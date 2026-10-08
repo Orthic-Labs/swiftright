@@ -169,3 +169,7 @@ Files: `result-presentmon-batch2.txt`, `pm-batch2-summary.txt`, `pm_an2.py` (raw
 - Present-to-display latency 31.7–32.5 ms in every run (two vblanks, Composed: Flip, SyncInterval 0).
 
 Finding for the contract: the §11 presentation limit (p95 ≤ 16.7 ms on a 60 Hz display) sits on the scan-out jitter floor of a 60.008 Hz display. Proposed restatement, pending maintainer decision under §11 change control: zero missed vblanks (displayed interval > 1.5 × measured refresh period) per run, and p95 ≤ measured refresh period + 0.1 ms. Harness must also log foreground window titles and occlusion per sample before disturbed runs can be attributed.
+
+### Harness note: run-desktop.ps1 v2 (script change only, not yet run)
+
+`scripts/run-desktop.ps1` now brings the probe window to the foreground once it exists (SetForegroundWindow, then AllowSetForegroundWindow, then AttachThreadInput) and logs `fg_attempt ... method=... ok=...` per run. Sampling moved from 250 ms to 50 ms and records the foreground HWND, its title and process, probe-foreground state, and visible top-level windows above the probe rect in z-order. It logs one `change` line per state change, plus `fg_samples`, `probe_fg_samples`, `occluded_samples`, `distinct_interrupters` and per-interrupter counts. The `focus_samples` line keeps its format. Parse-checked on Windows only (0 errors); not executed. The C# helper has not been compiled yet, so the first desktop run is the compile check.

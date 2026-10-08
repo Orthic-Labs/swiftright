@@ -86,7 +86,11 @@ type HWND = *mut c_void;
 type SubclassProc = unsafe extern "system" fn(HWND, u32, usize, isize, usize, usize) -> isize;
 type TaskDialogCallback = unsafe extern "system" fn(HWND, u32, usize, isize, isize) -> i32;
 
-#[repr(C)]
+// commctrl.h declares TASKDIALOGCONFIG under #include <pshpack1.h>; windows-0.61.3
+// (Controls/mod.rs: `#[repr(C, packed(1))] pub struct TASKDIALOGCONFIG`) mirrors that.
+// Natural alignment put hwndParent at offset 8 instead of 4 and made TaskDialogIndirect
+// return E_INVALIDARG. cbSize is size_of::<Self>() of this packed layout.
+#[repr(C, packed(1))]
 struct TaskDialogConfig {
     cb_size: u32,
     hwnd_parent: HWND,
@@ -120,6 +124,7 @@ extern "system" {
     fn WaitForSingleObject(handle: *mut c_void, millis: u32) -> u32;
     fn SetEvent(handle: *mut c_void) -> i32;
     fn PostMessageW(hwnd: HWND, msg: u32, w: usize, l: isize) -> i32;
+    fn SetForegroundWindow(hwnd: HWND) -> i32;
 }
 
 #[link(name = "comctl32")]
@@ -465,6 +470,19 @@ impl Render for ProbeView {
 
 // ---- Size-loop and modal observation (our own subclass, outermost) ----
 
+static EV_COUNT: AtomicU64 = AtomicU64::new(0);
+static EV_T0: Mutex<Option<std::time::Instant>> = Mutex::new(None);
+
+/// Diagnostic event log to stderr (bounded to 300 lines): size/move related window messages.
+fn ev(tag: &str, a: u64, b: u64, c: u64, d: u64) {
+    if EV_COUNT.fetch_add(1, SeqCst) >= 300 {
+        return;
+    }
+    let mut g = EV_T0.lock().unwrap_or_else(|e| e.into_inner());
+    let t0 = *g.get_or_insert_with(std::time::Instant::now);
+    eprintln!("[sr0-b ev t={:.0}ms] {tag} {a:#x} {b:#x} {c} {d}", t0.elapsed().as_secs_f64() * 1000.0);
+}
+
 unsafe extern "system" fn observe_proc(
     hwnd: HWND,
     msg: u32,
@@ -473,18 +491,56 @@ unsafe extern "system" fn observe_proc(
     _id: usize,
     _data: usize,
 ) -> isize {
+    const WM_NCHITTEST: u32 = 0x0084;
+    const WM_SYSCOMMAND: u32 = 0x0112;
+    const WM_SIZING: u32 = 0x0214;
+    const WM_SIZE: u32 = 0x0005;
+    const WM_WINDOWPOSCHANGED: u32 = 0x0047;
+    const WM_CAPTURECHANGED: u32 = 0x0215;
+    const WM_LBUTTONUP: u32 = 0x0202;
+    const WM_NCLBUTTONUP: u32 = 0x00A2;
+    static HT_LOGGED: AtomicU64 = AtomicU64::new(0);
+    static HT_EDGE: AtomicU64 = AtomicU64::new(0);
     match msg {
         WM_ENTERSIZEMOVE => {
             SIZING.store(true, SeqCst);
             SIZE_ENTER.fetch_add(1, SeqCst);
+            ev("ENTERSIZEMOVE", 0, 0, 0, 0);
         }
         WM_EXITSIZEMOVE => {
             SIZING.store(false, SeqCst);
             SIZE_EXIT.fetch_add(1, SeqCst);
+            ev("EXITSIZEMOVE", 0, 0, 0, 0);
         }
         WM_NCLBUTTONDOWN => {
             NC_LBUTTON_DOWN.fetch_add(1, SeqCst);
             NC_LAST_HT.store(w as u64, SeqCst);
+            ev("NCLBUTTONDOWN hit", w as u64, 0, (l & 0xFFFF) as i16 as i64 as u64, ((l >> 16) & 0xFFFF) as i16 as i64 as u64);
+        }
+        WM_NCLBUTTONUP => ev("NCLBUTTONUP hit", w as u64, 0, 0, 0),
+        WM_LBUTTONUP => ev("LBUTTONUP", 0, 0, 0, 0),
+        WM_CAPTURECHANGED => ev("CAPTURECHANGED", 0, 0, 0, 0),
+        WM_SYSCOMMAND => ev("SYSCOMMAND wparam", w as u64, 0, 0, 0),
+        WM_SIZING => ev("SIZING edge", w as u64, 0, 0, 0),
+        WM_SIZE => ev("SIZE type", w as u64, 0, (l & 0xFFFF) as u64, ((l >> 16) & 0xFFFF) as u64),
+        WM_WINDOWPOSCHANGED => {
+            let p = l as *const u8;
+            let (cx, cy, fl) = unsafe {
+                (
+                    *(p.add(24) as *const i32) as i64 as u64,
+                    *(p.add(28) as *const i32) as i64 as u64,
+                    *(p.add(32) as *const u32) as u64,
+                )
+            };
+            ev("WINDOWPOSCHANGED flags", fl, 0, cx, cy);
+        }
+        WM_NCHITTEST => {
+            let r = unsafe { DefSubclassProc(hwnd, msg, w, l) };
+            let edge = (10..=17).contains(&r);
+            if (edge && HT_EDGE.fetch_add(1, SeqCst) < 12) || HT_LOGGED.fetch_add(1, SeqCst) < 4 {
+                ev("NCHITTEST result", r as u64, 0, (l & 0xFFFF) as i16 as i64 as u64, ((l >> 16) & 0xFFFF) as i16 as i64 as u64);
+            }
+            return r;
         }
         _ => {}
     }
@@ -626,6 +682,8 @@ fn launch(cx: &mut App, host: HostRef) {
             ));
             unsafe { SetWindowSubclass(hwnd, observe_proc, 0x5352, 0) };
             window.activate_window();
+            // Make sure no other window covers the probe for the synthetic-input run.
+            unsafe { SetForegroundWindow(hwnd) };
         })
         .expect("window update failed during launch");
 

@@ -15,7 +15,7 @@ let totalJobs = 10_000          // 1 kHz, about 10 s of workload
 let paceHz = 1_000
 let totalHops = 500
 let hopEvery = 10
-let modalAtJob = 6_000          // Swift requests one TaskDialog about 6 s in
+let modalAtJob = 8_000          // Swift requests one TaskDialog about 8 s in (after the resize phase)
 let watchdogSeconds: Double = 150
 let axButtonNode: UInt64 = 2    // NodeId of the button in build_tree()
 

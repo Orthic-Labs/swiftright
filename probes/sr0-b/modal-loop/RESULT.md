@@ -92,3 +92,71 @@ Run 1 (iter 2 binary, `SR0B-Modal-run1`) showed the same pattern: `size_enter=0`
 - Modal drains and job p99 during modal (6). Blocked by the HRESULT.
 - Stale-after-close rejection (12) needs an AX action to reach the adapter after close. A direct probe path would be needed.
 - Nothing has been committed or pushed; the probe sits in `probes/sr0-b/modal-loop/`.
+
+---
+
+## 2026-10-09 take-over: TaskDialog and live-resize fixes (runs run3, run4, run5)
+
+**Overall: PARTIAL.** TaskDialog now opens and returns IDOK; the size/move modal loop is entered, the window rect changes, and drains and jobs continue through both loops. Remaining FAIL: job p99 during the modal TaskDialog is 31.1 ms (budget 16.7 ms), and real-mouse border drag still produces no WM_NCLBUTTONDOWN. Two Rust builds spent this session: `rr-1791497815583-49bcff325ce259d3` (packed(1) fix) and `rr-1791498872459-36629d6b6f95ecfb` (adds window-message event log); both SUCCEEDED. Swift rebuilt with `scripts/build-swift.ps1` (ComCtl v6 manifest flags kept).
+
+### Root causes and fixes
+
+1. **TaskDialogIndirect E_INVALIDARG (0x80070057).** commctrl.h declares TASKDIALOGCONFIG and TASKDIALOG_BUTTON under `#include <pshpack1.h>`. The windows crate in Cargo.lock mirrors that: `windows-0.61.3/src/Windows/Win32/UI/Controls/mod.rs:9113` `#[repr(C, packed(1))] pub struct TASKDIALOGCONFIG` (and `:9177` TASKDIALOG_BUTTON, and the two anonymous unions at `:9148`). The hand-written struct used natural alignment (hwndParent at offset 8 instead of 4), so cbSize and every later field were wrong. Fix: `#[repr(C, packed(1))]` on `TaskDialogConfig` in `src/lib.rs` (kept hand-written to avoid a new dependency and Cargo.lock change; field order and types are identical to the crate's definition). The ComCtl v6 manifest dependency was in effect (dialog created and returned 1; with a v5 comctl32 the export is missing, not E_INVALIDARG). Result: `modal_errors=0 modal_result_values=[1]`.
+2. **Live resize never entered the size loop.** GPUI 0.2.2 source (docs.rs `platform/windows/window.rs`, `events.rs`): window style is `WS_SYSMENU | WS_THICKFRAME | WS_MAXIMIZEBOX` (no WS_CAPTION), `hide_title_bar` comes from `titlebar.appears_transparent` (false here), and `handle_hit_test_msg` returns `None` (OS default hit test) when `!hide_title_bar`; `WM_NCCALCSIZE` is also default. So GPUI does not draw its own frame here and does not interfere with sizing. Logged `WM_NCHITTEST` via SendMessageTimeout at the corner: inset 1 and 2 px give HTNOWHERE (0), insets 4 to 16 px give HTBOTTOMRIGHT (17), 24 px gives HTCLIENT. So the earlier 4 px inset was a valid grip. In run4 and run5 a SendInput left-button-down at the HTBOTTOMRIGHT point (cursor verified at the grip, window under cursor is target and foreground, WM_NCHITTEST reaches the window and returns 0x11 at the moment of the click) still produced no WM_NCLBUTTONDOWN, no WM_SYSCOMMAND and no WM_ENTERSIZEMOVE. Cause of the dropped synthetic click is not determined (not GPUI: GPUI never saw a nonclient button message to reject). Run3 was invalid: absolute-coordinate SendInput mapped the cursor to the wrong point on this 3456x2160 multi-DPI display (cursor landed at 3004,1069 instead of 2544,1577); replaced with SetCursorPos for positioning.
+   **Method used (documented): deterministic SC_SIZE.** `PostMessage(hwnd, WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMRIGHT = 0xF008, 0)`, then 80 mouse moves (SetCursorPos plus a 1 px relative SendInput so a real WM_MOUSEMOVE is generated), then Enter (keybd_event VK_RETURN) to end the loop. A click did not end the loop in run3. PostMessage, not SendMessage, because SendMessage would block the runner inside the target's loop. Method A (real border drag) is still attempted first and its failure logged; the runner falls back to B when the rect is unchanged.
+3. **Schedule.** Swift now requests the TaskDialog at job 8,000 (was 6,000) so the resize loop (about 1.8 to 7.6 s of process time) and the modal phase do not overlap; `drains_both=0` in run5. In run3 they overlapped (`drains_both=983`) because the loop was still open when the dialog appeared.
+4. **Foreground.** `SetForegroundWindow(hwnd)` now also called inside the probe right after `activate_window()`.
+5. **Diagnostics.** `observe_proc` logs (bounded to 300 lines, stderr) ENTER/EXITSIZEMOVE, SYSCOMMAND, SIZING, SIZE, WINDOWPOSCHANGED, CAPTURECHANGED, NCLBUTTONDOWN, and the first NCHITTEST edge results.
+
+### Verbatim trimmed output, run5 (final binaries, `SR0B-Modal-run5`, task deleted, verified absent)
+
+```
+nchittest_corner inset-3=0 inset1=0 inset2=0 inset4=17 inset6=17 inset8=17 inset12=17 inset16=17 inset24=1
+resize_start rect=(908,583,2548,1581) grip=(2544,1577) inset=4 hit_at_grip=17
+pre_drag cursor=(2544,1577) window_at_grip_is_target=True foreground_is_target=True
+method_A_sendinput_border_drag down=1 moves_ok=80/80 up=1 rect_after=(908,583,2548,1581) rect_changed=False
+method_B_sc_size post_ok=True moves_ok=80/80 end_enter=1/1 rect_after=(908,583,2788,1741) rect_changed=True
+[sr0-b rust] drain_calls=12639 tick_calls=1190 deferred_total=1 nested_executed=0 drains_idle=8955 drains_sizing=2694 drains_modal=991 drains_both=0 selftest_detected=1 panics=0 ... size_enter=1 size_exit=1 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 run_rc=0
+jobs_run=10000/10000 ... late_dropped=0
+latency_ms all p99=0.9389 max=41.1207 n=10000
+latency_ms idle p99=0.6627 n=6259
+latency_ms during_live_resize p50=0.0662 p99=0.4795 max=2.2464 n=2695
+latency_ms during_modal p50=0.0710 p99=31.1238 max=41.1207 n=1046
+thread_mismatches=0 ; swift_reentry_violations=0 ; nested_executed=0 ; mainactor_hops=500/500
+nc_lbuttondown=0 size_loop_enter=1 size_loop_exit=1 frames_during_workload=1190
+modal_request_rc=0 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 modal_result_values=[1]
+verdict=FAIL   (modal p99 over budget; AX/UIA close-race criteria unchanged)
+event log: SYSCOMMAND 0xf008 @4891ms, ENTERSIZEMOVE @4892ms, SIZING edge 8 every ~33 ms until 7552ms, CAPTURECHANGED @7588, WINDOWPOSCHANGED 752x463 client (was 640x360) @7589, EXITSIZEMOVE @7595ms
+```
+
+Run4 (earlier binary, no event log) had the same pattern with an unrelated 0.47 s loop: resize p99 0.315 ms (n=470), modal p99 41.8 ms (n=1052).
+
+### Updated PASS / FAIL table
+
+| # | Criterion | Result | Evidence |
+|---|---|---|---|
+| 1 | Build succeeds | PASS | rr-...49bcff325ce259d3 and rr-...36629d6b6f95ecfb, exit 0 |
+| 2 | 10,000 jobs run, zero thread mismatches | PASS | 10000/10000, mismatches 0 |
+| 3 | Job p99 idle at or under 16.7 ms | PASS | 0.663 ms |
+| 4 | Drains during live resize > 0 | **PASS** | drains_sizing=2694, size_enter=1, size_exit=1 (via SC_SIZE) |
+| 5a | Job p99 'resize' at or under 16.7 ms | **PASS** | 0.4795 ms (n=2695, max 2.25 ms) |
+| 5b | Job p99 'modal' at or under 16.7 ms | **FAIL** | 31.12 ms (n=1046, max 41.1 ms); 41.8 ms in run4. Only about 10 jobs exceed the budget, consistent with a stall of up to about 40 ms while TaskDialogIndirect builds and shows the dialog on the UI thread (cause not isolated; no per-message timing taken). Drains during the dialog itself keep running (drains_modal=991) |
+| 6 | Modal TaskDialog opens and returns | **PASS** | result 1 (IDOK), modal_errors=0 |
+| 7 | Zero nested drains | PASS | 0 / 0 |
+| 8 | Deferred re-entrant callbacks counted | PASS | deferred_total=1 |
+| 9 | Zero panics | PASS | 0 |
+| 10 | AX sums consistent | PASS | unchanged from run2 pattern (sum_*_ok=true) |
+| 11 | No AX apply after close | PASS | 0 / 0 |
+| 12 | Stale-after-close rejection exercised | NOT EXERCISED | unchanged (UIA fails at close before reaching the adapter) |
+| 13 | UIA 2,000 Invokes while closing | PARTIAL | 1501 ok, 499 err after WM_CLOSE |
+| 14 | Clean shutdown | PASS | window_closed_calls=1, run_rc=0 |
+| 15 | Live resize by real SendInput border drag | **FAIL** | hit test is HTBOTTOMRIGHT at the grip, but the injected button-down never became WM_NCLBUTTONDOWN (cause undetermined) |
+| 15b | Size loop entered deterministically, rect changes | **PASS** | SC_SIZE|WMSZ_BOTTOMRIGHT: ENTERSIZEMOVE observed, rect 1640x998 to 1880x1158, EXITSIZEMOVE observed |
+
+Not done: isolating the real-mouse nonclient click drop (candidates: injected input needs a real mouse-move before down, or the scheduled-task session's input path; try `mouse_event` and a delay after SetCursorPos); isolating the 40 ms dialog-creation stall (candidate mitigation: pre-load comctl or show the dialog from a worker-created window); stale-after-close needs a direct adapter path. Nothing committed or pushed.
+
+## Primary disposition (2026-10-09)
+
+- Modal-loop progress is proven: drains continue inside the system size/move loop (`drains_sizing=2694`, resize-tagged job p99 0.48 ms) and inside the TaskDialog modal loop (`drains_modal=991`), with no nested drains.
+- The modal-tagged p99 of 31.1 ms comes from ~10 jobs queued while `TaskDialogIndirect` builds its window on the UI thread (≈40 ms). The SR0 slice fixtures contain no dialogs, so this does not gate SR0; it becomes an SR1 budget item for dialog/menu inventory (candidate mitigation: open dialogs only after a drain and accept a bounded one-off open cost, or measure against an AppKit sheet baseline).
+- Real-mouse border drag through `SendInput` never produced `WM_NCLBUTTONDOWN` although `WM_NCHITTEST` returns `HTBOTTOMRIGHT`; the size loop was entered via `SC_SIZE`. A physical/desktop-session drag still needs to confirm the same behaviour.
