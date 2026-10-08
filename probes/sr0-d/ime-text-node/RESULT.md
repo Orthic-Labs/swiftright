@@ -70,3 +70,22 @@ Pass criteria: every row above produces its expected lines, the process exits wi
 - Interactive run: not performed. The IMM32 paths above are read from source only.
 - The `ImmSetCandidateWindow` position on the real desktop.
 - Whether any of `text_for_range`, `unmark_text` or `character_index_for_point` is called by the Microsoft IME.
+
+## Interactive result (2026-10-09, Microsoft Japanese IME, hand-typed on the Dell)
+
+Log: [`evidence/stderr-2026-10-09.log`](evidence/stderr-2026-10-09.log), re-read from the host by the primary session.
+
+| Requirement | Result | Evidence |
+|---|---|---|
+| Committed text (English, WM_CHAR) | PASS | `replace_text_in_range … text="a"`; Backspace and Ctrl+A+Backspace update buffer & selection |
+| Marked text during composition | PASS | `replace_and_mark_text_in_range` grows marked16 15..16 → 15..21 on the external buffer |
+| Commit from candidate list | PASS | `replace_text_in_range target16=15..21 text="ありがとうございます。"` → marked None, selection 26..26 (UTF-16 correct) |
+| Space conversion | PASS | `replace_and_mark_text_in_range target16=32..35 new_text="日本"`, then Enter commits `replace_text_in_range 32..34 text="日本"` |
+| Escape-cancel composition | PASS | `replace_text_in_range target16=34..37 text=""` clears marked にほｎ, selection 34..34 |
+| Candidate-window placement query | PASS | `bounds_for_range` called at each composition start; IME list appeared at the probe's fixed rect (320,160), not the caret, as designed |
+| IME-off Space | PASS | U+3000 inserted via `replace_text_in_range` |
+| Calls on UI thread | PASS | No off-thread assertion fired |
+
+Injected input limitation: Unicode-packet (VK_PACKET) keystrokes bypass IME composition. Automated IME fixtures must send virtual-key input from the interactive desktop session.
+
+Caret-anchored candidate placement moves to SR0-B, where `bounds_for_range` returns real caret geometry from Swift-owned text runs.
