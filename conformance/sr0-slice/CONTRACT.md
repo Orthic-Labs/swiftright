@@ -41,7 +41,7 @@ Each fixture names its source hash, initial state, stable node IDs, stimuli, set
 |---|---|---|---|
 | F1 surviving-row identity | Edit survives unrelated insert above | Focus row 5, type "abc", fake engine inserts row at index 0, type "d" | Row 5 text "…abcd", focus & caret stay on row 5 identity, `@State` of row 5 unchanged |
 | F2 reorder | Identity survives move | Focus row 3, caret mid-text, `onMove` row 3 → index 7 | Same identity focused, caret offset unchanged, accessibility order updated |
-| F3 removal/reset | Removed row tears down | Focus row 4, delete row 4, reinsert same UUID | Mac-recorded teardown order: onDisappear, task cancel; reinserted row gets fresh `@State`; focus follows recorded Mac outcome |
+| F3 removal/reset | Removed row tears down | Focus row 4, delete row 4, reinsert same UUID | Mac-recorded teardown order: onDisappear, task cancel; reinserted row's `@State` and focus follow the recorded Mac outcome (macOS 27 `List` observed preserving `@State` across remove → reinsert of the same id; repeat with a longer gap before acceptance) |
 | F4 stale async | Guarded stale result | Start row task, remove row before fake completion fires | Cancellation delivered; result not committed to any row; cleanup observed |
 | F5 width layout | Width-dependent custom Layout | Resize window across wrap threshold during async updates | Containment, no clipping of caret, paint = hit-test = AX bounds |
 | F6 interrupted animation | Transaction semantics | Insert row with animation, insert again mid-animation | Interruption recorded, final layout settled, completion order; reduced-motion variant has no intermediate frames |
