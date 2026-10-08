@@ -2,11 +2,11 @@
 
 A proposed Swift desktop application SDK for macOS & Windows: one SwiftUI codebase, actual SwiftUI/AppKit on Mac & a SwiftRight-owned SwiftUI-semantics runtime on Windows, with GPUI as first renderer candidate.
 
-**Status:** architecture and implementation planning. The shared UI facade, selected dependencies, packaging, and performance still require prototype validation. This is not a released SDK or a claim of complete SwiftUI compatibility.
+**Status:** architecture and implementation planning. The SwiftUI-semantics runtime, selected dependencies, packaging, and performance still require prototype validation. This is not a released SDK or a claim of complete SwiftUI compatibility.
 
 ## Architecture and implementation plan
 
-Read [SwiftRight architecture v0.4](docs/architecture.md), dated 8 October 2026, & [review history with v0.4 dispositions](docs/architecture-review.md#v04-corrections-8-october-2026). Published GPUI 0.2.2 lacks AccessKit; exact accessible distribution & native-host qualification are first prerequisites.
+Read [SwiftRight architecture v0.5](docs/architecture.md), dated 8 October 2026, & [review history with v0.5 dispositions](docs/architecture-review.md#v05-sequential-adversarial-review-8-october-2026). Published GPUI 0.2.2 plus separate AccessKit Windows is first composition candidate; native UIA/text integration & host qualification remain prerequisites.
 
 The plan covers package boundaries, native backends, state and binding semantics, platform services, existing Rust-engine reuse, tooling, packaging, migration, conformance tests, performance measurements, and long-term maintenance.
 

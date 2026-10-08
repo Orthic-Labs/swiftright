@@ -1,6 +1,6 @@
 # SwiftRight architecture review history
 
-Current plan: [v0.4](architecture.md). Historical findings below apply to named revisions; [v0.4 dispositions](#v04-corrections-8-october-2026) supersede earlier dependency, fallback & delivery recommendations.
+Current plan: [v0.5](architecture.md). Historical findings apply to named revisions; [v0.5 dispositions](#v05-sequential-adversarial-review-8-october-2026) include current corrections.
 
 ## Original review of v0.1
 
@@ -101,7 +101,7 @@ Second-opinion review (Astra) proposed keeping Apple SwiftUI on Mac, building a 
 - GPUI first backend candidate. **Corrected in v0.4:** this review conflated published 0.2.2 with newer upstream source. AccessKit exists in inspected upstream source, not published 0.2.2; dependency selection needs artifact-level qualification.
 - Slint second backend behind same protocol, pending written licensing clarification for a redistributable framework.
 - Decision slice (editable reorderable list under async insert, custom Layout, interrupted animation, cancellation, IME, a11y activation) replaces v0.2 SR0.
-- Corrections to this review: wrapper-as-SwiftUI-view is acceptable; Windows compile is necessary not sufficient; SwiftCrossUI already enables StrictConcurrency; #787 evidence is UIA traversal, Narrator untested; Windows App SDK 1.8 servicing ended September 2026; Observation polyfill asymmetry noted.
+- Corrections to this review: wrapper-as-SwiftUI-view is acceptable; Windows compile is necessary not sufficient; SwiftCrossUI already enables StrictConcurrency; #787 evidence is UIA traversal, Narrator untested; Windows App SDK 1.8 servicing end-date claim unverified in this review (not a current dependency); Observation polyfill asymmetry noted.
 
 **Amended**
 - "Full parity against named SDK version" scoped to inventory parity with macOS traces as oracle; SDK version is ceiling. Tokamak archived January 2026; OpenSwiftUI cross-platform graph incomplete after years.
@@ -126,3 +126,84 @@ Adversarial review of v0.3 identified six plan defects. These dispositions chang
 Retained requirements: one Swift screen codebase, real SwiftUI/AppKit on Mac, Windows runtime ownership, reusable existing engines, no transpiler, second-language shell or runtime AI dependency. Custom `Layout` in SR0 remains a narrow probe; broader protocol support is later inventory growth.
 
 Dependency correction sources: [published GPUI manifest](https://docs.rs/crate/gpui/0.2.2/source/Cargo.toml), [upstream snapshot](https://github.com/zed-industries/zed/tree/b47a4ca595d3a3fba116b9e78ef01a46e2e43f3e/crates/gpui) & [AccessKit integration](https://github.com/zed-industries/zed/pull/56065).
+
+## v0.5 sequential adversarial review, 8 October 2026
+
+Fable 5.1 reviewed v0.4 read-only in native Claude session `95667ca2-6db5-4e91-bd33-d5daae9c8b3f`; transcript records `claude-fable-5-1`. Primary checked findings against plan, workspace owners & primary TSF/SwiftPM/MSIX documentation before integration. No implementation qualification is claimed.
+
+| Fable finding | Disposition |
+|---|---|
+| H1 external accessibility tree | Accepted: D must publish SwiftRight-owned nodes/actions; B proves ABI route |
+| H2 distribution dead end | Clarified: enumerate all platform crates; report unavailable published set as external blocker. No vendoring exception granted; alternate backend may enter D under same rules |
+| H3 synchronous text store | Accepted: bounded C function table & native lock protocol; prohibition remains on captured Swift closures & callbacks during measurement/commit |
+| M1 Mac Rust services | Accepted: thin services C ABI artifact on both OSes; Mac does not load renderer |
+| M2 list lifecycle | Accepted scoped requirement: observable row realization/lifecycle in SR0; exact private overscan excluded, large-scale optimization later |
+| M3 shipped-size budget | Rejected relaxation: no baseline measurement proves failure; runtime dependencies explicitly included & measured gate retained |
+| M4 SwiftPM binary consumption | Accepted: system-library/module-map payload path plus separate downstream consumer qualification |
+| M5 dispatch/RunLoop | Accepted: private drain shim identified & pinned, fail-closed qualification, RunLoop/Timer outside initial Windows contract |
+| M6 partial API support | Accepted: absent/unavailable APIs diagnosed by compiler; runtime-value restrictions separately explicit; Combine family initially unsupported |
+| M7 imports/modules | Accepted problem, different repair: one conditional target & import block; no underscored re-export required; same-source compile probe |
+| M8 shared-stage termination | Accepted: capped shared failures stop SR0; rerun only already-started downstream stages |
+| M9 shared adapters/template | Accepted gap preflight with RightKit owner/status; explicit Swift SDK request governs this product's runtime, without changing workspace template defaults |
+| M10 arm64 availability | Rejected dropping required architecture; corrected wording to required hosts, whose availability D verifies |
+| M11 MSIX migration | Accepted: qualify manifest-dependent paths, endpoint access, rollback reads & user-data preservation |
+| M12 paint vocabulary | Accepted: retained primitives plus separate semantic nodes, frozen in C & exercised in B |
+| L1–L3 instrumentation/schema | Accepted: observation topology, canonical roles/actions & calibrated visible-response endpoints defined before comparison |
+| L4–L5 stale wording/evidence | Accepted: README terminology & unverified historical servicing claim corrected |
+| L6 skip second seed | Rejected: two-seed comparison remains intended decision evidence; no measured reason to waive it |
+
+Subsequent Astra & Opus reviews, verified corrections & convergence results follow below.
+
+### Astra round 1
+
+Independent Astra Oracle reviewed v0.5 after Fable integration. All six findings accepted: cooperative cancellation separated from guarded stale results; surviving-row identity separated from removal/reset; SDK-owned single-window bootstrap defined; binary mismatch rejection precedes runtime allocation/callbacks; logical actions map to native shortcuts with separate raw-key tests; current review-version pointer corrected. Apple cancellation, identity, App & shortcut sources support semantic corrections. Primary also clarified D's disposable binary probe & C's declaration stubs to avoid depending on B/S artifacts before they exist.
+
+### Opus round 1
+
+Native Claude session `a9af4704-6e19-4cfa-9d9a-2878136d1227` reports `claude-opus-5-5`; completed read-only with no permission denials. Primary verified IMM32 handlers & GPUI `AppCell` at cited snapshot, plus AccessKit callback-thread documentation.
+
+| Opus finding | Disposition |
+|---|---|
+| H1 text API mismatch | Accepted: initial path is observed GPUI IMM32; remove unconditional TSF lock/reconversion claims; D/B prove actual path & ownership |
+| M1 AX callback thread | Accepted: enqueue/wake only; off-thread-close test |
+| M2 GPUI re-borrow | Accepted: drain outside GPUI borrows, independently retained measurement resources & buffered commits |
+| M3 main-thread bootstrap | Accepted: synchronous process-initial-thread entry, loop-ready callback, isolation assertions |
+| M4 animation clock | Accepted: on-demand display ticks, monotonic timestamps, idle stop & budget accounting |
+| M5 Windows repeats | Accepted: 20 correctness runs per seed/architecture, separate from performance samples |
+| M6 Mac runtime range | Accepted: explicit support matrix with floor/newest & trace lane for every advertised runtime |
+| M7 engine binary isolation | Accepted: separate versioned engine DLL with owner-freed memory, unchanged renderer |
+| L1 imports | Accepted explicit Foundation/Observation imports; no transitive-export assumption or dependency-byte exemption |
+| L2 executor alternative | Accepted pinned-toolchain availability check; no claim that proposed hook has shipped |
+| L3 artifact location/build comparison | Accepted manifests-only Git layout, staged payload/publication distinction & release edit-to-visible endpoint |
+
+### Fable round 2
+
+Resumed same native Fable 5.1 chat; effective model, successful completion & no denied reads verified. Prior repairs held. Eight in-repo findings accepted: published GPUI plus separate AccessKit composition candidate; explicit native service artifacts/Mac arm64 scope; Windows oracle of record; SR4 failure disposition; both Mac modules imported with SDK-symbol compile probe; required editable-text UIA patterns; signed recorder/permission preflight; TSF reference tied to future TSF qualification. Primary independently inspected published crate archives: GPUI exposes HWND & IMM32; AccessKit Windows 0.35.1 includes subclass adapter & UIA text provider. These establish candidate feasibility inputs, not native pass claims.
+
+Ninth suggestion (change workspace-wide Rust/React rule) rejected as outside this repository's plan repair: explicit user-requested Swift SDK scope is already recorded in §7 & governs this product. No general workspace policy or infrastructure change is authorized by this review.
+
+### Astra round 2
+
+Prior six findings resolved. One new wording defect accepted: B now tests measure/commit during permitted Swift drains; native IME callbacks permit only text queries/edits, with attempted frame commit rejected/deferred & reconciliation after unwind. No other actionable findings returned.
+
+### Opus round 2
+
+Prior eleven repairs & Fable/Astra integrations resolved. One remaining modal-loop issue accepted: non-reentrant drain guard across host callbacks, window-targeted wakes, asynchronous Swift modal requests after unwind & B probes for live resize plus a modal request under load. Primary verified Microsoft modal-loop documentation. No other actionable findings returned.
+
+### Fable round 3
+
+Prior integrations held. Accepted named foreground-executor wake/drain candidate with modal cadence/shutdown tests & added B's editable-text UIA range/caret bridge probe. Primary verified published GPUI dispatch/window/event source. Clarified missing required Mac floor capacity blocks O/SR0; rejected automatic floor increase because it weakens declared support. Retained one initial attempt plus one targeted repair per failing stage/candidate; rejected per-probe retry expansion because no execution evidence justifies increasing the existing stage budget. These are explicit policy choices, not hidden prerequisites.
+
+### Final sequential closure
+
+| Reviewer | Final result on unchanged v0.5 |
+|---|---|
+| Fable 5.1, round 3 closure | No actionable findings; repairs validated & explicit floor/retry policies accepted |
+| Astra, round 3 | No actionable findings; prior findings resolved, coherent ownership/gates/policies |
+| Opus 5.5, round 3 | No actionable findings; modal-loop closure & final integration checked |
+
+Order was Fable → Astra → Opus throughout, with primary verification & integration between stages. Final architecture & README stayed unchanged across the clean cycle. Primary verified SHA-256: architecture `9c8ea77ff8c7293fabb42981a6585c6321fa498a5b7509af1d6f4100a5a877eb`; README `1ee2bf78f925a51da9d2ad514db1a7ff49f45c6ed1a472a3f4810aee30c67419`. Opus reviewed on-disk files without independently hashing them; hashes are primary verification, not reviewer claims. This closure entry records results only.
+
+Native Claude supervision verified effective model identities (`claude-fable-5-1`, `claude-opus-5-5`), persistent session IDs/transcripts above, submitted review prompts & readbacks, same-ID resume/reconnection, successful terminal completion & no permission denials in final calls. Astra ran as an independent read-only Oracle subagent. Review scope was architecture quality; native runtime/packaging/performance evidence remains governed by explicit delivery gates.
+
+Primary validation: Markdown links/anchors/fences & `git diff --check` pass. All accepted findings are integrated; rejected suggestions retain their rationale above. No product implementation or workspace infrastructure was changed.
