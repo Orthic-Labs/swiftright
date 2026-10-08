@@ -2,6 +2,7 @@ import Foundation
 
 // Modifiers are wrapper views. Each one is a graph node whose lifecycle (appear, disappear,
 // task, focus, environment override, animation comparison) follows the node's identity.
+// Padding is the one modifier with geometry; the others pass their child's geometry through.
 
 struct Modified<Content: View>: View, PrimitiveView {
     let content: Content
@@ -13,9 +14,9 @@ struct Modified<Content: View>: View, PrimitiveView {
 }
 
 extension View {
-    // TODO(layout): padding is recorded in the commit tree but has no measure effect yet.
+    /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
-        Modified(content: self, spec: .padding)
+        Modified(content: self, spec: .padding(EdgeInsets(edges, length ?? defaultPaddingLength)))
     }
 
     public func onAppear(perform action: (() -> Void)? = nil) -> some View {

@@ -36,7 +36,7 @@ public struct NodeID: Hashable, CustomStringConvertible {
 // MARK: - Node
 
 enum ModifierSpec {
-    case padding
+    case padding(EdgeInsets)
     case appear(() -> Void)
     case disappear(() -> Void)
     case task(TaskPriority, @isolated(any) () async -> Void)
@@ -60,11 +60,23 @@ enum ModifierSpec {
 enum NodeKind {
     case user
     case text(String)
-    case spacer
+    case spacer(CGFloat)
     case button(() -> Void)
     case textField(() -> String)
-    case container(String)
+    case stack(StackSpec)
+    case layout(LayoutSpec)
     case modifier(ModifierSpec)
+
+    /// Wrappers whose geometry is their single child's geometry (user bodies, buttons, and
+    /// modifiers other than padding).
+    var passesThrough: Bool {
+        switch self {
+        case .user, .button: return true
+        case .modifier(.padding): return false
+        case .modifier: return true
+        default: return false
+        }
+    }
 }
 
 struct AnyEquatable {
@@ -95,6 +107,13 @@ final class Node {
     var lastEquatable: AnyEquatable?
     /// Monotonic per-graph creation number. Unlike object addresses it is never reused.
     var instance = 0
+    /// Frame in logical points, snapped to the physical pixel grid at placement.
+    var frame: LayoutRect = .zero
+    /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
+    var memoText: String?
+    var memo: [CGFloat?: LayoutSize] = [:]
+    /// Cache owned by a custom `Layout` container.
+    var layoutStorage: Any?
 
     init(id: NodeID, view: any View, parent: Node?) {
         self.id = id
@@ -134,6 +153,10 @@ public struct ResolvedNode: Equatable, Sendable {
     public let id: String
     public let kind: String
     public let text: String?
+    /// Logical points, edges snapped to the physical pixel grid.
+    public let frame: LayoutRect
+    /// The same frame in physical device pixels.
+    public let pixelFrame: PixelRect
     public let children: [ResolvedNode]
 }
 
@@ -158,9 +181,16 @@ public final class Graph {
     private var flushScheduled = false
     private var sequence = 0
     private var instanceCounter = 0
+    let measurer: any TextMeasurer
+    /// Physical pixels per logical point.
+    let scale: CGFloat
+    /// Size proposal for the root view. A host sets this to its content size.
+    public var rootProposal: ProposedViewSize = .unspecified
     public var commitSink: ((CommitRecord) -> Void)?
 
-    public init(_ rootView: some View) {
+    public init(_ rootView: some View, measurer: (any TextMeasurer)? = nil, scale: CGFloat = 1) {
+        self.measurer = measurer ?? FixedAdvanceTextMeasurer()
+        self.scale = scale
         let node = Node(id: NodeID(segments: [.type("Root")]), view: rootView, parent: nil)
         node.instance = 0
         root = node
@@ -170,7 +200,7 @@ public final class Graph {
 
     // MARK: Public test surface
 
-    /// Applies pending invalidations (coalesced) and always emits one commit record.
+    /// Applies pending invalidations (coalesced), lays out, and always emits one commit record.
     public func flush() {
         var rounds = 0
         while !dirty.isEmpty, rounds < 64 {
@@ -379,6 +409,7 @@ public final class Graph {
     // MARK: Commit
 
     private func commit() {
+        layoutRoot()
         sequence += 1
         let focusedNode = nodes.values.filter { $0.focused && $0.alive }.min { $0.id.description < $1.id.description }
         let record = CommitRecord(
@@ -402,6 +433,8 @@ public final class Graph {
             id: node.id.description,
             kind: kindName(node),
             text: text,
+            frame: node.frame,
+            pixelFrame: pixelRect(node.frame, scale: scale),
             children: node.children.compactMap { nodes[$0].map(resolve) }
         )
     }
@@ -413,7 +446,8 @@ public final class Graph {
         case .spacer: return "Spacer"
         case .button: return "Button"
         case .textField: return "TextField"
-        case .container(let name): return name
+        case .stack(let spec): return spec.name
+        case .layout: return "Layout"
         case .modifier(let spec): return "modifier.\(spec.name)"
         }
     }

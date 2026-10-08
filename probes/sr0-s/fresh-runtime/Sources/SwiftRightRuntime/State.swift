@@ -114,10 +114,33 @@ extension Binding: @MainActor Identifiable where Value: Identifiable {
     public var id: Value.ID { wrappedValue.id }
 }
 
-// Deviation: Binding is intentionally NOT a Collection in this runtime. Declaring it as one made
-// `ForEach($items)` resolve to the generic Identifiable initializer, which iterates indices and
-// hands out index-based row bindings (stale after insert or move). Without the conformance,
-// `ForEach($items)` resolves to the Binding<C> initializer, which addresses rows by id.
+// As in SwiftUI, a binding to a collection is itself a collection of bindings. Each element binding
+// addresses its element by index on access. `ForEach($items)` prefers the id-keyed initializers above.
+extension Binding: @MainActor Sequence, @MainActor Collection, @MainActor BidirectionalCollection,
+    @MainActor RandomAccessCollection, @MainActor MutableCollection
+where Value: MutableCollection & RandomAccessCollection {
+    public typealias Index = Value.Index
+    public typealias Element = Binding<Value.Element>
+
+    public var startIndex: Value.Index { wrappedValue.startIndex }
+    public var endIndex: Value.Index { wrappedValue.endIndex }
+
+    public func index(after i: Value.Index) -> Value.Index { wrappedValue.index(after: i) }
+    public func index(before i: Value.Index) -> Value.Index { wrappedValue.index(before: i) }
+
+    public subscript(position: Value.Index) -> Binding<Value.Element> {
+        get {
+            let whole = self
+            return Binding<Value.Element>(
+                get: { whole.wrappedValue[position] },
+                set: { whole.wrappedValue[position] = $0 }
+            )
+        }
+        nonmutating set {
+            wrappedValue[position] = newValue.wrappedValue
+        }
+    }
+}
 
 // MARK: - Bindable
 

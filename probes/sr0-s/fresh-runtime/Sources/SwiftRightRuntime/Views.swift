@@ -117,9 +117,10 @@ public struct Text: View, PrimitiveView {
 }
 
 public struct Spacer: View, PrimitiveView {
-    public init(minLength: CGFloat? = nil) {}
+    let minLength: CGFloat
+    public init(minLength: CGFloat? = nil) { self.minLength = minLength ?? 0 }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .spacer }
+    var nodeKind: NodeKind { .spacer(minLength) }
     var nodeContent: (any View)? { nil }
 }
 
@@ -164,21 +165,44 @@ extension TextField where Label == Text {
     }
 }
 
-public struct HorizontalAlignment: Sendable {
-    public static let leading = HorizontalAlignment()
-    public static let center = HorizontalAlignment()
-    public static let trailing = HorizontalAlignment()
-    public init() {}
+// MARK: - Alignment
+
+public struct HorizontalAlignment: Sendable, Equatable {
+    enum Kind: Sendable { case leading, center, trailing }
+    let kind: Kind
+
+    public static let leading = HorizontalAlignment(kind: .leading)
+    public static let center = HorizontalAlignment(kind: .center)
+    public static let trailing = HorizontalAlignment(kind: .trailing)
+
+    var crossAlignment: CrossAlignment {
+        switch kind {
+        case .leading: return .start
+        case .center: return .middle
+        case .trailing: return .end
+        }
+    }
 }
 
-public struct VerticalAlignment: Sendable {
-    public static let top = VerticalAlignment()
-    public static let center = VerticalAlignment()
-    public static let bottom = VerticalAlignment()
-    public init() {}
+public struct VerticalAlignment: Sendable, Equatable {
+    enum Kind: Sendable { case top, center, bottom }
+    let kind: Kind
+
+    public static let top = VerticalAlignment(kind: .top)
+    public static let center = VerticalAlignment(kind: .center)
+    public static let bottom = VerticalAlignment(kind: .bottom)
+
+    var crossAlignment: CrossAlignment {
+        switch kind {
+        case .top: return .start
+        case .center: return .middle
+        case .bottom: return .end
+        }
+    }
 }
 
-// TODO(layout): alignment and spacing are recorded but not applied; no measure/place pass yet.
+// MARK: - Stacks
+
 public struct VStack<Content: View>: View, PrimitiveView {
     let alignment: HorizontalAlignment
     let spacing: CGFloat?
@@ -189,7 +213,10 @@ public struct VStack<Content: View>: View, PrimitiveView {
         self.content = content()
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .container("VStack") }
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "VStack", axis: .vertical, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+    }
     var nodeContent: (any View)? { content }
 }
 
@@ -203,7 +230,10 @@ public struct HStack<Content: View>: View, PrimitiveView {
         self.content = content()
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .container("HStack") }
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+    }
     var nodeContent: (any View)? { content }
 }
 
@@ -211,7 +241,10 @@ public struct List<SelectionValue: Hashable, Content: View>: View, PrimitiveView
     let content: Content
     init(content: Content) { self.content = content }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .container("List") }
+    /// Rows stack vertically with no gap and take the full proposed width.
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "List", axis: .vertical, cross: .start, spacing: 0, fillsCross: true))
+    }
     var nodeContent: (any View)? { content }
 }
 
@@ -236,6 +269,8 @@ public struct ForEach<Data: RandomAccessCollection, ID: Hashable, Content: View>
         self.makeContent = makeContent
     }
 
+    /// Disfavored so that `ForEach($items)` over a Binding selects the id-keyed binding initializer.
+    @_disfavoredOverload
     public init(_ data: Data, id: KeyPath<Data.Element, ID>, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self.init(items: data, idOf: { $0[keyPath: id] }, makeContent: content)
     }
@@ -251,21 +286,40 @@ public struct ForEach<Data: RandomAccessCollection, ID: Hashable, Content: View>
 }
 
 extension ForEach where ID == Data.Element.ID, Data.Element: Identifiable {
+    @_disfavoredOverload
     public init(_ data: Data, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self.init(data, id: \.id, content: content)
     }
 }
 
 extension ForEach {
-    /// `ForEach($items) { $item in ... }`: each row binding resolves its element by id at access time,
-    /// so a row handle never targets a stale index after inserts, deletes or moves.
-    @_disfavoredOverload
-    public init<C>(_ data: Binding<C>, @ViewBuilder content: @escaping (Binding<C.Element>) -> Content)
-    where Data == LazyMapSequence<C.Indices, (C.Index, ID)>, ID == C.Element.ID, C: MutableCollection, C: RandomAccessCollection, C.Element: Identifiable
-    {
+    /// `ForEach($items) { $item in ... }`. Identity comes from each element's `id`. Each row binding
+    /// resolves its element by that id when it is read or written, so a row handle never targets a
+    /// stale index after inserts, deletes or moves.
+    public init<C: MutableCollection & RandomAccessCollection>(
+        _ data: Binding<C>,
+        @ViewBuilder content: @escaping (Binding<C.Element>) -> Content
+    ) where C.Element: Identifiable, ID == C.Element.ID, Data == LazyMapSequence<C.Indices, (C.Index, ID)> {
+        self.init(bindingRows: data, key: { $0.id }, content: content)
+    }
+
+    /// `ForEach($items, id: \.key) { $item in ... }`: identity comes from the key path.
+    public init<C: MutableCollection & RandomAccessCollection>(
+        _ data: Binding<C>,
+        id: KeyPath<C.Element, ID>,
+        @ViewBuilder content: @escaping (Binding<C.Element>) -> Content
+    ) where Data == LazyMapSequence<C.Indices, (C.Index, ID)> {
+        self.init(bindingRows: data, key: { $0[keyPath: id] }, content: content)
+    }
+
+    private init<C: MutableCollection & RandomAccessCollection>(
+        bindingRows data: Binding<C>,
+        key: @escaping (C.Element) -> ID,
+        content: @escaping (Binding<C.Element>) -> Content
+    ) where Data == LazyMapSequence<C.Indices, (C.Index, ID)> {
         let snapshot = data.wrappedValue
         let pairs: LazyMapSequence<C.Indices, (C.Index, ID)> = snapshot.indices.lazy.map { index in
-            (index, snapshot[index].id)
+            (index, key(snapshot[index]))
         }
         self.init(
             items: pairs,
@@ -274,10 +328,10 @@ extension ForEach {
                 let id = pair.1
                 let fallback = snapshot[pair.0]
                 let row = Binding<C.Element>(
-                    get: { data.wrappedValue.first(where: { $0.id == id }) ?? fallback },
+                    get: { data.wrappedValue.first(where: { key($0) == id }) ?? fallback },
                     set: { newValue in
                         var current = data.wrappedValue
-                        guard let index = current.firstIndex(where: { $0.id == id }) else { return }
+                        guard let index = current.firstIndex(where: { key($0) == id }) else { return }
                         current[index] = newValue
                         data.wrappedValue = current
                     }
@@ -323,8 +377,15 @@ extension MutableCollection where Self: RandomAccessCollection {
 }
 
 public struct Edge: Sendable {
-    public struct Set: Sendable {
-        public static let all = Set()
-        public init() {}
+    public struct Set: OptionSet, Sendable {
+        public let rawValue: Int
+        public init(rawValue: Int) { self.rawValue = rawValue }
+        public static let top = Set(rawValue: 1 << 0)
+        public static let leading = Set(rawValue: 1 << 1)
+        public static let bottom = Set(rawValue: 1 << 2)
+        public static let trailing = Set(rawValue: 1 << 3)
+        public static let horizontal: Set = [.leading, .trailing]
+        public static let vertical: Set = [.top, .bottom]
+        public static let all: Set = [.top, .leading, .bottom, .trailing]
     }
 }
