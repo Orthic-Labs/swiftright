@@ -159,3 +159,13 @@ Each run's max (about 3.0–3.1 s) is the gap across the probe's idle phase, whe
 **Drops follow occlusion.** Mass drops occur only in runs where the probe was not foreground (base-1, tbp-1, tbp-3, tbp-4). In this batch the maximized Claude desktop window covered the probe in those runs. DWM skips frames from occluded windows, so these drops say nothing about the renderer. The future harness must bring the probe to the foreground (or use a clean desktop) before measuring.
 
 **Still open.** base-2 and tbp-2 were not captured, so the next batch should start PresentMon before the first launch and confirm one row set per process. The probe's own `verdict=FAIL` (tbp-1 and tbp-3, exit 1) comes from the CPU paint-cadence check (`paint_interval_ms(rust)` p95 of about 19–20 ms). That is not the §11 endpoint, and its threshold should move to the PresentMon interval. The about 32 ms present-to-display latency is a DWM composition cost to track against the input-latency budget.
+
+## PresentMon batch 2 (2026-10-09, run by the Windows desktop session; copied & checked by primary)
+
+Files: `result-presentmon-batch2.txt`, `pm-batch2-summary.txt`, `pm_an2.py` (raw CSV stays on host at `D:\Claude\sr0b-frame-clock\presentmon\pm-batch2.csv`). PresentMon 2.6.0 elevated, started before run 1; desktop minimised (Win+D) before launches; 20 processes, 19 captured (tbp-10 has no rows, cause unknown); an unrelated modal-loop SwiftHost was excluded.
+
+- 13 clean runs (full foreground, zero drops): displayed-change p50 16.664 ms (one refresh at DWM's 60.008 Hz), p95 16.694–16.702 ms, p99 ≤ 16.95 ms, one missed vblank in total. Six clean runs sit 1–2 µs above the 16.70 ms limit.
+- Disturbed runs: drops in base-3 and tbp-6 despite full foreground samples (250 ms sampling may miss transient overlays); focus loss in five runs with no user input. Cause not yet attributed.
+- Present-to-display latency 31.7–32.5 ms in every run (two vblanks, Composed: Flip, SyncInterval 0).
+
+Finding for the contract: the §11 presentation limit (p95 ≤ 16.7 ms on a 60 Hz display) sits on the scan-out jitter floor of a 60.008 Hz display. Proposed restatement, pending maintainer decision under §11 change control: zero missed vblanks (displayed interval > 1.5 × measured refresh period) per run, and p95 ≤ measured refresh period + 0.1 ms. Harness must also log foreground window titles and occlusion per sample before disturbed runs can be attributed.
