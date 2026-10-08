@@ -25,7 +25,7 @@ Only these APIs and compositions are in SR0. Everything else is unsupported for 
 | Views | `Text`, `Button(_:action:)`, `TextField(_:text:)`, `VStack`, `HStack`, `Spacer`, `List`, `ForEach(_:id:)` over `Binding<[Row]>`, custom `Layout` |
 | State | `@State`, `Binding`, `@Bindable`, `@Observable` (stdlib Observation), `@Environment` with one custom `EnvironmentKey`, `@FocusState` with `.focused(_:equals:)` |
 | Lifecycle | `.onAppear`, `.onDisappear`, `.task` (cancellation on disappear) |
-| Lists | `.onMove`, deletion via model command, stable `id` per row |
+| Lists | `.onMove`, `MutableCollection.move(fromOffsets:toOffset:)`, deletion via model command, stable `id` per row, `ForEach($items) { $item in }` binding projection |
 | Animation | `.animation(_:value:)`, `withAnimation`, reduced motion via environment |
 | Entry | SDK root factory; Mac one `Window` scene; Windows synchronous initial-thread entry |
 
@@ -89,6 +89,6 @@ Copied unchanged from architecture §11 decision budgets; frozen with this contr
 
 ## 8. Open before freeze
 
-- Same-source compile probe result (`probes/sr0-c/same-source`).
+- ~~Same-source compile probe~~: PASS on macOS 27 arm64 & Windows x64 with an identical screen file; negative `NavigationSplitView` fixture fails on Windows only (`probes/sr0-c/same-source`).
 - TextPattern on Windows edit nodes; Mac AX caret routes for SwiftUI `TextField`.
 - Visible-response endpoint method per OS.
