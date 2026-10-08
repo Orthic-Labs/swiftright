@@ -1,0 +1,20 @@
+[package]
+name = "swiftright-render-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# SR0-B modal-loop probe: cdylib exposing a blocking GPUI 0.2.2 loop, a real
+# accesskit_windows 0.35.1 SubclassingAdapter, and a non-reentrant host callback guard.
+[lib]
+name = "swiftright_render_probe"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+gpui = "=0.2.2"
+accesskit = "=0.25.1"
+accesskit_windows = "=0.35.1"
+raw-window-handle = "=0.6.2"
+
+[workspace]
