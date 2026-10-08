@@ -268,7 +268,7 @@ Cover state and binding lifecycle, focus, undo/redo, Unicode and IME, keyboard-o
 
 ### Decision budgets
 
-These are initial engineering acceptance limits, not measured results or upstream guarantees. Freeze them with SR0-C fixtures before either seed is scored. Mac & Windows have separate records; Windows x64 success cannot qualify arm64. Any later limit change requires a documented contract revision & rerun of both candidates on the same workload.
+These are initial engineering acceptance limits, not measured results or upstream guarantees. Freeze them with SR0-C fixtures before either seed is scored. Mac & Windows have separate records; Windows x64 success cannot qualify arm64. Any later limit change requires a documented contract revision & rerun of both candidates on the same workload. Revision 1 (9 October 2026, approved by Adrian): the presentation limit moved from a fixed 16.7 ms p95 to missed-vblank count plus refresh-relative p95, because PresentMon showed clean 60.008 Hz runs at 16.694–16.702 ms p95 — the fixed limit sat on scan-out jitter (`probes/sr0-b/frame-clock/RESULT.md`).
 
 SR0 workload: 200 stable-ID editable rows, 20 asynchronous row updates/inserts per second, one reorder per second, continuous scrolling & editing, with fixed-size data maintained by removing unrelated rows. Include width-dependent text layout, interrupted animation, cancellation & window teardown. Pin logical window size, fonts, DPI, input script & 60 Hz display. Use release builds without debugger; after 10 seconds of warm-up, collect three 60-second runs. Every run must pass; archive raw samples & report p50/p95/p99. C specifies monotonic input timestamps & actual presented-frame endpoints per OS (validated compositor instrumentation or synchronized optical capture); enqueue/draw callbacks alone cannot establish visible response. Measure instrumentation overhead & bind clock correlation/calibration to run metadata. IME & screen-reader correctness scenarios run separately with native tools.
 
@@ -278,7 +278,7 @@ SR0 workload: 200 stable-ID editable rows, 20 asynchronous row updates/inserts p
 | Windows bridge handling per input event | p95 ≤ 1 ms; p99 ≤ 2 ms |
 | Windows aggregate bridge time per committed frame | p95 ≤ 2 ms; p99 ≤ 4 ms, including synchronous measurement, encoding, copying & commit; do not double-count nested calls |
 | End-to-end input to visible response, each OS | p95 ≤ 50 ms; p99 ≤ 100 ms; include all queueing & frame waits |
-| Frame presentation interval during continuous animation/scroll | p95 ≤ 16.7 ms; p99 ≤ 33.4 ms on fixed 60 Hz display |
+| Frame presentation interval during continuous animation/scroll | Zero missed vblanks per run (displayed interval > 1.5 × measured refresh period); p95 ≤ measured refresh period + 0.1 ms; measured with an external presentation trace (PresentMon/ETW) on an unoccluded window |
 | Swift main-actor enqueue to execution on Windows | p99 ≤ 16.7 ms under slice load; no deadlock or starvation |
 | UI-only incremental build | Zero Rust compiler invocations; renderer & unchanged engine artifact hashes stay identical |
 

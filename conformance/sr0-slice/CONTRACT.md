@@ -92,7 +92,7 @@ Mac route evidence (`probes/sr0-o/ax-routes`, macOS 27): tree walk, `AXIdentifie
 
 ## 7. Budgets
 
-Copied unchanged from architecture §11 decision budgets; frozen with this contract.
+Copied from architecture §11 decision budgets, including revision 1 (presentation limit = zero missed vblanks + p95 ≤ refresh + 0.1 ms, measured by PresentMon on an unoccluded window); frozen with this contract.
 
 ## 8. Open before freeze
 
