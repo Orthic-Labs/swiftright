@@ -75,3 +75,39 @@ UIA caret phase0: uia_selection_count=1 uia_text='' uia_rect=∞,∞,-∞,-∞ (
 - **Self-unregister failure.** The runner's `finally` did not remove its own task in run 1. Remove this task by name on each run until fixed.
 - **Single host.** One Windows x64 Dell at 250 % DPI. No 100 %/150 % comparison, no arm64 host, no Narrator or NVDA. No IME.
 - **Probe-only.** Not frozen ABI. Measurement cache keys are (width, scale) only, because text and font are constant in the probe.
+
+## 2026-10-09 follow-up: caret and word-navigation FAILs resolved (run 3)
+
+Run 3 used the build-2 exe unchanged (no Rust edits, so no build 3). Only `scripts/run-desktop.ps1` changed. Result: **PASS, 0 of 9 check groups failing** (`evidence/result-run3.json`, `evidence/app-run3.log`, run dir `D:\Claude\sr0b-text-geometry\run-20261009-023606`). The scheduled task was removed (`task_still_registered=False`).
+
+### (2) Word navigation: 23 moves vs 22. Expectation error, not our word data.
+
+- Word starts from our rule (same as `src/main.rs:83-97`, `word_starts_of`), including index 0: 23 stops. Excluding index 0: 22 interior starts. Recounted independently in Python.
+- The extra UIA move is the end-of-document stop. `accesskit_consumer` 0.39.1 `src/text.rs` `forward_to_word_start` falls through to `self.document_end()` after the last word start (text.rs, end of fn, the `for node in pos.node.following_text_runs` loop then `self.document_end()`).
+- Consistency: the character-unit check already counts 74 moves for 74 characters, which also lands at document end. The Microsoft `ITextRangeProvider::Move` page describes moving by boundaries but does not state the end-of-document stop explicitly. So the expectation change rests on AccessKit's implemented boundary model, not on a quoted spec sentence. Treat it as provisional.
+- Changed check: moves must equal 23 AND each stop must be the expected code point (or '' at end). The run shows `sequence_mismatches=[]` in all five phases. This confirms the `word_starts` data is consumed correctly in order.
+
+### (1) Degenerate caret rect: test-side fault plus a spec fact.
+
+- Microsoft `ITextRangeProvider::GetBoundingRectangles` (learn.microsoft.com/en-us/windows/win32/api/uiautomationcore/nf-uiautomationcore-itextrangeprovider-getboundingrectangles), pRetVal description: "An empty array for a degenerate range." So an empty result for the degenerate caret is spec-conformant. The old expectation (a rect from a degenerate range) was wrong.
+- The old FAIL value `uia_rect=∞,∞,-∞,-∞` is System.Windows.Rect.Empty. The probe's `Uia-Rects` treated it as a real rect. That was a harness bug, now fixed with `if ($rc.IsEmpty) { continue }`.
+- accesskit_windows 0.35.1 `src/text.rs:494-503` returns a null SAFEARRAY when `bounding_boxes()` is empty. The observed empty result therefore means the consumer returned no box for our degenerate caret. That contradicts the consumer's own comment at `accesskit_consumer` `src/text.rs:740-745` ("there will always be at least one box, even if it's zero-width, as it is for a degenerate range"). I did not find which precondition fails by source reading. Our tree sets bounds, positions, widths, and text_direction on every TextRun (`src/main.rs:418-424`). Record as an upstream gap: consumer comment vs observed empty, not reproduced in a unit test.
+- Caret location workaround, passed in run 3: the one-character range [6,7) returns rect x=142.00 vs app caret x=142.95, y=30, h=60 (within 1 px). Its text is 'b'. This uses only spec-defined non-degenerate ranges.
+- Upstream gap: accesskit_windows 0.35.1 implements no `ITextProvider2` (TextPattern2, `GetCaretRange`). Grep of `src/` finds nothing, and the pattern table in `src/node.rs:1432` lists only `ITextProvider`. So the UIA caret-range route is unavailable in this version.
+
+### Checks changed (scripts/run-desktop.ps1 only)
+
+- `Uia-Rects` skips `Rect.Empty`.
+- Word check: stop count plus per-stop character sequence. Code points split with `Get-Cps` (UIA counts 74 code points, not 77 UTF-16 units). The rule is replicated in `Word-Stops`.
+- Caret: (a) degenerate range returns empty rects (spec); (b) one-character range matches app caret within 1 px.
+
+### Remaining caveats
+
+- Narrator and NVDA were not run. Whether Narrator uses the one-character range or the TextPattern2 caret is unverified.
+- The end-of-document word stop is supported by AccessKit's boundary model and consistent with the char check, but not by an explicit UIA spec sentence I could find.
+- Single host, unchanged from the earlier run.
+- Build iterations: 0 of 3 used. No Rust change was needed.
+
+## Primary verification (2026-10-09)
+
+Fetched Microsoft docs confirm the degenerate-range expectation was wrong: Win32 `ITextRangeProvider::GetBoundingRectangles` returns "An empty array for a degenerate range"; .NET `TextPatternRange.GetBoundingRectangles` says the same. Caret geometry therefore comes from a one-character range on both platforms (matches the Mac AX rule in CONTRACT §5). No Microsoft page fetched states end-of-document behaviour for word moves; the 23-stop result stays provisional, cross-checked stop by stop against our word starts. Narrator/NVDA caret tracking remains untested and is required by the Windows accessibility gate.

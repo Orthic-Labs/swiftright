@@ -1,0 +1,1170 @@
+{
+    "info":  {
+                 "started":  "2026-10-09T02:36:08.1131881+05:30",
+                 "exe":  "D:\\Claude\\sr0b-text-geometry\\run-20261009-023606\\sr0b-text-geometry.exe",
+                 "runDir":  "D:\\Claude\\sr0b-text-geometry\\run-20261009-023606",
+                 "host":  "BOGUS-DELL",
+                 "user":  "adrds",
+                 "session":  1,
+                 "exitedEarly":  false,
+                 "hwnd":  199000,
+                 "dpi":  240,
+                 "scaleFromDpi":  2.5,
+                 "clientOrigin":  "928,508",
+                 "windowVisible":  true,
+                 "expChars":  74,
+                 "expWords":  22,
+                 "expFirst":  "Alpha ",
+                 "ranges":  5,
+                 "expWordMoves":  23,
+                 "controlType":  "ControlType.Edit",
+                 "patterns":  "ValuePatternIdentifiers.Pattern,TextPatternIdentifiers.Pattern",
+                 "exitCode":  null,
+                 "ended":  "2026-10-09T02:36:13.3324094+05:30"
+             },
+    "overall":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "TextPattern present",
+                       "status":  "PASS",
+                       "detail":  "control=ControlType.Edit patterns=ValuePatternIdentifiers.Pattern,TextPatternIdentifiers.Pattern"
+                   },
+                   {
+                       "name":  "document text equals TEXT",
+                       "status":  "PASS",
+                       "detail":  "uia_len=77 expected_len=77"
+                   },
+                   {
+                       "name":  "phase0 char navigation",
+                       "status":  "PASS",
+                       "detail":  "moves=74 expected=74 first_char_uia=\u0027A\u0027"
+                   },
+                   {
+                       "name":  "phase0 word navigation (boundaries + end of document)",
+                       "status":  "PASS",
+                       "detail":  "word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia=\u0027Alpha \u0027 expected=\u0027Alpha \u0027"
+                   },
+                   {
+                       "name":  "phase0 rect agreement (UIA vs paint, UIA vs AX, \u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "width=260 scale=2.5 max_err_paint=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 paint=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_paint=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 paint=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_paint=0.25 err_ax=0.25 ; [🙂] text_ok=True uia=513.00,30.00,54.00,60.00 paint=513.83,30.00,54.92,60.00 ax=513.83,30.00,54.92,60.00 err_paint=0.92 err_ax=0.92 ; [gamma delta] text_ok=True uia=30.00,90.00,232.00,60.00 paint=30.00,90.00,232.19,60.00 ax=30.00,90.00,232.19,60.00 err_paint=0.19 err_ax=0.19 ; [kappa.] text_ok=True uia=341.00,150.00,116.00,60.00 paint=341.62,150.00,116.29,60.00 ax=341.62,150.00,116.29,60.00 err_paint=0.62 err_ax=0.62"
+                   },
+                   {
+                       "name":  "phase0 app self-check (paint/hit/AX)",
+                       "status":  "PASS",
+                       "detail":  "version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true"
+                   },
+                   {
+                       "name":  "caret: degenerate range returns empty rects (UIA spec)",
+                       "status":  "PASS",
+                       "detail":  "caret_idx_app=6 uia_selection_count=1 uia_text=\u0027\u0027 selection_rects=none degenerate_rects=none"
+                   },
+                   {
+                       "name":  "caret location via one-character range matches app caret (\u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "caret_idx_app=6 one_char_text=\u0027b\u0027 one_char_rect=142.00,30.00,23.00,60.00 app_caret_x_y_h=142.95,30,60 app_commit_rect=142.95,30.00,2.50,60.00"
+                   },
+                   {
+                       "name":  "selection set via TextPatternRange.Select (SetTextSelection logged and applied)",
+                       "status":  "PASS",
+                       "detail":  "app=[APPLY select anchor=0 focus=5] action_logged=True uia_selection_text=\u0027Alpha\u0027 expected=\u0027Alpha\u0027"
+                   },
+                   {
+                       "name":  "phase1 char navigation",
+                       "status":  "PASS",
+                       "detail":  "moves=74 expected=74 first_char_uia=\u0027A\u0027"
+                   },
+                   {
+                       "name":  "phase1 word navigation (boundaries + end of document)",
+                       "status":  "PASS",
+                       "detail":  "word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia=\u0027Alpha \u0027 expected=\u0027Alpha \u0027"
+                   },
+                   {
+                       "name":  "phase1 rect agreement (UIA vs paint, UIA vs AX, \u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "width=180 scale=2.5 max_err_paint=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 paint=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_paint=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 paint=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_paint=0.25 err_ax=0.25 ; [🙂] text_ok=True uia=68.00,90.00,54.00,60.00 paint=68.55,90.00,54.92,60.00 ax=68.55,90.00,54.92,60.00 err_paint=0.92 err_ax=0.92 ; [gamma delta] text_ok=True uia=134.00,90.00,232.00,60.00 paint=134.43,90.00,232.19,60.00 ax=134.43,90.00,232.19,60.00 err_paint=0.43 err_ax=0.43 ; [kappa.] text_ok=True uia=209.00,210.00,116.00,60.00 paint=209.96,210.00,116.29,60.00 ax=209.96,210.00,116.29,60.00 err_paint=0.96 err_ax=0.96"
+                   },
+                   {
+                       "name":  "phase1 app self-check (paint/hit/AX)",
+                       "status":  "PASS",
+                       "detail":  "version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true"
+                   },
+                   {
+                       "name":  "phase1 selection persists across width change",
+                       "status":  "PASS",
+                       "detail":  "uia_selection_text=\u0027Alpha\u0027 expected=\u0027Alpha\u0027 width=180"
+                   },
+                   {
+                       "name":  "phase2 char navigation",
+                       "status":  "PASS",
+                       "detail":  "moves=74 expected=74 first_char_uia=\u0027A\u0027"
+                   },
+                   {
+                       "name":  "phase2 word navigation (boundaries + end of document)",
+                       "status":  "PASS",
+                       "detail":  "word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia=\u0027Alpha \u0027 expected=\u0027Alpha \u0027"
+                   },
+                   {
+                       "name":  "phase2 rect agreement (UIA vs paint, UIA vs AX, \u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "width=340 scale=2.5 max_err_paint=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 paint=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_paint=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 paint=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_paint=0.25 err_ax=0.25 ; [🙂] text_ok=True uia=513.00,30.00,54.00,60.00 paint=513.83,30.00,54.92,60.00 ax=513.83,30.00,54.92,60.00 err_paint=0.92 err_ax=0.92 ; [gamma delta] text_ok=True uia=579.00,30.00,232.00,60.00 paint=579.71,30.00,232.19,60.00 ax=579.71,30.00,232.19,60.00 err_paint=0.71 err_ax=0.71 ; [kappa.] text_ok=True uia=669.00,90.00,116.00,60.00 paint=669.18,90.00,116.29,60.00 ax=669.18,90.00,116.29,60.00 err_paint=0.29 err_ax=0.29"
+                   },
+                   {
+                       "name":  "phase2 app self-check (paint/hit/AX)",
+                       "status":  "PASS",
+                       "detail":  "version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true"
+                   },
+                   {
+                       "name":  "phase2 selection persists across width change",
+                       "status":  "PASS",
+                       "detail":  "uia_selection_text=\u0027Alpha\u0027 expected=\u0027Alpha\u0027 width=340"
+                   },
+                   {
+                       "name":  "phase3 char navigation",
+                       "status":  "PASS",
+                       "detail":  "moves=74 expected=74 first_char_uia=\u0027A\u0027"
+                   },
+                   {
+                       "name":  "phase3 word navigation (boundaries + end of document)",
+                       "status":  "PASS",
+                       "detail":  "word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia=\u0027Alpha \u0027 expected=\u0027Alpha \u0027"
+                   },
+                   {
+                       "name":  "phase3 rect agreement (UIA vs paint, UIA vs AX, \u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "width=260 scale=2.5 max_err_paint=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 paint=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_paint=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 paint=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_paint=0.25 err_ax=0.25 ; [🙂] text_ok=True uia=513.00,30.00,54.00,60.00 paint=513.83,30.00,54.92,60.00 ax=513.83,30.00,54.92,60.00 err_paint=0.92 err_ax=0.92 ; [gamma delta] text_ok=True uia=30.00,90.00,232.00,60.00 paint=30.00,90.00,232.19,60.00 ax=30.00,90.00,232.19,60.00 err_paint=0.19 err_ax=0.19 ; [kappa.] text_ok=True uia=341.00,150.00,116.00,60.00 paint=341.62,150.00,116.29,60.00 ax=341.62,150.00,116.29,60.00 err_paint=0.62 err_ax=0.62"
+                   },
+                   {
+                       "name":  "phase3 app self-check (paint/hit/AX)",
+                       "status":  "PASS",
+                       "detail":  "version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true"
+                   },
+                   {
+                       "name":  "phase3 selection persists across width change",
+                       "status":  "PASS",
+                       "detail":  "uia_selection_text=\u0027Alpha\u0027 expected=\u0027Alpha\u0027 width=260"
+                   },
+                   {
+                       "name":  "phase4 char navigation",
+                       "status":  "PASS",
+                       "detail":  "moves=74 expected=74 first_char_uia=\u0027A\u0027"
+                   },
+                   {
+                       "name":  "phase4 word navigation (boundaries + end of document)",
+                       "status":  "PASS",
+                       "detail":  "word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia=\u0027Alpha \u0027 expected=\u0027Alpha \u0027"
+                   },
+                   {
+                       "name":  "phase4 rect agreement (UIA vs paint, UIA vs AX, \u003c=1px)",
+                       "status":  "PASS",
+                       "detail":  "width=180 scale=2.5 max_err_paint=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 paint=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_paint=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 paint=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_paint=0.25 err_ax=0.25 ; [🙂] text_ok=True uia=68.00,90.00,54.00,60.00 paint=68.55,90.00,54.92,60.00 ax=68.55,90.00,54.92,60.00 err_paint=0.92 err_ax=0.92 ; [gamma delta] text_ok=True uia=134.00,90.00,232.00,60.00 paint=134.43,90.00,232.19,60.00 ax=134.43,90.00,232.19,60.00 err_paint=0.43 err_ax=0.43 ; [kappa.] text_ok=True uia=209.00,210.00,116.00,60.00 paint=209.96,210.00,116.29,60.00 ax=209.96,210.00,116.29,60.00 err_paint=0.96 err_ax=0.96"
+                   },
+                   {
+                       "name":  "phase4 app self-check (paint/hit/AX)",
+                       "status":  "PASS",
+                       "detail":  "version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true"
+                   },
+                   {
+                       "name":  "phase4 selection persists across width change",
+                       "status":  "PASS",
+                       "detail":  "uia_selection_text=\u0027Alpha\u0027 expected=\u0027Alpha\u0027 width=180"
+                   },
+                   {
+                       "name":  "app ran all phases and shut down",
+                       "status":  "PASS",
+                       "detail":  "DONE line present=True"
+                   },
+                   {
+                       "name":  "measurement sync \u0026 cached (3 misses, 2 cache hits)",
+                       "status":  "PASS",
+                       "detail":  "CACHE hits=2 misses=3 measure_calls=5"
+                   },
+                   {
+                       "name":  "all measurements synchronous (on UI thread, before commit)",
+                       "status":  "PASS",
+                       "detail":  "MEASURE lines=5"
+                   },
+                   {
+                       "name":  "physical-px commit (logical x scale_factor, per commit)",
+                       "status":  "PASS",
+                       "detail":  "w=260 scale=2.5 line0_phys=549.707 expect=549.707; w=260 scale=2.5 line0_phys=549.707 expect=549.707; w=180 scale=2.5 line0_phys=445.273 expect=445.273; w=340 scale=2.5 line0_phys=832.852 expect=832.852; w=260 scale=2.5 line0_phys=549.707 expect=549.707; w=180 scale=2.5 line0_phys=445.273 expect=445.273"
+                   },
+                   {
+                       "name":  "DPI recorded and matches window scale",
+                       "status":  "PASS",
+                       "detail":  "GetDpiForWindow=240 app_scale=2.5 (dpi=240)"
+                   },
+                   {
+                       "name":  "AccessKit action requests logged",
+                       "status":  "PASS",
+                       "detail":  "ACTION Select lines=1"
+                   }
+               ],
+    "phases":  [
+                   {
+                       "phase":  0,
+                       "width":  "260",
+                       "scale":  2.5,
+                       "appDpi":  240,
+                       "line0Phys":  "549.707",
+                       "line0Expect":  "549.707",
+                       "range0":  {
+                                      "label":  "Alpha",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    30,
+                                                                    101,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      30,
+                                                                      101.99,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   30,
+                                                                   101.99,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "Alpha"
+                                  },
+                       "range1":  {
+                                      "label":  "日本語",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    232,
+                                                                    30,
+                                                                    120,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      232.25,
+                                                                      30,
+                                                                      120,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   232.25,
+                                                                   30,
+                                                                   120,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "日本語"
+                                  },
+                       "range2":  {
+                                      "label":  "🙂",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    513,
+                                                                    30,
+                                                                    54,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      513.83,
+                                                                      30,
+                                                                      54.92,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   513.83,
+                                                                   30,
+                                                                   54.92,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "🙂"
+                                  },
+                       "range3":  {
+                                      "label":  "gamma delta",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    90,
+                                                                    232,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      90,
+                                                                      232.19,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   90,
+                                                                   232.19,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "gamma delta"
+                                  },
+                       "range4":  {
+                                      "label":  "kappa.",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    341,
+                                                                    150,
+                                                                    116,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      341.62,
+                                                                      150,
+                                                                      116.29,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   341.62,
+                                                                   150,
+                                                                   116.29,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "kappa."
+                                  }
+                   },
+                   {
+                       "phase":  1,
+                       "width":  "180",
+                       "scale":  2.5,
+                       "appDpi":  240,
+                       "line0Phys":  "445.273",
+                       "line0Expect":  "445.273",
+                       "range0":  {
+                                      "label":  "Alpha",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    30,
+                                                                    101,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      30,
+                                                                      101.99,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   30,
+                                                                   101.99,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "Alpha"
+                                  },
+                       "range1":  {
+                                      "label":  "日本語",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    232,
+                                                                    30,
+                                                                    120,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      232.25,
+                                                                      30,
+                                                                      120,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   232.25,
+                                                                   30,
+                                                                   120,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "日本語"
+                                  },
+                       "range2":  {
+                                      "label":  "🙂",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    68,
+                                                                    90,
+                                                                    54,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      68.55,
+                                                                      90,
+                                                                      54.92,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   68.55,
+                                                                   90,
+                                                                   54.92,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "🙂"
+                                  },
+                       "range3":  {
+                                      "label":  "gamma delta",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    134,
+                                                                    90,
+                                                                    232,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      134.43,
+                                                                      90,
+                                                                      232.19,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   134.43,
+                                                                   90,
+                                                                   232.19,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "gamma delta"
+                                  },
+                       "range4":  {
+                                      "label":  "kappa.",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    209,
+                                                                    210,
+                                                                    116,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      209.96,
+                                                                      210,
+                                                                      116.29,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   209.96,
+                                                                   210,
+                                                                   116.29,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "kappa."
+                                  }
+                   },
+                   {
+                       "phase":  2,
+                       "width":  "340",
+                       "scale":  2.5,
+                       "appDpi":  240,
+                       "line0Phys":  "832.852",
+                       "line0Expect":  "832.852",
+                       "range0":  {
+                                      "label":  "Alpha",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    30,
+                                                                    101,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      30,
+                                                                      101.99,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   30,
+                                                                   101.99,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "Alpha"
+                                  },
+                       "range1":  {
+                                      "label":  "日本語",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    232,
+                                                                    30,
+                                                                    120,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      232.25,
+                                                                      30,
+                                                                      120,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   232.25,
+                                                                   30,
+                                                                   120,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "日本語"
+                                  },
+                       "range2":  {
+                                      "label":  "🙂",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    513,
+                                                                    30,
+                                                                    54,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      513.83,
+                                                                      30,
+                                                                      54.92,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   513.83,
+                                                                   30,
+                                                                   54.92,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "🙂"
+                                  },
+                       "range3":  {
+                                      "label":  "gamma delta",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    579,
+                                                                    30,
+                                                                    232,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      579.71,
+                                                                      30,
+                                                                      232.19,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   579.71,
+                                                                   30,
+                                                                   232.19,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "gamma delta"
+                                  },
+                       "range4":  {
+                                      "label":  "kappa.",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    669,
+                                                                    90,
+                                                                    116,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      669.18,
+                                                                      90,
+                                                                      116.29,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   669.18,
+                                                                   90,
+                                                                   116.29,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "kappa."
+                                  }
+                   },
+                   {
+                       "phase":  3,
+                       "width":  "260",
+                       "scale":  2.5,
+                       "appDpi":  240,
+                       "line0Phys":  "549.707",
+                       "line0Expect":  "549.707",
+                       "range0":  {
+                                      "label":  "Alpha",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    30,
+                                                                    101,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      30,
+                                                                      101.99,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   30,
+                                                                   101.99,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "Alpha"
+                                  },
+                       "range1":  {
+                                      "label":  "日本語",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    232,
+                                                                    30,
+                                                                    120,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      232.25,
+                                                                      30,
+                                                                      120,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   232.25,
+                                                                   30,
+                                                                   120,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "日本語"
+                                  },
+                       "range2":  {
+                                      "label":  "🙂",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    513,
+                                                                    30,
+                                                                    54,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      513.83,
+                                                                      30,
+                                                                      54.92,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   513.83,
+                                                                   30,
+                                                                   54.92,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "🙂"
+                                  },
+                       "range3":  {
+                                      "label":  "gamma delta",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    90,
+                                                                    232,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      90,
+                                                                      232.19,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   90,
+                                                                   232.19,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "gamma delta"
+                                  },
+                       "range4":  {
+                                      "label":  "kappa.",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    341,
+                                                                    150,
+                                                                    116,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      341.62,
+                                                                      150,
+                                                                      116.29,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   341.62,
+                                                                   150,
+                                                                   116.29,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "kappa."
+                                  }
+                   },
+                   {
+                       "phase":  4,
+                       "width":  "180",
+                       "scale":  2.5,
+                       "appDpi":  240,
+                       "line0Phys":  "445.273",
+                       "line0Expect":  "445.273",
+                       "range0":  {
+                                      "label":  "Alpha",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    30,
+                                                                    30,
+                                                                    101,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      30,
+                                                                      30,
+                                                                      101.99,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   30,
+                                                                   30,
+                                                                   101.99,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "Alpha"
+                                  },
+                       "range1":  {
+                                      "label":  "日本語",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    232,
+                                                                    30,
+                                                                    120,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      232.25,
+                                                                      30,
+                                                                      120,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   232.25,
+                                                                   30,
+                                                                   120,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "日本語"
+                                  },
+                       "range2":  {
+                                      "label":  "🙂",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    68,
+                                                                    90,
+                                                                    54,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      68.55,
+                                                                      90,
+                                                                      54.92,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   68.55,
+                                                                   90,
+                                                                   54.92,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "🙂"
+                                  },
+                       "range3":  {
+                                      "label":  "gamma delta",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    134,
+                                                                    90,
+                                                                    232,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      134.43,
+                                                                      90,
+                                                                      232.19,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   134.43,
+                                                                   90,
+                                                                   232.19,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "gamma delta"
+                                  },
+                       "range4":  {
+                                      "label":  "kappa.",
+                                      "uia":  [
+                                                  {
+                                                      "value":  [
+                                                                    209,
+                                                                    210,
+                                                                    116,
+                                                                    60
+                                                                ],
+                                                      "Count":  4
+                                                  }
+                                              ],
+                                      "paint":  [
+                                                    {
+                                                        "value":  [
+                                                                      209.96,
+                                                                      210,
+                                                                      116.29,
+                                                                      60
+                                                                  ],
+                                                        "Count":  4
+                                                    }
+                                                ],
+                                      "ax":  [
+                                                 {
+                                                     "value":  [
+                                                                   209.96,
+                                                                   210,
+                                                                   116.29,
+                                                                   60
+                                                               ],
+                                                     "Count":  4
+                                                 }
+                                             ],
+                                      "text":  "kappa."
+                                  }
+                   }
+               ]
+}

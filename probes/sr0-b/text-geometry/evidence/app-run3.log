@@ -1,0 +1,141 @@
+START pid=28324 chars=74 bytes=103 text=Alpha beta 日本語のテキスト 🙂 gamma delta 漢字 epsilon zeta 🙂🙂 eta theta iota kappa.
+EXPECT chars=74 words=22 firstword=Alpha 
+RANGE 0 a=0 b=5 label=Alpha text=Alpha
+RANGE 1 a=11 b=14 label=日本語 text=日本語
+RANGE 2 a=20 b=21 label=🙂 text=🙂
+RANGE 3 a=22 b=33 label=gamma delta text=gamma delta
+RANGE 4 a=68 b=74 label=kappa. text=kappa.
+CARET_START idx=6 SELECT a=0 b=5
+WIDTHS [260.0, 180.0, 340.0] PHASE_WIDTH [0, 1, 2, 0, 1]
+MEASURE phase=Some(0) width=260 scale=2.5 cache=miss sync=true ms=1.788 lines=3 size=244.3x72.0
+COMMIT phase=Some(0) version=1 width=260 scale=2.5 dpi=240.0 line0_w_phys=549.707 expect_phys=549.707 lines=3 anchor=6 focus=6 tree=pushed
+ADAPTER attached hwnd=0x30958
+ACTIVATION initial_tree version=1 lines=3
+PAINT phase=0 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+AX phase=0 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+COMMITTED phase=0 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+HIT phase=0 r=0 probe_ok=5/5 gpui_ok=5/5
+PAINT phase=0 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+AX phase=0 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+COMMITTED phase=0 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+HIT phase=0 r=1 probe_ok=3/3 gpui_ok=3/3
+PAINT phase=0 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+AX phase=0 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+COMMITTED phase=0 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+HIT phase=0 r=2 probe_ok=1/1 gpui_ok=1/1
+PAINT phase=0 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+AX phase=0 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+COMMITTED phase=0 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+HIT phase=0 r=3 probe_ok=11/11 gpui_ok=11/11
+PAINT phase=0 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+AX phase=0 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+COMMITTED phase=0 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+HIT phase=0 r=4 probe_ok=6/6 gpui_ok=6/6
+CARET phase=0 idx=6 commit_rect=142.95,30.00,2.50,60.00 ax_rect=142.95,30.00,0.00,60.00
+SELFCHECK phase=0 version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true
+PHASE 0 ready
+ACTION Select { anchor: (100, 0), focus: (100, 5) } target=#2
+APPLY select anchor=0 focus=5
+COMMIT phase=None version=2 width=260 scale=2.5 dpi=240.0 line0_w_phys=549.707 expect_phys=549.707 lines=3 anchor=0 focus=5 tree=pushed
+MEASURE phase=Some(1) width=180 scale=2.5 cache=miss sync=true ms=0.237 lines=4 size=178.1x96.0
+COMMIT phase=Some(1) version=3 width=180 scale=2.5 dpi=240.0 line0_w_phys=445.273 expect_phys=445.273 lines=4 anchor=0 focus=5 tree=pushed
+PAINT phase=1 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+AX phase=1 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+COMMITTED phase=1 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+HIT phase=1 r=0 probe_ok=5/5 gpui_ok=5/5
+PAINT phase=1 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+AX phase=1 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+COMMITTED phase=1 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+HIT phase=1 r=1 probe_ok=3/3 gpui_ok=3/3
+PAINT phase=1 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+AX phase=1 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+COMMITTED phase=1 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+HIT phase=1 r=2 probe_ok=1/1 gpui_ok=1/1
+PAINT phase=1 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+AX phase=1 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+COMMITTED phase=1 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+HIT phase=1 r=3 probe_ok=11/11 gpui_ok=11/11
+PAINT phase=1 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+AX phase=1 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+COMMITTED phase=1 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+HIT phase=1 r=4 probe_ok=6/6 gpui_ok=6/6
+CARET phase=1 idx=5 commit_rect=131.99,30.00,2.50,60.00 ax_rect=131.99,30.00,0.00,60.00
+SELFCHECK phase=1 version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true
+PHASE 1 ready
+MEASURE phase=Some(2) width=340 scale=2.5 cache=miss sync=true ms=0.021 lines=2 size=333.1x48.0
+COMMIT phase=Some(2) version=4 width=340 scale=2.5 dpi=240.0 line0_w_phys=832.852 expect_phys=832.852 lines=2 anchor=0 focus=5 tree=pushed
+PAINT phase=2 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+AX phase=2 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+COMMITTED phase=2 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+HIT phase=2 r=0 probe_ok=5/5 gpui_ok=5/5
+PAINT phase=2 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+AX phase=2 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+COMMITTED phase=2 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+HIT phase=2 r=1 probe_ok=3/3 gpui_ok=3/3
+PAINT phase=2 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+AX phase=2 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+COMMITTED phase=2 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+HIT phase=2 r=2 probe_ok=1/1 gpui_ok=1/1
+PAINT phase=2 r=3 label=gamma delta rects=579.71,30.00,232.19,60.00
+AX phase=2 r=3 label=gamma delta rects=579.71,30.00,232.19,60.00
+COMMITTED phase=2 r=3 label=gamma delta rects=579.71,30.00,232.19,60.00
+HIT phase=2 r=3 probe_ok=11/11 gpui_ok=11/11
+PAINT phase=2 r=4 label=kappa. rects=669.18,90.00,116.29,60.00
+AX phase=2 r=4 label=kappa. rects=669.18,90.00,116.29,60.00
+COMMITTED phase=2 r=4 label=kappa. rects=669.18,90.00,116.29,60.00
+HIT phase=2 r=4 probe_ok=6/6 gpui_ok=6/6
+CARET phase=2 idx=5 commit_rect=131.99,30.00,2.50,60.00 ax_rect=131.99,30.00,0.00,60.00
+SELFCHECK phase=2 version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true
+PHASE 2 ready
+MEASURE phase=Some(3) width=260 scale=2.5 cache=hit sync=true
+COMMIT phase=Some(3) version=5 width=260 scale=2.5 dpi=240.0 line0_w_phys=549.707 expect_phys=549.707 lines=3 anchor=0 focus=5 tree=pushed
+PAINT phase=3 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+AX phase=3 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+COMMITTED phase=3 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+HIT phase=3 r=0 probe_ok=5/5 gpui_ok=5/5
+PAINT phase=3 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+AX phase=3 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+COMMITTED phase=3 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+HIT phase=3 r=1 probe_ok=3/3 gpui_ok=3/3
+PAINT phase=3 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+AX phase=3 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+COMMITTED phase=3 r=2 label=🙂 rects=513.83,30.00,54.92,60.00
+HIT phase=3 r=2 probe_ok=1/1 gpui_ok=1/1
+PAINT phase=3 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+AX phase=3 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+COMMITTED phase=3 r=3 label=gamma delta rects=30.00,90.00,232.19,60.00
+HIT phase=3 r=3 probe_ok=11/11 gpui_ok=11/11
+PAINT phase=3 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+AX phase=3 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+COMMITTED phase=3 r=4 label=kappa. rects=341.62,150.00,116.29,60.00
+HIT phase=3 r=4 probe_ok=6/6 gpui_ok=6/6
+CARET phase=3 idx=5 commit_rect=131.99,30.00,2.50,60.00 ax_rect=131.99,30.00,0.00,60.00
+SELFCHECK phase=3 version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true
+PHASE 3 ready
+MEASURE phase=Some(4) width=180 scale=2.5 cache=hit sync=true
+COMMIT phase=Some(4) version=6 width=180 scale=2.5 dpi=240.0 line0_w_phys=445.273 expect_phys=445.273 lines=4 anchor=0 focus=5 tree=pushed
+PAINT phase=4 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+AX phase=4 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+COMMITTED phase=4 r=0 label=Alpha rects=30.00,30.00,101.99,60.00
+HIT phase=4 r=0 probe_ok=5/5 gpui_ok=5/5
+PAINT phase=4 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+AX phase=4 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+COMMITTED phase=4 r=1 label=日本語 rects=232.25,30.00,120.00,60.00
+HIT phase=4 r=1 probe_ok=3/3 gpui_ok=3/3
+PAINT phase=4 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+AX phase=4 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+COMMITTED phase=4 r=2 label=🙂 rects=68.55,90.00,54.92,60.00
+HIT phase=4 r=2 probe_ok=1/1 gpui_ok=1/1
+PAINT phase=4 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+AX phase=4 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+COMMITTED phase=4 r=3 label=gamma delta rects=134.43,90.00,232.19,60.00
+HIT phase=4 r=3 probe_ok=11/11 gpui_ok=11/11
+PAINT phase=4 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+AX phase=4 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+COMMITTED phase=4 r=4 label=kappa. rects=209.96,210.00,116.29,60.00
+HIT phase=4 r=4 probe_ok=6/6 gpui_ok=6/6
+CARET phase=4 idx=5 commit_rect=131.99,30.00,2.50,60.00 ax_rect=131.99,30.00,0.00,60.00
+SELFCHECK phase=4 version_ok=true paint_vs_commit_max=0.0000 ax_vs_commit_max=0.0000 hit_mismatch=0 gpui_hit_mismatch=0 pass=true
+PHASE 4 ready
+CACHE hits=2 misses=3 measure_calls=5
+DONE

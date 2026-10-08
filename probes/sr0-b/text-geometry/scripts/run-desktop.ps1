@@ -89,9 +89,42 @@ function Uia-Rects($range, [double]$cx, [double]$cy) {
   $out = @()
   $rs = $range.GetBoundingRectangles()
   if ($rs -ne $null) {
-    foreach ($rc in $rs) { $out += ,([double[]]@(($rc.X - $cx), ($rc.Y - $cy), $rc.Width, $rc.Height)) }
+    foreach ($rc in $rs) {
+      # System.Windows.Rect.Empty (+inf,+inf,-inf,-inf) means "no rectangle", not a box at infinity.
+      if ($rc.IsEmpty) { continue }
+      $out += ,([double[]]@(($rc.X - $cx), ($rc.Y - $cy), $rc.Width, $rc.Height))
+    }
   }
   return ,$out
+}
+
+# UIA counts code points (74 for TEXT; 77 UTF-16 units). Split the same way.
+function Get-Cps([string]$t) {
+  $cps = New-Object System.Collections.ArrayList
+  for ($i = 0; $i -lt $t.Length; $i++) {
+    if ([char]::IsHighSurrogate($t[$i]) -and ($i + 1) -lt $t.Length) { [void]$cps.Add($t.Substring($i, 2)); $i++ }
+    else { [void]$cps.Add($t[$i].ToString()) }
+  }
+  return ,$cps
+}
+function Is-Wide([string]$s) { return ([char]::ConvertToUtf32($s, 0) -ge 0x3000) }
+function Is-Ws([string]$s) { return ($s.Length -eq 1 -and [char]::IsWhiteSpace($s[0])) }
+
+# Word boundaries, same rule as main.rs word_starts_of (index 0 and every start), then the
+# end of the document as the final boundary. UIA Move(Word) from the start must visit
+# each boundary in order; the number of moves is (boundaries - 1).
+function Word-Stops($cps) {
+  $n = $cps.Count
+  $stops = New-Object System.Collections.ArrayList
+  for ($i = 0; $i -lt $n; $i++) {
+    $c = $cps[$i]
+    if (Is-Ws $c) { continue }
+    $start = ($i -eq 0)
+    if (-not $start) { $p = $cps[$i - 1]; $start = ((Is-Ws $p) -or (Is-Wide $c) -or (Is-Wide $p)) }
+    if ($start) { [void]$stops.Add($i) }
+  }
+  [void]$stops.Add($n)
+  return ,$stops
 }
 
 function Fmt-Rects($rs) {
@@ -168,6 +201,11 @@ try {
     }
   }
   $info.expChars = $expChars; $info.expWords = $expWords; $info.expFirst = $expFirst; $info.ranges = $ranges.Count
+  $cps = Get-Cps $text
+  $wordStops = Word-Stops $cps
+  $expMoves = $wordStops.Count - 1
+  $info.expWordMoves = $expMoves
+  if ($cps.Count -ne $expChars) { throw "code point count $($cps.Count) != app EXPECT chars $expChars" }
 
   # ---- UI Automation: find the input and its TextPattern
   $root = [System.Windows.Automation.AutomationElement]::FromHandle($hwnd)
@@ -202,7 +240,22 @@ try {
     $dw.ExpandToEnclosingUnit($TU_WORD)
     $firstWord = $dw.GetText(-1)
     Add-Check "phase$p char navigation" (($charCount -eq [int]$expChars) -and ($firstChar -eq $text.Substring(0, 1))) ("moves=$charCount expected=$expChars first_char_uia='$firstChar'")
-    Add-Check "phase$p word navigation" (($wordCount -eq [int]$expWords) -and ($firstWord -eq $expFirst)) ("word_moves=$wordCount expected=$expWords first_word_uia='$firstWord' expected='$expFirst'")
+    # Word stops: walk one Move(Word) at a time and read the character at each stop.
+    # Stop k must be the boundary cps[stop] (or '' at end of document).
+    $wk = Degenerate-Start $tp $expChars
+    $seqBad = New-Object System.Collections.ArrayList
+    $wkMoves = 0
+    for ($k = 1; $k -lt $wordStops.Count; $k++) {
+      if ($wk.Move($TU_WORD, 1) -eq 0) { [void]$seqBad.Add("move$k=0"); break }
+      $wkMoves++
+      $pk = $wk.Clone(); $pk.ExpandToEnclosingUnit($TU_CHAR)
+      $got = $pk.GetText(-1)
+      $idx = $wordStops[$k]
+      $want = if ($idx -ge $expChars) { '' } else { $cps[$idx] }
+      if ($got -ne $want) { [void]$seqBad.Add("stop$k@$idx got='$got' want='$want'") }
+    }
+    $wordOk = (($wordCount -eq $expMoves) -and ($wkMoves -eq $expMoves) -and ($seqBad.Count -eq 0) -and ($firstWord -eq $expFirst))
+    Add-Check "phase$p word navigation (boundaries + end of document)" $wordOk ("word_moves=$wordCount expected=$expMoves (= $($expMoves - 1) word starts after index 0 + end-of-document) sequence_mismatches=[$($seqBad -join '; ')] first_word_uia='$firstWord' expected='$expFirst'")
 
     # Range text and rects for the 5 samples
     $maxPaint = 0.0; $maxAx = 0.0; $rangeDetail = @()
@@ -237,8 +290,18 @@ try {
       $appCaret = Get-Field $log 'CARET' 0 0
       $caretLine = ([regex]::Match($log, 'CARET phase=0 idx=(\d+) commit_rect=([^ ]+) ax_rect=')).Groups
       $cr = Parse-Rects $caretLine[2].Value
-      $caretOk = ($selCount -eq 1) -and ($caretText -eq '') -and ($caretRect.Count -ge 1) -and ([math]::Abs($caretRect[0][0] - $cr[0][0]) -le 1.0) -and ([math]::Abs($caretRect[0][1] - $cr[0][1]) -le 1.0)
-      Add-Check 'caret bounds (phase0, degenerate selection)' $caretOk ("caret_idx_app=$($caretLine[1].Value) uia_selection_count=$selCount uia_text='$caretText' uia_rect=$(Fmt-Rects $caretRect) app_commit_rect=$($caretLine[2].Value)")
+      $ci = [int]$caretLine[1].Value
+      # (a) Degenerate range: Microsoft ITextRangeProvider::GetBoundingRectangles says "An empty array for a degenerate range."
+      $dgR = Range-At $tp $ci $ci $expChars
+      $dgRects = Uia-Rects $dgR $clientX $clientY
+      $dgOk = ($selCount -eq 1) -and ($caretText -eq '') -and ($caretRect.Count -eq 0) -and ($dgRects.Count -eq 0)
+      Add-Check 'caret: degenerate range returns empty rects (UIA spec)' $dgOk ("caret_idx_app=$ci uia_selection_count=$selCount uia_text='$caretText' selection_rects=$(Fmt-Rects $caretRect) degenerate_rects=$(Fmt-Rects $dgRects)")
+      # (b) Caret location from the one-character range [caret, caret+1): non-degenerate, so spec-defined.
+      $oneR = Range-At $tp $ci ($ci + 1) $expChars
+      $oneText = $oneR.GetText(-1)
+      $oneRects = Uia-Rects $oneR $clientX $clientY
+      $oneOk = ($oneRects.Count -ge 1) -and ($oneText -eq $cps[$ci]) -and ([math]::Abs($oneRects[0][0] - $cr[0][0]) -le 1.0) -and ([math]::Abs($oneRects[0][1] - $cr[0][1]) -le 1.0) -and ([math]::Abs($oneRects[0][3] - $cr[0][3]) -le 1.0)
+      Add-Check 'caret location via one-character range matches app caret (<=1px)' $oneOk ("caret_idx_app=$ci one_char_text='$oneText' one_char_rect=$(Fmt-Rects $oneRects) app_caret_x_y_h=$($cr[0][0]),$($cr[0][1]),$($cr[0][3]) app_commit_rect=$($caretLine[2].Value)")
 
       $a0 = $ranges[0]
       $selRange = Range-At $tp $a0.a $a0.b $expChars
