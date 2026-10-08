@@ -1,0 +1,15 @@
+{
+  "fixtureId": "BridgeSmoke-ops",
+  "sourceHash": "sr0b-abi0:examples/BridgeSmoke",
+  "modelNodes": { "node/edit": { "type": "Edit" } },
+  "steps": [
+    { "id": "type_ab", "logicalAction": "type ab", "ops": [ { "op": "type", "text": "ab", "target": { "type": "Edit" } } ], "settleMs": 200 },
+    { "id": "select_first", "logicalAction": "select first character",
+      "ops": [ { "op": "select", "target": { "type": "Edit" }, "location": 0, "length": 1 } ], "settleMs": 200 },
+    { "id": "ctrl_a", "logicalAction": "select all", "ops": [ { "op": "command", "text": "selectAll" } ], "settleMs": 200 },
+    { "id": "set_value", "logicalAction": "set value xyz",
+      "ops": [ { "op": "setValue", "target": { "type": "Edit" }, "value": "xyz" } ], "settleMs": 200 },
+    { "id": "invoke_end", "logicalAction": "activate Press me (lets the target finish)",
+      "ops": [ { "op": "invoke", "target": { "type": "Button", "name": "Press me" } } ], "settleMs": 100 }
+  ]
+}

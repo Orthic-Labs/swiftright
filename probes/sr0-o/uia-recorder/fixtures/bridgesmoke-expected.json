@@ -1,0 +1,233 @@
+{
+  "declaredOrder": [],
+  "fixtureId": "BridgeSmoke",
+  "observations": [
+    {
+      "axNodes": [
+        {
+          "actions": [],
+          "id": "anon:root#0",
+          "label": "SwiftRight BridgeSmoke",
+          "order": 0,
+          "role": "window"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#0",
+          "order": 0,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#1",
+          "order": 1,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [
+            "activate"
+          ],
+          "id": "anon:anon:root#0#2",
+          "label": "Press me",
+          "order": 2,
+          "parent": "anon:root#0",
+          "role": "button"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "anon:anon:root#0#3",
+          "label": "Edit",
+          "order": 3,
+          "parent": "anon:root#0",
+          "role": "text-field",
+          "value": ""
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#4",
+          "order": 4,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        }
+      ],
+      "effects": [],
+      "focusedNodeId": "anon:anon:root#0#3",
+      "lifecycle": [],
+      "model": {
+        "node/edit": ""
+      },
+      "stepId": "initial"
+    },
+    {
+      "axNodes": [
+        {
+          "actions": [],
+          "id": "anon:root#0",
+          "label": "SwiftRight BridgeSmoke",
+          "order": 0,
+          "role": "window"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#0",
+          "order": 0,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#1",
+          "order": 1,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [
+            "activate"
+          ],
+          "id": "anon:anon:root#0#2",
+          "label": "Press me",
+          "order": 2,
+          "parent": "anon:root#0",
+          "role": "button"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "anon:anon:root#0#3",
+          "label": "Edit",
+          "order": 3,
+          "parent": "anon:root#0",
+          "role": "text-field",
+          "value": ""
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#4",
+          "order": 4,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        }
+      ],
+      "effects": [],
+      "focusedNodeId": "anon:anon:root#0#3",
+      "lifecycle": [],
+      "model": {
+        "node/edit": ""
+      },
+      "stepId": "invoke_press"
+    },
+    {
+      "effects": [],
+      "focusedNodeId": "anon:anon:root#0#3",
+      "lifecycle": [],
+      "model": {
+        "node/edit": ""
+      },
+      "stepId": "focus_edit"
+    },
+    {
+      "axNodes": [
+        {
+          "actions": [],
+          "id": "anon:root#0",
+          "label": "SwiftRight BridgeSmoke",
+          "order": 0,
+          "role": "window"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#0",
+          "order": 0,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#1",
+          "order": 1,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [
+            "activate"
+          ],
+          "id": "anon:anon:root#0#2",
+          "label": "Press me",
+          "order": 2,
+          "parent": "anon:root#0",
+          "role": "button"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "anon:anon:root#0#3",
+          "label": "Edit",
+          "order": 3,
+          "parent": "anon:root#0",
+          "role": "text-field",
+          "value": "a"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:root#0#4",
+          "order": 4,
+          "parent": "anon:root#0",
+          "role": "static-text"
+        }
+      ],
+      "effects": [],
+      "focusedNodeId": "anon:anon:root#0#3",
+      "lifecycle": [],
+      "model": {
+        "node/edit": "a"
+      },
+      "selection": {
+        "length": 0,
+        "location": 1
+      },
+      "stepId": "type_a"
+    }
+  ],
+  "platform": {
+    "arch": "x64",
+    "os": "windows",
+    "osBuild": "hand-written",
+    "toolchain": "hand-written from examples/BridgeSmoke/Sources/BridgeSmoke/main.swift"
+  },
+  "schemaVersion": "sr0-o.trace/v0",
+  "sourceHash": "sr0b-abi0:examples/BridgeSmoke",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "nativeMapping": "UIA tree walk (RawView) from window root",
+      "timestamp": "hand-written"
+    },
+    {
+      "id": "invoke_press",
+      "logicalAction": "activate Press me button",
+      "nativeMapping": "UIA InvokePattern.Invoke [type=Button,name=Press me]",
+      "timestamp": "hand-written"
+    },
+    {
+      "id": "focus_edit",
+      "logicalAction": "focus the edit node",
+      "nativeMapping": "UIA SetFocus [type=Edit]",
+      "timestamp": "hand-written"
+    },
+    {
+      "id": "type_a",
+      "logicalAction": "type a into the focused edit node",
+      "nativeMapping": "SendInput VK keys 'a' [type=Edit]",
+      "timestamp": "hand-written"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "fixtureId": "BridgeSmoke",
+  "sourceHash": "sr0b-abi0:examples/BridgeSmoke",
+  "modelNodes": { "node/edit": { "type": "Edit" } },
+  "declaredOrder": [],
+  "steps": [
+    { "id": "initial", "logicalAction": "launch-and-snapshot", "ops": [], "capture": true },
+    { "id": "invoke_press", "logicalAction": "activate Press me button",
+      "ops": [ { "op": "invoke", "target": { "type": "Button", "name": "Press me" } } ], "capture": true },
+    { "id": "focus_edit", "logicalAction": "focus the edit node",
+      "ops": [ { "op": "focus", "target": { "type": "Edit" } } ] },
+    { "id": "type_a", "logicalAction": "type a into the focused edit node",
+      "ops": [ { "op": "type", "text": "a", "target": { "type": "Edit" } } ], "settleMs": 150, "capture": true }
+  ]
+}

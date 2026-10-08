@@ -1,0 +1,133 @@
+{
+  "declaredOrder" : [
+
+  ],
+  "fixtureId" : "BridgeSmoke-ops",
+  "observations" : [
+    {
+      "effects" : [
+
+      ],
+      "focusedNodeId" : "anon:anon:root#0#3",
+      "lifecycle" : [
+
+      ],
+      "model" : {
+        "node\/edit" : "ab"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 2
+      },
+      "stepId" : "type_ab"
+    },
+    {
+      "effects" : [
+
+      ],
+      "focusedNodeId" : "anon:anon:root#0#3",
+      "lifecycle" : [
+
+      ],
+      "model" : {
+        "node\/edit" : "ab"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 2
+      },
+      "stepId" : "select_first"
+    },
+    {
+      "effects" : [
+
+      ],
+      "focusedNodeId" : "anon:anon:root#0#3",
+      "lifecycle" : [
+
+      ],
+      "model" : {
+        "node\/edit" : "ab"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 2
+      },
+      "stepId" : "ctrl_a"
+    },
+    {
+      "effects" : [
+
+      ],
+      "focusedNodeId" : "anon:anon:root#0#3",
+      "lifecycle" : [
+
+      ],
+      "model" : {
+        "node\/edit" : "ab"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 2
+      },
+      "stepId" : "set_value"
+    },
+    {
+      "effects" : [
+
+      ],
+      "focusedNodeId" : "anon:anon:root#0#3",
+      "lifecycle" : [
+
+      ],
+      "model" : {
+        "node\/edit" : "ab"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 2
+      },
+      "stepId" : "invoke_end"
+    }
+  ],
+  "platform" : {
+    "arch" : "x64",
+    "os" : "windows",
+    "osBuild" : "10.0.26300",
+    "toolchain" : "Swift 6.4.0 (swift-6.4-RELEASE)"
+  },
+  "schemaVersion" : "sr0-o.trace\/v0",
+  "sourceHash" : "sr0b-abi0:examples\/BridgeSmoke",
+  "steps" : [
+    {
+      "id" : "type_ab",
+      "logicalAction" : "type ab",
+      "nativeMapping" : "SendInput VK keys 'ab' [type=Edit]",
+      "timestamp" : "2026-10-08T23:47:52Z"
+    },
+    {
+      "id" : "select_first",
+      "logicalAction" : "select first character",
+      "nativeMapping" : "UIA TextPattern select UTF-16 0+1 [type=Edit]",
+      "timestamp" : "2026-10-08T23:47:52Z"
+    },
+    {
+      "id" : "ctrl_a",
+      "logicalAction" : "select all",
+      "nativeMapping" : "SendInput Ctrl-A",
+      "timestamp" : "2026-10-08T23:47:53Z"
+    },
+    {
+      "id" : "set_value",
+      "logicalAction" : "set value xyz",
+      "nativeMapping" : "UIA ValuePattern.SetValue(xyz) [type=Edit]",
+      "timestamp" : "2026-10-08T23:47:53Z"
+    },
+    {
+      "id" : "invoke_end",
+      "logicalAction" : "activate Press me (lets the target finish)",
+      "nativeMapping" : "UIA InvokePattern.Invoke [type=Button,name=Press me]",
+      "timestamp" : "2026-10-08T23:47:53Z"
+    }
+  ]
+}

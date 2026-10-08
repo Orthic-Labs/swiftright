@@ -1,0 +1,45 @@
+host=BOGUS-DELL session=1 started=2026-10-09T05:15:38.1467293+05:30 recorder=D:\Claude\sr0o-uia\scratch\out\Products\Release-windows-x86_64\UIARecorder.exe
+target pid=41296
+recorder args: record --pid 41296 --steps "D:\Claude\sr0o-uia\uia-recorder\fixtures\bridgesmoke-steps.json" --out "D:\Claude\sr0o-uia\out\trace-r1.json" --sidecar "D:\Claude\sr0o-uia\out\sidecar-r1.json"
+recorder exit=0
+target exit=0 end=2026-10-09T05:15:43.8972488+05:30
+--- recorder stdout ---
+wrote D:\Claude\sr0o-uia\out\trace-r1.json steps=4 ok=true
+
+--- recorder stderr ---
+
+--- target stdout ---
+ready: window=100000001 client=1600x1396px scale=2.5
+event: AX action=2 node=2
+event: AX invoke node=2 window=100000001 snapshot=1 (current 1)
+event: AX action=2 node=3
+event: AX action=2 node=3
+event: key a typed=a mods=0
+frames_while_not_foreground: ticks_with_inactive_window=0 of 287
+renderer stats: paints=289 commits=3 measure_calls=18 cache_hits=9 events=8 ax_enqueued=4 ax_rejected=0 ime_calls=2 ime_busy=0
+run: ok
+PASS wrap at 2 widths [wide(1050px)=2 lines 906.7x120.0; narrow(500px)=3 lines 487.5x180.0]
+PASS height = lines x line height
+PASS line breaks cover all bytes [utf8 77 wide=77 narrow=77]
+PASS cache hit on repeat measure [key f99cb0be541c5a26]
+PASS char cells [77 cells, last on line 2]
+PASS stale run handle rejected [second release returned false]
+PASS stale commit version rejected [SWR_E_STALE_VERSION]
+PASS bogus window generation rejected [SWR_E_STALE_HANDLE]
+PASS commit after close rejected [SWR_E_SHUTDOWN]
+PASS startup validation [abi 0.3 fn_count=13]
+PASS AX Invoke handled [invokes=1 window gen tag ok=true]
+PASS typed character reached the text store [typed=[a] ime_replace_calls=1 key_events=1]
+PASS display ticks delivered [ticks=287 max_gap_ms=17.7 paints=289]
+PASS non-reentrant drain [selftest=1 swift_refused=0 rust_refused=0 drains=301]
+PASS no thread violations or host panics [thread_violations=0 host_panics=0]
+PASS commits accepted; only the 3 injected faults rejected [accepted=3 rejected=3 deferred_in_ime=1]
+PASS window_closed delivered once [calls=1]
+PASS no stale or unknown-node events [stale=0 unknown=0 rust_dropped_stale=0]
+SMOKE PASS (18/18)
+
+--- target stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0x1210aba style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=289 paints_while_inactive=2 drains=301 ticks_delivered=287 events_pushed=8 reentry_refused=0
+
