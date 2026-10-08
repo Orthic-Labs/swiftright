@@ -75,6 +75,13 @@ Async completions come from an injected fake engine and clock; fixtures release 
 
 Canonical roles: window, button, text-field, list, list-item, static-text. Platform containers named in the normalizer are stripped; nothing else.
 
+Mac route evidence (`probes/sr0-o/ax-routes`, macOS 27): tree walk, `AXIdentifier`, `AXPress`, `AXFocused`, `AXSelectedTextRange` and `AXBoundsForRange` all work against real SwiftUI; row identity keeps focus across an insert above. Normalizer rules from that run:
+- Map `AXOutline` → list, `AXOutlineRow` → list-item; strip `AXCell`, `AXColumn`, `AXScrollArea`, `AXHostingView`, `AXGroup` containers.
+- Button label comes from `AXDescription`, not `AXTitle`.
+- Keyboard stimuli post to the fixture pid (`CGEvent.postToPid`) unless the driver proves the fixture is frontmost; never type through the global HID tap blind.
+- Caret bounds use a one-character range; a zero-length range returns zero width.
+- The recorder must hold its own Accessibility grant as a signed binary before O; the probe ran under the terminal's grant.
+
 ## 6. Bridge ABI v0 vocabulary (frozen only after SR0-B)
 
 - Bootstrap query: ABI major/minor, architecture, pointer width, function-table sizes into caller-sized buffer.
