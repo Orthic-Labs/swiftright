@@ -16,7 +16,7 @@
 //! animation is off, paints stop requesting frames and the chain ends.
 //!
 //! Measurement: every wake, drain, paint and tick is appended to a preallocated
-//! event ring with QPC timestamps. A sampler thread polls DwmFlush and
+//! event ring with QPC timestamps. A sampler thread polls DWM timing (no DwmFlush since batch 4) and
 //! DwmGetCompositionTimingInfo to record compositor-displayed frames (desktop
 //! global, not per swap chain). `swr_report` prints presented-frame intervals and,
 //! for each job over 16.7 ms, the overlapping wake/drain/paint/tick intervals and
@@ -40,7 +40,7 @@ use gpui::{
 };
 use windows::core::PCWSTR;
 use windows::Win32::Foundation::HWND;
-use windows::Win32::Graphics::Dwm::{DwmFlush, DwmGetCompositionTimingInfo, DWM_TIMING_INFO};
+use windows::Win32::Graphics::Dwm::{DwmGetCompositionTimingInfo, DWM_TIMING_INFO};
 use windows::Win32::Graphics::Gdi::{EnumDisplaySettingsW, DEVMODEW, ENUM_CURRENT_SETTINGS};
 use windows::Win32::Media::timeBeginPeriod;
 use windows::Win32::System::Performance::{QueryPerformanceCounter, QueryPerformanceFrequency};
@@ -226,6 +226,9 @@ static TICKS_DELIVERED: AtomicU64 = AtomicU64::new(0);
 static COMMITS_SUBMITTED: AtomicU64 = AtomicU64::new(0);
 static TIMER_RES_RC: AtomicU32 = AtomicU32::new(u32::MAX);
 static DWM_FAST_RETURNS: AtomicU64 = AtomicU64::new(0);
+static SAMPLER_ENABLED: AtomicBool = AtomicBool::new(true);
+static ACTIVE_STATE: AtomicU32 = AtomicU32::new(u32::MAX);
+static PAINTS_ACTIVE: AtomicU64 = AtomicU64::new(0);
 
 /// Plain copy of the host callbacks. `ctx` is stored as usize so the static
 /// below is Send. Callbacks are fn pointers, which are Send.
@@ -366,6 +369,22 @@ fn waiter_loop(handle: usize) {
 fn paint_frame(bounds: Bounds<Pixels>, window: &mut Window) {
     let t0 = qpc_now();
     let idx = PAINTS.fetch_add(1, SeqCst) + 1;
+    // gpui window activation state at paint time; one line per transition.
+    let active = window.is_window_active() as u32;
+    if active == 1 {
+        PAINTS_ACTIVE.fetch_add(1, SeqCst);
+    }
+    let prev_active = ACTIVE_STATE.swap(active, SeqCst);
+    if prev_active != active {
+        let prev = if prev_active == u32::MAX { "none".to_string() } else { prev_active.to_string() };
+        println!(
+            "[sr0-b rust] active_state t_ns={} active={} prev={} paint={}",
+            qpc_to_ns(t0),
+            active,
+            prev,
+            idx
+        );
+    }
     let animating = ANIMATING.load(SeqCst);
     let seq = COMMIT_SEQ.load(SeqCst);
     let prev = PREV_SEQ_SEEN.swap(seq, SeqCst);
@@ -491,9 +510,12 @@ fn launch(cx: &mut App, host: HostRef) {
 // ---- DWM sampler (independent thread, desktop-global compositor counters) ----
 
 fn dwm_sampler() {
+    if !SAMPLER_ENABLED.load(SeqCst) {
+        return;
+    }
+    // No DwmFlush here (batch 4): the sampler reads DWM timing at ~8 ms without
+    // blocking on vblank, so it does not add a second vblank waiter to the process.
     while SAMPLER_RUN.load(SeqCst) {
-        let t0 = qpc_now();
-        let ok = unsafe { DwmFlush().is_ok() };
         if PROBE_HWND.load(SeqCst) == 0 {
             unsafe { EnumWindows(find_own_window, 0) };
         }
@@ -502,10 +524,6 @@ fn dwm_sampler() {
         ti.cbSize = std::mem::size_of::<DWM_TIMING_INFO>() as u32;
         let rc = unsafe { DwmGetCompositionTimingInfo(HWND(hwnd as *mut c_void), &mut ti) };
         let t1 = qpc_now();
-        let fast = (t1 - t0) < qpc_freq() / 1000;
-        if fast {
-            DWM_FAST_RETURNS.fetch_add(1, SeqCst);
-        }
         let fg = (hwnd != 0 && unsafe { GetForegroundWindow() } as usize == hwnd) as u32;
         if rc.is_ok() {
             dwm_ring().push(DwmSample {
@@ -516,13 +534,11 @@ fn dwm_sampler() {
                 c_refresh: ti.cRefresh,
                 rate_num: ti.rateRefresh.uiNumerator,
                 rate_den: ti.rateRefresh.uiDenominator,
-                fast: fast as u32,
+                fast: 0,
                 fg,
             });
         }
-        if !ok || fast {
-            std::thread::sleep(Duration::from_millis(1));
-        }
+        std::thread::sleep(Duration::from_millis(8));
     }
 }
 
@@ -720,6 +736,13 @@ pub extern "C" fn swr_submit_commit(seq: u64) -> i32 {
         SWR_OK
     }))
     .unwrap_or(SWR_ERR_PANIC)
+}
+
+/// Enables (1) or disables (0) the DWM sampler thread. Call before swr_run.
+#[no_mangle]
+pub extern "C" fn swr_set_dwm_sampler(on: u32) -> i32 {
+    SAMPLER_ENABLED.store(on != 0, SeqCst);
+    SWR_OK
 }
 
 #[no_mangle]
@@ -921,6 +944,32 @@ pub extern "C" fn swr_report(enq: *const i64, exec: *const i64, n: u32, wins: *c
         let paint_dur: Vec<f64> = paints.iter().map(|e| to_ms(e.t1 - e.t0)).collect();
         println!("[frame-clock] {}", stats_line("paint_interval_ms(rust)", paint_iv));
         println!("[frame-clock] {}", stats_line("paint_duration_ms(rust)", paint_dur));
+        // Phase of each workload paint within the DWM vblank period, using the nearest
+        // sampler row at or before the paint. Tight phase = locked trigger; a smeared
+        // phase with a late cluster = trigger jitter.
+        let mut phases: Vec<f64> = Vec::new();
+        for p in &paints {
+            let i = dwm.partition_point(|s| s.qpc <= p.t0);
+            if i == 0 {
+                continue;
+            }
+            let s = dwm[i - 1];
+            if s.rate_num == 0 || s.rate_den == 0 || s.qpc_vblank == 0 {
+                continue;
+            }
+            let period = (freq * s.rate_den as f64 / s.rate_num as f64).round() as i64;
+            if period <= 0 {
+                continue;
+            }
+            phases.push(to_ms((p.t0 - s.qpc_vblank as i64).rem_euclid(period)));
+        }
+        println!("[frame-clock] {}", stats_line("paint_phase_ms(vblank)", phases));
+        println!(
+            "[frame-clock] paints_active_window={} paints_total={} dwm_sampler_enabled={}",
+            PAINTS_ACTIVE.load(SeqCst),
+            PAINTS.load(SeqCst),
+            SAMPLER_ENABLED.load(SeqCst) as u32
+        );
         let idle_paints = |a: i64, b: i64| ev.iter().filter(|e| e.kind == K_PAINT && in_win(e.t0, a, b)).count();
         println!(
             "[frame-clock] paints_in_workload={} paints_idle_A={} paints_idle_B={}",

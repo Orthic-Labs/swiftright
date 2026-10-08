@@ -18,9 +18,11 @@ let watchdogSeconds: Double = 150
 
 var outDir = "."
 var timerRes: UInt32 = 0
+var dwmSamplerOn: UInt32 = 1
 for a in CommandLine.arguments.dropFirst() {
     if a.hasPrefix("--out=") { outDir = String(a.dropFirst("--out=".count)) }
     if a == "--timer-res-1" { timerRes = 1 }
+    if a == "--no-dwm-sampler" { dwmSamplerOn = 0 }
 }
 
 let qpcFreq: Double = {
@@ -226,7 +228,7 @@ func pct(_ sorted: [Double], _ p: Double) -> Double {
 
 // ---- Entry ----
 
-print("initial_thread_id=\(mainThreadId) timer_resolution_1ms_requested=\(timerRes) out=\(outDir)")
+print("initial_thread_id=\(mainThreadId) timer_resolution_1ms_requested=\(timerRes) dwm_sampler_requested=\(dwmSamplerOn) out=\(outDir)")
 
 var info = swr_bootstrap_info()
 let queryRc = swr_bootstrap_query(&info, UInt32(MemoryLayout<swr_bootstrap_info>.size))
@@ -240,6 +242,7 @@ if timerRes == 1 {
     print("timer_resolution_1ms_rc=\(swr_set_timer_resolution(1))")
 }
 
+print("dwm_sampler_rc=\(swr_set_dwm_sampler(dwmSamplerOn))")
 let wakeHandle = _dispatch_get_main_queue_handle_4CF()
 print("main_queue_wake_handle=\(String(describing: wakeHandle))")
 let setRc = swr_set_wake_handle(wakeHandle)

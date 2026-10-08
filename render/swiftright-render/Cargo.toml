@@ -1,0 +1,24 @@
+[package]
+name = "swiftright-render"
+version = "0.0.3"
+edition = "2021"
+publish = false
+
+# SwiftRight renderer, ABI v0 (render/swiftright-abi/include/swiftright.h).
+# cdylib exposing GPUI 0.2.2 + AccessKit to a Swift host through a versioned C ABI.
+# Windows only (the whole crate is cfg(windows)). Exact pins are the SR0-D tuple; the
+# Cargo.lock started from probes/sr0-b/text-geometry/Cargo.lock.
+[lib]
+name = "swiftright_render"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+
+[target.'cfg(windows)'.dependencies]
+gpui = "=0.2.2"
+accesskit = "=0.25.1"
+accesskit_windows = "=0.35.1"
+raw-window-handle = "=0.6.2"
+
+[workspace]

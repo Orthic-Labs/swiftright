@@ -86,7 +86,7 @@ Mac route evidence (`probes/sr0-o/ax-routes`, macOS 27): tree walk, `AXIdentifie
 
 - Bootstrap query: ABI major/minor, architecture, pointer width, function-table sizes into caller-sized buffer.
 - Commit transaction: version, window generation, node upserts/removals, geometry in physical pixels, primitive list per node (text run handle, image, path, clip, transform), semantic node per node (role, label, value, actions, text selection), focus target.
-- Measurement: synchronous text measure returning size, baselines and retained shaped-run handle; cache key (text, font+version, width, locale, direction, DPI).
+- Measurement: synchronous text measure returning size, baselines and retained shaped-run handle; cache key (text, font+version, width, locale, direction, DPI, and text colour while colour is baked into shaped runs — ABI v0 does this).
 - Events: input, focus, IME (IMM32 function table), AX action records, display tick; each tagged with window generation, node identity and snapshot version.
 - Ownership: opaque generation-tagged handles, explicit release, owner-frees, panics contained.
 

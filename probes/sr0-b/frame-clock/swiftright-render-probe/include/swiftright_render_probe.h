@@ -55,6 +55,7 @@ int32_t swr_set_animating(int32_t on);           /* thread-safe; starts/stops th
 int32_t swr_submit_commit(uint64_t seq);         /* thread-safe; consumed by the next paint */
 uint64_t swr_paints(void);                       /* total paints (draws) so far */
 uint64_t swr_ticks_requested(void);              /* paints that requested a tick */
+int32_t swr_set_dwm_sampler(uint32_t on);        /* 0.2 probe: 1 = DWM sampler on (default), 0 = off; before swr_run */
 int32_t swr_selftest_reentry(void);
 int32_t swr_dump(const char* dir);               /* writes events.csv and dwm.csv into dir */
 int32_t swr_report(const int64_t* enq_qpc, const int64_t* exec_qpc, uint32_t n,
