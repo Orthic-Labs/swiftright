@@ -1,0 +1,134 @@
+# SR0-B frame-clock probe: RESULT
+
+Overall: **partial**. The on-demand frame clock works: zero paints and zero ticks over 3 s idle in every run, all 5000 jobs and 500 MainActor hops complete with zero thread or re-entrancy violations, and job latency p99 is at most 1.63 ms (max 13.6 ms). **Not achieved:** the presented-frame interval (the SR0 criterion, p95 at or under 16.7 ms). The only interval measured is the paint cadence on the CPU side, and its p95 is 16.79 to 20.65 ms, so it fails in all 10 runs. Presented-frame counters from DWM were not reachable for gpui's swap chain (details below). The earlier 300 to 660 ms job stalls did not recur, so there was nothing over 16.7 ms to attribute at the job level.
+
+Probe location: `probes/sr0-b/frame-clock/` (gpui-drain untouched). Windows artifacts: `D:\Claude\sr0b-frame-clock\`. Nothing committed or pushed.
+
+## Design
+
+- **Frame clock, no timer.** The 16 ms gpui timer is removed. gpui 0.2.2 on Windows (`src/platform/windows/platform.rs:240-270`) runs a VSync thread that calls `RedrawWindow(RDW_INVALIDATE)` every vblank. WM_PAINT then calls `on_request_frame` (`src/window.rs:1023-1060`), which first runs `Window::on_next_frame` callbacks and then draws only if the window is dirty. Each paint while `ANIMATING` calls `window.request_animation_frame()` (`src/window.rs:1654`). Frames stop when `ANIMATING` is cleared, because no paint then requests the next one.
+- **Ticks.** Each animated paint records a tick request and signals the drain task (`signal_notify`). The drain task, which runs outside any GPUI borrow, calls the host's `tick(ctx, timestamp_ns)` after the drain callback. Swift advances its counter and calls `swr_submit_commit(seq)`; the next paint shows the committed value. The `KICK` path (`swr_set_animating(1)`) notifies the root view to start the chain.
+- **Events.** Every WAKE (with source), DRAIN, PAINT (with animating flag and committed seq) and TICK is written with QPC timestamps into a preallocated 131072-slot ring (`swr_dump` writes `events.csv`, `dwm.csv`, `meta.txt`).
+- **DWM sampler.** A thread polls `DwmFlush` and `DwmGetCompositionTimingInfo` on the probe's own HWND (found through `EnumWindows` by PID), and records the foreground flag. `EnumDisplaySettingsW` gives the monitor refresh.
+- **Stall analysis.** `swr_report` prints, for each job over 16.7 ms, the overlapping wake/drain/paint/tick intervals, uncovered gaps and a cause line. In this batch there were no such jobs, so the stall path printed nothing.
+- **Workload** as gpui-drain (5000 jobs at 1 kHz, 500 MainActor hops), plus continuous animation during it. Phases: idle A (3 s after a 1 s settle, animation off), workload, idle B (3 s after animation stops and a 300 ms settle).
+- **A/B.** `--timer-res-1` calls `timeBeginPeriod(1)` before `swr_run`. Runs are interleaved (base-1, tbp-1, base-2, ...), 5 each.
+- **ABI 0.2** (probe-only): `tick` appended to `swr_host_callbacks`; new exports `swr_set_timer_resolution`, `swr_set_animating`, `swr_submit_commit`, `swr_paints`, `swr_ticks_requested`, `swr_dump`, `swr_report`.
+
+## Commands and request IDs
+
+- Rust build, iteration 1: `rightkit remote windows cargo build --release --target x86_64-pc-windows-msvc` in `swiftright-render-probe/`. `rr-1791489878849-19c46c5dfc78e8f6` **FAILED**: `E0308` in `src/lib.rs:316` (`qpc_to_ns` takes `i64`, target is `u64`). Fixed.
+- Rust build, iteration 2: `rr-1791490911432-6dca8835a146a515` **SUCCEEDED** (exit 0). Used for the first two batches.
+- Rust build, iteration 3 (DWM counters now queried with the probe HWND, plus foreground flag): `rr-1791492125625-4f269621277a0a9c` **SUCCEEDED**. Used for the final batch. Max 4 build-fix iterations; 3 used.
+- Swift build (once, unchanged afterwards): `scripts/build-swift.ps1` on Windows, `swift build -c release`, `Build complete! (13.29 secs)`, exit 0. Warnings only (`stateLock` used from async context; same pattern as gpui-drain).
+- Payload: DLL and import lib from the remote build's `target\x86_64-pc-windows-msvc\release\` into `payload\bin` and `payload\lib`; `include` synced from the Mac; DLL copied beside `SwiftHost.exe`.
+- Desktop runs: one-shot interactive scheduled task per batch (`Register-ScheduledTask`, user `adrds`, `LogonType Interactive`), running `scripts/run-desktop.ps1 -Runs 5`, then `Unregister-ScheduledTask`. Each unregistered after the result file's `finished=` line.
+  - `SR0F-20261009-020656`: all 10 runs failed with exit -1073741515 (DLL not found beside the exe). Invalid, no data.
+  - `SR0F-20261009-021000`: DLL fixed. Valid run, but DWM queried with a NULL HWND, so the DWM frame counter is 0. Superseded.
+  - `SR0F-20261009-021500`: final batch, iteration-3 DLL. **Results: `result-batch-20261009-021500.txt`** (same directory as this file; per-run artifacts in `D:\Claude\sr0b-frame-clock\runs\20261009-022720\<variant>-<n>\`).
+
+## Verbatim output (base-1, trimmed to the run block; full batch in `result-batch-20261009-021500.txt`)
+
+```
+=== RUN base-1 start=2026-10-09T02:27:20.6072379+05:30
+focus_samples: total=49 window_visible=47 window_foreground=47
+initial_thread_id=31352 timer_resolution_1ms_requested=0 out=<runRoot>\base-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x00000000000002a4)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5150 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985594180156 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0579 p95=0.1254 p99=0.3774 max=1.4873
+tick_entry_ms p50=0.3119 p95=0.4277 p99=0.5060 max=0.6431 n=301
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0007 max=0.0016 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5149 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=40933651242 we=40983770580 idleA=[40903628859,40933651201] idleB=[40986860138,41016887158]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11558 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.660 p95=16.898 p99=17.130 max=17.458
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.007 p95=0.013 p99=0.080 max=0.103
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+exit=0 end=2026-10-09T02:27:33.7395202+05:30
+```
+
+## Results: 10 runs (5 base, 5 with timeBeginPeriod(1)), 60 Hz display
+
+Monitor: `EnumDisplaySettingsW` reports 60 Hz; DWM rate 60.000 to 60.009 Hz.
+
+| Run | Job latency ms p50 / p95 / p99 / max | Paint interval ms p50 / p95 / p99 / max (n) | Tick entry ms p50 / p95 | Tick-to-commit ms p50 / p99 | Focus: visible / foreground of samples | Idle A/B paints, ticks | Verdict |
+|---|---|---|---|---|---|---|---|
+| base-1 | 0.0579 / 0.1254 / 0.3774 / 1.4873 | 16.660 / 16.898 / 17.130 / 17.458 (300) | 0.3119 / 0.4277 | 0.0003 / 0.0007 | 47/49 visible, 47 fg | A 0p 0t, B 0p 0t | PASS |
+| tbp-1 | 0.0604 / 0.1154 / 0.3072 / 0.5350 | 16.662 / 16.875 / 17.133 / 17.736 (299) | 0.2803 / 0.3951 | 0.0003 / 0.0007 | 49/51 visible, 49 fg | A 0p 0t, B 0p 0t | PASS |
+| base-2 | 0.0603 / 0.1113 / 0.2893 / 1.1570 | 16.668 / 16.956 / 17.376 / 17.509 (299) | 0.2631 / 0.3522 | 0.0003 / 0.0006 | 48/50 visible, 48 fg | A 0p 0t, B 0p 0t | PASS |
+| tbp-2 | 0.0333 / 0.2061 / 0.3895 / 4.0550 | 16.661 / 16.843 / 17.067 / 17.283 (300) | 1.2130 / 5.6244 | 0.0003 / 0.0005 | 48/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+| base-3 | 0.0411 / 0.1937 / 0.5204 / 2.9718 | 16.664 / 17.023 / 18.627 / 19.655 (299) | 0.6111 / 4.0728 | 0.0003 / 0.0006 | 48/50 visible, 5 fg | A 0p 0t, B 0p 0t | PASS |
+| tbp-3 | 0.0411 / 0.1704 / 0.2922 / 1.2979 | 16.665 / 16.789 / 17.109 / 19.602 (299) | 0.6797 / 4.3933 | 0.0003 / 0.0005 | 48/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+| base-4 | 0.0796 / 0.7329 / 1.6311 / 11.8092 | 16.670 / 20.648 / 27.447 / 50.692 (298) | 0.6387 / 5.0577 | 0.0003 / 0.0006 | 48/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+| tbp-4 | 0.0547 / 0.2806 / 0.8154 / 13.5598 | 16.663 / 19.443 / 21.080 / 21.307 (299) | 0.6420 / 3.1978 | 0.0003 / 0.0005 | 47/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+| base-5 | 0.0506 / 0.1714 / 0.4330 / 1.1215 | 16.663 / 19.083 / 19.508 / 20.039 (300) | 0.4187 / 2.4166 | 0.0003 / 0.0005 | 47/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+| tbp-5 | 0.0474 / 0.1823 / 0.4625 / 4.1171 | 16.657 / 19.050 / 19.361 / 19.704 (299) | 0.6199 / 2.2685 | 0.0003 / 0.0005 | 47/50 visible, 0 fg | A 0p 0t, B 0p 0t | PASS |
+
+Paint interval is the CPU-side interval between consecutive animated paints (Rust `PAINT` events). It is **not** a presented-frame interval.
+
+Across runs (base vs tbp, 5 each): job p99 ranges 0.29 to 1.63 ms (base) and 0.31 to 0.82 ms (tbp); paint p50 is 16.66 ms in every run; paint p95 is 16.79 to 20.65 ms. The timeBeginPeriod difference is within run-to-run noise at this sample size, so there is no claim that it helps or hurts.
+
+## PASS / FAIL
+
+| Criterion | Target | Result | Verdict |
+|---|---|---|---|
+| Idle frames over 3 s, no animation (paints and ticks) | 0 | 0 paints, 0 ticks, idle A and B, all 10 runs | PASS |
+| Ticks only while animating; coalesced delivery | ticks follow animated paints | ticks = animated paints in every run (299 to 301 each; 1:1) | PASS |
+| All jobs executed | 5000/5000 | 5000/5000, all 10 runs | PASS |
+| MainActor hops | 500/500 | 500/500, all 10 runs | PASS |
+| Thread violations and re-entrancy | 0 | 0 and 0 (self-test detected = 1) | PASS |
+| Job enqueue to execute p99 | at or under 16.7 ms | 0.29 to 1.63 ms | PASS |
+| Jobs over 16.7 ms | none expected | 0 of 50,000 (max 13.56 ms) | PASS |
+| Tick to commit cost | measured | p50 0.3 us, p99 0.5 to 0.8 us | MEASURED (no budget in §11) |
+| Presented-frame interval p95 at or under 16.7 ms (60 Hz) | 16.7 ms | **Not measured.** DWM frame counter stayed 0 with the probe HWND; swap chain is private to gpui | **NOT ACHIEVED** |
+| Paint-cadence p95 at or under 16.7 ms (CPU-side proxy) | 16.7 ms | 16.79 to 20.65 ms; fails in all 10 runs | FAIL (proxy) |
+| Paint-cadence p99 at or under 33.4 ms (proxy) | 33.4 ms | 17.07 to 27.45 ms | PASS (proxy) |
+| Stale paints during animation | low | 1 per run (the first paint after the kick) | PASS |
+| Foreground focus of the probe window | visible and focused | foreground in run 1 and 2 of base and tbp only; 0 after that | UNRESOLVED (see below) |
+
+## Stall attribution
+
+Jobs over 16.7 ms: **none** (0 of 50,000 across 10 runs). The 300 to 660 ms job stalls from gpui-drain did not recur. They cannot be attributed from this data.
+
+Paint gaps over 16.7 ms (CPU-side, workload window): base-1 93, tbp-1 98, base-2 90, tbp-2 92, base-3 98, tbp-3 84, base-4 143, tbp-4 104, base-5 93, tbp-5 95. Nearly all are 16.7 to 21 ms, meaning one vblank late by a fraction of a millisecond. In these gaps the UI thread was idle between vblanks (only job drains of about 5 µs, one per 1 ms). These are vsync wait jitter, not UI blocking.
+
+Paint gaps over 25 ms: **4, all in base-4** (26.75, 33.29, 27.45 and 50.69 ms; none in the other 9 runs).
+- The UI thread stayed live throughout: job drains kept running about every 1 ms (4 to 10 µs each) and wakes continued. Drains kept running after each paint returned, so the thread was not blocked in `window.present()` (DXGI Present) or in a paint.
+- No PAINT event occurred during the gap, so the frame trigger was late. The trigger is gpui's VSync thread (`DwmFlush` then `RedrawWindow`) and WM_PAINT delivery, both outside this probe's instrumentation.
+- **Attribution: unresolved.** The data excludes UI-thread blocking in drains, paint or Present. It does not identify the late trigger. The probe's own DWM sampler logged only 27 to 34 samples per run (about 2 to 3 per second), which suggests `DwmFlush` returned sparsely in this session, but that is not proven as the cause.
+
+Tick delivery tails: tick entry p95 is 0.35 to 0.43 ms in base-1, base-2 and tbp-1, but 2.2 to 5.6 ms in the other runs. The 50 ms tick entry in base-4 is not tied to the 50 ms paint gap (its own paint started 0.5 ms before its tick), so it is not attributed.
+
+## Focus
+
+Foreground status was not stable. The probe window was foreground in 47 to 49 of its samples in base-1, tbp-1 and base-2, and in 0 to 5 samples in every later run. Cause unknown. The likely candidate is the desktop session's focus changing during the batch; nothing in the probe changed focus. Window visibility was 47 to 49 of 50 samples in all runs. This is an observation, not a verified cause.
+
+## Gaps, open items, and what was not done
+
+- **Presented-frame interval (SR0 criterion) not measured.** `DwmGetCompositionTimingInfo` returned `cFrameDisplayed = 0` for every sample with the probe HWND, both with NULL and with the probe window. The swap chain is owned by gpui's DirectX renderer and is not reachable from this probe. Alternatives not tried in this slice: `IDXGISwapChain::GetFrameStatistics` (needs gpui's swap chain handle, i.e. a gpui change), or an external optical or ETW-based capture. Until one of those is in place, SR0 has no measured presented-frame interval.
+- **gpui's own vsync thread wakes at vblank even when idle** (`platform.rs:240-270`). The probe proves zero paints and zero ticks at idle, not zero gpui-internal wakeups. Measuring that needs instrumenting gpui.
+- Paint-cadence p95 fails the 16.7 ms target in all runs. The gap is a few tenths of a millisecond at p95 and several milliseconds in base-4's tail. Whether this is the frame-trigger issue above or VSync wait jitter is unresolved.
+- Single host (`BOGUS-DELL`), 60 Hz monitor, Swift 6.4.0, gpui 0.2.2 and windows 0.61.3. Probe-only ABI 0.2, not frozen. Nothing committed or pushed.
+
+## Primary verification & next step (2026-10-09)
+
+Primary re-read `result-batch-20261009-021500.txt`: idle frames 0, jobs 5000/5000, job p99 ≤ 1.63 ms, CPU paint cadence p50 16.66 ms with p95 up to ~20.7 ms, DWM presented-frame samples n=0. The earlier 300–660 ms stalls did not recur under the display-driven clock.
+
+Presented-frame measurement needs an external ETW consumer such as Microsoft PresentMon against the probe process, or swap-chain frame statistics exposed from inside GPUI. CPU paint cadence is not the §11 presentation endpoint.

@@ -1,0 +1,27 @@
+[package]
+name = "swiftright-render-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# SR0-B frame-clock probe: cdylib exposing a blocking GPUI 0.2.2 loop to a Swift host.
+[lib]
+name = "swiftright_render_probe"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+gpui = "=0.2.2"
+
+# Same windows 0.61.3 that gpui 0.2.2 already resolves to (no new crate versions).
+[target.'cfg(target_os = "windows")'.dependencies.windows]
+version = "=0.61.3"
+features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Dwm",
+    "Win32_Graphics_Gdi",
+    "Win32_Media",
+    "Win32_System_Performance",
+]
+
+[workspace]
