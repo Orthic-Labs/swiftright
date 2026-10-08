@@ -1,0 +1,18 @@
+[package]
+name = "sr0d-ime-text-node"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "sr0d-ime-text-node"
+path = "src/main.rs"
+
+[dependencies]
+
+# Windows-only IME probe: hand-authored text node registered with GPUI 0.2.2's
+# InputHandler path (WM_IME_* -> EntityInputHandler). Pin matches render-composition.
+[target.'cfg(windows)'.dependencies]
+gpui = "=0.2.2"
+
+[workspace]
