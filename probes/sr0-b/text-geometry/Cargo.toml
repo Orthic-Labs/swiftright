@@ -1,0 +1,21 @@
+[package]
+name = "sr0b-text-geometry"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "sr0b-text-geometry"
+path = "src/main.rs"
+
+[dependencies]
+
+# Windows-only SR0-B text-geometry probe: GPUI text system + canvas paint,
+# AccessKit multiline text input with TextRun children, accesskit_windows adapter.
+[target.'cfg(windows)'.dependencies]
+gpui = "=0.2.2"
+accesskit = "=0.25.1"
+accesskit_windows = "=0.35.1"
+raw-window-handle = "=0.6.2"
+
+[workspace]
