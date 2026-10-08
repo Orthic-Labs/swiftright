@@ -1,0 +1,20 @@
+[package]
+name = "sr0d-render-composition"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "sr0d-render-composition"
+path = "src/main.rs"
+
+[dependencies]
+
+# Windows-only composition probe: GPUI window HWND + accesskit_windows subclassing adapter.
+[target.'cfg(windows)'.dependencies]
+gpui = "=0.2.2"
+accesskit = "=0.25.1"
+accesskit_windows = "=0.35.1"
+raw-window-handle = "=0.6.2"
+
+[workspace]
