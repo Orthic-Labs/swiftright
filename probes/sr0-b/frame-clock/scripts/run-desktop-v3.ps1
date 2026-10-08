@@ -13,7 +13,7 @@
 # Disturbed runs are logged with valid=0 and are never removed from the result file.
 param(
     [int]$Runs = 10,
-    [string]$Bin = 'D:\Claude\sr0b-frame-clock\b4\scratch-b4\out\Products\Release-windows-x86_64',
+    [string]$Bin = 'D:\Claude\sr0b-frame-clock\b4\scratch-b4m\out\Products\Release-windows-x86_64',
     [string]$OutFile = '',
     [int]$RkWaitSeconds = 60
 )
@@ -290,7 +290,12 @@ for ($r = 1; $r -le $Runs; $r++) {
         $psi.RedirectStandardOutput = $true
         $psi.RedirectStandardError = $true
         $psi.EnvironmentVariables['Path'] = "$swiftBin;$Bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
-        $proc = [System.Diagnostics.Process]::Start($psi)
+        try { $proc = [System.Diagnostics.Process]::Start($psi) } catch { $proc = $null; $startErr = $_.Exception.Message }
+        if ($null -eq $proc) {
+            $lines.Add("ABORT run=$id launch failed: $startErr")
+            $lines | Set-Content -Encoding utf8 $OutFile
+            throw "SR0-B batch aborted: probe launch failed ($startErr)"
+        }
         $startQpc = To-Qpc ([System.Diagnostics.Stopwatch]::GetTimestamp())
         $creation = 'NA'
         try { $creation = $proc.StartTime.ToUniversalTime().ToString('o') } catch { }

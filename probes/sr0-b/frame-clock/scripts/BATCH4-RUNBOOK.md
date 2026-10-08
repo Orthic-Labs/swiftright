@@ -7,11 +7,14 @@ foreground-stealing test on this host during the batch.
 
 ## Inputs already staged
 
+Rebuild the host only with `scripts-v3\build-b4.ps1` run as a file on the host (`powershell -File`); inline builds over SSH strip the manifest-dependency quotes and the exe fails side-by-side activation.
+
+
 | Item | Path |
 |---|---|
 | Harness v3 | `D:\Claude\sr0b-frame-clock\scripts-v3\run-desktop-v3.ps1` |
 | Analyzer | `D:\Claude\sr0b-frame-clock\scripts-v3\pm_an3.py` |
-| b4 SwiftHost (+ DLL beside exe) | `D:\Claude\sr0b-frame-clock\b4\scratch-b4\out\Products\Release-windows-x86_64\` |
+| b4 SwiftHost (+ DLL beside exe) | `D:\Claude\sr0b-frame-clock\b4\scratch-b4m\out\Products\Release-windows-x86_64\` |
 | PresentMon 2.6.0 | `D:\Claude\tools\presentmon\PresentMon-2.6.0-x64.exe` |
 
 ## Output names
