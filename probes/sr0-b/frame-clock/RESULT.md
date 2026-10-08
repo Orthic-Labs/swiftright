@@ -173,3 +173,14 @@ Finding for the contract: the §11 presentation limit (p95 ≤ 16.7 ms on a 60 H
 ### Harness note: run-desktop.ps1 v2 (script change only, not yet run)
 
 `scripts/run-desktop.ps1` now brings the probe window to the foreground once it exists (SetForegroundWindow, then AllowSetForegroundWindow, then AttachThreadInput) and logs `fg_attempt ... method=... ok=...` per run. Sampling moved from 250 ms to 50 ms and records the foreground HWND, its title and process, probe-foreground state, and visible top-level windows above the probe rect in z-order. It logs one `change` line per state change, plus `fg_samples`, `probe_fg_samples`, `occluded_samples`, `distinct_interrupters` and per-interrupter counts. The `focus_samples` line keeps its format. Parse-checked on Windows only (0 errors); not executed. The C# helper has not been compiled yet, so the first desktop run is the compile check.
+
+## PresentMon batch 3 (2026-10-09, v2 harness; desktop session run, primary-checked)
+
+Files: `result-presentmon-batch3.txt`, `pm-batch3-summary.txt`, `pm_an2.py` (now matches PresentMon rows to runs by first-present time ±4 s). 18/20 processes captured (tbp-6, base-7 missing — third batch with unexplained capture gaps).
+
+Against §11 revision 1 (p95 ≤ refresh 16.664 + 0.1 = 16.764 ms; zero missed vblanks):
+- 15 runs with full probe foreground and zero drops: 14 meet p95 (16.696–16.750 ms); **tbp-1 fails at 16.873 ms** (p99 16.967) with no drops and no recorded interrupter. Not yet explained.
+- base-1: 6 drops with probe foreground and no occlusion recorded — cause outside the harness's view.
+- tbp-8: another session's RightKit test window ("RK2 target window") took foreground for ~8 s and every frame was dropped although rect/z-order occlusion lasted only 0.33 s. Either DWM drops frames for this non-foreground window, or the occluder escapes the rect test. Investigate GPUI's inactive-window behaviour.
+
+Open before SR0-B closes the frame budget: explain tbp-1's p95 tail, the PresentMon capture gaps, and frame drops while not foreground.

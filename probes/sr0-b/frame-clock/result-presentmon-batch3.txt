@@ -1,0 +1,817 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T04:13:07.4494780+05:30
+exe=D:\Claude\sr0b-frame-clock\scratch-1\out\Products\Release-windows-x86_64\SwiftHost.exe exists=True runs_per_variant=10 runRoot=D:\Claude\sr0b-frame-clock\runs\20261009-041307
+=== RUN base-1 start=2026-10-09T04:13:07.4565569+05:30
+change run=base-1 t=+0.041s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-1 t=+0.669s method=already ok=True hwnd=0x410896
+change run=base-1 t=+0.678s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-1 t=+13.063s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=175 window_visible=166 window_foreground=166
+fg_samples=175 probe_fg_samples=166 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=9 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=16608 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5118 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5498 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1984393703711 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0670 p95=0.1813 p99=0.5112 max=1.8998
+tick_entry_ms p50=0.3205 p95=0.5303 p99=0.7131 max=1.9286 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0005 p99=0.0007 max=0.0010 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5117 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=104402796771 we=104452928866 idleA=[104372724143,104402796717] idleB=[104456035336,104486109533]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=34 dwm_fast_returns=0 event_count=11521 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/34 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.654 p95=16.921 p99=17.379 max=17.441
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.016 p99=0.037 max=0.436
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:13:20.9822115+05:30
+=== RUN tbp-1 start=2026-10-09T04:13:20.9827364+05:30
+change run=tbp-1 t=+0.018s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+change run=tbp-1 t=+0.747s fg=SwiftHost|SR0-B frame-clock probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-1 t=+0.819s method=already ok=True hwnd=0x520C48
+change run=tbp-1 t=+0.830s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-1 t=+13.095s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=160 window_visible=150 window_foreground=150
+fg_samples=160 probe_fg_samples=150 occluded_samples=0 distinct_interrupters=2
+  interrupter samples=9 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+  interrupter samples=1 SwiftHost|SR0-B frame-clock
+initial_thread_id=36560 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5118 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985394100728 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0645 p95=0.1798 p99=0.5347 max=0.8968
+tick_entry_ms p50=0.3468 p95=0.5312 p99=0.6747 max=0.8134 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0519 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5117 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=104538692801 we=104588693955 idleA=[104508689879,104538692766] idleB=[104591696545,104621698699]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=39 dwm_fast_returns=0 event_count=11522 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/39 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.659 p95=17.009 p99=17.236 max=17.521
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.009 p95=0.020 p99=0.099 max=0.368
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:13:36.7435416+05:30
+=== RUN base-2 start=2026-10-09T04:13:36.7460676+05:30
+change run=base-2 t=+0.021s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-2 t=+0.721s method=already ok=True hwnd=0x540098
+change run=base-2 t=+0.751s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-2 t=+13.131s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=164 window_visible=155 window_foreground=155
+fg_samples=164 probe_fg_samples=155 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=9 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=26584 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-2
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5115 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1977991167533 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0669 p95=0.1726 p99=0.5208 max=1.6941
+tick_entry_ms p50=0.3347 p95=0.5185 p99=0.7850 max=0.9590 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0004 max=0.0015 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5114 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=104696479473 we=104746533740 idleA=[104666375737,104696479418] idleB=[104749645084,104779758605]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=39 dwm_fast_returns=0 event_count=11520 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/39 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.666 p95=16.854 p99=17.223 max=20.766
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.009 p95=0.017 p99=0.151 max=0.460
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:13:50.9417494+05:30
+=== RUN tbp-2 start=2026-10-09T04:13:50.9427578+05:30
+change run=tbp-2 t=+0.017s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-2 t=+0.585s method=already ok=True hwnd=0x540C48
+change run=tbp-2 t=+0.597s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-2 t=+12.918s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=173 window_visible=165 window_foreground=165
+fg_samples=173 probe_fg_samples=165 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=28724 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-2
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5130 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1975190060532 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0634 p95=0.1430 p99=0.4277 max=1.0191
+tick_entry_ms p50=0.2841 p95=0.3889 p99=0.4653 max=0.5860 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0004 max=0.0005 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5129 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=104836564443 we=104886578843 idleA=[104806561928,104836564392] idleB=[104889582817,104919586378]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11535 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.664 p95=16.856 p99=17.156 max=19.816
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.013 p99=0.080 max=0.127
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:14:04.2092970+05:30
+=== RUN base-3 start=2026-10-09T04:14:04.2102938+05:30
+change run=base-3 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-3 t=+0.548s method=already ok=True hwnd=0xEC0BFC
+change run=base-3 t=+0.559s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+focus_samples: total=167 window_visible=160 window_foreground=160
+fg_samples=167 probe_fg_samples=160 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=7 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=24196 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-3
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5127 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1984193624331 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0651 p95=0.1503 p99=0.4629 max=1.0513
+tick_entry_ms p50=0.2924 p95=0.3966 p99=0.5871 max=0.7150 n=301
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0427 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5126 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=104969286234 we=105019425232 idleA=[104939184281,104969286195] idleB=[105022548509,105052641466]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11535 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.672 p95=16.857 p99=17.049 max=17.304
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.008 p95=0.014 p99=0.060 max=0.425
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:14:17.2048758+05:30
+=== RUN tbp-3 start=2026-10-09T04:14:17.2054000+05:30
+change run=tbp-3 t=+0.020s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-3 t=+0.545s method=already ok=True hwnd=0x11C0B14
+change run=tbp-3 t=+0.554s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-3 t=+12.896s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=180 window_visible=172 window_foreground=172
+fg_samples=180 probe_fg_samples=172 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=25208 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-3
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5129 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1982392910274 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0637 p95=0.1437 p99=0.4363 max=0.7521
+tick_entry_ms p50=0.2869 p95=0.4194 p99=0.4773 max=0.7250 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0017 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5128 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105099341374 we=105149344731 idleA=[105069331371,105099341313] idleB=[105152345747,105182352061]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=30 dwm_fast_returns=0 event_count=11534 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/30 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.659 p95=16.849 p99=16.982 max=17.311
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.013 p99=0.032 max=0.133
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:14:30.1705235+05:30
+=== RUN base-4 start=2026-10-09T04:14:30.1722692+05:30
+change run=base-4 t=+0.018s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-4 t=+0.561s method=already ok=True hwnd=0x410C5A
+change run=base-4 t=+0.572s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-4 t=+12.944s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=181 window_visible=173 window_foreground=173
+fg_samples=181 probe_fg_samples=173 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=37796 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-4
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000290)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5135 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198359338624 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0640 p95=0.1518 p99=0.4126 max=1.3786
+tick_entry_ms p50=0.2816 p95=0.4056 p99=0.5187 max=0.6473 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0004 max=0.0006 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5134 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105229277231 we=105279287941 idleA=[105199125976,105229277198] idleB=[105282433148,105312482523]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=32 dwm_fast_returns=0 event_count=11539 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/32 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.667 p95=16.865 p99=17.034 max=17.040
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.013 p99=0.056 max=0.120
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:14:43.2054685+05:30
+=== RUN tbp-4 start=2026-10-09T04:14:43.2064777+05:30
+change run=tbp-4 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-4 t=+0.550s method=already ok=True hwnd=0x680A6A
+change run=tbp-4 t=+0.558s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-4 t=+12.873s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=180 window_visible=172 window_foreground=172
+fg_samples=180 probe_fg_samples=172 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=27820 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-4
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5127 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1982192830975 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0633 p95=0.1494 p99=0.4422 max=1.3233
+tick_entry_ms p50=0.2944 p95=0.4870 p99=0.5521 max=0.6673 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0394 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5126 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105358927168 we=105408927481 idleA=[105328920167,105358927133] idleB=[105411934639,105441949287]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11532 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.671 p95=16.904 p99=17.033 max=18.054
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.014 p99=0.092 max=0.171
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:14:56.1538444+05:30
+=== RUN base-5 start=2026-10-09T04:14:56.1553329+05:30
+change run=base-5 t=+0.014s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-5 t=+0.570s method=already ok=True hwnd=0xF00BFC
+change run=base-5 t=+0.580s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-5 t=+12.883s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=0 occluded_by=-
+focus_samples: total=188 window_visible=181 window_foreground=181
+fg_samples=188 probe_fg_samples=181 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=7 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=37676 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-5
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5123 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5498 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1979991959208 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0643 p95=0.1685 p99=0.4437 max=2.1950
+tick_entry_ms p50=0.2955 p95=0.4679 p99=0.5582 max=0.6574 n=301
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0013 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5122 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105488605551 we=105538697229 idleA=[105458548729,105488605513] idleB=[105541819398,105571968331]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11529 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.665 p95=16.892 p99=17.226 max=17.570
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.008 p95=0.014 p99=0.074 max=0.347
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:15:09.1201115+05:30
+=== RUN tbp-5 start=2026-10-09T04:15:09.1201115+05:30
+change run=tbp-5 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-5 t=+0.547s method=already ok=True hwnd=0x1200B14
+change run=tbp-5 t=+0.555s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+focus_samples: total=178 window_visible=171 window_foreground=171
+fg_samples=178 probe_fg_samples=171 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=7 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=42384 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-5
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5123 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1986594577414 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0624 p95=0.1540 p99=0.4318 max=0.8478
+tick_entry_ms p50=0.3064 p95=0.5241 p99=0.6673 max=0.8767 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0006 max=0.0008 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5122 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105618122461 we=105668153795 idleA=[105588119399,105618122422] idleB=[105671157721,105701160861]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=28 dwm_fast_returns=0 event_count=11528 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/28 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.664 p95=16.862 p99=17.193 max=17.266
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.015 p99=0.099 max=0.350
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:15:22.0519457+05:30
+=== RUN base-6 start=2026-10-09T04:15:22.0529562+05:30
+change run=base-6 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-6 t=+0.543s method=already ok=True hwnd=0x450C5A
+change run=base-6 t=+0.555s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-6 t=+12.924s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=189 window_visible=181 window_foreground=181
+fg_samples=189 probe_fg_samples=181 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=35732 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-6
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x00000000000000f4)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5146 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1976990771997 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0631 p95=0.1569 p99=0.4888 max=0.8798
+tick_entry_ms p50=0.3108 p95=0.4699 p99=0.6339 max=0.6894 n=301
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0006 max=0.0050 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5145 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105747591570 we=105797710625 idleA=[105717554554,105747591537] idleB=[105800833948,105830877490]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11554 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.651 p95=17.023 p99=17.252 max=19.680
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.008 p95=0.015 p99=0.072 max=0.341
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:15:35.2164317+05:30
+=== RUN tbp-6 start=2026-10-09T04:15:35.2174307+05:30
+change run=tbp-6 t=+0.026s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-6 t=+0.847s method=already ok=True hwnd=0x6C0A6A
+change run=tbp-6 t=+0.855s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-6 t=+13.169s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=179 window_visible=168 window_foreground=168
+fg_samples=179 probe_fg_samples=168 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=12580 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-6
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5123 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1987995133912 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0616 p95=0.1576 p99=0.4246 max=1.0660
+tick_entry_ms p50=0.2999 p95=0.5059 p99=0.6257 max=0.7709 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0006 max=0.0012 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5122 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=105882002438 we=105932000191 idleA=[105851995033,105882002401] idleB=[105935003827,105965004109]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=44 dwm_fast_returns=0 event_count=11528 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/44 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.671 p95=16.856 p99=17.168 max=18.975
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.014 p99=0.107 max=0.319
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:15:48.4667216+05:30
+=== RUN base-7 start=2026-10-09T04:15:48.4677290+05:30
+change run=base-7 t=+0.019s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-7 t=+0.572s method=already ok=True hwnd=0xF40BFC
+change run=base-7 t=+0.581s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-7 t=+12.908s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=183 window_visible=175 window_foreground=175
+fg_samples=183 probe_fg_samples=175 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=39232 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-7
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x00000000000002ac)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5133 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1966386591604 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0637 p95=0.1423 p99=0.4377 max=0.9888
+tick_entry_ms p50=0.3003 p95=0.4359 p99=0.6586 max=0.7308 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0016 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5132 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106011908547 we=106061955205 idleA=[105981907775,106011908477] idleB=[106065095825,106095102655]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=30 dwm_fast_returns=0 event_count=11538 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/30 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.660 p95=16.935 p99=17.422 max=21.960
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.014 p99=0.102 max=0.355
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:16:01.4590759+05:30
+=== RUN tbp-7 start=2026-10-09T04:16:01.4600763+05:30
+change run=tbp-7 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-7 t=+0.552s method=already ok=True hwnd=0x180C4E
+change run=tbp-7 t=+0.564s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-7 t=+12.881s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=178 window_visible=170 window_foreground=170
+fg_samples=178 probe_fg_samples=170 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=5124 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-7
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000298)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5136 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1984193624331 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0623 p95=0.1319 p99=0.4261 max=0.7462
+tick_entry_ms p50=0.2928 p95=0.4256 p99=0.5663 max=0.6698 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0008 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5135 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106141795888 we=106191840752 idleA=[106111790740,106141795855] idleB=[106194850049,106224850292]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=31 dwm_fast_returns=0 event_count=11541 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/31 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.661 p95=16.843 p99=17.043 max=17.133
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.014 p99=0.075 max=0.220
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:16:14.4257520+05:30
+=== RUN base-8 start=2026-10-09T04:16:14.4267534+05:30
+change run=base-8 t=+0.020s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-8 t=+0.552s method=already ok=True hwnd=0x490C5A
+change run=base-8 t=+0.561s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-8 t=+12.918s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=177 window_visible=169 window_foreground=169
+fg_samples=177 probe_fg_samples=169 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=41460 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-8
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5082 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5496 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1970788324131 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0738 p95=0.2312 p99=0.5264 max=1.9380
+tick_entry_ms p50=0.3257 p95=0.5392 p99=0.7433 max=2.2827 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0017 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5081 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106271363188 we=106321375717 idleA=[106241274668,106271363157] idleB=[106324484133,106354612203]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11483 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.662 p95=16.915 p99=17.081 max=17.371
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.015 p99=0.051 max=0.179
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:16:27.4085936+05:30
+=== RUN tbp-8 start=2026-10-09T04:16:27.4095931+05:30
+change run=tbp-8 t=+0.016s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-8 t=+0.544s method=already ok=True hwnd=0x700A6A
+change run=tbp-8 t=+0.553s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-8 t=+1.817s fg=rk2|RK2 target window probe_fg=0 probe_visible=1 occluded_by=rk2|RK2 target window
+change run=tbp-8 t=+2.151s fg=rk2|RK2 target window probe_fg=0 probe_visible=1 occluded_by=-
+change run=tbp-8 t=+9.808s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-8 t=+12.864s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=178 window_visible=170 window_foreground=58
+fg_samples=178 probe_fg_samples=58 occluded_samples=4 distinct_interrupters=2
+  interrupter samples=116 rk2|RK2 target window
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=33524 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-8
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000298)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5124 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1969187693674 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0565 p95=0.1956 p99=0.4724 max=1.4186
+tick_entry_ms p50=0.3454 p95=0.5329 p99=0.7125 max=1.3509 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0013 max=0.0195 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5123 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=1 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106400943021 we=106450984101 idleA=[106370940110,106400942980] idleB=[106453987571,106483993168]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=28 dwm_fast_returns=0 event_count=11530 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/28 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.699 p95=17.756 p99=18.396 max=18.551
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.007 p95=0.018 p99=0.063 max=0.271
+[frame-clock] paints_in_workload=300 paints_idle_A=1 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=FAIL
+
+
+exit=1 end=2026-10-09T04:16:40.3524396+05:30
+=== RUN base-9 start=2026-10-09T04:16:40.3534484+05:30
+change run=base-9 t=+0.018s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-9 t=+0.569s method=already ok=True hwnd=0xF80BFC
+change run=base-9 t=+0.580s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-9 t=+12.934s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=178 window_visible=170 window_foreground=170
+fg_samples=178 probe_fg_samples=170 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=42032 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-9
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5175 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1983793465596 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0600 p95=0.1457 p99=0.4325 max=1.8455
+tick_entry_ms p50=0.2979 p95=0.4448 p99=0.5592 max=1.2261 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0008 max=0.0012 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5174 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106530901689 we=106580917606 idleA=[106500776103,106530901657] idleB=[106584031723,106614167908]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=30 dwm_fast_returns=0 event_count=11580 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/30 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.666 p95=16.961 p99=17.204 max=17.441
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.014 p99=0.104 max=0.251
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:16:53.3664873+05:30
+=== RUN tbp-9 start=2026-10-09T04:16:53.3680191+05:30
+change run=tbp-9 t=+0.019s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-9 t=+0.626s method=already ok=True hwnd=0x620C48
+change run=tbp-9 t=+0.638s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-9 t=+12.949s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=178 window_visible=169 window_foreground=169
+fg_samples=178 probe_fg_samples=169 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=9 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=35168 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-9
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x00000000000002a8)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5137 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1988195213445 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0607 p95=0.1300 p99=0.4057 max=5.3587
+tick_entry_ms p50=0.2821 p95=0.4100 p99=0.5579 max=3.4417 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0007 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5136 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106661274329 we=106711269450 idleA=[106631266805,106661274298] idleB=[106714274371,106744276664]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=32 dwm_fast_returns=0 event_count=11542 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/32 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.659 p95=16.829 p99=16.942 max=18.353
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.012 p99=0.030 max=0.107
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:17:06.3793140+05:30
+=== RUN base-10 start=2026-10-09T04:17:06.3803207+05:30
+change run=base-10 t=+0.017s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=base-10 t=+0.541s method=already ok=True hwnd=0x2E092C
+change run=base-10 t=+0.550s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=base-10 t=+12.933s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=182 window_visible=174 window_foreground=174
+fg_samples=182 probe_fg_samples=174 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=21912 timer_resolution_1ms_requested=0 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\base-10
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x000000000000028c)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5138 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198359338624 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0652 p95=0.1732 p99=0.4171 max=1.3380
+tick_entry_ms p50=0.2858 p95=0.3993 p99=0.5227 max=0.6420 n=301
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0006 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5137 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106790937728 we=106841025221 idleA=[106760816007,106790937693] idleB=[106844125349,106874258892]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=29 dwm_fast_returns=0 event_count=11546 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/29 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.669 p95=16.861 p99=16.958 max=17.190
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.008 p95=0.013 p99=0.023 max=0.160
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:17:19.3891934+05:30
+=== RUN tbp-10 start=2026-10-09T04:17:19.3897031+05:30
+change run=tbp-10 t=+0.018s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+fg_attempt run=tbp-10 t=+0.614s method=already ok=True hwnd=0x4D0C5A
+change run=tbp-10 t=+0.624s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=-
+change run=tbp-10 t=+12.925s fg=msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge probe_fg=0 probe_visible=0 occluded_by=-
+focus_samples: total=183 window_visible=175 window_foreground=175
+fg_samples=183 probe_fg_samples=175 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=8 msedge|‎Apple TV and 8 more pages - Personal - Microsoft​ Edge
+initial_thread_id=38428 timer_resolution_1ms_requested=1 out=D:\Claude\sr0b-frame-clock\runs\20261009-041307\tbp-10
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] loop_ready_calls=1 drain_calls=5132 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985994339035 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0626 p95=0.1603 p99=0.4428 max=1.5947
+tick_entry_ms p50=0.2854 p95=0.4186 p99=0.6194 max=1.2446 n=300
+tick_to_commit_ms p50=0.0003 p95=0.0004 p99=0.0005 max=0.0014 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5131 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=106921360237 we=106971405684 idleA=[106891355852,106921360203] idleB=[106974406491,107004411642]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=31 dwm_fast_returns=0 event_count=11537 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/31 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.661 p95=16.843 p99=16.971 max=18.476
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.008 p95=0.013 p99=0.100 max=0.183
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T04:17:32.3824276+05:30
+finished=2026-10-09T04:17:32.3824276+05:30

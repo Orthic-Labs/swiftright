@@ -1,0 +1,58 @@
+[sr0-b ev t=0ms] WINDOWPOSCHANGED flags 0x1c 0x0 656 399
+[sr0-b ev t=0ms] SIZE type 0x0 0x0 640 360
+[sr0-b ev t=9ms] WINDOWPOSCHANGED flags 0x50001847 0x0 656 399
+[sr0-b ev t=9ms] SIZE type 0x0 0x0 640 360
+[sr0-b ev t=2217ms] NCHITTEST result 0xf 0x0 688 627
+[sr0-b ev t=2233ms] NCHITTEST result 0x1 0x0 679 619
+[sr0-b ev t=2236ms] NCHITTEST result 0x1 0x0 667 611
+[sr0-b ev t=2247ms] NCHITTEST result 0x1 0x0 664 608
+[sr0-b ev t=2257ms] NCHITTEST result 0x1 0x0 660 606
+[sr0-b ev t=31954ms] SYSCOMMAND wparam 0xf020 0x0 0 0
+[sr0-b ev t=31957ms] WINDOWPOSCHANGED flags 0x8130 0x0 391 61
+[sr0-b ev t=31957ms] SIZE type 0x1 0x0 0 0
+[sr0-b ev t=38405ms] WINDOWPOSCHANGED flags 0x1803 0x0 391 61
+[sr0-b ev t=38415ms] WINDOWPOSCHANGED flags 0x8120 0x0 656 399
+[sr0-b ev t=38415ms] SIZE type 0x0 0x0 640 360
+[sr0-b ev t=42958ms] NCHITTEST result 0x11 0x0 1014 626
+[sr0-b ev t=44091ms] NCHITTEST result 0x11 0x0 1014 626
+[sr0-b ev t=44093ms] NCHITTEST result 0x11 0x0 1014 626
+[sr0-b ev t=44093ms] NCLBUTTONDOWN hit 0x11 0x0 1014 626
+[sr0-b ev t=44093ms] SYSCOMMAND wparam 0xf008 0x0 0 0
+[sr0-b ev t=44094ms] ENTERSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=44157ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44174ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44191ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44208ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44224ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44241ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=44290ms] CAPTURECHANGED 0x0 0x0 0 0
+[sr0-b ev t=44292ms] WINDOWPOSCHANGED flags 0x1206 0x0 736 479
+[sr0-b ev t=44292ms] SIZE type 0x0 0x0 720 440
+[sr0-b ev t=44295ms] EXITSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=44308ms] NCHITTEST result 0x11 0x0 1094 706
+[sr0-b ev t=48164ms] NCLBUTTONDOWN hit 0x14 0x0 1068 249
+[sr0-b ev t=48215ms] NCLBUTTONUP hit 0x14 0x0 0 0
+[sr0-b ev t=48216ms] WINDOWPOSCHANGED flags 0x20001897 0x0 736 479
+[sr0-b rust] drain_calls=9956 tick_calls=1719 deferred_total=1 nested_executed=0 drains_idle=8969 drains_sizing=0 drains_modal=988 drains_both=0 selftest_detected=1 panics=0 wake_signals=10498 wake_wait_failures=0 frames_rendered=1490 size_enter=1 size_exit=1 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 run_rc=0
+initial_thread_id=42532
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x0000000000000284)
+producer enqueued=10000 hops=500
+jobs_run=10000/10000 enqueued_before_close=10000 run_by_final_flush=10000 enqueued_after_close_refused=0 late_dropped=0
+latency_ms all p99=1.4309 max=48.1290 n=10000
+latency_ms idle p99=0.7710 n=8954
+latency_ms during_live_resize p50=-1.0000 p99=-1.0000 max=-1.0000 n=0
+latency_ms during_modal p50=0.0697 p99=38.1269 max=48.1290 n=1046
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+mainactor_hops=500/500
+swift_drain_calls=9957 swift_reentry_violations=0 selftest_swift_result=1 ticks=1719
+rust_drain_calls=9956 drains_idle=8969 drains_sizing=0 drains_modal=988 drains_both=0 deferred_callbacks=1 nested_executed=0 selftest_detected=1 panics=0
+nc_lbuttondown=2 nc_last_hittest_code=20
+size_loop_enter=1 size_loop_exit=1 frames_during_workload=1488 frames_at_start=2 frames_at_end=1490
+modal_request_rc=0 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 modal_result_values=[1]
+ax_attempts=0 enqueued=0 full=0 rejected_stale_at_post=0
+ax_popped_applied=0 popped_stale=0 queue_len_end=0 swift_applied=0 swift_unsupported=0 swift_applied_after_close=0 rust_applied_after_close=0 model_clicks=0
+sum_attempts_ok=true sum_enqueued_ok=true swift_matches_rust=true
+window_closed_calls=1 close_flush_ok=true watchdog_fired=false wake_signals=10498 wake_wait_failures=0
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+verdict=FAIL

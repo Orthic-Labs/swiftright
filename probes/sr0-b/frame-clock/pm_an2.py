@@ -1,7 +1,7 @@
 """Batch summary: PresentMon v1 CSV + run-desktop.ps1 result file -> per-run table.
 
 Usage: pm_an2.py <pm.csv> <result.txt> [exclude_pid ...]
-Processes are matched to runs in launch order (one SwiftHost.exe per run).
+Processes are matched to runs by first-present time vs run start (assumes run 1 was captured).
 """
 import csv, re, sys
 
@@ -13,13 +13,14 @@ for r in rows:
         continue
     by.setdefault(r['ProcessID'], []).append(r)
 order = sorted(by, key=lambda k: float(by[k][0]['TimeInSeconds']))
+import datetime as _dt
 
 runs = []
 cur = None
 for line in open(result_txt, encoding='utf-8', errors='replace'):
-    m = re.match(r'=== RUN (\S+)', line)
+    m = re.match(r'=== RUN (\S+) start=(\S+?)[+-]\d\d:\d\d', line)
     if m:
-        cur = {'id': m.group(1)}
+        cur = {'id': m.group(1), 'start': _dt.datetime.fromisoformat(m.group(2)[:26])}
         runs.append(cur)
     m = re.match(r'focus_samples: total=(\d+) window_visible=(\d+) window_foreground=(\d+)', line)
     if m and cur:
@@ -43,11 +44,18 @@ def pct(a, p):
 
 print(f"pm_processes={len(order)} runs={len(runs)} excluded={exclude}")
 print("run | fg/vis | presents | dropped | disp p50/p95/p99 ms (n) | between-presents p95 | until_displayed p50/p95 | flags")
+# Match each run to the PresentMon process whose first present is closest to the run's launch offset.
+# Anchor: the first run with a process within 4 s of the first process (assumes run 1 was captured).
+anchor = float(by[order[0]][0]['TimeInSeconds']) if order else 0.0
+used = set()
 for i, run in enumerate(runs):
-    if i >= len(order):
+    exp = anchor + (run['start'] - runs[0]['start']).total_seconds()
+    cand = [p for p in order if p not in used and abs(float(by[p][0]['TimeInSeconds']) - exp) < 4]
+    if not cand:
         print(f"{run['id']} | {run.get('fg')}/{run.get('vis')} | NO PRESENTMON ROWS")
         continue
-    rs = by[order[i]]
+    pid = cand[0]; used.add(pid); order_i = pid
+    rs = by[pid]
     # within-workload display changes only: drop gaps > 100 ms (idle phases have no presents by design)
     disp = [x for x in (num(r.get('msBetweenDisplayChange')) for r in rs) if x and 0 < x < 100]
     pres = [x for x in (num(r.get('msBetweenPresents')) for r in rs) if x is not None and x < 100]
@@ -60,6 +68,7 @@ for i, run in enumerate(runs):
         flags.append(f"probe={run.get('verdict')}")
     print(f"{run['id']} | {run.get('fg')}/{run.get('vis')} | {len(rs)} | {dropped} | "
           f"{pct(disp, 50):.3f}/{pct(disp, 95):.3f}/{pct(disp, 99):.3f} ({len(disp)}) | {pct(pres, 95):.3f} | "
-          f"{pct(lat, 50):.2f}/{pct(lat, 95):.2f} | pid={order[i]} {' '.join(flags)}")
-if len(order) > len(runs):
-    print("extra pm processes:", order[len(runs):])
+          f"{pct(lat, 50):.2f}/{pct(lat, 95):.2f} | pid={order_i} {' '.join(flags)}")
+extra = [p for p in order if p not in used]
+if extra:
+    print("unmatched pm processes:", extra)
