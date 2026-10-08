@@ -1,0 +1,80 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T05:14:48.4179757+05:30
+window_hwnd=2754344 polls=4 exited_early=False
+uia_focus_row5=ok
+focused_after_uia_focus=[Row 5]
+row5_value_after_abc=[Row 5abc]
+uia_invoke_insert_above=ok
+row5_value_after_insert=[Row 5abc]
+focused_after_insert=[Row 5]
+row5_value_final=[Row 5abcd]
+focused_final=[Row 5]
+screenshot=D:\Claude\sr0s-bridge\result-fresh-run2.png size=1632x1288 scaled_to=800x631
+exit=0 end=2026-10-09T05:15:03.8192567+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"phase":"start","row5":"F0000001-0000-4000-8000-000000000005"},"seq":0}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":1}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","node_id":"window","payload":{"height_px":1396,"phase":"ready","scale":2.5,"width_px":1600},"seq":11}
+EVT {"kind":"focus","node_id":"focus","payload":{"focused":"F0000001-0000-4000-8000-000000000005","source":"ax"},"seq":12}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"row5 focused by AX","phase":"stage","stage":1},"seq":13}
+EVT {"kind":"state","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5a"},"seq":14}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":1,"phase":"local-edit"},"seq":15}
+EVT {"kind":"input","node_id":"row 5","payload":{"inserted":"a","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":16}
+EVT {"kind":"state","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5ab"},"seq":17}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":2,"phase":"local-edit"},"seq":18}
+EVT {"kind":"input","node_id":"row 5","payload":{"inserted":"b","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":19}
+EVT {"kind":"state","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abc"},"seq":20}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":3,"phase":"local-edit"},"seq":21}
+EVT {"kind":"input","node_id":"row 5","payload":{"inserted":"c","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":22}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"typed abc","phase":"stage","stage":2},"seq":23}
+EVT {"kind":"input","node_id":"toolbar\/insert","payload":{"node":4,"op":"invoke","source":"ax"},"seq":24}
+EVT {"kind":"state","node_id":"toolbar\/insert","payload":{"op":"invoke","seq":1},"seq":25}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"insert above invoked","phase":"stage","stage":3},"seq":26}
+EVT {"kind":"lifecycle","node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":27}
+EVT {"kind":"effect","node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":28}
+EVT {"kind":"effect","node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":29}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"engine released","phase":"stage","stage":4},"seq":30}
+EVT {"kind":"effect","node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":31}
+EVT {"kind":"effect","node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":32}
+EVT {"kind":"state","node_id":"model","payload":{"id":"F0000001-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":33}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":34}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"insert committed","phase":"stage","stage":5},"seq":35}
+EVT {"kind":"state","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abcd"},"seq":36}
+EVT {"kind":"lifecycle","node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"local-edit"},"seq":37}
+EVT {"kind":"input","node_id":"row 5","payload":{"inserted":"d","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":38}
+EVT {"kind":"lifecycle","node_id":"selftest","payload":{"note":"typed d; gathering frames","phase":"stage","stage":6},"seq":39}
+OBSERVE F1 stages: 1:row5 focused by AX@5.81s | 2:typed abc@7.31s | 3:insert above invoked@8.72s | 4:engine released@8.73s | 5:insert committed@8.75s | 6:typed d; gathering frames@10.77s
+OBSERVE F1 ticks=798 pointer-downs=0 key-events=4 ax-set-values=0 scale-changes=0
+OBSERVE F1 renderer paints=800 commits_accepted=10 commits_rejected=0 commits_deferred=4 measure_calls=277 cache_hits=242 reentry_refused=0 events_pushed=13 ime_calls=8 ime_busy=0
+OBSERVE F1 runtime measure_calls=61 commits=10
+ASSERT F1 insert-committed-at-top: PASS top=Engine 0
+ASSERT F1 row5-text: PASS text=Row 5abcd
+ASSERT F1 row5-identity-index-shift: PASS index=5
+ASSERT F1 row5-not-torn-down: PASS appear=1 disappear=0
+ASSERT F1 row5-node-instance-kept: PASS instance before=35 after=35
+ASSERT F1 row5-state-continuous: PASS local=4 (edits a,b,c,d since start; a reset would read 1)
+ASSERT F1 focus-stays-row5: PASS model=F0000001-0000-4000-8000-000000000005 runtime=F0000001-0000-4000-8000-000000000005 bridge-target before=169 after=169
+ASSERT F1 caret-follows-typing: PASS caret=9 expected=9 (end of text)
+ASSERT F1 no-rejected-effects: PASS rejected=0 release-no-waiter=0
+ASSERT F1 ax-focus-delivered: PASS ax-focus=2
+ASSERT F1 ax-invoke-delivered: PASS ax-invoke=1
+ASSERT F1 text-store-keystrokes: PASS replace calls=a,b,c,d
+ASSERT F1 commits-accepted: PASS commits=10 errors=0
+ASSERT F1 no-measure-or-draw-failures: PASS measure=0 draw=0 
+ASSERT F1 renderer-no-violations: PASS thread_violations=0 host_panics=0
+SELFTEST F1-bridge: PASS (15/15)
+EVT {"kind":"lifecycle","node_id":"window","payload":{"phase":"closed"},"seq":40}
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0x2a0728 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=800 paints_while_inactive=2 drains=818 ticks_delivered=798 events_pushed=13 reentry_refused=0
+
