@@ -1,10 +1,15 @@
 import Foundation
+#if os(macOS)
+import AppKit
+#endif
 
 @MainActor
 struct Check {
     let name: String
     let pass: Bool
     let detail: String
+    /// Observations record a platform outcome (e.g. preserved vs fresh @State). They never fail the verdict.
+    var observe: Bool = false
 }
 
 /// Read-only view over the recorded events and the final model.
@@ -52,6 +57,17 @@ struct Evidence {
     func check(_ name: String, _ pass: Bool, _ detail: String = "") -> Check {
         Check(name: name, pass: pass, detail: detail)
     }
+
+    func observe(_ name: String, _ value: String, _ detail: String = "") -> Check {
+        Check(name: name, pass: true, detail: "value=\(value) \(detail)", observe: true)
+    }
+
+    /// Milliseconds between two recorded event indices, from the in-process monotonic clock.
+    func millis(_ from: Int, _ to: Int) -> Int {
+        let a = events[from]["mono_ns"] as? UInt64 ?? 0
+        let b = events[to]["mono_ns"] as? UInt64 ?? 0
+        return Int((b &- a) / 1_000_000)
+    }
 }
 
 @MainActor
@@ -70,10 +86,9 @@ func isSubsequence<T: Equatable>(_ needle: [T], of haystack: [T]) -> Bool {
 
 /// Scripted programmatic equivalents of the slice stimuli. Keyboard and pointer input are out-of-process.
 @MainActor
-func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
+func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool, f3GapMs: Int = 0) -> SelfTestCase {
     let fixtureNumber = fixture.number
     func rid(_ slot: Int) -> UUID { RowModel.rowID(fixture: fixtureNumber, slot: slot) }
-    let initialOrder = (1...10).map { rid($0) }
 
     switch fixture {
     case .F1:
@@ -117,14 +132,16 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
         })
 
     case .F3:
+        // Removal, optional settle gap (the driver's `ms` is a minimum wait), then reinsertion of the same UUID.
         return SelfTestCase(steps: [
             ["step": "focus", "row": 4],
             ["step": "type", "row": 4, "text": "x"],
-            ["step": "remove-row", "row": 4],
+            ["step": "remove-row", "row": 4, "ms": f3GapMs],
             ["step": "insert-row", "row": 4, "text": "Row 4", "index": 3],
             ["step": "release-all"],
         ], checks: { e in
             let row4 = rid(4).uuidString
+            let removal = e.find(kind: "state", node: row4, tag: "remove").first
             let disappear = e.find(node: row4, tag: "disappear").first
             let cancel = e.find(node: row4, tag: "task-cancel").first
             let appears = e.find(node: row4, tag: "appear")
@@ -133,21 +150,30 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
             let commits = e.find(kind: "effect", node: row4, tag: "commit")
             let commitGen = commits.first.flatMap { e.payload($0)["gen"] as? Int }
             let rejectedReason = rejected.first.flatMap { e.payload($0)["reason"] as? String }
+            let outcome: String
+            switch secondLocal {
+            case 0?: outcome = "fresh"
+            case 1?: outcome = "preserved"
+            case let n?: outcome = "other(\(n))"
+            case nil: outcome = "no-reinsert"
+            }
+            let gap = (removal != nil && appears.count == 2) ? e.millis(removal!, appears[1]) : -1
+            let taskStarts = e.find(node: row4, tag: "task-start").count
             return [
                 e.check("teardown-disappear-before-cancel",
                         disappear != nil && cancel != nil && disappear! < cancel!,
                         "disappear=\(disappear.map(String.init) ?? "nil") cancel=\(cancel.map(String.init) ?? "nil")"),
-                e.check("reinserted-fresh-state", appears.count == 2 && secondLocal == 0,
-                        "appears=\(appears.count) second-local=\(secondLocal.map(String.init) ?? "nil")"),
                 e.check("reinserted-index-and-text", e.index(rid(4)) == 3 && e.text(rid(4)) == "Row 4",
                         "index=\(e.index(rid(4)) ?? -1) text=\(e.text(rid(4)) ?? "nil")"),
-                e.check("task-restarted-for-reinsert", e.find(node: row4, tag: "task-start").count == 2),
+                e.check("task-restarted-for-reinsert", taskStarts == 2, "task-starts=\(taskStarts)"),
                 e.check("old-result-rejected", rejected.count == 1 && rejectedReason == "task-cancelled",
                         "rejected=\(rejected.count) reason=\(rejectedReason ?? "nil")"),
                 e.check("only-new-instance-commits", commits.count == 1 && commitGen == 1,
                         "commits=\(commits.count) gen=\(commitGen.map(String.init) ?? "nil")"),
-                e.check("focus-outcome-recorded", e.lastFocus() != nil,
-                        "focus=\(e.lastFocus() ?? "nil") (Mac outcome, recorded not asserted)"),
+                e.observe("reinsert-local-state", outcome,
+                          "second-local=\(secondLocal.map(String.init) ?? "nil") appears=\(appears.count) gap-ms=\(gap)"),
+                e.observe("reinsert-focus", e.lastFocus() == row4 ? "focused" : "not-focused",
+                          "focus=\(e.lastFocus() ?? "nil")"),
             ]
         })
 
@@ -185,13 +211,22 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
             ["step": "release", "key": "insert-1", "value": 0],
             ["step": "resize", "width": 720, "height": 560, "ms": 300],
         ], checks: { e in
-            let modes = e.find(node: "layout").compactMap { e.payload($0)["mode"] as? String }
-            let containedAll = e.find(node: "layout").allSatisfy { (e.payload($0)["contained"] as? Bool) == true }
-            let layoutCount = e.find(node: "layout").count
+            let layouts = e.find(node: "layout")
+            let modes = layouts.compactMap { e.payload($0)["mode"] as? String }
+            let real = layouts.filter { (e.payload($0)["degenerate"] as? Bool) != true }
+            let degenerate = layouts.filter { (e.payload($0)["degenerate"] as? Bool) == true }
+            let offender = real.first { (e.payload($0)["contained"] as? Bool) != true }
+            let offenderDetail = offender.map { i -> String in
+                let p = e.payload(i)
+                return "event=\(i) width=\(p["width"] ?? "?") bounds=[\(p["bounds"] ?? "?")] outside=\(p["outside"] ?? [])"
+            } ?? ""
             return [
                 e.check("wide-narrow-wide-transitions", isSubsequence(["wide", "narrow", "wide"], of: modes),
                         "modes=\(modes.joined(separator: ">"))"),
-                e.check("all-placements-contained", layoutCount > 0 && containedAll, "placements=\(layoutCount)"),
+                e.check("all-placements-contained", !real.isEmpty && offender == nil,
+                        "placements=\(real.count) offender: \(offenderDetail)"),
+                e.observe("zero-width-placement-passes", "\(degenerate.count)",
+                          "contained-flags=\(degenerate.map { (e.payload($0)["contained"] as? Bool) == true ? "T" : "F" }.joined())"),
                 e.check("async-update-committed", e.text(rid(1)) == "Row 1 updated 0", "text=\(e.text(rid(1)) ?? "nil")"),
                 e.check("async-insert-committed", e.model.rows.count == 11 && e.model.rows.first?.text == "Engine 0",
                         "count=\(e.model.rows.count)"),
@@ -200,6 +235,7 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
         })
 
     case .F6:
+        // Both inserts in one turn: the only variant that produced an overlapping (interrupted) pair in probing.
         return SelfTestCase(steps: [
             ["step": "burst-insert", "ms": 1500],
         ], checks: { e in
@@ -295,7 +331,6 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool) -> SelfTestCase {
             ]
         })
     }
-    _ = initialOrder
 }
 
 @MainActor
@@ -317,21 +352,45 @@ final class SelfTestRunner {
 
     private func run() async {
         let fixture = session.config.fixture.rawValue
-        let testCase = makeCase(fixture: session.config.fixture, reduced: session.config.reducedMotion)
+        let testCase = makeCase(fixture: session.config.fixture, reduced: session.config.reducedMotion,
+                                f3GapMs: session.config.f3GapMs)
         let driver = session.driver
         await driver.settle(minimumMs: 300)
         for step in testCase.steps {
             await driver.perform(step)
         }
+        if session.config.fixture == .F9 {
+            // Closing the window does not end the process in self-test mode; wait (bounded) for the tree release event.
+            for _ in 0..<60 {
+                if session.log.events().contains(where: { ($0["node_id"] as? String) == "tree" }) { break }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            await driver.settle()
+        }
         let evidence = Evidence(model: session.model, events: session.log.events())
-        let checks = testCase.checks(evidence)
+        var checks = testCase.checks(evidence)
+        if session.config.fixture == .F9 {
+            // Diagnostic for the tree-release assertion: is the closed window object still retained by AppKit?
+            let titled = NSApplication.shared.windows.filter { $0.title.hasPrefix("SR0 Fixture") }
+            checks.append(Check(name: "window-objects-after-close", pass: true,
+                                detail: "titled=\(titled.count) visible=\(titled.filter(\.isVisible).count) released-flag=\(titled.map { $0.isReleasedWhenClosed })",
+                                observe: true))
+        }
         var failures = 0
+        var asserted = 0
         for check in checks {
+            if check.observe {
+                print("OBSERVE \(fixture) \(check.name): \(check.detail)")
+                continue
+            }
+            asserted += 1
             if !check.pass { failures += 1 }
             print("ASSERT \(fixture) \(check.name): \(check.pass ? "PASS" : "FAIL") \(check.detail)")
         }
         let verdict = failures == 0 ? "PASS" : "FAIL"
-        print("SELFTEST \(fixture)\(session.config.reducedMotion ? "-reduced" : ""): \(verdict) (\(checks.count - failures)/\(checks.count))")
+        let label = session.config.f3VariantName.map { "\(fixture) variant=\($0)" }
+            ?? "\(fixture)\(session.config.reducedMotion ? "-reduced" : "")"
+        print("SELFTEST \(label): \(verdict) (\(asserted - failures)/\(asserted))")
         fflush(stdout)
         exit(failures == 0 ? 0 : 1)
     }

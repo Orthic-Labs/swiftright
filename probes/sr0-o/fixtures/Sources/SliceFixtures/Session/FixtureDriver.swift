@@ -61,6 +61,10 @@ final class FixtureDriver {
             model.requestInsert()
         case "burst-insert":
             model.burstInsert()
+        case "burst-a":
+            model.burstInsertOne(0)
+        case "burst-b":
+            model.burstInsertOne(1)
         case "resize":
             resizeWindow(width: step["width"] as? Int ?? 480, height: step["height"] as? Int ?? 560)
         case "close-window":

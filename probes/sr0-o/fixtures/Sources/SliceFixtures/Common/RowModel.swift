@@ -132,9 +132,19 @@ final class RowModel {
         insertRequestSeq += 1
     }
 
+    /// Both burst inserts in one turn (kept for the original step). Their in-animation interleaving is SwiftUI timing.
     func burstInsert() {
-        insertRow(Row(id: rowID(200), text: "Anim A"), at: 0, animated: true, tag: "A")
-        insertRow(Row(id: rowID(201), text: "Anim B"), at: 0, animated: true, tag: "B")
+        burstInsertOne(0)
+        burstInsertOne(1)
+    }
+
+    /// One animated insert: 0 = A (slot 200), 1 = B (slot 201). The driver settles between them.
+    func burstInsertOne(_ which: Int) {
+        if which == 0 {
+            insertRow(Row(id: rowID(200), text: "Anim A"), at: 0, animated: true, tag: "A")
+        } else {
+            insertRow(Row(id: rowID(201), text: "Anim B"), at: 0, animated: true, tag: "B")
+        }
     }
 
     func setReducedMotion(_ systemReduce: Bool) {

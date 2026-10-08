@@ -63,3 +63,69 @@ Findings:
 - **F3 is an oracle observation, not a fixture bug:** real SwiftUI `List` on macOS 27 preserved row 4's `@State` (`local=1`) across remove → reinsert of the same UUID, after `onDisappear` had fired. The self-test expectation (fresh state) came from the draft contract and was wrong; CONTRACT F3 now defers to the recorded outcome. Repeat with a longer gap and with a non-`List` container before accepting it as the oracle. The fresh runtime's F3 test assumes fresh state and must follow whatever is accepted.
 - **F5 nondeterminism & containment:** traces differ across runs and one placement check fails; diagnose before F5 becomes an oracle.
 - **F9:** closing the last window terminates the app before the self-test prints its verdict; print before closing or keep the app alive after last window close in self-test mode.
+
+## Follow-up: F3 oracle, F5 nondeterminism, F9 verdict (2026-10-09, macOS 27.0.1 arm64, Swift 6.4)
+
+Scope: `probes/sr0-o/fixtures/` only. No commits, branches, or system-setting changes. Runs go through `scripts/run-self-test.sh`, with `--self-test` last. Hashes: `scripts/normalize-hash.py` (hashlib SHA-256 over normalized lines, `mono_ns` removed). Two hashes are reported: `raw` (line order kept) and `canonical` (order-insensitive within each driver step, because sibling events inside one SwiftUI pass may interleave differently).
+
+### Changes made
+
+- **App entry (F9):** `FixtureAppDelegate.applicationShouldTerminateAfterLastWindowClosed` returns false only when `--self-test` is present. The self-test waits (bounded, 3 s) for the `tree released` event after close, then prints the verdict.
+- **F5 root cause:** AppKit restored `NSWindow Frame main` from the app's defaults. Initial width varied between runs. A 0-width `placeSubviews` pass (window collapsing during restore) reported `contained=false` on every failing run. Self-test now clears `NSWindow Frame *` defaults before launch. Layout events now log `bounds`, `outside` frames and a `degenerate` flag. The containment assertion excludes degenerate (0-width) passes, which are reported as an OBSERVE line (`zero-width-placement-passes`).
+- **F3 oracle:** the assertion `reinserted-fresh-state` was removed. The outcome is now an OBSERVE record (`fresh`/`preserved`, focus, gap ms). Variant flag `--f3-variant <list|vstack|lazy>-<1|3>s`, placed before `--self-test`. The runner accepts an optional third argument.
+- **F6:** attempted two changes (split the burst into driver steps; `completionCriteria: .removed`). Neither produced an interruption: A completes about 6-11 ms after start, so a later insert never overlaps. Reverted to the original same-turn burst, which produces overlap. Iterations used on F6: 3 of 4. The remaining trace variance is recorded as a finding below.
+
+### F3 oracle table (container × gap → reinserted row local state)
+
+| Container | Gap | Run 1 | Run 2 | Run 3 | Deterministic? | Focus after reinsert |
+|---|---|---|---|---|---|---|
+| List | 0 (immediate, default) | preserved (local=1) | preserved | preserved | yes | focused |
+| List | 1 s (1.22-1.26 s measured) | preserved | preserved | preserved | yes | focused |
+| List | 3 s (3.25-3.39 s measured) | preserved | preserved | preserved | yes | focused |
+| VStack + ForEach | 1 s | fresh (local=0) | fresh | fresh | yes | not focused |
+| VStack + ForEach | 3 s | fresh | fresh | fresh | yes | not focused |
+| LazyVStack in ScrollView | 1 s | fresh | fresh | fresh | yes | not focused |
+| LazyVStack in ScrollView | 3 s | fresh | fresh | fresh | yes | not focused |
+
+Finding: the outcome depends on the container, not the gap. Only `List` preserves `@State` across remove → reinsert of the same UUID, on macOS 27.0.1. Every run is deterministic for this outcome. The draft contract's "fresh state" expectation holds for VStack and LazyVStack only. The Windows runtime must not assume either outcome as an oracle until it has been checked against the same container.
+
+### Full matrix: 3 runs each
+
+Assertions (asserted checks only; OBSERVE lines do not count):
+
+| Config | Verdict ×3 | Raw hash distinct (of 3) | Canonical hash distinct (of 3) |
+|---|---|---|---|
+| F1 | PASS 7/7 ×3 | 1 | 1 |
+| F2 | PASS 6/6 ×3 | 1 | 1 |
+| F3 (default = List, immediate) | PASS 5/5 ×3 | 1 | 1 |
+| F4 | PASS 6/6 ×3 | 1 | 1 |
+| F5 | PASS 5/5 ×3 | 1 | 1 |
+| F6 | PASS 5/5 ×3 | 3 | 2 |
+| F6-reduced | PASS 3/3 ×3 | 1 | 1 |
+| F7 | PASS 5/5 ×3 | 1 | 1 |
+| F8 | PASS 7/7 ×3 | 1 | 1 |
+| F9 | FAIL 4/5 ×3 (`tree-released`) | 1 | 1 |
+| F3 `list-1s` | PASS 5/5 ×3 | 1 | 1 |
+| F3 `list-3s` | PASS 5/5 ×3 | 1 | 1 |
+| F3 `vstack-1s` | PASS 5/5 ×3 | 1 | 1 |
+| F3 `vstack-3s` | PASS 5/5 ×3 | 2 | 1 |
+| F3 `lazy-1s` | PASS 5/5 ×3 | 3 | 1 |
+| F3 `lazy-3s` | PASS 5/5 ×3 | 3 | 1 |
+
+Fixture pass rate: 9 of 10 configs PASS ×3 (F9 FAIL ×3). F5 all-placements-contained now passes ×3; before this follow-up it failed 3 of 3.
+
+### Findings
+
+1. **F5 (resolved in fixture):** trace variance came from window-frame restoration (above). With restoration cleared, the canonical and raw hashes match across runs.
+2. **F6 (SwiftUI variance, recorded, not masked):** `interruption-recorded` passes ×3. The raw trace varies in 3 of 3 runs, and the canonical trace varies in 2 of 3. Run 2 shows an extra appear/disappear pair for row B (`...201`), which runs 1 and 3 do not. Row A's `disappear`/`appear` pair is in all three runs. The burst step's completion order is not fixed, and SwiftUI rebuilds an interrupted row in some passes. Treat F6's raw trace as nondeterministic on this macOS build.
+3. **F3 variant nondeterminism (recorded):** for `vstack` and `lazy`, the raw trace varies (order of sibling `appear` and `task-start` within one insert pass; the `focus` event lands before or after the row-load start). The canonical hash is identical within each container and matches across containers, so the difference is event order only, not outcome.
+4. **F9 (open finding, assertion kept failing):** the verdict now prints after close, and the first four assertions pass (tasks cancelled at close: 11; no commit after close; late results rejected: 11; cleanup after close: 11). `tree-released` fails ×3. The diagnostic observed the closed window still retained by AppKit (`titled=1 visible=0 isReleasedWhenClosed=false`). In self-test mode the process stays alive, so the window and its SwiftUI tree are not released. The assertion is not relaxed. Whether the tree should be released on close is an open question for the Windows side of the contract.
+
+### Not done
+
+- The F6 interruption cannot be forced deterministically from the driver on this build. It is observed only through the same-turn burst. A dedicated interruption probe would need a view-model change beyond this follow-up's scope.
+- F9 `tree-released` is open. The fixture does not release the window; this needs a decision (close-then-quit in the self-test versus asserting retention).
+
+## Primary verification (2026-10-09)
+
+Primary reran F3 `list-1s`, `vstack-1s`, `lazy-1s` and F5 once each: List reinsert appears with `local=1` (preserved), VStack and LazyVStack with `local=0` (fresh); F5 PASS 5/5. CONTRACT F3 now records per-container outcomes; F9 tree release is reclassified as a Windows runtime requirement rather than a Mac oracle assertion. F6 raw-trace variance (extra appear/disappear pair in one run) must be resolved as a declared permitted ordering or a fixture change before F6 becomes an oracle.

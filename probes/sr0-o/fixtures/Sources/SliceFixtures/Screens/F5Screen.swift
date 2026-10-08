@@ -28,14 +28,29 @@ struct WidthDependentLayout: Layout {
             )
         }
         let wide = bounds.width >= Self.wideThreshold
-        let contained = frames.allSatisfy { bounds.contains($0) }
+        // A frame is contained when its edges lie inside the bounds (half-point tolerance for rounding).
+        let outside = frames.filter { !Self.isContained($0, in: bounds) }
+        let contained = outside.isEmpty
         let signature = "\(wide)|" + frames.map { "\($0)" }.joined(separator: ";")
         log.emitIfChanged("state", node: "layout", signature: signature, payload: [
             "mode": wide ? "wide" : "narrow",
             "width": Int(bounds.width),
             "contained": contained,
+            "degenerate": bounds.width <= 0,
             "items": frames.count,
+            "bounds": Self.describe(bounds),
+            "outside": outside.map(Self.describe),
         ])
+    }
+
+    static func isContained(_ frame: CGRect, in bounds: CGRect) -> Bool {
+        let tolerance: CGFloat = 0.5
+        return frame.minX >= bounds.minX - tolerance && frame.maxX <= bounds.maxX + tolerance
+            && frame.minY >= bounds.minY - tolerance && frame.maxY <= bounds.maxY + tolerance
+    }
+
+    static func describe(_ rect: CGRect) -> String {
+        "x=\(rect.minX),y=\(rect.minY),w=\(rect.width),h=\(rect.height)"
     }
 
     static func plan(width: CGFloat, subviews: Subviews, origin: CGPoint) -> [CGRect] {

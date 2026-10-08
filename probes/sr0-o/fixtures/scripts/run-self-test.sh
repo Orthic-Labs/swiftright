@@ -1,16 +1,18 @@
 #!/bin/bash
-# Usage: run-self-test.sh <F1..F9|F6-reduced> <run-index>
+# Usage: run-self-test.sh <F1..F9|F6-reduced> <run-index> [f3-variant]
+# f3-variant (F3 only): <list|vstack|lazy>-<1|3>s, e.g. lazy-3s. Omitted = original F3 (list, immediate reinsert).
 # Launch -> run self-test -> quit. Kills the process if it is still alive after 30 s.
 # Relaunches only when the root view never reports root-appear (window not presented);
 # every attempt is recorded in out/<name>-run<n>.launch.txt. A launched run that fails its assertions is not retried.
 set -u
 cd "$(dirname "$0")/.."
 BIN="$(swift build --show-bin-path)/FixtureApp"
-arg="$1"; run="$2"
+arg="$1"; run="$2"; variant="${3:-}"
 fixture="${arg%-reduced}"
 extra=()
 [[ "$arg" == *-reduced ]] && extra=(--reduced-motion-variant)
-name="${arg}-run${run}"
+[[ -n "$variant" ]] && extra=(--f3-variant "$variant")
+name="${arg}${variant:+-$variant}-run${run}"
 events="out/${name}.jsonl"; stdout="out/${name}.stdout"; launch="out/${name}.launch.txt"
 : > "$launch"
 for attempt in 1 2 3 4 5 6 7 8; do

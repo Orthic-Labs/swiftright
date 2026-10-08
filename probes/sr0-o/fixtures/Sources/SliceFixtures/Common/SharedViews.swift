@@ -66,6 +66,36 @@ struct RowList: View {
     }
 }
 
+/// F3 container variants. `list` is the original fixture; `vstack` and `lazy` are oracle variants
+/// that test whether the preserved-state outcome depends on List's cell reuse.
+struct RowStack: View {
+    @Bindable var model: RowModel
+    let focus: FocusState<UUID?>.Binding
+    let kind: FixtureConfig.F3Container
+    var rowTasks = false
+
+    var body: some View {
+        switch kind {
+        case .list:
+            RowList(model: model, focus: focus, rowTasks: rowTasks)
+        case .vstack:
+            VStack(alignment: .leading) {
+                ForEach($model.rows, id: \.id) { row in
+                    EditableRowView(row: row, model: model, focus: focus, rowTask: rowTasks)
+                }
+            }
+        case .lazy:
+            ScrollView {
+                LazyVStack(alignment: .leading) {
+                    ForEach($model.rows, id: \.id) { row in
+                        EditableRowView(row: row, model: model, focus: focus, rowTask: rowTasks)
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// Common chrome for every fixture: focus logging, programmatic focus requests, toolbar insert, window disappearance.
 struct FixtureScaffold<Content: View>: View {
     @Bindable var model: RowModel

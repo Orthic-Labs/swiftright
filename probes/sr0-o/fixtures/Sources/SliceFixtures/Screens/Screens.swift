@@ -27,13 +27,15 @@ struct F2Screen: View {
     }
 }
 
-// F3: removal tears rows down; reinsertion with the same UUID starts fresh @State.
+// F3: removal tears rows down; reinsertion with the same UUID. The container is a variant axis.
+// The reinserted row's @State outcome is recorded by the self-test, not assumed.
 struct F3Screen: View {
     @Bindable var model: RowModel
+    let container: FixtureConfig.F3Container
 
     var body: some View {
         FixtureScaffold(model: model) { focus in
-            RowList(model: model, focus: focus, rowTasks: true)
+            RowStack(model: model, focus: focus, kind: container, rowTasks: true)
         }
     }
 }

@@ -72,7 +72,7 @@ public struct FixtureRootView: View {
         switch session.config.fixture {
         case .F1: F1Screen(model: session.model)
         case .F2: F2Screen(model: session.model)
-        case .F3: F3Screen(model: session.model)
+        case .F3: F3Screen(model: session.model, container: session.config.f3Container)
         case .F4: F4Screen(model: session.model)
         case .F5: F5Screen(model: session.model)
         case .F6: F6Screen(model: session.model)
