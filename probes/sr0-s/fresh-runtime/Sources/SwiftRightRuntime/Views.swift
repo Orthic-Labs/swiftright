@@ -1,0 +1,330 @@
+import Foundation
+
+// SR0-S fresh runtime: SwiftUI programming-model semantics without any renderer.
+// Public signatures mirror probes/sr0-c/.../WindowsStubs.swift.
+
+// MARK: - View protocol
+
+@MainActor @preconcurrency
+public protocol View {
+    associatedtype Body: View
+    @ViewBuilder @MainActor var body: Body { get }
+}
+
+extension View {
+    /// Evaluates `body` through an existential so the graph can expand the result.
+    @MainActor
+    func evaluateBody() -> any View { body }
+}
+
+extension Never: View {
+    @MainActor public var body: Never { return fatalError("Never has no body") }
+}
+
+public struct EmptyView: View {
+    public init() {}
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+}
+
+/// Views that only group children. Their children are spliced into the parent
+/// with structural segments; they never become graph nodes themselves.
+@MainActor
+protocol ViewContainer {
+    func parts() -> [(Segment, any View)]
+}
+
+/// Views that become graph nodes without a user `body`.
+@MainActor
+protocol PrimitiveView {
+    var nodeKind: NodeKind { get }
+    var nodeContent: (any View)? { get }
+}
+
+// MARK: - Builder containers
+
+@MainActor
+public struct TupleView<T>: View {
+    public let value: T
+    public init(_ value: T) { self.value = value }
+    @MainActor public var body: Never { return fatalError("TupleView has no body") }
+}
+
+extension TupleView: ViewContainer {
+    @MainActor
+    func parts() -> [(Segment, any View)] {
+        let mirror = Mirror(reflecting: value)
+        if mirror.displayStyle == .tuple {
+            var out: [(Segment, any View)] = []
+            for (index, child) in mirror.children.enumerated() {
+                if let view = child.value as? any View { out.append((.index(index), view)) }
+            }
+            return out
+        }
+        if let view = value as? any View { return [(.index(0), view)] }
+        return []
+    }
+}
+
+@MainActor
+public struct ConditionalContent<TrueContent: View, FalseContent: View>: View {
+    let first: TrueContent?
+    let second: FalseContent?
+    init(first: TrueContent?, second: FalseContent?) {
+        self.first = first
+        self.second = second
+    }
+    @MainActor public var body: Never { return fatalError("ConditionalContent has no body") }
+}
+
+extension ConditionalContent: ViewContainer {
+    @MainActor
+    func parts() -> [(Segment, any View)] {
+        if let first { return [(.branch(0), first)] }
+        if let second { return [(.branch(1), second)] }
+        return []
+    }
+}
+
+@MainActor
+@resultBuilder
+public struct ViewBuilder {
+    public static func buildBlock() -> EmptyView { EmptyView() }
+    public static func buildBlock<each Content: View>(_ content: repeat each Content) -> TupleView<(repeat each Content)> {
+        TupleView((repeat each content))
+    }
+    public static func buildExpression<Content: View>(_ content: Content) -> Content { content }
+    public static func buildIf<Content: View>(_ content: Content?) -> Content? { content }
+    public static func buildEither<TrueContent: View, FalseContent: View>(first content: TrueContent) -> ConditionalContent<TrueContent, FalseContent> {
+        ConditionalContent(first: content, second: nil)
+    }
+    public static func buildEither<TrueContent: View, FalseContent: View>(second content: FalseContent) -> ConditionalContent<TrueContent, FalseContent> {
+        ConditionalContent(first: nil, second: content)
+    }
+}
+
+extension Optional: View where Wrapped: View {
+    @MainActor public var body: Never { return fatalError("Optional has no body") }
+}
+
+// MARK: - Primitives
+
+public struct Text: View, PrimitiveView {
+    let string: String
+    public init(_ content: String) { string = content }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .text(string) }
+    var nodeContent: (any View)? { nil }
+}
+
+public struct Spacer: View, PrimitiveView {
+    public init(minLength: CGFloat? = nil) {}
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .spacer }
+    var nodeContent: (any View)? { nil }
+}
+
+public struct Button<Label: View>: View, PrimitiveView {
+    let action: () -> Void
+    let label: Label
+    public init(action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
+        self.action = action
+        self.label = label()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .button(action) }
+    var nodeContent: (any View)? { label }
+}
+
+extension Button where Label == Text {
+    public init(_ titleKey: String, action: @escaping () -> Void) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(action: action, label: label)
+    }
+}
+
+public struct TextField<Label: View>: View, PrimitiveView {
+    let text: Binding<String>
+    let label: Label
+    public init(text: Binding<String>, @ViewBuilder label: () -> Label) {
+        self.text = text
+        self.label = label()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind {
+        let binding = text
+        return .textField({ binding.wrappedValue })
+    }
+    var nodeContent: (any View)? { nil }
+}
+
+extension TextField where Label == Text {
+    public init(_ titleKey: String, text: Binding<String>) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(text: text, label: label)
+    }
+}
+
+public struct HorizontalAlignment: Sendable {
+    public static let leading = HorizontalAlignment()
+    public static let center = HorizontalAlignment()
+    public static let trailing = HorizontalAlignment()
+    public init() {}
+}
+
+public struct VerticalAlignment: Sendable {
+    public static let top = VerticalAlignment()
+    public static let center = VerticalAlignment()
+    public static let bottom = VerticalAlignment()
+    public init() {}
+}
+
+// TODO(layout): alignment and spacing are recorded but not applied; no measure/place pass yet.
+public struct VStack<Content: View>: View, PrimitiveView {
+    let alignment: HorizontalAlignment
+    let spacing: CGFloat?
+    let content: Content
+    public init(alignment: HorizontalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+        self.alignment = alignment
+        self.spacing = spacing
+        self.content = content()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .container("VStack") }
+    var nodeContent: (any View)? { content }
+}
+
+public struct HStack<Content: View>: View, PrimitiveView {
+    let alignment: VerticalAlignment
+    let spacing: CGFloat?
+    let content: Content
+    public init(alignment: VerticalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+        self.alignment = alignment
+        self.spacing = spacing
+        self.content = content()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .container("HStack") }
+    var nodeContent: (any View)? { content }
+}
+
+public struct List<SelectionValue: Hashable, Content: View>: View, PrimitiveView {
+    let content: Content
+    init(content: Content) { self.content = content }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .container("List") }
+    var nodeContent: (any View)? { content }
+}
+
+extension List where SelectionValue == Never {
+    public init(@ViewBuilder content: () -> Content) {
+        self.init(content: content())
+    }
+}
+
+// MARK: - Dynamic content and ForEach
+
+public protocol DynamicViewContent: View {}
+
+public struct ForEach<Data: RandomAccessCollection, ID: Hashable, Content: View>: DynamicViewContent, ViewContainer {
+    let items: Data
+    let idOf: (Data.Element) -> ID
+    let makeContent: (Data.Element) -> Content
+
+    init(items: Data, idOf: @escaping (Data.Element) -> ID, makeContent: @escaping (Data.Element) -> Content) {
+        self.items = items
+        self.idOf = idOf
+        self.makeContent = makeContent
+    }
+
+    public init(_ data: Data, id: KeyPath<Data.Element, ID>, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.init(items: data, idOf: { $0[keyPath: id] }, makeContent: content)
+    }
+
+    @MainActor public var body: Never { return fatalError("ForEach has no body") }
+
+    @MainActor
+    func parts() -> [(Segment, any View)] {
+        items.map { element in
+            (Segment.keyed(AnyHashable(idOf(element))), makeContent(element) as any View)
+        }
+    }
+}
+
+extension ForEach where ID == Data.Element.ID, Data.Element: Identifiable {
+    public init(_ data: Data, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.init(data, id: \.id, content: content)
+    }
+}
+
+extension ForEach {
+    /// `ForEach($items) { $item in ... }`: each row binding resolves its element by id at access time,
+    /// so a row handle never targets a stale index after inserts, deletes or moves.
+    @_disfavoredOverload
+    public init<C>(_ data: Binding<C>, @ViewBuilder content: @escaping (Binding<C.Element>) -> Content)
+    where Data == LazyMapSequence<C.Indices, (C.Index, ID)>, ID == C.Element.ID, C: MutableCollection, C: RandomAccessCollection, C.Element: Identifiable
+    {
+        let snapshot = data.wrappedValue
+        let pairs: LazyMapSequence<C.Indices, (C.Index, ID)> = snapshot.indices.lazy.map { index in
+            (index, snapshot[index].id)
+        }
+        self.init(
+            items: pairs,
+            idOf: { $0.1 },
+            makeContent: { pair in
+                let id = pair.1
+                let fallback = snapshot[pair.0]
+                let row = Binding<C.Element>(
+                    get: { data.wrappedValue.first(where: { $0.id == id }) ?? fallback },
+                    set: { newValue in
+                        var current = data.wrappedValue
+                        guard let index = current.firstIndex(where: { $0.id == id }) else { return }
+                        current[index] = newValue
+                        data.wrappedValue = current
+                    }
+                )
+                return content(row)
+            }
+        )
+    }
+}
+
+extension DynamicViewContent {
+    /// Accepted for API shape. Move gestures are not wired on the headless runtime; tests drive
+    /// `MutableCollection.move(fromOffsets:toOffset:)` on the model directly.
+    public func onMove(perform action: ((IndexSet, Int) -> Void)?) -> some DynamicViewContent {
+        OnMoveContent(content: self, handler: action)
+    }
+}
+
+struct OnMoveContent<Content: DynamicViewContent>: DynamicViewContent, ViewContainer {
+    let content: Content
+    let handler: ((IndexSet, Int) -> Void)?
+    @MainActor public var body: Never { return fatalError("OnMoveContent has no body") }
+    @MainActor
+    func parts() -> [(Segment, any View)] {
+        (content as? ViewContainer)?.parts() ?? []
+    }
+}
+
+extension MutableCollection where Self: RandomAccessCollection {
+    public mutating func move(fromOffsets source: IndexSet, toOffset destination: Int) {
+        var items = Array(self)
+        let moving = source.map { items[$0] }
+        var target = destination
+        for index in source.reversed() {
+            items.remove(at: index)
+            if index < target { target -= 1 }
+        }
+        items.insert(contentsOf: moving, at: target)
+        for (offset, element) in items.enumerated() {
+            self[self.index(startIndex, offsetBy: offset)] = element
+        }
+    }
+}
+
+public struct Edge: Sendable {
+    public struct Set: Sendable {
+        public static let all = Set()
+        public init() {}
+    }
+}
