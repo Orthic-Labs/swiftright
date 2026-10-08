@@ -132,3 +132,30 @@ Foreground status was not stable. The probe window was foreground in 47 to 49 of
 Primary re-read `result-batch-20261009-021500.txt`: idle frames 0, jobs 5000/5000, job p99 ≤ 1.63 ms, CPU paint cadence p50 16.66 ms with p95 up to ~20.7 ms, DWM presented-frame samples n=0. The earlier 300–660 ms stalls did not recur under the display-driven clock.
 
 Presented-frame measurement needs an external ETW consumer such as Microsoft PresentMon against the probe process, or swap-chain frame statistics exposed from inside GPUI. CPU paint cadence is not the §11 presentation endpoint.
+
+## Presented-frame intervals via PresentMon (2026-10-09, batch 030737)
+
+**Setup.** Microsoft PresentMon 2.6.0 CLI (`PresentMon-2.6.0-x64.exe`, official GameTechDev GitHub release) ran elevated through `win` with `--process_name SwiftHost.exe --v1_metrics --timed 300`. `scripts/run-desktop.ps1 -Runs 5` ran meanwhile in the interactive desktop session. The binary was unchanged from batch 021500. Results: `result-presentmon-batch1.txt` (probe output) and `pm-batch1-summary.txt` (per-process PresentMon summary from `pm_an.py`). The raw CSV stays on the host at `D:\Claude\sr0b-frame-clock\presentmon\pm-batch1.csv`.
+
+**Present path.** Every present is `Composed: Flip` with `SyncInterval 0`, so DWM composes frames rather than flipping them independently. `msUntilDisplayed` p50 is about 31–32 ms, roughly two vblanks from present to scan-out.
+
+**Mapping.** PresentMon recorded 8 of the 10 processes. Matching processes to runs by start time (13 s spacing): base-1 was captured only partly, because PresentMon started late. base-2 and tbp-2 have no PresentMon rows; the cause is unknown. The other seven runs map one-to-one.
+
+| Run | Foreground samples | Presents | Dropped | Displayed-change p50 / p95 / p99 ms |
+|---|---|---|---|---|
+| base-1 (partial) | 0/47 | 301 | 301 | none displayed |
+| tbp-1 | 4/47 | 363 | 358 | n=4 |
+| base-3 | 48/48 | 361 | 12 | 16.664 / 16.697 / 16.714 |
+| tbp-3 | 9/47 | 376 | 315 | 16.667 / 16.699 / 16.706 (n=60) |
+| base-4 | 47/47 | 361 | 12 | 16.664 / 16.697 / 16.710 |
+| tbp-4 | 23/47 | 361 | 163 | 16.666 / 116.654 / 166.648 |
+| base-5 | 35/47 | 367 | 3 | 16.664 / 16.696 / 17.231 |
+| tbp-5 | 46/46 | 352 | 5 | 16.665 / 16.689 / 16.703 |
+
+Each run's max (about 3.0–3.1 s) is the gap across the probe's idle phase, when no presents happen by design. It is not a stall.
+
+**Verdict.** In unobscured runs (base-3, base-4, base-5, tbp-5) the presented-frame interval has p95 16.689–16.697 ms, which meets architecture §11 (p95 ≤ 16.7 ms) by about 0.003 ms. p99 is at most 17.23 ms. A batch of four runs is not enough to call this a stable pass.
+
+**Drops follow occlusion.** Mass drops occur only in runs where the probe was not foreground (base-1, tbp-1, tbp-3, tbp-4). In this batch the maximized Claude desktop window covered the probe in those runs. DWM skips frames from occluded windows, so these drops say nothing about the renderer. The future harness must bring the probe to the foreground (or use a clean desktop) before measuring.
+
+**Still open.** base-2 and tbp-2 were not captured, so the next batch should start PresentMon before the first launch and confirm one row set per process. The probe's own `verdict=FAIL` (tbp-1 and tbp-3, exit 1) comes from the CPU paint-cadence check (`paint_interval_ms(rust)` p95 of about 19–20 ms). That is not the §11 endpoint, and its threshold should move to the PresentMon interval. The about 32 ms present-to-display latency is a DWM composition cost to track against the input-latency budget.
