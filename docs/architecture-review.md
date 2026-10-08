@@ -1,4 +1,8 @@
-# Adversarial review of SwiftRight architecture v0.1
+# SwiftRight architecture review history
+
+Current plan: [v0.4](architecture.md). Historical findings below apply to named revisions; [v0.4 dispositions](#v04-corrections-8-october-2026) supersede earlier dependency, fallback & delivery recommendations.
+
+## Original review of v0.1
 
 Reviewed 8 October 2026 against live upstream state. Verdict first, evidence after.
 
@@ -94,7 +98,7 @@ Second-opinion review (Astra) proposed keeping Apple SwiftUI on Mac, building a 
 
 **Accepted from Astra**
 - Drop SwiftCrossUI/WinUI as Windows foundation: removes WinRT projection ownership, archived bindings, and the UIA crash chain entirely.
-- GPUI first backend. Verified: gpui 0.2.x, Apache-2.0, unconditional `accesskit` dependency, Windows backend on Win32/DirectWrite, pre-1.0 with breaking changes.
+- GPUI first backend candidate. **Corrected in v0.4:** this review conflated published 0.2.2 with newer upstream source. AccessKit exists in inspected upstream source, not published 0.2.2; dependency selection needs artifact-level qualification.
 - Slint second backend behind same protocol, pending written licensing clarification for a redistributable framework.
 - Decision slice (editable reorderable list under async insert, custom Layout, interrupted animation, cancellation, IME, a11y activation) replaces v0.2 SR0.
 - Corrections to this review: wrapper-as-SwiftUI-view is acceptable; Windows compile is necessary not sufficient; SwiftCrossUI already enables StrictConcurrency; #787 evidence is UIA traversal, Narrator untested; Windows App SDK 1.8 servicing ended September 2026; Observation polyfill asymmetry noted.
@@ -105,3 +109,20 @@ Second-opinion review (Astra) proposed keeping Apple SwiftUI on Mac, building a 
 - Runtime seed decided in SR0 by comparing SwiftCrossUI core fork against fresh runtime.
 - §1 now states Windows is custom-drawn, Fluent-themed, accessible; not native WinUI. Same class as current Tauri shell.
 - C# WinUI fallback removed entirely; breaks one codebase.
+
+## v0.4 corrections, 8 October 2026
+
+Adversarial review of v0.3 identified six plan defects. These dispositions change design & acceptance requirements; no implementation or runtime qualification is claimed.
+
+| Finding | Correction in v0.4 | Required implementation evidence |
+|---|---|---|
+| Published GPUI conflated with upstream AccessKit | §2 separates published archive from source snapshot; SR0-D qualifies exact distribution before runtime investment | Native x64 & arm64 UIA discovery/action using pinned package/artifact inputs |
+| Renderer fallback used for runtime/bridge failures | §12 routes failures by owner; Slint remains unqualified until same ABI probes pass | Root-cause evidence plus unchanged app fixtures through qualified alternative, or runtime repair/reselection |
+| Swift & Rust both assigned layout ownership | §§5–6 give Swift final geometry; Rust supplies read-only measurement & painting | Width-dependent text, coherent paint/hit-test/AX bounds, no reentrant pumping, measured crossings |
+| Oracle permits false confidence | §11 specifies input replay, controlled app effects, lifecycle observations, normalization, partial orders & accepted/candidate traces | 20 repeatable Mac runs; negative comparator fixtures; Windows replay plus native IME/assistive-technology actions |
+| Seed selection precedes its evidence; budgets undefined | §§11–12 put fixtures/oracle before comparison, set numerical limits & bound failed attempts | Both seeds scored on same frozen workload/tuple; every stage reports pass/fail |
+| Shared capability/release integration absent | §§7–9 map RightKit owners, adapter gaps, managed builds, local native hosts & existing signing | Exact published pins, working Swift adapters & RightKit-packaged clean-machine qualification |
+
+Retained requirements: one Swift screen codebase, real SwiftUI/AppKit on Mac, Windows runtime ownership, reusable existing engines, no transpiler, second-language shell or runtime AI dependency. Custom `Layout` in SR0 remains a narrow probe; broader protocol support is later inventory growth.
+
+Dependency correction sources: [published GPUI manifest](https://docs.rs/crate/gpui/0.2.2/source/Cargo.toml), [upstream snapshot](https://github.com/zed-industries/zed/tree/b47a4ca595d3a3fba116b9e78ef01a46e2e43f3e/crates/gpui) & [AccessKit integration](https://github.com/zed-industries/zed/pull/56065).
