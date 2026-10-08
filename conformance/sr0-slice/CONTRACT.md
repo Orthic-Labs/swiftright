@@ -49,7 +49,7 @@ Each fixture names its source hash, initial state, stable node IDs, stimuli, set
 | F8 accessibility | Activation & editing via AX/UIA | AX press insert button; set value on row; move focus | Model state changes, roles/labels/actions per canonical map |
 | F9 window teardown | Close with live tasks | Close window with pending tasks & engine callbacks | Tasks cancelled, no commits after close (Mac oracle). Tree release after close is a Windows runtime requirement (architecture §6), not a Mac oracle assertion: AppKit keeps closed `NSWindow`s alive in the fixture host. |
 
-Each Mac fixture runs 20 times; all normalized assertions must agree before it becomes an oracle. Each Windows seed runs 20 times with all passing.
+Within one step, sibling lifecycle events from different nodes are unordered unless a fixture declares an order; per-node event order is always significant. Each Mac fixture runs 20 times; all normalized assertions must agree before it becomes an oracle. Each Windows seed runs 20 times with all passing.
 
 ## 4. Stimuli & native mappings
 

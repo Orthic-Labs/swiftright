@@ -89,6 +89,49 @@ struct AnyEquatable {
     func matches(_ other: Any) -> Bool { equals(other) }
 }
 
+/// Per-List cache of `@State` storage for keyed rows removed from that List (SR0-O F3 oracle:
+/// macOS 27 `List` preserves row state across remove → reinsert of the same id; VStack and
+/// LazyVStack reset it). Storage only: removal still runs onDisappear and cancels tasks, and
+/// reinsertion still runs onAppear and restarts tasks.
+///
+/// Lifetime (PROVISIONAL, pending more oracle traces): the cache lives as long as the List node.
+/// It is bounded to `limit` retired rows; the oldest-retired row is evicted first. A reinsert
+/// consumes its entries. Entries for a row are replaced when that row is retired again.
+struct RowStateCache {
+    /// Provisional bound. Not yet checked against a long-gap or many-row oracle trace.
+    static let limit = 64
+
+    private var storage: [NodeID: [String: AnyObject]] = [:]
+    /// Retained node ids grouped by the top-level row (the List child) they came from.
+    private var groups: [NodeID: [NodeID]] = [:]
+    /// Top-level rows in retirement order, oldest first.
+    private var order: [NodeID] = []
+
+    /// Starts a fresh retention group for one retired top-level row, replacing any earlier one.
+    mutating func beginRetiring(_ top: NodeID) {
+        for id in groups.removeValue(forKey: top) ?? [] { storage[id] = nil }
+        order.removeAll { $0 == top }
+        order.append(top)
+        groups[top] = []
+    }
+
+    mutating func retain(_ id: NodeID, top: NodeID, state: [String: AnyObject]) {
+        storage[id] = state
+        groups[top, default: []].append(id)
+    }
+
+    mutating func take(_ id: NodeID) -> [String: AnyObject]? {
+        storage.removeValue(forKey: id)
+    }
+
+    mutating func trim() {
+        while order.count > RowStateCache.limit {
+            let evicted = order.removeFirst()
+            for id in groups.removeValue(forKey: evicted) ?? [] { storage[id] = nil }
+        }
+    }
+}
+
 @MainActor
 final class Node {
     let id: NodeID
@@ -114,6 +157,8 @@ final class Node {
     var memo: [CGFloat?: LayoutSize] = [:]
     /// Cache owned by a custom `Layout` container.
     var layoutStorage: Any?
+    /// Retired-row state, used only when this node retains removed row state (List).
+    var rowCache = RowStateCache()
 
     init(id: NodeID, view: any View, parent: Node?) {
         self.id = id
@@ -123,6 +168,19 @@ final class Node {
 
     var kind: NodeKind { (view as? PrimitiveView)?.nodeKind ?? .user }
     var depth: Int { id.segments.count }
+
+    var retainsRemovedRowState: Bool {
+        if case .stack(let spec) = kind { return spec.retainsRemovedRowState }
+        return false
+    }
+}
+
+/// Keyed (ForEach) segment anywhere in a path.
+private func hasKeyedSegment(_ segments: ArraySlice<Segment>) -> Bool {
+    segments.contains { segment in
+        if case .keyed = segment { return true }
+        return false
+    }
 }
 
 /// Guarded commit for async work started by `.task`. A commit is accepted only while the
@@ -279,7 +337,13 @@ public final class Graph {
         }
         let surviving = Set(order)
         for old in parent.children where !surviving.contains(old) {
-            teardown(old)
+            if parent.retainsRemovedRowState, hasKeyedSegment(old.segments.dropFirst(parent.id.segments.count)) {
+                parent.rowCache.beginRetiring(old)
+                teardown(old, retainingIn: (list: parent, top: old))
+                parent.rowCache.trim()
+            } else {
+                teardown(old)
+            }
         }
         parent.children = order
         for childID in order {
@@ -293,13 +357,28 @@ public final class Graph {
                 instanceCounter += 1
                 created.instance = instanceCounter
                 created.inherited = parent.environment
+                if let list = rowListAncestor(of: parent), let restored = list.rowCache.take(childID) {
+                    created.storage = restored
+                }
                 nodes[childID] = created
                 evaluate(created)
             }
         }
     }
 
-    private func teardown(_ id: NodeID) {
+    /// The nearest ancestor-or-self that retains removed row state.
+    private func rowListAncestor(of node: Node) -> Node? {
+        var current: Node? = node
+        while let candidate = current {
+            if candidate.retainsRemovedRowState { return candidate }
+            current = candidate.parent
+        }
+        return nil
+    }
+
+    /// Tears a node down. When `retainingIn` is set, each removed node's `@State` storage is kept
+    /// in that List's row cache under its node id (state only; lifecycle has already run).
+    private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
         node.alive = false
         node.generation += 1
@@ -310,7 +389,10 @@ public final class Graph {
         }
         node.task?.cancel()
         node.task = nil
-        for child in node.children { teardown(child) }
+        if let target, !node.storage.isEmpty {
+            target.list.rowCache.retain(id, top: target.top, state: node.storage)
+        }
+        for child in node.children { teardown(child, retainingIn: target) }
         node.children = []
     }
 

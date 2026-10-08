@@ -42,6 +42,7 @@ struct RowView: View {
             Button("focus") { focus.wrappedValue = row.wrappedValue.id }
         }
         .focused(focus, equals: row.wrappedValue.id)
+        .onAppear(perform: RowTask(name: name, store: store).appear)
         .task(RowTask(name: name, store: store).run)
         .onDisappear(perform: RowTask(name: name, store: store).disappear)
     }
@@ -63,6 +64,10 @@ struct RowTask {
         store.log.append("commit=\(accepted) \(name)")
     }
 
+    func appear() {
+        store.log.append("appear \(name)")
+    }
+
     func disappear() {
         store.log.append("disappear \(name)")
     }
@@ -74,6 +79,20 @@ struct Screen: View {
 
     var body: some View {
         VStack {
+            ForEach($store.rows) { $row in
+                RowView(name: row.text, row: $row, focus: $focus, store: store)
+            }
+        }
+    }
+}
+
+/// Same rows as `Screen`, inside a `List` (SR0-O F3: List retains removed-row state).
+struct ListScreen: View {
+    @Bindable var store: Store
+    @FocusState var focus: UUID?
+
+    var body: some View {
+        List {
             ForEach($store.rows) { $row in
                 RowView(name: row.text, row: $row, focus: $focus, store: store)
             }
@@ -212,6 +231,11 @@ func allTexts(_ graph: Graph, kind: String) -> [String] {
 }
 
 @MainActor
+func rowLog(_ store: Store, from mark: Int) -> [String] {
+    store.log[mark...].filter { $0.hasSuffix(" r3") }
+}
+
+@MainActor
 func serialText(_ graph: Graph, _ uuid: UUID) -> String? {
     descendants(graph, under: rowNodeID(graph, uuid), kind: "Text").first?.text
 }
@@ -288,8 +312,38 @@ final class RuntimeTests: XCTestCase {
         XCTAssertTrue(records.last?.focused?.hasPrefix(rowNodeID(graph, target.id) + "/") == true)
     }
 
-    // F3: removal tears the row down (onDisappear, then task cancellation); reinsertion gets fresh state.
-    func testF3_RemovalTearsDownAndReinsertionGetsFreshState() async throws {
+    // F3, List (oracle: macOS 27 List preserves @State across remove -> reinsert of the same id).
+    // Lifecycle still runs: onDisappear and task cancel on removal, onAppear and task restart on reinsert.
+    func testF3_ListReinsertPreservesStateWhileLifecycleFires() async throws {
+        let store = makeStore()
+        let graph = Graph(ListScreen(store: store))
+        graph.flush()
+
+        let removed = store.rows[3]
+        let before = rowNodeID(graph, removed.id)
+        let tokenBefore = graph.nodeInstance(before)
+        let serialBefore = serialText(graph, removed.id)
+
+        let markRemoved = store.log.count
+        store.rows.remove(at: 3)
+        graph.flush()
+        try await settle()
+        XCTAssertNil(graph.nodeInstance(before), "removed node is gone")
+        XCTAssertEqual(rowLog(store, from: markRemoved), ["disappear r3", "cancelled r3", "commit=false r3"])
+
+        let markReinserted = store.log.count
+        store.rows.insert(removed, at: 3)
+        graph.flush()
+        XCTAssertNotEqual(graph.nodeInstance(rowNodeID(graph, removed.id)), tokenBefore, "reinsertion is a new node")
+        XCTAssertNotNil(serialBefore)
+        XCTAssertEqual(serialText(graph, removed.id), serialBefore, "List keeps reinserted row @State")
+        try await settle()
+        XCTAssertEqual(rowLog(store, from: markReinserted), ["appear r3", "commit=true r3"], "onAppear and task restart fire")
+        XCTAssertTrue(store.results.contains("r3"), "restarted task commits")
+    }
+
+    // F3, VStack + ForEach (oracle: VStack resets @State on remove -> reinsert of the same id).
+    func testF3_VStackReinsertResetsState() async throws {
         let store = makeStore()
         let graph = Graph(Screen(store: store))
         graph.flush()
@@ -299,16 +353,44 @@ final class RuntimeTests: XCTestCase {
         let tokenBefore = graph.nodeInstance(before)
         let serialBefore = serialText(graph, removed.id)
 
+        let markRemoved = store.log.count
         store.rows.remove(at: 3)
         graph.flush()
         try await settle()
         XCTAssertNil(graph.nodeInstance(before), "removed node is gone")
-        XCTAssertEqual(store.log.filter { $0.contains("r3") }, ["disappear r3", "cancelled r3", "commit=false r3"])
+        XCTAssertEqual(rowLog(store, from: markRemoved), ["disappear r3", "cancelled r3", "commit=false r3"])
 
+        let markReinserted = store.log.count
         store.rows.insert(removed, at: 3)
         graph.flush()
         XCTAssertNotEqual(graph.nodeInstance(rowNodeID(graph, removed.id)), tokenBefore, "reinsertion is a new node")
-        XCTAssertNotEqual(serialText(graph, removed.id), serialBefore, "reinserted row gets fresh @State")
+        XCTAssertNotEqual(serialText(graph, removed.id), serialBefore, "VStack resets reinserted row @State")
+        try await settle()
+        XCTAssertEqual(rowLog(store, from: markReinserted), ["appear r3", "commit=true r3"], "onAppear and task restart fire")
+    }
+
+    // F3, bound (PROVISIONAL limit 64 retired rows, oldest evicted first). 65 rows retire in one
+    // pass: the most recently retired row keeps its state, the oldest one has lost it.
+    func testF3_ListRetainedStateIsBounded() async throws {
+        let store = makeStore(70)
+        let graph = Graph(ListScreen(store: store))
+        graph.flush()
+
+        let oldest = store.rows[0]
+        let newest = store.rows[64]
+        let oldestSerial = serialText(graph, oldest.id)
+        let newestSerial = serialText(graph, newest.id)
+        store.rows.removeFirst(65)
+        graph.flush()
+        try await settle()
+
+        store.rows.insert(newest, at: 0)
+        graph.flush()
+        XCTAssertEqual(serialText(graph, newest.id), newestSerial, "most recently retired row is retained")
+
+        store.rows.insert(oldest, at: 0)
+        graph.flush()
+        XCTAssertNotEqual(serialText(graph, oldest.id), oldestSerial, "oldest retired row was evicted")
     }
 
     // F4: a stale async result is cancelled and rejected; cleanup still runs and is observable.

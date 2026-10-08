@@ -42,6 +42,9 @@ struct StackSpec: Sendable {
     let spacing: CGFloat
     /// List-style: the stack takes the full finite cross proposal.
     let fillsCross: Bool
+    /// Keeps `@State` of keyed rows removed from this container, so a reinserted row with the same
+    /// id gets its old state back. Only List does this on the recorded macOS 27 oracle (SR0-O F3).
+    var retainsRemovedRowState = false
 }
 
 /// Result of distributing a stack's main axis under one proposal.

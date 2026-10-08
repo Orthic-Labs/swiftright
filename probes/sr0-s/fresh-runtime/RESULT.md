@@ -278,3 +278,56 @@ Runtime only: 1740 lines (was 1059). Tests: 678 lines (was 404).
 - Mac: `cd probes/sr0-s/fresh-runtime && swift test`
 - Windows: `scripts/sync-to-win.sh probes/sr0-s/fresh-runtime 'D:\Claude\sr0s-fresh-runtime-2'`, then
   `swift test` in `D:\Claude\sr0s-fresh-runtime-2` with the Swift runtime bin directory on PATH.
+
+## SR0-S F3 alignment: List retains removed-row state (2026-10-09)
+
+Source of truth: `conformance/sr0-slice/CONTRACT.md` F3 row and `probes/sr0-o/fixtures/RESULT.md`
+("F3 oracle table" and "Primary verification"). macOS 27.0.1 oracle: List preserves row `@State`
+across remove → reinsert of the same id (gaps 0/1/3 s); VStack and LazyVStack reset it. Teardown
+(onDisappear, task cancel) and reinsert (onAppear, task restart) fire in all containers.
+
+### Result
+
+| Platform | `swift test` | Fix iterations |
+|---|---|---|
+| macOS 27 arm64, Swift 6.4 | PASS 21 of 21 (3 further repeats: 21 of 21 each) | 0 (first run green) |
+| Windows 11 x64, Swift 6.4.0 | PASS 21 of 21 (2 further repeats: 21 of 21 each) | 0 (first run green) |
+
+Baseline before the change: Mac 19 of 19. The 19 original tests stay green. F3 became three tests
+(List preserve, VStack reset, bound) so the total is 21.
+
+### Change (runtime, `Sources/SwiftRightRuntime/`)
+
+- `LayoutEngine.swift`: `StackSpec.retainsRemovedRowState` (default false).
+- `Views.swift`: `List` sets it true. VStack and HStack leave it false.
+- `Graph.swift`: `RowStateCache` on each node. When a keyed child (ForEach row) is removed from a
+  retaining container, `teardown` runs as before (lifecycle first), then stores each removed node's
+  `@State` storage under its full `NodeID`. When a node is created under a retaining ancestor, a
+  cached entry for that `NodeID` is restored into the new node's storage before its first evaluate,
+  so `@State` binds to the old box. Restored entries are consumed.
+
+### Assumptions (PROVISIONAL, pending oracle traces)
+
+- Cache lifetime: the List's own lifetime. The cache dies with the List node.
+- Bound: 64 retired top-level rows, oldest evicted first. The value is not derived from the oracle.
+- Scope: only keyed (ForEach) rows are retained. Unkeyed List children are not.
+- Gaps: the oracle recorded 0/1/3 s gaps. Longer gaps and List destruction are not yet traced.
+- Not covered: LazyVStack has no runtime node yet, so the "LazyVStack resets" half of F3 is not
+  asserted here. The VStack case is asserted; the LazyVStack case waits for a LazyVStack primitive.
+
+### Tests (`Tests/SwiftRightRuntimeTests/RuntimeTests.swift`)
+
+- `testF3_ListReinsertPreservesStateWhileLifecycleFires`: removal logs disappear, cancelled,
+  commit=false. Reinsert keeps the old serial text. Reinsert logs appear and commit=true after restart.
+- `testF3_VStackReinsertResetsState`: same lifecycle assertions, fresh `@State` (serial changes).
+- `testF3_ListRetainedStateIsBounded`: 65 rows retire in one pass. The newest keeps state, the
+  oldest (evicted) does not.
+- `RowView` gained `onAppear` logging (`appear rN`). `ListScreen` is the List variant of `Screen`.
+- Not asserted: focus after reinsert (the oracle records focus, but the runtime test does not yet check it).
+
+### Reproduce
+
+- Mac: `cd probes/sr0-s/fresh-runtime && swift test`
+- Windows: `scripts/sync-to-win.sh probes/sr0-s/fresh-runtime 'D:\Claude\sr0s-fresh-runtime-v4'`, then
+  `swift test` in `D:\Claude\sr0s-fresh-runtime-v4` with the Swift runtime bin on PATH.
+- Nothing committed, pushed, or branched. Writes limited to `probes/sr0-s/fresh-runtime/`.

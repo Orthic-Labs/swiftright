@@ -243,7 +243,8 @@ public struct List<SelectionValue: Hashable, Content: View>: View, PrimitiveView
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     /// Rows stack vertically with no gap and take the full proposed width.
     var nodeKind: NodeKind {
-        .stack(StackSpec(name: "List", axis: .vertical, cross: .start, spacing: 0, fillsCross: true))
+        .stack(StackSpec(name: "List", axis: .vertical, cross: .start, spacing: 0, fillsCross: true,
+                         retainsRemovedRowState: true))
     }
     var nodeContent: (any View)? { content }
 }

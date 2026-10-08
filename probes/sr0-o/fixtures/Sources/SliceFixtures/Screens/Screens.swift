@@ -60,7 +60,6 @@ struct F6Screen: View {
         FixtureScaffold(model: model) { focus in
             RowList(model: model, focus: focus)
         }
-        .animation(model.animationEnabled ? .linear(duration: 0.6) : nil, value: model.rows.count)
         .onAppear { model.setReducedMotion(reduceMotion) }
         .onChange(of: reduceMotion) { _, newValue in model.setReducedMotion(newValue) }
     }

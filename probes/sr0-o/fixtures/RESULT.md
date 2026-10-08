@@ -129,3 +129,41 @@ Fixture pass rate: 9 of 10 configs PASS ×3 (F9 FAIL ×3). F5 all-placements-con
 ## Primary verification (2026-10-09)
 
 Primary reran F3 `list-1s`, `vstack-1s`, `lazy-1s` and F5 once each: List reinsert appears with `local=1` (preserved), VStack and LazyVStack with `local=0` (fresh); F5 PASS 5/5. CONTRACT F3 now records per-container outcomes; F9 tree release is reclassified as a Windows runtime requirement rather than a Mac oracle assertion. F6 raw-trace variance (extra appear/disappear pair in one run) must be resolved as a declared permitted ordering or a fixture change before F6 becomes an oracle.
+
+## SR0-O F6 trace variance (2026-10-09, macOS 27.0.1 arm64, Swift 6.4)
+
+Scope: `probes/sr0-o/fixtures/` only (one source edit, `Sources/SliceFixtures/Screens/Screens.swift`). No commits, branches, or system settings. Runs via `scripts/run-self-test.sh` (`--self-test` last). Hashes via `scripts/normalize-hash.py` (`raw` keeps line order; `canonical` is order-insensitive within each driver step). Fixture iterations used: 1 of 4.
+
+### Correction to the earlier F6 note
+
+The earlier note said the extra appear/disappear pair for row B occurs "one run in three". The larger sample shows it is not a fixed rate. Across 13 runs with the original code (runs 1-3 and 11-20), the B pair appeared in 7 of 13 (runs 2, 12, 15, 17, 18, 19, 20). Row A's pair (appear, disappear, appear) appeared in all 13. The `canonical` hash took 2 values across runs 11-20 (6 and 4 runs), and `raw` took 3.
+
+### Data
+
+| Build | Runs | Row B extra pair | Row A pair | Canonical distinct | Raw distinct | Assertions |
+|---|---|---|---|---|---|---|
+| F6, original (implicit `.animation(_:value: rows.count)` on F6Screen root) | 11-20 | 6 of 10 | 10 of 10 | 2 | 3 | 5/5 ×10 |
+| F6, edited (implicit modifier removed) | 21-30 | 10 of 10 | 10 of 10 | 1 | 4 (7 runs share one) | 5/5 ×10 |
+| F6-reduced, edited | 21-30 | n/a (no B insert path variance) | n/a | 1 | 1 | 3/3 ×10 |
+
+Animation counts in edited F6 runs: 2 `start` and 2 `complete` per run. The F6-reduced assertions also pass: no animation transactions, policy disabled, final order correct.
+
+### Which events vary
+
+- The variance was row B's extra appear/disappear pair, in the original build only. It made the per-step lifecycle multiset differ between runs, which is the `lifecycle.count` check in TraceKit.
+- Row A's pair is constant. It was present in every run of both builds, so it is not variance.
+- Raw variance that remains in the edited build is only the order of sibling events within one step (for example `A200:appear` before or after `anim:complete:A`). TraceKit already permits any permutation of lifecycle events within a step except declared edges, so this is not a semantic difference.
+
+### Cause
+
+Not SwiftUI-internal, as far as the evidence goes. F6Screen drove the same row-count change with two animation sources: an explicit `withAnimation` transaction per insert (in `RowModel.insertRow`), and a value-keyed `.animation(_:value: model.rows.count)` on the screen root. Their interaction made B's extra pair intermittent. Removing the implicit modifier made the pair deterministic (10 of 10) and the canonical hash identical (10 of 10). The explicit transaction still drives both animations, and the two-animations/interruption assertions still pass.
+
+Not proven: why B's pair and A's pair occur at all. They are deterministic now. A's pair is consistent with a List row being rebuilt when it moves from index 0 to index 1 on a same-turn insert above it. That is a hypothesis, not a measured result. No declared permitted-ordering entry was written, because the pairs are now deterministic and nets to the same final state. Any accepted F6 baseline must contain them.
+
+### Resolution
+
+- Classification: fixture defect (double animation driver on one mutation). Fixed by removing the implicit modifier from `Sources/SliceFixtures/Screens/Screens.swift` (F6Screen). The original is kept outside the repo.
+- Canonical hash identical 10 of 10 for F6 and for F6-reduced. Raw hash identical 10 of 10 for F6-reduced; F6 raw has 4 distinct sibling-order variants, which the comparator's lifecycle permutation rule permits.
+- The comparator test for a permitted-ordering declaration was not written: the variance it would cover no longer occurs.
+- CONTRACT F6 row was not edited. Its "completion order" wording still needs a decision on whether sibling order within a step is asserted or permuted.
+- Open: raw sibling-order variance in F6 is not zero. If SR0-O requires raw identity, this needs a decision, not a fixture change.
