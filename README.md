@@ -6,7 +6,7 @@ A proposed Swift desktop application SDK for macOS and Windows: one SwiftUI code
 
 ## Architecture and implementation plan
 
-Read the [full SwiftRight architecture plan](docs/architecture.md), version 0.3, dated 8 October 2026, with an [adversarial review](docs/architecture-review.md) that drove the v0.2 changes.
+Read the [full SwiftRight architecture plan](docs/architecture.md), version 0.3, dated 8 October 2026, with an [adversarial review](docs/architecture-review.md) that drove the v0.2 and v0.3 changes.
 
 The plan covers package boundaries, native backends, state and binding semantics, platform services, existing Rust-engine reuse, tooling, packaging, migration, conformance tests, performance measurements, and long-term maintenance.
 
