@@ -1,0 +1,98 @@
+[ime-probe] start ui_thread=ThreadId(1)
+[ime-probe] first paint: bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } focused=false handle_input_registered=false
+[ime-probe] window focused at startup
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=0..0 text="k" | text="k" selection16=1..1 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=1..1 text="o" | text="ko" selection16=2..2 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=2..2 text="k" | text="kok" selection16=3..3 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=3..3 text="d" | text="kokd" selection16=4..4 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=4..4 text="f" | text="kokdf" selection16=5..5 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=5..5 text="o" | text="kokdfo" selection16=6..6 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=6..6 text="s" | text="kokdfos" selection16=7..7 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=7..7 text="d" | text="kokdfosd" selection16=8..8 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=8..8 text="f" | text="kokdfosdf" selection16=9..9 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] replace_text_in_range args_range16=None target16=9..9 text="n" | text="kokdfosdfn" selection16=10..10 marked16=None
+[ime-probe] replace_text_in_range args_range16=None target16=10..10 text="i" | text="kokdfosdfni" selection16=11..11 marked16=None
+[ime-probe] replace_text_in_range args_range16=None target16=11..11 text="h" | text="kokdfosdfnih" selection16=12..12 marked16=None
+[ime-probe] replace_text_in_range args_range16=None target16=12..12 text="o" | text="kokdfosdfniho" selection16=13..13 marked16=None
+[ime-probe] replace_text_in_range args_range16=None target16=13..13 text="n" | text="kokdfosdfnihon" selection16=14..14 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 14..14 | text="kokdfosdfnihon" selection16=14..14 marked16=None
+[ime-probe] bounds_for_range args16=14..14 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_text_in_range args_range16=None target16=14..14 text="\u{3000}" | text="kokdfosdfnihon\u{3000}" selection16=15..15 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 15..15 | text="kokdfosdfnihon\u{3000}" selection16=15..15 marked16=None
+[ime-probe] bounds_for_range args16=15..15 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..15 new_text="あ" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}あ" selection16=16..16 marked16=Some(15..16)
+[ime-probe] marked_text_range -> Some(15..16)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..16 new_text="あｓ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}あｓ" selection16=17..17 marked16=Some(15..17)
+[ime-probe] marked_text_range -> Some(15..17)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..17 new_text="あｓｄ" new_selected16=Some(3..3) | text="kokdfosdfnihon\u{3000}あｓｄ" selection16=18..18 marked16=Some(15..18)
+[ime-probe] marked_text_range -> Some(15..18)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..18 new_text="あｓｄｋ" new_selected16=Some(4..4) | text="kokdfosdfnihon\u{3000}あｓｄｋ" selection16=19..19 marked16=Some(15..19)
+[ime-probe] marked_text_range -> Some(15..19)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..19 new_text="あｓｄｋｓ" new_selected16=Some(5..5) | text="kokdfosdfnihon\u{3000}あｓｄｋｓ" selection16=20..20 marked16=Some(15..20)
+[ime-probe] marked_text_range -> Some(15..20)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=15..20 new_text="あｓｄｋｓｄ" new_selected16=Some(6..6) | text="kokdfosdfnihon\u{3000}あｓｄｋｓｄ" selection16=21..21 marked16=Some(15..21)
+[ime-probe] replace_text_in_range args_range16=None target16=15..21 text="ありがとうございます。" | text="kokdfosdfnihon\u{3000}ありがとうございます。" selection16=26..26 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 26..26 | text="kokdfosdfnihon\u{3000}ありがとうございます。" selection16=26..26 marked16=None
+[ime-probe] bounds_for_range args16=26..26 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=26..26 new_text="あ" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あ" selection16=27..27 marked16=Some(26..27)
+[ime-probe] marked_text_range -> Some(26..27)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=26..27 new_text="あｓ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓ" selection16=28..28 marked16=Some(26..28)
+[ime-probe] marked_text_range -> Some(26..28)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=26..28 new_text="あｓｄ" new_selected16=Some(3..3) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄ" selection16=29..29 marked16=Some(26..29)
+[ime-probe] replace_text_in_range args_range16=None target16=26..29 text="あｓｄ" | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄ" selection16=29..29 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 29..29 | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄ" selection16=29..29 marked16=None
+[ime-probe] bounds_for_range args16=29..29 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=29..29 new_text="ｎ" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄｎ" selection16=30..30 marked16=Some(29..30)
+[ime-probe] marked_text_range -> Some(29..30)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=29..30 new_text="に" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄに" selection16=30..30 marked16=Some(29..30)
+[ime-probe] marked_text_range -> Some(29..30)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=29..30 new_text="にｈ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにｈ" selection16=31..31 marked16=Some(29..31)
+[ime-probe] marked_text_range -> Some(29..31)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=29..31 new_text="にほ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほ" selection16=31..31 marked16=Some(29..31)
+[ime-probe] marked_text_range -> Some(29..31)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=29..31 new_text="にほｎ" new_selected16=Some(3..3) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ" selection16=32..32 marked16=Some(29..32)
+[ime-probe] marked_text_range -> Some(29..32)
+[ime-probe] replace_text_in_range args_range16=None target16=29..32 text="にほｎ" | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ" selection16=32..32 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 32..32 | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ" selection16=32..32 marked16=None
+[ime-probe] bounds_for_range args16=32..32 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..32 new_text="ｎ" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎｎ" selection16=33..33 marked16=Some(32..33)
+[ime-probe] marked_text_range -> Some(32..33)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..33 new_text="に" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎに" selection16=33..33 marked16=Some(32..33)
+[ime-probe] marked_text_range -> Some(32..33)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..33 new_text="にｈ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎにｈ" selection16=34..34 marked16=Some(32..34)
+[ime-probe] marked_text_range -> Some(32..34)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..34 new_text="にほ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎにほ" selection16=34..34 marked16=Some(32..34)
+[ime-probe] marked_text_range -> Some(32..34)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..34 new_text="にほｎ" new_selected16=Some(3..3) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎにほｎ" selection16=35..35 marked16=Some(32..35)
+[ime-probe] marked_text_range -> Some(32..35)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=32..35 new_text="日本" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本" selection16=34..34 marked16=Some(32..34)
+[ime-probe] replace_text_in_range args_range16=None target16=32..34 text="日本" | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本" selection16=34..34 marked16=None
+[ime-probe] marked_text_range -> None
+[ime-probe] selected_text_range ignore_disabled=false -> 34..34 | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本" selection16=34..34 marked16=None
+[ime-probe] bounds_for_range args16=34..34 element_bounds=Bounds { origin: Point { x: 16px, y: 119.6px }, size: Size { 608px × 32px } } -> fixed=Bounds { origin: Point { x: 320px, y: 160px }, size: Size { 2px × 24px } }
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=34..34 new_text="ｎ" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本ｎ" selection16=35..35 marked16=Some(34..35)
+[ime-probe] marked_text_range -> Some(34..35)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=34..35 new_text="に" new_selected16=Some(1..1) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本に" selection16=35..35 marked16=Some(34..35)
+[ime-probe] marked_text_range -> Some(34..35)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=34..35 new_text="にｈ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本にｈ" selection16=36..36 marked16=Some(34..36)
+[ime-probe] marked_text_range -> Some(34..36)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=34..36 new_text="にほ" new_selected16=Some(2..2) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本にほ" selection16=36..36 marked16=Some(34..36)
+[ime-probe] marked_text_range -> Some(34..36)
+[ime-probe] replace_and_mark_text_in_range args_range16=None target16=34..36 new_text="にほｎ" new_selected16=Some(3..3) | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本にほｎ" selection16=37..37 marked16=Some(34..37)
+[ime-probe] marked_text_range -> Some(34..37)
+[ime-probe] replace_text_in_range args_range16=None target16=34..37 text="" | text="kokdfosdfnihon\u{3000}ありがとうございます。あｓｄにほｎ日本" selection16=34..34 marked16=None
