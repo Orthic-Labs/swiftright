@@ -1,0 +1,94 @@
+# SR0 slice contract (SR0-C)
+
+Status: DRAFT v0.1, 9 October 2026. Freezes when the same-source compile probe passes on both targets and the D-stage observation routes below are confirmed. After freeze, changes need a documented contract revision and a rerun of both seeds (architecture §11).
+
+## 1. Pinned tuple (initial)
+
+| Item | Value |
+|---|---|
+| Mac oracle of record | Mac mini, macOS 27.0.1 (26A434), arm64, Xcode 27.0, Swift 6.4 |
+| Mac deployment floor | macOS 14 (Observation); not traced in SR0 |
+| Windows lane | Dell XPS 15, Windows 11 Pro 26300, x64, Swift 6.4.0 (swift-6.4-RELEASE), Rust 1.98.0 via RightKit |
+| Windows arm64 lane | Blocked: no native host |
+| Renderer | gpui 0.2.2 + accesskit 0.25.1 + accesskit_windows 0.35.1, lockfile `probes/sr0-d/render-composition/Cargo.lock` |
+| Dispatch | `_dispatch_main_queue_callback_4CF` in Swift 6.4.0 runtime dispatch.dll (ordinal 23) |
+| Language mode | Swift 6, strict concurrency |
+
+GPU/driver, fonts, locale, DPI and refresh are recorded per run in fixture metadata.
+
+## 2. Slice inventory
+
+Only these APIs and compositions are in SR0. Everything else is unsupported for SR0 and must fail Windows compilation or be absent.
+
+| Group | APIs |
+|---|---|
+| Views | `Text`, `Button(_:action:)`, `TextField(_:text:)`, `VStack`, `HStack`, `Spacer`, `List`, `ForEach(_:id:)` over `Binding<[Row]>`, custom `Layout` |
+| State | `@State`, `Binding`, `@Bindable`, `@Observable` (stdlib Observation), `@Environment` with one custom `EnvironmentKey`, `@FocusState` with `.focused(_:equals:)` |
+| Lifecycle | `.onAppear`, `.onDisappear`, `.task` (cancellation on disappear) |
+| Lists | `.onMove`, deletion via model command, stable `id` per row |
+| Animation | `.animation(_:value:)`, `withAnimation`, reduced motion via environment |
+| Entry | SDK root factory; Mac one `Window` scene; Windows synchronous initial-thread entry |
+
+`Layout` subset: `sizeThatFits(proposal:subviews:cache:)` and `placeSubviews(in:proposal:subviews:cache:)`, with `ProposedViewSize` and `Subviews` size queries only. No layout values, priorities, or spacing APIs in SR0.
+
+Negative fixtures: `.onReceive`, `ObservableObject`/`@StateObject`, `NavigationSplitView`, `Timer.publish` each must fail Windows compilation with a diagnostic.
+
+## 3. Fixtures
+
+Each fixture names its source hash, initial state, stable node IDs, stimuli, settlement condition and assertions. Node IDs are model-level row UUIDs plus a fixed control role suffix (`row/<uuid>/field`, `toolbar/insert`).
+
+| ID | Purpose | Stimuli (logical) | Required assertions |
+|---|---|---|---|
+| F1 surviving-row identity | Edit survives unrelated insert above | Focus row 5, type "abc", fake engine inserts row at index 0, type "d" | Row 5 text "…abcd", focus & caret stay on row 5 identity, `@State` of row 5 unchanged |
+| F2 reorder | Identity survives move | Focus row 3, caret mid-text, `onMove` row 3 → index 7 | Same identity focused, caret offset unchanged, accessibility order updated |
+| F3 removal/reset | Removed row tears down | Focus row 4, delete row 4, reinsert same UUID | Mac-recorded teardown order: onDisappear, task cancel; reinserted row gets fresh `@State`; focus follows recorded Mac outcome |
+| F4 stale async | Guarded stale result | Start row task, remove row before fake completion fires | Cancellation delivered; result not committed to any row; cleanup observed |
+| F5 width layout | Width-dependent custom Layout | Resize window across wrap threshold during async updates | Containment, no clipping of caret, paint = hit-test = AX bounds |
+| F6 interrupted animation | Transaction semantics | Insert row with animation, insert again mid-animation | Interruption recorded, final layout settled, completion order; reduced-motion variant has no intermediate frames |
+| F7 IME | Composition on active row | Begin composition, insert row above, commit | Marked text stays on original identity; committed text lands there |
+| F8 accessibility | Activation & editing via AX/UIA | AX press insert button; set value on row; move focus | Model state changes, roles/labels/actions per canonical map |
+| F9 window teardown | Close with live tasks | Close window with pending tasks & engine callbacks | Tasks cancelled, no commits after close, tree released |
+
+Each Mac fixture runs 20 times; all normalized assertions must agree before it becomes an oracle. Each Windows seed runs 20 times with all passing.
+
+## 4. Stimuli & native mappings
+
+| Logical action | Mac | Windows |
+|---|---|---|
+| Copy / Paste / Undo / Redo | Cmd-C / Cmd-V / Cmd-Z / Shift-Cmd-Z | Ctrl-C / Ctrl-V / Ctrl-Z / Ctrl-Y |
+| Select all | Cmd-A | Ctrl-A |
+| Move focus | Tab / Shift-Tab | Tab / Shift-Tab |
+| Activate | Space on focused button; AXPress | Space; UIA Invoke |
+| Composition | Japanese IME (Kotoeri) romaji | Microsoft Japanese IME romaji |
+
+Async completions come from an injected fake engine and clock; fixtures release them explicitly. No assertion depends on SwiftUI's private scheduling.
+
+## 5. Observation routes
+
+| Observation | Mac | Windows |
+|---|---|---|
+| Model state, lifecycle, effects | In-process instrumentation in shared fixture code | Same |
+| Accessibility tree, roles, actions, bounds | AX API out of process (signed recorder with AX permission) | UIA out of process (proven: `probes/sr0-d/render-composition`) |
+| Focus & caret | AX focused element, `AXSelectedTextRange`, `AXBoundsForRange` | UIA focus, TextPattern selection & `GetBoundingRectangles` (TextPattern not yet proven) |
+| Marked text | Bounded input/output assertion only (no public marked-text observation) | Runtime-owned buffer state |
+| Visible response | Compositor/optical endpoint, chosen before seed scoring | Same |
+
+Canonical roles: window, button, text-field, list, list-item, static-text. Platform containers named in the normalizer are stripped; nothing else.
+
+## 6. Bridge ABI v0 vocabulary (frozen only after SR0-B)
+
+- Bootstrap query: ABI major/minor, architecture, pointer width, function-table sizes into caller-sized buffer.
+- Commit transaction: version, window generation, node upserts/removals, geometry in physical pixels, primitive list per node (text run handle, image, path, clip, transform), semantic node per node (role, label, value, actions, text selection), focus target.
+- Measurement: synchronous text measure returning size, baselines and retained shaped-run handle; cache key (text, font+version, width, locale, direction, DPI).
+- Events: input, focus, IME (IMM32 function table), AX action records, display tick; each tagged with window generation, node identity and snapshot version.
+- Ownership: opaque generation-tagged handles, explicit release, owner-frees, panics contained.
+
+## 7. Budgets
+
+Copied unchanged from architecture §11 decision budgets; frozen with this contract.
+
+## 8. Open before freeze
+
+- Same-source compile probe result (`probes/sr0-c/same-source`).
+- TextPattern on Windows edit nodes; Mac AX caret routes for SwiftUI `TextField`.
+- Visible-response endpoint method per OS.

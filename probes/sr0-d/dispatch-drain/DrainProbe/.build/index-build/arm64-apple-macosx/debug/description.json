@@ -1,0 +1,252 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.DrainProbe-arm64-apple-macosx-debug.module" : {
+      "executable" : "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/sources",
+      "importPath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/DrainProbe/main.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/swift-version-1BA08FC37EE9B949.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/CDispatchPrivate/include/CDispatchPrivate.h"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "DrainProbe",
+      "moduleOutputPath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/Modules/DrainProbe.swiftmodule",
+      "objects" : [
+        "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/main.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-Xcc",
+        "-fmodule-map-file=/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/CDispatchPrivate.build/module.modulemap",
+        "-Xcc",
+        "-I",
+        "-Xcc",
+        "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/CDispatchPrivate/include",
+        "-module-cache-path",
+        "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "DrainProbe_main",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-plugin-path",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-F",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-I",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "drainprobe"
+      ],
+      "outputFileMapPath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/Modules/DrainProbe.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/DrainProbe/main.swift"
+      ],
+      "tempsPath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "DrainProbe" : [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "DrainProbe",
+      "-package-name",
+      "drainprobe",
+      "-c",
+      "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/DrainProbe/main.swift",
+      "-I",
+      "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-Xcc",
+      "-fmodule-map-file=/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/CDispatchPrivate.build/module.modulemap",
+      "-Xcc",
+      "-I",
+      "-Xcc",
+      "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/CDispatchPrivate/include",
+      "-module-cache-path",
+      "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "DrainProbe_main",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-plugin-path",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+      "-F",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "drainprobe",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "CDispatchPrivate" : [
+
+    ],
+    "DrainProbe" : [
+      "CDispatchPrivate"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : [
+      {
+
+      }
+    ]
+  },
+  "writeCommands" : {
+    "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/Sources/DrainProbe/main.swift"
+        }
+      ],
+      "outputFilePath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/DrainProbe.build/sources"
+    },
+    "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/swift-version-1BA08FC37EE9B949.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Volumes/D/claude/swiftright/probes/sr0-d/dispatch-drain/DrainProbe/.build/index-build/arm64-apple-macosx/debug/swift-version-1BA08FC37EE9B949.txt"
+    }
+  }
+}
