@@ -87,3 +87,21 @@ Doc compares against React/Tauri only. Missing option: shared Swift domain logic
 - Swift Bundler Windows bundlers: https://github.com/moreSwift/swift-bundler
 - Swift Windows install: https://swift.org/install/windows/
 - Skip (no Windows target): https://www.infoq.com/news/2026/01/swift-skip-open-sourced
+
+## Addendum: v0.3 decision, 8 October 2026
+
+Second-opinion review (Astra) proposed keeping Apple SwiftUI on Mac, building a SwiftUI-semantics runtime in Swift for Windows, and rendering through GPUI over a C ABI. Accepted with amendments; architecture moved to v0.3.
+
+**Accepted from Astra**
+- Drop SwiftCrossUI/WinUI as Windows foundation: removes WinRT projection ownership, archived bindings, and the UIA crash chain entirely.
+- GPUI first backend. Verified: gpui 0.2.x, Apache-2.0, unconditional `accesskit` dependency, Windows backend on Win32/DirectWrite, pre-1.0 with breaking changes.
+- Slint second backend behind same protocol, pending written licensing clarification for a redistributable framework.
+- Decision slice (editable reorderable list under async insert, custom Layout, interrupted animation, cancellation, IME, a11y activation) replaces v0.2 SR0.
+- Corrections to this review: wrapper-as-SwiftUI-view is acceptable; Windows compile is necessary not sufficient; SwiftCrossUI already enables StrictConcurrency; #787 evidence is UIA traversal, Narrator untested; Windows App SDK 1.8 servicing ended September 2026; Observation polyfill asymmetry noted.
+
+**Amended**
+- "Full parity against named SDK version" scoped to inventory parity with macOS traces as oracle; SDK version is ceiling. Tokamak archived January 2026; OpenSwiftUI cross-platform graph incomplete after years.
+- Bridge is the new hazard: batched diffs, handles, no closures across ABI, Rust owns loop, Swift main actor pumped; bridge cost is a budget item and a kill criterion.
+- Runtime seed decided in SR0 by comparing SwiftCrossUI core fork against fresh runtime.
+- §1 now states Windows is custom-drawn, Fluent-themed, accessible; not native WinUI. Same class as current Tauri shell.
+- C# WinUI fallback removed entirely; breaks one codebase.
