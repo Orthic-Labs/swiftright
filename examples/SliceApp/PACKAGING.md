@@ -363,3 +363,23 @@ Findings, in the order hit:
 Resume once item 3 is resolved: in the clone, `cd examples/SliceApp && pnpm exec right-release release --tier patch --platform mac
 --config right-release.config.mjs --no-upload`; then a second clone with the 0.1.1 bump commit (VERSION, config, swift-package.json,
 package.json, DMG name in `prepackage-mac.sh`, one Swift edit); then codesign/spctl/stapler verification and sha256 recording.
+
+## R2 signed Windows build (2026-10-09): STOPPED at the RightKit ownership gate, nothing signed or packed
+
+Source: origin master c7c7eb6a2d520d4784e5204550e121fca6e97b5e, cloned on the Dell from the Mac path (`git clone mac:/Volumes/D/claude/swiftright`; GitHub is unreachable
+from Windows over SSH) into `D:\Claude\sr0-r2\swiftright`. Clone-local commit b94715a916b9e86cb2f0093ef2b7fe0b06209023 (not pushed): `package.json` pins
+`@rightkit/release` to `0.2.137` (the contract check rejects `link:`) and `pnpm-workspace.yaml` overrides it to the staged local package
+`D:\Claude\sr0-r2\tools\rightkit\packages\release` (copy of the Mac RightKit tree HEAD 61ace202 plus uncommitted release changes; file hashes in
+`/Volumes/D/sr0-artifacts/win/0.1.0/rightkit-release-mac-source-sha256.txt` and `rightkit-release-staged-sha256.txt`). Pre-publication tooling.
+
+Reached: clone, tool staging, `right-release doctor` (swift, version, makeappx and signtool 10.0.26100.0, disk all ok), and `scripts/prepackage-windows.ps1`
+(Swift release build, manifest and closure check, renderer pin check, `windows-stage`, `verify-package-layout.ps1 -Mode Stage` OK, renderer sha256 C80B9517...FB30).
+Stage hashes: `stage-0.1.0-sha256.txt`. Not reached: MSIX pack, signing, `signtool verify`, `.appinstaller`, Swift-only proof (needs both seals).
+
+Blockers and defects found:
+1. Ownership preflight fails on Windows: "current process is elevated or elevation state is unknown" (`ownership-approval.mjs` evaluateWindowsAcl requires a non-elevated
+   process). The SSH session is a High-integrity admin token; an S4U Limited scheduled task is also elevated. The existing Interactive/Limited tasks need a logged-in
+   user. A non-elevated run therefore needs an interactive logon. The repository-registration gate (not registered in protected trust) follows on both hosts.
+2. `scripts/clone-build-win.ps1` clones with `core.symlinks=false` on Windows, turning `packages/SwiftRightBridge/Sources/CSwiftRight/swiftright.h` (a git symlink) into a
+   text file and breaking the Swift build. Fix: `git config core.symlinks true` before checkout (needs an elevated or Developer Mode session). Script not yet changed.
+3. A `pnpm install --frozen-lockfile` inside release must not replace the staged link: the lockfile records the override so it stays a no-op.
