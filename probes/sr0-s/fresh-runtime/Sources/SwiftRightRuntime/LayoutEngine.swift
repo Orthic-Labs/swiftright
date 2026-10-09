@@ -72,8 +72,8 @@ extension Graph {
         switch node.kind {
         case .text(let string):
             return measureText(node, string, width: proposal.width)
-        case .textField(let read):
-            return measureText(node, read(), width: nil)
+        case .textField:
+            return measureText(node, node.textInput?.display ?? "", width: nil)
         case .spacer:
             return .zero
         case .modifier(.padding(let insets)):
@@ -87,6 +87,11 @@ extension Graph {
             return stackPlan(childNodes(node), spec, proposal).size
         case .layout(let spec):
             return spec.size(proposal, subviews(of: node), &node.layoutStorage)
+        case .scroll:
+            // Takes the proposal on each axis; without one, the content's ideal size.
+            let width = finiteLength(proposal.width)
+            let content = measureGroup(node, ProposedViewSize(width: width, height: nil))
+            return LayoutSize(width: width ?? content.width, height: finiteLength(proposal.height) ?? content.height)
         case .user, .button, .modifier:
             return measureGroup(node, proposal)
         }
@@ -114,13 +119,25 @@ extension Graph {
             placeStack(childNodes(node), spec, in: rect, proposal: proposal)
         case .layout(let spec):
             spec.place(rect, proposal, subviews(of: node), &node.layoutStorage)
+        case .scroll:
+            // The content is laid out at its ideal height and shifted up by the scroll offset. The offset
+            // is clamped so the content never scrolls past its own bounds.
+            let content = measureGroup(node, ProposedViewSize(width: rect.width, height: nil))
+            let maxOffset = max(0, content.height - rect.height)
+            node.scrollOffset = min(max(0, node.scrollOffset), maxOffset)
+            let contentRect = LayoutRect(x: rect.minX, y: rect.minY - node.scrollOffset, width: rect.width, height: content.height)
+            placeGroup(node, in: contentRect, proposal: ProposedViewSize(width: rect.width, height: nil))
         case .user, .button, .modifier:
-            let children = childNodes(node)
-            if children.count == 1 {
-                place(children[0], in: rect, proposal: proposal)
-            } else if children.count > 1 {
-                placeStack(children, groupStackSpec, in: rect, proposal: proposal)
-            }
+            placeGroup(node, in: rect, proposal: proposal)
+        }
+    }
+
+    private func placeGroup(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+        let children = childNodes(node)
+        if children.count == 1 {
+            place(children[0], in: rect, proposal: proposal)
+        } else if children.count > 1 {
+            placeStack(children, groupStackSpec, in: rect, proposal: proposal)
         }
     }
 

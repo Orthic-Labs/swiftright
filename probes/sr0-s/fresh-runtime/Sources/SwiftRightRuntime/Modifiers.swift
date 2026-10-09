@@ -35,11 +35,33 @@ extension View {
         priority: TaskPriority = .userInitiated,
         @_inheritActorContext _ action: sending @escaping @isolated(any) () async -> Void
     ) -> some View {
-        Modified(content: self, spec: .task(priority, action))
+        Modified(content: self, spec: .task(priority, nil, action))
     }
 
+    /// As SwiftUI `task(id:)`: starts on appear, and cancels and restarts when `value` changes. The
+    /// previous run's commits are rejected once it has been replaced.
+    public func task<T: Equatable>(
+        id value: T,
+        priority: TaskPriority = .userInitiated,
+        @_inheritActorContext _ action: sending @escaping @isolated(any) () async -> Void
+    ) -> some View {
+        Modified(content: self, spec: .task(priority, AnyEquatable(value), action))
+    }
+
+    /// Gives focus to this view while `binding` names `value`. Removing the view clears the focus
+    /// (when it names `value`), as on the Mac oracle.
     public func focused<Value: Hashable>(_ binding: FocusState<Value>.Binding, equals value: Value) -> some View {
-        Modified(content: self, spec: .focus({ binding.wrappedValue == value }))
+        let link = FocusLink(
+            isFocused: { binding.wrappedValue == value },
+            focus: { binding.assign(value) },
+            release: { if binding.wrappedValue == value { binding.reset() } }
+        )
+        return Modified(content: self, spec: .focus(link))
+    }
+
+    /// Multiplies this view's opacity. Changes animate under an animated transaction.
+    public func opacity(_ value: Double) -> some View {
+        Modified(content: self, spec: .opacity(value))
     }
 
     public func animation<V: Equatable>(_ animation: Animation?, value: V) -> some View {

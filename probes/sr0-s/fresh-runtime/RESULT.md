@@ -331,3 +331,80 @@ Baseline before the change: Mac 19 of 19. The 19 original tests stay green. F3 b
 - Windows: `scripts/sync-to-win.sh probes/sr0-s/fresh-runtime 'D:\Claude\sr0s-fresh-runtime-v4'`, then
   `swift test` in `D:\Claude\sr0s-fresh-runtime-v4` with the Swift runtime bin on PATH.
 - Nothing committed, pushed, or branched. Writes limited to `probes/sr0-s/fresh-runtime/`.
+
+## SR0-S closure of Windows-matrix gaps: focus, teardown, task(id:), containers, animation, IME (2026-10-09)
+
+Scope: `probes/sr0-s/fresh-runtime/` only. Foundation and Observation only, Swift 6 mode. Headless: no windows opened on
+Windows. Nothing committed, branched or pushed. Mac oracle: `probes/sr0-o/fixtures/RESULT.md` and its out/ traces.
+
+### Verdict
+
+| Platform | `swift test` | New tests | Fix iterations |
+|---|---|---|---|
+| macOS 27 arm64, Swift 6.4 | PASS 46 of 46 (21 prior + 25 new, one full run after the last edit) | 25 | 3 of 6 (cycle 1: compile, redeclared fixture name, missing fixture, generic inference; cycle 2 and 3: task(id:) test settled before the id change, then asserted a task event before the task had run) |
+| Windows 11 x64, swift-6.4.0 | PASS 46 of 46 (exit 0, first run) | 25 | 0 of 6 |
+
+The 21 prior tests stay green on both platforms. Windows run: `D:\Claude\sr0s-fresh-runtime-v6`, script
+`D:\Claude\sr0s-ps\run-sr0s-tests.ps1` (Swift runtime bin on PATH; output in `swift-test-out.txt`).
+
+### Changes by item
+
+1. **Focus cleared on removal (all containers).** `.focused(_:equals:)` carries a `FocusLink` (isFocused, focus, release).
+   Removing a focused node calls `release`, which resets the FocusState to its default (nil) only while it still names that
+   row. Mac trace: removal gives `focused=none` in List, VStack and LazyVStack alike.
+   **Decision (conflict resolved from the oracle):** the brief said a reinserted row is not focused. The Mac F3 trace says
+   otherwise for `List`: focus is restored to the reinserted row (`reinsert-focus focused`, 3 runs at 1 s, plus the 0 s and 3 s
+   tables). VStack and LazyVStack do not restore. The runtime therefore restores focus on reinsert for `List` only, through
+   `RowStateCache` (`takeFocus`), and not for the other containers. Tests: `FocusContainerTests`.
+2. **Tree release after teardown.** `Graph.tearDown()` runs disappear, cancels tasks, drops motions and text state, releases
+   every node (`releaseContents`: @State storage, environment values, view values, row caches, text state), emits one final
+   record with a nil root, clears the commit sink, and closes the graph (later flush/tick commit nothing).
+   **Retention found and fixed:** (a) observation `onChange` closures captured the node and the graph strongly. They sit in
+   each `StateBox` registrar, so `node -> storage -> box -> registrar -> closure -> node` was a cycle that never broke. Fixed
+   with `NodeHandle` (a weak link to the node) and `[weak self]`. Verified: restoring the strong capture makes the release test
+   fail on both the graph and every node. (b) `TaskOwnerToken` held the node strongly, so a task that outlives its cancel
+   (the F9 engine case) kept its node alive. Now it holds a `NodeHandle`. Not separately tested (see gaps). (c) `RowStateCache`
+   retained removed rows' storage and focus until eviction. It is now cleared with the node. (d) Focus registry: none in the
+   runtime; focus lives in the FocusState cell, and the focus link closures capture the binding, not a node. Tests:
+   `TeardownTests` (weak refs to graph, nodes, @State value, List rows with row cache, final record, no commit after teardown).
+3. **`task(id:)`.** A non-nil id restarts the task when it changes: the old run is cancelled, its token stops matching
+   (generation bump), and the new run starts. Same id re-evaluation does not restart. Disappear cancels as before. The
+   `task(name:)` form is unchanged. Tests: `TaskIDTests`.
+4. **LazyVStack and ScrollView.** `LazyVStack` realizes all rows like VStack (no virtualization) and resets a reinserted row's
+   @State (Mac oracle, LazyVStack in a ScrollView). `ScrollView` is vertical only: it takes the proposal, lays content out at
+   its ideal height, shifts it by the scroll offset, and clamps the offset to `[0, content - viewport]`. `Graph.scroll(_:to:)`
+   sets the offset; the next flush applies it. No clipping is modeled; off-viewport rows appear in the commit record.
+   Tests: `LazyContainerTests`, `ScrollViewTests`.
+5. **Animation transactions on the injected clock.** `withAnimation(_:_:completion:)` (SwiftUI shape). `Animation` gains
+   duration and curve (`linear`, `easeIn`, `easeOut`, `easeInOut`, each a constructor). `Graph.tick(now:)` advances motions;
+   each commit that changes a layout target or target opacity starts a motion from the node's presented value (so an
+   interruption retargets from the current value). A new `.opacity(_:)` modifier animates. Insertions fade in (opacity 0 to
+   target). Removals are not animated (no ghost nodes). `accessibilityReduceMotion` (settable through `setRootEnvironment`,
+   read per node) snaps and still delivers the completion. Completions run once: after every motion the transaction started
+   has finished or been superseded, or at its commit if it started none. Tests: `AnimationTests`.
+   **Decisions:** (a) the Mac F6 burst (two inserts in one turn) is reproduced: both transactions start motions, the first is
+   superseded and completes at the second's commit, the second completes at its end. (b) Completion on supersession is our
+   semantics, not measured on the Mac; the Mac F6 oracle only records that both complete. (c) `.animation(_:value:)` changes
+   create a transaction for the flush, so they animate the whole flush, not only their subtree. (d) Transactions are applied in
+   queue order per flush. The completion of a transaction that changes nothing fires at its commit.
+6. **IME and marked text.** `TextInputState` per TextField node, with UTF-16 selection, marked range and composition location,
+   and operations named after the bridge `TextStore`: `replaceAndMark(range:text:newSelection:)`, `unmark()`,
+   `replace(range:text:)`, `setSelection(_:)`, plus read-only `display`, `committed`, `markedRange`, `substring(_:)`.
+   Decisions, recorded in `TextInput.swift`: (a) the bound String holds committed text only. Marked text is written to the
+   binding only on commit (`unmark`, `replace`, an edit or selection that leaves the marked range). (b) While composing, an
+   edit replaces the whole marked text. A range outside it first commits the composition. (c) Replacing a non-empty
+   selection to start a composition removes that selected text from the binding at once; it is a commit, not marked text.
+   (d) `setSelection` outside the marked range commits. (e) Ranges are in displayed coordinates; an emoji is two units.
+   The F7 identity rule holds: the state is per node, so a composition survives an insert above it. Tests: `TextInputTests`.
+
+### Gaps and open items (not closed in this lane)
+
+- F9 Windows fixture was not re-run. This pass is headless only. The retention fixes address the cause recorded for `tree-released`
+  (graph-owned retention), but the fixture verdict is unverified until the Windows F9 run is repeated.
+- Task-token retention (fix b) is not directly tested. A test needs a task that outlives its cancel without leaking its own
+  continuation, and none was written.
+- F6 interruption is verified against our own motion model, not against Mac timing. Mac F6 raw traces still vary in sibling
+  order (see the fixtures RESULT). Canonical order is what this runtime asserts.
+- ScrollView is vertical only, with no clipping, no bounce, and no scroll-position binding. LazyVStack does not virtualize.
+- The List row state bound (64 retired rows, oldest first) is still provisional.
+- Text-input composition is headless only. The Windows bridge still uses its own text store; no route into this runtime is wired.

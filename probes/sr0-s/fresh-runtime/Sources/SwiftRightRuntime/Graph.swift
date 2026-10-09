@@ -35,14 +35,27 @@ public struct NodeID: Hashable, CustomStringConvertible {
 
 // MARK: - Node
 
+/// Type-erased focus binding of one `.focused(_:equals:)` modifier.
+@MainActor
+struct FocusLink {
+    /// True when the bound focus names this modifier's value.
+    let isFocused: () -> Bool
+    /// Makes this modifier's value the focus.
+    let focus: () -> Void
+    /// Clears the focus only while it still names this modifier's value.
+    let release: () -> Void
+}
+
 enum ModifierSpec {
     case padding(EdgeInsets)
     case appear(() -> Void)
     case disappear(() -> Void)
-    case task(TaskPriority, @isolated(any) () async -> Void)
-    case focus(() -> Bool)
+    /// `id` is nil for `task(name:...)`; a non-nil id restarts the task when it changes.
+    case task(TaskPriority, AnyEquatable?, @isolated(any) () async -> Void)
+    case focus(FocusLink)
     case animation(AnyEquatable, Animation?)
     case environment((inout EnvironmentValues) -> Void)
+    case opacity(Double)
 
     var name: String {
         switch self {
@@ -53,6 +66,7 @@ enum ModifierSpec {
         case .focus: return "focused"
         case .animation: return "animation"
         case .environment: return "environment"
+        case .opacity: return "opacity"
         }
     }
 }
@@ -62,9 +76,11 @@ enum NodeKind {
     case text(String)
     case spacer(CGFloat)
     case button(() -> Void)
-    case textField(() -> String)
+    case textField(Binding<String>)
     case stack(StackSpec)
     case layout(LayoutSpec)
+    /// Vertical scroll container. Its scroll offset lives on the node.
+    case scroll
     case modifier(ModifierSpec)
 
     /// Wrappers whose geometry is their single child's geometry (user bodies, buttons, and
@@ -89,10 +105,10 @@ struct AnyEquatable {
     func matches(_ other: Any) -> Bool { equals(other) }
 }
 
-/// Per-List cache of `@State` storage for keyed rows removed from that List (SR0-O F3 oracle:
-/// macOS 27 `List` preserves row state across remove → reinsert of the same id; VStack and
-/// LazyVStack reset it). Storage only: removal still runs onDisappear and cancels tasks, and
-/// reinsertion still runs onAppear and restarts tasks.
+/// Per-List cache of `@State` storage and focus for keyed rows removed from that List (SR0-O F3
+/// oracle: macOS 27 `List` preserves row state across remove → reinsert of the same id, and restores
+/// focus to the reinserted row; VStack and LazyVStack reset both). Removal always clears focus and
+/// runs onDisappear and task cancel; reinsertion always runs onAppear and restarts tasks.
 ///
 /// Lifetime (PROVISIONAL, pending more oracle traces): the cache lives as long as the List node.
 /// It is bounded to `limit` retired rows; the oldest-retired row is evicted first. A reinsert
@@ -102,6 +118,8 @@ struct RowStateCache {
     static let limit = 64
 
     private var storage: [NodeID: [String: AnyObject]] = [:]
+    /// Retired nodes that held focus when they were removed.
+    private var focused: Set<NodeID> = []
     /// Retained node ids grouped by the top-level row (the List child) they came from.
     private var groups: [NodeID: [NodeID]] = [:]
     /// Top-level rows in retirement order, oldest first.
@@ -109,14 +127,16 @@ struct RowStateCache {
 
     /// Starts a fresh retention group for one retired top-level row, replacing any earlier one.
     mutating func beginRetiring(_ top: NodeID) {
-        for id in groups.removeValue(forKey: top) ?? [] { storage[id] = nil }
+        for id in groups.removeValue(forKey: top) ?? [] { forget(id) }
         order.removeAll { $0 == top }
         order.append(top)
         groups[top] = []
     }
 
-    mutating func retain(_ id: NodeID, top: NodeID, state: [String: AnyObject]) {
-        storage[id] = state
+    mutating func retain(_ id: NodeID, top: NodeID, state: [String: AnyObject], wasFocused: Bool) {
+        if state.isEmpty && !wasFocused { return }
+        storage[id] = state.isEmpty ? nil : state
+        if wasFocused { focused.insert(id) }
         groups[top, default: []].append(id)
     }
 
@@ -124,17 +144,34 @@ struct RowStateCache {
         storage.removeValue(forKey: id)
     }
 
+    mutating func takeFocus(_ id: NodeID) -> Bool {
+        focused.remove(id) != nil
+    }
+
     mutating func trim() {
         while order.count > RowStateCache.limit {
             let evicted = order.removeFirst()
-            for id in groups.removeValue(forKey: evicted) ?? [] { storage[id] = nil }
+            for id in groups.removeValue(forKey: evicted) ?? [] { forget(id) }
         }
     }
+
+    private mutating func forget(_ id: NodeID) {
+        storage[id] = nil
+        focused.remove(id)
+    }
+}
+
+/// Weak link from owner tokens and observation callbacks to a node. Holding a handle never keeps
+/// a node alive, which is what lets a torn-down tree be released.
+@MainActor
+final class NodeHandle {
+    weak var node: Node?
 }
 
 @MainActor
 final class Node {
     let id: NodeID
+    let handle: NodeHandle
     weak var parent: Node?
     var view: any View
     var inherited = EnvironmentValues()
@@ -143,14 +180,19 @@ final class Node {
     var storage: [String: AnyObject] = [:]
     var alive = true
     var appeared = false
-    /// Bumped on teardown. Owner tokens captured before teardown stop matching.
+    /// Bumped on teardown and on task restart. Owner tokens captured before stop matching.
     var generation = 0
     var focused = false
+    /// Set on a reinserted List row that held focus when removed; applied after its first evaluate.
+    var restoreFocus = false
     var task: Task<Void, Never>?
+    /// Id of the current `task(id:)` run, compared on re-evaluation.
+    var taskID: AnyEquatable?
+    /// Last value of `.animation(_:value:)`, compared on re-evaluation.
     var lastEquatable: AnyEquatable?
     /// Monotonic per-graph creation number. Unlike object addresses it is never reused.
     var instance = 0
-    /// Frame in logical points, snapped to the physical pixel grid at placement.
+    /// Layout target in logical points, set by the layout pass (snapped to the pixel grid).
     var frame: LayoutRect = .zero
     /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
     var memoText: String?
@@ -159,11 +201,26 @@ final class Node {
     var layoutStorage: Any?
     /// Retired-row state, used only when this node retains removed row state (List).
     var rowCache = RowStateCache()
+    /// Scroll offset of a ScrollView node, in logical points, clamped by the layout pass.
+    var scrollOffset: CGFloat = 0
+    /// Target opacity (own `.opacity` times the parent's target).
+    var targetOpacity: Double = 1
+    /// Presented (animated) values: what the last commit showed.
+    var presentedFrame: LayoutRect = .zero
+    var presentedOpacity: Double = 1
+    /// False until the first commit presents this node.
+    var committed = false
+    /// Running interpolation of `presentedFrame` and `presentedOpacity`.
+    var motion: Motion?
+    /// Per-field text input state (TextField nodes only).
+    var textInput: TextInputState?
 
     init(id: NodeID, view: any View, parent: Node?) {
         self.id = id
         self.view = view
         self.parent = parent
+        handle = NodeHandle()
+        handle.node = self
     }
 
     var kind: NodeKind { (view as? PrimitiveView)?.nodeKind ?? .user }
@@ -172,6 +229,23 @@ final class Node {
     var retainsRemovedRowState: Bool {
         if case .stack(let spec) = kind { return spec.retainsRemovedRowState }
         return false
+    }
+
+    /// Drops everything the node owns, so that a removed node cannot keep its @State, environment,
+    /// view values (and the closures in them) or observation state alive.
+    func releaseContents() {
+        children = []
+        storage = [:]
+        environment = EnvironmentValues()
+        inherited = EnvironmentValues()
+        view = EmptyView()
+        taskID = nil
+        lastEquatable = nil
+        layoutStorage = nil
+        rowCache = RowStateCache()
+        textInput = nil
+        memo = [:]
+        memoText = nil
     }
 }
 
@@ -186,11 +260,14 @@ private func hasKeyedSegment(_ segments: ArraySlice<Segment>) -> Bool {
 /// Guarded commit for async work started by `.task`. A commit is accepted only while the
 /// owning node is alive and still has the generation the task was started under.
 public struct TaskOwnerToken: Sendable {
-    fileprivate let node: Node
+    fileprivate let handle: NodeHandle
     fileprivate let generation: Int
 
     @MainActor
-    public var isLive: Bool { node.alive && node.generation == generation }
+    public var isLive: Bool {
+        guard let node = handle.node else { return false }
+        return node.alive && node.generation == generation
+    }
 
     @MainActor
     @discardableResult
@@ -210,16 +287,24 @@ public enum TaskOwner {
 public struct ResolvedNode: Equatable, Sendable {
     public let id: String
     public let kind: String
+    /// Text of a Text node, or the displayed text of a TextField (committed text plus marked text).
     public let text: String?
-    /// Logical points, edges snapped to the physical pixel grid.
+    /// Presented (animated) frame in logical points, edges snapped to the physical pixel grid.
     public let frame: LayoutRect
     /// The same frame in physical device pixels.
     public let pixelFrame: PixelRect
+    /// Presented opacity in 0...1 (1 unless an opacity modifier or an insertion animation applies).
+    public let opacity: Double
+    /// TextField only: the caret or selection in displayed text.
+    public let selection: UTF16Range?
+    /// TextField only: the marked (composing) range in displayed text.
+    public let marked: UTF16Range?
     public let children: [ResolvedNode]
 }
 
 public struct CommitRecord: Equatable, Sendable {
     public let sequence: Int
+    /// Nil only in the final record emitted by `tearDown()`.
     public let root: ResolvedNode?
     public let focused: String?
     /// Animation names requested by transactions that contributed to this flush, joined by ",".
@@ -235,10 +320,12 @@ public final class Graph {
     private(set) var root: Node?
     var nodes: [NodeID: Node] = [:]
     private var dirty: [NodeID: Node] = [:]
-    private var pendingAnimations: [String] = []
     private var flushScheduled = false
     private var sequence = 0
     private var instanceCounter = 0
+    /// Host-supplied time in seconds, set by `tick(now:)`. Animations start at this time.
+    var clock: Double = 0
+    private var closed = false
     let measurer: any TextMeasurer
     /// Physical pixels per logical point.
     let scale: CGFloat
@@ -284,7 +371,7 @@ public final class Graph {
     /// Creation number of the live node at `id`. Equal numbers mean the same node instance;
     /// a removed-then-reinserted row gets a new number.
     public func nodeInstance(_ id: String) -> Int? {
-        nodes.values.first { $0.id.description == id }?.instance
+        node(id)?.instance
     }
 
     public func ids(ofKind kind: String) -> [String] {
@@ -300,10 +387,77 @@ public final class Graph {
     /// Invokes a Button's action. Returns false when the id is not a live button.
     @discardableResult
     public func tapButton(_ id: String) -> Bool {
-        guard let node = nodes.values.first(where: { $0.id.description == id }),
-              case .button(let action) = node.kind else { return false }
+        guard let node = node(id), case .button(let action) = node.kind else { return false }
         action()
         return true
+    }
+
+    /// The text input state of a live TextField, for routing IME and text-store calls to it.
+    public func textInput(_ id: String) -> TextInputState? {
+        node(id)?.textInput
+    }
+
+    /// Sets the vertical scroll offset of a live ScrollView. The next flush lays it out, and the
+    /// offset is clamped to the content.
+    public func scroll(_ id: String, to offset: CGFloat) {
+        node(id)?.scrollOffset = offset
+    }
+
+    /// The last laid-out scroll offset of a live ScrollView.
+    public func scrollOffset(_ id: String) -> CGFloat? {
+        node(id).map(\.scrollOffset)
+    }
+
+    /// Edits the root environment (for example a host feeds the OS reduce-motion setting) and
+    /// re-evaluates the whole tree at the next flush.
+    public func setRootEnvironment(_ update: (inout EnvironmentValues) -> Void) {
+        guard let root else { return }
+        var environment = root.inherited
+        update(&environment)
+        root.inherited = environment
+        dirty[root.id] = root
+    }
+
+    /// Advances animations to `now` (host-supplied seconds, monotonic). Emits one commit record when
+    /// any animation was running, so the host can draw the interpolated values.
+    public func tick(now: Double) {
+        guard !closed, root != nil else { return }
+        let wasAnimating = orderedNodes().contains { $0.motion != nil }
+        clock = now
+        advanceMotions(now: now)
+        if wasAnimating { emit(animationNames: []) }
+        TransactionContext.drainDeferred()
+    }
+
+    /// Tears the whole tree down: disappear actions run, tasks are cancelled, running animations and
+    /// text input state are dropped, and every node is released with its @State, environment and task
+    /// handles. One final commit record with a nil root is emitted, then the commit sink is cleared.
+    /// Afterwards the graph is closed: flush and tick commit nothing.
+    public func tearDown() {
+        guard let root, !closed else { return }
+        teardown(root.id)
+        self.root = nil
+        nodes.removeAll()
+        dirty.removeAll()
+        for queued in TransactionContext.takeQueued() { queued.settleIfDone() }
+        sequence += 1
+        commitSink?(CommitRecord(sequence: sequence, root: nil, focused: nil, animation: nil))
+        closed = true
+        commitSink = nil
+        TransactionContext.drainDeferred()
+    }
+
+    // MARK: Helpers
+
+    func node(_ id: String) -> Node? {
+        nodes.values.first { $0.id.description == id }
+    }
+
+    /// Live nodes in a stable order (by path), so completion order does not depend on hashing.
+    func orderedNodes() -> [Node] {
+        nodes.values.map { (key: $0.id.description, node: $0) }
+            .sorted { $0.key < $1.key }
+            .map(\.node)
     }
 
     // MARK: Expansion and reconciliation
@@ -357,13 +511,23 @@ public final class Graph {
                 instanceCounter += 1
                 created.instance = instanceCounter
                 created.inherited = parent.environment
-                if let list = rowListAncestor(of: parent), let restored = list.rowCache.take(childID) {
-                    created.storage = restored
+                if let list = rowListAncestor(of: parent) {
+                    if let restored = list.rowCache.take(childID) { created.storage = restored }
+                    created.restoreFocus = list.rowCache.takeFocus(childID)
                 }
                 nodes[childID] = created
                 evaluate(created)
+                if created.restoreFocus { restoreFocus(created) }
             }
         }
+    }
+
+    /// Gives focus back to a reinserted node that held it when its List removed it.
+    private func restoreFocus(_ node: Node) {
+        node.restoreFocus = false
+        guard case .modifier(.focus(let link)) = node.kind else { return }
+        link.focus()
+        node.focused = true
     }
 
     /// The nearest ancestor-or-self that retains removed row state.
@@ -376,8 +540,9 @@ public final class Graph {
         return nil
     }
 
-    /// Tears a node down. When `retainingIn` is set, each removed node's `@State` storage is kept
-    /// in that List's row cache under its node id (state only; lifecycle has already run).
+    /// Tears a node down, in order: onDisappear, task cancel, motion and focus release, then the
+    /// children. When `retainingIn` is set, the node's `@State` storage and focus are kept in that
+    /// List's row cache under its node id, so a reinsertion can restore them.
     private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
         node.alive = false
@@ -389,11 +554,21 @@ public final class Graph {
         }
         node.task?.cancel()
         node.task = nil
-        if let target, !node.storage.isEmpty {
-            target.list.rowCache.retain(id, top: target.top, state: node.storage)
+        if let motion = node.motion {
+            node.motion = nil
+            motion.transaction.motionEnded()
+        }
+        var wasFocused = false
+        if node.focused, case .modifier(.focus(let link)) = node.kind {
+            wasFocused = true
+            node.focused = false
+            link.release()
+        }
+        if let target, !node.storage.isEmpty || wasFocused {
+            target.list.rowCache.retain(id, top: target.top, state: node.storage, wasFocused: wasFocused)
         }
         for child in node.children { teardown(child, retainingIn: target) }
-        node.children = []
+        node.releaseContents()
     }
 
     private func runAppear(_ node: Node) {
@@ -401,15 +576,24 @@ public final class Graph {
         switch spec {
         case .appear(let action):
             action()
-        case .task(let priority, let action):
-            let token = TaskOwnerToken(node: node, generation: node.generation)
-            node.task = Task(priority: priority) {
-                await TaskOwner.$current.withValue(token) {
-                    await action()
-                }
-            }
+        case .task(let priority, let id, let action):
+            node.taskID = id
+            startTask(node, priority, action)
         default:
             break
+        }
+    }
+
+    /// Starts (or restarts) a task for `node`. The previous run is cancelled, and its owner token
+    /// stops matching, so a late commit from it is rejected.
+    private func startTask(_ node: Node, _ priority: TaskPriority, _ action: @escaping @isolated(any) () async -> Void) {
+        node.task?.cancel()
+        node.generation += 1
+        let token = TaskOwnerToken(handle: node.handle, generation: node.generation)
+        node.task = Task(priority: priority) {
+            await TaskOwner.$current.withValue(token) {
+                await action()
+            }
         }
     }
 
@@ -421,8 +605,19 @@ public final class Graph {
         }
     }
 
-    /// Evaluates one node: applies its environment override, runs appear once, reads its
-    /// dependencies under observation tracking, then reconciles its children.
+    func textInputState(for node: Node, binding: Binding<String>) -> TextInputState {
+        if let state = node.textInput {
+            state.binding = binding
+            return state
+        }
+        let state = TextInputState(binding: binding)
+        node.textInput = state
+        return state
+    }
+
+    /// Evaluates one node: applies its environment override, runs appear once, restarts a
+    /// `task(id:)` whose id changed, reads its dependencies under observation tracking, then
+    /// reconciles its children.
     func evaluate(_ node: Node) {
         guard node.alive else { return }
         node.environment = node.inherited
@@ -432,25 +627,33 @@ public final class Graph {
         if !node.appeared {
             node.appeared = true
             runAppear(node)
+        } else if case .modifier(.task(let priority, let id?, let action)) = node.kind,
+                  let previous = node.taskID, !previous.matches(id.value) {
+            node.taskID = id
+            startTask(node, priority, action)
         }
         if case .modifier(.animation(let value, let animation)) = node.kind {
-            if let previous = node.lastEquatable, !previous.matches(value.value), let animation {
-                pendingAnimations.append(animation.name)
+            if let previous = node.lastEquatable, !previous.matches(value.value) {
+                TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil))
             }
             node.lastEquatable = value
         }
         if case .user = node.kind { bindDynamicProperties(node) }
+        if case .textField(let binding) = node.kind { _ = textInputState(for: node, binding: binding) }
 
         let produced: (any View)? = withObservationTracking({
             switch node.kind {
-            case .textField(let read): _ = read()
-            case .modifier(.focus(let predicate)): node.focused = predicate()
+            case .textField: _ = node.textInput?.display
+            case .modifier(.focus(let link)): node.focused = link.isFocused()
             default: break
             }
             if let primitive = node.view as? PrimitiveView { return primitive.nodeContent }
             return node.view.evaluateBody()
-        }, onChange: { [self, node] in
-            MainActor.assumeIsolated { self.noteChange(node) }
+        }, onChange: { [weak self, handle = node.handle] in
+            // Weak on purpose: a pending observation must not keep the graph or its nodes alive.
+            MainActor.assumeIsolated {
+                if let node = handle.node { self?.noteChange(node) }
+            }
         })
 
         var entries: [Entry] = []
@@ -463,9 +666,6 @@ public final class Graph {
     func noteChange(_ node: Node) {
         guard node.alive, nodes[node.id] === node else { return }
         dirty[node.id] = node
-        if let animation = TransactionContext.current {
-            pendingAnimations.append(animation.name)
-        }
         scheduleFlush()
     }
 
@@ -491,32 +691,58 @@ public final class Graph {
     // MARK: Commit
 
     private func commit() {
+        guard !closed, let root else { return }
+        advanceMotions(now: clock)
+        let previous: [NodeID: (LayoutRect, Double)] = nodes.mapValues { ($0.frame, $0.targetOpacity) }
         layoutRoot()
+        assignOpacity(root, parent: 1)
+        let changed = orderedNodes().filter { node in
+            guard let before = previous[node.id] else { return true }
+            return before.0 != node.frame || before.1 != node.targetOpacity
+        }
+        let transactions = TransactionContext.takeQueued()
+        applyTransactions(transactions, changed: changed)
+        emit(animationNames: transactions.compactMap { $0.animation?.name })
+        TransactionContext.drainDeferred()
+    }
+
+    /// Builds and delivers one commit record from the presented values.
+    private func emit(animationNames: [String]) {
+        guard let root else { return }
         sequence += 1
         let focusedNode = nodes.values.filter { $0.focused && $0.alive }.min { $0.id.description < $1.id.description }
         let record = CommitRecord(
             sequence: sequence,
-            root: root.map(resolve),
+            root: resolve(root),
             focused: focusedNode?.id.description,
-            animation: pendingAnimations.isEmpty ? nil : pendingAnimations.joined(separator: ",")
+            animation: animationNames.isEmpty ? nil : animationNames.joined(separator: ",")
         )
-        pendingAnimations.removeAll()
         commitSink?(record)
     }
 
     private func resolve(_ node: Node) -> ResolvedNode {
         let text: String?
+        var selection: UTF16Range?
+        var marked: UTF16Range?
         switch node.kind {
-        case .text(let string): text = string
-        case .textField(let read): text = read()
-        default: text = nil
+        case .text(let string):
+            text = string
+        case .textField:
+            text = node.textInput?.display
+            selection = node.textInput?.selection
+            marked = node.textInput?.markedRange
+        default:
+            text = nil
         }
         return ResolvedNode(
             id: node.id.description,
             kind: kindName(node),
             text: text,
-            frame: node.frame,
-            pixelFrame: pixelRect(node.frame, scale: scale),
+            frame: node.presentedFrame,
+            pixelFrame: pixelRect(node.presentedFrame, scale: scale),
+            opacity: node.presentedOpacity,
+            selection: selection,
+            marked: marked,
             children: node.children.compactMap { nodes[$0].map(resolve) }
         )
     }
@@ -530,30 +756,8 @@ public final class Graph {
         case .textField: return "TextField"
         case .stack(let spec): return spec.name
         case .layout: return "Layout"
+        case .scroll: return "ScrollView"
         case .modifier(let spec): return "modifier.\(spec.name)"
         }
     }
-}
-
-// MARK: - Transactions
-
-@MainActor
-enum TransactionContext {
-    /// Animation attached to invalidations raised inside `withAnimation`; nil outside.
-    static var current: Animation?
-}
-
-public struct Animation: Sendable, Equatable {
-    public let name: String
-    public init() { name = "default" }
-    public init(name: String) { self.name = name }
-    public static let `default` = Animation()
-}
-
-@MainActor
-public func withAnimation<Result>(_ animation: Animation? = .default, _ body: () throws -> Result) rethrows -> Result {
-    let previous = TransactionContext.current
-    TransactionContext.current = animation
-    defer { TransactionContext.current = previous }
-    return try body()
 }

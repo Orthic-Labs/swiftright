@@ -193,6 +193,17 @@ public struct EnvironmentValues {
         get { self[ColorSchemeKey.self] }
         set { self[ColorSchemeKey.self] = newValue }
     }
+
+    /// Animations jump to their final values and still deliver completions. Tests set it directly; a
+    /// host feeds the OS value through `Graph.setRootEnvironment`.
+    public var accessibilityReduceMotion: Bool {
+        get { self[ReduceMotionKey.self] }
+        set { self[ReduceMotionKey.self] = newValue }
+    }
+}
+
+private enum ReduceMotionKey: EnvironmentKey {
+    static var defaultValue: Bool { false }
 }
 
 @MainActor
@@ -251,6 +262,18 @@ public struct FocusState<Value: Hashable>: DynamicPropertyStorage {
         public var wrappedValue: Value {
             get { cell.resolved.value }
             nonmutating set { cell.resolved.value = newValue }
+        }
+
+        /// Makes `value` the focus.
+        @MainActor
+        func assign(_ value: Value) {
+            cell.resolved.value = value
+        }
+
+        /// Returns the focus to its default (nil for the `init()` form), as when the focused view is removed.
+        @MainActor
+        func reset() {
+            cell.resolved.value = cell.initial
         }
     }
 }

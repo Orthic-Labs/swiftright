@@ -151,10 +151,7 @@ public struct TextField<Label: View>: View, PrimitiveView {
         self.label = label()
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind {
-        let binding = text
-        return .textField({ binding.wrappedValue })
-    }
+    var nodeKind: NodeKind { .textField(text) }
     var nodeContent: (any View)? { nil }
 }
 
@@ -234,6 +231,37 @@ public struct HStack<Content: View>: View, PrimitiveView {
         .stack(StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
                          spacing: spacing ?? defaultStackSpacing, fillsCross: false))
     }
+    var nodeContent: (any View)? { content }
+}
+
+/// Vertical stack that realizes every row (no virtualization yet). Like VStack, a reinserted row's
+/// `@State` resets (SR0-O F3: macOS 27 LazyVStack in a ScrollView resets it, unlike List).
+public struct LazyVStack<Content: View>: View, PrimitiveView {
+    let alignment: HorizontalAlignment
+    let spacing: CGFloat?
+    let content: Content
+    public init(alignment: HorizontalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+        self.alignment = alignment
+        self.spacing = spacing
+        self.content = content()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "LazyVStack", axis: .vertical, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+    }
+    var nodeContent: (any View)? { content }
+}
+
+/// Vertical scroll container. It takes the proposed size, lays its content out unbounded in height, and
+/// offsets the content by the scroll offset (see `Graph.scroll(_:to:)`). Horizontal scrolling is not modeled.
+public struct ScrollView<Content: View>: View, PrimitiveView {
+    let content: Content
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .scroll }
     var nodeContent: (any View)? { content }
 }
 
