@@ -1,0 +1,12 @@
+ARTIFACT base=D:\Claude\sr0s-bridge06f exe_sha256=AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F dll_sha256=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F expect_exe=AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F expect_dll=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F
+ARTIFACT_OK
+registered=SR0S-Fix-F3lazy1sr3a1 at=2026-10-09T20:21:13.2628128+05:30
+state=Ready last_result=0
+Unregister-ScheduledTask : The system cannot find the file specified.
+At D:\Claude\sr0s-bridge06f\probes\sr0-s\fresh-on-bridge\scripts\schedule-fixture.ps1:36 char:1
++ Unregister-ScheduledTask -TaskName $task -Confirm:$false
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (MSFT_ScheduledTask:Root/Microsoft/...T_ScheduledTask) [Unregister-Sched 
+   uledTask], CimException
+    + FullyQualifiedErrorId : HRESULT 0x80070002,Unregister-ScheduledTask
+ 
