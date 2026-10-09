@@ -107,6 +107,7 @@ function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max, $winBa
     if (-not (Send-GatedKey 0x20 "space-$n" 120)) { break }
     Start-Sleep -Milliseconds 350
     $m = Marked-Of $row $v0; $seen.Add($m)
+    if ($n -eq 1 -and $winBase -ne $null) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
     if ($winBase -ne $null) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
     if ($m -eq $want) { break }
   }
@@ -190,6 +191,36 @@ function Candidate-Uia {
     }
   } catch { $diag += "uia_exception=$($_.Exception.Message)" }
   return [pscustomobject]@{ Hits = $res; Diag = $diag }
+}
+
+# Evidence capture (R9 candidate diagnosis): screenshot of OUR probe window + 300 px margin only (CopyFromScreen of that rect), and a full
+# EnumWindows dump (visible AND invisible) of every IME-related window (class / process / title match) plus every window overlapping the
+# probe region. Called right after Space press 1, and again ~1.2 s later in case the list is delayed.
+function Capture-Evidence([string]$tag) {
+  try {
+    $all = Snap-Windows
+    $me = $all | Where-Object { $_.Hwnd -eq $script:Hwnd.ToInt64() } | Select-Object -First 1
+    if ($me -ne $null) {
+      $mg = 300
+      $x = [math]::Max(0, $me.L - $mg); $y = [math]::Max(0, $me.T - $mg)
+      $w = ($me.R - $me.L) + 2 * $mg; $h = ($me.B - $me.T) + 2 * $mg
+      $bmp = New-Object System.Drawing.Bitmap($w, $h)
+      $g = [System.Drawing.Graphics]::FromImage($bmp)
+      $g.CopyFromScreen($x, $y, 0, 0, (New-Object System.Drawing.Size($w, $h)))
+      $png = "$Out.cand-$tag.png"
+      $bmp.Save($png, [System.Drawing.Imaging.ImageFormat]::Png); $g.Dispose(); $bmp.Dispose()
+      Log "candidate_evidence tag=$tag screenshot=$png region=$x,$y,$w,$h probe_rect=$($me.L),$($me.T),$($me.R),$($me.B)"
+    } else { Log "candidate_evidence tag=$tag screenshot=none (probe window not in EnumWindows)" }
+    $n = 0
+    foreach ($w in $all) {
+      $ov = $false
+      if ($me -ne $null) { $ov = ($w.R -gt $me.L - 300 -and $w.L -lt $me.R + 300 -and $w.B -gt $me.T - 300 -and $w.T -lt $me.B + 300 -and $w.Visible) }
+      if ((Is-ImeWin $w) -or $ov) { $n++; Log ("candidate_evidence tag=$tag win ime=$(Is-ImeWin $w) overlap=$ov " + (Fmt-Win $w)) }
+    }
+    Log "candidate_evidence tag=$tag total_top_windows=$($all.Count) listed=$n"
+    $u = Candidate-Uia
+    Log ("candidate_evidence tag=$tag uia_roots=[" + ($u.Diag -join '; ') + "] uia_hits=" + @($u.Hits).Count)
+  } catch { Log "candidate_evidence tag=$tag exception=$($_.Exception.Message)" }
 }
 $script:CandSeen = $null   # last EnumWindows hit seen right after any Space press (the list can vanish before the final measurement)
 function Measure-Candidate([string]$row, [string]$v0, $before) {
