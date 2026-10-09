@@ -1,6 +1,6 @@
 # SR0-D release preflight: @rightkit/release capability check
 
-Scope: read-only inspection of `tools/rightkit/packages/release` (v0.2.135). No build, sign, package, or upload was run. `right-release --help` was the only command executed (`node cli/right-release.mjs --help`). Paths are relative to `/Volumes/D/claude/tools/rightkit/packages/release/` unless absolute.
+Scope: read-only inspection of `rightkit/packages/release` (v0.2.135). No build, sign, package, or upload was run. `right-release --help` was the only command executed (`node cli/right-release.mjs --help`). Paths are relative to `/Volumes/D/claude/rightkit/packages/release/` unless absolute.
 
 ## Capability table
 

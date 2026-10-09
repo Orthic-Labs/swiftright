@@ -22,7 +22,7 @@ const base = one("--base", "https://localhost:8443/sliceapp").replace(/\/$/, "")
 // RightKit package: $RIGHTKIT_RELEASE_DIR, else the app's own pinned install (node_modules/@rightkit/release, the 0.2.142
 // package the sealed build used), else the monorepo tools tree.
 const pinned = path.resolve(here, "../node_modules/@rightkit/release");
-const rightkit = process.env.RIGHTKIT_RELEASE_DIR ?? (existsSync(path.join(pinned, "msix-appinstaller.mjs")) ? pinned : path.resolve(here, "../../../../tools/rightkit/packages/release"));
+const rightkit = process.env.RIGHTKIT_RELEASE_DIR ?? (existsSync(path.join(pinned, "msix-appinstaller.mjs")) ? pinned : path.resolve(here, "../../../../rightkit/packages/release"));
 const { generateAppInstaller } = await import(pathToFileURL(path.join(rightkit, "msix-appinstaller.mjs")).href);
 const config = (await import(pathToFileURL(path.join(here, "..", "right-release.config.mjs")).href)).default;
 const win = config.targets.win.msix;

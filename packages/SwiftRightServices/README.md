@@ -8,7 +8,7 @@ queue bounds, typed errors, shutdown and reconnect). It does not modify RightKit
 
 ## Protocol derivation (read-only, from RightKit source)
 
-Source root: `/Volumes/D/claude/tools/rightkit/crates/`. Line numbers are from that checkout.
+Source root: `/Volumes/D/claude/rightkit/crates/`. Line numbers are from that checkout.
 
 **Envelope** (`rightkit-framed-sidecar/src/wire.rs`)
 
@@ -123,7 +123,7 @@ Integration check of `EngineClient` against a real Rust engine built through Rig
 **Engine**
 
 - Binary: `rightkit-jobs` example `engine_fixture` (`crates/rightkit-jobs/examples/engine_fixture.rs`, 130 lines). It is RightKit's scriptable test engine for supervisor tests, not a product engine. It is the only standalone binary in the workspace that speaks the framed-sidecar envelope. The record helper is Windows-only capture, and the shell example is a Tauri GUI app.
-- Repo: `/Volumes/D/claude/tools/rightkit`, HEAD `9f3ec2d48689fb7a7c73d269fe67490f0874369e`. The fixture and the crates it links (`rightkit-jobs` 0.2.6, `rightkit-framed-sidecar` 0.1.0, `rightkit-service` 0.1.3, `rightkit-process`, `rightkit-db`, `rightkit-fs`) had no uncommitted changes when built. The repo as a whole was dirty with other owners' work, which was left untouched.
+- Repo: `/Volumes/D/claude/rightkit`, HEAD `9f3ec2d48689fb7a7c73d269fe67490f0874369e`. The fixture and the crates it links (`rightkit-jobs` 0.2.6, `rightkit-framed-sidecar` 0.1.0, `rightkit-service` 0.1.3, `rightkit-process`, `rightkit-db`, `rightkit-fs`) had no uncommitted changes when built. The repo as a whole was dirty with other owners' work, which was left untouched.
 - Build: `rightkit cargo build --release -p rightkit-jobs --example engine_fixture`, one run, 14.5 s, through RightKit. The output is in RightKit's managed target (`/Volumes/D/.rightkit-managed/rightkit-build-control/ws/bbf2da541b23/g/002/target/aarch64-apple-darwin/release/examples/engine_fixture`). SHA-256 `86f2a40b3cb7c3dd411be3ea9d6d2a1ca9fe7b0f384fe87b21f467627d50be3a`. Host: Mac arm64, Swift 6.4.
 - Wire behavior, observed by piping raw requests: `hello` `{"contract_version":1,"engine":"fixture","version":"1.0"}`, then responses. No `ready` frame is sent.
 

@@ -7,21 +7,21 @@
 #   -Commit          required; 7-40 hex chars, resolved to the full SHA after fetch
 #   -Origin          default git@github.com:bogusyogi/swiftright.git
 #   -Scratch         default D:\Claude\swiftright-clean\<sha12>
-#   -RightKit        default D:\Claude\tools\rightkit (local @rightkit/release package; read-only use)
+#   -RightKit        default D:\Claude\rightkit (local @rightkit/release package; read-only use)
 #   -RendererSource  swiftright_render.dll to stage (default: $env:SWIFTRIGHT_RENDERER_SRC, else the pin's defaultSource);
 #                    prepackage-windows.ps1 hash-checks it against Windows\renderer-pin.json and fails closed
 #   -Stage           doctor | build (default build; seal, NO upload)
 #   -DryRun          parse and validate arguments, print the plan, touch nothing
 # Never runs upload/publish-update. The commit must already be pushed to origin.
 #
-# package.json pins @rightkit/release as link:../../../tools/rightkit/packages/release (relative to examples\SliceApp).
-# The clone sits at <scratch>\swiftright and <scratch>\tools\rightkit is a junction to -RightKit, so the link resolves
+# package.json pins @rightkit/release as link:../../../rightkit/packages/release (relative to examples\SliceApp).
+# The clone sits at <scratch>\swiftright and <scratch>\rightkit is a junction to -RightKit, so the link resolves
 # without editing a tracked file (the tree stays clean, as the source gate requires).
 param(
     [string]$Commit = '',
     [string]$Origin = 'git@github.com:bogusyogi/swiftright.git',
     [string]$Scratch = '',
-    [string]$RightKit = 'D:\Claude\tools\rightkit',
+    [string]$RightKit = 'D:\Claude\rightkit',
     [string]$RendererSource = '',
     [ValidateSet('doctor', 'build')][string]$Stage = 'build',
     [switch]$DryRun
@@ -41,7 +41,7 @@ if ($primary) {
 $branch = "sr0-clean-$short"
 $clone = Join-Path $Scratch 'swiftright'
 "plan: clone $Origin at $Commit -> $clone (branch $branch)"
-"plan: $Scratch\tools\rightkit -> $RightKit (junction)"
+"plan: $Scratch\rightkit -> $RightKit (junction)"
 "plan: examples\SliceApp: pnpm install --frozen-lockfile; pnpm exec right-release $Stage --platform win --config right-release.config.mjs"
 if ($RendererSource) { "plan: renderer source $RendererSource (SWIFTRIGHT_RENDERER_SRC)" }
 if ($DryRun) { 'dry-run: nothing executed'; exit 0 }
@@ -49,7 +49,7 @@ if ($DryRun) { 'dry-run: nothing executed'; exit 0 }
 if (-not (Test-Path (Join-Path $RightKit 'packages\release'))) { Fail "RightKit release package not found: $RightKit\packages\release" }
 if (Test-Path $clone) { Fail "$clone already exists; pick a new -Scratch or remove it yourself" }
 New-Item -ItemType Directory -Force (Join-Path $Scratch 'tools') | Out-Null
-New-Item -ItemType Junction -Path (Join-Path $Scratch 'tools\rightkit') -Target $RightKit | Out-Null
+New-Item -ItemType Junction -Path (Join-Path $Scratch 'rightkit') -Target $RightKit | Out-Null
 
 function Run([string]$exe, [string[]]$a) { & $exe @a; if ($LASTEXITCODE -ne 0) { throw "$exe $($a -join ' ') failed (exit $LASTEXITCODE)" } }
 Run git @('clone', '--no-checkout', $Origin, $clone)

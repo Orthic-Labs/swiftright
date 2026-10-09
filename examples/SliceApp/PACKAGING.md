@@ -162,7 +162,7 @@ has no Rust and is outside this proof.
 RightKit requires a branch-attached PRIMARY checkout (`release-invocation.mjs` `assertPrimaryReleaseCheckout`), so linked worktrees do not
 qualify, and the source gate needs a clean tree. `scripts/clone-build-mac.sh` and `scripts/clone-build-win.ps1` clone `origin` at an exact,
 already-pushed commit into a scratch location outside the primary checkout, check out a local branch (`sr0-clean-<sha12>`), put a link
-`<scratch>/tools/rightkit` to the local RightKit tree (so `package.json`'s `link:../../../tools/rightkit/packages/release` resolves with no
+`<scratch>/rightkit` to the local RightKit tree (so `package.json`'s `link:../../../rightkit/packages/release` resolves with no
 tracked-file edit), `pnpm install --frozen-lockfile`, and run `right-release build` (doctor with `--stage doctor`). They never upload.
 `--dry-run`/`-DryRun` validates arguments and prints the plan only.
 
@@ -314,7 +314,7 @@ changes (msix-appinstaller/config/plan/target, project-type, swift-build-context
 release-invocation, publish-update, cache-policy, preflight, msix-build; 0.2.137 in package.json). PRE-PUBLICATION.
 
 Prepared (uncommitted):
-- `package.json`: `@rightkit/release` is `link:../../../tools/rightkit/packages/release` (pnpm install resolves the local tree;
+- `package.json`: `@rightkit/release` is `link:../../../rightkit/packages/release` (pnpm install resolves the local tree;
   `pnpm exec right-release` runs it; lockfile `pnpm-lock.yaml` records the link). Revert to the exact `0.2.138` pin after publication.
 - Publisher in `right-release.config.mjs` and `swift-package.json` set to the provisioned signer subject, read from the valid
   Authenticode signature of a sealed CodeRight installer on the Dell: `CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US`.
@@ -329,7 +329,7 @@ SliceApp prep (and the other sessions' work committed or removed); no bypass was
 ## R3 signed Mac build (2026-10-09): BLOCKED at preflight, nothing built, signed, or notarized
 
 Source: origin/master `c7c7eb6a2d520d4784e5204550e121fca6e97b5e`, independent clone `/Volumes/D/sr0-build/mac-c7c7eb6/swiftright`
-(branch `sr0-clean-c7c7eb6a2d52`, scratch outside the primary checkout; `<scratch>/tools/rightkit` links the local RightKit tree).
+(branch `sr0-clean-c7c7eb6a2d52`, scratch outside the primary checkout; `<scratch>/rightkit` links the local RightKit tree).
 Tool identity (pre-publication): RightKit HEAD `61ace202d83d6b2afe4f1138c9540a8854bf8a1d`, version 0.2.137, with uncommitted
 `packages/release` changes (`git status --short packages/release`): M CHANGELOG.md, README.md, build-release.mjs, build-release.test.mjs,
 cache-policy.mjs, msix-build.mjs, preflight.mjs, publish-update.mjs, release-invocation.mjs, release.mjs, swift-package.test.mjs;
@@ -342,7 +342,7 @@ Findings, in the order hit:
    (build-release.mjs:170 requires `target.package` or an MSIX target; the mac DMG flow is `release --tier patch --platform mac --no-upload`,
    as "Sealed build" above says). The script's default stage must be `release --tier patch --no-upload`. Not edited (no commit allowed).
 2. `link:` dependency rejected: `right-release doctor` in both the primary and the clone stops with
-   `sliceapp @rightkit/release must come from the published npm package, not link:../../../tools/rightkit/packages/release`
+   `sliceapp @rightkit/release must come from the published npm package, not link:../../../rightkit/packages/release`
    (release.mjs `validateRightKitPackageContract`, `FORBIDDEN_RIGHTKIT_SPEC`). Workaround inside the clone only (two local commits,
    `4092acc` then `6587313`): `package.json` and the lockfile specifier set to `0.2.137` while `node_modules/@rightkit/release` stays a
    symlink to the local tree. Do NOT let `pnpm exec` resolve it from the registry: it silently installs the published 0.2.137, which
@@ -369,7 +369,7 @@ package.json, DMG name in `prepackage-mac.sh`, one Swift edit); then codesign/sp
 Source: origin master c7c7eb6a2d520d4784e5204550e121fca6e97b5e, cloned on the Dell from the Mac path (`git clone mac:/Volumes/D/claude/swiftright`; GitHub is unreachable
 from Windows over SSH) into `D:\Claude\sr0-r2\swiftright`. Clone-local commit b94715a916b9e86cb2f0093ef2b7fe0b06209023 (not pushed): `package.json` pins
 `@rightkit/release` to `0.2.137` (the contract check rejects `link:`) and `pnpm-workspace.yaml` overrides it to the staged local package
-`D:\Claude\sr0-r2\tools\rightkit\packages\release` (copy of the Mac RightKit tree HEAD 61ace202 plus uncommitted release changes; file hashes in
+`D:\Claude\sr0-r2\rightkit\packages\release` (copy of the Mac RightKit tree HEAD 61ace202 plus uncommitted release changes; file hashes in
 `/Volumes/D/sr0-artifacts/win/0.1.0/rightkit-release-mac-source-sha256.txt` and `rightkit-release-staged-sha256.txt`). Pre-publication tooling.
 
 Reached: clone, tool staging, `right-release doctor` (swift, version, makeappx and signtool 10.0.26100.0, disk all ok), and `scripts/prepackage-windows.ps1`
@@ -386,7 +386,7 @@ Blockers and defects found:
 
 ## R2 retry (2026-10-09, later): elevation gate PASSED, now blocked by ownership scan content findings, nothing built or signed
 
-Clone `D:\Claude\sr0-r2b\swiftright` (origin master 66ead09, `git clone mac:...`, then `core.symlinks true` for checkout, then clone-local commits on branch `sr0-clean-66ead09`; origin URL set to `git@github.com:bogusyogi/swiftright.git` after clone, nothing fetched). Staged `@rightkit/release` is the Mac RightKit working tree at 258ca32b (package version 0.2.138, includes ownership registry commits 2922797c and a93d2516), at `D:\Claude\sr0-r2b\tools\rightkit\packages\release`. Clone-local changes: `package.json` spec `0.2.137` (the contract allowlist in `rightkit-versions.json` does not yet list 0.2.138; error "must be one of ... got 0.2.138") plus the pnpm override to the staged package; `Windows/renderer-pin.json` moved to the 0.6 rev06c DLL `777F14C4...335441` (11,779,072 bytes, `D:\Claude\sr0b-abi06c\bin`); the primary checkout's pin is still the superseded `C80B9517...` and needs this update before any R2 pass.
+Clone `D:\Claude\sr0-r2b\swiftright` (origin master 66ead09, `git clone mac:...`, then `core.symlinks true` for checkout, then clone-local commits on branch `sr0-clean-66ead09`; origin URL set to `git@github.com:bogusyogi/swiftright.git` after clone, nothing fetched). Staged `@rightkit/release` is the Mac RightKit working tree at 258ca32b (package version 0.2.138, includes ownership registry commits 2922797c and a93d2516), at `D:\Claude\sr0-r2b\rightkit\packages\release`. Clone-local changes: `package.json` spec `0.2.137` (the contract allowlist in `rightkit-versions.json` does not yet list 0.2.138; error "must be one of ... got 0.2.138") plus the pnpm override to the staged package; `Windows/renderer-pin.json` moved to the 0.6 rev06c DLL `777F14C4...335441` (11,779,072 bytes, `D:\Claude\sr0b-abi06c\bin`); the primary checkout's pin is still the superseded `C80B9517...` and needs this update before any R2 pass.
 
 Elevation fix works: `scripts` (kept outside the repo in `D:\Claude\sr0-r2b\r2-task.ps1` and `r2-step.ps1`) register a one-shot Interactive/Limited hidden task as `adrds`, log to a file, wait, unregister. The step log shows `elevated=False`, and `right-release doctor` passes swift, version, SDK, signtool, disk. The ownership preflight then fails in three successive ways (logs `D:\Claude\sr0-r2b\log-doctor*.txt`):
 1. `ownership evidence failed: unsupported repository identity URL` when origin was the Mac path; fixed by using the GitHub identity URL.

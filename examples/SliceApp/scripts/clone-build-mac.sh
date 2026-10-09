@@ -8,20 +8,20 @@
 #   --commit    required; 7-40 hex chars, resolved to the full SHA after fetch
 #   --origin    default: git@github.com:bogusyogi/swiftright.git
 #   --scratch   default: $HOME/.swiftright-clean/<sha12>  (refused if inside the primary checkout)
-#   --rightkit  default: /Volumes/D/claude/tools/rightkit  (local @rightkit/release package; read-only use)
+#   --rightkit  default: /Volumes/D/claude/rightkit  (local @rightkit/release package; read-only use)
 #   --stage     doctor = right-release doctor only; build (default) = right-release release --tier patch --no-upload (build, sign, notarize, staple, seal; NO upload)
 #   --dry-run   parse and validate arguments, print the plan, touch nothing
 # Never runs upload/publish-update. The commit must already be pushed to origin.
 #
-# package.json pins @rightkit/release as link:../../../tools/rightkit/packages/release (relative to examples/SliceApp).
-# The clone therefore sits at <scratch>/swiftright and <scratch>/tools/rightkit is a symlink to --rightkit, so the link
+# package.json pins @rightkit/release as link:../../../rightkit/packages/release (relative to examples/SliceApp).
+# The clone therefore sits at <scratch>/swiftright and <scratch>/rightkit is a symlink to --rightkit, so the link
 # resolves without editing any tracked file (the tree stays clean, as the source gate requires).
 set -eu
 
 ORIGIN="git@github.com:bogusyogi/swiftright.git"
 COMMIT=""
 SCRATCH=""
-RIGHTKIT="/Volumes/D/claude/tools/rightkit"
+RIGHTKIT="/Volumes/D/claude/rightkit"
 STAGE="build"
 DRY=0
 die() { echo "clone-build-mac: $*" >&2; exit 2; }
@@ -54,14 +54,14 @@ BRANCH="sr0-clean-$SHORT"
 CLONE="$SCRATCH/swiftright"
 
 echo "plan: clone $ORIGIN at $COMMIT -> $CLONE (branch $BRANCH)"
-echo "plan: $SCRATCH/tools/rightkit -> $RIGHTKIT"
+echo "plan: $SCRATCH/rightkit -> $RIGHTKIT"
 echo "plan: examples/SliceApp: pnpm install --frozen-lockfile; pnpm exec right-release $STAGE --platform mac --config right-release.config.mjs"
 if [ "$DRY" = 1 ]; then echo "dry-run: nothing executed"; exit 0; fi
 
 [ -d "$RIGHTKIT/packages/release" ] || die "RightKit release package not found: $RIGHTKIT/packages/release"
 [ ! -e "$CLONE" ] || die "$CLONE already exists; pick a new --scratch or remove it yourself"
 mkdir -p "$SCRATCH/tools"
-ln -s "$RIGHTKIT" "$SCRATCH/tools/rightkit"
+ln -s "$RIGHTKIT" "$SCRATCH/rightkit"
 
 git clone --no-checkout "$ORIGIN" "$CLONE"
 cd "$CLONE"

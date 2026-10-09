@@ -1,6 +1,6 @@
 # SR0-D RightKit owner/adapter map
 
-Read-only survey. No source, build, or commit changes. Registry status comes from `rightkit owns <capability>` (run from /Volumes/D/claude). Source evidence is from `/Volumes/D/claude/tools/rightkit` and the RightKitSwift checkout at `/Volumes/D/claude/scraperight/macos-native/ScrapeRightAppleCredentials/.build/checkouts/rightkit-swift` (git HEAD 48e0879, tag 0.3.7, VERSION 0.3.7).
+Read-only survey. No source, build, or commit changes. Registry status comes from `rightkit owns <capability>` (run from /Volumes/D/claude). Source evidence is from `/Volumes/D/claude/rightkit` and the RightKitSwift checkout at `/Volumes/D/claude/scraperight/macos-native/ScrapeRightAppleCredentials/.build/checkouts/rightkit-swift` (git HEAD 48e0879, tag 0.3.7, VERSION 0.3.7).
 
 Key terms: "C ABI" means `#[no_mangle]` or `pub extern "C" fn` exports. Every `extern "C"` hit in the owner crates is an import from a system framework or libc (verified), so no owner exports a C ABI today. "Swift adapter" means a RightKitSwift product that covers the need.
 
