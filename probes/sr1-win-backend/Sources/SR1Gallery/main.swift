@@ -3,13 +3,15 @@ import SwiftRightRuntime
 import SwiftRightBridge
 
 // SR1Gallery (SR1 head start, Windows backend): one control screen on the fresh runtime, drawn by the Windows
-// renderer through bridge ABI 0.5.
+// renderer through bridge ABI 0.6.
 //
 // Usage: SR1Gallery.exe --screen <name> [--self-test] [--live-modal]
 //   --screen <name>  toggle image editor label list-single list-multi list-delete menu alert dialog shortcut disabled
-//   --self-test      scripted checks against the runtime API and the commit records. Input is injected in-process
-//                    through Graph (no AX/VK driver needed). The self-test never opens a MessageBox.
-//   --live-modal     interactive runs only: alert and dialog plans open a MessageBoxW (YES/NO or OK/Cancel).
+//   --self-test      scripted checks against the runtime API and the committed ABI semantics. Input is injected
+//                    in-process through Graph (no AX/VK driver needed). The self-test never opens a native popup or
+//                    task dialog: modal answers are fed through GalleryBackend.modalResult.
+//   --live-modal     interactive runs only: menu requests open a native popup (TrackPopupMenu) and alert / dialog
+//                    requests open a task dialog (TaskDialogIndirect). Without it the in-window overlay stands in.
 //   no flag          interactive run until the window closes.
 // Exit: 0 = PASS, 1 = FAIL, 3 = BLOCKED (no failed check; at least one check the ABI cannot verify), 2 = usage,
 //       78 = startup diagnostic (SWR_STARTUP_ERROR, from the bridge loader).

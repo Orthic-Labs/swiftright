@@ -1,21 +1,29 @@
-# Builds SR1Gallery.exe on Windows (run through `win`; see the RESULT notes for the exact command).
+# Builds SR1Gallery.exe on Windows for bridge ABI 0.6 (run through `win`; see RESULT.md for the exact command).
 # Layout under $Base mirrors the repo (dereferenced copies, because the bridge header is a symlink):
 #   $Base\probes\sr0-s\fresh-runtime   (path dependency)
 #   $Base\probes\sr1-win-backend        (this package, includes sr1-gallery.manifest)
 #   $Base\packages\SwiftRightBridge     (path dependency)
 #   $Base\render\swiftright-abi\include\swiftright.h   (symlink target of the bridge header)
-# Renderer DLL: the ABI 0.5 payload, verified by SHA-256 before it is copied next to the exe. No Rust build here.
+# Renderer DLL: the ABI 0.6 payload (D:\Claude\sr1-abi06), verified by SHA-256 and by its 0.6 export names before it is
+# copied next to the exe. No Rust build here. Output goes to a NEW directory (sr1-gallery06); the 0.5 trees
+# (sr0b-abi0, sr0s-bridge, sr1-gallery) are never touched.
 # The exe is linked with the app manifest (ComCtl v6 + PerMonitorV2) and the manifest is checked in the binary.
 # This script builds only. It never starts SR1Gallery.exe (a run needs the interactive desktop).
 param(
-  [string]$Base = 'D:\Claude\sr1-gallery',
-  [string]$Dll = 'D:\Claude\sr0b-abi0\payload\bin\swiftright_render.dll'
+  [string]$Base = 'D:\Claude\sr1-gallery06',
+  [string]$Dll = 'D:\Claude\sr1-abi06\payload\bin\swiftright_render.dll'
 )
 $ErrorActionPreference = 'Stop'
-$expectedSha = '2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1'
+$expectedSha = 'C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30'
 $actualSha = (Get-FileHash -Algorithm SHA256 -LiteralPath $Dll).Hash
 "dll_sha256=$actualSha"
 if ($actualSha -ne $expectedSha) { throw "renderer DLL SHA-256 mismatch (expected $expectedSha)" }
+# The 0.6 DLL exports the image entry points (swr_image_register / swr_image_release); a 0.5 DLL does not.
+$dllText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($Dll))
+foreach ($export in @('swr_image_register', 'swr_image_release')) {
+  "dll_export[$export]=$($dllText.Contains($export))"
+  if (-not $dllText.Contains($export)) { throw "renderer DLL lacks $export (not the ABI 0.6 payload)" }
+}
 
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 $pkg = "$Base\probes\sr1-win-backend"

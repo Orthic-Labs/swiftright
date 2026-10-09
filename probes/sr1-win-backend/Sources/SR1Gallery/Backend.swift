@@ -2,26 +2,33 @@ import Foundation
 import SwiftRightRuntime
 import SwiftRightBridge
 
-// GalleryBackend: runtime commit records -> ABI 0.5 transactions, and bridge events -> runtime actions.
+// GalleryBackend: runtime commit records -> ABI 0.6 transactions, and bridge events -> runtime actions.
 //
 // Coordinates: runtime frames are logical points with the window client top-left at 0,0. ABI geometry is physical
 // pixels, so the runtime's `pixelFrame` is used directly. Node ids: each runtime node id string maps to a stable
-// non-zero bridge id (0 = window root); overlay and text-run ids live in the same namespace.
+// non-zero bridge id (0 = window root); overlay, presentation and text-run ids live in the same namespace.
 //
-// ABI 0.5 MAPPING (gaps are counted, see GalleryBackend.gapCounters and the RESULT notes):
-//   Button            -> rect + text, role button (disabled: grey, no invoke action; SWR_SEM_DISABLED not marshalled)
-//   Toggle            -> box rect (+ check glyph text run when on), role button, value "1"/"0" (no checkbox role,
-//                        no toggled state in ABI 0.5)
-//   Image             -> placeholder rect, role group + label (no image primitive: SWR_PRIM_IMAGE unsupported)
-//   TextField         -> rect + text run + caret, role textField (single line; AX text runs)
-//   TextEditor        -> rect + one text run per paragraph (ABI rejects '\n' in measure), role textField multiline,
-//                        no AX text runs
-//   Label             -> role group + label (children draw normally)
-//   Divider           -> hairline rect, no semantics
-//   Menu / context    -> host rect or hit target; the popup is an IN-WINDOW OVERLAY (ABI 0.5 has no popup-menu kind)
-//   List / list-item  -> role list / listItem; selected row drawn with a highlight (no selected state in ABI 0.5)
-//   Alert / dialog    -> modal plan: <=2 actions map to MessageBox OK / OK-Cancel / YES-NO; 3+ actions unsupported
-//   keyboardShortcut  -> key events dispatched through the runtime, Ctrl -> .command (CONTRACT section 4)
+// ABI 0.6 MAPPING (the 0.5 workarounds are gone; RESULT.md has the full table):
+//   Button            -> rect + text, role button, actions invoke/focus, SWR_SEM_DISABLED when disabled.
+//                        The grey fill is visual only; the renderer refuses invoke and swallows presses.
+//   Toggle            -> box rect (+ check glyph when on), role checkbox, toggled on/off (UIA TogglePattern),
+//                        actions invoke/focus, disabled flag.
+//   Image             -> SWR_PRIM_IMAGE of a generated RGBA test pattern (registered at ready, released at close),
+//                        role image + label. No asset files.
+//   TextField         -> rect + text run + caret, role textField (single line; AX text runs).
+//   TextEditor        -> rect + ONE multi-paragraph text node ('\n' kept as line-break cells), role textField
+//                        multiline, one AX text run per visual line (a paragraph's run ends with its '\n').
+//   Label             -> role group + label (children draw normally).
+//   Divider           -> hairline rect, no semantics.
+//   List / list-item  -> role list / listItem; list items carry selectable + selected flags. The selected row is also
+//                        highlighted (visual only).
+//   Menu / context    -> host button; invoke opens the menu. Live runs (--live-modal) open a native popup
+//                        (requestMenu at the pointer). Result -2 (could not be shown), or a run without --live-modal,
+//                        draws the in-window overlay instead (role menu, rows role menuItem).
+//   Alert / dialog    -> requestDialog (TaskDialogIndirect), one custom button per action, item id = action index + 1,
+//                        answered through performPresentationAction (live runs only). The presentation is also
+//                        exposed as role alert (alert) or dialog (confirmationDialog) covering the window.
+//   keyboardShortcut  -> key events dispatched through the runtime, Ctrl -> .command (CONTRACT section 4).
 
 enum GalleryStyle {
     static let fontFamily = "Segoe UI"
@@ -36,11 +43,11 @@ enum GalleryStyle {
     static let caretColor: UInt32 = 0x111111FF
     static let checkFill: UInt32 = 0xFFFFFFFF
     static let checkOn: UInt32 = 0x2563EBFF
-    static let placeholderFill: UInt32 = 0xDDDDDDFF
     static let dividerColor: UInt32 = 0xC8C8C8FF
     static let menuFill: UInt32 = 0xFAFAFAFF
     static let rowSelected: UInt32 = 0x2563EB33
     static let runBlock: UInt64 = 32
+    static let patternSize = 32
 }
 
 /// Scales the alpha byte of a 0xRRGGBBAA colour by `opacity` (the ABI has no layer opacity).
@@ -107,14 +114,38 @@ func galleryKey(_ name: String) -> KeyEquivalent? {
     }
 }
 
-/// Modal plan for a presented alert or dialog, against the ABI 0.5 MessageBox kinds only.
+/// A generated 32x32 RGBA8 test pattern (straight alpha, byte order R, G, B, A). No asset files: the gradient
+/// stands in for symbol images, the checker for asset images.
+func galleryPattern(gradient: Bool) -> [UInt8] {
+    let size = GalleryStyle.patternSize
+    var pixels = [UInt8](repeating: 255, count: size * size * 4)
+    for y in 0..<size {
+        for x in 0..<size {
+            let i = (y * size + x) * 4
+            if gradient {
+                pixels[i] = UInt8(x * 255 / (size - 1))
+                pixels[i + 1] = UInt8(y * 255 / (size - 1))
+                pixels[i + 2] = 0x80
+            } else if ((x / 4) + (y / 4)) % 2 == 0 {
+                pixels[i] = 0x25
+                pixels[i + 1] = 0x63
+                pixels[i + 2] = 0xEB
+            } else {
+                pixels[i] = 0xFF
+                pixels[i + 1] = 0xFF
+                pixels[i + 2] = 0xFF
+            }
+        }
+    }
+    return pixels
+}
+
+/// Native dialog plan for a presented alert or confirmation dialog: one custom button per action, item id = action
+/// index + 1 (non-zero, unique). The ABI task dialog takes 1 to 8 buttons.
 struct GalleryModalPlan {
     /// "alert" or "confirmationDialog".
     let kind: String
-    /// Action index answered by YES (or by OK for a single action).
-    var yesIndex: Int?
-    /// Action index answered by NO / CANCEL; nil when the plan dismisses instead.
-    var noIndex: Int?
+    var buttons: [BridgeWindow.ModalItem]
     /// Human-readable plan status, recorded for the self-test.
     var status: String
     var unsupported: Bool { status.hasPrefix("unsupported") }
@@ -122,22 +153,35 @@ struct GalleryModalPlan {
 
 func galleryPlanModal(_ p: ResolvedPresentation) -> GalleryModalPlan {
     let actions = p.actions
-    switch actions.count {
-    case 0:
-        return GalleryModalPlan(kind: p.kind, yesIndex: nil, noIndex: nil, status: "unsupported-0-actions")
-    case 1:
-        return GalleryModalPlan(kind: p.kind, yesIndex: 0, noIndex: nil, status: "ok")
-    case 2:
-        let cancel = actions.firstIndex { $0.role == .cancel }
-        if let cancel {
-            let other = cancel == 0 ? 1 : 0
-            return GalleryModalPlan(kind: p.kind, yesIndex: other, noIndex: cancel, status: "yes-no")
-        }
-        return GalleryModalPlan(kind: p.kind, yesIndex: 0, noIndex: 1, status: "yes-no")
-    default:
-        return GalleryModalPlan(kind: p.kind, yesIndex: nil, noIndex: nil,
-                                status: "unsupported-\(actions.count)-actions")
+    guard (1...8).contains(actions.count) else {
+        return GalleryModalPlan(kind: p.kind, buttons: [], status: "unsupported-\(actions.count)-actions")
     }
+    let buttons = actions.enumerated().map { index, action in
+        BridgeWindow.ModalItem(id: UInt32(index + 1), text: action.title, disabled: action.isDisabled)
+    }
+    return GalleryModalPlan(kind: p.kind, buttons: buttons, status: "buttons-\(actions.count)")
+}
+
+/// Native popup items for a menu host: one item per top-level entry, id = entry index + 1, so a pick maps back to the
+/// entry with `id - 1`. Dividers are separators. Submenus are shown disabled (the native popup here is flat).
+func galleryMenuItems(_ items: [ResolvedMenuItem]) -> [BridgeWindow.ModalItem] {
+    items.enumerated().map { index, item in
+        if item.kind == .divider { return BridgeWindow.ModalItem.separatorItem }
+        let suffix = item.kind == .submenu ? "  >" : ""
+        let enabled = !item.isDisabled && item.kind == .action
+        return BridgeWindow.ModalItem(id: UInt32(index + 1), text: item.title + suffix, disabled: !enabled)
+    }
+}
+
+/// What the backend sent for one runtime node (or overlay / presentation node) in the latest commit. The self-test
+/// reads these back to check the ABI 0.6 semantics that reached the renderer.
+struct CommittedSemantic: Equatable {
+    let role: NodeRole
+    let label: String
+    let toggled: ToggledState
+    let selected: Bool?
+    let disabled: Bool
+    let runTexts: [String]
 }
 
 /// Bridge measurement of runtime text. Synchronous; returned handles are released by the owner.
@@ -206,22 +250,31 @@ final class GalleryBackend {
     private var dirty = false
     private var closedFlag = false
     private var nextModalRequest: UInt64 = 1
+    private var windowPx = Rect.zero
+    /// Test patterns registered at ready ("gradient", "checker"). Released at close.
+    private var patterns: [String: ImageHandle] = [:]
 
     // Per-commit maps, rebuilt from the resolved tree on every commit.
-    private var buttons: [UInt64: (runtimeID: String, enabled: Bool)] = [:]
-    private var toggles: [UInt64: (runtimeID: String, enabled: Bool)] = [:]
+    private var buttons: [UInt64: String] = [:]
+    private var toggles: [UInt64: String] = [:]
     private var fields: [UInt64: String] = [:]
     private var fieldGeometry: [UInt64: GalleryFieldGeometry] = [:]
     private var rows: [UInt64: String] = [:]
     private var lists: [UInt64: String] = [:]
     private var menuHosts: [UInt64: String] = [:]
+    private var menuItemsByHost: [String: [ResolvedMenuItem]] = [:]
     private var overlayItems: [UInt64: (host: String, index: Int)] = [:]
+    private(set) var committed: [String: CommittedSemantic] = [:]
     private(set) var focusTarget: UInt64 = 0
     private(set) var runtimeFocus: String?
-    private var openMenuHost: String?
+
+    // In-window menu overlay (fallback) and native modal state.
+    private(set) var openMenuHost: String?
+    private var pendingMenus: [UInt64: String] = [:]
     private var activePresentationKey: String?
     private var activePresentationHost: String?
-    private var activePlan: GalleryModalPlan?
+    private(set) var activePlan: GalleryModalPlan?
+    private(set) var activeDialogRequestID: UInt64?
     private var presentationSeen = false
 
     // Renderer and input bookkeeping (read by the self-test).
@@ -230,35 +283,56 @@ final class GalleryBackend {
     private(set) var measureFailures = 0
     private(set) var kindCounts: [String: Int] = [:]
     private(set) var unknownKinds: Set<String> = []
-    private(set) var imagePlaceholders = 0
-    private(set) var toggleGlyphs = 0
-    private(set) var editorParagraphs = 0
-    private(set) var overlayItemsCommitted = 0
+    private(set) var imagePrimitives = 0
+    private(set) var editorLines = 0
+    private(set) var editorRuns = 0
+    private(set) var overlayRowsCommitted = 0
+    private(set) var highlightedRows = 0
     private(set) var invokesSent = 0
-    private(set) var invokesSuppressed = 0
     private(set) var pointerEvents = 0
     private(set) var keyEvents = 0
     private(set) var shortcutDispatches = 0
     private(set) var listKeyActions = 0
-    private(set) var highlightedRows = 0
     private(set) var rowSelectCalls = 0
     private(set) var menuOpens = 0
+    private(set) var overlayOpens = 0
     private(set) var menuPicks = 0
+    private(set) var nativeMenuRequests = 0
+    private(set) var menuFailures = 0
     private(set) var modalPlans: [String] = []
-    private(set) var modalRequests = 0
-    private(set) var modalResults: [Int32] = []
+    private(set) var nativeDialogRequests = 0
+    private(set) var dialogFailures = 0
+    private(set) var modalResults: [Int] = []
+    private(set) var staleModalResults = 0
     private(set) var closedCalls = 0
     private(set) var afterCloseCommits = 0
 
-    /// ABI 0.5 gap uses: each counter is how often the gallery drew a control the ABI cannot describe natively.
-    var abiGapUses: [String: Int] {
+    /// Native modal requests actually sent to the renderer (zero in a self-test without --live-modal).
+    var modalRequests: Int { nativeMenuRequests + nativeDialogRequests }
+
+    /// Registered test patterns (expected 2 after ready, 0 after close).
+    var registeredPatternCount: Int { patterns.count }
+
+    /// ABI 0.6 features the latest commit used (logged by the self-test).
+    var abiUses: [String: Int] {
         [
-            "image-primitive (placeholder drawn)": imagePlaceholders,
-            "checkbox-role-and-toggled-state (button + value)": toggleGlyphs,
-            "multi-paragraph text (per-paragraph runs, no AX runs)": editorParagraphs,
-            "popup-menu kind (in-window overlay items)": overlayItemsCommitted,
-            "list selected state (highlight only)": highlightedRows,
+            "image primitive (SWR_PRIM_IMAGE)": imagePrimitives,
+            "checkbox role + toggled state": committed.values.filter { $0.toggled != .none }.count,
+            "list selectable + selected flags": committed.values.filter { $0.selected != nil }.count,
+            "disabled flag (SWR_SEM_DISABLED)": disabledNodes,
+            "multi-paragraph text runs": editorRuns,
+            "native menu requests (requestMenu)": nativeMenuRequests,
+            "native dialog requests (requestDialog)": nativeDialogRequests,
+            "overlay menu rows (no native popup)": overlayRowsCommitted,
         ]
+    }
+
+    /// Count of committed nodes with the disabled flag.
+    var disabledNodes: Int { committed.values.filter(\.disabled).count }
+
+    /// Native popup items the Menu host at `host` would send (self-test check; sends nothing).
+    func nativeMenuItems(host: String) -> [BridgeWindow.ModalItem] {
+        galleryMenuItems(menuItemsByHost[host] ?? [])
     }
 
     /// Called after each bridge event and each tick; the self-test advances its stages here.
@@ -280,6 +354,8 @@ final class GalleryBackend {
         do {
             let metrics = try win.metrics()
             scale = metrics.scale
+            windowPx = Rect(x: 0, y: 0, w: Float(metrics.width), h: Float(metrics.height))
+            registerPatterns()
             let meas = GalleryTextMeasurer(bridge: bridge, scale: scale)
             measurer = meas
             let g = Graph(GalleryRoot(model: model, screen: screen), measurer: meas, scale: CGFloat(scale))
@@ -298,16 +374,33 @@ final class GalleryBackend {
         }
     }
 
+    private func registerPatterns() {
+        do {
+            patterns["gradient"] = try bridge.registerImage(
+                width: UInt32(GalleryStyle.patternSize), height: UInt32(GalleryStyle.patternSize),
+                rgba: galleryPattern(gradient: true))
+            patterns["checker"] = try bridge.registerImage(
+                width: UInt32(GalleryStyle.patternSize), height: UInt32(GalleryStyle.patternSize),
+                rgba: galleryPattern(gradient: false))
+        } catch {
+            commitErrors.append("registerImage: \(error)")
+        }
+    }
+
     func tick(timestampNS: UInt64) {
         guard let graph else { return }
         graph.tick(now: Double(timestampNS) / 1_000_000_000)
     }
 
-    /// Window closed: the renderer already refuses commits and frees its tree. The host runs the runtime teardown
-    /// and drops its ledger; nothing is sent to the renderer after this point.
+    /// Window closed: the renderer already refuses commits and frees its tree. The host releases its test images,
+    /// runs the runtime teardown and drops its ledger; nothing is sent to the renderer after this point.
     func closed() {
         closedCalls += 1
         closedFlag = true
+        for handle in patterns.values {
+            bridge.release(handle)
+        }
+        patterns = [:]
         graph?.tearDown()
         window = nil
         graph = nil
@@ -351,6 +444,7 @@ final class GalleryBackend {
         var upserts: [NodeUpsert] = []
         var parents: [UInt64: UInt64] = [:]
         var releasable: [TextRunHandle] = []
+        var committed: [String: CommittedSemantic] = [:]
         var overlay: (hostBridge: UInt64, hostRuntime: String, items: [ResolvedMenuItem], rect: Rect)?
         var presentation: (host: String, value: ResolvedPresentation)?
     }
@@ -370,6 +464,11 @@ final class GalleryBackend {
         }
     }
 
+    /// Pattern for an image node: the symbol gets the gradient, every other image the checker.
+    private func patternHandle(for name: String) -> ImageHandle? {
+        name == "star.fill" ? patterns["gradient"] : patterns["checker"]
+    }
+
     /// Converts one commit record into one ABI transaction (full upsert of the resolved tree; removes are the
     /// top-most ids that left the tree). A nil root is the runtime teardown and removes every node.
     func commit(_ record: CommitRecord) {
@@ -386,7 +485,9 @@ final class GalleryBackend {
             rows = [:]
             lists = [:]
             menuHosts = [:]
+            menuItemsByHost = [:]
             overlayItems = [:]
+            committed = [:]
             return
         }
         buttons = [:]
@@ -396,12 +497,13 @@ final class GalleryBackend {
         rows = [:]
         lists = [:]
         menuHosts = [:]
+        menuItemsByHost = [:]
         overlayItems = [:]
-        // Gap counters describe the tree of the latest commit, so they restart here.
-        imagePlaceholders = 0
-        toggleGlyphs = 0
-        editorParagraphs = 0
-        overlayItemsCommitted = 0
+        // Counters describe the tree of the latest commit, so they restart here.
+        imagePrimitives = 0
+        editorLines = 0
+        editorRuns = 0
+        overlayRowsCommitted = 0
         highlightedRows = 0
         runtimeFocus = record.focused
         presentationSeen = false
@@ -414,11 +516,14 @@ final class GalleryBackend {
         // A presentation is planned once per (kind, title) while it is presented.
         if let presentation = b.presentation {
             notePresentation(presentation.value, host: presentation.host)
+            emitPresentation(presentation, into: &b)
         } else if !presentationSeen {
             activePresentationKey = nil
             activePresentationHost = nil
             activePlan = nil
+            activeDialogRequestID = nil
         }
+        committed = b.committed
 
         focusTarget = runtimeFocus.flatMap { id in fields.first { $0.value == id }?.key } ?? 0
         var removes: [UInt64] = []
@@ -456,25 +561,25 @@ final class GalleryBackend {
         let fontDIP = galleryFontDIP(node.style.font)
 
         if node.accessibility.role == "list-item" {
-            // List rows are the runtime's list-item nodes; the selected one is highlighted (no selected state in ABI 0.5).
+            // List rows are the runtime's list-item nodes. The selected flag is published; the highlight is drawn too.
             rows[id] = node.id
-            if node.accessibility.isSelected {
+            let selected = node.accessibility.isSelected
+            if selected {
                 prims.append(.rect(bounds, color: faded(GalleryStyle.rowSelected, alpha), radius: 4 * s))
                 highlightedRows += 1
             }
             flags = [.hitTarget]
-            semantic = SemanticNode(role: .listItem, label: label)
+            semantic = SemanticNode(role: .listItem, label: label, selected: selected)
         } else {
             switch node.kind {
             case "Button":
                 bounds = Rect(x: bounds.x - 12 * s, y: bounds.y - 6 * s, w: bounds.w + 24 * s, h: bounds.h + 12 * s)
                 let fill = enabled ? GalleryStyle.buttonFill : GalleryStyle.disabledFill
                 prims.append(.rect(bounds, color: faded(fill, alpha), radius: 6 * s))
-                buttons[id] = (node.id, enabled)
-                flags = enabled ? [.hitTarget, .focusable] : []
-                semantic = SemanticNode(role: .button, label: label,
-                                        actions: enabled ? [.invoke, .focus] : [],
-                                        identifier: "sr1/\(screen)/button/\(label)")
+                buttons[id] = node.id
+                flags = [.hitTarget, .focusable]
+                semantic = SemanticNode(role: .button, label: label, actions: [.invoke, .focus],
+                                        identifier: "sr1/\(screen)/button/\(label)", disabled: !enabled)
                 childInside = true
 
             case "Text":
@@ -488,6 +593,7 @@ final class GalleryBackend {
                 }
 
             case "TextField", "TextEditor":
+                // One text node per field. The editor is multi-line: one measurement holds every paragraph.
                 let multiline = node.kind == "TextEditor"
                 let text = node.text ?? ""
                 let field = Rect(x: bounds.x - 6 * s, y: bounds.y, w: bounds.w + 12 * s, h: bounds.h)
@@ -499,25 +605,9 @@ final class GalleryBackend {
                 let lh = GalleryStyle.lineHeightDIP * s
                 var runs: [AXTextRun] = []
                 var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
-                if multiline {
-                    // ABI 0.5 measures one paragraph per call (no '\n'): each paragraph is its own run, stacked.
-                    var y = origin.y
-                    for paragraph in text.split(separator: "\n", omittingEmptySubsequences: false) {
-                        let para = String(paragraph)
-                        if para.isEmpty {
-                            y += lh
-                            continue
-                        }
-                        if let m = measure(para, color: faded(GalleryStyle.textColor, alpha), fontDIP: 16,
-                                           maxWidth: Float(pf.width), into: &b.releasable) {
-                            prims.append(.text(m.run, x: origin.x, y: y))
-                            y += m.height
-                            editorParagraphs += 1
-                        }
-                    }
-                } else if !text.isEmpty,
-                          let m = measure(text, color: faded(GalleryStyle.textColor, alpha), fontDIP: 16,
-                                          maxWidth: 0, into: &b.releasable) {
+                if !text.isEmpty,
+                   let m = measure(text, color: faded(GalleryStyle.textColor, alpha), fontDIP: 16,
+                                   maxWidth: multiline ? Float(pf.width) : 0, into: &b.releasable) {
                     let cells = (try? bridge.cells(of: m.run)) ?? []
                     prims.append(.text(m.run, x: origin.x, y: origin.y))
                     let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
@@ -529,6 +619,10 @@ final class GalleryBackend {
                     }
                     runs = makeAXTextRuns(text: text, measurement: m, cells: cells, origin: origin,
                                           lineHeightPx: lh, firstRunID: runBlock(node.id))
+                    if multiline {
+                        editorLines = m.lineCount
+                        editorRuns = runs.count
+                    }
                     if !runs.isEmpty {
                         let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
                         let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
@@ -555,20 +649,21 @@ final class GalleryBackend {
                 if on, let m = measure("\u{2713}", color: faded(0xFFFFFFFF, alpha), fontDIP: 12, maxWidth: 0,
                                        into: &b.releasable) {
                     prims.append(.text(m.run, x: box.x + (box.w - m.width) / 2, y: box.y + (box.h - m.height) / 2))
-                    toggleGlyphs += 1
                 }
-                toggles[id] = (node.id, enabled)
-                flags = enabled ? [.hitTarget, .focusable] : []
-                semantic = SemanticNode(role: .button, label: label, value: on ? "1" : "0",
-                                        actions: enabled ? [.invoke, .focus] : [],
-                                        identifier: "sr1/\(screen)/toggle/\(label)")
+                toggles[id] = node.id
+                flags = [.hitTarget, .focusable]
+                semantic = SemanticNode(role: .checkbox, label: label,
+                                        actions: [.invoke, .focus],
+                                        identifier: "sr1/\(screen)/toggle/\(label)",
+                                        toggled: on ? .on : .off, disabled: !enabled)
 
             case "Image":
                 let name = node.image?.name ?? "image"
-                prims.append(.rect(bounds, color: faded(GalleryStyle.placeholderFill, alpha), radius: 2 * s,
-                                   borderColor: faded(GalleryStyle.fieldBorder, alpha), borderWidth: max(1, s)))
-                imagePlaceholders += 1
-                semantic = SemanticNode(role: .group, label: node.accessibility.label ?? name,
+                if let handle = patternHandle(for: name) {
+                    prims.append(.image(handle, bounds, radius: 2 * s))
+                    imagePrimitives += 1
+                }
+                semantic = SemanticNode(role: .image, label: node.accessibility.label ?? name,
                                         identifier: "sr1/\(screen)/image/\(name)")
 
             case "Label":
@@ -602,11 +697,18 @@ final class GalleryBackend {
             }
         }
 
+        if let semantic {
+            b.committed[node.id] = CommittedSemantic(
+                role: semantic.role, label: semantic.label, toggled: semantic.toggled,
+                selected: semantic.selected, disabled: semantic.disabled,
+                runTexts: semantic.runs.map(\.text))
+        }
         if let presentation = node.presentation {
             b.presentation = (node.id, presentation)
         }
         if let items = node.menu {
             menuHosts[id] = node.id
+            menuItemsByHost[node.id] = items
             flags.insert(.hitTarget)
             if openMenuHost == node.id {
                 b.overlay = (id, node.id, items, Rect(x: bounds.x, y: bounds.y + bounds.h, w: 220 * s, h: 0))
@@ -620,24 +722,33 @@ final class GalleryBackend {
         }
     }
 
-    /// Popup overlay for an open menu host: one row per top-level item, below the host. Disabled and divider rows
-    /// are drawn without an invoke action. ABI 0.5 has no popup-menu kind; this is an in-window list.
+    /// In-window menu (fallback only: a result of -2, or a run without --live-modal). One role-menu container with one
+    /// role-menuItem row per top-level entry, below the host.
     private func emitOverlay(_ overlay: (hostBridge: UInt64, hostRuntime: String, items: [ResolvedMenuItem], rect: Rect),
                              into b: inout Builder) {
         let s = scale
         let rowH = 26 * s
+        let containerID = bridgeID("overlay-menu/\(overlay.hostRuntime)")
+        let total = Rect(x: overlay.rect.x, y: overlay.rect.y, w: overlay.rect.w, h: rowH * Float(overlay.items.count))
+        b.parents[containerID] = 0
+        let containerRole = NodeRole.menu
+        b.upserts.append(NodeUpsert(id: containerID, parent: 0, order: 1000, flags: [], bounds: total,
+                                    primitives: [], semantic: SemanticNode(role: containerRole,
+                                                                           identifier: "sr1/\(screen)/menu-popup")))
+        b.committed["overlay-menu/\(overlay.hostRuntime)"] = CommittedSemantic(
+            role: containerRole, label: "", toggled: .none, selected: nil, disabled: false, runTexts: [])
         var y = overlay.rect.y
         for (index, item) in overlay.items.enumerated() {
             let oid = bridgeID("overlay/\(overlay.hostRuntime)/\(index)")
             let rect = Rect(x: overlay.rect.x, y: y, w: overlay.rect.w, h: rowH)
             y += rowH
+            b.parents[oid] = containerID
             var prims: [Primitive] = []
             if item.kind == .divider {
                 prims.append(.rect(Rect(x: rect.x, y: rect.y + rowH / 2, w: rect.w, h: max(1, s)),
                                    color: faded(GalleryStyle.dividerColor, 1)))
-                b.upserts.append(NodeUpsert(id: oid, parent: 0, order: UInt32(1000 + index), flags: [],
+                b.upserts.append(NodeUpsert(id: oid, parent: containerID, order: UInt32(index), flags: [],
                                             bounds: rect, primitives: prims, semantic: nil))
-                b.parents[oid] = 0
                 continue
             }
             let enabled = !item.isDisabled && item.kind == .action
@@ -651,15 +762,30 @@ final class GalleryBackend {
             if enabled {
                 overlayItems[oid] = (overlay.hostRuntime, index)
             }
-            overlayItemsCommitted += 1
-            b.parents[oid] = 0
+            overlayRowsCommitted += 1
+            let semantic = SemanticNode(role: .menuItem, label: item.title,
+                                        actions: enabled ? [.invoke, .focus] : [],
+                                        identifier: "sr1/\(screen)/menu-item/\(item.title)",
+                                        disabled: !enabled)
+            b.committed["overlay/\(overlay.hostRuntime)/\(index)"] = CommittedSemantic(
+                role: .menuItem, label: item.title, toggled: .none, selected: nil, disabled: !enabled, runTexts: [])
             b.upserts.append(NodeUpsert(
-                id: oid, parent: 0, order: UInt32(1000 + index),
+                id: oid, parent: containerID, order: UInt32(index),
                 flags: enabled ? [.hitTarget, .focusable] : [], bounds: rect, primitives: prims,
-                semantic: SemanticNode(role: .button, label: item.title,
-                                       actions: enabled ? [.invoke, .focus] : [],
-                                       identifier: "sr1/\(screen)/menu-item/\(item.title)")))
+                semantic: semantic))
         }
+    }
+
+    /// The presented alert or dialog as a semantic node (role alert or dialog) covering the window. No primitives and
+    /// no hit target: the native dialog is the visible surface.
+    private func emitPresentation(_ p: (host: String, value: ResolvedPresentation), into b: inout Builder) {
+        let id = bridgeID("presentation/\(p.host)")
+        let role: NodeRole = p.value.kind == "alert" ? .alert : .dialog
+        b.parents[id] = 0
+        b.upserts.append(NodeUpsert(id: id, parent: 0, order: 2000, flags: [], bounds: windowPx, primitives: [],
+                                    semantic: SemanticNode(role: role, label: p.value.title)))
+        b.committed["presentation/\(p.host)"] = CommittedSemantic(
+            role: role, label: p.value.title, toggled: .none, selected: nil, disabled: false, runTexts: [])
     }
 
     private func notePresentation(_ p: ResolvedPresentation, host: String) {
@@ -671,21 +797,23 @@ final class GalleryBackend {
         let plan = galleryPlanModal(p)
         activePlan = plan
         modalPlans.append("\(p.kind):\(plan.status)")
-        guard !plan.unsupported else { return }
-        // The self-test never opens a MessageBox (it would block on a human). Live runs (--live-modal) do.
+        guard !plan.unsupported else {
+            activeDialogRequestID = nil
+            return
+        }
+        // The request id is taken even when nothing is sent, so the self-test can answer it through modalResult.
+        let requestID = nextModalRequest
+        nextModalRequest += 1
+        activeDialogRequestID = requestID
+        // The self-test never opens a task dialog (it would block on a human). Live runs (--live-modal) do.
         guard liveModal, let window else { return }
         do {
-            let buttons: BridgeWindow.ModalButtons
-            switch plan.status {
-            case "ok": buttons = .ok
-            case "yes-no": buttons = .yesNo
-            default: buttons = .okCancel
-            }
-            try window.requestModal(requestID: nextModalRequest, title: p.title, message: p.message ?? "", buttons: buttons)
-            nextModalRequest += 1
-            modalRequests += 1
+            try window.requestDialog(requestID: requestID, title: p.title, message: p.message ?? "",
+                                     buttons: plan.buttons, defaultIndex: 0)
+            nativeDialogRequests += 1
         } catch {
-            commitErrors.append("requestModal: \(error)")
+            commitErrors.append("requestDialog: \(error)")
+            activeDialogRequestID = nil
         }
     }
 
@@ -703,14 +831,13 @@ final class GalleryBackend {
                 keyDown(name: ev.text, modifiers: ev.modifiers)
             }
         case .axAction:
-            switch ev.axAction {
-            case .invoke?:
+            if ev.axAction == .invoke {
                 invoke(node: ev.node)
-            default:
-                break
             }
         case .modalResult:
-            modalResult(code: ev.i0)
+            let choice = ev.modalChoice
+            let index = ev.modalFailed ? -2 : (choice?.index ?? -1)
+            modalResult(requestID: ev.arg, kind: ev.action, itemID: choice?.itemID ?? 0, index: index)
         case .windowMetrics:
             applyMetrics(width: ev.i0, height: ev.i1, scale: ev.x)
         case .focus, .ime:
@@ -720,22 +847,15 @@ final class GalleryBackend {
         afterInput?()
     }
 
-    /// Activates a bridge node: button, toggle, menu host or overlay item. Disabled nodes are not sent to the runtime.
+    /// Activates a bridge node: button, toggle, menu host or overlay item. Disabled nodes are refused by the renderer
+    /// (no event reaches here) and by the runtime (tapButton / activateToggle return false).
     func invoke(node: UInt64) {
-        if let button = buttons[node] {
-            guard button.enabled else {
-                invokesSuppressed += 1
-                return
-            }
+        if let runtimeID = buttons[node] {
             invokesSent += 1
-            _ = graph?.tapButton(button.runtimeID)
-        } else if let toggle = toggles[node] {
-            guard toggle.enabled else {
-                invokesSuppressed += 1
-                return
-            }
+            _ = graph?.tapButton(runtimeID)
+        } else if let runtimeID = toggles[node] {
             invokesSent += 1
-            _ = graph?.activateToggle(toggle.runtimeID)
+            _ = graph?.activateToggle(runtimeID)
         } else if let host = menuHosts[node] {
             toggleMenu(host)
         } else if let item = overlayItems[node] {
@@ -748,7 +868,7 @@ final class GalleryBackend {
     private func pointerDown(node: UInt64, modifiers: UInt32) {
         pointerEvents += 1
         if overlayItems[node] == nil, openMenuHost != nil, menuHosts[node] == nil {
-            // A press outside the open menu closes it, then the press is handled normally.
+            // A press outside the open overlay closes it, then the press is handled normally.
             closeMenu()
         }
         if let row = rows[node] {
@@ -760,20 +880,80 @@ final class GalleryBackend {
     }
 
     private func toggleMenu(_ host: String) {
-        menuOpens += 1
-        openMenuHost = openMenuHost == host ? nil : host
-        dirty = true
+        if openMenuHost == host {
+            closeMenu()
+        } else {
+            openMenu(hostRuntimeID: host)
+        }
     }
 
-    /// Opens or closes a menu host's overlay (the self-test and pointer both come here).
+    /// Opens a menu host: a native popup at the pointer on live runs, otherwise (and when the popup could not be shown)
+    /// the in-window overlay.
     func openMenu(hostRuntimeID: String) {
-        openMenuHost = hostRuntimeID
         menuOpens += 1
+        if liveModal, let window, let items = menuItemsByHost[hostRuntimeID] {
+            let requestID = nextModalRequest
+            nextModalRequest += 1
+            do {
+                try window.requestMenu(requestID: requestID, items: galleryMenuItems(items), x: -1, y: -1)
+                pendingMenus[requestID] = hostRuntimeID
+                nativeMenuRequests += 1
+                return
+            } catch {
+                commitErrors.append("requestMenu: \(error)")
+            }
+        }
+        showOverlay(hostRuntimeID)
+    }
+
+    private func showOverlay(_ host: String) {
+        overlayOpens += 1
+        openMenuHost = host
         dirty = true
     }
 
     func closeMenu() {
         openMenuHost = nil
+        dirty = true
+    }
+
+    /// Answer from a native popup (kind 2, requestMenu) or task dialog (kind 3, requestDialog). `index` is -1 when the
+    /// user dismissed it and -2 when it could not be shown; otherwise `itemID` names the chosen item (id - 1 = index).
+    /// Also driven by the self-test with the same arguments the renderer sends.
+    func modalResult(requestID: UInt64, kind: UInt32, itemID: UInt32, index: Int) {
+        modalResults.append(index)
+        switch kind {
+        case 2:
+            guard let host = pendingMenus.removeValue(forKey: requestID) else {
+                staleModalResults += 1
+                return
+            }
+            if index == -2 {
+                // The popup could not be shown: fall back to the in-window overlay.
+                menuFailures += 1
+                showOverlay(host)
+                return
+            }
+            guard index >= 0, itemID > 0 else { return }
+            menuPicks += 1
+            _ = graph?.performMenuItem(host, path: [Int(itemID) - 1])
+        case 3:
+            guard requestID == activeDialogRequestID, let host = activePresentationHost else {
+                staleModalResults += 1
+                return
+            }
+            activeDialogRequestID = nil
+            if index == -2 {
+                dialogFailures += 1
+                _ = graph?.dismissPresentation(host)
+            } else if index >= 0, itemID > 0 {
+                _ = graph?.performPresentationAction(host, index: Int(itemID) - 1)
+            } else {
+                _ = graph?.dismissPresentation(host)
+            }
+        default:
+            staleModalResults += 1
+        }
         dirty = true
     }
 
@@ -808,29 +988,9 @@ final class GalleryBackend {
         }
     }
 
-    /// Presentation answer from the MessageBox (live runs only). Code values: SWR_MODAL_RESULT_* (YES 6, NO 7, OK 1,
-    /// CANCEL 2). YES runs the affirmative action; NO or CANCEL runs the cancel action or dismisses.
-    private func modalResult(code: Int32) {
-        modalResults.append(code)
-        guard let host = activePresentationHost, let plan = activePlan else { return }
-        switch code {
-        case 6, 1:
-            if let yes = plan.yesIndex {
-                _ = graph?.performPresentationAction(host, index: yes)
-            } else {
-                _ = graph?.dismissPresentation(host)
-            }
-        default:
-            if let no = plan.noIndex {
-                _ = graph?.performPresentationAction(host, index: no)
-            } else {
-                _ = graph?.dismissPresentation(host)
-            }
-        }
-    }
-
     private func applyMetrics(width: Int32, height: Int32, scale newScale: Float) {
         guard width > 0, height > 0 else { return }
+        windowPx = Rect(x: 0, y: 0, w: Float(width), h: Float(height))
         graph?.rootProposal = ProposedViewSize(width: CGFloat(width) / CGFloat(scale),
                                                height: CGFloat(height) / CGFloat(scale))
         dirty = true

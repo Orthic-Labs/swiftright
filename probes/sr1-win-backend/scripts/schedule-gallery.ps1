@@ -3,7 +3,7 @@
 #   -Screen toggle|image|editor|label|list-single|list-multi|list-delete|menu|alert|dialog|shortcut|disabled
 #   -Tag <unique run tag>
 param(
-  [string]$Base = 'D:\Claude\sr1-gallery',
+  [string]$Base = 'D:\Claude\sr1-gallery06',
   [string]$Screen = 'toggle',
   [string]$Tag = 'run1'
 )

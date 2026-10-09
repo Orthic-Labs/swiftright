@@ -3,9 +3,12 @@ import SwiftRightRuntime
 
 // Scripted self-test for one gallery screen. One stage runs per display tick (after the previous stage's
 // commit has been flushed and two ticks have passed). Stages drive the runtime through Graph and read back the
-// resolved tree; the backend counters show what reached the renderer.
+// resolved tree and what the backend committed to the renderer (GalleryBackend.committed).
 //
-// BLOCKED means a behaviour the ABI 0.5 path cannot verify or express (see the block reasons). It is not a pass.
+// Native popups and task dialogs are never opened here (no --live-modal). Their answers are fed through
+// GalleryBackend.modalResult with the arguments the renderer would send, so the item-id mapping is checked without a
+// human. The display itself is BLOCKED: it needs a person (or a UIA driver) on the desktop.
+// BLOCKED means a behaviour this run cannot verify. It is not a pass.
 
 typealias GalleryStage = (name: String, run: () -> Void)
 
@@ -33,6 +36,7 @@ final class GallerySelfTest {
         self.stages = [(name: "renderer-accepts-commits", run: { [self] in
             self.check("renderer accepted commits", self.backend.commitCount > 0 && self.backend.commitErrors.isEmpty)
             self.check("no measurement failures", self.backend.measureFailures == 0)
+            self.check("two test patterns registered", self.backend.registeredPatternCount == 2)
         })] + stagesFor(screen)
     }
 
@@ -70,8 +74,8 @@ final class GallerySelfTest {
     private func finish() {
         finished = true
         let verdict = !failures.isEmpty ? "FAIL" : (!blockers.isEmpty ? "BLOCKED" : "PASS")
-        for (key, count) in backend.abiGapUses.sorted(by: { $0.key < $1.key }) {
-            log("ABI-GAP \(key): \(count)")
+        for (key, count) in backend.abiUses.sorted(by: { $0.key < $1.key }) {
+            log("ABI-06 USE \(key): \(count)")
         }
         log("SELFTEST SR1 \(screen): \(verdict) (\(passes)/\(checks) checks, \(blockers.count) blocked, \(failures.count) failed)")
         requestQuit?()
@@ -130,6 +134,15 @@ final class GallerySelfTest {
         all().first { $0.presentation != nil }?.id
     }
 
+    private func documentHost() -> ResolvedNode? {
+        all().first { $0.menu != nil && galleryText($0) == "Document" }
+    }
+
+    /// What the backend committed for a runtime node in the latest commit.
+    private func sent(_ runtimeNode: ResolvedNode?) -> CommittedSemantic? {
+        runtimeNode.flatMap { backend.committed[$0.id] }
+    }
+
     // MARK: stages per screen
 
     private func stagesFor(_ screen: String) -> [GalleryStage] {
@@ -154,27 +167,31 @@ final class GallerySelfTest {
             (name: "toggle-role-and-value", run: { [self] in
                 let t = self.node("Toggle", "Wi-Fi")
                 self.check("Wi-Fi toggle present", t != nil)
-                self.check("Wi-Fi toggle reports checkbox role", t?.accessibility.role == "checkbox")
+                self.check("Wi-Fi toggle reports checkbox role to the runtime", t?.accessibility.role == "checkbox")
                 self.check("Wi-Fi toggle value is 0 when off", t?.accessibility.value == "0")
+                self.check("renderer gets checkbox role, toggled off", self.sent(t)?.role == .checkbox && self.sent(t)?.toggled == .off)
             }),
             (name: "toggle-activate", run: { [self] in
                 guard let t = self.node("Toggle", "Wi-Fi") else { return self.check("activate: toggle present", false) }
                 self.check("activateToggle accepted", self.graph.activateToggle(t.id))
             }),
             (name: "toggle-state-after-activate", run: { [self] in
+                let t = self.node("Toggle", "Wi-Fi")
                 self.check("binding set by toggle", self.model.wifi)
-                self.check("Wi-Fi toggle value is 1 when on", self.node("Toggle", "Wi-Fi")?.accessibility.value == "1")
+                self.check("Wi-Fi toggle value is 1 when on", t?.accessibility.value == "1")
+                self.check("renderer gets toggled on", self.sent(t)?.toggled == .on)
                 self.check("Wi-Fi caption follows", self.all().contains { $0.text == "Wi-Fi on" })
             }),
             (name: "toggle-disabled-ignores", run: { [self] in
                 guard let t = self.node("Toggle", "Locked") else { return self.check("locked toggle present", false) }
                 self.check("disabled toggle reports disabled", !t.accessibility.isEnabled)
+                self.check("disabled toggle sent with the disabled flag", self.sent(t)?.disabled == true)
                 self.check("disabled toggle refuses activation", !self.graph.activateToggle(t.id))
                 self.check("disabled toggle binding unchanged", !self.model.locked)
             }),
-            (name: "toggle-abi-role", run: { [self] in
-                self.block("checkbox role and toggled state",
-                           "ABI 0.5 has no checkbox role or checked flag; sent as a button with value 1/0")
+            (name: "toggle-native-display", run: { [self] in
+                self.block("checkbox rendered and toggled by a click or UIA TogglePattern",
+                           "needs the desktop (run with a person or UIA driver); the commit carries role checkbox and toggled state")
             }),
         ]
     }
@@ -187,11 +204,15 @@ final class GallerySelfTest {
                 self.check("symbol image labelled by its name", images.first?.accessibility.label == "star.fill")
                 self.check("asset image uses accessibilityLabel", images.last?.accessibility.label == "Company logo")
             }),
-            (name: "image-placeholders", run: { [self] in
-                self.check("backend drew placeholders for both images", self.backend.abiGapUses["image-primitive (placeholder drawn)"] == 2)
+            (name: "image-primitives", run: { [self] in
+                self.check("backend drew an image primitive for both images", self.backend.abiUses["image primitive (SWR_PRIM_IMAGE)"] == 2)
+                let images = self.nodes("Image")
+                self.check("renderer gets role image for both", images.allSatisfy { self.sent($0)?.role == .image })
+                self.check("renderer gets the image labels", self.sent(images.last)?.label == "Company logo")
             }),
-            (name: "image-primitive", run: { [self] in
-                self.block("image pixels", "SWR_PRIM_IMAGE is SWR_E_UNSUPPORTED in ABI 0.5; only placeholder rects are drawn")
+            (name: "image-pixels-native", run: { [self] in
+                self.block("image pixels on screen",
+                           "the commit carries SWR_PRIM_IMAGE with generated RGBA patterns; the display needs the desktop")
             }),
         ]
     }
@@ -201,11 +222,17 @@ final class GallerySelfTest {
             (name: "editor-node", run: { [self] in
                 let editor = self.nodes("TextEditor").first
                 self.check("TextEditor present", editor != nil)
-                self.check("TextEditor reports text-area role", editor?.accessibility.role == "text-area")
+                self.check("TextEditor reports text-area role to the runtime", editor?.accessibility.role == "text-area")
                 self.check("TextEditor value is the note", editor?.accessibility.value == self.model.note)
+                self.check("renderer gets a multiline text field", self.sent(editor)?.role == .textField)
             }),
-            (name: "editor-paragraphs", run: { [self] in
-                self.check("both paragraphs drawn as runs", self.backend.abiGapUses["multi-paragraph text (per-paragraph runs, no AX runs)"] == 2)
+            (name: "editor-single-node", run: { [self] in
+                let editor = self.nodes("TextEditor").first
+                self.check("both paragraphs measured in one text node", self.backend.editorLines >= 2)
+                self.check("one AX text run per visual line, at least two", self.backend.editorRuns >= 2)
+                let runs = self.sent(editor)?.runTexts ?? []
+                self.check("first paragraph run ends with its newline", runs.first?.hasSuffix("\n") == true)
+                self.check("AX runs partition the note", runs.joined() == self.model.note)
             }),
             (name: "editor-type", run: { [self] in
                 guard let editor = self.nodes("TextEditor").first, let state = self.graph.textInput(editor.id) else {
@@ -215,6 +242,11 @@ final class GallerySelfTest {
                 self.check("replace accepted in editor", state.replace(range: nil, text: "!"))
                 self.check("model note ends with typed text", self.model.note.hasSuffix("!"))
             }),
+            (name: "editor-runs-follow-typing", run: { [self] in
+                let editor = self.nodes("TextEditor").first
+                let runs = self.sent(editor)?.runTexts ?? []
+                self.check("AX runs follow the typed text", runs.joined() == self.model.note)
+            }),
             (name: "title-field-type", run: { [self] in
                 guard let field = self.nodes("TextField").first, let state = self.graph.textInput(field.id) else {
                     return self.check("title field text state present", false)
@@ -222,9 +254,9 @@ final class GallerySelfTest {
                 self.check("replace accepted in title field", state.replace(range: nil, text: "A"))
                 self.check("model title holds typed text", self.model.title == "A")
             }),
-            (name: "editor-ax-runs", run: { [self] in
-                self.block("multi-paragraph AX text runs",
-                           "ABI 0.5 measures one paragraph per call (no newline); the editor publishes no AX text runs")
+            (name: "editor-native-caret", run: { [self] in
+                self.block("caret and IME on screen",
+                           "the single-node editor is committed with line-break cells; typing on the desktop needs a person or UIA")
             }),
         ]
     }
@@ -234,6 +266,7 @@ final class GallerySelfTest {
             (name: "label-and-divider-nodes", run: { [self] in
                 self.check("Label present", self.nodes("Label").count >= 1)
                 self.check("Label icon drawn as an image node", self.nodes("Image").count == 1)
+                self.check("Label icon uses an image primitive", self.backend.abiUses["image primitive (SWR_PRIM_IMAGE)"] == 1)
                 self.check("two dividers present", self.nodes("Divider").count == 2)
             }),
             (name: "style-environment", run: { [self] in
@@ -250,6 +283,7 @@ final class GallerySelfTest {
             (name: "list-rows", run: { [self] in
                 self.check("one List node", self.graph.ids(ofKind: "List").count == 1)
                 self.check("four list-item rows", self.all().filter { $0.accessibility.role == "list-item" }.count == 4)
+                self.check("every row sent with the selectable flag", self.backend.abiUses["list selectable + selected flags"] == 4)
             }),
             (name: "select-row-2", run: { [self] in
                 guard let row = self.rowID("Row 2") else { return self.check("Row 2 present", false) }
@@ -262,10 +296,11 @@ final class GallerySelfTest {
                 self.check("binding holds tag 3", self.model.single == 3)
             }),
             (name: "row-selected-state", run: { [self] in
-                self.check("Row 3 reports selected", self.all().first { galleryText($0) == "Row 3" && $0.accessibility.role == "list-item" }?.accessibility.isSelected == true)
-            }),
-            (name: "list-selected-abi", run: { [self] in
-                self.block("selected state on list items", "ABI 0.5 has no selected flag; the row highlight is drawn only")
+                let row3 = self.all().first { galleryText($0) == "Row 3" && $0.accessibility.role == "list-item" }
+                self.check("Row 3 reports selected to the runtime", row3?.accessibility.isSelected == true)
+                self.check("renderer gets Row 3 selected", self.sent(row3)?.selected == true)
+                let row2 = self.all().first { galleryText($0) == "Row 2" && $0.accessibility.role == "list-item" }
+                self.check("renderer gets Row 2 not selected", self.sent(row2)?.selected == false)
             }),
         ]
     }
@@ -288,8 +323,10 @@ final class GallerySelfTest {
                 self.check("select all accepted", self.graph.navigateList(list, .selectAll))
                 self.check("selection is all four rows", self.model.multi == [1, 2, 3, 4])
             }),
-            (name: "multi-selected-abi", run: { [self] in
-                self.block("selected state on list items", "ABI 0.5 has no selected flag; the row highlight is drawn only")
+            (name: "multi-selected-flags", run: { [self] in
+                let rows = self.all().filter { $0.accessibility.role == "list-item" }
+                self.check("four rows sent", rows.count == 4)
+                self.check("every row sent as selected", rows.allSatisfy { self.sent($0)?.selected == true })
             }),
         ]
     }
@@ -321,31 +358,33 @@ final class GallerySelfTest {
     private func menuStages() -> [GalleryStage] {
         [
             (name: "menu-hosts", run: { [self] in
-                let doc = self.all().first { $0.menu != nil && galleryText($0) == "Document" }
+                let doc = self.documentHost()
                 self.check("context menu host present", doc != nil)
                 self.check("context menu has three items", doc?.menu?.count == 3)
                 let more = self.nodes("Menu").first
                 self.check("Menu node present", more != nil)
                 self.check("Menu has one item", more?.menu?.count == 1)
             }),
+            (name: "menu-native-items", run: { [self] in
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
+                let items = self.backend.nativeMenuItems(host: doc.id)
+                self.check("native popup gets three items", items.count == 3)
+                self.check("item ids are entry index + 1", items.map(\.id) == [1, 2, 3])
+                self.check("item texts follow the menu", items.map(\.text) == ["Copy", "Delete", "Share"])
+                self.check("Share is sent disabled", items.map(\.disabled) == [false, false, true])
+            }),
             (name: "menu-enabled-item", run: { [self] in
-                guard let doc = self.all().first(where: { $0.menu != nil && galleryText($0) == "Document" }) else {
-                    return self.check("context menu host present", false)
-                }
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
                 self.check("Copy runs", self.graph.performMenuItem(doc.id, path: [0]))
                 self.check("picks record copy", self.model.menuPicks == ["copy"])
             }),
             (name: "menu-destructive-item", run: { [self] in
-                guard let doc = self.all().first(where: { $0.menu != nil && galleryText($0) == "Document" }) else {
-                    return self.check("context menu host present", false)
-                }
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
                 self.check("Delete runs", self.graph.performMenuItem(doc.id, path: [1]))
                 self.check("picks record delete", self.model.menuPicks.last == "delete")
             }),
             (name: "menu-disabled-item", run: { [self] in
-                guard let doc = self.all().first(where: { $0.menu != nil && galleryText($0) == "Document" }) else {
-                    return self.check("context menu host present", false)
-                }
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
                 self.check("disabled Share refuses", !self.graph.performMenuItem(doc.id, path: [2]))
                 self.check("picks unchanged by disabled item", self.model.menuPicks.count == 2)
             }),
@@ -354,15 +393,23 @@ final class GallerySelfTest {
                 self.check("Menu item runs", self.graph.performMenuItem(more.id, path: [0]))
                 self.check("picks record export", self.model.menuPicks.last == "export")
             }),
-            (name: "menu-overlay-open", run: { [self] in
-                guard let doc = self.all().first(where: { $0.menu != nil && galleryText($0) == "Document" }) else {
-                    return self.check("context menu host present", false)
-                }
+            (name: "menu-overlay-fallback", run: { [self] in
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
                 self.backend.openMenu(hostRuntimeID: doc.id)
+                self.check("no native popup without --live-modal", self.backend.modalRequests == 0)
+                self.check("in-window overlay opened as the stand-in", self.backend.openMenuHost == doc.id)
             }),
-            (name: "menu-overlay-items", run: { [self] in
-                self.check("overlay drew three rows", self.backend.abiGapUses["popup-menu kind (in-window overlay items)"] == 3)
-                self.block("native popup menu", "ABI 0.5 has no popup-menu modal kind; the in-window overlay is used instead")
+            (name: "menu-overlay-rows", run: { [self] in
+                self.check("overlay drew three rows", self.backend.overlayRowsCommitted == 3)
+                guard let doc = self.documentHost() else { return self.check("context menu host present", false) }
+                let rows = (0..<3).compactMap { self.backend.committed["overlay/\(doc.id)/\($0)"] }
+                self.check("overlay rows sent as menu items", rows.count == 3 && rows.allSatisfy { $0.role == .menuItem })
+                self.check("overlay Share row sent disabled", rows.last?.disabled == true)
+                self.check("overlay container sent as a menu", self.backend.committed["overlay-menu/\(doc.id)"]?.role == .menu)
+            }),
+            (name: "menu-native-display", run: { [self] in
+                self.block("native popup shown and an item picked",
+                           "TrackPopupMenu opens only with --live-modal; a person or UIA must pick the item")
             }),
         ]
     }
@@ -379,21 +426,27 @@ final class GallerySelfTest {
                 self.check("alert presented", p != nil)
                 self.check("alert kind and title", p?.kind == "alert" && p?.title == "Delete item?")
                 self.check("alert has two actions", p?.actions.count == 2)
-                self.check("alert plan is YES/NO", self.backend.modalPlans.last == "alert:yes-no")
-                self.check("self-test opened no MessageBox", self.backend.modalRequests == 0)
+                self.check("alert plan is two custom buttons", self.backend.modalPlans.last == "alert:buttons-2")
+                self.check("alert buttons are Cancel (id 1) and Delete (id 2)",
+                           self.backend.activePlan?.buttons.map { "\($0.id):\($0.text)" } == ["1:Cancel", "2:Delete"])
+                self.check("renderer gets an alert role for the presentation",
+                           self.backend.committed["presentation/\(self.presentedHost() ?? "")"]?.role == .alert)
+                self.check("no native dialog without --live-modal", self.backend.liveModal || self.backend.modalRequests == 0)
             }),
-            (name: "alert-action", run: { [self] in
-                guard let host = self.presentedHost() else { return self.check("alert host present", false) }
-                self.check("destructive action runs", self.graph.performPresentationAction(host, index: 1))
-                self.check("outcome is delete", self.model.outcome == "delete")
+            (name: "alert-answer-delete", run: { [self] in
+                guard let requestID = self.backend.activeDialogRequestID else {
+                    return self.check("dialog request id present", false)
+                }
+                self.backend.modalResult(requestID: requestID, kind: 3, itemID: 2, index: 1)
+                self.check("answer for item 2 runs the Delete action", self.model.outcome == "delete")
             }),
             (name: "alert-dismissed", run: { [self] in
-                self.check("alert gone after action", self.presented() == nil)
+                self.check("alert gone after the answer", self.presented() == nil)
                 self.check("binding cleared", !self.model.showAlert)
             }),
-            (name: "alert-messagebox", run: { [self] in
-                self.block("MessageBox answer path",
-                           "YES/NO answer needs a human or a UIA driver; run with --live-modal interactively")
+            (name: "alert-native-display", run: { [self] in
+                self.block("native alert shown and answered",
+                           "TaskDialogIndirect opens only with --live-modal; a person or UIA must press a button")
             }),
         ]
     }
@@ -409,16 +462,23 @@ final class GallerySelfTest {
                 self.check("dialog presented", p != nil)
                 self.check("dialog kind and visibility", p?.kind == "confirmationDialog" && p?.titleVisibility == .visible)
                 self.check("dialog has three actions", p?.actions.count == 3)
-                self.check("dialog plan is unsupported", self.backend.modalPlans.last == "confirmationDialog:unsupported-3-actions")
+                self.check("dialog plan is three custom buttons", self.backend.modalPlans.last == "confirmationDialog:buttons-3")
+                self.check("dialog buttons are Archive, Delete, Cancel (ids 1 to 3)",
+                           self.backend.activePlan?.buttons.map { "\($0.id):\($0.text)" } == ["1:Archive", "2:Delete", "3:Cancel"])
+                self.check("renderer gets a dialog role for the presentation",
+                           self.backend.committed["presentation/\(self.presentedHost() ?? "")"]?.role == .dialog)
             }),
             (name: "dialog-action", run: { [self] in
-                guard let host = self.presentedHost() else { return self.check("dialog host present", false) }
-                self.check("Archive runs", self.graph.performPresentationAction(host, index: 0))
-                self.check("outcome is archive", self.model.outcome == "archive")
+                guard let requestID = self.backend.activeDialogRequestID else {
+                    return self.check("dialog request id present", false)
+                }
+                self.backend.modalResult(requestID: requestID, kind: 3, itemID: 1, index: 0)
+                self.check("answer for item 1 runs Archive", self.model.outcome == "archive")
+                self.check("dialog gone after the answer", self.presented() == nil)
             }),
-            (name: "dialog-abi-modal", run: { [self] in
-                self.block("three-action dialog through the modal",
-                           "ABI 0.5 modal offers OK, OK/Cancel and YES/NO only; custom actions need a new modal kind")
+            (name: "dialog-native-display", run: { [self] in
+                self.block("native three-button dialog shown and answered",
+                           "TaskDialogIndirect opens only with --live-modal; a person or UIA must press a button")
             }),
         ]
     }
@@ -452,8 +512,12 @@ final class GallerySelfTest {
     private func disabledStages() -> [GalleryStage] {
         [
             (name: "disabled-flags", run: { [self] in
-                self.check("enabled button reports enabled", self.node("Button", "Enabled")?.accessibility.isEnabled == true)
-                self.check("disabled button reports disabled", self.node("Button", "Disabled")?.accessibility.isEnabled == false)
+                let enabled = self.node("Button", "Enabled")
+                let disabled = self.node("Button", "Disabled")
+                self.check("enabled button reports enabled", enabled?.accessibility.isEnabled == true)
+                self.check("disabled button reports disabled", disabled?.accessibility.isEnabled == false)
+                self.check("renderer gets the disabled flag on the disabled button", self.sent(disabled)?.disabled == true)
+                self.check("renderer gets no disabled flag on the enabled button", self.sent(enabled)?.disabled == false)
             }),
             (name: "disabled-tap-refused", run: { [self] in
                 guard let d = self.node("Button", "Disabled") else { return self.check("disabled button present", false) }
@@ -469,10 +533,14 @@ final class GallerySelfTest {
                 guard let t = self.node("Toggle", "Locked toggle") else { return self.check("locked toggle present", false) }
                 self.check("disabled toggle refuses", !self.graph.activateToggle(t.id))
                 self.check("binding unchanged", !self.model.locked)
+                self.check("renderer gets the disabled flag on the toggle", self.sent(t)?.disabled == true)
             }),
-            (name: "disabled-abi-flag", run: { [self] in
-                self.block("disabled state in the ABI",
-                           "SWR_SEM_DISABLED exists in ABI 0.5 but the Swift bridge never sends it; UIA IsEnabled stays true")
+            (name: "disabled-flag-count", run: { [self] in
+                self.check("two disabled nodes sent (button and toggle)", self.backend.disabledNodes == 2)
+            }),
+            (name: "disabled-input-native", run: { [self] in
+                self.block("renderer refuses a click on the disabled button",
+                           "the flag is committed; swallowed presses and UIA IsEnabled need the desktop")
             }),
         ]
     }

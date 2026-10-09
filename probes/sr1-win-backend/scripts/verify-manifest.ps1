@@ -1,5 +1,5 @@
 # Dumps the embedded application manifest of SR1Gallery.exe with mt.exe (Windows SDK). Read-only; never launches the exe.
-param([string]$Base = 'D:\Claude\sr1-gallery')
+param([string]$Base = 'D:\Claude\sr1-gallery06')
 $ErrorActionPreference = 'Stop'
 $bin = (Get-Content -Raw "$Base\bin-path.txt").Trim()
 $exe = Join-Path $bin 'SR1Gallery.exe'
