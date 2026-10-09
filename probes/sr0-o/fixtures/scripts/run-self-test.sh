@@ -1,5 +1,6 @@
 #!/bin/bash
-# Usage: run-self-test.sh <F1..F9|F6-reduced> <run-index> [f3-variant]
+# Usage: [OUT_DIR=out/<dir>] run-self-test.sh <F1..F9|F6-reduced> <run-index> [f3-variant]
+# OUT_DIR defaults to out/.
 # f3-variant (F3 only): <list|vstack|lazy>-<1|3>s, e.g. lazy-3s. Omitted = original F3 (list, immediate reinsert).
 # Launch -> run self-test -> quit. Kills the process if it is still alive after 30 s.
 # Relaunches only when the root view never reports root-appear (window not presented);
@@ -13,7 +14,8 @@ extra=()
 [[ "$arg" == *-reduced ]] && extra=(--reduced-motion-variant)
 [[ -n "$variant" ]] && extra=(--f3-variant "$variant")
 name="${arg}${variant:+-$variant}-run${run}"
-events="out/${name}.jsonl"; stdout="out/${name}.stdout"; launch="out/${name}.launch.txt"
+OUT="${OUT_DIR:-out}"; mkdir -p "$OUT"
+events="$OUT/${name}.jsonl"; stdout="$OUT/${name}.stdout"; launch="$OUT/${name}.launch.txt"
 : > "$launch"
 for attempt in 1 2 3 4 5 6 7 8; do
   rm -f "$events"
@@ -31,7 +33,7 @@ for attempt in 1 2 3 4 5 6 7 8; do
   fi
   echo "attempt $attempt: no root-appear within 8 s, relaunch" >> "$launch"
   kill -9 $pid 2>/dev/null; wait $pid 2>/dev/null
-  pkill -9 -f "FixtureApp --fixture $fixture" 2>/dev/null
+  pkill -9 -f "FixtureApp --fixture $fixture --events $events" 2>/dev/null  # only this run's instance
   sleep 1
 done
 for _ in $(seq 30); do

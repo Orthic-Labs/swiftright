@@ -327,7 +327,8 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool, f3GapMs: Int = 0) -
                 e.check("no-commit-after-close", commitsAfterClose == 0, "commits=\(commitsAfterClose)"),
                 e.check("late-results-rejected", rejectedAfterClose == 11, "rejected=\(rejectedAfterClose)"),
                 e.check("cleanup-after-close", cleanupAfterClose == 11, "cleanup=\(cleanupAfterClose)"),
-                e.check("tree-released", released >= 1, "tree-released-events=\(released)"),
+                // CONTRACT §3 F9: tree release is a Windows runtime requirement, not a Mac oracle assertion.
+                e.observe("tree-released", released >= 1 ? "released" : "retained", "tree-released-events=\(released)"),
             ]
         })
     }
