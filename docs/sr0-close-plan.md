@@ -22,6 +22,7 @@
 | F7 | §11 full workload (200 rows, warm-up, 3×60 s, all thresholds) never run on the selected runtime | Full workload lane on both OSes, quiet hosts |
 | F8 | App Installer route not qualified while URLs are `.invalid` | Local-hosted (file or loopback https) App Installer feed for the update checks, or record as untested |
 | F9 | Stale status/freeze text | Reconcile before freezing |
+| F10 | Canonical v2 (per-node order) exposed F6 variance: interrupted-animation completion order A/B swapped in 1/20 Mac runs | F6 NOT qualified; 100-run sample in the Mac test user (R6) decides genuine SwiftUI variance (then a contract revision) vs fixture defect. No permitted-ordering declaration before that evidence |
 
 ## Lanes
 
