@@ -1,0 +1,32 @@
+{
+  "fixtureId": "F1",
+  "description": "F1 surviving-row identity (CONTRACT §3). One logical script; native mappings per platform are recorded by each recorder (CONTRACT §4/§5).",
+  "rowIdentity": "F0000001-0000-4000-8000-<slot as 12 digits>; field identifier row/<uuid>/field; toolbar/insert",
+  "steps": [
+    { "id": "initial", "logicalAction": "launch-and-snapshot" },
+    { "id": "focus_row5", "logicalAction": "focus row 5 field" },
+    { "id": "type_abc", "logicalAction": "type abc" },
+    { "id": "engine_insert_above", "logicalAction": "engine inserts row at index 0" },
+    { "id": "type_d", "logicalAction": "type d" }
+  ],
+  "modelRows": [
+    "row/F0000001-0000-4000-8000-000000000004/field",
+    "row/F0000001-0000-4000-8000-000000000005/field",
+    "row/F0000001-0000-4000-8000-000000000006/field",
+    "row/F0000001-0000-4000-8000-000000000099/field"
+  ],
+  "nativeMappings": {
+    "macos": {
+      "focus_row5": "AXFocused=true on row/<uuid5>/field; AXSelectedTextRange=end",
+      "type_abc": "CGEvent.postToPid(fixture) keyDown/keyUp per UTF-16 unit",
+      "engine_insert_above": "fixture stdin driver: release key insert-above (fake engine)",
+      "type_d": "CGEvent.postToPid(fixture) keyDown/keyUp per UTF-16 unit"
+    },
+    "windows": {
+      "focus_row5": "UIA SetFocus on row/<uuid5>/field (runtime sets caret to end)",
+      "type_abc": "SendInput VK keys",
+      "engine_insert_above": "fake engine release (see RESULT.md: in-process self-test or harness release signal); UIA poll until row 99 present",
+      "type_d": "SendInput VK keys"
+    }
+  }
+}

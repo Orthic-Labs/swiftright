@@ -1,0 +1,69 @@
+{
+  "fixtureId": "F1",
+  "sourceHash": "",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "focus_row5",
+      "logicalAction": "focus row 5 field",
+      "ops": [
+        {
+          "op": "focus",
+          "target": {
+            "id": "row/F0000001-0000-4000-8000-000000000005/field"
+          }
+        }
+      ],
+      "capture": true,
+      "settleMs": 400
+    },
+    {
+      "id": "type_abc",
+      "logicalAction": "type abc",
+      "ops": [
+        {
+          "op": "type",
+          "text": "abc"
+        }
+      ],
+      "capture": true,
+      "settleMs": 300
+    },
+    {
+      "id": "engine_insert_above",
+      "logicalAction": "engine inserts row at index 0",
+      "ops": [
+        {
+          "op": "touch"
+        },
+        {
+          "op": "waitFor",
+          "target": {
+            "id": "row/F0000001-0000-4000-8000-000000000099/field"
+          },
+          "ms": 15000
+        }
+      ],
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "type_d",
+      "logicalAction": "type d",
+      "ops": [
+        {
+          "op": "type",
+          "text": "d"
+        }
+      ],
+      "capture": true,
+      "settleMs": 500
+    }
+  ]
+}

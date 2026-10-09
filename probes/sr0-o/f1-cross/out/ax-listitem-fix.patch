@@ -1,0 +1,38 @@
+diff --git a/a/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift b/b/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift
+index fbf5682..73e4dd3 100644
+--- a/a/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift
++++ b/b/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift
+@@ -391,7 +391,7 @@ final class BridgeBackend {
+         return node.children.contains { hasIntermediateOpacity($0) }
+     }
+ 
+-    private func walk(_ node: ResolvedNode, parent: UInt64, order: UInt32, insideAffordance: Bool,
++    private func walk(_ node: ResolvedNode, parent: UInt64, order: UInt32, insideAffordance: Bool, parentKind: String = "",
+                       upserts: inout [NodeUpsert], parents: inout [UInt64: UInt64], releasable: inout [TextRunHandle]) {
+         let id = bridgeID(node.id)
+         parents[id] = parent
+@@ -496,8 +496,14 @@ final class BridgeBackend {
+             }
+             flags = [.hitTarget, .focusable, .editable]
+ 
++        case "List":
++            semantic = SemanticNode(role: .list)
++
+         default:
+-            break
++            // Direct children of a List are its rows (the Mac AXOutlineRow / UIA ListItem).
++            if parentKind == "List", rowUUID(in: node.id) != nil {
++                semantic = SemanticNode(role: .listItem)
++            }
+         }
+ 
+         if let identifier = semantic?.identifier, !identifier.isEmpty {
+@@ -506,7 +512,7 @@ final class BridgeBackend {
+         upserts.append(NodeUpsert(id: id, parent: parent, order: order, flags: flags, bounds: bounds,
+                                   primitives: prims, semantic: semantic))
+         for (index, child) in node.children.enumerated() {
+-            walk(child, parent: id, order: UInt32(index), insideAffordance: childInside,
++            walk(child, parent: id, order: UInt32(index), insideAffordance: childInside, parentKind: node.kind,
+                  upserts: &upserts, parents: &parents, releasable: &releasable)
+         }
+     }
