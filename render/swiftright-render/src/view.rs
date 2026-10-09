@@ -641,27 +641,8 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
             WaitSignal.await;
 
             if POST_CLOSE_ACTIVE.load(SeqCst) {
-                // Post-close pump (rev 0.5): drain only. The window and its tree are gone;
-                // commits, measurements and tick requests are refused with SWR_E_SHUTDOWN.
-                bump(S_POST_DRAINS);
-                if let Some(f) = host.drain {
-                    bump(S_DRAIN_CALLS);
-                    let ctx = host.ctx_ptr();
-                    call_host(|| f(ctx));
-                }
-                if events_pending() {
-                    if let Some(f) = host.events_available {
-                        let ctx = host.ctx_ptr();
-                        if !call_host(|| f(ctx)) {
-                            signal_notify();
-                        }
-                    }
-                }
-                if SHUTDOWN_COMPLETE.load(SeqCst) {
-                    break;
-                }
-                if POST_CLOSE_EXPIRED.load(SeqCst) {
-                    bump(S_POST_TIMEOUTS);
+                // Post-close pump (rev 0.5): see post_close_step.
+                if post_close_step(&host) {
                     break;
                 }
                 continue;
@@ -752,6 +733,79 @@ fn arm_post_close_timer() {
     }
 }
 
+/// One post-close pump iteration (rev 0.5): drain only. Returns true when the pump ends.
+fn post_close_step(host: &Host) -> bool {
+    let ended = post_close_step_inner(host);
+    if ended {
+        POST_CLOSE_ENDED.store(true, SeqCst);
+    }
+    ended
+}
+
+/// Set once the pump has ended (by either the drain task or finish_post_close), so the
+/// UI-thread tail never parks after the drain task already finished the phase.
+static POST_CLOSE_ENDED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+fn post_close_step_inner(host: &Host) -> bool {
+    bump(S_POST_DRAINS);
+    if let Some(f) = host.drain {
+        bump(S_DRAIN_CALLS);
+        let ctx = host.ctx_ptr();
+        call_host(|| f(ctx));
+    }
+    if events_pending() {
+        if let Some(f) = host.events_available {
+            let ctx = host.ctx_ptr();
+            if !call_host(|| f(ctx)) {
+                signal_notify();
+            }
+        }
+    }
+    if SHUTDOWN_COMPLETE.load(SeqCst) {
+        return true;
+    }
+    if POST_CLOSE_EXPIRED.load(SeqCst) {
+        bump(S_POST_TIMEOUTS);
+        return true;
+    }
+    false
+}
+
+struct ThreadWaker(std::thread::Thread);
+impl std::task::Wake for ThreadWaker {
+    fn wake(self: std::sync::Arc<Self>) {
+        self.0.unpark();
+    }
+}
+
+/// GPUI's Windows platform posts WM_QUIT when the last window closes (platform/windows/
+/// platform.rs:718-720), so Application::run returns before the post-close phase is over.
+/// Finish the phase here, on the UI thread.
+fn finish_post_close(host: &Host) {
+    use std::future::Future;
+    // Skip when the window never closed, the drain task already ended the pump, or the host
+    // already called swr_shutdown_complete before Application::run returned.
+    if !POST_CLOSE_ACTIVE.load(SeqCst)
+        || POST_CLOSE_ENDED.load(SeqCst)
+        || SHUTDOWN_COMPLETE.load(SeqCst)
+    {
+        return;
+    }
+    let waker = std::task::Waker::from(std::sync::Arc::new(ThreadWaker(std::thread::current())));
+    let mut tcx = std::task::Context::from_waker(&waker);
+    loop {
+        let mut w = WaitSignal;
+        match std::pin::Pin::new(&mut w).poll(&mut tcx) {
+            std::task::Poll::Ready(_) => {
+                if post_close_step(host) {
+                    return;
+                }
+            }
+            std::task::Poll::Pending => std::thread::park(),
+        }
+    }
+}
+
 /// Blocks on the calling thread until the window closes and GPUI quits.
 pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> Status {
     // Per-monitor-v2 DPI awareness BEFORE any window exists. A DPI-unaware process gets a
@@ -769,6 +823,7 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
         return E_PLATFORM;
     }
     Application::new().run(move |cx: &mut App| launch(cx, title, width, height, host));
+    finish_post_close(&host);
     set_host(None);
     eprintln!(
         "[swiftright-render] shutdown paints={} paints_while_inactive={} drains={} ticks_delivered={} events_pushed={} reentry_refused={} post_close_drains={} post_close_timeouts={}",
