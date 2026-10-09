@@ -89,6 +89,18 @@ function Restore-Ime {
 #  caret = the caret rect the exe returns to the IME, screen px; form_pt/form_rc are CLIENT px as the IME holds them.)
 $script:CandOpenSeen = 0; $script:CandShots = 0; $script:CompStartIdx = 0
 $script:CandHits = @()   # live WindowFromPoint hits taken at each ime_cand open (see Cand-Hit-Probe); Seq = open-line count when taken
+$script:LayoutDone = @{} # raw exe-stderr line indices of ime_replace reason=layout lines already handled (see Layout-Trigger)
+$script:LayoutRes = @()  # per layout move: client->screen old/new caret, and the candidate hits taken 400 ms after the move
+# Newest `ime_cand event=open` line (from index $from) that has a caret, read from the RAW line. The parsed Caret field of
+# Parse-ImeCand was observed flattened in the F8 log (caret=... repeated), so the probes use this instead.
+function Open-Caret-Latest([int]$from = 0) {
+  $c = $null; $all = Exe-ErrLines
+  for ($i = $from; $i -lt $all.Count; $i++) {
+    if ([string]$all[$i] -match 'ime_cand event=open .*caret=(-?\d+),(-?\d+),(-?\d+),(-?\d+)\s*$') { $c = [int[]]@([int]$Matches[1], [int]$Matches[2], [int]$Matches[3], [int]$Matches[4]) }
+  }
+  if ($null -eq $c) { return $null }
+  return ,$c
+}
 function Exe-ErrLines { try { return @($script:ErrTap.Snapshot()) } catch { return @() } }
 function Parse-ImeCand([int]$from = 0) {
   $o = @(); $all = Exe-ErrLines
@@ -113,6 +125,7 @@ function Anchored-To([int[]]$car, $w, [double]$s) {
 }
 # Screenshot as soon as the exe reports IMN_OPENCANDIDATE (called from the typing / Space wait loops); at most 4 per run.
 function Cand-Trigger {
+  Layout-Trigger
   $n = @(Exe-ErrLines | Where-Object { $_ -match 'ime_cand event=open' }).Count
   if ($n -gt $script:CandOpenSeen) {
     $script:CandOpenSeen = $n
@@ -248,27 +261,58 @@ function Candidate-Uia {
 # visible is the candidate window. Titles of non-ours windows are never logged.
 function Cand-Hit-Probe([int]$seq) {
   try {
-    # Exactly one open event: the newest one with a caret (the list was opened by the Space that triggered this probe).
-    $opens = @(Parse-ImeCand 0 | Where-Object { $_.Event -eq 'open' -and $null -ne $_.Caret })
-    if ($opens.Count -eq 0) { Log "candidate_hit skipped=no_open_event_with_caret"; return }
-    $car = [int[]]$opens[$opens.Count - 1].Caret
+    # The newest open event with a caret (the list was opened by the Space that triggered this probe).
+    $car = Open-Caret-Latest 0
+    if ($null -eq $car) { Log "candidate_hit skipped=no_open_event_with_caret"; return }
+    foreach ($h in @(Cand-Hits-Near $car 'candidate_hit')) { $script:CandHits += [pscustomobject]@{ At = $h.At; Caret = $car; W = $h.W; Seq = $seq } }
+  } catch { Log "candidate_hit exception=$($_.Exception.Message)" }
+}
+# Hit test around one caret rect (screen px): below and above it, as described above. Returns @{At; W} per visible non-probe hit.
+function Cand-Hits-Near([int[]]$car, [string]$tag) {
+  $out = @()
+  try {
     $pts = @(
       [pscustomobject]@{ At = 'below'; X = [int]($car[0] + 20); Y = [int]($car[1] + $car[3] + 30) },
       [pscustomobject]@{ At = 'above'; X = [int]($car[0] + 20); Y = [int]($car[1] - 30) })
     foreach ($p in $pts) {
       $root = [SRN.N]::RootAt($p.X, $p.Y)
-      if ($root -eq 0) { Log "candidate_hit at=$($p.At) result=none"; continue }
-      if ($root -eq $script:Hwnd.ToInt64()) { Log "candidate_hit at=$($p.At) result=probe_window"; continue }
+      if ($root -eq 0) { Log "$tag at=$($p.At) result=none"; continue }
+      if ($root -eq $script:Hwnd.ToInt64()) { Log "$tag at=$($p.At) result=probe_window"; continue }
       $wi = [SRN.N]::InfoOf([IntPtr]$root)
       $pn = Proc-Name ([uint32]$wi.Pid)
-      if (-not $wi.Visible) { Log "candidate_hit at=$($p.At) result=hidden class=$($wi.Cls) process=$pn"; continue }
+      if (-not $wi.Visible) { Log "$tag at=$($p.At) result=hidden class=$($wi.Cls) process=$pn"; continue }
       # Title deliberately not copied into the logged object (redaction): only class / process / rect are logged.
       # L..B = visible (DWM) rect, the one the anchoring rule uses; RawL..RawB = GetWindowRect with the invisible border.
-      $w = [pscustomobject]@{ Hwnd = $wi.Hwnd; Pid = $wi.Pid; Proc = $pn; Cls = $wi.Cls; Title = ''; L = $wi.VL; T = $wi.VT; R = $wi.VR; B = $wi.VB; RawL = $wi.L; RawT = $wi.T; RawR = $wi.R; RawB = $wi.B; VisFallback = $wi.VisFallback; Visible = $true; Ex = $wi.ExStyle; Why = "candidate_hit at=$($p.At)" }
-      Log "candidate_hit at=$($p.At) class=$($wi.Cls) process=$pn visible_rect=$($w.L),$($w.T),$($w.R),$($w.B) raw_rect=$($wi.L),$($wi.T),$($wi.R),$($wi.B) dwm=$(if ($wi.VisFallback) { 'fallback' } else { 'ok' }) caret=$($car -join ',')"
-      $script:CandHits += [pscustomobject]@{ At = $p.At; Caret = $car; W = $w; Seq = $seq }
+      $w = [pscustomobject]@{ Hwnd = $wi.Hwnd; Pid = $wi.Pid; Proc = $pn; Cls = $wi.Cls; Title = ''; L = $wi.VL; T = $wi.VT; R = $wi.VR; B = $wi.VB; RawL = $wi.L; RawT = $wi.T; RawR = $wi.R; RawB = $wi.B; VisFallback = $wi.VisFallback; Visible = $true; Ex = $wi.ExStyle; Why = "$tag at=$($p.At)" }
+      Log "$tag at=$($p.At) class=$($wi.Cls) process=$pn visible_rect=$($w.L),$($w.T),$($w.R),$($w.B) raw_rect=$($wi.L),$($wi.T),$($wi.R),$($wi.B) dwm=$(if ($wi.VisFallback) { 'fallback' } else { 'ok' }) caret=$($car -join ',')"
+      $out += [pscustomobject]@{ At = $p.At; W = $w }
     }
-  } catch { Log "candidate_hit exception=$($_.Exception.Message)" }
+  } catch { Log "$tag exception=$($_.Exception.Message)" }
+  return ,$out
+}
+# R9 layout move: the renderer re-places the IME windows when layout moves the composing field (`ime_replace reason=layout
+# old=l,t,w,h new=l,t,w,h`, CLIENT px of the caret). For each new line: convert both rects to screen (same origin logic as
+# Eval-PositionSet: ClientOrigin + client px), wait 400 ms for the IME to follow, then hit-test below/above the NEW caret.
+function Layout-Trigger {
+  $all = @(Exe-ErrLines)
+  for ($i = 0; $i -lt $all.Count; $i++) {
+    if ($script:LayoutDone.ContainsKey($i)) { continue }
+    $l = [string]$all[$i]
+    if ($l -notmatch 'ime_replace reason=layout') { continue }
+    $script:LayoutDone[$i] = $true
+    if ($l -notmatch 'old=(-?\d+),(-?\d+),(-?\d+),(-?\d+) new=(-?\d+),(-?\d+),(-?\d+),(-?\d+)') { Log "candidate_after_layout line=$i skipped=unparsed"; continue }
+    $oc = @([int]$Matches[1], [int]$Matches[2], [int]$Matches[3], [int]$Matches[4])
+    $nc = @([int]$Matches[5], [int]$Matches[6], [int]$Matches[7], [int]$Matches[8])
+    $o = [SRN.N]::ClientOrigin($script:Hwnd)
+    $oldS = [int[]]@(($o[0] + $oc[0]), ($o[1] + $oc[1]), $oc[2], $oc[3])
+    $newS = [int[]]@(($o[0] + $nc[0]), ($o[1] + $nc[1]), $nc[2], $nc[3])
+    $scale = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0
+    Log "candidate_after_layout line=$i caret_old_screen=$($oldS -join ',') caret_new_screen=$($newS -join ',') scale=$scale wait_ms=400"
+    Start-Sleep -Milliseconds 400
+    $hits = @(Cand-Hits-Near $newS 'candidate_after_layout')
+    Log "candidate_after_layout line=$i hits=$($hits.Count)"
+    $script:LayoutRes += [pscustomobject]@{ Idx = $i; Old = $oldS; New = $newS; Scale = $scale; Hits = $hits }
+  }
 }
 
 # Evidence capture (R9 candidate diagnosis): screenshot of OUR probe window + 300 px margin only (CopyFromScreen of that rect), and a full
@@ -303,6 +347,7 @@ function Capture-Evidence([string]$tag) {
 $script:CandSeen = $null   # last EnumWindows hit seen right after any Space press (the list can vanish before the final measurement)
 function Measure-Candidate([string]$row, [string]$v0, $before) {
   Start-Sleep -Milliseconds 500
+  Layout-Trigger
   $el = Edit $row
   $caret = Caret-Info $el
   $startRect = Char-Rect $el (Cp-Count $v0)
@@ -321,7 +366,8 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   $exeEv = Parse-ImeCand $script:CompStartIdx
   $exeBest = $null; $exeCaret = $null
   foreach ($e in $exeEv) {
-    if ($e.Caret -eq $null) { continue }
+    # open-time pairs only: the candidate list and the caret of the same IMN_OPENCANDIDATE (change lines move the caret later)
+    if ($e.Caret -eq $null -or $e.Event -ne 'open') { continue }
     foreach ($w in (Cand-UiWins $e)) {
       $a = Anchored-To $e.Caret $w $scale
       if ($exeBest -eq $null -or ($a.Ok -and -not $exeBest.A.Ok)) { $exeBest = [pscustomobject]@{ W = $w; A = $a; E = $e } }
@@ -354,7 +400,9 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   # reference for the follow-after-commit check; the UIA rectangle is not used for it.
   $compWithCaret = @($exeEv | Where-Object { $null -ne $_.Caret })
   $compCaret = if ($compWithCaret.Count -gt 0) { [int[]]$compWithCaret[$compWithCaret.Count - 1].Caret } else { $null }
-  $bounds = if ($exeCaret -ne $null) { $exeCaret } elseif ($compCaret -ne $null) { $compCaret } else { Last-CaretBounds }
+  # anchored check reference = OPEN-time caret (the one the candidate was measured with), never the post-move caret
+  $openCaret = Open-Caret-Latest $script:CompStartIdx
+  $bounds = if ($exeCaret -ne $null) { $exeCaret } elseif ($openCaret -ne $null) { $openCaret } elseif ($compCaret -ne $null) { $compCaret } else { Last-CaretBounds }
   Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds) comp_exe_caret=$(Fmt-Rect $compCaret)"
   return [pscustomobject]@{ ExeEv = $exeEv; Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; CompCaret = $compCaret; Scale = $scale; New = $cw.New; Via = $via }
 }
@@ -457,7 +505,8 @@ try {
   # ------------------------------------------------------------ composition 1: "nihonn" -> marked text tracks composition
   $idxBefore = [array]::IndexOf((Edit-Names), $row)
   $obs1 = Type-And-Observe $row $v0 'nihonn'
-  $expect1 = @('n', $NI, ($NI + 'h'), ($NI + $HO), ($NI + $HO + 'n'), ($NI + $HO + $NN))
+  $lay1Start = $script:CompStartIdx
+  $expect1 =@('n', $NI, ($NI + 'h'), ($NI + $HO), ($NI + $HO + 'n'), ($NI + $HO + $NN))
   $norm1 = @($obs1 | ForEach-Object { Norm-Width $_ })
   $trackOk = ($norm1.Count -eq $expect1.Count)
   if ($trackOk) { for ($i = 0; $i -lt $expect1.Count; $i++) { if ($norm1[$i] -ne $expect1[$i]) { $trackOk = $false } } }
@@ -507,6 +556,33 @@ try {
   Add-Check 'conversion-to-nihon' $(if ($sp.Reached) { 'PASS' } else { 'FAIL' }) "Space presses=$($sp.Presses) marked after each press=[$($sp.Seen -join ' | ')] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)"
   $m1 = Measure-Candidate $row $v0 $winBefore
   $a1 = Eval-Anchor $m1
+
+  # ------------------------------------------------------------ candidate follows a layout move (F8: row above removed mid-composition)
+  $lay = @($script:LayoutRes | Where-Object { $_.Idx -ge $lay1Start })
+  if ($lay.Count -eq 0) {
+    Add-Check 'candidate-window-follows-layout-move' 'NOT-RUN' 'no ime_replace reason=layout during composition 1 (the composing field did not move)'
+  } else {
+    $r = $lay[0]; $s = $r.Scale
+    $bh = $null
+    foreach ($h in @($script:CandHits | Where-Object { [math]::Abs($_.Caret[0] - $r.Old[0]) -le 2 -and [math]::Abs($_.Caret[1] - $r.Old[1]) -le 2 })) {
+      if ($bh -eq $null -or ((Anchored-To $r.Old $h.W $s).Ok -and -not (Anchored-To $r.Old $bh.W $s).Ok)) { $bh = $h }
+    }
+    $ah = $null
+    foreach ($h in @($r.Hits)) {
+      if ($ah -eq $null -or ((Anchored-To $r.New $h.W $s).Ok -and -not (Anchored-To $r.New $ah.W $s).Ok)) { $ah = $h }
+    }
+    $bW = if ($bh) { $bh.W } else { $null }; $aW = if ($ah) { $ah.W } else { $null }
+    if ($bW -eq $null -or $aW -eq $null) {
+      Add-Check 'candidate-window-follows-layout-move' 'FAIL' "candidate not located: open-time candidate at the pre-move caret=$(if ($bW) { Fmt-Win $bW } else { 'none' }) ; candidate 400 ms after the move=$(if ($aW) { Fmt-Win $aW } else { 'none' }) ; caret old=$($r.Old -join ',') new=$($r.New -join ',') (screen px)"
+    } else {
+      $kdx = $r.New[0] - $r.Old[0]; $kdy = $r.New[1] - $r.Old[1]; $kLen = [math]::Sqrt($kdx * $kdx + $kdy * $kdy)
+      $cdx = $aW.L - $bW.L; $cdy = $aW.T - $bW.T; $tol = 12 * $s
+      $anch = Anchored-To $r.New $aW $s
+      $moved = $kLen -gt 10 * $s
+      $okL = $moved -and ([math]::Abs($cdx - $kdx) -le $tol) -and ([math]::Abs($cdy - $kdy) -le $tol) -and $anch.Ok
+      Add-Check 'candidate-window-follows-layout-move' $(if ($okL) { 'PASS' } else { 'FAIL' }) ("caret old=$($r.Old -join ',') new=$($r.New -join ',') move=($kdx,$kdy) len=$([math]::Round($kLen)) (must exceed $([math]::Round(10 * $s))); candidate visible rect before=$($bW.L),$($bW.T),$($bW.R),$($bW.B) after=$($aW.L),$($aW.T),$($aW.R),$($aW.B) move=($cdx,$cdy) (per-axis tolerance $([math]::Round($tol))); anchored to NEW caret=$($anch.Ok) placement=$($anch.Placement) dx=$([math]::Round($anch.Dx)) top-caret.bottom=$([math]::Round($anch.Dy)) bottom-caret.top=$([math]::Round($anch.DyAbove)) (scale=$s)")
+    }
+  }
 
   # ------------------------------------------------------------ commit (Enter) and UTF-16 selection
   if (Budget-Left -gt 6000) {
