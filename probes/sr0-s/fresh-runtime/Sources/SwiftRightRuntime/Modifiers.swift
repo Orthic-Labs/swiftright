@@ -13,6 +13,22 @@ struct Modified<Content: View>: View, PrimitiveView {
     var nodeContent: (any View)? { content }
 }
 
+/// A modifier node built by the runtime itself (for example the per-row `onDelete` hook), when the wrapped view is
+/// only available as an existential.
+struct ModifierWrapper: View, PrimitiveView {
+    let inner: any View
+    let spec: ModifierSpec
+
+    @MainActor public var body: Never { return fatalError("modifier has no body") }
+    var nodeKind: NodeKind { .modifier(spec) }
+    var nodeContent: (any View)? { inner }
+}
+
+extension ModifierWrapper: @MainActor WrappedModifier {
+    var modifierInner: any View { inner }
+    var modifierSpec: ModifierSpec { spec }
+}
+
 extension View {
     /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
@@ -71,6 +87,47 @@ extension View {
     public func environment<V>(_ keyPath: WritableKeyPath<EnvironmentValues, V>, _ value: V) -> some View {
         Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
             environment[keyPath: keyPath] = value
+        }))
+    }
+
+    // MARK: SR1 modifiers
+
+    /// Selection value of a row in a `List(selection:)`. Apple: https://developer.apple.com/documentation/swiftui/view/tag(_:)
+    public func tag<V: Hashable>(_ tag: V) -> some View {
+        Modified(content: self, spec: .tag(AnyHashable(tag)))
+    }
+
+    /// Overrides the accessibility label of this view. Apple: https://developer.apple.com/documentation/swiftui/view/accessibilitylabel(_:)
+    public func accessibilityLabel(_ label: String) -> some View {
+        Modified(content: self, spec: .accessibilityLabel(label))
+    }
+
+    /// Registers a keyboard shortcut for the button inside this view. `modifiers` defaults to `.command`, the
+    /// platform's primary modifier. Apple: https://developer.apple.com/documentation/swiftui/view/keyboardshortcut(_:modifiers:)
+    public func keyboardShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command) -> some View {
+        Modified(content: self, spec: .keyboardShortcut(key, modifiers))
+    }
+
+    /// Disables controls in this view. Nested `disabled(false)` does not re-enable a disabled ancestor.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/disabled(_:)
+    public func disabled(_ disabled: Bool) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.isEnabled = environment.isEnabled && !disabled
+        }))
+    }
+
+    /// Font of the text in this view. Apple: https://developer.apple.com/documentation/swiftui/view/font(_:)
+    public func font(_ font: Font?) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.font = font
+        }))
+    }
+
+    /// Foreground colour of the content. Apple: https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:)
+    public func foregroundStyle<S: ShapeStyle>(_ style: S) -> some View {
+        let color = style.resolvedColor
+        return Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.foregroundStyle = color
         }))
     }
 }

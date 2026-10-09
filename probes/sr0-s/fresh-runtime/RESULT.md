@@ -408,3 +408,90 @@ The 21 prior tests stay green on both platforms. Windows run: `D:\Claude\sr0s-fr
 - ScrollView is vertical only, with no clipping, no bounce, and no scroll-position binding. LazyVStack does not virtualize.
 - The List row state bound (64 retired rows, oldest first) is still provisional.
 - Text-input composition is headless only. The Windows bridge still uses its own text store; no route into this runtime is wired.
+
+## SR1 head start: initial inventory on the headless runtime (2026-10-09)
+
+Scope: `probes/sr0-s/fresh-runtime/` only. Foundation and Observation only, Swift 6 mode, headless (no window on
+either platform). Nothing committed, branched, or pushed. Public API kept: the 46 earlier tests stay green unchanged.
+
+### Verdict
+
+| Platform | `swift test` | Before | New | Fix iterations |
+|---|---|---|---|---|
+| macOS 27 arm64, Swift 6.4 | PASS 62 of 62 | 46 | 16 | 2 of 6 (builder-closure wrapping in `Controls.swift` and `Presentation.swift`; a test expected two `Menu` nodes where the nested one is a model entry) |
+| Windows 11 x64, swift-6.4.0 | PASS 62 of 62 (exit 0) | 46 | 16 | 0 code fixes. One infrastructure retry: a `permission denied` on a `.build` module cache file. Clearing `D:\Claude\sr1-runtime\.build` and rerunning passed. |
+
+`probes/sr0-s/fresh-on-bridge` still builds on macOS against the changed runtime (no API removed).
+`examples/SliceApp` is not present in this checkout, so it was not built.
+
+### Added (file: API, SwiftUI shape)
+
+- `Controls.swift`: `Toggle(_:isOn:)`, `Toggle(isOn:label:)`, `Image(systemName:)`, `Image(_:)` (resolved
+  `ImageReference`), `TextEditor(text:)`, `Label(_:systemImage:)` and `Label(title:icon:)`, `Divider`, `Color`
+  (semantic names), `ShapeStyle`, `Font` (text styles, `system(size:weight:)`), `Visibility`, and environment keys
+  `isEnabled`, `font`, `foregroundStyle`.
+- `Presentation.swift`: `Menu`, `contextMenu(menuItems:)`, `alert(_:isPresented:actions:message:)`,
+  `confirmationDialog(_:isPresented:titleVisibility:actions:message:)`, and `Graph.performMenuItem`,
+  `performPresentationAction`, `dismissPresentation`.
+- `Keyboard.swift`: `keyboardShortcut(_:modifiers:)`, `KeyEquivalent`, `EventModifiers`, `LogicalCommand`
+  (CONTRACT section 4), `KeyboardChords` (per-platform chord table), `Graph.keyboardShortcuts()`,
+  `Graph.performKeyboardShortcut(_:modifiers:)`.
+- `Selection.swift`: `List(selection:)` in single (`Binding<T?>`) and multiple (`Binding<Set<T>>`) forms, `tag(_:)`,
+  `Graph.navigateList`, `Graph.selectRow`, `onDelete(perform:)`, `Graph.deleteRow`, `deleteRows`, `deleteSelection`.
+- `Modifiers.swift`: `tag`, `accessibilityLabel`, `keyboardShortcut`, `disabled`, `font`, `foregroundStyle`.
+- `Views.swift`: `Button(role:action:label:)`, `ButtonRole`. `List` gains an internal selection slot.
+- `TextInput.swift`: `TextInputState(multiline:)` and `insertLineBreak()`. Return commits an active composition
+  first (IME order), then inserts a line break in a multi-line field, and returns false in a single-line field.
+- `TextMeasurement.swift`: newlines are hard breaks before word wrap (Text and TextEditor semantics).
+- `Graph.swift` and `LayoutEngine.swift`: new node kinds (`toggle`, `image`, `textEditor`, `divider`, `menu`) and
+  modifier cases. Commit records gain `accessibility`, `style`, `image`, `menu`, `presentation`, `shortcut`. Dividers
+  are thin on the stack's main axis. Text memo is keyed by font as well as text and width.
+
+### Tests (new, `Tests/SwiftRightRuntimeTests/SR1*.swift`, 16)
+
+Toggle flip and checkbox state, disabled toggle; Image references, accessibility overrides, host intrinsic size;
+TextEditor line breaks, height, text-area role; Return during composition; Label, Divider, style inheritance and
+font id at measurement; `.disabled` nesting; single and multiple List selection with keyboard hooks; onDelete offsets
+(per handler and by selection); no-handler delete; contextMenu, Menu and submenu dispatch with disabled items; alert
+presentation, action dispatch and dismissal; confirmationDialog visibility and role; keyboard registry, logical
+mapping on Mac and Windows, dispatch and disabled shortcuts.
+
+### Decisions (chosen, not traced on macOS)
+
+- Toggle: role `checkbox`, value `"1"`/`"0"`. No SR0 trace covers Toggle; the value encoding is a choice.
+- Image: accessibility label defaults to the symbol or asset name. `.accessibilityLabel` on a modifier overrides the
+  label of that modifier node (the backend uses the outermost non-nil label).
+- Alert and dialog: the runtime lists actions with roles and dismisses after any action. Escape and outside click are
+  the backend's to call `dismissPresentation` for.
+- Menus and presentations: items are a model, recomputed at each evaluation. Dispatch uses the last committed items.
+- Keyboard: `.command` is the platform primary modifier. The backend maps Ctrl to `.command` on Windows before
+  dispatch. Redo is Shift-Cmd-Z on Mac and Ctrl-Y on Windows (CONTRACT section 4). Matching is first-enabled in path
+  order, with no focus-scope precedence.
+- Selection: a row is selectable only with `.tag`. Click and keyboard use anchor and cursor. Shift-click replaces the
+  selection with the anchor-to-row range (Finder-style). Selection writes go to the binding and are not pruned after
+  a delete.
+- TextEditor: greedy (takes each finite proposal axis, else the measured text).
+- Colors are semantic names (`system.red`, `label`), resolved by the backend. Font ids are symbolic.
+
+### Known divergences and gaps
+
+1. Menu, alert and dialog content made of custom `View` types is evaluated outside the graph, so its `@State` is
+   detached. Primitives (Button, Text, Divider, Menu, modifiers) are read exactly.
+2. `.disabled` blocks buttons, toggles and menu items in the runtime. Text editing is not blocked. A backend must
+   check `isEnabled` before editing a disabled field.
+3. Multi-line caret motion (up and down between lines) is not modelled. Only line-break insertion is.
+4. `onDelete` offsets are those of the last flush. The Delete key on macOS and Windows is not traced; `deleteSelection`
+   is the model hook.
+5. `Label` lays icon then title. SwiftUI's order is platform-dependent.
+6. `Image(_:)` has no bundle parameter. Intrinsic size comes from the host, not from the asset.
+7. Presentation has no `alert(_:isPresented:actions:)` form without a message closure.
+8. Accessibility roles extend the CONTRACT canonical set (`checkbox`, `text-area`, `image`, `menu`, `separator`,
+   `scroll-area`, `alert`, `dialog`, `list-item` for List children). None is traced against the Mac oracle.
+9. Carried over from the previous section: the 64-row List bound is provisional, and F9 is not re-run.
+
+### Reproduce
+
+- Mac: `cd probes/sr0-s/fresh-runtime && swift test` (62 of 62).
+- Windows: `scripts/sync-to-win.sh probes/sr0-s/fresh-runtime 'D:\Claude\sr1-runtime'`, then
+  `powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr1-ps\run-sr1-tests.ps1` (sets the Swift 6.4.0 runtime
+  bin on PATH and runs `swift test`; output in `D:\Claude\sr1-runtime\swift-test-out.txt`).

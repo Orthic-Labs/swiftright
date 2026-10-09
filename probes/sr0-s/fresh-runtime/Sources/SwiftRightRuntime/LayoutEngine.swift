@@ -74,6 +74,17 @@ extension Graph {
             return measureText(node, string, width: proposal.width)
         case .textField:
             return measureText(node, node.textInput?.display ?? "", width: nil)
+        case .textEditor:
+            // Greedy like SwiftUI TextEditor: takes each finite proposal axis, else the measured text.
+            let measured = measureText(node, node.textInput?.display ?? "", width: proposal.width)
+            return LayoutSize(
+                width: finiteLength(proposal.width) ?? measured.width,
+                height: finiteLength(proposal.height) ?? measured.height
+            )
+        case .image(let reference):
+            return imageIntrinsicSize(reference)
+        case .divider:
+            return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: dividerThickness)
         case .spacer:
             return .zero
         case .modifier(.padding(let insets)):
@@ -92,7 +103,7 @@ extension Graph {
             let width = finiteLength(proposal.width)
             let content = measureGroup(node, ProposedViewSize(width: width, height: nil))
             return LayoutSize(width: width ?? content.width, height: finiteLength(proposal.height) ?? content.height)
-        case .user, .button, .modifier:
+        case .user, .button, .modifier, .toggle, .menu:
             return measureGroup(node, proposal)
         }
     }
@@ -100,7 +111,7 @@ extension Graph {
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
         switch node.kind {
-        case .text, .textField, .spacer:
+        case .text, .textField, .textEditor, .spacer, .image, .divider:
             break
         case .modifier(.padding(let insets)):
             guard let child = childNodes(node).first else { return }
@@ -127,7 +138,7 @@ extension Graph {
             node.scrollOffset = min(max(0, node.scrollOffset), maxOffset)
             let contentRect = LayoutRect(x: rect.minX, y: rect.minY - node.scrollOffset, width: rect.width, height: content.height)
             placeGroup(node, in: contentRect, proposal: ProposedViewSize(width: rect.width, height: nil))
-        case .user, .button, .modifier:
+        case .user, .button, .modifier, .toggle, .menu:
             placeGroup(node, in: rect, proposal: proposal)
         }
     }
@@ -146,6 +157,7 @@ extension Graph {
         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
         let crossLimit = axis.crossLimit(proposal)
         let minLengths: [CGFloat?] = children.map { spacerLength($0) }
+        let fixed: [LayoutSize?] = children.map { fixedStackSize($0, axis, crossLimit) }
         var sizes = Array(repeating: LayoutSize.zero, count: children.count)
         var proposals = Array(repeating: ProposedViewSize.unspecified, count: children.count)
 
@@ -167,6 +179,8 @@ extension Graph {
                 let size: LayoutSize
                 if let minLength = minLengths[index] {
                     size = axis.size(main: max(minLength, share), cross: 0)
+                } else if let fixedSize = fixed[index] {
+                    size = fixedSize
                 } else {
                     size = measure(children[index], proposal)
                 }
@@ -181,6 +195,8 @@ extension Graph {
                 let proposal = axis.proposal(main: nil, cross: crossLimit)
                 if let minLength = minLengths[index] {
                     sizes[index] = axis.size(main: minLength, cross: 0)
+                } else if let fixedSize = fixed[index] {
+                    sizes[index] = fixedSize
                 } else {
                     sizes[index] = measure(children[index], proposal)
                 }
@@ -223,6 +239,12 @@ extension Graph {
         return stackPlan(children, groupStackSpec, proposal).size
     }
 
+    /// A divider's size in a stack: thin on the main axis, filling the cross axis.
+    private func fixedStackSize(_ node: Node, _ axis: StackAxis, _ crossLimit: CGFloat?) -> LayoutSize? {
+        guard case .divider = node.kind else { return nil }
+        return axis.size(main: dividerThickness, cross: crossLimit ?? 0)
+    }
+
     /// A spacer's minimum length, seen through single-child wrappers; nil for other views.
     private func spacerLength(_ node: Node) -> CGFloat? {
         if case .spacer(let minLength) = node.kind { return minLength }
@@ -233,12 +255,14 @@ extension Graph {
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
         let wrapWidth = finiteLength(width)
-        if node.memoText != string {
+        let fontID = node.environment.font?.id ?? "body"
+        if node.memoText != string || node.memoFont != fontID {
             node.memoText = string
+            node.memoFont = fontID
             node.memo.removeAll()
         }
         if let cached = node.memo[wrapWidth] { return cached }
-        let request = TextMeasureRequest(text: string, fontID: "body", proposedWidth: wrapWidth, scale: scale)
+        let request = TextMeasureRequest(text: string, fontID: fontID, proposedWidth: wrapWidth, scale: scale)
         let size = measurer.measure(request).size
         node.memo[wrapWidth] = size
         return size

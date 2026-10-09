@@ -56,6 +56,16 @@ enum ModifierSpec {
     case animation(AnyEquatable, Animation?)
     case environment((inout EnvironmentValues) -> Void)
     case opacity(Double)
+    /// SR1: `.tag(_:)` value of a List row.
+    case tag(AnyHashable)
+    /// SR1: the `onDelete` hook of a List row.
+    case deletion(DeletionHook)
+    /// SR1: a context menu's content, evaluated into `Node.menuEntries`.
+    case contextMenu(any View)
+    /// SR1: an alert or confirmation dialog, presented while its binding is true.
+    case presentation(PresentationPayload)
+    case keyboardShortcut(KeyEquivalent, EventModifiers)
+    case accessibilityLabel(String)
 
     var name: String {
         switch self {
@@ -67,6 +77,13 @@ enum ModifierSpec {
         case .animation: return "animation"
         case .environment: return "environment"
         case .opacity: return "opacity"
+        case .tag: return "tag"
+        case .deletion: return "onDelete"
+        case .contextMenu: return "contextMenu"
+        case .presentation(let payload):
+            return payload.kind == .alert ? "alert" : "confirmationDialog"
+        case .keyboardShortcut: return "keyboardShortcut"
+        case .accessibilityLabel: return "accessibilityLabel"
         }
     }
 }
@@ -82,6 +99,13 @@ enum NodeKind {
     /// Vertical scroll container. Its scroll offset lives on the node.
     case scroll
     case modifier(ModifierSpec)
+    /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
+    case toggle(Binding<Bool>)
+    case image(ImageReference)
+    case textEditor(Binding<String>)
+    case divider
+    /// Menu label is the child; its items are a model (`Node.menuEntries`).
+    case menu
 
     /// Wrappers whose geometry is their single child's geometry (user bodies, buttons, and
     /// modifiers other than padding).
@@ -212,8 +236,19 @@ final class Node {
     var committed = false
     /// Running interpolation of `presentedFrame` and `presentedOpacity`.
     var motion: Motion?
-    /// Per-field text input state (TextField nodes only).
+    /// Per-field text input state (TextField and TextEditor nodes only).
     var textInput: TextInputState?
+    /// Font identifier of the last measurement (the memo is keyed by text, font and width).
+    var memoFont: String?
+    /// Selection binding of a List node, set at evaluation.
+    var selection: SelectionAccess?
+    /// Anchor and cursor of a List's keyboard and click selection, as row tags.
+    var selectionAnchor: AnyHashable?
+    var selectionCursor: AnyHashable?
+    /// Items of a Menu or context menu, evaluated at each evaluation. Nil for other nodes.
+    var menuEntries: [MenuEntry]?
+    /// The presented alert or dialog, while presented. Nil otherwise.
+    var presented: PresentedModel?
 
     init(id: NodeID, view: any View, parent: Node?) {
         self.id = id
@@ -246,6 +281,12 @@ final class Node {
         textInput = nil
         memo = [:]
         memoText = nil
+        memoFont = nil
+        selection = nil
+        selectionAnchor = nil
+        selectionCursor = nil
+        menuEntries = nil
+        presented = nil
     }
 }
 
@@ -300,6 +341,35 @@ public struct ResolvedNode: Equatable, Sendable {
     /// TextField only: the marked (composing) range in displayed text.
     public let marked: UTF16Range?
     public let children: [ResolvedNode]
+    /// Role, label, value, enablement and selection for the accessibility backend.
+    public let accessibility: ResolvedAccessibility
+    /// Font and foreground colour in effect at this node (inherited through the environment).
+    public let style: ResolvedStyle
+    /// Image nodes only: the reference the backend loads.
+    public let image: ImageReference?
+    /// Menu and context-menu nodes only: the items, with disabled state and submenus.
+    public let menu: [ResolvedMenuItem]?
+    /// Alert and confirmation dialog nodes, while presented.
+    public let presentation: ResolvedPresentation?
+    /// Modifier nodes created by `.keyboardShortcut(_:modifiers:)`.
+    public let shortcut: ResolvedShortcut?
+}
+
+/// Accessibility as the runtime resolves it. Roles: window, button, text-field, text-area, checkbox, static-text,
+/// image, list, list-item, menu, separator, scroll-area, alert, dialog (the first six are the CONTRACT canonical set).
+public struct ResolvedAccessibility: Equatable, Sendable {
+    public let role: String?
+    public let label: String?
+    /// Text for fields; "1" or "0" for a checkbox (Toggle).
+    public let value: String?
+    public let isEnabled: Bool
+    /// True for a List row whose tag is in the selection.
+    public let isSelected: Bool
+}
+
+public struct ResolvedStyle: Equatable, Sendable {
+    public let font: Font?
+    public let foreground: ResolvedColor?
 }
 
 public struct CommitRecord: Equatable, Sendable {
@@ -332,6 +402,10 @@ public final class Graph {
     /// Size proposal for the root view. A host sets this to its content size.
     public var rootProposal: ProposedViewSize = .unspecified
     public var commitSink: ((CommitRecord) -> Void)?
+    /// Intrinsic size of an image reference, in logical points. A host supplies the real size; the default is 24 pt.
+    public var imageIntrinsicSize: (ImageReference) -> LayoutSize = { _ in LayoutSize(width: 24, height: 24) }
+    /// Platform used to map native chords to logical commands (CONTRACT section 4).
+    public var keyboardPlatform: KeyboardPlatform = .mac
 
     public init(_ rootView: some View, measurer: (any TextMeasurer)? = nil, scale: CGFloat = 1) {
         self.measurer = measurer ?? FixedAdvanceTextMeasurer()
@@ -365,7 +439,7 @@ public final class Graph {
     }
 
     public func snapshot() -> ResolvedNode? {
-        root.map(resolve)
+        root.map { resolve($0) }
     }
 
     /// Creation number of the live node at `id`. Equal numbers mean the same node instance;
@@ -387,8 +461,20 @@ public final class Graph {
     /// Invokes a Button's action. Returns false when the id is not a live button.
     @discardableResult
     public func tapButton(_ id: String) -> Bool {
-        guard let node = node(id), case .button(let action) = node.kind else { return false }
+        guard let target = node(id), case .button(let action) = target.kind, target.environment.isEnabled else {
+            return false
+        }
         action()
+        return true
+    }
+
+    /// Flips a live, enabled Toggle's binding. Returns false when the id is not a live enabled toggle.
+    @discardableResult
+    public func activateToggle(_ id: String) -> Bool {
+        guard let target = node(id), case .toggle(let binding) = target.kind, target.environment.isEnabled else {
+            return false
+        }
+        binding.wrappedValue.toggle()
         return true
     }
 
@@ -605,12 +691,12 @@ public final class Graph {
         }
     }
 
-    func textInputState(for node: Node, binding: Binding<String>) -> TextInputState {
+    func textInputState(for node: Node, binding: Binding<String>, multiline: Bool) -> TextInputState {
         if let state = node.textInput {
             state.binding = binding
             return state
         }
-        let state = TextInputState(binding: binding)
+        let state = TextInputState(binding: binding, multiline: multiline)
         node.textInput = state
         return state
     }
@@ -639,14 +725,32 @@ public final class Graph {
             node.lastEquatable = value
         }
         if case .user = node.kind { bindDynamicProperties(node) }
-        if case .textField(let binding) = node.kind { _ = textInputState(for: node, binding: binding) }
+        node.selection = (node.view as? SelectionProviding)?.selectionAccess
+        if case .textField(let binding) = node.kind {
+            _ = textInputState(for: node, binding: binding, multiline: false)
+        }
+        if case .textEditor(let binding) = node.kind {
+            _ = textInputState(for: node, binding: binding, multiline: true)
+        }
 
         let produced: (any View)? = withObservationTracking({
             switch node.kind {
-            case .textField: _ = node.textInput?.display
+            case .textField, .textEditor: _ = node.textInput?.display
             case .modifier(.focus(let link)): node.focused = link.isFocused()
+            case .toggle(let binding): _ = binding.wrappedValue
+            case .modifier(.presentation(let payload)):
+                node.presented = payload.isPresented.wrappedValue
+                    ? PresentedModel(payload: payload, environment: node.environment)
+                    : nil
+            case .modifier(.contextMenu(let content)):
+                node.menuEntries = ViewWalk.entries(content, environment: node.environment)
+            case .menu:
+                node.menuEntries = (node.view as? MenuView).map {
+                    ViewWalk.entries($0.menuContent, environment: node.environment)
+                }
             default: break
             }
+            if let selection = node.selection { _ = selection.current() }
             if let primitive = node.view as? PrimitiveView { return primitive.nodeContent }
             return node.view.evaluateBody()
         }, onChange: { [weak self, handle = node.handle] in
@@ -720,19 +824,34 @@ public final class Graph {
         commitSink?(record)
     }
 
-    private func resolve(_ node: Node) -> ResolvedNode {
+    private func resolve(_ node: Node, selected: Bool = false) -> ResolvedNode {
         let text: String?
         var selection: UTF16Range?
         var marked: UTF16Range?
         switch node.kind {
         case .text(let string):
             text = string
-        case .textField:
+        case .textField, .textEditor:
             text = node.textInput?.display
             selection = node.textInput?.selection
             marked = node.textInput?.markedRange
         default:
             text = nil
+        }
+        let selectedTags = node.selection?.current() ?? []
+        let children: [ResolvedNode] = node.children.compactMap { childID in
+            guard let child = nodes[childID] else { return nil }
+            let isSelected = node.selection != nil && (tagOf(child).map { selectedTags.contains($0) } ?? false)
+            return resolve(child, selected: isSelected)
+        }
+        var image: ImageReference?
+        if case .image(let reference) = node.kind { image = reference }
+        var shortcut: ResolvedShortcut?
+        if case .modifier(.keyboardShortcut(let key, let modifiers)) = node.kind {
+            shortcut = ResolvedShortcut(
+                chord: KeyboardChord(key: key, modifiers: modifiers),
+                logical: KeyboardChords.command(for: key, modifiers: modifiers, on: keyboardPlatform)
+            )
         }
         return ResolvedNode(
             id: node.id.description,
@@ -743,8 +862,91 @@ public final class Graph {
             opacity: node.presentedOpacity,
             selection: selection,
             marked: marked,
-            children: node.children.compactMap { nodes[$0].map(resolve) }
+            children: children,
+            accessibility: accessibility(of: node, children: children, selected: selected),
+            style: ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle),
+            image: image,
+            menu: node.menuEntries.map(resolveMenu),
+            presentation: node.presented.map(resolvePresentation),
+            shortcut: shortcut
         )
+    }
+
+    /// Role, label and value for the accessibility backend. A primitive sets the role; a List's direct children
+    /// are list items; an accessibilityLabel modifier overrides the label of its own node.
+    private func accessibility(of node: Node, children: [ResolvedNode], selected: Bool) -> ResolvedAccessibility {
+        var role: String?
+        var label: String?
+        var value: String?
+        switch node.kind {
+        case .text(let string):
+            role = "static-text"
+            label = string
+        case .button:
+            role = "button"
+            label = joinedText(children)
+        case .textField:
+            role = "text-field"
+            label = titleOf(node)
+            value = node.textInput?.display
+        case .textEditor:
+            role = "text-area"
+            value = node.textInput?.display
+        case .toggle(let binding):
+            role = "checkbox"
+            label = titleOf(node) ?? joinedText(children)
+            value = binding.wrappedValue ? "1" : "0"
+        case .image(let reference):
+            role = "image"
+            label = reference.name
+        case .menu:
+            role = "menu"
+            label = joinedText(children)
+        case .divider:
+            role = "separator"
+        case .scroll:
+            role = "scroll-area"
+        case .stack(let spec) where spec.name == "List":
+            role = "list"
+        case .modifier(.accessibilityLabel(let override)):
+            label = override
+        case .modifier(.presentation):
+            if let presented = node.presented {
+                role = presented.kind == .alert ? "alert" : "dialog"
+                label = presented.title
+            }
+        default:
+            break
+        }
+        if let parent = node.parent, case .stack(let spec) = parent.kind, spec.name == "List" {
+            role = "list-item"
+            label = label ?? joinedText(children)
+        }
+        return ResolvedAccessibility(
+            role: role,
+            label: label,
+            value: value,
+            isEnabled: node.environment.isEnabled,
+            isSelected: selected
+        )
+    }
+
+    /// Accessibility title of a labelled control (TextField, Toggle), from its label view.
+    private func titleOf(_ node: Node) -> String? {
+        guard let labeled = node.view as? LabeledControl else { return nil }
+        let title = ViewWalk.plainText(labeled.titleView)
+        return title.isEmpty ? nil : title
+    }
+
+    /// The text of the resolved descendants, in order, joined by spaces. Nil when there is none.
+    private func joinedText(_ resolved: [ResolvedNode]) -> String? {
+        var parts: [String] = []
+        func collect(_ item: ResolvedNode) {
+            if let text = item.text, !text.isEmpty { parts.append(text) }
+            item.children.forEach(collect)
+        }
+        resolved.forEach(collect)
+        return parts.isEmpty ? nil : parts.joined(separator: " ")
     }
 
     private func kindName(_ node: Node) -> String {
@@ -758,6 +960,11 @@ public final class Graph {
         case .layout: return "Layout"
         case .scroll: return "ScrollView"
         case .modifier(let spec): return "modifier.\(spec.name)"
+        case .toggle: return "Toggle"
+        case .image: return "Image"
+        case .textEditor: return "TextEditor"
+        case .divider: return "Divider"
+        case .menu: return "Menu"
         }
     }
 }

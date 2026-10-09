@@ -124,12 +124,26 @@ public struct Spacer: View, PrimitiveView {
     var nodeContent: (any View)? { nil }
 }
 
+/// Semantic role of a button in an alert or dialog. Apple: https://developer.apple.com/documentation/swiftui/buttonrole
+public enum ButtonRole: Hashable, Sendable {
+    case cancel
+    case destructive
+}
+
 public struct Button<Label: View>: View, PrimitiveView {
     let action: () -> Void
     let label: Label
+    let role: ButtonRole?
     public init(action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
         self.action = action
         self.label = label()
+        self.role = nil
+    }
+    /// Apple: https://developer.apple.com/documentation/swiftui/button/init(role:action:label:)
+    public init(role: ButtonRole?, action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
+        self.action = action
+        self.label = label()
+        self.role = role
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .button(action) }
@@ -140,6 +154,12 @@ extension Button where Label == Text {
     public init(_ titleKey: String, action: @escaping () -> Void) {
         let label: () -> Text = { Text(titleKey) }
         self.init(action: action, label: label)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/button/init(_:role:action:)
+    public init(_ titleKey: String, role: ButtonRole?, action: @escaping () -> Void) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(role: role, action: action, label: label)
     }
 }
 
@@ -265,9 +285,15 @@ public struct ScrollView<Content: View>: View, PrimitiveView {
     var nodeContent: (any View)? { content }
 }
 
+/// Apple: https://developer.apple.com/documentation/swiftui/list
 public struct List<SelectionValue: Hashable, Content: View>: View, PrimitiveView {
     let content: Content
-    init(content: Content) { self.content = content }
+    /// Selection binding, nil for an unselectable list. Set by `init(selection:content:)` (Selection.swift).
+    let selectionAccess: SelectionAccess?
+    init(content: Content, selectionAccess: SelectionAccess? = nil) {
+        self.content = content
+        self.selectionAccess = selectionAccess
+    }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     /// Rows stack vertically with no gap and take the full proposed width.
     var nodeKind: NodeKind {

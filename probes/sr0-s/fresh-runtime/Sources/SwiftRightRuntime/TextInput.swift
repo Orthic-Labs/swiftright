@@ -38,6 +38,8 @@ public struct UTF16Range: Hashable, Sendable {
 @Observable
 public final class TextInputState {
     @ObservationIgnored var binding: Binding<String>
+    /// True for TextEditor (Return inserts a line break), false for TextField.
+    public let multiline: Bool
     /// Marked (composing) text. Nil when there is no composition; never empty when set.
     public private(set) var composition: String?
     /// UTF-16 offset in the committed text where the composition is inserted.
@@ -45,8 +47,9 @@ public final class TextInputState {
     /// Caret or selection in displayed-text coordinates.
     public private(set) var selection = UTF16Range(location: 0, length: 0)
 
-    init(binding: Binding<String>) {
+    init(binding: Binding<String>, multiline: Bool = false) {
         self.binding = binding
+        self.multiline = multiline
     }
 
     /// The bound value: committed text only.
@@ -117,6 +120,16 @@ public final class TextInputState {
         if newCommitted != committed { binding.wrappedValue = newCommitted }
         selection = UTF16Range(location: target.location + text.utf16.count, length: 0)
         return true
+    }
+
+    /// Return key. While composing it commits the composition, as an IME does, and inserts nothing. Otherwise a
+    /// multi-line field replaces the selection with a line break. A single-line field returns false.
+    /// Apple: https://developer.apple.com/documentation/swiftui/texteditor
+    @discardableResult
+    public func insertLineBreak() -> Bool {
+        if composition != nil { return unmark() }
+        guard multiline else { return false }
+        return replace(text: "\n")
     }
 
     /// Bridge `setSelection`: moves the caret or selection. Leaving the marked text commits it first.

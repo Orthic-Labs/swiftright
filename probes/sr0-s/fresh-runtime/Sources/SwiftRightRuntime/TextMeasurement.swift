@@ -66,13 +66,18 @@ public final class FixedAdvanceTextMeasurer: TextMeasurer {
         requests.filter { $0.text == text }.count
     }
 
+    /// Hard line breaks first (a newline always starts a line, as in Text and TextEditor), then word wrap.
     private func wrap(_ text: String, width: CGFloat?) -> [String] {
         guard !text.isEmpty else { return [] }
-        guard let width else { return [text] }
+        return text.split(separator: "\n", omittingEmptySubsequences: false).flatMap { wrapLine(String($0), width: width) }
+    }
+
+    private func wrapLine(_ line: String, width: CGFloat?) -> [String] {
+        guard let width else { return [line] }
         let limit = Int((width / advance).rounded(.down))
         var lines: [String] = []
         var current = ""
-        for piece in text.split(separator: " ", omittingEmptySubsequences: false) {
+        for piece in line.split(separator: " ", omittingEmptySubsequences: false) {
             let word = String(piece)
             if current.isEmpty {
                 current = word
