@@ -3,6 +3,8 @@ import Foundation
 public struct FixtureConfig: Sendable {
     public enum Fixture: String, CaseIterable, Sendable {
         case F1, F2, F3, F4, F5, F6, F7, F8, F9
+        /// SR1 inventory fixtures (Mac oracle side). Numbers 10...17 seed their row IDs (unused rows).
+        case G1, G2, G3, G4, G5, G6, G7, G8
 
         public var number: Int {
             (Self.allCases.firstIndex(of: self) ?? 0) + 1

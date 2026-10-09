@@ -8,6 +8,7 @@ public final class FixtureSession {
     let log: EventLog
     let engine: FakeEngine
     let model: RowModel
+    let sr1: SR1Model
     let driver: FixtureDriver
     private var attached = false
 
@@ -24,7 +25,9 @@ public final class FixtureSession {
         self.log = log
         self.engine = engine
         self.model = model
-        self.driver = FixtureDriver(model: model, engine: engine, log: log)
+        let sr1 = SR1Model(log: log)
+        self.sr1 = sr1
+        self.driver = FixtureDriver(model: model, engine: engine, log: log, sr1: sr1)
     }
 
     /// Starts either the scripted self-test or the stdin JSON-lines driver, exactly once.
@@ -79,6 +82,14 @@ public struct FixtureRootView: View {
         case .F7: F7Screen(model: session.model)
         case .F8: F8Screen(model: session.model)
         case .F9: F9Screen(model: session.model)
+        case .G1: G1Screen(model: session.sr1)
+        case .G2: G2Screen(model: session.sr1)
+        case .G3: G3Screen(model: session.sr1)
+        case .G4: G4Screen(model: session.sr1)
+        case .G5: G5Screen(model: session.sr1)
+        case .G6: G6Screen(model: session.sr1)
+        case .G7: G7Screen(model: session.sr1)
+        case .G8: G8Screen(model: session.sr1)
         }
     }
 }

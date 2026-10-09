@@ -86,7 +86,7 @@ func isSubsequence<T: Equatable>(_ needle: [T], of haystack: [T]) -> Bool {
 
 /// Scripted programmatic equivalents of the slice stimuli. Keyboard and pointer input are out-of-process.
 @MainActor
-func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool, f3GapMs: Int = 0) -> SelfTestCase {
+func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool, f3GapMs: Int = 0, sr1: SR1Model) -> SelfTestCase {
     let fixtureNumber = fixture.number
     func rid(_ slot: Int) -> UUID { RowModel.rowID(fixture: fixtureNumber, slot: slot) }
 
@@ -312,6 +312,8 @@ func makeCase(fixture: FixtureConfig.Fixture, reduced: Bool, f3GapMs: Int = 0) -
             ]
         })
 
+    case .G1, .G2, .G3, .G4, .G5, .G6, .G7, .G8:
+        return sr1Case(fixture, model: sr1)
     case .F9:
         return SelfTestCase(steps: [
             ["step": "close-window", "ms": 300],
@@ -354,7 +356,7 @@ final class SelfTestRunner {
     private func run() async {
         let fixture = session.config.fixture.rawValue
         let testCase = makeCase(fixture: session.config.fixture, reduced: session.config.reducedMotion,
-                                f3GapMs: session.config.f3GapMs)
+                                f3GapMs: session.config.f3GapMs, sr1: session.sr1)
         let driver = session.driver
         await driver.settle(minimumMs: 300)
         for step in testCase.steps {

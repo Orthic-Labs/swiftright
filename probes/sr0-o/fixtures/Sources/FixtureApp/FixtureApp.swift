@@ -36,5 +36,6 @@ struct FixtureApp: App {
             FixtureRootView(session: session)
         }
         .defaultSize(width: 480, height: 560)
+        .commands { SR1Commands(session: session) }
     }
 }

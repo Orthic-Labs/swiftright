@@ -167,3 +167,36 @@ Not proven: why B's pair and A's pair occur at all. They are deterministic now. 
 - The comparator test for a permitted-ordering declaration was not written: the variance it would cover no longer occurs.
 - CONTRACT F6 row was not edited. Its "completion order" wording still needs a decision on whether sibling order within a step is asserted or permuted.
 - Open: raw sibling-order variance in F6 is not zero. If SR0-O requires raw identity, this needs a decision, not a fixture change.
+
+
+## SR1 fixtures G1-G8 (2026-10-09, macOS 27.0.1 arm64, Swift 6.4): INTERRUPTED
+
+Status: INTERRUPTED. The 20x sweep was stopped by the coordinator because it was disrupting the user's work on this Mac. No runs were started after the stop. G8 was never repeated, and G6 run 20 and G7 run 2 were cut off by the stop. Nothing here is an oracle-qualified SR1 baseline except the configs marked yes below.
+
+Scope: `probes/sr0-o/fixtures/` only (Sources, `scripts/sr1-repeat20.sh`, `scripts/sr1-summary.py`). No commits, branches, or system settings changed.
+
+Method: each fixture is driven by `scripts/run-self-test.sh`. Stimuli are model writes, pid-posted keys (`CGEvent.postToPid`), and in-process AX reads and actions. Each action records one `observe` event. Checks assert only internal consistency (the driver ran every step, the model holds its own last write). The recorded outcomes are the oracle. `normalize-hash.py --canonical` decides agreement.
+
+Results at interruption (from `scripts/sr1-summary.py` over `out/sr1/`, completed runs only):
+
+| Config | Self-test PASS | Runs completed | Raw distinct | Canonical distinct | Oracle-qualified |
+|---|---|---|---|---|---|
+| G1 Toggle | 20 | 20/20 | 1 | 1 | yes |
+| G2 TextEditor | 20 | 20/20 | 2 | 2 | no |
+| G3 List(selection:) single and multi | 20 | 20/20 | 1 | 1 | yes |
+| G4 onDelete | 20 | 20/20 | 1 | 1 | yes |
+| G5 contextMenu / Menu | 20 | 20/20 | 1 | 1 | yes (as UNAVAILABLE, see below) |
+| G6 alert / confirmationDialog | 19 | 19/20 (run 20 cut off) | 2 | 2 | no |
+| G7 keyboardShortcut | 2 | 2/20 | 1 | 1 | no (incomplete) |
+| G8 Image / Label / Divider / disabled | not run | 0/20 | n/a | n/a | no |
+
+Recorded outcomes (G1 and G5 read back in detail; the rest are in `out/sr1/`):
+- G1: Space on the focused Toggle changed value 0 to 1. AXPress changed 1 back to 0. A model write set it to 1. Role AXCheckBox, action AXPress, focus on. Identical in 20 of 20 runs.
+- G5: the target element advertises AXShowMenu. The "More actions" button advertises AXPress. The popup was not observed in-process and no item was invoked. Recorded as `AX-unavailable (in-process)`. This is not a menu conformance PASS.
+
+Findings and open items:
+- G2 (TextEditor) and G6 (alert and dialog) are non-deterministic in the canonical hash across runs. They were not diagnosed. Do not treat them as oracles until the cause is understood.
+- G5: AXShowMenu on a SwiftUI context menu or Menu cannot be driven in-process. The call either blocked the main thread or returned with no popup observed. A run-loop timer scheduled before the call and an AXShowMenu call on a background thread both failed. Astra (gpt-6-astra, high effort) recommended recording it as UNAVAILABLE in-process and using the out-of-process AX recorder for popup coverage. That recorder route is not built here.
+- Fix iterations used: G5 used 4 of 4 (diagnostic dump, timer after call, detached thread, timer before call). Then the cases were replaced with the UNAVAILABLE record. The other configs needed no fix iterations.
+- Two sweep loops were briefly running at once during the first attempt. Overlapping output was moved aside, not deleted, to `out/sr1-discarded-overlap/` (67 files). It is not evidence. The sweep script now holds a PID lock at `out/sr1/.sweep.pid`.
+- G8 and G7 repeats remain. Rerun after the stop is lifted, in a single sweep: `OUT_DIR=out/sr1 scripts/sr1-repeat20.sh G2 G6 G7 G8`, or fresh per config with `RUNS`. Do not run it on the user's active session.

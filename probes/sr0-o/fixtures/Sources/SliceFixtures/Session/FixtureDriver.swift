@@ -12,11 +12,13 @@ final class FixtureDriver {
     let model: RowModel
     let engine: FakeEngine
     let log: EventLog
+    let sr1: SR1Model
 
-    init(model: RowModel, engine: FakeEngine, log: EventLog) {
+    init(model: RowModel, engine: FakeEngine, log: EventLog, sr1: SR1Model) {
         self.model = model
         self.engine = engine
         self.log = log
+        self.sr1 = sr1
     }
 
     func handleLine(_ line: String) async {
@@ -74,6 +76,11 @@ final class FixtureDriver {
         case "snapshot", "settle":
             break
         default:
+            #if os(macOS)
+            if await SR1Steps.perform(name, step, model: sr1) {
+                break
+            }
+            #endif
             log.emit("lifecycle", node: "driver", payload: ["phase": "unknown-step", "name": name])
         }
         await settle(minimumMs: step["ms"] as? Int ?? 0)
