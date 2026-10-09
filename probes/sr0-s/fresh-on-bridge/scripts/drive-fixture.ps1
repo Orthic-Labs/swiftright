@@ -244,16 +244,29 @@ function Delete-Near([string]$editName) {
   # The Delete button on the same row as the named edit: nearest by vertical centre.
   $row = Edit $editName 15000
   if ($row -eq $null) { return $null }
-  $ry = $row.Current.BoundingRectangle.Top + $row.Current.BoundingRectangle.Height / 2
   $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)
-  $best = $null; $bestDy = [double]::MaxValue
-  foreach ($b in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond)) {
-    if ($b.Current.Name -ne 'Delete') { continue }
-    $by = $b.Current.BoundingRectangle.Top + $b.Current.BoundingRectangle.Height / 2
-    $dy = [math]::Abs($by - $ry)
-    if ($dy -lt $bestDy) { $bestDy = $dy; $best = $b }
-  }
-  Log "delete_near[$editName] dy=$([math]::Round($bestDy,1))"
+  # The UIA tree can lag one step behind the previous action, so retry the whole search
+  # (fresh row and Delete FindAll from the window root) for up to 2 s at 100 ms intervals.
+  $best = $null; $bestDy = [double]::MaxValue; $attempts = 0
+  $sw = [Diagnostics.Stopwatch]::StartNew()
+  do {
+    $attempts++
+    $best = $null; $bestDy = [double]::MaxValue
+    $row = Edit $editName 0
+    if ($row -ne $null) {
+      $ry = $row.Current.BoundingRectangle.Top + $row.Current.BoundingRectangle.Height / 2
+      foreach ($b in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond)) {
+        if ($b.Current.Name -ne 'Delete') { continue }
+        $by = $b.Current.BoundingRectangle.Top + $b.Current.BoundingRectangle.Height / 2
+        $dy = [math]::Abs($by - $ry)
+        if ($dy -lt $bestDy) { $bestDy = $dy; $best = $b }
+      }
+    }
+    if ($best -ne $null) { break }
+    if ($sw.ElapsedMilliseconds -lt 2000) { Start-Sleep -Milliseconds 100 }
+  } while ($sw.ElapsedMilliseconds -lt 2000)
+  Log "delete_near[$editName] dy=$([math]::Round($bestDy,1)) delete_near_attempts=$attempts"
+  if ($best -eq $null) { Log "delete_near[$editName] NO_CANDIDATE after $attempts attempts (2 s)" }
   return $best
 }
 function Set-ClientDip([int]$w, [int]$h) {
