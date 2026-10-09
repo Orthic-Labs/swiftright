@@ -5,6 +5,7 @@ Run: python3 -I -m unittest discover -s qualification -v
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import tempfile
 import unittest
@@ -453,7 +454,7 @@ class StrictRunnerTests(unittest.TestCase):
 
     def test_run_exits_nonzero_when_a_stage_skips_or_has_no_pass(self):
         orig = q.package_stage
-        q.package_stage = lambda log, paths, dry=False, repo=q.REPO: log.emit("package", "skip", reason="no")
+        q.package_stage = lambda log, paths, dry=False: log.emit("package", "skip", reason="no")
         try:
             self.assertEqual(q.cmd_run(run_args("--stages", "package")), 1)
         finally:
@@ -554,77 +555,254 @@ class WindowsEvidenceTests(unittest.TestCase):
             log.close()
 
 
+def sha_ref_of(data):
+    return "sha256:" + hashlib.sha256(data).hexdigest()
+
+
+RUN_ID = "20261009T100000Z"
+HARNESS_SHA = sha_ref_of(b"harness")
+
+
+def check_record(platform, check_id, implemented=True, status="pass", run_id=RUN_ID):
+    if status == "pass":
+        reason = None
+    elif implemented:
+        reason = "observed mismatch"
+    else:
+        reason = f"not-implemented: {check_id}"
+    return {
+        "schema": q.PACKAGE_RECEIPT_SCHEMA, "record": "check", "product": "SliceApp", "platform": platform,
+        "run_id": run_id, "check_id": check_id, "check_name": f"{check_id} check", "implemented": implemented,
+        "status": status, "reason": reason, "started_utc": "2026-10-09T10:00:00Z",
+        "ended_utc": "2026-10-09T10:00:05Z", "exit_status": None,
+        "observations": {"window_visible": "true", "rc": 0},
+        "artifact_ids": {"installer": sha_ref_of(b"installer")},
+        "environment": {"host": "host-a", "os_version": "test 1", "user": "tester"},
+        "harness": {"name": "harness", "sha256": HARNESS_SHA},
+    }
+
+
+def run_record(platform, checks, run_id=RUN_ID):
+    not_ok = [c["check_id"] for c in checks if c["status"] != "pass" or not c["implemented"]]
+    return {
+        "schema": q.PACKAGE_RECEIPT_SCHEMA, "record": "run", "product": "SliceApp", "platform": platform,
+        "run_id": run_id, "status": "fail" if not_ok else "pass",
+        "expected_checks": list(q.PACKAGE_CHECKS[platform]),
+        "checks": [{"check_id": c["check_id"], "status": c["status"], "implemented": c["implemented"]} for c in checks],
+        "started_utc": "2026-10-09T10:00:00Z", "ended_utc": "2026-10-09T10:01:00Z",
+        "reason": f"checks not passing: {', '.join(not_ok)}" if not_ok else None,
+        "artifact_ids": {"old_dmg": sha_ref_of(b"old"), "new_dmg": sha_ref_of(b"new")},
+        "harness": {"name": "harness", "sha256": HARNESS_SHA},
+    }
+
+
+def passing_checks(platform):
+    return [check_record(platform, cid) for cid in q.PACKAGE_CHECKS[platform]]
+
+
+def harness_output(platform, unimplemented=()):
+    """Checks as a harness emits them: an unimplemented check is recorded as fail with implemented false."""
+    return [check_record(platform, cid, implemented=cid not in unimplemented, status="pass" if cid not in unimplemented else "fail")
+            for cid in q.PACKAGE_CHECKS[platform]]
+
+
+WIN_UNIMPLEMENTED = ("W08-interrupted-update", "W11-legacy-data-physical-path")
+MAC_UNIMPLEMENTED = ("M08-interrupted-install", "M11-window-visible")
+
+
 class PackageStageTests(unittest.TestCase):
     def setUp(self):
         SCRATCH.mkdir(parents=True, exist_ok=True)
         self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.root = self.dir / "receipts"
         self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
-        self.art = self.dir / "slice.exe"
-        self.art.write_bytes(b"exe")
 
     def tearDown(self):
         self.log.close()
         shutil.rmtree(self.dir, ignore_errors=True)
 
-    def receipt(self, platform="windows-x64", **overrides):
-        body = {"schema": q.PACKAGE_RECEIPT_SCHEMA, "product": "SliceApp", "platform": platform,
-                "created_ts": "2026-10-09T10:00:00.000Z", "source_rev": "abc1234", "verdict": "PASS",
-                "artifacts": {"slice": {"sha256": hashlib.sha256(b"exe").hexdigest(), "path": str(self.art)}},
-                "checks": [{"name": "launch", "result": "PASS"}, {"name": "signature", "result": "PASS"}]}
-        body.update(overrides)
-        return body
-
-    def write(self, name, body):
-        (self.dir / "receipts").mkdir(exist_ok=True)
-        (self.dir / "receipts" / name).write_text(json.dumps(body), encoding="utf-8")
+    def write_run(self, name, checks, run=None, platform=None):
+        """Writes <root>/<name>/<check_id>.json for each check and run.json (default: derived from the checks)."""
+        target = self.root / name
+        target.mkdir(parents=True, exist_ok=True)
+        for c in checks:
+            (target / f"{c['check_id']}.json").write_text(json.dumps(c), encoding="utf-8")
+        if run is None:
+            run = run_record(platform or checks[0]["platform"], checks)
+        (target / "run.json").write_text(json.dumps(run), encoding="utf-8")
 
     def stage(self):
-        return q.package_stage(self.log, [self.dir / "receipts"])
+        return q.package_stage(self.log, [self.root])
 
-    def test_both_platform_receipts_pass(self):
-        self.write("win.json", self.receipt("windows-x64"))
-        self.write("mac.json", self.receipt("macos-arm64"))
+    def events(self):
+        return [json.loads(line) for line in (self.dir / "e.jsonl").read_text().splitlines() if line.strip()]
+
+    def fail_reasons(self):
+        return [e["reason"] or "" for e in self.events() if e["event"] == "fail"]
+
+    def test_passing_set_covers_both_platforms(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.write_run("mac", passing_checks("macos-arm64"))
         self.assertTrue(self.stage())
         self.assertEqual(self.log.passes["package"], 2)
         self.assertEqual(self.log.failures, 0)
 
-    def test_absent_receipts_fail(self):
+    def test_unimplemented_checks_fail_their_platform(self):
+        self.write_run("windows", harness_output("windows-x64", WIN_UNIMPLEMENTED))
+        self.write_run("mac", passing_checks("macos-arm64"))
         self.assertFalse(self.stage())
-        self.assertEqual(self.log.failures, 1)
+        reasons = " ".join(self.fail_reasons())
+        self.assertIn("W08-interrupted-update", reasons)
+        self.assertIn("W11-legacy-data-physical-path", reasons)
+        self.assertIn("must be implemented and pass", reasons)
+
+    def test_mac_unimplemented_checks_fail_the_mac_run(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.write_run("mac", harness_output("macos-arm64", MAC_UNIMPLEMENTED))
+        self.assertFalse(self.stage())
+        self.assertIn("M11-window-visible", " ".join(self.fail_reasons()))
+
+    def test_pass_on_unimplemented_check_is_rejected_even_when_run_claims_pass(self):
+        checks = passing_checks("windows-x64")
+        checks[8] = check_record("windows-x64", "W08-interrupted-update", implemented=False, status="pass")
+        run = run_record("windows-x64", checks)
+        run["status"], run["reason"] = "pass", None
+        run["checks"][8]["status"] = "pass"
+        self.write_run("windows", checks, run=run)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("W08-interrupted-update", " ".join(self.fail_reasons()))
 
     def test_missing_platform_fails(self):
-        self.write("win.json", self.receipt("windows-x64"))
+        self.write_run("windows", passing_checks("windows-x64"))
         self.assertFalse(self.stage())
         self.assertIn("macos-arm64", self.events()[-1]["reason"])
 
-    def events(self):
-        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()]
-
-    def test_failed_verdict_check_or_hash_mismatch_fails(self):
-        for name, overrides in (("verdict", {"verdict": "FAIL"}),
-                                ("check", {"checks": [{"name": "launch", "result": "FAIL"}]}),
-                                ("hash", {"artifacts": {"slice": {"sha256": "0" * 64, "path": str(self.art)}}}),
-                                ("nohash", {"artifacts": {"slice": {"path": str(self.art)}}}),
-                                ("nochecks", {"checks": []}),
-                                ("schema", {"schema": "other/v1"}),
-                                ("platform", {"platform": "linux-x64"})):
-            self.assertTrue(q.validate_package_receipt(self.receipt(**overrides)), name)
-        self.assertEqual(q.validate_package_receipt(self.receipt()), [])
-
-    def test_invalid_receipt_fails_even_when_platforms_are_covered(self):
-        self.write("win.json", self.receipt("windows-x64"))
-        self.write("mac.json", self.receipt("macos-arm64"))
-        self.write("bad.json", self.receipt("macos-arm64", verdict="FAIL"))
+    def test_missing_check_record_fails(self):
+        checks = passing_checks("windows-x64")
+        self.write_run("windows", checks[:-1], run=run_record("windows-x64", checks))
+        self.write_run("mac", passing_checks("macos-arm64"))
         self.assertFalse(self.stage())
+        self.assertIn(f"{checks[-1]['check_id']}: check record missing", " ".join(self.fail_reasons()))
 
-    def test_malformed_json_fails(self):
-        (self.dir / "receipts").mkdir()
-        (self.dir / "receipts" / "x.json").write_text("{nope")
+    def test_run_summary_and_check_file_must_agree(self):
+        checks = passing_checks("windows-x64")
+        stale = [dict(c) for c in checks]
+        stale[5] = check_record("windows-x64", "W05-write-data", implemented=True, status="fail")
+        self.write_run("windows", stale, run=run_record("windows-x64", checks))
+        self.write_run("mac", passing_checks("macos-arm64"))
         self.assertFalse(self.stage())
+        self.assertIn("W05-write-data", " ".join(self.fail_reasons()))
+
+    def test_harness_dropping_a_declared_check_fails(self):
+        checks = passing_checks("windows-x64")[:-1]
+        run = run_record("windows-x64", checks)
+        run["expected_checks"] = list(q.PACKAGE_CHECKS["windows-x64"][:-1])
+        self.write_run("windows", checks, run=run)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("expected_checks differ", " ".join(self.fail_reasons()))
+
+    def test_undeclared_check_record_fails(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.write_run("mac", passing_checks("macos-arm64"))
+        (self.root / "windows" / "W12-extra.json").write_text(json.dumps(check_record("windows-x64", "W00-environment")))
+        self.assertFalse(self.stage())
+        self.assertIn("undeclared check records: W12-extra.json", " ".join(self.fail_reasons()))
+
+    def test_previous_schema_version_is_rejected(self):
+        checks = passing_checks("windows-x64")
+        run = run_record("windows-x64", checks)
+        run["schema"] = "sr0-a.package-receipt/v1"
+        self.write_run("windows", checks, run=run)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("schema is 'sr0-a.package-receipt/v1'", " ".join(self.fail_reasons()))
+
+    def test_directory_without_run_record_is_not_a_run(self):
+        (self.root / "orphan").mkdir(parents=True)
+        (self.root / "orphan" / "W00-environment.json").write_text("{}")
+        self.assertFalse(self.stage())
+        self.assertEqual(self.log.failures, 1)
+        self.assertIn("no package run records", self.events()[-1]["reason"])
+
+    def test_malformed_run_record_fails(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.write_run("mac", passing_checks("macos-arm64"))
+        (self.root / "mac" / "run.json").write_text("{nope")
+        self.assertFalse(self.stage())
+        self.assertIn("run.json unreadable", " ".join(self.fail_reasons()))
 
     def test_package_dry_run_skips(self):
-        self.assertTrue(q.package_stage(self.log, [self.dir / "receipts"], dry_run=True))
+        self.assertTrue(q.package_stage(self.log, [self.root], dry_run=True))
         self.assertEqual(self.log.skips, 1)
+
+    def test_check_record_rules(self):
+        cid = "W00-environment"
+        self.assertEqual(q.validate_check_record(check_record("windows-x64", cid), "windows-x64", RUN_ID, cid), [])
+        cases = {
+            "pass without implemented": check_record("windows-x64", cid, implemented=False, status="pass"),
+            "pass with reason": {**check_record("windows-x64", cid), "reason": "x"},
+            "fail without reason": {**check_record("windows-x64", cid, status="fail"), "reason": None},
+            "sha without prefix": {**check_record("windows-x64", cid), "artifact_ids": {"installer": "ab" * 32}},
+            "bad artifact name": {**check_record("windows-x64", cid), "artifact_ids": {"Bad-Name": sha_ref_of(b"x")}},
+            "wrong platform": check_record("macos-arm64", cid),
+            "wrong run id": check_record("windows-x64", cid, run_id="other"),
+            "wrong file name": check_record("windows-x64", "W01-artifacts-bound"),
+            "v1 schema": {**check_record("windows-x64", cid), "schema": "sr0-a.package-receipt/v1"},
+            "extra key": {**check_record("windows-x64", cid), "stage": "package"},
+            "bad timestamp": {**check_record("windows-x64", cid), "started_utc": "2026-10-09 10:00"},
+            "observation not scalar": {**check_record("windows-x64", cid), "observations": {"a": [1]}},
+        }
+        for name, rec in cases.items():
+            with self.subTest(name):
+                self.assertTrue(q.validate_check_record(rec, "windows-x64", RUN_ID, cid), name)
+
+    def test_run_record_rules(self):
+        checks = passing_checks("windows-x64")
+        self.assertEqual(q.validate_run_record(run_record("windows-x64", checks))[0], [])
+        bad_pass = run_record("windows-x64", harness_output("windows-x64", WIN_UNIMPLEMENTED))
+        bad_pass["status"], bad_pass["reason"] = "pass", None
+        self.assertTrue(q.validate_run_record(bad_pass)[0])
+        problems, platform = q.validate_run_record({**run_record("windows-x64", checks), "platform": "linux-x64"})
+        self.assertIsNone(platform)
+        self.assertTrue(problems)
+
+
+class HarnessDriftTests(unittest.TestCase):
+    """The declared checks, the schema file and the harnesses must agree on one format."""
+    CLEAN = q.REPO / "qualification" / "clean-machine"
+    MAC = CLEAN / "mac-clean-run.sh"
+    GUEST = CLEAN / "windows" / "guest" / "sandbox-run.ps1"
+    HOST = CLEAN / "windows" / "run-sandbox.ps1"
+
+    def test_mac_harness_declares_the_package_checks(self):
+        text = self.MAC.read_text(encoding="utf-8")
+        ids = tuple(re.findall(r"M\d{2}-[a-z0-9-]+", re.search(r"EXPECTED=\((.*?)\)", text, re.S).group(1)))
+        self.assertEqual(ids, q.PACKAGE_CHECKS["macos-arm64"])
+
+    def test_windows_harnesses_declare_the_package_checks(self):
+        for path in (self.GUEST, self.HOST):
+            with self.subTest(path.name):
+                text = path.read_text(encoding="utf-8")
+                block = re.search(r"\$ExpectedChecks\s*=\s*@\((.*?)\)", text, re.S).group(1)
+                self.assertEqual(tuple(re.findall(r"'(W\d{2}-[a-z0-9-]+)'", block)), q.PACKAGE_CHECKS["windows-x64"])
+
+    def test_every_harness_writes_only_the_v2_schema(self):
+        for path in (self.MAC, self.GUEST, self.HOST):
+            with self.subTest(path.name):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn(q.PACKAGE_RECEIPT_SCHEMA, text)
+                self.assertNotIn("clean-machine-receipt/", text)
+                self.assertNotIn("sr0-a.package-receipt/v1", text)
+
+    def test_json_schema_file_matches_the_code(self):
+        schema = json.loads((self.CLEAN / "receipt.schema.json").read_text(encoding="utf-8"))
+        self.assertEqual(schema["title"], q.PACKAGE_RECEIPT_SCHEMA)
+        self.assertEqual(set(schema["$defs"]["check"]["required"]), set(q.PACKAGE_CHECK_KEYS))
+        self.assertEqual(set(schema["$defs"]["run"]["required"]), set(q.PACKAGE_RUN_KEYS))
+        self.assertEqual(schema["$defs"]["check"]["properties"]["schema"]["const"], q.PACKAGE_RECEIPT_SCHEMA)
+        self.assertEqual(schema["$defs"]["run"]["properties"]["schema"]["const"], q.PACKAGE_RECEIPT_SCHEMA)
 
 
 if __name__ == "__main__":

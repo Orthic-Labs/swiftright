@@ -2,8 +2,10 @@
 #
 # Runs inside the sandbox as WDAGUtilityAccount (an administrator in the sandbox), started by logon.cmd.
 # Reads host-staged inputs from the read-only packages folder (manifest.json, old and new .msix, signer.cer).
-# Writes one receipt per check to the writable receipts folder as it goes: <check_id>.json, then run-summary.json.
-# Receipts follow ..\..\receipt.schema.json (clean-machine-receipt/v1).
+# Writes one receipt per check to the writable receipts folder as it goes: <check_id>.json, then guest-run.json.
+# guest-run.json is the guest's own run record. run-sandbox.ps1 verifies it and writes the authoritative run.json,
+# which is what the package stage reads.
+# Receipts follow ..\..\receipt.schema.json (sr0-a.package-receipt/v2).
 #
 # Rules:
 #   * A check passes only when its own observations pass. Anything not implemented is recorded as fail with
@@ -72,6 +74,7 @@ function Write-CheckReceipt {
         $Status = 'fail'
         $Reason = 'not-implemented: ' + $Reason
     }
+    if ($Status -ne 'pass' -and [string]::IsNullOrEmpty($Reason)) { $Reason = 'failed' }
     $envRec = Get-EnvironmentRecord
     $ids = @{}
     foreach ($k in $Artifacts.Keys) {
@@ -79,20 +82,20 @@ function Write-CheckReceipt {
         if ([string]$Artifacts[$k] -match '^sha256:[0-9a-f]{64}$') { $ids[$k] = [string]$Artifacts[$k] }
     }
     $rec = [ordered]@{
-        schema = 'clean-machine-receipt/v1'
+        schema = 'sr0-a.package-receipt/v2'
         record = 'check'
-        platform = 'windows'
+        product = 'SliceApp'
+        platform = 'windows-x64'
         run_id = $script:RunId
         check_id = $CheckId
         check_name = $CheckName
-        stage = 'package'
-        status = $Status
         implemented = $Implemented
+        status = $Status
         reason = $(if ($Status -eq 'pass') { $null } else { $Reason })
         started_utc = $Started
         ended_utc = Get-UtcStamp
         exit_status = $ExitStatus
-        observed = $Observed
+        observations = $Observed
         artifact_ids = $ids
         environment = $envRec
         harness = [ordered]@{ name = $HarnessName; sha256 = (Get-Sha256Ref -Path $HarnessPath) }
@@ -292,6 +295,7 @@ if (Test-Path -LiteralPath $manifestPath) {
     $script:Manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 }
 $script:RunId = $(if ($script:Manifest) { [string]$script:Manifest.run_id } else { 'unknown-no-manifest' })
+$script:RunStarted = Get-UtcStamp
 
 # W00: environment. Offline must be real (no default route) and the logon must be elevated.
 Invoke-Check -CheckId 'W00-environment' -CheckName 'Sandbox environment, elevation, offline' -Body {
@@ -490,18 +494,19 @@ if (-not $ok) {
     $reason = ($parts -join '; ')
 }
 $summary = [ordered]@{
-    schema = 'clean-machine-receipt/v1'
+    schema = 'sr0-a.package-receipt/v2'
     record = 'run'
-    platform = 'windows'
+    product = 'SliceApp'
+    platform = 'windows-x64'
     run_id = $script:RunId
     status = $(if ($ok) { 'pass' } else { 'fail' })
     expected_checks = $ExpectedChecks
     checks = $checks
-    started_utc = Get-UtcStamp
+    started_utc = $script:RunStarted
     ended_utc = Get-UtcStamp
     reason = $reason
     artifact_ids = @{}
     harness = [ordered]@{ name = $HarnessName; sha256 = (Get-Sha256Ref -Path $HarnessPath) }
 }
-[System.IO.File]::WriteAllText((Join-Path $ReceiptsDir 'run-summary.json'), ($summary | ConvertTo-Json -Depth 8), $Utf8)
+[System.IO.File]::WriteAllText((Join-Path $ReceiptsDir 'guest-run.json'), ($summary | ConvertTo-Json -Depth 8), $Utf8)
 Write-Output ('run ' + $script:RunId + ': ' + $summary.status + $(if ($reason) { ' (' + $reason + ')' } else { '' }))

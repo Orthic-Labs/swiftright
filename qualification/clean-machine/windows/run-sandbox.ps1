@@ -7,9 +7,10 @@
 #   4. Writes <run>\clean-machine.wsb from clean-machine.wsb.tmpl with absolute, XML-escaped host paths.
 #   5. Starts the sandbox. Uses the documented `wsb start --config` (Windows 11 24H2 and later) when `wsb` is on PATH,
 #      otherwise WindowsSandbox.exe with the .wsb file (documented since Windows 10 build 18342).
-#   6. Waits for <run>\receipts\run-summary.json (written last by the guest). Times out with a fail verdict.
-#   7. Verifies every receipt against the host's own hashes and the guest harness hash, writes host-verdict.json,
-#      then stops the sandbox with `wsb stop --id` when an id is known.
+#   6. Waits for <run>\receipts\guest-run.json (written last by the guest). Times out with a fail verdict.
+#   7. Verifies every receipt against the host's own hashes and the guest harness hash, writes the authoritative
+#      run record <run>\receipts\run.json (sr0-a.package-receipt/v2; the package stage reads it), then stops the
+#      sandbox with `wsb stop --id` when an id is known.
 #
 # Verdict rule: pass only if the guest summary passed, every expected check has a receipt with status pass and
 # implemented true, the receipt artifact hashes equal the host hashes, and the harness hash equals the staged guest.
@@ -52,7 +53,7 @@ $StageDir = Join-Path $RunDir 'staging'
 $PkgStage = Join-Path $StageDir 'packages'
 $HarnessStage = Join-Path $StageDir 'harness'
 $ReceiptsDir = Join-Path $RunDir 'receipts'
-$VerdictPath = Join-Path $RunDir 'host-verdict.json'
+$VerdictPath = Join-Path $ReceiptsDir 'run.json'
 
 function Get-Sha256Ref {
     param([string]$Path)
@@ -183,7 +184,7 @@ Write-Output "launched via $launchedWith (sandbox id: $(if ($sandboxId) { $sandb
 # ---------------------------------------------------------------- wait, verify, stop
 
 $startedUtc = Get-UtcStamp
-$summaryPath = Join-Path $ReceiptsDir 'run-summary.json'
+$summaryPath = Join-Path $ReceiptsDir 'guest-run.json'
 $deadline = (Get-Date).AddMinutes($TimeoutMinutes)
 try {
     while (-not (Test-Path -LiteralPath $summaryPath) -and (Get-Date) -lt $deadline) {
@@ -195,7 +196,7 @@ try {
     if (-not $timedOut) { $guest = Get-Content -Raw -LiteralPath $summaryPath | ConvertFrom-Json }
 
     $reasons = @()
-    if ($timedOut) { $reasons += "timeout: no run-summary.json after $TimeoutMinutes min" }
+    if ($timedOut) { $reasons += "timeout: no guest-run.json after $TimeoutMinutes min" }
     if ($guest) {
         if ([string]$guest.run_id -ne $RunId) { $reasons += 'guest run_id differs from host run_id' }
         if (($guest.expected_checks -join ',') -ne ($ExpectedChecks -join ',')) { $reasons += 'guest expected_checks differ from host list' }
@@ -212,7 +213,7 @@ try {
             continue
         }
         $r = Get-Content -Raw -LiteralPath $path | ConvertFrom-Json
-        $rowOk = ($r.status -eq 'pass') -and ($r.implemented -eq $true) -and ($r.run_id -eq $RunId) -and ($r.platform -eq 'windows')
+        $rowOk = ($r.status -eq 'pass') -and ($r.implemented -eq $true) -and ($r.run_id -eq $RunId) -and ($r.platform -eq 'windows-x64')
         if ($r.artifact_ids) {
             $expect = @{ old_msix = $oldSha; new_msix = $newSha; signer_cer = $cerSha }
             foreach ($k in $expect.Keys) {
@@ -227,9 +228,10 @@ try {
 
     $ok = ($reasons.Count -eq 0) -and -not $timedOut
     $verdict = [ordered]@{
-        schema = 'clean-machine-receipt/v1'
+        schema = 'sr0-a.package-receipt/v2'
         record = 'run'
-        platform = 'windows'
+        product = 'SliceApp'
+        platform = 'windows-x64'
         run_id = $RunId
         status = $(if ($ok) { 'pass' } else { 'fail' })
         expected_checks = $ExpectedChecks

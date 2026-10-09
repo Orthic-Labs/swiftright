@@ -53,8 +53,19 @@ STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package", "seed", "pr
 RUN_STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package")  # default declared order
 WINDOWS_PASS_IDS = ("windows_exe", "windows_renderer", "windows_trace")
 WINDOWS_STAGES = ("win-replay", "smoke")
-PACKAGE_RECEIPT_SCHEMA = "sr0-a.package-receipt/v1"
+PACKAGE_RECEIPT_SCHEMA = "sr0-a.package-receipt/v2"
 PACKAGE_PLATFORMS = ("windows-x64", "macos-arm64")  # scope revision 1
+# Declared checks per platform, in run order. Must equal the harness lists; test_run.py HarnessDriftTests reads them.
+PACKAGE_CHECKS = {
+    "windows-x64": ("W00-environment", "W01-artifacts-bound", "W02-signer-trust", "W03-install-old",
+                    "W04-launch-offline-old", "W05-write-data", "W06-upgrade-new", "W07-corrupt-update-rejected",
+                    "W08-interrupted-update", "W09-rollback-readable", "W10-uninstall-keeps-data",
+                    "W11-legacy-data-physical-path"),
+    "macos-arm64": ("M00-environment", "M01-artifacts-bound", "M02-quarantined-delivery", "M03-gatekeeper-dmg",
+                    "M04-install-from-dmg", "M05-offline-first-launch", "M06-upgrade-dmg-replace",
+                    "M07-corrupt-binary-rejected", "M08-interrupted-install", "M09-rollback-readable",
+                    "M10-uninstall-keeps-data", "M11-window-visible"),
+}
 PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
 WIN_TRACE_FILE = "win-trace-v0.json"
 SMOKE_BASE = "D:\\Claude\\sr0b-abi0"
@@ -688,90 +699,227 @@ def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess
     return True
 
 
-# ---------------------------------------------------------------- package stage (package-verification receipts)
+# ---------------------------------------------------------------- package stage (sr0-a.package-receipt/v2)
+#
+# Input: one directory per harness run, exactly as the harnesses write it: run.json (record "run") and one
+# <check_id>.json per check (record "check"). The Windows guest writes W*.json and guest-run.json; run-sandbox.ps1
+# verifies them against the host hashes and writes the authoritative run.json. Schema: clean-machine/receipt.schema.json.
+# A platform is covered only by a run whose run.json is pass and whose every declared check is implemented and pass.
 
-def validate_package_receipt(receipt, repo=REPO):
-    """Receipt schema sr0-a.package-receipt/v1, produced by the packaging lanes (see docs/qualification.md):
-    {schema, product, platform in PACKAGE_PLATFORMS, created_ts, verdict "PASS"|"FAIL", source_rev,
-     artifacts: {name: {sha256, path?}}, checks: [{name, result "PASS"|"FAIL"}]}.
-    A PASS needs at least one artifact and one check, every check PASS. Returns the problem list."""
+CHECK_FILE_RE = re.compile(r"^[WM][0-9]{2}-[a-z0-9-]+\.json$")
+PACKAGE_CHECK_ID_RE = re.compile(r"^[WM][0-9]{2}-[a-z0-9-]+$")
+PACKAGE_ARTIFACT_NAME_RE = re.compile(r"^[a-z0-9_]+$")
+PACKAGE_TS_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+RUN_RECORD_NAME = "run.json"
+PACKAGE_CHECK_KEYS = frozenset({
+    "schema", "record", "product", "platform", "run_id", "check_id", "check_name", "implemented", "status",
+    "reason", "started_utc", "ended_utc", "exit_status", "observations", "artifact_ids", "environment", "harness"})
+PACKAGE_RUN_KEYS = frozenset({
+    "schema", "record", "product", "platform", "run_id", "status", "expected_checks", "checks",
+    "started_utc", "ended_utc", "reason", "artifact_ids", "harness"})
+PACKAGE_SUMMARY_KEYS = frozenset({"check_id", "status", "implemented"})
+PACKAGE_HARNESS_KEYS = frozenset({"name", "sha256"})
+PACKAGE_STATUSES = ("pass", "fail")
+
+
+def _nonempty(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _is_sha_ref(value):
+    return isinstance(value, str) and bool(SHA_REF_RE.match(value))
+
+
+def _sha_map(value):
+    return isinstance(value, dict) and all(
+        isinstance(k, str) and PACKAGE_ARTIFACT_NAME_RE.match(k) and _is_sha_ref(v) for k, v in value.items())
+
+
+def _scalar_map(value):
+    return isinstance(value, dict) and all(v is None or isinstance(v, (str, int, float, bool)) for v in value.values())
+
+
+def _key_problem(rec, expected):
+    extra, missing = sorted(set(rec) - expected), sorted(expected - set(rec))
+    return f"keys differ (extra {extra}, missing {missing})"
+
+
+def _common_problems(rec, record_kind, platform):
     problems = []
-    if not isinstance(receipt, dict):
-        return ["receipt is not a JSON object"]
-    if receipt.get("schema") != PACKAGE_RECEIPT_SCHEMA:
-        problems.append(f"schema != {PACKAGE_RECEIPT_SCHEMA}")
-    if receipt.get("platform") not in PACKAGE_PLATFORMS:
-        problems.append(f"platform not in {PACKAGE_PLATFORMS}")
-    for key in ("product", "created_ts", "source_rev"):
-        if not isinstance(receipt.get(key), str) or not receipt[key].strip():
-            problems.append(f"{key} missing")
-    if receipt.get("verdict") != "PASS":
-        problems.append(f"verdict is {receipt.get('verdict')!r}, not PASS")
-    artifacts = receipt.get("artifacts")
-    if not isinstance(artifacts, dict) or not artifacts:
-        problems.append("artifacts missing")
-    else:
-        for name, info in artifacts.items():
-            if not isinstance(info, dict) or not SHA_HEX_RE.match(str(info.get("sha256", ""))):
-                problems.append(f"artifact {name}: sha256 missing or malformed")
-            elif info.get("path"):
-                path = Path(info["path"])
-                path = path if path.is_absolute() else Path(repo) / path
-                if not path.is_file():
-                    problems.append(f"artifact {name}: path {info['path']} missing")
-                elif sha256_file(path) != info["sha256"]:
-                    problems.append(f"artifact {name}: sha256 does not match {info['path']}")
-    checks = receipt.get("checks")
-    if not isinstance(checks, list) or not checks:
-        problems.append("checks missing")
-    else:
-        failed = [c.get("name") if isinstance(c, dict) else c for c in checks
-                  if not (isinstance(c, dict) and c.get("result") == "PASS")]
-        if failed:
-            problems.append(f"checks not PASS: {failed}")
+    if rec.get("schema") != PACKAGE_RECEIPT_SCHEMA:
+        problems.append(f"schema is {rec.get('schema')!r}, not {PACKAGE_RECEIPT_SCHEMA}")
+    if rec.get("record") != record_kind:
+        problems.append(f"record is {rec.get('record')!r}, not {record_kind!r}")
+    if rec.get("platform") != platform:
+        problems.append(f"platform is {rec.get('platform')!r}, not {platform!r}")
+    if not _nonempty(rec.get("product")):
+        problems.append("product missing")
+    if not _nonempty(rec.get("run_id")):
+        problems.append("run_id missing")
+    for key in ("started_utc", "ended_utc"):
+        if not (isinstance(rec.get(key), str) and PACKAGE_TS_RE.match(rec[key])):
+            problems.append(f"{key} must be YYYY-MM-DDTHH:MM:SSZ")
+    harness = rec.get("harness")
+    if not (isinstance(harness, dict) and set(harness) == PACKAGE_HARNESS_KEYS
+            and _nonempty(harness.get("name")) and _is_sha_ref(harness.get("sha256"))):
+        problems.append("harness must be {name, sha256: sha256:<64 hex>}")
     return problems
 
 
-def package_stage(log, receipt_paths, dry_run=False, repo=REPO):
-    """Consumes package-verification receipts. Fails when none exist, any is invalid, or a required
-    platform has no valid PASS receipt."""
-    stage = "package"
-    log.emit(stage, "start", None, reason=f"package receipts for {', '.join(PACKAGE_PLATFORMS)}")
-    if dry_run:
-        log.emit(stage, "skip", None, reason=f"dry-run: would read receipts {', '.join(str(p) for p in receipt_paths)}")
-        return True
-    files = []
-    for path in receipt_paths:
-        path = Path(path)
-        if path.is_dir():
-            files.extend(sorted(path.glob("*.json")))
-        elif path.exists():
-            files.append(path)
-    if not files:
-        log.emit(stage, "fail", None, reason="no package-verification receipts found "
-                                             f"(looked in {', '.join(str(p) for p in receipt_paths)})")
-        return False
-    covered, ok = {}, True
-    for file in files:
+def validate_check_record(rec, platform, run_id, check_id):
+    """Problems with one per-check record. A check can be pass only when it is implemented."""
+    if not isinstance(rec, dict):
+        return ["check record is not a JSON object"]
+    if set(rec) != PACKAGE_CHECK_KEYS:
+        return [_key_problem(rec, PACKAGE_CHECK_KEYS)]
+    problems = _common_problems(rec, "check", platform)
+    if not (isinstance(rec["check_id"], str) and PACKAGE_CHECK_ID_RE.match(rec["check_id"])):
+        problems.append("check_id malformed")
+    elif rec["check_id"] != check_id:
+        problems.append(f"check_id {rec['check_id']!r} differs from file name {check_id}")
+    if rec["run_id"] != run_id:
+        problems.append("run_id differs from the run record")
+    if not _nonempty(rec["check_name"]):
+        problems.append("check_name missing")
+    if not isinstance(rec["implemented"], bool):
+        problems.append("implemented must be boolean")
+    if rec["status"] not in PACKAGE_STATUSES:
+        problems.append(f"status {rec['status']!r} is not pass|fail")
+    elif rec["status"] == "pass":
+        if rec["implemented"] is not True:
+            problems.append("status pass on a check that is not implemented")
+        if rec["reason"] is not None:
+            problems.append("pass must carry reason null")
+    elif not _nonempty(rec["reason"]):
+        problems.append("fail needs a reason")
+    exit_status = rec["exit_status"]
+    if exit_status is not None and (isinstance(exit_status, bool) or not isinstance(exit_status, int)):
+        problems.append("exit_status must be an integer or null")
+    if not _scalar_map(rec["observations"]):
+        problems.append("observations must map names to scalars")
+    if not _sha_map(rec["artifact_ids"]):
+        problems.append("artifact_ids must map names to sha256:<64 hex>")
+    env = rec["environment"]
+    if not (_scalar_map(env) and all(isinstance(env.get(k), str) for k in ("host", "os_version", "user"))):
+        problems.append("environment needs string host, os_version and user")
+    return problems
+
+
+def validate_run_record(rec):
+    """Problems with a run summary. Returns (problems, platform); platform is None when no declared platform."""
+    if not isinstance(rec, dict):
+        return ["run record is not a JSON object"], None
+    if set(rec) != PACKAGE_RUN_KEYS:
+        return [_key_problem(rec, PACKAGE_RUN_KEYS)], None
+    platform = rec["platform"]
+    if platform not in PACKAGE_PLATFORMS:
+        return [f"platform {platform!r} is not in {PACKAGE_PLATFORMS}"], None
+    problems = _common_problems(rec, "run", platform)
+    expected = list(PACKAGE_CHECKS[platform])
+    if rec["expected_checks"] != expected:
+        problems.append(f"expected_checks differ from the declared checks for {platform}")
+    status = rec["status"]
+    if status not in PACKAGE_STATUSES:
+        problems.append(f"status {status!r} is not pass|fail")
+    elif status == "pass" and rec["reason"] is not None:
+        problems.append("pass must carry reason null")
+    elif status == "fail" and not _nonempty(rec["reason"]):
+        problems.append("fail needs a reason")
+    summary = rec["checks"]
+    if not (isinstance(summary, list) and all(isinstance(c, dict) and set(c) == PACKAGE_SUMMARY_KEYS for c in summary)):
+        problems.append("checks must be a list of {check_id, status, implemented}")
+    else:
+        if [c["check_id"] for c in summary] != expected:
+            problems.append(f"checks must list exactly the declared checks for {platform}, in order")
+        for c in summary:
+            if c["status"] == "pass" and c["implemented"] is not True:
+                problems.append(f"{c['check_id']}: pass on a check that is not implemented")
+        not_ok = [c["check_id"] for c in summary if c["status"] != "pass" or c["implemented"] is not True]
+        if status == "pass" and not_ok:
+            problems.append("status pass but not every check is implemented and pass: " + ", ".join(map(str, not_ok)))
+    if not _sha_map(rec["artifact_ids"]):
+        problems.append("artifact_ids must map names to sha256:<64 hex>")
+    return problems, platform
+
+
+def load_package_run(run_dir):
+    """Reads one harness run directory. Returns (run record or None, problems)."""
+    try:
+        run = json.loads((run_dir / RUN_RECORD_NAME).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return None, [f"{RUN_RECORD_NAME} unreadable: {exc}"]
+    problems, platform = validate_run_record(run)
+    if platform is None:
+        return None, problems
+    if run["status"] != "pass":
+        problems.append(f"run status is {run['status']!r}: every declared check must be implemented and pass")
+    summary = {c["check_id"]: c for c in run["checks"] if isinstance(c, dict) and "check_id" in c} \
+        if isinstance(run["checks"], list) else {}
+    for check_id in PACKAGE_CHECKS[platform]:
         try:
-            receipt = json.loads(Path(file).read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            log.emit(stage, "fail", None, reason=f"{Path(file).name}: unreadable receipt: {exc}")
-            ok = False
+            rec = json.loads((run_dir / f"{check_id}.json").read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            problems.append(f"{check_id}: check record missing")
             continue
-        problems = validate_package_receipt(receipt, repo)
+        except (OSError, ValueError) as exc:
+            problems.append(f"{check_id}: unreadable: {exc}")
+            continue
+        problems += [f"{check_id}: {p}" for p in validate_check_record(rec, platform, run["run_id"], check_id)]
+        if isinstance(rec, dict) and (rec.get("implemented") is not True or rec.get("status") != "pass"):
+            problems.append(f"{check_id}: must be implemented and pass (status {rec.get('status')!r}, "
+                            f"implemented {rec.get('implemented')!r})")
+        line = summary.get(check_id)
+        if line is None:
+            problems.append(f"{check_id}: missing from run summary")
+        elif isinstance(rec, dict) and (line.get("status") != rec.get("status")
+                                        or line.get("implemented") != rec.get("implemented")):
+            problems.append(f"{check_id}: status or implemented differs from run summary")
+    undeclared = sorted(p.name for p in run_dir.iterdir()
+                        if CHECK_FILE_RE.match(p.name) and p.stem not in PACKAGE_CHECKS[platform])
+    if undeclared:
+        problems.append("undeclared check records: " + ", ".join(undeclared))
+    return run, problems
+
+
+def collect_run_dirs(paths):
+    """Each path is a run directory (holds run.json) or a parent whose subdirectories are run directories."""
+    found = []
+    for path in map(Path, paths):
+        if (path / RUN_RECORD_NAME).is_file():
+            found.append(path)
+        elif path.is_dir():
+            found.extend(sorted(c for c in path.iterdir() if c.is_dir() and (c / RUN_RECORD_NAME).is_file()))
+    return found
+
+
+def package_stage(log, paths, dry_run=False):
+    """Reads harness run directories. Fails when none exist, any is invalid, or a platform has no valid PASS run."""
+    stage = "package"
+    log.emit(stage, "start", None, reason=f"package run records ({PACKAGE_RECEIPT_SCHEMA}) for {', '.join(PACKAGE_PLATFORMS)}")
+    if dry_run:
+        log.emit(stage, "skip", None, reason=f"dry-run: would read run directories {', '.join(str(p) for p in paths)}")
+        return True
+    run_dirs = collect_run_dirs(paths)
+    if not run_dirs:
+        log.emit(stage, "fail", None, reason=f"no package run records found (looked in {', '.join(str(p) for p in paths)})")
+        return False
+    covered, ok = set(), True
+    for run_dir in run_dirs:
+        run, problems = load_package_run(run_dir)
+        run_path = run_dir / RUN_RECORD_NAME
+        ids = {"package_run": sha_ref(sha256_file(run_path))} if run_path.is_file() else {}
         if problems:
-            log.emit(stage, "fail", None, {"package_receipt": sha_ref(sha256_file(file))},
-                     f"{Path(file).name}: {'; '.join(problems)}")
+            log.emit(stage, "fail", None, ids, f"{run_dir.name}: {'; '.join(problems)}")
             ok = False
             continue
-        covered[receipt["platform"]] = file
-        ids = {"package_receipt": sha_ref(sha256_file(file))}
-        ids.update({f"artifact_{n}": sha_ref(i["sha256"]) for n, i in sorted(receipt["artifacts"].items())})
-        log.emit(stage, "pass", None, ids, f"{Path(file).name}: {receipt['product']} {receipt['platform']} PASS")
+        covered.add(run["platform"])
+        ids.update({f"artifact_{name}": value for name, value in sorted(run["artifact_ids"].items())})
+        count = len(PACKAGE_CHECKS[run["platform"]])
+        log.emit(stage, "pass", None, ids,
+                 f"{run_dir.name}: {run['platform']} {count}/{count} checks implemented and PASS (run {run['run_id']})")
     absent = [p for p in PACKAGE_PLATFORMS if p not in covered]
     if absent:
-        log.emit(stage, "fail", None, reason=f"no valid PASS receipt for platform(s): {', '.join(absent)}")
+        log.emit(stage, "fail", None, reason=f"no valid PASS run for platform(s): {', '.join(absent)}")
         return False
     return ok
 

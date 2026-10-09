@@ -7,7 +7,7 @@ Status: runner built and Mac-side verified; hardened 2026-10-09 by SR0 close pla
 | Path | What |
 |---|---|
 | `qualification/run.py` | stdlib-only runner, run as `python3 -I qualification/run.py <command>` |
-| `qualification/test_run.py` | 62 unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'` |
+| `qualification/test_run.py` | 74 unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'` |
 | `conformance/accepted/F1/`, `conformance/accepted/F2/` | accepted baselines (normalized traces, manifests, provenance, PROMOTIONS log); F1 also has the schema-v0 comparator trace and its adaptations |
 | `qualification/out/` (ignored) | per-run `events.jsonl`, fixture stdout, comparator reports |
 | `qualification/.build/` (ignored) | SwiftPM scratch and exported committed source trees |
@@ -136,13 +136,20 @@ Offline recompute from the saved 20-run sweep (`probes/sr0-o/fixtures/out/repeat
 - `mac-oracle` defaults to all 16 configs (`--fixtures` narrows it).
 - Windows `pass` records (`win-replay`, `smoke`) must carry `windows_exe`, `windows_renderer`, `windows_trace` sha256 artifact ids (`validate_event` enforces it). The Windows scripts must print one line per run, `ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256>`; the runner fails a PASS run that lacks it and fails when runs mix exe or renderer builds. Open item for the Windows lanes: `schedule-fixture.ps1` and `drive-smoke.ps1` do not emit that line yet.
 - `smoke` dispatches BridgeSmoke through `win` and `schedule-smoke.ps1 -Tag <tag>` (dry run prints the plan; a real run needs `--confirm-windows-gui`). It passes only on `AUTOMATIONID PASS`, `run: ok` and the ARTIFACTS line.
-- `package` consumes receipts from `qualification/receipts/package/*.json` (or `--package-receipts`). Fails when none exist, any is invalid, or `windows-x64` or `macos-arm64` has no valid PASS receipt. Receipt schema `sr0-a.package-receipt/v1`:
+- `package` reads harness run directories: `qualification/receipts/package/` by default, or `--package-receipts DIR ...`. A directory is a run when it holds `run.json`. A parent directory is scanned for run subdirectories. Each run directory holds `run.json` (record `run`, the authoritative summary) and one `<check_id>.json` per declared check (record `check`). Producers: `clean-machine/mac-clean-run.sh` writes into `~/clean-machine-receipts/<run id>/`. The Windows guest writes `W*.json` and `guest-run.json`, and `run-sandbox.ps1` verifies them against host hashes and writes `run.json`.
+- Schema `sr0-a.package-receipt/v2` (v1 is retired). The one definition is `qualification/clean-machine/receipt.schema.json`. Platforms are `windows-x64` and `macos-arm64`. Declared checks are `W00`-`W11` and `M00`-`M11` (`PACKAGE_CHECKS` in `run.py`). A harness list that drifts from `PACKAGE_CHECKS` fails `HarnessDriftTests`.
+- A check may be `pass` only when `implemented` is true. An unimplemented check is recorded as `fail` with reason `not-implemented: ...`.
+- `package` passes a platform only when its `run.json` is `pass` and every declared check is implemented and `pass`, with the run summary agreeing with each check file. It fails when no run exists, a record is unreadable or invalid, a declared check file is missing, a record is undeclared, or a platform has no valid PASS run.
+- Check record fields: `schema`, `record: "check"`, `product`, `platform`, `run_id`, `check_id`, `check_name`, `implemented`, `status` (`pass|fail`), `reason` (null on pass), `started_utc`, `ended_utc`, `exit_status`, `observations` (scalars), `artifact_ids` (`name: "sha256:<64 hex>"`), `environment` (`host`, `os_version`, `user`), `harness` (`name`, `sha256`).
+- Run record fields: the same header, plus `status`, `expected_checks`, `checks` (`check_id`, `status`, `implemented`), `reason`, and `artifact_ids` (the sealed inputs, for example `old_msix` or `old_dmg`).
 
 ```json
-{"schema": "sr0-a.package-receipt/v1", "product": "SliceApp", "platform": "windows-x64|macos-arm64",
- "created_ts": "2026-10-09T10:00:00.000Z", "source_rev": "<git sha>", "verdict": "PASS",
- "artifacts": {"<name>": {"sha256": "<64 hex>", "path": "<optional; if present it must exist and match>"}},
- "checks": [{"name": "launch", "result": "PASS"}]}
+{"schema": "sr0-a.package-receipt/v2", "record": "run", "product": "SliceApp", "platform": "macos-arm64",
+ "run_id": "20261009T100000Z", "status": "fail", "expected_checks": ["M00-environment", "..."],
+ "checks": [{"check_id": "M08-interrupted-install", "status": "fail", "implemented": false}],
+ "started_utc": "2026-10-09T10:00:00Z", "ended_utc": "2026-10-09T10:05:00Z",
+ "reason": "checks not passing: M08-interrupted-install", "artifact_ids": {"old_dmg": "sha256:<64 hex>"},
+ "harness": {"name": "mac-clean-run.sh", "sha256": "sha256:<64 hex>"}}
 ```
 
-Verification: `python3 qualification/test_run.py` from `qualification/`, 62 tests OK (31 before).
+Verification: `python3 test_run.py` from `qualification/`, 74 tests OK (62 before the v2 package receipt).

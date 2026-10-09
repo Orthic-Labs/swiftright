@@ -15,7 +15,8 @@
 #   * Never runs open, osascript, screencapture, or notifyutil -p (workspace rule). The app is started by
 #     direct execution of its binary. The Finder/Gatekeeper first-launch dialog is a manual step in
 #     mac-clean-checklist.md; the window check (M11) is not automated and FAILS until observed.
-#   * Each check writes <receipts>/<check_id>.json (schema: ../receipt.schema.json). A check passes only
+#   * Each check writes <receipts>/<check_id>.json and the run writes <receipts>/run.json
+#     (sr0-a.package-receipt/v2, schema: ../receipt.schema.json). A check passes only
 #     when its own observations pass. Unimplemented checks are recorded as fail (not-implemented).
 #   * Requires the sealed build hashes (--old-sha/--new-sha). Without them the run refuses to start,
 #     so a wrong DMG cannot produce a green run.
@@ -171,20 +172,20 @@ if not implemented:
     status = "fail"
     reason = "not-implemented: " + (reason if reason != "-" else "no automated procedure")
 rec = {
-    "schema": "clean-machine-receipt/v1",
+    "schema": "sr0-a.package-receipt/v2",
     "record": "check",
-    "platform": "mac",
+    "product": "SliceApp",
+    "platform": "macos-arm64",
     "run_id": run,
     "check_id": cid,
     "check_name": name,
-    "stage": "package",
-    "status": status,
     "implemented": implemented,
+    "status": status,
     "reason": None if status == "pass" else (reason if reason != "-" else "failed"),
     "started_utc": started,
     "ended_utc": ended,
     "exit_status": None if rc == "-" else int(rc),
-    "observed": kv(obsf),
+    "observations": kv(obsf),
     "artifact_ids": kv(artf),
     "environment": kv(envf),
     "harness": {"name": hname, "sha256": hsha},
@@ -446,9 +447,9 @@ check_begin M11-window-visible "Window visible on first launch (manual observati
 check_finish fail false - "requires a recorded manual observation; see mac-clean-checklist.md step 5"
 
 # ---------------------------------------------------------------- run summary
-python3 -I - "$RECEIPTS" "$RUN_ID" "$HARNESS_NAME" "$HARNESS_SHA" "${EXPECTED[@]}" <<'PY'
+python3 -I - "$RECEIPTS" "$RUN_ID" "$HARNESS_NAME" "$HARNESS_SHA" "$OLD_SHA" "$NEW_SHA" "${EXPECTED[@]}" <<'PY'
 import glob, json, os, sys, datetime
-rdir, run, hname, hsha, *expected = sys.argv[1:]
+rdir, run, hname, hsha, old_sha, new_sha, *expected = sys.argv[1:]
 checks = []
 by_id = {}
 for path in sorted(glob.glob(os.path.join(rdir, "M*.json"))):
@@ -457,15 +458,16 @@ for path in sorted(glob.glob(os.path.join(rdir, "M*.json"))):
     by_id[rec["check_id"]] = rec
     checks.append({"check_id": rec["check_id"], "status": rec["status"], "implemented": rec["implemented"]})
 missing = [c for c in expected if c not in by_id]
-ok = not missing and all(by_id[c]["status"] == "pass" and by_id[c]["implemented"] for c in expected)
-reason = None if ok else ("missing receipts: " + ", ".join(missing) if missing else "checks not passing: " + ", ".join(
-    c for c in expected if c in by_id and by_id[c]["status"] != "pass"))
+not_ok = [c for c in expected if c in by_id and (by_id[c]["status"] != "pass" or not by_id[c]["implemented"])]
+ok = not missing and not not_ok
+reason = None if ok else ("missing receipts: " + ", ".join(missing) if missing else "checks not passing: " + ", ".join(not_ok))
 now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 run_rec = {
-    "schema": "clean-machine-receipt/v1", "record": "run", "platform": "mac", "run_id": run,
-    "status": "pass" if ok else "fail", "expected_checks": expected, "checks": checks,
+    "schema": "sr0-a.package-receipt/v2", "record": "run", "product": "SliceApp", "platform": "macos-arm64",
+    "run_id": run, "status": "pass" if ok else "fail", "expected_checks": expected, "checks": checks,
     "started_utc": now, "ended_utc": now, "reason": reason,
-    "artifact_ids": {}, "harness": {"name": hname, "sha256": hsha},
+    "artifact_ids": {"old_dmg": old_sha, "new_dmg": new_sha},
+    "harness": {"name": hname, "sha256": hsha},
 }
 with open(os.path.join(rdir, "run.json"), "w", encoding="utf-8") as f:
     json.dump(run_rec, f, indent=2, sort_keys=True); f.write("\n")
