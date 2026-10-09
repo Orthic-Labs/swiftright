@@ -3,7 +3,7 @@
 # virtual keys (keybd_event). No Unicode packets are sent. Engine releases and model steps are in-process
 # (the exe's self-test); this script only observes the UI state it needs to sequence input, and closes the window.
 #   -Fixture F1..F9     -Variant  F3: list-0s|list-1s|list-3s|vstack-1s|vstack-3s|lazy-1s
-#                                  F6: reduced   F9: notasks   (empty otherwise)
+#                                  F6: reduced|override-on   F9: notasks   (empty otherwise)
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge',
   [string]$Fixture = 'F1',
@@ -42,7 +42,10 @@ if (-not [SW.N]::SetProcessDpiAwarenessContext([IntPtr]-4)) { [void][SW.N]::SetP
 $exeArgs = "--fixture $Fixture"
 switch ($Fixture) {
   'F3' { if ($Variant) { $exeArgs += " --f3-variant $Variant" } }
-  'F6' { if ($Variant -eq 'reduced') { $exeArgs += ' --reduced-motion-variant' } }
+  'F6' {
+    if ($Variant -eq 'reduced') { $exeArgs += ' --reduced-motion-variant' }
+    elseif ($Variant -eq 'override-on') { $exeArgs += ' --reduce-motion-override on' }
+  }
   'F9' { if ($Variant -eq 'notasks') { $exeArgs += ' --f9-variant notasks' } }
 }
 Log "host=$env:COMPUTERNAME session=$((Get-Process -Id $PID).SessionId) fixture=$Fixture variant=$Variant args=$exeArgs started=$(Get-Date -Format o)"
@@ -248,11 +251,12 @@ if ($root -ne $null) {
       Start-Sleep -Milliseconds 2500
     }
     'F7' {
+      # VK keys type "ka" (keystroke path). The IME composition ("n", "na", unmark) is driven by the exe
+      # through the bridge text-store API; real IME input is a separate manual check.
       Focus-Edit 'Row 2'
       Type-Key 0x4B; Type-Key 0x41
       Wait-Value 'Row 2' 'Row 2ka' | Out-Null
       Wait-Element { Edit 'Row 99' } 'inserted row 99 (Engine 0)' 30000 | Out-Null
-      Type-Key 0x4E; Type-Key 0x41
       Wait-Value 'Row 2' 'Row 2kana' | Out-Null
       Log "focused_final=[$(Focused-Name)]"
     }

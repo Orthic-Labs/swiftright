@@ -11,17 +11,22 @@ import SwiftRightRuntime
 struct FixtureChrome<Content: View>: View {
     @Bindable var model: RowModel
     @FocusState private var focus: UUID?
+    /// True when the owning screen starts the toolbar effect from `.task(id:)` (F8): the button only bumps the request.
+    let taskDriven: Bool
     let content: (FocusState<UUID?>.Binding) -> Content
 
-    init(model: RowModel, @ViewBuilder content: @escaping (FocusState<UUID?>.Binding) -> Content) {
+    init(model: RowModel, taskDriven: Bool = false, @ViewBuilder content: @escaping (FocusState<UUID?>.Binding) -> Content) {
         self._model = Bindable(wrappedValue: model)
+        self.taskDriven = taskDriven
         self.content = content
     }
 
     var body: some View {
         let _ = model.registerFocus($focus)
         VStack(alignment: .leading, spacing: 8) {
-            Button("Insert above", action: { model.requestInsert() })
+            Button("Insert above", action: {
+                if taskDriven { model.bumpInsertRequest() } else { model.requestInsert() }
+            })
             content($focus)
         }
         .padding(.all, 16)
@@ -94,8 +99,7 @@ struct RowList: View {
     }
 }
 
-/// F3 container variants that the runtime supports. LazyVStack needs a ScrollView and a lazy primitive
-/// (neither exists in the runtime), so the `lazy` variant is not a Screen here.
+/// F3 container variants: List (retains removed-row state), VStack and LazyVStack in a ScrollView (reset it).
 struct RowStack: View {
     @Bindable var model: RowModel
     let focus: FocusState<UUID?>.Binding
@@ -107,6 +111,14 @@ struct RowStack: View {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach($model.rows, id: \.id) { row in
                     EditableRowView(row: row, model: model, focus: focus, rowTask: rowTasks)
+                }
+            }
+        } else if container == .lazy {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 8) {
+                    ForEach($model.rows, id: \.id) { row in
+                        EditableRowView(row: row, model: model, focus: focus, rowTask: rowTasks)
+                    }
                 }
             }
         } else {
@@ -254,7 +266,7 @@ struct F6Root: View {
     }
 }
 
-/// F7: IME placeholder. Composition is not exercised (runtime has no marked text).
+/// F7: IME composition. The composition itself is driven through the bridge text-store API by the self-test.
 struct F7Root: View {
     @Bindable var model: RowModel
     var body: some View {
@@ -268,13 +280,16 @@ struct F7Root: View {
     }
 }
 
-/// F8: accessibility surface. Every row exposes a text field and a labelled Delete button.
+/// F8: accessibility surface. Every row exposes a text field and a labelled Delete button. The toolbar effect
+/// runs from `.task(id:)` on the request id: a new press cancels the previous run (its result is rejected).
 struct F8Root: View {
     @Bindable var model: RowModel
     var body: some View {
-        FixtureChrome(model: model) { focus in
+        let seq = model.insertRequestSeq
+        FixtureChrome(model: model, taskDriven: true) { focus in
             RowList(model: model, focus: focus, showDelete: true)
         }
+        .task(id: seq) { await model.runToolbarInsert(seq: seq) }
     }
 }
 

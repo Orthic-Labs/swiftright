@@ -64,6 +64,38 @@ final class SelfTest {
         steps = buildScript()
     }
 
+    // MARK: F7 composition (programmatic, through the bridge text-store API)
+
+    /// Text state of row 2 right after one programmatic text-store call (or after the insert).
+    private struct ImeSnapshot {
+        let committed: String
+        let display: String
+        let marked: UTF16Range?
+        let viaStore: UTF16Span?
+    }
+    private var imeSnapshots: [String: ImeSnapshot] = [:]
+
+    /// One composition step through `Bridge.textStore`, the object the renderer calls, on the UI thread.
+    private func compose(_ text: String, key: String) {
+        guard let node = backend.textFieldBridgeID(rid(2)) else { return }
+        _ = bridge.textStore?.replaceAndMark(node: node, range: nil, text: Array(text.utf16), newSelection: nil)
+        snapshot(key)
+    }
+
+    private func unmarkComposition() {
+        guard let node = backend.textFieldBridgeID(rid(2)) else { return }
+        _ = bridge.textStore?.unmark(node: node)
+        snapshot("unmark")
+    }
+
+    private func snapshot(_ key: String) {
+        guard let state = backend.textState(for: rid(2)) else { return }
+        let node = backend.textFieldBridgeID(rid(2))
+        let viaStore = node.flatMap { bridge.textStore?.markedRange(node: $0) }
+        imeSnapshots[key] = ImeSnapshot(committed: state.committed, display: state.display,
+                                        marked: state.markedRange, viaStore: viaStore)
+    }
+
     // MARK: Evidence helpers (read-only over the event log)
 
     private func rid(_ slot: Int) -> UUID { model.rowID(slot) }
@@ -255,12 +287,17 @@ final class SelfTest {
                 .wait("insert-above pending") { self.pendingHas("insert-above") },
                 .wait("row2 focused by AX") { self.lastFocusID() == self.rid(2) },
                 .wait("typed ka") { self.text(self.rid(2)) == "Row 2ka" },
-                .act("release insert-above") {
+                .act("compose n (marked, uncommitted)") { self.compose("n", key: "mark1") },
+                .wait("composition visible in runtime") { self.backend.textState(for: self.rid(2))?.composition == "n" },
+                .act("release insert-above (composition open)") {
                     self.commitMark = self.backend.commitCount
                     self.engine.release("insert-above", value: 0)
                 },
                 .wait("insert committed") { self.model.rows.first?.text == "Engine 0" && self.backend.commitCount > self.commitMark },
-                .wait("typed na") { self.text(self.rid(2)) == "Row 2kana" },
+                .act("record composition across insert") { self.snapshot("insert") },
+                .act("compose na (replaces marked n)") { self.compose("na", key: "mark2") },
+                .act("unmark (commit composition)") { self.unmarkComposition() },
+                .wait("composition committed to model") { self.text(self.rid(2)) == "Row 2kana" },
                 .awaitClose,
             ]
 
@@ -269,6 +306,12 @@ final class SelfTest {
                 .wait("toolbar insert pending") { self.pendingHas("insert-toolbar-1") },
                 .act("release toolbar insert") { self.engine.release("insert-toolbar-1", value: 0) },
                 .wait("toolbar row committed") { self.model.rows.first?.text == "Toolbar 0" },
+                .act("restart: press 2") { self.backend.pressInsertButton() },
+                .wait("insert-toolbar-2 pending") { self.pendingHas("insert-toolbar-2") },
+                .act("restart: press 3 (replaces run 2)") { self.backend.pressInsertButton() },
+                .wait("insert-toolbar-3 pending") { self.pendingHas("insert-toolbar-3") },
+                .act("release cancelled run 2") { self.engine.release("insert-toolbar-2", value: 0) },
+                .wait("stale result rejected") { self.count(kind: "effect", node: "toolbar/insert", phase: "rejected") >= 1 },
                 .wait("AX value applied") { self.text(self.rid(3)) == "AX value" },
                 .wait("row3 focused by AX") { self.lastFocusID() == self.rid(3) },
                 .wait("row6 deleted by AX") { self.index(self.rid(6)) == nil && self.model.rows.count == 10 },
@@ -444,7 +487,7 @@ final class SelfTest {
                 pass("reinsert-state-matches-mac-oracle", windowsState == oracleState,
                      "windows=\(windowsState) (second-local=\(secondLocal.map(String.init) ?? "nil")) mac-oracle=\(oracleState) container=\(options.f3Container.rawValue)"),
                 pass("reinsert-focus-matches-mac-oracle", focusedAfter == oracleFocus,
-                     "windows-focused=\(focusedAfter) mac-oracle-focused=\(oracleFocus) (runtime FocusState tag for a removed row is not cleared)"),
+                     "windows-focused=\(focusedAfter) mac-oracle-focused=\(oracleFocus) (runtime clears focus on removal; List restores it on reinsert)"),
                 observe("reinsert-gap-ms", "\(gapMs) (configured \(options.f3GapMs))"),
             ]
 
@@ -488,40 +531,69 @@ final class SelfTest {
             ]
 
         case .F6:
-            let starts = count(kind: "lifecycle", node: "animation", phase: "start")
-            let policyEvents = events(kind: "lifecycle", node: "animation", phase: "policy")
-            let policy = policyEvents.last.flatMap { payload($0)["enabled"] as? Bool }
+            let starts = events(kind: "lifecycle", node: "animation", phase: "start")
+            let completes = events(kind: "lifecycle", node: "animation", phase: "complete")
+            let policy = events(kind: "lifecycle", node: "animation", phase: "policy").last.flatMap { payload($0)["enabled"] as? Bool }
             let order = model.rows.count > 1 ? (model.rows[0].id, model.rows[1].id) : nil
+            let effective = backend.reduceMotionEffective
+            let osState = backend.osReduceMotion.map { $0 ? "reduce-on" : "reduce-off" } ?? "unavailable"
+            checks += [
+                pass("os-reduce-motion-read", backend.osReduceMotion != nil,
+                     "os=\(osState) effective=\(effective) source=\(backend.reduceMotionSource)"),
+            ]
             if options.reducedVariant {
                 checks += [
-                    pass("reduced-policy-disables-animation", policy == false, "enabled=\(policy.map(String.init(describing:)) ?? "nil") (variant flag path)"),
-                    blocked("system-reduce-motion-read", "SwiftRightRuntime exposes no accessibilityReduceMotion environment key; the OS setting cannot be read"),
-                    pass("reduced-no-animation-transactions", starts == 0 && backend.animationTagCommits == 0,
-                         "starts=\(starts) commit-tags=\(backend.animationTagCommits)"),
+                    pass("reduced-policy-disables-animation", policy == false, "enabled=\(policy.map(String.init(describing:)) ?? "nil") (variant flag)"),
+                    pass("reduced-no-animation-transactions", starts.isEmpty && completes.isEmpty && backend.animationTagCommits == 0,
+                         "starts=\(starts.count) completes=\(completes.count) commit-tags=\(backend.animationTagCommits)"),
                     pass("reduced-final-order", order?.0 == rid(201) && order?.1 == rid(200), "count=\(model.rows.count)"),
                 ]
             } else {
-                let overlapBlocked = "runtime records animation tags per commit only; no interpolation, duration or completion callback"
+                // Mac oracle rule: the second start comes before the first completion (the burst overlaps).
+                let overlap = starts.count == 2 && completes.count >= 1 && seq(starts[1]) < seq(completes[0])
                 checks += [
-                    blocked("normal-policy-enabled", "system reduce-motion cannot be read (no accessibilityReduceMotion key); policy enabled=\(policy.map(String.init(describing:)) ?? "nil") from the variant path only"),
-                    pass("two-animations-started", starts == 2, "transaction starts=\(starts) (model-opened withAnimation calls)"),
-                    observe("animation-tag-commits", "\(backend.animationTagCommits) commit records carried an animation tag"),
-                    blocked("interruption-recorded", overlapBlocked),
-                    blocked("both-animations-complete", "no withAnimation completion criteria or completion callback in the runtime"),
+                    pass("normal-policy-enabled", policy == true, "enabled=\(policy.map(String.init(describing:)) ?? "nil")"),
+                    pass("two-animations-started", starts.count == 2, "starts=\(starts.count)"),
+                    pass("interruption-recorded", overlap,
+                         "second-start seq=\(starts.count > 1 ? seq(starts[1]) : -1) first-complete seq=\(completes.first.map { seq($0) } ?? -1)"),
+                    pass("both-animations-complete", completes.count == 2, "completes=\(completes.count)"),
                     pass("final-order", order?.0 == rid(201) && order?.1 == rid(200) && model.rows.count == 12, "count=\(model.rows.count)"),
+                    pass("env-reduce-controls-motion", effective ? backend.interpolatedCommits == 0 : backend.interpolatedCommits >= 3,
+                         "effective-reduce=\(effective) fade-frame commits=\(backend.interpolatedCommits) (snap: 0; animate: >=3)"),
+                    pass("frames-driven-by-display-tick", effective || backend.tickCommits >= 3,
+                         "tick-commits=\(backend.tickCommits) ticks=\(backend.tickCount)"),
                 ]
             }
 
         case .F7:
             let r2 = rid(2)
+            let mark1 = imeSnapshots["mark1"]
+            let mark2 = imeSnapshots["mark2"]
+            let atInsert = imeSnapshots["insert"]
+            let unmarked = imeSnapshots["unmark"]
+            let m1 = UTF16Range(location: 7, length: 1)
+            let m2 = UTF16Range(location: 7, length: 2)
             checks += [
                 pass("committed-text-on-original-identity", text(r2) == "Row 2kana", "text=\(text(r2) ?? "nil")"),
                 pass("identity-index-shift", index(r2) == 2, "index=\(index(r2).map(String.init) ?? "nil")"),
                 pass("focus-stays-on-identity", lastFocusID() == r2, "focus=\(lastFocusID()?.uuidString ?? "nil")"),
                 pass("insert-committed", model.rows.first?.text == "Engine 0"),
                 pass("no-teardown", count(node: r2.uuidString, phase: "disappear") == 0),
-                blocked("ime-composition", "runtime TextField has no marked-text (composition) state; replaceAndMark is a plain replace in the bridge"),
-                pass("text-store-keystrokes", backend.keystrokes == ["k", "a", "n", "a"], "replace calls=\(backend.keystrokes.joined(separator: ","))"),
+                pass("text-store-keystrokes", backend.keystrokes == ["k", "a"], "replace calls=\(backend.keystrokes.joined(separator: ","))"),
+                pass("composition-uncommitted-in-model", mark1?.committed == "Row 2ka" && mark2?.committed == "Row 2ka",
+                     "committed during composition=\(mark1?.committed ?? "nil") / \(mark2?.committed ?? "nil")"),
+                pass("composition-marked-range", mark1?.display == "Row 2kan" && mark1?.marked == m1,
+                     "display=\(mark1?.display ?? "nil") marked=\(mark1?.marked.map { "\($0.location),\($0.length)" } ?? "nil")"),
+                pass("marked-range-via-text-store", mark1?.viaStore == UTF16Span(start: 7, end: 8),
+                     "store markedRange=\(mark1?.viaStore.map { "\($0.start)-\($0.end)" } ?? "nil")"),
+                pass("composition-replaced-in-place", mark2?.display == "Row 2kana" && mark2?.marked == m2,
+                     "display=\(mark2?.display ?? "nil") marked=\(mark2?.marked.map { "\($0.location),\($0.length)" } ?? "nil")"),
+                pass("composition-survives-insert-above", atInsert?.display == "Row 2kan" && atInsert?.marked == m1,
+                     "display=\(atInsert?.display ?? "nil") marked=\(atInsert?.marked.map { "\($0.location),\($0.length)" } ?? "nil")"),
+                pass("composition-committed-on-unmark", unmarked?.committed == "Row 2kana" && unmarked?.marked == nil,
+                     "committed=\(unmarked?.committed ?? "nil") marked=\(unmarked?.marked == nil ? "none" : "still")"),
+                pass("ime-calls-recorded", backend.imeCalls == ["mark:n", "mark:na", "unmark"], "calls=\(backend.imeCalls.joined(separator: ","))"),
+                pass("marked-text-in-commit-records", backend.imeMarkedCommits >= 2, "commits with marked text=\(backend.imeMarkedCommits)"),
             ]
 
         case .F8:
@@ -529,11 +601,15 @@ final class SelfTest {
             let r6 = rid(6)
             let inserted = model.rows.first.map(\.id)
             let insertedControls = inserted.map { appearControls($0) } ?? []
+            let starts = count(kind: "lifecycle", node: "toolbar/insert", phase: "task-start")
+            let cancels = count(kind: "lifecycle", node: "toolbar/insert", phase: "task-cancel")
+            let staleRejected = events(kind: "effect", node: "toolbar/insert", phase: "rejected")
+                .filter { (payload($0)["reason"] as? String) == "task-cancelled" }.count
             checks += [
-                pass("toolbar-activation-commits",
-                     count(node: "toolbar/insert", phase: "commit") == 1 && count(node: "toolbar/insert", phase: "task-start") == 1,
-                     "commit=\(count(node: "toolbar/insert", phase: "commit")) start=\(count(node: "toolbar/insert", phase: "task-start"))"),
-                blocked("toolbar-task-restarts-per-request", "runtime task has no id parameter (.task(id:)); the button action starts the effect instead"),
+                pass("toolbar-activation-commits", count(node: "toolbar/insert", phase: "commit") == 1,
+                     "commit=\(count(node: "toolbar/insert", phase: "commit"))"),
+                pass("toolbar-task-restarts-per-request", starts == 3 && cancels == 1 && staleRejected == 1,
+                     "task-starts=\(starts) (presses 1,2,3) cancels=\(cancels) stale-rejected=\(staleRejected)"),
                 pass("inserted-row-exposes-controls", insertedControls.contains("field") && insertedControls.contains("delete"),
                      "controls=\(insertedControls.joined(separator: ","))"),
                 pass("row3-delete-action-registered", appearControls(r3).contains("delete"), "controls=\(appearControls(r3).joined(separator: ","))"),
@@ -549,20 +625,21 @@ final class SelfTest {
             ]
 
         case .F9:
-            let treeReleased = events(node: "tree", phase: "released").count >= 1
-            let releasedAtGraphDrop = backend.releasedAfterGraphDrop
-            let cleared = backend.clearedViewBindings
             let cancels = count(kind: "lifecycle", phase: "task-cancel")
+            let expectedCancels = options.f9NoTasks ? 0 : 11
             checks += [
-                blocked("tasks-cancelled-at-close", "no runtime unmount or teardown API; row and screen tasks are not cancelled by window close (task-cancel events recorded in the run: \(cancels))"),
-                observe("commits-after-close", "commits at close=\(closeCommitMark) now=\(backend.commitCount); the graph is dropped at close, so no flush can commit afterwards"),
-                blocked("late-results-rejected", "window_closed is the last host callback; the MainActor executor is not pumped afterwards, so late engine results cannot resume"),
+                pass("tasks-cancelled-at-teardown", cancels >= expectedCancels,
+                     "task-cancel events=\(cancels) expected>=\(expectedCancels) (row tasks and screen task, cancelled by runtime teardown)"),
+                observe("commits-after-close", "commits at close=\(closeCommitMark) now=\(backend.commitCount) (the graph is closed by teardown: no later commit)"),
+                blocked("late-results-rejected", "the bridge drains the main queue only inside renderer callbacks; window_closed is the last callback, so a resumed engine continuation cannot run after close (bridge gap: post-close pump)"),
                 blocked("cleanup-after-close", "same as late-results-rejected"),
-                observe("tree-released-at-graph-drop", "\(releasedAtGraphDrop) (probe deinit right after the graph is dropped, before the host clears its model bindings)"),
-                observe("view-bindings-cleared-by-host", "\(cleared) model-held view references (focus binding, text-input handlers) dropped at close"),
-                pass("tree-released", treeReleased,
-                     "tree-released-events=\(events(node: "tree", phase: "released").count) after host close (probe deinit; pending row tasks keep nodes alive)"),
-                blocked("renderer-live-nodes-zero", "swr_stats has no live-node counter"),
+                pass("tree-released", backend.releasedAtTeardown,
+                     "probe deinit ran during runtime teardown (tree-released events=\(events(node: "tree", phase: "released").count))"),
+                pass("teardown-commit-accepted", backend.teardownAccepted, "renderer accepted the nil-root teardown transaction"),
+                pass("bridge-ledger-zero-after-teardown", backend.ledgerAfterTeardown == 0,
+                     "host ledger of renderer nodes after teardown=\(backend.ledgerAfterTeardown)"),
+                blocked("renderer-live-nodes-zero", "swr_stats has no live-node counter (ABI rev 0.4); only the host ledger above counts nodes"),
+                observe("view-bindings-cleared-by-host", "\(backend.clearedViewBindings) model-held view references dropped after teardown"),
             ]
         }
         checks += bridgeChecks()

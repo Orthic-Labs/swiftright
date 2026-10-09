@@ -2,9 +2,9 @@ import Foundation
 import SwiftRightRuntime
 import SwiftRightBridge
 
-// FreshOnBridge (SR0-S): fixtures F1-F9 on the fresh runtime through bridge ABI v0 (revision 0.3).
-// Usage: FreshOnBridge.exe --fixture F1..F9 [--f3-variant list|vstack-<0|1|3>s] [--f9-variant notasks]
-//                          [--reduced-motion-variant] --self-test
+// FreshOnBridge (SR0-S): fixtures F1-F9 on the fresh runtime through bridge ABI rev 0.4.
+// Usage: FreshOnBridge.exe --fixture F1..F9 [--f3-variant list|vstack-<1|3>s|lazy-<1|3>s] [--f9-variant notasks]
+//                          [--reduced-motion-variant] [--reduce-motion-override on|off] --self-test
 //   --self-test  scripted run. Input (AX/UIA focus, VK keys, invoke, SetValue, window close) is driven from
 //                outside by scripts/drive-fixture.ps1. Engine releases and model steps run in-process.
 //   no flag      interactive run until the window closes.
@@ -45,6 +45,14 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
         case "--reduced-motion-variant":
             options.reducedVariant = true
             label = "F6-reduced"
+        case "--reduce-motion-override":
+            index += 1
+            let value = index < arguments.count ? arguments[index] : ""
+            switch value {
+            case "on": options.reduceMotionOverride = true; label = "F6 override-on"
+            case "off": options.reduceMotionOverride = false; label = "F6 override-off"
+            default: return (options, "invalid --reduce-motion-override \(value)")
+            }
         default:
             break
         }
@@ -56,11 +64,6 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
 
 @MainActor
 func runFreshOnBridge(options: FixtureOptions) -> Int32 {
-    if options.fixture == .F3 && options.f3Container == .lazy {
-        print("SELFTEST \(options.label): BLOCKED (LazyVStack and ScrollView are absent from SwiftRightRuntime; no lazy container primitive exists to port the variant)")
-        fflush(stdout)
-        return 3
-    }
     let bridge: Bridge
     do {
         bridge = try Bridge.load()
@@ -84,7 +87,7 @@ func runFreshOnBridge(options: FixtureOptions) -> Int32 {
 
     bridge.onReady = { win in MainActor.assumeIsolated { backend.ready(win) } }
     bridge.onEvent = { ev in MainActor.assumeIsolated { backend.handle(ev) } }
-    bridge.onTick = { _, _ in MainActor.assumeIsolated { backend.tick(); test.tick() } }
+    bridge.onTick = { _, timestamp in MainActor.assumeIsolated { backend.tick(timestampNS: timestamp); test.tick() } }
     bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed() } }
 
     do {

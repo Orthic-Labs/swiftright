@@ -27,6 +27,8 @@ struct FixtureOptions: Sendable {
     var f3Container: F3Container = .list
     var f3GapMs = 0
     var f9NoTasks = false
+    /// Test override of the runtime reduce-motion environment (`--reduce-motion-override on|off`). Nil = the OS setting.
+    var reduceMotionOverride: Bool? = nil
     /// Label printed on the SELFTEST line, e.g. `F3 list-1s`.
     var label: String = "F1"
 }
@@ -134,6 +136,10 @@ final class RowModel {
     /// Per-row text write path, registered by each row's body (same route as the TextField binding).
     @ObservationIgnored var textInputHandlers: [UUID: (String) -> Void] = [:]
     @ObservationIgnored var rowGeneration: [UUID: Int] = [:]
+    /// Windows reduce-motion inputs, set by the backend before the graph exists (logged by applyMotionPolicy).
+    @ObservationIgnored var systemReduceMotion: Bool?
+    @ObservationIgnored var effectiveReduceMotion = false
+    @ObservationIgnored var reduceMotionSource = "unset"
 
     var rows: [Row]
     var screenGeneration = 0
@@ -223,11 +229,14 @@ final class RowModel {
         let position = min(max(index, 0), rows.count)
         let animate = animated && animationEnabled
         if animate {
-            // The transaction opens here. Completion and interpolation are not observable in this runtime.
+            // The transaction opens here; its completion runs once the motion has finished or been superseded.
             log.emit("lifecycle", node: "animation", payload: ["phase": "start", "tag": tag])
-            withAnimation(.default) {
+            let log = self.log
+            withAnimation(.default, {
                 rows.insert(row, at: position)
-            }
+            }, completion: {
+                log.emit("lifecycle", node: "animation", payload: ["phase": "complete", "tag": tag])
+            })
         } else {
             rows.insert(row, at: position)
         }
@@ -259,13 +268,19 @@ final class RowModel {
         onMutate?()
     }
 
-    /// Toolbar-style request. The Mac runs its effect from `.task(id:)`; the runtime has no `task(id:)`,
-    /// so the button action starts the same effect (see RESULT.md, F8 gaps).
-    func requestInsert() {
+    /// Toolbar request: bumps the request id. F8 starts the effect from `.task(id:)` on that id.
+    @discardableResult
+    func bumpInsertRequest() -> Int {
         insertRequestSeq += 1
         log.emit("input", node: "toolbar/insert", payload: ["op": "invoke", "seq": insertRequestSeq])
+        return insertRequestSeq
+    }
+
+    /// Toolbar request whose button action starts its own effect (F1-F7 chrome).
+    func requestInsert() {
+        let seq = bumpInsertRequest()
         Task { @MainActor in
-            await self.runToolbarInsert()
+            await self.runToolbarInsert(seq: seq)
         }
     }
 
@@ -274,13 +289,15 @@ final class RowModel {
         insertRow(Row(id: rowID(201), text: "Anim B"), at: 0, animated: true, tag: "B")
     }
 
-    /// Animation policy from the variant flag only. The OS reduce-motion setting cannot be read through
-    /// this runtime (no accessibilityReduceMotion environment key), so it is recorded as unavailable.
+    /// Animation policy: the reduced-motion variant flag disables animation transactions (Mac oracle policy).
+    /// The OS setting and the override reach the runtime environment instead (snapping; see BridgeBackend).
     func applyMotionPolicy() {
         let enabled = !reducedVariant
         animationEnabled = enabled
         log.emit("lifecycle", node: "animation", payload: [
-            "phase": "policy", "enabled": enabled, "system_reduce": "unavailable", "variant_reduce": reducedVariant,
+            "phase": "policy", "enabled": enabled, "variant_reduce": reducedVariant,
+            "system_reduce": systemReduceMotion.map { $0 ? "on" : "off" } ?? "unavailable",
+            "effective_reduce": effectiveReduceMotion, "reduce_source": reduceMotionSource,
         ])
     }
 
@@ -343,8 +360,7 @@ final class RowModel {
         return value
     }
 
-    func runToolbarInsert() async {
-        let seq = insertRequestSeq
+    func runToolbarInsert(seq: Int) async {
         guard seq > 0 else { return }
         guard let value = await runEffect("insert-above", key: "insert-toolbar-\(seq)", owner: .control("toolbar/insert")) else {
             return

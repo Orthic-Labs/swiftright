@@ -306,3 +306,84 @@ No Codex consult was needed.
 Primary tallied `out/matrix/`: final run files match the table above. The `.aN.txt` files are earlier attempts of the same run that ended early (window lost foreground on the shared desktop, keys withheld) and were retried; they are kept as evidence, not counted. Retries mean these results show correctness under a quiet desktop, not robustness to foreground theft — repeatability counts for the oracle protocol must report attempts as well as passes.
 
 Runtime gaps to fix next (fresh runtime): focus cleared when the focused row is removed (Mac behaviour, F3 vstack); graph releases the tree after window close (F9); `task(id:)` restart (F8); LazyVStack/ScrollView (F3 lazy); animation interpolation, completion and interruption plus OS reduce-motion (F6); IME composition through the runtime text model (F7).
+
+## SR0-S fresh-on-bridge rev 2: runtime closure ported, BLOCKED and FAIL fixtures unblocked (2026-10-09, build only)
+
+Scope: `probes/sr0-s/fresh-on-bridge/` only. Runtime (`probes/sr0-s/fresh-runtime`) and bridge (`packages/SwiftRightBridge`,
+ABI rev 0.4 header) not edited. Nothing committed, branched or pushed. No GUI run has been made in this pass.
+
+### Build result (status: BUILD ONLY, NOT RUN)
+
+- Mac: `swift build` in `probes/sr0-s/fresh-on-bridge` passes (type-check only; the binary was not launched in this pass).
+- Windows 11 x64, Swift 6.4.0: `scripts/build-fresh.ps1` exit 0, `swift build exit=0`.
+  `FreshOnBridge.exe` 2935296 bytes, built 2026-10-09T07:30:13+05:30; `swiftright_render.dll` 11731456 bytes (rev 0.4 payload, unchanged).
+- Embedded manifest verified with `mt.exe` (`scripts/verify-manifest.ps1`): comctl32 v6.0.0.0 dependency present (`manifest=OK comctl32-v6`).
+- Staged tree matches the repo (checked by diff) at build time. Stage: `scratchpad/stage-072909` -> `D:\Claude\sr0s-bridge`.
+- Fix iterations: 2 of 6. (1) Mac: `UTF16Range.end` is internal to the runtime; used `location + length`.
+  (2) Windows: `SystemParametersInfoW` returns `Bool`; removed the `!= 0`. No Codex consult needed.
+- Build script hardened: `build-fresh.ps1` now stops on a failed `swift build` (before, it listed and copied a stale exe).
+
+### What changed (all in `probes/sr0-s/fresh-on-bridge/`)
+
+1. **Display tick drives the runtime** (`BridgeBackend.tick(timestampNS:)`, `main.swift`): `bridge.onTick` passes the QPC
+   timestamp (ns) to `Graph.tick(now:)`. Interpolated frames are committed from the tick. Counted as `tickCount`/`tickCommits`.
+2. **Reduce motion** (`SystemSettings.swift`, `BridgeBackend.resolveReduceMotion`): reads `SPI_GETCLIENTAREAANIMATION` (0x1042).
+   Effective value = `--reduce-motion-override on|off` if given, else the OS value (reduce = animations off). Fed into the root
+   environment with `Graph.setRootEnvironment` before the first commit. Logged as `reduce_source`.
+3. **IME text store** (`BridgeBackend` text-store section): replace, replace-and-mark, unmark, selection, marked range, text and
+   caret all route to the field's runtime `TextInputState` (UTF-16). The bound String holds committed text only; marked text is drawn
+   (text plus an underline rect, since ABI v0 has no underline primitive). Focus change commits the previous field's composition.
+4. **F3 lazy and focus** (`Screens.swift` `RowStack`, `SelfTest`): `lazy-*` is now a real run: `ScrollView { LazyVStack }`, no
+   BLOCKED exit. The focus expectation follows the Mac oracle (List restores focus on reinsert; VStack and LazyVStack do not). The
+   runtime now clears focus on removal for every container, so `vstack-1s` should no longer FAIL.
+5. **F6 interruption and completion** (`Fixture.swift` `insertRow`, `SelfTest` F6): `withAnimation(_:_:completion:)` logs `complete`.
+   Checks: `interruption-recorded` (second start before first complete, as on the Mac), `both-animations-complete`,
+   `env-reduce-controls-motion` (fade-frame commits: 0 when snapped, >=3 when animating), `frames-driven-by-display-tick`.
+   New variant `F6:override-on` (`--reduce-motion-override on`): the runtime must snap (no fade frames) yet still deliver completions.
+   `F6:reduced` keeps the Mac policy path (variant flag disables animation transactions).
+6. **F7 IME composition** (`SelfTest` F7, `drive-fixture.ps1`): VK types `ka` (keystroke path, `text-store-keystrokes` = k,a). The
+   composition is then driven programmatically through `Bridge.textStore` (`replaceAndMark "n"`, insert above while composing,
+   `replaceAndMark "na"`, `unmark`). Checks: committed text unchanged during composition, marked range (7,1) then (7,2), marked range
+   reported via the text store, composition survives the insert above, committed on unmark, `ime-calls-recorded`. Real Microsoft
+   Japanese IME remains a separate manual check (not headless).
+7. **F8 `task(id:)`** (`Screens.swift` `F8Root`): the toolbar effect runs from `.task(id: seq)`; the button only bumps the request.
+   The self-test presses through the runtime (`pressInsertButton` -> `Graph.tapButton`): press 2 starts run 2; press 3 cancels run 2;
+   releasing run 2 is rejected (`task-cancelled`); run 3 stays pending. Checks: `toolbar-task-restarts-per-request` (starts 3, cancels 1,
+   stale rejected 1). Row count stays 10 after the delete.
+8. **F9 tree release** (`BridgeBackend.closed`, `commitTeardown`): on window close the host calls `Graph.tearDown()` (disappear, task
+   cancel, release every node) and commits a nil-root teardown (removes all top-level nodes). Checks: `tasks-cancelled-at-teardown`,
+   `tree-released` (probe deinit during teardown), `teardown-commit-accepted`, `bridge-ledger-zero-after-teardown` (host ledger, not a
+   renderer count).
+
+### Still BLOCKED after this pass (exact gaps; not faked)
+
+- F9 `late-results-rejected`, `cleanup-after-close`: after `window_closed` the renderer loop has returned, so the main queue is not
+  drained and resumed engine continuations cannot run. **Bridge change request:** a host pump after window close (for example drain
+  the main queue once more after `window_closed`, or a `swr_` pump call).
+- F9 `renderer-live-nodes-zero`: `swr_stats` has no live-node counter. **ABI change request:** add `live_nodes` to `swr_stats`.
+- F6 OS reduce-motion change at runtime (WM_SETTINGCHANGE): the value is read once at ready; a change while running is not applied.
+- F7 real IME: manual check only (romaji with the Microsoft Japanese IME is not headless).
+
+### Risks to check on the first desktop run
+
+- The F9 teardown commit happens inside `window_closed`. If the renderer rejects it (stale handle), `teardown-commit-accepted` and
+  `bridge-ledger-zero-after-teardown` FAIL. `tree-released` is runtime-side and does not depend on it.
+- F6 semantics: the runtime counts a superseded transaction as complete at the superseding commit (the Mac oracle records both
+  completions; the timing is ours). `interruption-recorded` follows the Mac rule.
+- `F8` now presses three times (the Mac oracle presses once); the extra presses are documented above and in the check detail.
+
+### Run the matrix (not run yet; the primary triggers it when the desktop is free)
+
+Prerequisite: the Windows tree is the staged tree above (`D:\Claude\sr0s-bridge`), and `build-fresh.ps1` has passed. If sources
+change, re-stage (`rsync -a --exclude .build --exclude out probes/sr0-s/fresh-on-bridge <stage>/probes/sr0-s/`, plus the runtime,
+dereferenced bridge and header), `sh scripts/sync-to-win.sh <stage> 'D:\Claude\sr0s-bridge'`, and rebuild.
+
+```sh
+cd /Volumes/D/claude/swiftright && OUT_DIR=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/matrix-rev2 \
+  sh probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh
+```
+
+The default matrix is 15 configurations x 3 runs (45 one-shot interactive tasks). Each run is bounded by the driver's 90 s exit timeout,
+and a run is retried only when the desktop denies foreground (no keys are sent to another application). Attempts are kept as
+`*.aN.txt`. Output: `out/matrix-rev2/<F>-<variant>-r<n>.txt`, one `SELFTEST` line per run.
+Before the run: `win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0s-bridge\probes\sr0-s\fresh-on-bridge\scripts\verify-manifest.ps1"`.

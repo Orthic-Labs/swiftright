@@ -13,7 +13,9 @@ Set-Location "$Base\probes\sr0-s\fresh-on-bridge"
 $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'"
 & swift build -c release --scratch-path "$Base\scratch" "-Xlinker" "/MANIFEST:EMBED" "-Xlinker" $dep
 "swift build exit=$LASTEXITCODE"
+# A failed build must stop here: the binary listing below would otherwise show a stale exe.
+if ($LASTEXITCODE -ne 0) { throw "swift build failed (exit $LASTEXITCODE); no binary copied" }
 $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim()
 Copy-Item $Dll $bin -Force
 "bin=$bin"
-Get-ChildItem $bin | Where-Object { $_.Extension -in ".exe", ".dll" } | ForEach-Object { "{0} {1}" -f $_.Name, $_.Length }
+Get-ChildItem $bin | Where-Object { $_.Extension -in ".exe", ".dll" } | ForEach-Object { "{0} {1} {2}" -f $_.Name, $_.Length, $_.LastWriteTime.ToString("o") }
