@@ -30,7 +30,7 @@ Legend: PROVEN = evidence on both sides as the clause requires; MAC = Mac oracle
 ### §2 Slice inventory
 - Same-source compile: SAME-SRC PASS on both targets.
 - Runtime implementation of the inventory: HL 46/46 both OSes.
-- Negative fixtures (`.onReceive`, `ObservableObject`/`@StateObject`, `NavigationSplitView`, `Timer.publish`): only `NavigationSplitView` is evidenced (SAME-SRC). The other three: **PENDING** (need a compile-fail result per name).
+- Negative fixtures (`.onReceive`, `ObservableObject`/`@StateObject`, `NavigationSplitView`, `Timer.publish`): all four fail Windows compilation with a diagnostic, as CONTRACT §2 requires (`probes/sr0-c/same-source`, `probes/sr0-c/negative-fixtures/RESULT.md`). **MET.** Note: on macOS `.onReceive` and `ObservableObject` also fail against the slice, but `Timer.publish` compiles (Foundation on Darwin provides it), so the slice cannot reject it on Mac by compilation alone.
 - `ForEach($items) { $item in }`: `probes/sr0-c/same-source/RESULT.md` records the `$`-projected closure parameter fails on Windows (cited in `probes/sr0-o/fixtures/RESULT.md` finding 2). Fixtures use `ForEach($model.rows, id: \.id) { row in }`. See change C3.
 
 ### §3 Fixtures F1-F9
@@ -97,7 +97,7 @@ None of C1-C8 changes a pass/fail semantic that the Mac oracle recorded; C3 and 
 1. WIN-M3 completion: F3 remaining configs, F4-F9 on the bridge. Needs: `out/matrix-rev3/RESULT.md` showing all configs PASS, F9 using `live_nodes`, late-results-rejected and cleanup-after-close (8f3ffeb).
 2. Windows repeat count per C9 (3 vs 20 runs).
 3. XCMP: F1 Mac-vs-Windows compare passing after the List/list-item AX fix (cc605bf); needs a recorded compare result.
-4. Negative fixtures for `.onReceive`, `ObservableObject`/`@StateObject`, `Timer.publish`: compile-fail evidence on Windows.
+4. ~~Negative fixtures~~: MET (`probes/sr0-c/negative-fixtures/RESULT.md`).
 5. Windows TextPattern on populated edit nodes (selection, caret rect); UIA AutomationId rerun (see bridge doc).
 6. Visible-response endpoint per OS chosen and recorded (CONTRACT §8).
 7. Signed Mac recorder with its own AX grant (`docs/sr0-status.md`).
