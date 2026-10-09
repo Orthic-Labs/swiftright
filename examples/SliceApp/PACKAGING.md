@@ -86,13 +86,13 @@ pnpm exec right-release doctor --platform mac --config right-release.config.mjs
 Windows seal (on the Windows host, native signer; no `az login`):
 
 ```sh
-win "cd D:\Claude\swiftright\examples\SliceApp; pnpm exec right-release release --tier patch --platform win --config right-release.config.mjs --no-upload"
+win "cd D:\Claude\swiftright\examples\SliceApp; pnpm exec right-release build --platform win --config right-release.config.mjs"
 ```
 
 macOS seal (on the Mac host, notary profile `apple-dev-notary`):
 
 ```sh
-pnpm exec right-release release --tier patch --platform mac --config right-release.config.mjs --no-upload
+pnpm exec right-release build --platform mac --config right-release.config.mjs
 ```
 
 Upload is a separate step and needs Adrian's explicit request for the exact sealed build:
@@ -402,3 +402,24 @@ Cause (staged `@rightkit/release`, 258ca32b working tree): `committed-source.mjs
 ### R2 retry 3 (origin/master 9f0e58d, published @rightkit/release 0.2.138, no override): published package has no MSIX support
 
 Clone `D:\Claude\sr0-r2b\swiftright` on `sr0-clean-9f0e58d` (clean tree, no clone-local commits; pnpm install installed the registry 0.2.138). Doctor via the non-elevated task (`log-doctor5.txt`, `elevated=False`) fails before preflight: `right-release: sliceapp win must declare signingContract: windows-raw-exe-authenticode-before-nsis-v1 or windows-raw-exe-authenticode-before-portable-v1`. The config declares `windows-msix-signed-v1`. The installed package has no `msix-config.mjs` or `msix-build.mjs`. In the Mac RightKit tree those (plus `msix-appinstaller.mjs`, `msix-plan.mjs`, `msix-target.mjs`, `project-type.mjs`, `swift-build-context.mjs`) are still uncommitted/untracked, so the MSIX target was never in the published 0.2.138. Needs a RightKit release that contains the MSIX adapter. The ownership and trust gates were not reached on this run.
+
+## R3 result (2026-10-09, @rightkit/release 0.2.139, clones on d70d36b)
+
+Build command: `pnpm exec right-release build --platform mac --config right-release.config.mjs` (`release --tier` is
+rejected: "build is tier-neutral"). `.right-release/` must be gitignored (the build lock is written before the
+clean-tree preflight). 0.1.1 = version bump + Swift-only label edit ("Rows: N").
+
+| | 0.1.0 | 0.1.1 |
+|---|---|---|
+| DMG sha256 | 81742a7c…64b661 | c75155b4…071a8a |
+| DMG codesign --verify --strict | PASS (Developer ID Application, Team 6KLGD3LLKF, hardened runtime) | PASS |
+| DMG spctl -a -vv | accepted, Notarized Developer ID | accepted, Notarized Developer ID |
+| DMG stapler validate | PASS | PASS |
+| .app codesign --verify --deep --strict | PASS | PASS |
+| .app spctl -a -vv | accepted, Notarized Developer ID | accepted, Notarized Developer ID |
+| .app stapler validate | FAIL: no ticket stapled to the .app (only the DMG is stapled; config allows one `notarize.file`) | FAIL (same) |
+
+App executable sha256: 0.1.0 84f9b81a…0646cc, 0.1.1 05110857…a8e2. Evidence: `/Volumes/D/sr0-artifacts/mac/{0.1.0,0.1.1}/r3-verify-*.txt`,
+build logs `r3-build-*.log`; sealed manifests 0.1.0 97a1ac67…a03d2, 0.1.1 40a9026c…d3048.
+Open: .app staple (gap 3b; offline first launch in R7 decides impact); `hdiutil detach` "Resource busy" flake (2–3 attempts
+per DMG); Swift-only rebuild proof and receipts not yet run.
