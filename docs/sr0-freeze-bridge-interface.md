@@ -90,10 +90,10 @@ The rev05 0/5 result was a timing race: UIA lookups ran after the app self-quit.
 | B5 | Post-close pump edge paths | **CLOSED**: early `SWR_E_STATE`, idempotent repeat, 5 s timeout (timeouts=1) in rev05c / timeout05c (27d93cc) |
 | B6 | Incomplete size table | **CLOSED** (02e660f) |
 | B7 | Smoke evidence reachable | **CLOSED**: rev05c and timeout05c committed (ee5a4db) |
-| B8 | Declared-not-emitted events | Decide: freeze as RESERVED (key-up, pointer-move, window-focus), not as shipped behaviour |
+| B8 | Declared-not-emitted events | **Decided:** freeze as RESERVED (key-up, pointer-move, window-focus): codes fixed, hosts must tolerate but not rely on them; emitting them later is an append-only minor bump |
 
 Non-blocking but record in the freeze note: arm64 (README Deferred), packaging/checksum-pinned payload/signing (README Deferred, `docs/sr0-status.md` SR0-P blocked), multi-window, IMAGE/PATH primitives, non-translation transforms, bidi, multi-paragraph text, font fallback, modal result smoke, menus, scroll/touch/drag. Rev 0.5 is ABI-incompatible with 0.4 by bootstrap check (`stats_size`, function count 13 -> 14), so the freeze also fixes the "minor mismatch rejects" policy: the loader validates exact sizes, so any later minor bump needs a host rebuild.
 
 ## 4. Proposed freeze decision
 
-Freeze ABI 0.5 as the SR0 interface, built from renderer d45c98c (DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`). B1, B2, B5, B6, B7 are closed by receipts; B3/B4 close through the contract proposal (F1 compare rerun and C9); B8 decision remains. Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
+Freeze ABI 0.5 as the SR0 interface, built from renderer d45c98c (DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`). B1, B2, B5, B6, B7 are closed by receipts; B3/B4 close through the contract proposal (F1 compare rerun and C9); B8 decided (RESERVED). Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
