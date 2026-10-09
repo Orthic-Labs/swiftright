@@ -89,11 +89,20 @@ export default {
       // prePackage: swift build, assemble SliceApp.app, Developer ID sign the app with its entitlements
       // (swift-package mac-app --sign applies swift-package.json mac.entitlements), then build the branded DMG
       // from the signed app. The DMG is the signed, notarized, stapled artifact (stapleable; a zip is not).
+      // Order: prePackage (swift build, assemble + sign the .app, build a first DMG; sign.prePackageFiles must name an
+      // existing FILE, and right-release 0.2.140 cannot receipt-verify a .app directory there) -> sign that DMG ->
+      // notarize + staple the .app (appBeforePackage) -> package (rebuild the DMG from the stapled app) -> postSign
+      // (sign the rebuilt DMG) -> notarize + staple the DMG.
       prePackage: { cmd: "sh", args: ["scripts/prepackage-mac.sh"] },
-      // The DMG container is signed after prePackage (Developer ID, hardened runtime, timestamp).
       sign: { prePackageFiles: [MAC_DMG] },
+      package: { cmd: "sh", args: ["scripts/package-mac.sh"] },
+      // The DMG container is signed after packaging (Developer ID, hardened runtime, timestamp).
+      postSign: {
+        cmd: "node",
+        args: ["node_modules/@rightkit/release/sign-macos.mjs", "--receipt", path.join(".build", "dmg-sign.receipt.json"), MAC_DMG],
+      },
       // release.mjs notarizes this file; notarize-macos.mjs staples a .dmg container itself.
-      notarize: { file: MAC_DMG, profile: "apple-dev-notary" },
+      notarize: { app: MAC_APP, appBeforePackage: true, file: MAC_DMG, profile: "apple-dev-notary" },
       artifacts: [MAC_DMG],
       hardening: [MAC_DMG],
       installer: { artifacts: [{ file: MAC_DMG, key: "sliceapp/installers/mac/current/SliceApp.dmg" }] },
