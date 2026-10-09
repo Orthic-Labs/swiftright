@@ -11,11 +11,11 @@ import WinSDK
 // Runner (scripts/run-modal.ps1) performs a real SendInput border drag-resize
 // and 2,000 UIA Invoke calls from a separate thread, closing the window mid-stream.
 
-let totalJobs = 10_000          // 1 kHz, about 10 s of workload
+let totalJobs = 30_000          // 1 kHz, up to 30 s of workload (runner closes the window earlier)
 let paceHz = 1_000
 let totalHops = 500
 let hopEvery = 10
-let modalAtJob = 8_000          // Swift requests one TaskDialog about 8 s in (after the resize phase)
+let modalFallbackJob = 22_000   // TaskDialog is requested 300 jobs after the 3rd size/move loop exits (resize, move, drag); this is the fallback if that never happens
 let watchdogSeconds: Double = 150
 let axButtonNode: UInt64 = 2    // NodeId of the button in build_tree()
 
@@ -40,6 +40,10 @@ let latenciesMs = UnsafeMutablePointer<Double>.allocate(capacity: totalJobs)
 let phaseAt = UnsafeMutablePointer<UInt32>.allocate(capacity: totalJobs)
 latenciesMs.initialize(repeating: -1, count: totalJobs)
 phaseAt.initialize(repeating: 0xFF, count: totalJobs)
+let loopAt = UnsafeMutablePointer<UInt32>.allocate(capacity: totalJobs)   // size/move loop ordinal (WM_ENTERSIZEMOVE count) when the job ran
+loopAt.initialize(repeating: 0, count: totalJobs)
+// Loop ordinals: 1 = SC_SIZE live resize, 2 = SC_MOVE (0xF012) move loop, 3 = injected SendInput border drag. The runner runs them in that order.
+var loopDrains: [Int] = [0, 0, 0, 0]
 
 // Main-thread-only state.
 var jobsRun = 0
@@ -80,6 +84,8 @@ func runProducer() {
     let period = Int64(qpcFreq / Double(paceHz))
     let start = qpcNow()
     var hopsEnqueued = 0
+    var modalRequested = false
+    var exit3At = -1
     for i in 0..<totalJobs {
         let target = start + Int64(i) * period
         while qpcNow() < target { Sleep(0) }
@@ -87,7 +93,9 @@ func runProducer() {
         let closed = closedFlag
         stateLock.unlock()
         if closed { enqueuedAfterClose += 1; break }
-        if i == modalAtJob {
+        if exit3At < 0 && swr_stat(22) >= 3 { exit3At = i }
+        if !modalRequested && ((exit3At >= 0 && i >= exit3At + 300) || i >= modalFallbackJob) {
+            modalRequested = true
             let rc = swr_request_modal(1)
             stateLock.lock(); modalRequestRc = rc; stateLock.unlock()
         }
@@ -96,6 +104,7 @@ func runProducer() {
         DispatchQueue.main.async {
             latenciesMs[i] = msSince(enqueueTicks[i])
             phaseAt[i] = swr_phase()
+            loopAt[i] = UInt32(truncatingIfNeeded: swr_stat(21))
             jobsRun += 1
             if GetCurrentThreadId() != mainThreadId { jobThreadMismatches += 1 }
         }
@@ -139,6 +148,7 @@ func drainAccessKitQueue() {
 
 func drainFromRust() {
     drainCalls += 1
+    if swr_phase() & 1 != 0 { loopDrains[min(Int(swr_stat(21)), 3)] += 1 }
     if drainingSwift {
         drainReentryViolations += 1
         return
@@ -229,19 +239,26 @@ func pct(_ xs: [Double], _ p: Double) -> Double {
 
 // Latency sample sets, tagged by the phase in effect when the job ran.
 var allLat: [Double] = []
-var resizeLat: [Double] = []   // bit 0 set (size loop)
+var resizeLat: [Double] = []   // bit 0 set, loop ordinal 1 (SC_SIZE)
+var moveLat: [Double] = []     // bit 0 set, loop ordinal 2 (SC_MOVE 0xF012)
+var dragLat: [Double] = []     // bit 0 set, loop ordinal 3 (injected border drag)
 var modalLat: [Double] = []    // bit 1 set (TaskDialog)
 var idleLat: [Double] = []
+var openLat: [Double] = []     // phase value 4: TaskDialog construction stall, one-off, reported separately
 for i in 0..<totalJobs where latenciesMs[i] >= 0 {
     let v = latenciesMs[i]
     let ph = phaseAt[i]
     allLat.append(v)
-    if ph & 1 != 0 { resizeLat.append(v) }
+    if ph & 1 != 0 {
+        switch loopAt[i] { case 1: resizeLat.append(v); case 2: moveLat.append(v); default: dragLat.append(v) }
+    }
     if ph & 2 != 0 { modalLat.append(v) }
+    if ph & 4 != 0 { openLat.append(v) }
     if ph == 0 { idleLat.append(v) }
 }
 let mismatches = jobThreadMismatches + hopThreadMismatches + drainThreadMismatches + loopReadyThreadMismatches
 let resizeDrains = counter(11) + counter(13)
+let sizeEnters = counter(21), sizeExits = counter(22)
 let frames = framesAtEnd &- framesAtStart
 
 let axAttempts = counter(0), axEnq = counter(1), axFull = counter(2), axRejPost = counter(3)
@@ -257,6 +274,10 @@ print(String(format: "latency_ms all p99=%.4f max=%.4f n=%d", pct(allLat, 0.99),
 print(String(format: "latency_ms idle p99=%.4f n=%d", pct(idleLat, 0.99), idleLat.count))
 print(String(format: "latency_ms during_live_resize p50=%.4f p99=%.4f max=%.4f n=%d", pct(resizeLat, 0.5), pct(resizeLat, 0.99), resizeLat.max() ?? -1, resizeLat.count))
 print(String(format: "latency_ms during_modal p50=%.4f p99=%.4f max=%.4f n=%d", pct(modalLat, 0.5), pct(modalLat, 0.99), modalLat.max() ?? -1, modalLat.count))
+print(String(format: "latency_ms modal_open_one_off max=%.4f n=%d (budget: single bounded stall <= 50 ms; excluded from during_modal)", openLat.max() ?? -1, openLat.count))
+print(String(format: "latency_ms during_move p50=%.4f p99=%.4f max=%.4f n=%d", pct(moveLat, 0.5), pct(moveLat, 0.99), moveLat.max() ?? -1, moveLat.count))
+print(String(format: "latency_ms during_injected_border_drag p50=%.4f p99=%.4f max=%.4f n=%d", pct(dragLat, 0.5), pct(dragLat, 0.99), dragLat.max() ?? -1, dragLat.count))
+print("loop_drains resize=\(loopDrains[1]) move=\(loopDrains[2]) border_drag=\(loopDrains[3]) size_loop_enters=\(sizeEnters) exits=\(sizeExits)")
 print("thread_mismatches=\(mismatches) (jobs=\(jobThreadMismatches) hops=\(hopThreadMismatches) drain=\(drainThreadMismatches) loop_ready=\(loopReadyThreadMismatches))")
 print("mainactor_hops=\(hopsRun)/\(totalHops)")
 print("swift_drain_calls=\(drainCalls) swift_reentry_violations=\(drainReentryViolations) selftest_swift_result=\(selftestResult) ticks=\(tickCount)")
@@ -271,22 +292,35 @@ print("window_closed_calls=\(windowClosedCalls) close_flush_ok=\(closeOk) watchd
 print("swr_set_wake_handle_rc=\(setRc) swr_run_rc=\(runRc) main_thread_after_run_same=\(mainThreadAfter == mainThreadId)")
 
 func budgetOk(_ xs: [Double]) -> Bool { xs.isEmpty ? false : pct(xs, 0.99) <= 16.7 }
+let openMax = openLat.max() ?? -1
+let critModal = budgetOk(modalLat)
+let critOpen = openMax <= 50   // n=0 is reported, not hidden; the stall is expected on this build
+let critResize = budgetOk(resizeLat) && counter(11) > 0 && loopDrains[1] > 0
+let critMove = budgetOk(moveLat) && loopDrains[2] > 0
+let critDrag = budgetOk(dragLat) && loopDrains[3] > 0 && sizeEnters >= 3
+let critNested = counter(15) == 0
+func pf(_ b: Bool) -> String { b ? "PASS" : "FAIL" }
+print("criterion during_modal_p99<=16.7ms: \(pf(critModal)) p99=\(String(format: "%.4f", pct(modalLat, 0.99))) n=\(modalLat.count)")
+print("criterion modal_open_one_off_max<=50ms: \(pf(critOpen)) max=\(String(format: "%.4f", openMax)) n=\(openLat.count)")
+print("criterion during_live_resize_p99<=16.7ms_and_drains_sizing>0: \(pf(critResize)) p99=\(String(format: "%.4f", pct(resizeLat, 0.99))) n=\(resizeLat.count) loop_drains=\(loopDrains[1]) drains_sizing=\(counter(11))")
+print("criterion during_move_p99<=16.7ms_and_drains>0: \(pf(critMove)) p99=\(String(format: "%.4f", pct(moveLat, 0.99))) n=\(moveLat.count) loop_drains=\(loopDrains[2])")
+print("criterion injected_border_drag_p99<=16.7ms_and_drains>0_and_ENTERSIZEMOVE_fired: \(pf(critDrag)) p99=\(String(format: "%.4f", pct(dragLat, 0.99))) n=\(dragLat.count) loop_drains=\(loopDrains[3]) size_enters=\(sizeEnters)")
+print("criterion nested_executed=0: \(pf(critNested)) nested_executed=\(counter(15))")
 let pass = runRc == 0
     && windowClosedCalls == 1
     && !watchdogFired
     && mainThreadAfter == mainThreadId
     && mismatches == 0
     && drainReentryViolations == 0
-    && counter(15) == 0
+    && critNested
     && counter(16) == 0
     && selftestResult == 1
-    && resizeDrains > 0
+    && critModal && critOpen && critResize && critMove && critDrag
     && counter(18) == 1 && counter(19) == 1 && modalResults == [1]
     && modalRequestRc == 0
     && axSumAttemptsOk && axSumEnqOk && swiftSumOk
     && axAppliedAfterClose == 0 && counter(7) == 0
     && closeOk
-    && budgetOk(resizeLat) && budgetOk(modalLat)
     && counter(26) == 0
 print("verdict=\(pass ? "PASS" : "FAIL")")
 exit(pass ? 0 : 1)

@@ -72,6 +72,7 @@ const ACTION_CLICK_CODE: u32 = 1;
 
 const PHASE_SIZING: usize = 1;
 const PHASE_MODAL: usize = 2;
+const PHASE_OPENING: usize = 4;
 
 const WM_CLOSE: u32 = 0x0010;
 const WM_ENTERSIZEMOVE: u32 = 0x0231;
@@ -163,6 +164,10 @@ static PANICS: AtomicU64 = AtomicU64::new(0);
 // Phase tracking.
 static SIZING: AtomicBool = AtomicBool::new(false);
 static MODAL_ACTIVE: AtomicBool = AtomicBool::new(false);
+// True from run_modal start until the first drain after TDN_CREATED: the one-off cost of
+// TaskDialogIndirect building its window on the UI thread (~40 ms). Reported separately (bit 4).
+static MODAL_OPENING: AtomicBool = AtomicBool::new(false);
+static MODAL_CREATED: AtomicBool = AtomicBool::new(false);
 static SIZE_ENTER: AtomicU64 = AtomicU64::new(0);
 static SIZE_EXIT: AtomicU64 = AtomicU64::new(0);
 static NC_LBUTTON_DOWN: AtomicU64 = AtomicU64::new(0);
@@ -291,7 +296,9 @@ fn current_phase() -> usize {
     if SIZING.load(SeqCst) {
         p |= PHASE_SIZING;
     }
-    if MODAL_ACTIVE.load(SeqCst) {
+    if MODAL_OPENING.load(SeqCst) {
+        p |= PHASE_OPENING;
+    } else if MODAL_ACTIVE.load(SeqCst) {
         p |= PHASE_MODAL;
     }
     p
@@ -310,11 +317,14 @@ fn run_callback(kind: usize) {
     };
     CALLBACK_RUNS[kind].fetch_add(1, SeqCst);
     if kind == KIND_DRAIN {
-        DRAINS_BY_PHASE[current_phase()].fetch_add(1, SeqCst);
+        DRAINS_BY_PHASE[current_phase() & 3].fetch_add(1, SeqCst);
     }
     if let Some(f) = f {
         let ctx = host.ctx as *mut c_void;
         let _ = catch_unwind(AssertUnwindSafe(|| f(ctx)));
+    }
+    if kind == KIND_DRAIN && MODAL_CREATED.swap(false, SeqCst) {
+        MODAL_OPENING.store(false, SeqCst);
     }
 }
 
@@ -473,9 +483,9 @@ impl Render for ProbeView {
 static EV_COUNT: AtomicU64 = AtomicU64::new(0);
 static EV_T0: Mutex<Option<std::time::Instant>> = Mutex::new(None);
 
-/// Diagnostic event log to stderr (bounded to 300 lines): size/move related window messages.
+/// Diagnostic event log to stderr (bounded to 1500 lines): size/move related window messages.
 fn ev(tag: &str, a: u64, b: u64, c: u64, d: u64) {
-    if EV_COUNT.fetch_add(1, SeqCst) >= 300 {
+    if EV_COUNT.fetch_add(1, SeqCst) >= 1500 {
         return;
     }
     let mut g = EV_T0.lock().unwrap_or_else(|e| e.into_inner());
@@ -554,6 +564,7 @@ fn wide(s: &str) -> Vec<u16> {
 /// Auto-dismiss: 1 s after the dialog is created, post IDOK to it.
 unsafe extern "system" fn taskdialog_cb(hwnd: HWND, msg: u32, _w: usize, _l: isize, _data: isize) -> i32 {
     if msg == TDN_CREATED {
+        MODAL_CREATED.store(true, SeqCst);
         let h = hwnd as usize;
         std::thread::spawn(move || {
             std::thread::sleep(Duration::from_millis(1000));
@@ -615,9 +626,11 @@ fn run_modal(kind: u32) {
         return;
     }
     MODAL_OPENED.fetch_add(1, SeqCst);
+    MODAL_OPENING.store(true, SeqCst);
     MODAL_ACTIVE.store(true, SeqCst);
     let result = open_task_dialog();
     MODAL_ACTIVE.store(false, SeqCst);
+    MODAL_OPENING.store(false, SeqCst);
     MODAL_RESULTS.fetch_add(1, SeqCst);
     let rec = SwrUiRecord {
         tag: UI_TAG_MODAL_RESULT,

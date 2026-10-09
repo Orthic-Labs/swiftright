@@ -1,6 +1,7 @@
 # SR0-B modal-loop runner. Executes INSIDE an interactive desktop session (one-shot scheduled task).
 # 1. Launch SwiftHost.exe; wait for its main window.
-# 2. Real live resize: SendInput mouse drag on the bottom-right border for 3 s.
+# 2. Three modal size/move loops, each held >= 3 s while the Swift producer posts jobs at 1 kHz:
+#    (a) SC_SIZE live resize, (b) SC_MOVE (0xF012) move, (c) injected SendInput bottom-right border drag.
 # 3. From a separate runspace thread, 2,000 UIA Invoke calls on "Probe action";
 #    WM_CLOSE is posted to the window after the 1,500th call (mid-stream).
 # Writes everything to $Out.
@@ -106,37 +107,67 @@ if ($hwnd -ne [IntPtr]::Zero) {
     }
     return $ok
   }
-  $r0 = $r
-  $t0 = Get-Date
-  [void][SR0M.Native]::SetForegroundWindow($hwnd)
-  [void][SR0M.Native]::SetCursorPos($sx, $sy); Start-Sleep -Milliseconds 200
-  $cp = New-Object SR0M.Native+POINT; [void][SR0M.Native]::GetCursorPos([ref]$cp)
-  $wfp = [SR0M.Native]::WindowFromPoint($cp)
-  Log ("pre_drag cursor=($($cp.x),$($cp.y)) window_at_grip_is_target={0} foreground_is_target={1}" -f ($wfp -eq $hwnd), ([SR0M.Native]::GetForegroundWindow() -eq $hwnd))
-  $dnRet = MouseBtn $LDOWN; Start-Sleep -Milliseconds 100
-  $mvOk = MoveSteps 80 $sx $sy ($sx + 240) ($sy + 160)
-  $upRet = MouseBtn $LUP; Start-Sleep -Milliseconds 300
-  [void][SR0M.Native]::GetWindowRect($hwnd, [ref]$r)
-  $changedA = ($r.right -ne $r0.right) -or ($r.bottom -ne $r0.bottom)
-  Log ("method_A_sendinput_border_drag down={0} moves_ok={1}/80 up={2} rect_after=({3},{4},{5},{6}) rect_changed={7}" -f $dnRet, $mvOk, $upRet, $r.left, $r.top, $r.right, $r.bottom, $changedA)
-  $method = 'A_sendinput_border'
-  if (-not $changedA) {
-    $method = 'B_sc_size'
-    $r1 = $r
-    $sx = $r.right - 4; $sy = $r.bottom - 4
-    [void][SR0M.Native]::SetForegroundWindow($hwnd)
-    [void][SR0M.Native]::SetCursorPos($sx, $sy); Start-Sleep -Milliseconds 100
-    $pm = [SR0M.Native]::PostMessageW($hwnd, 0x0112, [IntPtr]0xF008, [IntPtr]::Zero)
-    Start-Sleep -Milliseconds 400
-    $mvOk = MoveSteps 80 $sx $sy ($sx + 240) ($sy + 160)
-    # Enter ends the keyboard/SC_SIZE size loop (a click did not in run3).
-    [SR0M.Native]::keybd_event(0x0D, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 50
-    [SR0M.Native]::keybd_event(0x0D, 0, 2, [UIntPtr]::Zero); $d2 = 1; $u2 = 1; Start-Sleep -Milliseconds 300
-    [void][SR0M.Native]::GetWindowRect($hwnd, [ref]$r)
-    Log ("method_B_sc_size post_ok={0} moves_ok={1}/80 end_enter={2}/{3} rect_after=({4},{5},{6},{7}) rect_changed={8}" -f $pm, $mvOk, $d2, $u2, $r.left, $r.top, $r.right, $r.bottom, (($r.right -ne $r1.right) -or ($r.bottom -ne $r1.bottom)))
+  # Time-based sweep: HOLD_MS of motion in 15 ms steps (linear from (fx,fy) to (tx,ty)), jobs keep flowing meanwhile.
+  $HOLD_MS = 3300
+  function MoveForMs([int]$ms, [int]$fx, [int]$fy, [int]$tx, [int]$ty) {
+    $ok = 0; $n = 0; $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    while ($sw.ElapsedMilliseconds -lt $ms) {
+      $f = $sw.ElapsedMilliseconds / [double]$ms
+      $ok += MouseMoveTo ($fx + [int](($tx - $fx) * $f)) ($fy + [int](($ty - $fy) * $f)); $n++
+      Start-Sleep -Milliseconds 15
+    }
+    return "$ok/$n"
   }
+  function PressEnter() {
+    [SR0M.Native]::keybd_event(0x0D, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 50
+    [SR0M.Native]::keybd_event(0x0D, 0, 2, [UIntPtr]::Zero); Start-Sleep -Milliseconds 300
+  }
+  function Rect() { $q = New-Object SR0M.Native+RECT; [void][SR0M.Native]::GetWindowRect($hwnd, [ref]$q); return $q }
+  # Order matters: Swift buckets latency by WM_ENTERSIZEMOVE ordinal: 1 = SC_SIZE resize, 2 = SC_MOVE, 3 = injected border drag.
+  # Each posted SYSCOMMAND enters the modal size/move loop; the loop is ended with Enter (commit).
+
+  # (a) live resize: SC_SIZE | WMSZ_BOTTOMRIGHT.
+  $r0 = Rect; $t0 = Get-Date
+  $sx = $r0.right - 4; $sy = $r0.bottom - 4
+  [void][SR0M.Native]::SetForegroundWindow($hwnd); [void][SR0M.Native]::SetCursorPos($sx, $sy); Start-Sleep -Milliseconds 100
+  $pm = [SR0M.Native]::PostMessageW($hwnd, 0x0112, [IntPtr]0xF008, [IntPtr]::Zero)
+  Start-Sleep -Milliseconds 400
+  $mv = MoveForMs $HOLD_MS $sx $sy ($sx + 240) ($sy + 160)
+  PressEnter
+  $r = Rect
+  Log ("loop_a_resize SC_SIZE post_ok={0} moves_ok={1} hold_ms={2} s={3:N2} rect ({4},{5},{6},{7}) -> ({8},{9},{10},{11}) changed={12}" -f $pm, $mv, $HOLD_MS, ((Get-Date) - $t0).TotalSeconds, $r0.left, $r0.top, $r0.right, $r0.bottom, $r.left, $r.top, $r.right, $r.bottom, (($r.right -ne $r0.right) -or ($r.bottom -ne $r0.bottom)))
+  Start-Sleep -Milliseconds 700
+
+  # (b) move loop: WM_SYSCOMMAND 0xF012 (SC_MOVE | HTCAPTION).
+  $r1 = Rect; $t0 = Get-Date
+  $cx = [int](($r1.left + $r1.right) / 2); $cy = $r1.top + 40
+  [void][SR0M.Native]::SetForegroundWindow($hwnd); [void][SR0M.Native]::SetCursorPos($cx, $cy); Start-Sleep -Milliseconds 100
+  $pm = [SR0M.Native]::PostMessageW($hwnd, 0x0112, [IntPtr]0xF012, [IntPtr]::Zero)
+  Start-Sleep -Milliseconds 400
+  $cp2 = New-Object SR0M.Native+POINT; [void][SR0M.Native]::GetCursorPos([ref]$cp2)
+  $mv = MoveForMs $HOLD_MS $cp2.x $cp2.y ($cp2.x - 200) ($cp2.y + 120)
+  PressEnter
+  $r2 = Rect
+  Log ("loop_b_move SC_MOVE0xF012 post_ok={0} moves_ok={1} hold_ms={2} s={3:N2} rect ({4},{5},{6},{7}) -> ({8},{9},{10},{11}) moved={12}" -f $pm, $mv, $HOLD_MS, ((Get-Date) - $t0).TotalSeconds, $r1.left, $r1.top, $r1.right, $r1.bottom, $r2.left, $r2.top, $r2.right, $r2.bottom, (($r2.left -ne $r1.left) -or ($r2.top -ne $r1.top)))
+  Start-Sleep -Milliseconds 700
+
+  # (c) injected SendInput border drag on the bottom-right border: cursor at an HTBOTTOMRIGHT point, hover 1 s (real-drag
+  #     recipe from result-realdrag.txt), left down, stepped moves for HOLD_MS, left up. Swift verifies ENTERSIZEMOVE fired (3rd enter).
+  $r3 = Rect; $t0 = Get-Date
+  $inset = 4
+  foreach ($d in @(4, 2, 6, 8, 3, 5, 12)) { if ((HitTest ($r3.right - $d) ($r3.bottom - $d)) -eq 17) { $inset = $d; break } }
+  $gx = $r3.right - $inset; $gy = $r3.bottom - $inset
+  [void][SR0M.Native]::SetForegroundWindow($hwnd); [void][SR0M.Native]::SetCursorPos($gx, $gy); Start-Sleep -Milliseconds 200
+  [void](MouseMoveTo ($gx + 1) $gy); [void](MouseMoveTo $gx $gy); Start-Sleep -Milliseconds 1000
+  $cp3 = New-Object SR0M.Native+POINT; [void][SR0M.Native]::GetCursorPos([ref]$cp3)
+  $hit3 = HitTest $cp3.x $cp3.y
+  $dn = MouseBtn $LDOWN; Start-Sleep -Milliseconds 100
+  $mv = MoveForMs $HOLD_MS $cp3.x $cp3.y ($cp3.x + 160) ($cp3.y + 100)
+  $up = MouseBtn $LUP; Start-Sleep -Milliseconds 300
+  $r4 = Rect
+  Log ("loop_c_border_drag grip=({0},{1}) hit_at_grip={2} down={3} moves_ok={4} up={5} hold_ms={6} s={7:N2} rect ({8},{9},{10},{11}) -> ({12},{13},{14},{15}) changed={16}" -f $cp3.x, $cp3.y, $hit3, $dn, $mv, $up, $HOLD_MS, ((Get-Date) - $t0).TotalSeconds, $r3.left, $r3.top, $r3.right, $r3.bottom, $r4.left, $r4.top, $r4.right, $r4.bottom, (($r4.right -ne $r3.right) -or ($r4.bottom -ne $r3.bottom)))
+  $r = $r4
   $dragS = ((Get-Date) - $t0).TotalSeconds
-  Log ("resize_done method=$method drag_s={0:N2} rect_before=({1},{2},{3},{4}) rect_after=({5},{6},{7},{8})" -f $dragS, $r0.left, $r0.top, $r0.right, $r0.bottom, $r.left, $r.top, $r.right, $r.bottom)
 
   # 3. UIA Invoke storm from a separate thread (runspace); WM_CLOSE mid-stream.
   Start-Sleep -Milliseconds 800
