@@ -489,9 +489,25 @@ mapping on Mac and Windows, dispatch and disabled shortcuts.
    `scroll-area`, `alert`, `dialog`, `list-item` for List children). None is traced against the Mac oracle.
 9. Carried over from the previous section: the 64-row List bound is provisional, and F9 is not re-run.
 
+### Commit path scaling (SR0 R10 diagnosis)
+
+The section 11 workload (200 rows) first ran at 0.3 to 0.4 s per commit on both the Mac (headless replay) and the Dell, against a
+60 fps budget. Causes, in cost order, all in this package or the workload host: layout asked every subtree three or more times per
+pass and never kept an answer (about 200 ms of 300); a ForEach row binding found its element by scanning the array on every read,
+and layout read each TextField through it; node identity hashed whole type names and every commit sorted every node by path
+string (diff, motions, focus); every commit re-resolved, re-measured and re-upserted all 2000 nodes. Fixes: per-node size cache
+invalidated by evaluation of the node or a descendant (`LayoutKey`: own text, spec, insets, or always for a custom `Layout`),
+index-hinted row lookup, hashed-once node ids and interned type names, ordered passes replaced by one tree walk, once-per-type
+reflection, single-child and same-children fast paths in reconcile, and one live observation registration per node (a `Tether`
+cancels the previous one; without it every re-evaluation stacked another and a 200-row keystroke loop reached 1.2 GB in 2000
+commits). Measured on the 200-row workload, release, headless (`WorkloadWin --bench`, mock renderer): keystroke commit 300 ms ->
+1.1 ms, scroll-only tick 308 -> 1.4, row update 374 -> 4.2, reorder 379 -> 4.3 (what remains is evaluating every row that reads
+`rows`, which Observation's per-property granularity requires). Regression tests: `PerformanceTests` (work counters that hold in
+any build, wall-clock bounds sized for debug and release, and a seeded edit sequence checked against a freshly built graph).
+
 ### Reproduce
 
-- Mac: `cd probes/sr0-s/fresh-runtime && swift test` (62 of 62).
+- Mac: `cd probes/sr0-s/fresh-runtime && swift test` (77 of 77).
 - Windows: `scripts/sync-to-win.sh probes/sr0-s/fresh-runtime 'D:\Claude\sr1-runtime'`, then
   `powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr1-ps\run-sr1-tests.ps1` (sets the Swift 6.4.0 runtime
   bin on PATH and runs `swift test`; output in `D:\Claude\sr1-runtime\swift-test-out.txt`).

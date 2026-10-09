@@ -57,8 +57,8 @@ public final class TextInputState {
 
     /// The displayed text: committed text with the composition inserted.
     public var display: String {
-        let base = Array(committed.utf16)
         guard let composition else { return committed }
+        let base = Array(committed.utf16)
         let at = clampedLocation(base.count)
         return string(base[0..<at] + Array(composition.utf16) + base[at...])
     }

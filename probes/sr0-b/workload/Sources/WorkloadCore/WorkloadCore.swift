@@ -107,6 +107,10 @@ public struct Row: Identifiable, Equatable, Sendable {
     public var slot: Int
     public var text: String
     public var detail: String
+
+    public init(id: UUID, slot: Int, text: String, detail: String) {
+        self.id = id; self.slot = slot; self.text = text; self.detail = detail
+    }
 }
 
 enum Detail {
@@ -356,6 +360,8 @@ public final class WorkloadModel {
     @ObservationIgnored private var detailVersion: [UUID: Int] = [:]
     @ObservationIgnored private var userSeq = 0
 
+    /// Identity of the pinned active row (constant: only its text changes).
+    @ObservationIgnored public let activeID = workloadRowID(0)
     public var rows: [Row]
     public var active: Row
     public var typedCount = 0
@@ -384,7 +390,7 @@ public final class WorkloadModel {
             let id = workloadRowID(slot)
             return Row(id: id, slot: slot, text: "Row \(slot)", detail: Detail.text(slot: slot, version: 0))
         }
-        active = Row(id: workloadRowID(0), slot: 0, text: "", detail: "")
+        active = Row(id: activeID, slot: 0, text: "", detail: "")
         nextSlot = listCount + 1
         integrity.rowsMin = rows.count + 1
         integrity.rowsMax = rows.count + 1

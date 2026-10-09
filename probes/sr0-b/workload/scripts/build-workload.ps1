@@ -12,6 +12,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+# The renderer payload is staged under $Base\payload\bin; the original build output may be gone. Fall back to the stage copy
+# (the hash gate below still pins the exact bytes).
+if (-not (Test-Path -LiteralPath $Dll)) { $Dll = "$Base\payload\bin\swiftright_render.dll" }
 $srcHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $Dll).Hash
 "dll_source=$Dll sha256=$srcHash"
 if ($srcHash -ne $ExpectDllSha256.ToUpper()) { throw "renderer DLL source hash mismatch ($srcHash); nothing built" }
@@ -24,9 +27,13 @@ $buildS = [math]::Round($sw.Elapsed.TotalSeconds, 1)
 "swift build exit=$buildExit seconds=$buildS"
 if ($buildExit -ne 0) { throw "swift build failed (exit $buildExit); no binary copied" }
 $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim()
-Copy-Item $Dll $bin -Force
+function Copy-Unless-Same([string]$from, [string]$to) {
+  if (Test-Path -LiteralPath $to) { if ((Resolve-Path -LiteralPath $from).Path -eq (Resolve-Path -LiteralPath $to).Path) { return } }
+  Copy-Item -LiteralPath $from -Destination $to -Force
+}
+Copy-Unless-Same $Dll "$bin\swiftright_render.dll"
 New-Item -ItemType Directory -Force "$Base\payload\bin" | Out-Null
-Copy-Item $Dll "$Base\payload\bin\swiftright_render.dll" -Force
+Copy-Unless-Same $Dll "$Base\payload\bin\swiftright_render.dll"
 "bin=$bin"
 Get-ChildItem $bin | Where-Object { $_.Extension -in '.exe', '.dll' } | ForEach-Object { "{0} {1} {2}" -f $_.Name, $_.Length, $_.LastWriteTime.ToString('o') }
 $binDll = (Get-FileHash -Algorithm SHA256 -LiteralPath "$bin\swiftright_render.dll").Hash

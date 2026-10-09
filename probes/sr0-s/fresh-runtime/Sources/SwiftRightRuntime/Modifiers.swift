@@ -68,6 +68,7 @@ extension View {
     /// (when it names `value`), as on the Mac oracle.
     public func focused<Value: Hashable>(_ binding: FocusState<Value>.Binding, equals value: Value) -> some View {
         let link = FocusLink(
+            storage: ObjectIdentifier(binding.cell.resolved),
             isFocused: { binding.wrappedValue == value },
             focus: { binding.assign(value) },
             release: { if binding.wrappedValue == value { binding.reset() } }

@@ -35,7 +35,7 @@ enum CrossAlignment: Sendable {
     case end
 }
 
-struct StackSpec: Sendable {
+struct StackSpec: Sendable, Equatable {
     let name: String
     let axis: StackAxis
     let cross: CrossAlignment
@@ -68,7 +68,18 @@ extension Graph {
         place(root, in: LayoutRect(origin: .zero, size: size), proposal: rootProposal)
     }
 
+    /// Size of `node` under `proposal`. A result is kept on the node until the node or a descendant is evaluated again, so a
+    /// layout pass asks each subtree once per distinct proposal instead of once per query (stacks and layouts query a child
+    /// several times).
     func measure(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
+        if let cached = node.sizeCache[proposal] { return cached }
+        let size = computeSize(node, proposal)
+        if node.sizeCache.count >= 16 { node.sizeCache.removeAll(keepingCapacity: true) }
+        node.sizeCache[proposal] = size
+        return size
+    }
+
+    private func computeSize(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
         switch node.kind {
         case .text(let string):
             return measureText(node, string, width: proposal.width)
@@ -269,7 +280,7 @@ extension Graph {
     }
 
     func childNodes(_ node: Node) -> [Node] {
-        node.children.compactMap { nodes[$0] }
+        node.childNodes
     }
 
     func subviews(of node: Node) -> Subviews {

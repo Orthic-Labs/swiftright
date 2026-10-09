@@ -3,10 +3,31 @@ import Observation
 
 // MARK: - Identity
 
+/// The name of a leaf view type, built once per metatype (reflecting a type name allocates and demangles). Segments compare
+/// and hash it by identity, so node identity never walks the characters of a type name.
+final class TypeName: @unchecked Sendable {
+    let full: String
+    let short: String
+    let key: Int
+
+    init(_ type: Any.Type) {
+        full = String(reflecting: type)
+        short = shortName(full)
+        key = Int(bitPattern: ObjectIdentifier(type))
+    }
+
+    /// A name that stands for no real view type (the graph root).
+    init(_ type: Any.Type, display: String) {
+        full = display
+        short = display
+        key = Int(bitPattern: ObjectIdentifier(type))
+    }
+}
+
 /// One step of a structural path. Positional segments come from the builder (tuple index,
 /// Either branch, Optional presence); keyed segments come from explicit ForEach ids.
 enum Segment: Hashable, CustomStringConvertible {
-    case type(String)        // leaf view type (full name, identity); displayed short
+    case type(TypeName)      // leaf view type (identity); displayed short
     case index(Int)          // position inside a builder tuple
     case branch(Int)         // ConditionalContent arm
     case optional            // Optional<View> presence
@@ -14,11 +35,35 @@ enum Segment: Hashable, CustomStringConvertible {
 
     var description: String {
         switch self {
-        case .type(let name): return shortName(name)
+        case .type(let name): return name.short
         case .index(let i): return "#\(i)"
         case .branch(let i): return "branch\(i)"
         case .optional: return "opt"
         case .keyed(let value): return "[\(value)]"
+        }
+    }
+
+    static func == (lhs: Segment, rhs: Segment) -> Bool {
+        switch (lhs, rhs) {
+        case (.type(let a), .type(let b)): return a === b
+        case (.index(let a), .index(let b)): return a == b
+        case (.branch(let a), .branch(let b)): return a == b
+        case (.optional, .optional): return true
+        case (.keyed(let a), .keyed(let b)): return a == b
+        default: return false
+        }
+    }
+
+    func hash(into hasher: inout Hasher) { hasher.combine(mixKey) }
+
+    /// A cheap integer standing for this segment in the path hash.
+    var mixKey: Int {
+        switch self {
+        case .type(let name): return name.key
+        case .index(let i): return i &+ 0x1_0000_0001
+        case .branch(let i): return i &+ 0x2_0000_0003
+        case .optional: return 0x3_0000_0007
+        case .keyed(let value): return value.hashValue
         }
     }
 }
@@ -30,7 +75,91 @@ func shortName(_ fullName: String) -> String {
 
 public struct NodeID: Hashable, CustomStringConvertible {
     let segments: [Segment]
+    /// Order-sensitive digest of `segments`, computed incrementally when a child id is built from its parent's.
+    let key: Int
+
+    init(segments: [Segment]) {
+        self.segments = segments
+        key = segments.reduce(NodeID.seed) { NodeID.mix($0, $1.mixKey) }
+    }
+
+    init(parent: NodeID, relative: [Segment]) {
+        segments = parent.segments + relative
+        key = relative.reduce(parent.key) { NodeID.mix($0, $1.mixKey) }
+    }
+
+    private static let seed = 0x1000_0000_01B3
+    @inline(__always)
+    private static func mix(_ hash: Int, _ part: Int) -> Int { (hash ^ part) &* 0x1000_0000_01B3 }
+
+    public static func == (lhs: NodeID, rhs: NodeID) -> Bool { lhs.key == rhs.key && lhs.segments == rhs.segments }
+    public func hash(into hasher: inout Hasher) { hasher.combine(key) }
     public var description: String { segments.map(\.description).joined(separator: "/") }
+}
+
+/// Type facts that never change for a view type, looked up once per metatype instead of by reflection on every evaluation.
+@MainActor
+enum ViewTypes {
+    enum Shape {
+        case empty
+        case container
+        case optional
+        case leaf
+    }
+
+    struct Info {
+        let name: TypeName
+        let shape: Shape
+        /// True when a stored property is `@State`, `@FocusState` or `@Environment` (a dynamic property).
+        let hasDynamicProperties: Bool
+        /// Reads a primitive view's kind and content. Nil for a user view. Built once per type, so reading a view of that type
+        /// needs a cast to the concrete type only, not a conformance lookup.
+        let readPrimitive: (@MainActor (any View) -> (kind: NodeKind, content: (any View)?))?
+    }
+
+    private static var cache: [ObjectIdentifier: Info] = [:]
+
+    static func info(for view: any View) -> Info {
+        let type = type(of: view)
+        let key = ObjectIdentifier(type)
+        if let found = cache[key] { return found }
+        let shape: Shape
+        if view is EmptyView { shape = .empty }
+        else if view is any ViewContainer { shape = .container }
+        else if view is any OptionalViewBox { shape = .optional }
+        else { shape = .leaf }
+        var dynamic = false
+        var reader: (@MainActor (any View) -> (kind: NodeKind, content: (any View)?))?
+        if shape == .leaf {
+            dynamic = Mirror(reflecting: view).children.contains { $0.value is DynamicPropertyStorage }
+            if let primitive = view as? any (PrimitiveView & View) { reader = makeReader(primitive) }
+        }
+        let info = Info(name: TypeName(type), shape: shape, hasDynamicProperties: dynamic, readPrimitive: reader)
+        cache[key] = info
+        return info
+    }
+
+    private static func makeReader<P: PrimitiveView & View>(_ sample: P) -> @MainActor (any View) -> (kind: NodeKind, content: (any View)?) {
+        { view in
+            let primitive = view as! P
+            return (primitive.nodeKind, primitive.nodeContent)
+        }
+    }
+}
+
+/// `Optional<Wrapped>` where the wrapped value is a view: the child to expand, nil when absent.
+@MainActor
+protocol OptionalViewBox {
+    var wrappedView: (any View)? { get }
+}
+
+extension Optional: @MainActor OptionalViewBox where Wrapped: View {
+    var wrappedView: (any View)? {
+        switch self {
+        case .some(let view): return view
+        case .none: return nil
+        }
+    }
 }
 
 // MARK: - Node
@@ -38,6 +167,8 @@ public struct NodeID: Hashable, CustomStringConvertible {
 /// Type-erased focus binding of one `.focused(_:equals:)` modifier.
 @MainActor
 struct FocusLink {
+    /// Identity of the observable box this link reads. Two links with the same identity depend on the same observable.
+    let storage: ObjectIdentifier
     /// True when the bound focus names this modifier's value.
     let isFocused: () -> Bool
     /// Makes this modifier's value the focus.
@@ -66,6 +197,27 @@ enum ModifierSpec {
     case presentation(PresentationPayload)
     case keyboardShortcut(KeyEquivalent, EventModifiers)
     case accessibilityLabel(String)
+
+    /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
+    var kindName: String {
+        switch self {
+        case .padding: return "modifier.padding"
+        case .appear: return "modifier.onAppear"
+        case .disappear: return "modifier.onDisappear"
+        case .task: return "modifier.task"
+        case .focus: return "modifier.focused"
+        case .animation: return "modifier.animation"
+        case .environment: return "modifier.environment"
+        case .opacity: return "modifier.opacity"
+        case .tag: return "modifier.tag"
+        case .deletion: return "modifier.onDelete"
+        case .contextMenu: return "modifier.contextMenu"
+        case .presentation(let payload):
+            return payload.kind == .alert ? "modifier.alert" : "modifier.confirmationDialog"
+        case .keyboardShortcut: return "modifier.keyboardShortcut"
+        case .accessibilityLabel: return "modifier.accessibilityLabel"
+        }
+    }
 
     var name: String {
         switch self {
@@ -106,6 +258,12 @@ enum NodeKind {
     case divider
     /// Menu label is the child; its items are a model (`Node.menuEntries`).
     case menu
+
+    /// True for the modifier that edits the environment its content sees.
+    var changesEnvironment: Bool {
+        if case .modifier(.environment) = self { return true }
+        return false
+    }
 
     /// Wrappers whose geometry is their single child's geometry (user bodies, buttons, and
     /// modifiers other than padding).
@@ -185,6 +343,16 @@ struct RowStateCache {
     }
 }
 
+/// Observation registrations last until one of their properties changes. A node that is evaluated again without a change would
+/// stack a new registration on top of the live one, and the stack grows with every evaluation (a registration on a property that
+/// never changes is never released). Each tracked node therefore reads one of these inside its tracking scope: bumping it before
+/// the node is tracked again fires, and so cancels, the previous registration.
+@Observable
+@MainActor
+final class Tether {
+    var version = 0
+}
+
 /// Weak link from owner tokens and observation callbacks to a node. Holding a handle never keeps
 /// a node alive, which is what lets a torn-down tree be released.
 @MainActor
@@ -195,12 +363,59 @@ final class NodeHandle {
 @MainActor
 final class Node {
     let id: NodeID
+    /// The segments after the parent's path: the node's key among its siblings.
+    let relative: [Segment]
     let handle: NodeHandle
     weak var parent: Node?
-    var view: any View
+    private(set) var view: any View
+    private(set) var info: ViewTypes.Info
+
+    /// Replaces the node's view (and its type facts) with a new evaluation's.
+    func setView(_ newView: any View, info newInfo: ViewTypes.Info) {
+        view = newView
+        info = newInfo
+        kindResolved = false
+    }
     var inherited = EnvironmentValues()
+    var inheritedEnabled = true
+    var inheritedStyle = ResolvedStyle(font: nil, foreground: nil)
     var environment = EnvironmentValues()
     var children: [NodeID] = []
+    /// The live child nodes, parallel to `children`.
+    var childNodes: [Node] = []
+    private var kindResolved = false
+    private var kindCache: NodeKind = .user
+    private var contentCache: (any View)?
+    private var idStringCache: String?
+    /// The id as a string, built once.
+    var idString: String {
+        if let idStringCache { return idStringCache }
+        let built = id.description
+        idStringCache = built
+        return built
+    }
+    /// Measured sizes of this subtree by proposal. Cleared when this node or a descendant is evaluated.
+    var sizeCache: [ProposedViewSize: LayoutSize] = [:]
+    /// Target frame and opacity as of the last change detection (the "before" side of the next commit's diff).
+    var snapFrame: LayoutRect = .zero
+    var snapOpacity: Double = 1
+    /// Flush round in which this node was last evaluated.
+    var evaluatedRound = -1
+    /// Environment facts the commit record carries, read once per evaluation.
+    var enabled = true
+    var style = ResolvedStyle(font: nil, foreground: nil)
+    /// Layout epoch in which this node's size cache was last cleared.
+    var invalidatedEpoch = -1
+    /// The layout-relevant content of the last evaluation.
+    var layoutKey = LayoutKey.unset
+    /// Observation bookkeeping: the node's live tracking (if any) and which tracking is the current one.
+    var tether: Tether?
+    var trackToken = 0
+    var trackingLive = false
+    /// The focus storage the live tracking of a `.focused` modifier covers.
+    var trackedFocusStorage: ObjectIdentifier?
+    /// True while the node is listed in `Graph.animating`.
+    var isAnimating = false
     var storage: [String: AnyObject] = [:]
     var alive = true
     var appeared = false
@@ -250,16 +465,60 @@ final class Node {
     /// The presented alert or dialog, while presented. Nil otherwise.
     var presented: PresentedModel?
 
-    init(id: NodeID, view: any View, parent: Node?) {
+    init(id: NodeID, relative: [Segment], view: any View, info: ViewTypes.Info, parent: Node?) {
         self.id = id
+        self.relative = relative
         self.view = view
+        self.info = info
         self.parent = parent
         handle = NodeHandle()
         handle.node = self
     }
 
-    var kind: NodeKind { (view as? PrimitiveView)?.nodeKind ?? .user }
+    /// The node's kind, derived from its view once per view assignment.
+    var kind: NodeKind {
+        resolveKind()
+        return kindCache
+    }
+
+    /// What a primitive node expands to (its stored content), nil for a user view and for leaf primitives.
+    var primitiveContent: (any View)? {
+        resolveKind()
+        return contentCache
+    }
+
+    private func resolveKind() {
+        if kindResolved { return }
+        if let read = info.readPrimitive {
+            let read = read(view)
+            kindCache = read.kind
+            contentCache = read.content
+        } else {
+            kindCache = .user
+            contentCache = nil
+        }
+        kindResolved = true
+    }
     var depth: Int { id.segments.count }
+
+    /// Cancels the node's live observation registration, if it has one.
+    func retireTracking() {
+        guard trackingLive else { return }
+        trackToken &+= 1
+        trackingLive = false
+        tether?.version &+= 1
+    }
+
+    /// Forgets the measured sizes of this node and every ancestor (their results depend on this subtree). Within one layout epoch
+    /// the first call clears the whole chain, so a later call stops at the first ancestor already cleared.
+    func invalidateLayout(epoch: Int) {
+        var current: Node? = self
+        while let node = current, node.invalidatedEpoch != epoch {
+            node.invalidatedEpoch = epoch
+            if !node.sizeCache.isEmpty { node.sizeCache.removeAll(keepingCapacity: true) }
+            current = node.parent
+        }
+    }
 
     var retainsRemovedRowState: Bool {
         if case .stack(let spec) = kind { return spec.retainsRemovedRowState }
@@ -270,6 +529,8 @@ final class Node {
     /// view values (and the closures in them) or observation state alive.
     func releaseContents() {
         children = []
+        childNodes = []
+        sizeCache = [:]
         storage = [:]
         environment = EnvironmentValues()
         inherited = EnvironmentValues()
@@ -296,6 +557,22 @@ private func hasKeyedSegment(_ segments: ArraySlice<Segment>) -> Bool {
         if case .keyed = segment { return true }
         return false
     }
+}
+
+/// The part of a node's own content that its measured size depends on (children are tracked separately: a node that
+/// re-evaluates with an unchanged key and unchanged children keeps its cached sizes).
+enum LayoutKey: Equatable {
+    /// A node that has not been evaluated yet.
+    case unset
+    /// No own content: a size comes from the children alone.
+    case none
+    /// A custom `Layout`, which can depend on anything its owner holds: never cached across evaluations.
+    case always
+    case text(String, String?)
+    case stack(StackSpec)
+    case padding(EdgeInsets)
+    case spacer(CGFloat)
+    case image(ImageReference)
 }
 
 /// Guarded commit for async work started by `.task`. A commit is accepted only while the
@@ -327,6 +604,9 @@ public enum TaskOwner {
 
 public struct ResolvedNode: Equatable, Sendable {
     public let id: String
+    /// The node's creation number in its graph: unique, never reused, and unchanged while the node lives (a removed row that
+    /// comes back is a new node with a new number). A backend keys its retained state by it instead of hashing `id`.
+    public let instance: Int
     public let kind: String
     /// Text of a Text node, or the displayed text of a TextField (committed text plus marked text).
     public let text: String?
@@ -381,14 +661,55 @@ public struct CommitRecord: Equatable, Sendable {
     public let animation: String?
 }
 
+// MARK: - Profile
+
+/// Per-phase wall-clock counters of one graph (nanoseconds, from the monotonic clock). Off by default: a host or a benchmark
+/// sets `Graph.profile` to a fresh value to start counting and reads it back to stop.
+public struct GraphProfile: Sendable {
+    /// `flush()` calls and commit records built.
+    public var flushes = 0
+    public var commits = 0
+    /// Nodes whose body or primitive content was evaluated.
+    public var evaluations = 0
+    /// Dirty-node evaluation, layout pass, change detection, transaction application, record resolution, commit sink.
+    public var evaluateNS: UInt64 = 0
+    public var layoutNS: UInt64 = 0
+    public var diffNS: UInt64 = 0
+    public var transactionNS: UInt64 = 0
+    public var resolveNS: UInt64 = 0
+    public var sinkNS: UInt64 = 0
+    /// Nodes in the live tree at the last commit and nodes resolved into records in total.
+    public var liveNodes = 0
+    public var resolvedNodes = 0
+    public init() {}
+
+    @inline(__always)
+    static func now() -> UInt64 { DispatchTime.now().uptimeNanoseconds }
+}
+
 // MARK: - Graph
 
 @MainActor
 public final class Graph {
-    typealias Entry = ([Segment], any View)
+    struct Entry {
+        let relative: [Segment]
+        let view: any View
+        let info: ViewTypes.Info
+    }
 
     private(set) var root: Node?
     var nodes: [NodeID: Node] = [:]
+    /// Live nodes by their string id (what hosts and tests address nodes by).
+    private var nodesByString: [String: Node] = [:]
+    /// Nodes that hold or recently held a running motion, in path order once `animatingNeedsSort` is cleared.
+    var animating: [Node] = []
+    var animatingNeedsSort = false
+    /// Bumped by each layout pass; see `Node.invalidateLayout(epoch:)`.
+    private(set) var layoutEpoch = 0
+    /// Counts evaluation rounds of a flush; see `Node.evaluatedRound`.
+    private var evaluationRound = 0
+    /// Observation change callbacks received (tests check that retired registrations stay silent).
+    private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
     private var flushScheduled = false
     private var sequence = 0
@@ -396,6 +717,8 @@ public final class Graph {
     /// Host-supplied time in seconds, set by `tick(now:)`. Animations start at this time.
     var clock: Double = 0
     private var closed = false
+    /// The focused node with the smallest id seen so far while resolving a record.
+    private var resolveFocus: Node?
     let measurer: any TextMeasurer
     /// Physical pixels per logical point.
     let scale: CGFloat
@@ -403,20 +726,28 @@ public final class Graph {
     public var rootProposal: ProposedViewSize = .unspecified
     public var commitSink: ((CommitRecord) -> Void)?
     /// Intrinsic size of an image reference, in logical points. A host supplies the real size; the default is 24 pt.
-    public var imageIntrinsicSize: (ImageReference) -> LayoutSize = { _ in LayoutSize(width: 24, height: 24) }
+    public var imageIntrinsicSize: (ImageReference) -> LayoutSize = { _ in LayoutSize(width: 24, height: 24) } {
+        didSet { for node in nodes.values { node.sizeCache.removeAll() } }
+    }
+    /// Phase counters, nil (off) by default. See `GraphProfile`.
+    public var profile: GraphProfile?
     /// Platform used to map native chords to logical commands (CONTRACT section 4).
     public var keyboardPlatform: KeyboardPlatform = .mac
     /// Models macOS System Settings > Keyboard > "Keyboard navigation" turned on: Tab also stops on focus-bound
     /// Buttons and Toggles. Default false (text fields and lists only). See FocusTraversal.swift.
     public var tabFocusesAllControls = false
 
+    private static let rootTypeName = TypeName(Void.self, display: "Root")
+
     public init(_ rootView: some View, measurer: (any TextMeasurer)? = nil, scale: CGFloat = 1) {
         self.measurer = measurer ?? FixedAdvanceTextMeasurer()
         self.scale = scale
-        let node = Node(id: NodeID(segments: [.type("Root")]), view: rootView, parent: nil)
+        let node = Node(id: NodeID(segments: [.type(Graph.rootTypeName)]), relative: [], view: rootView,
+                        info: ViewTypes.info(for: rootView), parent: nil)
         node.instance = 0
         root = node
         nodes[node.id] = node
+        nodesByString[node.idString] = node
         evaluate(node)
     }
 
@@ -424,19 +755,27 @@ public final class Graph {
 
     /// Applies pending invalidations (coalesced), lays out, and always emits one commit record.
     public func flush() {
+        let flushStart = profile == nil ? 0 : GraphProfile.now()
         var rounds = 0
         while !dirty.isEmpty, rounds < 64 {
             rounds += 1
+            evaluationRound += 1
+            // Shallow nodes first so a dirty ancestor evaluates its dirty descendants; ties in creation order (deterministic and
+            // an integer compare, where comparing path strings would cost more than evaluating a small node).
             let batch = dirty.values.sorted {
-                ($0.depth, $0.id.description) < ($1.depth, $1.id.description)
+                $0.depth != $1.depth ? $0.depth < $1.depth : $0.instance < $1.instance
             }
             dirty.removeAll()
-            var evaluated: Set<NodeID> = []
             for node in batch where node.alive && nodes[node.id] === node {
-                if hasEvaluatedAncestor(node, evaluated) { continue }
-                evaluated.insert(node.id)
+                // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
+                // in this round is done.
+                if node.evaluatedRound == evaluationRound { continue }
                 evaluate(node)
             }
+        }
+        if profile != nil {
+            profile!.flushes += 1
+            profile!.evaluateNS &+= GraphProfile.now() &- flushStart
         }
         commit()
     }
@@ -511,7 +850,7 @@ public final class Graph {
     /// any animation was running, so the host can draw the interpolated values.
     public func tick(now: Double) {
         guard !closed, root != nil else { return }
-        let wasAnimating = orderedNodes().contains { $0.motion != nil }
+        let wasAnimating = animating.contains { $0.motion != nil && $0.alive }
         clock = now
         advanceMotions(now: now)
         if wasAnimating { emit(animationNames: []) }
@@ -527,6 +866,8 @@ public final class Graph {
         teardown(root.id)
         self.root = nil
         nodes.removeAll()
+        nodesByString.removeAll()
+        animating.removeAll()
         dirty.removeAll()
         for queued in TransactionContext.takeQueued() { queued.settleIfDone() }
         sequence += 1
@@ -539,46 +880,66 @@ public final class Graph {
     // MARK: Helpers
 
     func node(_ id: String) -> Node? {
-        nodes.values.first { $0.id.description == id }
+        nodesByString[id]
     }
 
     /// Live nodes in a stable order (by path), so completion order does not depend on hashing.
     func orderedNodes() -> [Node] {
-        nodes.values.map { (key: $0.id.description, node: $0) }
-            .sorted { $0.key < $1.key }
-            .map(\.node)
+        nodes.values.sorted { $0.idString < $1.idString }
     }
 
     // MARK: Expansion and reconciliation
 
     private func expand(_ view: any View, prefix: [Segment], into out: inout [Entry]) {
-        if view is EmptyView { return }
-        if let container = view as? any ViewContainer {
+        let info = ViewTypes.info(for: view)
+        switch info.shape {
+        case .empty:
+            return
+        case .container:
+            guard let container = view as? any ViewContainer else { return }
             for (segment, part) in container.parts() {
                 expand(part, prefix: prefix + [segment], into: &out)
             }
-            return
-        }
-        let mirror = Mirror(reflecting: view)
-        if mirror.displayStyle == .optional {
-            if let child = mirror.children.first?.value as? any View {
+        case .optional:
+            if let child = (view as? any OptionalViewBox)?.wrappedView {
                 expand(child, prefix: prefix + [.optional], into: &out)
             }
-            return
+        case .leaf:
+            out.append(Entry(relative: prefix + [.type(info.name)], view: view, info: info))
         }
-        out.append((prefix + [.type(String(reflecting: type(of: view)))], view))
     }
 
     private func reconcile(_ parent: Node, entries: [Entry]) {
-        var order: [NodeID] = []
-        var viewByID: [NodeID: any View] = [:]
-        for (segments, view) in entries {
-            let childID = NodeID(segments: parent.id.segments + segments)
-            if viewByID[childID] != nil { continue }  // duplicate ForEach id: first wins
-            order.append(childID)
-            viewByID[childID] = view
+        // Fast path, the usual re-evaluation: the same children in the same order. No ids are built and nothing is hashed.
+        if entries.count == parent.childNodes.count {
+            var same = true
+            for index in entries.indices where entries[index].relative != parent.childNodes[index].relative {
+                same = false
+                break
+            }
+            if same {
+                for index in entries.indices {
+                    let existing = parent.childNodes[index]
+                    existing.setView(entries[index].view, info: entries[index].info)
+                    inherit(existing, from: parent)
+                    evaluate(existing)
+                }
+                return
+            }
         }
-        let surviving = Set(order)
+
+        var order: [NodeID] = []
+        var relatives: [[Segment]] = []
+        var kept: [Entry] = []
+        order.reserveCapacity(entries.count)
+        var surviving = Set<NodeID>(minimumCapacity: entries.count)
+        for entry in entries {
+            let childID = NodeID(parent: parent.id, relative: entry.relative)
+            if !surviving.insert(childID).inserted { continue }  // duplicate ForEach id: first wins
+            order.append(childID)
+            relatives.append(entry.relative)
+            kept.append(entry)
+        }
         for old in parent.children where !surviving.contains(old) {
             if parent.retainsRemovedRowState, hasKeyedSegment(old.segments.dropFirst(parent.id.segments.count)) {
                 parent.rowCache.beginRetiring(old)
@@ -589,26 +950,40 @@ public final class Graph {
             }
         }
         parent.children = order
-        for childID in order {
-            guard let view = viewByID[childID] else { continue }
+        parent.invalidateLayout(epoch: layoutEpoch)
+        var live: [Node] = []
+        live.reserveCapacity(order.count)
+        for (index, childID) in order.enumerated() {
+            let entry = kept[index]
             if let existing = nodes[childID] {
-                existing.view = view
-                existing.inherited = parent.environment
+                existing.setView(entry.view, info: entry.info)
+                inherit(existing, from: parent)
+                live.append(existing)
                 evaluate(existing)
             } else {
-                let created = Node(id: childID, view: view, parent: parent)
+                let created = Node(id: childID, relative: relatives[index], view: entry.view, info: entry.info, parent: parent)
                 instanceCounter += 1
                 created.instance = instanceCounter
-                created.inherited = parent.environment
+                inherit(created, from: parent)
                 if let list = rowListAncestor(of: parent) {
                     if let restored = list.rowCache.take(childID) { created.storage = restored }
                     created.restoreFocus = list.rowCache.takeFocus(childID)
                 }
                 nodes[childID] = created
+                nodesByString[created.idString] = created
+                live.append(created)
                 evaluate(created)
                 if created.restoreFocus { restoreFocus(created) }
             }
         }
+        parent.childNodes = live
+    }
+
+    /// Hands the parent's environment, and the facts the commit record reads from it, to a child about to be evaluated.
+    private func inherit(_ child: Node, from parent: Node) {
+        child.inherited = parent.environment
+        child.inheritedEnabled = parent.enabled
+        child.inheritedStyle = parent.style
     }
 
     /// Gives focus back to a reinserted node that held it when its List removed it.
@@ -634,8 +1009,10 @@ public final class Graph {
     /// List's row cache under its node id, so a reinsertion can restore them.
     private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
+        if nodesByString[node.idString] === node { nodesByString[node.idString] = nil }
         node.alive = false
         node.generation += 1
+        node.retireTracking()
         dirty[id] = nil
         if node.appeared {
             node.appeared = false
@@ -687,6 +1064,8 @@ public final class Graph {
     }
 
     private func bindDynamicProperties(_ node: Node) {
+        // Reflection is needed only for view types that declare a dynamic property (decided once per type).
+        guard node.info.hasDynamicProperties else { return }
         for child in Mirror(reflecting: node.view).children {
             if let key = child.label, let property = child.value as? DynamicPropertyStorage {
                 property.bindDynamicProperty(to: node, key: key)
@@ -709,63 +1088,155 @@ public final class Graph {
     /// reconciles its children.
     func evaluate(_ node: Node) {
         guard node.alive else { return }
+        if profile != nil { profile!.evaluations += 1 }
+        node.evaluatedRound = evaluationRound
         node.environment = node.inherited
-        if case .modifier(.environment(let apply)) = node.kind {
+        let kind = node.kind
+        if case .modifier(.environment(let apply)) = kind {
             apply(&node.environment)
+        }
+        if node.parent == nil || kind.changesEnvironment {
+            node.enabled = node.environment.isEnabled
+            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle)
+        } else {
+            node.enabled = node.inheritedEnabled
+            node.style = node.inheritedStyle
         }
         if !node.appeared {
             node.appeared = true
             runAppear(node)
-        } else if case .modifier(.task(let priority, let id?, let action)) = node.kind,
+        } else if case .modifier(.task(let priority, let id?, let action)) = kind,
                   let previous = node.taskID, !previous.matches(id.value) {
             node.taskID = id
             startTask(node, priority, action)
         }
-        if case .modifier(.animation(let value, let animation)) = node.kind {
+        if case .modifier(.animation(let value, let animation)) = kind {
             if let previous = node.lastEquatable, !previous.matches(value.value) {
                 TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil))
             }
             node.lastEquatable = value
         }
-        if case .user = node.kind { bindDynamicProperties(node) }
-        node.selection = (node.view as? SelectionProviding)?.selectionAccess
-        if case .textField(let binding) = node.kind {
+        if case .user = kind { bindDynamicProperties(node) }
+        if case .stack = kind {
+            node.selection = (node.view as? SelectionProviding)?.selectionAccess
+        } else if node.selection != nil {
+            node.selection = nil
+        }
+        if case .textField(let binding) = kind {
             _ = textInputState(for: node, binding: binding, multiline: false)
         }
-        if case .textEditor(let binding) = node.kind {
+        if case .textEditor(let binding) = kind {
             _ = textInputState(for: node, binding: binding, multiline: true)
         }
+        noteLayoutContent(node, kind)
 
-        let produced: (any View)? = withObservationTracking({
-            switch node.kind {
-            case .textField, .textEditor: _ = node.textInput?.display
-            case .modifier(.focus(let link)): node.focused = link.isFocused()
-            case .toggle(let binding): _ = binding.wrappedValue
-            case .modifier(.presentation(let payload)):
-                node.presented = payload.isPresented.wrappedValue
-                    ? PresentedModel(payload: payload, environment: node.environment)
-                    : nil
-            case .modifier(.contextMenu(let content)):
-                node.menuEntries = ViewWalk.entries(content, environment: node.environment)
-            case .menu:
-                node.menuEntries = (node.view as? MenuView).map {
-                    ViewWalk.entries($0.menuContent, environment: node.environment)
+        // Only nodes whose content reads observable state register a dependency; a primitive that just hands back stored
+        // children (Text, stacks, most modifiers) reads nothing, so it needs no tracking scope.
+        let produced: (any View)?
+        if case .modifier(.focus(let link)) = kind, node.trackingLive, node.trackedFocusStorage == link.storage {
+            // The only observable thing a `.focused` modifier reads is the focus storage, and the live registration already
+            // covers that same storage: read the value without registering a second time.
+            node.focused = link.isFocused()
+            produced = node.primitiveContent
+        } else if tracksDependencies(kind, node) {
+            node.retireTracking()
+            if case .modifier(.focus(let link)) = kind { node.trackedFocusStorage = link.storage }
+            node.trackToken &+= 1
+            let token = node.trackToken
+            let tether = node.tether ?? Tether()
+            node.tether = tether
+            node.trackingLive = true
+            produced = withObservationTracking({
+                _ = tether.version
+                return produceContent(node, kind)
+            }, onChange: { [weak self, handle = node.handle] in
+                // Weak on purpose: a pending observation must not keep the graph or its nodes alive. A registration that was
+                // retired by a newer evaluation reports nothing.
+                MainActor.assumeIsolated {
+                    self?.observationCallbacks += 1
+                    guard let node = handle.node, node.trackToken == token else { return }
+                    node.trackingLive = false
+                    self?.noteChange(node)
                 }
-            default: break
-            }
-            if let selection = node.selection { _ = selection.current() }
-            if let primitive = node.view as? PrimitiveView { return primitive.nodeContent }
-            return node.view.evaluateBody()
-        }, onChange: { [weak self, handle = node.handle] in
-            // Weak on purpose: a pending observation must not keep the graph or its nodes alive.
-            MainActor.assumeIsolated {
-                if let node = handle.node { self?.noteChange(node) }
-            }
-        })
+            })
+        } else {
+            produced = node.primitiveContent
+        }
 
+        guard let produced else {
+            reconcile(node, entries: [])
+            return
+        }
+        let producedInfo = ViewTypes.info(for: produced)
+        if producedInfo.shape == .leaf {
+            // One view that is a node itself (a modifier's content, a user view's body): update that child in place with no
+            // entry list and no id built.
+            if node.childNodes.count == 1, node.childNodes[0].relative.count == 1,
+               case .type(let name) = node.childNodes[0].relative[0], name === producedInfo.name {
+                let child = node.childNodes[0]
+                child.setView(produced, info: producedInfo)
+                inherit(child, from: node)
+                evaluate(child)
+            } else {
+                reconcile(node, entries: [Entry(relative: [.type(producedInfo.name)], view: produced, info: producedInfo)])
+            }
+            return
+        }
         var entries: [Entry] = []
-        if let produced { expand(produced, prefix: [], into: &entries) }
+        expand(produced, prefix: [], into: &entries)
         reconcile(node, entries: entries)
+    }
+
+    /// Drops the cached sizes of this node and its ancestors when the node's own layout-relevant content changed.
+    private func noteLayoutContent(_ node: Node, _ kind: NodeKind) {
+        let key: LayoutKey
+        switch kind {
+        case .text(let string): key = .text(string, node.environment.font?.id)
+        case .textField, .textEditor: key = .text(node.textInput?.display ?? "", node.environment.font?.id)
+        case .stack(let spec): key = .stack(spec)
+        case .modifier(.padding(let insets)): key = .padding(insets)
+        case .spacer(let length): key = .spacer(length)
+        case .image(let reference): key = .image(reference)
+        case .layout: key = .always
+        default: key = .none
+        }
+        if key == .always || key != node.layoutKey {
+            node.layoutKey = key
+            node.invalidateLayout(epoch: layoutEpoch)
+        }
+    }
+
+    /// True for the kinds whose content evaluation reads observable state.
+    private func tracksDependencies(_ kind: NodeKind, _ node: Node) -> Bool {
+        if node.selection != nil { return true }
+        switch kind {
+        case .user, .textField, .textEditor, .toggle, .menu: return true
+        case .modifier(.focus), .modifier(.presentation), .modifier(.contextMenu): return true
+        default: return false
+        }
+    }
+
+    /// Reads the node's dependencies and returns the view it expands to. Runs inside the observation tracking scope.
+    private func produceContent(_ node: Node, _ kind: NodeKind) -> (any View)? {
+        switch kind {
+        case .textField, .textEditor: _ = node.textInput?.display
+        case .modifier(.focus(let link)): node.focused = link.isFocused()
+        case .toggle(let binding): _ = binding.wrappedValue
+        case .modifier(.presentation(let payload)):
+            node.presented = payload.isPresented.wrappedValue
+                ? PresentedModel(payload: payload, environment: node.environment)
+                : nil
+        case .modifier(.contextMenu(let content)):
+            node.menuEntries = ViewWalk.entries(content, environment: node.environment)
+        case .menu:
+            node.menuEntries = (node.view as? MenuView).map {
+                ViewWalk.entries($0.menuContent, environment: node.environment)
+            }
+        default: break
+        }
+        if let selection = node.selection { _ = selection.current() }
+        if case .user = kind { return node.view.evaluateBody() }
+        return node.primitiveContent
     }
 
     // MARK: Invalidation
@@ -786,52 +1257,81 @@ public final class Graph {
         }
     }
 
-    private func hasEvaluatedAncestor(_ node: Node, _ evaluated: Set<NodeID>) -> Bool {
-        var current = node.parent
-        while let ancestor = current {
-            if evaluated.contains(ancestor.id) { return true }
-            current = ancestor.parent
-        }
-        return false
-    }
-
     // MARK: Commit
 
     private func commit() {
         guard !closed, let root else { return }
+        let profiling = profile != nil
+        var t0 = profiling ? GraphProfile.now() : 0
+        func lap(_ add: inout UInt64) {
+            guard profiling else { return }
+            let t1 = GraphProfile.now()
+            add &+= t1 &- t0
+            t0 = t1
+        }
         advanceMotions(now: clock)
-        let previous: [NodeID: (LayoutRect, Double)] = nodes.mapValues { ($0.frame, $0.targetOpacity) }
+        if profiling { lap(&profile!.transactionNS) }
         layoutRoot()
         assignOpacity(root, parent: 1)
-        let changed = orderedNodes().filter { node in
-            guard let before = previous[node.id] else { return true }
-            return before.0 != node.frame || before.1 != node.targetOpacity
-        }
+        layoutEpoch += 1
+        if profiling { lap(&profile!.layoutNS) }
+        var changed: [Node] = []
+        collectChanged(root, into: &changed)
         let transactions = TransactionContext.takeQueued()
+        // Motions end in path order (completion order must not depend on how the tree was walked), so sort when a motion
+        // can start or end in this commit.
+        if !transactions.isEmpty || changed.contains(where: { $0.motion != nil }) {
+            changed.sort { $0.idString < $1.idString }
+        }
+        if profiling { lap(&profile!.diffNS) }
         applyTransactions(transactions, changed: changed)
+        if profiling { lap(&profile!.transactionNS) }
         emit(animationNames: transactions.compactMap { $0.animation?.name })
         TransactionContext.drainDeferred()
+    }
+
+    /// Collects the nodes whose layout target (frame or target opacity) differs from the previous commit's, and records the
+    /// new targets as the baseline for the next.
+    private func collectChanged(_ node: Node, into out: inout [Node]) {
+        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity {
+            out.append(node)
+            node.snapFrame = node.frame
+            node.snapOpacity = node.targetOpacity
+        }
+        for child in node.childNodes { collectChanged(child, into: &out) }
     }
 
     /// Builds and delivers one commit record from the presented values.
     private func emit(animationNames: [String]) {
         guard let root else { return }
+        let profiling = profile != nil
+        let t0 = profiling ? GraphProfile.now() : 0
         sequence += 1
-        let focusedNode = nodes.values.filter { $0.focused && $0.alive }.min { $0.id.description < $1.id.description }
+        resolveFocus = nil
+        let resolved = resolve(root)
         let record = CommitRecord(
             sequence: sequence,
-            root: resolve(root),
-            focused: focusedNode?.id.description,
+            root: resolved,
+            focused: resolveFocus?.idString,
             animation: animationNames.isEmpty ? nil : animationNames.joined(separator: ",")
         )
+        resolveFocus = nil
+        let t1 = profiling ? GraphProfile.now() : 0
         commitSink?(record)
+        if profiling {
+            profile!.commits += 1
+            profile!.liveNodes = nodes.count
+            profile!.resolveNS &+= t1 &- t0
+            profile!.sinkNS &+= GraphProfile.now() &- t1
+        }
     }
 
     private func resolve(_ node: Node, selected: Bool = false) -> ResolvedNode {
+        let kind = node.kind
         let text: String?
         var selection: UTF16Range?
         var marked: UTF16Range?
-        switch node.kind {
+        switch kind {
         case .text(let string):
             text = string
         case .textField, .textEditor:
@@ -841,23 +1341,28 @@ public final class Graph {
         default:
             text = nil
         }
+        if node.focused, node.alive, resolveFocus.map({ node.idString < $0.idString }) ?? true { resolveFocus = node }
+        let hasSelection = node.selection != nil
         let selectedTags = node.selection?.current() ?? []
-        let children: [ResolvedNode] = node.children.compactMap { childID in
-            guard let child = nodes[childID] else { return nil }
-            let isSelected = node.selection != nil && (tagOf(child).map { selectedTags.contains($0) } ?? false)
-            return resolve(child, selected: isSelected)
+        let childNodes = node.childNodes
+        var children: [ResolvedNode] = []
+        children.reserveCapacity(childNodes.count)
+        for child in childNodes {
+            let isSelected = hasSelection && (tagOf(child).map { selectedTags.contains($0) } ?? false)
+            children.append(resolve(child, selected: isSelected))
         }
         var image: ImageReference?
-        if case .image(let reference) = node.kind { image = reference }
+        if case .image(let reference) = kind { image = reference }
         var shortcut: ResolvedShortcut?
-        if case .modifier(.keyboardShortcut(let key, let modifiers)) = node.kind {
+        if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
                 chord: KeyboardChord(key: key, modifiers: modifiers),
                 logical: KeyboardChords.command(for: key, modifiers: modifiers, on: keyboardPlatform)
             )
         }
         return ResolvedNode(
-            id: node.id.description,
+            id: node.idString,
+            instance: node.instance,
             kind: kindName(node),
             text: text,
             frame: node.presentedFrame,
@@ -867,7 +1372,7 @@ public final class Graph {
             marked: marked,
             children: children,
             accessibility: accessibility(of: node, children: children, selected: selected),
-            style: ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle),
+            style: node.style,
             image: image,
             menu: node.menuEntries.map(resolveMenu),
             presentation: node.presented.map(resolvePresentation),
@@ -929,7 +1434,7 @@ public final class Graph {
             role: role,
             label: label,
             value: value,
-            isEnabled: node.environment.isEnabled,
+            isEnabled: node.enabled,
             isSelected: selected
         )
     }
@@ -954,7 +1459,7 @@ public final class Graph {
 
     private func kindName(_ node: Node) -> String {
         switch node.kind {
-        case .user: return shortName(String(reflecting: type(of: node.view)))
+        case .user: return node.info.name.short
         case .text: return "Text"
         case .spacer: return "Spacer"
         case .button: return "Button"
@@ -962,7 +1467,7 @@ public final class Graph {
         case .stack(let spec): return spec.name
         case .layout: return "Layout"
         case .scroll: return "ScrollView"
-        case .modifier(let spec): return "modifier.\(spec.name)"
+        case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
         case .image: return "Image"
         case .textEditor: return "TextEditor"

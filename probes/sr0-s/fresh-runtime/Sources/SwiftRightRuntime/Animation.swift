@@ -213,6 +213,11 @@ extension Graph {
             transaction: transaction
         )
         transaction.motionStarted()
+        if !node.isAnimating {
+            node.isAnimating = true
+            animating.append(node)
+            animatingNeedsSort = true
+        }
     }
 
     /// Presents the target at once and ends any motion (its transaction counts as finished).
@@ -228,7 +233,20 @@ extension Graph {
     /// Interpolates every running motion to `now`. A motion that reaches its end presents its target
     /// and finishes its transaction.
     func advanceMotions(now: Double) {
-        for node in orderedNodes() {
+        guard !animating.isEmpty else { return }
+        // Only nodes that hold a motion are visited, in path order so completion order does not depend on hashing.
+        if animatingNeedsSort {
+            animating.sort { $0.idString < $1.idString }
+            animatingNeedsSort = false
+        }
+        defer {
+            animating.removeAll { node in
+                guard node.motion == nil || !node.alive else { return false }
+                node.isAnimating = false
+                return true
+            }
+        }
+        for node in animating {
             guard let motion = node.motion else { continue }
             let progress = (now - motion.start) / motion.duration
             if progress >= 1 {

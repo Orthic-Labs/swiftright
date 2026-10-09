@@ -45,13 +45,28 @@ protocol PrimitiveView {
 @MainActor
 public struct TupleView<T>: View {
     public let value: T
-    public init(_ value: T) { self.value = value }
+    /// The tuple's views in order, listed when the builder made the tuple (no reflection needed to read them back).
+    let listed: [any View]?
+    public init(_ value: T) {
+        self.value = value
+        listed = nil
+    }
+    init(value: T, listed: [any View]) {
+        self.value = value
+        self.listed = listed
+    }
     @MainActor public var body: Never { return fatalError("TupleView has no body") }
 }
 
 extension TupleView: ViewContainer {
     @MainActor
     func parts() -> [(Segment, any View)] {
+        if let listed {
+            var out: [(Segment, any View)] = []
+            out.reserveCapacity(listed.count)
+            for (index, view) in listed.enumerated() { out.append((.index(index), view)) }
+            return out
+        }
         let mirror = Mirror(reflecting: value)
         if mirror.displayStyle == .tuple {
             var out: [(Segment, any View)] = []
@@ -90,7 +105,9 @@ extension ConditionalContent: ViewContainer {
 public struct ViewBuilder {
     public static func buildBlock() -> EmptyView { EmptyView() }
     public static func buildBlock<each Content: View>(_ content: repeat each Content) -> TupleView<(repeat each Content)> {
-        TupleView((repeat each content))
+        var listed: [any View] = []
+        for view in repeat each content { listed.append(view) }
+        return TupleView(value: (repeat each content), listed: listed)
     }
     public static func buildExpression<Content: View>(_ content: Content) -> Content { content }
     public static func buildIf<Content: View>(_ content: Content?) -> Content? { content }
@@ -381,12 +398,22 @@ extension ForEach {
             idOf: { $0.1 },
             makeContent: { pair in
                 let id = pair.1
-                let fallback = snapshot[pair.0]
+                let hint = pair.0
+                let fallback = snapshot[hint]
+                // The element is found by id, so a row handle never targets a stale index. The index it had at evaluation is
+                // tried first (one comparison); only a row that has moved since needs the scan.
+                @MainActor func locate(_ current: C) -> C.Index? {
+                    if hint >= current.startIndex, hint < current.endIndex, key(current[hint]) == id { return hint }
+                    return current.firstIndex(where: { key($0) == id })
+                }
                 let row = Binding<C.Element>(
-                    get: { data.wrappedValue.first(where: { key($0) == id }) ?? fallback },
+                    get: {
+                        let current = data.wrappedValue
+                        return locate(current).map { current[$0] } ?? fallback
+                    },
                     set: { newValue in
                         var current = data.wrappedValue
-                        guard let index = current.firstIndex(where: { key($0) == id }) else { return }
+                        guard let index = locate(current) else { return }
                         current[index] = newValue
                         data.wrappedValue = current
                     }

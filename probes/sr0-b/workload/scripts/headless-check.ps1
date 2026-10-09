@@ -10,3 +10,7 @@ Set-Location $bin
 & .\WorkloadWin.exe --overhead; "overhead exit=$LASTEXITCODE"
 & .\WorkloadWin.exe --count-nodes; "count-nodes exit=$LASTEXITCODE"
 & .\WorkloadWin.exe --model-selftest 5; "model-selftest exit=$LASTEXITCODE (2 = not available on Windows, by design)"
+# Commit path: the incremental, flattened commit conversion must show the renderer exactly what a full commit shows (mock renderer,
+# no window), then the per-commit timings at 200 rows.
+& .\WorkloadWin.exe --bench --verify; "bench-verify exit=$LASTEXITCODE"
+& .\WorkloadWin.exe --bench --iters 40; "bench exit=$LASTEXITCODE"

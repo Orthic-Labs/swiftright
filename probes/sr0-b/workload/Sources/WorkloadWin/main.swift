@@ -9,6 +9,8 @@ import WorkloadCore
 //   WorkloadWin.exe --model-selftest <seconds>      headless model check (no window, no renderer)
 //   WorkloadWin.exe --count-nodes                   headless runtime-only check: resolved node counts + flush timings
 //   WorkloadWin.exe --overhead                      timer micro-benchmark only
+//   WorkloadWin.exe --bench [--rows N --iters N --only keystroke|row|reorder|insert|tick|anim] [--verify]
+//                                                   headless commit benchmark / equivalence check against a mock renderer (Bench.swift)
 //
 // Self-timed: 10 s warm-up, 60 s measured run, window close (teardown + post-close pump), then raw CSVs,
 // integrity.json and meta.json are written to --out. The external driver (scripts/inject.ps1) posts the keystrokes.
@@ -68,7 +70,8 @@ func runWorkload() -> Int32 {
     let config = args.config
     let recorder = RunRecorder()
     let model = WorkloadModel(config: config, recorder: recorder)
-    let backend = WinBackend(bridge: bridge, model: model, recorder: recorder, config: config)
+    let platform = BridgePlatform(bridge: bridge)
+    let backend = WinBackend(platform: platform, model: model, recorder: recorder, config: config)
     bridge.textStore = WorkloadTextStore(backend: backend)
     var sampler: MainActorSampler?
     var finished = false
@@ -83,7 +86,8 @@ func runWorkload() -> Int32 {
     }
     bridge.onReady = { win in
         MainActor.assumeIsolated {
-            backend.ready(win)
+            platform.attach(win)
+            backend.ready()
             if config.instr == .full {
                 let s = MainActorSampler(recorder: recorder)
                 s.start()
@@ -93,7 +97,7 @@ func runWorkload() -> Int32 {
     }
     bridge.onEvent = { ev in MainActor.assumeIsolated { backend.handle(ev) } }
     bridge.onTick = { _, ts in MainActor.assumeIsolated { backend.tick(timestampNS: ts) } }
-    bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed() } }
+    bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed(); platform.detach() } }
 
     do {
         try bridge.run(title: "SwiftRight SR0 Workload", width: 960, height: 640)
@@ -196,6 +200,8 @@ if args.options["model-selftest"] != nil {
     OverheadBench.run(into: r)
     for o in r.overhead { print("\(o.name): \(o.nsPerPair) ns (n=\(o.iterations))") }
     status = 0
+} else if args.options["bench"] != nil {
+    status = MainActor.assumeIsolated { runBench(arguments: args.options) }
 } else if args.options["count-nodes"] != nil {
     status = MainActor.assumeIsolated { countNodes() }
 } else {
