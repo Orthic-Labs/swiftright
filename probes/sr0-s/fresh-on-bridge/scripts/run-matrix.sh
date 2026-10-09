@@ -7,7 +7,7 @@
 #   BASE_DIR            Windows tree root that holds the build. Default: the 0.6b build, D:\Claude\sr0s-bridge06b
 #   EXPECT_EXE_SHA256   SHA-256 of FreshOnBridge.exe in <BASE_DIR>\scratch\out\Products\Release-windows-x86_64.
 #                       Default: 3593209A... (0.6b: Tab / Shift-Tab traversal, IME hooks, per-line stdout flush)
-#   EXPECT_DLL_SHA256   SHA-256 of swiftright_render.dll in the same directory. Default: C80B9517... (ABI 0.6)
+#   EXPECT_DLL_SHA256   SHA-256 of swiftright_render.dll in the same directory. Default: 777F14C4... (ABI 0.6 rev06c, commit 862997c; C80B9517... is superseded)
 # Defaults are the pinned 0.6b tuple; override all three together when a newer build exists.
 # Preflight (verify-artifacts.ps1) must pass before anything runs, and every run re-checks the hashes on the host.
 # Every result file starts with an ARTIFACT line that binds base dir and both hashes; a run whose ARTIFACT line does
@@ -21,7 +21,7 @@
 # OUT_DIR overrides the evidence directory, so a new pass does not overwrite an earlier one.
 : "${BASE_DIR:=D:\\Claude\\sr0s-bridge06b}"
 : "${EXPECT_EXE_SHA256:=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA}"
-: "${EXPECT_DLL_SHA256:=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30}"
+: "${EXPECT_DLL_SHA256:=777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441}"
 EXPECT_EXE_SHA256=$(printf %s "$EXPECT_EXE_SHA256" | tr a-f A-F)
 EXPECT_DLL_SHA256=$(printf %s "$EXPECT_DLL_SHA256" | tr a-f A-F)
 for h in "$EXPECT_EXE_SHA256" "$EXPECT_DLL_SHA256"; do
