@@ -2,6 +2,8 @@
 
 **PROPOSAL, not frozen. Reconciled 9 Oct 2026 against HEAD `6263841` and `docs/sr0-close-plan.md` v2 (scope revision 1).** Compiled from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md` (DRAFT v0.1; SR0-C row in `docs/sr0-status.md`). Freeze rule from the CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11); the fork seed is early-disqualified (`probes/sr0-s/COMPARISON.md`), so a rerun means the fresh runtime. The freeze binds to the ABI 0.6 snapshot tuple in `docs/sr0-snapshot.md`; all Windows evidence below was produced on ABI 0.5 and is history until rerun on that tuple.
 
+**Close-out update (9 Oct 2026 evening, HEAD `c31f1b5`): STILL NOT FROZEN.** Final tuple: renderer `4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F`, fixture host `AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F` (matrix-abi06g PENDING). Evidence added since the reconciliation: ABI 0.6 matrix 316/320 + 12/12 reruns on renderer `777F14C4` (WIN-M6), matrix-abi06f on the final renderer with an F8 fixture defect (WIN-M7), real Microsoft Japanese IME and Narrator (NATIVE), signed MSIX/DMG and clean-guest results (PKG). Open and PENDING: R1b on the final fixture (matrix-abi06g), R6 signed Mac recorder cross-compare (needs Adrian), R8 per-node digest and runner, R10 workload, R5 Windows Sandbox run, MSIX rebuild on the final renderer. Recorded limitations: IME candidate list under a mid-composition layout move (SR1, TSF); RightKit `install-app` swap gap (RightKit helper). Sections below keep the reconciliation text; the tables in sections 1, 2 (F7, §4 notes) and 4 are updated for the new evidence.
+
 ## 1. Evidence base
 
 | Label | Evidence | State |
@@ -16,6 +18,10 @@
 | WIN-M4 | `probes/sr0-s/fresh-on-bridge/out/matrix-rev4/RESULT.md` (cc4c93a, ee5a4db): 44/45 PASS, F9 run3 failed (pump ended by renderer, GPUI quit-on-last-window); `matrix-rev4b` on renderer d45c98c (DLL sha256 2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1): F9 3/3, F9-notasks 3/3, F6 override-on 3/3. **All 15 configs 3/3 PASS.** Root causes fixed: cc605bf, cc4c93a, d45c98c | complete (3 runs) |
 | WIN-M5 | `probes/sr0-s/fresh-on-bridge/out/matrix-20b/` (`65e0f29`): 15 configs x 20 runs = **300/300 PASS**, ABI 0.5, FreshOnBridge sha256 `DD6C9CE6…`, DLL `2DC4B6F7…`; one run (F2 run9) needed a foreground retry. Earlier partial `matrix-20` (`3d2d57f`) exposed an F3 vstack settle race, fixed in the self-test. Lacks the F3 3 s variants (`list-3s`, `vstack-3s`, `lazy-3s`); real IME and screen reader not covered | complete on ABI 0.5; rerun on 0.6 plus F3 3 s (plan R1b) |
 | XCMP | `probes/sr0-o/f1-cross/` (`7a91608`, `96fcd30`, `eaf40dc`): F1 Mac-vs-Windows compare, 317 diffs -> 52 (List AX roles) -> **0 diffs** for Windows w6 vs Mac m1..m5 (`eaf40dc`). Only F1 was compared; Mac side used the unsigned-grant terminal route. Signed recorder (`F1MacRecord.app`, `7a91608`) still needs Adrian's AX grant | PASS for F1 on ABI 0.5; F1-F9 on the signed recorder and ABI 0.6 PENDING (plan R6) |
+| WIN-M6 | `probes/sr0-s/fresh-on-bridge/out/matrix-abi06c/RESULT.md` (`69ad73b`, `73fd9a6`): ABI 0.6, 15 configs incl. F3 3 s variants x 20 runs: **316/320 first time** (3 infrastructure: two scheduled tasks ended 0xC000013A while the Dell was busy, one task vanished with foreground taken; 1 driver UIA lookup race, F8 r9), reruns 12/12 on a quiet Dell. Fixture `3593209A…D68BA`, renderer `777F14C4…` (now superseded) | complete on the old 0.6 renderer; history for the final tuple |
+| WIN-M7 | `probes/sr0-s/fresh-on-bridge/out/matrix-abi06f/` (`c31f1b5`): final renderer `4FB068F0…`, fixture `30FBE599…`: F1-F7, F9 20/20 so far; **F8 0/20** (fixture defect: AX button focus logged as a `focus` event masked the row-focus check; now `ax-button-focus`). `matrix-abi06g` with fixture `AFE131A1…`: **PENDING** (uncommitted) | INCOMPLETE |
+| NATIVE | `probes/sr0-b/native-interaction/out/RESULT.md` (`277b92d`, final run `050d28e`): real Microsoft Japanese IME F7 20/20, F7live (insert-above mid-composition, identity and composition survive) 20/20, F8 18/19; Narrator 8/8 automatable PASS (reaches and activates Delete, model updated, state restored). Renderer `4FB068F0…`, fixture `30FBE599…` | complete except the limitation below and Narrator speech (audio, PENDING Adrian about 2 min) |
+| PKG | `examples/SliceApp/RESULT-R2.md` (`b476c85`: MSIX 0.1.0.0/0.1.1.0 signed, signtool OK), `examples/SliceApp/PACKAGING.md` R3 (`1aee425`, `f02244c`, `ea879dc`: DMG signed, notarized, stapled), `examples/SliceApp/RESULT-R7.md` (`c7ddb7d`, `94b81ac`: Mac VM install/upgrade/rollback/corrupt/uninstall PASS, Gatekeeper baseline PASS, atomic-swap `--recover` PASS on 0.2.142) | partial: MSIX not on the final renderer (rebuild PENDING), R5 Windows Sandbox run PENDING |
 | SAME-SRC | `probes/sr0-c/same-source/RESULT.md` (cited by CONTRACT §8): identical screen compiles on both targets; `NavigationSplitView` negative fixture fails on Windows only | complete |
 
 Windows 20-run requirement (CONTRACT §3 last paragraph): **met on ABI 0.5** by WIN-M5 (300/300), **not yet met on the ABI 0.6 tuple** and not met for the F3 3 s variants. C9 is decided (keep 20).
@@ -45,7 +51,7 @@ Legend: PROVEN = evidence on both sides as the clause requires; MAC = Mac oracle
 | F4 | MAC-20 20/20 | HL PASS | WIN-M4 3/3 PASS |
 | F5 | MAC-20 20/20; zero-width pass logged as OBSERVE | HL covers layout engine (`fresh-runtime/RESULT.md`, line 171 section) | WIN-M4 3/3 PASS |
 | F6, F6-reduced | MAC-20 20/20 each; raw traces vary (4 distinct for F6), canonical 1 | HL animation tests (commit 000679e `AnimationTests.swift`) | WIN-M4 3/3 PASS (incl. F6 override-on, rev4b) |
-| F7 | MAC-20 20/20 (bounded I/O only) | HL TextInput/IME tests (000679e) | WIN-M2 FAIL (no-teardown); WIN-M4 3/3 PASS |
+| F7 | MAC-20 20/20 (bounded I/O only) | HL TextInput/IME tests (000679e) | WIN-M2 FAIL (no-teardown); WIN-M4 3/3 PASS; WIN-M6 20/20 on 0.6 (old renderer); WIN-M7 20/20 on the final renderer (so far); NATIVE real IME F7 20/20, F7live 20/20 |
 | F8 | MAC-20 20/20 | HL PASS | WIN-M2 FAIL (toolbar-task-restarts-per-request); WIN-M4 3/3 PASS |
 | F9 | MAC-20 20/20 with `tree-released` as OBSERVE only | HL teardown coverage (000679e) | WIN-M2 3 BLOCKED (no post-close pump, no live-node counter in ABI 0.4); ABI 0.5 supplies both; WIN-M4 3/3 PASS (F9 and F9-notasks, rev4b) |
 
@@ -56,7 +62,7 @@ Run-count rule: "Each Mac fixture runs 20 times; all normalized assertions must 
 ### §4 Stimuli and native mappings
 - Mac: stimuli posted via `CGEvent.postToPid` (CONTRACT §5 rules); used by all MAC-20 runs.
 - Windows: Ctrl mappings and virtual-key SendInput implemented in `probes/sr0-o/uia-recorder/` (RESULT.md "Stimuli" section); IME composition uses virtual keys, not Unicode packets (`docs/sr0-status.md` host facts).
-- Microsoft Japanese IME romaji composition end-to-end on the bridge: not evidenced (F7 passes on the bridge per WIN-M4 with virtual-key input; real IME composition not evidenced).
+- Microsoft Japanese IME romaji composition end-to-end on the bridge: evidenced by NATIVE (F7 20/20, F7live 20/20, F8 18/19) on the final renderer. Known limitation, deferred to SR1: when layout moves the composing field while the candidate list is open, the renderer re-places the IME windows (`ime_replace reason=layout`) but Windows 11's modern IME does not move the open list; a TSF text store (`ITfContextView::GetTextExt`) is the likely fix. The contract does not require candidate-list tracking across layout moves.
 - Injected fake engine and clock: used by all fixtures (`probes/sr0-o/fixtures/Sources/SliceFixtures/Common/`). PROVEN.
 
 ### §5 Observation routes
@@ -77,7 +83,7 @@ Governed by the companion proposal `docs/sr0-freeze-bridge-interface.md`. Contra
 - Same-source compile: closed (SAME-SRC).
 - TextPattern on populated Windows edit nodes: closed (`fcc999d`). Mac AX caret route: proven (`probes/sr0-o/ax-routes`).
 - Visible-response endpoint: decided (CONTRACT §5).
-- Still open: real Japanese IME and Narrator/NVDA on the 0.6 tuple (R9); §11 workload (R10); signed recorder re-record (R6).
+- Closed since: real Japanese IME and Narrator automatable checks on the final renderer (R9, NATIVE). Still open and PENDING: Narrator speech content (Adrian listening, about 2 min); §11 workload (R10); signed recorder re-record and cross-compare (R6, needs Adrian); matrix on the final fixture (matrix-abi06g).
 
 ## 3. Proposed changes versus the current contract (v0.1 -> v1.0)
 
@@ -103,15 +109,16 @@ Open, in plan lane order:
 
 | # | Blocker | Lane | Needs |
 |---|---|---|---|
-| 1 | Re-run the Windows matrix on the 0.6 tuple, 20 runs per config, including the F3 3 s variants (plan F5) | R1b | Dell interactive desktop, FreshOnBridge rebuilt on 0.6 |
-| 2 | Signed Mac recorder with its own AX grant; re-record F1-F9 and compare cross-platform on the 0.6 tuple | R6 | Adrian: separate macOS test user, Remote Desktop, AX grant for `F1MacRecord.app` |
-| 3 | Per-node-ordered canonical digest (plan F4, CONTRACT §3 per-node order), fault-injection test, recompute accepted baselines and the 20-run results from saved JSONL | R8 | runner and comparator change |
-| 4 | Real IME (Microsoft Japanese) and Narrator/NVDA with model-state effects | R9 | Adrian at the Dell for ~5 min |
-| 5 | §11 workload: 200 rows, 10 s warm-up, 3 x 60 s, all thresholds, raw samples, both OSes | R10 | quiet host |
-| 6 | Apply C1-C8 and C3 text to CONTRACT.md; bump to v1.0; name the snapshot tuple | R11 | blockers 1-5 |
+| 1 | Re-run the Windows matrix on the 0.6 tuple, 20 runs per config, including the F3 3 s variants (plan F5) | R1b | PARTIAL: WIN-M6 316/320 + 12/12 on the old 0.6 renderer; final renderer: matrix-abi06g with fixture `AFE131A1…` PENDING (matrix-abi06f F8 fixture defect fixed in the rebuild) |
+| 2 | Signed Mac recorder with its own AX grant; re-record F1-F9 and compare cross-platform on the 0.6 tuple | R6 | PENDING: Adrian, Mac free about 10 min for the oracle run with the signed recorder (Accessibility grant) |
+| 3 | Per-node-ordered canonical digest (plan F4, CONTRACT §3 per-node order), fault-injection test, recompute accepted baselines and the 20-run results from saved JSONL | R8 | PENDING (no committed work) |
+| 4 | Real IME (Microsoft Japanese) and Narrator/NVDA with model-state effects | R9 | DONE for automatable checks (NATIVE, `277b92d`); Narrator speech PENDING (Adrian, about 2 min); candidate-list-on-layout-move recorded as SR1 limitation |
+| 5 | §11 workload: 200 rows, 10 s warm-up, 3 x 60 s, all thresholds, raw samples, both OSes | R10 | PENDING: probe and analyzer built (`4d69e55`), no result; quiet Dell and Mac test user |
+| 6 | Apply C1-C8 and C3 text to CONTRACT.md; bump to v1.0; name the snapshot tuple | R11 | blockers 1-5 and 7; PENDING |
+| 7 | Package qualification on the final tuple: MSIX rebuilt on the final renderer, R5 Windows Sandbox run (`examples/SliceApp/R5-RUNBOOK.md`) | R2, R5 | PENDING (R7 Mac VM results are committed; the install-app swap gap is a RightKit helper item) |
 
 Non-blocking: Windows arm64 and Intel Mac are out of scope (scope revision 1), not exclusions to be lifted by this freeze.
 
 ## 5. Proposed freeze decision
 
-Freeze as v1.0 when blockers 1-5 have receipts bound to one snapshot tuple (`docs/sr0-snapshot.md`: runtime commit, bridge/header commit, renderer DLL sha256 `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30` for ABI 0.6, binary hashes) and C1-C8 plus C3 are applied. The 0.5 renderer hash `2DC4B6F7…` named in earlier drafts is superseded. Seed decision: fresh runtime selected, fork early-disqualified and never run through the real backend (`probes/sr0-s/COMPARISON.md`). After freeze any change triggers a rerun of the fresh runtime's affected stages.
+Freeze as v1.0 when blockers 1-5 and 7 have receipts bound to one snapshot tuple (`docs/sr0-snapshot.md`: runtime commit, bridge/header commit, renderer DLL sha256 `4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F` for ABI 0.6, fixture host `AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F`, binary hashes) and C1-C8 plus C3 are applied. The 0.5 renderer hash `2DC4B6F7…` named in earlier drafts is superseded. Seed decision: fresh runtime selected, fork early-disqualified and never run through the real backend (`probes/sr0-s/COMPARISON.md`). After freeze any change triggers a rerun of the fresh runtime's affected stages.

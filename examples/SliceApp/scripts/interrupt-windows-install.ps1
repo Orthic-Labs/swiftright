@@ -1,5 +1,5 @@
 # F6 (Windows): real interruptions of an MSIX update, for the Windows Sandbox guest only (never the Dell desktop).
-#   interrupt-windows-install.ps1 -OldMsix <0.1.0.0.msix> -NewMsix <0.1.1.0.msix> -Mode KillDeployment|DeferInUse -DisposableGuest
+#   interrupt-windows-install.ps1 -OldMsix <0.1.0.0.msix> -NewMsix <0.1.1.0.msix> -Mode KillDeployment|DeferInUse -DisposableGuest [-ResultJson <path>]
 #
 # Sources: Microsoft Learn, Add-AppxPackage (learn.microsoft.com/powershell/module/appx/add-appxpackage):
 #   -DeferRegistrationWhenPackagesAreInUse "Specifies that the app won't register for a user if currently in use. The
@@ -11,32 +11,54 @@
 # script stops AppXSvc while the update is in flight. The expected outcome is OBSERVED and recorded, not assumed:
 # exactly one of 0.1.0.0 / 0.1.1.0 registered (never none, never both, no PartiallyStaged/needs-repair state), the
 # registered one launches, and %LOCALAPPDATA%\SliceApp\rows.json is byte-identical to before.
-#   KillDeployment  start Add-AppxPackage for the new package, stop AppXSvc as soon as deployment events appear.
+#   KillDeployment  install the old package (which must NOT be registered yet, remove any other version first), start
+#                   Add-AppxPackage for the new package, stop AppXSvc as soon as deployment events appear.
+#                   The run is VALID only when the cmdlet job was still running at the stop AND it ended with an error.
 #   DeferInUse      launch the old app, then Add-AppxPackage -DeferRegistrationWhenPackagesAreInUse for the new package:
-#                   expect old still registered while running; close the app, relaunch, expect the new version.
+#                   expect old still registered while running (the caller closes the app, relaunches, checks the new version).
+# -ResultJson writes the observations as JSON (schema sr0-interrupt/v1) so a harness can assert on them; the script
+# also prints them. Launch / rerun / data-readability steps stay with the caller (they need the desktop and UIA).
 param(
     [Parameter(Mandatory)][string]$OldMsix, [Parameter(Mandatory)][string]$NewMsix,
     [Parameter(Mandatory)][ValidateSet('KillDeployment', 'DeferInUse')][string]$Mode,
-    [string]$PackageName = 'OrthicLabs.SliceApp', [switch]$DisposableGuest
+    [string]$PackageName = 'OrthicLabs.SliceApp', [string]$ResultJson = '', [switch]$DisposableGuest
 )
 $ErrorActionPreference = 'Stop'
 if (-not $DisposableGuest) { throw 'refusing to run: pass -DisposableGuest to confirm this is a throwaway Windows Sandbox guest' }
 $rows = Join-Path $env:LOCALAPPDATA 'SliceApp\rows.json'
 function State([string]$when) {
     $pk = @(Get-AppxPackage -Name $PackageName)
-    "[$when] registered: $(if ($pk) { ($pk | ForEach-Object { "$($_.PackageFullName) status=$($_.Status)" }) -join '; ' } else { 'NONE' })"
-    if (Test-Path -LiteralPath $rows) { "[$when] rows.json sha256=$((Get-FileHash -LiteralPath $rows -Algorithm SHA256).Hash)" } else { "[$when] rows.json absent" }
+    $all = @(Get-AppxPackage -AllUsers -Name $PackageName -ErrorAction SilentlyContinue)
+    $sha = $(if (Test-Path -LiteralPath $rows) { (Get-FileHash -LiteralPath $rows -Algorithm SHA256).Hash } else { 'absent' })
+    $o = [ordered]@{
+        when = $when
+        registered_count = $pk.Count
+        registered = @($pk | ForEach-Object { [ordered]@{ full_name = $_.PackageFullName; version = [string]$_.Version; status = [string]$_.Status } })
+        all_users_count = $all.Count
+        rows_sha256 = $sha
+    }
+    "[$when] registered: $(if ($pk) { ($pk | ForEach-Object { "$($_.PackageFullName) status=$($_.Status)" }) -join '; ' } else { 'NONE' }); rows.json $sha"
+    return $o
 }
+$res = [ordered]@{ schema = 'sr0-interrupt/v1'; mode = $Mode; old_msix = $OldMsix; new_msix = $NewMsix; valid = $false; states = @() }
+function Finish {
+    if ($ResultJson) { [IO.File]::WriteAllText($ResultJson, ($res | ConvertTo-Json -Depth 6), (New-Object Text.UTF8Encoding($false))) }
+}
+if (@(Get-AppxPackage -Name $PackageName).Count -gt 0) { throw "$PackageName is already registered; remove it first (Remove-AppxPackage -PreserveApplicationData)" }
 Add-AppxPackage -Path $OldMsix
-State 'old installed'
+$res.states += , (State 'old installed')
 if ($Mode -eq 'DeferInUse') {
-    $pfn = (Get-AppxPackage -Name $PackageName).PackageFamilyName
-    Start-Process "shell:AppsFolder\$pfn!App"; Start-Sleep -Seconds 5
+    $pkg = Get-AppxPackage -Name $PackageName
+    $appId = [string](Get-AppxPackageManifest -Package $pkg.PackageFullName).Package.Applications.Application.Id
+    Start-Process 'explorer.exe' ("shell:AppsFolder\$($pkg.PackageFamilyName)!$appId"); Start-Sleep -Seconds 6
     Add-AppxPackage -Path $NewMsix -DeferRegistrationWhenPackagesAreInUse
-    State 'after deferred add (app running)'
+    $res.states += , (State 'after deferred add (app running)')
+    $res.valid = $true
+    Finish
     "close SliceApp, relaunch it, then run: Get-AppxPackage -Name $PackageName | Select Version"
     return
 }
+$errText = ''
 $job = Start-Job { param($m) Add-AppxPackage -Path $m } -ArgumentList $NewMsix
 $deadline = (Get-Date).AddSeconds(60)
 $start = Get-Date
@@ -46,8 +68,19 @@ while ((Get-Date) -lt $deadline) {
     if ($job.State -ne 'Running') { break }
     Start-Sleep -Milliseconds 20
 }
-if ($job.State -eq 'Running') { Stop-Service -Name AppXSvc -Force; "AppXSvc stopped mid-deployment" } else { "deployment finished before the interrupt landed: result not valid, rerun with a larger package" }
-$null = Wait-Job $job -Timeout 120; Receive-Job $job -ErrorAction SilentlyContinue | Out-Null
+$stoppedInFlight = ($job.State -eq 'Running')
+if ($stoppedInFlight) { Stop-Service -Name AppXSvc -Force; "AppXSvc stopped mid-deployment" } else { "deployment finished before the interrupt landed: result not valid, rerun" }
+$null = Wait-Job $job -Timeout 120
+try { Receive-Job $job -ErrorAction Stop | Out-Null } catch { $errText = $_.Exception.Message }
+$jobState = [string]$job.State
+Remove-Job $job -Force -ErrorAction SilentlyContinue
 Start-Service -Name AppXSvc -ErrorAction SilentlyContinue
-State 'after interrupt'
-"launch check (Sandbox desktop): start SliceApp from the Start menu and confirm the window; then re-run Add-AppxPackage for $NewMsix and confirm 0.1.1.0 registers."
+$res.states += , (State 'after interrupt')
+$res.stopped_in_flight = $stoppedInFlight
+$res.job_state = $jobState
+$res.job_error = $errText
+# Valid only if the stop landed mid-flight AND the cmdlet reported a failure (a clean success means it finished anyway).
+$res.valid = ($stoppedInFlight -and $errText -ne '')
+Finish
+"valid=$($res.valid) job_state=$jobState error=[$errText]"
+"launch check (caller): start SliceApp and confirm the window, then re-run Add-AppxPackage for $NewMsix and confirm the new version registers."

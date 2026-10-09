@@ -35,13 +35,15 @@ $ExpectedChecks = @(
     'W00-environment', 'W01-artifacts-bound', 'W02-signer-trust', 'W03-install-old',
     'W04-launch-offline-old', 'W05-write-data', 'W06-upgrade-new', 'W07-corrupt-update-rejected',
     'W08-interrupted-update', 'W09-rollback-readable', 'W10-uninstall-keeps-data',
-    'W11-legacy-data-physical-path'
+    'W11-legacy-data-physical-path', 'W12-appinstaller-update', 'W13-renderer-layout-installed',
+    'W14-deferred-update-in-use'
 )
 
 $script:Results = New-Object System.Collections.ArrayList
 $script:Pfn = $null
 $script:AppId = $null
 $script:DataSha = $null
+$script:NewMarkerWritten = $false
 
 # ---------------------------------------------------------------- helpers
 
@@ -230,7 +232,7 @@ function Find-ByName {
     return @($Root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond))
 }
 
-# Writes the marker into the last editable row, through UIA ValuePattern (the app routes AX SetValue into editText).
+# Inserts a row and writes the marker into the new (empty) row, through UIA ValuePattern (the app routes AX SetValue into editText).
 function Write-MarkerRow {
     param($Root, [string]$Marker)
     $btn = @(Find-ByName -Root $Root -Name 'Insert above' -ControlType ([System.Windows.Automation.ControlType]::Button))
@@ -240,7 +242,13 @@ function Write-MarkerRow {
     Start-Sleep -Seconds 1
     $rows = @(Find-ByName -Root $Root -Name 'Row' -ControlType ([System.Windows.Automation.ControlType]::Edit))
     if ($rows.Count -eq 0) { throw 'no "Row" text fields found after insert' }
-    $target = $rows[$rows.Count - 1]
+    # Insert above adds an EMPTY row (EditorModel.insertAbove); write into it so earlier markers are never overwritten.
+    $target = $null
+    foreach ($r in $rows) {
+        $v = $r.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ([string]$v.Current.Value -eq '') { $target = $r; break }
+    }
+    if (-not $target) { throw 'no empty Row field after Insert above' }
     $vp = $target.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
     $vp.SetValue($Marker)
     return @{ row_fields = $rows.Count }
@@ -284,6 +292,49 @@ function Read-ManifestPackage {
     return $xml
 }
 
+
+# ---- R5 additions: SliceApp scripts staged beside this harness (harness\SliceApp\scripts, harness\SliceApp\Windows)
+$script:SliceDir = Join-Path $PSScriptRoot 'SliceApp'
+$script:LocalAppData = Join-Path $env:LOCALAPPDATA 'SliceApp'
+
+# Runs a child Windows PowerShell with the given arguments, returns @{ exit; out }.
+function Invoke-ChildPs {
+    param([string[]]$PsArgs)
+    $out = & powershell.exe -NoProfile -ExecutionPolicy Bypass @PsArgs 2>&1 | Out-String
+    return @{ exit = $LASTEXITCODE; out = $out.Trim() }
+}
+
+function Get-VersionString { $p = Get-Pkg; if ($p) { return [string]$p.Version } else { return 'none' } }
+
+function Remove-PkgKeepData {
+    $p = Get-Pkg
+    if ($p) { Remove-AppxPackage -Package $p.PackageFullName -PreserveApplicationData }
+    return (-not (Get-Pkg))
+}
+
+function Get-RowsSha {
+    $f = Join-Path $script:LocalAppData 'rows.json'
+    if (Test-Path -LiteralPath $f -PathType Leaf) { return Get-Sha256Ref -Path $f } else { return 'absent' }
+}
+
+# True when no package-private copy of the data exists (virtualization must be off).
+function Test-NoLocalCacheCopy {
+    if (-not $script:Pfn) { return $false }
+    $lc = Join-Path $env:LOCALAPPDATA ('Packages\' + $script:Pfn + '\LocalCache\Local\SliceApp')
+    return (-not (Test-Path -LiteralPath $lc))
+}
+
+# Polls until Get-Pkg reports the wanted version; returns the last observed version.
+function Wait-PkgVersion {
+    param([string]$Version, [int]$TimeoutSec = 60)
+    $deadline = (Get-Date).AddSeconds($TimeoutSec)
+    while ((Get-Date) -lt $deadline) {
+        if ((Get-VersionString) -eq $Version) { return $Version }
+        Start-Sleep -Seconds 2
+    }
+    return (Get-VersionString)
+}
+
 # ---------------------------------------------------------------- start
 
 if (-not (Test-Path -LiteralPath $ReceiptsDir)) { throw "receipts folder not mapped: $ReceiptsDir" }
@@ -324,7 +375,12 @@ Invoke-Check -CheckId 'W01-artifacts-bound' -CheckName 'Staged packages and sign
     $shaCer = Get-Sha256Ref -Path $cer
     $arts = @{ old_msix = $shaOld; new_msix = $shaNew; signer_cer = $shaCer }
     $pass = ($shaOld -eq $m.old.sha256) -and ($shaNew -eq $m.new.sha256) -and ($shaCer -eq $m.signer_cer.sha256)
-    @{ pass = $pass; reason = 'hash differs from manifest'; observed = @{ run_id = $m.run_id }; artifacts = $arts; exit = $null }
+    # Feed material and the staged SliceApp scripts / renderer pin must match their host hashes too.
+    $badExtra = @()
+    foreach ($e in @($m.extra)) { if ((Get-Sha256Ref -Path (Join-Path $PackagesDir $e.path)) -ne $e.sha256) { $badExtra += [string]$e.path } }
+    foreach ($e in @($m.harness_files)) { if ((Get-Sha256Ref -Path (Join-Path $PSScriptRoot $e.path)) -ne $e.sha256) { $badExtra += [string]$e.path } }
+    if ($badExtra.Count -gt 0) { $pass = $false }
+    @{ pass = $pass; reason = ('hash differs from manifest' + $(if ($badExtra.Count -gt 0) { ': ' + ($badExtra -join ', ') } else { '' })); observed = @{ run_id = $m.run_id; extra_files_checked = [string](@($m.extra).Count + @($m.harness_files).Count) }; artifacts = $arts; exit = $null }
 }
 
 # W02: the signer must be trusted in the guest. The sandbox starts with no trust. Import only the public .cer.
@@ -364,6 +420,28 @@ Invoke-Check -CheckId 'W03-install-old' -CheckName 'Install old MSIX' -Body {
     $ver = $(if ($pkg) { [string]$pkg.Version } else { 'none' })
     $pass = ($ver -eq [string]$m.old.version)
     @{ pass = $pass; reason = ('installed version ' + $ver + ' != ' + $m.old.version); observed = @{ version = $ver; package_family = [string]$script:Pfn }; artifacts = @{ old_msix = (Get-Sha256Ref -Path $old) }; exit = 0 }
+}
+
+
+# W03b: installed renderer layout (F1) by Authenticode digest. RightKit signs every packaged PE, so the raw sha256
+# differs per build; verify-package-layout.ps1 -Mode Installed compares the PE Authenticode digest to
+# Windows\renderer-pin.json (final tuple renderer 4FB068F0...) and loads the renderer + its closure from the package
+# under a scrubbed environment (PATH = System32, SWIFTRIGHT_RENDER_DLL unset). No app launch.
+Invoke-Check -CheckId 'W13-renderer-layout-installed' -CheckName 'Installed renderer matches the pin (Authenticode digest) and loads from the package' -Body {
+    $r = Invoke-ChildPs -PsArgs @('-File', (Join-Path $script:SliceDir 'scripts\verify-package-layout.ps1'), '-Mode', 'Installed')
+    $pin = Get-Content -Raw -LiteralPath (Join-Path $script:SliceDir 'Windows\renderer-pin.json') | ConvertFrom-Json
+    $pkg = Get-Pkg
+    $dll = Join-Path $pkg.InstallLocation $pin.file
+    $exe = Join-Path $pkg.InstallLocation 'SliceApp.exe'
+    $observed = @{
+        verify_exit = [string]$r.exit; verify_output = $r.out
+        pin_sha256_unsigned = [string]$pin.sha256; pin_authenticode_sha256 = [string]$pin.authenticodeSha256
+        packaged_dll_raw_sha256 = [string](Get-FileHash -Algorithm SHA256 -LiteralPath $dll).Hash
+        dll_signature = [string](Get-AuthenticodeSignature -FilePath $dll).Status
+        exe_signature = [string](Get-AuthenticodeSignature -FilePath $exe).Status
+        install_location = [string]$pkg.InstallLocation
+    }
+    @{ pass = ($r.exit -eq 0); reason = 'verify-package-layout -Mode Installed failed; see verify_output'; observed = $observed; artifacts = @{}; exit = $r.exit }
 }
 
 # W04: launch the old build offline; the window must appear through UIA.
@@ -406,8 +484,13 @@ Invoke-Check -CheckId 'W06-upgrade-new' -CheckName 'Upgrade to new MSIX keeps da
     $vals = Read-RowValues -Root (Get-AppRoot -ProcessId $w.pid)
     $marker = 'rightkit-check-' + $script:RunId
     $shown = ($vals -contains $marker)
-    $observed = @{ closed_before_install = [string]$closed; version = $ver; data_sha_before = [string]$before; data_sha_after_install = [string]$after; marker_shown = [string]$shown }
-    $pass = ($ver -eq [string]$m.new.version) -and ($before -eq $after) -and $shown
+    # The NEW build writes a row of its own, so W09 can prove the OLD build reads data written by the new one.
+    $newMarker = 'rightkit-new-' + $script:RunId
+    [void](Write-MarkerRow -Root (Get-AppRoot -ProcessId $w.pid) -Marker $newMarker)
+    $newFound = Wait-ForMarkerInFile -Marker $newMarker -TimeoutSec 20
+    $script:NewMarkerWritten = [bool]$newFound
+    $observed = @{ new_build_marker_written = [string]$script:NewMarkerWritten; closed_before_install = [string]$closed; version = $ver; data_sha_before = [string]$before; data_sha_after_install = [string]$after; marker_shown = [string]$shown }
+    $pass = ($ver -eq [string]$m.new.version) -and ($before -eq $after) -and $shown -and $script:NewMarkerWritten
     @{ pass = $pass; reason = 'version, data hash, or marker in UI differs'; observed = $observed; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = 0 }
 }
 
@@ -433,9 +516,78 @@ Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX re
     @{ pass = $pass; reason = 'tampered package was accepted or installed version changed'; observed = $observed; artifacts = @{ tampered_msix = (Get-Sha256Ref -Path $bad) }; exit = $null }
 }
 
-# W08: interrupted update. Procedure not defined yet (close plan F6). Always FAILS until implemented.
-Invoke-Check -CheckId 'W08-interrupted-update' -CheckName 'Interrupted update at install/copy/swap boundaries' -Implemented $false `
-    -NotImplementedReason 'procedure not defined; see docs/sr0-close-plan.md F6 and mac-clean-checklist.md (shared procedure)'
+# W08: real interrupted update (Sandbox guest only). Fault injection: AppXSvc is stopped while Add-AppxPackage deploys the
+# new package (scripts\interrupt-windows-install.ps1 -Mode KillDeployment). Valid only if the stop landed mid-flight and the
+# cmdlet failed. Pass = exactly one version registered with status Ok (no none/both/partial), data byte-identical, the
+# registered build launches, and a rerun of the update registers the new version. Not a Microsoft-documented procedure.
+Invoke-Check -CheckId 'W08-interrupted-update' -CheckName 'Interrupted update (AppXSvc stopped mid-deployment): consistent state, data intact, recovery' -Body {
+    $m = $script:Manifest
+    $old = Join-Path $PackagesDir $m.old.file
+    $new = Join-Path $PackagesDir $m.new.file
+    [void](Stop-AppGracefully)
+    $shaBefore = Get-RowsSha
+    $removed = Remove-PkgKeepData
+    $resFile = Join-Path $WorkDir 'interrupt-kill.json'
+    Remove-Item -LiteralPath $resFile -ErrorAction SilentlyContinue
+    $r = Invoke-ChildPs -PsArgs @('-File', (Join-Path $script:SliceDir 'scripts\interrupt-windows-install.ps1'), '-OldMsix', $old, '-NewMsix', $new, '-Mode', 'KillDeployment', '-ResultJson', $resFile, '-DisposableGuest')
+    if (-not (Test-Path -LiteralPath $resFile)) { throw ('interrupt script wrote no result: ' + $r.out) }
+    $res = Get-Content -Raw -LiteralPath $resFile | ConvertFrom-Json
+    $after = $res.states | Where-Object { $_.when -eq 'after interrupt' } | Select-Object -Last 1
+    $oneRegistered = ($after.registered_count -eq 1) -and ($after.all_users_count -le 1)
+    $statusOk = $oneRegistered -and ([string]$after.registered[0].status -eq 'Ok')
+    $versionAfter = $(if ($oneRegistered) { [string]$after.registered[0].version } else { 'none-or-many' })
+    $oneOfTwo = ($versionAfter -eq [string]$m.old.version) -or ($versionAfter -eq [string]$m.new.version)
+    $shaAfterInterrupt = Get-RowsSha
+    # The registered build must launch.
+    $launched = $false; $launchErr = ''
+    if ($oneRegistered) {
+        try { $w = Start-AppAndFindWindow -TimeoutSec 40; $launched = ($w.window_name -ne '') } catch { $launchErr = $_.Exception.Message }
+        [void](Stop-AppGracefully)
+    }
+    # Recovery: rerun the update; the new version must register.
+    $rerunErr = ''
+    try { Add-AppxPackage -Path $new } catch { $rerunErr = $_.Exception.Message }
+    $versionRerun = Get-VersionString
+    $shaFinal = Get-RowsSha
+    $observed = @{
+        removed_before = [string]$removed; interrupt_valid = [string]$res.valid; stopped_in_flight = [string]$res.stopped_in_flight
+        job_state = [string]$res.job_state; job_error = [string]$res.job_error
+        registered_count_after_interrupt = [string]$after.registered_count; all_users_count_after_interrupt = [string]$after.all_users_count
+        status_after_interrupt = $(if ($oneRegistered) { [string]$after.registered[0].status } else { 'n/a' })
+        version_after_interrupt = $versionAfter
+        rows_sha_before = $shaBefore; rows_sha_after_interrupt = $shaAfterInterrupt; rows_sha_after_rerun = $shaFinal
+        launched_after_interrupt = [string]$launched; launch_error = $launchErr
+        rerun_error = $rerunErr; version_after_rerun = $versionRerun; script_output = $r.out
+    }
+    $pass = [bool]$res.valid -and $oneRegistered -and $statusOk -and $oneOfTwo -and ($shaBefore -eq $shaAfterInterrupt) -and $launched -and ($versionRerun -eq [string]$m.new.version)
+    @{ pass = $pass; reason = 'run invalid (not interrupted in flight), inconsistent registration, data changed, build did not launch, or rerun did not register the new version'; observed = $observed; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = $r.exit }
+}
+
+# W08b: update while the app is running. Add-AppxPackage -DeferRegistrationWhenPackagesAreInUse must leave the old version
+# registered while the app runs, and the update must apply on a later launch (Microsoft Learn, Add-AppxPackage).
+Invoke-Check -CheckId 'W14-deferred-update-in-use' -CheckName 'Update deferred while the app runs; applies on next launch' -Body {
+    $m = $script:Manifest
+    $old = Join-Path $PackagesDir $m.old.file
+    $new = Join-Path $PackagesDir $m.new.file
+    [void](Stop-AppGracefully)
+    [void](Remove-PkgKeepData)
+    Add-AppxPackage -Path $old
+    $shaBefore = Get-RowsSha
+    $w = Start-AppAndFindWindow -TimeoutSec 40
+    $addErr = ''
+    try { Add-AppxPackage -Path $new -DeferRegistrationWhenPackagesAreInUse } catch { $addErr = $_.Exception.Message }
+    $versionWhileRunning = Get-VersionString
+    $stillRunning = (@(Get-AppProcesses).Count -gt 0)
+    [void](Stop-AppGracefully)
+    $w2 = Start-AppAndFindWindow -TimeoutSec 40
+    $versionAfterRelaunch = Wait-PkgVersion -Version ([string]$m.new.version) -TimeoutSec 90
+    [void](Stop-AppGracefully)
+    $shaAfter = Get-RowsSha
+    $observed = @{ add_error = $addErr; version_while_running = $versionWhileRunning; app_still_running = [string]$stillRunning; version_after_relaunch = $versionAfterRelaunch; rows_sha_before = $shaBefore; rows_sha_after = $shaAfter }
+    $pass = ($addErr -eq '') -and ($versionWhileRunning -eq [string]$m.old.version) -and $stillRunning -and ($versionAfterRelaunch -eq [string]$m.new.version) -and ($shaBefore -eq $shaAfter)
+    @{ pass = $pass; reason = 'update was not deferred while running, did not apply after relaunch, or data changed'; observed = $observed; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = $null }
+}
+
 
 # W09: rollback. Remove the new package keeping data, install the old build, and check it reads the new data.
 Invoke-Check -CheckId 'W09-rollback-readable' -CheckName 'Old build reads data written by new build' -Body {
@@ -451,7 +603,7 @@ Invoke-Check -CheckId 'W09-rollback-readable' -CheckName 'Old build reads data w
     $w = Start-AppAndFindWindow -TimeoutSec 40
     $vals = Read-RowValues -Root (Get-AppRoot -ProcessId $w.pid)
     $marker = 'rightkit-check-' + $script:RunId
-    $shown = ($vals -contains $marker)
+    $shown = ($vals -contains $marker) -and ($vals -contains ('rightkit-new-' + $script:RunId))
     $schemaOk = $false
     if ($st.found) { $schemaOk = Test-RowsSchema1 -Path $st.found.path }
     $observed = @{ data_preserved_on_remove = [string]$preserved; old_version = $ver; marker_shown_by_old = [string]$shown; schema_1_after_old_launch = [string]$schemaOk }
@@ -476,9 +628,122 @@ Invoke-Check -CheckId 'W10-uninstall-keeps-data' -CheckName 'Uninstall keeps row
     @{ pass = $pass; reason = 'package not removed or rows.json missing or changed'; observed = $observed; artifacts = @{ rows_json = $asha }; exit = 0 }
 }
 
-# W11: legacy (pre-existing, not written by this package) data must be read from the physical path.
-Invoke-Check -CheckId 'W11-legacy-data-physical-path' -CheckName 'Legacy data read at physical path after install' -Implemented $false `
-    -NotImplementedReason 'legacy data fixture not defined; see docs/sr0-close-plan.md F6'
+# W11: virtualization / physical paths (F8) and legacy data. Fresh profile: the file the packaged app created (W05) sits at
+# %LOCALAPPDATA%\SliceApp\rows.json and no copy exists under Packages\<PFN>\LocalCache\Local\SliceApp. Legacy: with the
+# package removed, a rows.json written by a NON-package process (the W05 file with its marker rewritten) is pre-placed; the
+# reinstalled package must read it from the physical path, write the next change back to the same file, and still create
+# no LocalCache copy. The installed manifest must declare FileSystemWriteVirtualization=disabled and unvirtualizedResources.
+Invoke-Check -CheckId 'W11-legacy-data-physical-path' -CheckName 'Physical data path (fresh + legacy); virtualization disabled' -Body {
+    $m = $script:Manifest
+    $old = Join-Path $PackagesDir $m.old.file
+    [void](Stop-AppGracefully)
+    $rowsPath = Join-Path $script:LocalAppData 'rows.json'
+    $freshExists = Test-Path -LiteralPath $rowsPath -PathType Leaf
+    # W10 left the package removed and rows.json in place: this is the fresh-profile file, hash it, then rewrite as legacy.
+    $freshText = Get-RowsText -Path $rowsPath
+    $marker = 'rightkit-check-' + $script:RunId
+    $legacyMarker = 'legacy-' + $script:RunId
+    if (-not $freshText -or -not $freshText.Contains($marker)) { throw 'W05 marker not in rows.json; cannot derive the legacy file' }
+    Add-AppxPackage -Path $old
+    $manifestText = Get-Content -Raw -LiteralPath (Join-Path (Get-Pkg).InstallLocation 'AppxManifest.xml')
+    $virtOff = ($manifestText -match 'FileSystemWriteVirtualization>\s*disabled\s*<')
+    $unvirt = ($manifestText -match 'unvirtualizedResources')
+    $noCacheFresh = Test-NoLocalCacheCopy
+    [void](Remove-PkgKeepData)
+    $legacyText = $freshText.Replace($marker, $legacyMarker)
+    [System.IO.File]::WriteAllText($rowsPath, $legacyText, $Utf8)
+    $legacySha = Get-Sha256Ref -Path $rowsPath
+    Add-AppxPackage -Path $old
+    $w = Start-AppAndFindWindow -TimeoutSec 40
+    $root = Get-AppRoot -ProcessId $w.pid
+    $vals = Read-RowValues -Root $root
+    $shown = ($vals -contains $legacyMarker)
+    $edit = 'edit-after-legacy-' + $script:RunId
+    [void](Write-MarkerRow -Root $root -Marker $edit)
+    $landed = $null
+    $deadline = (Get-Date).AddSeconds(20)
+    while ((Get-Date) -lt $deadline -and -not $landed) {
+        $t = Get-RowsText -Path $rowsPath
+        if ($t -and $t.Contains($edit)) { $landed = $true }
+        Start-Sleep -Milliseconds 500
+    }
+    [void](Stop-AppGracefully)
+    $noCacheLegacy = Test-NoLocalCacheCopy
+    $observed = @{
+        fresh_file_existed_at_physical_path = [string]$freshExists
+        manifest_filesystem_write_virtualization_disabled = [string]$virtOff
+        manifest_unvirtualized_resources = [string]$unvirt
+        no_localcache_copy_fresh = [string]$noCacheFresh
+        legacy_file_sha = $legacySha; legacy_marker_shown_by_app = [string]$shown
+        edit_landed_at_physical_path = [string]($null -ne $landed)
+        no_localcache_copy_after_legacy = [string]$noCacheLegacy
+        rows_sha_final = (Get-RowsSha)
+    }
+    $pass = $freshExists -and $virtOff -and $unvirt -and $noCacheFresh -and $shown -and ($null -ne $landed) -and $noCacheLegacy
+    @{ pass = $pass; reason = 'physical-path, virtualization manifest, or legacy-read check failed'; observed = $observed; artifacts = @{ rows_json_legacy = $legacySha }; exit = $null }
+}
+
+# W12: real App Installer route over a local https feed served INSIDE the guest (loopback; the .wsb has networking disabled,
+# loopback is used on purpose and W12 records whether it works). Feed files come from RightKit's generator on the host side
+# (scripts\make-local-appinstaller.mjs), staged as packages\feed\. Steps: install via the feed (0.1.0.0), swap the feed for
+# 0.1.1.0, relaunch (OnLaunch, HoursBetweenUpdateChecks=0), expect 0.1.1.0 to register with rows.json unchanged. Negative:
+# a feed whose MainPackage Publisher differs from the package must fail to install.
+Invoke-Check -CheckId 'W12-appinstaller-update' -CheckName 'App Installer feed install + OnLaunch update; mismatched feed rejected' -Body {
+    $m = $script:Manifest
+    $feedSrc = Join-Path $PackagesDir 'feed'
+    $feed = 'C:\feed'
+    [void](Stop-AppGracefully)
+    [void](Remove-PkgKeepData)
+    if (Test-Path -LiteralPath $feed) { Remove-Item -LiteralPath $feed -Recurse -Force }
+    New-Item -ItemType Directory -Force -Path $feed | Out-Null
+    Get-ChildItem -LiteralPath $feedSrc -Filter '*.msix' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $feed -Force }
+    Copy-Item -LiteralPath (Join-Path $feedSrc 'SliceApp.0.appinstaller') -Destination (Join-Path $feed 'SliceApp.appinstaller') -Force
+    $server = Start-Process -FilePath 'powershell.exe' -WindowStyle Hidden -PassThru -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $script:SliceDir 'scripts\serve-local-feed.ps1'), '-Dir', $feed, '-DisposableGuest')
+    $url = 'https://localhost:8443/sliceapp/SliceApp.appinstaller'
+    try {
+        $up = $false
+        $deadline = (Get-Date).AddSeconds(40)
+        while ((Get-Date) -lt $deadline -and -not $up) {
+            try { $up = ((Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 5).StatusCode -eq 200) } catch { Start-Sleep -Seconds 2 }
+        }
+        if (-not $up) { throw 'local feed did not come up (loopback https unreachable in the guest)' }
+        # Negative first (clean slate): publisher mismatch.
+        $bad = (Get-Content -Raw -LiteralPath (Join-Path $feed 'SliceApp.appinstaller')) -replace 'Publisher="CN=Damned Ventures LLC', 'Publisher="CN=Not The Signer'
+        [System.IO.File]::WriteAllText((Join-Path $feed 'SliceApp.appinstaller'), $bad, $Utf8)
+        $negRejected = $false; $negMsg = ''
+        try { Add-AppxPackage -AppInstallerFile $url } catch { $negRejected = $true; $negMsg = $_.Exception.Message }
+        $negNotInstalled = (-not (Get-Pkg))
+        # Positive: the 0.1.0.0 feed.
+        Copy-Item -LiteralPath (Join-Path $feedSrc 'SliceApp.0.appinstaller') -Destination (Join-Path $feed 'SliceApp.appinstaller') -Force
+        $installErr = ''
+        try { Add-AppxPackage -AppInstallerFile $url } catch { $installErr = $_.Exception.Message }
+        $v0 = Get-VersionString
+        $w = Start-AppAndFindWindow -TimeoutSec 40
+        $shaBefore = Get-RowsSha
+        [void](Stop-AppGracefully)
+        # Publish the update and relaunch (OnLaunch check); the update may apply on this or the next launch.
+        Copy-Item -LiteralPath (Join-Path $feedSrc 'SliceApp.1.appinstaller') -Destination (Join-Path $feed 'SliceApp.appinstaller') -Force
+        $v1 = Get-VersionString
+        for ($i = 0; $i -lt 3 -and $v1 -ne [string]$m.new.version; $i++) {
+            $w = Start-AppAndFindWindow -TimeoutSec 40
+            $v1 = Wait-PkgVersion -Version ([string]$m.new.version) -TimeoutSec 45
+            [void](Stop-AppGracefully)
+            if ($v1 -ne [string]$m.new.version) { Start-Sleep -Seconds 5; $v1 = Get-VersionString }
+        }
+        $shaAfter = Get-RowsSha
+        $observed = @{
+            feed_url = $url; negative_publisher_mismatch_rejected = [string]$negRejected; negative_error = $negMsg
+            negative_left_nothing_installed = [string]$negNotInstalled; install_error = $installErr
+            version_after_feed_install = $v0; version_after_update_feed = $v1; rows_sha_before = $shaBefore; rows_sha_after = $shaAfter
+        }
+        $pass = $negRejected -and $negNotInstalled -and ($installErr -eq '') -and ($v0 -eq [string]$m.old.version) -and ($v1 -eq [string]$m.new.version) -and ($shaBefore -eq $shaAfter)
+        @{ pass = $pass; reason = 'feed install/update did not reach the new version, data changed, or the mismatched feed was accepted'; observed = $observed; artifacts = @{}; exit = $null }
+    }
+    finally {
+        if ($server -and -not $server.HasExited) { Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue }
+    }
+}
+
 
 # ---------------------------------------------------------------- run summary
 
@@ -510,3 +775,7 @@ $summary = [ordered]@{
 }
 [System.IO.File]::WriteAllText((Join-Path $ReceiptsDir 'guest-run.json'), ($summary | ConvertTo-Json -Depth 8), $Utf8)
 Write-Output ('run ' + $script:RunId + ': ' + $summary.status + $(if ($reason) { ' (' + $reason + ')' } else { '' }))
+# No `wsb` CLI on this host (Windows Sandbox started through WindowsSandbox.exe has no id to stop), so the guest ends itself
+# once the receipts are flushed to the mapped folder; the host verdict only needs the files.
+Start-Sleep -Seconds 10
+Stop-Computer -Force

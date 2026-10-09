@@ -29,7 +29,15 @@ param(
     [Parameter(Mandatory = $true)][string]$NewMsix,
     [string]$RunId = (Get-Date -Format 'yyyyMMddTHHmmss'),
     [string]$OutRoot = (Join-Path $PSScriptRoot 'runs'),
-    [int]$TimeoutMinutes = 45,
+    [int]$TimeoutMinutes = 75,
+    # R5: SliceApp tree that holds scripts\ and Windows\renderer-pin.json (default: examples\SliceApp of this checkout).
+    [string]$SliceAppDir = (Join-Path $PSScriptRoot '..\..\..\examples\SliceApp'),
+    # R5: directory with SliceApp.0.appinstaller and SliceApp.1.appinstaller (scripts\make-local-appinstaller.mjs output for
+    # the old and new MSIX, run on the Mac with the pinned 0.2.142 RightKit generator; see examples\SliceApp\R5-RUNBOOK.md).
+    [Parameter(Mandatory = $true)][string]$FeedDir,
+    # R5: the sealed hashes the packages must equal (msix-seal-*.json msix.sha256); the run refuses any other bytes.
+    [Parameter(Mandatory = $true)][string]$ExpectOldSha256,
+    [Parameter(Mandatory = $true)][string]$ExpectNewSha256,
     [switch]$DryRun
 )
 
@@ -38,12 +46,13 @@ $ErrorActionPreference = 'Stop'
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 $HostHarnessName = 'run-sandbox.ps1'
 
-# Must match $ExpectedChecks in guest\sandbox-run.ps1.
+# Must match $ExpectedChecks in guest\sandbox-run.ps1 (declared order = run.py PACKAGE_CHECKS; the guest executes W13 after W03 and W14 after W08).
 $ExpectedChecks = @(
     'W00-environment', 'W01-artifacts-bound', 'W02-signer-trust', 'W03-install-old',
     'W04-launch-offline-old', 'W05-write-data', 'W06-upgrade-new', 'W07-corrupt-update-rejected',
     'W08-interrupted-update', 'W09-rollback-readable', 'W10-uninstall-keeps-data',
-    'W11-legacy-data-physical-path'
+    'W11-legacy-data-physical-path', 'W12-appinstaller-update', 'W13-renderer-layout-installed',
+    'W14-deferred-update-in-use'
 )
 
 $GuestDir = Join-Path $PSScriptRoot 'guest'
@@ -96,6 +105,17 @@ foreach ($p in @($OldMsix, $NewMsix, $TemplatePath)) {
 $OldMsix = (Resolve-Path -LiteralPath $OldMsix).Path
 $NewMsix = (Resolve-Path -LiteralPath $NewMsix).Path
 
+$SliceAppDir = (Resolve-Path -LiteralPath $SliceAppDir).Path
+$FeedDir = (Resolve-Path -LiteralPath $FeedDir).Path
+foreach ($p in @((Join-Path $FeedDir 'SliceApp.0.appinstaller'), (Join-Path $FeedDir 'SliceApp.1.appinstaller'),
+        (Join-Path $SliceAppDir 'scripts\interrupt-windows-install.ps1'), (Join-Path $SliceAppDir 'scripts\verify-package-layout.ps1'),
+        (Join-Path $SliceAppDir 'scripts\serve-local-feed.ps1'), (Join-Path $SliceAppDir 'Windows\renderer-pin.json'))) {
+    if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { throw "not found: $p" }
+}
+foreach ($pair in @(@($OldMsix, $ExpectOldSha256, 'old'), @($NewMsix, $ExpectNewSha256, 'new'))) {
+    $h = (Get-FileHash -Algorithm SHA256 -LiteralPath $pair[0]).Hash
+    if ($h -ne $pair[1].ToUpperInvariant()) { throw ("{0} MSIX sha256 {1} != expected {2}" -f $pair[2], $h, $pair[1]) }
+}
 $oldId = Read-MsixIdentity -Path $OldMsix
 $newId = Read-MsixIdentity -Path $NewMsix
 if ($oldId.identity_name -ne $newId.identity_name) { throw "identity differs: '$($oldId.identity_name)' vs '$($newId.identity_name)'" }
@@ -114,7 +134,22 @@ Copy-Item -LiteralPath $OldMsix -Destination (Join-Path $PkgStage 'old.msix') -F
 Copy-Item -LiteralPath $NewMsix -Destination (Join-Path $PkgStage 'new.msix') -Force
 # Public certificate only. The sandbox has no trust; the guest imports this .cer into TrustedPeople (W02).
 Export-Certificate -Cert $oldSig.SignerCertificate -FilePath (Join-Path $PkgStage 'signer.cer') -Type CERT | Out-Null
-Copy-Item -Path (Join-Path $GuestDir '*') -Destination $HarnessStage -Force
+Copy-Item -Path (Join-Path $GuestDir '*') -Destination $HarnessStage -Force -Recurse
+# Guest-side copies of the SliceApp scripts and the renderer pin (read-only mapped; hashes go into the manifest).
+$SliceStageScripts = Join-Path $HarnessStage 'SliceApp\scripts'
+$SliceStageWindows = Join-Path $HarnessStage 'SliceApp\Windows'
+New-Item -ItemType Directory -Force -Path $SliceStageScripts, $SliceStageWindows | Out-Null
+foreach ($f in 'interrupt-windows-install.ps1', 'verify-package-layout.ps1', 'serve-local-feed.ps1') {
+    Copy-Item -LiteralPath (Join-Path $SliceAppDir ('scripts\' + $f)) -Destination $SliceStageScripts -Force
+}
+Copy-Item -LiteralPath (Join-Path $SliceAppDir 'Windows\renderer-pin.json') -Destination $SliceStageWindows -Force
+# App Installer feed material: original-named MSIX (the feed names them) plus the two generated feed files.
+$FeedStage = Join-Path $PkgStage 'feed'
+New-Item -ItemType Directory -Force -Path $FeedStage | Out-Null
+Copy-Item -LiteralPath $OldMsix -Destination (Join-Path $FeedStage (Split-Path -Leaf $OldMsix)) -Force
+Copy-Item -LiteralPath $NewMsix -Destination (Join-Path $FeedStage (Split-Path -Leaf $NewMsix)) -Force
+Copy-Item -LiteralPath (Join-Path $FeedDir 'SliceApp.0.appinstaller') -Destination $FeedStage -Force
+Copy-Item -LiteralPath (Join-Path $FeedDir 'SliceApp.1.appinstaller') -Destination $FeedStage -Force
 
 $oldSha = Get-Sha256Ref -Path (Join-Path $PkgStage 'old.msix')
 $newSha = Get-Sha256Ref -Path (Join-Path $PkgStage 'new.msix')
@@ -133,6 +168,14 @@ $manifest = [ordered]@{
         thumbprint = $oldSig.SignerCertificate.Thumbprint
         subject = [string]$oldSig.SignerCertificate.Subject
     }
+    # Every extra file the guest relies on, hash-bound (W01 re-hashes them in the guest).
+    extra = @(
+        (Get-ChildItem -Path $FeedStage -File | ForEach-Object { [ordered]@{ path = ('feed\' + $_.Name); sha256 = (Get-Sha256Ref -Path $_.FullName) } })
+    )
+    harness_files = @(
+        (Get-ChildItem -Path (Join-Path $HarnessStage 'SliceApp') -File -Recurse | ForEach-Object {
+            [ordered]@{ path = $_.FullName.Substring($HarnessStage.Length + 1); sha256 = (Get-Sha256Ref -Path $_.FullName) } })
+    )
 }
 Write-Utf8 -Path (Join-Path $PkgStage 'manifest.json') -Text ($manifest | ConvertTo-Json -Depth 6)
 

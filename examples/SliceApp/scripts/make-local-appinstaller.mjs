@@ -9,7 +9,7 @@
 // from right-release.config.mjs through RightKit's own generateAppInstaller (read-only import), so the feed matches
 // the sealed package identity. Local feed uses https because the generator (and the config validator) require it.
 // It never uploads anything.
-import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -19,7 +19,10 @@ const one = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] :
 const msix = one("--msix"), version = one("--version"), out = one("--out");
 if (!msix || !version || !out) { console.error("usage: make-local-appinstaller.mjs --msix <file> --version <a.b.c.d> --out <dir> [--base <https url>]"); process.exit(2); }
 const base = one("--base", "https://localhost:8443/sliceapp").replace(/\/$/, "");
-const rightkit = process.env.RIGHTKIT_RELEASE_DIR ?? path.resolve(here, "../../../../tools/rightkit/packages/release");
+// RightKit package: $RIGHTKIT_RELEASE_DIR, else the app's own pinned install (node_modules/@rightkit/release, the 0.2.142
+// package the sealed build used), else the monorepo tools tree.
+const pinned = path.resolve(here, "../node_modules/@rightkit/release");
+const rightkit = process.env.RIGHTKIT_RELEASE_DIR ?? (existsSync(path.join(pinned, "msix-appinstaller.mjs")) ? pinned : path.resolve(here, "../../../../tools/rightkit/packages/release"));
 const { generateAppInstaller } = await import(pathToFileURL(path.join(rightkit, "msix-appinstaller.mjs")).href);
 const config = (await import(pathToFileURL(path.join(here, "..", "right-release.config.mjs")).href)).default;
 const win = config.targets.win.msix;

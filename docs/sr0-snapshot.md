@@ -2,7 +2,7 @@
 
 Written 9 October 2026 against repository HEAD `6263841` (lane R0 of `docs/sr0-close-plan.md` v2). Mac-side text work plus read-only inspection (`win` for hashes and file listings, no GUI, nothing built or run). Every row cites a path, commit, or a command run for this document; anything not checked is marked UNVERIFIED.
 
-**Status: the tuple is NOT yet complete.** Source commits, the renderer DLL, BridgeSmoke rev06c and FreshOnBridge 3593209A are pinned. Fixture drivers and SliceApp are TO-BUILD, so no end-to-end receipt can yet bind to this tuple. The final pin is the commit that lands those builds; until then the tuple names a candidate base (`6263841`).
+**Status (updated 9 October 2026 evening, HEAD `c31f1b5`): the FINAL tuple is named but NOT yet fully receipted.** Renderer DLL `4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F` (source `5e36535`) is the tuple renderer; the fixture host is FreshOnBridge `AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F` (matrix-abi06g **PENDING**, run not committed). Receipts so far bind to the earlier 0.6 renderer `777F14C4…` (BridgeSmoke rev06c 40/40 and 41/41, matrix-abi06c 316/320 + 12/12, R2 MSIX) or to intermediate fixtures (see "Final tuple" below); those are history until rerun on the final renderer, except where stated. R9 native-interaction final results ARE bound to the final renderer (fixture `30FBE599`). Source/header pins below keep the original text; the renderer, fixture and package rows are superseded by the "Final tuple" section.
 
 Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit, bridge/header commit, renderer DLL sha256, app/fixture binary sha256. Existing 0.5 evidence stays as history.
 
@@ -17,7 +17,7 @@ Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit
 | Fresh runtime | `probes/sr0-s/fresh-runtime/` | last changed `14106d6` (SR1 inventory controls, 62/62 headless on macOS and Windows; earlier 46/46 at `000679e`) | pinned. matrix-20b ran an older runtime: the Windows staging copy was written 11:16 (`D:\Claude\sr0s-bridge`), `14106d6` is dated 11:45, so the 0.5 matrix did not run `14106d6`. Exact runtime commit of matrix-20b UNVERIFIED (not recorded in `out/matrix-20b`) |
 | Windows fresh-on-bridge host | `probes/sr0-s/fresh-on-bridge/` | last matrix driver edits in `076a56f` (matrix driver hardening) | pinned |
 | BridgeSmoke | `examples/BridgeSmoke/` | last changed `4df7e67` | pinned |
-| SliceApp | `examples/SliceApp/` (right-release config, `package.json` pins `@rightkit/release` 0.2.138) | `2051a6a` adopted bridge AX fixes; `076a56f` packaging prep | pinned; not packaged |
+| SliceApp | `examples/SliceApp/` (right-release config, `package.json` pins `@rightkit/release` 0.2.142, `ea879dc`) | `2051a6a` adopted bridge AX fixes; `076a56f` packaging prep; `b476c85` R2 MSIX; `1aee425`/`ea879dc` R3 DMG | packaged on renderer `777F14C4` (R2) and built on 0.2.142 (R3); final-renderer MSIX rebuild PENDING (`examples/SliceApp/R5-RUNBOOK.md`) |
 | Mac fixtures / comparator / recorder | `probes/sr0-o/{fixtures,comparator,f1-cross,uia-recorder}` | fixtures last changed `858faa7` (SR1 G2/G6; SR0 F-configs unchanged since `4ff202f` sweep per `docs/qualification.md`); signed `F1MacRecord.app` built in `7a91608` | pinned; recorder has no AX grant yet (R6) |
 | Accepted Mac baselines | `conformance/accepted/` (16 configs) | `799047d`, approver note in `docs/qualification.md` | pinned; canonical digests to be recomputed after the F4 per-node-order fix (plan F4) |
 | Contract | `conformance/sr0-slice/CONTRACT.md` | DRAFT v0.1 (freeze proposal `docs/sr0-freeze-slice-contract-v1.md`) | not frozen |
@@ -26,7 +26,7 @@ Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit
 
 | Artifact | Path | sha256 | Built from | State |
 |---|---|---|---|---|
-| **Renderer DLL, ABI 0.6 (rev06c)** | `D:\Claude\sr0b-abi06c\bin\swiftright_render.dll` (11,779,072 bytes, written 2026-10-09 14:42:21; same bytes in `sr0b-abi06c\scratch\release`) | `777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441` | commit `862997c` (images counted in `live_nodes` until freed; header change is comments only). Hash computed with `win Get-FileHash`. That the file equals a rebuild of `862997c` is UNVERIFIED (file predates the commit at 15:02; no RightKit receipt id recorded) | pinned |
+| Renderer DLL, ABI 0.6 (rev06c) | `D:\Claude\sr0b-abi06c\bin\swiftright_render.dll` (11,779,072 bytes, written 2026-10-09 14:42:21; same bytes in `sr0b-abi06c\scratch\release`) | `777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441` | commit `862997c` (images counted in `live_nodes` until freed; header change is comments only). Hash computed with `win Get-FileHash`. That the file equals a rebuild of `862997c` is UNVERIFIED (file predates the commit at 15:02; no RightKit receipt id recorded) | SUPERSEDED by `4FB068F0…` for the final tuple; history for BridgeSmoke rev06c, matrix-abi06c and the R2 MSIX |
 | Renderer DLL, ABI 0.6 (first build) | `D:\Claude\sr1-abi06\payload\bin\swiftright_render.dll` (11,777,536 bytes, 2026-10-09 12:06:15) | `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30` | `4df7e67`; also kept as `swiftright_render.dll.c80b9517` in `sr0s-bridge06b` | SUPERSEDED by 777F14C4… (history only) |
 | BridgeSmoke.exe (0.6, rev06c) | `D:\Claude\sr0b-abi06c\scratch\release\BridgeSmoke.exe` (999,424 bytes, 2026-10-09 14:56:17) | `517600DC635D38A4581FE34347C13A4D57557C5080246D77A73BEA28DFD25B12` | bridge package at `862997c` with renderer `777F14C4…` | RUN: smoke 40/40 (`examples/BridgeSmoke/result-smoke-rev06c.txt`), timeout mode 41/41 (`result-smoke-timeout06c.txt`), Dell desktop |
 | BridgeSmoke.exe (0.6 first build, superseded) | `D:\Claude\sr1-abi06\scratch\release\BridgeSmoke.exe` (955,904 bytes, 12:20:12) | `1B031BD8B8ABA9DF897B41D53AEEE05FFB14AEB575641CB93D974A1067E48E83` | bridge as of `4df7e67`, before `fd2e0ad` | SUPERSEDED, never run |
@@ -38,6 +38,19 @@ Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit
 | SliceApp .app + DMG (old + new), signed, notarized, stapled | R3 | TO-BUILD | | TO-BUILD |
 | Mac FixtureApp | `probes/sr0-o/fixtures` (SwiftPM) | `6C972B766718ED0FA2D2E84D047C7F17600321DB2231DED0A4ADA2825C2D83A4` from `docs/qualification.md` (committed tree `bb4258a2549f`, 2026-10-09 06:05 run). Rebuild required after the F4 canonical-form change | | hash recorded only for history; TO-BUILD on the tuple |
 | Mac recorder `F1MacRecord.app` | `probes/sr0-o/f1-cross` | not hashed (UNVERIFIED location of the signed build) | `7a91608` | needs Adrian's AX grant (R6) |
+
+## 2b. Final tuple (9 October 2026 evening; supersedes the 0.6 rows above)
+
+| Artifact | Path | sha256 | Built from | State |
+|---|---|---|---|---|
+| **Renderer DLL, ABI 0.6 (final)** | `D:\Claude\sr0s-bridge06f\payload\bin\swiftright_render.dll` (11,789,312 bytes, 2026-10-09 18:06:19; identical copies in `scratch\out\Products\Release-windows-x86_64` and `scratch\renderer-src`) | `4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F` | `5e36535` (18:07:31: IME composition/candidate window re-placement on layout move, on top of `15855e1` IME fixes and `a9db7dc` candidate geometry logging). That the file equals a clean rebuild of `5e36535` is UNVERIFIED (file written one minute before the commit; no RightKit receipt id) | pinned; Authenticode digest of the unsigned DLL `B77F7A5EDBE5AF03A375A59561796E9A12CA76078DB6D660CE4C47DCF2B75F49` (`examples/SliceApp/Windows/renderer-pin.json`; import closure unchanged, `imm32.dll` already declared) |
+| FreshOnBridge fixture host, matrix-abi06f / R9 final | `D:\Claude\sr0s-bridge06f\...` | `30FBE599B697F731CFB652586B81B7B9561BDA969990D82DCD0681532630D239` | working tree at the time (`preflight-final06f.txt` ARTIFACT_OK with the final DLL) | RUN: R9 final (`050d28e`, `277b92d`); matrix-abi06f (`c31f1b5`): F8 0/20 fixture defect, other configs 20/20 so far. Fixture NOT final |
+| **FreshOnBridge fixture host (final)** | rebuilt after `c31f1b5` (ax-button-focus logging) | `AFE131A1B75C70B0939CD2077C5A5E3E4788FA198E8739FC80EC48F0E8617B0F` | working tree (commit of the rebuild PENDING) | matrix-abi06g **PENDING** (untracked `out/matrix-abi06g/`, not committed) |
+| Intermediate fixtures | | `3593209A…` (abi06c matrix, R9 first pass), `083752D2…` (Narrator pass after `0993eb2`) | | history |
+| BridgeSmoke.exe | still rev06c `517600DC…` (row above) | `517600DC635D38A4581FE34347C13A4D57557C5080246D77A73BEA28DFD25B12` | bridge `862997c` with renderer `777F14C4…` | smoke 40/40 and timeout 41/41 bind to the OLD renderer; rerun on `4FB068F0…` PENDING |
+| SliceApp MSIX 0.1.0.0 / 0.1.1.0 (R2) | `/Volumes/D/sr0-artifacts/win/r2-msix/` | `A2D6BC08A9AA573F46D79240AACF99C7D04DF9131A2B4D4A9AE77ECF5A63119E` / `BB2031CAC1A53B555CD344B1F69E1DAC2D7693E9B286D1DC0627175DED86FD23` | SliceApp `d70d36b`, renderer `777F14C4…`, `@rightkit/release` 0.2.139, signed (CN=Damned Ventures LLC, thumb `70C72673…`) | built and signed; NOT on the final renderer; rebuild PENDING (`R5-RUNBOOK.md` section 3) |
+| SliceApp DMG 0.1.0 / 0.1.1 (R3) | `/Volumes/D/sr0-artifacts/mac/` (`0.1.0`, `0.1.1`, `0.1.0-rk0140`, `0.1.0-rk0142`) | 0.2.139 DMGs `81742a7c…64b661` / `c75155b4…071a8a` (`RESULT-R7.md`); 0.2.142 0.1.0 DMG `363c8768…0d5ea` | SliceApp clones, Developer ID signed, notarized, `.app` stapled before DMG since 0.2.140 | built; Mac packages carry no Windows renderer, no tuple change |
+| Windows Sandbox harness (R5) | `qualification/clean-machine/windows/`, `examples/SliceApp/R5-RUNBOOK.md` | n/a | prepared, parse-checked only | run PENDING |
 
 ### Superseded 0.5 binaries (history only, not tuple members)
 
@@ -59,7 +72,7 @@ Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit
 | Windows build tools | MSVC / `mt.exe` / `dumpbin` via `scripts/build-windows.ps1`; versions not recorded in the repository | UNVERIFIED |
 | GPU / driver, fonts, locale, DPI, refresh | recorded per run in fixture metadata, not at tuple level | UNVERIFIED for 0.6 runs (none exist) |
 | Architectures in scope | Windows x64 and macOS arm64 only | `docs/architecture.md` §9 scope revision 1 |
-| Packaging pin | `@rightkit/release` 0.2.138, publish pending (plan R4) | `examples/SliceApp/package.json`, `PACKAGING.md` |
+| Packaging pin | `@rightkit/release` 0.2.142 (published; R4 done) | `examples/SliceApp/package.json` (`ea879dc`), `PACKAGING.md` |
 
 ## 4. What must be rerun on this tuple
 
@@ -81,3 +94,20 @@ Source of the list: which receipts were produced on ABI 0.5 (or earlier-ABI prob
 | 12 | Packaging (P), clean-machine checks, automation (A) | none | New on final binaries | R2, R3, R5, R7, R8 |
 
 Not part of the SR0 tuple: SR1 gallery (`probes/sr1-win-backend`, build only), SR1 Mac fixtures G1-G8 (`c9347a0`), SR3 engine client (`e0034fc`, `b56704e`).
+
+## 5. Rerun status after the 9 October evening lanes
+
+State of the section 4 list against commits through `c31f1b5`; PENDING means no committed result.
+
+| # (section 4) | State |
+|---|---|
+| 1 BridgeSmoke + timeout mode | DONE on renderer `777F14C4` (`862997c`: 40/40, 41/41); rerun on `4FB068F0…` PENDING |
+| 2 Windows matrix 20 runs incl. F3 3 s | DONE on `777F14C4`/fixture `3593209A` (`69ad73b`, `73fd9a6`: 316/320, reruns 12/12); on the final renderer matrix-abi06f has F8 0/20 (fixture defect) and matrix-abi06g with fixture `AFE131A1…` is PENDING |
+| 4, 10 Mac-Windows compare F1-F9 | PENDING (R6, needs Adrian: signed recorder on the Mac, about 10 min) |
+| 5 Mac oracle digests, F4 per-node order | PENDING (R8, R6) |
+| 6 Text geometry on 0.6 | PENDING (no committed receipt) |
+| 7 Real modal paths on 0.6 | PENDING (no committed receipt) |
+| 8 §11 workload | PENDING (R10: probe built, no result) |
+| 9 Headless runtime tests on the pinned commit | PENDING (no committed record) |
+| 11 Real IME, Narrator | DONE on the final renderer (`050d28e`, `277b92d`): IME F7 20/20, F7live 20/20, F8 18/19 (known limitation, SR1 TSF), Narrator 8/8 automatable; Narrator speech (audio) PENDING Adrian about 2 min |
+| 12 Packaging and clean machines | R2 MSIX and R3 DMG built/signed (old pair; MSIX rebuild on the final renderer PENDING); R7 Mac VM results committed (`c7ddb7d`, `94b81ac`, interrupted install on 0.2.142); R5 Windows Sandbox PENDING; R8 automation PENDING |
