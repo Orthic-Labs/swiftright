@@ -17,6 +17,7 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `Sources/SliceApp/Entry/` | macOS SwiftUI `App` (one `Window`) and the Windows `@main` bootstrap |
 | `Sources/SliceApp/Windows/` | Windows bootstrap (renderer load, typed startup errors) and the bridge backend |
 | `Windows/SliceApp.manifest` | ComCtl v6 + PerMonitorV2 DPI, embedded by the linker |
+| `Windows/renderer-pin.json` | Checksum pin for the dynamically loaded renderer (ABI 0.6, sha256, closure). Staging fails closed on any mismatch |
 | `Windows/Assets/` | MSIX logos (placeholders, solid colour) |
 | `Mac/SliceApp.entitlements` | Empty entitlements record (none requested); applied to the app by `swift-package mac-app --sign` |
 | `Mac/dmg/background.tiff` | DMG background, PLACEHOLDER (flat light grey, 660x400 + 1320x800 multi-rep TIFF); replace with branded art before any publication |
@@ -24,11 +25,27 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `right-release.config.mjs` | Release contract: `projectType: "swiftpm"`, mac branded DMG (signed, notarized, stapled), Windows MSIX, App Installer |
 | `package.json` | Pins `@rightkit/release` 0.2.138 (exact) for `pnpm exec right-release` |
 | `scripts/build-windows.ps1` | Windows build, `mt.exe` manifest check, `dumpbin` closure, payload copy |
+| `scripts/verify-package-layout.ps1` | Renderer packaging check: Stage mode (pre-pack) and Installed mode (scrubbed-environment load); no app launch |
+| `scripts/clone-build-mac.sh`, `scripts/clone-build-win.ps1` | Build from an independent clean clone at an exact commit (see "Clean-clone builds") |
+| `scripts/swift-only-proof.mjs` | Swift-only-edit proof: renderer bytes identical, no Rust compile |
+| `scripts/make-local-appinstaller.mjs`, `scripts/serve-local-feed.ps1` | Local App Installer feed for the Sandbox (F8) |
+| `scripts/interrupt-windows-install.ps1`, `scripts/interrupt-mac-install.sh` | Real interrupted-update experiments (F6) |
 | `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release`. The mac one builds the app, signs it with its entitlements, and builds the DMG |
 
 Data: rows persist to `rows.json` (schema 1, atomic write):
 - macOS: `~/Library/Application Support/SliceApp/rows.json`
-- Windows: `%LOCALAPPDATA%\SliceApp\rows.json` (outside the MSIX install folder)
+- Windows: `%LOCALAPPDATA%\SliceApp\rows.json`. This is the unpackaged-looking path the app writes. Under MSIX it is
+  inside AppData, which MSIX virtualizes by default: on Windows newer than 1809 a NEWLY CREATED file under AppData is
+  written to a private per-user, per-app store and removed on uninstall (Microsoft Learn, "Flexible virtualization",
+  "Default MSIX behavior", AppData row). So the config sets `virtualization.fileSystemWrite = "disabled"` (manifest
+  `desktop6:FileSystemWriteVirtualization=disabled` plus the restricted capability `unvirtualizedResources`, which RightKit
+  adds): per the same doc, writes then go to the real AppData path, are visible outside the package, and survive uninstall.
+  Alternative considered and not taken: moving the file outside AppData (the doc says writes outside AppData are not
+  virtualized). It needs a Windows-only Swift change and a migration; the manifest setting needs neither. Trade-offs:
+  restricted capability (fine for App Installer/sideload, needs Store approval otherwise) and no fine-grained control
+  (Windows 11 `virtualization:ExcludedDirectories` would scope it to `%LOCALAPPDATA%\SliceApp` but RightKit's manifest
+  generator does not emit it; RightKit follow-up, not edited). The earlier text here claimed the path was "outside both
+  virtualized areas"; that was wrong. Not yet verified on a machine: see Windows check 8.
 
 ## Dev build
 
@@ -93,32 +110,122 @@ on the DMG. No zip is produced.
 Required outputs: `dist/win/SliceApp_0.1.0.0_x64.msix`, `dist/win/SliceApp.appinstaller`, `dist/mac/SliceApp_0.1.0_arm64.dmg`,
 the signing receipts and `msix-seal.json` under the RightKit state root.
 
+## Renderer packaging (F1)
+
+`swiftright_render.dll` is loaded dynamically (`Bridge.load`: path argument, else `$SWIFTRIGHT_RENDER_DLL`, else the bare name
+`swiftright_render.dll`), so it is absent from the exe's import table and every import-closure walk (the 18-DLL inventory,
+`windows-stage`, `verifyPayloadInventory`) is blind to it. It ships by explicit declaration:
+
+1. `Windows/renderer-pin.json` pins ABI 0.6 sha256 `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30` and records the
+   `dumpbin /dependents` closure (2026-10-09): `VCRUNTIME140.dll` (already in the payload inventory) plus Windows system DLLs and
+   api-sets. `icuuc.dll` (OS ICU, System32) is not in RightKit's built-in system list, so it is declared in
+   `swift-package.json` `windows.systemDlls` and in the config's `runtime.systemDlls`.
+2. `scripts/prepackage-windows.ps1` checks the source DLL against the pin BEFORE building, copies it to `.build/renderer`, re-checks the
+   copy, runs `windows-stage` (`swift-package.json` `windows.include` stages it and walks its imports), then runs
+   `verify-package-layout.ps1 -Mode Stage`. Any mismatch or missing file throws; the release stops before packing.
+3. `right-release.config.mjs` lists `swiftright_render.dll` in `runtime.dlls`, so `verifyPayloadInventory` fails closed if it is
+   missing from the payload at pack time. The MSIX seal records the payload hashes (`msix-seal.json`).
+4. Installed check (R5, no app launch): `verify-package-layout.ps1 -Mode Installed` asserts the DLL sits beside `SliceApp.exe` with the pinned
+   hash and that, in a child process with `SWIFTRIGHT_RENDER_DLL` unset and PATH reduced to System32/Windows, the renderer plus its
+   import closure load from the package (under a ComCtl v6 activation context, which the renderer requires, see Loader.swift error 127).
+   The exe-side half (its own `Bridge.load()` with no path, resolved beside the exe) runs with the packaged BridgeSmoke step under the same
+   scrubbed environment on the Sandbox desktop.
+
+Static evidence so far (2026-10-09, Dell): the pinned DLL hashes to the pin; Stage and Installed modes pass on a synthetic layout
+(DLL + `VCRUNTIME140.dll` + dummy exe) with a bogus `SWIFTRIGHT_RENDER_DLL` set and PATH scrubbed; a one-byte tamper fails Stage mode;
+`Loader.swift` default name is `swiftright_render.dll`, equal to the pin. No package was built.
+
+### Swift-only-edit proof
+
+Build old (0.1.0) and new (0.1.1) from independent clean clones whose commits differ only in Swift sources and the version fields, save each
+build transcript, then:
+
+```sh
+node scripts/swift-only-proof.mjs --old-seal <old msix-seal.json> --new-seal <new msix-seal.json> \
+  --old-commit <sha0.1.0> --new-commit <sha0.1.1> --repo <clone> --build-log <old.log> --build-log <new.log>
+```
+
+It passes only if the renderer hash is the pin in both seals, `SliceApp.exe` is the only payload file that changed, `git diff` touches no
+Rust input (`render/**`, `*.rs`, `Cargo.*`, `rust-toolchain*`), and neither transcript shows a cargo/rustc/`Compiling` line. The mac app
+has no Rust and is outside this proof.
+
+## Versions for upgrade and rollback
+
+- Old: `0.1.0` / MSIX `0.1.0.0`, as committed. New: `0.1.1` / `0.1.1.0`, one commit on top that bumps `VERSION`, `MSIX_VERSION` (config),
+  `version`/`msixVersion` (swift-package.json), `version` (package.json), the DMG/`.msix` names in `prepackage-mac.sh`, and makes one
+  Swift-only edit that does not change the row schema. Build each from its own clean clone (below).
+- Data compatibility: schema 1 is the contract. The new build must write rows the old build reads (rollback): check by writing a row with
+  0.1.1 and installing 0.1.0 over it (Windows uses remove-then-install, data kept; Mac `install-app` takes the old DMG).
+
+## Clean-clone builds (independent clone, not a worktree)
+
+RightKit requires a branch-attached PRIMARY checkout (`release-invocation.mjs` `assertPrimaryReleaseCheckout`), so linked worktrees do not
+qualify, and the source gate needs a clean tree. `scripts/clone-build-mac.sh` and `scripts/clone-build-win.ps1` clone `origin` at an exact,
+already-pushed commit into a scratch location outside the primary checkout, check out a local branch (`sr0-clean-<sha12>`), put a link
+`<scratch>/tools/rightkit` to the local RightKit tree (so `package.json`'s `link:../../../tools/rightkit/packages/release` resolves with no
+tracked-file edit), `pnpm install --frozen-lockfile`, and run `right-release build` (doctor with `--stage doctor`). They never upload.
+`--dry-run`/`-DryRun` validates arguments and prints the plan only.
+
+```sh
+sh scripts/clone-build-mac.sh --commit <sha> [--stage doctor] [--dry-run]
+win "powershell -NoProfile -ExecutionPolicy Bypass -File <script>\clone-build-win.ps1 -Commit <sha> [-RendererSource <dll>] [-DryRun]"
+```
+
+Status: argument parsing validated by dry run only; not run (the 0.6 snapshot commit is pending).
+
+## Local App Installer feed (F8)
+
+The config's feed URLs are `.invalid`, so the real update route (App Installer fetch, `OnLaunch` update check) is untested by the sealed
+files. In the Windows Sandbox guest (host loopback is not reachable from the guest, so the feed lives in the guest):
+
+1. Copy the signed 0.1.0 and 0.1.1 `.msix`, `scripts/make-local-appinstaller.mjs` (or its output), and `serve-local-feed.ps1` into the guest.
+2. Write the 0.1.0 feed: `node make-local-appinstaller.mjs --msix SliceApp_0.1.0.0_x64.msix --version 0.1.0.0 --out C:\feed`
+   (name, publisher and settings come from the config through RightKit's generator; URLs `https://localhost:8443/sliceapp/...`).
+3. `serve-local-feed.ps1 -Dir C:\feed -DisposableGuest` (self-signed `localhost` certificate added to the guest Trusted Root and bound to the
+   port; guest only). The package itself is signed by the provisioned signer, so no signing-certificate trust is added.
+4. Install through the route: `Add-AppxPackage -AppInstallerFile C:\feed\SliceApp.appinstaller`, launch, and confirm 0.1.0.0.
+5. Publish the update: put the 0.1.1.0 `.msix` in `C:\feed` and overwrite `SliceApp.appinstaller` with the 0.1.1.0 feed. Relaunch the app
+   (`OnLaunch`, `HoursBetweenUpdateChecks=0`) and confirm 0.1.1.0 registers and `rows.json` is unchanged.
+6. Negative: serve a feed whose `MainPackage` `Publisher` or `Version` does not match the `.msix` manifest and confirm the install fails
+   (Microsoft Learn, "Create an App Installer file manually": name, publisher and version are validated against the package identity).
+Limits: this exercises the real App Installer fetch/update code over https, not the R2 host, DNS, or the production TLS chain. Record those
+as untested until the real URLs exist.
+
 ## Clean-machine checks
 
 Run on a clean Windows 11 x64 machine and a clean Apple silicon Mac, one OS at a time. Record receipts, not
-impressions. The App Installer URLs in the config are placeholders, so the upgrade check uses the local `.msix`.
+impressions. The App Installer URLs in the config are placeholders, so the route is exercised through the local feed (F8), and the plain upgrade uses the local `.msix`.
 
-Windows (PowerShell, elevated where noted):
+Windows (run in the Windows Sandbox guest; PowerShell, elevated where noted):
 
+0. Renderer: `scripts\verify-package-layout.ps1 -Mode Installed` (see "Renderer packaging") passes after step 1.
 1. Install: `Add-AppxPackage -Path .\SliceApp_0.1.0.0_x64.msix`; then `Get-AppxPackage OrthicLabs.SliceApp` shows
    version `0.1.0.0` and publisher equal to the signing subject.
 2. Offline launch: disable networking, start SliceApp from the Start menu, confirm the window and the file
    `%LOCALAPPDATA%\SliceApp\rows.json` is written. Desktop runs need Adrian's coordination (peer-session rule).
 3. Upgrade: build `0.1.1.0` (bump `version`, `msixVersion`, `identity.version`), then
    `Add-AppxPackage -Path .\SliceApp_0.1.1.0_x64.msix`. Expect the new version; `rows.json` unchanged.
-4. Rollback: MSIX does not downgrade in place. Remove the package (step 6, data kept), then install `0.1.0.0`.
+4. Rollback: MSIX does not downgrade in place (a lower version needs remove-then-install, or `-ForceUpdateFromAnyVersion`, Microsoft Learn Add-AppxPackage). Remove the package (step 6, data kept), then install `0.1.0.0`.
    Expect the old build to read the rows written by `0.1.1.0` (schema 1 is the contract).
 5. Corrupt update rejection: flip one byte in a copy of the `.msix` (away from the header), run
    `Add-AppxPackage` on it. Expect failure and the installed version unchanged.
-6. Interrupted update: start `Add-AppxPackage` of `0.1.1.0`, stop the installer process mid-install
-   (`Get-Process AppInstaller, Add-AppxPackage -ErrorAction SilentlyContinue | Stop-Process`). Expect either the old
-   or the new version, never a broken package; launch succeeds; `rows.json` intact.
+6. Interrupted update (real, Sandbox guest only): `scripts\interrupt-windows-install.ps1 -OldMsix <0.1.0.0> -NewMsix <0.1.1.0> -Mode KillDeployment -DisposableGuest`.
+   It stops the AppX Deployment Service (`AppXSvc`) while `Add-AppxPackage` is in flight; killing the cmdlet host would not interrupt
+   the deployment, which runs in the service. Record the observed state: exactly one of 0.1.0.0/0.1.1.0 registered, no
+   partial state, the registered version launches, `rows.json` byte-identical; then re-run `Add-AppxPackage` and confirm 0.1.1.0
+   registers. A run where the deployment finished before the interrupt landed is invalid. Second scenario, `-Mode DeferInUse`:
+   with the app running, `Add-AppxPackage -DeferRegistrationWhenPackagesAreInUse` leaves 0.1.0.0 registered and the update applies on the next
+   launch (Microsoft Learn, Add-AppxPackage). The kill technique is fault injection, not a Microsoft-documented procedure.
 7. Uninstall preserving user data: `Remove-AppxPackage` on the package full name. Expect `%LOCALAPPDATA%\SliceApp\rows.json`
-   still present and byte-identical; reinstall and confirm the rows show.
-8. Virtualization check: confirm the app's data writes land in `%LOCALAPPDATA%\SliceApp` and not in the install folder
-   or the package registry hive (inspect with Process Monitor from Adrian's session; no automated pass yet).
-9. Dependency check: `dumpbin /dependents` on the installed `SliceApp.exe` and each staged DLL; every entry is in
-   the 18-DLL inventory or a system DLL.
+   still present and byte-identical; reinstall and confirm the rows show. This is the check that proves the virtualization choice; with
+   `fileSystemWrite=enabled` it would fail.
+8. Virtualization physical paths: after the app has written rows (run once on a fresh profile so the file is created by the packaged app, and once
+   with a legacy `rows.json` pre-placed), list both `%LOCALAPPDATA%\SliceApp\rows.json` (must exist, real path) and
+   `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\SliceApp` (must not exist). Extract the installed `AppxManifest.xml` and
+   confirm `FileSystemWriteVirtualization` is `disabled` and `unvirtualizedResources` is declared. Save the file listings and hashes.
+9. Dependency check: `dumpbin /dependents` on the installed `SliceApp.exe` and each staged DLL (including `swiftright_render.dll`); every entry is in
+   the 18-DLL inventory, the renderer, or a system DLL.
+10. Upgrade through the App Installer route: the local feed procedure above (F8).
 
 macOS (`right-release install-app` and the terminal; no direct `open`):
 
@@ -129,12 +236,15 @@ macOS (`right-release install-app` and the terminal; no direct `open`):
    offline without its own ticket must be read from this check (gap 3b).
 2. Offline launch and first run: Adrian launches the app with networking off; confirm
    `~/Library/Application Support/SliceApp/rows.json` appears.
-3. Upgrade: install the `0.1.1` DMG through `right-release install-app` (it verifies first and keeps the old bundle
-   in the Trash). Expect `rows.json` unchanged.
+3. Upgrade and rollback: install the `0.1.1` DMG through `right-release install-app` (it verifies first and keeps the old bundle
+   in the Trash). Expect `rows.json` unchanged. Then install the `0.1.0` DMG over it (rollback) and confirm the old build reads the rows `0.1.1` wrote.
 4. Corrupt update rejection: alter one byte in a copy of `Contents/MacOS/SliceApp`; `codesign --verify --deep --strict`
    must fail, and the install step must refuse the bundle.
-5. Interrupted update: kill `ditto` mid-copy in a scratch directory (never the installed copy). Expect the installed
-   bundle untouched (`install-app` restores the old bundle on failure).
+5. Interrupted update (real swap): `install-app` moves the installed bundle to `~/.Trash`, runs `/usr/bin/ditto` into the destination, and restores the old
+   bundle only when ditto reports an error (`install-app.mjs`, "Replace"). `scripts/interrupt-mac-install.sh --old-dmg <0.1.0> --new-dmg <0.1.1> --mode ditto`
+   kills the ditto child (expect the old bundle restored and verifying); `--mode installer` kills install-app itself after the old bundle is moved
+   aside (outcome to be observed: a missing/partial bundle with the old one in the Trash would be a RightKit atomicity defect to report, not fix).
+   Runs in a scratch `--dest`, never `/Applications`; then re-run `install-app` for the new DMG and confirm codesign/spctl pass and `rows.json` is unchanged.
 6. Uninstall preserving user data: move `/Applications/SliceApp.app` to the Trash; `rows.json` still present.
 7. Eject the DMG volume after testing (`hdiutil detach /Volumes/SliceApp* -force`); the build folder copy of the app is
    removed by the DMG build's cleanup. Unregister stray copies with RightKit's `lsclean.sh` if any show in Spotlight.
@@ -188,9 +298,14 @@ macOS (`right-release install-app` and the terminal; no direct `open`):
    must pin the runtime to a commit (or a published package) first.
 6. `windows.searchDirs` hard-codes the Swift 6.4.0 runtime path on this host. A release host with a different
    toolchain needs its own `swift-package.json`.
-7. Virtualization is set to `enabled` for both areas (reasoning in `right-release.config.mjs`). This is a choice to
-   confirm during the packaged qualification, not a verified fact.
-8. Rust binaries: none. The "unchanged Rust binaries after a Swift-only edit" check does not apply to this app.
+7. Virtualization: `fileSystemWrite: "disabled"`, `registryWrite: "enabled"` (reasoning in the config and in "Layout" above).
+   A documented-behavior choice, still unverified on a machine until Windows check 8 runs.
+8. Rust binaries: none are built by this app's release. The renderer is a pinned prebuilt DLL (`Windows/renderer-pin.json`),
+   so the Swift-only-edit proof applies: see "Swift-only-edit proof". (The earlier text called the check inapplicable; that
+   was wrong, because the proof is exactly that the pinned renderer bytes survive a Swift-only rebuild.)
+9. The renderer is not built here. `RendererSource` (default `D:\Claude\sr1-abi06\payload\bin\swiftright_render.dll`) must
+   hold the pinned bytes on the build host; an independent clean clone cannot supply it from git. Moving the binary into a
+   content-addressed store both lanes can fetch is a snapshot-manifest (R0) decision.
 
 ## SR0-P pre-publication build (2026-10-09): BLOCKED before build, nothing built or signed
 

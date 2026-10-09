@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "file": "swiftright_render.dll",
+  "abi": "0.6",
+  "sha256": "C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30",
+  "sizeBytes": 11777536,
+  "defaultSource": "D:\\Claude\\sr1-abi06\\payload\\bin\\swiftright_render.dll",
+  "sourceEnv": "SWIFTRIGHT_RENDERER_SRC",
+  "closure": {
+    "note": "dumpbin /dependents of the pinned DLL (2026-10-09). Everything is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload. icuuc.dll is the OS ICU in System32 (Windows 10 1903+; package minimum is 10.0.19041.0), declared as a system DLL in swift-package.json and right-release.config.mjs.",
+    "shipped": ["VCRUNTIME140.dll"],
+    "system": ["USER32.dll", "COMCTL32.dll", "kernel32.dll", "uiautomationcore.dll", "oleaut32.dll", "combase.dll", "bcryptprimitives.dll", "advapi32.dll", "ole32.dll", "gdi32.dll", "ntdll.dll", "imm32.dll", "dwmapi.dll", "dcomp.dll", "shell32.dll", "dxgi.dll", "dwrite.dll", "d3d11.dll", "icuuc.dll"],
+    "apiSets": ["api-ms-win-core-winrt-error-l1-1-0.dll", "api-ms-win-core-synch-l1-2-0.dll", "api-ms-win-core-winrt-l1-1-0.dll", "api-ms-win-shcore-scaling-l1-1-1.dll", "api-ms-win-crt-math-l1-1-0.dll", "api-ms-win-crt-string-l1-1-0.dll", "api-ms-win-crt-runtime-l1-1-0.dll", "api-ms-win-crt-heap-l1-1-0.dll"]
+  }
+}

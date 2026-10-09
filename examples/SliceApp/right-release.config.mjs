@@ -45,6 +45,16 @@ const SWIFT_RUNTIME_DLLS = [
   "VCRUNTIME140_1.dll",
 ];
 
+// The renderer is loaded dynamically (Bridge.load: path arg, $SWIFTRIGHT_RENDER_DLL, else "swiftright_render.dll",
+// resolved beside the exe), so it is never in the exe's import table and the closure walk cannot find it. It ships
+// by explicit declaration: scripts/prepackage-windows.ps1 hash-checks it against Windows/renderer-pin.json and stages
+// it via swift-package.json windows.include (which also walks its import closure). Declaring it here makes
+// verifyPayloadInventory fail closed if it is ever missing from the payload.
+const RENDERER_DLL = "swiftright_render.dll";
+const PAYLOAD_DLLS = [...SWIFT_RUNTIME_DLLS, RENDERER_DLL];
+// Windows-owned DLL the renderer imports that RightKit's built-in system list does not include (OS ICU, System32).
+const EXTRA_SYSTEM_DLLS = ["icuuc.dll"];
+
 const WIN_APPX = path.join("dist", "win", `SliceApp_${MSIX_VERSION}_x64.msix`);
 const MAC_APP = path.join("dist", "mac", "SliceApp.app");
 const MAC_DMG = path.join("dist", "mac", `SliceApp_${VERSION}_arm64.dmg`);
@@ -120,20 +130,27 @@ export default {
         capabilities: [],
         minWindowsVersion: "10.0.19041.0",
         maxWindowsVersionTested: "10.0.26100.0",
-        // Virtualization is explicit (required by the schema). Both are "enabled" on purpose:
-        //  - fileSystemWrite "enabled": the app never writes its install folder; if an install-folder write ever
-        //    happens, the write lands in the per-package store (removed on uninstall) instead of failing or
-        //    needing the restricted unvirtualizedResources capability, which "disabled" would add.
-        //  - registryWrite "enabled": the app writes no registry values. Any registry write stays inside the
-        //    package hive and is removed on uninstall.
-        //  User data is in %LOCALAPPDATA%\SliceApp, outside both virtualized areas, so it survives uninstall.
-        virtualization: { fileSystemWrite: "enabled", registryWrite: "enabled" },
+        // Virtualization is explicit (required by the schema).
+        //  - fileSystemWrite "disabled": REQUIRED for the data contract. Per Microsoft's flexible-virtualization doc
+        //    (learn.microsoft.com/windows/msix/desktop/flexible-virtualization, "Default MSIX behavior", AppData
+        //    row), on Windows > 1809 every NEWLY CREATED file under the user's AppData is written to a private
+        //    per-user, per-app location and is REMOVED ON UNINSTALL. rows.json is created by the app under
+        //    %LOCALAPPDATA%\SliceApp, so with "enabled" it would be virtualized and deleted on uninstall (the earlier
+        //    claim here was wrong). "disabled" (FilesystemWriteVirtualization=disabled with the restricted capability
+        //    unvirtualizedResources, which msix-build.mjs adds) sends AppData writes to the real path, visible
+        //    outside the package and NOT cleaned up on uninstall: the behaviour the doc describes for save data.
+        //    Cost: restricted capability (fine for sideload/App Installer distribution, needs Store approval
+        //    otherwise) and it is not fine-grained. Windows 11's finer ExcludedDirectories is not emitted by
+        //    RightKit's manifest generator; revisit if it is added. Verified only by the physical-path checks
+        //    in PACKAGING.md (R5), not yet run.
+        //  - registryWrite "enabled": the app writes no registry values; any write stays in the package hive.
+        virtualization: { fileSystemWrite: "disabled", registryWrite: "enabled" },
         assets: {
           storeLogo: "Windows/Assets/StoreLogo.png",
           square150: "Windows/Assets/Square150x150Logo.png",
           square44: "Windows/Assets/Square44x44Logo.png",
         },
-        runtime: { dlls: SWIFT_RUNTIME_DLLS, systemDlls: [] },
+        runtime: { dlls: PAYLOAD_DLLS, systemDlls: EXTRA_SYSTEM_DLLS },
         appInstaller: {
           // TODO(updater): placeholder R2 public host. Replace with the RightApps R2 public URL for SliceApp before
           // any publication. Both URLs must be https (validator). Do not publish this placeholder.
