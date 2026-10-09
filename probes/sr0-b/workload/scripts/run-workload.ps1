@@ -1,10 +1,10 @@
 # SR0 workload orchestrator (Windows). Run as a FILE from an ELEVATED session (PresentMon needs ETW rights):
 #   win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0b-workload\probes\sr0-b\workload\scripts\run-workload.ps1 -Instr full"
-# 1) artifact identity gate (exe + renderer DLL hashes) and quiet-host gate (no builds/other desktop tests running)
+# 1) artifact identity gate (exe + renderer DLL hashes); host load is recorded as context, never gated (R10: the Dell is in normal use)
 # 2) PresentMon 2.6.0, ALL-process capture (no --process_name), QPC time, started first and confirmed recording
 # 3) a one-shot INTERACTIVE scheduled task runs task-workload.ps1 (3 runs: 10 s warm-up + 60 s measured each, PostMessage script)
 # 4) PresentMon stopped, task removed, analyze_workload.py joins input QPC stamps to presented frames (PID match, as frame-clock batch 5)
-# Nothing here touches the desktop of another application: keys are sent only while the workload window is foreground.
+# Nothing here touches the desktop of another application: keys are POSTED to the workload window only (it need not be foreground).
 # Stress / resources (R10): -Rows (200 default; stress 1000, 5000) and -KeyRate (10 default; stress 30) go to task-workload.ps1 (-Rows reaches the app as
 # `--rows N`; an app build that ignores it is caught by the analyzer, which compares meta.json total_rows). Every run samples CPU / threads / memory / GPU
 # into <run>\resources.csv unless -NoResources (overhead A/B). scripts\run-stress.ps1 runs the Rows x KeyRate series through this script.
@@ -17,11 +17,12 @@ param(
   [int]$Rows = 200,                   # editable rows the app runs with (200 = the section 11 workload; stress series 1000, 5000)
   [double]$KeyRate = 10,              # keys per second posted to the workload window (10 = the section 11 workload; stress series 30)
   [switch]$NoResources,               # skip the resource sampler (overhead A/B)
+  [string]$PaintPhaseMs = '',         # R10 A/B: SWR_PAINT_PHASE_MS handed to the renderer through task-workload.ps1 (0 = pacing off; '' = renderer default)
   [string]$Tag = '',
-  [string]$ExpectDll = '4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F',
+  [string]$ExpectDll = '7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC',
   [double]$ExpectScale = 2.5,         # Dell tuple: 250% (dpi 240); every SR0 Dell record is scale 2.5
-  [int]$MaxIdleCpu = 25,              # abort if average total CPU % over the sample window exceeds this (Dell idle baseline ~17-19%: Membrane, Defender)
-  [int]$CpuSampleSeconds = 20,
+  [int]$MaxIdleCpu = 25,              # ignored since R10 (no quiet-host gate; the host is in normal use)
+  [int]$CpuSampleSeconds = 20,        # ignored since R10
   [switch]$Force,                     # bypass the quiet-host gate; receipt is marked host_quiet=forced
   [switch]$SkipQuietCheck             # legacy alias for -Force
 )
@@ -53,77 +54,32 @@ function Stop-Pm {
   while ((Get-Process -Name 'PresentMon-2.6.0-x64' -ErrorAction SilentlyContinue) -and (Get-Date) -lt $d) { Start-Sleep -Seconds 2 }
 }
 
-Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure rows=$Rows key_rate=$KeyRate resources=$(if ($NoResources) { 'off' } else { 'on' })"
+Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure rows=$Rows key_rate=$KeyRate resources=$(if ($NoResources) { 'off' } else { 'on' }) paint_phase_ms=$(if ($PaintPhaseMs -eq '') { 'default' } else { $PaintPhaseMs })"
 $null = Log ("whoami=" + (whoami) + " elevated=" + ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
 # 1) gates
 $art = & "$scripts\verify-artifacts.ps1" -Base $Base -ExpectDll $ExpectDll
 $art | ForEach-Object { Log $_ }
 if (-not ($art -match 'ARTIFACT_OK')) { Log 'ABORT: artifact gate failed'; exit 2 }
-# 1b) quiet-host gate. BLOCKS only on build/test activity. Measures background CPU. Logs everything else.
-$forceQuiet = [bool]($Force.IsPresent -or $SkipQuietCheck.IsPresent)
+# 1b) host context (R10: NO quiet-host gate). The Dell is a working machine (the user's own apps, agents, a build now and then) and the product has to
+# meet its budget under that normal load, so nothing here can stop a run. What was running is recorded: build/test processes and SR0 scheduled tasks
+# seen now (host-quiet.txt, receipt state `context_only`); the harness adds per-run user input, foreground owners, overlay hooks and the CPU by process
+# over each run, and the sampler records total CPU every second. The analyzer voids a run only for a window that stopped presenting / was minimized or
+# a CPU saturated above ~90 % for most of the measured window. -Force / -SkipQuietCheck / -MaxIdleCpu / -CpuSampleSeconds are accepted and ignored.
 $hostRcpt   = "$runRoot\host-quiet.txt"
-function Write-HostReceipt([string]$state, [string[]]$lines) {
-  $hdr = @("host_quiet=$state", "max_idle_cpu_pct=$MaxIdleCpu", "sample_seconds=$CpuSampleSeconds") + $lines
-  Set-Content -Path $hostRcpt -Value $hdr -Encoding ascii
-}
-function Get-CpuMap {
-  $m = @{}
-  foreach ($p in (Get-Process -ErrorAction SilentlyContinue)) {
-    try { $m[$p.Id] = [pscustomobject]@{ Name = $p.ProcessName; Cpu = $p.TotalProcessorTime.TotalSeconds } } catch {}
-  }
-  return $m
-}
 $buildNames = @('cargo','rustc','swift-build','swift-frontend','swiftc','link','cl','clang','lld-link','msbuild','makeappx','signtool')
 $ownPattern = '^(FreshOnBridge|BridgeSmoke|SliceApp|Workload|SwiftHost)'
-$blockers = @()
+$seen = @()
 foreach ($p in (Get-Process -ErrorAction SilentlyContinue)) {
   $pth = try { $p.Path } catch { $null }
   $isOurs = [bool]($pth -and $pth.StartsWith($Base, [StringComparison]::OrdinalIgnoreCase))
-  if (($buildNames -contains $p.ProcessName) -or (($p.ProcessName -match $ownPattern) -and -not $isOurs)) {
-    $blockers += "$($p.ProcessName)($($p.Id))"
-  }
+  if (($buildNames -contains $p.ProcessName) -or (($p.ProcessName -match $ownPattern) -and -not $isOurs)) { $seen += "$($p.ProcessName)($($p.Id))" }
 }
 $hostLines = @()
-foreach ($t in @(Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like 'SR0*' -and $_.TaskName -ne $taskName })) {
-  $hostLines += "sched_sr0=$($t.TaskName) state=$($t.State)"
-  if ($t.State -eq 'Running') { $blockers += "task:$($t.TaskName)" }
-}
-$blockTxt = if ($blockers.Count) { $blockers -join ',' } else { 'none' }
-$hostLines = @("blockers=$blockTxt") + $hostLines
-if ($blockers.Count -and -not $forceQuiet) {
-  Log "ABORT: build/test activity running: $blockTxt"
-  Write-HostReceipt 'blocked' $hostLines
-  exit 3
-}
-if ($forceQuiet) {
-  Log "host_quiet=forced: quiet gate bypassed (-Force); blockers seen: $blockTxt"
-  Write-HostReceipt 'forced' (@('cpu_avg_pct=not_sampled') + $hostLines)
-} else {
-  Log "cpu sampling ${CpuSampleSeconds}s (gate: average total CPU <= $MaxIdleCpu%)"
-  $snapA = Get-CpuMap
-  $ctr = Get-Counter -Counter '\Processor(_Total)\% Processor Time' -SampleInterval 1 -MaxSamples $CpuSampleSeconds
-  $snapB = Get-CpuMap
-  $cpuAvg = [math]::Round(($ctr.CounterSamples | Measure-Object -Property CookedValue -Average).Average, 1)
-  $cores = [Environment]::ProcessorCount
-  $raw = foreach ($id in $snapA.Keys) {
-    if ($snapB.ContainsKey($id) -and $snapB[$id].Name -eq $snapA[$id].Name) {
-      $d = $snapB[$id].Cpu - $snapA[$id].Cpu
-      [pscustomobject]@{ Name = $snapA[$id].Name; Id = $id; Pct = [math]::Round($d / ($CpuSampleSeconds * $cores) * 100, 2) }
-    }
-  }
-  $rows = @($raw | Sort-Object Pct -Descending)
-  $cpuLines = $hostLines + @("cpu_avg_pct=$cpuAvg")
-  foreach ($r in ($rows | Select-Object -First 5)) { $l = "top_cpu=$($r.Name)($($r.Id)) $($r.Pct)%"; Log $l; $cpuLines += $l }
-  foreach ($r in ($rows | Select-Object -Skip 5 | Where-Object { $_.Pct -ge 1.0 })) { $l = "notable_cpu=$($r.Name)($($r.Id)) $($r.Pct)%"; Log $l; $cpuLines += $l }
-  if ($cpuAvg -gt $MaxIdleCpu) {
-    Log "ABORT: host busy, average total CPU $cpuAvg% > $MaxIdleCpu%"
-    Write-HostReceipt 'busy' $cpuLines
-    exit 5
-  }
-  Log "host_quiet=pass avg_cpu=$cpuAvg% blockers=$blockTxt"
-  Write-HostReceipt 'pass' $cpuLines
-}
+foreach ($t in @(Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like 'SR0*' -and $_.TaskName -ne $taskName })) { $hostLines += "sched_sr0=$($t.TaskName) state=$($t.State)" }
+$seenTxt = if ($seen.Count) { $seen -join ',' } else { 'none' }
+Set-Content -Path $hostRcpt -Value (@('host_quiet=context_only', "build_or_test_processes_seen=$seenTxt") + $hostLines) -Encoding ascii
+Log "host context (not a gate): build/test processes seen=$seenTxt"
 
 # 2) PresentMon: all-process capture, QPC time, no process filter. Total capture window with margin.
 $timed = $Runs * ($Warmup + $Measure + 25) + 60
@@ -143,7 +99,7 @@ if (-not $started) { Stop-Pm; Log 'ABORT: PresentMon not recording'; exit 4 }
 Start-Sleep -Seconds 5
 
 # 3) interactive one-shot task
-$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoResources) { ' -NoResources' })"
+$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoResources) { ' -NoResources' })$(if ($PaintPhaseMs -ne '') { " -PaintPhaseMs $PaintPhaseMs" })"
 $act = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arg -WorkingDirectory $Base
 $pri = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 $set = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes (($Runs * ($Warmup + $Measure + 60)) / 60 + 10)) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries

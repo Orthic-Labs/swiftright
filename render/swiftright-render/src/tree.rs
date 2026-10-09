@@ -151,17 +151,6 @@ fn dfs_order(nodes: &HashMap<u64, PNode>) -> Vec<u64> {
     out
 }
 
-unsafe fn str_of(p: *const c_char, len: u32) -> Result<String, Status> {
-    if len == 0 {
-        return Ok(String::new());
-    }
-    if p.is_null() {
-        return Err(E_BAD_ARG);
-    }
-    let s = std::slice::from_raw_parts(p as *const u8, len as usize);
-    String::from_utf8(s.to_vec()).map_err(|_| E_BAD_ARG)
-}
-
 unsafe fn slice_of<'a, T>(p: *const T, n: u32) -> Result<&'a [T], Status> {
     if n == 0 {
         return Ok(&[]);
@@ -259,18 +248,34 @@ fn empty_runs() -> Arc<Vec<SemRun>> {
     EMPTY.get_or_init(|| Arc::new(Vec::new())).clone()
 }
 
-unsafe fn arc_str(p: *const c_char, len: u32) -> Result<Arc<str>, Status> {
+unsafe fn bytes_of<'a>(p: *const c_char, len: u32) -> Result<&'a [u8], Status> {
     if len == 0 {
-        return Ok(empty_str());
+        return Ok(&[]);
     }
     if p.is_null() {
         return Err(E_BAD_ARG);
     }
-    let bytes = std::slice::from_raw_parts(p as *const u8, len as usize);
+    Ok(std::slice::from_raw_parts(p as *const u8, len as usize))
+}
+
+/// The string at `p`, shared with `old` when the bytes are the same (a node whose label did not change allocates nothing).
+unsafe fn arc_str(p: *const c_char, len: u32, old: Option<&Arc<str>>) -> Result<Arc<str>, Status> {
+    if len == 0 {
+        return Ok(empty_str());
+    }
+    let bytes = bytes_of(p, len)?;
+    if let Some(o) = old {
+        if o.as_bytes() == bytes {
+            return Ok(o.clone());
+        }
+    }
     std::str::from_utf8(bytes).map(Arc::from).map_err(|_| E_BAD_ARG)
 }
 
-unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
+/// Converts the semantic payload of an upsert. `old` is the semantic of the node being replaced (if any): every string, run and
+/// per-character array that is byte-identical to it is shared with it instead of copied, so re-sending a scrolled list (every
+/// node's bounds change, nothing else) costs no allocation per node beyond the new run table.
+unsafe fn convert_sem(s: &Semantic, old: Option<&Sem>) -> Result<Sem, Status> {
     if s.identifier_len > IDENTIFIER_MAX {
         return Err(E_TOO_LARGE);
     }
@@ -278,28 +283,71 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
         return Err(E_BAD_ARG);
     }
     let rs = slice_of(s.runs, s.run_count)?;
+    let old_runs: Option<&Arc<Vec<SemRun>>> = old.map(|o| &o.runs);
     let mut runs: Vec<SemRun> = Vec::with_capacity(rs.len());
-    for r in rs {
+    let mut all_same = old_runs.is_some_and(|o| o.len() == rs.len());
+    for (i, r) in rs.iter().enumerate() {
         let n = r.char_count;
-        runs.push(AxRun {
-            id: r.id,
-            text: str_of(r.text, r.text_len)?,
-            lengths: slice_of(r.char_lengths, n)?.to_vec(),
-            positions: slice_of(r.char_positions, n)?.to_vec(),
-            widths: slice_of(r.char_widths, n)?.to_vec(),
-            word_starts: slice_of(r.word_starts, r.word_start_count)?.to_vec(),
-            bounds: rect4(&r.bounds)?,
+        let text = bytes_of(r.text, r.text_len)?;
+        let lengths = slice_of(r.char_lengths, n)?;
+        let positions = slice_of(r.char_positions, n)?;
+        let widths = slice_of(r.char_widths, n)?;
+        let word_starts = slice_of(r.word_starts, r.word_start_count)?;
+        let bounds = rect4(&r.bounds)?;
+        let prev = old_runs.and_then(|o| o.get(i)).filter(|p| {
+            p.id == r.id
+                && p.text.as_bytes() == text
+                && p.lengths[..] == *lengths
+                && p.positions[..] == *positions
+                && p.widths[..] == *widths
+                && p.word_starts[..] == *word_starts
         });
+        match prev {
+            Some(p) => {
+                if p.bounds != bounds {
+                    all_same = false;
+                }
+                runs.push(AxRun {
+                    id: p.id,
+                    text: p.text.clone(),
+                    lengths: p.lengths.clone(),
+                    positions: p.positions.clone(),
+                    widths: p.widths.clone(),
+                    word_starts: p.word_starts.clone(),
+                    bounds,
+                });
+            }
+            None => {
+                all_same = false;
+                runs.push(AxRun {
+                    id: r.id,
+                    text: std::str::from_utf8(text).map(Arc::from).map_err(|_| E_BAD_ARG)?,
+                    lengths: Arc::from(lengths),
+                    positions: Arc::from(positions),
+                    widths: Arc::from(widths),
+                    word_starts: Arc::from(word_starts),
+                    bounds,
+                });
+            }
+        }
     }
+    let runs = if runs.is_empty() {
+        empty_runs()
+    } else if all_same {
+        // Nothing about the runs changed, bounds included: the previous table is the table.
+        old_runs.cloned().unwrap_or_else(|| Arc::new(runs))
+    } else {
+        Arc::new(runs)
+    };
     Ok(Sem {
         role: s.role,
         actions: s.actions,
         flags: s.flags,
-        label: arc_str(s.label, s.label_len)?,
-        value: arc_str(s.value, s.value_len)?,
-        identifier: arc_str(s.identifier, s.identifier_len)?,
+        label: arc_str(s.label, s.label_len, old.map(|o| &o.label))?,
+        value: arc_str(s.value, s.value_len, old.map(|o| &o.value))?,
+        identifier: arc_str(s.identifier, s.identifier_len, old.map(|o| &o.identifier))?,
         toggled: s.toggled,
-        runs: if runs.is_empty() { empty_runs() } else { Arc::new(runs) },
+        runs,
         sel: if s.flags & SEM_HAS_SELECTION != 0 {
             Some((s.sel_anchor_run, s.sel_anchor_char, s.sel_focus_run, s.sel_focus_char))
         } else {
@@ -354,7 +402,8 @@ pub unsafe fn commit(
             return Err(E_BAD_ARG);
         }
         let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs, images)?;
-        let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic)?) } else { None };
+        let old_sem = tree.nodes.get(&n.id).and_then(|o| o.sem.as_ref());
+        let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, old_sem)?) } else { None };
         fresh.push(PNode {
             id: n.id,
             parent: n.parent,
@@ -605,7 +654,7 @@ mod tests {
                 return Err(E_BAD_ARG);
             }
             let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs, images)?;
-            let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic)?) } else { None };
+            let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, None)?) } else { None };
             staged.insert(
                 n.id,
                 PNode { id: n.id, parent: n.parent, order: n.order, flags: n.flags, bounds: rect4(&n.bounds)?, prims: node_prims, sem },
@@ -917,7 +966,7 @@ mod tests {
             let prims = unsafe { slice_of(raw.primitives, raw.primitive_count).unwrap() };
             for n in ups {
                 let _ = unsafe { convert_prims(&prims[n.prim_offset as usize..(n.prim_offset + n.prim_count) as usize], &runs, &images) };
-                let _ = unsafe { convert_sem(&n.semantic) };
+                let _ = unsafe { convert_sem(&n.semantic, None) };
             }
             convert_ns += t2.elapsed().as_nanos();
         }

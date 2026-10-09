@@ -8,7 +8,7 @@
 param(
   [string]$Base = 'D:\Claude\sr0b-workload',
   [string]$Dll = 'D:\Claude\sr0s-bridge06b\scratch\out\Products\Release-windows-x86_64\swiftright_render.dll',
-  [string]$ExpectDllSha256 = '4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F'
+  [string]$ExpectDllSha256 = '7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC'
 )
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')

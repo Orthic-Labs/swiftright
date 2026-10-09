@@ -9,7 +9,7 @@
 use std::cell::RefCell;
 use std::ffi::c_void;
 use std::ops::Range;
-use std::sync::atomic::{AtomicI32, AtomicU32, AtomicU64, Ordering::SeqCst};
+use std::sync::atomic::{AtomicI32, AtomicI64, AtomicU32, AtomicU64, Ordering::SeqCst};
 use std::sync::{Arc, Mutex};
 
 use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
@@ -27,6 +27,7 @@ use crate::ax::{Actions, Activation};
 use crate::pace;
 use crate::rt::*;
 use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
+use crate::trace;
 use crate::tree::{Prim, Tree};
 
 #[link(name = "user32")]
@@ -345,18 +346,67 @@ pub struct RootView {
     adapter: Option<SubclassingAdapter>,
 }
 
-impl RootView {
-    fn publish_ax(&mut self) {
-        // One publication per committed snapshot: a repaint or a tick without a commit changes nothing for AccessKit.
-        let version = SNAPSHOT.load(SeqCst);
-        if AX_PUBLISHED.swap(version, SeqCst) == version {
-            return;
+/// AccessKit publication policy (environment, read once). `SWR_AX_OFF=1`: never publish (diagnostics: tells whether the AX / UIA side is
+/// what grows the process). `SWR_AX_MIN_MS=<n>`: publish at most every n milliseconds; the newest snapshot is always published after the
+/// interval (a trailing publish), so a client sees every state within n ms. Default `DEFAULT_AX_MIN_MS`; 0 = every committed snapshot.
+/// R10 (Dell): with a UIA client attached an AX publication costs 1.2 ms of UI thread and ~400 allocations per node-batch, 87 times a second
+/// (a tenth of the UI thread, a third of the process heap churn, ~1 MB/min of private-bytes growth); at 100 ms the cost is 0.14 ms/commit.
+const DEFAULT_AX_MIN_MS: f64 = 100.0;
+
+struct AxPolicy {
+    off: bool,
+    min_ticks: i64,
+}
+
+static AX_POLICY: std::sync::OnceLock<AxPolicy> = std::sync::OnceLock::new();
+static AX_LAST_PUBLISH: AtomicI64 = AtomicI64::new(0);
+static AX_TRAILING: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+pub static AX_PUBLISHES: AtomicU64 = AtomicU64::new(0);
+pub static AX_THROTTLED: AtomicU64 = AtomicU64::new(0);
+
+fn ax_policy() -> &'static AxPolicy {
+    AX_POLICY.get_or_init(|| {
+        let off = std::env::var("SWR_AX_OFF").map(|v| v.trim() == "1").unwrap_or(false);
+        let ms = std::env::var("SWR_AX_MIN_MS").ok().and_then(|v| v.trim().parse::<f64>().ok()).unwrap_or(DEFAULT_AX_MIN_MS).max(0.0);
+        let min_ticks = (ms * qpc_freq() as f64 / 1000.0) as i64;
+        if off || min_ticks > 0 {
+            eprintln!("[swiftright-render] ax publication policy: off={off} min_interval_ms={ms}");
         }
+        AxPolicy { off, min_ticks }
+    })
+}
+
+impl RootView {
+    /// One publication per committed snapshot (a repaint or a tick without a commit changes nothing for AccessKit), subject to the AX policy.
+    /// Returns the time to wait before the throttled snapshot may be published (the caller schedules the trailing publish).
+    fn publish_ax(&mut self) -> Option<std::time::Duration> {
+        let version = SNAPSHOT.load(SeqCst);
+        if AX_PUBLISHED.load(SeqCst) == version {
+            return None;
+        }
+        let pol = ax_policy();
+        if pol.off {
+            AX_PUBLISHED.store(version, SeqCst);
+            return None;
+        }
+        if pol.min_ticks > 0 {
+            let now = qpc_now();
+            let last = AX_LAST_PUBLISH.load(SeqCst);
+            if last != 0 && now - last < pol.min_ticks {
+                AX_THROTTLED.fetch_add(1, SeqCst);
+                let rest_ns = qpc_to_ns(pol.min_ticks - (now - last));
+                return Some(std::time::Duration::from_nanos(rest_ns.max(1_000_000)));
+            }
+            AX_LAST_PUBLISH.store(now, SeqCst);
+        }
+        AX_PUBLISHED.store(version, SeqCst);
+        AX_PUBLISHES.fetch_add(1, SeqCst);
         if let Some(a) = self.adapter.as_mut() {
             if let Some(events) = a.update_if_active(crate::ax::build_tree) {
                 events.raise();
             }
         }
+        None
     }
 }
 
@@ -564,8 +614,9 @@ fn paint_root(
     view: &Entity<RootView>,
 ) {
     let paint_start = qpc_now();
-    if let Some(phase) = pace::vblank_phase_ns(paint_start) {
-        PH_PHASE.add_ns(phase);
+    let edge = pace::latest_edge();
+    if edge != 0 && paint_start >= edge {
+        PH_PHASE.add(paint_start - edge);
     }
     bump(S_PAINTS);
     if !window.is_window_active() {
@@ -626,7 +677,7 @@ fn paint_root(
 
     ime_replace_on_layout(MAIN_HWND.load(SeqCst) as *mut c_void);
     let paint_end = qpc_now();
-    PH_PAINT.add(paint_end - paint_start);
+    PH_PAINT.span(trace::K_PAINT, paint_start, paint_end);
 }
 
 // -------------------------------------------------- IME text store (InputHandler)
@@ -648,7 +699,9 @@ fn with_ime<R>(f: impl FnOnce(&Host, u64, u64) -> R) -> Option<R> {
         return None;
     };
     IN_IME.with(|c| c.set(c.get() + 1));
+    let t0 = qpc_now();
     let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| f(&host, win, node)));
+    PH_IME.span(trace::K_IME, t0, qpc_now());
     IN_IME.with(|c| c.set(c.get() - 1));
     match r {
         Ok(v) => Some(v),
@@ -990,9 +1043,16 @@ fn place_ime_windows(hwnd: *mut c_void) {
 }
 
 unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usize, l: isize, _id: usize, _data: usize) -> isize {
-    // Paint pacing (pace.rs): the vblank WM_PAINT is held back and delivered later in the same refresh period.
-    if msg == WM_PAINT && pace::defer_paint(hwnd) {
-        return 0;
+    // Paint pacing (pace.rs): GPUI's vblank WM_PAINT is swallowed; the paced WM_SWR_PAINT paints at a fixed phase of the period.
+    if msg == WM_PAINT {
+        if pace::defer_paint(hwnd) {
+            return 0;
+        }
+        let t0 = qpc_now();
+        let out = DefSubclassProc(hwnd, msg, w, l);
+        let t1 = qpc_now();
+        PH_FRAME.span(trace::K_FRAME, t0, t1);
+        return out;
     }
     if msg == pace::WM_SWR_PAINT {
         pace::run_deferred_paint(hwnd);
@@ -1042,25 +1102,47 @@ fn deliver_tick(host: &Host, win: u64) {
         let ts = qpc_to_ns(target as i64);
         let t0 = qpc_now();
         let delivered = call_host(|| f(ctx, win, ts));
-        PH_TICK.add(qpc_now() - t0);
+        PH_TICK.span(trace::K_TICK, t0, qpc_now());
         if delivered {
             bump(S_TICKS_DEL);
         }
     }
 }
 
-/// Marks the window dirty after a commit (and publishes the new AX snapshot). The frame itself is painted from a WM_PAINT at
-/// the phase of the refresh period that pace.rs picks.
+/// Marks the window dirty after a commit (and publishes the new AX snapshot, subject to the AX policy). The frame itself is painted from a
+/// WM_PAINT: GPUI's own at the vblank, or the paced one (pace.rs).
 fn present(cx: &mut AsyncApp, handle: WindowHandle<RootView>) {
     let t0 = qpc_now();
-    let _ = cx.update(|cx| {
-        let _ = handle.update(cx, |view, window, cx| {
-            view.publish_ax();
-            window.refresh();
-            cx.notify();
-        });
-    });
-    PH_PRESENT.add(qpc_now() - t0);
+    let wait = cx
+        .update(|cx| {
+            handle
+                .update(cx, |view, window, cx| {
+                    let wait = view.publish_ax();
+                    window.refresh();
+                    cx.notify();
+                    wait
+                })
+                .ok()
+                .flatten()
+        })
+        .ok()
+        .flatten();
+    PH_PRESENT.span(trace::K_PRESENT, t0, qpc_now());
+    if let Some(wait) = wait {
+        // Throttled: publish the newest snapshot when the interval is over (once, however many commits arrive meanwhile).
+        if !AX_TRAILING.swap(true, SeqCst) {
+            cx.spawn(async move |cx: &mut AsyncApp| {
+                cx.background_executor().timer(wait).await;
+                AX_TRAILING.store(false, SeqCst);
+                let _ = cx.update(|cx| {
+                    let _ = handle.update(cx, |view, _window, _cx| {
+                        let _ = view.publish_ax();
+                    });
+                });
+            })
+            .detach();
+        }
+    }
 }
 
 fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
@@ -1171,7 +1253,7 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
                 let ctx = host.ctx_ptr();
                 let t0 = qpc_now();
                 call_host(|| f(ctx));
-                PH_DRAIN.add(qpc_now() - t0);
+                PH_DRAIN.span(trace::K_DRAIN, t0, qpc_now());
             }
             if events_pending() {
                 if let Some(f) = host.events_available {
@@ -1347,6 +1429,8 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
     Application::new().run(move |cx: &mut App| launch(cx, title, width, height, host));
     finish_post_close(&host);
     set_host(None);
+    pace::stop();
+    trace::dump();
     eprintln!(
         "[swiftright-render] shutdown paints={} paints_while_inactive={} drains={} ticks_delivered={} events_pushed={} reentry_refused={} post_close_drains={} post_close_timeouts={}",
         stat(S_PAINTS),
@@ -1359,19 +1443,35 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
         stat(S_POST_TIMEOUTS),
     );
     eprintln!(
-        "[swiftright-render] phases {} {} {} {} {} {} paint_start_after_vblank{} pacing[phase_us={} deferred={} passed_through_late={} failed_open={} fallback_waits={}]",
+        "[swiftright-render] phases {} {} {} {} {} {} {} {} paint_start_after_edge{} pacing[phase_us={} period_us={} edges={} posted={} skipped_pending={} expired={} swallowed={} passed_stale={} no_wait_edges={}]",
         PH_COMMIT.line("commit"),
         PH_TREE.line("tree_commit"),
         PH_PAINT.line("paint_root"),
         PH_PRESENT.line("present"),
         PH_TICK.line("host_tick"),
         PH_DRAIN.line("host_drain"),
+        PH_FRAME.line("frame"),
+        PH_IME.line("ime_cb"),
         PH_PHASE.line(""),
         pace::phase_us(),
-        pace::DEFERRED.load(SeqCst),
-        pace::PASSED_THROUGH.load(SeqCst),
-        pace::FAILED_OPEN.load(SeqCst),
-        pace::FALLBACK_WAITS.load(SeqCst),
+        pace::period_us(),
+        pace::EDGES.load(SeqCst),
+        pace::POSTED.load(SeqCst),
+        pace::SKIPPED_PENDING.load(SeqCst),
+        pace::EXPIRED.load(SeqCst),
+        pace::SWALLOWED.load(SeqCst),
+        pace::PASSED_STALE.load(SeqCst),
+        pace::NO_WAIT_EDGES.load(SeqCst),
+    );
+    let (private, ws) = trace::process_memory();
+    eprintln!(
+        "[swiftright-render] memory rust_live_bytes={} rust_allocs={} private_bytes={} working_set={} ax_publishes={} ax_throttled={}",
+        trace::rust_live_bytes(),
+        trace::rust_allocs(),
+        private,
+        ws,
+        AX_PUBLISHES.load(SeqCst),
+        AX_THROTTLED.load(SeqCst)
     );
     if OPEN_FAILED.load(SeqCst) {
         E_PLATFORM

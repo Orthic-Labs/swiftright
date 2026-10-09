@@ -65,6 +65,7 @@ LIMITS = {
     'clock_corr_p95_ms': 2.0, 'calibration_floor_p95_ms': 34.0,
 }
 KEY_CYCLE = 'mwqogdhbnk'
+HOST_SATURATED_CPU_PCT = 90.0   # R10: a run is void when total CPU is above this for at least half of the measured window
 EXPECT_TOTAL_ROWS = 200
 EXPECT_KEY_RATE = 10.0
 LEAK_SLOPE_MB_PER_MIN = 5.0
@@ -238,12 +239,29 @@ def parse_harness(path):
         m = re.match(r'window run=(\S+) hwnd=\d+ foreground=(\S+) dpi=(\d+)', line)
         if m and m.group(1) in runs:
             runs[m.group(1)].update(foreground=m.group(2), dpi=int(m.group(3)))
+        m = re.match(r'context run=(\S+) phase=(\S+) overlay_modules=(\S+) modules_total=(\d+) overlay_procs=(\S+)', line)
+        if m and m.group(1) in runs:
+            runs[m.group(1)].setdefault('context', {})[m.group(2)] = {'overlay_modules': m.group(3), 'modules_total': int(m.group(4)), 'overlay_procs': m.group(5)}
+        m = re.match(r'host_top run=(\S+) span_s=([\d.]+) logical_cpus=(\d+) pct_of_machine_excluding_workload=(.*)$', line)
+        if m and m.group(1) in runs:
+            runs[m.group(1)]['host_top'] = m.group(4).strip()
+        m = re.match(r'window run=(\S+) .* user_idle_ms=(-?\d+)', line)
+        if m and m.group(1) in runs:
+            runs[m.group(1)]['user_idle_ms_at_start'] = int(m.group(2))
         m = re.match(r'inject run=(\S+) sent=(\d+) fg_lost=(\d+) send_fail=(\d+)', line)
         if m and m.group(1) in runs:
             runs[m.group(1)].update(inject_sent=int(m.group(2)), fg_lost=int(m.group(3)), send_fail=int(m.group(4)))
+            for key in ('user_input_events', 'min_idle_ms', 'minimized_samples', 'fg_events'):
+                mk = re.search(r' ' + key + r'=(-?\d+)', line)
+                if mk:
+                    runs[m.group(1)]['fg_event_count' if key == 'fg_events' else key] = int(mk.group(1))   # 'fg_events' (a list) is filled from the fg_event lines
             m2 = re.search(r' stop=(\S+)', line)
             m3 = re.search(r' key_deadline_ms_from_start=(\d+)', line)
             runs[m.group(1)].update(inject_stop=m2.group(1) if m2 else None, key_deadline_ms=int(m3.group(1)) if m3 else None)
+        m = re.match(r'fg_event run=(\S+) (\d+),(\d+),(\d),(\d),(\d),"(.*)"\s*$', line)
+        if m and m.group(1) in runs:
+            runs[m.group(1)].setdefault('fg_events', []).append(
+                {'seq': int(m.group(2)), 'qpc': int(m.group(3)), 'recovered': m.group(4) == '1', 'owner': m.group(7)})
         m = re.match(r'resources run=(\S+) rows=(\d+) sampler_exit=(\S+)', line)
         if m and m.group(1) in runs:
             runs[m.group(1)].update(resources_rows=int(m.group(2)), sampler_exit=m.group(3))
@@ -274,7 +292,8 @@ def load_presentmon(path):
                 continue
             byp.setdefault(r.get('ProcessID'), []).append({
                 'q': int(q), 'until': num(r.get('msUntilDisplayed')), 'dropped': r.get('Dropped') == '1',
-                'between': num(r.get('msBetweenDisplayChange')), 'screen': num(r.get('ScreenTimeQPC'))})
+                'between': num(r.get('msBetweenDisplayChange')), 'screen': num(r.get('ScreenTimeQPC')),
+                'rc': num(r.get('msUntilRenderComplete'))})
     for k in byp:
         byp[k].sort(key=lambda r: r['q'])
     return byp, ''
@@ -340,6 +359,14 @@ def analyze_resources(rr, rdir, ms, me, hz, expected):
         return
     win = [r for r in rows if num(r.get('qpc')) is not None and ms <= num(r['qpc']) <= me]
     res = {'present': True, 'samples_total': len(rows), 'samples': len(win)}
+    # Host saturation voids a run (R10: a build or similar pegging the machine); ordinary background load does not.
+    cpu_win = [num(r.get('total_cpu_pct')) for r in win if num(r.get('total_cpu_pct')) is not None]
+    if cpu_win:
+        sat = sum(1 for c in cpu_win if c > HOST_SATURATED_CPU_PCT) / len(cpu_win)
+        res['total_cpu_pct_median'] = sorted(cpu_win)[len(cpu_win) // 2]
+        res['host_saturated_fraction'] = round(sat, 3)
+        if sat >= 0.5:
+            rr.invalid.append(f'host saturated: total CPU above {HOST_SATURATED_CPU_PCT:g}% in {sat * 100:.0f}% of the measured window (median {res["total_cpu_pct_median"]:.0f}%)')
     if len(win) < MIN_RESOURCE_SAMPLES:
         res['note'] = f'only {len(win)} samples in the measured window (need >= {MIN_RESOURCE_SAMPLES})'
         rr.flags.append(res['note'])
@@ -480,7 +507,20 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
     typed = int(integ.get('typed_count', -1))
     in_run = [r for r in sent_rows if int(r['qpc_before']) <= me]
     post_run = len(sent_rows) - len(in_run)
-    text_ok = integ.get('active_text') == expected[:typed]
+    # Characters outside the injected alphabet cannot be duplicates or replays of the harness's WM_CHARs (20261009-233129-full r1: typed 684 for 680
+    # injected, the four extras were '.', ',', '.', ' ' next to two foreground steals by heardright_next_bin, a dictation tray app that types
+    # into whatever window is in front). They are another process's input: reported on their own, taken out before the lost-edit and sequence checks
+    # (those then speak only about the harness's keys), and the run is not a valid measurement.
+    active_raw = integ.get('active_text') or ''
+    foreign = [(i, c) for i, c in enumerate(active_raw) if c not in set(KEY_CYCLE)]
+    if foreign:
+        typed -= len(foreign)
+    active_clean = ''.join(c for c in active_raw if c in set(KEY_CYCLE))
+    fg_events = harness_run.get('fg_events') or []
+    rr.summary['foreign_chars'] = [c for _, c in foreign]
+    if foreign:
+        rr.flags.append(f"CONTEXT: {len(foreign)} character(s) the harness did not inject reached the active text ({[c for _, c in foreign]}): user or another process typed into the window; excluded from the key checks, run not voided")
+    text_ok = active_clean == expected[:typed]
     if text_ok and len(in_run) <= typed <= len(sent_rows):
         lost = 0
     elif text_ok and typed < len(in_run):
@@ -492,13 +532,24 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
     rr.add('W1', 'active text equals injected sequence', rr.rid, bool(text_ok and len(in_run) <= typed <= len(sent_rows)), True, 'bool')
     rr.summary['keys'] = {'injected': len(sent_rows), 'in_run': len(in_run), 'post_run': post_run, 'typed': typed,
                           'post_run_unapplied': max(0, len(sent_rows) - typed) if lost == 0 else None, 'inject_stop': harness_run.get('inject_stop')}
-    first_loss = int(fg_lost_rows[0]['seq']) if fg_lost_rows else None
-    loss_before_end = False
-    if fg_lost_rows and sent_rows:
-        last_q = int(sent_rows[-1]['qpc_before'])
-        loss_before_end = last_q < me - int(0.2 * hz)
-    rr.add('P', 'window stayed foreground through the measured run (no foreground loss)', rr.rid, not loss_before_end, True, 'bool',
-           f'first_loss_seq={first_loss}')
+    # Foreground, user input, minimized window, overlay hooks, host load: CONTEXT only (R10: the host is in normal use, thresholds must hold under it).
+    # A run is voided only for a minimized window or a window that stopped presenting (checked with the PresentMon rows below) or a saturated host.
+    fg_ev = harness_run.get('fg_events') or []
+    n_user = harness_run.get('user_input_events')
+    disturbed = bool(n_user)
+    rr.summary['context'] = {'disturbed_by_user_input': disturbed, 'user_input_events': n_user, 'min_idle_ms': harness_run.get('min_idle_ms'),
+                             'foreground_changes': len(fg_ev), 'foreground_owners': sorted({e['owner'].split(' title=')[0].split('name=')[-1].split(' class=')[0] for e in fg_ev}),
+                             'minimized_samples': harness_run.get('minimized_samples'), 'overlay': harness_run.get('context'), 'host_top': harness_run.get('host_top')}
+    rr.flags.append('CONTEXT: user input during the key script: ' + ('not recorded by this harness version' if n_user is None else
+                    f"{n_user} event(s), shortest idle {harness_run.get('min_idle_ms')} ms (disturbed=true)" if disturbed else 'none (disturbed=false)')
+                    + f"; foreground changes {len(fg_ev)} {rr.summary['context']['foreground_owners']}")
+    ov = harness_run.get('context') or {}
+    if ov:
+        rr.flags.append('CONTEXT: overlay hooks in the workload process: ' + '; '.join(f"{k}: modules={v['overlay_modules']} procs={v['overlay_procs']} (of {v['modules_total']} modules)" for k, v in ov.items()))
+    if harness_run.get('host_top'):
+        rr.flags.append('CONTEXT: busiest other processes over the key script (% of the whole machine): ' + harness_run['host_top'])
+    if harness_run.get('minimized_samples'):
+        rr.invalid.append(f"workload window was minimized during the key script ({harness_run['minimized_samples']} samples)")
 
     # window filters
     in_inputs = {int(r['seq']): r for r in inputs}
@@ -551,8 +602,22 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
     rows = [r for r in rows if q0 - 2 * hz <= r['q'] <= q1 + 2 * hz]
     win_rows = [r for r in rows if ms <= r['q'] <= me]
     expected_rows = (me - ms) / hz * 60.0
+    # GPU side of each present (context for W5): the frame is displayed two vblanks later only when its render (and, on a hybrid laptop, the cross-adapter copy)
+    # completes before the next vblank, i.e. present phase + render-complete time < one refresh period.
+    rcs = [r['rc'] for r in win_rows if r.get('rc') is not None]
+    if rcs:
+        rr.summary['render_complete_ms'] = stats_block(rcs)
+        rr.flags.append(f"CONTEXT: msUntilRenderComplete p50 {pct(rcs, 0.5):.2f} p95 {pct(rcs, 0.95):.2f} p99 {pct(rcs, 0.99):.2f} max {max(rcs):.2f} ms; "
+                        f"dropped (replaced) presents {sum(1 for r in win_rows if r['dropped'])} of {len(win_rows)}")
     rr.add('C', 'PresentMon rows in measured window (capture integrity)', rr.rid, len(win_rows) >= MIN_PM_ROWS_FRACTION * expected_rows, True, 'bool',
            f'rows={len(win_rows)} expect~{expected_rows:.0f} pid={pid}')
+    shown = sum(1 for r in win_rows if not r['dropped'])
+    rr.summary['presents_in_window'] = len(win_rows)
+    rr.summary['displayed_in_window'] = shown
+    if win_rows and (len(win_rows) < 0.5 * expected_rows or shown < 0.5 * expected_rows):
+        # An occluded window keeps presenting but DWM shows none of it (every present is "dropped"); a minimized one stops presenting.
+        rr.invalid.append(f'window not displayed for most of the measured window (PresentMon: {len(win_rows)} presents, {shown} displayed, ~{expected_rows:.0f} expected): '
+                          'minimized, occluded by another window, or throttled')
     if not win_rows:
         rr.invalid.append('no PresentMon rows for this run pid')
         return

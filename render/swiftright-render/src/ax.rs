@@ -14,14 +14,16 @@ use accesskit::{
 use crate::abi::*;
 use crate::rt::*;
 
+/// One AX text run. The data of a run (text and the per-character arrays) is immutable and shared (`Arc`): a node that only
+/// moved (scrolling) is committed with new bounds and the same character data, and its conversion allocates nothing for it.
 #[derive(Clone)]
 pub struct AxRun {
     pub id: u64,
-    pub text: String,
-    pub lengths: Vec<u8>,
-    pub positions: Vec<f32>,
-    pub widths: Vec<f32>,
-    pub word_starts: Vec<u8>,
+    pub text: Arc<str>,
+    pub lengths: Arc<[u8]>,
+    pub positions: Arc<[f32]>,
+    pub widths: Arc<[f32]>,
+    pub word_starts: Arc<[u8]>,
     pub bounds: [f32; 4],
 }
 
@@ -171,12 +173,12 @@ pub fn build_tree() -> TreeUpdate {
 
         for r in n.runs.iter() {
             let mut run = Node::new(Role::TextRun);
-            run.set_value(r.text.clone());
+            run.set_value(r.text.to_string());
             run.set_text_direction(TextDirection::LeftToRight);
-            run.set_character_lengths(r.lengths.clone());
-            run.set_character_positions(r.positions.clone());
-            run.set_character_widths(r.widths.clone());
-            run.set_word_starts(r.word_starts.clone());
+            run.set_character_lengths(r.lengths.to_vec());
+            run.set_character_positions(r.positions.to_vec());
+            run.set_character_widths(r.widths.to_vec());
+            run.set_word_starts(r.word_starts.to_vec());
             run.set_bounds(rect(&r.bounds));
             nodes.push((NodeId(r.id), run));
         }

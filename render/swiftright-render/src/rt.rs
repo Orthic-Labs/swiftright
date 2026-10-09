@@ -111,13 +111,10 @@ impl Phase {
         self.max.fetch_max(t, SeqCst);
     }
 
-    /// Records one measured section of `ns` nanoseconds.
-    pub fn add_ns(&self, ns: u64) {
-        self.count.fetch_add(1, SeqCst);
-        // Stored in QPC ticks like `add`, so `line` converts both the same way.
-        let t = (ns as u128 * qpc_freq() as u128 / 1_000_000_000u128) as u64;
-        self.total.fetch_add(t, SeqCst);
-        self.max.fetch_max(t, SeqCst);
+    /// Records one measured section [t0, t1] of QPC ticks, and the span in the trace when it is on (trace.rs).
+    pub fn span(&self, kind: u8, t0: i64, t1: i64) {
+        self.add(t1 - t0);
+        crate::trace::span(kind, t0, t1);
     }
 
     /// "name n=.. mean_us=.. max_us=..".
@@ -132,7 +129,8 @@ impl Phase {
 
 /// swr_commit as a whole / the tree part of it / paint_root (the paint of the committed snapshot) /
 /// present() (AX publish + dirty marking) / the host tick callback / the host drain callback / the time from the
-/// latest vblank to the start of each paint (see pace.rs).
+/// latest DWM composition edge to the start of each paint (see pace.rs) / GPUI's whole frame (WM_PAINT dispatch until
+/// Present returned) / the ime_* host callbacks.
 pub static PH_COMMIT: Phase = Phase::new();
 pub static PH_TREE: Phase = Phase::new();
 pub static PH_PAINT: Phase = Phase::new();
@@ -140,6 +138,8 @@ pub static PH_PRESENT: Phase = Phase::new();
 pub static PH_TICK: Phase = Phase::new();
 pub static PH_DRAIN: Phase = Phase::new();
 pub static PH_PHASE: Phase = Phase::new();
+pub static PH_FRAME: Phase = Phase::new();
+pub static PH_IME: Phase = Phase::new();
 
 // ------------------------------------------------------------------- flags
 

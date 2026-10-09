@@ -5,6 +5,9 @@
 # loss that cannot be recovered aborts the script and voids the run), wait for the self-timed run to finish (10 s warm-up +
 # 60 s measured + teardown), record pid / QPC start / QPC end for the PresentMon PID join.
 #
+# R10 (normal-use host): the foreground is no longer required, taken or fought for (see Run() and the acquire block below); foreground owners, user
+#   input (GetLastInputInfo), a minimized window, overlay hooks in the workload process and the host's CPU by process are recorded as CONTEXT lines
+#   (`fg_event`, `activity`/activity.csv, `context`, `host_top`); no run is voided for them.
 # R10 harness fixes (first real run, 20261009-212322-full):
 #   * Keys: a physical key is three messages (WM_KEYDOWN, WM_CHAR, WM_KEYUP) but the renderer's loop translates WM_KEYDOWN into a
 #     WM_CHAR itself, so posting all three typed every key twice (injected 47, typed 94). Only WM_CHAR is posted by default
@@ -37,6 +40,7 @@ param(
   [int]$Rows = 200,                                         # total editable rows the app runs with (200 default; stress series also 1000, 5000)
   [double]$KeyTailS = 0.5,                                  # keys stop this long before the nominal run end (process start + warm-up + measured)
   [switch]$NoResources,                                     # skip the resource sampler (overhead A/B)
+  [string]$PaintPhaseMs = '',                               # R10: SWR_PAINT_PHASE_MS for the renderer (A/B: 0 = pacing off); '' leaves the renderer default
   [string]$RunPrefix = 'r',
   [ValidateSet('char', 'all')][string]$KeyMode = 'char',   # char: WM_CHAR only; all: WM_KEYDOWN + WM_CHAR + WM_KEYUP (types every key twice)
   [int]$ForegroundSeconds = 8                               # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
@@ -77,6 +81,11 @@ public static class Inj {
     [DllImport("user32.dll")] static extern bool AttachThreadInput(uint a, uint b, bool attach);
     [DllImport("kernel32.dll")] static extern uint GetCurrentThreadId();
     [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
+    [DllImport("user32.dll")] static extern bool GetLastInputInfo(ref LASTINPUTINFO p);
+    [DllImport("kernel32.dll")] static extern uint GetTickCount();
+    [StructLayout(LayoutKind.Sequential)] public struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
+    public static long IdleMs() { uint li = LastInputTick(); return li == 0 ? -1 : (long)unchecked(GetTickCount() - li); }
+    static uint LastInputTick() { LASTINPUTINFO i = new LASTINPUTINFO(); i.cbSize = 8; return GetLastInputInfo(ref i) ? i.dwTime : 0; }
     [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
 
     public static int InputSize() { return 0; } // no SendInput: keys are POSTED to the workload HWND only
@@ -177,20 +186,25 @@ public static class Inj {
 
     // Posts `chars` cyclically at rateHz for maxSeconds, each key on an absolute schedule from the first key. The QPC
     // timestamp is taken immediately BEFORE the key's PostMessage (the event timestamp of CONTRACT section 5).
-    // Foreground is checked before each key (validity: window must stay unoccluded). A loss is logged with who holds the
-    // foreground and re-acquired (three tries, 30/60/120 ms); a key goes out only with the window in the foreground, and when
-    // re-acquiring fails the script aborts (fg_lost=1). Losses are written to eventsPath and marked in the key's fg_event column.
+    // Keys are window-targeted, so the foreground is NOT required and is never fought for here (the machine is in normal use: the user's own
+    // windows come and go). Foreground changes, user input (GetLastInputInfo; our PostMessage keys do not count as input) and a minimized window
+    // are RECORDED as context at every key: eventsPath (foreground owner changes), activityPath (one row per key). Nothing here aborts the script.
     // deadlineQpc > 0: no key is posted whose due time is after it (keys never reach a window the app is already closing).
-    public static string Run(IntPtr hwnd, int pid, double rateHz, double maxSeconds, string outPath, string chars, string eventsPath, bool allMessages, long deadlineQpc) {
+    public static string Run(IntPtr hwnd, int pid, double rateHz, double maxSeconds, string outPath, string chars, string eventsPath, bool allMessages, long deadlineQpc, string activityPath) {
         double hz = Stopwatch.Frequency;
         long step = (long)(hz / rateHz);
         long start = Stopwatch.GetTimestamp() + (long)(0.2 * hz);
         long limit = (long)(maxSeconds * hz);
         StringBuilder sb = new StringBuilder();
         StringBuilder ev = new StringBuilder();
+        StringBuilder act = new StringBuilder();
         sb.Append("seq,char,qpc_before,qpc_after,sent,fg_ok,fg_event\n");
         ev.Append("seq,qpc,recovered,hung,responsive,owner\n");
-        int seq = 0, fgLost = 0, sendFail = 0, events = 0, recoveredEvents = 0;
+        act.Append("seq,qpc,idle_ms,fg_ours,iconic\n");
+        int seq = 0, sendFail = 0, events = 0, userInput = 0, minimized = 0;
+        uint minIdle = uint.MaxValue;
+        uint lastInput = LastInputTick();
+        IntPtr lastFg = GetForegroundWindow();
         string stop = "limit";
         while (true) {
             long due = start + (long)seq * step;
@@ -202,30 +216,23 @@ public static class Inj {
                 if (rem > (long)(0.016 * hz)) Thread.Sleep(8); else Thread.SpinWait(40);
             }
             if (!IsWindow(hwnd)) { stop = "window-gone"; break; }
+            IntPtr fg = GetForegroundWindow();
+            uint li = LastInputTick();
+            uint idle = unchecked(GetTickCount() - li);
+            bool iconic = IsIconic(hwnd);
+            if (li != lastInput) { userInput++; lastInput = li; }
+            if (idle < minIdle) minIdle = idle;
+            if (iconic) minimized++;
             int fgEvent = 0;
-            if (GetForegroundWindow() != hwnd) {
-                long lostAt = Stopwatch.GetTimestamp();
-                string owner = ForegroundOwner();
-                bool hung = Hung(hwnd);
-                bool responsive = Responsive(hwnd, 100);
-                bool recovered = false;
-                int pause = 30;
-                for (int i = 0; i < 3 && !recovered; i++) {
-                    string how = Foreground(hwnd, pid);
-                    recovered = how != "failed" && GetForegroundWindow() == hwnd;
-                    if (!recovered) { Thread.Sleep(pause); pause *= 2; }
-                }
-                events++;
-                if (recovered) recoveredEvents++;
-                ev.Append(seq + "," + lostAt + "," + (recovered ? 1 : 0) + "," + (hung ? 1 : 0) + "," + (responsive ? 1 : 0) + ",\"" + owner + "\"\n");
-                if (!recovered) {
-                    fgLost = 1;
-                    stop = "fg-lost";
-                    sb.Append(seq + ",,0,0,0,0,1\n");
-                    break;
-                }
+            if (fg != lastFg) {
                 fgEvent = 1;
+                events++;
+                string owner = "?";
+                try { owner = fg == hwnd ? "workload-window (regained)" : ForegroundOwner(); } catch (Exception) { }
+                ev.Append(seq + "," + Stopwatch.GetTimestamp() + ",0," + (Hung(hwnd) ? 1 : 0) + ",1,\"" + owner + "\"\n");
+                lastFg = fg;
             }
+            act.Append(seq + "," + Stopwatch.GetTimestamp() + "," + idle + "," + (fg == hwnd ? 1 : 0) + "," + (iconic ? 1 : 0) + "\n");
             char c = chars[seq % chars.Length];
             ushort vk = (ushort)char.ToUpperInvariant(c);
             long before = Stopwatch.GetTimestamp();
@@ -238,7 +245,9 @@ public static class Inj {
         }
         File.WriteAllText(outPath, sb.ToString());
         File.WriteAllText(eventsPath, ev.ToString());
-        return "sent=" + seq + " fg_lost=" + fgLost + " send_fail=" + sendFail + " fg_events=" + events + " fg_recovered=" + recoveredEvents + " stop=" + stop;
+        File.WriteAllText(activityPath, act.ToString());
+        return "sent=" + seq + " fg_lost=0 send_fail=" + sendFail + " fg_events=" + events + " fg_recovered=0 stop=" + stop
+            + " user_input_events=" + userInput + " min_idle_ms=" + (minIdle == uint.MaxValue ? -1 : (long)minIdle) + " minimized_samples=" + minimized;
     }
 }
 '@
@@ -254,10 +263,25 @@ if (-not $vc) { $vc = $vcs | Select-Object -First 1 }
 $lines.Add("harness=task-workload host=$env:COMPUTERNAME user=$env:USERNAME session=$((Get-Process -Id $PID).SessionId) started=$(Get-Date -Format o)")
 $lines.Add("host qpc_freq=$swFreq input_struct=$([Inj]::InputSize()) gpu=$($vc.Name) driver=$($vc.DriverVersion) refresh_hz=$($vc.CurrentRefreshRate) res=$($vc.CurrentHorizontalResolution)x$($vc.CurrentVerticalResolution)")
 foreach ($c in $vcs) { $lines.Add("controller name=$($c.Name) driver=$($c.DriverVersion) refresh_hz=$($c.CurrentRefreshRate) res=$($c.CurrentHorizontalResolution)x$($c.CurrentVerticalResolution)") }
-$lines.Add("exe=$exe exe_sha256=$($b.exe_sha256) dll_sha256=$($b.dll_sha256) instr=$Instr runs=$Runs warmup_s=$Warmup measure_s=$Measure rate_hz=$KeyRate rows=$Rows key_tail_s=$KeyTailS resources=$(if ($NoResources) { 'off' } else { 'on' }) key_mode=$KeyMode foreground_s=$ForegroundSeconds")
+$lines.Add("exe=$exe exe_sha256=$($b.exe_sha256) dll_sha256=$($b.dll_sha256) instr=$Instr runs=$Runs warmup_s=$Warmup measure_s=$Measure rate_hz=$KeyRate rows=$Rows key_tail_s=$KeyTailS resources=$(if ($NoResources) { 'off' } else { 'on' }) key_mode=$KeyMode foreground_s=$ForegroundSeconds paint_phase_ms=$(if ($PaintPhaseMs -eq '') { 'default' } else { $PaintPhaseMs })")
 $lines.Add("power=$((powercfg /getactivescheme) -join ' ')")
 Flush-Out
 $chars = 'mwqogdhbnk'
+function Get-CpuMap {
+  $m = @{}
+  foreach ($p in (Get-Process -ErrorAction SilentlyContinue)) {
+    try { $m[$p.Id] = [pscustomobject]@{ Name = $p.ProcessName; Cpu = $p.TotalProcessorTime.TotalSeconds } } catch { }
+  }
+  return $m
+}
+# Overlay / capture-hook context for one process: loaded module names that match a known overlay or injection pattern, and running helper processes.
+function Get-OverlayContext([int]$ProcId) {
+  $mods = @()
+  try { $mods = @((Get-Process -Id $ProcId -ErrorAction Stop).Modules | ForEach-Object { $_.ModuleName }) } catch { }
+  $hit = @($mods | Where-Object { $_ -match 'nvspcap|nvoverlay|nvtelemetry|overlay|rtss|reshade|discord|obs-?(graphics|vulkan)|nvcamera|nvshare|nvinject|vkbasalt|steam|nvngx_update|NvCameraAllowlisting' } | Sort-Object -Unique)
+  $procs = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -match 'NVIDIA (Overlay|Share|app)|nvcontainer|NVDisplay\.Container|GeForceExperience|RTSS|Discord|obs64|^Steam$|MSIAfterburner' } | ForEach-Object { $_.ProcessName } | Sort-Object -Unique)
+  [pscustomobject]@{ total = $mods.Count; hits = ($hit -join ','); procs = ($procs -join ','); all = $mods }
+}
 $okRuns = 0
 for ($i = 1; $i -le $Runs; $i++) {
   $id = "$RunPrefix$i"
@@ -272,6 +296,10 @@ for ($i = 1; $i -le $Runs; $i++) {
   $psi.RedirectStandardOutput = $true
   $psi.RedirectStandardError = $true
   $psi.EnvironmentVariables['Path'] = "$swiftBin;$bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
+  # Renderer knobs travel through the child's environment (the scheduled task does not inherit the orchestrator's). The renderer prints
+  # what it read on stderr ("paint pacing on/off ...", stderr.txt); the analyzer-side receipt is the `exe=` line above.
+  if ($PaintPhaseMs -ne '') { $psi.EnvironmentVariables['SWR_PAINT_PHASE_MS'] = $PaintPhaseMs } else { [void]$psi.EnvironmentVariables.Remove('SWR_PAINT_PHASE_MS') }
+  $psi.EnvironmentVariables['SWR_FRAME_LOG'] = "$dir\render-frames.csv"
   $qs = [System.Diagnostics.Stopwatch]::GetTimestamp()
   $proc = [System.Diagnostics.Process]::Start($psi)
   $so = $proc.StandardOutput.ReadToEndAsync()
@@ -305,21 +333,36 @@ for ($i = 1; $i -le $Runs; $i++) {
     }
     $lines.Add("window_ready run=$id visible=$([int][Inj]::Visible($hwnd)) consecutive_answers=$answers hung=$([int][Inj]::Hung($hwnd)) after_ms=$([int](([System.Diagnostics.Stopwatch]::GetTimestamp() - $qs) * 1000 / $swFreq))")
     Start-Sleep -Milliseconds 500
+    # R10: the Dell is in normal use. Keys are posted to this window's HWND, so the foreground is not needed for delivery: take it ONCE, best effort
+    # (2 s budget), and only when the user has not touched the keyboard or mouse in the last 2 s (a take-over would eat their next keystrokes). No
+    # failure here voids the run; the foreground owner is then recorded as context (fg_event lines, activity.csv).
     $acqLog = New-Object System.Text.StringBuilder
-    $fg = [Inj]::Acquire($hwnd, $proc.Id, $ForegroundSeconds * 1000, $acqLog)
+    $idle0 = [Inj]::IdleMs()
+    $fg = if ($idle0 -ge 0 -and $idle0 -lt 2000) { 'skipped-user-active' } else { [Inj]::Acquire($hwnd, $proc.Id, 2000, $acqLog) }
     foreach ($l in ($acqLog.ToString() -split "`r?`n" | Where-Object { $_ })) { $lines.Add("fg_attempt run=$id $l") }
     $rc = New-Object Inj+RECT; [void][Inj]::GetClientRect($hwnd, [ref]$rc)
     $dpi = [Inj]::GetDpiForWindow($hwnd)
-    $lines.Add("window run=$id hwnd=$($hwnd.ToInt64()) foreground=$fg dpi=$dpi client_px=$($rc.Right)x$($rc.Bottom)")
-    if ($fg -eq 'failed' -or $fg -eq 'no-window') { $valid = $false; $reason = 'foreground-failed' }
-    else {
-      # Keys from now until the run ends (warm-up + measured + margin); the analyzer keeps those inside the measured window.
-      $keyDeadline = $qs + [long](($Warmup + $Measure - $KeyTailS) * $swFreq)
-      $res = [Inj]::Run($hwnd, $proc.Id, $KeyRate, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline)
-      $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode rate_hz=$KeyRate key_deadline_ms_from_start=$([int](($keyDeadline - $qs) * 1000 / $swFreq))")
-      foreach ($l in (Get-Content "$dir\fg_events.csv" -ErrorAction SilentlyContinue | Select-Object -Skip 1)) { $lines.Add("fg_event run=$id $l") }
-      # fg_lost=1 only stops the key script. The analyzer decides validity: a loss before the measured window ends voids the run.
+    $lines.Add("window run=$id hwnd=$($hwnd.ToInt64()) foreground=$fg dpi=$dpi client_px=$($rc.Right)x$($rc.Bottom) user_idle_ms=$idle0")
+    # Context: overlay hooks in our process, overlay/capture helper processes, and the host's CPU by process over the key script.
+    $ctx0 = Get-OverlayContext $proc.Id
+    $lines.Add("context run=$id phase=pre overlay_modules=$(if ($ctx0.hits) { $ctx0.hits } else { 'none' }) modules_total=$($ctx0.total) overlay_procs=$(if ($ctx0.procs) { $ctx0.procs } else { 'none' })")
+    $cpuA = Get-CpuMap; $tA = [System.Diagnostics.Stopwatch]::GetTimestamp()
+    # Keys from now until the run ends (warm-up + measured + margin); the analyzer keeps those inside the measured window.
+    $keyDeadline = $qs + [long](($Warmup + $Measure - $KeyTailS) * $swFreq)
+    $res = [Inj]::Run($hwnd, $proc.Id, $KeyRate, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline, "$dir\activity.csv")
+    $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode rate_hz=$KeyRate key_deadline_ms_from_start=$([int](($keyDeadline - $qs) * 1000 / $swFreq))")
+    foreach ($l in (Get-Content "$dir\fg_events.csv" -ErrorAction SilentlyContinue | Select-Object -Skip 1)) { $lines.Add("fg_event run=$id $l") }
+    $cpuB = Get-CpuMap; $spanS = ([System.Diagnostics.Stopwatch]::GetTimestamp() - $tA) / $swFreq
+    $ctx1 = Get-OverlayContext $proc.Id
+    $lines.Add("context run=$id phase=post overlay_modules=$(if ($ctx1.hits) { $ctx1.hits } else { 'none' }) modules_total=$($ctx1.total) overlay_procs=$(if ($ctx1.procs) { $ctx1.procs } else { 'none' })")
+    try { Set-Content -Path "$dir\modules.txt" -Value $ctx1.all -Encoding ascii } catch { }
+    $topRows = foreach ($k in $cpuA.Keys) {
+      if ($cpuB.ContainsKey($k) -and $cpuB[$k].Name -eq $cpuA[$k].Name -and $k -ne $proc.Id) {
+        [pscustomobject]@{ Name = $cpuA[$k].Name; Id = $k; Pct = [math]::Round(($cpuB[$k].Cpu - $cpuA[$k].Cpu) / ($spanS * [Environment]::ProcessorCount) * 100, 2) }
+      }
     }
+    $top = @($topRows | Sort-Object Pct -Descending | Select-Object -First 6 | ForEach-Object { "$($_.Name)($($_.Id)):$($_.Pct)" }) -join ';'
+    $lines.Add("host_top run=$id span_s=$([math]::Round($spanS, 1)) logical_cpus=$([Environment]::ProcessorCount) pct_of_machine_excluding_workload=$top")
   }
   $deadline = (Get-Date).AddSeconds($Warmup + $Measure + 40)
   while (-not $proc.HasExited -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 500 }

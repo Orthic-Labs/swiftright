@@ -13,6 +13,7 @@ mod ax;
 mod pace;
 mod rt;
 mod text;
+mod trace;
 mod tree;
 mod view;
 
@@ -23,6 +24,10 @@ use std::sync::Arc;
 
 use abi::*;
 use rt::*;
+
+/// Counts live bytes and allocations (trace.rs): the memory-growth work needs to tell the Rust heap from everything else.
+#[global_allocator]
+static GLOBAL: trace::CountingAlloc = trace::CountingAlloc;
 
 macro_rules! guard {
     ($body:expr) => {
@@ -255,7 +260,7 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
                 }
                 PRESENT_PENDING.store(true, SeqCst);
                 signal_notify();
-                PH_COMMIT.add(qpc_now() - t_start);
+                PH_COMMIT.span(trace::K_COMMIT, t_start, qpc_now());
                 SWR_OK
             }
         }
