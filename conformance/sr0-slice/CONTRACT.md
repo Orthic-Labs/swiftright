@@ -71,7 +71,7 @@ Async completions come from an injected fake engine and clock; fixtures release 
 | Accessibility tree, roles, actions, bounds | AX API out of process (signed recorder with AX permission) | UIA out of process (proven: `probes/sr0-d/render-composition`) |
 | Focus & caret | AX focused element, `AXSelectedTextRange`, `AXBoundsForRange` | UIA focus, TextPattern selection & `GetBoundingRectangles` (TextPattern not yet proven) |
 | Marked text | Bounded input/output assertion only (no public marked-text observation) | Runtime-owned buffer state |
-| Visible response | Compositor/optical endpoint, chosen before seed scoring | Same |
+| Visible response | Input event timestamp from the injecting recorder (mach absolute time) to the first frame containing the response, detected by ScreenCaptureKit frame timestamps on a recorder-owned stream (decided 9 Oct 2026; optical capture remains the cross-check if ScreenCaptureKit latency is not calibrated) | SendInput QPC timestamp to PresentMon `msUntilDisplayed`-derived display time of the first present after the event that contains the response (decided 9 Oct 2026; same clock domain, QPC) |
 
 Canonical roles: window, button, text-field, list, list-item, static-text. Platform containers named in the normalizer are stripped; nothing else.
 
@@ -98,4 +98,4 @@ Copied from architecture §11 decision budgets, including revision 1 (presentati
 
 - ~~Same-source compile probe~~: PASS on macOS 27 arm64 & Windows x64 with an identical screen file; negative `NavigationSplitView` fixture fails on Windows only (`probes/sr0-c/same-source`).
 - TextPattern on Windows edit nodes; Mac AX caret routes for SwiftUI `TextField`.
-- Visible-response endpoint method per OS.
+- ~~Visible-response endpoint method per OS~~: decided (§5).

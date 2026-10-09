@@ -1,6 +1,6 @@
 # SR0 slice contract v1.0: freeze proposal
 
-**PROPOSAL — pending evidence noted inline.** Nothing here is frozen. Compiled 9 October 2026, updated evening against HEAD ee5a4db, from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md` (DRAFT v0.1; SR0-C row in `docs/sr0-status.md`). Freeze rule from CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11).
+**PROPOSAL — updated 9 Oct 2026 (late): blockers 3, 5, 6 closed; 2 running; 7 needs Adrian's one-time grant.** Nothing here is frozen. Compiled 9 October 2026, updated evening against HEAD ee5a4db, from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md` (DRAFT v0.1; SR0-C row in `docs/sr0-status.md`). Freeze rule from CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11).
 
 ## 1. Evidence base
 
@@ -96,11 +96,11 @@ None of C1-C8 changes a pass/fail semantic that the Mac oracle recorded; C3 and 
 ## 4. Freeze-blocking items
 
 1. ~~WIN-M3 completion~~: MET as WIN-M4, all 15 configs 3/3 PASS (`out/matrix-rev4/RESULT.md`, `matrix-rev4b`, ee5a4db).
-2. Windows repeat count per C9 (3 vs 20 runs): **OPEN**.
-3. XCMP: F1 Mac-vs-Windows compare rerun after cc4c93a label fix: **BLOCKED** (desktop-intrusion hook; pending Adrian). Last recorded: 52 diffs, text-field labels only (`compare-strict-m1-w5.json`).
+2. Windows repeat count per C9: DECIDED — keep 20 runs (no reason to weaken the contract). Evidence: `fresh-on-bridge/out/matrix-20b` (running 9 Oct 2026; partial `matrix-20` committed 3d2d57f exposed an F3 vstack settle race, fixed in the self-test). Closes when matrix-20b shows 20/20 for all 15 configs.
+3. ~~XCMP~~: MET — F1 Mac-vs-Windows compare PASSES, Windows w6 vs Mac m1..m5, 0 diffs each (eaf40dc).
 4. ~~Negative fixtures~~: MET (`probes/sr0-c/negative-fixtures/RESULT.md`).
-5. Windows TextPattern on populated edit nodes (selection, caret rect): degenerate caret check built (88bfc7a), desktop run PENDING (blocked). UIA AutomationId: **MET** (5/5, rev05c).
-6. Visible-response endpoint per OS chosen and recorded (CONTRACT §8).
+5. ~~Windows TextPattern on populated edit nodes~~: MET — text geometry run 4, 35/35 incl. degenerate caret rect via raw UIA provider (fcc999d). UIA AutomationId: MET (5/5, rev05c).
+6. ~~Visible-response endpoint~~: DECIDED 9 Oct 2026 and recorded in CONTRACT §5 (see there).
 7. Signed Mac recorder with its own AX grant: `F1MacRecord.app` built (7a91608), awaiting Adrian's one-time Accessibility grant.
 
 Non-blocking for a v1.0 on x64 + Mac arm64: Windows arm64 lane (no host), noted as exclusion.

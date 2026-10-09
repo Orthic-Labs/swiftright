@@ -85,8 +85,8 @@ The rev05 0/5 result was a timing race: UIA lookups ran after the app self-quit.
 |---|---|---|
 | B1 | UIA AutomationId | **CLOSED**: 5/5 in `result-smoke-rev05c.txt` and `result-smoke-timeout05c.txt` |
 | B2 | `SWR_PRIM_UNDERLINE` | **CLOSED as acceptance only** (rev05c); no per-primitive draw counter, painting not asserted |
-| B3 | List/list-item AX through bridge | WIN matrix 15/15 PASS; F1 cross-platform compare rerun **OPEN (blocked)** after cc4c93a |
-| B4 | Contract freeze dependency | README says ABI freeze waits on the SR0-C contract freeze; contract blockers in `docs/sr0-freeze-slice-contract-v1.md` section 4 (C9 20-run Windows matrix OPEN). `docs/sr0-status.md` updated to 0.5 |
+| B3 | List/list-item AX through bridge | **CLOSED**: WIN matrix 15/15 PASS; F1 cross-platform compare 0 diffs (eaf40dc) |
+| B4 | Contract freeze dependency | Waits on the SR0-C contract freeze: remaining contract blockers are the 20-run Windows matrix (running) and the signed Mac recorder grant |
 | B5 | Post-close pump edge paths | **CLOSED**: early `SWR_E_STATE`, idempotent repeat, 5 s timeout (timeouts=1) in rev05c / timeout05c (27d93cc) |
 | B6 | Incomplete size table | **CLOSED** (02e660f) |
 | B7 | Smoke evidence reachable | **CLOSED**: rev05c and timeout05c committed (ee5a4db) |
