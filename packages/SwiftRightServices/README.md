@@ -73,7 +73,7 @@ Frames carry JSON bodies only. The protocol has no binary payload type (wire.rs 
 
 ## Tests
 
-`swift test` runs 29 tests: 11 codec tests (no process) and 18 process tests against `FakeEngine`, an independent Swift executable that speaks the same envelope without importing this library.
+`swift test` runs 29 tests: 11 codec tests (no process) and 18 process tests against `FakeEngine`, an independent Swift executable that speaks the same envelope without importing this library. `RealEngineTests` (2) run against a real Rust engine when `SWR_REAL_ENGINE` is set and are skipped otherwise. See "Real engine check".
 
 - Handshake over JSON lines and length-prefixed framing. Version mismatch is rejected with `incompatibleProtocol`. A silent engine hits `handshakeTimeout`.
 - 40 concurrent requests with out-of-order responses, each correlated to its own caller.
@@ -102,7 +102,7 @@ Owners per `docs/architecture.md` section 7 and `probes/sr0-d/owner-map/RESULT.m
 1. **No handshake version negotiation.** `hello` carries one `contract_version: u32` (wire.rs:62-68). There is no min/max range, no negotiation reply, and no rule for which version wins. This client applies its own range policy. The owner should define the contract range and rejection frame.
 2. **No cancel frame.** The `Frame` enum has no cancel variant (wire.rs:58-105), and "cancel" appears nowhere in `rightkit-framed-sidecar` or `rightkit-process` source. Cancelled work keeps running in the engine. A `cancel` frame or a documented cancel method is needed.
 3. **No binary payload type.** Bodies are always JSON, including length-prefixed (length_prefixed.rs:1-4). Bulk data needs a defined side channel.
-4. **`ready` is not normative.** It appears only as a doc comment (wire.rs:70). This client requires it before requests. The owner should confirm whether it is mandatory.
+4. **`ready` is not normative, and the shipped Rust host does not send it.** It appears only as a doc comment (wire.rs:70). This client requires it by default (`requireReady = true`). The real engine check below shows `rightkit-jobs` treats `hello` as ready and never sends `ready`, so the default fails against it. The owner must decide whether `ready` is mandatory. Until then, consumers of real engines set `requireReady = false`.
 5. **No process-tree termination in Foundation.** `Process.terminate()` stops only the direct child. `rightkit-process` provides kill-on-close and process-tree handling (`windows_job.rs:23`, `owned.rs:197-210`, `unix_containment`), and this package does not use it. A Swift adapter or C ABI over `OwnedChild` is needed. Until then, Windows grandchildren can survive shutdown.
 6. **Environment allowlist not applied.** `rightkit-process` offers `DEFAULT_ENV_ALLOWLIST` (owned.rs:346) and `env_allowlist` (owned.rs:161). This client inherits the parent environment unless `environment` is set.
 7. **No Swift or C ABI for any of these.** `rightkit-framed-sidecar` 0.1.0 and `rightkit-process` 0.3.1 match the registry and are Rust-only (owner-map RESULT.md, EngineService rows). No `rightkit-service` Swift client exists for `service.json` discovery or the current-user socket. Architecture section 8 allows inherited pipes, so this package uses pipes only.
@@ -115,3 +115,46 @@ Owners per `docs/architecture.md` section 7 and `probes/sr0-d/owner-map/RESULT.m
 - Not committed or pushed. No branch created.
 - Unix-domain socket and named-pipe transports (architecture section 8) are not implemented. Only inherited stdin/stdout pipes are.
 - Event buffering drops the oldest events when the consumer lags (`bufferingNewest`). RightKit does not define a policy.
+
+## Real engine check
+
+Integration check of `EngineClient` against a real Rust engine built through RightKit. It is opt-in and headless.
+
+**Engine**
+
+- Binary: `rightkit-jobs` example `engine_fixture` (`crates/rightkit-jobs/examples/engine_fixture.rs`, 130 lines). It is RightKit's scriptable test engine for supervisor tests, not a product engine. It is the only standalone binary in the workspace that speaks the framed-sidecar envelope. The record helper is Windows-only capture, and the shell example is a Tauri GUI app.
+- Repo: `/Volumes/D/claude/tools/rightkit`, HEAD `9f3ec2d48689fb7a7c73d269fe67490f0874369e`. The fixture and the crates it links (`rightkit-jobs` 0.2.6, `rightkit-framed-sidecar` 0.1.0, `rightkit-service` 0.1.3, `rightkit-process`, `rightkit-db`, `rightkit-fs`) had no uncommitted changes when built. The repo as a whole was dirty with other owners' work, which was left untouched.
+- Build: `rightkit cargo build --release -p rightkit-jobs --example engine_fixture`, one run, 14.5 s, through RightKit. The output is in RightKit's managed target (`/Volumes/D/.rightkit-managed/rightkit-build-control/ws/bbf2da541b23/g/002/target/aarch64-apple-darwin/release/examples/engine_fixture`). SHA-256 `86f2a40b3cb7c3dd411be3ea9d6d2a1ca9fe7b0f384fe87b21f467627d50be3a`. Host: Mac arm64, Swift 6.4.
+- Wire behavior, observed by piping raw requests: `hello` `{"contract_version":1,"engine":"fixture","version":"1.0"}`, then responses. No `ready` frame is sent.
+
+**Run**
+
+```sh
+SWR_REAL_ENGINE=<path-to-engine_fixture> swift test --filter RealEngineTests
+SWR_REAL_ENGINE=<path-to-engine_fixture> swift test    # full suite
+```
+
+**Results (Mac, arm64, Swift 6.4)**
+
+| Test | Result |
+|---|---|
+| `testStrictHandshakeTimesOutWaitingForReadyFromRealEngine` (default `requireReady = true`) | passed. `start()` throws `handshakeTimeout(stage: "ready", after: 2s)`, as the protocol requires. |
+| `testHandshakeRequestsErrorAndShutdownAgainstRealEngine` (`requireReady = false`) | passed. Covers `hello` equal to `{fixture, 1.0, 1}`, `ping` with `{pong: true}`, a nested `echo` round trip (integer, escaped string, array, float, null), a typed remote error `unknown_method` with `retryable: false`, a second request after the error, and `shutdown()` returning `.exited(status: 0)`. |
+
+Full suite with `SWR_REAL_ENGINE` set: 31 of 31 pass (11 codec, 18 FakeEngine, 2 real). Without it: 29 pass and 2 are skipped. Before this check the baseline was 29 of 29.
+
+**Client change made for this check**
+
+- `EngineConfiguration.requireReady: Bool`, default `true`. When `false`, `hello` alone completes the handshake. The default behavior is unchanged. The `ready` completion code moved into `EngineClient.completeHandshake()`, which both paths share.
+- Reason: a real shipped engine never sends `ready`, so the strict default cannot reach a request against it. This is a protocol decision, which is why the default stays strict and the choice is exposed as an option. See gap 4.
+
+**Findings**
+
+- The strict handshake fails cleanly with a typed timeout (no hang), so the failure mode is safe.
+- `shutdown()` against the real engine reports `.exited(status: 0)`. The fixture answers the `bye` frame with a null-id `unknown_method` response (checked by a raw pipe). The client still reached a clean exit, so that stray response did not break shutdown.
+- The real engine's request, error, and shutdown behavior matches the client's wire model. No framing or correlation mismatch was seen.
+- Not exercised: oversized frames, length-prefixed framing (the fixture only speaks JSON lines), crash or restart paths, and progress events (`notify` is available in the fixture and was not wired into the test).
+
+## Default handshake decision (2026-10-09)
+
+`requireReady` defaults to `false`: the shipped RightKit host (`rightkit-jobs`) treats `hello` as ready and never sends `ready` (only a doc comment in `wire.rs`), so a strict default would fail against every real engine. Strict mode stays available for engines that do send `ready`. Reported to the RightKit owner as gap 4.

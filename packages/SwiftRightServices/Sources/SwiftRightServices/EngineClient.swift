@@ -321,6 +321,18 @@ public actor EngineClient {
         }
     }
 
+    /// Marks the session ready, resolves the start waiter, and emits `.connected`.
+    private func completeHandshake() {
+        guard let info = hello else { return }
+        phase = .ready
+        handshakeTimer?.cancel()
+        handshakeTimer = nil
+        let waiter = handshakeWaiter
+        handshakeWaiter = nil
+        waiter?.resume(returning: info)
+        sink.yield(.connected(info))
+    }
+
     private func handshakeTimedOut(_ gen: UInt64, _ armed: Phase, _ after: Duration) {
         guard session?.generation == gen, phase == armed else { return }
         guard armed == .awaitingHello || armed == .awaitingReady else { return }
@@ -364,20 +376,17 @@ public actor EngineClient {
                 return
             }
             hello = info
+            guard configuration.requireReady else {
+                completeHandshake()
+                return
+            }
             phase = .awaitingReady
             armHandshakeTimer(gen, configuration.readyTimeout)
 
         case .awaitingReady:
             switch frame {
             case .ready:
-                guard let info = hello else { return }
-                phase = .ready
-                handshakeTimer?.cancel()
-                handshakeTimer = nil
-                let waiter = handshakeWaiter
-                handshakeWaiter = nil
-                waiter?.resume(returning: info)
-                sink.yield(.connected(info))
+                completeHandshake()
             case .hello:
                 teardown(gen, error: .handshakeFailed("duplicate hello before ready"))
             default:

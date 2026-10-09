@@ -37,6 +37,10 @@ public struct EngineConfiguration: Sendable {
     public var maxEventBuffer: Int
     public var handshakeTimeout: Duration
     public var readyTimeout: Duration
+    /// false (default): `hello` alone completes the handshake, matching the shipped Rust hosts. true: also wait for `ready`.
+    /// The shipped Rust engines (rightkit-jobs `EngineClient`) treat `hello` as ready and never
+    /// send `ready`; see README "Real engine check".
+    public var requireReady: Bool
     public var defaultRequestTimeout: Duration
     public var shutdownGrace: Duration
     public var reconnect: ReconnectPolicy
@@ -59,6 +63,7 @@ public struct EngineConfiguration: Sendable {
         self.maxEventBuffer = 1024
         self.handshakeTimeout = .seconds(10)
         self.readyTimeout = .seconds(60)
+        self.requireReady = false
         self.defaultRequestTimeout = .seconds(30)
         self.shutdownGrace = .seconds(5)
         self.reconnect = .disabled
