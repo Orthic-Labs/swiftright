@@ -423,3 +423,7 @@ App executable sha256: 0.1.0 84f9b81a…0646cc, 0.1.1 05110857…a8e2. Evidence:
 build logs `r3-build-*.log`; sealed manifests 0.1.0 97a1ac67…a03d2, 0.1.1 40a9026c…d3048.
 Open: .app staple (gap 3b; offline first launch in R7 decides impact); `hdiutil detach` "Resource busy" flake (2–3 attempts
 per DMG); Swift-only rebuild proof and receipts not yet run.
+
+## R2 result (2026-10-09): MSIX old + new built, signed, verified
+
+Passed on @rightkit/release 0.2.139 via the non-elevated scheduled-task route. Full table, hashes and three defects (proof script and installed check compare signed raw hashes; `.right-release/` not gitignored; use `right-release build`, not `release --tier patch`) in `RESULT-R2.md`.
