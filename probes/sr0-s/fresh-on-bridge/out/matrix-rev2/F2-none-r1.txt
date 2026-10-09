@@ -1,0 +1,69 @@
+registered=SR0S-Fix-F2noner1a1 at=2026-10-09T07:42:16.0791651+05:30
+state=Ready last_result=0
+deleted=SR0S-Fix-F2noner1a1 exists_after=False
+host=BOGUS-DELL session=1 fixture=F2 variant=none args=--fixture F2 started=2026-10-09T07:42:16.6316093+05:30
+window_hwnd=2754976 polls=2 exited_early=False
+focus[Row 3]=ok attempt=0
+wait_value[Row 3]=Row 3-x ok ms=18
+uia_edit_order=[Row 1,Row 2,Row 4,Row 5,Row 6,Row 7,Row 8,Row 3,Row 9,Row 10]
+focused_final=[Row 3]
+close_window=WM_CLOSE posted=True
+exit=1 end=2026-10-09T07:42:21.2755849+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","mono_ns":22984835014700,"node_id":"selftest","payload":{"fixture":"F2","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":22985307487200,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":22985308821700,"node_id":"F0000002-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":22985309453000,"node_id":"F0000002-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":22985309787700,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":22985310053300,"node_id":"F0000002-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":22985310293500,"node_id":"F0000002-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":22985310559800,"node_id":"F0000002-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":22985310789200,"node_id":"F0000002-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":22985311020600,"node_id":"F0000002-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":22985311234700,"node_id":"F0000002-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":22985311452800,"node_id":"F0000002-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":22985328308300,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":true,"reduce_source":"os","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"focus","mono_ns":22987044261900,"node_id":"focus","payload":{"focused":"F0000002-0000-4000-8000-000000000003","source":"ax"},"seq":13}
+EVT {"kind":"lifecycle","mono_ns":22987055967000,"node_id":"selftest","payload":{"name":"row3 focused by AX","phase":"stage"},"seq":14}
+EVT {"kind":"state","mono_ns":22987480902700,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"op":"edit","text":"Row 3-"},"seq":15}
+EVT {"kind":"lifecycle","mono_ns":22987481004100,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"local":1,"phase":"local-edit"},"seq":16}
+EVT {"kind":"input","mono_ns":22987481046200,"node_id":"row 3","payload":{"inserted":"-","op":"text-store-replace","row":"F0000002-0000-4000-8000-000000000003"},"seq":17}
+EVT {"kind":"state","mono_ns":22987776835400,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"op":"edit","text":"Row 3-x"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":22987776961900,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"local":2,"phase":"local-edit"},"seq":19}
+EVT {"kind":"input","mono_ns":22987777027100,"node_id":"row 3","payload":{"inserted":"x","op":"text-store-replace","row":"F0000002-0000-4000-8000-000000000003"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":22987791896100,"node_id":"selftest","payload":{"name":"typed -x","phase":"stage"},"seq":21}
+EVT {"kind":"state","mono_ns":22987792211200,"node_id":"model","payload":{"from":[2],"ids":["F0000002-0000-4000-8000-000000000001","F0000002-0000-4000-8000-000000000002","F0000002-0000-4000-8000-000000000004","F0000002-0000-4000-8000-000000000005","F0000002-0000-4000-8000-000000000006","F0000002-0000-4000-8000-000000000007","F0000002-0000-4000-8000-000000000008","F0000002-0000-4000-8000-000000000003","F0000002-0000-4000-8000-000000000009","F0000002-0000-4000-8000-000000000010"],"op":"move","to":8},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":22987792326800,"node_id":"selftest","payload":{"name":"move offset 2 to 8","phase":"stage"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":22987792393200,"node_id":"selftest","payload":{"name":"order matches move","phase":"stage"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":22989349107000,"node_id":"window","payload":{"phase":"closed"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":22989349340000,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":22989349562100,"node_id":"F0000002-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":22989349795800,"node_id":"F0000002-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":22989349989700,"node_id":"F0000002-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":29}
+EVT {"kind":"lifecycle","mono_ns":22989350202000,"node_id":"F0000002-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":30}
+EVT {"kind":"lifecycle","mono_ns":22989350391200,"node_id":"F0000002-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":22989350578600,"node_id":"F0000002-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":22989350771500,"node_id":"F0000002-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":22989350945200,"node_id":"F0000002-0000-4000-8000-000000000003","payload":{"local":2,"phase":"disappear"},"seq":34}
+EVT {"kind":"lifecycle","mono_ns":22989351355900,"node_id":"F0000002-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":35}
+EVT {"kind":"lifecycle","mono_ns":22989351564900,"node_id":"F0000002-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":36}
+EVT {"kind":"lifecycle","mono_ns":22989352005100,"node_id":"bridge","payload":{"error":"SWR failure SWR_E_SHUTDOWN (-13) in swr_commit v9","phase":"teardown-rejected"},"seq":37}
+SELFTEST-STAGES F2: row3 focused by AX@2.22s | typed -x@2.96s | move offset 2 to 8@2.96s | order matches move@2.96s | awaiting-driver-close end-reason=window-closed
+ASSERT F2 script-completed: PASS stages=row3 focused by AX@2.22s | typed -x@2.96s | move offset 2 to 8@2.96s | order matches move@2.96s | awaiting-driver-close
+ASSERT F2 row3-moved-to-index7: PASS index=7
+ASSERT F2 row3-text-preserved: PASS text=Row 3-x
+ASSERT F2 order-matches-move: PASS 
+ASSERT F2 focus-stays-row3: PASS focus=F0000002-0000-4000-8000-000000000003
+ASSERT F2 no-teardown-on-move: FAIL 
+ASSERT F2 local-state-kept: PASS local=2 (keystrokes '-','x'; Mac oracle recorded local=1 for one programmatic edit; a reset would read 0)
+ASSERT F2 text-store-keystrokes: PASS replace calls=-,x
+ASSERT F2 renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F2 commits-accepted: FAIL commits=8 errors=1
+ASSERT F2 no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F2: FAIL (9/11 asserted; blocked=0; end=window-closed)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0x2a09a0 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=242 paints_while_inactive=2 drains=253 ticks_delivered=240 events_pushed=7 reentry_refused=0
+
