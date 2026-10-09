@@ -54,3 +54,16 @@ Narrator checks:
 ## Primary cleanup (2026-10-09)
 
 Narrator was not running after the run (0 processes). The changed keys under `HKCU:\Software\Microsoft\Narrator` and `\NoRoam` are Narrator's own first-run defaults (no before-snapshot values were stored by the driver, so exact prior values cannot be restored). The stale `NoRoam\RunningState=1` (Narrator was killed, not exited) was reset to 0. Driver fix needed before the next run: persist the before-snapshot values to the result file and restore every changed value, and stop Narrator with its own exit path before falling back to kill.
+
+## Final R9 runs on renderer 4FB068F0 / fixture 30FBE599 (2026-10-09 evening)
+
+| Check set | Result |
+|---|---|
+| IME F7 (real Microsoft Japanese IME) | 20/20 PASS — marked text, conversion, commit, Escape, caret at end of composition, candidate position set exactly at caret, candidate list (explorer ApplicationFrameWindow) anchored below the caret and following it between compositions |
+| IME F7live (insert-above mid-composition) | 20/20 PASS |
+| IME F8 (row removed above the composing field) | 18/19 — all pass except `candidate-window-follows-layout-move` |
+| Narrator | 8/8 automatable PASS (reaches and activates Delete after the button-focus fix 0993eb2; state restored); 2 not automatable (speech is audio-only; Narrator start attribution) |
+
+Product fixes this lane produced: runtime IME selection relative to marked text (caret drawn at index 2), renderer IME window subclass re-placing composition/candidate windows (`ime_cand`, `ime_replace` logs), backend honouring screen-reader focus on buttons.
+
+**Known limitation (SR1):** when layout moves the composing field while the candidate list is open, the renderer re-places the IME windows (`ime_replace reason=layout` logged) but the open list is not found under the moved caret 400 ms later (evidence `native-ime-f8-final06f-b.txt`). The IMM32 path (ImmSetCandidateWindow) is not honoured by Windows 11's modern IME for an already-open list, or the list closes. A TSF text store (ITfContextView::GetTextExt) is the likely fix — SR1 scope. Speech content needs a person listening (2 minutes).
