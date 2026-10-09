@@ -108,7 +108,7 @@ export default {
           // TODO(identity): replace with the exact subject of the provisioned Azure Artifact Signing certificate,
           // confirmed natively on the signing host. MSIX requires Publisher to equal the signer subject byte for
           // byte. The CN must stay "CN=Damned Ventures LLC" (msix-build.mjs MSIX_SIGNER_SUBJECT).
-          publisher: "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=TODO-confirm, S=TODO-confirm, C=US",
+          publisher: "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
           publisherDisplayName: "Orthic Labs",
           displayName: "SliceApp",
           description: "SwiftRight packaging example: shared editor screen on macOS and Windows.",

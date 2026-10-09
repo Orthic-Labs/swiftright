@@ -191,3 +191,22 @@ macOS (`right-release install-app` and the terminal; no direct `open`):
 7. Virtualization is set to `enabled` for both areas (reasoning in `right-release.config.mjs`). This is a choice to
    confirm during the packaged qualification, not a verified fact.
 8. Rust binaries: none. The "unchanged Rust binaries after a Swift-only edit" check does not apply to this app.
+
+## SR0-P pre-publication build (2026-10-09): BLOCKED before build, nothing built or signed
+
+Intended source: RightKit working tree at `9f3ec2d48689fb7a7c73d269fe67490f0874369e` plus uncommitted `packages/release`
+changes (msix-appinstaller/config/plan/target, project-type, swift-build-context, build-release, release,
+release-invocation, publish-update, cache-policy, preflight, msix-build; 0.2.137 in package.json). PRE-PUBLICATION.
+
+Prepared (uncommitted):
+- `package.json`: `@rightkit/release` is `link:../../../tools/rightkit/packages/release` (pnpm install resolves the local tree;
+  `pnpm exec right-release` runs it; lockfile `pnpm-lock.yaml` records the link). Revert to the exact `0.2.138` pin after publication.
+- Publisher in `right-release.config.mjs` and `swift-package.json` set to the provisioned signer subject, read from the valid
+  Authenticode signature of a sealed CodeRight installer on the Dell: `CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US`.
+  App Installer URLs stay `.invalid`.
+
+Blocker: `right-release doctor/build` refuses to run: `dirty release config cannot be executed` (build-release.mjs:127,
+release.mjs:113), and build also requires a clean whole-repository tree (`assertCleanSource`, source-gate.mjs) at the primary
+checkout, with config and build inputs matching HEAD. The swiftright tree has the above SliceApp edits plus unrelated uncommitted
+`probes/sr0-s/fresh-on-bridge` and `probes/sr1-pulse-probe` work from other sessions. Resolution needs Adrian's commit of the
+SliceApp prep (and the other sessions' work committed or removed); no bypass was attempted.

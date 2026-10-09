@@ -45,6 +45,9 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
         case "--reduced-motion-variant":
             options.reducedVariant = true
             label = "F6-reduced"
+        case "--ready-file":
+            index += 1
+            options.readyFile = index < arguments.count ? arguments[index] : nil
         case "--reduce-motion-override":
             index += 1
             let value = index < arguments.count ? arguments[index] : ""

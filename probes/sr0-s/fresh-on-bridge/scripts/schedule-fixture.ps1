@@ -5,12 +5,13 @@ param(
   [string]$Base = 'D:\Claude\sr0s-bridge',
   [string]$Fixture = 'F1',
   [string]$Variant = '',
-  [string]$Tag = 'run1'
+  [string]$Tag = 'run1',
+  [string]$KeyMode = 'char'
 )
 $ErrorActionPreference = 'Stop'
 $task = "SR0S-Fix-$Tag"
 $out = "$Base\result-$Fixture-$Tag.txt"
-$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\probes\sr0-s\fresh-on-bridge\scripts\drive-fixture.ps1`" -Base `"$Base`" -Fixture $Fixture -Variant `"$Variant`" -Out `"$out`""
+$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\probes\sr0-s\fresh-on-bridge\scripts\drive-fixture.ps1`" -Base `"$Base`" -Fixture $Fixture -Variant `"$Variant`" -Out `"$out`" -KeyMode $KeyMode"
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $taskArgs -WorkingDirectory $Base
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 5) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries

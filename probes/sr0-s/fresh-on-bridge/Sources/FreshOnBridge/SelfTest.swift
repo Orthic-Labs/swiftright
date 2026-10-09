@@ -27,6 +27,9 @@ enum Step {
     case wait(String, () -> Bool)
     case act(String, () -> Void)
     case pause(String, Int)
+    /// Bounded wait for effect settlement after an act whose effects are asynchronous (e.g. "release all").
+    /// On expiry the run continues and the checks report FAIL with reason "settle-timeout".
+    case settle(String, () -> Bool, Int)
     case awaitClose
 }
 
@@ -54,6 +57,8 @@ final class SelfTest {
     /// F9: swr_stats.live_nodes read in the post-close pump, before shutdownComplete (nil = not read).
     private var liveNodesAtPump: UInt64?
     private(set) var finished = false
+    /// Name of the settle step that expired (nil = every settle step settled within its bound).
+    private var settleTimedOut: String?
     /// Set when the renderer reports window-closed; main.swift uses it to print results if the pump ends first.
     private(set) var windowClosedSeen = false
     private(set) var exitCode: Int32 = 1
@@ -258,6 +263,12 @@ final class SelfTest {
                 },
                 .wait("reinserted task restarted") { self.count(kind: "lifecycle", node: self.rid(4).uuidString, phase: "task-start") == 2 },
                 .act("release all") { self.engine.releaseAll() },
+                // Settle on the observed outcomes before the driver may close: the old instance's async result is
+                // rejected (task-cancelled) and the new instance commits. Bounded at 2 s; expiry is reported as FAIL.
+                .settle("released effects settled", {
+                    self.count(kind: "effect", node: self.rid(4).uuidString, phase: "rejected") >= 1
+                        && self.count(kind: "effect", node: self.rid(4).uuidString, phase: "commit") >= 1
+                }, 2000),
                 .awaitClose,
             ]
 
@@ -369,15 +380,32 @@ final class SelfTest {
                 } else {
                     return
                 }
+            case .settle(let name, let condition, let boundMs):
+                if condition() {
+                    enter(name)
+                } else if Date().timeIntervalSince(stepStarted) * 1000 >= Double(boundMs) {
+                    settleTimedOut = name
+                    enter("\(name) [settle-timeout]")
+                } else {
+                    return
+                }
             case .awaitClose:
                 if !reachedClose {
                     reachedClose = true
                     closeWaitStarted = Date()
                     stageLog.append("awaiting-driver-close")
+                    writeReadyFile()
                 }
                 return
             }
         }
+    }
+
+    /// Tells the driver the script is complete and the window may be closed (see FixtureOptions.readyFile).
+    private func writeReadyFile() {
+        guard let path = options.readyFile else { return }
+        let body = "ready \(String(format: "%.2f", Date().timeIntervalSince(started)))s\n"
+        FileManager.default.createFile(atPath: path, contents: Data(body.utf8))
     }
 
     private func enter(_ name: String) {
@@ -549,6 +577,10 @@ final class SelfTest {
                 pass("reinsert-focus-matches-mac-oracle", focusedAfter == oracleFocus,
                      "windows-focused=\(focusedAfter) mac-oracle-focused=\(oracleFocus) (runtime clears focus on removal; List restores it on reinsert)"),
                 observe("reinsert-gap-ms", "\(gapMs) (configured \(options.f3GapMs))"),
+                settleTimedOut == nil
+                    ? pass("released-effects-settled", true, "rejected=\(rejected.count) commits=\(commits.count) within 2000 ms")
+                    : Check(name: "released-effects-settled", status: .fail,
+                            detail: "reason=settle-timeout step='\(settleTimedOut!)' rejected=\(rejected.count) commits=\(commits.count)"),
             ]
 
         case .F4:

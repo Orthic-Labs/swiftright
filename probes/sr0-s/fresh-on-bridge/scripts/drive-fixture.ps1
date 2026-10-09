@@ -8,7 +8,9 @@ param(
   [string]$Base = 'D:\Claude\sr0s-bridge',
   [string]$Fixture = 'F1',
   [string]$Variant = '',
-  [string]$Out = 'D:\Claude\sr0s-bridge\result-fixture.txt'
+  [string]$Out = 'D:\Claude\sr0s-bridge\result-fixture.txt',
+  # Targeted message set: all (WM_KEYDOWN, WM_CHAR, WM_KEYUP as a physical key), char (WM_CHAR only), keydown (no WM_CHAR)
+  [string]$KeyMode = 'char'
 )
 $ErrorActionPreference = 'Continue'
 $Bin = "$Base\scratch\out\Products\Release-windows-x86_64"
@@ -32,6 +34,8 @@ namespace SW {
     [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, IntPtr pid);
     [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a, uint b, bool attach);
     [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
+    [DllImport("user32.dll")] public static extern uint MapVirtualKeyW(uint code, uint map);
+    [DllImport("user32.dll")] public static extern bool LockSetForegroundWindow(uint lockCode);
   }
 }
 '@
@@ -48,6 +52,14 @@ switch ($Fixture) {
   }
   'F9' { if ($Variant -eq 'notasks') { $exeArgs += ' --f9-variant notasks' } }
 }
+# The exe writes "$Out.ready" when its script reaches the close step (after any settle). Close only after that.
+$readyFile = "$Out.ready"
+if (Test-Path $readyFile) { Remove-Item -LiteralPath $readyFile -Force }
+$exeArgs += " --ready-file `"$readyFile`""
+# Delivery (default targeted): WM_KEYDOWN / WM_CHAR / WM_KEYUP are POSTED to the probe window only. No keystroke can
+# reach another application, whatever has focus. Global keybd_event (-Delivery global) is used by no matrix config;
+# it is gated: foreground is locked and re-checked before and after each key-down, and any mismatch aborts the run.
+$delivery = if ($env:SR0S_DELIVERY) { $env:SR0S_DELIVERY } else { 'targeted' }
 Log "host=$env:COMPUTERNAME session=$((Get-Process -Id $PID).SessionId) fixture=$Fixture variant=$Variant args=$exeArgs started=$(Get-Date -Format o)"
 
 $psi = New-Object System.Diagnostics.ProcessStartInfo
@@ -143,6 +155,20 @@ function Dump-Names {
 # Keys are sent only while the test window is the foreground window. A person may be using the same desktop;
 # keystrokes must never reach another application, so a failed foreground acquire aborts the input.
 $script:inputAborted = $false
+$script:abortReason = $null
+$script:lastFg = [IntPtr]::Zero
+$script:fgChanges = 0
+# Records a change of the foreground window between samples (recorded per run, not acted on).
+function Sample-Fg([string]$where) {
+  $fg = [SW.N]::GetForegroundWindow()
+  if ($fg -ne $script:lastFg) {
+    $script:fgChanges++
+    $t = (Get-Process | Where-Object { $_.MainWindowHandle -eq $fg } | Select-Object -First 1).MainWindowTitle
+    Log "fg_change at=$where from=$($script:lastFg.ToInt64()) to=$($fg.ToInt64()) title=[$t] probe=$($hwnd.ToInt64())"
+    $script:lastFg = $fg
+  }
+  return $fg
+}
 function Ensure-Foreground {
   for ($k = 0; $k -lt 20; $k++) {
     if ([SW.N]::GetForegroundWindow() -eq $hwnd) { return $true }
@@ -159,20 +185,39 @@ function Ensure-Foreground {
   if (-not $ok) { Log "foreground_failed fg_title=[$((Get-Process | Where-Object { $_.MainWindowHandle -eq [SW.N]::GetForegroundWindow() } | Select-Object -First 1).MainWindowTitle)]" }
   return $ok
 }
-function Type-Key([byte]$vk) {
-  if ($script:inputAborted -or -not (Ensure-Foreground)) {
-    $script:inputAborted = $true
-    Log "key_skipped vk=$vk reason=not_foreground"
-    return
+function Type-Key([byte]$vk, [int]$ch = 0) {
+  if ($delivery -eq 'global') { Type-Key-Global $vk; return }
+  # Targeted: the three messages a physical key produces, posted to the probe HWND. Char = lower-case letter or the
+  # unshifted OEM character (the fixtures type only these). Foreground is not required for delivery.
+  $scan = [SW.N]::MapVirtualKeyW($vk, 0)
+  $down = [IntPtr]([int64]1 -bor ([int64]$scan -shl 16))
+  $up   = [IntPtr]([int64]1 -bor ([int64]$scan -shl 16) -bor 0x40000000 -bor 0x80000000)
+  $fgBefore = Sample-Fg "key-$vk"
+  $ok1 = $true; $ok2 = $true; $ok3 = $true
+  if ($KeyMode -ne 'char') { $ok1 = [SW.N]::PostMessage($hwnd, 0x0100, [IntPtr]$vk, $down) }
+  if ($KeyMode -ne 'keydown' -and $ch -gt 0) { $ok2 = [SW.N]::PostMessage($hwnd, 0x0102, [IntPtr]$ch, $down) }
+  if ($KeyMode -ne 'char') { $ok3 = [SW.N]::PostMessage($hwnd, 0x0101, [IntPtr]$vk, $up) }
+  Start-Sleep -Milliseconds 220
+  Log "key vk=$vk char=$ch mode=targeted-post keymode=$KeyMode posted=$($ok1 -and $ok2 -and $ok3) fg_before=$($fgBefore.ToInt64()) fg_after=$(([SW.N]::GetForegroundWindow()).ToInt64())"
+}
+# Global path (not used by any matrix config). Abort, with no further keys, on any foreground mismatch.
+function Type-Key-Global([byte]$vk) {
+  if ($script:abortReason) { Log "key_skipped vk=$vk reason=$($script:abortReason)"; return }
+  if (-not (Ensure-Foreground)) { $script:abortReason = 'foreground-lost'; Log "driver_abort=foreground-lost before=vk$vk"; return }
+  [void][SW.N]::LockSetForegroundWindow(1)
+  if ([SW.N]::GetForegroundWindow() -ne $hwnd) { $script:abortReason = 'foreground-lost'; Log "driver_abort=foreground-lost before-down=vk$vk"; return }
+  [SW.N]::keybd_event($vk, 0, 0, [UIntPtr]::Zero)
+  if ([SW.N]::GetForegroundWindow() -ne $hwnd) {
+    $script:abortReason = 'foreground-lost'; Log "driver_abort=foreground-lost after-down=vk$vk fg=$(([SW.N]::GetForegroundWindow()).ToInt64())"; return
   }
-  [SW.N]::keybd_event($vk, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 60
   [SW.N]::keybd_event($vk, 0, 2, [UIntPtr]::Zero); Start-Sleep -Milliseconds 220
+  Log "key vk=$vk mode=global fg_ok=true"
 }
 function Focus-Edit([string]$name) {
   $el = Edit $name 15000
   if ($el -eq $null) { Log "focus[$name]=NOT_FOUND"; return }
   for ($k = 0; $k -lt 4; $k++) {
-    if (-not (Ensure-Foreground)) { $script:inputAborted = $true; Log "focus[$name]=not_foreground"; return }
+    if (-not (Ensure-Foreground)) { Log "focus[$name]=not_foreground"; return }
     try { $el.SetFocus() } catch { Log "focus[$name]=ERR $($_.Exception.Message)" }
     Start-Sleep -Milliseconds 400
     if ((Focused-Name) -eq $name) { Log "focus[$name]=ok attempt=$k"; return }
@@ -233,16 +278,16 @@ if ($root -ne $null) {
     'F1' {
       Focus-Edit 'Row 5'
       Log "focused_after_focus=[$(Focused-Name)]"
-      Type-Key 0x41; Type-Key 0x42; Type-Key 0x43
+      Type-Key 0x41 97; Type-Key 0x42 98; Type-Key 0x43 99
       Wait-Value 'Row 5' 'Row 5abc' | Out-Null
       Wait-Element { Edit 'Row 99' } 'inserted row 99 (Engine 0)' 30000 | Out-Null
-      Type-Key 0x44
+      Type-Key 0x44 100
       Wait-Value 'Row 5' 'Row 5abcd' | Out-Null
       Log "focused_final=[$(Focused-Name)]"
     }
     'F2' {
       Focus-Edit 'Row 3'
-      Type-Key 0xBD; Type-Key 0x58
+      Type-Key 0xBD 45; Type-Key 0x58 120
       Wait-Value 'Row 3' 'Row 3-x' | Out-Null
       Start-Sleep -Milliseconds 1200
       Log "uia_edit_order=[$((Edit-Names) -join ',')]"
@@ -250,7 +295,7 @@ if ($root -ne $null) {
     }
     'F3' {
       Focus-Edit 'Row 4'
-      Type-Key 0x58
+      Type-Key 0x58 120
       Start-Sleep -Milliseconds 2500
       Log "row4_value_after_reinsert=[$(Value-Of (Edit 'Row 4'))]"
       Log "focused_final=[$(Focused-Name)]"
@@ -272,7 +317,7 @@ if ($root -ne $null) {
       # VK keys type "ka" (keystroke path). The IME composition ("n", "na", unmark) is driven by the exe
       # through the bridge text-store API; real IME input is a separate manual check.
       Focus-Edit 'Row 2'
-      Type-Key 0x4B; Type-Key 0x41
+      Type-Key 0x4B 107; Type-Key 0x41 97
       Wait-Value 'Row 2' 'Row 2ka' | Out-Null
       Wait-Element { Edit 'Row 99' } 'inserted row 99 (Engine 0)' 30000 | Out-Null
       Wait-Value 'Row 2' 'Row 2kana' | Out-Null
@@ -295,6 +340,9 @@ if ($root -ne $null) {
       Log "uia_edit_count_before_close=$((Edit-Names).Count)"
     }
   }
+  $waitReady = [Diagnostics.Stopwatch]::StartNew()
+  while (-not (Test-Path $readyFile) -and -not $proc.HasExited -and $waitReady.ElapsedMilliseconds -lt 45000) { Start-Sleep -Milliseconds 100 }
+  Log "ready_file=$(Test-Path $readyFile) waited_ms=$($waitReady.ElapsedMilliseconds) exe_exited=$($proc.HasExited)"
   Close-Window
 } else {
   Log 'no window: UIA root unavailable'
@@ -302,6 +350,8 @@ if ($root -ne $null) {
 
 if (-not $proc.WaitForExit(90000)) { $proc.Kill(); Log 'TIMEOUT: killed after 90 s' }
 $proc.WaitForExit()
+[void][SW.N]::LockSetForegroundWindow(2)
+Log "run_summary keymode=$KeyMode delivery=$delivery fg_changes=$($script:fgChanges) driver_abort=$(if ($script:abortReason) { $script:abortReason } else { 'none' })"
 Log "exit=$($proc.ExitCode) end=$(Get-Date -Format o)"
 Log '--- stdout ---'
 Log ([string]$stdout.Result)

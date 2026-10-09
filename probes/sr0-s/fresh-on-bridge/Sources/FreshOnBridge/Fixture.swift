@@ -31,6 +31,9 @@ struct FixtureOptions: Sendable {
     var reduceMotionOverride: Bool? = nil
     /// Label printed on the SELFTEST line, e.g. `F3 list-1s`.
     var label: String = "F1"
+    /// `--ready-file <path>`: the exe writes this file when its script reaches the close step (awaiting the driver's
+    /// WM_CLOSE). drive-fixture.ps1 waits for it before closing, so the window never closes mid-settle.
+    var readyFile: String? = nil
 }
 
 /// Records events as dictionaries and echoes each as one `EVT {json}` line on stdout.
