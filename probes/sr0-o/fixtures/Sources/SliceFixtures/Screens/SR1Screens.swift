@@ -57,11 +57,6 @@ struct G2Screen: View {
                 .focused(focus, equals: "g2/editor")
                 .accessibilityIdentifier("g2/editor")
                 .frame(width: 400, height: 180)
-                .onChange(of: model.note) { _, value in
-                    model.log.emit("state", node: "g2/editor", payload: [
-                        "op": "binding-write", "text": value, "lines": value.components(separatedBy: "\n").count,
-                    ])
-                }
         }
     }
 }

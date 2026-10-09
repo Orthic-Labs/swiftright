@@ -18,8 +18,15 @@ enum SR1Steps {
 
         switch name {
         case "g-activate":
-            activate()
-            await pause(pauseMs)
+            // Bounded precondition: retry until our window is key. A window that never becomes key is recorded as a
+            // driver error (checked by activation-held), not as a contract observation.
+            var keyed = false
+            for _ in 0..<20 where !keyed {
+                activate()
+                await pause(100)
+                keyed = appWindow()?.isKeyWindow == true
+            }
+            if !keyed { log.emit("lifecycle", node: "driver", payload: ["phase": "activation-failed"]) }
             observe(log, node: "window", phase: label, ["responder": responder(), "key-window": NSApp.keyWindow != nil])
 
         case "g-focus":

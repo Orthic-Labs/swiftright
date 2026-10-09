@@ -200,3 +200,90 @@ Findings and open items:
 - Fix iterations used: G5 used 4 of 4 (diagnostic dump, timer after call, detached thread, timer before call). Then the cases were replaced with the UNAVAILABLE record. The other configs needed no fix iterations.
 - Two sweep loops were briefly running at once during the first attempt. Overlapping output was moved aside, not deleted, to `out/sr1-discarded-overlap/` (67 files). It is not evidence. The sweep script now holds a PID lock at `out/sr1/.sweep.pid`.
 - G8 and G7 repeats remain. Rerun after the stop is lifted, in a single sweep: `OUT_DIR=out/sr1 scripts/sr1-repeat20.sh G2 G6 G7 G8`, or fresh per config with `RUNS`. Do not run it on the user's active session.
+
+## G2/G6 variance analysis (offline, 2026-10-09)
+
+Scope: saved JSONL in `out/sr1/` only (`out/sr1-discarded-overlap/` ignored). No app was launched, no run was repeated, no source was edited, nothing committed. Tools: `scripts/sr1-summary.py`, `scripts/normalize-hash.py` (`--canonical`, `--diff`), plus an ad hoc multiset diff of event sequences per config.
+
+### Groups
+
+| Config | Complete runs | Canonical groups | Members |
+|---|---|---|---|
+| G2 | 20 | A = 15 runs, B = 5 runs | B: 11, 12, 15, 16, 20 |
+| G6 | 19 (run 20 truncated, no `RC=`, 7 of 43 lines) | A = 18 runs, B = 1 run | B: 14 |
+
+G6 run 20 was cut off by the stop. It is excluded by `sr1-summary.py` (no RC line) and is not variance. The summary's "2 distinct" for G6 comes from run 14 alone.
+
+### G2 (TextEditor): one extra transient `binding-write`
+
+- The only difference between groups is one extra event in step `g-text:type-ab`: `state`, node `g2/editor`, payload `{"op":"binding-write","text":"a","lines":1}`. It occurs 3.6 to 4.7 ms before the normal `{"text":"ab"}` write (checked in runs 11, 12, 15). Group A has only the `ab` write.
+- Every other event is identical in both groups. Order is identical. The `observe` records (`typed`, `text-value`, `text-selection`) match in all 20 runs.
+- Frequency: 5 of 20 runs (25%). The variant runs cluster in the second half of the sweep (11 to 20), but 5 runs is too few to call that a trend, and it was not tested.
+- Mechanism: `SR1AX.typeText` (`Common/SR1AX.swift:171-180`) posts key-down and key-up for `a` and then `b` back to back with `postToPid`, with no pause. Whether SwiftUI's `onChange(of: model.note)` delivers `"a"` as its own update depends on whether the main run loop commits a transaction between the two keystrokes. Sometimes it does (the intermediate value is delivered). Sometimes both characters land in one transaction (not delivered).
+- Classification: (b) fixture defect, with a SwiftUI timing root. The fixture logs every `onChange` delivery as a contract `state` event (`Screens/SR1Screens.swift:60-65`). The number of intermediate deliveries is timing-dependent and is not part of the contract. The contract-bound outcome, the settled text, is identical in all 20 runs.
+- Not genuine contract variance. A permitted-ordering rule (per-node order significant, sibling order unordered) would not cover this. The extra event is a count difference, not a reorder, and `canonical_digest` does not drop events. Expressing it in the comparator would need a new rule ("within one step, consecutive `binding-write` events for the same node collapse to the last"). I do not recommend that rule, because it hides a real instrumentation choice.
+
+Proposed fixture fix (not applied, not run). Stop emitting per-delivery text writes. The settled value is already recorded by the `g-snap` observe (`text-value`) and by `g-model`:
+
+```diff
+--- a/probes/sr0-o/fixtures/Sources/SliceFixtures/Screens/SR1Screens.swift
++++ b/probes/sr0-o/fixtures/Sources/SliceFixtures/Screens/SR1Screens.swift
+@@ G2Screen.body
+                 .frame(width: 400, height: 180)
+-                .onChange(of: model.note) { _, value in
+-                    model.log.emit("state", node: "g2/editor", payload: [
+-                        "op": "binding-write", "text": value, "lines": value.components(separatedBy: "\n").count,
+-                    ])
+-                }
+```
+
+Alternative if a per-step write record is wanted: the `g-snap` branch in `SR1Steps.snapshot` emits it once per snapshot, from `model.note`, rather than from `onChange`. The G2 case checks (`twelve-actions-observed`, `model-holds-last-write`) do not read these events, so removing them does not change any check. The hash will change, so G2 needs a 20-run repeat after the edit.
+
+### G6 (alert / confirmationDialog): one lost window activation
+
+- The only difference in group B (run 14) is the first observe: `window / activate` payload `{"key-window":false,"responder":"nil"}`, versus `{"key-window":true,"responder":"AppKitWindow"}` in the other 18 runs. Everything after is identical in order and content (the sheet, cancel, escape, delete, and dump observations all match).
+- Frequency: 1 of 19 complete runs (5%).
+- Mechanism (likely, not verified offline): `g-activate` calls `NSApplication.activate(ignoringOtherApps:)` once, waits 300 ms, and records whatever state exists. On macOS, activation is cooperative and can be denied while another app is frontmost. This Mac was in use during the sweep. The driver recorded a lost activation as an outcome instead of a precondition failure.
+- Classification: (b) fixture driver defect (driver step racing window activation). Nothing in the SwiftUI presentation changed; the alert itself presents correctly in run 14.
+
+Proposed fixture fix (not applied, not run). Make activation a bounded precondition. Retry until our window is key. If it never becomes key, record a driver error instead of a contract observation, so the run fails instead of qualifying with a recorded `false`:
+
+```diff
+--- a/probes/sr0-o/fixtures/Sources/SliceFixtures/Session/SR1Steps.swift
++++ b/probes/sr0-o/fixtures/Sources/SliceFixtures/Session/SR1Steps.swift
+@@ case "g-activate":
+         case "g-activate":
+-            activate()
+-            await pause(pauseMs)
++            var keyed = false
++            for _ in 0..<20 where !keyed {
++                activate()
++                await pause(100)
++                keyed = appWindow()?.isKeyWindow == true
++            }
++            if !keyed { log.emit("lifecycle", node: "driver", payload: ["phase": "activation-failed"]) }
+             observe(log, node: "window", phase: label, ["responder": responder(), "key-window": NSApp.keyWindow != nil])
+```
+
+and in `SR1Cases.swift` for G6 (and G1-G8 generally), add one check next to `no-unknown-steps`: `e.check("activation-held", e.find(node: "driver", tag: "activation-failed").isEmpty)`. The observe payload shape is unchanged, so the 19 agreeing runs keep their hashes. Run 14 would be rejected, or would match if activation succeeds on retry.
+
+### Oracle-validity notes (not variance, but they affect what the "recorded outcome" means)
+
+- G2 `g2/editor / after-typing` records `found: false` in all 20 runs. The identifier lookup fails right after typing, then succeeds at `range-1-2`. The result is stable, so it does not cause variance, but a recorded "not found" should not be accepted as an oracle without an explanation. Probable cause: the AX tree changes once the editor has text and focus. Unverified. A candidate check is to run `SR1AX.everything()` once after typing and see whether the TextEditor is nested under a different element.
+- G6 `title/Cancel` and `title/Delete` record `ax-status: -25205` (kAXErrorAttributeUnsupported) in all 19 runs, yet the alert actions fire (`g6/alert` `action` events are present). The status code is not a reliable success signal for AXPress on alert buttons. Keep the effect event as the oracle, not the AX status.
+
+### Summary
+
+| Config | Variant | Count | Class | Fix |
+|---|---|---|---|---|
+| G2 | extra transient `binding-write "a"` | 5/20 | (b) fixture instrumentation on timing | remove per-delivery `onChange` emit (diff above) |
+| G6 | `window/activate` key-window false | 1/19 | (b) fixture driver precondition race | bounded activation retry plus `activation-failed` check (diff above) |
+
+Neither variant is genuine SwiftUI contract variance. The comparator needs no permitted-ordering rule for these two configs. Both still need a 20-run repeat after the fixes, and G2 and G6 should not be treated as qualified until then. Sources were not edited, so the saved 20-run evidence still matches the current source.
+
+### Fixes applied (2026-10-09, after the offline analysis above)
+
+- G2: per-delivery `onChange` `binding-write` emit removed from `G2Screen` (`Screens/SR1Screens.swift`).
+- G6: `g-activate` (shared by all configs) now retries activation for up to 2 s until the window is key. Failure emits `driver / activation-failed`, checked by `activation-held` in the G6 case (`Session/SR1Cases.swift`).
+- `swift build` (headless) passes. The app was not run.
+- The 20 saved runs in `out/sr1/` predate these fixes. G2 and G6 (and the remaining G7 runs and G8) need a fresh 20-run repeat when Adrian's Mac is free. Their qualification is open until then.

@@ -10,6 +10,9 @@ func sr1Case(_ fixture: FixtureConfig.Fixture, model: SR1Model) -> SelfTestCase 
     func noUnknownSteps(_ e: Evidence) -> Check {
         e.check("no-unknown-steps", e.find(node: "driver", tag: "unknown-step").isEmpty)
     }
+    func activationHeld(_ e: Evidence) -> Check {
+        e.check("activation-held", e.find(node: "driver", tag: "activation-failed").isEmpty)
+    }
 
     switch fixture {
     case .G1:
@@ -147,6 +150,7 @@ func sr1Case(_ fixture: FixtureConfig.Fixture, model: SR1Model) -> SelfTestCase 
             let lastPresented = alertBindings.last.flatMap { e.payload($0)["presented"] as? Bool }
             return [
                 noUnknownSteps(e),
+                activationHeld(e),
                 e.check("alert-binding-logged", !alertBindings.isEmpty, "binding-events=\(alertBindings.count)"),
                 e.check("alert-binding-matches-model", lastPresented == model.alertShown,
                         "last-logged=\(lastPresented.map(String.init) ?? "nil") model=\(model.alertShown)"),
