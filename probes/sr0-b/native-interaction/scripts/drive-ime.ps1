@@ -347,21 +347,8 @@ try {
   $winBefore = Snap-Windows   # snapshot immediately before the first Space
   $sp = Space-Until $row $v0 $NIPPON 4 $winBefore
   Add-Check 'conversion-to-nihon' $(if ($sp.Reached) { 'PASS' } else { 'FAIL' }) "Space presses=$($sp.Presses) marked after each press=[$($sp.Seen -join ' | ')] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)"
-  # Microsoft Japanese IME: the first Space converts inline; the candidate list opens on the SECOND consecutive Space. Press it (same gated IME key path), measure, then Escape to close the list.
-  $winBefore1b = Snap-Windows; $script:CandSeen = $null
-  [void](Send-GatedKey 0x20 'space-candidate-list' 120); Start-Sleep -Milliseconds 500
-  $csx = Candidate-Windows $winBefore1b; $hx = $csx.Hit | Select-Object -First 1; if ($hx -ne $null) { $script:CandSeen = $hx }
-  $markedList = Marked-Of $row $v0
-  Log "candidate_step: second Space pressed for comp1; marked=[$markedList] (selection may move to the next candidate)"
-  $m1 = Measure-Candidate $row $v0 $winBefore1b
+  $m1 = Measure-Candidate $row $v0 $winBefore
   $a1 = Eval-Anchor $m1
-  [void](Send-GatedKey 0x1B 'escape-close-candidate-list' 120); Start-Sleep -Milliseconds 500
-  $markedAfterEsc = Marked-Of $row $v0
-  Log "candidate_step: Escape closed list; marked=[$markedAfterEsc] (expected nihon conversion preserved: [$NIPPON]); if the IME dropped back to the first candidate or to kana the commit check below reports it"
-  if ($markedAfterEsc -ne $NIPPON -and $markedAfterEsc -ne '') {
-    $spr = Space-Until $row $v0 $NIPPON 4
-    Log "candidate_step: re-selecting target after list close: presses=$($spr.Presses) reached=$($spr.Reached) marked=[$($spr.Seen -join ' | ')]"
-  }
 
   # ------------------------------------------------------------ commit (Enter) and UTF-16 selection
   if (Budget-Left -gt 6000) {
@@ -376,11 +363,8 @@ try {
   if (Budget-Left -gt 14000) {
     $v1 = Value-Of (Edit $row)
     [void](Type-And-Observe $row $v1 'nihonn')
-    $sp2 = Space-Until $row $v1 $NIPPON 1
-    $winBefore2 = Snap-Windows; $script:CandSeen = $null
-    [void](Send-GatedKey 0x20 'space-candidate-list-2' 120); Start-Sleep -Milliseconds 500
-    $csy = Candidate-Windows $winBefore2; $hy = $csy.Hit | Select-Object -First 1; if ($hy -ne $null) { $script:CandSeen = $hy }
-    Log "candidate_step: second Space pressed for comp2 (list open); marked=[$(Marked-Of $row $v1)]"
+    $winBefore2 = Snap-Windows
+    $sp2 = Space-Until $row $v1 $NIPPON 1 $winBefore2
     $m2 = Measure-Candidate $row $v1 $winBefore2
     $a2 = Eval-Anchor $m2
     if ($m1.Candidate -eq $null -or $m2.Candidate -eq $null) {
