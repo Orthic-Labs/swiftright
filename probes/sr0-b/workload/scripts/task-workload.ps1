@@ -124,9 +124,13 @@ public static class Inj {
 $swFreq = [System.Diagnostics.Stopwatch]::Frequency
 $lines = New-Object System.Collections.Generic.List[string]
 function Flush-Out { [System.IO.File]::WriteAllText($ResultFile, [string]::Join("`r`n", $lines)) }
-$vc = Get-CimInstance Win32_VideoController | Select-Object -First 1
+# The display hangs off the controller with an active mode (hybrid laptop: the first controller, the dGPU, reports no mode).
+$vcs = @(Get-CimInstance Win32_VideoController)
+$vc = $vcs | Where-Object { $_.CurrentRefreshRate } | Select-Object -First 1
+if (-not $vc) { $vc = $vcs | Select-Object -First 1 }
 $lines.Add("harness=task-workload host=$env:COMPUTERNAME user=$env:USERNAME session=$((Get-Process -Id $PID).SessionId) started=$(Get-Date -Format o)")
 $lines.Add("host qpc_freq=$swFreq input_struct=$([Inj]::InputSize()) gpu=$($vc.Name) driver=$($vc.DriverVersion) refresh_hz=$($vc.CurrentRefreshRate) res=$($vc.CurrentHorizontalResolution)x$($vc.CurrentVerticalResolution)")
+foreach ($c in $vcs) { $lines.Add("controller name=$($c.Name) driver=$($c.DriverVersion) refresh_hz=$($c.CurrentRefreshRate) res=$($c.CurrentHorizontalResolution)x$($c.CurrentVerticalResolution)") }
 $lines.Add("exe=$exe exe_sha256=$($b.exe_sha256) dll_sha256=$($b.dll_sha256) instr=$Instr runs=$Runs warmup_s=$Warmup measure_s=$Measure rate_hz=$RateHz")
 $lines.Add("power=$((powercfg /getactivescheme) -join ' ')")
 Flush-Out

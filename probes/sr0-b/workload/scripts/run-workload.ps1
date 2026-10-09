@@ -13,7 +13,7 @@ param(
   [int]$Measure = 60,
   [string]$Tag = '',
   [string]$ExpectDll = '4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F',
-  [double]$ExpectScale = 1.0,
+  [double]$ExpectScale = 2.5,         # Dell tuple: 250% (dpi 240); every SR0 Dell record is scale 2.5
   [int]$MaxIdleCpu = 25,              # abort if average total CPU % over the sample window exceeds this (Dell idle baseline ~17-19%: Membrane, Defender)
   [int]$CpuSampleSeconds = 20,
   [switch]$Force,                     # bypass the quiet-host gate; receipt is marked host_quiet=forced

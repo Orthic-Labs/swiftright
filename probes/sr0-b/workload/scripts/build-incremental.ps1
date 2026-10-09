@@ -29,6 +29,12 @@ Copy-Item $target $backup -Force
 $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'"
 function Hashes { $h = [ordered]@{}; foreach ($f in @("$bin\swiftright_render.dll") + $EngineArtifacts) { $h[$f] = (Get-FileHash -Algorithm SHA256 -LiteralPath $f).Hash }; $h }
 $before = Hashes
+# The incremental builds relink WorkloadWin.exe in the pinned bin dir (a different hash: the PE timestamp). The workload identity gate
+# (verify-artifacts.ps1) binds the exe hash in build.json, so the pinned exe is copied aside first and put back byte-for-byte afterwards.
+$pinExe = "$bin\WorkloadWin.exe"
+$pinHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $pinExe).Hash
+$pinCopy = "$Base\WorkloadWin.exe.pinned"
+Copy-Item $pinExe $pinCopy -Force
 $trials = @()
 Set-Location $work
 try {
@@ -40,11 +46,15 @@ try {
     $rc = $LASTEXITCODE
     $sec = [math]::Round($sw.Elapsed.TotalSeconds, 2)
     $after_log = if (Test-Path $log) { (Get-Content $log).Count } else { 0 }
-    $trials += [ordered]@{ edit = $i; exit = $rc; seconds = $sec; rust_invocations = ($after_log - $before_log) }
+    $trials += [pscustomobject]@{ edit = $i; exit = $rc; seconds = $sec; rust_invocations = ($after_log - $before_log) }
     "edit=$i exit=$rc seconds=$sec rust_invocations=$($after_log - $before_log)"
   }
 } finally {
   Copy-Item $backup $target -Force
+  if ((Get-FileHash -Algorithm SHA256 -LiteralPath $pinExe).Hash -ne $pinHash) {
+    Copy-Item $pinCopy $pinExe -Force
+    "pinned WorkloadWin.exe restored (sha256 $pinHash)"
+  }
 }
 $after = Hashes
 $identical = $true
@@ -55,6 +65,7 @@ $out = [ordered]@{
   platform = 'windows'; edits = $Edits; trials = $trials; rust_invocations_total = $rust; shim_log = $shimLines
   artifact_hashes_before = $before; artifact_hashes_after = $after; hashes_identical = $identical
   builds_ok = (@($trials | Where-Object { $_.exit -ne 0 }).Count -eq 0)
+  pinned_exe_sha256 = $pinHash
   note = 'The renderer DLL is a prebuilt payload copied beside the exe; there is no engine artifact in this workload unless -EngineArtifacts is given.'
 }
 $out | ConvertTo-Json -Depth 5 | Set-Content -Encoding utf8 "$Base\incremental.json"

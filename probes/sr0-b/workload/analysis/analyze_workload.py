@@ -1,7 +1,7 @@
 """SR0 workload analyzer (plan v2 lane R10): architecture.md section 11 "Decision budgets".
 
 Usage:
-  analyze_workload.py --os windows|macos --root <run-root> [--out <dir>] [--expect-runs 3] [--expect-scale 1.0]
+  analyze_workload.py --os windows|macos --root <run-root> [--out <dir>] [--expect-runs 3] [--expect-scale 2.5 (windows) | 2.0 (macos)]
                       [--incremental <incremental.json>] [--light-root <run-root of --instr light runs>]
   analyze_workload.py --selftest [--selftest-keep <dir>]   (synthetic data; keep writes windows-good/ and macos-good/ run sets)
 
@@ -192,10 +192,11 @@ def parse_harness(path):
             cur = m.group(1)
             runs[cur] = {'valid': None, 'reason': 'no run_state', 'inject_ok_through': None}
             continue
-        m = re.match(r'host qpc_freq=(\d+).*refresh_hz=(\d+)', line)
+        m = re.match(r'host qpc_freq=(\d+)', line)
         if m:
             hz = int(m.group(1))
-            host['refresh_hz'] = int(m.group(2))
+            m2 = re.search(r'refresh_hz=(\d+)', line)    # informational only; empty when the first video controller has no active mode
+            host['refresh_hz'] = int(m2.group(1)) if m2 else None
         m = re.match(r'pid run=(\S+) pid=(\d+) start_utc=\S+ qpc_start=(\d+)', line)
         if m and m.group(1) in runs:
             runs[m.group(1)].update(pid=m.group(2), qpc_start=int(m.group(3)))
@@ -251,6 +252,8 @@ def console_loss(path):
 
 
 def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_dir):
+    if harness_run.get('valid') is not True:
+        rr.invalid.append(f"harness run_state valid={harness_run.get('valid')} reason={harness_run.get('reason')}")
     meta = read_json(f'{rdir}/meta.json')
     integ = read_json(f'{rdir}/integrity.json')
     inputs = read_csv(f'{rdir}/inputs.csv')
@@ -259,6 +262,8 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
     ticks = read_csv(f'{rdir}/ticks.csv')
     mact = read_csv(f'{rdir}/mainactor.csv')
     inj = read_csv(f'{rdir}/inject.csv')
+    if inj is None and harness_run.get('valid') is not True:
+        inj = []    # the harness never injected (foreground-failed / no-window): the run is already invalid, still report the other thresholds
     over = read_csv(f'{rdir}/overhead_probe.csv')
     missing = [n for n, v in (('meta.json', meta), ('integrity.json', integ), ('inputs.csv', inputs), ('frames.csv', frames),
                               ('bridge_input.csv', bin_in), ('ticks.csv', ticks), ('mainactor.csv', mact), ('inject.csv', inj)) if v is None]
@@ -294,8 +299,6 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
         loss_before_end = last_q < me - int(0.2 * hz)
     rr.add('P', 'window stayed foreground through the measured run (no foreground loss)', rr.rid, not loss_before_end, True, 'bool',
            f'first_loss_seq={first_loss}')
-    if harness_run.get('valid') is not True:
-        rr.invalid.append(f"harness run_state valid={harness_run.get('valid')} reason={harness_run.get('reason')}")
 
     # window filters
     in_inputs = {int(r['seq']): r for r in inputs}
@@ -348,15 +351,18 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
         return
 
     # W5 presentation interval
-    intervals = [r['between'] for r in win_rows if not r['dropped'] and r['between'] and 0 < r['between'] < 100]
-    refresh = statistics.median(intervals) if intervals else float('nan')
+    # Every displayed interval counts (a >=100 ms stall is a missed vblank, never discarded); the refresh period is the median
+    # of the steady (<100 ms) intervals, else of all of them (a run that never presents at frame rate then fails the 60 Hz check).
+    intervals = [r['between'] for r in win_rows if not r['dropped'] and r['between'] and r['between'] > 0]
+    steady = [x for x in intervals if x < 100]
+    refresh = statistics.median(steady or intervals) if intervals else float('nan')
     missed = sum(1 for x in intervals if x > LIMITS['presentation_missed_factor'] * refresh)
     rr.add('W5', 'refresh period measured (ms) within 60 Hz +-0.5%', rr.rid, bool(abs(1000.0 / refresh - 60.0) <= 0.3) if refresh == refresh else None,
            True, 'bool', f'refresh_ms={refresh:.3f} hz={1000.0 / refresh if refresh == refresh else float("nan"):.3f}')
-    rr.add('W5', 'missed vblanks (interval > 1.5 x refresh)', rr.rid, missed, 0, '==', f'n={len(intervals)}')
+    rr.add('W5', 'missed vblanks (interval > 1.5 x refresh)', rr.rid, missed if intervals else None, 0, '==', f'n={len(intervals)}')
     p95i = pct(intervals, 0.95)
     rr.add('W5', 'presented interval p95 (ms) <= refresh + 0.1', rr.rid, p95i, refresh + LIMITS['presentation_p95_margin_ms'], '<=',
-           f'p50={pct(intervals, 0.5):.3f} p99={pct(intervals, 0.99):.3f} max={max(intervals):.3f}')
+           f'p50={pct(intervals, 0.5):.3f} p99={pct(intervals, 0.99):.3f} max={max(intervals) if intervals else float("nan"):.3f}')
     rr.summary['presented_interval_ms'] = stats_block(intervals)
     rr.summary['refresh_ms'] = refresh
     rr.summary['pm_dropped_in_window'] = sum(1 for r in win_rows if r['dropped'])
@@ -435,7 +441,7 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
         lat.append(latency)
         rawrows.append([r['seq'], r['char'], qb, disp[idx][0], f'{latency:.4f}', used])
     n_win_keys = len(rawrows)
-    rr.add('W4', 'every injected key in the window has a visible response', rr.rid, unresolved, 0, '==', f'keys={n_win_keys}')
+    rr.add('W4', 'every injected key in the window has a visible response', rr.rid, unresolved if n_win_keys else None, 0, '==', f'keys={n_win_keys}')
     rr.add('W4', 'input->visible p95 (ms)', rr.rid, pct(lat, 0.95), LIMITS['visible_p95_ms'], '<=', f'n={len(lat)} p50={pct(lat, 0.5):.2f}')
     rr.add('W4', 'input->visible p99 (ms)', rr.rid, pct(lat, 0.99), LIMITS['visible_p99_ms'], '<=', f'max={max(lat) if lat else float("nan"):.2f}')
     rr.summary['visible_ms'] = stats_block(lat)
@@ -582,6 +588,8 @@ def analyze(platform, root, expect_runs, expect_scale, out, incremental, quiet=F
             global_invalid.append('result-workload.txt missing (harness did not run)')
         elif not harness['host'].get('finished'):
             global_invalid.append('harness did not finish (no finished= line)')
+        if harness is not None and not harness['qpc_hz']:
+            global_invalid.append('harness host line has no qpc_freq (per-run analysis cannot run)')
         pm, err = load_presentmon(f'{root}/presentmon.csv')
         if pm is None:
             global_invalid.append(err)
@@ -612,8 +620,14 @@ def analyze(platform, root, expect_runs, expect_scale, out, incremental, quiet=F
             hr = (harness or {'runs': {}})['runs'].get(rid)
             if not hr:
                 rr.invalid.append('run absent from harness result file')
-            elif harness['qpc_hz']:
-                analyze_windows_run(rr, rdir, hr, harness['qpc_hz'], pm, expect_scale, out)
+            elif not harness['qpc_hz']:
+                rr.invalid.append('no harness qpc_freq: run not analyzed')
+            else:
+                try:
+                    analyze_windows_run(rr, rdir, hr, harness['qpc_hz'], pm, expect_scale, out)
+                except Exception as ex:    # a crash must surface as an invalid run, never as an empty report or a missing one
+                    import traceback
+                    rr.invalid.append(f'analyzer error: {type(ex).__name__}: {ex} @ ' + traceback.format_exc().strip().splitlines()[-3].strip())
         else:
             analyze_mac_run(rr, rdir, expect_scale)
         if not allow_light:
@@ -674,10 +688,10 @@ def selftest(keep=None):
     hz = 10_000_000
     frame = hz / 60.0
 
-    def make(root, runs=3, latency_extra_ms=0.0, drop_calibration=False, drop_incremental=False, light=False, drop_run=None):
+    def make(root, runs=3, latency_extra_ms=0.0, drop_calibration=False, drop_incremental=False, light=False, drop_run=None, empty_refresh=False):
         os.makedirs(root, exist_ok=True)
         rnd = random.Random(7)
-        res = ['harness=selftest', f'host qpc_freq={hz} input_struct=40 gpu=x driver=y refresh_hz=60 res=1920x1080']
+        res = ['harness=selftest', f'host qpc_freq={hz} input_struct=40 gpu=x driver=y refresh_hz={"" if empty_refresh else 60} res={"x" if empty_refresh else "1920x1080"}']
         pm_rows = ['Application,ProcessID,CPUStartQPC,Dropped,msBetweenDisplayChange,msUntilDisplayed']
         base = 5_000_000_000
         for n in range(1, runs + 1):
@@ -786,6 +800,7 @@ def selftest(keep=None):
             ('no calibration', dict(drop_calibration=True), 'INCOMPLETE'),
             ('no incremental record', dict(drop_incremental=True), 'INCOMPLETE'),
             ('light baseline', dict(light=True), 'INCOMPLETE'),
+            ('empty refresh_hz in host line', dict(empty_refresh=True), 'PASS'),   # R10 regression: the run analysis was silently skipped
         ]
         for name, kw, want in cases:
             root = f'{tmp}/{re.sub(r"[^a-z]", "", name)}'
@@ -859,7 +874,7 @@ def main(argv):
         return 3
     out = opts.get('out', os.path.join(root, 'report'))
     expect_runs = int(opts.get('expect-runs', 3))
-    expect_scale = float(opts.get('expect-scale', 1.0 if platform == 'windows' else 2.0))
+    expect_scale = float(opts.get('expect-scale', 2.5 if platform == 'windows' else 2.0))    # Dell tuple is 250% (scale 2.5); Mac is 2.0
     incremental = opts.get('incremental') or next((p for p in (f'{root}/incremental.json', f'{root}/../../incremental.json') if os.path.isfile(p)), f'{root}/incremental.json')
     result = analyze(platform, root, expect_runs, expect_scale, out, incremental)
     overall, checks, reasons = finish(platform, result, out, opts.get('light-root'))
