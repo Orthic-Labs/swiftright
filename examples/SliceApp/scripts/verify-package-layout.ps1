@@ -3,7 +3,10 @@
 #   -Mode Installed  (default root: the installed OrthicLabs.SliceApp InstallLocation): post-install check
 # Static checks (both modes):
 #   1. SliceApp.exe and swiftright_render.dll are in the same directory (the loader's default name resolves beside the exe).
-#   2. The renderer is byte-identical to Windows\renderer-pin.json (sha256).
+#   2. The renderer matches Windows\renderer-pin.json by Authenticode digest (PE hash excluding CheckSum and the certificate
+#      table; pin.authenticodeSha256). RightKit signs every PE in the package, so the raw sha256 differs per build; the
+#      Authenticode digest does not (it equals the unsigned stage DLL's, and what signtool reports). Falls back to raw
+#      sha256 only if the pin has no authenticodeSha256. Non-PE files are never compared here.
 #   3. Every shipped closure entry the pin names (VCRUNTIME140.dll) sits beside it.
 #   4. The loader's default name literal in packages\SwiftRightBridge ...\Loader.swift equals the pin's file name, so no
 #      environment variable or PATH entry is needed (checked only when the source tree is present).
@@ -30,13 +33,48 @@ if (-not $Root) {
     }
 }
 $problems = New-Object System.Collections.Generic.List[string]
+Add-Type -TypeDefinition @'
+using System; using System.IO; using System.Linq; using System.Security.Cryptography;
+public static class PeDigest {
+  // SHA-256 over the PE image excluding CheckSum, the Certificate Table directory entry and the certificate data.
+  public static string Sha256(string path) {
+    byte[] b = File.ReadAllBytes(path);
+    if (b.Length < 0x40 || BitConverter.ToUInt16(b, 0) != 0x5a4d) throw new Exception("not a PE: " + path);
+    int pe = BitConverter.ToInt32(b, 0x3c);
+    if (BitConverter.ToUInt32(b, pe) != 0x4550) throw new Exception("not a PE: " + path);
+    int nSec = BitConverter.ToUInt16(b, pe + 6), optSize = BitConverter.ToUInt16(b, pe + 20), opt = pe + 24;
+    ushort magic = BitConverter.ToUInt16(b, opt);
+    if (magic != 0x10b && magic != 0x20b) throw new Exception("bad optional header: " + path);
+    int checksum = opt + 64, certDir = opt + (magic == 0x20b ? 112 : 96) + 32;
+    int sizeOfHeaders = BitConverter.ToInt32(b, opt + 60);
+    int certOff = BitConverter.ToInt32(b, certDir), certSize = BitConverter.ToInt32(b, certDir + 4);
+    using (var h = SHA256.Create()) {
+      h.TransformBlock(b, 0, checksum, null, 0);
+      h.TransformBlock(b, checksum + 4, certDir - (checksum + 4), null, 0);
+      h.TransformBlock(b, certDir + 8, sizeOfHeaders - (certDir + 8), null, 0);
+      int hashed = sizeOfHeaders;
+      var secs = Enumerable.Range(0, nSec).Select(i => new { Size = BitConverter.ToInt32(b, opt + optSize + i * 40 + 16), Ptr = BitConverter.ToInt32(b, opt + optSize + i * 40 + 20) }).OrderBy(s => s.Ptr);
+      foreach (var s in secs) { if (s.Size == 0) continue; h.TransformBlock(b, s.Ptr, s.Size, null, 0); hashed += s.Size; }
+      int end = certSize > 0 ? certOff : b.Length;
+      if (end > hashed) h.TransformBlock(b, hashed, end - hashed, null, 0);
+      h.TransformFinalBlock(new byte[0], 0, 0);
+      return BitConverter.ToString(h.Hash).Replace("-", "");
+    }
+  }
+}
+'@
 $exe = Join-Path $Root 'SliceApp.exe'
 $dll = Join-Path $Root $pin.file
 if (-not (Test-Path -LiteralPath $exe)) { $problems.Add("SliceApp.exe not found in $Root") }
 if (-not (Test-Path -LiteralPath $dll)) { $problems.Add("$($pin.file) is not beside SliceApp.exe in $Root") }
 else {
-    $actual = (Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash
-    if ($actual -ne $pin.sha256.ToUpperInvariant()) { $problems.Add("$($pin.file) sha256 $actual != pin $($pin.sha256)") }
+    if ($pin.authenticodeSha256) {
+        $actual = [PeDigest]::Sha256($dll)
+        if ($actual -ne $pin.authenticodeSha256.ToUpperInvariant()) { $problems.Add("$($pin.file) Authenticode digest $actual != pin $($pin.authenticodeSha256)") }
+    } else {
+        $actual = (Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash
+        if ($actual -ne $pin.sha256.ToUpperInvariant()) { $problems.Add("$($pin.file) sha256 $actual != pin $($pin.sha256)") }
+    }
 }
 foreach ($shipped in $pin.closure.shipped) {
     if (-not (Test-Path -LiteralPath (Join-Path $Root $shipped))) { $problems.Add("closure entry $shipped missing beside the exe") }
@@ -87,4 +125,4 @@ Write-Output 'LOADED'
     else { "scrubbed-environment load ok (PATH=System32 only, SWIFTRIGHT_RENDER_DLL unset)" }
 }
 if ($problems.Count -gt 0) { $problems | ForEach-Object { "FAIL: $_" }; exit 1 }
-"OK ($Mode): $($pin.file) beside SliceApp.exe in $Root, sha256 matches pin (ABI $($pin.abi))"
+"OK ($Mode): $($pin.file) beside SliceApp.exe in $Root, Authenticode digest matches pin (ABI $($pin.abi))"
