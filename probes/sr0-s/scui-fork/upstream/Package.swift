@@ -144,9 +144,6 @@ let package = Package(
         .library(name: "Gtk", type: libraryType, targets: ["Gtk"]),
         .library(name: "Gtk3", type: libraryType, targets: ["Gtk3"]),
         .executable(name: "GtkExample", targets: ["GtkExample"]),
-        // .library(name: "CursesBackend", type: libraryType, targets: ["CursesBackend"]),
-        // .library(name: "QtBackend", type: libraryType, targets: ["QtBackend"]),
-        // .library(name: "LVGLBackend", type: libraryType, targets: ["LVGLBackend"]),
     ],
     dependencies: [
         .package(
@@ -189,18 +186,6 @@ let package = Package(
             url: "https://github.com/moreSwift/swift-observation-polyfill",
             .upToNextMinor(from: "0.1.1")
         ),
-        // .package(
-        //     url: "https://github.com/stackotter/TermKit",
-        //     revision: "163afa64f1257a0c026cc83ed8bc47a5f8fc9704"
-        // ),
-        // .package(
-        //     url: "https://github.com/PADL/LVGLSwift",
-        //     revision: "19c19a942153b50d61486faf1d0d45daf79e7be5"
-        // ),
-        // .package(
-        //     url: "https://github.com/Longhanks/qlift",
-        //     revision: "ddab1f1ecc113ad4f8e05d2999c2734cdf706210"
-        // ),
     ],
     targets: [
         .target(
@@ -352,20 +337,6 @@ let package = Package(
         ),
 
         // .target(
-        //     name: "CursesBackend",
-        //     dependencies: ["SwiftCrossUI", "TermKit"]
-        // ),
-        // .target(
-        //     name: "QtBackend",
-        //     dependencies: ["SwiftCrossUI", .product(name: "Qlift", package: "qlift")]
-        // ),
-        // .target(
-        //     name: "LVGLBackend",
-        //     dependencies: [
-        //         "SwiftCrossUI",
-        //         .product(name: "LVGL", package: "LVGLSwift"),
-        //         .product(name: "CLVGL", package: "LVGLSwift"),
-        //     ]
         // ),
     ]
 )
