@@ -1,0 +1,19 @@
+# Not part of the release plan: runner -> drive-mac.sh -> JSON on this host. No VM is started, nothing is built or launched
+# (checks the tools, the Tart binary, the ssh key and that the base VM exists).
+#   rightkit-qa run --config rightkit-qa.toml qa/dev/selfcheck-macos.scenario.toml
+name = "dev.selfcheck"
+tier = "fast"
+target = "engine"
+timeout_s = 120
+
+[[step]]
+kind = "cli"
+label = "driver self-check"
+args = ['selfcheck']
+timeout_s = 90
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.baseVmPresent"
+  eq = true

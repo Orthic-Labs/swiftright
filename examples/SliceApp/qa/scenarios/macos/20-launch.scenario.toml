@@ -1,0 +1,34 @@
+# Release floor `smoke.launch` (mapped to this check name by right-release.config.mjs qa.checks), macOS. The app runs ONLY inside a
+# disposable Tart VM (qa/drive-mac.sh clones the base VM, runs it headless, deletes it afterwards): launch, a visible window
+# (CGWindowList), the seed rows persisted (the ready signal), quit on request with no crash report.
+name = "app.launch"
+tier = "fast"
+target = "engine"
+timeout_s = 900
+
+[[step]]
+kind = "cli"
+label = "launch in the Tart VM, window shown, ready, quit"
+args = ['launch']
+timeout_s = 600
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.ready"
+  eq = true
+  [[step.expect]]
+  path = "json.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.rowsJson.schema"
+  eq = 1
+  [[step.expect]]
+  path = "json.quit.clean"
+  eq = true
+  [[step.expect]]
+  path = "json.diagnostics"
+  len_eq = 0

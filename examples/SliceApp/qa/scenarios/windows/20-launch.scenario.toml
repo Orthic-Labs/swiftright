@@ -1,0 +1,54 @@
+# Release floor `smoke.launch` (mapped to this check name by right-release.config.mjs qa.checks): launch the staged exe with a
+# scrubbed PATH and an isolated LOCALAPPDATA, see a visible top-level window, see the ready signal through UIA (insert-above
+# button plus the five seed row fields), then quit through WM_CLOSE and require exit code 0 and no SWR_/SLICE_ error lines.
+name = "app.launch"
+tier = "fast"
+target = "engine"
+timeout_s = 600
+
+[[step]]
+kind = "cli"
+label = "launch, window shown, ready, clean quit"
+args = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', 'qa\drive-windows.ps1', 'launch']
+timeout_s = 300
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.windowTitle"
+  eq = "SliceApp"
+  [[step.expect]]
+  path = "json.ready"
+  eq = true
+  [[step.expect]]
+  path = "json.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.rowsJson.schema"
+  eq = 1
+  [[step.expect]]
+  path = "json.rowsJson.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.quit.clean"
+  eq = true
+  [[step.expect]]
+  path = "json.quit.exitCode"
+  eq = 0
+  [[step.expect]]
+  path = "json.diagnostics"
+  len_eq = 0
+
+[[step]]
+kind = "file_stat"
+label = "the app wrote rows.json under the isolated LOCALAPPDATA"
+path = "launch/localappdata/SliceApp/rows.json"
+  [[step.expect]]
+  path = "exists"
+  eq = true
+  [[step.expect]]
+  path = "size"
+  gte = 20

@@ -31,6 +31,7 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `scripts/make-local-appinstaller.mjs`, `scripts/serve-local-feed.ps1` | Local App Installer feed for the Sandbox (F8) |
 | `scripts/interrupt-windows-install.ps1`, `scripts/interrupt-mac-install.sh` | Real interrupted-update experiments (F6) |
 | `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release`. The mac one builds the app and signs it with its entitlements (right-release builds the DMG) |
+| `rightkit-qa.toml`, `qa/` | QA plan behind `right-release qa` (see "QA gate"): `qa/scenarios/windows` and `qa/scenarios/macos` (engine-target scenarios), drivers `qa/drive-windows.ps1` (UIA, window-targeted) and `qa/drive-mac.sh` + `qa/mac-probe.swift` (app runs only in a Tart VM), `qa/dev/` self-checks that launch nothing |
 
 Data: rows persist to `rows.json` (schema 1, atomic write):
 - macOS: `~/Library/Application Support/SliceApp/rows.json`
@@ -172,6 +173,47 @@ win "powershell -NoProfile -ExecutionPolicy Bypass -File <script>\clone-build-wi
 ```
 
 Status: argument parsing validated by dry run only; not run (the 0.6 snapshot commit is pending).
+
+## QA gate (@rightkit/release >= 0.2.144)
+
+`right-release build` refuses without a passing source-stage QA receipt for the exact commit (`build-release.mjs` `assertSourceQaAdmission`, every platform,
+including the Mac R3 path); upload and publication need an installed-stage receipt. The receipt is written only by `right-release qa`, MAC'd with a key held by
+the host that runs it (macOS Keychain / `%APPDATA%\RightKit` file, created on first use), so QA must run on the same host as the build. It needs a clean tree
+(untracked files count), the primary branch-attached checkout, and the runner `rightkit-qa` on PATH (or `qa.runner`). Floor (`release-qa-floor.json`): `smoke.launch` and
+`journey` at both stages. `right-release.config.mjs` `qa` maps them to evidence check names: `smoke.launch` -> `app.launch`, `journey` -> `journey.*`.
+
+Plan: SliceApp is native Swift, so the runner's `ui` target (in-app rightkit-control server + webview) does not apply. Every scenario is an `engine`-target scenario: one
+`cli` step runs a per-platform driver that prints one JSON object, and the scenario asserts on it (`rightkit-qa.toml`, `qa/scenarios/<platform>/`). Scenarios per platform:
+`app.build` (build and stage the payload), `app.launch` (floor `smoke.launch`), `journey.restart-keeps-data` (floor `journey`).
+
+| | Windows (`qa/drive-windows.ps1`) | macOS (`qa/drive-mac.sh`) |
+|---|---|---|
+| Build | `scripts/prepackage-windows.ps1` (the real prePackage: swift build, manifest and closure checks, pinned renderer, flat stage), then `.build\qa-build.json` (commit, exe and renderer hashes) | `swift build -c release`, unsigned `swift-package mac-app`, ad-hoc `codesign`, probe compiled; all headless |
+| Runs | `.build\msix-stage\SliceApp.exe`, PATH = System32 + Windows only, isolated `%LOCALAPPDATA%` | only inside a disposable Tart VM (clone of `sliceapp-base`, `--no-graphics`, deleted afterwards); never on the host |
+| `app.launch` | visible window titled `SliceApp`, ready signal through UIA (`toolbar/insert-above` + five `row/<uuid>/field`), seed rows in `rows.json`, WM_CLOSE, exit code 0, no `SWR_`/`SLICE_` error lines | visible window (CGWindowList), seed rows written, `NSRunningApplication.terminate()`, process gone, no crash report |
+| Journey | insert a row (Invoke), write a marker (ValuePattern.SetValue), `rows.json` has it, quit, relaunch, marker shown again, `rows.json` byte-identical after the reload | no UI input (no Accessibility grant in the VM image): the driver edits row 0 in `rows.json` between two launches; evidence says `uiDriven=false`, `dataWrittenBy=driver` |
+| Input | UIA only (window-targeted). No SendInput, no foreground change | none |
+
+Limits, stated so a receipt is not over-read: the installed stage is NOT implemented (the drivers refuse `RIGHT_RELEASE_QA_STAGE=installed`, so no installed receipt exists and upload stays
+gated; the R5 Sandbox checks W03 to W05 are the installed-launch equivalent, outside RightKit's receipt). The Mac journey cannot see the UI and cannot detect a load failure that leaves
+the file untouched; the macOS exit status is not observable for an app started through `open`. Mac window geometry needs the VM's ssh user to have a window-server session (auto-login in the base VM).
+
+Commands (QA opens SliceApp windows on Windows: run it only on a free desktop):
+
+```sh
+# Windows (Dell, non-elevated one-shot task; launchers live beside the clones, outside any repo). Runner: D:\Claude\sr0-r5\bin\rightkit-qa.exe, prepended to PATH by the launcher.
+win 'powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0-r5\step-qa-0.1.0.ps1'            # clean : right-release qa --stage source --platform win
+win 'powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0-r5\step-qa-0.1.1.ps1'            # clean2: same, its own commit and receipt
+#   add -Build to chain `right-release build --platform win` in the same task when QA passed
+# macOS (host orchestrates, the VM runs the app; needs rightkit-qa on PATH, Tart at /Volumes/D/tart-install, VM sliceapp-base):
+sh scripts/clone-build-mac.sh --commit <pushed sha> --stage qa      # then: --stage build
+# no window, no VM, no build (runner -> driver -> JSON path only):
+rightkit-qa run --config rightkit-qa.toml qa/dev/selfcheck-windows.scenario.toml     # Windows
+rightkit-qa run --config rightkit-qa.toml qa/dev/selfcheck-macos.scenario.toml       # macOS
+```
+
+Receipts: `<repo>/.right-release/qa/sliceapp-<version>-<commit8>/<windows|mac>/source.receipt.json` (gitignored). The receipt binds the commit, tree, lockfiles, release config hash and the
+runner hash, so any commit (including a clone-local one) needs its own QA run before its build.
 
 ## Local App Installer feed (F8)
 
