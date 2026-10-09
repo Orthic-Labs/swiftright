@@ -122,6 +122,7 @@ struct Motion {
 enum TransactionContext {
     private static var queued: [AnimationTransaction] = []
     static var deferred: [() -> Void] = []
+    static var queuedCount: Int { queued.count }
 
     static func enqueue(_ transaction: AnimationTransaction) {
         queued.append(transaction)

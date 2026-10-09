@@ -118,6 +118,7 @@ enum ViewTypes {
     }
 
     private static var cache: [ObjectIdentifier: Info] = [:]
+    static var cacheCount: Int { cache.count }
 
     static func info(for view: any View) -> Info {
         let type = type(of: view)
@@ -329,6 +330,9 @@ struct RowStateCache {
     mutating func takeFocus(_ id: NodeID) -> Bool {
         focused.remove(id) != nil
     }
+
+    /// Entries held (diagnostics).
+    var entryCount: Int { storage.count + focused.count + groups.count + order.count }
 
     mutating func trim() {
         while order.count > RowStateCache.limit {
@@ -767,6 +771,40 @@ public final class Graph {
     }
 
     // MARK: Public test surface
+
+    /// Sizes of every table and queue the graph keeps (R10 memory diagnosis). A table that grows without bound under a steady
+    /// workload shows up here as a count that rises with time. Walks every live node: call it at a low rate.
+    public struct Counts: Sendable {
+        public var nodes = 0, nodesByString = 0, animating = 0, dirty = 0
+        public var sizeCacheEntries = 0, memoEntries = 0, rowCacheEntries = 0, nodeStorageEntries = 0
+        public var tasks = 0, tethers = 0, textInputs = 0, motions = 0
+        public var observationCallbacks = 0
+        public var viewTypeInfos = 0, queuedTransactions = 0, deferredCompletions = 0
+        public init() {}
+    }
+
+    public func counts() -> Counts {
+        var c = Counts()
+        c.nodes = nodes.count
+        c.nodesByString = nodesByString.count
+        c.animating = animating.count
+        c.dirty = dirty.count
+        c.observationCallbacks = observationCallbacks
+        for node in nodes.values {
+            c.sizeCacheEntries += node.sizeCache.count
+            c.memoEntries += node.memo.count
+            c.rowCacheEntries += node.rowCache.entryCount
+            c.nodeStorageEntries += node.storage.count
+            if node.task != nil { c.tasks += 1 }
+            if node.tether != nil || node.dataTether != nil { c.tethers += 1 }
+            if node.textInput != nil { c.textInputs += 1 }
+            if node.motion != nil { c.motions += 1 }
+        }
+        c.viewTypeInfos = ViewTypes.cacheCount
+        c.queuedTransactions = TransactionContext.queuedCount
+        c.deferredCompletions = TransactionContext.deferred.count
+        return c
+    }
 
     /// Applies pending invalidations (coalesced), lays out, and always emits one commit record.
     public func flush() {
