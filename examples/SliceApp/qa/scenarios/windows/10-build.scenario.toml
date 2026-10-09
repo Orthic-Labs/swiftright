@@ -1,0 +1,22 @@
+# Source QA, Windows: build and stage the payload exactly as right-release's prePackage does (swift build, manifest and
+# import-closure checks, pinned renderer, flat stage), then record the commit and the exe/renderer hashes the later scenarios bind to.
+# Needs SWIFTRIGHT_RENDERER_SRC (or the pin's defaultSource) and `pnpm install` done in this directory.
+name = "app.build"
+tier = "fast"
+target = "engine"
+timeout_s = 3000
+
+[[step]]
+kind = "cli"
+label = "build and stage the payload"
+args = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', 'qa\drive-windows.ps1', 'build']
+timeout_s = 2700
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.build.exeSha256"
+  not_empty = true
+  [[step.expect]]
+  path = "json.build.rendererSha256"
+  not_empty = true

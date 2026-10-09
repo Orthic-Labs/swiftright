@@ -1,0 +1,54 @@
+# Release floor `journey` (mapped to journey.* by right-release.config.mjs qa.checks), macOS. Inside the Tart VM:
+#   launch -> seed rows written -> quit -> the DRIVER edits row 0 of rows.json -> relaunch -> window shown, the edited data still on
+#   disk and not rewritten -> quit.
+# No UI input on macOS (no Accessibility grant in the VM image): the evidence says so (uiDriven=false, dataWrittenBy=driver), and
+# this scenario asserts it, so a reader of the receipt cannot mistake it for the Windows UIA journey.
+name = "journey.restart-keeps-data"
+tier = "fast"
+target = "engine"
+timeout_s = 1200
+
+[[step]]
+kind = "cli"
+label = "restart keeps edited data (Tart VM)"
+args = ['journey']
+timeout_s = 900
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.uiDriven"
+  eq = false
+  [[step.expect]]
+  path = "json.dataWrittenBy"
+  eq = "driver"
+  [[step.expect]]
+  path = "json.firstRun.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.firstRun.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.firstRun.quit.terminated"
+  eq = true
+  [[step.expect]]
+  path = "json.secondRun.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.secondRun.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.secondRun.quit.terminated"
+  eq = true
+  [[step.expect]]
+  path = "json.rowsJsonUnchangedByReload"
+  eq = true
+  [[step.expect]]
+  path = "json.restartKeptData"
+  eq = true
+  [[step.expect]]
+  path = "json.crashReports"
+  eq = 0
+  [[step.expect]]
+  path = "json.diagnostics"
+  len_eq = 0

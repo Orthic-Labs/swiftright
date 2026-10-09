@@ -59,6 +59,17 @@ const WIN_APPX = path.join("dist", "win", `SliceApp_${MSIX_VERSION}_x64.msix`);
 const MAC_APP = path.join("dist", "mac", "SliceApp.app");
 const MAC_DMG = path.join("dist", "mac", `SliceApp_${VERSION}_arm64.dmg`);
 
+// QA plan for the release gate (`right-release qa`; @rightkit/release >= 0.2.144 refuses `build` without a passing source-stage
+// receipt for the exact commit, and upload/publication without an installed-stage one). The floor requires smoke.launch and
+// journey at both stages; they map to evidence check names produced by rightkit-qa (the scenario `name`): app.launch and journey.*.
+// SliceApp is a native Swift app, so every scenario is an `engine`-target scenario that runs a per-platform driver
+// (qa/drive-windows.ps1: UIA only, window-targeted; qa/drive-mac.sh: app runs only inside a Tart VM, never on the host) against
+// the STAGED payload and asserts on the JSON it prints. The scenario files are chosen per platform (this module runs on the
+// host that runs the gate). The installed stage is NOT implemented: the drivers refuse RIGHT_RELEASE_QA_STAGE=installed, so no
+// installed receipt can be produced yet. rightkit-qa is found on PATH (or add `runner: "<path>"`). See PACKAGING.md "QA gate".
+const QA_PLATFORM = process.platform === "win32" ? "windows" : "macos";
+const QA_SCENARIOS = ["10-build", "20-launch", "30-journey"].map((name) => `qa/scenarios/${QA_PLATFORM}/${name}.scenario.toml`);
+
 export default {
   schema: 1,
   app: "sliceapp",
@@ -82,6 +93,12 @@ export default {
     exclude: [".build/**", "dist/**", "**/*.test.*"],
   },
   checks: [],
+  qa: {
+    version: "1",
+    config: "rightkit-qa.toml",
+    args: { source: QA_SCENARIOS, installed: QA_SCENARIOS },
+    checks: { "smoke.launch": ["app.launch"], journey: ["journey.*"] },
+  },
   targets: {
     mac: {
       signed: true,

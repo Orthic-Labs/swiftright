@@ -9,7 +9,10 @@
 #   --origin    default: git@github.com:bogusyogi/swiftright.git
 #   --scratch   default: $HOME/.swiftright-clean/<sha12>  (refused if inside the primary checkout)
 #   --rightkit  default: /Volumes/D/claude/rightkit  (local @rightkit/release package; read-only use)
-#   --stage     doctor = right-release doctor only; build (default) = right-release release --tier patch --no-upload (build, sign, notarize, staple, seal; NO upload)
+#   --stage     doctor = right-release doctor only; qa = right-release qa --stage source (release gate, @rightkit/release >= 0.2.144;
+#               the app runs only in a Tart VM, never on this Mac: see qa/drive-mac.sh); build (default) = right-release build (sign,
+#               notarize, staple, seal; NO upload). build refuses without the passing qa receipt for the same commit: run qa first in the
+#               same clone, with rightkit-qa on PATH.
 #   --dry-run   parse and validate arguments, print the plan, touch nothing
 # Never runs upload/publish-update. The commit must already be pushed to origin.
 #
@@ -34,14 +37,14 @@ while [ $# -gt 0 ]; do
     --rightkit) [ $# -ge 2 ] || die "--rightkit needs a value"; RIGHTKIT="$2"; shift 2 ;;
     --stage) [ $# -ge 2 ] || die "--stage needs a value"; STAGE="$2"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
-    -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
     *) die "unknown argument: $1" ;;
   esac
 done
 
 [ -n "$COMMIT" ] || die "--commit is required"
 printf '%s' "$COMMIT" | grep -Eq '^[0-9a-fA-F]{7,40}$' || die "--commit must be 7-40 hex characters"
-case "$STAGE" in doctor|build) ;; *) die "--stage must be doctor or build" ;; esac
+case "$STAGE" in doctor|qa|build) ;; *) die "--stage must be doctor, qa or build" ;; esac
 SHORT=$(printf '%s' "$COMMIT" | cut -c1-12)
 [ -n "$SCRATCH" ] || SCRATCH="$HOME/.swiftright-clean/$SHORT"
 
@@ -55,7 +58,8 @@ CLONE="$SCRATCH/swiftright"
 
 echo "plan: clone $ORIGIN at $COMMIT -> $CLONE (branch $BRANCH)"
 echo "plan: $SCRATCH/rightkit -> $RIGHTKIT"
-echo "plan: examples/SliceApp: pnpm install --frozen-lockfile; pnpm exec right-release $STAGE --platform mac --config right-release.config.mjs"
+PLAN_CMD="$STAGE"; [ "$STAGE" != qa ] || PLAN_CMD="qa --stage source"
+echo "plan: examples/SliceApp: pnpm install --frozen-lockfile; pnpm exec right-release $PLAN_CMD --platform mac --config right-release.config.mjs"
 if [ "$DRY" = 1 ]; then echo "dry-run: nothing executed"; exit 0; fi
 
 [ -d "$RIGHTKIT/packages/release" ] || die "RightKit release package not found: $RIGHTKIT/packages/release"
@@ -77,7 +81,9 @@ pnpm install --frozen-lockfile
 [ -z "$(git status --porcelain)" ] || die "pnpm install dirtied the tree (lockfile out of date?); source gate would refuse"
 if [ "$STAGE" = doctor ]; then
   pnpm exec right-release doctor --platform mac --config right-release.config.mjs
+elif [ "$STAGE" = qa ]; then
+  pnpm exec right-release qa --stage source --platform mac --config right-release.config.mjs
 else
-  pnpm exec right-release release --tier patch --platform mac --no-upload --config right-release.config.mjs
+  pnpm exec right-release build --platform mac --config right-release.config.mjs
 fi
 echo "done: $STAGE at $FULL (clone: $CLONE). Artifacts under $CLONE/examples/SliceApp/dist and the RightKit state root."

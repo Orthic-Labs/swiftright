@@ -1,0 +1,18 @@
+# Source QA, macOS: headless host build only (swift build, unsigned dist/mac/SliceApp.app, ad-hoc signed for the VM, probe compiled).
+# Nothing is launched on the host. Records the commit and the app executable hash the later scenarios bind to.
+name = "app.build"
+tier = "fast"
+target = "engine"
+timeout_s = 3000
+
+[[step]]
+kind = "cli"
+label = "headless build of the QA bundle and the VM probe"
+args = ['build']
+timeout_s = 2700
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.build.exeSha256"
+  not_empty = true

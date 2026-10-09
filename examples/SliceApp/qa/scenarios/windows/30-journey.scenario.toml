@@ -1,0 +1,74 @@
+# Release floor `journey` (mapped to journey.* by right-release.config.mjs qa.checks). The app's core flow, driven through UIA
+# only (InvokePattern on the "Insert above" button, ValuePattern.SetValue on the new row's text field; window-targeted, no
+# SendInput, no focus change):
+#   fresh profile -> launch -> insert a row -> write a marker into it -> rows.json holds the marker -> clean quit
+#   -> relaunch on the same profile -> the marker row is shown again -> rows.json is byte-identical after the reload -> clean quit.
+name = "journey.restart-keeps-data"
+tier = "fast"
+target = "engine"
+timeout_s = 1200
+
+[[step]]
+kind = "cli"
+label = "insert, edit, persist, restart, reload"
+args = ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', 'qa\drive-windows.ps1', 'journey']
+timeout_s = 600
+  [[step.expect]]
+  path = "json.ok"
+  eq = true
+  [[step.expect]]
+  path = "json.uiDriven"
+  eq = true
+  [[step.expect]]
+  path = "json.firstRun.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.firstRun.rowCount"
+  eq = 5
+  [[step.expect]]
+  path = "json.edit.rowCountAfterInsert"
+  eq = 6
+  [[step.expect]]
+  path = "json.edit.markerInRowsJson"
+  eq = true
+  [[step.expect]]
+  path = "json.firstRun.quit.clean"
+  eq = true
+  [[step.expect]]
+  path = "json.firstRun.quit.exitCode"
+  eq = 0
+  [[step.expect]]
+  path = "json.secondRun.windowShown"
+  eq = true
+  [[step.expect]]
+  path = "json.secondRun.rowCount"
+  eq = 6
+  [[step.expect]]
+  path = "json.secondRun.markerShown"
+  eq = true
+  [[step.expect]]
+  path = "json.secondRun.quit.clean"
+  eq = true
+  [[step.expect]]
+  path = "json.secondRun.quit.exitCode"
+  eq = 0
+  [[step.expect]]
+  path = "json.rowsJsonUnchangedByReload"
+  eq = true
+  [[step.expect]]
+  path = "json.restartKeptData"
+  eq = true
+  [[step.expect]]
+  path = "json.diagnostics"
+  len_eq = 0
+
+[[step]]
+kind = "file_stat"
+label = "final rows.json under the isolated LOCALAPPDATA"
+path = "journey/localappdata/SliceApp/rows.json"
+  [[step.expect]]
+  path = "exists"
+  eq = true
+  [[step.expect]]
+  path = "size"
+  gte = 20

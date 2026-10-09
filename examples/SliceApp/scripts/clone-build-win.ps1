@@ -10,7 +10,9 @@
 #   -RightKit        default D:\Claude\rightkit (local @rightkit/release package; read-only use)
 #   -RendererSource  swiftright_render.dll to stage (default: $env:SWIFTRIGHT_RENDERER_SRC, else the pin's defaultSource);
 #                    prepackage-windows.ps1 hash-checks it against Windows\renderer-pin.json and fails closed
-#   -Stage           doctor | build (default build; seal, NO upload)
+#   -Stage           doctor | qa | build (default build; seal, NO upload). `qa` runs `right-release qa --stage source` (release gate,
+#                    @rightkit/release >= 0.2.144): build refuses without its passing receipt for the same commit, so run `qa` first
+#                    in the same clone. rightkit-qa must be on PATH. QA launches SliceApp windows: needs a free interactive desktop.
 #   -DryRun          parse and validate arguments, print the plan, touch nothing
 # Never runs upload/publish-update. The commit must already be pushed to origin.
 #
@@ -23,7 +25,7 @@ param(
     [string]$Scratch = '',
     [string]$RightKit = 'D:\Claude\rightkit',
     [string]$RendererSource = '',
-    [ValidateSet('doctor', 'build')][string]$Stage = 'build',
+    [ValidateSet('doctor', 'qa', 'build')][string]$Stage = 'build',
     [switch]$DryRun
 )
 $ErrorActionPreference = 'Stop'
@@ -67,5 +69,6 @@ if ($RendererSource) { $env:SWIFTRIGHT_RENDERER_SRC = $RendererSource }
 Run pnpm @('install', '--frozen-lockfile')
 if (& git status --porcelain) { throw 'pnpm install dirtied the tree (lockfile out of date?); source gate would refuse' }
 if ($Stage -eq 'doctor') { Run pnpm @('exec', 'right-release', 'doctor', '--platform', 'win', '--config', 'right-release.config.mjs') }
+elseif ($Stage -eq 'qa') { Run pnpm @('exec', 'right-release', 'qa', '--stage', 'source', '--platform', 'win', '--config', 'right-release.config.mjs') }
 else { Run pnpm @('exec', 'right-release', 'build', '--platform', 'win', '--config', 'right-release.config.mjs') }
 "done: $Stage at $full (clone: $clone). Artifacts under $clone\examples\SliceApp\dist and the RightKit state root."

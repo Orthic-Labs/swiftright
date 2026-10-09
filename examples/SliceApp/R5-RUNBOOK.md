@@ -36,6 +36,8 @@ FINAL=$(git rev-parse HEAD); echo $FINAL
 
 Do not start until the Dell is free. Builds are `right-release build` (sealed, no upload; `release --no-upload` fails with "build is tier-neutral").
 
+QA gate (@rightkit/release 0.2.144): `build` also refuses without a passing `right-release qa --stage source` receipt for the exact commit of that clone (PACKAGING.md "QA gate"). Run `D:\Claude\sr0-r5\step-qa-0.1.0.ps1` (clone `clean`) and `step-qa-0.1.1.ps1` (clone `clean2`) BEFORE the build steps below, or pass `-Build` to chain the build in the same task. QA opens SliceApp windows on the Dell desktop and needs `D:\Claude\sr0-r5\bin\rightkit-qa.exe` (the launchers put it on PATH for their own process). The clones carry a clone-local QA commit delivered by bundle (`sr0-r5d.bundle`); a different commit needs its own QA run.
+
 ```sh
 FINAL=<sha from section 2>
 cd /Volumes/D/claude/swiftright/examples/SliceApp

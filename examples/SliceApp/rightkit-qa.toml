@@ -1,0 +1,25 @@
+# rightkit-qa config for SliceApp: the QA plan behind `right-release qa` (release gate, @rightkit/release >= 0.2.144).
+#
+# SliceApp is a native Swift app, so the runner's Tauri-only `ui` target (in-app rightkit-control server + webview) does not
+# apply. Every scenario uses the `engine` target instead: one `cli` step runs a per-platform DRIVER, the driver launches and
+# drives the staged app and prints one JSON object, and the scenario asserts on that JSON. The runner supplies the run lock,
+# a per-scenario data directory (SLICEAPP_QA_DATA), owned-process tracking with an orphan check, and the hashed evidence bundle.
+#
+#   Windows: powershell.exe qa\drive-windows.ps1 <case>   (UIA only: window-targeted, never SendInput)
+#   macOS:   qa/drive-mac.sh <case>                       (never launches the app on the host; GUI work runs in a Tart VM)
+#
+# Scenario files are chosen per platform by right-release.config.mjs (`qa.args`), so the paths below are only used by
+# `rightkit-qa doctor|list` and for ad-hoc runs. Run from this directory (the Windows scenarios use cwd-relative paths):
+#   rightkit-qa doctor --config rightkit-qa.toml
+#   rightkit-qa run --config rightkit-qa.toml qa/dev/selfcheck-windows.scenario.toml     (no window, no build)
+app = "sliceapp"
+app_root = "."
+evidence_dir = ".cache/rightkit-qa"
+scenarios = ["qa/scenarios/windows", "qa/scenarios/macos"]
+default_tier = "fast"
+
+[engine]
+# The runner joins this onto app_root; an absolute path (Windows PowerShell) is used as is. A .cmd wrapper is avoided on purpose:
+# app_root is canonicalized to a \\?\ path on Windows, which cmd.exe cannot run.
+binary = { darwin = "qa/drive-mac.sh", windows = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" }
+data_dir_env = "SLICEAPP_QA_DATA"
