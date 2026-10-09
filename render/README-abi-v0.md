@@ -73,6 +73,19 @@ Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freez
 - Known wrinkle: metrics read at `loop_ready` (client 1600x1396, scale 2.5) were taken before the window reached its final size; the first paint sends `SWR_EV_WINDOW_METRICS` with the real size and the smoke re-renders on it.
 - Rust builds: 2 of 4 used (`rr-1791500259707-a963e83c6a6ff9e4` built first time; `rr-1791501276615-90b478882a1ad507` adds DPI awareness and Win32 initial metrics). The first Swift run crashed on an empty-text AX run (fixed in `makeAXTextRuns`) before any Rust change.
 
+## Performance and diagnostics knobs (R10; environment, read once at start)
+
+| variable | default | effect |
+|---|---|---|
+| `SWR_PAINT_PHASE_MS` | `0` (off) | Edge-clock paint pacing (`src/pace.rs`): GPUI's vblank WM_PAINT is swallowed and one paint is posted `n` ms after each DWM composition edge (a `DwmFlush()` loop on its own thread). Off = GPUI's own WM_PAINT, untouched. On the Dell hybrid laptop pacing at 2.5 ms measured 21-30 missed vblanks per 60 s against 5 unpaced in the same state; see `probes/sr0-b/workload/results/ITERATION.md`. |
+| `SWR_AX_MIN_MS` | `100` | AccessKit publication at most every `n` ms with a trailing publish (the newest snapshot is always published within `n` ms). 0 = every commit. With a UIA client attached a publication costs ~1.2 ms of UI thread. |
+| `SWR_AX_OFF` | unset | `1`: never publish to AccessKit (diagnostics only). |
+| `SWR_FRAME_LOG` | unset | Path of a trace file written at shutdown: UI-thread spans (WM_PAINT, frame, paint, commit, tick, drain, present, ime callback), DWM composition edges, once-a-second memory samples (`src/trace.rs` documents the format). The buffers are preallocated and bounded. |
+| `SWR_MEM_DEEP` | unset | `1` (with `SWR_FRAME_LOG`): also walk the process heaps and address space every 5th memory sample (slow; diagnostics only). |
+
+The shutdown stderr lines carry the same counters without a trace file: `phases ... pacing[...]` and `memory rust_live_bytes=... private_bytes=... ax_publishes=... ax_throttled=...`.
+The crate's global allocator counts live bytes and allocations (`src/trace.rs`).
+
 ## Build and run
 
 ```sh
