@@ -2,6 +2,7 @@
 
 Run: python3 -I -m unittest discover -s qualification -v
 """
+import argparse
 import hashlib
 import json
 import shutil
@@ -256,6 +257,71 @@ class PlanTests(unittest.TestCase):
             self.assertFalse(q.win_stage(log, ["F1:none"], 3, Path(tmp), dry_run=False, confirmed=False))
             self.assertEqual(log.failures, 1)
             log.close()
+
+
+
+class ConfigAddressingTests(FakeEnv):
+    def test_allow_list_is_the_sixteen_known_configs(self):
+        self.assertEqual(len(q.CONFIGS), 16)
+        self.assertEqual(q.CONFIGS["F3"], ("F3", ()))
+        self.assertEqual(q.CONFIGS["F3-lazy-3s"], ("F3", ("--f3-variant", "lazy-3s")))
+        self.assertEqual(q.CONFIGS["F6-reduced"], ("F6", ("--reduced-motion-variant",)))
+
+    def test_unknown_configs_are_refused(self):
+        for bad in ("F10", "F3-list-0s", "F3-list-2s", "F6-reduced-x", "F3-list-1s; rm", "f3"):
+            with self.assertRaises(argparse.ArgumentTypeError):
+                q.validate_fixture(bad)
+        with self.assertRaises(ValueError):
+            q.self_test_argv("/b/FixtureApp", "F3-list-2s", "/e.jsonl")
+
+    def test_variant_flags_precede_self_test_which_stays_last(self):
+        argv = q.self_test_argv("/b/FixtureApp", "F3-lazy-3s", "/e.jsonl")
+        self.assertEqual(argv, ["/b/FixtureApp", "--fixture", "F3", "--events", "/e.jsonl",
+                                "--f3-variant", "lazy-3s", "--self-test"])
+
+    def test_reduced_motion_config_uses_reduced_flag(self):
+        argv = q.self_test_argv("/b/FixtureApp", "F6-reduced", "/e.jsonl")
+        self.assertEqual(argv, ["/b/FixtureApp", "--fixture", "F6", "--events", "/e.jsonl",
+                                "--reduced-motion-variant", "--self-test"])
+
+    def test_original_f3_has_no_variant_flag(self):
+        argv = q.self_test_argv("/b/FixtureApp", "F3", "/e.jsonl")
+        self.assertNotIn("--f3-variant", argv)
+        self.assertEqual(argv[-1], "--self-test")
+
+    def test_variant_verdict_lines_parse_and_match_config(self):
+        verdict = q.parse_verdict("SELFTEST F3 variant=lazy-1s: PASS (5/5)\n")
+        self.assertEqual(verdict, ("F3-lazy-1s", "PASS", 5, 5))
+        self.assertTrue(q.verdict_passes(verdict, "F3-lazy-1s"))
+        self.assertFalse(q.verdict_passes(verdict, "F3-vstack-1s"))
+        self.assertFalse(q.verdict_passes(verdict, "F3"))
+        self.assertEqual(q.parse_verdict("SELFTEST F3: PASS (5/5)")[0], "F3")
+        reduced = q.parse_verdict("SELFTEST F6-reduced: PASS (3/3)")
+        self.assertTrue(q.verdict_passes(reduced, "F6-reduced"))
+        self.assertFalse(q.verdict_passes(reduced, "F6"))
+
+    def test_event_fixture_accepts_config_ids_only(self):
+        record = {"ts": "2026-10-09T10:15:30.123Z", "stage": "mac-oracle", "event": "pass",
+                  "fixture": "F3-vstack-3s", "artifact_ids": {}, "reason": "ok"}
+        q.validate_event(record)
+        record["fixture"] = "F3-list-0s"
+        with self.assertRaises(ValueError):
+            q.validate_event(record)
+
+    def test_variant_oracle_run_passes_under_config_id(self):
+        lines = trace_lines([("init", 1)])
+        self.write_accepted(lines, fixture="F3-lazy-1s")
+        ok = q.oracle_fixture("F3-lazy-1s", 1,
+                              self.fake_launcher([(lines, "SELFTEST F3 variant=lazy-1s: PASS (5/5)")]),
+                              self.binary, self.accepted, self.candidates, self.dir / "work", self.log)
+        self.assertTrue(ok)
+        self.assertFalse(list(self.candidates.glob("**/candidate.json")))
+
+    def test_repeat_evidence_has_a_stem_for_every_config(self):
+        if not q.REPEAT_DIR.exists():
+            self.skipTest("repeat-run evidence not present on this host")
+        for config in q.CONFIGS:
+            self.assertTrue((q.REPEAT_DIR / f"{config}-run1.stdout").exists(), config)
 
 
 if __name__ == "__main__":

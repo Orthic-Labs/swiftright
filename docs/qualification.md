@@ -106,3 +106,13 @@ Status: **not seeded**. No file under `conformance/accepted/` was written for F3
 
 
 Approver IDs: `swiftright-primary@autonomy-2026-10-09` means the SwiftRight primary session approved under Adrian's standing autonomy grant of 9 Oct 2026, on the 20-run evidence in `probes/sr0-o/fixtures/REPEAT20.md`; Adrian did not review the traces individually.
+
+## 2026-10-09 update: F3 configs and F4-F9 seeded and verified (supersedes the blocked note above)
+
+- Approver: `swiftright-primary@autonomy-2026-10-09` (validator-compatible short ID, per the coordinator decision in commit 8bb1d08).
+- `qualification/run.py` now addresses 16 configs through an explicit allow-list (`CONFIGS`): `F1`-`F9`, `F3-{list-1s,list-3s,vstack-1s,vstack-3s,lazy-1s,lazy-3s}`, `F6-reduced`. Plain `F3` is the original `list-0s` config (the committed FixtureApp rejects `list-0s` as a variant). Variant flags go before `--self-test`, which stays last. Variant verdicts (`SELFTEST F3 variant=lazy-1s`) parse to the config id.
+- Seeded from the 20-run evidence in `probes/sr0-o/fixtures/REPEAT20.md`: all 14 new configs were 20/20 PASS with one canonical trace each.
+- Mac-oracle verification, committed tree `bb4258a2549f`, 3 runs per config: 14/14 PASS, 42/42 runs PASS, canonical digests equal the accepted baselines, no candidates written.
+- Unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'`, 31 tests OK.
+- Observation: canonical digests coincide across variants (`F3`, `list-1s`, `list-3s` share one; `vstack-1s`, `vstack-3s`, `lazy-1s`, `lazy-3s` share another). The canonical trace does not record the timing variant, so it cannot tell those variants apart.
+- Not committed. The SR1 fixture working-tree edits were not touched. No FixtureApp process was left running.

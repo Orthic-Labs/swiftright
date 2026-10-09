@@ -48,12 +48,37 @@ STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "seed", "promote")
 EVENTS = ("start", "pass", "fail", "skip")
 EVENT_KEYS = {"ts", "stage", "event", "fixture", "artifact_ids", "reason"}
 TS_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
-FIXTURE_RE = re.compile(r"^F[1-9]$")
+F3_VARIANTS = ("list-1s", "list-3s", "vstack-1s", "vstack-3s", "lazy-1s", "lazy-3s")
+# Allow-list of config ids. Config id = accepted directory name = REPEAT20 file stem.
+# Value = (FixtureApp --fixture value, flags placed before --self-test). Plain F3 is the original list-0s config.
+CONFIGS = {f"F{n}": (f"F{n}", ()) for n in range(1, 10)}
+CONFIGS.update({f"F3-{v}": ("F3", ("--f3-variant", v)) for v in F3_VARIANTS})
+CONFIGS["F6-reduced"] = ("F6", ("--reduced-motion-variant",))
+FIXTURE_RE = re.compile(r"^(?:" + "|".join(re.escape(c) for c in CONFIGS) + r")$")
 SHA_REF_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
-VERDICT_RE = re.compile(r"^SELFTEST (F[1-9]\S*): (PASS|FAIL)(?: \((\d+)/(\d+)\))?", re.M)
+VERDICT_RE = re.compile(r"^SELFTEST (F[1-9][^\s:]*)(?: variant=([a-z0-9-]+))?: (PASS|FAIL)(?: \((\d+)/(\d+)\))?", re.M)
 APPROVER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._@-]{0,63}$")
 DEFAULT_MATRIX_CONFIGS = ("F1:none", "F2:none")
 DEFAULT_FIXTURES = ("F1", "F2")
+
+
+def config_spec(config):
+    if config not in CONFIGS:
+        raise ValueError(f"unknown config {config!r}; allowed: {', '.join(CONFIGS)}")
+    return CONFIGS[config]
+
+
+def self_test_argv(binary, config, events_path):
+    """FixtureApp argv for one config. Variant flags come before --self-test, which stays last
+    (AppKit treats a trailing bare path as a document and suppresses the window)."""
+    base, flags = config_spec(config)
+    return [str(binary), "--fixture", base, "--events", str(events_path), *flags, "--self-test"]
+
+
+def verdict_passes(verdict, config):
+    """Exact config match. parse_verdict folds 'SELFTEST F3 variant=lazy-1s' into 'F3-lazy-1s'."""
+    config_spec(config)
+    return bool(verdict) and verdict[1] == "PASS" and verdict[0] == config
 
 
 class TraceError(Exception):
@@ -259,7 +284,7 @@ def launch_self_test(binary, fixture, events_path, stdout_path, timeout_s=30, ap
     for attempt in range(1, attempts + 1):
         Path(events_path).unlink(missing_ok=True)
         with open(stdout_path, "w", encoding="utf-8") as out:
-            proc = subprocess.Popen([str(binary), "--fixture", fixture, "--events", str(events_path), "--self-test"],
+            proc = subprocess.Popen(self_test_argv(binary, fixture, events_path),
                                     stdout=out, stderr=subprocess.STDOUT)
         for _ in range(appear_s):
             if Path(events_path).exists() and '"root-appear"' in Path(events_path).read_text(errors="replace"):
@@ -290,7 +315,9 @@ def parse_verdict(stdout):
     match = VERDICT_RE.search(stdout or "")
     if not match:
         return None
-    fixture, status, passed, total = match.groups()
+    fixture, variant, status, passed, total = match.groups()
+    if variant:
+        fixture = f"{fixture}-{variant}"  # F3 variant verdicts name the config id, e.g. F3-lazy-1s
     return fixture, status, int(passed or 0), int(total or 0)
 
 
@@ -381,7 +408,7 @@ def oracle_fixture(fixture, runs, launcher, binary, accepted_root, candidate_roo
         events.parent.mkdir(parents=True, exist_ok=True)
         result = launcher(binary, fixture, events, stdout)
         verdict = parse_verdict(result.get("stdout", ""))
-        verdict_ok = bool(verdict and verdict[0] == fixture and verdict[1] == "PASS")
+        verdict_ok = verdict_passes(verdict, fixture)
         ids = {"fixture_binary": sha_ref(bin_sha)}
         try:
             lines = read_normalized(events)
@@ -563,7 +590,7 @@ def cmd_seed(args, log, accepted_root=ACCEPTED_ROOT):
         for run in range(1, args.runs + 1):
             stdout = (source / f"{fixture}-run{run}.stdout").read_text(encoding="utf-8", errors="replace")
             verdict = parse_verdict(stdout)
-            if not (verdict and verdict[0] == fixture and verdict[1] == "PASS"):
+            if not verdict_passes(verdict, fixture):
                 raise ApprovalError(f"run {run}: self-test verdict is not PASS for {fixture}")
             lines = read_normalized(source / f"{fixture}-run{run}.jsonl")
             digests.add(canonical_digest(lines))
