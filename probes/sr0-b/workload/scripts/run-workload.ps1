@@ -5,12 +5,18 @@
 # 3) a one-shot INTERACTIVE scheduled task runs task-workload.ps1 (3 runs: 10 s warm-up + 60 s measured each, PostMessage script)
 # 4) PresentMon stopped, task removed, analyze_workload.py joins input QPC stamps to presented frames (PID match, as frame-clock batch 5)
 # Nothing here touches the desktop of another application: keys are sent only while the workload window is foreground.
+# Stress / resources (R10): -Rows (200 default; stress 1000, 5000) and -KeyRate (10 default; stress 30) go to task-workload.ps1 (-Rows reaches the app as
+# `--rows N`; an app build that ignores it is caught by the analyzer, which compares meta.json total_rows). Every run samples CPU / threads / memory / GPU
+# into <run>\resources.csv unless -NoResources (overhead A/B). scripts\run-stress.ps1 runs the Rows x KeyRate series through this script.
 param(
   [string]$Base = 'D:\Claude\sr0b-workload',
   [string]$Instr = 'full',            # full | light (light = overhead A/B baseline; analyzer reports it as such)
   [int]$Runs = 3,
   [int]$Warmup = 10,
   [int]$Measure = 60,
+  [int]$Rows = 200,                   # editable rows the app runs with (200 = the section 11 workload; stress series 1000, 5000)
+  [double]$KeyRate = 10,              # keys per second posted to the workload window (10 = the section 11 workload; stress series 30)
+  [switch]$NoResources,               # skip the resource sampler (overhead A/B)
   [string]$Tag = '',
   [string]$ExpectDll = '4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F',
   [double]$ExpectScale = 2.5,         # Dell tuple: 250% (dpi 240); every SR0 Dell record is scale 2.5
@@ -47,7 +53,7 @@ function Stop-Pm {
   while ((Get-Process -Name 'PresentMon-2.6.0-x64' -ErrorAction SilentlyContinue) -and (Get-Date) -lt $d) { Start-Sleep -Seconds 2 }
 }
 
-Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure"
+Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure rows=$Rows key_rate=$KeyRate resources=$(if ($NoResources) { 'off' } else { 'on' })"
 $null = Log ("whoami=" + (whoami) + " elevated=" + ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
 # 1) gates
@@ -137,7 +143,7 @@ if (-not $started) { Stop-Pm; Log 'ABORT: PresentMon not recording'; exit 4 }
 Start-Sleep -Seconds 5
 
 # 3) interactive one-shot task
-$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr"
+$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoResources) { ' -NoResources' })"
 $act = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arg -WorkingDirectory $Base
 $pri = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 $set = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes (($Runs * ($Warmup + $Measure + 60)) / 60 + 10)) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries

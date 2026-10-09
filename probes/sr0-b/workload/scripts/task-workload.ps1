@@ -16,7 +16,15 @@
 #     ~200 ms before the next key; if that fails the script aborts as before (fg_lost=1). Recovered losses are written to
 #     fg_events.csv, the `fg_event` result lines, and the fg_event column of inject.csv (the analyzer ignores the extra column).
 #   * Window-targeted input only: the foreground calls below never inject input; keys only ever go to the workload HWND.
-# Result file lines (parsed by analyze_workload.py): "=== RUN <id>", "pid run=", "pid_exit run=", "inject run=", "host ...".
+# R10 stress + resource additions:
+#   * -Rows N (default 200) is passed to the app as `--rows N` (the app reports the row count it ran with in meta.json total_rows; the analyzer
+#     voids a run whose app did not honour it). -KeyRate K (default 10, alias -RateHz) is the PostMessage rate; it is the harness's, the app has no key-rate arg.
+#   * Keys stop at process start + warm-up + measured - KeyTailS (default 0.5 s). The app's t0 follows its launch by ~0.57 s and it requests its own
+#     window close on the first tick after t0 + 70 s, so the last key lands ~1.1 s before the close. Before this, r2 of 20261009-224605-full posted its
+#     694th key 21.9 ms AFTER the app had asked to close (it was never delivered to the app: renderer events_pushed 695 = 693 typed + 2 setup events).
+#   * One resource sampler process per run (sample-resources.ps1: CPU, per-thread CPU, memory, GPU engines per adapter) writes <run>\resources.csv.
+#     -NoResources skips it (overhead A/B baseline). The sampler runs at BelowNormal priority with no window and reports its own CPU in every row.
+# Result file lines (parsed by analyze_workload.py): "=== RUN <id>", "pid run=", "pid_exit run=", "inject run=", "host ...", "exe= ... rows= rate_hz=".
 param(
   [string]$Base = 'D:\Claude\sr0b-workload',
   [string]$RunRoot = 'D:\Claude\sr0b-workload\runs\manual',
@@ -25,7 +33,10 @@ param(
   [int]$Warmup = 10,
   [int]$Measure = 60,
   [string]$Instr = 'full',
-  [double]$RateHz = 10,
+  [Alias('RateHz')][double]$KeyRate = 10,                   # keys per second posted to the workload window (10 default; stress series also 30)
+  [int]$Rows = 200,                                         # total editable rows the app runs with (200 default; stress series also 1000, 5000)
+  [double]$KeyTailS = 0.5,                                  # keys stop this long before the nominal run end (process start + warm-up + measured)
+  [switch]$NoResources,                                     # skip the resource sampler (overhead A/B)
   [string]$RunPrefix = 'r',
   [ValidateSet('char', 'all')][string]$KeyMode = 'char',   # char: WM_CHAR only; all: WM_KEYDOWN + WM_CHAR + WM_KEYUP (types every key twice)
   [int]$ForegroundSeconds = 8                               # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
@@ -169,7 +180,8 @@ public static class Inj {
     // Foreground is checked before each key (validity: window must stay unoccluded). A loss is logged with who holds the
     // foreground and re-acquired (three tries, 30/60/120 ms); a key goes out only with the window in the foreground, and when
     // re-acquiring fails the script aborts (fg_lost=1). Losses are written to eventsPath and marked in the key's fg_event column.
-    public static string Run(IntPtr hwnd, int pid, double rateHz, double maxSeconds, string outPath, string chars, string eventsPath, bool allMessages) {
+    // deadlineQpc > 0: no key is posted whose due time is after it (keys never reach a window the app is already closing).
+    public static string Run(IntPtr hwnd, int pid, double rateHz, double maxSeconds, string outPath, string chars, string eventsPath, bool allMessages, long deadlineQpc) {
         double hz = Stopwatch.Frequency;
         long step = (long)(hz / rateHz);
         long start = Stopwatch.GetTimestamp() + (long)(0.2 * hz);
@@ -179,15 +191,17 @@ public static class Inj {
         sb.Append("seq,char,qpc_before,qpc_after,sent,fg_ok,fg_event\n");
         ev.Append("seq,qpc,recovered,hung,responsive,owner\n");
         int seq = 0, fgLost = 0, sendFail = 0, events = 0, recoveredEvents = 0;
+        string stop = "limit";
         while (true) {
             long due = start + (long)seq * step;
             if (due - start > limit) break;
+            if (deadlineQpc > 0 && due > deadlineQpc) { stop = "deadline"; break; }
             while (true) {
                 long rem = due - Stopwatch.GetTimestamp();
                 if (rem <= 0) break;
                 if (rem > (long)(0.016 * hz)) Thread.Sleep(8); else Thread.SpinWait(40);
             }
-            if (!IsWindow(hwnd)) break;
+            if (!IsWindow(hwnd)) { stop = "window-gone"; break; }
             int fgEvent = 0;
             if (GetForegroundWindow() != hwnd) {
                 long lostAt = Stopwatch.GetTimestamp();
@@ -206,6 +220,7 @@ public static class Inj {
                 ev.Append(seq + "," + lostAt + "," + (recovered ? 1 : 0) + "," + (hung ? 1 : 0) + "," + (responsive ? 1 : 0) + ",\"" + owner + "\"\n");
                 if (!recovered) {
                     fgLost = 1;
+                    stop = "fg-lost";
                     sb.Append(seq + ",,0,0,0,0,1\n");
                     break;
                 }
@@ -223,7 +238,7 @@ public static class Inj {
         }
         File.WriteAllText(outPath, sb.ToString());
         File.WriteAllText(eventsPath, ev.ToString());
-        return "sent=" + seq + " fg_lost=" + fgLost + " send_fail=" + sendFail + " fg_events=" + events + " fg_recovered=" + recoveredEvents;
+        return "sent=" + seq + " fg_lost=" + fgLost + " send_fail=" + sendFail + " fg_events=" + events + " fg_recovered=" + recoveredEvents + " stop=" + stop;
     }
 }
 '@
@@ -239,7 +254,7 @@ if (-not $vc) { $vc = $vcs | Select-Object -First 1 }
 $lines.Add("harness=task-workload host=$env:COMPUTERNAME user=$env:USERNAME session=$((Get-Process -Id $PID).SessionId) started=$(Get-Date -Format o)")
 $lines.Add("host qpc_freq=$swFreq input_struct=$([Inj]::InputSize()) gpu=$($vc.Name) driver=$($vc.DriverVersion) refresh_hz=$($vc.CurrentRefreshRate) res=$($vc.CurrentHorizontalResolution)x$($vc.CurrentVerticalResolution)")
 foreach ($c in $vcs) { $lines.Add("controller name=$($c.Name) driver=$($c.DriverVersion) refresh_hz=$($c.CurrentRefreshRate) res=$($c.CurrentHorizontalResolution)x$($c.CurrentVerticalResolution)") }
-$lines.Add("exe=$exe exe_sha256=$($b.exe_sha256) dll_sha256=$($b.dll_sha256) instr=$Instr runs=$Runs warmup_s=$Warmup measure_s=$Measure rate_hz=$RateHz key_mode=$KeyMode foreground_s=$ForegroundSeconds")
+$lines.Add("exe=$exe exe_sha256=$($b.exe_sha256) dll_sha256=$($b.dll_sha256) instr=$Instr runs=$Runs warmup_s=$Warmup measure_s=$Measure rate_hz=$KeyRate rows=$Rows key_tail_s=$KeyTailS resources=$(if ($NoResources) { 'off' } else { 'on' }) key_mode=$KeyMode foreground_s=$ForegroundSeconds")
 $lines.Add("power=$((powercfg /getactivescheme) -join ' ')")
 Flush-Out
 $chars = 'mwqogdhbnk'
@@ -251,7 +266,7 @@ for ($i = 1; $i -le $Runs; $i++) {
   $lines.Add("=== RUN $id start=$(Get-Date -Format o)")
   $psi = New-Object System.Diagnostics.ProcessStartInfo
   $psi.FileName = $exe
-  $psi.Arguments = "--run-id $id --out `"$dir`" --warmup-s $Warmup --measure-s $Measure --instr $Instr"
+  $psi.Arguments = "--run-id $id --out `"$dir`" --warmup-s $Warmup --measure-s $Measure --instr $Instr --rows $Rows"
   $psi.WorkingDirectory = $bin
   $psi.UseShellExecute = $false
   $psi.RedirectStandardOutput = $true
@@ -262,6 +277,22 @@ for ($i = 1; $i -le $Runs; $i++) {
   $so = $proc.StandardOutput.ReadToEndAsync()
   $se = $proc.StandardError.ReadToEndAsync()
   $lines.Add("pid run=$id pid=$($proc.Id) start_utc=$([DateTime]::UtcNow.ToString('o')) qpc_start=$qs")
+  $sampler = $null; $samplerErr = $null
+  if (-not $NoResources) {
+    # No window, BelowNormal priority: it must not take the foreground or compete with the workload. Its own CPU is a column of every row.
+    $ssi = New-Object System.Diagnostics.ProcessStartInfo
+    $ssi.FileName = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $ssi.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSScriptRoot\sample-resources.ps1`" -TargetPid $($proc.Id) -OutDir `"$dir`" -RunId $id -StopFile `"$dir\sampler.stop`" -MaxSeconds $($Warmup + $Measure + 120)"
+    $ssi.UseShellExecute = $false; $ssi.CreateNoWindow = $true; $ssi.RedirectStandardOutput = $true; $ssi.RedirectStandardError = $true
+    $ssi.WorkingDirectory = $dir
+    try {
+      $sampler = [System.Diagnostics.Process]::Start($ssi)
+      try { $sampler.PriorityClass = [System.Diagnostics.ProcessPriorityClass]::BelowNormal } catch { }
+      $null = $sampler.StandardOutput.ReadToEndAsync()
+      $samplerErr = $sampler.StandardError.ReadToEndAsync()
+      $lines.Add("sampler run=$id pid=$($sampler.Id) target=$($proc.Id)")
+    } catch { $lines.Add("sampler run=$id start_failed=$($_.Exception.Message)"); $sampler = $null }
+  }
   $hwnd = [IntPtr]::Zero
   for ($k = 0; $k -lt 120 -and $hwnd -eq [IntPtr]::Zero -and -not $proc.HasExited; $k++) { Start-Sleep -Milliseconds 250; $proc.Refresh(); $hwnd = $proc.MainWindowHandle }
   $valid = $true; $reason = 'ok'
@@ -283,8 +314,9 @@ for ($i = 1; $i -le $Runs; $i++) {
     if ($fg -eq 'failed' -or $fg -eq 'no-window') { $valid = $false; $reason = 'foreground-failed' }
     else {
       # Keys from now until the run ends (warm-up + measured + margin); the analyzer keeps those inside the measured window.
-      $res = [Inj]::Run($hwnd, $proc.Id, $RateHz, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'))
-      $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode")
+      $keyDeadline = $qs + [long](($Warmup + $Measure - $KeyTailS) * $swFreq)
+      $res = [Inj]::Run($hwnd, $proc.Id, $KeyRate, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline)
+      $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode rate_hz=$KeyRate key_deadline_ms_from_start=$([int](($keyDeadline - $qs) * 1000 / $swFreq))")
       foreach ($l in (Get-Content "$dir\fg_events.csv" -ErrorAction SilentlyContinue | Select-Object -Skip 1)) { $lines.Add("fg_event run=$id $l") }
       # fg_lost=1 only stops the key script. The analyzer decides validity: a loss before the measured window ends voids the run.
     }
@@ -296,6 +328,14 @@ for ($i = 1; $i -le $Runs; $i++) {
   $exit = if ($proc.HasExited) { $proc.ExitCode } else { -1 }
   $lines.Add("pid_exit run=$id pid=$($proc.Id) qpc_end=$qe exit=$exit")
   if ($exit -ne 0) { $valid = $false; if ($reason -eq 'ok') { $reason = "exit-$exit" } }
+  if ($sampler) {
+    try { Set-Content -Path "$dir\sampler.stop" -Value 'stop' -Encoding ascii } catch { }
+    if (-not $sampler.WaitForExit(8000)) { try { $sampler.Kill() } catch { } }
+    $sErr = try { $samplerErr.Result } catch { '' }
+    if ($sErr) { [System.IO.File]::WriteAllText("$dir\sampler-stderr.txt", $sErr) }
+    $nRows = @(Get-Content "$dir\resources.csv" -ErrorAction SilentlyContinue).Count - 1
+    $lines.Add("resources run=$id rows=$([math]::Max($nRows, 0)) sampler_exit=$(if ($sampler.HasExited) { $sampler.ExitCode } else { 'running' }) csv=$dir\resources.csv")
+  }
   [System.IO.File]::WriteAllText("$dir\stdout.txt", $so.Result)
   [System.IO.File]::WriteAllText("$dir\stderr.txt", $se.Result)
   $lines.Add("run_state id=$id valid=$([int]$valid) reason=$reason")
