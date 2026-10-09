@@ -206,4 +206,5 @@ Log '--- stdout ---'
 Log ([string]$stdout.Result)
 Log '--- stderr ---'
 Log ([string]$stderr.Result)
+Log ("ARTIFACTS exe=$((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $Bin 'BridgeSmoke.exe')).Hash.ToLower()) renderer=$((Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $Bin 'swiftright_render.dll')).Hash.ToLower()) trace=$(([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes([string]$stdout.Result))) -replace '-','').ToLower())")
 [System.IO.File]::WriteAllText($Out, [string]::Join("`r`n", $lines))

@@ -2,7 +2,7 @@
 # schedule-fixture.ps1). Input is UIA (SetFocus, Invoke, ValuePattern.SetValue, WindowPattern.Close) and
 # virtual keys (keybd_event). No Unicode packets are sent. Engine releases and model steps are in-process
 # (the exe's self-test); this script only observes the UI state it needs to sequence input, and closes the window.
-#   -Fixture F1..F9     -Variant  F3: list-0s|list-1s|list-3s|vstack-1s|vstack-3s|lazy-1s
+#   -Fixture F1..F9     -Variant  F3: list-0s|list-1s|list-3s|vstack-1s|vstack-3s|lazy-1s|lazy-3s
 #                                  F6: reduced|override-on   F9: notasks   (empty otherwise)
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge',
@@ -357,4 +357,9 @@ Log '--- stdout ---'
 Log ([string]$stdout.Result)
 Log '--- stderr ---'
 Log ([string]$stderr.Result)
+# Artifact identity for qualification: exe and renderer hashes plus the run trace (the exe event stdout, UTF-8).
+$traceHash = ([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes([string]$stdout.Result))) -replace '-','').ToLower()
+$artExe = (Get-FileHash -Algorithm SHA256 -LiteralPath "$Bin\FreshOnBridge.exe").Hash.ToLower()
+$artDll = (Get-FileHash -Algorithm SHA256 -LiteralPath "$Bin\swiftright_render.dll").Hash.ToLower()
+Log "ARTIFACTS exe=$artExe renderer=$artDll trace=$traceHash"
 [System.IO.File]::WriteAllText($Out, [string]::Join("`r`n", $lines))
