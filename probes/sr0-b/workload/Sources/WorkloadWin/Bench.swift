@@ -71,6 +71,7 @@ final class MockPlatform: BackendPlatform {
     private(set) var staleRunUse = 0
     private(set) var versionErrors = 0
     var liveRuns: Int { live.count }
+    var eventsDelivered: Int { 0 }
 
     init(scaleDIP: Float = 2.5, widthDIP: UInt32 = 960, heightDIP: UInt32 = 640, verify: Bool) {
         scale = scaleDIP

@@ -41,6 +41,7 @@ param(
   [double]$KeyTailS = 0.5,                                  # keys stop this long before the nominal run end (process start + warm-up + measured)
   [switch]$NoResources,                                     # skip the resource sampler (overhead A/B)
   [string]$PaintPhaseMs = '',                               # R10: SWR_PAINT_PHASE_MS for the renderer (A/B: 0 = pacing off); '' leaves the renderer default
+  [switch]$MemDeep,                                         # R10 memory diagnosis: SWR_MEM_DEEP=1 (the renderer also walks the process heaps and address space every 5th memory sample; slow, never a gated run)
   [string]$RunPrefix = 'r',
   [ValidateSet('char', 'all')][string]$KeyMode = 'char',   # char: WM_CHAR only; all: WM_KEYDOWN + WM_CHAR + WM_KEYUP (types every key twice)
   [int]$ForegroundSeconds = 8                               # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
@@ -300,6 +301,7 @@ for ($i = 1; $i -le $Runs; $i++) {
   # what it read on stderr ("paint pacing on/off ...", stderr.txt); the analyzer-side receipt is the `exe=` line above.
   if ($PaintPhaseMs -ne '') { $psi.EnvironmentVariables['SWR_PAINT_PHASE_MS'] = $PaintPhaseMs } else { [void]$psi.EnvironmentVariables.Remove('SWR_PAINT_PHASE_MS') }
   $psi.EnvironmentVariables['SWR_FRAME_LOG'] = "$dir\render-frames.csv"
+  if ($MemDeep) { $psi.EnvironmentVariables['SWR_MEM_DEEP'] = '1' } else { [void]$psi.EnvironmentVariables.Remove('SWR_MEM_DEEP') }
   $qs = [System.Diagnostics.Stopwatch]::GetTimestamp()
   $proc = [System.Diagnostics.Process]::Start($psi)
   $so = $proc.StandardOutput.ReadToEndAsync()

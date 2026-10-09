@@ -21,9 +21,22 @@ public final class Bridge {
     public var onWindowClosed: (() -> Void)?
     public var textStore: TextStore?
 
-    /// Same events as `onEvent`, as an AsyncStream (iterate it on the MainActor).
-    public let events: AsyncStream<BridgeEvent>
-    private let continuation: AsyncStream<BridgeEvent>.Continuation
+    /// Same events as `onEvent`, as an AsyncStream (iterate it on the MainActor). The stream is made on first access and buffers
+    /// from then on: a host that only uses `onEvent` never reads it, and an unbounded buffer nobody reads grows with every event
+    /// of the run (R10 memory diagnosis), so nothing is buffered until the stream is asked for.
+    public var events: AsyncStream<BridgeEvent> {
+        if let stream = eventStream { return stream }
+        var cont: AsyncStream<BridgeEvent>.Continuation!
+        let stream = AsyncStream(BridgeEvent.self, bufferingPolicy: .unbounded) { cont = $0 }
+        eventStream = stream
+        eventContinuation = cont
+        if windowClosedCalls > 0 { cont.finish() }
+        return stream
+    }
+    private var eventStream: AsyncStream<BridgeEvent>?
+    private var eventContinuation: AsyncStream<BridgeEvent>.Continuation?
+    /// Events delivered to `onEvent` so far (diagnostics).
+    public private(set) var eventsDelivered = 0
 
     public private(set) var window: BridgeWindow?
     public private(set) var staleEventsDropped = 0
@@ -37,9 +50,6 @@ public final class Bridge {
     init(api: swr_api, info: swr_bootstrap_info) {
         self.api = api
         self.info = info
-        var cont: AsyncStream<BridgeEvent>.Continuation!
-        self.events = AsyncStream(BridgeEvent.self, bufferingPolicy: .unbounded) { cont = $0 }
-        self.continuation = cont
     }
 
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
@@ -114,6 +124,26 @@ public final class Bridge {
         #else
         throw BridgeError.unsupportedPlatform
         #endif
+    }
+
+    /// Drains the main dispatch queue once, from the calling (main) thread, for a host that has no renderer loop (the headless
+    /// benchmark and soak, which run `MainActor` work and `Task`s without a window). Not for use from inside a renderer callback
+    /// (the drain callback does this itself, with a re-entry guard). Windows only; elsewhere the run loop does it.
+    public static func drainMainQueueHeadless() {
+        #if os(Windows)
+        _dispatch_main_queue_callback_4CF(nil)
+        #else
+        RunLoop.main.run(mode: .default, before: Date())
+        #endif
+    }
+
+    /// Builds the C transaction `BridgeWindow.commit` would send, then frees it, without calling the renderer: the host-side
+    /// allocation pattern of one commit, for a benchmark or soak that has no window. Returns the node count marshalled.
+    @discardableResult
+    public static func marshalOnly(_ t: Transaction) -> Int {
+        let arena = Arena()
+        let tx = cTransaction(t, window: 1, arena: arena)
+        return Int(tx.upsert_count) + Int(tx.primitive_count)
     }
 
     /// Thread-safe.
@@ -229,8 +259,9 @@ public final class Bridge {
                 continue
             }
             let ev = decodeEvent(raw)
+            eventsDelivered += 1
             onEvent?(ev)
-            continuation.yield(ev)
+            eventContinuation?.yield(ev)
         }
     }
 
@@ -243,7 +274,7 @@ public final class Bridge {
         windowClosedCalls += 1
         onWindowClosed?()
         window = nil
-        continuation.finish()
+        eventContinuation?.finish()
     }
 
     // MARK: measurement and runs (UI thread)

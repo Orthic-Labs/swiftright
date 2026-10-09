@@ -11,6 +11,9 @@ import WorkloadCore
 //   WorkloadWin.exe --overhead                      timer micro-benchmark only
 //   WorkloadWin.exe --bench [--rows N --iters N --only keystroke|row|reorder|insert|tick|anim] [--verify]
 //                                                   headless commit benchmark / equivalence check against a mock renderer (Bench.swift)
+//   WorkloadWin.exe --soak [--soak-s 300 --report-s 15 --warm-s 20 --instr full|light --census --hold S]
+//                                                   headless memory soak: the workload's whole schedule on a mock renderer, memory and
+//                                                   per-subsystem counters over time (Soak.swift)
 //
 // Self-timed: 10 s warm-up, 60 s measured run, window close (teardown + post-close pump), then raw CSVs,
 // integrity.json and meta.json are written to --out. The external driver (scripts/inject.ps1) posts the keystrokes.
@@ -150,6 +153,10 @@ func writeOutputs(bridge: Bridge, backend: WinBackend, model: WorkloadModel, rec
         "renderer_live_nodes_final": Int(end.liveNodes),
         "bridge_timed_calls": backend.clock.calls,
         "bridge_measure_calls_timed": backend.clock.measureCalls,
+        "bridge_events_delivered": bridge.eventsDelivered,
+        "trace_bytes_used": recorder.traceFootprint.usedBytes,
+        "trace_bytes_reserved": recorder.traceFootprint.reservedBytes,
+        "runs_live_at_end": backend.platform.liveRuns,
     ]
     try? WorkloadModel.integrityJSON(i, extra: extra).write(toFile: dir + "/integrity.json", atomically: true, encoding: .utf8)
     var meta: [String: Any] = [
@@ -202,6 +209,8 @@ if args.options["model-selftest"] != nil {
     status = 0
 } else if args.options["bench"] != nil {
     status = MainActor.assumeIsolated { runBench(arguments: args.options) }
+} else if args.options["soak"] != nil {
+    status = MainActor.assumeIsolated { runSoak(arguments: args.options) }
 } else if args.options["count-nodes"] != nil {
     status = MainActor.assumeIsolated { countNodes() }
 } else {

@@ -195,6 +195,14 @@ public final class RunRecorder: @unchecked Sendable {
     public private(set) var ticks: [TickSample] = []
     public private(set) var mainActor: [MainActorSample] = []
     public private(set) var overhead: [OverheadProbe] = []
+    /// One line a second of memory and table sizes (R10 memory diagnosis; `counters.csv`): about 70 short strings a run, not counted
+    /// in `traceFootprint`.
+    public static let counterHeader = "rx_ticks,private_bytes,trace_used_bytes,trace_reserved_bytes,trace_items,"
+        + "model_rows,model_generation,model_detail_version,model_inflight,model_parked,model_timed,"
+        + "graph_nodes,graph_size_cache,graph_memo,graph_tasks,graph_tethers,graph_obs_callbacks,"
+        + "backend_sent,backend_runs_retained,renderer_runs_live,backend_cells,backend_ax_runs,backend_field_geometry,"
+        + "bridge_events,renderer_live_nodes"
+    public private(set) var counterRows: [String] = []
     private var firstUnstamped = 0
     public var meta: [String: String] = [:]
 
@@ -227,11 +235,26 @@ public final class RunRecorder: @unchecked Sendable {
         return firstUnstamped < inputs.count
     }
 
+    /// Bytes held by the raw-sample tables (the instrumentation buffers): used = elements x stride, reserved = capacity x stride.
+    /// Instrumentation, not application memory: the leak metric of an `instr full` run counts it, an app-only figure excludes it.
+    public var traceFootprint: (items: Int, usedBytes: Int, reservedBytes: Int) {
+        lock.lock(); defer { lock.unlock() }
+        let items = inputs.count + frames.count + bridgeInputs.count + ticks.count + mainActor.count + overhead.count
+        let used = inputs.count * MemoryLayout<Input>.stride + frames.count * MemoryLayout<Frame>.stride
+            + bridgeInputs.count * MemoryLayout<BridgeInput>.stride + ticks.count * MemoryLayout<TickSample>.stride
+            + mainActor.count * MemoryLayout<MainActorSample>.stride + overhead.count * MemoryLayout<OverheadProbe>.stride
+        let reserved = inputs.capacity * MemoryLayout<Input>.stride + frames.capacity * MemoryLayout<Frame>.stride
+            + bridgeInputs.capacity * MemoryLayout<BridgeInput>.stride + ticks.capacity * MemoryLayout<TickSample>.stride
+            + mainActor.capacity * MemoryLayout<MainActorSample>.stride + overhead.capacity * MemoryLayout<OverheadProbe>.stride
+        return (items, used, reserved)
+    }
+
     public func addFrame(_ f: Frame) { lock.lock(); frames.append(f); lock.unlock() }
     public func addBridgeInput(_ b: BridgeInput) { lock.lock(); bridgeInputs.append(b); lock.unlock() }
     public func addTick(_ t: TickSample) { lock.lock(); ticks.append(t); lock.unlock() }
     public func addMainActor(_ m: MainActorSample) { lock.lock(); mainActor.append(m); lock.unlock() }
     public func addOverhead(_ o: OverheadProbe) { lock.lock(); overhead.append(o); lock.unlock() }
+    public func addCounterRow(_ row: String) { lock.lock(); counterRows.append(row); lock.unlock() }
 
     /// Writes every table as CSV into `dir` (created if missing). Returns the file names written.
     @discardableResult
@@ -256,6 +279,7 @@ public final class RunRecorder: @unchecked Sendable {
             mainActor.map { "\($0.enqueueTicks),\($0.execTicks)" })
         put("overhead_probe.csv", "name,ns_per_pair,iterations",
             overhead.map { "\($0.name),\($0.nsPerPair),\($0.iterations)" })
+        put("counters.csv", RunRecorder.counterHeader, counterRows)
         return written
     }
 }
@@ -302,7 +326,9 @@ public final class WorkloadEngine {
         let continuation: CheckedContinuation<Int, Never>
     }
     private var timed: [Timed] = []
-    private var parked: [UUID: CheckedContinuation<Void, Never>] = [:]
+    /// Row tasks suspended until teardown. The token tells a later park of the same id apart from the one a cancellation names.
+    private var parked: [UUID: (token: Int, continuation: CheckedContinuation<Void, Never>)] = [:]
+    private var parkTokens = 0
     private var counter = 0
     public var parkedCount: Int { parked.count }
     public var timedCount: Int { timed.count }
@@ -325,10 +351,24 @@ public final class WorkloadEngine {
         for item in ready { item.continuation.resume(returning: item.order) }
     }
 
-    func park(_ id: UUID) async {
+    func nextParkToken() -> Int {
+        parkTokens += 1
+        return parkTokens
+    }
+
+    func park(_ id: UUID, token: Int) async {
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            if let old = parked.updateValue(continuation, forKey: id) { old.resume() }
+            if let old = parked.updateValue((token, continuation), forKey: id) { old.continuation.resume() }
         }
+    }
+
+    /// Resumes and forgets the task parked as `token` under `id` (a row task that was cancelled). Until this existed the engine kept
+    /// the continuation of every cancelled row task, and with it the whole suspended task (about 2 KB of task stack and frames),
+    /// until window close: 13 removed rows a second grew the process heap by about 1.7 MB a minute (R10 memory diagnosis).
+    func unpark(_ id: UUID, token: Int) {
+        guard let entry = parked[id], entry.token == token else { return }
+        parked[id] = nil
+        entry.continuation.resume()
     }
 
     func releaseAll() {
@@ -337,7 +377,7 @@ public final class WorkloadEngine {
         for item in timedNow { item.continuation.resume(returning: 0) }
         let parkedNow = parked
         parked.removeAll()
-        for (_, c) in parkedNow { c.resume() }
+        for (_, entry) in parkedNow { entry.continuation.resume() }
     }
 }
 
@@ -401,6 +441,16 @@ public final class WorkloadModel {
     }
 
     public var rowTotal: Int { rows.count + 1 }
+
+    /// Sizes of the model's own tables and queues (R10 memory diagnosis; the headless soak prints them over time).
+    public struct Counters: Sendable {
+        public var rows = 0, generation = 0, detailVersion = 0, inflight = 0, killQueue = 0
+        public var parked = 0, timed = 0
+    }
+    public var counters: Counters {
+        Counters(rows: rows.count, generation: generation.count, detailVersion: detailVersion.count, inflight: inflight.count,
+                 killQueue: killQueue.count, parked: engine.parkedCount, timed: engine.timedCount)
+    }
     /// Engine continuations still waiting (timed results plus parked row tasks).
     public var enginePending: Int { engine.parkedCount + engine.timedCount }
 
@@ -508,6 +558,7 @@ public final class WorkloadModel {
         }
         guard !cancelled, generation[target, default: 0] == gen, let index = rows.firstIndex(where: { $0.id == target }) else {
             integrity.staleRejected += 1
+            if !rows.contains(where: { $0.id == target }) { generation[target] = nil }   // the row is gone: nothing else will look at its tombstone
             return
         }
         // Independent commit check: the guard above admitted it, so the owner must be live right here.
@@ -565,7 +616,10 @@ public final class WorkloadModel {
     private func removeRow(_ id: UUID) {
         guard let index = rows.firstIndex(where: { $0.id == id }) else { return }
         rows.remove(at: index)
-        generation[id, default: 0] += 1
+        // The per-row tables must not outlive the row (ids are never reused). A generation is bumped only while a result for the
+        // row is still in flight: `finishUpdate` sees the mismatch, rejects the result and clears the entry.
+        if inflight[id] != nil { generation[id, default: 0] += 1 } else { generation[id] = nil }
+        detailVersion[id] = nil
         inflight[id]?.cancel()
         inflight[id] = nil
     }
@@ -638,10 +692,14 @@ public final class WorkloadModel {
 
     public func rowTaskBody(_ id: UUID) async {
         integrity.rowTaskStarts += 1
+        let token = engine.nextParkToken()
         await withTaskCancellationHandler {
-            await engine.park(id)
+            await engine.park(id, token: token)
         } onCancel: {
-            Task { @MainActor [weak self] in self?.integrity.rowTaskCancels += 1 }
+            Task { @MainActor [weak self] in
+                self?.integrity.rowTaskCancels += 1
+                self?.engine.unpark(id, token: token)
+            }
         }
         if closed { integrity.tasksParkedAfterRelease += 1 }
     }

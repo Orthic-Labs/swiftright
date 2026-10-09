@@ -14,3 +14,6 @@ Set-Location $bin
 # no window), then the per-commit timings at 200 rows.
 & .\WorkloadWin.exe --bench --verify; "bench-verify exit=$LASTEXITCODE"
 & .\WorkloadWin.exe --bench --iters 40; "bench exit=$LASTEXITCODE"
+# Memory: the workload's whole schedule (20 ops/s, reorders, animations, cancellations, 10 keys/s, 60 Hz scrolling) on the mock renderer for 90 simulated seconds.
+# Prints process heap / private bytes next to every table's size and the growth slope after warm-up; app-only heap slope must be ~0 (R10 memory diagnosis).
+& .\WorkloadWin.exe --soak --marshal --soak-s 90 --report-s 30 --warm-s 30; "soak exit=$LASTEXITCODE"

@@ -347,6 +347,51 @@ def parse_top_threads(txt):
 GPU_GROUPS = ('3d', 'compute', 'copy', 'video', 'other')
 
 
+def trace_slope_mb_per_min(rdir, ms, me, hz):
+    """Growth of the app's own instrumentation tables over the measured window (MB/min), from <run>/counters.csv `trace_used_bytes`
+    (the app's count of the bytes its raw-sample tables hold). None when the run has no counters (an older build)."""
+    rows = read_csv(f'{rdir}/counters.csv')
+    if not rows:
+        return None
+    pts = [(num(r.get('rx_ticks')), num(r.get('trace_used_bytes'))) for r in rows]
+    pts = [(t, v) for t, v in pts if t is not None and v is not None and ms <= t <= me]
+    if len(pts) < 10:
+        return None
+    q0 = pts[0][0]
+    slope = linreg_slope([(t - q0) / hz / 60.0 for t, _ in pts], [v / 1048576.0 for _, v in pts])
+    return None if math.isnan(slope) else slope
+
+
+# Tables the app keeps that must follow the live tree, not the run's length (counters.csv columns). A table that is bigger at the end of
+# the measured window than at its start by more than COUNTER_GROWTH_FACTOR x + COUNTER_GROWTH_SLACK is flagged.
+FLAT_COUNTERS = ('model_generation', 'model_detail_version', 'model_inflight', 'model_parked', 'graph_nodes', 'graph_tasks', 'graph_tethers',
+                 'backend_sent', 'backend_runs_retained', 'renderer_runs_live', 'backend_ax_runs', 'renderer_live_nodes')   # not backend_cells: it follows the typed text
+COUNTER_GROWTH_FACTOR = 1.5
+COUNTER_GROWTH_SLACK = 100
+
+
+def analyze_counters(rr, rdir, ms, me, hz):
+    """First / last / max of the app's table sizes over the measured window (report.json `resources.app_counters`), and a flag for a table
+    that follows the run's length. None when the run has no counters.csv."""
+    rows = read_csv(f'{rdir}/counters.csv')
+    if not rows:
+        return None
+    win = [r for r in rows if num(r.get('rx_ticks')) is not None and ms <= num(r['rx_ticks']) <= me]
+    if len(win) < 10:
+        return None
+    out = {'samples': len(win)}
+    for name in (rows[0].keys() if rows else []):
+        if name == 'rx_ticks':
+            continue
+        vals = [v for v in (num(r.get(name)) for r in win) if v is not None]
+        if not vals:
+            continue
+        out[name] = {'first': int(vals[0]), 'last': int(vals[-1]), 'max': int(max(vals))}
+        if name in FLAT_COUNTERS and vals[-1] > vals[0] * COUNTER_GROWTH_FACTOR + COUNTER_GROWTH_SLACK:
+            rr.flags.append(f'COUNTER: {name} grows {int(vals[0])} -> {int(vals[-1])} over the measured window (a table that follows the run length)')
+    return out
+
+
 def analyze_resources(rr, rdir, ms, me, hz, expected):
     """Informational resource section for one run from <run>/resources.csv (scripts/sample-resources.ps1), restricted to the measured window.
     Adds the leak threshold (R: private bytes growth slope) and flags (pinned thread, sampler gaps, GPU counters absent) to the run report."""
@@ -419,11 +464,28 @@ def analyze_resources(rr, rdir, ms, me, hz, expected):
         if vals:
             res[key] = {'max': int(max(vals)), 'first': int(vals[0]), 'last': int(vals[-1]), 'growth': int(vals[-1] - vals[0])}
     slope = (res.get('private_mb') or {}).get('slope_mb_per_min')
+    # The app's own instrumentation (the raw-sample tables of `instr full`) grows with the run by design; the leak metric is the
+    # application's growth, so the tables' growth (counters.csv trace_used_bytes, the app's own byte count) is taken out of the slope.
+    trace = trace_slope_mb_per_min(rdir, ms, me, hz)
+    counters = analyze_counters(rr, rdir, ms, me, hz)
+    if counters:
+        res['app_counters'] = counters
     if slope is not None and len(win) >= MIN_RESOURCE_SAMPLES:
-        c = rr.add('R', 'private bytes growth slope in the measured window (MB/min), leak flag', rr.rid, float(slope), LEAK_SLOPE_MB_PER_MIN, '<=',
-                   f"n={len(win)} first={res['private_mb']['first']}MB last={res['private_mb']['last']}MB ws_slope={(res.get('working_set_mb') or {}).get('slope_mb_per_min')}MB/min")
-        if c.status == 'FAIL':
-            rr.flags.append(f'LEAK: private bytes grow {slope:.2f} MB/min (> {LEAK_SLOPE_MB_PER_MIN:g})')
+        if trace is not None and not math.isnan(slope):
+            res['trace_mb_per_min'] = nz(trace, 3)
+            app_slope = float(slope) - trace
+            res['private_app_only_mb_per_min'] = nz(app_slope, 3)
+            c = rr.add('R', 'private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag', rr.rid, app_slope,
+                       LEAK_SLOPE_MB_PER_MIN, '<=',
+                       f"raw_slope={float(slope):.3f} trace_slope={trace:.3f} n={len(win)} first={res['private_mb']['first']}MB last={res['private_mb']['last']}MB "
+                       f"ws_slope={(res.get('working_set_mb') or {}).get('slope_mb_per_min')}MB/min")
+            if c.status == 'FAIL':
+                rr.flags.append(f'LEAK: private bytes grow {app_slope:.2f} MB/min without the trace buffers (raw {float(slope):.2f}, trace {trace:.2f}; limit {LEAK_SLOPE_MB_PER_MIN:g})')
+        else:
+            c = rr.add('R', 'private bytes growth slope in the measured window (MB/min), leak flag', rr.rid, float(slope), LEAK_SLOPE_MB_PER_MIN, '<=',
+                       f"n={len(win)} first={res['private_mb']['first']}MB last={res['private_mb']['last']}MB ws_slope={(res.get('working_set_mb') or {}).get('slope_mb_per_min')}MB/min")
+            if c.status == 'FAIL':
+                rr.flags.append(f'LEAK: private bytes grow {slope:.2f} MB/min (> {LEAK_SLOPE_MB_PER_MIN:g})')
 
     # GPU: per adapter, per engine type (summed over the process's engine instances of that type)
     names = {int(a['index']): a for a in (meta.get('adapters') or []) if isinstance(a, dict) and 'index' in a}
@@ -938,7 +1000,7 @@ def resources_md(runs):
           'CPU: machine total %, our process in % of ONE core (100 = one core busy). Memory in MB with growth slope MB/min over the measured window. '
           'GPU: our process only, % summed per engine type per adapter.', '',
           '| run | samples | CPU total avg/peak % | process avg/peak (core %) | busiest thread | pinned samples | working set avg/peak MB (slope/min) | '
-          'private avg/peak MB (slope/min) | handles max | threads max | GPU adapter used | sampler overhead (core %) |',
+          'private avg/peak MB (slope/min; app-only = trace buffers excluded) | handles max | threads max | GPU adapter used | sampler overhead (core %) |',
           '|---|---|---|---|---|---|---|---|---|---|---|---|']
     for rr in runs:
         r = rr.summary.get('resources')
@@ -948,12 +1010,13 @@ def resources_md(runs):
         ws, pv = r.get('working_set_mb') or {}, r.get('private_mb') or {}
         tt = (r.get('top_threads') or [{}])[0]
         used = ((r.get('gpu') or {}).get('adapter_used') or {}).get('name', 'unknown')
-        md.append('| {rid} | {n} | {c1}/{c2} | {p1}/{p2} | {tid}{nm} {tp}% | {pin} | {w1}/{w2} ({ws}) | {v1}/{v2} ({vs}) | {h} | {t} | {used} | {so} |'.format(
+        md.append('| {rid} | {n} | {c1}/{c2} | {p1}/{p2} | {tid}{nm} {tp}% | {pin} | {w1}/{w2} ({ws}) | {v1}/{v2} ({vs}{ao}) | {h} | {t} | {used} | {so} |'.format(
             rid=rr.rid, n=r.get('samples'), c1=fmt((r.get('total_cpu_pct') or {}).get('avg')), c2=fmt((r.get('total_cpu_pct') or {}).get('peak')),
             p1=fmt((r.get('proc_cpu_core_pct') or {}).get('avg')), p2=fmt((r.get('proc_cpu_core_pct') or {}).get('peak')),
             tid=tt.get('tid', '-'), nm=f"[{tt['name']}]" if tt.get('name') else '', tp=fmt(tt.get('avg_pct_of_core')),
             pin=r.get('pinned_samples', 0), w1=fmt(ws.get('avg')), w2=fmt(ws.get('peak')), ws=fmt(ws.get('slope_mb_per_min'), 2),
             v1=fmt(pv.get('avg')), v2=fmt(pv.get('peak')), vs=fmt(pv.get('slope_mb_per_min'), 2),
+            ao=(f"; app-only {fmt(r.get('private_app_only_mb_per_min'), 2)}" if r.get('private_app_only_mb_per_min') is not None else ''),
             h=(r.get('handles') or {}).get('max', '-'), t=(r.get('threads') or {}).get('max', '-'), used=used,
             so=fmt((r.get('sampler_cpu_core_pct') or {}).get('avg'))))
     md += ['', '| run | adapter | 3D avg/peak % | compute | copy | video | other | dedicated MB avg/peak | shared MB avg/peak |', '|---|---|---|---|---|---|---|---|---|']
@@ -1038,7 +1101,7 @@ def selftest(keep=None):
         cols += ['gpu_n', 'gpu_engines', 'sampler_cpu_pct']
         lines = [','.join(cols)]
         n = 6 if kind == 'sparse' else 72
-        slope = 8.0 if kind == 'leak' else 0.4          # MB per minute
+        slope = {'leak': 8.0, 'trace': 6.0}.get(kind, 0.4)          # MB per minute ('trace': 4 MB/min of it is the app's own sample tables)
         for k in range(n):
             ts = k * 1.05 + 1.0 if kind != 'sparse' else k * 10.0 + 11.0
             q = int(t0 + ts * hz)
@@ -1053,6 +1116,14 @@ def selftest(keep=None):
             row += ['40', '"a1.3d#0=12.5;a0.copy#2=0.8"', f'{rnd.uniform(1, 5):.2f}']
             lines.append(','.join(row))
         open(f'{rdir}/resources.csv', 'w').write('\n'.join(lines) + '\n')
+        if kind in ('trace', 'tables'):
+            # counters.csv (the app's once-a-second table sizes): trace tables growing 2 MB/min; 'tables': a row-task table following the run length
+            clines = ['rx_ticks,private_bytes,trace_used_bytes,trace_reserved_bytes,trace_items,model_parked,backend_runs_retained']
+            for k in range(75):
+                ts = k * 1.0 + 0.5
+                clines.append(f'{int(t0 + ts * hz)},{int(300 * 1048576)},{int((2.0 * ts / 60.0 + 1.0) * 1048576)},{4 * 1048576},{k * 300},'
+                              f'{199 + (int(ts * 13) if kind == "tables" else 0)},600')
+            open(f'{rdir}/counters.csv', 'w').write('\n'.join(clines) + '\n')
 
     def make(root, runs=3, latency_extra_ms=0.0, drop_calibration=False, drop_incremental=False, light=False, drop_run=None, empty_refresh=False,
              rows=200, key_rate=10.0, resources=None, res_expected=None, tail_unapplied=False, lost_inrun=False, rows_ignored=False, deadline=False):
@@ -1185,12 +1256,20 @@ def selftest(keep=None):
             ('empty refresh_hz in host line', dict(empty_refresh=True), 'PASS'),   # R10 regression: the run analysis was silently skipped
             # --- stress / resources / lost-key additions (R10)
             ('resources good', dict(resources='good'), 'PASS', lambda res: [] if all(
-                (rr.summary['resources']['gpu']['adapter_used'] or {}).get('name', '').startswith('NVIDIA') and not rr.flags
+                (rr.summary['resources']['gpu']['adapter_used'] or {}).get('name', '').startswith('NVIDIA') and not [f for f in rr.flags if not f.startswith('CONTEXT')]
                 and abs(rr.summary['resources']['private_mb']['slope_mb_per_min'] - 0.4) < 0.3 and rr.summary['resources']['samples'] >= 55
                 and rr.summary['resources']['gpu']['adapters_active'] == ['Intel(R) Iris(R) Xe Graphics', 'NVIDIA GeForce RTX 4070 Laptop GPU']
                 and rr.summary['resources']['top_threads'][0]['name'] == 'render' for rr in res['runs']) else ['resources summary wrong']),
             ('resources leak', dict(resources='leak'), 'FAIL', lambda res: [] if all(
                 any('LEAK' in f for f in rr.flags) and any(c.tid == 'R' and c.status == 'FAIL' for c in rr.checks) for rr in res['runs']) else ['leak not flagged']),
+            ('resources trace buffers excluded', dict(resources='trace'), 'PASS', lambda res: [] if all(
+                abs(rr.summary['resources']['private_mb']['slope_mb_per_min'] - 6.0) < 0.5
+                and abs(rr.summary['resources']['trace_mb_per_min'] - 2.0) < 0.2
+                and abs(rr.summary['resources']['private_app_only_mb_per_min'] - 4.0) < 0.6
+                and not any('LEAK' in f or 'COUNTER' in f for f in rr.flags)
+                and any(c.tid == 'R' and c.status == 'PASS' and 'excluded' in c.name for c in rr.checks) for rr in res['runs']) else ['trace subtraction wrong']),
+            ('resources table follows the run length', dict(resources='tables'), 'PASS', lambda res: [] if all(
+                any('COUNTER: model_parked' in f for f in rr.flags) and not any('backend_runs_retained' in f for f in rr.flags) for rr in res['runs']) else ['table growth not flagged']),
             ('resources pinned thread', dict(resources='pinned'), 'PASS', lambda res: [] if all(
                 any('pinned core' in f for f in rr.flags) and rr.summary['resources']['pinned_threads'] == [100] for rr in res['runs']) else ['pinned not flagged']),
             ('resources sparse', dict(resources='sparse'), 'PASS', lambda res: [] if all(any('only' in f for f in rr.flags) for rr in res['runs']) else ['sparse not flagged']),

@@ -120,19 +120,47 @@ Final source = 709E05CB plus comment/doc edits only; the rebuild is not bit-iden
 | user input | 2 events | none | 38 events |
 | total CPU avg % | 9.3 | 13.0 | 9.9 |
 
+## it6 / it7 / it8: the private-bytes growth (01:14-01:35 IST, renderer 7533963D, `-PaintPhaseMs` default = off)
+
+Cause, found with the headless soak (`WorkloadWin --soak [--marshal] [--census]`: the workload's whole schedule on the mock renderer, process heap and every table's size over
+5 simulated minutes, on the Mac with malloc accounting and on the Dell with `HeapSummary` / `HeapWalk`): `WorkloadEngine.park` kept the continuation of every row task for the rest
+of the run. A cancelled `.task` was never resumed, so each of the ~13 rows removed per second left a suspended task (task stack + frames, ~2.3 KB) in `parked`:
+parked 0 -> 4037 in 300 s, heap allocated +2.5 MB/min (Dell soak) and 1351 `Task stack` blocks in `heap`; with the real renderer's allocation churn around it, the committed heap grew
+about 2.5x as fast (the memtest: allocated +2.2, committed +5.7 MB/min). Smaller ones: `generation` / `detailVersion` per-row tables (+0.05 MB/min), and the bridge's `events`
+AsyncStream, which buffered every renderer event unread (680 per run, ~0.1 MB/min). Fixes: `unpark` on cancellation (token-checked), per-row tables pruned on removal,
+`Bridge.events` made on first access. Soak after the fix, Dell: app-only heap slope -0.003 MB/min (trace tables excluded), parked flat at 199; Mac: `leaks` 0.
+The trace tables of `instr full` (frames, ticks, main-actor samples, inputs: 0.6 MB/min, deterministic) are reported by the app (`counters.csv`, `trace_used_bytes`) and the analyzer
+subtracts their growth: the R threshold is the app-only slope (raw slope reported next to it). `counters.csv` (once a second, all instr levels) carries private bytes and the size of every
+table: model (rows, generation, detail versions, in-flight, parked, timed), graph (nodes, caches, tasks, tethers, observation callbacks), backend (sent nodes, retained runs, renderer run
+balance, cells, AX runs), events delivered, renderer live nodes. The analyzer flags a table that follows the run length.
+
+| run (exe, dll) | r1 | r2 | r3 |
+|---|---|---|---|
+| it5 before (8E0264F0, 7533963D): raw slope MB/min | 5.46 | 5.61 | 7.35 (disturbed) |
+| it6 parked-task fix (F19DA160): raw / app-only | 4.84 / 4.24 | 2.96 / 2.36 | 3.84 / 3.23 |
+| it7 `-MemDeep` diagnostic (renderer heap + address-space walk every 5 s; perturbs the heap, not a result) | 6.99 / 6.39 | 5.35 / 4.74 | 3.93 / 3.33 |
+| it8 final (0815DF49): raw / app-only | 3.85 / 3.24 | 3.58 / 2.97 | 3.58 / 2.97 |
+
+What is left (it7 data, renderer `H` / `V` lines): the process heap's *allocated* bytes are flat (54.5 -> 56-57 MB, saw-tooth every ~15 s) while its *committed* bytes grow 64.4 -> 74.5 MB in 65 s,
+concave and levelling off after ~40 s; image and mapped bytes are constant, private committed regions grow by the same amount. That is allocator retention/fragmentation behind the renderer's
+and the platform's churn (Rust live bytes flat at 7-13 MB, 12 M allocations per 70 s; DirectWrite, D3D, UIA), not a leak: every Swift-side table is flat, the Swift soak with the bridge's commit
+marshalling (`--soak --marshal`) shows no committed-vs-allocated drift beyond the trace arrays' doublings, and `renderer_runs_live` equals the retained run count (600) throughout. The in-window
+slope is the tail of that warm-up curve (10-40 s of the 10-70 s window). No renderer change is proposed: nothing here proves one.
+
 ## What is left (targets from the brief: W4 p95 <= 50, W5 0 missed and p95 <= 16.77, CAL <= 2, W1 all pass, leak <= 5 MB/min, on 3 consecutive runs)
 
 * Met on every undisturbed sub-run: W1 (all), W2, W3, W6, CAL (0.12-0.18 ms), W5 p95 (16.73-16.75), W4 p95 (40.7-48.9), key delivery, window metrics.
-* Not met: missed vblanks (1-8 per 60 s in undisturbed runs, median 2) and the private-bytes slope (5.2-6.6, median ~6).
+* Not met: missed vblanks (1-8 per 60 s in undisturbed runs, median 2). The private-bytes slope was not met before it6 (5.2-6.6, median ~6); with the parked-task fix it is 3.0-4.2 app-only (see it6-it8).
 * Missed vblanks: each one is a 3-7 ms late paint (key handler or host drain on the paint edge) on top of a GPU burst (msUntilRenderComplete 9-12 ms for three frames; median 6.2 ms, floor 5.5 ms,
   p99 11 ms, max 14). The 6 ms floor is the 13 MB back buffer crossing PCIe from the RTX 4070 to the Intel iGPU that owns the display (NVIDIA copy engine 27 % busy); `nvspcap64.dll`
   (NVIDIA capture/overlay hook) is injected into the process as well. Whether the overlay is part of the burst/floor cannot be told without turning it off: ask Adrian for ONE run with the NVIDIA overlay
   / in-game capture off (no setting was touched here). Rendering on the Intel iGPU would remove the copy (GPUI enumerates adapter 0, which is the NVIDIA on this machine).
-* Private bytes: Rust heap flat (7-13 MB); Swift graph objects flat (headless bench heap census); growth is in the shared process heap (committed +5.7 MB/min, allocated +2.2) and levels off
+* Private bytes (superseded by it6-it8 above: the allocated growth was the leaked row tasks): Rust heap flat (7-13 MB); Swift graph objects flat (headless bench heap census); growth is in the shared process heap (committed +5.7 MB/min, allocated +2.2) and levels off
   after ~35 s, i.e. a warm-up curve that still bends at 70 s and sits inside the 10-70 s window. Candidates not owned by the renderer: DirectWrite/D3D/UIA allocations, the NVIDIA hook.
 * Interference seen in the runs (all recorded, none voided except A2 r2 occluded): Adrian's Alt-Tab/Claude/wezterm use, ChatGPT/codex, heardright_next_bin (it typed '.', ',', '.', ' ' into the window in 233129 r1).
 
 ## Run accounting
 
 Timed workload invocations (3 x 60 s each): it1, it2, it3a1, it3b1, it3a2, it3b2, it4a, it5 = 8 in all, 6 of them after the coordinator's run-cap message (it3a1 .. it5 counting the A/B quartet, the no-resource run and the final one).
+Memory-diagnosis session (after it5): it6, it7 (`-MemDeep`), it8 = 3 timed invocations, plus headless `--soak` runs (no window).
 Not measurement runs: one harness smoke test (1 x 6 s, no PresentMon), one memory diagnostic (3 app launches x 75 s, no PresentMon, no keys), headless Mac bench runs.

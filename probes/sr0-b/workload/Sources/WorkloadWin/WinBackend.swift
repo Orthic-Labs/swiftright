@@ -83,6 +83,10 @@ protocol BackendPlatform: AnyObject {
     @discardableResult func release(_ run: TextRunHandle) -> Bool
     func commit(_ transaction: Transaction) throws
     func stats() -> StatsSnap
+    /// Text runs made by `measure` and not yet released (the owner's balance; the renderer should hold the same number).
+    var liveRuns: Int { get }
+    /// Events the renderer delivered to the bridge so far.
+    var eventsDelivered: Int { get }
 }
 
 @MainActor
@@ -103,9 +107,22 @@ final class BridgePlatform: BackendPlatform {
     func metrics() throws -> (width: UInt32, height: UInt32, scale: Float, active: Bool) { try live().metrics() }
     func requestTicks(_ on: Bool) throws { try live().requestTicks(on) }
     func requestClose() throws { try live().requestClose() }
-    func measure(_ request: MeasureRequest) throws -> SwiftRightBridge.TextMeasurement { try bridge.measure(request) }
+    private var runsMade = 0
+    private var runsReleased = 0
+    var liveRuns: Int { runsMade - runsReleased }
+    var eventsDelivered: Int { bridge.eventsDelivered }
+
+    func measure(_ request: MeasureRequest) throws -> SwiftRightBridge.TextMeasurement {
+        let m = try bridge.measure(request)
+        runsMade += 1
+        return m
+    }
     func cells(of run: TextRunHandle) throws -> [CharCell] { try bridge.cells(of: run) }
-    @discardableResult func release(_ run: TextRunHandle) -> Bool { bridge.release(run) }
+    @discardableResult func release(_ run: TextRunHandle) -> Bool {
+        let ok = bridge.release(run)
+        if ok { runsReleased += 1 }
+        return ok
+    }
     func commit(_ transaction: Transaction) throws { try live().commit(transaction) }
     func stats() -> StatsSnap { bridge.statsSnap() }
 }
@@ -326,6 +343,7 @@ final class WinBackend {
         if !closedFlag {
             let s = platform.stats()
             recorder.addTick(.init(tsNS: timestampNS, rxTicks: now, paints: s.paints, commits: s.commitsAccepted))
+            sampleCounters(now: now, liveNodes: s.liveNodes)
         }
         guard let graph, !closedFlag else { return }
         model.advance(nowTicks: now)
@@ -898,6 +916,56 @@ final class WinBackend {
     }
 
     func measurerFailures() -> Int { measurer?.failures ?? 0 }
+
+    private var nextCounterTicks: UInt64 = 0
+
+    /// Once a second: process private bytes next to the size of every table the app keeps (`counters.csv`, R10 memory diagnosis).
+    /// A table that follows the run's length instead of the live tree is a leak; the analyzer subtracts the trace tables
+    /// (`trace_used_bytes`) from the private-bytes slope to get the application's own growth.
+    private func sampleCounters(now: UInt64, liveNodes: UInt64) {
+        guard now >= nextCounterTicks else { return }
+        nextCounterTicks = now &+ WClock.hz
+        let trace = recorder.traceFootprint
+        let m = model.counters
+        let g = graph?.counts() ?? Graph.Counts()
+        let b = counts()
+        let fields: [String] = [
+            String(now), String(MemProbe.privateBytes()), String(trace.usedBytes), String(trace.reservedBytes), String(trace.items),
+            String(m.rows), String(m.generation), String(m.detailVersion), String(m.inflight), String(m.parked), String(m.timed),
+            String(g.nodes), String(g.sizeCacheEntries), String(g.memoEntries), String(g.tasks), String(g.tethers), String(g.observationCallbacks),
+            String(b.sentNodes), String(b.retainedRuns), String(platform.liveRuns), String(b.cellsHeld), String(b.axRunsHeld), String(b.fieldGeometry),
+            String(platform.eventsDelivered), String(liveNodes),
+        ]
+        recorder.addCounterRow(fields.joined(separator: ","))
+    }
+
+    /// Sizes of the backend's tables (R10 memory diagnosis). Each should track the live tree, not the run's length.
+    struct Counts {
+        var sentNodes = 0, retainedRuns = 0, cellsHeld = 0, axRunsHeld = 0
+        var runtimeFieldByBridge = 0, rowByBridgeField = 0, fieldGeometry = 0, commitErrors = 0
+    }
+
+    func counts() -> Counts {
+        var c = Counts()
+        c.sentNodes = sentNodes.count
+        for (_, node) in sentNodes {
+            guard let shape = node.shape else { continue }
+            if shape.retained { c.retainedRuns += 1 }
+            c.cellsHeld += shape.cells.count
+            c.axRunsHeld += shape.axRuns.count
+        }
+        c.runtimeFieldByBridge = runtimeFieldByBridge.count
+        c.rowByBridgeField = rowByBridgeField.count
+        c.fieldGeometry = fieldGeometry.count
+        c.commitErrors = commitErrors.count
+        return c
+    }
+
+    /// Bridge node id of the first TextField (the active editor), for the soak's keystrokes.
+    func firstFieldNode() -> UInt64? {
+        guard let graph, let id = graph.ids(ofKind: "TextField").first, let instance = graph.nodeInstance(id) else { return nil }
+        return UInt64(instance) + 1
+    }
 }
 
 final class WorkloadTextStore: TextStore {
