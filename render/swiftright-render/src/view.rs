@@ -24,6 +24,7 @@ use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 
 use crate::abi::*;
 use crate::ax::{Actions, Activation};
+use crate::pace;
 use crate::rt::*;
 use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
 use crate::tree::{Prim, Tree};
@@ -346,6 +347,11 @@ pub struct RootView {
 
 impl RootView {
     fn publish_ax(&mut self) {
+        // One publication per committed snapshot: a repaint or a tick without a commit changes nothing for AccessKit.
+        let version = SNAPSHOT.load(SeqCst);
+        if AX_PUBLISHED.swap(version, SeqCst) == version {
+            return;
+        }
         if let Some(a) = self.adapter.as_mut() {
             if let Some(events) = a.update_if_active(crate::ax::build_tree) {
                 events.raise();
@@ -434,9 +440,18 @@ fn masked(window: &mut Window, clip: Option<Bounds<Pixels>>, f: impl FnOnce(&mut
     }
 }
 
+/// True when `b` can put a pixel inside the window and inside the active clip. A primitive outside both is not
+/// handed to GPUI: with a long scrolling list most rows are off screen, and each skipped text run saves a
+/// glyph lookup, a sprite and its GPU work for every frame.
+#[inline]
+fn visible(b: &Bounds<Pixels>, view: &Bounds<Pixels>, clip: Option<&Bounds<Pixels>>) -> bool {
+    b.intersects(view) && clip.map_or(true, |c| b.intersects(c))
+}
+
 fn paint_tree(
     tree: &Tree,
     origin: gpui::Point<Pixels>,
+    view: Bounds<Pixels>,
     scale: f32,
     window: &mut Window,
     cx: &mut App,
@@ -455,6 +470,9 @@ fn paint_tree(
                         point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
                         size(px(r[2] * inv), px(r[3] * inv)),
                     );
+                    if !visible(&b, &view, clip.as_ref()) {
+                        continue;
+                    }
                     let mut q = fill(b, rgba(*color));
                     if *radius > 0.0 {
                         q = q.corner_radii(px(radius * inv));
@@ -465,6 +483,15 @@ fn paint_tree(
                     masked(window, clip, |w| w.paint_quad(q));
                 }
                 Prim::Text { x, y, run } => {
+                    // The whole run (every paragraph), padded by 2 DIP for glyph overhang.
+                    let pad = 2.0 * scale;
+                    let rb = Bounds::new(
+                        point(origin.x + px((*x + tx.0 - pad) * inv), origin.y + px((*y + tx.1 - pad) * inv)),
+                        size(px((run.width + 2.0 * pad) * inv), px((run.height + 2.0 * pad) * inv)),
+                    );
+                    if !visible(&rb, &view, clip.as_ref()) {
+                        continue;
+                    }
                     // Rev 0.6: one GPUI WrappedLine per paragraph, stacked by `top` (run-local px).
                     let lh = px(run.line_height_dip);
                     for (wl, top) in run.wrapped.iter() {
@@ -483,6 +510,9 @@ fn paint_tree(
                             point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
                             size(px(r[2] * inv), px(r[3] * inv)),
                         );
+                        if !visible(&b, &view, clip.as_ref()) {
+                            continue;
+                        }
                         let corners = Corners::all(px(*radius * inv));
                         let img = img.img.clone();
                         masked(window, clip, |w| {
@@ -496,6 +526,9 @@ fn paint_tree(
                         point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
                         size(px(r[2] * inv), px(r[3] * inv)),
                     );
+                    if !visible(&b, &view, clip.as_ref()) {
+                        continue;
+                    }
                     masked(window, clip, |w| w.paint_quad(fill(b, rgba(*color))));
                 }
                 Prim::ClipPush(r) => {
@@ -530,6 +563,10 @@ fn paint_root(
     focus: &FocusHandle,
     view: &Entity<RootView>,
 ) {
+    let paint_start = qpc_now();
+    if let Some(phase) = pace::vblank_phase_ns(paint_start) {
+        PH_PHASE.add_ns(phase);
+    }
     bump(S_PAINTS);
     if !window.is_window_active() {
         PAINTS_INACTIVE.fetch_add(1, SeqCst);
@@ -570,7 +607,7 @@ fn paint_root(
 
     UI.with(|u| {
         if let Ok(ui) = u.try_borrow() {
-            paint_tree(&ui.tree, bounds.origin, scale, window, cx);
+            paint_tree(&ui.tree, bounds.origin, bounds, scale, window, cx);
         }
     });
 
@@ -588,6 +625,8 @@ fn paint_root(
     }
 
     ime_replace_on_layout(MAIN_HWND.load(SeqCst) as *mut c_void);
+    let paint_end = qpc_now();
+    PH_PAINT.add(paint_end - paint_start);
 }
 
 // -------------------------------------------------- IME text store (InputHandler)
@@ -809,6 +848,7 @@ extern "system" {
     ) -> i32;
     fn DefSubclassProc(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> isize;
 }
+const WM_PAINT: u32 = 0x000F;
 const WM_IME_SETCONTEXT: u32 = 0x0281;
 const WM_IME_NOTIFY: u32 = 0x0282;
 const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
@@ -950,6 +990,14 @@ fn place_ime_windows(hwnd: *mut c_void) {
 }
 
 unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usize, l: isize, _id: usize, _data: usize) -> isize {
+    // Paint pacing (pace.rs): the vblank WM_PAINT is held back and delivered later in the same refresh period.
+    if msg == WM_PAINT && pace::defer_paint(hwnd) {
+        return 0;
+    }
+    if msg == pace::WM_SWR_PAINT {
+        pace::run_deferred_paint(hwnd);
+        return 0;
+    }
     let out = DefSubclassProc(hwnd, msg, w, l);
     match msg {
         WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
@@ -992,13 +1040,19 @@ fn deliver_tick(host: &Host, win: u64) {
     if let Some(f) = host.tick {
         let ctx = host.ctx_ptr();
         let ts = qpc_to_ns(target as i64);
-        if call_host(|| f(ctx, win, ts)) {
+        let t0 = qpc_now();
+        let delivered = call_host(|| f(ctx, win, ts));
+        PH_TICK.add(qpc_now() - t0);
+        if delivered {
             bump(S_TICKS_DEL);
         }
     }
 }
 
+/// Marks the window dirty after a commit (and publishes the new AX snapshot). The frame itself is painted from a WM_PAINT at
+/// the phase of the refresh period that pace.rs picks.
 fn present(cx: &mut AsyncApp, handle: WindowHandle<RootView>) {
+    let t0 = qpc_now();
     let _ = cx.update(|cx| {
         let _ = handle.update(cx, |view, window, cx| {
             view.publish_ax();
@@ -1006,6 +1060,7 @@ fn present(cx: &mut AsyncApp, handle: WindowHandle<RootView>) {
             cx.notify();
         });
     });
+    PH_PRESENT.add(qpc_now() - t0);
 }
 
 fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
@@ -1044,6 +1099,7 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
         let hwnd = hwnd_of(window);
         MAIN_HWND.store(hwnd as usize, SeqCst);
         install_ime_subclass(hwnd);
+        pace::init(hwnd);
         view.adapter = Some(SubclassingAdapter::new(AkHWND(hwnd), Activation, Actions));
         window.focus(&view.focus);
         window.activate_window();
@@ -1113,7 +1169,9 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
             if let Some(f) = host.drain {
                 bump(S_DRAIN_CALLS);
                 let ctx = host.ctx_ptr();
+                let t0 = qpc_now();
                 call_host(|| f(ctx));
+                PH_DRAIN.add(qpc_now() - t0);
             }
             if events_pending() {
                 if let Some(f) = host.events_available {
@@ -1299,6 +1357,21 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
         stat(S_REENTRY),
         stat(S_POST_DRAINS),
         stat(S_POST_TIMEOUTS),
+    );
+    eprintln!(
+        "[swiftright-render] phases {} {} {} {} {} {} paint_start_after_vblank{} pacing[phase_us={} deferred={} passed_through_late={} failed_open={} fallback_waits={}]",
+        PH_COMMIT.line("commit"),
+        PH_TREE.line("tree_commit"),
+        PH_PAINT.line("paint_root"),
+        PH_PRESENT.line("present"),
+        PH_TICK.line("host_tick"),
+        PH_DRAIN.line("host_drain"),
+        PH_PHASE.line(""),
+        pace::phase_us(),
+        pace::DEFERRED.load(SeqCst),
+        pace::PASSED_THROUGH.load(SeqCst),
+        pace::FAILED_OPEN.load(SeqCst),
+        pace::FALLBACK_WAITS.load(SeqCst),
     );
     if OPEN_FAILED.load(SeqCst) {
         E_PLATFORM

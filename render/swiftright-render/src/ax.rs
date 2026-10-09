@@ -3,7 +3,8 @@
 //! handler only validates, enqueues a generation/node/snapshot record and wakes the UI
 //! loop. It never calls the host or GPUI and may run on any thread.
 
-use std::sync::Mutex;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 
 use accesskit::{
     Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Node, NodeId, Rect, Role,
@@ -32,11 +33,11 @@ pub struct AxNode {
     pub actions: u32,
     pub flags: u32,
     pub toggled: u32,
-    pub label: String,
-    pub value: String,
-    pub identifier: String,
+    pub label: Arc<str>,
+    pub value: Arc<str>,
+    pub identifier: Arc<str>,
     pub bounds: [f32; 4],
-    pub runs: Vec<AxRun>,
+    pub runs: Arc<Vec<AxRun>>,
     pub sel: Option<(u64, u32, u64, u32)>,
 }
 
@@ -78,8 +79,12 @@ pub fn build_tree() -> TreeUpdate {
 
     let mut root = Node::new(Role::Window);
     root.set_label(s.title.clone());
-    let top: Vec<NodeId> = s.nodes.iter().filter(|n| n.parent == 0).map(|n| NodeId(n.id)).collect();
-    root.set_children(top);
+    // Children by parent, in snapshot (paint) order: one pass instead of a scan per node.
+    let mut kids: HashMap<u64, Vec<NodeId>> = HashMap::new();
+    for n in &s.nodes {
+        kids.entry(n.parent).or_default().push(NodeId(n.id));
+    }
+    root.set_children(kids.remove(&0).unwrap_or_default());
     nodes.push((ROOT_ID, root));
 
     for n in &s.nodes {
@@ -110,19 +115,19 @@ pub fn build_tree() -> TreeUpdate {
         };
         let mut node = Node::new(role);
         if !n.label.is_empty() {
-            node.set_label(n.label.clone());
+            node.set_label(n.label.to_string());
         }
         if n.role == ROLE_STATIC_TEXT {
             // accesskit_consumer node.rs `label_comes_from_value` is true for Role::Label, and
             // accesskit_windows `name()` then writes the VALUE as UIA Name. The bridge's text
             // is the label, so a static text without a value publishes its label as the value.
-            node.set_value(if n.value.is_empty() { n.label.clone() } else { n.value.clone() });
+            node.set_value(if n.value.is_empty() { n.label.to_string() } else { n.value.to_string() });
         } else if !n.value.is_empty() || n.role == ROLE_TEXT_FIELD {
-            node.set_value(n.value.clone());
+            node.set_value(n.value.to_string());
         }
         if !n.identifier.is_empty() {
             // AccessKit author id -> UIA AutomationId (accesskit_windows node.rs automation_id).
-            node.set_author_id(n.identifier.clone());
+            node.set_author_id(n.identifier.to_string());
         }
         if n.actions & ACT_INVOKE != 0 {
             node.add_action(Action::Click);
@@ -153,7 +158,7 @@ pub fn build_tree() -> TreeUpdate {
             node.set_disabled();
         }
         node.set_bounds(rect(&n.bounds));
-        let mut children: Vec<NodeId> = s.nodes.iter().filter(|c| c.parent == n.id).map(|c| NodeId(c.id)).collect();
+        let mut children: Vec<NodeId> = kids.remove(&n.id).unwrap_or_default();
         children.extend(n.runs.iter().map(|r| NodeId(r.id)));
         node.set_children(children);
         if let Some((ar, ac, fr, fc)) = n.sel {
@@ -164,7 +169,7 @@ pub fn build_tree() -> TreeUpdate {
         }
         nodes.push((NodeId(n.id), node));
 
-        for r in &n.runs {
+        for r in n.runs.iter() {
             let mut run = Node::new(Role::TextRun);
             run.set_value(r.text.clone());
             run.set_text_direction(TextDirection::LeftToRight);
@@ -219,7 +224,7 @@ impl ActionHandler for Actions {
                         break;
                     }
                     let mut base = 0usize;
-                    for r in &n.runs {
+                    for r in n.runs.iter() {
                         if r.id == target {
                             let actions = if n.flags & SEM_DISABLED != 0 { 0 } else { n.actions };
                             found = Some((n.id, actions, Some(base), s.window, s.version));
@@ -280,7 +285,7 @@ fn global_char(node: u64, run_id: u64, idx: usize) -> usize {
     let s = lock_ax();
     let Some(n) = s.nodes.iter().find(|n| n.id == node) else { return 0 };
     let mut base = 0usize;
-    for r in &n.runs {
+    for r in n.runs.iter() {
         if r.id == run_id {
             return base + idx.min(r.lengths.len());
         }

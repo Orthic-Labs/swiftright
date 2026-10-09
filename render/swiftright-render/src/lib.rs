@@ -10,6 +10,7 @@
 
 mod abi;
 mod ax;
+mod pace;
 mod rt;
 mod text;
 mod tree;
@@ -211,7 +212,9 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
             bump(S_COMMITS_REJ);
             return E_STALE_HANDLE;
         }
+        let t_start = qpc_now();
         let r = view::with_ui(|ui| unsafe { tree::commit(&mut ui.tree, &ui.runs, &ui.images, t) });
+        PH_TREE.add(qpc_now() - t_start);
         match r {
             Err(e) => {
                 bump(S_COMMITS_REJ);
@@ -252,6 +255,7 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
                 }
                 PRESENT_PENDING.store(true, SeqCst);
                 signal_notify();
+                PH_COMMIT.add(qpc_now() - t_start);
                 SWR_OK
             }
         }

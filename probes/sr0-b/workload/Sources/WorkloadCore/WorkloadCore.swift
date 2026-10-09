@@ -9,6 +9,10 @@ import SwiftUI
 import struct WinSDK.LARGE_INTEGER
 import func WinSDK.QueryPerformanceCounter
 import func WinSDK.QueryPerformanceFrequency
+import func WinSDK.CreateWaitableTimerExW
+import func WinSDK.SetWaitableTimer
+import func WinSDK.WaitForSingleObject
+import func WinSDK.CloseHandle
 #elseif canImport(Darwin)
 import Darwin
 #endif
@@ -696,6 +700,39 @@ public final class WorkloadModel {
 /// Samples Swift main-actor enqueue-to-execution latency (architecture section 11: p99 <= 16.7 ms on Windows).
 /// A background thread stamps the clock, enqueues a `@MainActor` task, and the task stamps the clock when it runs.
 /// 200 samples/s. Thread start/stop only; no allocation in the sampled path beyond the Task itself.
+/// A sleep that honours millisecond values. `Thread.sleep` on Windows rounds up to the system timer tick (15.6 ms unless a
+/// process asks for finer), which made the sampler below deliver ~64 samples/s instead of its 200/s and fail the W6
+/// starvation guard for a reason that had nothing to do with the main actor. A high-resolution waitable timer needs no
+/// process-wide timer change. Elsewhere this is `Thread.sleep`.
+final class HighResSleeper {
+    #if os(Windows)
+    private let handle: UnsafeMutableRawPointer?
+
+    init() {
+        // CREATE_WAITABLE_TIMER_HIGH_RESOLUTION (0x2), TIMER_ALL_ACCESS (0x1F0003); nil if the OS lacks it (before 1803).
+        handle = CreateWaitableTimerExW(nil, nil, 0x2, 0x1F0003)
+    }
+
+    func sleep(ms: Int) {
+        guard let handle else { Thread.sleep(forTimeInterval: Double(ms) / 1000); return }
+        var due = LARGE_INTEGER()
+        due.QuadPart = -Int64(ms) * 10_000   // relative, 100 ns units
+        if SetWaitableTimer(handle, &due, 0, nil, nil, false) {
+            _ = WaitForSingleObject(handle, 0xFFFF_FFFF)
+        } else {
+            Thread.sleep(forTimeInterval: Double(ms) / 1000)
+        }
+    }
+
+    deinit {
+        if let handle { CloseHandle(handle) }
+    }
+    #else
+    init() {}
+    func sleep(ms: Int) { Thread.sleep(forTimeInterval: Double(ms) / 1000) }
+    #endif
+}
+
 public final class MainActorSampler: @unchecked Sendable {
     private let recorder: RunRecorder
     private var thread: Thread?
@@ -710,6 +747,7 @@ public final class MainActorSampler: @unchecked Sendable {
 
     public func start() {
         let t = Thread { [self] in
+            let sleeper = HighResSleeper()
             while true {
                 stopLock.lock(); let done = stopped; stopLock.unlock()
                 if done { return }
@@ -717,7 +755,7 @@ public final class MainActorSampler: @unchecked Sendable {
                 Task { @MainActor [recorder] in
                     recorder.addMainActor(.init(enqueueTicks: enqueue, execTicks: WClock.ticks()))
                 }
-                Thread.sleep(forTimeInterval: Double(intervalMS) / 1000)
+                sleeper.sleep(ms: intervalMS)
             }
         }
         t.name = "workload-main-actor-sampler"
@@ -807,7 +845,8 @@ public struct WorkloadArgs {
     public var config = WorkloadConfig()
     public var options: [String: String] = [:]
 
-    /// `--key value` pairs and bare `--flag`s. Known keys: run-id, out, warmup-s, measure-s, instr, seed.
+    /// `--key value` pairs and bare `--flag`s. Known keys: run-id, out, warmup-s, measure-s, instr, seed, rows.
+    /// (`--rows` is also read by `--bench`, which takes `arguments["rows"]` directly; the key rate is the harness's, not the app's.)
     public init(_ arguments: [String]) {
         var i = 1
         while i < arguments.count {
@@ -829,6 +868,8 @@ public struct WorkloadArgs {
         if let v = options["measure-s"], let d = Double(v) { config.measureS = d }
         if let v = options["instr"], let l = InstrLevel(rawValue: v) { config.instr = l }
         if let v = options["seed"], let s = UInt64(v) { config.seed = s }
+        // Stress series: total editable rows (199 list rows + the pinned active row at the default 200). meta.json reports it.
+        if let v = options["rows"], let n = Int(v), n >= 2 { config.totalRows = n }
     }
 }
 

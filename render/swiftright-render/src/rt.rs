@@ -86,6 +86,61 @@ pub fn fill_stats(out: &mut Stats) {
     out.post_close_timeouts = stat(S_POST_TIMEOUTS);
 }
 
+// ------------------------------------------------------------ phase timers
+//
+// Cheap always-on timers (two QPC reads per measured section) for the renderer's own phases, printed in the
+// shutdown line. They cost ~50 ns each and need no ABI field: the host reads wall-clock effects from its own
+// recorder, these say where the UI thread's time went inside the renderer.
+
+pub struct Phase {
+    count: AtomicU64,
+    total: AtomicU64,
+    max: AtomicU64,
+}
+
+impl Phase {
+    pub const fn new() -> Phase {
+        Phase { count: AtomicU64::new(0), total: AtomicU64::new(0), max: AtomicU64::new(0) }
+    }
+
+    /// Records one measured section of `ticks` QPC ticks.
+    pub fn add(&self, ticks: i64) {
+        let t = ticks.max(0) as u64;
+        self.count.fetch_add(1, SeqCst);
+        self.total.fetch_add(t, SeqCst);
+        self.max.fetch_max(t, SeqCst);
+    }
+
+    /// Records one measured section of `ns` nanoseconds.
+    pub fn add_ns(&self, ns: u64) {
+        self.count.fetch_add(1, SeqCst);
+        // Stored in QPC ticks like `add`, so `line` converts both the same way.
+        let t = (ns as u128 * qpc_freq() as u128 / 1_000_000_000u128) as u64;
+        self.total.fetch_add(t, SeqCst);
+        self.max.fetch_max(t, SeqCst);
+    }
+
+    /// "name n=.. mean_us=.. max_us=..".
+    pub fn line(&self, name: &str) -> String {
+        let n = self.count.load(SeqCst);
+        let total_us = qpc_to_ns(self.total.load(SeqCst) as i64) as f64 / 1000.0;
+        let max_us = qpc_to_ns(self.max.load(SeqCst) as i64) as f64 / 1000.0;
+        let mean = if n == 0 { 0.0 } else { total_us / n as f64 };
+        format!("{name}[n={n} mean_us={mean:.0} max_us={max_us:.0}]")
+    }
+}
+
+/// swr_commit as a whole / the tree part of it / paint_root (the paint of the committed snapshot) /
+/// present() (AX publish + dirty marking) / the host tick callback / the host drain callback / the time from the
+/// latest vblank to the start of each paint (see pace.rs).
+pub static PH_COMMIT: Phase = Phase::new();
+pub static PH_TREE: Phase = Phase::new();
+pub static PH_PAINT: Phase = Phase::new();
+pub static PH_PRESENT: Phase = Phase::new();
+pub static PH_TICK: Phase = Phase::new();
+pub static PH_DRAIN: Phase = Phase::new();
+pub static PH_PHASE: Phase = Phase::new();
+
 // ------------------------------------------------------------------- flags
 
 pub static UI_THREAD: AtomicU32 = AtomicU32::new(0);
@@ -112,6 +167,8 @@ pub static ANIMATING: AtomicBool = AtomicBool::new(false);
 pub static KICK: AtomicBool = AtomicBool::new(false);
 pub static TICK_PENDING: AtomicBool = AtomicBool::new(false);
 pub static TICK_TARGET: AtomicU64 = AtomicU64::new(0);
+/// Version of the latest AX snapshot handed to AccessKit (publish only when it changed).
+pub static AX_PUBLISHED: AtomicU64 = AtomicU64::new(0);
 
 pub static WIN_W: AtomicU32 = AtomicU32::new(0);
 pub static WIN_H: AtomicU32 = AtomicU32::new(0);
@@ -150,7 +207,7 @@ pub fn qpc_now() -> i64 {
     v
 }
 
-pub fn qpc_to_ns(t: i64) -> u64 {
+pub fn qpc_freq() -> u64 {
     static FREQ: AtomicU64 = AtomicU64::new(0);
     let mut f = FREQ.load(SeqCst);
     if f == 0 {
@@ -159,7 +216,11 @@ pub fn qpc_to_ns(t: i64) -> u64 {
         f = v.max(1) as u64;
         FREQ.store(f, SeqCst);
     }
-    ((t.max(0) as u128 * 1_000_000_000u128) / f as u128) as u64
+    f
+}
+
+pub fn qpc_to_ns(t: i64) -> u64 {
+    ((t.max(0) as u128 * 1_000_000_000u128) / qpc_freq() as u128) as u64
 }
 
 // ------------------------------------------------------------ event queue

@@ -375,6 +375,7 @@ final class Node {
         view = newView
         info = newInfo
         kindResolved = false
+        viewReplaced = true
     }
     var inherited = EnvironmentValues()
     var inheritedEnabled = true
@@ -408,6 +409,18 @@ final class Node {
     var invalidatedEpoch = -1
     /// The layout-relevant content of the last evaluation.
     var layoutKey = LayoutKey.unset
+    /// True from `setView` until the node is evaluated: its stored view is not the one it last expanded.
+    var viewReplaced = false
+    /// Marked dirty because a ForEach data source it expands changed (`Graph.noteDataChange`), and/or for any other reason
+    /// (`fullDirty`: its own observation fired, the root environment changed). Only a data-only mark may re-expand the node
+    /// without re-evaluating its unchanged rows.
+    var dataStale = false
+    var fullDirty = false
+    /// Evaluations so far; the data registrations of one evaluation share a token (see `Graph.trackData`).
+    var evaluationCount = 0
+    var dataEvalMark = -1
+    var dataToken = 0
+    var dataTether: Tether?
     /// Observation bookkeeping: the node's live tracking (if any) and which tracking is the current one.
     var tether: Tether?
     var trackToken = 0
@@ -503,6 +516,8 @@ final class Node {
 
     /// Cancels the node's live observation registration, if it has one.
     func retireTracking() {
+        dataToken &+= 1
+        dataTether?.version &+= 1
         guard trackingLive else { return }
         trackToken &+= 1
         trackingLive = false
@@ -770,7 +785,9 @@ public final class Graph {
                 // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
                 // in this round is done.
                 if node.evaluatedRound == evaluationRound { continue }
-                evaluate(node)
+                // A node marked only because a ForEach data source it expands changed, and whose own view has not been
+                // replaced, expands the same ForEach again: its unchanged rows need no evaluation (see `expand`).
+                evaluate(node, refresh: node.dataStale && !node.fullDirty && !node.viewReplaced)
             }
         }
         if profile != nil {
@@ -843,6 +860,7 @@ public final class Graph {
         var environment = root.inherited
         update(&environment)
         root.inherited = environment
+        root.fullDirty = true
         dirty[root.id] = root
     }
 
@@ -890,26 +908,32 @@ public final class Graph {
 
     // MARK: Expansion and reconciliation
 
-    private func expand(_ view: any View, prefix: [Segment], into out: inout [Entry]) {
+    /// Flattens `view` into node entries. `refreshable` turns false when a container met on the way cannot be re-expanded
+    /// without re-evaluating its rows (`ViewContainer.supportsRefreshSkip`).
+    private func expand(_ view: any View, prefix: [Segment], into out: inout [Entry], refreshable: inout Bool) {
         let info = ViewTypes.info(for: view)
         switch info.shape {
         case .empty:
             return
         case .container:
             guard let container = view as? any ViewContainer else { return }
+            if !container.supportsRefreshSkip { refreshable = false }
             for (segment, part) in container.parts() {
-                expand(part, prefix: prefix + [segment], into: &out)
+                expand(part, prefix: prefix + [segment], into: &out, refreshable: &refreshable)
             }
         case .optional:
             if let child = (view as? any OptionalViewBox)?.wrappedView {
-                expand(child, prefix: prefix + [.optional], into: &out)
+                expand(child, prefix: prefix + [.optional], into: &out, refreshable: &refreshable)
             }
         case .leaf:
             out.append(Entry(relative: prefix + [.type(info.name)], view: view, info: info))
         }
     }
 
-    private func reconcile(_ parent: Node, entries: [Entry]) {
+    /// `keepExisting`: a child that survives is left as it is (not given the new view, not evaluated). Valid only when the
+    /// parent re-expanded the same views it expanded before, which is the case for a data-only refresh of its ForEach: a row
+    /// whose element changed is woken by its own observation of the row's box.
+    private func reconcile(_ parent: Node, entries: [Entry], keepExisting: Bool = false, changedRows: Set<AnyHashable> = []) {
         // Fast path, the usual re-evaluation: the same children in the same order. No ids are built and nothing is hashed.
         if entries.count == parent.childNodes.count {
             var same = true
@@ -919,6 +943,7 @@ public final class Graph {
             }
             if same {
                 for index in entries.indices {
+                    if keepExisting, !isChangedRow(entries[index], changedRows) { continue }
                     let existing = parent.childNodes[index]
                     existing.setView(entries[index].view, info: entries[index].info)
                     inherit(existing, from: parent)
@@ -956,10 +981,14 @@ public final class Graph {
         for (index, childID) in order.enumerated() {
             let entry = kept[index]
             if let existing = nodes[childID] {
-                existing.setView(entry.view, info: entry.info)
-                inherit(existing, from: parent)
-                live.append(existing)
-                evaluate(existing)
+                if keepExisting, !isChangedRow(entry, changedRows) {
+                    live.append(existing)
+                } else {
+                    existing.setView(entry.view, info: entry.info)
+                    inherit(existing, from: parent)
+                    live.append(existing)
+                    evaluate(existing)
+                }
             } else {
                 let created = Node(id: childID, relative: relatives[index], view: entry.view, info: entry.info, parent: parent)
                 instanceCounter += 1
@@ -977,6 +1006,15 @@ public final class Graph {
             }
         }
         parent.childNodes = live
+    }
+
+    /// True when `entry` is a ForEach row whose element is new or changed in the expansion being reconciled.
+    private func isChangedRow(_ entry: Entry, _ changedRows: Set<AnyHashable>) -> Bool {
+        if changedRows.isEmpty { return false }
+        for segment in entry.relative {
+            if case .keyed(let id) = segment, changedRows.contains(id) { return true }
+        }
+        return false
     }
 
     /// Hands the parent's environment, and the facts the commit record reads from it, to a child about to be evaluated.
@@ -1086,10 +1124,15 @@ public final class Graph {
     /// Evaluates one node: applies its environment override, runs appear once, restarts a
     /// `task(id:)` whose id changed, reads its dependencies under observation tracking, then
     /// reconciles its children.
-    func evaluate(_ node: Node) {
+    func evaluate(_ node: Node, refresh: Bool = false) {
         guard node.alive else { return }
         if profile != nil { profile!.evaluations += 1 }
         node.evaluatedRound = evaluationRound
+        node.evaluationCount &+= 1
+        dirty[node.id] = nil
+        node.viewReplaced = false
+        node.dataStale = false
+        node.fullDirty = false
         node.environment = node.inherited
         let kind = node.kind
         if case .modifier(.environment(let apply)) = kind {
@@ -1148,6 +1191,8 @@ public final class Graph {
             node.trackingLive = true
             produced = withObservationTracking({
                 _ = tether.version
+                ObservationScope.depth += 1
+                defer { ObservationScope.depth -= 1 }
                 return produceContent(node, kind)
             }, onChange: { [weak self, handle = node.handle] in
                 // Weak on purpose: a pending observation must not keep the graph or its nodes alive. A registration that was
@@ -1183,8 +1228,17 @@ public final class Graph {
             return
         }
         var entries: [Entry] = []
-        expand(produced, prefix: [], into: &entries)
-        reconcile(node, entries: entries)
+        var refreshable = true
+        let outer = ExpansionContext.owner
+        ExpansionContext.owner = (self, node)
+        ExpansionContext.changedRows = []
+        expand(produced, prefix: [], into: &entries, refreshable: &refreshable)
+        ExpansionContext.owner = outer
+        let changedRows = ExpansionContext.changedRows
+        ExpansionContext.changedRows = []
+        // Only a node that hands back its stored content expands the same views as last time; a body re-runs and builds new ones.
+        reconcile(node, entries: entries, keepExisting: refresh && refreshable && !tracksDependencies(kind, node),
+                  changedRows: changedRows)
     }
 
     /// Drops the cached sizes of this node and its ancestors when the node's own layout-relevant content changed.
@@ -1243,8 +1297,41 @@ public final class Graph {
 
     func noteChange(_ node: Node) {
         guard node.alive, nodes[node.id] === node else { return }
+        node.fullDirty = true
         dirty[node.id] = node
         scheduleFlush()
+    }
+
+    /// A ForEach data source that `node` expands changed. The node is re-expanded at the next flush.
+    func noteDataChange(_ node: Node) {
+        guard node.alive, nodes[node.id] === node else { return }
+        node.dataStale = true
+        dirty[node.id] = node
+        scheduleFlush()
+    }
+
+    /// Reads a ForEach's data on behalf of `node`, the node that expands it. The registration is the node's own and is kept apart
+    /// from the tracking of its content, so a change to the data re-expands the node (`noteDataChange`) without counting as a
+    /// change of anything its content read. The registrations of one evaluation share a token; a newer evaluation supersedes them
+    /// (its first read bumps the tether, which fires and so cancels the earlier ones).
+    func trackData<T>(of node: Node, _ read: () -> T) -> T {
+        if node.dataEvalMark != node.evaluationCount {
+            node.dataEvalMark = node.evaluationCount
+            node.dataToken &+= 1
+            node.dataTether?.version &+= 1
+        }
+        let token = node.dataToken
+        let tether = node.dataTether ?? Tether()
+        node.dataTether = tether
+        return withObservationTracking({
+            _ = tether.version
+            return read()
+        }, onChange: { [weak self, handle = node.handle] in
+            MainActor.assumeIsolated {
+                guard let node = handle.node, node.dataToken == token else { return }
+                self?.noteDataChange(node)
+            }
+        })
     }
 
     private func scheduleFlush() {

@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 // SR0-S fresh runtime: SwiftUI programming-model semantics without any renderer.
 // Public signatures mirror probes/sr0-c/.../WindowsStubs.swift.
@@ -31,6 +32,15 @@ public struct EmptyView: View {
 @MainActor
 protocol ViewContainer {
     func parts() -> [(Segment, any View)]
+    /// True when this container's parts are the same views every time the owner re-expands it without its own view
+    /// having been replaced (only the data behind a keyed `ForEach` may differ, and its rows track that themselves). The
+    /// graph then re-reconciles such an owner without re-evaluating the unchanged rows beneath it. A container that
+    /// wraps its rows with position-dependent state (`onDelete`) says false.
+    var supportsRefreshSkip: Bool { get }
+}
+
+extension ViewContainer {
+    var supportsRefreshSkip: Bool { false }
 }
 
 /// Views that become graph nodes without a user `body`.
@@ -59,6 +69,8 @@ public struct TupleView<T>: View {
 }
 
 extension TupleView: ViewContainer {
+    var supportsRefreshSkip: Bool { true }
+
     @MainActor
     func parts() -> [(Segment, any View)] {
         if let listed {
@@ -92,6 +104,8 @@ public struct ConditionalContent<TrueContent: View, FalseContent: View>: View {
 }
 
 extension ConditionalContent: ViewContainer {
+    var supportsRefreshSkip: Bool { true }
+
     @MainActor
     func parts() -> [(Segment, any View)] {
         if let first { return [(.branch(0), first)] }
@@ -331,14 +345,20 @@ extension List where SelectionValue == Never {
 public protocol DynamicViewContent: View {}
 
 public struct ForEach<Data: RandomAccessCollection, ID: Hashable, Content: View>: DynamicViewContent, ViewContainer {
-    let items: Data
-    let idOf: (Data.Element) -> ID
-    let makeContent: (Data.Element) -> Content
+    /// Builds the keyed row views. For a ForEach over a binding it reads the data when called (see `ExpansionContext`),
+    /// not when the ForEach is built, so the node that expands it, not the body that wrote it, depends on the data.
+    let makeParts: @MainActor () -> [(Segment, any View)]
 
     init(items: Data, idOf: @escaping (Data.Element) -> ID, makeContent: @escaping (Data.Element) -> Content) {
-        self.items = items
-        self.idOf = idOf
-        self.makeContent = makeContent
+        makeParts = {
+            items.map { element in
+                (Segment.keyed(AnyHashable(idOf(element))), makeContent(element) as any View)
+            }
+        }
+    }
+
+    init(makeParts: @escaping @MainActor () -> [(Segment, any View)]) {
+        self.makeParts = makeParts
     }
 
     /// Disfavored so that `ForEach($items)` over a Binding selects the id-keyed binding initializer.
@@ -349,11 +369,11 @@ public struct ForEach<Data: RandomAccessCollection, ID: Hashable, Content: View>
 
     @MainActor public var body: Never { return fatalError("ForEach has no body") }
 
+    var supportsRefreshSkip: Bool { true }
+
     @MainActor
     func parts() -> [(Segment, any View)] {
-        items.map { element in
-            (Segment.keyed(AnyHashable(idOf(element))), makeContent(element) as any View)
-        }
+        makeParts()
     }
 }
 
@@ -362,6 +382,65 @@ extension ForEach where ID == Data.Element.ID, Data.Element: Identifiable {
     public init(_ data: Data, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self.init(data, id: \.id, content: content)
     }
+}
+
+/// The observable value of one ForEach row, as last seen by the ForEach that owns the row. Row bodies read it instead of
+/// the whole collection, so a change to one element wakes that row's nodes only.
+@Observable
+@MainActor
+final class RowBox<Element, Index> {
+    var value: Element
+    /// Where the row sat in the collection at the last expansion; the row binding tries it first when it reads the live
+    /// collection. Not observed: moving a row does not change what its views read.
+    @ObservationIgnored var hint: Index
+    init(_ value: Element, hint: Index) {
+        self.value = value
+        self.hint = hint
+    }
+}
+
+/// The boxes of one ForEach, by row id. It lives as long as the ForEach value, so the rows of an owner that re-expands
+/// the same ForEach (the data changed, nothing else) keep reading the same boxes.
+@MainActor
+final class RowStore<ID: Hashable, Element, Index> {
+    var boxes: [ID: RowBox<Element, Index>] = [:]
+}
+
+/// Value equality for an element that may or may not be Equatable. An element that is not Equatable counts as changed.
+@MainActor
+func elementsEqual<T>(_ a: T, _ b: T) -> Bool {
+    guard let equatable = a as? any Equatable else { return false }
+    return equalErased(equatable, b)
+}
+
+@MainActor
+private func equalErased<E: Equatable>(_ a: E, _ b: Any) -> Bool {
+    guard let typed = b as? E else { return false }
+    return typed == a
+}
+
+/// What a ForEach is being expanded under. `Graph.evaluate` sets it around `expand`; a ForEach over a binding reads its data
+/// through `read` so the dependency belongs to that owner node and a change to the data re-expands the owner alone (and
+/// only the rows whose element changed re-evaluate), instead of re-evaluating the body that built the ForEach.
+@MainActor
+enum ExpansionContext {
+    static var owner: (graph: Graph, node: Node)?
+    /// Ids of the rows this expansion saw new or with a changed element. The row views a ForEach builds can read the element
+    /// directly (a bare `Text(row.wrappedValue.text)` has no body to track it), so the graph hands such a row its new view.
+    static var changedRows: Set<AnyHashable> = []
+
+    static func readData<T>(_ read: () -> T) -> T {
+        guard let (graph, node) = owner else { return read() }
+        return graph.trackData(of: node, read)
+    }
+}
+
+/// Counts the observation tracking scopes of node evaluation that are open. A row binding read inside one registers on the
+/// row's box; read anywhere else (an event handler, layout, resolution) it reads the live collection.
+@MainActor
+enum ObservationScope {
+    static var depth = 0
+    static var tracking: Bool { depth > 0 }
 }
 
 extension ForEach {
@@ -389,25 +468,48 @@ extension ForEach {
         key: @escaping (C.Element) -> ID,
         content: @escaping (Binding<C.Element>) -> Content
     ) where Data == LazyMapSequence<C.Indices, (C.Index, ID)> {
-        let snapshot = data.wrappedValue
-        let pairs: LazyMapSequence<C.Indices, (C.Index, ID)> = snapshot.indices.lazy.map { index in
-            (index, key(snapshot[index]))
-        }
-        self.init(
-            items: pairs,
-            idOf: { $0.1 },
-            makeContent: { pair in
-                let id = pair.1
-                let hint = pair.0
-                let fallback = snapshot[hint]
-                // The element is found by id, so a row handle never targets a stale index. The index it had at evaluation is
-                // tried first (one comparison); only a row that has moved since needs the scan.
+        let store = RowStore<ID, C.Element, C.Index>()
+        self.init(makeParts: {
+            let snapshot = ExpansionContext.readData { data.wrappedValue }
+            var live = Set<ID>(minimumCapacity: snapshot.count)
+            var parts: [(Segment, any View)] = []
+            parts.reserveCapacity(snapshot.count)
+            for position in snapshot.indices {
+                let element = snapshot[position]
+                let id = key(element)
+                let box: RowBox<C.Element, C.Index>
+                if let known = store.boxes[id] {
+                    box = known
+                    // A duplicate id reuses the first row's box (the graph keeps the first row of a duplicate id).
+                    if live.insert(id).inserted {
+                        known.hint = position
+                        if !elementsEqual(known.value, element) {
+                            known.value = element
+                            ExpansionContext.changedRows.insert(AnyHashable(id))
+                        }
+                    }
+                } else {
+                    box = RowBox(element, hint: position)
+                    store.boxes[id] = box
+                    live.insert(id)
+                    ExpansionContext.changedRows.insert(AnyHashable(id))
+                }
+                let fallback = element
+                // The element is found by id, so a row handle never targets a stale index. The index it had at the last
+                // expansion is tried first (one comparison); only a row that has moved since needs the scan, which then
+                // remembers where it found the row.
                 @MainActor func locate(_ current: C) -> C.Index? {
+                    let hint = box.hint
                     if hint >= current.startIndex, hint < current.endIndex, key(current[hint]) == id { return hint }
-                    return current.firstIndex(where: { key($0) == id })
+                    guard let found = current.firstIndex(where: { key($0) == id }) else { return nil }
+                    box.hint = found
+                    return found
                 }
                 let row = Binding<C.Element>(
                     get: {
+                        // Inside a node's observation scope the row reads its box (a dependency on this row alone);
+                        // everywhere else the live collection, so an event handler never sees a stale value.
+                        if ObservationScope.tracking { return box.value }
                         let current = data.wrappedValue
                         return locate(current).map { current[$0] } ?? fallback
                     },
@@ -418,9 +520,11 @@ extension ForEach {
                         data.wrappedValue = current
                     }
                 )
-                return content(row)
+                parts.append((Segment.keyed(AnyHashable(id)), content(row) as any View))
             }
-        )
+            if store.boxes.count != live.count { store.boxes = store.boxes.filter { live.contains($0.key) } }
+            return parts
+        })
     }
 }
 
@@ -436,6 +540,7 @@ struct OnMoveContent<Content: DynamicViewContent>: DynamicViewContent, ViewConta
     let content: Content
     let handler: ((IndexSet, Int) -> Void)?
     @MainActor public var body: Never { return fatalError("OnMoveContent has no body") }
+    var supportsRefreshSkip: Bool { (content as? ViewContainer)?.supportsRefreshSkip ?? false }
     @MainActor
     func parts() -> [(Segment, any View)] {
         (content as? ViewContainer)?.parts() ?? []

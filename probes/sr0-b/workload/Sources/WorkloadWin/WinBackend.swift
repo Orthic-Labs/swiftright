@@ -510,18 +510,32 @@ final class WinBackend {
         let nothingToSend = pass.upserts.isEmpty && removes.isEmpty && !focusChanged
         var accepted = false
         var submitted = false
+        var partiallyApplied = false
         if !nothingToSend {
-            version += 1
             submitted = true
-            let transaction = Transaction(version: version, focus: focusedField, upserts: pass.upserts, removes: removes)
             maxUpserts = max(maxUpserts, pass.upserts.count)
             maxPrimitives = max(maxPrimitives, pass.primitives)
-            do {
-                try clock.time { try platform.commit(transaction) }
-                commitCount += 1
-                accepted = true
-            } catch {
-                commitErrors.append("commit v\(version): \(error)")
+            // One transaction unless the renderer's per-transaction limits (4096 upserts, 65536 primitives; swiftright.h) would be
+            // exceeded, as a long list's scroll commit does (every node moved). Larger commits go in chunks, parents before
+            // children, removes in the first, the focus in the last (a focus must name a node the renderer already has).
+            let chunks = Self.chunked(pass.upserts)
+            var applied = 0
+            accepted = true
+            for (index, chunk) in chunks.enumerated() {
+                version += 1
+                let last = index == chunks.count - 1
+                let transaction = Transaction(version: version, focus: last ? focusedField : 0, upserts: chunk,
+                                              removes: index == 0 ? removes : [])
+                do {
+                    try clock.time { try platform.commit(transaction) }
+                    commitCount += 1
+                    applied += 1
+                } catch {
+                    commitErrors.append("commit v\(version) chunk \(index + 1)/\(chunks.count): \(error)")
+                    accepted = false
+                    partiallyApplied = applied > 0
+                    break
+                }
             }
         }
         let endTicks = WClock.ticks()
@@ -544,6 +558,8 @@ final class WinBackend {
         } else {
             for (id, previous) in pass.undo.reversed() { sentNodes[id] = previous }
             toRelease = pass.created
+            // A chunked commit that failed part-way left the renderer holding some of this pass's nodes: send everything next time.
+            if partiallyApplied { for id in sentNodes.keys { sentNodes[id]?.sig = nil } }
         }
         for handle in toRelease { clock.time { _ = platform.release(handle) } }
         let releaseEnd = WClock.ticks()
@@ -573,6 +589,25 @@ final class WinBackend {
             }
         }
         lastFrameEndTicks = endTicks
+    }
+
+    /// Splits a commit's upserts into transactions within the renderer's limits (a margin below 4096 upserts and 65536 primitives).
+    static func chunked(_ upserts: [NodeUpsert]) -> [[NodeUpsert]] {
+        let maxUpserts = 4000, maxPrimitives = 60_000
+        var out: [[NodeUpsert]] = []
+        var current: [NodeUpsert] = []
+        var primitives = 0
+        for upsert in upserts {
+            if !current.isEmpty, current.count >= maxUpserts || primitives + upsert.primitives.count > maxPrimitives {
+                out.append(current)
+                current = []
+                primitives = 0
+            }
+            current.append(upsert)
+            primitives += upsert.primitives.count
+        }
+        out.append(current)   // an empty last chunk still carries removes and the focus
+        return out
     }
 
     /// Releases every retained run (window teardown) and forgets what was sent.
