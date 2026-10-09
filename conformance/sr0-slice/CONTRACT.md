@@ -9,7 +9,7 @@ Status: DRAFT v0.1, 9 October 2026. Freezes when the same-source compile probe p
 | Mac oracle of record | Mac mini, macOS 27.0.1 (26A434), arm64, Xcode 27.0, Swift 6.4 |
 | Mac deployment floor | macOS 14 (Observation); not traced in SR0 |
 | Windows lane | Dell XPS 15, Windows 11 Pro 26300, x64, Swift 6.4.0 (swift-6.4-RELEASE), Rust 1.98.0 via RightKit |
-| Windows arm64 lane | Blocked: no native host |
+| Windows arm64 / Intel Mac | Out of scope (scope revision 1, `docs/architecture.md` §9) |
 | Renderer | gpui 0.2.2 + accesskit 0.25.1 + accesskit_windows 0.35.1, lockfile `probes/sr0-d/render-composition/Cargo.lock` |
 | Dispatch | `_dispatch_main_queue_callback_4CF` in Swift 6.4.0 runtime dispatch.dll (ordinal 23) |
 | Language mode | Swift 6, strict concurrency |
@@ -97,5 +97,5 @@ Copied from architecture §11 decision budgets, including revision 1 (presentati
 ## 8. Open before freeze
 
 - ~~Same-source compile probe~~: PASS on macOS 27 arm64 & Windows x64 with an identical screen file; negative `NavigationSplitView` fixture fails on Windows only (`probes/sr0-c/same-source`).
-- TextPattern on Windows edit nodes; Mac AX caret routes for SwiftUI `TextField`.
+- ~~TextPattern on Windows edit nodes; Mac AX caret routes for SwiftUI `TextField`~~: met (`probes/sr0-b/text-geometry` run 4, `fcc999d`; `probes/sr0-o/ax-routes`).
 - ~~Visible-response endpoint method per OS~~: decided (§5).

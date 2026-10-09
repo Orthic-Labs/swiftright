@@ -1,6 +1,6 @@
 # SR0 slice contract v1.0: freeze proposal
 
-**PROPOSAL — updated 9 Oct 2026 (late): blockers 3, 5, 6 closed; 2 running; 7 needs Adrian's one-time grant.** Nothing here is frozen. Compiled 9 October 2026, updated evening against HEAD ee5a4db, from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md` (DRAFT v0.1; SR0-C row in `docs/sr0-status.md`). Freeze rule from CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11).
+**PROPOSAL, not frozen. Reconciled 9 Oct 2026 against HEAD `6263841` and `docs/sr0-close-plan.md` v2 (scope revision 1).** Compiled from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md` (DRAFT v0.1; SR0-C row in `docs/sr0-status.md`). Freeze rule from the CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11); the fork seed is early-disqualified (`probes/sr0-s/COMPARISON.md`), so a rerun means the fresh runtime. The freeze binds to the ABI 0.6 snapshot tuple in `docs/sr0-snapshot.md`; all Windows evidence below was produced on ABI 0.5 and is history until rerun on that tuple.
 
 ## 1. Evidence base
 
@@ -14,19 +14,20 @@
 | WIN-M2 | `probes/sr0-s/fresh-on-bridge/out/matrix-rev2/RESULT.md` (commit 2aa1983): 15 configs x 3, **all FAIL** (regression). Fixed in cc605bf (no post-close teardown commit; List AX roles) and 8f3ffeb (F9 asserts on ABI 0.5) | recorded regression |
 | WIN-M3 | `probes/sr0-s/fresh-on-bridge/out/matrix-rev3/` (commit 96fcd30): partial, superseded by WIN-M4 | superseded |
 | WIN-M4 | `probes/sr0-s/fresh-on-bridge/out/matrix-rev4/RESULT.md` (cc4c93a, ee5a4db): 44/45 PASS, F9 run3 failed (pump ended by renderer, GPUI quit-on-last-window); `matrix-rev4b` on renderer d45c98c (DLL sha256 2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1): F9 3/3, F9-notasks 3/3, F6 override-on 3/3. **All 15 configs 3/3 PASS.** Root causes fixed: cc605bf, cc4c93a, d45c98c | complete (3 runs) |
-| XCMP | `probes/sr0-o/f1-cross/` (7a91608, 96fcd30): F1 Mac-vs-Windows compare 317 diffs -> 52 after List AX roles (`out/compare-strict-m1-w5.json`, only text-field labels); label fix in cc4c93a. Rerun **BLOCKED**: Windows desktop runs are blocked by a desktop-intrusion hook (Adrian's live desktop); pending Adrian. Signed `F1MacRecord.app` built (7a91608), needs Adrian's one-time Accessibility grant | **PENDING (blocked)** |
+| WIN-M5 | `probes/sr0-s/fresh-on-bridge/out/matrix-20b/` (`65e0f29`): 15 configs x 20 runs = **300/300 PASS**, ABI 0.5, FreshOnBridge sha256 `DD6C9CE6…`, DLL `2DC4B6F7…`; one run (F2 run9) needed a foreground retry. Earlier partial `matrix-20` (`3d2d57f`) exposed an F3 vstack settle race, fixed in the self-test. Lacks the F3 3 s variants (`list-3s`, `vstack-3s`, `lazy-3s`); real IME and screen reader not covered | complete on ABI 0.5; rerun on 0.6 plus F3 3 s (plan R1b) |
+| XCMP | `probes/sr0-o/f1-cross/` (`7a91608`, `96fcd30`, `eaf40dc`): F1 Mac-vs-Windows compare, 317 diffs -> 52 (List AX roles) -> **0 diffs** for Windows w6 vs Mac m1..m5 (`eaf40dc`). Only F1 was compared; Mac side used the unsigned-grant terminal route. Signed recorder (`F1MacRecord.app`, `7a91608`) still needs Adrian's AX grant | PASS for F1 on ABI 0.5; F1-F9 on the signed recorder and ABI 0.6 PENDING (plan R6) |
 | SAME-SRC | `probes/sr0-c/same-source/RESULT.md` (cited by CONTRACT §8): identical screen compiles on both targets; `NavigationSplitView` negative fixture fails on Windows only | complete |
 
-Windows 20-run requirement (CONTRACT §3 last paragraph: "Each Windows seed runs 20 times with all passing") is **not met by any evidence**: the matrices run 3 runs per config (WIN-M4 included). C9 remains OPEN.
+Windows 20-run requirement (CONTRACT §3 last paragraph): **met on ABI 0.5** by WIN-M5 (300/300), **not yet met on the ABI 0.6 tuple** and not met for the F3 3 s variants. C9 is decided (keep 20).
 
 ## 2. Clause-by-clause status
 
 Legend: PROVEN = evidence on both sides as the clause requires; MAC = Mac oracle only; PENDING = named evidence missing.
 
 ### §1 Pinned tuple
-- Pins Mac mini macOS 27.0.1, Xcode 27.0, Swift 6.4; Windows XPS 15 build 26300 x64, Swift 6.4.0; renderer gpui 0.2.2 / accesskit 0.25.1 / accesskit_windows 0.35.1; dispatch ordinal 23.
+- Pins Mac mini macOS 27.0.1, Xcode 27.0, Swift 6.4; Windows XPS 15 build 26300 x64, Swift 6.4 (swift-6.4-RELEASE); renderer gpui 0.2.2 / accesskit 0.25.1 / accesskit_windows 0.35.1; dispatch ordinal 23.
 - Evidence: MAC-3/MAC-20 ran on macOS 27.0.1 arm64 Swift 6.4; HL and WIN-* on Windows 11 x64 Swift 6.4.0; renderer pins mirrored in `render/README-abi-v0.md`.
-- Gap: Windows arm64 lane blocked (no host; `docs/sr0-status.md` SR0-D). Status: **PROVEN for x64/arm64-Mac; arm64 Windows PENDING and carried as a known exclusion.**
+- Windows arm64 and Intel Mac are out of scope under scope revision 1 (`docs/architecture.md` §9), not pending. Status: **PROVEN for Windows x64 and Mac arm64 on the evidence above; to be re-pinned to the 0.6 snapshot.**
 
 ### §2 Slice inventory
 - Same-source compile: SAME-SRC PASS on both targets.
@@ -60,22 +61,23 @@ Run-count rule: "Each Mac fixture runs 20 times; all normalized assertions must 
 
 ### §5 Observation routes
 - Model/lifecycle/effects in-process: PROVEN (MAC-20 EventLog).
-- Mac AX tree/identifier/press/focus/selection/bounds: PROVEN (`probes/sr0-o/ax-routes`, CONTRACT §5 evidence paragraph). Signed recorder with its own AX grant: still needed (`docs/sr0-status.md` SR0-O row) -> **PENDING**.
+- Mac AX tree/identifier/press/focus/selection/bounds: PROVEN (`probes/sr0-o/ax-routes`, CONTRACT §5 evidence paragraph). Signed recorder with its own AX grant: still needed (`docs/sr0-status.md` SR0-O row; plan R6, separate macOS test user) -> **PENDING**.
 - Windows UIA tree and Invoke: PROVEN (`probes/sr0-d/render-composition`; recorder `probes/sr0-o/uia-recorder`). Automation-id on the bridge: ABI 0.5 smoke rev05c shows 5/5 (`examples/BridgeSmoke/result-smoke-rev05c.txt`): **PROVEN**.
-- Windows TextPattern: empty-edit TextPattern PASS in smoke (`examples/BridgeSmoke/result-smoke-rev05.txt`, `empty_edit_textpattern=PASS`). Selection, `GetBoundingRectangles` caret rect on a populated field: **PENDING** (CONTRACT §8 open item).
-- Canonical roles window, button, text-field, list, list-item, static-text: Mac normalizer rules in CONTRACT §5; Windows roles in ABI `SWR_ROLE_*`; List/list-item emission added in cc605bf. Cross-platform shape match: XCMP 317 -> 52 diffs, only text-field labels remaining before cc4c93a; rerun **PENDING (blocked)**.
-- Visible-response endpoint per OS: **PENDING** (CONTRACT §8; not chosen anywhere in the evidence reviewed).
+- Windows TextPattern: empty-edit TextPattern PASS in smoke (`examples/BridgeSmoke/result-smoke-rev05.txt`, `empty_edit_textpattern=PASS`). Populated-field selection and caret rect: **MET** (text geometry run 4, 35/35, degenerate caret via raw UIA, `fcc999d`; probe-tree bridge, rerun on 0.6 per snapshot item 6).
+- Canonical roles window, button, text-field, list, list-item, static-text: Mac normalizer rules in CONTRACT §5; Windows roles in ABI `SWR_ROLE_*`; List/list-item emission added in cc605bf. Cross-platform shape match: XCMP 0 diffs for F1 (`eaf40dc`); F2-F9 never compared cross-platform: **PENDING** (R6).
+- Visible-response endpoint per OS: **DECIDED** 9 Oct 2026 and recorded in CONTRACT §5. Implementation and measurement run in the §11 workload lane (R10).
 
 ### §6 Bridge ABI vocabulary
 Governed by the companion proposal `docs/sr0-freeze-bridge-interface.md`. Contract-side change C4 below.
 
 ### §7 Budgets
-- Presentation budget revision 1 (zero missed vblanks, p95 <= refresh + 0.1 ms): MET, batch 5, 30/30 valid runs (commit 011c83e; `docs/sr0-status.md` SR0-B row). **PROVEN** on the Windows lane tested.
+- Presentation budget revision 1 (zero missed vblanks, p95 <= refresh + 0.1 ms): MET, batch 5, 30/30 valid runs (commit 011c83e; `docs/sr0-status.md` SR0-B row). **PROVEN** on the Windows lane tested with the standalone probe host; the §11 full workload on the selected runtime has never run (plan F7, lane R10).
 
 ### §8 Open before freeze
 - Same-source compile: closed (SAME-SRC).
-- TextPattern on Windows edit nodes: partial (empty field only). Mac AX caret route for SwiftUI `TextField`: AXSelectedTextRange/AXBoundsForRange proven in `probes/sr0-o/ax-routes`. **Remaining: Windows populated-field TextPattern.**
-- Visible-response endpoint: open.
+- TextPattern on populated Windows edit nodes: closed (`fcc999d`). Mac AX caret route: proven (`probes/sr0-o/ax-routes`).
+- Visible-response endpoint: decided (CONTRACT §5).
+- Still open: real Japanese IME and Narrator/NVDA on the 0.6 tuple (R9); §11 workload (R10); signed recorder re-record (R6).
 
 ## 3. Proposed changes versus the current contract (v0.1 -> v1.0)
 
@@ -89,22 +91,27 @@ Governed by the companion proposal `docs/sr0-freeze-bridge-interface.md`. Contra
 | C6 | **F6 raw-trace variance**: add a sentence that raw traces may vary within a step; canonical order-insensitive comparison is the qualification form. | MAC-3 finding F6; MAC-20 (F6 raw 4, canonical 1); CONTRACT §3 already has the within-step rule, make F6's variance explicit |
 | C7 | **F5 harness rule**: window frame restoration cleared before launch; zero-width passes reported as OBSERVE not assertion failures. | MAC-3 F5 root cause; MAC-20 `zero-width-placement-passes` |
 | C8 | **Fixture CLI rule** (harness, not semantic): `--self-test` last in argv. | MAC-3 diagnosis |
-| C9 | Windows repeat count: either keep 20 (requires a 20-run Windows matrix) or amend to a stated smaller N with reason. **Still OPEN; decision needed.** | §3 last paragraph vs WIN-M4 (3 runs) |
+| C9 | Windows repeat count: **decided, keep 20** (met on ABI 0.5 by WIN-M5; rerun on 0.6). | §3 last paragraph; WIN-M5 |
 
-None of C1-C8 changes a pass/fail semantic that the Mac oracle recorded; C3 and C9 change contract text and require a decision.
+None of C1-C8 changes a pass/fail semantic that the Mac oracle recorded; C3 changes contract text and requires a decision; C9 is decided (no text change).
 
-## 4. Freeze-blocking items
+## 4. Remaining freeze blockers (close plan v2)
 
-1. ~~WIN-M3 completion~~: MET as WIN-M4, all 15 configs 3/3 PASS (`out/matrix-rev4/RESULT.md`, `matrix-rev4b`, ee5a4db).
-2. Windows repeat count per C9: DECIDED — keep 20 runs (no reason to weaken the contract). Evidence: `fresh-on-bridge/out/matrix-20b` (running 9 Oct 2026; partial `matrix-20` committed 3d2d57f exposed an F3 vstack settle race, fixed in the self-test). Closes when matrix-20b shows 20/20 for all 15 configs.
-3. ~~XCMP~~: MET — F1 Mac-vs-Windows compare PASSES, Windows w6 vs Mac m1..m5, 0 diffs each (eaf40dc).
-4. ~~Negative fixtures~~: MET (`probes/sr0-c/negative-fixtures/RESULT.md`).
-5. ~~Windows TextPattern on populated edit nodes~~: MET — text geometry run 4, 35/35 incl. degenerate caret rect via raw UIA provider (fcc999d). UIA AutomationId: MET (5/5, rev05c).
-6. ~~Visible-response endpoint~~: DECIDED 9 Oct 2026 and recorded in CONTRACT §5 (see there).
-7. Signed Mac recorder with its own AX grant: `F1MacRecord.app` built (7a91608), awaiting Adrian's one-time Accessibility grant.
+Closed: WIN-M4 15 configs x 3 (`ee5a4db`); Windows repeat count on ABI 0.5 (matrix-20b, `65e0f29`); XCMP F1 compare, 0 diffs (`eaf40dc`); negative fixtures (`5afd873`); Windows TextPattern on populated nodes (`fcc999d`); UIA AutomationId 5/5 (rev05c); visible-response endpoint decided (CONTRACT §5).
 
-Non-blocking for a v1.0 on x64 + Mac arm64: Windows arm64 lane (no host), noted as exclusion.
+Open, in plan lane order:
+
+| # | Blocker | Lane | Needs |
+|---|---|---|---|
+| 1 | Re-run the Windows matrix on the 0.6 tuple, 20 runs per config, including the F3 3 s variants (plan F5) | R1b | Dell interactive desktop, FreshOnBridge rebuilt on 0.6 |
+| 2 | Signed Mac recorder with its own AX grant; re-record F1-F9 and compare cross-platform on the 0.6 tuple | R6 | Adrian: separate macOS test user, Remote Desktop, AX grant for `F1MacRecord.app` |
+| 3 | Per-node-ordered canonical digest (plan F4, CONTRACT §3 per-node order), fault-injection test, recompute accepted baselines and the 20-run results from saved JSONL | R8 | runner and comparator change |
+| 4 | Real IME (Microsoft Japanese) and Narrator/NVDA with model-state effects | R9 | Adrian at the Dell for ~5 min |
+| 5 | §11 workload: 200 rows, 10 s warm-up, 3 x 60 s, all thresholds, raw samples, both OSes | R10 | quiet host |
+| 6 | Apply C1-C8 and C3 text to CONTRACT.md; bump to v1.0; name the snapshot tuple | R11 | blockers 1-5 |
+
+Non-blocking: Windows arm64 and Intel Mac are out of scope (scope revision 1), not exclusions to be lifted by this freeze.
 
 ## 5. Proposed freeze decision
 
-Freeze as v1.0 once blockers 2-3 are closed with receipts (1 and 4 are met); the freeze must name the renderer build d45c98c, DLL sha256 2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1. Seed decision: fresh runtime (fork 17/22 + 5 blocked, a7b43ac/b771c20); the green Windows matrix supports finalizing. C1-C9 must be applied (C9 decision open), after which any change triggers a rerun of both seeds. Selection of the fresh runtime remains provisional until XCMP lands (WIN-M4 landed) (`probes/sr0-s/COMPARISON.md` header).
+Freeze as v1.0 when blockers 1-5 have receipts bound to one snapshot tuple (`docs/sr0-snapshot.md`: runtime commit, bridge/header commit, renderer DLL sha256 `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30` for ABI 0.6, binary hashes) and C1-C8 plus C3 are applied. The 0.5 renderer hash `2DC4B6F7…` named in earlier drafts is superseded. Seed decision: fresh runtime selected, fork early-disqualified and never run through the real backend (`probes/sr0-s/COMPARISON.md`). After freeze any change triggers a rerun of the fresh runtime's affected stages.

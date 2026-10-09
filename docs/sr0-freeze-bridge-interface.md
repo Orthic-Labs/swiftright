@@ -1,8 +1,10 @@
-# SR0-B bridge interface (ABI rev 0.5): freeze proposal
+# SR0-B bridge interface (ABI rev 0.6): freeze proposal
 
-**PROPOSAL — pending evidence noted inline.** Nothing here is frozen. Compiled 9 October 2026, updated evening against HEAD ee5a4db, from repository evidence only. Renderer changed after 10c4877 (d45c98c, post-close pump survives GPUI quit-on-last-window); the freeze names that build, DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`. Sources: `render/swiftright-abi/include/swiftright.h` (single source of truth), `render/README-abi-v0.md` (revision notes and evidence), `packages/SwiftRightBridge/`, `examples/BridgeSmoke/`. History: b907913 (v0, smoke 19/19), b9651bd (rev 0.4), 10c4877 (rev 0.5, "built; smoke pending desktop"). The README states "Not frozen (freeze waits on the SR0-C contract freeze)"; companion proposal: `docs/sr0-freeze-slice-contract-v1.md`.
+**PROPOSAL, not frozen. Retargeted to ABI 0.6 on 9 October 2026** (close plan v2, `docs/sr0-close-plan.md`; reconciled against HEAD `6263841`). The SR0 snapshot is bridge ABI **0.6**, an append-only superset of 0.5 (header `SWR_ABI_MINOR 6`, `4df7e67`). Sections 1 to 4 below were written for 0.5 and keep their 0.5 evidence as history; section 5 lists the 0.6 delta that makes the 0.6 surface = sections 1.1-1.10 plus section 5. Pinned renderer for the freeze: DLL `D:\Claude\sr1-abi06\payload\bin\swiftright_render.dll`, sha256 `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30` (tuple: `docs/sr0-snapshot.md`). The 0.5 DLL `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1` (renderer `d45c98c`) is superseded and is history. Sources: `render/swiftright-abi/include/swiftright.h` (single source of truth), `render/README-abi-v0.md`, `packages/SwiftRightBridge/` (latest `fd2e0ad`), `examples/BridgeSmoke/`. History: b907913 (v0, smoke 19/19), b9651bd (rev 0.4), 10c4877 (rev 0.5), 4df7e67 (rev 0.6, "built; smoke pending desktop"). The README says freeze waits on the SR0-C contract freeze; companion proposal: `docs/sr0-freeze-slice-contract-v1.md`.
 
-## 1. Proposed frozen surface (ABI 0.5 -> "ABI 1" candidate)
+**No 0.6 evidence exists yet.** All smoke, matrix and probe receipts cited below ran on ABI 0.5 (or earlier probe ABIs). The 0.6 smoke has never been run; the only 0.6 BridgeSmoke binary on the Windows host predates `fd2e0ad` and is stale (snapshot section 2).
+
+## 1. Proposed frozen surface, 0.5 baseline (0.6 adds section 5)
 
 ### 1.1 Bootstrap and loading
 - `SWR_ABI_MAJOR 0`, `SWR_ABI_MINOR 5`; `swr_bootstrap_query(out, caller_size)` and `swr_get_api(out, caller_size)`: any thread, no allocation, no callbacks (header LOADING block).
@@ -86,21 +88,23 @@ The rev05 0/5 result was a timing race: UIA lookups ran after the app self-quit.
 | B1 | UIA AutomationId | **CLOSED**: 5/5 in `result-smoke-rev05c.txt` and `result-smoke-timeout05c.txt` |
 | B2 | `SWR_PRIM_UNDERLINE` | **CLOSED as acceptance only** (rev05c); no per-primitive draw counter, painting not asserted |
 | B3 | List/list-item AX through bridge | **CLOSED**: WIN matrix 15/15 PASS; F1 cross-platform compare 0 diffs (eaf40dc) |
-| B4 | Contract freeze dependency | Waits on the SR0-C contract freeze: remaining contract blockers are the 20-run Windows matrix (running) and the signed Mac recorder grant |
+| B4 | Contract freeze dependency | Waits on the SR0-C contract freeze. Closed on 0.5: 20-run matrix (matrix-20b 300/300, `65e0f29`) and F1 compare (`eaf40dc`). Remaining per plan v2: matrix on 0.6 incl. F3 3 s (R1b), signed recorder (R6), IME/screen reader (R9), §11 workload (R10), per-node digest (R8) |
 | B5 | Post-close pump edge paths | **CLOSED**: early `SWR_E_STATE`, idempotent repeat, 5 s timeout (timeouts=1) in rev05c / timeout05c (27d93cc) |
 | B6 | Incomplete size table | **CLOSED** (02e660f) |
 | B7 | Smoke evidence reachable | **CLOSED**: rev05c and timeout05c committed (ee5a4db) |
+| B9 | **ABI 0.6 smoke and timeout mode** | **OPEN.** Build BridgeSmoke on the final bridge commit (after `fd2e0ad`) against DLL `C80B9517…`; run on the Dell desktop (plan R1a). Must cover the 0.6 additions in section 5; the bridge's real menu and dialog modal result paths have no receipt (README: smoke checks only that bad menu and dialog arguments are rejected) |
+| B10 | Snapshot manifest | OPEN until FreshOnBridge, fixtures and SliceApp are built on 0.6 and hashed in `docs/sr0-snapshot.md` |
 | B8 | Declared-not-emitted events | **Decided:** freeze as RESERVED (key-up, pointer-move, window-focus): codes fixed, hosts must tolerate but not rely on them; emitting them later is an append-only minor bump |
 
 Non-blocking but record in the freeze note: arm64 (README Deferred), packaging/checksum-pinned payload/signing (README Deferred, `docs/sr0-status.md` SR0-P blocked), multi-window, IMAGE/PATH primitives, non-translation transforms, bidi, multi-paragraph text, font fallback, modal result smoke, menus, scroll/touch/drag. Rev 0.5 is ABI-incompatible with 0.4 by bootstrap check (`stats_size`, function count 13 -> 14), so the freeze also fixes the "minor mismatch rejects" policy: the loader validates exact sizes, so any later minor bump needs a host rebuild.
 
 ## 4. Proposed freeze decision
 
-Freeze ABI 0.5 as the SR0 interface, built from renderer d45c98c (DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`). B1, B2, B5, B6, B7 are closed by receipts; B3/B4 close through the contract proposal (F1 compare rerun and C9); B8 decided (RESERVED). Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
+Freeze **ABI 0.6** (sections 1 to 3 as the baseline plus section 5) as the SR0 interface, built from renderer DLL sha256 `C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30`, once B9 and B10 close and the matrix on the 0.6 tuple passes. On 0.5, B1, B2, B5, B6, B7 are closed by receipts and B8 is decided (RESERVED); B3 closed on 0.5; B4 closes through the contract freeze. A 0.5 receipt does not close a 0.6 item. Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change. Because the loader validates exact sizes and function count, any later minor bump needs a host rebuild.
 
-## 5. After-freeze additions (ABI 0.6, SR1)
+## 5. ABI 0.6 delta over 0.5 (append-only; part of the retargeted freeze)
 
-The freeze rule stands: after 0.5, changes are append-only (struct tails, function-table tail, new codes and constants); no layout change to an existing field, constant or offset. ABI 0.6 (SR1, `render/README-abi-v0.md` "0.6") follows it and bumps the bootstrap minor to 6, so a 0.5 host or renderer is rejected at startup. Nothing in sections 1 to 4 changes meaning.
+The rule holds: from 0.5 to 0.6, changes are append-only (struct tails, function-table tail, new codes and constants); no layout change to an existing field, constant or offset. ABI 0.6 (SR1, `render/README-abi-v0.md` "0.6") follows it and bumps the bootstrap minor to 6, so a 0.5 host or renderer is rejected at startup. Nothing in sections 1 to 4 changes meaning.
 
 | Addition | How it stays append-only |
 |---|---|
@@ -111,4 +115,4 @@ The freeze rule stands: after 0.5, changes are append-only (struct tails, functi
 | `SWR_MODAL_MENU 2`, `SWR_MODAL_DIALOG 3`, `swr_modal_item` | new kinds; `swr_modal_request` gains a TAIL (48 -> 80 bytes, old fields untouched); result events reuse `SWR_EV_MODAL_RESULT` (`action` = kind, `i0` = item id, `i1` = index) |
 | `\n` in `swr_measure_text`, `SWR_CELL_LINE_BREAK 0x2` | the v0 rejection (`SWR_E_UNSUPPORTED`) is lifted; the cell flag is a new bit; no struct changed. `\r` is still rejected |
 
-Consequences for this proposal: section 1.8's "`\n` rejected" and the IMAGE row of section 1.6 ("declared, `SWR_E_UNSUPPORTED`") describe 0.5; in 0.6 IMAGE is live and `\n` is accepted. Section 1.2's 14-function table is the 0.5 table; 0.6 appends `image_register` and `image_release`. The freeze hash in section 4 names the 0.5 renderer; a 0.6 freeze needs its own DLL hash after the Windows smoke (nothing about 0.6 has been run on a desktop yet).
+Consequences for this proposal: section 1.8's "`\n` rejected" and the IMAGE row of section 1.6 ("declared, `SWR_E_UNSUPPORTED`") describe 0.5; in 0.6 IMAGE is live and `\n` is accepted. Section 1.2's 14-function table is the 0.5 table; 0.6 appends `image_register` and `image_release`. The freeze hash in section 4 now names the 0.6 renderer. It stays PROPOSED until the Windows 0.6 smoke (B9) runs; nothing about 0.6 has been run on a desktop yet.
