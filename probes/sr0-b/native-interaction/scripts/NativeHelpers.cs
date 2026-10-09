@@ -19,6 +19,8 @@ namespace SRN {
   public sealed class WinInfo {
     public long Hwnd; public uint Pid; public string Cls; public string Title;
     public int L; public int T; public int R; public int B; public bool Visible; public long ExStyle;
+    // Visible (DWM extended frame) rect; equals L/T/R/B when DWM refuses (VisFallback = true).
+    public int VL; public int VT; public int VR; public int VB; public bool VisFallback;
   }
 
   public static class N {
@@ -43,6 +45,18 @@ namespace SRN {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowTextW(IntPtr h, StringBuilder sb, int max);
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
     [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
+    [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, uint attr, out RECT r, int size);
+    public const uint DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+    /// Fills w.VL..VB with the visible (DWM extended frame) rect of h; GetWindowRect (w.L..w.B) is the fallback. Read only.
+    public static void SetVisibleRect(IntPtr h, WinInfo w) {
+      RECT v;
+      int hr = DwmGetWindowAttribute(h, DWMWA_EXTENDED_FRAME_BOUNDS, out v, Marshal.SizeOf(typeof(RECT)));
+      if (hr != 0 || (v.Right <= v.Left && v.Bottom <= v.Top)) {
+        w.VL = w.L; w.VT = w.T; w.VR = w.R; w.VB = w.B; w.VisFallback = true;
+      } else {
+        w.VL = v.Left; w.VT = v.Top; w.VR = v.Right; w.VB = v.Bottom; w.VisFallback = false;
+      }
+    }
     [StructLayout(LayoutKind.Sequential)] public struct PT { public int X; public int Y; }
     [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h, ref PT p);
     /// Screen coordinates (physical px, the driver is per-monitor DPI aware) of the window's client origin.
@@ -67,6 +81,7 @@ namespace SRN {
       GetClassNameW(h, c, 256); GetWindowTextW(h, t, 256);
       w.Cls = c.ToString(); w.Title = t.ToString();
       RECT r; GetWindowRect(h, out r); w.L = r.Left; w.T = r.Top; w.R = r.Right; w.B = r.Bottom;
+      SetVisibleRect(h, w);
       w.Visible = IsWindowVisible(h);
       w.ExStyle = GetWindowLongW(h, -20);
       return w;
@@ -137,6 +152,7 @@ namespace SRN {
         GetClassNameW(h, c, 256); GetWindowTextW(h, t, 256);
         w.Cls = c.ToString(); w.Title = t.ToString();
         RECT r; GetWindowRect(h, out r); w.L = r.Left; w.T = r.Top; w.R = r.Right; w.B = r.Bottom;
+        SetVisibleRect(h, w);
         w.Visible = IsWindowVisible(h);
         w.ExStyle = GetWindowLongW(h, -20);
         res.Add(w);

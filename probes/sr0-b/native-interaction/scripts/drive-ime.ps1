@@ -181,7 +181,8 @@ function Win-Key($w) { return "$($w.Hwnd)" }
 function Snap-Windows {
   $o = @()
   foreach ($w in [SRN.N]::TopWindows()) {
-    $o += [pscustomobject]@{ Hwnd = $w.Hwnd; Pid = $w.Pid; Proc = (Proc-Name $w.Pid); Cls = $w.Cls; Title = $w.Title; L = $w.L; T = $w.T; R = $w.R; B = $w.B; Visible = $w.Visible; Ex = $w.ExStyle }
+    # L..B = visible (DWM extended frame) rect; RawL..RawB = GetWindowRect, which includes the invisible resize/shadow border.
+    $o += [pscustomobject]@{ Hwnd = $w.Hwnd; Pid = $w.Pid; Proc = (Proc-Name $w.Pid); Cls = $w.Cls; Title = $w.Title; L = $w.VL; T = $w.VT; R = $w.VR; B = $w.VB; RawL = $w.L; RawT = $w.T; RawR = $w.R; RawB = $w.B; VisFallback = $w.VisFallback; Visible = $w.Visible; Ex = $w.ExStyle }
   }
   return ,$o
 }
@@ -190,7 +191,9 @@ function Fmt-Win($w) {
   # Titles of windows that are neither ours nor IME-related (user documents, browser tabs) are never logged.
   $ours = ($script:Hwnd -ne $null -and $w.Hwnd -eq $script:Hwnd.ToInt64()) -or ($w.Title -match '^SwiftRight')
   $title = if ($ours -or (Is-ImeWin $w)) { $w.Title } else { '<redacted>' }
-  return "$($w.Proc)/$($w.Pid)|$($w.Cls)|$title|vis=$($w.Visible)|$($w.L),$($w.T),$($w.R),$($w.B)|ex=0x$('{0:X}' -f $w.Ex)"
+  $rects = "visible_rect=$($w.L),$($w.T),$($w.R),$($w.B)"
+  if ($w.RawL -ne $null) { $rects += " raw_rect=$($w.RawL),$($w.RawT),$($w.RawR),$($w.RawB) dwm=$(if ($w.VisFallback) { 'fallback' } else { 'ok' })" }
+  return "$($w.Proc)/$($w.Pid)|$($w.Cls)|$title|vis=$($w.Visible)|$rects|ex=0x$('{0:X}' -f $w.Ex)"
 }
 
 function Candidate-Windows($before) {
@@ -245,9 +248,10 @@ function Candidate-Uia {
 # visible is the candidate window. Titles of non-ours windows are never logged.
 function Cand-Hit-Probe([int]$seq) {
   try {
-    $ev = @(Parse-ImeCand 0 | Where-Object { $_.Event -eq 'open' -and $_.Caret -ne $null }) | Select-Object -Last 1
-    if ($ev -eq $null) { Log "candidate_hit skipped=no_open_event_with_caret"; return }
-    $car = $ev.Caret
+    # Exactly one open event: the newest one with a caret (the list was opened by the Space that triggered this probe).
+    $opens = @(Parse-ImeCand 0 | Where-Object { $_.Event -eq 'open' -and $null -ne $_.Caret })
+    if ($opens.Count -eq 0) { Log "candidate_hit skipped=no_open_event_with_caret"; return }
+    $car = [int[]]$opens[$opens.Count - 1].Caret
     $pts = @(
       [pscustomobject]@{ At = 'below'; X = [int]($car[0] + 20); Y = [int]($car[1] + $car[3] + 30) },
       [pscustomobject]@{ At = 'above'; X = [int]($car[0] + 20); Y = [int]($car[1] - 30) })
@@ -259,8 +263,9 @@ function Cand-Hit-Probe([int]$seq) {
       $pn = Proc-Name ([uint32]$wi.Pid)
       if (-not $wi.Visible) { Log "candidate_hit at=$($p.At) result=hidden class=$($wi.Cls) process=$pn"; continue }
       # Title deliberately not copied into the logged object (redaction): only class / process / rect are logged.
-      $w = [pscustomobject]@{ Hwnd = $wi.Hwnd; Pid = $wi.Pid; Proc = $pn; Cls = $wi.Cls; Title = ''; L = $wi.L; T = $wi.T; R = $wi.R; B = $wi.B; Visible = $true; Ex = $wi.ExStyle; Why = "candidate_hit at=$($p.At)" }
-      Log "candidate_hit at=$($p.At) class=$($wi.Cls) process=$pn rect=$($wi.L),$($wi.T),$($wi.R),$($wi.B) caret=$($car -join ',')"
+      # L..B = visible (DWM) rect, the one the anchoring rule uses; RawL..RawB = GetWindowRect with the invisible border.
+      $w = [pscustomobject]@{ Hwnd = $wi.Hwnd; Pid = $wi.Pid; Proc = $pn; Cls = $wi.Cls; Title = ''; L = $wi.VL; T = $wi.VT; R = $wi.VR; B = $wi.VB; RawL = $wi.L; RawT = $wi.T; RawR = $wi.R; RawB = $wi.B; VisFallback = $wi.VisFallback; Visible = $true; Ex = $wi.ExStyle; Why = "candidate_hit at=$($p.At)" }
+      Log "candidate_hit at=$($p.At) class=$($wi.Cls) process=$pn visible_rect=$($w.L),$($w.T),$($w.R),$($w.B) raw_rect=$($wi.L),$($wi.T),$($wi.R),$($wi.B) dwm=$(if ($wi.VisFallback) { 'fallback' } else { 'ok' }) caret=$($car -join ',')"
       $script:CandHits += [pscustomobject]@{ At = $p.At; Caret = $car; W = $w; Seq = $seq }
     }
   } catch { Log "candidate_hit exception=$($_.Exception.Message)" }
@@ -345,9 +350,13 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   Log ("candidate_probe ime_related_windows=[" + (($cw.Ime | ForEach-Object { (Fmt-Win $_) + "|why=$($_.Why)" }) -join '; ') + "]")
   if ($uiaDiag) { Log "candidate_probe uia_ime_roots=[$uiaDiag]" }
   if ($cand -ne $null) { Log "candidate_probe chosen=$(Fmt-Win $cand) why=$($cand.Why)" }
-  $bounds = if ($exeCaret -ne $null) { $exeCaret } else { Last-CaretBounds }
-  Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds)"
-  return [pscustomobject]@{ ExeEv = $exeEv; Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New; Via = $via }
+  # CompCaret = the exe-logged caret rect of THIS composition (last ime_cand line since it began, open or change). It is the
+  # reference for the follow-after-commit check; the UIA rectangle is not used for it.
+  $compWithCaret = @($exeEv | Where-Object { $null -ne $_.Caret })
+  $compCaret = if ($compWithCaret.Count -gt 0) { [int[]]$compWithCaret[$compWithCaret.Count - 1].Caret } else { $null }
+  $bounds = if ($exeCaret -ne $null) { $exeCaret } elseif ($compCaret -ne $null) { $compCaret } else { Last-CaretBounds }
+  Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds) comp_exe_caret=$(Fmt-Rect $compCaret)"
+  return [pscustomobject]@{ ExeEv = $exeEv; Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; CompCaret = $compCaret; Scale = $scale; New = $cw.New; Via = $via }
 }
 # Anchoring: the candidate must sit just below the caret (top within caret.bottom +/- 40 px) or just above it (bottom within caret.top +/- 40 px),
 # and horizontally near it (left within 60 px of caret.x, or the caret x inside the candidate's span +/- 60 px); all px scaled by DPI.
@@ -527,12 +536,19 @@ try {
     } elseif ($a1 -eq $null -or $a2 -eq $null) {
       Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "candidate window found (comp1 $($m1.Candidate.L),$($m1.Candidate.T); comp2 $($m2.Candidate.L),$($m2.Candidate.T)) but neither the exe-logged caret bounds (comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds)) nor the UIA rectangle (comp1=$(Fmt-Rect $m1.Start) comp2=$(Fmt-Rect $m2.Start)) was available, so anchoring cannot be judged"
     } else {
-      $shiftCand = $m2.Candidate.L - $m1.Candidate.L
-      $r1 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m1.Bounds } else { $m1.Start }; $r2 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m2.Bounds } else { $m2.Start }
-      $shiftComp = $r2[0] - $r1[0]
-      $shiftOk = ([math]::Abs($shiftCand - $shiftComp) -le 12 * $m1.Scale) -and ($shiftComp -gt 10 * $m1.Scale)
+      # Follow check: movement of the candidate window's visible rect between the two compositions vs movement of the exe-logged
+      # caret rect of each composition (CompCaret). Both are compared as 2-D vectors; the UIA rectangle is not used here.
+      $kc1 = $m1.CompCaret; $kc2 = $m2.CompCaret
+      if ($kc1 -eq $null -or $kc2 -eq $null) { $shiftOk = $false }
+      $cdx = $m2.Candidate.L - $m1.Candidate.L; $cdy = $m2.Candidate.T - $m1.Candidate.T
+      $shiftCand = [math]::Sqrt($cdx * $cdx + $cdy * $cdy)
+      if ($kc1 -ne $null -and $kc2 -ne $null) {
+        $kdx = $kc2[0] - $kc1[0]; $kdy = $kc2[1] - $kc1[1]
+        $shiftComp = [math]::Sqrt($kdx * $kdx + $kdy * $kdy)
+        $shiftOk = ([math]::Abs($shiftCand - $shiftComp) -le 12 * $m1.Scale) -and ($shiftComp -gt 10 * $m1.Scale)
+      } else { $shiftComp = 0 }
       Add-Check 'candidate-window-anchored-to-caret' $(if ($a1.Ok -and $a2.Ok) { 'PASS' } else { 'FAIL' }) ("candidate vs exe-logged caret rect (screen px, scale=$($m1.Scale)): comp1 caret=$(Fmt-Rect $(if ($m1.Bounds -ne $null) { $m1.Bounds } else { $m1.Start })) cand=[$(Fmt-Win $m1.Candidate)] via=$($m1.Via) placement=$($a1.Placement) dx=$([math]::Round($a1.Dx)) top-caret.bottom=$([math]::Round($a1.Dy)) bottom-caret.top=$([math]::Round($a1.DyAbove)) xOk=$($a1.XOk); comp2 caret=$(Fmt-Rect $(if ($m2.Bounds -ne $null) { $m2.Bounds } else { $m2.Start })) cand=[$(Fmt-Win $m2.Candidate)] via=$($m2.Via) placement=$($a2.Placement) dx=$([math]::Round($a2.Dx)) top-caret.bottom=$([math]::Round($a2.Dy)) bottom-caret.top=$([math]::Round($a2.DyAbove)) xOk=$($a2.XOk); rule: candidate top within caret.bottom +/-40*scale (below) or bottom within caret.top +/-40*scale (above), and left within 60*scale of caret.x or caret.x inside the candidate span +/-60*scale")
-      Add-Check 'candidate-window-follows-caret-after-commit' $(if ($shiftOk) { 'PASS' } else { 'FAIL' }) "composition start moved by $([math]::Round($shiftComp)) px after the commit; candidate window moved by $([math]::Round($shiftCand)) px (tolerance 12*scale, and the caret must have moved > 10*scale)"
+      Add-Check 'candidate-window-follows-caret-after-commit' $(if ($shiftOk) { 'PASS' } else { 'FAIL' }) "exe-logged caret per composition: comp1=$(Fmt-Rect $m1.CompCaret) comp2=$(Fmt-Rect $m2.CompCaret) caret moved $([math]::Round($shiftComp)) px; candidate visible rect comp1=$($m1.Candidate.L),$($m1.Candidate.T) comp2=$($m2.Candidate.L),$($m2.Candidate.T) moved $([math]::Round($shiftCand)) px (tolerance 12*scale; caret must move > 10*scale; no exe caret for a composition = FAIL)"
     }
     # --- Escape: back out of conversion, then out of the composition
     $esc = Esc-Until-Clear $row $v1 4
