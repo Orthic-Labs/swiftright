@@ -24,20 +24,23 @@ def normalized_lines(path):
     return lines
 
 
+CANONICAL_FORM = "sr0-a.canonical/v2"
+
+
 def canonical_digest(path):
-    """Order-insensitive within each driver step: sibling lifecycle/effect events inside one step may
-    interleave differently in SwiftUI's internal pass order. Reported separately from the raw hash."""
-    groups = {}
-    with open(path, encoding="utf-8") as handle:
-        for raw in handle:
-            raw = raw.strip()
-            if not raw:
-                continue
-            event = json.loads(raw)
-            event.pop("mono_ns", None)
-            groups.setdefault(event.get("step", ""), []).append(json.dumps(event, sort_keys=True, separators=(",", ":")))
-    body = "\n".join(f"#{step}\n" + "\n".join(sorted(lines)) for step, lines in groups.items())
-    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+    """Canonical form v2 (CONTRACT section 3): group by driver step (steps keep their order), then by node.
+    Nodes inside a step may permute (sorted); each node's event sequence keeps its recorded order.
+    Must stay identical to qualification/run.py canonical_body. Reported separately from the raw hash."""
+    steps = {}
+    for line in normalized_lines(path):
+        event = json.loads(line)
+        nodes = steps.setdefault(event.get("step", ""), {})
+        nodes.setdefault(event.get("node_id", ""), []).append(line)
+    parts = [CANONICAL_FORM]
+    for step, nodes in steps.items():
+        groups = sorted("\n".join(seq) for seq in nodes.values())
+        parts.append(f"#{step}\n" + "\n".join(groups))
+    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
 
 
 def main(argv):

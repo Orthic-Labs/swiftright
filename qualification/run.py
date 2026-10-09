@@ -4,7 +4,7 @@
 Run with:  python3 -I qualification/run.py <command> [options]
 
 Commands
-  run     execute stages: mac-oracle, compare, smoke, win-replay
+  run     execute stages in the declared order: mac-oracle, win-replay, compare, smoke, package
   seed    create the first accepted baseline for a fixture from repeat-run evidence (needs --approved-by)
   promote replace an accepted baseline with a candidate (needs --approved-by)
 
@@ -14,7 +14,13 @@ Rules (docs/architecture.md AD7 and section 11)
   * Only `promote --approved-by <name>` changes accepted traces. The approver is recorded.
   * Every stage emits JSON lines {ts, stage, event, fixture, artifact_ids, reason} to stdout and to
     qualification/out/<run>/events.jsonl. event is start|pass|fail|skip.
-  * Exit 0 when no fail event was emitted, 1 otherwise, 2 for usage errors.
+  * Every stage named in `run` is required. Exit 0 only when no fail event was emitted, no stage was skipped
+    and every stage emitted a pass; a skip or missing evidence is a failure (exit 1). --dry-run prints plans,
+    emits skip events and exits 0; it is never qualification evidence. 2 is for usage errors.
+  * --stages runs in the order given. compare consumes the Windows trace produced by an earlier win-replay in
+    the same run; a historical file needs an explicit --win-candidate and may not precede its replay.
+  * Windows pass records carry windows_exe, windows_renderer and windows_trace sha256 artifact ids.
+  * Canonical digest form sr0-a.canonical/v2: group by step, then node; per-node event order is significant.
   * win-replay drives Windows GUI jobs. It runs only with --confirm-windows-gui, or as --dry-run plan.
 """
 import argparse
@@ -40,11 +46,20 @@ CANDIDATE_ROOT = REPO / "conformance" / "candidates"
 FIXTURES_PKG = REPO / "probes" / "sr0-o" / "fixtures"
 COMPARATOR_PKG = REPO / "probes" / "sr0-o" / "comparator"
 REPEAT_DIR = FIXTURES_PKG / "out" / "repeat20"
-WIN_TRACE_DEFAULT = REPO / "probes" / "sr0-o" / "f1-cross" / "out" / "win-trace-strict-w6.json"
 MATRIX_SCRIPT = REPO / "probes" / "sr0-s" / "fresh-on-bridge" / "scripts" / "run-matrix.sh"
 SMOKE_SCRIPT = REPO / "examples" / "BridgeSmoke" / "scripts" / "schedule-smoke.ps1"
 
-STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "seed", "promote")
+STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package", "seed", "promote")
+RUN_STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package")  # default declared order
+WINDOWS_PASS_IDS = ("windows_exe", "windows_renderer", "windows_trace")
+WINDOWS_STAGES = ("win-replay", "smoke")
+PACKAGE_RECEIPT_SCHEMA = "sr0-a.package-receipt/v1"
+PACKAGE_PLATFORMS = ("windows-x64", "macos-arm64")  # scope revision 1
+PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
+WIN_TRACE_FILE = "win-trace-v0.json"
+SMOKE_BASE = "D:\\Claude\\sr0b-abi0"
+SHA_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
+ARTIFACTS_LINE_RE = re.compile(r"^ARTIFACTS exe=([0-9a-f]{64}) renderer=([0-9a-f]{64}) trace=([0-9a-f]{64})\s*$", re.M)
 EVENTS = ("start", "pass", "fail", "skip")
 EVENT_KEYS = {"ts", "stage", "event", "fixture", "artifact_ids", "reason"}
 TS_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
@@ -59,7 +74,7 @@ SHA_REF_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 VERDICT_RE = re.compile(r"^SELFTEST (F[1-9][^\s:]*)(?: variant=([a-z0-9-]+))?: (PASS|FAIL)(?: \((\d+)/(\d+)\))?", re.M)
 APPROVER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._@-]{0,63}$")
 DEFAULT_MATRIX_CONFIGS = ("F1:none", "F2:none")
-DEFAULT_FIXTURES = ("F1", "F2")
+DEFAULT_FIXTURES = tuple(CONFIGS)  # full manifest: all 16 SR0 configs
 
 
 def config_spec(config):
@@ -151,13 +166,28 @@ def raw_digest(lines):
     return sha256_text("\n".join(lines))
 
 
-def canonical_digest(lines):
-    """Order-insensitive within each driver step (normalize-hash.py --canonical)."""
-    groups = {}
+CANONICAL_FORM = "sr0-a.canonical/v2"
+
+
+def canonical_body(lines):
+    """Canonical form v2 (CONTRACT section 3): group by driver step (steps keep their order), then by node.
+    Nodes inside a step may permute, so node groups are sorted; each node's event sequence keeps its
+    recorded order, so reversing two events of one node (e.g. onDisappear vs task-cancel) changes the digest.
+    Keep identical to probes/sr0-o/fixtures/scripts/normalize-hash.py --canonical."""
+    steps = {}
     for line in lines:
-        groups.setdefault(json.loads(line).get("step", ""), []).append(line)
-    body = "\n".join(f"#{step}\n" + "\n".join(sorted(group)) for step, group in groups.items())
-    return sha256_text(body)
+        event = json.loads(line)
+        nodes = steps.setdefault(event.get("step", ""), {})
+        nodes.setdefault(event.get("node_id", ""), []).append(line)
+    parts = [CANONICAL_FORM]
+    for step, nodes in steps.items():
+        groups = sorted(("\n".join(seq) for seq in nodes.values()))
+        parts.append(f"#{step}\n" + "\n".join(groups))
+    return "\n".join(parts)
+
+
+def canonical_digest(lines):
+    return sha256_text(canonical_body(lines))
 
 
 def identity(lines):
@@ -201,6 +231,10 @@ def validate_event(record):
         raise ValueError("reason must be a string or null")
     if record["event"] in ("fail", "skip") and not (record["reason"] or "").strip():
         raise ValueError(f"{record['event']} needs a reason")
+    if record["event"] == "pass" and record["stage"] in WINDOWS_STAGES:
+        missing = [k for k in WINDOWS_PASS_IDS if k not in ids]
+        if missing:
+            raise ValueError(f"{record['stage']} pass needs artifact ids {', '.join(missing)}")
 
 
 class EventLog:
@@ -210,6 +244,8 @@ class EventLog:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._handle = open(self.path, "a", encoding="utf-8")
         self.failures = 0
+        self.skips = 0
+        self.passes = {}
 
     def emit(self, stage, event, fixture=None, artifact_ids=None, reason=None):
         record = {"ts": utc_now(), "stage": stage, "event": event, "fixture": fixture,
@@ -217,6 +253,10 @@ class EventLog:
         validate_event(record)
         if event == "fail":
             self.failures += 1
+        elif event == "skip":
+            self.skips += 1
+        elif event == "pass":
+            self.passes[stage] = self.passes.get(stage, 0) + 1
         line = json.dumps(record, sort_keys=True)
         if self.echo:
             print(line, flush=True)
@@ -333,6 +373,9 @@ def load_accepted(root, fixture):
         lines = read_normalized(fixture_dir / manifest["trace_file"])
     except TraceError as exc:
         raise AcceptedError(str(exc)) from exc
+    if manifest.get("canonical_form") != CANONICAL_FORM:
+        raise AcceptedError(f"{fixture}: manifest canonical_form {manifest.get('canonical_form')!r} "
+                            f"is not {CANONICAL_FORM} (recompute digests offline, with provenance)")
     ident = identity(lines)
     if ident["canonical_sha256"] != manifest["canonical_sha256"] or ident["raw_sha256"] != manifest["raw_sha256"]:
         raise AcceptedError(f"{fixture}: accepted trace digest does not match manifest")
@@ -371,7 +414,7 @@ def write_accepted(fixture_dir, lines, extra):
     identity_block = identity(lines)
     write_lines(fixture_dir / "trace.jsonl", lines)
     manifest = {"schema": "sr0-a.accepted/v1", "fixture": fixture_dir.name, "trace_file": "trace.jsonl",
-                **identity_block, **extra}
+                "canonical_form": CANONICAL_FORM, **identity_block, **extra}
     (fixture_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return manifest
 
@@ -532,12 +575,61 @@ def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir):
 
 # ---------------------------------------------------------------- smoke and win-replay
 
-def smoke_stage(log):
+def parse_windows_artifacts(text):
+    """The Windows scripts must print `ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256>` for each run.
+    Returns (exe, renderer, trace) of the last such line, or None."""
+    found = ARTIFACTS_LINE_RE.findall(text or "")
+    return found[-1] if found else None
+
+
+def windows_ids(exes, renderers, traces):
+    """Artifact ids for one Windows pass record. Exe and renderer must be a single build across runs."""
+    if len(set(exes)) != 1 or len(set(renderers)) != 1:
+        raise ValueError(f"runs used {len(set(exes))} exe and {len(set(renderers))} renderer builds, expected one each")
+    return {"windows_exe": sha_ref(exes[0]), "windows_renderer": sha_ref(renderers[0]),
+            "windows_trace": sha_ref(sha256_text("\n".join(sorted(set(traces)))))}
+
+
+def smoke_plan(tag):
+    script = f"{SMOKE_BASE}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
+    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Tag {tag}"],
+            "transport": "win bridge (ssh) starting one interactive scheduled task",
+            "desktop": "interactive Windows desktop session required",
+            "pass_markers": ["AUTOMATIONID PASS", "run: ok"],
+            "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"}
+
+
+def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which):
+    """Dispatches BridgeSmoke on Windows. Required: skip and missing evidence are failures outside --dry-run."""
     stage = "smoke"
-    log.emit(stage, "start", None, reason="BridgeSmoke ABI smoke")
-    log.emit(stage, "skip", None, reason=(
-        "BridgeSmoke is a Windows executable and needs an interactive Windows desktop "
-        f"({SMOKE_SCRIPT.relative_to(REPO)} via a one-shot scheduled task). It does not run on macOS."))
+    tag = "qual-" + stamp().replace(":", "").replace(".", "")
+    plan = smoke_plan(tag)
+    log.emit(stage, "start", None, reason="BridgeSmoke ABI smoke on Windows")
+    if dry_run:
+        print("PLAN " + json.dumps(plan, indent=2), file=sys.stderr)
+        log.emit(stage, "skip", None, reason="dry-run: BridgeSmoke plan printed to stderr; no Windows job started")
+        return True
+    if not confirmed:
+        log.emit(stage, "fail", None, reason="refused: Windows GUI jobs need --confirm-windows-gui (desktop is busy)")
+        return False
+    if which("win") is None:
+        log.emit(stage, "fail", None, reason="win bridge not on PATH")
+        return False
+    result = runner(plan["command"], capture_output=True, text=True)
+    text = (result.stdout or "") + (result.stderr or "")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "smoke.txt").write_text(text, encoding="utf-8")
+    markers_ok = all(m in text for m in plan["pass_markers"])
+    artifacts = parse_windows_artifacts(text)
+    if result.returncode != 0 or not markers_ok:
+        log.emit(stage, "fail", None, reason=f"BridgeSmoke did not PASS (rc={result.returncode}, markers_ok={markers_ok})")
+        return False
+    if artifacts is None:
+        log.emit(stage, "fail", None, reason="BridgeSmoke PASS lacks an ARTIFACTS line (exe, renderer, trace sha256)")
+        return False
+    log.emit(stage, "pass", None, windows_ids([artifacts[0]], [artifacts[1]], [artifacts[2]]),
+             "BridgeSmoke PASS with artifact ids")
+    return True
 
 
 def win_plan(configs, runs, out_dir):
@@ -548,7 +640,7 @@ def win_plan(configs, runs, out_dir):
             "desktop": "interactive Windows desktop session required"}
 
 
-def win_stage(log, configs, runs, out_dir, dry_run, confirmed):
+def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which):
     stage = "win-replay"
     plan = win_plan(configs, runs, out_dir)
     log.emit(stage, "start", None, reason=f"{len(configs)} configs x {runs} runs")
@@ -559,21 +651,129 @@ def win_stage(log, configs, runs, out_dir, dry_run, confirmed):
     if not confirmed:
         log.emit(stage, "fail", None, reason="refused: Windows GUI jobs need --confirm-windows-gui (desktop is busy)")
         return False
-    if shutil.which("win") is None:
+    if which("win") is None:
         log.emit(stage, "fail", None, reason="win bridge not on PATH")
         return False
-    (out_dir / "win-matrix").mkdir(parents=True, exist_ok=True)
-    result = subprocess.run(plan["command"], env={**os.environ, **plan["env"]},
-                            capture_output=True, text=True)
-    (out_dir / "win-matrix.log").write_text(result.stdout + result.stderr, encoding="utf-8")
-    lines = [l for l in result.stdout.splitlines() if " run" in l]
+    matrix_dir = out_dir / "win-matrix"
+    matrix_dir.mkdir(parents=True, exist_ok=True)
+    result = runner(plan["command"], env={**os.environ, **plan["env"]}, capture_output=True, text=True)
+    (out_dir / "win-matrix.log").write_text((result.stdout or "") + (result.stderr or ""), encoding="utf-8")
+    lines = [l for l in (result.stdout or "").splitlines() if " run" in l]
     expected = len(configs) * runs
     passed = [l for l in lines if "PASS" in l and "FAIL" not in l]
-    if result.returncode == 0 and len(passed) == expected:
-        log.emit(stage, "pass", None, reason=f"{len(passed)}/{expected} Windows runs PASS")
+    if result.returncode != 0 or len(passed) != expected:
+        log.emit(stage, "fail", None, reason=f"{len(passed)}/{expected} Windows runs PASS, rc={result.returncode}")
+        return False
+    exes, renderers, traces, missing = [], [], [], []
+    for config in configs:
+        fixture, _, variant = config.partition(":")
+        for run in range(1, runs + 1):
+            record = matrix_dir / f"{fixture}-{variant}-r{run}.txt"
+            artifacts = parse_windows_artifacts(record.read_text(encoding="utf-8", errors="replace")
+                                                if record.exists() else "")
+            if artifacts is None:
+                missing.append(record.name)
+            else:
+                exes.append(artifacts[0]); renderers.append(artifacts[1]); traces.append(artifacts[2])
+    if missing:
+        log.emit(stage, "fail", None, reason=f"{len(missing)} PASS runs lack ARTIFACTS evidence "
+                                             f"(exe, renderer, trace sha256): {', '.join(missing[:4])}")
+        return False
+    try:
+        ids = windows_ids(exes, renderers, traces)
+    except ValueError as exc:
+        log.emit(stage, "fail", None, reason=str(exc))
+        return False
+    log.emit(stage, "pass", None, ids, f"{len(passed)}/{expected} Windows runs PASS with artifact ids")
+    return True
+
+
+# ---------------------------------------------------------------- package stage (package-verification receipts)
+
+def validate_package_receipt(receipt, repo=REPO):
+    """Receipt schema sr0-a.package-receipt/v1, produced by the packaging lanes (see docs/qualification.md):
+    {schema, product, platform in PACKAGE_PLATFORMS, created_ts, verdict "PASS"|"FAIL", source_rev,
+     artifacts: {name: {sha256, path?}}, checks: [{name, result "PASS"|"FAIL"}]}.
+    A PASS needs at least one artifact and one check, every check PASS. Returns the problem list."""
+    problems = []
+    if not isinstance(receipt, dict):
+        return ["receipt is not a JSON object"]
+    if receipt.get("schema") != PACKAGE_RECEIPT_SCHEMA:
+        problems.append(f"schema != {PACKAGE_RECEIPT_SCHEMA}")
+    if receipt.get("platform") not in PACKAGE_PLATFORMS:
+        problems.append(f"platform not in {PACKAGE_PLATFORMS}")
+    for key in ("product", "created_ts", "source_rev"):
+        if not isinstance(receipt.get(key), str) or not receipt[key].strip():
+            problems.append(f"{key} missing")
+    if receipt.get("verdict") != "PASS":
+        problems.append(f"verdict is {receipt.get('verdict')!r}, not PASS")
+    artifacts = receipt.get("artifacts")
+    if not isinstance(artifacts, dict) or not artifacts:
+        problems.append("artifacts missing")
+    else:
+        for name, info in artifacts.items():
+            if not isinstance(info, dict) or not SHA_HEX_RE.match(str(info.get("sha256", ""))):
+                problems.append(f"artifact {name}: sha256 missing or malformed")
+            elif info.get("path"):
+                path = Path(info["path"])
+                path = path if path.is_absolute() else Path(repo) / path
+                if not path.is_file():
+                    problems.append(f"artifact {name}: path {info['path']} missing")
+                elif sha256_file(path) != info["sha256"]:
+                    problems.append(f"artifact {name}: sha256 does not match {info['path']}")
+    checks = receipt.get("checks")
+    if not isinstance(checks, list) or not checks:
+        problems.append("checks missing")
+    else:
+        failed = [c.get("name") if isinstance(c, dict) else c for c in checks
+                  if not (isinstance(c, dict) and c.get("result") == "PASS")]
+        if failed:
+            problems.append(f"checks not PASS: {failed}")
+    return problems
+
+
+def package_stage(log, receipt_paths, dry_run=False, repo=REPO):
+    """Consumes package-verification receipts. Fails when none exist, any is invalid, or a required
+    platform has no valid PASS receipt."""
+    stage = "package"
+    log.emit(stage, "start", None, reason=f"package receipts for {', '.join(PACKAGE_PLATFORMS)}")
+    if dry_run:
+        log.emit(stage, "skip", None, reason=f"dry-run: would read receipts {', '.join(str(p) for p in receipt_paths)}")
         return True
-    log.emit(stage, "fail", None, reason=f"{len(passed)}/{expected} Windows runs PASS, rc={result.returncode}")
-    return False
+    files = []
+    for path in receipt_paths:
+        path = Path(path)
+        if path.is_dir():
+            files.extend(sorted(path.glob("*.json")))
+        elif path.exists():
+            files.append(path)
+    if not files:
+        log.emit(stage, "fail", None, reason="no package-verification receipts found "
+                                             f"(looked in {', '.join(str(p) for p in receipt_paths)})")
+        return False
+    covered, ok = {}, True
+    for file in files:
+        try:
+            receipt = json.loads(Path(file).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            log.emit(stage, "fail", None, reason=f"{Path(file).name}: unreadable receipt: {exc}")
+            ok = False
+            continue
+        problems = validate_package_receipt(receipt, repo)
+        if problems:
+            log.emit(stage, "fail", None, {"package_receipt": sha_ref(sha256_file(file))},
+                     f"{Path(file).name}: {'; '.join(problems)}")
+            ok = False
+            continue
+        covered[receipt["platform"]] = file
+        ids = {"package_receipt": sha_ref(sha256_file(file))}
+        ids.update({f"artifact_{n}": sha_ref(i["sha256"]) for n, i in sorted(receipt["artifacts"].items())})
+        log.emit(stage, "pass", None, ids, f"{Path(file).name}: {receipt['product']} {receipt['platform']} PASS")
+    absent = [p for p in PACKAGE_PLATFORMS if p not in covered]
+    if absent:
+        log.emit(stage, "fail", None, reason=f"no valid PASS receipt for platform(s): {', '.join(absent)}")
+        return False
+    return ok
 
 
 # ---------------------------------------------------------------- seed and promote
@@ -666,30 +866,69 @@ def out_dir_for(command):
     return directory
 
 
+def run_stage_order(args):
+    """Declared order, validated. Returns (stages, error)."""
+    stages = list(args.stages or RUN_STAGES)
+    if len(set(stages)) != len(stages):
+        return stages, "a stage is named twice"
+    if "compare" in stages and "win-replay" in stages and stages.index("compare") < stages.index("win-replay"):
+        return stages, "compare is declared before win-replay and would compare a historical file; reorder"
+    return stages, None
+
+
 def cmd_run(args):
+    stages, error = run_stage_order(args)
+    if error:
+        print(f"usage error: {error}", file=sys.stderr)
+        return 2
     out_dir = out_dir_for("run")
     log = EventLog(out_dir / "events.jsonl")
+    dry = args.dry_run
     try:
-        stages = args.stages or ["mac-oracle", "compare", "smoke"]
-        if "mac-oracle" in stages:
-            if args.dry_run:
-                mac_oracle_dry(log, args.fixtures, args.runs)
-            else:
-                cmd_mac_oracle_real(log, args.fixtures, args.runs, out_dir / "mac-oracle")
-        if "compare" in stages:
-            if args.dry_run:
-                log.emit("compare", "skip", "F1", reason="dry-run: compare needs a built comparator; plan only")
-            else:
-                compare_stage(log, "F1", ACCEPTED_ROOT / "F1" / "trace-v0.json", args.win_candidate,
-                              ACCEPTED_ROOT / "F1" / "adapt-v0.json", out_dir)
-        if "smoke" in stages:
-            smoke_stage(log)
-        if "win-replay" in stages:
-            win_stage(log, args.configs, args.win_runs, out_dir, args.dry_run, args.confirm_windows_gui)
+        for stage in stages:
+            if stage == "mac-oracle":
+                if dry:
+                    mac_oracle_dry(log, args.fixtures, args.runs)
+                else:
+                    cmd_mac_oracle_real(log, args.fixtures, args.runs, out_dir / "mac-oracle")
+            elif stage == "win-replay":
+                win_stage(log, args.configs, args.win_runs, out_dir, dry, args.confirm_windows_gui)
+            elif stage == "compare":
+                run_compare(log, args, stages, out_dir, dry)
+            elif stage == "smoke":
+                smoke_stage(log, out_dir, dry, args.confirm_windows_gui)
+            elif stage == "package":
+                package_stage(log, args.package_receipts or [PACKAGE_RECEIPT_DIR], dry)
+        if not dry:
+            for stage in stages:
+                if not log.passes.get(stage):
+                    log.emit(stage, "fail", None, reason="required stage produced no pass (skip or missing evidence)")
     finally:
         log.close()
     print(f"events: {log.path}", file=sys.stderr)
-    return 1 if log.failures else 0
+    if dry:
+        print("dry-run: plans only, not qualification evidence", file=sys.stderr)
+        return 1 if log.failures else 0
+    return 1 if (log.failures or log.skips) else 0
+
+
+def run_compare(log, args, stages, out_dir, dry):
+    if dry:
+        log.emit("compare", "skip", "F1", reason="dry-run: compare needs a built comparator and a Windows trace; plan only")
+        return
+    if "win-replay" in stages:
+        candidate = out_dir / "win-matrix" / WIN_TRACE_FILE
+        origin = "fresh from win-replay"
+    elif args.win_candidate:
+        candidate, origin = args.win_candidate, "historical file named by --win-candidate"
+    else:
+        log.emit("compare", "fail", "F1", reason="no Windows trace: run win-replay first or name --win-candidate")
+        return
+    if not Path(candidate).exists():
+        log.emit("compare", "fail", "F1", reason=f"Windows trace missing ({origin}): {candidate}")
+        return
+    compare_stage(log, "F1", ACCEPTED_ROOT / "F1" / "trace-v0.json", Path(candidate),
+                  ACCEPTED_ROOT / "F1" / "adapt-v0.json", out_dir)
 
 
 def cmd_single(args, command):
@@ -711,15 +950,18 @@ def build_parser():
     sub = parser.add_subparsers(dest="command", required=True)
 
     run_p = sub.add_parser("run", help="run stages")
-    run_p.add_argument("--stages", nargs="+", choices=["mac-oracle", "compare", "smoke", "win-replay"])
+    run_p.add_argument("--stages", nargs="+", choices=list(RUN_STAGES),
+                       help="stages in the order given (default: all, in declared order)")
     run_p.add_argument("--fixtures", nargs="+", default=list(DEFAULT_FIXTURES), type=validate_fixture)
-    run_p.add_argument("--runs", type=int, default=3)
+    run_p.add_argument("--runs", type=int, default=3, help="Mac oracle runs per config")
     run_p.add_argument("--dry-run", action="store_true", help="print plans; start no GUI or Windows job")
     run_p.add_argument("--confirm-windows-gui", action="store_true", help="required to start Windows GUI matrix runs")
     run_p.add_argument("--configs", nargs="+", default=list(DEFAULT_MATRIX_CONFIGS))
     run_p.add_argument("--win-runs", type=int, default=3)
-    run_p.add_argument("--win-candidate", type=Path, default=WIN_TRACE_DEFAULT,
-                       help="Windows schema-v0 trace to compare against the Mac accepted trace")
+    run_p.add_argument("--win-candidate", type=Path, default=None,
+                       help="historical Windows schema-v0 trace for compare when win-replay is not in this run")
+    run_p.add_argument("--package-receipts", nargs="+", type=Path,
+                       help=f"receipt files or directories (default {PACKAGE_RECEIPT_DIR})")
 
     seed_p = sub.add_parser("seed", help="create first accepted baseline from repeat-run evidence")
     seed_p.add_argument("--fixture", required=True, type=validate_fixture)

@@ -324,5 +324,308 @@ class ConfigAddressingTests(FakeEnv):
             self.assertTrue((q.REPEAT_DIR / f"{config}-run1.stdout").exists(), config)
 
 
+def node_events(spec):
+    """spec: list of (step, node_id, phase) -> normalized-looking lines."""
+    return [json.dumps({"fixture": "F3", "kind": "lifecycle", "node_id": node, "payload": {"phase": phase},
+                        "step": step}, sort_keys=True, separators=(",", ":")) for step, node, phase in spec]
+
+
+class CanonicalV2Tests(unittest.TestCase):
+    BASE = [("remove", "row4", "disappear"), ("remove", "row4", "task-cancel"),
+            ("remove", "row5", "appear"), ("remove", "window", "layout"), ("reinsert", "row4", "appear")]
+
+    def test_reversing_two_events_of_one_node_changes_digest(self):
+        a = node_events(self.BASE)
+        b = node_events([self.BASE[1], self.BASE[0], *self.BASE[2:]])  # onDisappear vs task-cancel reversed
+        self.assertNotEqual(q.canonical_digest(a), q.canonical_digest(b))
+
+    def test_reversing_non_adjacent_events_of_one_node_changes_digest(self):
+        spec = [("s", "n1", "a"), ("s", "n2", "x"), ("s", "n1", "b")]
+        swapped = [("s", "n1", "b"), ("s", "n2", "x"), ("s", "n1", "a")]
+        self.assertNotEqual(q.canonical_digest(node_events(spec)), q.canonical_digest(node_events(swapped)))
+
+    def test_swapping_events_of_different_nodes_keeps_digest(self):
+        a = node_events(self.BASE)
+        b = node_events([self.BASE[2], self.BASE[0], self.BASE[1], self.BASE[3], self.BASE[4]])
+        self.assertEqual(q.canonical_digest(a), q.canonical_digest(b))
+        interleaved = node_events([self.BASE[0], self.BASE[2], self.BASE[1], self.BASE[3], self.BASE[4]])
+        self.assertEqual(q.canonical_digest(a), q.canonical_digest(interleaved))
+
+    def test_moving_an_event_across_steps_changes_digest(self):
+        a = node_events(self.BASE)
+        b = node_events([*self.BASE[:3], ("reinsert", "window", "layout"), self.BASE[4]])
+        self.assertNotEqual(q.canonical_digest(a), q.canonical_digest(b))
+
+    def test_step_order_is_significant(self):
+        a = node_events([("s1", "n", "a"), ("s2", "n", "b")])
+        b = node_events([("s2", "n", "b"), ("s1", "n", "a")])
+        self.assertNotEqual(q.canonical_digest(a), q.canonical_digest(b))
+
+    def test_normalize_hash_script_matches_runner_and_applies_same_rule(self):
+        script = QUAL.parent / "probes" / "sr0-o" / "fixtures" / "scripts" / "normalize-hash.py"
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("normalize_hash", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
+            def digest(lines, name):
+                path = Path(tmp) / name
+                path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+                return module.canonical_digest(path)
+            a = node_events(self.BASE)
+            reversed_node = node_events([self.BASE[1], self.BASE[0], *self.BASE[2:]])
+            different_nodes = node_events([self.BASE[2], self.BASE[0], self.BASE[1], self.BASE[3], self.BASE[4]])
+            self.assertEqual(digest(a, "a"), q.canonical_digest(a))
+            self.assertNotEqual(digest(a, "a"), digest(reversed_node, "b"))
+            self.assertEqual(digest(a, "a"), digest(different_nodes, "c"))
+
+    def test_accepted_manifest_with_old_canonical_form_is_refused(self):
+        with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
+            root = Path(tmp)
+            fixture_dir = root / "F1"
+            lines = trace_lines([("init", 1)])
+            q.write_accepted(fixture_dir, lines, {})
+            manifest = json.loads((fixture_dir / "manifest.json").read_text())
+            del manifest["canonical_form"]
+            (fixture_dir / "manifest.json").write_text(json.dumps(manifest))
+            with self.assertRaises(q.AcceptedError):
+                q.load_accepted(root, "F1")
+
+    def test_repo_accepted_baselines_load_under_v2(self):
+        for config in q.CONFIGS:
+            loaded = q.load_accepted(q.ACCEPTED_ROOT, config)
+            self.assertIsNotNone(loaded, config)
+            self.assertEqual(loaded["manifest"]["canonical_form"], q.CANONICAL_FORM)
+
+
+def run_args(*argv):
+    return q.build_parser().parse_args(["run", *argv])
+
+
+class StrictRunnerTests(unittest.TestCase):
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_default_mac_oracle_manifest_is_all_sixteen_configs(self):
+        args = run_args()
+        self.assertEqual(sorted(args.fixtures), sorted(q.CONFIGS))
+        self.assertEqual(len(args.fixtures), 16)
+
+    def test_default_stages_cover_smoke_and_package_in_declared_order(self):
+        stages, error = q.run_stage_order(run_args())
+        self.assertIsNone(error)
+        self.assertEqual(stages, ["mac-oracle", "win-replay", "compare", "smoke", "package"])
+
+    def test_stages_honour_the_given_order(self):
+        stages, _ = q.run_stage_order(run_args("--stages", "package", "mac-oracle"))
+        self.assertEqual(stages, ["package", "mac-oracle"])
+
+    def test_compare_before_win_replay_is_a_usage_error(self):
+        self.assertEqual(q.cmd_run(run_args("--stages", "compare", "win-replay", "--dry-run")), 2)
+        self.assertIsNotNone(q.run_stage_order(run_args("--stages", "compare", "win-replay"))[1])
+        self.assertIsNone(q.run_stage_order(run_args("--stages", "win-replay", "compare"))[1])
+
+    def test_compare_without_any_windows_trace_fails(self):
+        args = run_args("--stages", "compare")
+        q.run_compare(self.log, args, ["compare"], self.dir, dry=False)
+        self.assertEqual(self.log.failures, 1)
+
+    def test_compare_after_replay_fails_when_replay_wrote_no_trace(self):
+        args = run_args("--stages", "win-replay", "compare")
+        q.run_compare(self.log, args, ["win-replay", "compare"], self.dir, dry=False)
+        self.assertEqual(self.log.failures, 1)
+
+    def test_dry_run_skips_exit_zero_but_real_skip_is_failure(self):
+        self.assertEqual(q.cmd_run(run_args("--stages", "smoke", "package", "--dry-run")), 0)
+        log = q.EventLog(self.dir / "s.jsonl", echo=False)
+        log.emit("smoke", "skip", reason="x")
+        self.assertEqual(log.skips, 1)
+        log.close()
+
+    def test_real_run_with_unconfirmed_windows_fails(self):
+        self.assertEqual(q.cmd_run(run_args("--stages", "smoke")), 1)
+
+    def test_run_exits_nonzero_when_a_stage_skips_or_has_no_pass(self):
+        orig = q.package_stage
+        q.package_stage = lambda log, paths, dry=False, repo=q.REPO: log.emit("package", "skip", reason="no")
+        try:
+            self.assertEqual(q.cmd_run(run_args("--stages", "package")), 1)
+        finally:
+            q.package_stage = orig
+
+
+class WindowsEvidenceTests(unittest.TestCase):
+    EXE, RND, TRC = "a" * 64, "b" * 64, "c" * 64
+
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def artifacts_line(self, trace=None):
+        return f"ARTIFACTS exe={self.EXE} renderer={self.RND} trace={trace or self.TRC}\n"
+
+    def events(self):
+        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()]
+
+    def record(self, **overrides):
+        base = {"ts": "2026-10-09T10:15:30.123Z", "stage": "win-replay", "event": "pass", "fixture": None,
+                "artifact_ids": {}, "reason": "ok"}
+        base.update(overrides)
+        return base
+
+    def test_windows_pass_record_requires_artifact_ids(self):
+        for stage in ("win-replay", "smoke"):
+            with self.assertRaises(ValueError):
+                q.validate_event(self.record(stage=stage))
+            with self.assertRaises(ValueError):
+                q.validate_event(self.record(stage=stage, artifact_ids={"windows_exe": "sha256:" + "a" * 64}))
+            ids = {k: "sha256:" + "a" * 64 for k in q.WINDOWS_PASS_IDS}
+            q.validate_event(self.record(stage=stage, artifact_ids=ids))
+        q.validate_event(self.record(stage="win-replay", event="fail", reason="x"))
+
+    def fake_win(self, matrix_lines, write_evidence=True, trace=None):
+        out_dir = self.dir
+
+        def runner(command, env=None, capture_output=True, text=True):
+            if write_evidence:
+                for l in matrix_lines:
+                    fixture, variant, run = l.split()[0], l.split()[1], l.split()[2]
+                    (out_dir / "win-matrix" / f"{fixture}-{variant}-r{run[3:]}.txt").write_text(
+                        "SELFTEST PASS\n" + self.artifacts_line(trace), encoding="utf-8")
+            return argparse.Namespace(returncode=0, stdout="\n".join(l + ": SELFTEST F1: PASS" for l in matrix_lines),
+                                      stderr="")
+        return runner
+
+    def test_win_replay_passes_with_artifact_ids(self):
+        runner = self.fake_win(["F1 none run1"])
+        ok = q.win_stage(self.log, ["F1:none"], 1, self.dir, False, True, runner=runner, which=lambda n: "/bin/win")
+        self.assertTrue(ok)
+        final = self.events()[-1]
+        self.assertEqual(final["event"], "pass")
+        self.assertEqual(final["artifact_ids"]["windows_exe"], "sha256:" + self.EXE)
+        self.assertEqual(final["artifact_ids"]["windows_renderer"], "sha256:" + self.RND)
+        self.assertEqual(final["artifact_ids"]["windows_trace"], "sha256:" + q.sha256_text(self.TRC))
+
+    def test_win_replay_pass_without_artifact_evidence_fails(self):
+        runner = self.fake_win(["F1 none run1"], write_evidence=False)
+        ok = q.win_stage(self.log, ["F1:none"], 1, self.dir, False, True, runner=runner, which=lambda n: "/bin/win")
+        self.assertFalse(ok)
+        self.assertIn("ARTIFACTS", self.events()[-1]["reason"])
+        self.assertEqual(self.log.passes.get("win-replay"), None)
+
+    def test_win_replay_refuses_mixed_builds(self):
+        with self.assertRaises(ValueError):
+            q.windows_ids(["a" * 64, "d" * 64], ["b" * 64, "b" * 64], ["c" * 64] * 2)
+
+    def smoke_runner(self, text, rc=0):
+        return lambda command, capture_output=True, text_=True, **kw: argparse.Namespace(returncode=rc, stdout=text, stderr="")
+
+    def test_smoke_dry_run_prints_plan_and_skips(self):
+        self.assertTrue(q.smoke_stage(self.log, self.dir, True, False))
+        self.assertEqual(self.log.skips, 1)
+        plan = q.smoke_plan("t1")
+        self.assertEqual(plan["command"][0], "win")
+        self.assertIn("schedule-smoke.ps1", plan["command"][1])
+        self.assertIn("-Tag t1", plan["command"][1])
+
+    def test_smoke_refuses_without_confirmation(self):
+        self.assertFalse(q.smoke_stage(self.log, self.dir, False, False))
+        self.assertEqual(self.log.failures, 1)
+
+    def test_smoke_pass_needs_markers_and_artifacts(self):
+        good = "AUTOMATIONID PASS\nrun: ok\n" + self.artifacts_line()
+        self.assertTrue(q.smoke_stage(self.log, self.dir, False, True, runner=self.smoke_runner(good), which=lambda n: "w"))
+        self.assertEqual(self.events()[-1]["artifact_ids"]["windows_exe"], "sha256:" + self.EXE)
+        for text in ("AUTOMATIONID PASS\nrun: ok\n", "AUTOMATIONID FAIL\nrun: ok\n" + self.artifacts_line()):
+            log = q.EventLog(self.dir / "x.jsonl", echo=False)
+            self.assertFalse(q.smoke_stage(log, self.dir, False, True, runner=self.smoke_runner(text), which=lambda n: "w"))
+            self.assertEqual(log.failures, 1)
+            log.close()
+
+
+class PackageStageTests(unittest.TestCase):
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+        self.art = self.dir / "slice.exe"
+        self.art.write_bytes(b"exe")
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def receipt(self, platform="windows-x64", **overrides):
+        body = {"schema": q.PACKAGE_RECEIPT_SCHEMA, "product": "SliceApp", "platform": platform,
+                "created_ts": "2026-10-09T10:00:00.000Z", "source_rev": "abc1234", "verdict": "PASS",
+                "artifacts": {"slice": {"sha256": hashlib.sha256(b"exe").hexdigest(), "path": str(self.art)}},
+                "checks": [{"name": "launch", "result": "PASS"}, {"name": "signature", "result": "PASS"}]}
+        body.update(overrides)
+        return body
+
+    def write(self, name, body):
+        (self.dir / "receipts").mkdir(exist_ok=True)
+        (self.dir / "receipts" / name).write_text(json.dumps(body), encoding="utf-8")
+
+    def stage(self):
+        return q.package_stage(self.log, [self.dir / "receipts"])
+
+    def test_both_platform_receipts_pass(self):
+        self.write("win.json", self.receipt("windows-x64"))
+        self.write("mac.json", self.receipt("macos-arm64"))
+        self.assertTrue(self.stage())
+        self.assertEqual(self.log.passes["package"], 2)
+        self.assertEqual(self.log.failures, 0)
+
+    def test_absent_receipts_fail(self):
+        self.assertFalse(self.stage())
+        self.assertEqual(self.log.failures, 1)
+
+    def test_missing_platform_fails(self):
+        self.write("win.json", self.receipt("windows-x64"))
+        self.assertFalse(self.stage())
+        self.assertIn("macos-arm64", self.events()[-1]["reason"])
+
+    def events(self):
+        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()]
+
+    def test_failed_verdict_check_or_hash_mismatch_fails(self):
+        for name, overrides in (("verdict", {"verdict": "FAIL"}),
+                                ("check", {"checks": [{"name": "launch", "result": "FAIL"}]}),
+                                ("hash", {"artifacts": {"slice": {"sha256": "0" * 64, "path": str(self.art)}}}),
+                                ("nohash", {"artifacts": {"slice": {"path": str(self.art)}}}),
+                                ("nochecks", {"checks": []}),
+                                ("schema", {"schema": "other/v1"}),
+                                ("platform", {"platform": "linux-x64"})):
+            self.assertTrue(q.validate_package_receipt(self.receipt(**overrides)), name)
+        self.assertEqual(q.validate_package_receipt(self.receipt()), [])
+
+    def test_invalid_receipt_fails_even_when_platforms_are_covered(self):
+        self.write("win.json", self.receipt("windows-x64"))
+        self.write("mac.json", self.receipt("macos-arm64"))
+        self.write("bad.json", self.receipt("macos-arm64", verdict="FAIL"))
+        self.assertFalse(self.stage())
+
+    def test_malformed_json_fails(self):
+        (self.dir / "receipts").mkdir()
+        (self.dir / "receipts" / "x.json").write_text("{nope")
+        self.assertFalse(self.stage())
+
+    def test_package_dry_run_skips(self):
+        self.assertTrue(q.package_stage(self.log, [self.dir / "receipts"], dry_run=True))
+        self.assertEqual(self.log.skips, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

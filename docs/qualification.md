@@ -1,13 +1,13 @@
 # SR0-A local qualification runner
 
-Status: runner built and Mac-side verified. SR0-A is **not closed**: `docs/architecture.md` §12 makes SR0-A depend on stage P, which is still blocked (`docs/sr0-status.md`), and the Windows matrix has not been run for this runner. Nothing here commits, pushes, or branches.
+Status: runner built and Mac-side verified; hardened 2026-10-09 by SR0 close plan v2 lane R8 (see the end of this page). SR0-A is **not closed**: `docs/architecture.md` §12 makes SR0-A depend on stage P, which is still blocked (`docs/sr0-status.md`), and the Windows matrix has not been run for this runner. Nothing here commits, pushes, or branches.
 
 ## Scope of this change
 
 | Path | What |
 |---|---|
 | `qualification/run.py` | stdlib-only runner, run as `python3 -I qualification/run.py <command>` |
-| `qualification/test_run.py` | 22 unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'` |
+| `qualification/test_run.py` | 62 unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'` |
 | `conformance/accepted/F1/`, `conformance/accepted/F2/` | accepted baselines (normalized traces, manifests, provenance, PROMOTIONS log); F1 also has the schema-v0 comparator trace and its adaptations |
 | `qualification/out/` (ignored) | per-run `events.jsonl`, fixture stdout, comparator reports |
 | `qualification/.build/` (ignored) | SwiftPM scratch and exported committed source trees |
@@ -116,3 +116,33 @@ Approver IDs: `swiftright-primary@autonomy-2026-10-09` means the SwiftRight prim
 - Unit tests: `python3 -I -m unittest discover -s qualification -p 'test_*.py'`, 31 tests OK.
 - Observation: canonical digests coincide across variants (`F3`, `list-1s`, `list-3s` share one; `vstack-1s`, `vstack-3s`, `lazy-1s`, `lazy-3s` share another). The canonical trace does not record the timing variant, so it cannot tell those variants apart.
 - Not committed. The SR1 fixture working-tree edits were not touched. No FixtureApp process was left running.
+
+## 2026-10-09 R8 hardening (close plan v2, findings F3 and F4)
+
+### F4: canonical form v2 (`sr0-a.canonical/v2`)
+
+The canonical digest groups events by driver step (steps keep their order), then by `node_id`. Node groups inside a step are sorted, so different nodes may permute, but each node's own event sequence keeps its recorded order (CONTRACT section 3). Reversing `onDisappear` and task-cancel on one node now changes the digest; swapping events of different nodes does not. Implemented identically in `qualification/run.py` (`canonical_body`) and `probes/sr0-o/fixtures/scripts/normalize-hash.py --canonical`. `load_accepted` refuses a manifest whose `canonical_form` is not v2. Tests: `CanonicalV2Tests`.
+
+Offline recompute from the saved 20-run sweep (`probes/sr0-o/fixtures/out/repeat20`, 320 traces), all 16 configs:
+
+- 15 configs: exactly one canonical v2 result in 20/20 runs. The accepted trace bytes are unchanged; only `canonical_sha256` in each manifest was recomputed. Each manifest records `canonical_form`, `previous_canonical_sha256_v1`, a `canonical_recomputed` block (ts, source, per-variant run lists) and `PROMOTIONS.jsonl` has a `recanonicalize` entry.
+- **F6 is not stable under v2**: 2 canonical results (19 runs vs run 9). In step `burst-insert` the `animation` node completes tag B before tag A in run 9 (accepted order: A then B). The raw diff is in `conformance/candidates/F6/<ts>/diff.txt` (status `candidate-not-promoted`). `accepted/F6` keeps the majority trace and its manifest has `distinct_canonical_traces: 2` and a `canonical_variance` note. It was not re-seeded. Open decision: declare A/B completion order a permitted ordering (contract change) or treat it as a fixture/runtime defect. Until then F6 Mac oracle runs can fail about 1 in 20.
+- `REPEAT20.md` still shows the v1 "canonical distinct" column; read it with this note.
+
+### F3: runner strictness
+
+- Every stage named in `run` is required. Outside `--dry-run`, any `skip`, any `fail`, or a stage with no `pass` exits 1. `--dry-run` prints plans, emits `skip` events and exits 0; it is not qualification evidence.
+- `--stages` runs in the order given. Default order: `mac-oracle win-replay compare smoke package`. `compare` uses the Windows trace written by a preceding `win-replay` in the same run (`win-matrix/win-trace-v0.json`); a historical file needs explicit `--win-candidate` and `compare` declared before `win-replay` is a usage error (exit 2). There is no default historical trace.
+- `mac-oracle` defaults to all 16 configs (`--fixtures` narrows it).
+- Windows `pass` records (`win-replay`, `smoke`) must carry `windows_exe`, `windows_renderer`, `windows_trace` sha256 artifact ids (`validate_event` enforces it). The Windows scripts must print one line per run, `ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256>`; the runner fails a PASS run that lacks it and fails when runs mix exe or renderer builds. Open item for the Windows lanes: `schedule-fixture.ps1` and `drive-smoke.ps1` do not emit that line yet.
+- `smoke` dispatches BridgeSmoke through `win` and `schedule-smoke.ps1 -Tag <tag>` (dry run prints the plan; a real run needs `--confirm-windows-gui`). It passes only on `AUTOMATIONID PASS`, `run: ok` and the ARTIFACTS line.
+- `package` consumes receipts from `qualification/receipts/package/*.json` (or `--package-receipts`). Fails when none exist, any is invalid, or `windows-x64` or `macos-arm64` has no valid PASS receipt. Receipt schema `sr0-a.package-receipt/v1`:
+
+```json
+{"schema": "sr0-a.package-receipt/v1", "product": "SliceApp", "platform": "windows-x64|macos-arm64",
+ "created_ts": "2026-10-09T10:00:00.000Z", "source_rev": "<git sha>", "verdict": "PASS",
+ "artifacts": {"<name>": {"sha256": "<64 hex>", "path": "<optional; if present it must exist and match>"}},
+ "checks": [{"name": "launch", "result": "PASS"}]}
+```
+
+Verification: `python3 qualification/test_run.py` from `qualification/`, 62 tests OK (31 before).

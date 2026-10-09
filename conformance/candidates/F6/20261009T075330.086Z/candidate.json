@@ -1,0 +1,20 @@
+{
+  "accepted_canonical_sha256": "0a24aa9a3a7d0f081e86edf9ceac19d5dca0f8ba6c8405e39bc9013c4a860147",
+  "approval": null,
+  "binary_sha256": null,
+  "candidate_canonical_sha256": "3029968c76b3e7ee9d793255c8e1f735efa89b0ea8ccba39924354e9c1e38377",
+  "candidate_raw_sha256": "7cc648f5968c7a910729b44ad4b1833fb30b7e3ef5b295e228a8fa5da9bce0a7",
+  "created_ts": "2026-10-09T07:53:30.086Z",
+  "fixture": "F6",
+  "host": {
+    "arch": "arm64",
+    "build": "26A434",
+    "os": "macOS",
+    "product_version": "27.0.1"
+  },
+  "note": "Observed in repeat20 run 9 of 20 (1/20) under canonical v2: animation node completes tag B before tag A in step burst-insert (accepted: A then B). Not promoted; needs a decision whether completion order is nondeterministic (relax fixture/contract) or a bug.",
+  "promote_hint": "python3 -I qualification/run.py promote --fixture F6 --candidate conformance/candidates/F6/20261009T075330.086Z --approved-by <name>",
+  "run": 9,
+  "source_tree": "bb4258a2549f (repeat20 evidence, commit 4ff202f)",
+  "status": "candidate-not-promoted"
+}
