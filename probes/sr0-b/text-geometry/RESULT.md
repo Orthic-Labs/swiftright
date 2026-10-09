@@ -117,3 +117,9 @@ Fetched Microsoft docs confirm the degenerate-range expectation was wrong: Win32
 Source reading of `accesskit_consumer` 0.39.1 and `accesskit_windows` 0.35.1 (`GetBoundingRectangles`) shows the provider returns one zero-width box for a degenerate range (the consumer's own test at `text.rs` ~2195 asserts `x0 == x1`, full line height). The earlier FAIL value `∞,∞,-∞,-∞` is a single `Rect.Empty`: a returned element, not an empty array. My inference is that the managed `TextPatternRange` wrapper maps a zero-width rect to `Rect.Empty`; not verified. If so, the provider already satisfies the requirement and the run-3 "empty array" reading above was wrong. No renderer change was made, because there is nothing in the tree data that would change this behaviour.
 
 `scripts/run-desktop.ps1` now checks the degenerate range (and the selection range) through `UiaCoreApi.RawTextRange_GetBoundingRectangles`, which returns the provider's raw `double[]`: at least one rect, x/y/height within 1 px of the app caret, width from 0 to the caret thickness. The one-character-range check is kept. If the raw array is empty, the check fails and the detail line shows `raw_degenerate=none`, which would point at accesskit_windows or UIA core instead. Not run yet (needs desktop).
+
+## Run 4 (2026-10-09, `evidence/result-run4.json`)
+
+35/35 checks PASS. Degenerate caret restored: raw UIA provider array for the empty range at the caret =
+142,30,0,60 (zero width, full line height) vs app caret 142.95,30 h60 — PASS; the managed wrapper still returns none
+(Rect.Empty), confirming the earlier FAIL was the consumer, not the provider. One-character caret check also PASS.
