@@ -183,3 +183,9 @@ SwiftHost (fault thread started from `loop_ready`) posts: one valid job, a wrong
 | No delivery after close, none to removed node | NOT RUN |
 
 Build: Rust probe via `rightkit remote windows cargo build --release --target x86_64-pc-windows-msvc`, request `rr-1791514410034-2e472dfa8aad8b11`, SUCCEEDED, exit 0, 2382.6 s (shared queue). Swift host built with the flags above in `D:\Claude\sr0b-gpui-drain-late` (`swift build` exit 0); DLL sha256 `8181A140F1A7D88CE93052EDA08BF54FA16C8FB994AEE028D5C3B3BD7A43378E`. Run with `scripts/run-desktop.ps1 -Base D:\Claude\sr0b-gpui-drain-late`. Not executed: the desktop was in use.
+
+## Late-dispatch desktop run (2026-10-09, `result-late-dispatch.txt`)
+
+3/3 runs `late_dispatch_verdict=PASS`, `verdict=PASS`: posts after close / stale generation / dead node rejected with
+-7 (SWR_ERR_STALE), 200-post storm after close all rejected, delivered_after_close=0, delivered_dead_node=0,
+thread_mismatches=0, all posts accounted.

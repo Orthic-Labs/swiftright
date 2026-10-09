@@ -164,3 +164,12 @@ Not done: isolating the real-mouse nonclient click drop (candidates: injected in
 ## Real mouse drag (2026-10-09, desktop session; `result-realdrag.txt`)
 
 A physical-style drag on the bottom-right border produced `WM_NCLBUTTONDOWN` (HTBOTTOMRIGHT) → `WM_ENTERSIZEMOVE` → resize +200/+200 → `WM_EXITSIZEMOVE`, so GPUI's window resizes normally; our SendInput drag failure was a harness problem. The drag lasted ~200 ms, so no drains were measured during it (the SC_SIZE run covers that). **Bug found:** a press ~2 px inside the visible client edge fell through to the window behind; the probe's client area renders transparent, so it is likely click-through where alpha is 0. The renderer must create opaque windows (GPUI `WindowBackgroundAppearance::Opaque`) and paint a background.
+
+## Runs 6–8 (2026-10-09, driver rewrite 23933e1 + reposition fix)
+
+Run 8 (`result-run8.txt`): during_modal p99 4.67 ms PASS; modal_open_one_off max 49.35 ms PASS (bound 50 ms — near the
+bound, SR1 budget risk); live resize p99 0.31 ms PASS (3760 drains); move loop (keyboard SC_MOVE 0xF010) p99 0.37 ms
+PASS (3750 drains); nested_executed=0 PASS. Run 7 consistent (modal p99 2.61, open 31.9, resize 0.37, move 0.60).
+Injected border drag: NOT EVIDENCED by injection — cursor reaches HTBOTTOMRIGHT (hit=17) but SendInput left-down from the
+interactive scheduled task never produces NCLBUTTONDOWN/ENTERSIZEMOVE (also mouse-driven 0xF012 never moved the window).
+A physical drag enters the same SC_SIZE modal loop (`result-realdrag.txt`), whose budget PASSES in loop (a).

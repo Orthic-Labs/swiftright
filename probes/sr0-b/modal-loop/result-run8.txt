@@ -1,0 +1,179 @@
+registered=SR0B-Modal-run8 at=2026-10-09T10:15:54.3928067+05:30
+state=Ready last_result=0 last_run=2026-10-09T10:15:54.0000000+05:30
+deleted=SR0B-Modal-run8 exists_after=False
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T10:15:55.5845850+05:30
+dpi_awareness_per_monitor_v2_set=True
+window_hwnd=9962496 found_after_polls=3 exited_early=False
+screen=3456x2160 sizeof_input=40
+nchittest_corner inset-3=0 inset1=0 inset2=0 inset4=17 inset6=17 inset8=17 inset12=17 inset16=17 inset24=1  (17=HTBOTTOMRIGHT 15=HTBOTTOM 16=HTBOTTOMLEFT 11=HTRIGHT 1=HTCLIENT 0=HTNOWHERE 18=HTBORDER)
+resize_start rect=(908,583,2548,1581) grip=(2544,1577) inset=4 hit_at_grip=17
+virtual_desktop=(0,0) 3456x2160
+loop_a_resize SC_SIZE post_ok=True moves_ok=88/88 hold_ms=3300 s=4.28 rect (908,583,2548,1581) -> (908,583,2786,1741) changed=True
+diag[b_before_down] t=8078ms cursor=(1847,683) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+diag[b_after_post] t=8514ms cursor=(1847,683) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+loop_b mouse path did not move the window; fallback to keyboard SC_MOVE 0xF010 + arrows
+diag[b_kb_after_post] t=12856ms cursor=(1845,618) under_cursor_is_host=True fg_is_host=True gui_flags=0x2 capture=9962496 movesize=9962496 lbutton_down=False
+loop_b_move mode=keyboard_0xF010 keys=54 down=1 up=1 post_ok=True moves_ok=60/60 hold_ms=3300 s=9.08 rect (908,583,2786,1741) -> (165,1325,2043,2483) moved=True
+loop_c_reposition (165,1325) -> (908,583)
+diag[c_attempt1_before_down] t=19083ms cursor=(2782,1737) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+diag[c_attempt1_after_down] t=19239ms cursor=(2782,1737) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+loop_c_border_drag attempt=1 grip=(2782,1737) hit_at_grip=17 down=1 moves_ok=131/131 up=1 hold_ms=3300 s=5.23 rect (908,583,2786,1741) -> (908,583,2786,1741) changed=False
+diag[c_attempt2_before_down] t=24321ms cursor=(2778,1733) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+diag[c_attempt2_after_down] t=24489ms cursor=(2778,1733) under_cursor_is_host=True fg_is_host=True gui_flags=0x0 capture=0 movesize=0 lbutton_down=False
+loop_c_border_drag attempt=2 grip=(2778,1733) hit_at_grip=17 down=1 moves_ok=112/112 up=1 hold_ms=3300 s=6.40 rect (908,583,2786,1741) -> (908,583,2786,1741) changed=False
+uia_first_err_idx=1500 first_err_ms=25597
+uia_invoke n=2000 ok=1500 err=500 notfound=0 close_sent_at_ms=25756 first_err='Exception calling "Invoke" with "0" argument(s): "Unrecognized error."' total_ms=34128 first_invoke_ms=8
+exit=1 end=2026-10-09T10:17:00.1443529+05:30
+--- stdout ---
+[sr0-b rust] drain_calls=32620 tick_calls=1973 deferred_total=1 nested_executed=0 drains_idle=24137 drains_sizing=7510 drains_modal=974 drains_both=0 selftest_detected=1 panics=0 wake_signals=33494 wake_wait_failures=0 frames_rendered=1976 size_enter=2 size_exit=2 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 run_rc=0
+initial_thread_id=39216
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+main_queue_wake_handle=Optional(0x00000000000002a0)
+producer enqueued=30000 hops=500
+jobs_run=30000/30000 enqueued_before_close=30000 run_by_final_flush=30000 enqueued_after_close_refused=0 late_dropped=0
+latency_ms all p99=0.4477 max=49.3492 n=30000
+latency_ms idle p99=0.3918 n=21438
+latency_ms during_live_resize p50=0.0623 p99=0.3065 max=1.0145 n=3759
+latency_ms during_modal p50=0.0720 p99=4.6707 max=11.6669 n=1000
+latency_ms modal_open_one_off max=49.3492 n=50 (budget: single bounded stall <= 50 ms; excluded from during_modal)
+latency_ms during_move p50=0.0633 p99=0.3667 max=1.3170 n=3753
+latency_ms during_injected_border_drag p50=-1.0000 p99=-1.0000 max=-1.0000 n=0
+loop_drains resize=3760 move=3750 border_drag=0 size_loop_enters=2 exits=2
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+mainactor_hops=500/500
+swift_drain_calls=32621 swift_reentry_violations=0 selftest_swift_result=1 ticks=1973
+rust_drain_calls=32620 drains_idle=24137 drains_sizing=7510 drains_modal=974 drains_both=0 deferred_callbacks=1 nested_executed=0 selftest_detected=1 panics=0
+nc_lbuttondown=0 nc_last_hittest_code=0
+size_loop_enter=2 size_loop_exit=2 frames_during_workload=1974 frames_at_start=2 frames_at_end=1976
+modal_request_rc=0 modal_requests=1 modal_opened=1 modal_results=1 modal_errors=0 modal_result_values=[1]
+ax_attempts=3000 enqueued=3000 full=0 rejected_stale_at_post=0
+ax_popped_applied=3000 popped_stale=0 queue_len_end=0 swift_applied=1500 swift_unsupported=1500 swift_applied_after_close=0 rust_applied_after_close=0 model_clicks=1500
+sum_attempts_ok=true sum_enqueued_ok=true swift_matches_rust=true
+window_closed_calls=1 close_flush_ok=true watchdog_fired=false wake_signals=33494 wake_wait_failures=0
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+criterion during_modal_p99<=16.7ms: PASS p99=4.6707 n=1000
+criterion modal_open_one_off_max<=50ms: PASS max=49.3492 n=50
+criterion during_live_resize_p99<=16.7ms_and_drains_sizing>0: PASS p99=0.3065 n=3759 loop_drains=3760 drains_sizing=7510
+criterion during_move_p99<=16.7ms_and_drains>0: PASS p99=0.3667 n=3753 loop_drains=3750
+criterion injected_border_drag_p99<=16.7ms_and_drains>0_and_ENTERSIZEMOVE_fired: FAIL p99=-1.0000 n=0 loop_drains=0 size_enters=2
+criterion nested_executed=0: PASS nested_executed=0
+verdict=FAIL
+
+msg_clock_offset_ms=-622 (probe event t minus driver clock, calibrated on loop_a SYSCOMMAND)
+msgs_loop_a window_ms=[1919,6540]: CAPTURECHANGED=1 ENTERSIZEMOVE=1 EXITSIZEMOVE=1 NCHITTEST=1 SIZE=1 SIZING=77 SYSCOMMAND=1 WINDOWPOSCHANGED=1
+msgs_loop_b window_ms=[6830,16362]: CAPTURECHANGED=1 ENTERSIZEMOVE=1 EXITSIZEMOVE=1 SYSCOMMAND=2 WINDOWPOSCHANGED=1
+msgs_loop_c window_ms=[16958,29042]: NCHITTEST=3 WINDOWPOSCHANGED=1
+--- stderr ---
+[sr0-b ev t=0ms] WINDOWPOSCHANGED flags 0x1c 0x0 656 399
+[sr0-b ev t=0ms] SIZE type 0x0 0x0 640 360
+[sr0-b ev t=8ms] WINDOWPOSCHANGED flags 0x50001847 0x0 656 399
+[sr0-b ev t=9ms] SIZE type 0x0 0x0 640 360
+[sr0-b ev t=1808ms] NCHITTEST result 0x0 0x0 1020 634
+[sr0-b ev t=1815ms] NCHITTEST result 0x0 0x0 1019 632
+[sr0-b ev t=1816ms] NCHITTEST result 0x0 0x0 1018 632
+[sr0-b ev t=1816ms] NCHITTEST result 0x11 0x0 1018 631
+[sr0-b ev t=1817ms] NCHITTEST result 0x11 0x0 1017 630
+[sr0-b ev t=1817ms] NCHITTEST result 0x11 0x0 1016 629
+[sr0-b ev t=1818ms] NCHITTEST result 0x11 0x0 1014 628
+[sr0-b ev t=1818ms] NCHITTEST result 0x11 0x0 1013 626
+[sr0-b ev t=1818ms] NCHITTEST result 0x1 0x0 1010 623
+[sr0-b ev t=1820ms] NCHITTEST result 0x11 0x0 1018 631
+[sr0-b ev t=1826ms] NCHITTEST result 0x11 0x0 1018 631
+[sr0-b ev t=1861ms] NCHITTEST result 0x11 0x0 1018 631
+[sr0-b ev t=1982ms] SYSCOMMAND wparam 0xf008 0x0 0 0
+[sr0-b ev t=1982ms] ENTERSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=2495ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2528ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2545ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2594ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2628ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2662ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2694ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2728ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2745ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2778ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2795ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2828ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2878ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2911ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2928ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2961ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=2994ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3028ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3061ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3094ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3144ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3178ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3211ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3244ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3311ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3328ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3361ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3394ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3428ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3461ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3494ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3528ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3594ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3628ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3661ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3711ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3811ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3828ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3878ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3944ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3962ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3978ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=3994ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4061ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4128ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4161ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4178ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4194ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4261ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4294ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4328ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4361ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4394ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4411ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4444ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4478ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4511ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4544ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4578ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4644ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4711ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4744ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4811ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4844ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4894ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=4977ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5077ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5194ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5261ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5361ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5444ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5511ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5561ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5577ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5611ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5644ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5711ms] SIZING edge 0x8 0x0 0 0
+[sr0-b ev t=5742ms] CAPTURECHANGED 0x0 0x0 0 0
+[sr0-b ev t=5743ms] WINDOWPOSCHANGED flags 0x1206 0x0 751 463
+[sr0-b ev t=5743ms] SIZE type 0x0 0x0 735 424
+[sr0-b ev t=5746ms] EXITSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=5747ms] NCHITTEST result 0x11 0x0 1113 695
+[sr0-b ev t=7577ms] SYSCOMMAND wparam 0xf012 0x0 0 0
+[sr0-b ev t=11829ms] SYSCOMMAND wparam 0xf010 0x0 0 0
+[sr0-b ev t=11830ms] ENTERSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=15583ms] CAPTURECHANGED 0x0 0x0 0 0
+[sr0-b ev t=15583ms] WINDOWPOSCHANGED flags 0xa05 0x0 751 463
+[sr0-b ev t=15584ms] EXITSIZEMOVE 0x0 0x0 0 0
+[sr0-b ev t=16690ms] WINDOWPOSCHANGED flags 0x815 0x0 751 463
+[sr0-b ev t=17025ms] NCHITTEST result 0x11 0x0 1113 695
+[sr0-b ev t=17459ms] NCHITTEST result 0x11 0x0 1113 695
+[sr0-b ev t=18461ms] NCHITTEST result 0x11 0x0 1113 695
+[sr0-b ev t=22246ms] WINDOWPOSCHANGED flags 0x1803 0x0 751 463
+[sr0-b ev t=55286ms] WINDOWPOSCHANGED flags 0x20001897 0x0 751 463
+

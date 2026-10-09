@@ -1,0 +1,87 @@
+script=D:\Claude\sr0b-gpui-drain-late\scripts\run-desktop.ps1
+state=Ready last=0
+file=D:\Claude\sr0b-gpui-drain-late\result.txt
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T10:13:38.1555535+05:30
+exe=D:\Claude\sr0b-gpui-drain-late\scratch-1\out\Products\Release-windows-x86_64\SwiftHost.exe exists=True
+=== RUN 1 start=2026-10-09T10:13:38.1725907+05:30
+focus_samples: total=35 window_visible=0 window_foreground=0
+focus_first_visible: 
+focus_last_visible: 
+[sr0-b rust] loop_ready_calls=1 drain_calls=5267 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5454 wake_wait_failures=0 frames_rendered=184 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+[sr0-b rust] late_dispatch posted_ok=323 delivered=323 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=1 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0
+initial_thread_id=25132
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=10
+main_queue_wake_handle=Optional(0x000000000000029c)
+producer enqueue_rate_hz=1000.1982392910274 hops_enqueued=500
+jobs_run=5000/5000
+latency_ms p50=0.0445 p95=0.2233 p99=0.4583 max=4.2001
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5266 selftest_swift_result=1
+mainactor_hops=500/500
+frames_during_workload=183 workload_s=4.999 frames_at_start=1 frames_at_end=184
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+late_dispatch rc_valid=0 rc_wrong_gen=-7 rc_no_gen=-7 rc_live_node=0 rc_dead_node=-7 rc_after_run=-7 rc_after_run_old_gen=-7
+late_dispatch storm_ok=321 storm_stale=200 storm_full=0 storm_other=0 storm_done=true
+late_dispatch swift_delivered=323 delivered_after_close=0 delivered_dead_node=0 thread_mismatches=0
+late_dispatch stats_rc=0 posted_ok=323 delivered=323 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=202 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0 accounted=true
+late_dispatch_verdict=PASS
+verdict=PASS
+
+
+exit=0 end=2026-10-09T10:13:47.4182154+05:30
+=== RUN 2 start=2026-10-09T10:13:47.4182154+05:30
+focus_samples: total=34 window_visible=0 window_foreground=0
+focus_first_visible: 
+focus_last_visible: 
+[sr0-b rust] loop_ready_calls=1 drain_calls=5230 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 frames_rendered=188 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+[sr0-b rust] late_dispatch posted_ok=321 delivered=321 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=1 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0
+initial_thread_id=42244
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=10
+main_queue_wake_handle=Optional(0x0000000000000288)
+producer enqueue_rate_hz=1000.1975190060532 hops_enqueued=500
+jobs_run=5000/5000
+latency_ms p50=0.0615 p95=0.2441 p99=0.6754 max=5.4962
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5229 selftest_swift_result=1
+mainactor_hops=500/500
+frames_during_workload=187 workload_s=4.999 frames_at_start=1 frames_at_end=188
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+late_dispatch rc_valid=0 rc_wrong_gen=-7 rc_no_gen=-7 rc_live_node=0 rc_dead_node=-7 rc_after_run=-7 rc_after_run_old_gen=-7
+late_dispatch storm_ok=319 storm_stale=200 storm_full=0 storm_other=0 storm_done=true
+late_dispatch swift_delivered=321 delivered_after_close=0 delivered_dead_node=0 thread_mismatches=0
+late_dispatch stats_rc=0 posted_ok=321 delivered=321 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=202 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0 accounted=true
+late_dispatch_verdict=PASS
+verdict=PASS
+
+
+exit=0 end=2026-10-09T10:13:56.2340675+05:30
+=== RUN 3 start=2026-10-09T10:13:56.2340675+05:30
+focus_samples: total=35 window_visible=0 window_foreground=0
+focus_first_visible: 
+focus_last_visible: 
+[sr0-b rust] loop_ready_calls=1 drain_calls=5205 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 frames_rendered=184 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+[sr0-b rust] late_dispatch posted_ok=323 delivered=323 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=2 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0
+initial_thread_id=35444
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=10
+main_queue_wake_handle=Optional(0x000000000000027c)
+producer enqueue_rate_hz=1000.1963585491104 hops_enqueued=500
+jobs_run=5000/5000
+latency_ms p50=0.0627 p95=0.3372 p99=0.9691 max=9.9103
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5204 selftest_swift_result=1
+mainactor_hops=500/500
+frames_during_workload=183 workload_s=4.999 frames_at_start=1 frames_at_end=184
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+late_dispatch rc_valid=0 rc_wrong_gen=-7 rc_no_gen=-7 rc_live_node=0 rc_dead_node=-7 rc_after_run=-7 rc_after_run_old_gen=-7
+late_dispatch storm_ok=321 storm_stale=200 storm_full=0 storm_other=0 storm_done=true
+late_dispatch swift_delivered=323 delivered_after_close=0 delivered_dead_node=0 thread_mismatches=0
+late_dispatch stats_rc=0 posted_ok=323 delivered=323 dropped_at_close=0 dropped_at_deliver=0 rejected_closed=202 rejected_stale_gen=2 rejected_stale_node=1 rejected_full=0 accounted=true
+late_dispatch_verdict=PASS
+verdict=PASS
+
+
+exit=0 end=2026-10-09T10:14:05.3762686+05:30
+finished=2026-10-09T10:14:05.3762686+05:30
