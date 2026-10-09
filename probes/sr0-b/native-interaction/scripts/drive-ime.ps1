@@ -100,13 +100,14 @@ function Type-And-Observe([string]$row, [string]$v0, [string]$romaji) {
   }
   return ,$seen.ToArray()
 }
-function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max) {
-  $seen = New-Object System.Collections.Generic.List[string]; $n = 0
+function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max, $winBase = $null) {
+  $seen = New-Object System.Collections.Generic.List[string]; $n = 0; $script:CandSeen = $null
   while ($n -lt $max) {
     $n++
     if (-not (Send-GatedKey 0x20 "space-$n" 120)) { break }
     Start-Sleep -Milliseconds 350
     $m = Marked-Of $row $v0; $seen.Add($m)
+    if ($winBase -ne $null) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
     if ($m -eq $want) { break }
   }
   return [pscustomobject]@{ Presses = $n; Seen = $seen.ToArray(); Reached = ($seen.Count -gt 0 -and $seen[$seen.Count - 1] -eq $want) }
@@ -121,20 +122,76 @@ function Esc-Until-Clear([string]$row, [string]$v0, [int]$max) {
   return [pscustomobject]@{ Presses = $n; Marked = $m }
 }
 
-# Candidate window: located by class name among visible top-level windows other than the probe (Windows 11 candidate UI
-# is a separate top-level window); ImmGetCandidateWindow cannot be used from this process (the HIMC belongs to the probe thread).
-function Candidate-Windows($before) {
-  $beforeSet = @{}; foreach ($w in $before) { $beforeSet[$w.Hwnd] = $true }
-  $now = [SRN.N]::TopWindows(); $new = @(); $hit = @()
-  foreach ($w in $now) {
-    if (-not $w.Visible -or $w.Pid -eq $script:Proc.Id -or $w.Hwnd -eq $script:Hwnd.ToInt64()) { continue }
-    $area = ($w.R - $w.L) * ($w.B - $w.T)
-    if ($area -lt 400) { continue }
-    if (-not $beforeSet.ContainsKey($w.Hwnd)) { $new += $w }
-    if ($w.Cls -match 'Candidate' -or $w.Title -match 'Candidate') { $hit += $w }
-  }
-  return [pscustomobject]@{ New = $new; Hit = $hit }
+# Candidate window detection (rewritten). The modern Microsoft IME (Windows 11, TSF) draws its candidate list in a popup that is
+# frequently not "new" (a hidden window reused, shown on demand), not owned by the probe, and not titled "Candidate"; it may be hosted by
+# TextInputHost / ctfmon / ImeBroker or live in the probe's own process (classes IME / MSCTFIME UI). So: snapshot EVERY top-level window
+# (class, process, visible, rect) before the first Space and again after each Space; accept an IME-related window that is visible and
+# (new | became visible | moved/resized | class says Candidate). If EnumWindows finds none, fall back to UI Automation: a List / candidate
+# element under any IME-related top-level window (ImmGetCandidateWindow cannot be used: the HIMC belongs to the probe thread).
+$script:PnCache = @{}
+function Proc-Name([uint32]$procId) {
+  if (-not $script:PnCache.ContainsKey($procId)) { $n = '?'; try { $n = (Get-Process -Id $procId -ErrorAction Stop).ProcessName } catch { }; $script:PnCache[$procId] = $n }
+  return $script:PnCache[$procId]
 }
+$script:ImeClassRx = 'Candidate|^IME$|MSCTFIME|CiceroUI|Microsoft\.IME|ImeUI|IMEUI|IME\.|TextInput|InputHost|TF_|Ime'
+$script:ImeProcRx = '^(TextInputHost|ctfmon|ImeBroker|InputApp|ChsIME|MicrosoftIME.*|imejp.*|IMEJP.*|IMJP.*)$'
+function Win-Key($w) { return "$($w.Hwnd)" }
+function Snap-Windows {
+  $o = @()
+  foreach ($w in [SRN.N]::TopWindows()) {
+    $o += [pscustomobject]@{ Hwnd = $w.Hwnd; Pid = $w.Pid; Proc = (Proc-Name $w.Pid); Cls = $w.Cls; Title = $w.Title; L = $w.L; T = $w.T; R = $w.R; B = $w.B; Visible = $w.Visible; Ex = $w.ExStyle }
+  }
+  return ,$o
+}
+function Is-ImeWin($w) { return ($w.Cls -match $script:ImeClassRx) -or ($w.Title -match 'Candidate|IME|Text Input') -or ($w.Proc -match $script:ImeProcRx) }
+function Fmt-Win($w) { return "$($w.Proc)/$($w.Pid)|$($w.Cls)|$($w.Title)|vis=$($w.Visible)|$($w.L),$($w.T),$($w.R),$($w.B)|ex=0x$('{0:X}' -f $w.Ex)" }
+
+function Candidate-Windows($before) {
+  $bset = @{}; foreach ($w in $before) { $bset[(Win-Key $w)] = $w }
+  $now = Snap-Windows; $changed = @(); $ime = @(); $hit = @()
+  foreach ($w in $now) {
+    if ($w.Hwnd -eq $script:Hwnd.ToInt64()) { continue }
+    $b = $bset[(Win-Key $w)]; $why = @()
+    if ($b -eq $null) { $why += 'new' }
+    else {
+      if ($w.Visible -and -not $b.Visible) { $why += 'became-visible' }
+      if ($w.Visible -and ($b.L -ne $w.L -or $b.T -ne $w.T -or $b.R -ne $w.R -or $b.B -ne $w.B)) { $why += 'rect-changed' }
+    }
+    $w | Add-Member -NotePropertyName Why -NotePropertyValue ($why -join '+') -Force
+    $imeRel = Is-ImeWin $w
+    if ($why.Count -gt 0 -and ($w.Visible -or $b -ne $null)) { $changed += $w }
+    if ($imeRel) { $ime += $w }
+    $area = ($w.R - $w.L) * ($w.B - $w.T)
+    if ($w.Visible -and $area -ge 400 -and $imeRel -and ($why.Count -gt 0 -or $w.Cls -match 'Candidate' -or $w.Title -match 'Candidate')) { $hit += $w }
+  }
+  return [pscustomobject]@{ New = $changed; Ime = $ime; Hit = $hit }
+}
+# UIA fallback: IME-related top-level elements (by process or class), then List / candidate-named descendants with a real rectangle.
+function Candidate-Uia {
+  $res = @(); $diag = @()
+  try {
+    $root = [System.Windows.Automation.AutomationElement]::RootElement
+    $tops = $root.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)
+    $listCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::List)
+    foreach ($t in $tops) {
+      $c = $null; try { $c = $t.Current } catch { continue }
+      $pn = Proc-Name ([uint32]$c.ProcessId)
+      if (-not (($pn -match $script:ImeProcRx) -or ($c.ClassName -match $script:ImeClassRx) -or ($c.Name -match 'Candidate|Text Input'))) { continue }
+      $diag += "$pn|$($c.ClassName)|$($c.Name)|offscreen=$($c.IsOffscreen)"
+      $cands = @()
+      if ($c.ClassName -match 'Candidate' -or $c.Name -match 'Candidate') { $cands += $t }
+      try { foreach ($e in $t.FindAll([System.Windows.Automation.TreeScope]::Descendants, $listCond)) { $cands += $e } } catch { }
+      foreach ($e in $cands) {
+        $ec = $null; try { $ec = $e.Current } catch { continue }
+        $r = $ec.BoundingRectangle
+        if ($ec.IsOffscreen -or $r.IsEmpty -or $r.Width -lt 4 -or $r.Height -lt 4 -or [double]::IsInfinity($r.Left)) { continue }
+        $res += [pscustomobject]@{ Hwnd = 0; Pid = $ec.ProcessId; Proc = $pn; Cls = "uia:$($ec.ClassName)"; Title = $ec.Name; L = [int]$r.Left; T = [int]$r.Top; R = [int]$r.Right; B = [int]$r.Bottom; Visible = $true; Ex = 0; Why = 'uia-list' }
+      }
+    }
+  } catch { $diag += "uia_exception=$($_.Exception.Message)" }
+  return [pscustomobject]@{ Hits = $res; Diag = $diag }
+}
+$script:CandSeen = $null   # last EnumWindows hit seen right after any Space press (the list can vanish before the final measurement)
 function Measure-Candidate([string]$row, [string]$v0, $before) {
   Start-Sleep -Milliseconds 500
   $el = Edit $row
@@ -142,12 +199,27 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   $startRect = Char-Rect $el (Cp-Count $v0)
   $cw = Candidate-Windows $before
   $scale = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0
-  $cand = $cw.Hit | Sort-Object { ($_.R - $_.L) * ($_.B - $_.T) } | Select-Object -First 1
-  Log ("candidate_probe caret_rect=$(Fmt-Rect $caret.CaretRect) comp_start_rect=$(Fmt-Rect $startRect) new_windows=[" + (($cw.New | ForEach-Object { "$($_.Cls)|$($_.Title)|$($_.L),$($_.T),$($_.R),$($_.B)" }) -join '; ') + "] class_hits=$(@($cw.Hit).Count) scale=$scale")
+  $via = 'enumwindows'
+  $cand = $cw.Hit | Sort-Object @{ Expression = { if ($_.Cls -match 'Candidate' -or $_.Title -match 'Candidate') { 0 } else { 1 } } }, @{ Expression = { ($_.R - $_.L) * ($_.B - $_.T) } } | Select-Object -First 1
+  $uiaDiag = ''
+  if ($cand -eq $null) {
+    $u = Candidate-Uia; $uiaDiag = ($u.Diag -join '; ')
+    $cand = $u.Hits | Sort-Object @{ Expression = { ($_.R - $_.L) * ($_.B - $_.T) } } | Select-Object -First 1
+    if ($cand -ne $null) { $via = 'uia' }
+  }
+  if ($cand -eq $null -and $script:CandSeen -ne $null) { $cand = $script:CandSeen; $via = 'enumwindows-seen-during-space-presses' }
+  if ($cand -eq $null) { $via = 'none' }
+  Log ("candidate_probe caret_rect=$(Fmt-Rect $caret.CaretRect) comp_start_rect=$(Fmt-Rect $startRect) scale=$scale via=$via")
+  Log ("candidate_probe changed_windows=[" + (($cw.New | ForEach-Object { (Fmt-Win $_) + "|why=$($_.Why)" }) -join '; ') + "]")
+  Log ("candidate_probe ime_related_windows=[" + (($cw.Ime | ForEach-Object { (Fmt-Win $_) + "|why=$($_.Why)" }) -join '; ') + "]")
+  if ($uiaDiag) { Log "candidate_probe uia_ime_roots=[$uiaDiag]" }
+  if ($cand -ne $null) { Log "candidate_probe chosen=$(Fmt-Win $cand) why=$($cand.Why)" }
   $bounds = Last-CaretBounds
   Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds)"
-  return [pscustomobject]@{ Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New }
+  return [pscustomobject]@{ Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New; Via = $via }
 }
+# Anchoring: the candidate must sit just below the caret (top within caret.bottom +/- 40 px) or just above it (bottom within caret.top +/- 40 px),
+# and horizontally near it (left within 60 px of caret.x, or the caret x inside the candidate's span +/- 60 px); all px scaled by DPI.
 function Eval-Anchor($m) {
   if ($m.Candidate -eq $null) { return $null }
   # reference = what the exe returned to the IME as the caret rectangle (storeCaretBounds, EVT ime/caret-bounds); the UIA
@@ -155,9 +227,12 @@ function Eval-Anchor($m) {
   $ref = if ($m.Bounds -ne $null) { $m.Bounds } else { $m.Start }
   if ($ref -eq $null) { return $null }
   $c = $m.Candidate; $s = $m.Scale
-  $dx = $c.L - $ref[0]; $dy = $c.T - ($ref[1] + $ref[3])
-  $ok = ([math]::Abs($dx) -le 60 * $s) -and ($dy -ge -20 * $s) -and ($dy -le 140 * $s)
-  return [pscustomobject]@{ Ok = $ok; Dx = $dx; Dy = $dy }
+  $caretX = $ref[0]; $caretTop = $ref[1]; $caretBottom = $ref[1] + $ref[3]
+  $dx = $c.L - $caretX; $dyBelow = $c.T - $caretBottom; $dyAbove = $c.B - $caretTop
+  $below = [math]::Abs($dyBelow) -le 40 * $s
+  $above = [math]::Abs($dyAbove) -le 40 * $s
+  $xOk = ([math]::Abs($dx) -le 60 * $s) -or (($caretX -ge $c.L - 60 * $s) -and ($caretX -le $c.R + 60 * $s))
+  return [pscustomobject]@{ Ok = (($below -or $above) -and $xOk); Dx = $dx; Dy = $dyBelow; DyAbove = $dyAbove; Placement = $(if ($below) { 'below' } elseif ($above) { 'above' } else { 'neither' }); XOk = $xOk }
 }
 
 # ============================================================ run
@@ -222,7 +297,6 @@ try {
   if ($Fixture -eq 'F8') { [void](Focus-Edit 'Row 7'); Start-Sleep -Milliseconds 500; $v0 = Value-Of (Edit $row) }
 
   # ------------------------------------------------------------ composition 1: "nihonn" -> marked text tracks composition
-  $winBefore = [SRN.N]::TopWindows()
   $idxBefore = [array]::IndexOf((Edit-Names), $row)
   $obs1 = Type-And-Observe $row $v0 'nihonn'
   $expect1 = @('n', $NI, ($NI + 'h'), ($NI + $HO), ($NI + $HO + 'n'), ($NI + $HO + $NN))
@@ -270,7 +344,8 @@ try {
   }
 
   # ------------------------------------------------------------ conversion (Space) and candidate window
-  $sp = Space-Until $row $v0 $NIPPON 4
+  $winBefore = Snap-Windows   # snapshot immediately before the first Space
+  $sp = Space-Until $row $v0 $NIPPON 4 $winBefore
   Add-Check 'conversion-to-nihon' $(if ($sp.Reached) { 'PASS' } else { 'FAIL' }) "Space presses=$($sp.Presses) marked after each press=[$($sp.Seen -join ' | ')] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)"
   $m1 = Measure-Candidate $row $v0 $winBefore
   $a1 = Eval-Anchor $m1
@@ -287,14 +362,14 @@ try {
   # ------------------------------------------------------------ composition 2 after the commit: candidate window follows the caret
   if (Budget-Left -gt 14000) {
     $v1 = Value-Of (Edit $row)
-    $winBefore2 = [SRN.N]::TopWindows()
     [void](Type-And-Observe $row $v1 'nihonn')
-    $sp2 = Space-Until $row $v1 $NIPPON 1
+    $winBefore2 = Snap-Windows
+    $sp2 = Space-Until $row $v1 $NIPPON 1 $winBefore2
     $m2 = Measure-Candidate $row $v1 $winBefore2
     $a2 = Eval-Anchor $m2
     if ($m1.Candidate -eq $null -or $m2.Candidate -eq $null) {
-      $newDesc = ((@($m1.New) + @($m2.New)) | ForEach-Object { "$($_.Cls)|$($_.Title)|$($_.L),$($_.T),$($_.R),$($_.B)" }) -join '; '
-      Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "no visible top-level window with a class or title containing 'Candidate' was found after Space (comp1 found=$($m1.Candidate -ne $null) comp2 found=$($m2.Candidate -ne $null)); exe-logged caret bounds comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds) (screen px) so the expected anchor is known but the IME's window was not located; windows new after Space: [$newDesc]"
+      $newDesc = ((@($m1.New) + @($m2.New)) | ForEach-Object { Fmt-Win $_ }) -join '; '
+      Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "no IME candidate window was found after Space by EnumWindows (new / became-visible / moved, IME-related class or process) nor by UIA List search (comp1 found=$($m1.Candidate -ne $null) comp2 found=$($m2.Candidate -ne $null)); exe-logged caret bounds comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds) (screen px) so the expected anchor is known but the IME's window was not located; windows changed after Space: [$newDesc] (see candidate_probe ime_related_windows / uia_ime_roots log lines)"
     } elseif ($a1 -eq $null -or $a2 -eq $null) {
       Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "candidate window found (comp1 $($m1.Candidate.L),$($m1.Candidate.T); comp2 $($m2.Candidate.L),$($m2.Candidate.T)) but neither the exe-logged caret bounds (comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds)) nor the UIA rectangle (comp1=$(Fmt-Rect $m1.Start) comp2=$(Fmt-Rect $m2.Start)) was available, so anchoring cannot be judged"
     } else {
@@ -302,7 +377,7 @@ try {
       $r1 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m1.Bounds } else { $m1.Start }; $r2 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m2.Bounds } else { $m2.Start }
       $shiftComp = $r2[0] - $r1[0]
       $shiftOk = ([math]::Abs($shiftCand - $shiftComp) -le 12 * $m1.Scale) -and ($shiftComp -gt 10 * $m1.Scale)
-      Add-Check 'candidate-window-anchored-to-caret' $(if ($a1.Ok -and $a2.Ok) { 'PASS' } else { 'FAIL' }) ("candidate left/top vs composition start (screen px): comp1 cand=$($m1.Candidate.L),$($m1.Candidate.T) class=$($m1.Candidate.Cls) dx=$([math]::Round($a1.Dx)) dy_below_caret=$([math]::Round($a1.Dy)); comp2 cand=$($m2.Candidate.L),$($m2.Candidate.T) dx=$([math]::Round($a2.Dx)) dy=$([math]::Round($a2.Dy)); tolerance dx<=60*scale, dy in [-20,140]*scale, scale=$($m1.Scale)")
+      Add-Check 'candidate-window-anchored-to-caret' $(if ($a1.Ok -and $a2.Ok) { 'PASS' } else { 'FAIL' }) ("candidate vs exe-logged caret rect (screen px, scale=$($m1.Scale)): comp1 caret=$(Fmt-Rect $(if ($m1.Bounds -ne $null) { $m1.Bounds } else { $m1.Start })) cand=[$(Fmt-Win $m1.Candidate)] via=$($m1.Via) placement=$($a1.Placement) dx=$([math]::Round($a1.Dx)) top-caret.bottom=$([math]::Round($a1.Dy)) bottom-caret.top=$([math]::Round($a1.DyAbove)) xOk=$($a1.XOk); comp2 caret=$(Fmt-Rect $(if ($m2.Bounds -ne $null) { $m2.Bounds } else { $m2.Start })) cand=[$(Fmt-Win $m2.Candidate)] via=$($m2.Via) placement=$($a2.Placement) dx=$([math]::Round($a2.Dx)) top-caret.bottom=$([math]::Round($a2.Dy)) bottom-caret.top=$([math]::Round($a2.DyAbove)) xOk=$($a2.XOk); rule: candidate top within caret.bottom +/-40*scale (below) or bottom within caret.top +/-40*scale (above), and left within 60*scale of caret.x or caret.x inside the candidate span +/-60*scale")
       Add-Check 'candidate-window-follows-caret-after-commit' $(if ($shiftOk) { 'PASS' } else { 'FAIL' }) "composition start moved by $([math]::Round($shiftComp)) px after the commit; candidate window moved by $([math]::Round($shiftCand)) px (tolerance 12*scale, and the caret must have moved > 10*scale)"
     }
     # --- Escape: back out of conversion, then out of the composition

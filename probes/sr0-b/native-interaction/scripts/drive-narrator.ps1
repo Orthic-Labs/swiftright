@@ -26,15 +26,66 @@ if ((Get-Process -Id $PID).SessionId -eq 0) { Add-Check 'interactive-session' 'F
 if (-not (Verify-Tree $Base $ExpectExe $ExpectDll)) { Add-Check 'artifacts' 'FAIL' 'exe or renderer hash differs from the pinned tuple'; Write-Result $Out 'narrator'; exit 3 }
 
 # ------------------------------------------------------------ prior state
-function Snap-Reg {
-  $o = @{}
-  foreach ($k in @('HKCU:\Software\Microsoft\Narrator', 'HKCU:\Software\Microsoft\Narrator\NoRoam', 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Accessibility')) {
-    if (Test-Path $k) {
-      $p = Get-ItemProperty $k
-      $o[$k] = (($p.PSObject.Properties | Where-Object { $_.Name -notlike 'PS*' } | Sort-Object Name | ForEach-Object { "$($_.Name)=$($_.Value)" }) -join ';')
-    } else { $o[$k] = '<absent>' }
+# Registry backup/restore of every Narrator-touched key (full subtrees, with value kinds). The before-snapshot is logged AND written to
+# "$Out.regbackup.txt" (one line per value: key|name|kind|base64 of the value) so an interrupted run can still be undone by hand.
+$script:RegRoots = @('Software\Microsoft\Narrator', 'Software\Microsoft\Windows NT\CurrentVersion\Accessibility')
+function Reg-Val($k, [string]$n) {
+  $kind = $k.GetValueKind($n).ToString()
+  $v = $k.GetValue($n, $null, [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+  $enc = switch ($kind) {
+    'Binary' { [Convert]::ToBase64String([byte[]]$v) }
+    'MultiString' { [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(($v -join "`n"))) }
+    default { [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes([string]$v)) }
   }
-  return $o
+  return [pscustomobject]@{ Kind = $kind; Enc = $enc; Raw = $v }
+}
+function Reg-Walk([string]$sub, $acc) {
+  $k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($sub, $false)
+  if ($k -eq $null) { $acc[$sub] = $null; return }
+  try {
+    $vals = @{}; foreach ($n in $k.GetValueNames()) { $vals[$n] = (Reg-Val $k $n) }
+    $acc[$sub] = $vals
+    foreach ($s in $k.GetSubKeyNames()) { Reg-Walk "$sub\$s" $acc }
+  } finally { $k.Close() }
+}
+function Snap-Reg { $acc = @{}; foreach ($r in $script:RegRoots) { Reg-Walk $r $acc }; return $acc }   # key -> $null (absent) or name -> {Kind,Enc,Raw}
+function Reg-Sig($vals) { if ($vals -eq $null) { return '<absent>' }; return (($vals.Keys | Sort-Object | ForEach-Object { "$_=$($vals[$_].Kind):$($vals[$_].Enc)" }) -join ';') }
+function Reg-Save([string]$file, $snap) {
+  $lines = foreach ($k in ($snap.Keys | Sort-Object)) {
+    if ($snap[$k] -eq $null) { "$k|<key-absent>" } else { "$k|<key-present>"; foreach ($n in ($snap[$k].Keys | Sort-Object)) { "$k|$n|$($snap[$k][$n].Kind)|$($snap[$k][$n].Enc)" } }
+  }
+  [IO.File]::WriteAllText($file, [string]::Join([Environment]::NewLine, @($lines)), (New-Object Text.UTF8Encoding $false))
+}
+# Restore: set every saved value back (same kind), remove values that Narrator added, remove subkeys that did not exist before (and a root
+# that did not exist before). Returns a list of what was done.
+function Reg-Restore($before) {
+  $done = @()
+  $now = Snap-Reg
+  foreach ($sub in @($now.Keys | Sort-Object { $_.Length } -Descending)) {   # deepest first, for deletions
+    if (-not $before.ContainsKey($sub) -and $now[$sub] -ne $null) {
+      try { [Microsoft.Win32.Registry]::CurrentUser.DeleteSubKeyTree($sub, $false); $done += "deleted-key:$sub" } catch { $done += "delete-failed:$sub" }
+    }
+  }
+  foreach ($sub in @($before.Keys | Sort-Object { $_.Length })) {
+    $bv = $before[$sub]
+    if ($bv -eq $null) {
+      try { [Microsoft.Win32.Registry]::CurrentUser.DeleteSubKeyTree($sub, $false); $done += "deleted-key:$sub" } catch { }
+      continue
+    }
+    $k = [Microsoft.Win32.Registry]::CurrentUser.CreateSubKey($sub)
+    try {
+      foreach ($n in $k.GetValueNames()) { if (-not $bv.ContainsKey($n)) { $k.DeleteValue($n, $false); $done += "deleted-value:$sub\$n" } }
+      foreach ($n in $bv.Keys) {
+        $cur = $null; try { $cur = (Reg-Val $k $n) } catch { }
+        if ($cur -eq $null -or $cur.Kind -ne $bv[$n].Kind -or $cur.Enc -ne $bv[$n].Enc) {
+          $kind = [Microsoft.Win32.RegistryValueKind]$bv[$n].Kind
+          $val = $bv[$n].Raw
+          $k.SetValue($n, $val, $kind); $done += "restored:$sub\$n"
+        }
+      }
+    } finally { $k.Close() }
+  }
+  return $done
 }
 $nvda = (Get-Process -Name nvda -ErrorAction SilentlyContinue) -ne $null -or (Test-Path "$env:ProgramFiles\NVDA\nvda.exe") -or (Test-Path "${env:ProgramFiles(x86)}\NVDA\nvda.exe")
 Add-Check 'nvda' 'INFO' $(if ($nvda) { 'NVDA is present on this host but is NOT driven by this lane (not requested; out of scope here)' } else { 'NVDA is not installed: out of scope for this lane (not installed by the driver, per instruction)' })
@@ -47,6 +98,8 @@ if ($narBefore.Count -gt 0) {
 $pidsBefore = @(Get-Process | ForEach-Object { $_.Id })
 $capsBefore = ([SRN.N]::GetKeyState(0x14) -band 1)
 $regBefore = Snap-Reg
+try { Reg-Save "$Out.regbackup.txt" $regBefore; Log "registry_backup_file=$Out.regbackup.txt values=$(($regBefore.Values | ForEach-Object { if ($_ -ne $null) { $_.Count } else { 0 } } | Measure-Object -Sum).Sum)" } catch { Log "registry_backup_failed: $($_.Exception.Message)" }
+foreach ($k in ($regBefore.Keys | Sort-Object)) { if ($regBefore[$k] -eq $null) { Log "reg_before $k <absent>" } else { foreach ($n in ($regBefore[$k].Keys | Sort-Object)) { Log "reg_before $k\\$n kind=$($regBefore[$k][$n].Kind) b64=$($regBefore[$k][$n].Enc)" } } }
 $listenBefore = [SRN.N]::UiaClientsAreListening()
 Add-Check 'narrator-prior-state' 'INFO' "narrator_running=False caps_lock_on=$capsBefore uia_clients_listening=$listenBefore registry_keys_snapshotted=$($regBefore.Keys.Count)"
 
@@ -139,8 +192,19 @@ catch { Log "driver_exception: $($_.Exception.Message)"; Add-Check 'driver-run' 
 finally {
   if ($tap -ne $null) { $tap.Stop() }
   # ---------------------------------------------------------- stop Narrator, restore its prior state
+  $exitPath = 'not-attempted'
   if ($narStarted) {
-    Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    # own exit path first: Narrator key + Escape through the same gated, probe-foreground-only input path; kill only as a fallback
+    if (@(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count -gt 0 -and $script:Hwnd -ne [IntPtr]::Zero -and -not $script:Proc.HasExited) {
+      [void](Send-GatedChord @($VK_CAPS) 0x1B 'narrator-exit' 500)
+      $sw = [Diagnostics.Stopwatch]::StartNew()
+      while ($sw.ElapsedMilliseconds -lt 6000 -and @(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count -gt 0) { Start-Sleep -Milliseconds 250 }
+      $exitPath = if (@(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count -eq 0) { 'own-exit-caps+esc' } else { 'own-exit-failed' }
+    }
+    if (@(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count -gt 0) {
+      Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+      $exitPath += '+killed'
+    }
     $sw = [Diagnostics.Stopwatch]::StartNew()
     while ($sw.ElapsedMilliseconds -lt 8000 -and @(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count -gt 0) { Start-Sleep -Milliseconds 250 }
     Start-Sleep -Milliseconds 1500
@@ -148,19 +212,18 @@ finally {
   $stillRunning = @(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count
   $listenAfter = [SRN.N]::UiaClientsAreListening()
   $regAfter = Snap-Reg; $regDiff = @(); $regRestored = @()
-  foreach ($k in $regBefore.Keys) { if ($regBefore[$k] -ne $regAfter[$k]) { $regDiff += $k } }
-  $accKey = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Accessibility'
-  if ($regDiff -contains $accKey) {
-    # restore only the Accessibility key's values that changed (the list of running assistive technologies)
-    $b = @{}; foreach ($kv in ($regBefore[$accKey] -split ';')) { if ($kv -match '^([^=]+)=(.*)$') { $b[$Matches[1]] = $Matches[2] } }
-    $a = @{}; foreach ($kv in ($regAfter[$accKey] -split ';')) { if ($kv -match '^([^=]+)=(.*)$') { $a[$Matches[1]] = $Matches[2] } }
-    foreach ($n in $b.Keys) { if ($a[$n] -ne $b[$n]) { try { Set-ItemProperty -Path $accKey -Name $n -Value $b[$n]; $regRestored += $n } catch { } } }
+  foreach ($k in ($regBefore.Keys + $regAfter.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regAfter[$k])) { $regDiff += $k } }
+  if ($narStarted -and $regDiff.Count -gt 0) {
+    try { $regRestored = @(Reg-Restore $regBefore) } catch { Log "registry_restore_exception: $($_.Exception.Message)" }
   }
+  $regFinal = Snap-Reg; $regLeft = @()
+  foreach ($k in ($regBefore.Keys + $regFinal.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regFinal[$k])) { $regLeft += $k } }
+  Log "narrator_exit_path=$exitPath registry_changed=[$($regDiff -join ' ; ')] restored=[$($regRestored -join ' ; ')] still_different_after_restore=[$($regLeft -join ' ; ')]"
   # Caps Lock: Narrator consumes the key while running; if the state still differs, restore it while the probe is foreground
   $capsNow = ([SRN.N]::GetKeyState(0x14) -band 1); $capsFixed = 'n/a'
   if ($capsNow -ne $capsBefore -and $script:Hwnd -ne [IntPtr]::Zero -and -not $script:Proc.HasExited) { $capsFixed = (Send-GatedKey $VK_CAPS 'caps-lock-restore' 200); $capsNow = ([SRN.N]::GetKeyState(0x14) -band 1) }
   $leftover = @(Get-Process | Where-Object { $pidsBefore -notcontains $_.Id -and $_.Name -like 'Narrator*' }).Count
-  Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore) { 'PASS' } else { 'FAIL' }) "narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] values_restored=[$($regRestored -join ',')] (other changed Narrator keys are reported, not rewritten)"
+  Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore -and $regLeft.Count -eq 0) { 'PASS' } else { 'FAIL' }) "exit_path=$exitPath narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] registry_restored=$($regRestored.Count) still_different_after_restore=[$($regLeft -join ' ; ')] (before-snapshot in $Out.regbackup.txt)"
   Close-And-Collect 'F8'
 }
 
