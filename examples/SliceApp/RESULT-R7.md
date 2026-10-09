@@ -48,3 +48,15 @@ Re-run after Adrian set `sliceapp-base` to "App Store & Known Developers" (`spct
 | Real unpatched `right-release install-app` | REFUSES: fails at verify on `stapler-validate`. On the host the message is "SliceApp.app does not have a ticket stapled to it" (`install-app-host-0.1.0.log`); in the VM it fails earlier because the VM has no Xcode tools (`gb3`). Recorded as the result: the real install path cannot install a 0.2.139 DMG. |
 
 Staple-gap conclusion: with the stapled DMG as the carrier, Gatekeeper decides the copied, unstapled .app offline without any prompt or block beyond the normal first-open dialog. The ticket evidently comes from the DMG's staple when the app is opened from a quarantined DMG copy; this is not proven for an app delivered without the DMG (for example a zip), which is not a shipped format here. The real gap is `install-app`'s staple gate and `syspolicy_check`, not first launch. Re-run on 0.2.140.
+
+## Interrupted install on @rightkit/release 0.2.142 (atomic swap, --recover)
+
+Fresh clone of `sliceapp-base` (headless, no graphics), real unpatched 0.2.142 `install-app` (host node binary + the package copied in; VM has no Xcode tools, so the stapler-free `spctl-only` ticket path ran), 0.1.0 = the 0.2.142-built DMG (sha256 363c8768...0d5ea), 0.1.1 = `/Volumes/D/sr0-artifacts/mac/0.1.1`. Interruption injected by `scripts/interrupt-mac-install-hook.mjs` (rewritten for the 0.2.141+ flow: modes `copy`, `swap`, `swap-term`); each run: install 0.1.0, launch it once, interrupt the 0.1.1 upgrade, check, `install-app --recover`, check, uninterrupted 0.1.1 install. Logs: `/Volumes/D/sr0-artifacts/mac/0.1.0-rk0142/r7-interrupt-{copy,swap,swap-term}.log`. The VM clone was deleted afterwards.
+
+| Phase (signal) | Right after the interrupt | `--recover` | After recovery |
+|---|---|---|---|
+| copy (SIGKILL during ditto into staging) | old 0.1.0 present, verifies, launches; staged copy + journal left; DMG still mounted | `cleared` (staged removed, DMG detached) | old 0.1.0, no leftovers, launches, `rows.json` sha unchanged; follow-up 0.1.1 install OK |
+| swap (SIGKILL right after installed -> backup) | **app ABSENT** (backup beside it, journal "swapping"); DMG still mounted | `restored-backup` (DMG detached) | old 0.1.0 back, verifies, launches, no leftovers, `rows.json` unchanged; follow-up 0.1.1 install OK |
+| swap (SIGTERM, same point) | old 0.1.0 present (handler rolled back), DMG detached, no leftovers, exit 143 | nothing to recover (0) | old 0.1.0, launches, data unchanged |
+
+Finding: the old non-atomic outcome (old bundle stranded in `~/.Trash`) is gone; no bundle goes to the Trash before the new one verifies. Remaining window: a hard SIGKILL between the two renames leaves the install path absent until the next `install-app` or `install-app --recover` (milliseconds wide; documented behaviour of rename-only swaps without a kernel-level exchange). Signals SIGINT/SIGTERM are fully handled.

@@ -30,7 +30,7 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `scripts/swift-only-proof.mjs` | Swift-only-edit proof: renderer bytes identical, no Rust compile |
 | `scripts/make-local-appinstaller.mjs`, `scripts/serve-local-feed.ps1` | Local App Installer feed for the Sandbox (F8) |
 | `scripts/interrupt-windows-install.ps1`, `scripts/interrupt-mac-install.sh` | Real interrupted-update experiments (F6) |
-| `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release`. The mac one builds the app, signs it with its entitlements, and builds the DMG |
+| `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release`. The mac one builds the app and signs it with its entitlements (right-release builds the DMG) |
 
 Data: rows persist to `rows.json` (schema 1, atomic write):
 - macOS: `~/Library/Application Support/SliceApp/rows.json`
@@ -101,11 +101,11 @@ Upload is a separate step and needs Adrian's explicit request for the exact seal
 pnpm exec right-release upload --release <id> --platform win --tier patch
 ```
 
-macOS DMG flow (what the mac target runs, in order): `prePackage` (`scripts/prepackage-mac.sh`: `swift build -c release`,
-`swift-package mac-app --sign` (app with `Mac/SliceApp.entitlements`, Developer ID, hardened runtime), `right-release dmg build`
-into `dist/mac/SliceApp_0.1.0_arm64.dmg`), then `sign.prePackageFiles` (the DMG container, Developer ID), then `notarize.file`
-(the DMG, submitted with profile `apple-dev-notary`; `notarize-macos.mjs` staples the DMG and validates it), then hardening
-on the DMG. No zip is produced.
+macOS DMG flow (@rightkit/release >= 0.2.142, in order): `prePackage` (`scripts/prepackage-mac.sh`: `swift build -c release`,
+`swift-package mac-app --sign`: app with `Mac/SliceApp.entitlements`, Developer ID, hardened runtime; no DMG), then `sign.prePackageFiles`
+(the `.app`, signed inside-out), `notarize.appBeforePackage` (the `.app` is notarized and stapled), the automatic DMG step
+(`targets.mac.dmg`: right-release builds `dist/mac/SliceApp_0.1.0_arm64.dmg` from the stapled app and Developer ID signs it), then
+`notarize.file` (the DMG, profile `apple-dev-notary`, stapled and validated), then hardening on the DMG. No zip is produced.
 
 Required outputs: `dist/win/SliceApp_0.1.0.0_x64.msix`, `dist/win/SliceApp.appinstaller`, `dist/mac/SliceApp_0.1.0_arm64.dmg`,
 the signing receipts and `msix-seal.json` under the RightKit state root.

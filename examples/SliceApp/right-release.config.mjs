@@ -86,20 +86,19 @@ export default {
     mac: {
       signed: true,
       signingContract: "macos-developer-id-notarized-portable-v1",
-      // prePackage: swift build, assemble SliceApp.app, Developer ID sign the app with its entitlements
-      // (swift-package mac-app --sign applies swift-package.json mac.entitlements), then build the branded DMG
-      // from the signed app. The DMG is the signed, notarized, stapled artifact (stapleable; a zip is not).
-      // Order: prePackage (swift build, assemble + sign the .app, build a first DMG; sign.prePackageFiles must name an
-      // existing FILE, and right-release 0.2.140 cannot receipt-verify a .app directory there) -> sign that DMG ->
-      // notarize + staple the .app (appBeforePackage) -> package (rebuild the DMG from the stapled app) -> postSign
-      // (sign the rebuilt DMG) -> notarize + staple the DMG.
+      // Order (@rightkit/release >= 0.2.142): prePackage (swift build, assemble + Developer ID sign the .app with its
+      // entitlements via swift-package mac-app --sign; no DMG here, preflight rejects a prePackage DMG) -> sign the
+      // .app inside-out (sign.prePackageFiles) -> notarize + staple the .app (appBeforePackage) -> right-release builds
+      // the DMG itself from the stapled app (targets.mac.dmg), signs it, then notarizes + staples the DMG.
       prePackage: { cmd: "sh", args: ["scripts/prepackage-mac.sh"] },
-      sign: { prePackageFiles: [MAC_DMG] },
-      package: { cmd: "sh", args: ["scripts/package-mac.sh"] },
-      // The DMG container is signed after packaging (Developer ID, hardened runtime, timestamp).
-      postSign: {
-        cmd: "node",
-        args: ["node_modules/@rightkit/release/sign-macos.mjs", "--receipt", path.join(".build", "dmg-sign.receipt.json"), MAC_DMG],
+      sign: { prePackageFiles: [MAC_APP] },
+      dmg: {
+        volname: "SliceApp",
+        background: "Mac/dmg/background.tiff",
+        window: "660,400",
+        iconSize: 128,
+        appPosition: "158,231",
+        applicationsPosition: "492,231",
       },
       // release.mjs notarizes this file; notarize-macos.mjs staples a .dmg container itself.
       notarize: { app: MAC_APP, appBeforePackage: true, file: MAC_DMG, profile: "apple-dev-notary" },
