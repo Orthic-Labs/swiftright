@@ -119,6 +119,8 @@ final class BridgeBackend {
     private var fieldGeometry: [UUID: FieldGeometry] = [:]
     private var focusedRow: UUID?
     private var focusTarget: UInt64 = 0
+    /// Bridge id of a button focused through AX/UIA SetFocus (Narrator item navigation). Cleared by any row focus.
+    private var axButtonFocus: UInt64 = 0
 
     init(bridge: Bridge, model: EditorModel) {
         self.bridge = bridge
@@ -236,7 +238,8 @@ final class BridgeBackend {
         walk(root, parent: 0, order: 0, insideAffordance: false, parentKind: "",
              upserts: &upserts, parents: &parents, releasable: &releasable)
 
-        focusTarget = focusedRow.flatMap { textFieldByRow[$0] } ?? 0
+        if axButtonFocus != 0, parents[axButtonFocus] == nil { axButtonFocus = 0 }
+        focusTarget = axButtonFocus != 0 ? axButtonFocus : (focusedRow.flatMap { textFieldByRow[$0] } ?? 0)
         var removes: [UInt64] = []
         for (id, parent) in liveParent where parents[id] == nil {
             if parent == 0 || parents[parent] != nil { removes.append(id) }
@@ -389,6 +392,7 @@ final class BridgeBackend {
                 invoke(node: ev.node)
             case .focus?:
                 if let row = rowByTextField[ev.node] { focusRow(row) }
+                else if buttonRuntimeID[ev.node] != nil { axButtonFocus = ev.node; dirty = true }
             case .setValue?:
                 if let row = rowByTextField[ev.node] {
                     model.editText(row, ev.text)
@@ -432,6 +436,7 @@ final class BridgeBackend {
     }
 
     private func focusRow(_ row: UUID) {
+        axButtonFocus = 0
         // Focus leaving a composing field commits its composition (as the IME does on focus loss).
         if let previous = focusedRow, previous != row, let state = textState(for: previous) {
             _ = state.unmark()

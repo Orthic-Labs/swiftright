@@ -133,6 +133,8 @@ final class BridgeBackend {
     private var fieldGeometry: [UUID: FieldGeometry] = [:]
     private(set) var focusedRow: UUID?
     private(set) var focusTarget: UInt64 = 0
+    /// Bridge id of a button focused through AX/UIA SetFocus (Narrator item navigation). Cleared by any row focus.
+    private var axButtonFocus: UInt64 = 0
 
     // Input and renderer bookkeeping (read by the self-test).
     /// Text-store replace calls (the keystroke path: VK input through the renderer).
@@ -348,7 +350,8 @@ final class BridgeBackend {
         var releasable: [TextRunHandle] = []
         walk(root, parent: 0, order: 0, insideAffordance: false, upserts: &upserts, parents: &parents, releasable: &releasable)
 
-        focusTarget = focusedRow.flatMap { textFieldByRow[$0] } ?? 0
+        if axButtonFocus != 0, parents[axButtonFocus] == nil { axButtonFocus = 0 }
+        focusTarget = axButtonFocus != 0 ? axButtonFocus : (focusedRow.flatMap { textFieldByRow[$0] } ?? 0)
         var removes: [UInt64] = []
         for (id, parent) in liveParent where parents[id] == nil {
             if parent == 0 || parents[parent] != nil { removes.append(id) }
@@ -525,6 +528,10 @@ final class BridgeBackend {
             case .focus?:
                 axFocusEvents += 1
                 if let row = rowByTextField[ev.node] { focusRow(row, source: "ax") }
+                else if buttonRuntimeID[ev.node] != nil {
+                    axButtonFocus = ev.node; dirty = true
+                    log.emit("focus", node: "focus", payload: ["focused": "button:\(ev.node)", "source": "ax"])
+                }
             case .setValue?:
                 axSetValues += 1
                 if let row = rowByTextField[ev.node] {
@@ -592,6 +599,7 @@ final class BridgeBackend {
     }
 
     private func focusRow(_ row: UUID, source: String) {
+        axButtonFocus = 0
         // Focus leaving a composing field commits its composition (as the IME does on focus loss).
         if let previous = focusedRow, previous != row, let state = textState(for: previous) {
             _ = state.unmark()
