@@ -304,6 +304,7 @@ for ($r = 1; $r -le $Runs; $r++) {
         $stderr = $proc.StandardError.ReadToEndAsync()
 
         $clock = [Diagnostics.Stopwatch]::StartNew()
+        $nextSample = 0.0
         $samples = 0; $visible = 0; $foreground = 0
         $occludedN = 0; $probeFgN = 0
         $fgTried = $false
@@ -358,7 +359,10 @@ for ($r = 1; $r -le $Runs; $r++) {
                 $t = $clock.Elapsed.TotalSeconds.ToString('0.000', $inv)
                 $lines.Add("change run=$id t=+${t}s fg=$($snap.FgProc)|$($snap.FgTitle) probe_fg=$([int]$snap.ProbeFg) probe_visible=$([int]$snap.ProbeVisible) occluded_by=$occText cloaked=$($snap.ProbeCloaked) cur_desktop=$($snap.OnCurrentDesktop) hit_pct=$($snap.HitPct) fg_geom=$($snap.FgGeom)")
             }
-            Start-Sleep -Milliseconds 50
+            # Deadline-based cadence: sample every 50 ms regardless of per-sample probe cost.
+            $nextSample += 50
+            $wait = [int]($nextSample - $clock.Elapsed.TotalMilliseconds)
+            if ($wait -gt 0) { Start-Sleep -Milliseconds $wait } else { $nextSample = $clock.Elapsed.TotalMilliseconds }
         }
         if (-not $proc.HasExited) { $proc.Kill(); $lines.Add('TIMEOUT: killed after 120 s') }
         $proc.WaitForExit()
@@ -385,7 +389,12 @@ for ($r = 1; $r -le $Runs; $r++) {
         $nWl = $wl.Count
         $fgN = 0; $minHit = -1; $hitMin = 'NA'
         if ($null -eq $ws) { $reasons.Add('no-window-ticks') }
-        elseif ($nWl -lt 80) { $reasons.Add('sparse-samples') }
+        else {
+            # Require >= 80% of the samples a 50 ms cadence would give over the actual workload window.
+            $wlSec = ($we - $ws) / [double][System.Diagnostics.Stopwatch]::Frequency
+            $needWl = [int][Math]::Floor(0.8 * $wlSec / 0.05)
+            if ($nWl -lt $needWl) { $reasons.Add("sparse-samples($nWl<$needWl)") }
+        }
         if ($nWl -gt 0) {
             $fgN = @($wl | Where-Object { $_.probe_fg -eq 1 }).Count
             if ($fgN -lt $nWl) { $reasons.Add('probe_fg<100%') }

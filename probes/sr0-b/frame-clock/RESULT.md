@@ -184,3 +184,14 @@ Against §11 revision 1 (p95 ≤ refresh 16.664 + 0.1 = 16.764 ms; zero missed v
 - tbp-8: another session's RightKit test window ("RK2 target window") took foreground for ~8 s and every frame was dropped although rect/z-order occlusion lasted only 0.33 s. Either DWM drops frames for this non-foreground window, or the occluder escapes the rect test. Investigate GPUI's inactive-window behaviour.
 
 Open before SR0-B closes the frame budget: explain tbp-1's p95 tail, the PresentMon capture gaps, and frame drops while not foreground.
+
+## PresentMon batch 4 (2026-10-09, desktop session; rerun after the SxS rebuild)
+
+Capture integrity improved: 30/30 probe PIDs have PresentMon rows (all-process capture, PID matching), no ETW loss lines. The analyzer still marked 0/30 valid:
+- **Harness defect (fixed after the batch):** every run was flagged `sparse-samples` because each sample costs ~16 ms on top of the 50 ms sleep (p50 cadence 66 ms) and the threshold was a fixed 80. `run-desktop-v3.ps1` now samples on a 50 ms deadline and requires ≥ 80 % of the samples the actual workload window implies.
+- **Desktop contention from this project:** other SwiftRight windows (FreshOnBridge F1, BridgeSmoke from parallel lanes) sat at the probe's rect; nosamp-3 and nosamp-5 dropped every workload frame next to them while the rect/z-order check reported no occlusion. Desktop GUI lanes must now run one at a time.
+- **Interactive use of the host:** KeyShot (incl. its update popup), ChatGPT and the Claude window took foreground or occluded the probe in 12 runs.
+
+Undisturbed runs (probe foreground 100 %, no occlusion, invalid only for the harness defect): tbp-1, nosamp-1, base-2, tbp-2, nosamp-2, tbp-3, tbp-4, tbp-6, nosamp-6, base-7, tbp-7 — zero drops, zero missed vblanks, displayed p95 16.684–16.702 ms, inside §11 rev 1 (≤ 16.764 ms). base-3, nosamp-7 and tbp-8 had 1–3 drops (single 33.3 ms intervals).
+
+Batch 5 needs: the fixed harness, no other SwiftRight GUI lane on the desktop, and an idle host for ~10 minutes.
