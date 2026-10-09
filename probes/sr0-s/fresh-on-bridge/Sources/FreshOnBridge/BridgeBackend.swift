@@ -326,7 +326,11 @@ final class BridgeBackend {
     /// Converts one commit record into one ABI transaction. Full upsert of the resolved tree each time;
     /// removes are the top-most ids that left the tree. A nil root (runtime teardown) removes every node.
     func commit(_ record: CommitRecord) {
-        guard let window else { return }
+        // After close nothing is sent: a pending commit is dropped and counted, not an error.
+        guard let window, !closedFlag else {
+            if closedFlag, record.root != nil { commitsAfterClose += 1 }
+            return
+        }
         guard let root = record.root else {
             commitTeardown(window)
             return
@@ -482,7 +486,7 @@ final class BridgeBackend {
             if let row {
                 textFieldByRow[row] = id
                 rowByTextField[id] = row
-                semantic = SemanticNode(role: .textField, label: "Row \(FreshModelSlot.slot(of: row))", value: text,
+                semantic = SemanticNode(role: .textField, label: "", value: text,
                                         actions: [.focus, .setValue, .setSelection], runs: runs, selection: selection,
                                         identifier: "row/\(row.uuidString)/field")
             }

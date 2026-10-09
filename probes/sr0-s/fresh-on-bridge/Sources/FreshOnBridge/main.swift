@@ -97,6 +97,7 @@ func runFreshOnBridge(options: FixtureOptions) -> Int32 {
         fflush(stdout)
         return 1
     }
+    test.finishAfterRun()
     if !test.finished {
         print("SELFTEST \(options.label): FAIL (run ended before the self-test finished)")
         fflush(stdout)

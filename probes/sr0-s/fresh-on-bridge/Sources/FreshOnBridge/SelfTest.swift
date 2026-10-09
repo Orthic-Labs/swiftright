@@ -54,6 +54,8 @@ final class SelfTest {
     /// F9: swr_stats.live_nodes read in the post-close pump, before shutdownComplete (nil = not read).
     private var liveNodesAtPump: UInt64?
     private(set) var finished = false
+    /// Set when the renderer reports window-closed; main.swift uses it to print results if the pump ends first.
+    private(set) var windowClosedSeen = false
     private(set) var exitCode: Int32 = 1
     var requestQuit: (() -> Void)?
 
@@ -397,13 +399,14 @@ final class SelfTest {
 
     /// Host window-closed callback (the renderer shuts down after it returns).
     func windowClosed() {
+        windowClosedSeen = true
         closeCommitMark = backend.commitCount
         if options.fixture == .F9 {
             // Cancelled tasks still wait on their engine continuation, which keeps the tree alive. Resume them,
             // then judge release after the post-close pump has run the unwinding tasks (ABI rev 0.5).
             releaseSeqMark = log.events().map { seq($0) }.max() ?? -1
             engine.releaseAll()
-            pumpThenFinish(hopsLeft: 200)
+            pumpThenFinish(hopsLeft: 5000)
             return
         }
         finish(reason: "window-closed")
@@ -414,14 +417,30 @@ final class SelfTest {
     /// live_nodes and finishes. finish() calls shutdownComplete, which ends the pump.
     private var f9Expected: Int { options.f9NoTasks ? 0 : 11 }
 
-    private func pumpThenFinish(hopsLeft: Int) {
-        let done = lateCount("rejected") >= f9Expected && lateCount("cleanup") >= f9Expected
-        if done || hopsLeft <= 0 {
-            liveNodesAtPump = bridge.stats().live_nodes
+    private func pumpThenFinish(hopsLeft: Int, firstHop: Bool = true) {
+        // The renderer frees its tree only after window_closed returns, so the first read is deferred to a hop
+        // that runs inside the post-close pump. Poll until the late results are in and live_nodes is 0, bounded
+        // by hops and wall clock (inside the renderer's 5 s timer); a value that never reaches 0 is reported.
+        if firstHop { pumpStarted = Date() }
+        let live = bridge.stats().live_nodes
+        liveNodesAtPump = live
+        let late = lateCount("rejected") >= f9Expected && lateCount("cleanup") >= f9Expected
+        let expired = hopsLeft <= 0 || Date().timeIntervalSince(pumpStarted) > 3
+        if !firstHop, (late && live == 0) || expired {
             finish(reason: "window-closed")
             return
         }
-        DispatchQueue.main.async { MainActor.assumeIsolated { self.pumpThenFinish(hopsLeft: hopsLeft - 1) } }
+        DispatchQueue.main.async { MainActor.assumeIsolated { self.pumpThenFinish(hopsLeft: hopsLeft - 1, firstHop: false) } }
+    }
+
+    private var pumpStarted = Date()
+
+    /// The renderer ended the post-close pump (quit or timeout) before the checks ran: print the results now,
+    /// from the host's own state, instead of reporting a bare failure. Safe after `run` returned.
+    func finishAfterRun() {
+        guard !finished, windowClosedSeen else { return }
+        liveNodesAtPump = bridge.stats().live_nodes
+        finish(reason: "pump ended by renderer before post-close checks completed", afterRun: true)
     }
 
     /// Effect events with the given phase logged after the post-close engine release.
@@ -449,7 +468,7 @@ final class SelfTest {
             pass("renderer-no-violations", st.thread_violations == 0 && st.host_panics == 0,
                  "thread_violations=\(st.thread_violations) host_panics=\(st.host_panics)"),
             pass("commits-accepted", backend.commitErrors.isEmpty && backend.commitCount >= 1,
-                 "commits=\(backend.commitCount) errors=\(backend.commitErrors.count)"),
+                 "commits=\(backend.commitCount) errors=\(backend.commitErrors.count) dropped-after-close=\(backend.commitsAfterClose)\(backend.commitErrors.first.map { " first-error=\($0)" } ?? "")"),
             pass("no-measure-or-draw-failures", backend.measurerFailures() == 0 && backend.drawFailures == 0,
                  "measure=\(backend.measurerFailures()) draw=\(backend.drawFailures) \(backend.measurerError())\(backend.lastDrawError)"),
         ]
@@ -618,8 +637,9 @@ final class SelfTest {
                 pass("committed-text-on-original-identity", text(r2) == "Row 2kana", "text=\(text(r2) ?? "nil")"),
                 pass("identity-index-shift", index(r2) == 2, "index=\(index(r2).map(String.init) ?? "nil")"),
                 pass("focus-stays-on-identity", lastFocusID() == r2, "focus=\(lastFocusID()?.uuidString ?? "nil")"),
-                pass("insert-committed", model.rows.first?.text == "Engine 0"),
-                pass("no-teardown", count(node: r2.uuidString, phase: "disappear") == 0),
+                pass("insert-committed", model.rows.first?.text == "Engine 0", "top=\(model.rows.first?.text ?? "nil")"),
+                pass("no-teardown", count(node: r2.uuidString, phase: "disappear") == 0,
+                     "row2 disappear events before window close=\(count(node: r2.uuidString, phase: "disappear")) (teardown at close excluded: \(count(node: r2.uuidString, phase: "disappear", includeTeardown: true)) incl. teardown)"),
                 pass("text-store-keystrokes", backend.keystrokes == ["k", "a"], "replace calls=\(backend.keystrokes.joined(separator: ","))"),
                 pass("composition-uncommitted-in-model", mark1?.committed == "Row 2ka" && mark2?.committed == "Row 2ka",
                      "committed during composition=\(mark1?.committed ?? "nil") / \(mark2?.committed ?? "nil")"),
@@ -692,7 +712,7 @@ final class SelfTest {
 
     // MARK: Finish
 
-    private func finish(reason: String) {
+    private func finish(reason: String, afterRun: Bool = false) {
         guard !finished else { return }
         finished = true
         let checks = buildChecks()
@@ -723,6 +743,7 @@ final class SelfTest {
         print("SELFTEST \(options.label): \(verdict) (\(passCount)/\(asserted.count) asserted; blocked=\(blockedCount); end=\(reason))")
         fflush(stdout)
         // Ends swr_run. Needed after a window close too: the renderer loop does not return on its own.
+        if afterRun { return }
         requestQuit?()
         // Ends the post-close pump at once (ABI rev 0.5); E_STATE before the window closed, ignored.
         try? bridge.shutdownComplete()

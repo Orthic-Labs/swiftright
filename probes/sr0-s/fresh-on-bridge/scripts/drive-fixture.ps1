@@ -83,7 +83,25 @@ function Find-Named([string]$name, $type, [int]$timeoutMs = 0) {
   } while ($sw.ElapsedMilliseconds -lt $timeoutMs)
   return $null
 }
-function Edit([string]$name, [int]$t = 0) { Find-Named $name ([System.Windows.Automation.ControlType]::Edit) $t }
+# Text fields carry no AX label (Mac oracle parity); a field is addressed by its AutomationId
+# "row/<uuid>/field", whose uuid ends in the row slot. "Row N" below is the slot name used by the script.
+function Edit-Slot($el) {
+  $id = $el.Current.AutomationId
+  if ($id -match '-0*(\d+)/field$') { return "Row $($Matches[1])" }
+  return $null
+}
+function Edit([string]$name, [int]$t = 0) {
+  if ($root -eq $null) { return $null }
+  $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
+  $sw = [Diagnostics.Stopwatch]::StartNew()
+  do {
+    foreach ($el in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond)) {
+      if ((Edit-Slot $el) -eq $name) { return $el }
+    }
+    if ($sw.ElapsedMilliseconds -lt $t) { Start-Sleep -Milliseconds 150 }
+  } while ($sw.ElapsedMilliseconds -lt $t)
+  return $null
+}
 function Button([string]$name, [int]$t = 0) { Find-Named $name ([System.Windows.Automation.ControlType]::Button) $t }
 function Text-Elem([string]$name, [int]$t = 0) { Find-Named $name ([System.Windows.Automation.ControlType]::Text) $t }
 function Value-Of($el) {
@@ -161,7 +179,7 @@ function Focus-Edit([string]$name) {
   }
   Log "focus[$name]=NOT_CONFIRMED focused=[$(Focused-Name)]"
 }
-function Focused-Name { try { [System.Windows.Automation.AutomationElement]::FocusedElement.Current.Name } catch { "ERR" } }
+function Focused-Name { try { $f = [System.Windows.Automation.AutomationElement]::FocusedElement; $n = Edit-Slot $f; if ($n) { $n } else { $f.Current.Name } } catch { "ERR" } }
 function Invoke-Named($el, [string]$label) {
   if ($el -eq $null) { Log "invoke[$label]=NOT_FOUND"; return }
   try { $el.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); Log "invoke[$label]=ok" } catch { Log "invoke[$label]=ERR $($_.Exception.Message)" }
@@ -175,7 +193,7 @@ function Edit-Names {
   if ($root -eq $null) { return @() }
   $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
   $all = $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond)
-  return @($all | ForEach-Object { $_.Current.Name })
+  return @($all | ForEach-Object { $n = Edit-Slot $_; if ($n) { $n } else { $_.Current.Name } })
 }
 function Delete-Near([string]$editName) {
   # The Delete button on the same row as the named edit: nearest by vertical centre.
