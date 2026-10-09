@@ -9,7 +9,7 @@
 #   --origin    default: git@github.com:bogusyogi/swiftright.git
 #   --scratch   default: $HOME/.swiftright-clean/<sha12>  (refused if inside the primary checkout)
 #   --rightkit  default: /Volumes/D/claude/tools/rightkit  (local @rightkit/release package; read-only use)
-#   --stage     doctor = right-release doctor only; build (default) = right-release build (seal, NO upload)
+#   --stage     doctor = right-release doctor only; build (default) = right-release release --tier patch --no-upload (build, sign, notarize, staple, seal; NO upload)
 #   --dry-run   parse and validate arguments, print the plan, touch nothing
 # Never runs upload/publish-update. The commit must already be pushed to origin.
 #
@@ -78,6 +78,6 @@ pnpm install --frozen-lockfile
 if [ "$STAGE" = doctor ]; then
   pnpm exec right-release doctor --platform mac --config right-release.config.mjs
 else
-  pnpm exec right-release build --platform mac --config right-release.config.mjs
+  pnpm exec right-release release --tier patch --platform mac --no-upload --config right-release.config.mjs
 fi
 echo "done: $STAGE at $FULL (clone: $CLONE). Artifacts under $CLONE/examples/SliceApp/dist and the RightKit state root."

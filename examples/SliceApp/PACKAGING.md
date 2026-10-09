@@ -325,3 +325,41 @@ release.mjs:113), and build also requires a clean whole-repository tree (`assert
 checkout, with config and build inputs matching HEAD. The swiftright tree has the above SliceApp edits plus unrelated uncommitted
 `probes/sr0-s/fresh-on-bridge` and `probes/sr1-pulse-probe` work from other sessions. Resolution needs Adrian's commit of the
 SliceApp prep (and the other sessions' work committed or removed); no bypass was attempted.
+
+## R3 signed Mac build (2026-10-09): BLOCKED at preflight, nothing built, signed, or notarized
+
+Source: origin/master `c7c7eb6a2d520d4784e5204550e121fca6e97b5e`, independent clone `/Volumes/D/sr0-build/mac-c7c7eb6/swiftright`
+(branch `sr0-clean-c7c7eb6a2d52`, scratch outside the primary checkout; `<scratch>/tools/rightkit` links the local RightKit tree).
+Tool identity (pre-publication): RightKit HEAD `61ace202d83d6b2afe4f1138c9540a8854bf8a1d`, version 0.2.137, with uncommitted
+`packages/release` changes (`git status --short packages/release`): M CHANGELOG.md, README.md, build-release.mjs, build-release.test.mjs,
+cache-policy.mjs, msix-build.mjs, preflight.mjs, publish-update.mjs, release-invocation.mjs, release.mjs, swift-package.test.mjs;
+?? msix-appinstaller.mjs, msix-config.mjs, msix-plan.mjs, msix-target.mjs, msix.test.mjs, project-type.mjs, swift-build-context.mjs,
+swift-build-context.test.mjs.
+
+Findings, in the order hit:
+
+1. `scripts/clone-build-mac.sh` defect (stage `build`): `right-release build --platform mac` fails with `sliceapp has no mac package command`
+   (build-release.mjs:170 requires `target.package` or an MSIX target; the mac DMG flow is `release --tier patch --platform mac --no-upload`,
+   as "Sealed build" above says). The script's default stage must be `release --tier patch --no-upload`. Not edited (no commit allowed).
+2. `link:` dependency rejected: `right-release doctor` in both the primary and the clone stops with
+   `sliceapp @rightkit/release must come from the published npm package, not link:../../../tools/rightkit/packages/release`
+   (release.mjs `validateRightKitPackageContract`, `FORBIDDEN_RIGHTKIT_SPEC`). Workaround inside the clone only (two local commits,
+   `4092acc` then `6587313`): `package.json` and the lockfile specifier set to `0.2.137` while `node_modules/@rightkit/release` stays a
+   symlink to the local tree. Do NOT let `pnpm exec` resolve it from the registry: it silently installs the published 0.2.137, which
+   has no swiftpm support (fails with `native Cargo manifest missing .../src-tauri/Cargo.toml`).
+3. BLOCKER (RightKit ownership registration, not patched): with the workaround, `doctor --platform mac` runs preflight and fails
+
+   ```
+   [FAIL] ownership: ownership evidence failed: repository is not registered in protected trust
+          fix: restore protected RightKit ownership trust and catalog
+   ```
+   (preflight.mjs:320 <- ownership-evidence.mjs:92 `verifyRepositoryRegistration`; identity from `origin` `bogusyogi/swiftright`).
+   swift 6.4, version-free and disk checks pass. The protected ownership registry is off limits to agents (a hook blocks reading it), so
+   whether `bogusyogi/swiftright` is simply unregistered was not inspected. Needs RightKit owner action: register the repository (roots
+   covering `examples/SliceApp`). Stopped; no bypass attempted. Old (0.1.0) and new (0.1.1) were not built.
+4. Receipt note: `sr0-a.package-receipt/v2` (`qualification/run.py` PACKAGE_CHECKS) declares only install-side checks (M00-M11); it has no
+   build/sign check type, so a build receipt JSON would sit next to the artifacts once a build exists. None written (no artifacts).
+
+Resume once item 3 is resolved: in the clone, `cd examples/SliceApp && pnpm exec right-release release --tier patch --platform mac
+--config right-release.config.mjs --no-upload`; then a second clone with the 0.1.1 bump commit (VERSION, config, swift-package.json,
+package.json, DMG name in `prepackage-mac.sh`, one Swift edit); then codesign/spctl/stapler verification and sha256 recording.
