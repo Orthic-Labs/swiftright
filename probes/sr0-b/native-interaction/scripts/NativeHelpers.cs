@@ -48,6 +48,29 @@ namespace SRN {
     /// Screen coordinates (physical px, the driver is per-monitor DPI aware) of the window's client origin.
     public static int[] ClientOrigin(IntPtr h) { PT p = new PT(); ClientToScreen(h, ref p); return new int[] { p.X, p.Y }; }
     [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+    [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(PT p);
+    [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr h, uint flags);
+    public const uint GA_ROOT = 2;
+    /// Root (GA_ROOT) window under a screen point (physical px), 0 when none. Read only.
+    public static long RootAt(int x, int y) {
+      PT p = new PT(); p.X = x; p.Y = y;
+      IntPtr h = WindowFromPoint(p);
+      if (h == IntPtr.Zero) return 0;
+      return GetAncestor(h, GA_ROOT).ToInt64();
+    }
+    /// Geometry, class, owner pid and visibility of one window (title is read but callers decide whether to log it).
+    public static WinInfo InfoOf(IntPtr h) {
+      WinInfo w = new WinInfo();
+      w.Hwnd = h.ToInt64();
+      uint pid; GetWindowThreadProcessId(h, out pid); w.Pid = pid;
+      StringBuilder c = new StringBuilder(256); StringBuilder t = new StringBuilder(256);
+      GetClassNameW(h, c, 256); GetWindowTextW(h, t, 256);
+      w.Cls = c.ToString(); w.Title = t.ToString();
+      RECT r; GetWindowRect(h, out r); w.L = r.Left; w.T = r.Top; w.R = r.Right; w.B = r.Bottom;
+      w.Visible = IsWindowVisible(h);
+      w.ExStyle = GetWindowLongW(h, -20);
+      return w;
+    }
     [DllImport("user32.dll")] public static extern int GetWindowLongW(IntPtr h, int index);
     [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
     [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int hgt, bool repaint);

@@ -88,6 +88,7 @@ function Restore-Ime {
 # (cand_windows = visible windows of our process, the default IME window, and visible classes containing IME/Candidate; screen px;
 #  caret = the caret rect the exe returns to the IME, screen px; form_pt/form_rc are CLIENT px as the IME holds them.)
 $script:CandOpenSeen = 0; $script:CandShots = 0; $script:CompStartIdx = 0
+$script:CandHits = @()   # live WindowFromPoint hits taken at each ime_cand open (see Cand-Hit-Probe); Seq = open-line count when taken
 function Exe-ErrLines { try { return @($script:ErrTap.Snapshot()) } catch { return @() } }
 function Parse-ImeCand([int]$from = 0) {
   $o = @(); $all = Exe-ErrLines
@@ -115,6 +116,7 @@ function Cand-Trigger {
   $n = @(Exe-ErrLines | Where-Object { $_ -match 'ime_cand event=open' }).Count
   if ($n -gt $script:CandOpenSeen) {
     $script:CandOpenSeen = $n
+    Cand-Hit-Probe $n
     if ($script:CandShots -lt 4) { $script:CandShots++; Log "ime_cand_open_trigger n=$n shot=$($script:CandShots)"; Capture-Evidence "open$n" }
   }
 }
@@ -237,6 +239,33 @@ function Candidate-Uia {
   return [pscustomobject]@{ Hits = $res; Diag = $diag }
 }
 
+# Live hit test at the moment the exe logs IMN_OPENCANDIDATE: the Microsoft IME candidate/prediction list is drawn directly below
+# the caret (and is not found by EnumWindows class/process filters or UIA List search). Probe 30 px below the caret bottom and
+# 30 px above the caret top (x = caret.left + 20); the root window (GA_ROOT) under each point that is not our probe window and is
+# visible is the candidate window. Titles of non-ours windows are never logged.
+function Cand-Hit-Probe([int]$seq) {
+  try {
+    $ev = @(Parse-ImeCand 0 | Where-Object { $_.Event -eq 'open' -and $_.Caret -ne $null }) | Select-Object -Last 1
+    if ($ev -eq $null) { Log "candidate_hit skipped=no_open_event_with_caret"; return }
+    $car = $ev.Caret
+    $pts = @(
+      [pscustomobject]@{ At = 'below'; X = [int]($car[0] + 20); Y = [int]($car[1] + $car[3] + 30) },
+      [pscustomobject]@{ At = 'above'; X = [int]($car[0] + 20); Y = [int]($car[1] - 30) })
+    foreach ($p in $pts) {
+      $root = [SRN.N]::RootAt($p.X, $p.Y)
+      if ($root -eq 0) { Log "candidate_hit at=$($p.At) result=none"; continue }
+      if ($root -eq $script:Hwnd.ToInt64()) { Log "candidate_hit at=$($p.At) result=probe_window"; continue }
+      $wi = [SRN.N]::InfoOf([IntPtr]$root)
+      $pn = Proc-Name ([uint32]$wi.Pid)
+      if (-not $wi.Visible) { Log "candidate_hit at=$($p.At) result=hidden class=$($wi.Cls) process=$pn"; continue }
+      # Title deliberately not copied into the logged object (redaction): only class / process / rect are logged.
+      $w = [pscustomobject]@{ Hwnd = $wi.Hwnd; Pid = $wi.Pid; Proc = $pn; Cls = $wi.Cls; Title = ''; L = $wi.L; T = $wi.T; R = $wi.R; B = $wi.B; Visible = $true; Ex = $wi.ExStyle; Why = "candidate_hit at=$($p.At)" }
+      Log "candidate_hit at=$($p.At) class=$($wi.Cls) process=$pn rect=$($wi.L),$($wi.T),$($wi.R),$($wi.B) caret=$($car -join ',')"
+      $script:CandHits += [pscustomobject]@{ At = $p.At; Caret = $car; W = $w; Seq = $seq }
+    }
+  } catch { Log "candidate_hit exception=$($_.Exception.Message)" }
+}
+
 # Evidence capture (R9 candidate diagnosis): screenshot of OUR probe window + 300 px margin only (CopyFromScreen of that rect), and a full
 # EnumWindows dump (visible AND invisible) of every IME-related window (class / process / title match) plus every window overlapping the
 # probe region. Called right after Space press 1, and again ~1.2 s later in case the list is delayed.
@@ -296,6 +325,18 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   if ($exeBest -ne $null) {
     $w = $exeBest.W; $cand = [pscustomobject]@{ Hwnd = 0; Pid = 0; Proc = 'exe-log'; Cls = $w.Cls; Title = ''; L = $w.L; T = $w.T; R = $w.R; B = $w.B; Visible = $true; Ex = 0; Why = "exe ime_cand event=$($exeBest.E.Event)" }
     $exeCaret = $exeBest.E.Caret; $via = 'exe-ime_cand'
+  }
+  # live hit-test candidates taken at ime_cand open events of this composition (see Cand-Hit-Probe); anchored hits override the
+  # EnumWindows / UIA / exe-log choice, and an unanchored hit is used only when nothing else was found.
+  $openBefore = @(@(Exe-ErrLines | Select-Object -First $script:CompStartIdx) | Where-Object { $_ -match 'ime_cand event=open' }).Count
+  $hitBest = $null
+  foreach ($h in @($script:CandHits | Where-Object { $_.Seq -gt $openBefore })) {
+    $a = Anchored-To $h.Caret $h.W $scale
+    if ($hitBest -eq $null -or ($a.Ok -and -not $hitBest.A.Ok)) { $hitBest = [pscustomobject]@{ H = $h; A = $a } }
+  }
+  Log ("candidate_probe hit_candidates=$(@($script:CandHits | Where-Object { $_.Seq -gt $openBefore }).Count) best=$(if ($hitBest) { "$($hitBest.H.At) anchored=$($hitBest.A.Ok)" } else { 'none' })")
+  if ($hitBest -ne $null -and ($hitBest.A.Ok -or $exeBest -eq $null)) {
+    $cand = $hitBest.H.W; $exeCaret = $hitBest.H.Caret; $via = 'candidate-hit-' + $hitBest.H.At
   }
   if ($cand -eq $null) { $via = 'none' }
   Log ("candidate_probe exe_ime_cand_lines=$(@($exeEv).Count) opens=$(@($exeEv | Where-Object { $_.Event -eq 'open' }).Count) with_visible_ui_window=$(@($exeEv | Where-Object { @(Cand-UiWins $_).Count -gt 0 }).Count) best=$(if ($exeBest) { "$($exeBest.W.Cls)@$($exeBest.W.L),$($exeBest.W.T),$($exeBest.W.R),$($exeBest.W.B) anchored=$($exeBest.A.Ok)" } else { 'none' })")
