@@ -1,0 +1,64 @@
+registered=SR0B-Smoke-timeout at=2026-10-09T09:40:01.7999374+05:30
+state=Ready last_result=0
+deleted=SR0B-Smoke-timeout exists_after=False
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T09:40:02.4891127+05:30
+window_hwnd=13306436 polls=2 exited_early=False
+styles style=0x14CF0000 exstyle=0x240100 WS_EX_LAYERED=False WS_EX_TRANSPARENT=False WS_EX_NOREDIRECTIONBITMAP=True
+client=1600x1200 origin=(928,508) edge_point=(930,608) window_from_point_is_target=True wm_nchittest=1 (1=HTCLIENT)
+edge_click_sent=true
+uia_invoke=ok
+empty_edit_textpattern=PASS selections=1 degenerate_at_0=True text_empty=True
+defocused foreground_is_target=False
+refocused foreground_is_target=True
+uia_edit_value=[a]
+automation_id[title/hello]=ok control_type=ControlType.Text name=[Hello SwiftRight: bridge ABI v0] name_ok=True
+automation_id[text/paragraph]=ok control_type=ControlType.Text name=[The quick brown fox jumps over the lazy dog while SwiftRight wraps this text.] name_ok=True
+automation_id[toolbar/press]=ok control_type=ControlType.Button name=[Press me] name_ok=True
+automation_id[field/edit]=ok control_type=ControlType.Edit name=[Edit] name_ok=True
+automation_id[status/ax]=ok control_type=ControlType.Text name=[AX invokes: 1  typed: [a]] name_ok=True
+automation_id_checks=5/5
+AUTOMATIONID PASS
+exit=1 end=2026-10-09T09:40:24.3264675+05:30
+--- stdout ---
+ready: window=100000001 client=1600x1396px scale=2.5
+event: pointer down x=2.0 y=100.0 hit=0 snapshot=2 window_w=1600
+event: AX action=2 node=2
+event: AX invoke node=2 window=100000001 snapshot=2 (current 2)
+event: key a typed=a mods=0
+frames_while_not_foreground: ticks_with_inactive_window=170 of 1273
+renderer stats: paints=1275 commits=4 measure_calls=18 cache_hits=9 events=8 ax_enqueued=2 ax_rejected=0 ime_calls=2 ime_busy=0 live_nodes=0 post_close_drains=2 post_close_timeouts=0
+run: ok
+PASS wrap at 2 widths [wide(1050px)=2 lines 906.7x120.0; narrow(500px)=3 lines 487.5x180.0]
+PASS height = lines x line height
+PASS line breaks cover all bytes [utf8 77 wide=77 narrow=77]
+PASS cache hit on repeat measure [key f99cb0be541c5a26]
+PASS char cells [77 cells, last on line 2]
+PASS stale run handle rejected [second release returned false]
+PASS stale commit version rejected [SWR_E_STALE_VERSION]
+PASS bogus window generation rejected [SWR_E_STALE_HANDLE]
+PASS underline primitive (IME marked text) accepted [accepted 1->2 rejected 2->2; limitation: the renderer exposes no per-primitive draw counter, so painting is not asserted (stats.paints only counts frames)]
+PASS commit after close rejected [SWR_E_SHUTDOWN]
+PASS startup validation [abi 0.5 fn_count=14 stats_size=200]
+PASS AX Invoke handled [invokes=1 window gen tag ok=true]
+PASS typed character reached the text store [typed=[a] ime_replace_calls=1 key_events=1]
+PASS click 2px inside the client edge reached the window [pointer_events=2]
+PASS display ticks delivered [ticks=1273 max_gap_ms=19.7 paints=1275]
+PASS non-reentrant drain [selftest=1 swift_refused=0 rust_refused=0 drains=1291]
+PASS no thread violations or host panics [thread_violations=0 host_panics=0]
+PASS commits accepted; only the 4 injected faults rejected [accepted=4 rejected=4 deferred_in_ime=1]
+PASS window_closed delivered once [calls=1]
+PASS late async result after close rejected [commit=SWR_E_SHUTDOWN measure=SWR_E_SHUTDOWN]
+PASS cleanup ran in post-close pump [post_close_drains=2]
+PASS live nodes zero after teardown [at cleanup=0 after run=0]
+PASS swr_shutdown_complete before close returns SWR_E_STATE and has no effect [rc=SWR_E_STATE post_close_drains_at_call=0 window kept running: close_calls=1]
+PASS timeout mode: app never called swr_shutdown_complete
+FAIL pump ended by the 5 s timeout [SKIP_SHUTDOWN] [timeouts=0 run returned 0.02s after window_closed (bound=5s)]
+PASS swr_shutdown_complete after timeout-ended run [rc=SWR_OK (documented: idempotent, valid once window_closed entered)]
+PASS no stale or unknown-node events [stale=0 unknown=0 rust_dropped_stale=0]
+SMOKE FAIL (26/27)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0xcb0a44 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=1275 paints_while_inactive=172 drains=1291 ticks_delivered=1273 events_pushed=8 reentry_refused=0 post_close_drains=2 post_close_timeouts=0
+
