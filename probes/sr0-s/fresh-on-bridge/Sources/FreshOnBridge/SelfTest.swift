@@ -113,8 +113,16 @@ final class SelfTest {
 
     private func seq(_ e: [String: Any]) -> Int { e["seq"] as? Int ?? -1 }
 
-    private func events(kind: String? = nil, node: String? = nil, phase wanted: String? = nil) -> [[String: Any]] {
-        log.events().filter { e in
+    /// Evidence is read as of window close by default: the host teardown at close (disappear, task-cancel) is
+    /// a separate phase and is read with `includeTeardown`.
+    private func events(kind: String? = nil, node: String? = nil, phase wanted: String? = nil,
+                        includeTeardown: Bool = false) -> [[String: Any]] {
+        let all = log.events()
+        let closedSeq = includeTeardown ? nil : all.first {
+            ($0["node_id"] as? String) == "window" && phase($0) == "closed"
+        }.map { seq($0) }
+        return all.filter { e in
+            if let closedSeq, seq(e) > closedSeq { return false }
             if let kind, e["kind"] as? String != kind { return false }
             if let node, e["node_id"] as? String != node { return false }
             if let wanted, phase(e) != wanted { return false }
@@ -122,8 +130,9 @@ final class SelfTest {
         }
     }
 
-    private func count(kind: String? = nil, node: String? = nil, phase wanted: String? = nil) -> Int {
-        events(kind: kind, node: node, phase: wanted).count
+    private func count(kind: String? = nil, node: String? = nil, phase wanted: String? = nil,
+                       includeTeardown: Bool = false) -> Int {
+        events(kind: kind, node: node, phase: wanted, includeTeardown: includeTeardown).count
     }
 
     private func lastFocusID() -> UUID? {
@@ -385,6 +394,17 @@ final class SelfTest {
     /// Host window-closed callback (the renderer shuts down after it returns).
     func windowClosed() {
         closeCommitMark = backend.commitCount
+        if options.fixture == .F9 {
+            // Cancelled tasks still wait on their engine continuation, which keeps the tree alive. Resume them,
+            // then judge release after the post-close pump has run the unwinding tasks (ABI rev 0.5).
+            engine.releaseAll()
+            DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    DispatchQueue.main.async { MainActor.assumeIsolated { self.finish(reason: "window-closed") } }
+                }
+            }
+            return
+        }
         finish(reason: "window-closed")
     }
 
@@ -625,7 +645,7 @@ final class SelfTest {
             ]
 
         case .F9:
-            let cancels = count(kind: "lifecycle", phase: "task-cancel")
+            let cancels = count(kind: "lifecycle", phase: "task-cancel", includeTeardown: true)
             let expectedCancels = options.f9NoTasks ? 0 : 11
             checks += [
                 pass("tasks-cancelled-at-teardown", cancels >= expectedCancels,
@@ -633,11 +653,11 @@ final class SelfTest {
                 observe("commits-after-close", "commits at close=\(closeCommitMark) now=\(backend.commitCount) (the graph is closed by teardown: no later commit)"),
                 blocked("late-results-rejected", "the bridge drains the main queue only inside renderer callbacks; window_closed is the last callback, so a resumed engine continuation cannot run after close (bridge gap: post-close pump)"),
                 blocked("cleanup-after-close", "same as late-results-rejected"),
-                pass("tree-released", backend.releasedAtTeardown,
-                     "probe deinit ran during runtime teardown (tree-released events=\(events(node: "tree", phase: "released").count))"),
-                pass("teardown-commit-accepted", backend.teardownAccepted, "renderer accepted the nil-root teardown transaction"),
+                pass("tree-released", events(node: "tree", phase: "released", includeTeardown: true).count >= 1,
+                     "probe deinit ran after runtime teardown and engine release, within the post-close pump (tree-released events=\(events(node: "tree", phase: "released", includeTeardown: true).count))"),
+                observe("teardown-commit", "not sent: the renderer sets SHUTDOWN before window_closed, so any commit then returns SWR_E_SHUTDOWN (errors=\(backend.commitErrors.count)); the renderer frees its own tree at close"),
                 pass("bridge-ledger-zero-after-teardown", backend.ledgerAfterTeardown == 0,
-                     "host ledger of renderer nodes after teardown=\(backend.ledgerAfterTeardown)"),
+                     "host ledger of renderer nodes after teardown=\(backend.ledgerAfterTeardown) (host drops its node state; the renderer frees the tree itself)"),
                 blocked("renderer-live-nodes-zero", "swr_stats has no live-node counter (ABI rev 0.4); only the host ledger above counts nodes"),
                 observe("view-bindings-cleared-by-host", "\(backend.clearedViewBindings) model-held view references dropped after teardown"),
             ]
@@ -680,5 +700,7 @@ final class SelfTest {
         fflush(stdout)
         // Ends swr_run. Needed after a window close too: the renderer loop does not return on its own.
         requestQuit?()
+        // Ends the post-close pump at once (ABI rev 0.5); E_STATE before the window closed, ignored.
+        try? bridge.shutdownComplete()
     }
 }

@@ -175,6 +175,8 @@ final class BridgeBackend {
     /// Every stable identifier sent in a committed transaction (ABI rev 0.4).
     private(set) var committedIdentifiers: Set<String> = []
     private var inTick = false
+    /// Caret (selection end) per row at window close, kept after the runtime state is torn down.
+    private var caretAtClose: [UUID: UInt32] = [:]
 
     /// Called after each bridge event and each tick; the self-test advances its stages here.
     var afterInput: (() -> Void)?
@@ -250,13 +252,17 @@ final class BridgeBackend {
         inTick = false
     }
 
-    /// Window closed (renderer shuts down after this returns). The host runs the runtime teardown while the
-    /// window is still open: disappear actions run, tasks are cancelled, and the tree is released. The teardown
-    /// commit (nil root) removes the renderer's nodes. Pending engine results are not pumped after close.
+    /// Window closed. The renderer already refuses commits (SWR_E_SHUTDOWN) and frees its own tree. The host
+    /// runs the runtime teardown (disappear actions, task cancel, tree release); its nil-root commit record is
+    /// not sent to the renderer. The main queue is pumped after this returns until `shutdownComplete` (rev 0.5).
     func closed() {
         closedFlag = true
         log.emit("lifecycle", node: "window", payload: ["phase": "closed"])
         model.markClosed()
+        // Snapshot the live text state before teardown drops it (the self-test reads it after close).
+        for (row, node) in runtimeFieldByRow {
+            if let state = graph?.textInput(node) { caretAtClose[row] = UInt32(state.selection.location + state.selection.length) }
+        }
         if let graph {
             graph.tearDown()
         }
@@ -361,29 +367,15 @@ final class BridgeBackend {
         for handle in releasable { bridge.release(handle) }
     }
 
-    /// Teardown commit: removes every top-level node (their descendants go with them).
+    /// Teardown commit: the renderer rejects commits from the moment the window closes (SWR_E_SHUTDOWN: its
+    /// SHUTDOWN flag is set before `window_closed` is entered) and frees its own tree, so nothing is sent.
+    /// The host only drops its node ledger. Last-commit evidence (focus, caret) is kept for the self-test.
     private func commitTeardown(_ window: BridgeWindow) {
-        version += 1
-        let removes = liveParent.compactMap { $0.value == 0 ? $0.key : nil }
-        let transaction = Transaction(version: version, focus: 0, upserts: [], removes: removes)
-        do {
-            try window.commit(transaction)
-            commitCount += 1
-            liveParent = [:]
-            teardownAccepted = true
-            log.emit("lifecycle", node: "bridge", payload: ["phase": "teardown-committed", "removed_top": removes.count])
-        } catch {
-            commitErrors.append("teardown v\(version): \(error)")
-            log.emit("lifecycle", node: "bridge", payload: ["phase": "teardown-rejected", "error": "\(error)"])
-        }
-        textFieldByRow = [:]
-        rowByTextField = [:]
-        runtimeFieldByRow = [:]
+        liveParent = [:]
         buttonRuntimeID = [:]
         insertButtonRuntimeID = nil
         fieldGeometry = [:]
-        focusedRow = nil
-        focusTarget = 0
+        log.emit("lifecycle", node: "bridge", payload: ["phase": "teardown-no-commit", "reason": "renderer-shutdown"])
     }
 
     private func hasIntermediateOpacity(_ node: ResolvedNode) -> Bool {
@@ -391,7 +383,7 @@ final class BridgeBackend {
         return node.children.contains { hasIntermediateOpacity($0) }
     }
 
-    private func walk(_ node: ResolvedNode, parent: UInt64, order: UInt32, insideAffordance: Bool,
+    private func walk(_ node: ResolvedNode, parent: UInt64, order: UInt32, insideAffordance: Bool, parentKind: String = "",
                       upserts: inout [NodeUpsert], parents: inout [UInt64: UInt64], releasable: inout [TextRunHandle]) {
         let id = bridgeID(node.id)
         parents[id] = parent
@@ -496,8 +488,14 @@ final class BridgeBackend {
             }
             flags = [.hitTarget, .focusable, .editable]
 
+        case "List":
+            semantic = SemanticNode(role: .list)
+
         default:
-            break
+            // Direct children of a List are its rows (the Mac AXOutlineRow / UIA ListItem).
+            if parentKind == "List", rowUUID(in: node.id) != nil {
+                semantic = SemanticNode(role: .listItem)
+            }
         }
 
         if let identifier = semantic?.identifier, !identifier.isEmpty {
@@ -506,7 +504,7 @@ final class BridgeBackend {
         upserts.append(NodeUpsert(id: id, parent: parent, order: order, flags: flags, bounds: bounds,
                                   primitives: prims, semantic: semantic))
         for (index, child) in node.children.enumerated() {
-            walk(child, parent: id, order: UInt32(index), insideAffordance: childInside,
+            walk(child, parent: id, order: UInt32(index), insideAffordance: childInside, parentKind: node.kind,
                  upserts: &upserts, parents: &parents, releasable: &releasable)
         }
     }
@@ -695,7 +693,7 @@ final class BridgeBackend {
     func textFieldBridgeID(_ row: UUID) -> UInt64? { textFieldByRow[row] }
     /// Caret (selection end) of a row's field in UTF-16 units, from the runtime text state.
     func caretOffset(_ row: UUID) -> UInt32? {
-        textState(for: row).map { UInt32($0.selection.location + $0.selection.length) }
+        textState(for: row).map { UInt32($0.selection.location + $0.selection.length) } ?? caretAtClose[row]
     }
     func buttonCount() -> Int { buttonRuntimeID.count }
     func measurerFailures() -> Int { measurer?.failures ?? 0 }
