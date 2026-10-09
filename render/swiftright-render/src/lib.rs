@@ -584,7 +584,7 @@ pub extern "C" fn swr_image_register(
         let Some(buf) = image::RgbaImage::from_raw(width, height, px) else {
             return E_BAD_ARG;
         };
-        let img = Arc::new(gpui::RenderImage::new(vec![image::Frame::new(buf)]));
+        let img = Arc::new(crate::text::TrackedImage::new(gpui::RenderImage::new(vec![image::Frame::new(buf)])));
         match view::with_ui(|ui| ui.images.insert(img)) {
             Err(e) | Ok(Err(e)) => e,
             Ok(Ok(h)) => {
@@ -606,7 +606,7 @@ pub extern "C" fn swr_image_release(image: u64) -> Status {
             Err(e) => e,
             Ok(None) => E_STALE_HANDLE,
             Ok(Some(img)) => {
-                view::queue_image_drop(img);
+                view::queue_image_drop(img.img.clone());
                 SWR_OK
             }
         }

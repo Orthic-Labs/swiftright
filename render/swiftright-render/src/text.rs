@@ -46,6 +46,25 @@ pub struct Slab<T> {
 
 pub type RunSlab = Slab<Measured>;
 
+/// A registered image. `LIVE_IMAGES` counts it from creation until the last reference
+/// (host handle or committed node) is dropped, so the gauge falls only when it is freed.
+pub struct TrackedImage {
+    pub img: Arc<gpui::RenderImage>,
+}
+
+impl TrackedImage {
+    pub fn new(img: gpui::RenderImage) -> TrackedImage {
+        crate::rt::LIVE_IMAGES.fetch_add(1, SeqCst);
+        TrackedImage { img: Arc::new(img) }
+    }
+}
+
+impl Drop for TrackedImage {
+    fn drop(&mut self) {
+        crate::rt::LIVE_IMAGES.fetch_sub(1, SeqCst);
+    }
+}
+
 impl<T> Slab<T> {
     pub fn new(live: &'static AtomicU64, max: usize) -> Slab<T> {
         Slab { slots: Vec::new(), live, max }

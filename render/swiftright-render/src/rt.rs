@@ -122,8 +122,11 @@ pub static WIN_ACTIVE: AtomicBool = AtomicBool::new(false);
 /// Nodes in the committed tree, and live (unreleased) text-run handles.
 pub static LIVE_TREE_NODES: AtomicU64 = AtomicU64::new(0);
 pub static LIVE_RUNS: AtomicU64 = AtomicU64::new(0);
-/// Rev 0.6: registered, unreleased swr_image handles (counted in swr_stats.live_nodes).
+/// Rev 0.6: images alive in the renderer (host handle still held OR referenced by a
+/// committed node); freed images are removed by `TrackedImage::drop`. Counted in live_nodes.
 pub static LIVE_IMAGES: AtomicU64 = AtomicU64::new(0);
+/// Rev 0.6: host-held swr_image handles (slab occupancy; not reported).
+pub static IMAGE_HANDLES: AtomicU64 = AtomicU64::new(0);
 
 /// Post-close pump (rev 0.5). ACTIVE is set before window_closed is entered; COMPLETE by
 /// swr_shutdown_complete; EXPIRED by the timer thread when SWR_POST_CLOSE_TIMEOUT_MS passes.

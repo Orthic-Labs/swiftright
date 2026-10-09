@@ -22,6 +22,8 @@ Add-Type -Namespace SW -Name N -MemberDefinition @'
 [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
 [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
 [DllImport("user32.dll")] public static extern IntPtr GetShellWindow();
+[DllImport("user32.dll")] public static extern bool PostMessageW(IntPtr h, uint msg, IntPtr w, IntPtr l);
+[DllImport("user32.dll")] public static extern uint MapVirtualKeyW(uint code, uint type);
 [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
 [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h, ref POINT p);
 [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
@@ -73,11 +75,15 @@ if ($hwnd -ne [IntPtr]::Zero) {
   $lp = [IntPtr](([int64]($ey -band 0xFFFF) -shl 16) -bor [int64]($ex2 -band 0xFFFF))
   [void][SW.N]::SendMessageTimeoutW($hwnd, 0x0084, [IntPtr]::Zero, $lp, 2, 1000, [ref]$res)
   Log ("client={0}x{1} origin=({2},{3}) edge_point=({4},{5}) window_from_point_is_target={6} wm_nchittest={7} (1=HTCLIENT)" -f $cr.right, $cr.bottom, $org.x, $org.y, $ex2, $ey, ($wfp -eq $hwnd), $res.ToInt64())
-  # real click 2 px inside the client edge
+  # real click 2 px inside the client edge — only if the point is ours and we hold the foreground right now
+  # (a global click must never land in another app).
   [void][SW.N]::SetCursorPos($ex2, $ey); Start-Sleep -Milliseconds 150
-  [SW.N]::mouse_event(2, 0, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 60
-  [SW.N]::mouse_event(4, 0, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 300
-  Log "edge_click_sent=true"
+  $wfp2 = [SW.N]::WindowFromPoint($pt)
+  if ($wfp2 -eq $hwnd -and [SW.N]::GetForegroundWindow() -eq $hwnd) {
+    [SW.N]::mouse_event(2, 0, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 60
+    [SW.N]::mouse_event(4, 0, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 300
+    Log "edge_click_sent=true"
+  } else { Log "edge_click_sent=false (point or foreground not the target; click skipped)" }
 
   # UIA Invoke on the button
   $root = [System.Windows.Automation.AutomationElement]::FromHandle($hwnd)
@@ -123,8 +129,12 @@ if ($hwnd -ne [IntPtr]::Zero) {
   Log ("refocused foreground_is_target={0}" -f ([SW.N]::GetForegroundWindow() -eq $hwnd))
 
   # type 'a' with a virtual key
-  [SW.N]::keybd_event(0x41, 0, 0, [UIntPtr]::Zero); Start-Sleep -Milliseconds 40
-  [SW.N]::keybd_event(0x41, 0, 2, [UIntPtr]::Zero); Start-Sleep -Milliseconds 800
+  # window-targeted: the messages a physical 'a' produces, posted to the probe HWND only (no global keystroke)
+  $scanA = [SW.N]::MapVirtualKeyW(0x41, 0)
+  $kd = [IntPtr]([int64]1 -bor ([int64]$scanA -shl 16)); $ku = [IntPtr]([int64]1 -bor ([int64]$scanA -shl 16) -bor 0x40000000 -bor 0x80000000)
+  [void][SW.N]::PostMessageW($hwnd, 0x0100, [IntPtr]0x41, $kd)
+  [void][SW.N]::PostMessageW($hwnd, 0x0102, [IntPtr]0x61, $kd)
+  [void][SW.N]::PostMessageW($hwnd, 0x0101, [IntPtr]0x41, $ku); Start-Sleep -Milliseconds 800
   $editCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
   $edit = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $editCond)
   if ($edit -eq $null) { Log 'uia_edit=NOT_FOUND' } else {

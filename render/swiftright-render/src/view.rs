@@ -25,7 +25,7 @@ use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 use crate::abi::*;
 use crate::ax::{Actions, Activation};
 use crate::rt::*;
-use crate::text::{RunSlab, Slab, TextCache, MAX_RUNS};
+use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
 use crate::tree::{Prim, Tree};
 
 #[link(name = "user32")]
@@ -126,7 +126,7 @@ pub struct Ui {
     pub text_system: Option<Arc<WindowTextSystem>>,
     pub runs: RunSlab,
     /// Rev 0.6: registered swr_image handles (RGBA8 copied into GPUI RenderImages, BGRA).
-    pub images: Slab<RenderImage>,
+    pub images: Slab<TrackedImage>,
     pub cache: TextCache,
     pub tree: Tree,
 }
@@ -135,7 +135,7 @@ thread_local! {
     static UI: RefCell<Ui> = RefCell::new(Ui {
         text_system: None,
         runs: Slab::new(&LIVE_RUNS, MAX_RUNS),
-        images: Slab::new(&LIVE_IMAGES, IMAGE_MAX_LIVE),
+        images: Slab::new(&IMAGE_HANDLES, IMAGE_MAX_LIVE),
         cache: TextCache::new(),
         tree: Tree::default(),
     });
@@ -484,7 +484,7 @@ fn paint_tree(
                             size(px(r[2] * inv), px(r[3] * inv)),
                         );
                         let corners = Corners::all(px(*radius * inv));
-                        let img = img.clone();
+                        let img = img.img.clone();
                         masked(window, clip, |w| {
                             let _ = w.paint_image(b, corners, img, 0, false);
                         });

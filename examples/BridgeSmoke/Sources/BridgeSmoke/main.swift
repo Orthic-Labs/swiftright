@@ -286,11 +286,23 @@ final class Smoke: TextStore {
             let after = b.stats()
             add("SWR_PRIM_IMAGE accepted (scaled 4x4 -> 64 DIP)", rc == 0 && after.commits_accepted == before.commits_accepted + 1,
                 "rc=\(statusName(rc)); limitation: painting is not asserted (no per-primitive draw counter)")
+            // Lifetime (ABI 0.6): a committed node keeps the image alive; release drops only the host handle.
+            let liveCommitted = b.stats().live_nodes
             let rel1 = b.release(image)
             let rel2 = b.release(image)
-            let live2 = b.stats().live_nodes
-            add("image released once; second release is stale", rel1 && !rel2 && live2 == live0,
-                "release=\(rel1) again=\(rel2) live_nodes back to \(live2) (was \(live0))")
+            let liveReleased = b.stats().live_nodes
+            add("release drops the host handle only; second release is stale; committed node keeps the image alive",
+                rel1 && !rel2 && liveReleased == liveCommitted && liveCommitted == live0 + 2,
+                "release=\(rel1) again=\(rel2) live_nodes \(live0) -> committed \(liveCommitted) -> released \(liveReleased) (image + node still alive)")
+            // Re-committing node 7 without the image primitive (same semantic node, so the UIA swatch
+            // stays) drops the last reference: the image is freed and leaves live_nodes.
+            version += 1
+            let bare = NodeUpsert(id: 7, order: 7, bounds: Rect(x: cx, y: 20 * s, w: 64 * s, h: 64 * s), primitives: [],
+                                  semantic: SemanticNode(role: .image, label: "swatch", identifier: "image/swatch"))
+            let rmRC = status { try win.commit(Transaction(version: version, upserts: [bare])) }
+            let liveFreed = b.stats().live_nodes
+            add("image freed once released and unreferenced (live_nodes: node stays, image gone)", rmRC == 0 && liveFreed == live0 + 1,
+                "re-commit rc=\(statusName(rmRC)) live_nodes \(liveFreed) (baseline \(live0) + node 7)")
             // A commit that references the released handle is rejected (the ONE intended commit rejection).
             version += 1
             let stale = NodeUpsert(id: 8, order: 8, bounds: Rect(x: cx, y: 100 * s, w: 16, h: 16),
@@ -355,10 +367,20 @@ final class Smoke: TextStore {
             add("multi-paragraph measure", false, "measure threw")
         }
         let narrowText = "aaaa bbbb cccc\ndddd eeee ffff"
-        if let m = measure(narrowText, width: 60 * s), let one = measure("aaaa bbbb cccc", width: 60 * s) {
-            add("each paragraph wraps on its own", m.lineCount >= 2 * one.lineCount && m.lineCount > 2,
-                "paragraph alone=\(one.lineCount) lines, two paragraphs=\(m.lineCount)")
-            b.release(m.run); b.release(one.run)
+        let paraA = "aaaa bbbb cccc", paraB = "dddd eeee ffff"
+        if let m = measure(narrowText, width: 60 * s), let one = measure(paraA, width: 60 * s),
+           let two = measure(paraB, width: 60 * s) {
+            // Each paragraph wraps as it does alone: same lines (offsets shifted by the first paragraph + '\n').
+            let shift = UInt32(paraA.utf8.count + 1)
+            let expected = one.lines.map { ($0.utf8Start, $0.utf8Len) } + two.lines.map { ($0.utf8Start + shift, $0.utf8Len) }
+            var got = m.lines.map { ($0.utf8Start, $0.utf8Len) }
+            if let li = one.lines.indices.last, got.indices.contains(li) { got[li].1 -= 1 }   // '\n' belongs to the last line of paragraph 1
+            let same = got.count == expected.count && zip(got, expected).allSatisfy { $0 == $1 }
+            func dump(_ l: [LineInfo]) -> String { l.map { "[\($0.utf8Start)+\($0.utf8Len)]" }.joined() }
+            add("each paragraph wraps on its own", same && one.lineCount > 1 && two.lineCount > 1
+                    && m.lineCount == one.lineCount + two.lineCount,
+                "A alone=\(one.lineCount) \(dump(one.lines)); B alone=\(two.lineCount) \(dump(two.lines)); together=\(m.lineCount) \(dump(m.lines))")
+            b.release(m.run); b.release(one.run); b.release(two.run)
         }
         let crRC = status { _ = try b.measure(MeasureRequest(text: "a\r\nb", scale: s)) }
         add("'\\r' still rejected (SWR_E_UNSUPPORTED)", crRC == -15, statusName(crRC))

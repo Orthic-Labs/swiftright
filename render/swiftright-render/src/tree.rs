@@ -9,8 +9,7 @@ use std::sync::Arc;
 use crate::abi::*;
 use crate::ax::{AxNode, AxRun, AxShared};
 use crate::rt::LIVE_TREE_NODES;
-use crate::text::{Measured, RunSlab, Slab};
-use gpui::RenderImage;
+use crate::text::{Measured, RunSlab, Slab, TrackedImage};
 use std::sync::atomic::Ordering::SeqCst;
 
 #[derive(Clone)]
@@ -19,7 +18,7 @@ pub enum Prim {
     Text { x: f32, y: f32, run: Arc<Measured> },
     Underline { r: [f32; 4], color: u32 },
     /// Rev 0.6: the image scaled to fill `r`, corner radius `radius` (physical px).
-    Image { r: [f32; 4], radius: f32, img: Arc<RenderImage> },
+    Image { r: [f32; 4], radius: f32, img: Arc<TrackedImage> },
     ClipPush([f32; 4]),
     ClipPop,
     TranslatePush(f32, f32),
@@ -168,7 +167,7 @@ fn rect4(r: &Rect) -> Result<[f32; 4], Status> {
 unsafe fn convert_prims(
     prims: &[Primitive],
     runs: &RunSlab,
-    images: &Slab<RenderImage>,
+    images: &Slab<TrackedImage>,
 ) -> Result<Vec<Prim>, Status> {
     let mut out = Vec::with_capacity(prims.len());
     let mut clip = 0i32;
@@ -275,7 +274,7 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
 pub unsafe fn commit(
     tree: &mut Tree,
     runs: &RunSlab,
-    images: &Slab<RenderImage>,
+    images: &Slab<TrackedImage>,
     t: &Transaction,
 ) -> Result<AxShared, Status> {
     if t.upsert_count > MAX_UPSERTS || t.remove_count > MAX_REMOVES || t.primitive_count > MAX_PRIMITIVES {

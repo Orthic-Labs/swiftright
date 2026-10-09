@@ -675,7 +675,8 @@ typedef struct swr_stats {
     uint64_t ime_busy_rejected;
     uint64_t selftest_reentry_detected;
     /* rev 0.5. live_nodes is a GAUGE, not a counter: swr_node entries retained by the
-     * committed tree plus live (unreleased) swr_text_run and (rev 0.6) swr_image handles.
+     * committed tree plus live (unreleased) swr_text_run handles and (rev 0.6) images that
+     * are alive: still held by the host OR referenced by a committed node (counted until freed).
      * Zero after teardown.
      * Readable from any thread (it is an atomic mirror). */
     uint64_t live_nodes;
@@ -721,7 +722,8 @@ SWR_API swr_status swr_request_modal(swr_window window, const swr_modal_request 
  * is also dropped when the window closes. width/height 0 or > SWR_IMAGE_MAX_DIM,
  * a stride below width * 4 or a null buffer -> SWR_E_BAD_ARG (dimensions over the limit,
  * or more than SWR_IMAGE_MAX_BYTES / SWR_IMAGE_MAX_LIVE -> SWR_E_TOO_LARGE).
- * SWR_E_SHUTDOWN after shutdown has begun. swr_stats.live_nodes counts live images. */
+ * SWR_E_SHUTDOWN after shutdown has begun. swr_stats.live_nodes counts an image until it is freed:
+ * after swr_image_release it stays counted while a committed node still references it. */
 SWR_API swr_status swr_image_register(const uint8_t *rgba, uint32_t width, uint32_t height,
                                       uint32_t stride, swr_image *out);
 /* A stale or already released handle fails with SWR_E_STALE_HANDLE. */
