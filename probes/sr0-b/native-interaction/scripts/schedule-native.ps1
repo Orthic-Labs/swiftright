@@ -14,7 +14,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $verify = & "$Base\probes\sr0-s\fresh-on-bridge\scripts\verify-artifacts.ps1" -Base $Base -ExpectExe $ExpectExe -ExpectDll $ExpectDll
 $verify
-if ($LASTEXITCODE -ne 0) { throw 'artifact check failed; no task registered' }
+if (@($verify) -cnotcontains 'ARTIFACT_OK') { throw 'artifact check failed; no task registered' }
 $artifactLine = ($verify | Where-Object { $_ -like 'ARTIFACT base=*' } | Select-Object -First 1).Trim()
 $scripts = "$Base\probes\sr0-b\native-interaction\scripts"
 $out = "$Base\result-native-$Check-$Tag.txt"

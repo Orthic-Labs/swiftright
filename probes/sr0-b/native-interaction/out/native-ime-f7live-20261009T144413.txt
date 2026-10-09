@@ -1,0 +1,142 @@
+ARTIFACT base=D:\Claude\sr0s-bridge06b exe_sha256=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA dll_sha256=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30 expect_exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA expect_dll=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30
+ARTIFACT_OK
+registered=SR0N-ime-f7live-20261009T144413 at=2026-10-09T14:45:00.0653606+05:30
+state=Ready last_result=0
+deleted=SR0N-ime-f7live-20261009T144413 exists_after=False
+ARTIFACT base=D:\Claude\sr0s-bridge06b exe_sha256=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA dll_sha256=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30 expect_exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA expect_dll=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30 class=native check=ime-f7live tag=20261009T144413
+    0.0s host=BOGUS-DELL user=adrds session=1 fixture=F7live started=2026-10-09T14:45:01.0463388+05:30
+    0.1s ARTIFACTS exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA renderer=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30 expect_exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA expect_dll=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30 match=True
+    0.2s CHECK ime-installed PASS :: tip_registered=True user_has_tip=True (want 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}) user_tips=[0409:00000409 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}] hkls_0411=[0x04110411]
+    0.7s fixture=F7 pid=2180 window_hwnd=199202 polls=2 exited_early=False dpi=240
+    2.3s probe_thread=29024 layout_before=0x04090409 ja_hkl=0x04110411 input_struct_size=40
+    2.8s focus[Row 2]=ok attempt=0
+    3.1s key setup-k vk=0x4B mods= delivered fg_ok=true
+    3.4s key setup-a vk=0x41 mods= delivered fg_ok=true
+    3.5s wait_value[Row 2]=Row 2ka ok ms=7
+    3.5s hook_armed=True waited_ms=52
+    3.5s CHECK precondition-row2 PASS :: value=[Row 2ka] release hook armed (exe EVT hook/armed)=True (F7live: no programmatic composition ran)
+    4.2s ime_switch set_open_rc=0 set_conv_rc=0 readback open=1 conv=0x9 layout=0x04110411
+    4.2s CHECK ime-activated-on-probe-thread PASS :: layout=0x04110411 open_status=1 conversion_mode=0x9 (hiragana = native|fullshape = 0x9)
+    4.2s CHECK ime-hiragana-mode PASS :: conversion_mode=0x9
+    4.2s imm_context_from_driver_process=0 (0 expected: an HIMC cannot be taken across processes, so ImmGetCandidateWindow is not callable from here)
+    4.4s key romaji-N vk=0x4E mods= delivered fg_ok=true
+    4.7s key romaji-I vk=0x49 mods= delivered fg_ok=true
+    5.0s key romaji-H vk=0x48 mods= delivered fg_ok=true
+    5.3s key romaji-O vk=0x4F mods= delivered fg_ok=true
+    5.6s key romaji-N vk=0x4E mods= delivered fg_ok=true
+    6.0s key romaji-N vk=0x4E mods= delivered fg_ok=true
+    6.1s CHECK marked-text-tracks-composition PASS :: display minus committed prefix after each key n,i,h,o,n,n: observed=[n | ? | ?h | ?? | ??n | ???] expected(width-normalised)=[n | ? | ?h | ?? | ??n | ???]
+    6.1s release_hook_signalled name=Local\SR0_RELEASE_HOOK
+    6.3s wait_element[inserted row 99 (Engine 0)] ok ms=215
+    7.2s CHECK insert-above-fires-mid-real-composition PASS :: signalled=True row99_present=True hook EVT key=insert-above marked_at_release=7,3 display_at_release=[Row 2ka???] committed_at_release=[Row 2ka] (a composition must be open at the release)
+    7.2s CHECK identity-and-composition-survive-insert-above-real-ime PASS :: row inserted ABOVE the composing row during a REAL composition: uuid_before=F0000007-0000-4000-8000-000000000002 uuid_after=F0000007-0000-4000-8000-000000000002 index 1->2 (expect +1) display_before=[Row 2ka???] display_after=[Row 2ka???] marked_after=[???] (non-empty expected) focus_before=Row 2 focus_after=Row 2
+    7.4s key space-1 vk=0x20 mods= delivered fg_ok=true
+    7.8s CHECK conversion-to-nihon PASS :: Space presses=1 marked after each press=[??] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)
+    8.3s candidate_probe caret_rect=1,015,828,0x60 comp_start_rect=1,117,828,40x60 new_windows=[] class_hits=0 scale=2.5
+    8.4s candidate_probe exe_caret_bounds_screen=1,117,768,2x60
+    8.6s key enter-commit vk=0x0D mods= delivered fg_ok=true
+    9.3s CHECK commit-replaces-marked-range-utf16-selection PASS :: value=[Row 2ka??] expected=[Row 2ka??] selection start16=9 len16=0 (expected start16=9, len 0; BMP-only text: supplementary-plane mapping is not exercised here) doc_equals_value=True err=
+    9.5s key romaji-N vk=0x4E mods= delivered fg_ok=true
+    9.8s key romaji-I vk=0x49 mods= delivered fg_ok=true
+   10.1s key romaji-H vk=0x48 mods= delivered fg_ok=true
+   10.4s key romaji-O vk=0x4F mods= delivered fg_ok=true
+   10.7s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   11.1s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   11.4s key space-1 vk=0x20 mods= delivered fg_ok=true
+   12.3s candidate_probe caret_rect=1,015,828,0x60 comp_start_rect=1,197,828,40x60 new_windows=[] class_hits=0 scale=2.5
+   12.3s candidate_probe exe_caret_bounds_screen=1,197,828,2x60
+   12.3s CHECK candidate-window-anchored-to-caret FAIL :: no visible top-level window with a class or title containing 'Candidate' was found after Space (comp1 found=False comp2 found=False); exe-logged caret bounds comp1=1,117,768,2x60 comp2=1,197,828,2x60 (screen px) so the expected anchor is known but the IME's window was not located; windows new after Space: []
+   12.5s key escape-1 vk=0x1B mods= delivered fg_ok=true
+   13.1s key escape-2 vk=0x1B mods= delivered fg_ok=true
+   13.5s CHECK escape-cancel-clears-composition PASS :: Escape presses=2 marked_after=[] value=[Row 2ka??] expected committed=[Row 2ka??] caret start16=9 (expected 9); first Escape may only leave conversion mode
+   13.7s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   14.0s key romaji-I vk=0x49 mods= delivered fg_ok=true
+   14.3s key romaji-H vk=0x48 mods= delivered fg_ok=true
+   14.7s key romaji-O vk=0x4F mods= delivered fg_ok=true
+   15.0s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   15.3s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   15.6s key escape-1 vk=0x1B mods= delivered fg_ok=true
+   16.0s CHECK escape-cancel-unconverted-composition PASS :: unconverted composition, Escape presses=1 marked_after=[] (one press expected)
+   16.3s ime_restore open=0 layout=0x04090409 (before 0x04090409)
+   16.3s CHECK ime-restored PASS :: probe thread layout back to 0x04090409 and IME closed
+   16.3s close_window=WM_CLOSE posted=True
+   16.9s exe_exit=0 keys_sent=26 driver_abort=none
+   16.9s selftest_verdict=[SELFTEST F7: PASS (8/8 asserted; blocked=0; end=window-closed)]
+   16.9s CHECK ime-caret-bounds-logged PASS :: exe EVT ime/caret-bounds lines=3 with a non-empty rectangle=3 distinct x positions=2 (expected >=2: the caret rectangle must move as the composition grows) last=x=269.0234375 y=320 w=2 h=60 scale=2.5
+   16.9s CHECK f7live-selftest-verdict PASS :: failed asserts=[] verdict=[SELFTEST F7: PASS (8/8 asserted; blocked=0; end=window-closed)] (live variant: insert-committed, identity-index-shift, no-teardown, release-hook-fired)
+   16.9s CHECK f7live-hook-evidence-recorded PASS :: release hook EVT: key=insert-above source=event display=[Row 2ka???] marked=7,3
+   16.9s CHECK input-gate-no-foreground-abort PASS :: gated virtual-key events sent=26 abort=none (any foreground change aborts the run; no keystroke may reach another application)
+   16.9s NATIVE_SUMMARY ime-F7live pass=16 fail=1 fail_not_automatable=0 not_run=0
+   16.9s --- exe stdout ---
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545363243800,"node_id":"selftest","payload":{"fixture":"F7","phase":"start"},"seq":0}
+   16.9s EVT {"kind":"hook","mono_ns":1545364299600,"node_id":"release-hook","payload":{"event":"Local\\SR0_RELEASE_HOOK","file":"none","phase":"configured"},"seq":1}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545841445600,"node_id":"window","payload":{"phase":"root-appear"},"seq":2}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545842991400,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545843668400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545844001100,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545844287100,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545844564800,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545844890900,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545845186300,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545845462300,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545845719500,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545845988500,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":12}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545871556100,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":true,"reduce_source":"os","scale":2.5,"width_px":1600},"seq":13}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545871800300,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":14}
+   16.9s EVT {"kind":"effect","mono_ns":1545871877100,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":15}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1545893333400,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":16}
+   16.9s EVT {"kind":"focus","mono_ns":1547496537300,"node_id":"focus","payload":{"focused":"F0000007-0000-4000-8000-000000000002","source":"ax"},"seq":17}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1547519776700,"node_id":"selftest","payload":{"name":"row2 focused by AX","phase":"stage"},"seq":18}
+   16.9s EVT {"kind":"state","mono_ns":1547934494200,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2k"},"seq":19}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1547934617600,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":1,"phase":"local-edit"},"seq":20}
+   16.9s EVT {"kind":"input","mono_ns":1547934675700,"node_id":"row 2","payload":{"inserted":"k","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":21}
+   16.9s EVT {"kind":"state","mono_ns":1548295549400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2ka"},"seq":22}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1548295656500,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":2,"phase":"local-edit"},"seq":23}
+   16.9s EVT {"kind":"input","mono_ns":1548295711900,"node_id":"row 2","payload":{"inserted":"a","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":24}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1548324268300,"node_id":"selftest","payload":{"name":"typed ka","phase":"stage"},"seq":25}
+   16.9s EVT {"kind":"hook","mono_ns":1548324391100,"node_id":"release-hook","payload":{"phase":"armed"},"seq":26}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1548324447100,"node_id":"selftest","payload":{"name":"armed: waiting for the release hook","phase":"stage"},"seq":27}
+   16.9s EVT {"kind":"ime","mono_ns":1549359026100,"node_id":"caret-bounds","payload":{"end":7,"h":60,"node":59,"row":"F0000007-0000-4000-8000-000000000002","scale":2.5,"start":7,"w":2,"x":189.0234375,"y":260},"seq":28}
+   16.9s EVT {"kind":"hook","mono_ns":1551260401400,"node_id":"release-hook","payload":{"committed":"Row 2ka","display":"Row 2ka???","focused_row":"F0000007-0000-4000-8000-000000000002","key":"insert-above","marked":"7,3","pending":"insert-above","phase":"release","source":"event"},"seq":29}
+   16.9s EVT {"kind":"effect","mono_ns":1551260563600,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":30}
+   16.9s EVT {"kind":"effect","mono_ns":1551261062900,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":31}
+   16.9s EVT {"kind":"effect","mono_ns":1551261159400,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":32}
+   16.9s EVT {"kind":"state","mono_ns":1551261372100,"node_id":"model","payload":{"animated":false,"id":"F0000007-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":33}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1551265227800,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":34}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1551316006600,"node_id":"selftest","payload":{"name":"release hook fired","phase":"stage"},"seq":35}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1551316141000,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":36}
+   16.9s EVT {"kind":"state","mono_ns":1553522826500,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2ka??"},"seq":37}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1553522939400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"local-edit"},"seq":38}
+   16.9s EVT {"kind":"input","mono_ns":1553522989100,"node_id":"row 2","payload":{"inserted":"??","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":39}
+   16.9s EVT {"kind":"ime","mono_ns":1554444763000,"node_id":"caret-bounds","payload":{"end":9,"h":60,"node":59,"row":"F0000007-0000-4000-8000-000000000002","scale":2.5,"start":9,"w":2,"x":269.0234375,"y":320},"seq":40}
+   16.9s EVT {"kind":"input","mono_ns":1558066046300,"node_id":"row 2","payload":{"inserted":"","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":41}
+   16.9s EVT {"kind":"ime","mono_ns":1558680311700,"node_id":"caret-bounds","payload":{"end":9,"h":60,"node":59,"row":"F0000007-0000-4000-8000-000000000002","scale":2.5,"start":9,"w":2,"x":269.0234375,"y":320},"seq":42}
+   16.9s EVT {"kind":"input","mono_ns":1560590521700,"node_id":"row 2","payload":{"inserted":"","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":43}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561489560600,"node_id":"window","payload":{"phase":"closed"},"seq":44}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561489724500,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":45}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561497686000,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":46}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561497892800,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":47}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498015300,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"disappear"},"seq":48}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498375300,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":49}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498489100,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":50}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498601500,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":51}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498711300,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":52}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498830800,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":53}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561498948700,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":54}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561499061400,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":55}
+   16.9s EVT {"kind":"lifecycle","mono_ns":1561499168400,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":56}
+   16.9s SELFTEST-STAGES F7: insert-above pending@0.53s | row2 focused by AX@2.16s | typed ka@2.96s | armed: waiting for the release hook@2.96s | release hook fired@5.95s | insert committed@5.95s | awaiting-driver-close end-reason=window-closed
+   16.9s ASSERT F7 script-completed: PASS stages=insert-above pending@0.53s | row2 focused by AX@2.16s | typed ka@2.96s | armed: waiting for the release hook@2.96s | release hook fired@5.95s | insert committed@5.95s | awaiting-driver-close
+   16.9s ASSERT F7 insert-committed: PASS top=Engine 0
+   16.9s ASSERT F7 identity-index-shift: PASS index=2
+   16.9s ASSERT F7 no-teardown: PASS row2 disappear events before window close=0
+   16.9s ASSERT F7 release-hook-fired: PASS firings=1 releases=1
+   16.9s OBSERVE F7 live-composition-text: row2 text=Row 2ka?? (real IME; composition state at release is in the EVT hook line)
+   16.9s ASSERT F7 renderer-no-violations: PASS thread_violations=0 host_panics=0
+   16.9s ASSERT F7 commits-accepted: PASS commits=32 errors=0 dropped-after-close=0
+   16.9s ASSERT F7 no-measure-or-draw-failures: PASS measure=0 draw=0 
+   16.9s SELFTEST F7: PASS (8/8 asserted; blocked=0; end=window-closed)
+   16.9s --- exe stderr ---
+   16.9s [swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+   16.9s [swiftright-render] window hwnd=0x30a22 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+   16.9s [swiftright-render] shutdown paints=913 paints_while_inactive=2 drains=954 ticks_delivered=911 events_pushed=34 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
