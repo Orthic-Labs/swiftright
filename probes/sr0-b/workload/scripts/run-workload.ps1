@@ -14,7 +14,7 @@ param(
   [string]$Tag = '',
   [string]$ExpectDll = '777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441',
   [double]$ExpectScale = 1.0,
-  [int]$MaxIdleCpu = 15,              # abort if average total CPU % over the sample window exceeds this
+  [int]$MaxIdleCpu = 25,              # abort if average total CPU % over the sample window exceeds this (Dell idle baseline ~17-19%: Membrane, Defender)
   [int]$CpuSampleSeconds = 20,
   [switch]$Force,                     # bypass the quiet-host gate; receipt is marked host_quiet=forced
   [switch]$SkipQuietCheck             # legacy alias for -Force
@@ -128,7 +128,9 @@ while (-not $started -and (Get-Date) -lt $d) {
   Start-Sleep -Milliseconds 500
   $alive = [bool](Get-Process -Name 'PresentMon-2.6.0-x64' -ErrorAction SilentlyContinue)
   $csvLen = if (Test-Path $pmCsv) { (Get-Item $pmCsv).Length } else { 0 }
-  $started = $alive -and ($csvLen -ge 2000)
+  # stdout is block-buffered when redirected ('Started recording.' appears only at exit), and the CSV grows only when
+  # something presents. Live signal: process alive and the CSV header written (the ETW session is open).
+  $started = $alive -and ($csvLen -gt 0)
 }
 Log "presentmon started=$started csv_bytes=$csvLen"
 if (-not $started) { Stop-Pm; Log 'ABORT: PresentMon not recording'; exit 4 }
