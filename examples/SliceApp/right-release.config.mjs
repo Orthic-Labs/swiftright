@@ -8,9 +8,10 @@
 // Commands: see PACKAGING.md.
 //
 // Shared-tooling gaps the release CLI still has for this app (see PACKAGING.md "Gaps"):
-//   - mac: release.mjs signs `sign.prePackageFiles` without `--entitlements`, and its mac branch requires a
-//     notarized archive (`notarize.file`) produced by `package`. The app needs no entitlements (no sandbox), so
-//     the empty Mac/SliceApp.entitlements is only a record of that.
+//   - mac: release.mjs has no entitlements key for the mac target and signs `sign.prePackageFiles` (the DMG
+//     container) without `--entitlements`. The app's entitlements are applied in prePackage by
+//     `swift-package mac-app --sign`, which reads swift-package.json `mac.entitlements`. SliceApp requests none, so
+//     Mac/SliceApp.entitlements is an empty record. A future entitlement must be added to that path, not here.
 import path from "node:path";
 
 const VERSION = "0.1.0";
@@ -46,7 +47,7 @@ const SWIFT_RUNTIME_DLLS = [
 
 const WIN_APPX = path.join("dist", "win", `SliceApp_${MSIX_VERSION}_x64.msix`);
 const MAC_APP = path.join("dist", "mac", "SliceApp.app");
-const MAC_ZIP = path.join("dist", "mac", "SliceApp.zip");
+const MAC_DMG = path.join("dist", "mac", `SliceApp_${VERSION}_arm64.dmg`);
 
 export default {
   schema: 1,
@@ -75,15 +76,17 @@ export default {
     mac: {
       signed: true,
       signingContract: "macos-developer-id-notarized-portable-v1",
-      // Build the executable and assemble SliceApp.app (Info.plist from swift-package.json). No signing here.
+      // prePackage: swift build, assemble SliceApp.app, Developer ID sign the app with its entitlements
+      // (swift-package mac-app --sign applies swift-package.json mac.entitlements), then build the branded DMG
+      // from the signed app. The DMG is the signed, notarized, stapled artifact (stapleable; a zip is not).
       prePackage: { cmd: "sh", args: ["scripts/prepackage-mac.sh"] },
-      sign: { prePackageFiles: [MAC_APP] },
-      // Zip after signing (package runs after sign), then notarize and staple the archive.
-      package: { cmd: "ditto", args: ["-c", "-k", "--keepParent", MAC_APP, MAC_ZIP] },
-      notarize: { file: MAC_ZIP, profile: "apple-dev-notary" },
-      artifacts: [MAC_ZIP],
-      hardening: [MAC_ZIP],
-      installer: { artifacts: [{ file: MAC_ZIP, key: "sliceapp/installers/mac/current/SliceApp.zip" }] },
+      // The DMG container is signed after prePackage (Developer ID, hardened runtime, timestamp).
+      sign: { prePackageFiles: [MAC_DMG] },
+      // release.mjs notarizes this file; notarize-macos.mjs staples a .dmg container itself.
+      notarize: { file: MAC_DMG, profile: "apple-dev-notary" },
+      artifacts: [MAC_DMG],
+      hardening: [MAC_DMG],
+      installer: { artifacts: [{ file: MAC_DMG, key: "sliceapp/installers/mac/current/SliceApp.dmg" }] },
     },
     win: {
       signed: true,

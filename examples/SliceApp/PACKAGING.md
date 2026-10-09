@@ -18,12 +18,13 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `Sources/SliceApp/Windows/` | Windows bootstrap (renderer load, typed startup errors) and the bridge backend |
 | `Windows/SliceApp.manifest` | ComCtl v6 + PerMonitorV2 DPI, embedded by the linker |
 | `Windows/Assets/` | MSIX logos (placeholders, solid colour) |
-| `Mac/SliceApp.entitlements` | Empty entitlements record (none requested) |
+| `Mac/SliceApp.entitlements` | Empty entitlements record (none requested); applied to the app by `swift-package mac-app --sign` |
+| `Mac/dmg/background.tiff` | DMG background, PLACEHOLDER (flat light grey, 660x400 + 1320x800 multi-rep TIFF); replace with branded art before any publication |
 | `swift-package.json` | Schema 1 config for `right-release swift-package` (both OSes) |
-| `right-release.config.mjs` | Release contract: `projectType: "swiftpm"`, mac `.app` (zip), Windows MSIX, App Installer |
+| `right-release.config.mjs` | Release contract: `projectType: "swiftpm"`, mac branded DMG (signed, notarized, stapled), Windows MSIX, App Installer |
 | `package.json` | Pins `@rightkit/release` 0.2.138 (exact) for `pnpm exec right-release` |
 | `scripts/build-windows.ps1` | Windows build, `mt.exe` manifest check, `dumpbin` closure, payload copy |
-| `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release` |
+| `scripts/prepackage-windows.ps1`, `scripts/prepackage-mac.sh` | `prePackage` steps called by `right-release`. The mac one builds the app, signs it with its entitlements, and builds the DMG |
 
 Data: rows persist to `rows.json` (schema 1, atomic write):
 - macOS: `~/Library/Application Support/SliceApp/rows.json`
@@ -83,7 +84,13 @@ Upload is a separate step and needs Adrian's explicit request for the exact seal
 pnpm exec right-release upload --release <id> --platform win --tier patch
 ```
 
-Required outputs: `dist/win/SliceApp_0.1.0.0_x64.msix`, `dist/win/SliceApp.appinstaller`, `dist/mac/SliceApp.zip`,
+macOS DMG flow (what the mac target runs, in order): `prePackage` (`scripts/prepackage-mac.sh`: `swift build -c release`,
+`swift-package mac-app --sign` (app with `Mac/SliceApp.entitlements`, Developer ID, hardened runtime), `right-release dmg build`
+into `dist/mac/SliceApp_0.1.0_arm64.dmg`), then `sign.prePackageFiles` (the DMG container, Developer ID), then `notarize.file`
+(the DMG, submitted with profile `apple-dev-notary`; `notarize-macos.mjs` staples the DMG and validates it), then hardening
+on the DMG. No zip is produced.
+
+Required outputs: `dist/win/SliceApp_0.1.0.0_x64.msix`, `dist/win/SliceApp.appinstaller`, `dist/mac/SliceApp_0.1.0_arm64.dmg`,
 the signing receipts and `msix-seal.json` under the RightKit state root.
 
 ## Clean-machine checks
@@ -115,23 +122,31 @@ Windows (PowerShell, elevated where noted):
 
 macOS (`right-release install-app` and the terminal; no direct `open`):
 
-1. Install: `ditto -x -k dist/mac/SliceApp.zip /Applications` (or `right-release install-app` on a `.dmg` once one is
-   produced); then `codesign --verify --deep --strict /Applications/SliceApp.app`,
-   `spctl --assess --type execute /Applications/SliceApp.app`. Do not expect a staple here: a zip cannot be stapled
-   (gap 3).
+1. Install: `right-release install-app --dmg dist/mac/SliceApp_0.1.0_arm64.dmg --app-name SliceApp.app --bundle-id dev.orthic.sliceapp`
+   (it verifies first). Then `xcrun stapler validate dist/mac/SliceApp_0.1.0_arm64.dmg` (expect the DMG ticket),
+   `codesign --verify --deep --strict /Applications/SliceApp.app`, `spctl --assess --type execute /Applications/SliceApp.app`.
+   Open question to check here, not assumed: the staple is on the DMG container only. Whether the copied `.app` launches
+   offline without its own ticket must be read from this check (gap 3b).
 2. Offline launch and first run: Adrian launches the app with networking off; confirm
    `~/Library/Application Support/SliceApp/rows.json` appears.
-3. Upgrade: replace the bundle with the `0.1.1` build through `right-release install-app` (it verifies first and
-   keeps the old bundle in the Trash). Expect `rows.json` unchanged.
+3. Upgrade: install the `0.1.1` DMG through `right-release install-app` (it verifies first and keeps the old bundle
+   in the Trash). Expect `rows.json` unchanged.
 4. Corrupt update rejection: alter one byte in a copy of `Contents/MacOS/SliceApp`; `codesign --verify --deep --strict`
    must fail, and the install step must refuse the bundle.
 5. Interrupted update: kill `ditto` mid-copy in a scratch directory (never the installed copy). Expect the installed
    bundle untouched (`install-app` restores the old bundle on failure).
 6. Uninstall preserving user data: move `/Applications/SliceApp.app` to the Trash; `rows.json` still present.
+7. Eject the DMG volume after testing (`hdiutil detach /Volumes/SliceApp* -force`); the build folder copy of the app is
+   removed by the DMG build's cleanup. Unregister stray copies with RightKit's `lsclean.sh` if any show in Spotlight.
 
 ## Verified so far
 
 - macOS: `swift build -c release` passes (Xcode 27 RC toolchain; Swift version not recorded).
+- `right-release.config.mjs` mac target (prep, 2026-10-09): the preconditions `release.mjs` enforces for the mac branch
+  (signingContract, prePackage, sign.prePackageFiles, notarize.file) hold, `notarize.file` is the signed DMG, and the
+  DMG build arguments parse with RightKit's `parseDmgArguments` (read-only import of the local 0.2.137 tree). There is no
+  pure mac/DMG config validator in RightKit; the mac check is the inline one in `release.mjs`. The win target still
+  reports no problems from `validateMsixTarget`.
 - Windows: `build-windows.ps1` passes on the host against the committed runtime (`git archive HEAD`).
   - `mt.exe` reads the embedded manifest: ComCtl v6 and PerMonitorV2 present.
   - Import closure resolves with no unresolved entries. The exe sha256 is recorded in the build output.
@@ -151,12 +166,21 @@ macOS (`right-release install-app` and the terminal; no direct `open`):
    0.2.137's validators.
 2. Publisher and App Installer URLs are placeholders (`TODO` in the config). The publisher must equal the signing
    subject exactly, and the URLs must not reach R2 until real.
-3. The mac branch of `release.mjs` does not pass `--entitlements` to `sign-macos.mjs`. The app needs none, so this has
-   no effect now, but it blocks any future entitlement. The mac `swift-package mac-app` step assembles the bundle
-   only; signing and notarization run through `release.mjs`.
-3b. Stapling: `release.mjs` notarizes the zip, and a zip cannot carry a ticket. The `.app` inside ships unstapled, so
-   first launch offline needs Gatekeeper to fetch the ticket. Decide before sealing: a DMG (stapleable) or a
-   post-unzip staple step. The macOS offline-launch check (step 2) depends on this.
+3. Entitlements (RightKit gap, not edited): the mac target has no entitlements key. `release.mjs` signs the DMG
+   container through `sign-macos.mjs` without `--entitlements`, which is correct for a container. The app's entitlements
+   are applied by `swift-package mac-app --sign` in prePackage, which reads `swift-package.json` `mac.entitlements`. So
+   this app's empty entitlements are honored, but a release-level entitlements declaration is still missing from
+   `release.mjs`; a future entitlement must go through that path. Record for RightKit Mac.
+3b. Stapling (resolved for the container, open for the app): the mac target now ships a DMG, and
+   `notarizeMacosArtifact` staples a `.dmg` archive itself. The `.app` inside is not separately notarized or stapled.
+   `release.mjs` takes one `notarize.file`, so notarizing the app first (zip, staple the app) and then the DMG is not
+   expressible in this config. Whether offline first launch of the copied app passes Gatekeeper on the DMG ticket alone
+   is unverified; the macOS offline-launch check (install step 1 and step 2) decides it. If it fails, the fix is a
+   RightKit change (two-stage notarize) and not an edit here.
+3c. The DMG background is a placeholder. The DMG build does not run without a background, but a plain DMG is not a
+   shippable look (workspace `docs/BRANDED-SIGNED-DMG.md`); replace `Mac/dmg/background.tiff` before publication.
+3d. The DMG name is arm64 (`SliceApp_0.1.0_arm64.dmg`) because the build is host-architecture. A universal build needs
+   a universal `swift build` and a rename; not decided here.
 4. Windows contract name: the workspace text says the Windows screen imports `SwiftRightUI`. The tree has no such
    module; the runtime is `SwiftRightRuntime`, which the screen imports on Windows. The contract text needs the
    module name settled.
