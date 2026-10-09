@@ -169,3 +169,17 @@ Open for SR0-B before ABI v0 freeze:
 - Frame clock: 26-35 fps observed from a 16 ms GPUI timer. Architecture §11 requires presentation interval p95 ≤ 16.7 ms; replace the timer with on-demand display ticks and measure real presented-frame intervals.
 - Window title lookup failed; foreground state unmeasured.
 - Hosts loading the renderer DLL must embed the ComCtl v6 manifest dependency; renderer windows require an interactive desktop session (DXGI unavailable in session 0).
+
+## Late-dispatch fault test (architecture.md:172): built, desktop run pending
+
+Probe ABI 0.2 adds a generation- and node-addressed job path. `swr_post_job(generation, node, token)` queues a continuation for the host `job` callback. It returns `SWR_ERR_STALE` (counted as closed, stale generation, or stale node) when the target is gone, and `SWR_ERR_FULL` at capacity. The generation check and the push share one lock with window close, and close drops everything still queued, so no job survives a close. Delivery re-checks generation and node on the UI thread right before calling Swift. Counters come from `swr_late_stats`.
+
+SwiftHost (fault thread started from `loop_ready`) posts: one valid job, a wrong generation, generation 0, a live node, a removed node, then a ~1 kHz stream through window close until 200 rejections are seen; after `swr_run` returns it posts again with retired generations. Pass requires: rejects return -7, nothing delivered after `window_closed` or to the removed node, delivery always on the main thread, `posted_ok == delivered + dropped_at_close + dropped_at_deliver`, Swift-delivered count equals runtime-delivered count, and `rejected_closed >= 200`. Result lines: `late_dispatch ...` and `late_dispatch_verdict=PASS|FAIL`; the overall `verdict=` includes it.
+
+| Criterion | Evidence |
+|---|---|
+| Late dispatch after window close rejected, counted | NOT RUN (needs desktop) |
+| Accepted job dropped, not delivered, when target dies first | NOT RUN (race-dependent, reported as `dropped_at_close` / `dropped_at_deliver`) |
+| No delivery after close, none to removed node | NOT RUN |
+
+Build: Rust probe via `rightkit remote windows cargo build --release --target x86_64-pc-windows-msvc`, request `rr-1791514410034-2e472dfa8aad8b11`, SUCCEEDED, exit 0, 2382.6 s (shared queue). Swift host built with the flags above in `D:\Claude\sr0b-gpui-drain-late` (`swift build` exit 0); DLL sha256 `8181A140F1A7D88CE93052EDA08BF54FA16C8FB994AEE028D5C3B3BD7A43378E`. Run with `scripts/run-desktop.ps1 -Base D:\Claude\sr0b-gpui-drain-late`. Not executed: the desktop was in use.

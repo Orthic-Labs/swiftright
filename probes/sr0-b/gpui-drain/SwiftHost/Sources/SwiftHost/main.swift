@@ -4,7 +4,11 @@ import Dispatch
 import Foundation
 import WinSDK
 
-// SR0-B probe. Synchronous entry on the initial thread (no async main).
+// SR0-B probe. Also carries the late-dispatch fault test (architecture.md stage B: "reject new
+// work after shutdown begins & fault-test late dispatch"): continuations addressed to a stale
+// window generation, a closed window or a removed node must be rejected or dropped, counted,
+// and never delivered to Swift after the target is gone.
+// Synchronous entry on the initial thread (no async main).
 // GPUI's loop runs inside swr_run on this thread. Swift's main dispatch queue
 // is drained from a GPUI foreground task via _dispatch_main_queue_callback_4CF.
 
@@ -57,6 +61,25 @@ var workloadStartTick: Int64 = 0
 var workloadEndTick: Int64 = 0
 var quitIssued = false
 
+// Late-dispatch fault test. Job callback state is main-thread-only; the fault thread owns the rest.
+var lateDelivered = 0
+var lateDeliveredAfterClose = 0
+var lateDeliveredDeadNode = 0
+var lateThreadMismatches = 0
+let liveNodeId: UInt64 = 7
+let deadNodeId: UInt64 = 8
+var lateRcValid: Int32 = -99
+var lateRcWrongGen: Int32 = -99
+var lateRcNoGen: Int32 = -99
+var lateRcLiveNode: Int32 = -99
+var lateRcDeadNode: Int32 = -99
+var lateStormOk = 0
+var lateStormStale = 0
+var lateStormFull = 0
+var lateStormOther = 0
+var lateStormDone = false
+let lateStormStaleTarget = 200
+
 // Cross-thread state.
 let stateLock = NSLock()
 var finishedFlag = false
@@ -102,6 +125,38 @@ func runProducer() {
     print("producer enqueue_rate_hz=\(Double(totalJobs) / (Double(qpcNow() - start) / qpcFreq)) hops_enqueued=\(hopsEnqueued)")
 }
 
+// Runs on its own thread from loop_ready. Targets the live window generation, then keeps posting
+// through window close until the runtime has rejected lateStormStaleTarget late posts.
+func runLateDispatchFault() {
+    let gen = swr_window_generation()
+    lateRcValid = swr_post_job(gen, 0, 1)
+    lateRcWrongGen = swr_post_job(gen &+ 1000, 0, 2)
+    lateRcNoGen = swr_post_job(0, 0, 3)
+    _ = swr_node_set(liveNodeId, 1)
+    lateRcLiveNode = swr_post_job(gen, liveNodeId, 4)
+    _ = swr_node_set(deadNodeId, 1)
+    _ = swr_node_set(deadNodeId, 0)
+    lateRcDeadNode = swr_post_job(gen, deadNodeId, 5)
+
+    let deadline = qpcNow() + Int64(qpcFreq * 150.0)
+    var token: UInt64 = 100
+    while qpcNow() < deadline {
+        token += 1
+        let rc = swr_post_job(gen, 0, token)
+        switch rc {
+        case 0: lateStormOk += 1
+        case -7: lateStormStale += 1
+        case -8: lateStormFull += 1
+        default: lateStormOther += 1
+        }
+        if lateStormStale >= lateStormStaleTarget { break }
+        Sleep(1)
+    }
+    stateLock.lock()
+    lateStormDone = true
+    stateLock.unlock()
+}
+
 func runWatchdog() {
     Thread.sleep(forTimeInterval: watchdogSeconds)
     stateLock.lock()
@@ -138,6 +193,14 @@ let loopReadyCallback: @convention(c) (UnsafeMutableRawPointer?) -> Void = { _ i
     workloadStartTick = qpcNow()
     Thread { runProducer() }.start()
     Thread { runWatchdog() }.start()
+    Thread { runLateDispatchFault() }.start()
+}
+
+let jobCallback: @convention(c) (UnsafeMutableRawPointer?, UInt64, UInt64) -> Void = { _, node, _ in
+    lateDelivered += 1
+    if GetCurrentThreadId() != mainThreadId { lateThreadMismatches += 1 }
+    if windowClosedCalls > 0 { lateDeliveredAfterClose += 1 }
+    if node == deadNodeId { lateDeliveredDeadNode += 1 }
 }
 
 let windowClosedCallback: @convention(c) (UnsafeMutableRawPointer?) -> Void = { _ in
@@ -151,7 +214,7 @@ print("initial_thread_id=\(mainThreadId)")
 var info = swr_bootstrap_info()
 let queryRc = swr_bootstrap_query(&info, UInt32(MemoryLayout<swr_bootstrap_info>.size))
 print("bootstrap_query_rc=\(queryRc) abi=\(info.abi_major).\(info.abi_minor) pointer_width=\(info.pointer_width) fn_table_size=\(info.fn_table_size)")
-guard queryRc == 0, info.abi_major == 0, info.abi_minor == 1, info.pointer_width == 64 else {
+guard queryRc == 0, info.abi_major == 0, info.abi_minor == 2, info.pointer_width == 64 else {
     print("bootstrap_rejected")
     exit(2)
 }
@@ -165,10 +228,26 @@ var callbacks = swr_host_callbacks(
     ctx: nil,
     loop_ready: loopReadyCallback,
     drain: drainCallback,
-    window_closed: windowClosedCallback
+    window_closed: windowClosedCallback,
+    job: jobCallback
 )
 let runRc = swr_run(&callbacks)
 let mainThreadAfter = GetCurrentThreadId()
+
+// Late dispatch after the loop has ended: the generation is retired, so this must be rejected.
+let lateRcAfterRun = swr_post_job(swr_window_generation() &+ 1, 0, 999)
+let lateRcAfterRunOldGen = swr_post_job(1, 0, 998)
+var lateWaitMs = 0
+while lateWaitMs < 5000 {
+    stateLock.lock()
+    let d = lateStormDone
+    stateLock.unlock()
+    if d { break }
+    Thread.sleep(forTimeInterval: 0.05)
+    lateWaitMs += 50
+}
+var lateStats = swr_late_stats_t()
+let lateStatsRc = swr_late_stats(&lateStats, UInt32(MemoryLayout<swr_late_stats_t>.size))
 
 // ---- Report (main thread, after swr_run returned) ----
 
@@ -199,7 +278,30 @@ print("frames_during_workload=\(frames) workload_s=\(String(format: "%.3f", work
 print("loop_ready_calls=\(loopReadyCalls) window_closed_calls=\(windowClosedCalls) watchdog_fired=\(watchdogFired)")
 print("swr_set_wake_handle_rc=\(setRc) swr_run_rc=\(runRc) main_thread_after_run_same=\(mainThreadAfter == mainThreadId)")
 
+stateLock.lock()
+let lateDone = lateStormDone
+stateLock.unlock()
+let lateAccounted = lateStats.posted_ok == lateStats.delivered + lateStats.dropped_at_close + lateStats.dropped_at_deliver
+let lateOk = lateStatsRc == 0
+    && lateDone
+    && lateRcValid == 0 && lateRcWrongGen == -7 && lateRcNoGen == -7
+    && lateRcLiveNode == 0 && lateRcDeadNode == -7
+    && lateRcAfterRun == -7 && lateRcAfterRunOldGen == -7
+    && lateDeliveredAfterClose == 0 && lateDeliveredDeadNode == 0 && lateThreadMismatches == 0
+    && lateAccounted
+    && UInt64(lateDelivered) == lateStats.delivered
+    && lateDelivered >= 2
+    && lateStats.rejected_stale_gen >= 1 && lateStats.rejected_stale_node >= 1
+    && lateStats.rejected_closed >= UInt64(lateStormStaleTarget)
+    && lateStormOther == 0
+print("late_dispatch rc_valid=\(lateRcValid) rc_wrong_gen=\(lateRcWrongGen) rc_no_gen=\(lateRcNoGen) rc_live_node=\(lateRcLiveNode) rc_dead_node=\(lateRcDeadNode) rc_after_run=\(lateRcAfterRun) rc_after_run_old_gen=\(lateRcAfterRunOldGen)")
+print("late_dispatch storm_ok=\(lateStormOk) storm_stale=\(lateStormStale) storm_full=\(lateStormFull) storm_other=\(lateStormOther) storm_done=\(lateDone)")
+print("late_dispatch swift_delivered=\(lateDelivered) delivered_after_close=\(lateDeliveredAfterClose) delivered_dead_node=\(lateDeliveredDeadNode) thread_mismatches=\(lateThreadMismatches)")
+print("late_dispatch stats_rc=\(lateStatsRc) posted_ok=\(lateStats.posted_ok) delivered=\(lateStats.delivered) dropped_at_close=\(lateStats.dropped_at_close) dropped_at_deliver=\(lateStats.dropped_at_deliver) rejected_closed=\(lateStats.rejected_closed) rejected_stale_gen=\(lateStats.rejected_stale_gen) rejected_stale_node=\(lateStats.rejected_stale_node) rejected_full=\(lateStats.rejected_full) accounted=\(lateAccounted)")
+print("late_dispatch_verdict=\(lateOk ? "PASS" : "FAIL")")
+
 let pass = runRc == 0
+    && lateOk
     && jobsDone == totalJobs
     && hopsRun == totalHops
     && mismatches == 0

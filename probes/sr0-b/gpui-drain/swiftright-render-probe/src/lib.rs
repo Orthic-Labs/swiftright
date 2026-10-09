@@ -34,10 +34,13 @@ const SWR_ERR_NOT_READY: i32 = -3;
 const SWR_ERR_RUNNING: i32 = -4;
 const SWR_ERR_APP: i32 = -5;
 const SWR_ERR_WAKE: i32 = -6;
+const SWR_ERR_STALE: i32 = -7; // target generation/node is gone
+const SWR_ERR_FULL: i32 = -8; // job queue at capacity
 
 const ABI_MAJOR: u32 = 0;
-const ABI_MINOR: u32 = 1;
-const FN_TABLE_SIZE: u32 = 6;
+const ABI_MINOR: u32 = 2; // 0.2: adds the late-dispatch fault surface (swr_post_job & co.)
+const FN_TABLE_SIZE: u32 = 10;
+const JOB_QUEUE_CAP: usize = 4096;
 
 #[allow(non_snake_case)]
 extern "system" {
@@ -66,6 +69,79 @@ static WINDOW_CLOSED_EVENTS: AtomicU64 = AtomicU64::new(0);
 static QUIT_REQUESTS: AtomicU64 = AtomicU64::new(0);
 static FRAMES: AtomicU64 = AtomicU64::new(0);
 
+// ---- Late-dispatch fault surface ----
+// A job is a continuation addressed to (target generation, node). It is accepted only while
+// both are live, and delivered to the host only while both are still live at delivery.
+// WINDOW_GEN changes only under the JOBS lock, and the same lock covers the accept check and
+// the push, so a job can never be left queued behind a close that already flushed the queue.
+// Delivery and close both run on the UI thread, so a job cannot be delivered after close.
+static WINDOW_GEN: AtomicU64 = AtomicU64::new(0);
+static NEXT_GEN: AtomicU64 = AtomicU64::new(1);
+
+#[derive(Clone, Copy)]
+struct Job {
+    gen: u64,
+    node: u64,
+    token: u64,
+}
+
+static JOBS: Mutex<Vec<Job>> = Mutex::new(Vec::new());
+static LIVE_NODES: Mutex<Vec<u64>> = Mutex::new(Vec::new());
+
+static LATE_POSTED_OK: AtomicU64 = AtomicU64::new(0);
+static LATE_DELIVERED: AtomicU64 = AtomicU64::new(0);
+static LATE_DROPPED_AT_CLOSE: AtomicU64 = AtomicU64::new(0);
+static LATE_DROPPED_AT_DELIVER: AtomicU64 = AtomicU64::new(0);
+static LATE_REJ_CLOSED: AtomicU64 = AtomicU64::new(0);
+static LATE_REJ_GEN: AtomicU64 = AtomicU64::new(0);
+static LATE_REJ_NODE: AtomicU64 = AtomicU64::new(0);
+static LATE_REJ_FULL: AtomicU64 = AtomicU64::new(0);
+
+fn lock_jobs() -> std::sync::MutexGuard<'static, Vec<Job>> {
+    JOBS.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+fn node_is_live(node: u64) -> bool {
+    LIVE_NODES.lock().unwrap_or_else(|e| e.into_inner()).contains(&node)
+}
+
+/// Target opened: publish a fresh generation.
+fn open_target() -> u64 {
+    let _q = lock_jobs();
+    let gen = NEXT_GEN.fetch_add(1, SeqCst);
+    WINDOW_GEN.store(gen, SeqCst);
+    gen
+}
+
+/// Target gone: retire the generation and drop every queued job addressed to it.
+/// Idempotent. Never calls the host.
+fn close_target() {
+    let mut q = lock_jobs();
+    WINDOW_GEN.store(0, SeqCst);
+    let n = q.len() as u64;
+    q.clear();
+    if n > 0 {
+        LATE_DROPPED_AT_CLOSE.fetch_add(n, SeqCst);
+    }
+}
+
+/// UI thread, outside any App/Window borrow. Hands each still-valid job to the host and
+/// drops the rest. No lock is held while calling Swift.
+fn deliver_jobs(h: HostRef) {
+    let batch = std::mem::take(&mut *lock_jobs());
+    for j in batch {
+        let cur = WINDOW_GEN.load(SeqCst);
+        if cur == 0 || j.gen != cur || (j.node != 0 && !node_is_live(j.node)) {
+            LATE_DROPPED_AT_DELIVER.fetch_add(1, SeqCst);
+            continue;
+        }
+        LATE_DELIVERED.fetch_add(1, SeqCst);
+        if let Some(f) = h.job {
+            let _ = catch_unwind(AssertUnwindSafe(|| f(h.ctx as *mut c_void, j.node, j.token)));
+        }
+    }
+}
+
 /// Plain copy of the host callbacks. `ctx` is stored as usize so the static
 /// below is Send. Callbacks are fn pointers, which are Send.
 #[derive(Clone, Copy)]
@@ -74,6 +150,7 @@ struct HostRef {
     loop_ready: Option<extern "C" fn(*mut c_void)>,
     drain: Option<extern "C" fn(*mut c_void)>,
     window_closed: Option<extern "C" fn(*mut c_void)>,
+    job: Option<extern "C" fn(*mut c_void, u64, u64)>,
 }
 
 static HOST: Mutex<Option<HostRef>> = Mutex::new(None);
@@ -194,7 +271,9 @@ fn launch(cx: &mut App, host: HostRef) {
     };
 
     // Runs inside App's close path. Only sets flags and wakes the drain task.
+    open_target();
     let closed_sub = cx.on_window_closed(|_cx| {
+        close_target();
         WINDOW_CLOSED.store(true, SeqCst);
         signal_notify();
     });
@@ -222,6 +301,7 @@ fn launch(cx: &mut App, host: HostRef) {
         loop {
             WaitSignal.await;
             guarded_drain(host);
+            deliver_jobs(host);
 
             if QUIT_REQUESTED.load(SeqCst) && !close_issued {
                 close_issued = true;
@@ -262,6 +342,7 @@ fn run_inner(cb: *const SwrHostCallbacks) -> i32 {
         loop_ready: raw.loop_ready,
         drain: raw.drain,
         window_closed: raw.window_closed,
+        job: raw.job,
     };
     *HOST.lock().unwrap_or_else(|e| e.into_inner()) = Some(host);
     UI_THREAD.store(unsafe { GetCurrentThreadId() }, SeqCst);
@@ -277,6 +358,7 @@ fn run_inner(cb: *const SwrHostCallbacks) -> i32 {
 
     Application::new().run(move |cx: &mut App| launch(cx, host));
 
+    close_target();
     let rc = if OPEN_FAILED.load(SeqCst) { SWR_ERR_APP } else { SWR_OK };
     println!(
         "[sr0-b rust] loop_ready_calls={} drain_calls={} drain_reentry_violations={} thread_violations={} selftest_detected={} wake_signals={} wake_wait_failures={} frames_rendered={} window_closed_events={} quit_requests={} open_failed={} run_rc={}",
@@ -292,6 +374,17 @@ fn run_inner(cb: *const SwrHostCallbacks) -> i32 {
         QUIT_REQUESTS.load(SeqCst),
         OPEN_FAILED.load(SeqCst),
         rc,
+    );
+    println!(
+        "[sr0-b rust] late_dispatch posted_ok={} delivered={} dropped_at_close={} dropped_at_deliver={} rejected_closed={} rejected_stale_gen={} rejected_stale_node={} rejected_full={}",
+        LATE_POSTED_OK.load(SeqCst),
+        LATE_DELIVERED.load(SeqCst),
+        LATE_DROPPED_AT_CLOSE.load(SeqCst),
+        LATE_DROPPED_AT_DELIVER.load(SeqCst),
+        LATE_REJ_CLOSED.load(SeqCst),
+        LATE_REJ_GEN.load(SeqCst),
+        LATE_REJ_NODE.load(SeqCst),
+        LATE_REJ_FULL.load(SeqCst),
     );
     *HOST.lock().unwrap_or_else(|e| e.into_inner()) = None;
     RUNNING.store(false, SeqCst);
@@ -318,6 +411,7 @@ pub struct SwrHostCallbacks {
     pub loop_ready: Option<extern "C" fn(*mut c_void)>,
     pub drain: Option<extern "C" fn(*mut c_void)>,
     pub window_closed: Option<extern "C" fn(*mut c_void)>,
+    pub job: Option<extern "C" fn(*mut c_void, u64, u64)>,
 }
 
 #[no_mangle]
@@ -408,6 +502,108 @@ pub extern "C" fn swr_selftest_reentry() -> i32 {
         } else {
             0
         }
+    }))
+    .unwrap_or(SWR_ERR_PANIC)
+}
+
+// ---- Late-dispatch fault surface (ABI 0.2) ----
+
+#[repr(C)]
+pub struct SwrLateStats {
+    pub struct_size: u32,
+    pub reserved: u32,
+    pub window_gen: u64,
+    pub posted_ok: u64,
+    pub delivered: u64,
+    pub dropped_at_close: u64,
+    pub dropped_at_deliver: u64,
+    pub rejected_closed: u64,
+    pub rejected_stale_gen: u64,
+    pub rejected_stale_node: u64,
+    pub rejected_full: u64,
+}
+
+/// Current live target generation, or 0 when none exists. Thread-safe.
+#[no_mangle]
+pub extern "C" fn swr_window_generation() -> u64 {
+    catch_unwind(|| WINDOW_GEN.load(SeqCst)).unwrap_or(0)
+}
+
+/// Marks a node live (nonzero `live`) or gone (zero). Thread-safe. Node 0 means "no node".
+#[no_mangle]
+pub extern "C" fn swr_node_set(node: u64, live: i32) -> i32 {
+    catch_unwind(AssertUnwindSafe(|| {
+        if node == 0 {
+            return SWR_ERR_ARGS;
+        }
+        let mut n = LIVE_NODES.lock().unwrap_or_else(|e| e.into_inner());
+        n.retain(|x| *x != node);
+        if live != 0 {
+            n.push(node);
+        }
+        SWR_OK
+    }))
+    .unwrap_or(SWR_ERR_PANIC)
+}
+
+/// Thread-safe. Queues a continuation for the host's `job` callback on the UI thread.
+/// Returns SWR_ERR_STALE (and counts why) when the generation is not the live one, no
+/// target exists, or `node` (when nonzero) is not live; SWR_ERR_FULL at capacity.
+/// A job accepted here is still dropped, uncalled, if its target dies before delivery.
+#[no_mangle]
+pub extern "C" fn swr_post_job(generation: u64, node: u64, token: u64) -> i32 {
+    catch_unwind(AssertUnwindSafe(|| {
+        {
+            let mut q = lock_jobs();
+            let cur = WINDOW_GEN.load(SeqCst);
+            if cur == 0 {
+                LATE_REJ_CLOSED.fetch_add(1, SeqCst);
+                return SWR_ERR_STALE;
+            }
+            if generation != cur {
+                LATE_REJ_GEN.fetch_add(1, SeqCst);
+                return SWR_ERR_STALE;
+            }
+            if node != 0 && !node_is_live(node) {
+                LATE_REJ_NODE.fetch_add(1, SeqCst);
+                return SWR_ERR_STALE;
+            }
+            if q.len() >= JOB_QUEUE_CAP {
+                LATE_REJ_FULL.fetch_add(1, SeqCst);
+                return SWR_ERR_FULL;
+            }
+            q.push(Job { gen: generation, node, token });
+            LATE_POSTED_OK.fetch_add(1, SeqCst);
+        }
+        signal_notify();
+        SWR_OK
+    }))
+    .unwrap_or(SWR_ERR_PANIC)
+}
+
+#[no_mangle]
+pub extern "C" fn swr_late_stats(out: *mut SwrLateStats, caller_size: u32) -> i32 {
+    catch_unwind(AssertUnwindSafe(|| {
+        let need = std::mem::size_of::<SwrLateStats>() as u32;
+        if out.is_null() || caller_size < need {
+            return SWR_ERR_ARGS;
+        }
+        unsafe {
+            *out = SwrLateStats {
+                struct_size: need,
+                reserved: 0,
+                window_gen: WINDOW_GEN.load(SeqCst),
+                posted_ok: LATE_POSTED_OK.load(SeqCst),
+                delivered: LATE_DELIVERED.load(SeqCst),
+                dropped_at_close: LATE_DROPPED_AT_CLOSE.load(SeqCst),
+                dropped_at_deliver: LATE_DROPPED_AT_DELIVER.load(SeqCst),
+                rejected_closed: LATE_REJ_CLOSED.load(SeqCst),
+                rejected_stale_gen: LATE_REJ_GEN.load(SeqCst),
+                rejected_stale_node: LATE_REJ_NODE.load(SeqCst),
+                rejected_full: LATE_REJ_FULL.load(SeqCst),
+            };
+        }
+        SWR_OK
     }))
     .unwrap_or(SWR_ERR_PANIC)
 }

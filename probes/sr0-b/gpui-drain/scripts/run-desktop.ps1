@@ -4,10 +4,12 @@
 # While each run is alive, samples every 250 ms whether the gpui window ("SR0-B drain")
 # exists and whether it is the foreground window. Writes D:\Claude\sr0b-gpui-drain\result.txt.
 # The binary is unchanged; latency sample timestamps and per-frame intervals are not emitted by it.
-param([int]$Runs = 5)
+# Late-dispatch fault test (ABI 0.2) build: pass -Base D:\Claude\sr0b-gpui-drain-late; look for the
+# `late_dispatch ...` lines and `late_dispatch_verdict=PASS` in each run (also folded into verdict=).
+param([int]$Runs = 5, [string]$Base = 'D:\Claude\sr0b-gpui-drain')
 
 $ErrorActionPreference = 'Continue'
-$base = 'D:\Claude\sr0b-gpui-drain'
+$base = $Base
 $bin = "$base\scratch-1\out\Products\Release-windows-x86_64"
 $exe = Join-Path $bin 'SwiftHost.exe'
 $resultPath = "$base\result.txt"

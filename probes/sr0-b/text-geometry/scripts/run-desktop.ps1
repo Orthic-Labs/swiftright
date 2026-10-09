@@ -98,6 +98,29 @@ function Uia-Rects($range, [double]$cx, [double]$cy) {
   return ,$out
 }
 
+# Raw (unconverted) rectangles for a range. The managed TextPatternRange.GetBoundingRectangles
+# converts a zero-width rectangle into Rect.Empty (+inf,+inf,-inf,-inf), which hides what the
+# provider actually returned for a degenerate range. UiaCoreApi.RawTextRange_GetBoundingRectangles
+# returns the provider's double[] (x,y,w,h per rect) untouched. Returns $null when unavailable.
+$script:RawGet = [System.Windows.Automation.TextPattern].Assembly.GetType('MS.Internal.Automation.UiaCoreApi').GetMethod('RawTextRange_GetBoundingRectangles', [Reflection.BindingFlags]'Static,NonPublic,Public')
+$script:RangeHandle = [System.Windows.Automation.Text.TextPatternRange].GetField('_hTextRange', [Reflection.BindingFlags]'Instance,NonPublic')
+function Raw-Rects($range, [double]$cx, [double]$cy) {
+  try {
+    $h = $script:RangeHandle.GetValue($range)
+    $a = New-Object object[] 2
+    $a[0] = $h
+    $hr = $script:RawGet.Invoke($null, $a)
+    $d = $a[1]
+    $out = @()
+    if ($d -ne $null) {
+      for ($i = 0; $i + 3 -lt $d.Length; $i += 4) {
+        $out += ,([double[]]@(($d[$i] - $cx), ($d[$i + 1] - $cy), $d[$i + 2], $d[$i + 3]))
+      }
+    }
+    return ,$out
+  } catch { return $null }
+}
+
 # UIA counts code points (74 for TEXT; 77 UTF-16 units). Split the same way.
 function Get-Cps([string]$t) {
   $cps = New-Object System.Collections.ArrayList
@@ -291,11 +314,18 @@ try {
       $caretLine = ([regex]::Match($log, 'CARET phase=0 idx=(\d+) commit_rect=([^ ]+) ax_rect=')).Groups
       $cr = Parse-Rects $caretLine[2].Value
       $ci = [int]$caretLine[1].Value
-      # (a) Degenerate range: Microsoft ITextRangeProvider::GetBoundingRectangles says "An empty array for a degenerate range."
+      # (a) Degenerate range at the caret must report the caret rectangle (architecture.md: caret &
+      # text-range bounds). A zero-width rectangle at the caret is the AccessKit convention, so width
+      # may be 0 up to the caret thickness; x/y/height must match the app caret within 1 px.
+      # The raw provider array is checked, because the managed wrapper turns a zero-width rect into Rect.Empty.
       $dgR = Range-At $tp $ci $ci $expChars
+      $rawDg = Raw-Rects $dgR $clientX $clientY
+      $rawSel = if ($selCount -gt 0) { Raw-Rects $sel[0] $clientX $clientY } else { $null }
       $dgRects = Uia-Rects $dgR $clientX $clientY
-      $dgOk = ($selCount -eq 1) -and ($caretText -eq '') -and ($caretRect.Count -eq 0) -and ($dgRects.Count -eq 0)
-      Add-Check 'caret: degenerate range returns empty rects (UIA spec)' $dgOk ("caret_idx_app=$ci uia_selection_count=$selCount uia_text='$caretText' selection_rects=$(Fmt-Rects $caretRect) degenerate_rects=$(Fmt-Rects $dgRects)")
+      $dgDetail = "caret_idx_app=$ci uia_selection_count=$selCount uia_text='$caretText' raw_degenerate=$(if ($rawDg -eq $null) { 'unavailable' } else { Fmt-Rects $rawDg }) raw_selection=$(if ($rawSel -eq $null) { 'unavailable' } else { Fmt-Rects $rawSel }) managed_degenerate=$(Fmt-Rects $dgRects) app_caret=$($caretLine[2].Value)"
+      $dgPick = if ($rawDg -ne $null) { ,$rawDg } else { ,$dgRects }
+      $dgOk = ($selCount -eq 1) -and ($caretText -eq '') -and ($dgPick.Count -ge 1) -and ([math]::Abs($dgPick[0][0] - $cr[0][0]) -le 1.0) -and ([math]::Abs($dgPick[0][1] - $cr[0][1]) -le 1.0) -and ([math]::Abs($dgPick[0][3] - $cr[0][3]) -le 1.0) -and ($dgPick[0][2] -ge 0) -and ($dgPick[0][2] -le ($cr[0][2] + 1.0))
+      Add-Check 'caret: degenerate range reports caret rect (zero-width, raw provider array)' $dgOk $dgDetail
       # (b) Caret location from the one-character range [caret, caret+1): non-degenerate, so spec-defined.
       $oneR = Range-At $tp $ci ($ci + 1) $expChars
       $oneText = $oneR.GetText(-1)
