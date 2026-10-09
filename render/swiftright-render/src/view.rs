@@ -784,6 +784,17 @@ extern "system" {
     fn ImmReleaseContext(hwnd: *mut c_void, himc: *mut c_void) -> i32;
     fn ImmSetCandidateWindow(himc: *mut c_void, f: *const CandidateForm) -> i32;
     fn ImmSetCompositionWindow(himc: *mut c_void, f: *const CompositionForm) -> i32;
+    fn ImmGetCandidateWindow(himc: *mut c_void, index: u32, f: *mut CandidateForm) -> i32;
+    fn ImmGetDefaultIMEWnd(hwnd: *mut c_void) -> *mut c_void;
+}
+#[link(name = "user32")]
+extern "system" {
+    fn EnumWindows(cb: unsafe extern "system" fn(*mut c_void, isize) -> i32, l: isize) -> i32;
+    fn GetClassNameW(hwnd: *mut c_void, buf: *mut u16, max: i32) -> i32;
+    fn IsWindowVisible(hwnd: *mut c_void) -> i32;
+    fn GetWindowRect(hwnd: *mut c_void, rect: *mut [i32; 4]) -> i32;
+    fn GetWindowThreadProcessId(hwnd: *mut c_void, pid: *mut u32) -> u32;
+    fn GetCurrentProcessId() -> u32;
 }
 #[link(name = "comctl32")]
 extern "system" {
@@ -802,8 +813,8 @@ const WM_IME_ENDCOMPOSITION: u32 = 0x010E;
 const WM_IME_COMPOSITION: u32 = 0x010F;
 static IME_MSG_LOGS: AtomicU32 = AtomicU32::new(0);
 
-fn place_ime_windows(hwnd: *mut c_void) {
-    let r = with_ime(|h, win, node| {
+fn ime_caret_rect(_hwnd: *mut c_void) -> Option<Rect> {
+    with_ime(|h, win, node| {
         let mut sel = Utf16Selection::default();
         let mut mr = Utf16Range::default();
         let mut has = 0i32;
@@ -819,7 +830,58 @@ fn place_ime_windows(hwnd: *mut c_void) {
         }
         Some(out)
     })
-    .flatten();
+    .flatten()
+}
+
+struct WinScan { pid: u32, ime: *mut c_void, out: Vec<String> }
+
+unsafe extern "system" fn scan_windows(h: *mut c_void, l: isize) -> i32 {
+    let sc = &mut *(l as *mut WinScan);
+    if IsWindowVisible(h) == 0 {
+        return 1;
+    }
+    let mut buf = [0u16; 128];
+    let n = GetClassNameW(h, buf.as_mut_ptr(), 128).max(0) as usize;
+    let cls = String::from_utf16_lossy(&buf[..n]);
+    let lc = cls.to_ascii_lowercase();
+    let mut pid = 0u32;
+    GetWindowThreadProcessId(h, &mut pid);
+    if pid == sc.pid || h == sc.ime || lc.contains("ime") || lc.contains("candidate") {
+        let mut r = [0i32; 4];
+        GetWindowRect(h, &mut r);
+        if sc.out.len() < 24 {
+            sc.out.push(format!("{cls}@{},{},{},{}", r[0], r[1], r[2], r[3]));
+        }
+    }
+    1
+}
+
+/// Evidence line for IMN_OPENCANDIDATE / IMN_CHANGECANDIDATE: the candidate form the IME holds, the visible IME / our windows, our caret.
+fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
+    unsafe {
+        let mut form = CandidateForm { index: 0, style: 0, pt: [0, 0], rc: [0; 4] };
+        let himc = ImmGetContext(hwnd);
+        let got = if himc.is_null() { 0 } else { ImmGetCandidateWindow(himc, 0, &mut form) };
+        if !himc.is_null() {
+            ImmReleaseContext(hwnd, himc);
+        }
+        let mut sc = WinScan { pid: GetCurrentProcessId(), ime: ImmGetDefaultIMEWnd(hwnd), out: Vec::new() };
+        EnumWindows(scan_windows, &mut sc as *mut WinScan as isize);
+        let mut o = [0i32, 0];
+        ClientToScreen(hwnd, &mut o);
+        let caret = match ime_caret_rect(hwnd) {
+            Some(r) => format!("{},{},{},{}", o[0] + r.x as i32, o[1] + r.y as i32, r.w as i32, r.h as i32),
+            None => "none".to_string(),
+        };
+        eprintln!(
+            "[swiftright-render] ime_cand event={event} got={got} form_style={} form_pt={},{} form_rc={},{},{},{} cand_windows=[{}] caret={caret}",
+            form.style, form.pt[0], form.pt[1], form.rc[0], form.rc[1], form.rc[2], form.rc[3], sc.out.join(";")
+        );
+    }
+}
+
+fn place_ime_windows(hwnd: *mut c_void) {
+    let r = ime_caret_rect(hwnd);
     let Some(r) = r else { return };
     let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
     unsafe {
@@ -845,6 +907,9 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
             }
             if msg == WM_IME_COMPOSITION || msg == WM_IME_STARTCOMPOSITION || (msg == WM_IME_NOTIFY && matches!(w, 3 | 4 | 5 | 6 | 7)) {
                 place_ime_windows(hwnd);
+            }
+            if msg == WM_IME_NOTIFY && (w == 5 || w == 3) {
+                log_candidate_ui(hwnd, if w == 5 { "open" } else { "change" });
             }
         }
         _ => {}

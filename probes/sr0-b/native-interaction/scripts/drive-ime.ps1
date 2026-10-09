@@ -82,6 +82,43 @@ function Restore-Ime {
   return ([SRN.N]::LayoutOfThread($tid) -eq $layoutBefore)
 }
 
+# ------------------------------------------------------------ exe-side candidate evidence (stderr `ime_cand` lines)
+# The exe logs one line per IMN_OPENCANDIDATE / IMN_CHANGECANDIDATE:
+#   ime_cand event=open|change got=.. form_style=.. form_pt=x,y form_rc=.. cand_windows=[class@l,t,r,b;...] caret=l,t,w,h|none
+# (cand_windows = visible windows of our process, the default IME window, and visible classes containing IME/Candidate; screen px;
+#  caret = the caret rect the exe returns to the IME, screen px; form_pt/form_rc are CLIENT px as the IME holds them.)
+$script:CandOpenSeen = 0; $script:CandShots = 0; $script:CompStartIdx = 0
+function Exe-ErrLines { try { return @($script:ErrTap.Snapshot()) } catch { return @() } }
+function Parse-ImeCand([int]$from = 0) {
+  $o = @(); $all = Exe-ErrLines
+  for ($i = $from; $i -lt $all.Count; $i++) {
+    $l = [string]$all[$i]
+    if ($l -notmatch 'ime_cand event=(open|change) got=(-?\d+) form_style=(\d+) form_pt=(-?\d+),(-?\d+) form_rc=(-?\d+),(-?\d+),(-?\d+),(-?\d+) cand_windows=\[(.*?)\] caret=(\S+)') { continue }
+    $m = $Matches; $wins = @()
+    foreach ($e in ($m[10] -split ';')) { if ($e -match '^(.*)@(-?\d+),(-?\d+),(-?\d+),(-?\d+)$') { $wins += [pscustomobject]@{ Cls = $Matches[1]; L = [int]$Matches[2]; T = [int]$Matches[3]; R = [int]$Matches[4]; B = [int]$Matches[5] } } }
+    $car = $null; if ($m[11] -match '^(-?\d+),(-?\d+),(-?\d+),(-?\d+)$') { $car = @([int]$Matches[1], [int]$Matches[2], [int]$Matches[3], [int]$Matches[4]) }
+    $o += [pscustomobject]@{ Event = $m[1]; Got = [int]$m[2]; Style = [int]$m[3]; Px = [int]$m[4]; Py = [int]$m[5]; Wins = $wins; Caret = $car; Raw = $l }
+  }
+  return ,$o
+}
+# Candidate UI windows = IME/Candidate-class windows with a real area (our own windows are listed by the exe but are not candidate UI).
+function Cand-UiWins($e) { return @($e.Wins | Where-Object { $_.Cls -match '(?i)ime|candidate' -and (($_.R - $_.L) * ($_.B - $_.T)) -ge 400 }) }
+function Anchored-To([int[]]$car, $w, [double]$s) {
+  $caretX = $car[0]; $caretTop = $car[1]; $caretBottom = $car[1] + $car[3]
+  $dx = $w.L - $caretX; $dyBelow = $w.T - $caretBottom; $dyAbove = $w.B - $caretTop
+  $yOk = ([math]::Abs($dyBelow) -le 40 * $s) -or ([math]::Abs($dyAbove) -le 40 * $s)
+  $xOk = ([math]::Abs($dx) -le 60 * $s) -or (($caretX -ge $w.L - 60 * $s) -and ($caretX -le $w.R + 60 * $s))
+  return [pscustomobject]@{ Ok = ($yOk -and $xOk); Dx = $dx; Dy = $dyBelow; DyAbove = $dyAbove; Placement = $(if ([math]::Abs($dyBelow) -le 40 * $s) { 'below' } elseif ([math]::Abs($dyAbove) -le 40 * $s) { 'above' } else { 'neither' }); XOk = $xOk }
+}
+# Screenshot as soon as the exe reports IMN_OPENCANDIDATE (called from the typing / Space wait loops); at most 4 per run.
+function Cand-Trigger {
+  $n = @(Exe-ErrLines | Where-Object { $_ -match 'ime_cand event=open' }).Count
+  if ($n -gt $script:CandOpenSeen) {
+    $script:CandOpenSeen = $n
+    if ($script:CandShots -lt 4) { $script:CandShots++; Log "ime_cand_open_trigger n=$n shot=$($script:CandShots)"; Capture-Evidence "open$n" }
+  }
+}
+
 # ------------------------------------------------------------ observation helpers
 function Marked-Of([string]$row, [string]$v0) {
   $v = Value-Of (Edit $row)
@@ -91,11 +128,12 @@ function Marked-Of([string]$row, [string]$v0) {
 # Type romaji one key at a time; after each key wait (<=1.5 s) for the display text to change, then record it.
 function Type-And-Observe([string]$row, [string]$v0, [string]$romaji) {
   $seen = New-Object System.Collections.Generic.List[string]
+  $script:CompStartIdx = (Exe-ErrLines).Count
   $prev = Marked-Of $row $v0
   foreach ($c in $romaji.ToUpper().ToCharArray()) {
     if (-not (Send-GatedKey ([uint16][int]$c) "romaji-$c" 120)) { break }
     $sw = [Diagnostics.Stopwatch]::StartNew(); $cur = $prev
-    do { Start-Sleep -Milliseconds 100; $cur = Marked-Of $row $v0 } while ($cur -eq $prev -and $sw.ElapsedMilliseconds -lt 1500)
+    do { Start-Sleep -Milliseconds 100; Cand-Trigger; $cur = Marked-Of $row $v0 } while ($cur -eq $prev -and $sw.ElapsedMilliseconds -lt 1500)
     $seen.Add($cur); $prev = $cur
   }
   return ,$seen.ToArray()
@@ -106,6 +144,7 @@ function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max, $winBa
     $n++
     if (-not (Send-GatedKey 0x20 "space-$n" 120)) { break }
     Start-Sleep -Milliseconds 350
+    Cand-Trigger
     $m = Marked-Of $row $v0; $seen.Add($m)
     if ($winBase -ne $null) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
     if ($winBase -ne $null) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
@@ -244,15 +283,30 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
     if ($cand -ne $null) { $via = 'uia' }
   }
   if ($cand -eq $null -and $script:CandSeen -ne $null) { $cand = $script:CandSeen; $via = 'enumwindows-seen-during-space-presses' }
+  # exe-side evidence (ime_cand lines since this composition began): any visible IME/Candidate window anchored to the logged caret wins.
+  $exeEv = Parse-ImeCand $script:CompStartIdx
+  $exeBest = $null; $exeCaret = $null
+  foreach ($e in $exeEv) {
+    if ($e.Caret -eq $null) { continue }
+    foreach ($w in (Cand-UiWins $e)) {
+      $a = Anchored-To $e.Caret $w $scale
+      if ($exeBest -eq $null -or ($a.Ok -and -not $exeBest.A.Ok)) { $exeBest = [pscustomobject]@{ W = $w; A = $a; E = $e } }
+    }
+  }
+  if ($exeBest -ne $null) {
+    $w = $exeBest.W; $cand = [pscustomobject]@{ Hwnd = 0; Pid = 0; Proc = 'exe-log'; Cls = $w.Cls; Title = ''; L = $w.L; T = $w.T; R = $w.R; B = $w.B; Visible = $true; Ex = 0; Why = "exe ime_cand event=$($exeBest.E.Event)" }
+    $exeCaret = $exeBest.E.Caret; $via = 'exe-ime_cand'
+  }
   if ($cand -eq $null) { $via = 'none' }
+  Log ("candidate_probe exe_ime_cand_lines=$(@($exeEv).Count) opens=$(@($exeEv | Where-Object { $_.Event -eq 'open' }).Count) with_visible_ui_window=$(@($exeEv | Where-Object { @(Cand-UiWins $_).Count -gt 0 }).Count) best=$(if ($exeBest) { "$($exeBest.W.Cls)@$($exeBest.W.L),$($exeBest.W.T),$($exeBest.W.R),$($exeBest.W.B) anchored=$($exeBest.A.Ok)" } else { 'none' })")
   Log ("candidate_probe caret_rect=$(Fmt-Rect $caret.CaretRect) comp_start_rect=$(Fmt-Rect $startRect) scale=$scale via=$via")
   Log ("candidate_probe changed_windows=[" + (($cw.New | ForEach-Object { (Fmt-Win $_) + "|why=$($_.Why)" }) -join '; ') + "]")
   Log ("candidate_probe ime_related_windows=[" + (($cw.Ime | ForEach-Object { (Fmt-Win $_) + "|why=$($_.Why)" }) -join '; ') + "]")
   if ($uiaDiag) { Log "candidate_probe uia_ime_roots=[$uiaDiag]" }
   if ($cand -ne $null) { Log "candidate_probe chosen=$(Fmt-Win $cand) why=$($cand.Why)" }
-  $bounds = Last-CaretBounds
+  $bounds = if ($exeCaret -ne $null) { $exeCaret } else { Last-CaretBounds }
   Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds)"
-  return [pscustomobject]@{ Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New; Via = $via }
+  return [pscustomobject]@{ ExeEv = $exeEv; Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New; Via = $via }
 }
 # Anchoring: the candidate must sit just below the caret (top within caret.bottom +/- 40 px) or just above it (bottom within caret.top +/- 40 px),
 # and horizontally near it (left within 60 px of caret.x, or the caret x inside the candidate's span +/- 60 px); all px scaled by DPI.
@@ -269,6 +323,24 @@ function Eval-Anchor($m) {
   $above = [math]::Abs($dyAbove) -le 40 * $s
   $xOk = ([math]::Abs($dx) -le 60 * $s) -or (($caretX -ge $c.L - 60 * $s) -and ($caretX -le $c.R + 60 * $s))
   return [pscustomobject]@{ Ok = (($below -or $above) -and $xOk); Dx = $dx; Dy = $dyBelow; DyAbove = $dyAbove; Placement = $(if ($below) { 'below' } elseif ($above) { 'above' } else { 'neither' }); XOk = $xOk }
+}
+
+# Position-set evidence (separate from visibility): did an IMN_OPENCANDIDATE fire whose candidate form (client px -> screen) sits at the logged caret?
+function Eval-PositionSet($m) {
+  $o = [SRN.N]::ClientOrigin($script:Hwnd); $s = $m.Scale
+  $opens = @($m.ExeEv | Where-Object { $_.Event -eq 'open' })
+  if ($opens.Count -eq 0) { return [pscustomobject]@{ Fired = $false; Match = $false; Note = 'no IMN_OPENCANDIDATE logged'; Vis = 0 } }
+  $match = $false; $note = @(); $vis = 0
+  foreach ($e in $opens) {
+    $vis += @(Cand-UiWins $e).Count
+    if ($e.Caret -eq $null) { $note += 'caret=none'; continue }
+    $px = $o[0] + $e.Px; $py = $o[1] + $e.Py
+    $dx = $px - $e.Caret[0]; $dyB = $py - ($e.Caret[1] + $e.Caret[3]); $dyT = $py - $e.Caret[1]
+    $ok = ($e.Got -ne 0) -and ([math]::Abs($dx) -le 60 * $s) -and (([math]::Abs($dyB) -le 40 * $s) -or ([math]::Abs($dyT) -le 40 * $s))
+    if ($ok) { $match = $true }
+    $note += "got=$($e.Got) style=0x$('{0:X}' -f $e.Style) form_screen=$px,$py caret=$($e.Caret -join ',') dx=$dx dy_bottom=$dyB ok=$ok"
+  }
+  return [pscustomobject]@{ Fired = $true; Match = $match; Note = ($note | Select-Object -First 3) -join ' ; '; Vis = $vis }
 }
 
 # ============================================================ run
@@ -403,6 +475,11 @@ try {
     $sp2 = Space-Until $row $v1 $NIPPON 1 $winBefore2
     $m2 = Measure-Candidate $row $v1 $winBefore2
     $a2 = Eval-Anchor $m2
+    foreach ($pair in @(@('comp1', $m1), @('comp2', $m2))) {
+      $ps = Eval-PositionSet $pair[1]
+      $visTxt = if ($ps.Vis -gt 0) { "candidate list VISIBLE (IME window(s) seen at open: $($ps.Vis))" } else { 'candidate list NOT visible to EnumWindows at open (visibility unproven; see screenshots)' }
+      Add-Check "candidate-position-set-at-caret-$($pair[0])" $(if ($ps.Fired -and $ps.Match) { 'PASS' } elseif ($ps.Fired) { 'FAIL' } else { 'NOT-RUN' }) "$($ps.Note); $visTxt"
+    }
     if ($m1.Candidate -eq $null -or $m2.Candidate -eq $null) {
       $newDesc = ((@($m1.New) + @($m2.New)) | ForEach-Object { Fmt-Win $_ }) -join '; '
       Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "no IME candidate window was found after Space by EnumWindows (new / became-visible / moved, IME-related class or process) nor by UIA List search (comp1 found=$($m1.Candidate -ne $null) comp2 found=$($m2.Candidate -ne $null)); exe-logged caret bounds comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds) (screen px) so the expected anchor is known but the IME's window was not located; windows changed after Space: [$newDesc] (see candidate_probe ime_related_windows / uia_ime_roots log lines)"
