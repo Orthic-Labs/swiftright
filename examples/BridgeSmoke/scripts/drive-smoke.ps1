@@ -45,6 +45,7 @@ $psi.RedirectStandardOutput = $true
 $psi.RedirectStandardError = $true
 $psi.EnvironmentVariables['Path'] = "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$Bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
 $psi.EnvironmentVariables['SWR_SMOKE_EXPECT_EDGE_CLICK'] = '1'
+$psi.EnvironmentVariables['SWR_SMOKE_LINGER_TICKS'] = '900'  # window stays ~15 s after typing so UIA lookups cannot race the self-quit
 $proc = [System.Diagnostics.Process]::Start($psi)
 $stdout = $proc.StandardOutput.ReadToEndAsync()
 $stderr = $proc.StandardError.ReadToEndAsync()

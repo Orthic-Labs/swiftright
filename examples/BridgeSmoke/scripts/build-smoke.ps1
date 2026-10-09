@@ -13,4 +13,4 @@ $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
 if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path) }
 Copy-Item "$Base\payload\bin\swiftright_render.dll" $bin -Force
 "bin=$bin"
-Get-ChildItem $bin -Filter *.exe, *.dll | ForEach-Object { "{0} {1}" -f $_.Name, $_.Length }
+Get-ChildItem "$bin\*" -Include *.exe, *.dll | ForEach-Object { "{0} {1}" -f $_.Name, $_.Length }

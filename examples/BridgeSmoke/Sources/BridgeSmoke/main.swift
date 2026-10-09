@@ -67,6 +67,7 @@ final class Smoke: TextStore {
     var ticks = 0
     var ticksInactive = 0
     var doneAtTick: Int?
+    let lingerTicks = Int(ProcessInfo.processInfo.environment["SWR_SMOKE_LINGER_TICKS"] ?? "") ?? 90
     var finishing = false
     var lastTickNs: UInt64 = 0
     var maxTickGapMs = 0.0
@@ -284,7 +285,7 @@ final class Smoke: TextStore {
 
     func evaluateDone() {
         if doneAtTick == nil, axInvokes >= 1, typed.contains("a"), !expectEdgeClick || edgeClickSeen {
-            doneAtTick = ticks + 90        // keep presenting ~1.5 s more to gather frame evidence
+            doneAtTick = ticks + lingerTicks  // default 90 ticks (~1.5 s); the UIA driver sets SWR_SMOKE_LINGER_TICKS so its lookups finish first
         }
     }
 
@@ -484,6 +485,21 @@ do {
             smoke.add("bogus window generation rejected", rc == -6, statusName(rc))
         } catch {
             smoke.add("bogus window generation rejected", false, "\(error)")
+        }
+        // SWR_PRIM_UNDERLINE (ABI 0.5): an IME marked-text underline as its own node, committed live.
+        do {
+            let before = bridge.stats()
+            let us = smoke.scale
+            smoke.version += 1
+            let ul = NodeUpsert(id: 6, order: 6, bounds: Rect(x: 20 * us, y: 440 * us, w: 120 * us, h: 3 * us),
+                                primitives: [.underline(Rect(x: 20 * us, y: 440 * us, w: 120 * us, h: max(1, 2 * us)), color: 0xD97706FF)])
+            try win.commit(Transaction(version: smoke.version, upserts: [ul]))
+            let after = bridge.stats()
+            let ok = after.commits_accepted == before.commits_accepted + 1 && after.commits_rejected == before.commits_rejected
+            smoke.add("underline primitive (IME marked text) accepted", ok,
+                      "accepted \(before.commits_accepted)->\(after.commits_accepted) rejected \(before.commits_rejected)->\(after.commits_rejected); limitation: the renderer exposes no per-primitive draw counter, so painting is not asserted (stats.paints only counts frames)")
+        } catch {
+            smoke.add("underline primitive (IME marked text) accepted", false, "\(error)")
         }
         try? win.requestTicks(true)
         Task { @MainActor in
