@@ -49,6 +49,10 @@ final class SelfTest {
     private var instanceBefore: Int?
     private var instanceAfter: Int?
     private var closeCommitMark = 0
+    /// F9: last log seq before the post-close engine release; late-result evidence is read after it.
+    private var releaseSeqMark = -1
+    /// F9: swr_stats.live_nodes read in the post-close pump, before shutdownComplete (nil = not read).
+    private var liveNodesAtPump: UInt64?
     private(set) var finished = false
     private(set) var exitCode: Int32 = 1
     var requestQuit: (() -> Void)?
@@ -397,15 +401,32 @@ final class SelfTest {
         if options.fixture == .F9 {
             // Cancelled tasks still wait on their engine continuation, which keeps the tree alive. Resume them,
             // then judge release after the post-close pump has run the unwinding tasks (ABI rev 0.5).
+            releaseSeqMark = log.events().map { seq($0) }.max() ?? -1
             engine.releaseAll()
-            DispatchQueue.main.async {
-                DispatchQueue.main.async {
-                    DispatchQueue.main.async { MainActor.assumeIsolated { self.finish(reason: "window-closed") } }
-                }
-            }
+            pumpThenFinish(hopsLeft: 200)
             return
         }
         finish(reason: "window-closed")
+    }
+
+    /// Hops the main queue (the post-close pump, ABI rev 0.5) until every resumed continuation has rejected its
+    /// late result and run its cleanup (or the hop budget ends; far inside the renderer's 5 s timer), then reads
+    /// live_nodes and finishes. finish() calls shutdownComplete, which ends the pump.
+    private var f9Expected: Int { options.f9NoTasks ? 0 : 11 }
+
+    private func pumpThenFinish(hopsLeft: Int) {
+        let done = lateCount("rejected") >= f9Expected && lateCount("cleanup") >= f9Expected
+        if done || hopsLeft <= 0 {
+            liveNodesAtPump = bridge.stats().live_nodes
+            finish(reason: "window-closed")
+            return
+        }
+        DispatchQueue.main.async { MainActor.assumeIsolated { self.pumpThenFinish(hopsLeft: hopsLeft - 1) } }
+    }
+
+    /// Effect events with the given phase logged after the post-close engine release.
+    private func lateCount(_ phase: String) -> Int {
+        log.events().filter { seq($0) > releaseSeqMark && ($0["kind"] as? String) == "effect" && self.phase($0) == phase }.count
     }
 
     // MARK: Checks
@@ -651,14 +672,17 @@ final class SelfTest {
                 pass("tasks-cancelled-at-teardown", cancels >= expectedCancels,
                      "task-cancel events=\(cancels) expected>=\(expectedCancels) (row tasks and screen task, cancelled by runtime teardown)"),
                 observe("commits-after-close", "commits at close=\(closeCommitMark) now=\(backend.commitCount) (the graph is closed by teardown: no later commit)"),
-                blocked("late-results-rejected", "the bridge drains the main queue only inside renderer callbacks; window_closed is the last callback, so a resumed engine continuation cannot run after close (bridge gap: post-close pump)"),
-                blocked("cleanup-after-close", "same as late-results-rejected"),
+                pass("late-results-rejected", lateCount("rejected") == f9Expected,
+                     "rejected after post-close release=\(lateCount("rejected")) expected=\(f9Expected) (resumed continuations run in the post-close pump; commit gate refuses window-closed)"),
+                pass("cleanup-after-close", lateCount("cleanup") == f9Expected,
+                     "cleanup after post-close release=\(lateCount("cleanup")) expected=\(f9Expected)"),
                 pass("tree-released", events(node: "tree", phase: "released", includeTeardown: true).count >= 1,
                      "probe deinit ran after runtime teardown and engine release, within the post-close pump (tree-released events=\(events(node: "tree", phase: "released", includeTeardown: true).count))"),
                 observe("teardown-commit", "not sent: the renderer sets SHUTDOWN before window_closed, so any commit then returns SWR_E_SHUTDOWN (errors=\(backend.commitErrors.count)); the renderer frees its own tree at close"),
-                pass("bridge-ledger-zero-after-teardown", backend.ledgerAfterTeardown == 0,
-                     "host ledger of renderer nodes after teardown=\(backend.ledgerAfterTeardown) (host drops its node state; the renderer frees the tree itself)"),
-                blocked("renderer-live-nodes-zero", "swr_stats has no live-node counter (ABI rev 0.4); only the host ledger above counts nodes"),
+                observe("bridge-ledger-after-teardown", "host ledger of renderer nodes after teardown=\(backend.ledgerAfterTeardown) (trivial: the host drops its own state; live_nodes below is the real check)"),
+                liveNodesAtPump.map { n in
+                    pass("renderer-live-nodes-zero", n == 0, "swr_stats.live_nodes=\(n) read in the post-close pump before shutdownComplete")
+                } ?? blocked("renderer-live-nodes-zero", "live_nodes was not read in the post-close pump"),
                 observe("view-bindings-cleared-by-host", "\(backend.clearedViewBindings) model-held view references dropped after teardown"),
             ]
         }
