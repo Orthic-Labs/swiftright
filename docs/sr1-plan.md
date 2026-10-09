@@ -63,15 +63,27 @@ passes. Merge gate = comparator green + no regression in the existing goldens. N
 The SwiftUI shell screens compile unchanged on Windows and every screen is compared side by side, same as a block.
 Existing Swift apps (dictation pill, Pulse notch with its CI view renders) are early acceptance targets.
 
+## What is deterministic
+
+The factory is scripts, not agents: catalogue extraction, probe generation (from each block's signature plus a
+standard input matrix per block kind, with per-block overrides), Mac golden capture, Windows replay, comparison and
+reports. Agents (Codex or community) are used only to implement each block's Windows behaviour until its comparison
+passes, and occasionally to tune a block's input matrix.
+
 ## Order
 
 1. Foundations the factory needs: catalogue extractor, golden capture harness (Mac VM), Windows offscreen
    replay, comparator + report, renderer support for paths/shapes, images, clipping, scrolling, hit-testing.
-2. Pilot: about 20 blocks through the whole pipeline (shapes, images, scroll, the first form controls), to prove
-   capture, comparison and the agent loop. Fix the factory, not the blocks, when it struggles.
+2. Pilot ramp: 5 blocks through the whole pipeline -> fix the factory -> 10 more -> fix -> 20 more; when 20 pass with
+   no factory fixes, open the queue. Fix the factory, not the blocks, when it struggles.
 3. Shell demand map + shell screens written in SwiftUI on Mac.
 4. Scale: open the queue to parallel agents, shell-needed blocks first, by dependency layer.
 5. Shell parity on Windows; then the rest of the catalogue for community/open source.
+
+## Estimates (agentic critical path, unmeasured)
+
+Factory build including renderer paths/images/offscreen target: about 12 h. Then 5 blocks about 2 h, 10 about 3 h,
+20 about 4 h, each followed by factory fixes.
 
 ## Pass criteria
 - Factory: a new block goes from ticket to `parity` with no manual steps besides the implementation.
