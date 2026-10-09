@@ -1,4 +1,4 @@
-//! swiftright-render: ABI v0 (revision 0.4) renderer for SwiftRight on Windows.
+//! swiftright-render: ABI v0 (revision 0.5) renderer for SwiftRight on Windows.
 //! See render/swiftright-abi/include/swiftright.h for the contract (threading,
 //! ownership, units). Every `extern "C"` entry contains panics (SWR_E_PANIC).
 //!
@@ -66,7 +66,7 @@ pub extern "C" fn swr_bootstrap_query(out: *mut BootstrapInfo, caller_size: u32)
                 line_info_size: std::mem::size_of::<LineInfo>() as u32,
                 char_cell_size: std::mem::size_of::<CharCell>() as u32,
                 fn_count: API_FN_COUNT,
-                reserved: 0,
+                stats_size: std::mem::size_of::<Stats>() as u32,
             };
         }
         SWR_OK
@@ -96,6 +96,7 @@ pub extern "C" fn swr_get_api(out: *mut Api, caller_size: u32) -> Status {
                 request_modal: swr_request_modal,
                 selftest_reentry: swr_selftest_reentry,
                 get_stats: swr_get_stats,
+                shutdown_complete: swr_shutdown_complete,
             };
         }
         SWR_OK
@@ -489,6 +490,23 @@ pub extern "C" fn swr_get_stats(out: *mut Stats) -> Status {
             fill_stats(&mut s);
             *out = s;
         }
+        SWR_OK
+    })
+}
+
+/// Ends the post-close pump (rev 0.5). UI thread only; valid once window_closed has been
+/// entered. Idempotent. swr_run returns after the pump ends.
+#[no_mangle]
+pub extern "C" fn swr_shutdown_complete() -> Status {
+    guard!({
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        if !POST_CLOSE_ACTIVE.load(SeqCst) {
+            return E_STATE;
+        }
+        SHUTDOWN_COMPLETE.store(true, SeqCst);
+        signal_notify();
         SWR_OK
     })
 }

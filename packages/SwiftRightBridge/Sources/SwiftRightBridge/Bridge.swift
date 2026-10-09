@@ -77,6 +77,7 @@ public final class Bridge {
             ("measure_result", i.measure_result_size, MemoryLayout<swr_measure_result>.size),
             ("line_info", i.line_info_size, MemoryLayout<swr_line_info>.size),
             ("char_cell", i.char_cell_size, MemoryLayout<swr_char_cell>.size),
+            ("stats", i.stats_size, MemoryLayout<swr_stats>.size),
         ]
         for (name, got, want) in sizes where Int(got) != want {
             throw BridgeError.startup("SWR_STARTUP_ERROR: \(name) table size mismatch expected \(want) got \(got)")
@@ -88,8 +89,10 @@ public final class Bridge {
 
     // MARK: running
 
-    /// Opens the window, runs the renderer loop and blocks until the window is closed.
-    /// `onReady` fires once (UI thread, outside all renderer borrows).
+    /// Opens the window, runs the renderer loop, and blocks until the post-close pump ends
+    /// (`shutdownComplete()` or the renderer's timeout, rev 0.5). `onReady` fires once
+    /// (UI thread, outside all renderer borrows). `onWindowClosed` runs teardown; late
+    /// main-queue work is still drained after it.
     @discardableResult
     public func run(title: String, width: UInt32, height: UInt32) throws -> Int32 {
         #if os(Windows)
@@ -116,6 +119,13 @@ public final class Bridge {
     /// Thread-safe.
     public func requestQuit() {
         _ = api.request_quit?()
+    }
+
+    /// Ends the post-close pump (ABI rev 0.5). UI thread only. Valid once `onWindowClosed`
+    /// has been entered (E_STATE before that); idempotent. `run` returns after this.
+    public func shutdownComplete() throws {
+        let rc = api.shutdown_complete?() ?? -3
+        if rc != 0 { throw BridgeError.status(rc, "swr_shutdown_complete") }
     }
 
     func makeCallbacks() -> swr_host_callbacks {

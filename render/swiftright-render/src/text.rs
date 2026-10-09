@@ -53,6 +53,7 @@ impl RunSlab {
             }
         };
         self.slots[slot].1 = Some(m);
+        LIVE_RUNS.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
         Ok(((self.slots[slot].0 as u64) << 32) | (slot as u64 + 1))
     }
 
@@ -78,15 +79,30 @@ impl RunSlab {
         match self.locate(h) {
             None => E_STALE_HANDLE,
             Some(s) => {
-                self.slots[s].1 = None;
-                let mut g = self.slots[s].0.wrapping_add(1);
-                if g == 0 {
-                    g = 1;
-                }
-                self.slots[s].0 = g;
+                self.retire(s);
                 SWR_OK
             }
         }
+    }
+
+    /// Drops every live run (window closed: the owner died). Each dropped handle's
+    /// generation advances, so a later release fails with SWR_E_STALE_HANDLE.
+    pub fn clear(&mut self) {
+        for s in 0..self.slots.len() {
+            if self.slots[s].1.is_some() {
+                self.retire(s);
+            }
+        }
+    }
+
+    fn retire(&mut self, s: usize) {
+        self.slots[s].1 = None;
+        let mut g = self.slots[s].0.wrapping_add(1);
+        if g == 0 {
+            g = 1;
+        }
+        self.slots[s].0 = g;
+        LIVE_RUNS.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
     }
 }
 

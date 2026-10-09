@@ -55,6 +55,8 @@ func cPrimitive(_ p: Primitive) -> swr_primitive {
         c.kind = 7; c.m = (1, 0, 0, 1, dx, dy)
     case .translatePop:
         c.kind = 8
+    case .underline(let r, let color):
+        c.kind = 9; c.rect = cRect(r); c.color = color
     }
     return c
 }

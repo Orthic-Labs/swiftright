@@ -1,11 +1,11 @@
-//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.4).
+//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.5).
 //! Compile-time size asserts use the sizes measured with clang on the header.
 
 use std::ffi::{c_char, c_void};
 
 pub const ABI_MAJOR: u32 = 0;
-pub const ABI_MINOR: u32 = 4;
-pub const API_FN_COUNT: u32 = 13;
+pub const ABI_MINOR: u32 = 5;
+pub const API_FN_COUNT: u32 = 14;
 
 pub type Status = i32;
 pub const SWR_EMPTY: Status = 1;
@@ -38,6 +38,7 @@ pub const PRIM_CLIP_PUSH: u32 = 5;
 pub const PRIM_CLIP_POP: u32 = 6;
 pub const PRIM_TRANSFORM_PUSH: u32 = 7;
 pub const PRIM_TRANSFORM_POP: u32 = 8;
+pub const PRIM_UNDERLINE: u32 = 9;
 
 pub const ROLE_NONE: u32 = 0;
 pub const ROLE_WINDOW: u32 = 1;
@@ -86,6 +87,9 @@ pub const MOD_PLATFORM: u32 = 0x8;
 pub const EVENT_TEXT_CAP: usize = 64;
 
 pub const IDENTIFIER_MAX: u32 = 256;
+
+/// Post-close pump bound (rev 0.5).
+pub const POST_CLOSE_TIMEOUT_MS: u64 = 5000;
 
 pub const MODAL_MESSAGE: u32 = 1;
 
@@ -139,7 +143,7 @@ pub struct BootstrapInfo {
     pub line_info_size: u32,
     pub char_cell_size: u32,
     pub fn_count: u32,
-    pub reserved: u32,
+    pub stats_size: u32,
 }
 
 #[repr(C)]
@@ -431,6 +435,9 @@ pub struct Stats {
     pub ime_calls: u64,
     pub ime_busy_rejected: u64,
     pub selftest_reentry_detected: u64,
+    pub live_nodes: u64,
+    pub post_close_drains: u64,
+    pub post_close_timeouts: u64,
 }
 
 #[repr(C)]
@@ -450,12 +457,13 @@ pub struct Api {
     pub request_modal: extern "C" fn(u64, *const ModalRequest) -> Status,
     pub selftest_reentry: extern "C" fn() -> Status,
     pub get_stats: extern "C" fn(*mut Stats) -> Status,
+    pub shutdown_complete: extern "C" fn() -> Status,
 }
 
 // Sizes measured with clang on swiftright.h (x86_64 / arm64 agree).
 const _: () = assert!(std::mem::size_of::<BootstrapInfo>() == 88);
 const _: () = assert!(std::mem::size_of::<HostCallbacks>() == 112);
-const _: () = assert!(std::mem::size_of::<Api>() == 112);
+const _: () = assert!(std::mem::size_of::<Api>() == 120);
 const _: () = assert!(std::mem::size_of::<Transaction>() == 72);
 const _: () = assert!(std::mem::size_of::<Node>() == 144);
 const _: () = assert!(std::mem::size_of::<Primitive>() == 80);
@@ -469,4 +477,4 @@ const _: () = assert!(std::mem::size_of::<CharCell>() == 24);
 const _: () = assert!(std::mem::size_of::<RunOptions>() == 40);
 const _: () = assert!(std::mem::size_of::<WindowMetrics>() == 24);
 const _: () = assert!(std::mem::size_of::<ModalRequest>() == 48);
-const _: () = assert!(std::mem::size_of::<Stats>() == 176);
+const _: () = assert!(std::mem::size_of::<Stats>() == 200);

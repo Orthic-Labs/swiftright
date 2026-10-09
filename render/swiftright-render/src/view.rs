@@ -245,6 +245,14 @@ fn paint_tree(
                         });
                     }
                 }
+                Prim::Underline { r, color } => {
+                    // SWR_PRIM_UNDERLINE (rev 0.5): solid bar, painted as a quad in v0.
+                    let b = Bounds::new(
+                        point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
+                        size(px(r[2] * inv), px(r[3] * inv)),
+                    );
+                    masked(window, clip, |w| w.paint_quad(fill(b, rgba(*color))));
+                }
                 Prim::ClipPush(r) => {
                     let mut b = Bounds::new(
                         point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
@@ -632,6 +640,33 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
         loop {
             WaitSignal.await;
 
+            if POST_CLOSE_ACTIVE.load(SeqCst) {
+                // Post-close pump (rev 0.5): drain only. The window and its tree are gone;
+                // commits, measurements and tick requests are refused with SWR_E_SHUTDOWN.
+                bump(S_POST_DRAINS);
+                if let Some(f) = host.drain {
+                    bump(S_DRAIN_CALLS);
+                    let ctx = host.ctx_ptr();
+                    call_host(|| f(ctx));
+                }
+                if events_pending() {
+                    if let Some(f) = host.events_available {
+                        let ctx = host.ctx_ptr();
+                        if !call_host(|| f(ctx)) {
+                            signal_notify();
+                        }
+                    }
+                }
+                if SHUTDOWN_COMPLETE.load(SeqCst) {
+                    break;
+                }
+                if POST_CLOSE_EXPIRED.load(SeqCst) {
+                    bump(S_POST_TIMEOUTS);
+                    break;
+                }
+                continue;
+            }
+
             if let Some(f) = host.drain {
                 bump(S_DRAIN_CALLS);
                 let ctx = host.ctx_ptr();
@@ -673,19 +708,48 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
                 ANIMATING.store(false, SeqCst);
                 LIVE_WINDOW.store(0, SeqCst);
                 crate::ax::lock_ax().window = 0;
+                // The post-close flag goes up before the host sees the close, so the host can
+                // end the phase from inside window_closed; the timer bounds the phase.
+                POST_CLOSE_ACTIVE.store(true, SeqCst);
+                arm_post_close_timer();
                 if let Some(f) = host.window_closed {
                     let ctx = host.ctx_ptr();
                     call_host(|| f(ctx, win_handle));
                 }
-                // The closed window must not retain its tree.
-                let _ = with_ui(|ui| ui.tree.clear());
+                // Teardown is over: the closed window's tree, text runs and AccessKit
+                // snapshot are released here, so the live-node gauge reads zero.
+                let _ = with_ui(|ui| {
+                    ui.tree.clear();
+                    ui.runs.clear();
+                });
+                {
+                    let mut a = crate::ax::lock_ax();
+                    a.nodes.clear();
+                    a.focus = 0;
+                }
                 clear_events();
-                let _ = cx.update(|cx| cx.quit());
-                break;
+                continue;
             }
         }
+        let _ = cx.update(|cx| cx.quit());
     })
     .detach();
+}
+
+/// Arms the post-close bound: after SWR_POST_CLOSE_TIMEOUT_MS the pump ends even if the
+/// host never calls swr_shutdown_complete. A failed thread spawn ends it at once.
+fn arm_post_close_timer() {
+    let spawned = std::thread::Builder::new()
+        .name("swr-post-close-timer".into())
+        .spawn(|| {
+            std::thread::sleep(std::time::Duration::from_millis(POST_CLOSE_TIMEOUT_MS));
+            POST_CLOSE_EXPIRED.store(true, SeqCst);
+            signal_notify();
+        });
+    if spawned.is_err() {
+        POST_CLOSE_EXPIRED.store(true, SeqCst);
+        signal_notify();
+    }
 }
 
 /// Blocks on the calling thread until the window closes and GPUI quits.
@@ -707,13 +771,15 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
     Application::new().run(move |cx: &mut App| launch(cx, title, width, height, host));
     set_host(None);
     eprintln!(
-        "[swiftright-render] shutdown paints={} paints_while_inactive={} drains={} ticks_delivered={} events_pushed={} reentry_refused={}",
+        "[swiftright-render] shutdown paints={} paints_while_inactive={} drains={} ticks_delivered={} events_pushed={} reentry_refused={} post_close_drains={} post_close_timeouts={}",
         stat(S_PAINTS),
         PAINTS_INACTIVE.load(SeqCst),
         stat(S_DRAIN_CALLS),
         stat(S_TICKS_DEL),
         stat(S_EV_PUSHED),
         stat(S_REENTRY),
+        stat(S_POST_DRAINS),
+        stat(S_POST_TIMEOUTS),
     );
     if OPEN_FAILED.load(SeqCst) {
         E_PLATFORM

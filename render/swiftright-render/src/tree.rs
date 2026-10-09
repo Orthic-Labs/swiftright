@@ -8,12 +8,15 @@ use std::sync::Arc;
 
 use crate::abi::*;
 use crate::ax::{AxNode, AxRun, AxShared};
+use crate::rt::LIVE_TREE_NODES;
 use crate::text::{Measured, RunSlab};
+use std::sync::atomic::Ordering::SeqCst;
 
 #[derive(Clone)]
 pub enum Prim {
     Rect { r: [f32; 4], color: u32, border_color: u32, border_w: f32, radius: f32 },
     Text { x: f32, y: f32, run: Arc<Measured> },
+    Underline { r: [f32; 4], color: u32 },
     ClipPush([f32; 4]),
     ClipPop,
     TranslatePush(f32, f32),
@@ -68,6 +71,7 @@ impl Tree {
         self.nodes.clear();
         self.order.clear();
         self.focus = 0;
+        LIVE_TREE_NODES.store(0, SeqCst);
     }
 
     /// Topmost hit-target node containing the physical point.
@@ -156,6 +160,13 @@ unsafe fn convert_prims(prims: &[Primitive], runs: &RunSlab) -> Result<Vec<Prim>
             PRIM_TEXT_RUN => {
                 let run = runs.get(p.text_run).ok_or(E_STALE_HANDLE)?;
                 out.push(Prim::Text { x: p.rect.x, y: p.rect.y, run });
+            }
+            PRIM_UNDERLINE => {
+                let r = rect4(&p.rect)?;
+                if r[3] <= 0.0 {
+                    return Err(E_BAD_ARG);
+                }
+                out.push(Prim::Underline { r, color: p.color });
             }
             PRIM_IMAGE | PRIM_PATH => return Err(E_UNSUPPORTED),
             PRIM_CLIP_PUSH => {
@@ -319,6 +330,7 @@ pub unsafe fn commit(tree: &mut Tree, runs: &RunSlab, t: &Transaction) -> Result
         return Err(E_NOT_FOUND);
     }
 
+    LIVE_TREE_NODES.store(staged.len() as u64, SeqCst);
     tree.nodes = staged;
     tree.order = dfs_order(&tree.nodes);
     tree.version = t.version;

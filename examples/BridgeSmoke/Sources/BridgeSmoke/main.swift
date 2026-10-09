@@ -1,7 +1,7 @@
 import Foundation
 import SwiftRightBridge
 
-// BridgeSmoke: end-to-end ABI v0 check. Opens a window, commits a hand-authored tree
+// BridgeSmoke: end-to-end ABI rev 0.5 check. Opens a window, commits a hand-authored tree
 // (label, wrapped paragraph, button, editable text node, status), measures and wraps text
 // at two widths, handles an AX Invoke and a typed character (driven from outside by
 // scripts/drive-smoke.ps1: UIA Invoke + virtual-key input), then quits and prints a
@@ -47,6 +47,14 @@ final class Smoke: TextStore {
     var unknownNodeEvents = 0
     var firstAXWindow: UInt64 = 0
     var metricsEvents = 0
+
+    // post-close evidence (rev 0.5)
+    var closeCalls = 0
+    var lateCommitRC: Int32?
+    var lateMeasureRC: Int32?
+    var cleanupRan = false
+    var cleanupLiveNodes: UInt64?
+    var cleanupShutdownRC: Int32?
 
     // measurement evidence
     var wrapWide: TextMeasurement?
@@ -280,6 +288,48 @@ final class Smoke: TextStore {
         }
     }
 
+    /// window_closed (rev 0.5). Teardown happens here. The renderer then runs the post-close
+    /// pump, which drains the main queue: a late result posted to the main queue must be
+    /// rejected, and the cleanup job runs there and ends the pump with swr_shutdown_complete.
+    func onClosed() {
+        closeCalls += 1
+        let b = bridge
+        let handle = lastHandle
+        DispatchQueue.main.async { [self] in
+            // Late async result: a finished request tries to commit and measure after close.
+            let win = BridgeWindow.makeForTesting(bridge: b, handle: handle)
+            do {
+                try win.commit(Transaction(version: 200_000))
+                self.lateCommitRC = 0
+            } catch BridgeError.status(let rc, _) {
+                self.lateCommitRC = rc
+            } catch {
+                self.lateCommitRC = -999
+            }
+            do {
+                _ = try b.measure(MeasureRequest(text: "late", scale: 1))
+                self.lateMeasureRC = 0
+            } catch BridgeError.status(let rc, _) {
+                self.lateMeasureRC = rc
+            } catch {
+                self.lateMeasureRC = -999
+            }
+        }
+        DispatchQueue.main.async { [self] in
+            // Cleanup in the post-close pump: the closed window must retain no nodes or runs.
+            self.cleanupRan = true
+            self.cleanupLiveNodes = b.stats().live_nodes
+            do {
+                try b.shutdownComplete()
+                self.cleanupShutdownRC = 0
+            } catch BridgeError.status(let rc, _) {
+                self.cleanupShutdownRC = rc
+            } catch {
+                self.cleanupShutdownRC = -999
+            }
+        }
+    }
+
     func onTick(_ win: BridgeWindow, _ ts: UInt64) {
         ticks += 1
         if lastTickNs != 0 { maxTickGapMs = max(maxTickGapMs, Double(ts &- lastTickNs) / 1e6) }
@@ -357,7 +407,7 @@ final class Smoke: TextStore {
 func summarize(_ smoke: Smoke, runResult: String) -> Int32 {
     let st = smoke.bridge.stats()
     let b = smoke.bridge
-    smoke.add("startup validation", true, "abi \(b.info.abi_major).\(b.info.abi_minor) fn_count=\(b.info.fn_count)")
+    smoke.add("startup validation", true, "abi \(b.info.abi_major).\(b.info.abi_minor) fn_count=\(b.info.fn_count) stats_size=\(b.info.stats_size)")
     smoke.add("AX Invoke handled", smoke.axInvokes >= 1, "invokes=\(smoke.axInvokes) window gen tag ok=\(smoke.firstAXWindow != 0)")
     smoke.add("typed character reached the text store", smoke.typed.contains("a"),
               "typed=[\(smoke.typed)] ime_replace_calls=\(smoke.imeReplaceCalls) key_events=\(smoke.keyEvents)")
@@ -370,13 +420,24 @@ func summarize(_ smoke: Smoke, runResult: String) -> Int32 {
               "selftest=\(b.reentrySelftest) swift_refused=\(b.drainReentryRefused) rust_refused=\(st.reentry_refused) drains=\(b.drainCalls)")
     smoke.add("no thread violations or host panics", st.thread_violations == 0 && st.host_panics == 0,
               "thread_violations=\(st.thread_violations) host_panics=\(st.host_panics)")
-    smoke.add("commits accepted; only the 3 injected faults rejected", st.commits_accepted >= 2 && st.commits_rejected == 3,
+    smoke.add("commits accepted; only the 4 injected faults rejected", st.commits_accepted >= 2 && st.commits_rejected == 4,
               "accepted=\(st.commits_accepted) rejected=\(st.commits_rejected) deferred_in_ime=\(st.commits_deferred)")
-    smoke.add("window_closed delivered once", b.windowClosedCalls == 1, "calls=\(b.windowClosedCalls)")
+    smoke.add("window_closed delivered once", b.windowClosedCalls == 1 && smoke.closeCalls == 1, "calls=\(b.windowClosedCalls)")
+    let lateOK = smoke.lateCommitRC == -13 && smoke.lateMeasureRC == -13
+    smoke.add("late async result after close rejected", lateOK,
+              "commit=\(statusName(smoke.lateCommitRC ?? 0)) measure=\(statusName(smoke.lateMeasureRC ?? 0))")
+    let liveAtCleanup = smoke.cleanupLiveNodes.map { String($0) } ?? "none"
+    smoke.add("cleanup ran in post-close pump", smoke.cleanupRan && st.post_close_drains >= 1,
+              "post_close_drains=\(st.post_close_drains)")
+    smoke.add("live nodes zero after teardown", smoke.cleanupLiveNodes == 0 && st.live_nodes == 0,
+              "at cleanup=\(liveAtCleanup) after run=\(st.live_nodes)")
+    smoke.add("pump ended by swr_shutdown_complete, not the timeout",
+              smoke.cleanupShutdownRC == 0 && st.post_close_timeouts == 0,
+              "shutdown=\(statusName(smoke.cleanupShutdownRC ?? -99)) timeouts=\(st.post_close_timeouts)")
     smoke.add("no stale or unknown-node events", smoke.staleEvents == 0 && smoke.unknownNodeEvents == 0,
               "stale=\(smoke.staleEvents) unknown=\(smoke.unknownNodeEvents) rust_dropped_stale=\(st.events_dropped_stale)")
     print("frames_while_not_foreground: ticks_with_inactive_window=\(smoke.ticksInactive) of \(smoke.ticks)")
-    print("renderer stats: paints=\(st.paints) commits=\(st.commits_accepted) measure_calls=\(st.measure_calls) cache_hits=\(st.measure_cache_hits) events=\(st.events_pushed) ax_enqueued=\(st.ax_actions_enqueued) ax_rejected=\(st.ax_actions_rejected) ime_calls=\(st.ime_calls) ime_busy=\(st.ime_busy_rejected)")
+    print("renderer stats: paints=\(st.paints) commits=\(st.commits_accepted) measure_calls=\(st.measure_calls) cache_hits=\(st.measure_cache_hits) events=\(st.events_pushed) ax_enqueued=\(st.ax_actions_enqueued) ax_rejected=\(st.ax_actions_rejected) ime_calls=\(st.ime_calls) ime_busy=\(st.ime_busy_rejected) live_nodes=\(st.live_nodes) post_close_drains=\(st.post_close_drains) post_close_timeouts=\(st.post_close_timeouts)")
     print("run: \(runResult)")
     var pass = true
     for c in smoke.checks {
@@ -391,6 +452,7 @@ do {
     let bridge = try Bridge.load()
     let smoke = Smoke(bridge: bridge)
     bridge.textStore = smoke
+    bridge.onWindowClosed = { smoke.onClosed() }
     var runResult = "ok"
 
     bridge.onReady = { win in

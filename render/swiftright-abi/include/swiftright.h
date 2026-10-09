@@ -9,6 +9,13 @@
  * identifier_len), exposed to Windows UI Automation as AutomationId. Appended at the
  * end of swr_semantic, so every earlier field keeps its offset; the struct grows
  * from 72 to 88 bytes and swr_node from 128 to 144 bytes.
+ * Revision 0.5: (a) swr_stats gains live_nodes (gauge), post_close_drains and
+ * post_close_timeouts, appended at the end; swr_bootstrap_info.reserved becomes
+ * stats_size so the host checks sizeof(swr_stats) too. (b) POST-CLOSE PUMP: after
+ * window_closed the renderer keeps draining the host's main queue until the host calls
+ * swr_shutdown_complete() or SWR_POST_CLOSE_TIMEOUT_MS elapses; commits, measurements
+ * and modal requests stay rejected (SWR_E_SHUTDOWN). swr_api gains shutdown_complete at
+ * the end (14 functions). (c) SWR_PRIM_UNDERLINE, a solid bar for IME marked text.
  *
  * The header is plain C99 with fixed-width types only, so the layout is the same
  * for the Rust renderer, the MSVC ABI and the Swift clang importer. No Swift
@@ -39,6 +46,12 @@
  *   - All host callbacks run on the UI thread. loop_ready, drain, events_available,
  *     tick and window_closed run OUTSIDE every renderer/GPUI borrow and lock; they
  *     may call any UI-thread entry point except swr_run.
+ *   - POST-CLOSE PUMP (rev 0.5): after window_closed, drain (and events_available if
+ *     events are queued) keep running on wake until swr_shutdown_complete() or
+ *     SWR_POST_CLOSE_TIMEOUT_MS. In this phase swr_commit and swr_measure_text return
+ *     SWR_E_SHUTDOWN; swr_request_ticks and swr_request_modal return SWR_E_STALE_HANDLE
+ *     (the window is gone); no window or ime_* callback runs. A host job that finishes
+ *     late must be rejected by its own check on these statuses.
  *   - The ime_* callbacks run INSIDE native input handling (WM_CHAR /
  *     WM_IME_COMPOSITION) while the renderer holds GPUI borrows. In an ime_*
  *     callback the host may only read/edit its own text store, call
@@ -98,10 +111,14 @@ extern "C" {
 #endif
 
 #define SWR_ABI_MAJOR 0
-#define SWR_ABI_MINOR 4
+#define SWR_ABI_MINOR 5
 
 /* Longest accepted swr_semantic.identifier, in UTF-8 bytes. Longer -> SWR_E_TOO_LARGE. */
 #define SWR_IDENTIFIER_MAX 256
+
+/* Post-close pump bound (rev 0.5): after window_closed the renderer drains for at most
+ * this long unless swr_shutdown_complete() ends the phase first. */
+#define SWR_POST_CLOSE_TIMEOUT_MS 5000
 
 /* ------------------------------------------------------------------ status */
 
@@ -172,7 +189,7 @@ typedef struct swr_bootstrap_info {
     uint32_t line_info_size;
     uint32_t char_cell_size;
     uint32_t fn_count;               /* number of function pointers in swr_api */
-    uint32_t reserved;
+    uint32_t stats_size;             /* sizeof(swr_stats) as the renderer was built (rev 0.5) */
 } swr_bootstrap_info;
 
 SWR_API swr_status swr_bootstrap_query(swr_bootstrap_info *out, uint32_t caller_size);
@@ -201,7 +218,12 @@ typedef struct swr_host_callbacks {
      * timestamp_ns is the monotonic (QPC) time of the presented frame that asked. */
     void (*tick)(void *ctx, swr_window window, uint64_t timestamp_ns);
 
-    /* Once, after the window closed. After this returns the renderer shuts down. */
+    /* Once, after the window closed. Teardown happens here: release your text runs and
+     * drop your node state (commits are already rejected with SWR_E_SHUTDOWN). After this
+     * returns the renderer frees its tree and text runs (live_nodes -> 0) and enters the
+     * POST-CLOSE PUMP: drain keeps being called on the UI thread, for late main-queue work,
+     * until swr_shutdown_complete() or SWR_POST_CLOSE_TIMEOUT_MS. swr_shutdown_complete may
+     * be called from this callback. Then swr_run returns. */
     void (*window_closed)(void *ctx, swr_window window);
 
     /* ---- IME text store (SR0-D ime-text-node mapping). All ranges UTF-16; the host
@@ -274,6 +296,10 @@ typedef struct swr_window_metrics {
 #define SWR_PRIM_CLIP_POP        6
 #define SWR_PRIM_TRANSFORM_PUSH  7  /* m = [a b c d tx ty]; v0: translation only */
 #define SWR_PRIM_TRANSFORM_POP   8
+#define SWR_PRIM_UNDERLINE       9  /* rev 0.5: solid bar, rect.x/y origin, rect.w length,
+                                       rect.h thickness (px, > 0), color; border, radius,
+                                       image_id, text_run and m are ignored. For IME marked
+                                       text. Painted as a solid bar in rev 0.5. */
 
 typedef struct swr_primitive {
     uint32_t     kind;              /* SWR_PRIM_* */
@@ -543,14 +569,20 @@ typedef struct swr_stats {
     uint64_t ime_calls;
     uint64_t ime_busy_rejected;
     uint64_t selftest_reentry_detected;
+    /* rev 0.5. live_nodes is a GAUGE, not a counter: swr_node entries retained by the
+     * committed tree plus live (unreleased) swr_text_run handles. Zero after teardown.
+     * Readable from any thread (it is an atomic mirror). */
+    uint64_t live_nodes;
+    uint64_t post_close_drains;     /* drain calls during the post-close pump */
+    uint64_t post_close_timeouts;   /* post-close phases ended by the timeout */
 } swr_stats;
 
 /* -------------------------------------------------------------- functions */
 
 SWR_API swr_status swr_get_api(swr_api *out, uint32_t caller_size);
 
-/* Blocks on the calling thread: opens the window, runs the loop, returns after
- * window_closed. One run per process in v0. */
+/* Blocks on the calling thread: opens the window, runs the loop, and returns after the
+ * post-close pump ends (swr_shutdown_complete or the timeout). One run per process in v0. */
 SWR_API swr_status swr_run(const swr_run_options *opts, const swr_host_callbacks *cb);
 /* Thread-safe. Closes the window and ends swr_run (window_closed still fires). */
 SWR_API swr_status swr_request_quit(void);
@@ -583,6 +615,11 @@ SWR_API swr_status swr_selftest_reentry(void);
 
 SWR_API swr_status swr_get_stats(swr_stats *out);
 
+/* UI thread only (E_WRONG_THREAD elsewhere). Valid after window_closed has been entered
+ * (SWR_E_STATE before that). Ends the post-close pump; the renderer then returns from
+ * swr_run. Idempotent. */
+SWR_API swr_status swr_shutdown_complete(void);
+
 struct swr_api {
     uint32_t struct_size;
     uint32_t reserved;
@@ -599,9 +636,10 @@ struct swr_api {
     swr_status (*request_modal)(swr_window, const swr_modal_request *);
     swr_status (*selftest_reentry)(void);
     swr_status (*get_stats)(swr_stats *);
+    swr_status (*shutdown_complete)(void);   /* rev 0.5, appended */
 };
 
-#define SWR_API_FN_COUNT 13
+#define SWR_API_FN_COUNT 14
 
 #ifdef __cplusplus
 }

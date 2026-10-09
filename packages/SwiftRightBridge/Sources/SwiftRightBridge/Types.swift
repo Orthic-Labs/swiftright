@@ -58,6 +58,9 @@ public enum Primitive {
     /// v0: translation only.
     case translatePush(dx: Float, dy: Float)
     case translatePop
+    /// rev 0.5: solid bar. `rect` gives the origin (x, y), the length (w) and the thickness
+    /// (h, physical px, > 0). Used for IME marked-text underlines.
+    case underline(Rect, color: UInt32)
 }
 
 /// One visual line of a text node, published as an AccessKit TextRun child.

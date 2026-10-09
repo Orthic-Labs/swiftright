@@ -44,7 +44,9 @@ pub const S_AX_REJ: usize = 17;
 pub const S_IME_CALLS: usize = 18;
 pub const S_IME_BUSY: usize = 19;
 pub const S_SELFTEST: usize = 20;
-const S_COUNT: usize = 21;
+pub const S_POST_DRAINS: usize = 21;
+pub const S_POST_TIMEOUTS: usize = 22;
+const S_COUNT: usize = 23;
 
 static STATS: [AtomicU64; S_COUNT] = [const { AtomicU64::new(0) }; S_COUNT];
 
@@ -79,6 +81,9 @@ pub fn fill_stats(out: &mut Stats) {
     out.ime_calls = stat(S_IME_CALLS);
     out.ime_busy_rejected = stat(S_IME_BUSY);
     out.selftest_reentry_detected = stat(S_SELFTEST);
+    out.live_nodes = LIVE_TREE_NODES.load(SeqCst) + LIVE_RUNS.load(SeqCst);
+    out.post_close_drains = stat(S_POST_DRAINS);
+    out.post_close_timeouts = stat(S_POST_TIMEOUTS);
 }
 
 // ------------------------------------------------------------------- flags
@@ -112,6 +117,17 @@ pub static WIN_W: AtomicU32 = AtomicU32::new(0);
 pub static WIN_H: AtomicU32 = AtomicU32::new(0);
 pub static WIN_SCALE_BITS: AtomicU32 = AtomicU32::new(0);
 pub static WIN_ACTIVE: AtomicBool = AtomicBool::new(false);
+
+/// Atomic mirrors of the UI-thread state, so swr_get_stats can read them from any thread.
+/// Nodes in the committed tree, and live (unreleased) text-run handles.
+pub static LIVE_TREE_NODES: AtomicU64 = AtomicU64::new(0);
+pub static LIVE_RUNS: AtomicU64 = AtomicU64::new(0);
+
+/// Post-close pump (rev 0.5). ACTIVE is set before window_closed is entered; COMPLETE by
+/// swr_shutdown_complete; EXPIRED by the timer thread when SWR_POST_CLOSE_TIMEOUT_MS passes.
+pub static POST_CLOSE_ACTIVE: AtomicBool = AtomicBool::new(false);
+pub static SHUTDOWN_COMPLETE: AtomicBool = AtomicBool::new(false);
+pub static POST_CLOSE_EXPIRED: AtomicBool = AtomicBool::new(false);
 
 pub fn on_ui_thread() -> bool {
     let t = UI_THREAD.load(SeqCst);

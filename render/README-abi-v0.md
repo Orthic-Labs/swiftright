@@ -1,4 +1,4 @@
-# SwiftRight renderer bridge, ABI v0 (revision 0.4)
+# SwiftRight renderer bridge, ABI v0 (revision 0.5)
 
 Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freeze waits on the SR0-C contract freeze). Nothing committed.
 
@@ -11,6 +11,13 @@ Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freez
 
 ## Revision notes
 
+- **0.5** (SR0-B, bridge change requests from the SR0-S fixture matrix, `probes/sr0-s/fresh-on-bridge/RESULT.md`):
+  - (a) `swr_stats` gains `live_nodes` (a gauge: nodes in the committed tree plus unreleased text-run handles; atomic mirror, readable from any thread), `post_close_drains` and `post_close_timeouts`, appended at the end (`swr_stats` 176 -> 200 bytes). `swr_bootstrap_info.reserved` becomes `stats_size`, so the host validates `sizeof(swr_stats)` too.
+  - (b) Post-close pump. After `window_closed` returns, the renderer frees its tree, text runs and AccessKit snapshot (so `live_nodes` reads zero) and keeps draining the host's main queue on wake. The phase ends when the host calls `swr_shutdown_complete()` (UI thread, idempotent, `SWR_E_STATE` before close; allowed from inside `window_closed`) or after `SWR_POST_CLOSE_TIMEOUT_MS` (5000 ms, counted in `post_close_timeouts`). `swr_run` returns when the phase ends. Commits and measurements stay rejected with `SWR_E_SHUTDOWN`; request_ticks and request_modal return `SWR_E_STALE_HANDLE`. `swr_api` gains `shutdown_complete` at the end (14 functions, 112 -> 120 bytes). Swift: `Bridge.shutdownComplete()`.
+  - (c) `SWR_PRIM_UNDERLINE` (kind 9): solid bar, `rect` = origin, length (w) and thickness (h, > 0), `color`. For IME marked-text underlines. Rendered as a filled quad in v0; wavy or dotted styles are not in this revision. Swift: `Primitive.underline(_:color:)`.
+  - Sizes measured with clang (`sizeof`, x86_64): bootstrap 88, host_callbacks 112, api 120, transaction 72, node 144, primitive 80, semantic 88, ax_text_run 80, event 136, measure_request 88, measure_result 56, line_info 24, char_cell 24, stats 200. The Rust mirror asserts the same values.
+  - Teardown contract for hosts: release text runs and drop node state in `window_closed` (or later, during the pump). A text-run handle is invalid after the window closes, so a later release returns `SWR_E_STALE_HANDLE`.
+  - Header compiles clean under `clang -std=c99 -Wall -Wextra -pedantic`.
 - **0.4** (SR0-B): `swr_semantic` gains an optional stable identifier, `identifier` (UTF-8 ptr + `identifier_len`, at most `SWR_IDENTIFIER_MAX` = 256 bytes, longer is `SWR_E_TOO_LARGE`; NULL/0 = none), plus a reserved word. Appended at the end of the struct: `swr_semantic` 72 -> 88 bytes, `swr_node` 128 -> 144 bytes (clang-measured; the Rust mirror asserts the same). The renderer maps it to AccessKit `Node::set_author_id` (accesskit 0.25.1, `src/lib.rs` `AuthorId` entry), which accesskit_windows 0.35.1 publishes as the UIA `AutomationId` (`src/node.rs` `automation_id`, falls back to `author_id` when no `html_id` is set; `UIA_AutomationIdPropertyId` mapping). Mac counterpart: `AXIdentifier`. Uniqueness among siblings is the host's job and is not checked. Swift: `SemanticNode(identifier:)`.
   Same revision, two UIA mappings the SR0-O recorder found:
   - Static text: accesskit_consumer `label_comes_from_value()` is true for `Role::Label` (`src/node.rs`), and accesskit_windows `name()` (`src/node.rs`) writes the value as the UIA Name. The renderer therefore publishes a static text's label as its AccessKit value when the value is empty, so UIA Name = label.
@@ -20,7 +27,7 @@ Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freez
 
 ## What v0 covers
 
-- **Bootstrap**: caller-sized `swr_bootstrap_query` (abi 0.3, arch, pointer width, 12 struct sizes, fn count), then `swr_get_api` fills the function table. The Swift loader uses `LoadLibraryW`/`GetProcAddress` only, validates before resolving anything else, and emits typed `SWR_STARTUP_ERROR:` lines (missing DLL, error 127 hints at the ComCtl v6 manifest, abi/arch/size mismatch) with exit 78.
+- **Bootstrap**: caller-sized `swr_bootstrap_query` (abi 0.5, arch, pointer width, 12 struct sizes plus `stats_size`, fn count), then `swr_get_api` fills the function table. The Swift loader uses `LoadLibraryW`/`GetProcAddress` only, validates before resolving anything else, and emits typed `SWR_STARTUP_ERROR:` lines (missing DLL, error 127 hints at the ComCtl v6 manifest, abi/arch/size mismatch) with exit 78.
 - **Handles**: generation-tagged window and text-run handles, explicit release, stale handles fail `SWR_E_STALE_HANDLE`. Typed status enum (`SWR_E_*`). Every entry point is wrapped in `catch_unwind` (`SWR_E_PANIC`).
 - **Loop**: `swr_run` blocks on the initial thread; the Swift main dispatch queue is drained from a GPUI foreground task (`_dispatch_main_queue_callback_4CF`), outside every GPUI borrow, behind a non-reentrant guard on both sides (self-test included). Wake path = waiter thread on the dispatch wake HANDLE.
 - **Frame clock**: `swr_request_ticks`; ticks come from presented-frame `request_animation_frame`, coalesced, delivered with a QPC timestamp, stop when off or closed.
@@ -30,12 +37,13 @@ Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freez
 - **IME**: GPUI's IMM32 `EntityInputHandler` bridged to the `ime_*` callback table (selection, marked range, text, replace, replace-and-mark, unmark, caret bounds), UTF-16 ranges, host owns the buffer. Same non-reentrancy guard; busy calls are refused and counted.
 - **Events**: bounded pop queue (256, overflow drops the new event and counts it) for key-down, pointer down/up (Rust hit-tests the committed snapshot), IME notices, AX actions, modal results, window metrics; each tagged with window generation, node and snapshot; stale-window events dropped at pop and again in Swift.
 - **Modal**: `swr_request_modal` queues a `MessageBoxW`, opened from a separate foreground task after the drain unwinds; result arrives as an event.
+- **Post-close pump** (rev 0.5): after `window_closed`, drain keeps running until `swr_shutdown_complete()` or the 5 s bound; late host work is drained and rejected with `SWR_E_SHUTDOWN`.
 - **Window**: opaque background (`WindowBackgroundAppearance::Opaque`) plus a full-window rect painted every frame; the renderer sets per-monitor-v2 DPI awareness before creating the window and logs `WS_EX_*` styles at startup.
 
 ## Deferred (declared in the header or absent)
 
 - More than one window; `swr_window_open`. v0 opens exactly one window inside `swr_run`.
-- `SWR_PRIM_IMAGE` and `SWR_PRIM_PATH` (return `SWR_E_UNSUPPORTED`); non-translation transforms.
+- `SWR_PRIM_IMAGE` and `SWR_PRIM_PATH` (return `SWR_E_UNSUPPORTED`); non-translation transforms; wavy or dotted underline styles.
 - RTL/bidi (`direction != 0`), multi-paragraph text (`\n` rejected), font fallback/locale-specific shaping control.
 - Key-up, pointer-move and window-focus events (kinds declared, not emitted); touch, scroll, drag.
 - Modal result path is implemented but not exercised by the smoke (a `MessageBoxW` needs a human or extra driver); menus are not implemented.
