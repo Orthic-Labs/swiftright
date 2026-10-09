@@ -1,6 +1,6 @@
 # SR0-B bridge interface (ABI rev 0.5): freeze proposal
 
-**PROPOSAL — pending evidence noted inline.** Nothing here is frozen. Compiled 9 October 2026 from repository evidence only. Sources: `render/swiftright-abi/include/swiftright.h` (single source of truth), `render/README-abi-v0.md` (revision notes and evidence), `packages/SwiftRightBridge/`, `examples/BridgeSmoke/`. History: b907913 (v0, smoke 19/19), b9651bd (rev 0.4), 10c4877 (rev 0.5, "built; smoke pending desktop"). The README states "Not frozen (freeze waits on the SR0-C contract freeze)"; companion proposal: `docs/sr0-freeze-slice-contract-v1.md`.
+**PROPOSAL — pending evidence noted inline.** Nothing here is frozen. Compiled 9 October 2026, updated evening against HEAD ee5a4db, from repository evidence only. Renderer changed after 10c4877 (d45c98c, post-close pump survives GPUI quit-on-last-window); the freeze names that build, DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`. Sources: `render/swiftright-abi/include/swiftright.h` (single source of truth), `render/README-abi-v0.md` (revision notes and evidence), `packages/SwiftRightBridge/`, `examples/BridgeSmoke/`. History: b907913 (v0, smoke 19/19), b9651bd (rev 0.4), 10c4877 (rev 0.5, "built; smoke pending desktop"). The README states "Not frozen (freeze waits on the SR0-C contract freeze)"; companion proposal: `docs/sr0-freeze-slice-contract-v1.md`.
 
 ## 1. Proposed frozen surface (ABI 0.5 -> "ABI 1" candidate)
 
@@ -15,7 +15,7 @@ Thread-safe from any thread: bootstrap_query, get_api, request_quit, window_requ
 Swift surface: `Bridge`, `BridgeWindow`, `Bridge.shutdownComplete()`, `Primitive.underline(_:color:)`, `SemanticNode(identifier:)` (README).
 
 ### 1.3 Struct sizes (clang-measured, x86_64; Rust mirror asserts the same; README rev 0.5)
-bootstrap 88, host_callbacks 112, api 120, transaction 72, node 144, primitive 80, semantic 88, ax_text_run 80, event 136, measure_request 88, measure_result 56, line_info 24, char_cell 24, **stats 200** (176 -> 200 in 0.5). Further structs in the header (`swr_rect`, `swr_utf16_range`, `swr_utf16_selection`, `swr_run_options`, `swr_window_metrics`, `swr_modal_request`) have no size recorded in the README: **size table must be completed before freeze** (blocking item B6).
+bootstrap 88, host_callbacks 112, api 120, transaction 72, node 144, primitive 80, semantic 88, ax_text_run 80, event 136, measure_request 88, measure_result 56, line_info 24, char_cell 24, **stats 200** (176 -> 200 in 0.5). The remaining six structs (`swr_rect`, `swr_utf16_range`, `swr_utf16_selection`, `swr_run_options`, `swr_window_metrics`, `swr_modal_request`) are now recorded in the README (commit 02e660f: 3 asserted in `abi.rs`, 3 static-asserted); B6 closed.
 `swr_stats` fields: 23 counters from the original layout plus `live_nodes` (gauge), `post_close_drains`, `post_close_timeouts` appended (header lines 548-575).
 
 ### 1.4 Status codes (header lines 125-143)
@@ -55,11 +55,11 @@ Generation-tagged `swr_window` / `swr_text_run` (low 32 slot, high 32 generation
 |---|---|---|
 | Header compiles | `clang -std=c99 -Wall -Wextra -pedantic` clean (README, rev 0.5) | claimed in README; **not re-run by this review** |
 | Bootstrap/size validation, ABI 0.5, stats_size 200 | `examples/BridgeSmoke/result-smoke-rev05.txt`: `PASS startup validation [abi 0.5 fn_count=14 stats_size=200]` | PROVEN (Windows) |
-| Overall smoke | same file: **`SMOKE PASS (23/23)`** (app-side checks) | PROVEN app-side |
+| Overall smoke | `examples/BridgeSmoke/result-smoke-rev05c.txt`: **`SMOKE PASS (26/26)`**; timeout mode `result-smoke-timeout05c.txt`: **`SMOKE PASS (27/27)`**. Earlier: rev05 23/23, rev05b 26/26 (96fcd30), re-run on the d45c98c renderer (ee5a4db) | PROVEN (Windows) |
 | Measure (wrap at 2 widths, height, line-break coverage, cache hit, 77 char cells) | smoke PASS lines; v0 evidence `b907913` | PROVEN |
 | Typed errors: stale run handle, `SWR_E_STALE_VERSION`, bogus window generation (`SWR_E_STALE_HANDLE`), commit after close (`SWR_E_SHUTDOWN`) | smoke PASS lines | PROVEN for these four; other codes (BAD_ARG, QUEUE_FULL, TOO_LARGE, BUSY, WRONG_THREAD, NOT_FOUND, PLATFORM, ABI, UNSUPPORTED, NOT_READY, STATE-before-close) have no smoke assertion in the reviewed output |
 | `SWR_E_SHUTDOWN` in post-close | smoke `late async result after close rejected [commit=SWR_E_SHUTDOWN measure=SWR_E_SHUTDOWN]`; also hit in matrix-rev2 as the nil-root teardown commit failure | PROVEN |
-| Post-close pump | smoke: `cleanup ran in post-close pump [post_close_drains=1]`; `pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0]`; `live nodes zero after teardown [at cleanup=0 after run=0]`; stats line `live_nodes=0 post_close_drains=1 post_close_timeouts=0` | PROVEN on the happy path. **Not exercised**: timeout path (5000 ms), `SWR_E_STATE` for `shutdown_complete` before close, idempotent second call |
+| Post-close pump | rev05c: `pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.02s after window_closed]`; `shutdown_complete before close returns SWR_E_STATE`; `repeat swr_shutdown_complete is idempotent`; stats `live_nodes=0 post_close_drains=1 post_close_timeouts=0`. timeout05c: `pump ended by the 5 s timeout [timeouts=1 run returned 5.00s]`, `shutdown_complete after timeout-ended run rc=SWR_OK` | PROVEN (happy path, early call, repeat, timeout; commit 27d93cc) |
 | `swr_stats` size 200 / new fields | smoke `stats_size=200`; stats line prints the three new fields | PROVEN |
 | Non-reentrant drain, thread violations, host panics | smoke: `selftest=1 swift_refused=0 rust_refused=0`, `thread_violations=0 host_panics=0` | PROVEN |
 | `window_closed` once | smoke `calls=1` | PROVEN |
@@ -69,31 +69,31 @@ Generation-tagged `swr_window` / `swr_text_run` (low 32 slot, high 32 generation
 | Pointer edge click (DPI fix) | smoke `click 2px inside the client edge reached the window`; driver output `window_from_point_is_target=True wm_nchittest=1` | PROVEN |
 | Ticks and frames while inactive | smoke `ticks=1078 max_gap_ms=22.6`; `ticks_with_inactive_window=210 of 1078` | PROVEN |
 | Empty-edit TextPattern | driver output `empty_edit_textpattern=PASS selections=1 degenerate_at_0=True` | PROVEN |
-| **UIA AutomationId** (rev 0.4 identifier) | driver output `automation_id_checks=0/5`, all five `NOT_FOUND`, and `uia_edit=NOT_FOUND`; `AUTOMATIONID FAIL` | **FAILED in this run; suspected timing race** (see below) |
-| Roles list/list-item through the bridge | Emission added in cc605bf (`fresh-on-bridge`); the pre-fix F1 compare (`probes/sr0-o/f1-cross/out/compare-strict-m1-w4.json`) failed with `role=list-item` absent | **PENDING**: no post-fix compare recorded |
-| **SWR_PRIM_UNDERLINE** | Defined in header and README; no smoke assertion, no fixture use found | **NOT EXERCISED** |
-| Identifier on real fixture screens | `probes/sr0-s/fresh-on-bridge/out/matrix-rev3/` (untracked, incomplete: F1, F2, F3 list/vstack/lazy-1s only) | PENDING completion |
-| Modal | Implemented, loops proven in SR0-B probes (`probes/sr0-b/*`, commit c0b93d8 per history); smoke does not exercise the result path (README) | partial |
+| **UIA AutomationId** (rev 0.4 identifier) | `result-smoke-rev05c.txt` and `result-smoke-timeout05c.txt`: `automation_id_checks=5/5`, all `name_ok=True`. The rev05 0/5 was the timing race fixed by linger ticks (4000565) | **PROVEN** (5/5) |
+| Roles list/list-item through the bridge | Emission added in cc605bf; F1 compare 317 diffs -> 52 after List AX roles (`probes/sr0-o/f1-cross/out/compare-strict-m1-w5.json`, only text-field labels), label fix in cc4c93a | List roles PROVEN by diff reduction; full compare rerun **PENDING (blocked: Windows desktop runs blocked by desktop-intrusion hook, pending Adrian)** |
+| **SWR_PRIM_UNDERLINE** | rev05c: `PASS underline primitive (IME marked text) accepted [accepted 1->2 rejected 2->2]`; the renderer exposes no per-primitive draw counter, so painting is not asserted (`stats.paints` counts frames only) | PROVEN as acceptance only, not painting |
+| Identifier on real fixture screens | `probes/sr0-s/fresh-on-bridge/out/matrix-rev4/RESULT.md` + `matrix-rev4b`: all 15 configs 3/3 PASS on Windows (ee5a4db) | PROVEN (3 runs per config) |
+| Modal | Implemented, loops proven in SR0-B probes (`probes/sr0-b/*`, commit c0b93d8 per history); modal-loop probe updated (23933e1; open stall reported separately as `modal_open_one_off`, the p99 31 ms was the one-off TaskDialog open stall, an SR1 budget item); late-dispatch test and degenerate caret check built (88bfc7a), desktop runs PENDING (blocked); smoke does not exercise the result path (README) | partial |
 | Frame budget | commit 011c83e: batch 5, 30/30 valid runs | PROVEN (separate from ABI shape) |
 
-### UIA AutomationId diagnosis (suspected, not confirmed)
-Result file shows `uia_edit=NOT_FOUND` as well as all five ids, while `uia_invoke=ok` and `empty_edit_textpattern=PASS` succeeded earlier in the same run, and the app finished in about 2 minutes. Working-tree changes (uncommitted: `examples/BridgeSmoke/Sources/BridgeSmoke/main.swift`, `scripts/drive-smoke.ps1`; patch copy `examples/BridgeSmoke/uia-rev05-fix.patch`) add `SWR_SMOKE_LINGER_TICKS` (default 90 ticks, driver sets 900) so UIA lookups finish before the app self-quits after typing. That patch's own comment states the intent ("so UIA lookups cannot race the self-quit"). Whether `result-smoke-rev05.txt` was produced with or without the patch is **not stated in the file**. Until a rerun with the lingering driver finds 5/5 ids, treat the identifier path as unproven for rev 0.5 (it was the stated deliverable of rev 0.4, b9651bd).
+### UIA AutomationId diagnosis (resolved)
+The rev05 0/5 result was a timing race: UIA lookups ran after the app self-quit. Linger ticks (4000565) fixed it; rev05c and timeout05c both show `automation_id_checks=5/5`.
 
 ## 3. Explicit freeze-blocking items
 
 | # | Item | Needed to clear |
 |---|---|---|
-| B1 | UIA AutomationId 0/5 | Rerun with lingering driver (patch above) showing 5/5 `automation_id[...]` and `uia_edit` found; commit the patch and `result-smoke-rev05.txt` |
-| B2 | `SWR_PRIM_UNDERLINE` unexercised | A smoke or fixture assertion that commits an underline (accepted, `h > 0`; `h == 0` behaviour per header), plus ideally a visual or paint-count check |
-| B3 | List/list-item AX through bridge | Post-cc605bf F1 cross-platform compare passing (`probes/sr0-o/f1-cross`) and WIN-M3 completion (see contract doc) |
-| B4 | Contract freeze dependency | README says ABI freeze waits on the SR0-C contract freeze; contract blockers listed in `docs/sr0-freeze-slice-contract-v1.md` section 4. `docs/sr0-status.md` SR0-B row still reads "ABI rev 0.4 smoke 19/19 ... freeze pending runtime-gap rerun" and needs updating to 0.5 (23/23) |
-| B5 | Post-close pump edge paths | Evidence for `swr_shutdown_complete` before close (`SWR_E_STATE`), idempotent repeat, and timeout path (`post_close_timeouts` increments) |
-| B6 | Incomplete size table | Record `sizeof` for `swr_rect`, `swr_utf16_range`, `swr_utf16_selection`, `swr_run_options`, `swr_window_metrics`, `swr_modal_request` (not in README list) and confirm the Rust mirror assertions |
-| B7 | Uncommitted rev 0.5 smoke evidence | `result-smoke-rev05.txt` and `uia-rev05-fix.patch` are untracked; working-tree modifications to BridgeSmoke are uncommitted. Freeze evidence must be a reachable commit |
+| B1 | UIA AutomationId | **CLOSED**: 5/5 in `result-smoke-rev05c.txt` and `result-smoke-timeout05c.txt` |
+| B2 | `SWR_PRIM_UNDERLINE` | **CLOSED as acceptance only** (rev05c); no per-primitive draw counter, painting not asserted |
+| B3 | List/list-item AX through bridge | WIN matrix 15/15 PASS; F1 cross-platform compare rerun **OPEN (blocked)** after cc4c93a |
+| B4 | Contract freeze dependency | README says ABI freeze waits on the SR0-C contract freeze; contract blockers in `docs/sr0-freeze-slice-contract-v1.md` section 4 (C9 20-run Windows matrix OPEN). `docs/sr0-status.md` updated to 0.5 |
+| B5 | Post-close pump edge paths | **CLOSED**: early `SWR_E_STATE`, idempotent repeat, 5 s timeout (timeouts=1) in rev05c / timeout05c (27d93cc) |
+| B6 | Incomplete size table | **CLOSED** (02e660f) |
+| B7 | Smoke evidence reachable | **CLOSED**: rev05c and timeout05c committed (ee5a4db) |
 | B8 | Declared-not-emitted events | Decide: freeze as RESERVED (key-up, pointer-move, window-focus), not as shipped behaviour |
 
 Non-blocking but record in the freeze note: arm64 (README Deferred), packaging/checksum-pinned payload/signing (README Deferred, `docs/sr0-status.md` SR0-P blocked), multi-window, IMAGE/PATH primitives, non-translation transforms, bidi, multi-paragraph text, font fallback, modal result smoke, menus, scroll/touch/drag. Rev 0.5 is ABI-incompatible with 0.4 by bootstrap check (`stats_size`, function count 13 -> 14), so the freeze also fixes the "minor mismatch rejects" policy: the loader validates exact sizes, so any later minor bump needs a host rebuild.
 
 ## 4. Proposed freeze decision
 
-Freeze ABI 0.5 as the SR0 interface once B1, B2, B5, B6, B7 are closed by receipts, and B3/B4 close through the contract proposal. Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
+Freeze ABI 0.5 as the SR0 interface, built from renderer d45c98c (DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`). B1, B2, B5, B6, B7 are closed by receipts; B3/B4 close through the contract proposal (F1 compare rerun and C9); B8 decision remains. Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
