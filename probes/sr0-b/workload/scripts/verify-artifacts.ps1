@@ -3,7 +3,7 @@
 param(
   [string]$Base = 'D:\Claude\sr0b-workload',
   [string]$ExpectExe = '',
-  [string]$ExpectDll = '777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441'
+  [string]$ExpectDll = '4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F'
 )
 $ErrorActionPreference = 'Stop'
 $b = Get-Content -Raw "$Base\build.json" | ConvertFrom-Json
