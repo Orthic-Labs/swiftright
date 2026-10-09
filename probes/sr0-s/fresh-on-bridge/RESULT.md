@@ -387,3 +387,73 @@ The default matrix is 15 configurations x 3 runs (45 one-shot interactive tasks)
 and a run is retried only when the desktop denies foreground (no keys are sent to another application). Attempts are kept as
 `*.aN.txt`. Output: `out/matrix-rev2/<F>-<variant>-r<n>.txt`, one `SELFTEST` line per run.
 Before the run: `win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0s-bridge\probes\sr0-s\fresh-on-bridge\scripts\verify-manifest.ps1"`.
+
+## SR0-S matrix-20b: 20 runs per configuration, targeted key delivery, settle fix (2026-10-09)
+
+Scope: `probes/sr0-s/fresh-on-bridge/` only. Runtime and bridge not edited. Nothing committed, branched or pushed.
+
+### Verdict
+
+All 15 configurations: 20/20 PASS (300 of 300 runs). No FAIL, no BLOCKED. Attempts: 301 (one retry, F2 run 9).
+Evidence: `out/matrix-20b/*-r<n>.txt` (base files), `out/matrix-20b/run-log.txt`.
+
+### Binaries (every run)
+
+- `FreshOnBridge.exe` sha256 `DD6C9CE69F06D9C28EF300E7FEA5B499AEA0F7AF9AF364C3F2B4C4D67BED8CC6`, built 11:18 (rev 0.5 sources). Manifest checked with `mt.exe`: comctl32 v6.0.0.0 present.
+- Renderer `swiftright_render.dll` sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1` (11742208 bytes, ABI 0.5). Replaces the rev 0.4 DLL cited above.
+- Driver staged on host (`scripts/drive-fixture.ps1`) sha256 `6B0C7B570CE9EF4BE66177CB2AD4FD892BB9B90237AFB6FBA50CBC14DA58191D`.
+- The exe was not rebuilt during the matrix.
+
+### Changes in this pass
+
+1. **Settle after "release all" (F3).** A bounded settle step (2000 ms, main queue) waits for one `rejected` old result and one new-instance `commit`. On expiry the run reports `released-effects-settled` FAIL with reason `settle-timeout`. Only F3 has a release before close. F9's post-close release is already bounded by its pump (3 s).
+2. **Close signal.** The exe writes `<result>.ready` when its script reaches the close step (`--ready-file`). The driver waits for it, or for exe exit, bounded at 45 s, before WM_CLOSE.
+3. **Targeted key delivery (default).** Keys are posted to the probe HWND only (`PostMessage`), so no keystroke can reach another application. Foreground is still acquired for the UIA focus step. `-KeyMode char` (default) posts WM_CHAR only.
+4. **Global path (gated, unused).** `-Delivery global` uses `keybd_event` with `LockSetForegroundWindow`, re-checks the foreground window before and after each key-down, and aborts the run (`driver_abort=foreground-lost`, no further keys) on mismatch. No matrix config uses it. F7 real IME remains a manual check.
+5. **Per-run record.** Each result file has a `run_summary` line (`keymode`, `delivery`, `fg_changes`, `driver_abort`), and a `fg_change` line for each foreground change.
+
+### Targeted delivery: what the runtime receives
+
+Posting all three messages a physical key produces (WM_KEYDOWN, WM_CHAR, WM_KEYUP) doubled the text: F1 typed `aabbcc`, F2 `--xx` (`out/matrix-targeted-check/`). Posting WM_KEYDOWN alone, or WM_CHAR alone, gave exactly one `text-store-replace` per key. The runtime event stream for F1 (EVT lines: 4 text-store replaces, 4 edits, 1 insert, same lifecycle counts) matched the earlier global-keybd_event run in both single-message modes (`out/keymode-exp/F1-char.txt`, `F1-keydown.txt`, baseline `out/matrix-20b/pre-targeted/F1-none-r1.txt`). WM_CHAR was chosen: it is the text-input message, and no matrix fixture handles key-down. GPUI did not ignore any posted key. The `keydown` mode also inserts text, so it is equivalent for the observed events.
+
+### Per-configuration table (20 runs each, matrix-20b)
+
+| Config | PASS/20 | Attempts (retries) | Keys typed |
+|---|---|---|---|
+| F1 none | 20 | 20 (0) | yes (char) |
+| F2 none | 20 | 21 (1) | yes (char) |
+| F3 list-0s | 20 | 20 (0) | yes |
+| F3 list-1s | 20 | 20 (0) | yes |
+| F3 vstack-1s | 20 | 20 (0) | yes |
+| F3 lazy-1s | 20 | 20 (0) | yes |
+| F4 none | 20 | 20 (0) | no |
+| F5 none | 20 | 20 (0) | no |
+| F6 none | 20 | 20 (0) | no |
+| F6 reduced | 20 | 20 (0) | no |
+| F6 override-on | 20 | 20 (0) | no |
+| F7 none | 20 | 20 (0) | yes |
+| F8 none | 20 | 20 (0) | no |
+| F9 none | 20 | 20 (0) | no |
+| F9 notasks | 20 | 20 (0) | no |
+
+Retries are foreground-loss retries only. F2 run 9 attempt 1 reported `not_foreground` at the focus step (no SELFTEST verdict printed) and no keys were sent to another window. Attempt 2 passed 11/11.
+
+Settle check: `released-effects-settled` PASS in 20/20 runs of each F3 variant.
+
+### Foreground record
+
+- 140 key-config runs (F1, F2, F3 x4, F7): one `fg_change` line, the initial acquisition (`from=0`), made when the probe was foregrounded for the focus step.
+- 160 no-key runs: no foreground sampling.
+- Mid-run foreground changes: 0 in all 300 base runs. Driver aborts: 0.
+
+### Superseded results (kept as evidence, not counted)
+
+- `out/matrix-20b/pre-targeted/`: F1, F2 and F3 (vstack, lazy) from the global `keybd_event` path. The global F2 run 18 FAILed (`Row 3-`, then `x` reached `Bloop-v4-3d-showcase.mp4`: focus moved between the foreground check and the key). That failure is the reason for targeted delivery. The old run log is also there.
+- `out/matrix-targeted-check/ABORTED-mode-all-*`: a rerun started with the three-message mode by mistake (text doubled), stopped after one F2 attempt.
+- `out/keymode-exp/`: F1 experiments for the delivery mode choice.
+
+### Not run / notes
+
+- F7 real IME composition is not run (manual check, as before). The F7 composition steps are programmatic through the bridge text store.
+- Another lane edited the repo's `scripts/drive-fixture.ps1` at 13:26:30 (adds an ARTIFACTS line: exe, renderer and trace hashes). That edit is not on the host, and this matrix ran on the staged copy above (`6B0C7B57…`). Sync it before any run that needs those artifact hashes.
+- No rebuild during the matrix. The bridge package in the working tree is ABI 0.6 (another lane); this exe was built from the 0.5 sources.
