@@ -107,7 +107,7 @@ function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max, $winBa
     if (-not (Send-GatedKey 0x20 "space-$n" 120)) { break }
     Start-Sleep -Milliseconds 350
     $m = Marked-Of $row $v0; $seen.Add($m)
-    if ($n -eq 1 -and $winBase -ne $null) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
+    if ($winBase -ne $null) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
     if ($winBase -ne $null) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
     if ($m -eq $want) { break }
   }
@@ -145,7 +145,12 @@ function Snap-Windows {
   return ,$o
 }
 function Is-ImeWin($w) { return ($w.Cls -match $script:ImeClassRx) -or ($w.Title -match 'Candidate|IME|Text Input') -or ($w.Proc -match $script:ImeProcRx) }
-function Fmt-Win($w) { return "$($w.Proc)/$($w.Pid)|$($w.Cls)|$($w.Title)|vis=$($w.Visible)|$($w.L),$($w.T),$($w.R),$($w.B)|ex=0x$('{0:X}' -f $w.Ex)" }
+function Fmt-Win($w) {
+  # Titles of windows that are neither ours nor IME-related (user documents, browser tabs) are never logged.
+  $ours = ($script:Hwnd -ne $null -and $w.Hwnd -eq $script:Hwnd.ToInt64()) -or ($w.Title -match '^SwiftRight')
+  $title = if ($ours -or (Is-ImeWin $w)) { $w.Title } else { '<redacted>' }
+  return "$($w.Proc)/$($w.Pid)|$($w.Cls)|$title|vis=$($w.Visible)|$($w.L),$($w.T),$($w.R),$($w.B)|ex=0x$('{0:X}' -f $w.Ex)"
+}
 
 function Candidate-Windows($before) {
   $bset = @{}; foreach ($w in $before) { $bset[(Win-Key $w)] = $w }

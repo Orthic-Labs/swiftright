@@ -9,7 +9,7 @@
 use std::cell::RefCell;
 use std::ffi::c_void;
 use std::ops::Range;
-use std::sync::atomic::{AtomicU64, Ordering::SeqCst};
+use std::sync::atomic::{AtomicU32, AtomicU64, Ordering::SeqCst};
 use std::sync::{Arc, Mutex};
 
 use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
@@ -769,6 +769,94 @@ impl EntityInputHandler for RootView {
     }
 }
 
+// ---------------------------------------------------------- IME window placement (subclass)
+// GPUI 0.2.2 (not vendored) calls ImmSetComposition/CandidateWindow once, at WM_IME_STARTCOMPOSITION,
+// and forwards WM_IME_SETCONTEXT / WM_IME_NOTIFY to DefWindowProc. Microsoft IME positions its candidate
+// list from the candidate form it last read, so we re-assert it (CFS_EXCLUDE around the composition start,
+// client physical px) after every composition update and candidate notification.
+#[repr(C)]
+struct CompositionForm { style: u32, pt: [i32; 2], rc: [i32; 4] }
+#[repr(C)]
+struct CandidateForm { index: u32, style: u32, pt: [i32; 2], rc: [i32; 4] }
+#[link(name = "imm32")]
+extern "system" {
+    fn ImmGetContext(hwnd: *mut c_void) -> *mut c_void;
+    fn ImmReleaseContext(hwnd: *mut c_void, himc: *mut c_void) -> i32;
+    fn ImmSetCandidateWindow(himc: *mut c_void, f: *const CandidateForm) -> i32;
+    fn ImmSetCompositionWindow(himc: *mut c_void, f: *const CompositionForm) -> i32;
+}
+#[link(name = "comctl32")]
+extern "system" {
+    fn SetWindowSubclass(
+        hwnd: *mut c_void,
+        cb: unsafe extern "system" fn(*mut c_void, u32, usize, isize, usize, usize) -> isize,
+        id: usize,
+        data: usize,
+    ) -> i32;
+    fn DefSubclassProc(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> isize;
+}
+const WM_IME_SETCONTEXT: u32 = 0x0281;
+const WM_IME_NOTIFY: u32 = 0x0282;
+const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
+const WM_IME_ENDCOMPOSITION: u32 = 0x010E;
+const WM_IME_COMPOSITION: u32 = 0x010F;
+static IME_MSG_LOGS: AtomicU32 = AtomicU32::new(0);
+
+fn place_ime_windows(hwnd: *mut c_void) {
+    let r = with_ime(|h, win, node| {
+        let mut sel = Utf16Selection::default();
+        let mut mr = Utf16Range::default();
+        let mut has = 0i32;
+        let range = match (h.ime_get_marked, h.ime_get_selection) {
+            (Some(fm), _) if fm(h.ctx_ptr(), win, node, &mut mr, &mut has) == SWR_OK && has != 0 => mr,
+            (_, Some(fs)) if fs(h.ctx_ptr(), win, node, &mut sel) == SWR_OK => sel.range,
+            _ => return None,
+        };
+        let f = h.ime_caret_bounds?;
+        let mut out = Rect::default();
+        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start, end: range.start }, &mut out) != SWR_OK {
+            return None;
+        }
+        Some(out)
+    })
+    .flatten();
+    let Some(r) = r else { return };
+    let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
+    unsafe {
+        let himc = ImmGetContext(hwnd);
+        if himc.is_null() {
+            return;
+        }
+        let cf = CompositionForm { style: 0x0002, pt: [x, y], rc: [x, y, x + w, y + h] }; // CFS_POINT
+        let cand = CandidateForm { index: 0, style: 0x0080, pt: [x, y + h], rc: [x, y, x + w, y + h] }; // CFS_EXCLUDE
+        ImmSetCompositionWindow(himc, &cf);
+        ImmSetCandidateWindow(himc, &cand);
+        ImmReleaseContext(hwnd, himc);
+    }
+}
+
+unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usize, l: isize, _id: usize, _data: usize) -> isize {
+    let out = DefSubclassProc(hwnd, msg, w, l);
+    match msg {
+        WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
+            // Evidence for the next desktop run: which IME messages arrive, and what they carry.
+            if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
+                eprintln!("[swiftright-render] ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
+            }
+            if msg == WM_IME_COMPOSITION || msg == WM_IME_STARTCOMPOSITION || (msg == WM_IME_NOTIFY && matches!(w, 3 | 4 | 5 | 6 | 7)) {
+                place_ime_windows(hwnd);
+            }
+        }
+        _ => {}
+    }
+    out
+}
+
+fn install_ime_subclass(hwnd: *mut c_void) {
+    let ok = unsafe { SetWindowSubclass(hwnd, ime_subclass_proc, 0x5352_494D, 0) };
+    eprintln!("[swiftright-render] ime_subclass installed={ok}");
+}
+
 // ------------------------------------------------------------- launch / loop
 
 fn hwnd_of(window: &Window) -> *mut c_void {
@@ -835,6 +923,7 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
     let ok = handle.update(cx, |view, window, _cx| {
         let hwnd = hwnd_of(window);
         MAIN_HWND.store(hwnd as usize, SeqCst);
+        install_ime_subclass(hwnd);
         view.adapter = Some(SubclassingAdapter::new(AkHWND(hwnd), Activation, Actions));
         window.focus(&view.focus);
         window.activate_window();

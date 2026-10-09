@@ -77,8 +77,8 @@ public final class TextInputState {
     }
 
     /// Bridge `replaceAndMark`: replaces `range` (nil: the marked text while composing, else the
-    /// selection) with `text` and marks the inserted text. `newSelection` is in displayed coordinates
-    /// after the edit; by default the caret goes to the end of the inserted text. An empty `text` ends
+    /// selection) with `text` and marks the inserted text. `newSelection` is relative to the inserted text
+    /// (NSTextInputClient / GPUI semantics: 0..<count is inside the composition); by default the caret goes to the end of the inserted text. An empty `text` ends
     /// the composition. Returns false when the range is out of bounds.
     @discardableResult
     public func replaceAndMark(range: UTF16Range? = nil, text: String, newSelection: UTF16Range? = nil) -> Bool {
@@ -92,7 +92,8 @@ public final class TextInputState {
         if newCommitted != committed { binding.wrappedValue = newCommitted }
         composition = inserted.isEmpty ? nil : text
         compositionLocation = markStart
-        selection = clamped(newSelection ?? UTF16Range(location: markEnd, length: 0), count: units.count)
+        let relative = newSelection.map { UTF16Range(location: markStart + $0.location, length: $0.length) }
+        selection = clamped(relative ?? UTF16Range(location: markEnd, length: 0), count: units.count)
         return true
     }
 

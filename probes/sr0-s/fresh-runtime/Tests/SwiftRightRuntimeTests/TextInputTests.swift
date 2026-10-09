@@ -69,6 +69,9 @@ final class TextInputTests: XCTestCase {
         XCTAssertEqual(input.display, "Row 2kana", "a new composition replaces the marked text")
         XCTAssertEqual(model.text, "Row 2")
 
+        XCTAssertTrue(input.replaceAndMark(range: nil, text: "kana", newSelection: UTF16Range(location: 2, length: 0)))
+        XCTAssertEqual(input.selection, UTF16Range(location: 7, length: 0), "newSelection is relative to the inserted text (GPUI/IME cursor)")
+        XCTAssertTrue(input.replaceAndMark(range: nil, text: "kana"))
         XCTAssertTrue(input.unmark())
         graph.flush()
         XCTAssertNil(input.markedRange)
