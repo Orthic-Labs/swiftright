@@ -153,18 +153,45 @@ func decodeEvent(_ e: swr_event) -> BridgeEvent {
 
 // MARK: helpers for hosts that lay out text
 
+/// AX text-run id block of one text node. Run ids are `firstRunID + lineIndex`, so a node owns
+/// the half-open block `[firstRunID, firstRunID + axTextRunBlockSize)`. Run ids share the node-id
+/// namespace, so a host must reserve this many ids per text node (never fewer, and never let the
+/// next node's ids start inside the block). 2^16 lines is far beyond any editor; more is a typed
+/// error (`AXTextRunError.blockExceeded`) instead of silently overlapping the next node.
+public let axTextRunBlockSize: UInt64 = 1 << 16
+
+public enum AXTextRunError: Error, Equatable, CustomStringConvertible {
+    /// The measured text has more visual lines than one id block holds.
+    case blockExceeded(lines: Int, blockSize: UInt64)
+
+    public var description: String {
+        switch self {
+        case .blockExceeded(let lines, let blockSize):
+            return "SwiftRightBridge: text node has \(lines) lines, more than its AX run-id block of \(blockSize)"
+        }
+    }
+}
+
 /// Splits a measured run into per-visual-line AccessKit text runs (UTF-8 lengths, line-local
 /// positions/widths, word starts). `origin` is the run's top-left in physical window px;
-/// run ids are `firstRunID + lineIndex`.
-/// Empty text publishes ONE zero-length run (id `firstRunID`) at the origin: accesskit_consumer
-/// `supports_text_ranges` needs a text run before an editable node exposes UIA TextPattern.
-public func makeAXTextRuns(text: String, measurement m: TextMeasurement, cells: [CharCell],
-                           origin: (x: Float, y: Float), lineHeightPx: Float,
-                           firstRunID: NodeID) -> [AXTextRun] {
-    if cells.isEmpty {
+/// run ids are `firstRunID + lineIndex` and must lie in a block of `axTextRunBlockSize` ids.
+///
+/// Every editable node needs at least one run: pass `measurement: nil` (or empty `cells`) for
+/// empty text and this publishes ONE zero-length run (id `firstRunID`) at the origin.
+/// accesskit_consumer `supports_text_ranges` needs a text run before an editable node exposes UIA
+/// TextPattern; the host then selects `TextSelectionPosition(run: firstRunID, character: 0)`.
+///
+/// Throws `AXTextRunError.blockExceeded` when the text has more lines than the id block holds.
+public func makeAXTextRunsChecked(text: String, measurement m: TextMeasurement?, cells: [CharCell],
+                                  origin: (x: Float, y: Float), lineHeightPx: Float,
+                                  firstRunID: NodeID) throws -> [AXTextRun] {
+    guard let m, !cells.isEmpty else {
         return [AXTextRun(id: firstRunID, text: "", charLengths: [], charPositions: [],
                           charWidths: [], wordStarts: [],
                           bounds: Rect(x: origin.x, y: origin.y, w: 0, h: lineHeightPx))]
+    }
+    if UInt64(m.lines.count) > axTextRunBlockSize {
+        throw AXTextRunError.blockExceeded(lines: m.lines.count, blockSize: axTextRunBlockSize)
     }
     let utf8 = Array(text.utf8)
     var runs: [AXTextRun] = []
@@ -184,6 +211,20 @@ public func makeAXTextRuns(text: String, measurement m: TextMeasurement, cells: 
             bounds: Rect(x: origin.x, y: origin.y + line.top, w: line.width, h: lineHeightPx)))
     }
     return runs
+}
+
+/// Non-throwing form of `makeAXTextRunsChecked` for hosts that keep the 0.5 signature. Exceeding
+/// the id block is a programming error here: it traps (precondition) rather than publishing ids
+/// that overlap the next node.
+public func makeAXTextRuns(text: String, measurement m: TextMeasurement?, cells: [CharCell],
+                           origin: (x: Float, y: Float), lineHeightPx: Float,
+                           firstRunID: NodeID) -> [AXTextRun] {
+    do {
+        return try makeAXTextRunsChecked(text: text, measurement: m, cells: cells, origin: origin,
+                                         lineHeightPx: lineHeightPx, firstRunID: firstRunID)
+    } catch {
+        preconditionFailure("\(error)")
+    }
 }
 
 /// Window-px caret rectangle before character `index` (or at the end of the text), of the

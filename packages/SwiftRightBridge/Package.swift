@@ -26,6 +26,11 @@ let package = Package(
             dependencies: ["CSwiftRight", "CDispatchPrivate"],
             path: "Sources/SwiftRightBridge"
         ),
+        .testTarget(
+            name: "SwiftRightBridgeTests",
+            dependencies: ["SwiftRightBridge"],
+            path: "Tests/SwiftRightBridgeTests"
+        ),
     ],
     swiftLanguageModes: [.v5]
 )

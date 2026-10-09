@@ -21,8 +21,8 @@ the Mac. The self-test has not been executed. Desktop behaviour is unverified.
 Remaining limits, all noted in the code:
 - Image opacity is not applied (the primitive has no alpha). The image fills its rect.
 - Menu submenus are flattened: shown disabled with `>`, as in the 0.5 overlay.
-- Editor run ids use a 32-id block per node. An editor with more than 31 lines would overlap the next block.
-- An empty TextField publishes no AX text run. This is carried over from 0.5. `makeAXTextRuns` handles empty text if the backend calls it.
+- Editor run ids use the bridge's 2^16-id block per text node (`axTextRunBlockSize`). A text node over 65536 lines is a typed error (`AXTextRunError.blockExceeded`), recorded in `commitErrors`, not an overlap.
+- Every text field and editor publishes at least one AX text run. An empty one gets a zero-length run at the origin and a degenerate selection at (run, 0) (`makeAXTextRunsChecked` with a nil measurement). This was a gap in the 0.5 carry-over; the bridge now has a unit test for it.
 
 ## Self-test semantics
 

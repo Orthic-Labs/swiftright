@@ -46,7 +46,9 @@ enum GalleryStyle {
     static let dividerColor: UInt32 = 0xC8C8C8FF
     static let menuFill: UInt32 = 0xFAFAFAFF
     static let rowSelected: UInt32 = 0x2563EB33
-    static let runBlock: UInt64 = 32
+    /// AX run ids per text node: the bridge's block (2^16). A text node with more lines than this is a typed error
+    /// (`AXTextRunError.blockExceeded`), never an overlap with the next node's ids.
+    static let runBlock: UInt64 = axTextRunBlockSize
     static let patternSize = 32
 }
 
@@ -603,35 +605,44 @@ final class GalleryBackend {
                 fields[id] = node.id
                 let origin = (x: Float(pf.x), y: Float(pf.y))
                 let lh = GalleryStyle.lineHeightDIP * s
-                var runs: [AXTextRun] = []
-                var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
-                if !text.isEmpty,
-                   let m = measure(text, color: faded(GalleryStyle.textColor, alpha), fontDIP: 16,
-                                   maxWidth: multiline ? Float(pf.width) : 0, into: &b.releasable) {
-                    let cells = (try? bridge.cells(of: m.run)) ?? []
+                // Every editable node publishes at least one AX text run, empty or not (UIA TextPattern needs one).
+                // Empty text has no measurement: it gets the zero-length run at the origin and a degenerate
+                // selection at (first run, 0), as the bridge specifies.
+                let measurement = text.isEmpty ? nil : measure(text, color: faded(GalleryStyle.textColor, alpha),
+                                                               fontDIP: 16, maxWidth: multiline ? Float(pf.width) : 0,
+                                                               into: &b.releasable)
+                let cells = measurement.flatMap { try? bridge.cells(of: $0.run) } ?? []
+                let lines = measurement?.lines ?? []
+                if let m = measurement {
                     prims.append(.text(m.run, x: origin.x, y: origin.y))
-                    let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
-                    let caretIndex = min(caretEnd, cells.count)
-                    if node.id == runtimeFocus {
-                        let caret = caretRect(cells: cells, lines: m.lines, index: caretIndex, origin: origin,
-                                              lineHeightPx: lh, width: max(1, 1.5 * s))
-                        prims.append(.rect(caret, color: faded(GalleryStyle.caretColor, alpha)))
-                    }
-                    runs = makeAXTextRuns(text: text, measurement: m, cells: cells, origin: origin,
-                                          lineHeightPx: lh, firstRunID: runBlock(node.id))
-                    if multiline {
-                        editorLines = m.lineCount
-                        editorRuns = runs.count
-                    }
-                    if !runs.isEmpty {
-                        let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
-                        let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
-                        let position = TextSelectionPosition(run: runBlock(node.id) + UInt64(min(line, runs.count - 1)),
-                                                             character: UInt32(inLine))
-                        selection = (anchor: position, focus: position)
-                    }
-                    fieldGeometry[id] = GalleryFieldGeometry(origin: origin, cells: cells, lines: m.lines, lineHeightPx: lh)
                 }
+                let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
+                let caretIndex = min(caretEnd, cells.count)
+                if node.id == runtimeFocus {
+                    let caret = caretRect(cells: cells, lines: lines, index: caretIndex, origin: origin,
+                                          lineHeightPx: lh, width: max(1, 1.5 * s))
+                    prims.append(.rect(caret, color: faded(GalleryStyle.caretColor, alpha)))
+                }
+                var runs: [AXTextRun] = []
+                do {
+                    runs = try makeAXTextRunsChecked(text: text, measurement: measurement, cells: cells, origin: origin,
+                                                     lineHeightPx: lh, firstRunID: runBlock(node.id))
+                } catch {
+                    commitErrors.append("text runs \(node.id): \(error)")
+                }
+                if multiline {
+                    editorLines = lines.count
+                    editorRuns = runs.count
+                }
+                var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
+                if !runs.isEmpty {
+                    let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
+                    let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
+                    let position = TextSelectionPosition(run: runBlock(node.id) + UInt64(min(line, runs.count - 1)),
+                                                         character: UInt32(inLine))
+                    selection = (anchor: position, focus: position)
+                }
+                fieldGeometry[id] = GalleryFieldGeometry(origin: origin, cells: cells, lines: lines, lineHeightPx: lh)
                 semantic = SemanticNode(role: .textField, label: "", value: text,
                                         actions: [.focus, .setValue, .setSelection], multiline: multiline,
                                         runs: runs, selection: selection,
