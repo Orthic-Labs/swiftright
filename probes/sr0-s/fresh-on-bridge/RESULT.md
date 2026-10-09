@@ -193,3 +193,116 @@ the window is now 240 ticks (about 4 s) and the caret assertion was added. Run 2
    with a `Where-Object` filter. The build itself succeeded on the first attempt.
 3. Harness timing: the driver's final read ran after the exe closed (run 1). Fixed by extending the
    gather window and adding the caret check (run 2).
+
+## SR0-S F2-F9 port on the fresh runtime, bridge ABI rev 0.4 (2026-10-09, Windows 11 x64, Swift 6.4.0, scale 2.5)
+
+Scope: `probes/sr0-s/fresh-on-bridge/` only. Runtime (`probes/sr0-s/fresh-runtime`) and bridge (`packages/SwiftRightBridge`) not edited.
+Nothing committed, branched or pushed. Mac oracle: `probes/sr0-o/fixtures/Sources/SliceFixtures` (Screens, SelfTest) and
+`probes/sr0-o/fixtures/RESULT.md`.
+
+### ABI revision and DLL used (every run below)
+
+- Bridge and header: working-tree rev 0.4 (`identifier` on `swr_semantic`, 88-byte semantic / 144-byte node). Staged to
+  `D:\Claude\sr0s-bridge` at 05:39 (`packages/SwiftRightBridge` dereferenced, `render/swiftright-abi/include/swiftright.h`).
+  Working-tree `Types.swift` sha256 `1a0f0d56...`, matches the staged copy.
+- Renderer DLL: `D:\Claude\sr0b-abi0\payload\bin\swiftright_render.dll`, 11731456 bytes (rev 0.4 payload, built 05:21).
+  The rev 0.3 staging used for the F1 smoke run at 05:31 (before the coordinator's 0.4 notice) is not part of the matrix.
+- The exe bootstraps and commits under 0.4 (`commits-accepted` PASS on every run).
+
+### Verdict table (3 runs each; final matrix `out/matrix/`, earlier pass `out/matrix-pass1/`)
+
+| Fixture | Verdict x3 | Asserted (pass/total per run) | Blocked per run | Status identical across the 3 runs |
+|---|---|---|---|---|
+| F1 | PASS x3 | 15/15 | 0 | yes |
+| F2 | PASS x3 | 11/11 | 0 | yes |
+| F3 list (0 s gap) | PASS x3 | 11/11 | 0 | yes |
+| F3 list-1s | PASS x3 | 11/11 | 0 | yes |
+| F3 vstack-1s | FAIL x3 | 10/11 | 0 | yes (`reinsert-focus-matches-mac-oracle`) |
+| F3 lazy-1s | BLOCKED x3 (not run) | 0 | whole variant | yes |
+| F4 | PASS x3 | 10/10 | 0 | yes |
+| F5 | PASS x3 | 10/10 | 0 | yes |
+| F6 normal | BLOCKED x3 | 6/6 | 3 | yes |
+| F6 reduced (variant flag) | BLOCKED x3 | 7/7 | 1 | yes |
+| F7 | BLOCKED x3 | 10/10 | 1 (IME) | yes |
+| F8 | BLOCKED x3 | 12/12 | 1 (toolbar task id) | yes |
+| F9 | FAIL x3 | 4/5 pass; `tree-released` FAIL | 4 | yes |
+| F9 notasks (diagnostic) | FAIL x3 | 4/5 pass; `tree-released` FAIL | 4 | yes |
+
+Determinism: every configuration gives the same PASS/FAIL/BLOCKED status for every assertion across its 3 runs.
+Only the OBSERVE timing line (F3 `reinsert-gap-ms`) varies, by design.
+Infrastructure retries (the runner repeats a run only when the driver reports `not_foreground`, with no keys sent, or
+`no window`). Attempts used in the final matrix: F2 run3 2, F3 list-0s run3 2, F3 list-1s run3 3, F3 vstack-1s run2 3,
+run3 3. The first final-pass F1 run1 got no window; F1 was rerun 3x and all three pass.
+
+### Mismatches against the Mac oracle (recorded, not hidden)
+
+1. **F1 `row5-state-continuous`**: Mac `local=2` (two programmatic `setText` steps); Windows `local=4` (four keystrokes a,b,c,d).
+   The check asserts continuity (equals edits since start); a reset would read 1. Input-granularity difference.
+2. **F2 `local-state-kept`**: Mac `local=1` (one programmatic edit); Windows `local=2` (keystrokes `-`,`x`). Same reason.
+3. **F3 vstack `reinsert-focus-matches-mac-oracle`**: Mac: VStack reinsert is not focused (SwiftUI clears focus when the focused
+   row is removed). Windows: focused. Runtime gap: `FocusState` keeps the tag of a removed row, so the reinserted field is focused.
+   FAIL, real. List reinsert focus matches the Mac (focused).
+4. **F3 reinsert state**: List preserves `@State` (second local 1) and VStack resets it (second local 0), matching the Mac oracle
+   table on 0 s and 1 s gaps. Not run at 3 s (time budget).
+5. **F9 `tree-released`**: Mac also FAILs this assertion (`tree-released` 4/5 x3 in `probes/sr0-o/fixtures/RESULT.md`). Windows
+   FAILs for a different measured reason: the probe is not released (0 events) after window close, with pending row tasks
+   (normal) and also without any tasks (notasks). The host dropped the graph and cleared its own view references
+   (11 references: focus binding and per-row text handlers); the tree is still retained. Cause is inside the runtime's graph
+   retention. Not investigated further (runtime is read-only for this task).
+6. **F6**: Mac normal PASS 5/5. Windows: `two-animations-started` and `final-order` PASS, the rest BLOCKED (no interpolation or
+   completion; OS reduce-motion unreadable). The reduced variant's policy path PASSes (variant flag only).
+
+### Fixture gaps (exact missing API; BLOCKED, not faked)
+
+- F3 lazy: `LazyVStack` and `ScrollView` absent. Variant not run; the exe prints BLOCKED and exits 3.
+- F6 interruption and completion: `withAnimation` records a tag per commit only. No `completionCriteria`/completion callback,
+  no duration or interpolation. Start is observed (model-opened transactions).
+- F6 OS reduce motion: no `EnvironmentValues.accessibilityReduceMotion` key.
+- F7 IME composition: no marked-text state in `TextField`; bridge `replaceAndMark` is a plain replace.
+- F8 toolbar restart: no `task(id:)`. The button action starts the effect (as in F1); the check is blocked, not asserted.
+- F9 close semantics: no unmount or teardown API on `Graph`, so window close does not cancel tasks. `window_closed` is the last
+  host callback and the MainActor executor is not pumped afterwards, so late engine results cannot resume.
+  `swr_stats` has no live-node count, so "zero live nodes" is blocked.
+- No `onChange`: local-edit counting moved to the text-write path (as in F1). No `.toolbar`: the insert button is in the body.
+  Accessibility identifiers: the runtime has none; the bridge sets them (see below).
+
+### ABI 0.4 identifiers
+
+`BridgeBackend` sets `row/<uuid>/field` (TextField), `row/<uuid>/delete` (Delete button) and `toolbar/insert` (Insert above).
+F8 `row-identifiers-committed` PASSes on every run (the backend records the committed identifiers). The driver reads the UIA
+element names; AutomationId is not separately read back by the driver.
+
+### Driver facts
+
+- Input is UIA (`SetFocus`, `Invoke`, `ValuePattern.SetValue`) and VK `keybd_event` only; no Unicode packets.
+- Keys are sent only while the test window is the foreground window. A person and other agents' windows share this desktop; a
+  failed foreground acquire skips the keys and reports `not_foreground`, so no keystroke reaches another application
+  (observed: `SR0-B frame-clock`, `Work with Codex`, a human typing into the field once).
+- Close is `WM_CLOSE` via PostMessage (UIA `WindowPattern` is unsupported on this window). The exe quits its run loop after the
+  close (`requestQuit` is called on every finish; without it the renderer loop did not return).
+- Schedules: one-shot interactive task per run, deleted after (`schedule-fixture.ps1`). No leftover windows or tasks after the
+  matrix (checked: no FreshOnBridge, BridgeSmoke or SwiftHost process).
+- Superseded: `scripts/drive-fresh.ps1` and `scripts/schedule-fresh.ps1` (F1 path of run1/run2, invoke-driven). The F1 run2
+  evidence is kept under `out/`. The current F1 starts its insert at appear, as the Mac does, so the old driver is not compatible.
+
+### Fix iterations (per fixture, max 4)
+
+- F1: 0 new code fixes (port works; the F1 insert is now engine-started at appear, Mac order).
+- F2: 0 code fixes (driver foreground and text checks only).
+- F3: 2 (settle between remove and reinsert: the runtime sees remove+insert in one turn as no change; task modifier placed
+  innermost so teardown runs disappear before cancel, as on the Mac).
+- F4, F5: 0 code fixes.
+- F6, F7, F8: identifiers (F8) only.
+- F9: 1 (quit after close; tree-release measurement split into `tree-released-at-graph-drop` and post-clearing).
+No Codex consult was needed.
+
+### Evidence
+
+- `out/matrix/*.txt` (final, per run: driver lines, exe stdout incl. EVT, stderr), `out/matrix/run-log.txt`.
+- `out/matrix-pass1/` (first full pass; superseded by the final pass for F3 and F9, and by F1 rerun).
+
+## Primary verification (2026-10-09)
+
+Primary tallied `out/matrix/`: final run files match the table above. The `.aN.txt` files are earlier attempts of the same run that ended early (window lost foreground on the shared desktop, keys withheld) and were retried; they are kept as evidence, not counted. Retries mean these results show correctness under a quiet desktop, not robustness to foreground theft — repeatability counts for the oracle protocol must report attempts as well as passes.
+
+Runtime gaps to fix next (fresh runtime): focus cleared when the focused row is removed (Mac behaviour, F3 vstack); graph releases the tree after window close (F9); `task(id:)` restart (F8); LazyVStack/ScrollView (F3 lazy); animation interpolation, completion and interruption plus OS reduce-motion (F6); IME composition through the runtime text model (F7).

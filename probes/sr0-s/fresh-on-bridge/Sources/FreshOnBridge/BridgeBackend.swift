@@ -92,6 +92,7 @@ final class BridgeBackend {
     let bridge: Bridge
     let model: RowModel
     let log: EventLog
+    let options: FixtureOptions
     private(set) var window: BridgeWindow?
     private(set) var graph: Graph?
     private(set) var measurer: BridgeTextMeasurer?
@@ -124,14 +125,28 @@ final class BridgeBackend {
     private(set) var scaleChanges = 0
     private(set) var metricsEvents = 0
     private(set) var lastDrawError = ""
+    /// Commit records that carried an animation tag (F6 observation; the runtime records tags only).
+    private(set) var animationTagCommits = 0
+    /// Commits that reached the renderer after the host window was closed (must stay 0).
+    private(set) var commitsAfterClose = 0
+    private(set) var closedFlag = false
+    /// F9 tree release: whether the probe deinit ran right after the graph was dropped, and how many
+    /// model-held view references the host cleared afterwards.
+    private(set) var releasedAfterGraphDrop = false
+    private(set) var clearedViewBindings = 0
+    /// Every stable identifier sent in a committed transaction (ABI rev 0.4).
+    private(set) var committedIdentifiers: Set<String> = []
 
     /// Called after each bridge event and each tick; the self-test advances its stages here.
     var afterInput: (() -> Void)?
+    /// Called once, from the window-closed callback, after the host close handling.
+    var afterClose: (() -> Void)?
 
-    init(bridge: Bridge, model: RowModel, log: EventLog) {
+    init(bridge: Bridge, model: RowModel, log: EventLog, options: FixtureOptions) {
         self.bridge = bridge
         self.model = model
         self.log = log
+        self.options = options
     }
 
     // MARK: lifecycle (UI thread)
@@ -143,7 +158,7 @@ final class BridgeBackend {
             scale = metrics.scale
             let meas = BridgeTextMeasurer(bridge: bridge, scale: scale)
             measurer = meas
-            let g = Graph(F1Root(model: model), measurer: meas, scale: CGFloat(scale))
+            let g = makeGraph(options: options, model: model, measurer: meas, scale: CGFloat(scale))
             g.rootProposal = proposal(width: metrics.width, height: metrics.height)
             g.commitSink = { [weak self] record in
                 MainActor.assumeIsolated { self?.commit(record) }
@@ -167,9 +182,18 @@ final class BridgeBackend {
         flushIfDirty()
     }
 
+    /// Window closed (renderer shuts down after this returns). The runtime has no unmount API, so the host
+    /// marks the model closed (root disappear) and drops the graph; pending row tasks are NOT cancelled.
     func closed() {
         window = nil
+        closedFlag = true
         log.emit("lifecycle", node: "window", payload: ["phase": "closed"])
+        model.markClosed()
+        graph = nil
+        measurer = nil
+        releasedAfterGraphDrop = log.events().contains { ($0["node_id"] as? String) == "tree" }
+        clearedViewBindings = model.releaseViewReferences()
+        afterClose?()
     }
 
     private func proposal(width: UInt32, height: UInt32) -> ProposedViewSize {
@@ -242,6 +266,7 @@ final class BridgeBackend {
         }
 
         version += 1
+        if record.animation != nil { animationTagCommits += 1 }
         let transaction = Transaction(version: version, focus: focusTarget, upserts: upserts, removes: removes)
         do {
             try window.commit(transaction)
@@ -274,7 +299,15 @@ final class BridgeBackend {
             flags = [.hitTarget, .focusable]
             buttonRuntimeID[id] = node.id
             let label = node.children.first?.text ?? ""
-            semantic = SemanticNode(role: .button, label: label, actions: [.invoke, .focus])
+            let identifier: String
+            if label == "Insert above" {
+                identifier = "toolbar/insert"
+            } else if label == "Delete", let row = rowUUID(in: node.id) {
+                identifier = "row/\(row.uuidString)/delete"
+            } else {
+                identifier = ""
+            }
+            semantic = SemanticNode(role: .button, label: label, actions: [.invoke, .focus], identifier: identifier)
             childInside = true
 
         case "Text":
@@ -326,7 +359,8 @@ final class BridgeBackend {
                 textFieldByRow[row] = id
                 rowByTextField[id] = row
                 semantic = SemanticNode(role: .textField, label: "Row \(FreshModelSlot.slot(of: row))", value: text,
-                                        actions: [.focus, .setValue, .setSelection], runs: runs, selection: selection)
+                                        actions: [.focus, .setValue, .setSelection], runs: runs, selection: selection,
+                                        identifier: "row/\(row.uuidString)/field")
             }
             flags = [.hitTarget, .focusable, .editable]
 
@@ -334,6 +368,9 @@ final class BridgeBackend {
             break
         }
 
+        if let identifier = semantic?.identifier, !identifier.isEmpty {
+            committedIdentifiers.insert(identifier)
+        }
         upserts.append(NodeUpsert(id: id, parent: parent, order: order, flags: flags, bounds: bounds,
                                   primitives: prims, semantic: semantic))
         for (index, child) in node.children.enumerated() {
@@ -398,9 +435,8 @@ final class BridgeBackend {
     }
 
     private func focusRow(_ row: UUID, source: String) {
-        model.focusBinding?.wrappedValue = row
+        model.setFocus(row, source: source)
         caret[row] = nil
-        log.emit("focus", node: "focus", payload: ["focused": row.uuidString, "source": source])
         dirty = true
     }
 
