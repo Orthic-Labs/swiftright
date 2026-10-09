@@ -9,7 +9,7 @@
 use std::cell::RefCell;
 use std::ffi::c_void;
 use std::ops::Range;
-use std::sync::atomic::{AtomicU32, AtomicU64, Ordering::SeqCst};
+use std::sync::atomic::{AtomicI32, AtomicU32, AtomicU64, Ordering::SeqCst};
 use std::sync::{Arc, Mutex};
 
 use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
@@ -586,6 +586,8 @@ fn paint_root(
             signal_notify();
         }
     }
+
+    ime_replace_on_layout(MAIN_HWND.load(SeqCst) as *mut c_void);
 }
 
 // -------------------------------------------------- IME text store (InputHandler)
@@ -786,6 +788,7 @@ extern "system" {
     fn ImmSetCompositionWindow(himc: *mut c_void, f: *const CompositionForm) -> i32;
     fn ImmGetCandidateWindow(himc: *mut c_void, index: u32, f: *mut CandidateForm) -> i32;
     fn ImmGetDefaultIMEWnd(hwnd: *mut c_void) -> *mut c_void;
+    fn ImmGetCompositionStringW(himc: *mut c_void, index: u32, buf: *mut c_void, len: u32) -> i32;
 }
 #[link(name = "user32")]
 extern "system" {
@@ -880,10 +883,59 @@ fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
     }
 }
 
+static IME_LAST_RECT: [AtomicI32; 4] = [AtomicI32::new(i32::MIN), AtomicI32::new(0), AtomicI32::new(0), AtomicI32::new(0)];
+
+fn ime_remember(x: i32, y: i32, w: i32, h: i32) {
+    for (a, v) in IME_LAST_RECT.iter().zip([x, y, w, h]) {
+        a.store(v, SeqCst);
+    }
+}
+
+/// Layout moved the composing field while the IME composition is active: re-place the
+/// composition/candidate windows at the new caret. Runs from paint (UI thread); only when
+/// the caret rect actually changed. Host access goes through with_ime (no re-entrancy).
+fn ime_replace_on_layout(hwnd: *mut c_void) {
+    if IME_NODE.load(SeqCst) == 0 || hwnd.is_null() {
+        return;
+    }
+    let active = unsafe {
+        let himc = ImmGetContext(hwnd);
+        if himc.is_null() {
+            false
+        } else {
+            let n = ImmGetCompositionStringW(himc, 0x0008, std::ptr::null_mut(), 0);
+            ImmReleaseContext(hwnd, himc);
+            n > 0
+        }
+    };
+    if !active {
+        ime_remember(i32::MIN, 0, 0, 0);
+        return;
+    }
+    let Some(r) = ime_caret_rect(hwnd) else { return };
+    let new = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
+    let old = (
+        IME_LAST_RECT[0].load(SeqCst),
+        IME_LAST_RECT[1].load(SeqCst),
+        IME_LAST_RECT[2].load(SeqCst),
+        IME_LAST_RECT[3].load(SeqCst),
+    );
+    if old == new {
+        return;
+    }
+    if old.0 != i32::MIN {
+        eprintln!("[swiftright-render] ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
+        place_ime_windows(hwnd);
+    } else {
+        ime_remember(new.0, new.1, new.2, new.3);
+    }
+}
+
 fn place_ime_windows(hwnd: *mut c_void) {
     let r = ime_caret_rect(hwnd);
     let Some(r) = r else { return };
     let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
+    ime_remember(x, y, w, h);
     unsafe {
         let himc = ImmGetContext(hwnd);
         if himc.is_null() {
@@ -904,6 +956,9 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
             // Evidence for the next desktop run: which IME messages arrive, and what they carry.
             if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
                 eprintln!("[swiftright-render] ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
+            }
+            if msg == WM_IME_ENDCOMPOSITION {
+                ime_remember(i32::MIN, 0, 0, 0);
             }
             if msg == WM_IME_COMPOSITION || msg == WM_IME_STARTCOMPOSITION || (msg == WM_IME_NOTIFY && matches!(w, 3 | 4 | 5 | 6 | 7)) {
                 place_ime_windows(hwnd);
