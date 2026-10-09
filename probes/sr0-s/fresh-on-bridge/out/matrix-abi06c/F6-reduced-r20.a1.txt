@@ -1,0 +1,65 @@
+ARTIFACT base=D:\Claude\sr0s-bridge06b exe_sha256=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA dll_sha256=777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441 expect_exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA expect_dll=777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441
+ARTIFACT_OK
+registered=SR0S-Fix-F6reducedr20a1 at=2026-10-09T16:10:35.1800754+05:30
+state=Ready last_result=0
+deleted=SR0S-Fix-F6reducedr20a1 exists_after=False
+ARTIFACT base=D:\Claude\sr0s-bridge06b exe_sha256=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA dll_sha256=777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441 expect_exe=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA expect_dll=777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441 class=sr0 fixture=F6 variant=reduced tag=F6reducedr20a1
+host=BOGUS-DELL session=1 fixture=F6 variant=reduced args=--fixture F6 --reduced-motion-variant --ready-file "D:\Claude\sr0s-bridge06b\result-F6-F6reducedr20a1.txt.ready" started=2026-10-09T16:10:36.0307750+05:30
+window_hwnd=12061464 polls=2 exited_early=False
+ready_file=True waited_ms=4 exe_exited=False
+close_window=WM_CLOSE posted=True
+run_summary keymode=char delivery=targeted fg_changes=0 driver_abort=none
+exit=0 end=2026-10-09T16:10:40.9984241+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","mono_ns":6680242365600,"node_id":"selftest","payload":{"fixture":"F6-reduced","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":6680697981500,"node_id":"animation","payload":{"effective_reduce":true,"enabled":false,"phase":"policy","reduce_source":"os","system_reduce":"on","variant_reduce":true},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":6680698434100,"node_id":"window","payload":{"phase":"root-appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":6680699938700,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":6680700619900,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":6680700911100,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":6680701155100,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":6680701409400,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":6680701689700,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":6680701940300,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":6680702192500,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":6680702433900,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":6680702670100,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":6680717432900,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":true,"reduce_source":"os","scale":2.5,"width_px":1600},"seq":13}
+EVT {"kind":"lifecycle","mono_ns":6680729215400,"node_id":"selftest","payload":{"name":"motion policy recorded","phase":"stage"},"seq":14}
+EVT {"kind":"state","mono_ns":6680729575000,"node_id":"model","payload":{"animated":false,"id":"F0000006-0000-4000-8000-000000000200","index":0,"op":"insert","tag":"A"},"seq":15}
+EVT {"kind":"state","mono_ns":6680729673800,"node_id":"model","payload":{"animated":false,"id":"F0000006-0000-4000-8000-000000000201","index":0,"op":"insert","tag":"B"},"seq":16}
+EVT {"kind":"lifecycle","mono_ns":6680729754000,"node_id":"selftest","payload":{"name":"burst insert (same turn)","phase":"stage"},"seq":17}
+EVT {"kind":"lifecycle","mono_ns":6680733873100,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":6680734414000,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":19}
+EVT {"kind":"lifecycle","mono_ns":6682230917700,"node_id":"selftest","payload":{"name":"animation window","phase":"stage"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":6685061640800,"node_id":"window","payload":{"phase":"closed"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":6685061964500,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":6685080818700,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"local":0,"phase":"disappear"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":6685081150900,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"local":0,"phase":"disappear"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":6685081430100,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":6685081661700,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":6685081840900,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":6685082033700,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":6685082242700,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":29}
+EVT {"kind":"lifecycle","mono_ns":6685082451200,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":30}
+EVT {"kind":"lifecycle","mono_ns":6685082660600,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":6685082863800,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":6685083093900,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":6685083353800,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":34}
+SELFTEST-STAGES F6-reduced: motion policy recorded@0.49s | burst insert (same turn)@0.49s | animation window@1.99s | awaiting-driver-close end-reason=window-closed
+ASSERT F6-reduced script-completed: PASS stages=motion policy recorded@0.49s | burst insert (same turn)@0.49s | animation window@1.99s | awaiting-driver-close
+ASSERT F6-reduced os-reduce-motion-read: PASS os=reduce-on effective=true source=os
+ASSERT F6-reduced reduced-policy-disables-animation: PASS enabled=false (variant flag)
+ASSERT F6-reduced reduced-no-animation-transactions: PASS starts=0 completes=0 commit-tags=0
+ASSERT F6-reduced reduced-final-order: PASS count=12
+ASSERT F6-reduced renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F6-reduced commits-accepted: PASS commits=4 errors=0 dropped-after-close=0
+ASSERT F6-reduced no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F6-reduced: PASS (8/8 asserted; blocked=0; end=window-closed)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0xb80b18 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=262 paints_while_inactive=2 drains=266 ticks_delivered=260 events_pushed=2 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
+
+ARTIFACTS exe=3593209a49bc540fd0fab2ec7ad14390a60c9e30042d8b7e23852d48000d68ba renderer=777f14c4ff11822bf6e2174e127b3a4a325d83a6b322fa599c7fc4408b335441 trace=0ddfc9e5750eab2cc85f5606bae73c8062ebb6c1f7d12ae6c4b362f700ae6990
