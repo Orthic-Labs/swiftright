@@ -81,7 +81,7 @@ pub fn fill_stats(out: &mut Stats) {
     out.ime_calls = stat(S_IME_CALLS);
     out.ime_busy_rejected = stat(S_IME_BUSY);
     out.selftest_reentry_detected = stat(S_SELFTEST);
-    out.live_nodes = LIVE_TREE_NODES.load(SeqCst) + LIVE_RUNS.load(SeqCst);
+    out.live_nodes = LIVE_TREE_NODES.load(SeqCst) + LIVE_RUNS.load(SeqCst) + LIVE_IMAGES.load(SeqCst);
     out.post_close_drains = stat(S_POST_DRAINS);
     out.post_close_timeouts = stat(S_POST_TIMEOUTS);
 }
@@ -122,6 +122,8 @@ pub static WIN_ACTIVE: AtomicBool = AtomicBool::new(false);
 /// Nodes in the committed tree, and live (unreleased) text-run handles.
 pub static LIVE_TREE_NODES: AtomicU64 = AtomicU64::new(0);
 pub static LIVE_RUNS: AtomicU64 = AtomicU64::new(0);
+/// Rev 0.6: registered, unreleased swr_image handles (counted in swr_stats.live_nodes).
+pub static LIVE_IMAGES: AtomicU64 = AtomicU64::new(0);
 
 /// Post-close pump (rev 0.5). ACTIVE is set before window_closed is entered; COMPLETE by
 /// swr_shutdown_complete; EXPIRED by the timer thread when SWR_POST_CLOSE_TIMEOUT_MS passes.

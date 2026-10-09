@@ -43,8 +43,8 @@ func cPrimitive(_ p: Primitive) -> swr_primitive {
         c.radius = radius; c.border_color = borderColor; c.border_width = borderWidth
     case .text(let run, let x, let y):
         c.kind = 2; c.text_run = run.raw; c.rect = swr_rect(x: x, y: y, w: 0, h: 0)
-    case .image(let id, let r):
-        c.kind = 3; c.image_id = id; c.rect = cRect(r)
+    case .image(let image, let r, let radius):
+        c.kind = 3; c.image = image.raw; c.rect = cRect(r); c.radius = radius
     case .path:
         c.kind = 4
     case .clipPush(let r):
@@ -66,6 +66,10 @@ func cSemantic(_ s: SemanticNode, _ arena: Arena) -> swr_semantic {
     c.role = s.role.rawValue
     c.actions = s.actions.rawValue
     c.flags = (s.multiline ? 0x2 : 0) | (s.selection != nil ? 0x1 : 0)
+        | (s.disabled ? 0x4 : 0)                        // SWR_SEM_DISABLED
+        | (s.selected != nil ? 0x8 : 0)                 // SWR_SEM_SELECTABLE
+        | (s.selected == true ? 0x10 : 0)               // SWR_SEM_SELECTED
+    c.toggled = s.toggled.rawValue
     let label = arena.string(s.label)
     c.label = label.ptr; c.label_len = label.len
     let value = arena.string(s.value)
@@ -194,7 +198,12 @@ public func caretRect(cells: [CharCell], lines: [LineInfo], index: Int,
         line = Int(cells[index].line); x = cells[index].x0
     } else {
         let last = cells[cells.count - 1]
-        line = Int(last.line); x = last.x1
+        if last.lineBreak {
+            // After a trailing '\n' the caret starts the next (empty) line at x = 0.
+            line = Int(last.line) + 1; x = 0
+        } else {
+            line = Int(last.line); x = last.x1
+        }
     }
     let top = line < lines.count ? lines[line].top : Float(line) * lineHeightPx
     return Rect(x: origin.x + x, y: origin.y + top, w: width, h: lineHeightPx)

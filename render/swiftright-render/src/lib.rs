@@ -1,4 +1,4 @@
-//! swiftright-render: ABI v0 (revision 0.5) renderer for SwiftRight on Windows.
+//! swiftright-render: ABI v0 (revision 0.6) renderer for SwiftRight on Windows.
 //! See render/swiftright-abi/include/swiftright.h for the contract (threading,
 //! ownership, units). Every `extern "C"` entry contains panics (SWR_E_PANIC).
 //!
@@ -97,6 +97,8 @@ pub extern "C" fn swr_get_api(out: *mut Api, caller_size: u32) -> Status {
                 selftest_reentry: swr_selftest_reentry,
                 get_stats: swr_get_stats,
                 shutdown_complete: swr_shutdown_complete,
+                image_register: swr_image_register,
+                image_release: swr_image_release,
             };
         }
         SWR_OK
@@ -209,7 +211,7 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
             bump(S_COMMITS_REJ);
             return E_STALE_HANDLE;
         }
-        let r = view::with_ui(|ui| unsafe { tree::commit(&mut ui.tree, &ui.runs, t) });
+        let r = view::with_ui(|ui| unsafe { tree::commit(&mut ui.tree, &ui.runs, &ui.images, t) });
         match r {
             Err(e) => {
                 bump(S_COMMITS_REJ);
@@ -221,20 +223,26 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
             }
             Ok(Ok(mut ax)) => {
                 // Publish plain data for AccessKit, remember the IME / focus targets.
-                let editable = view::with_ui(|ui| {
-                    ui.tree
+                // Rev 0.6: a disabled focus target (or one below a disabled node) is neither
+                // the key-event nor the IME target: events carry node 0 (the window).
+                let (editable, focus_disabled) = view::with_ui(|ui| {
+                    let ed = ui
+                        .tree
                         .nodes
                         .get(&t.focus)
                         .map(|n| n.flags & NODE_EDITABLE != 0)
-                        .unwrap_or(false)
+                        .unwrap_or(false);
+                    (ed, t.focus != 0 && ui.tree.is_disabled(t.focus))
                 })
-                .unwrap_or(false);
+                .unwrap_or((false, false));
+                let editable = editable && !focus_disabled;
+                let event_focus = if focus_disabled { 0 } else { t.focus };
                 {
                     let mut shared = ax::lock_ax();
                     ax.title = shared.title.clone();
                     *shared = ax;
                 }
-                FOCUS_NODE.store(t.focus, SeqCst);
+                FOCUS_NODE.store(event_focus, SeqCst);
                 IME_NODE.store(if editable { t.focus } else { 0 }, SeqCst);
                 SNAPSHOT.store(t.version, SeqCst);
                 bump(S_COMMITS_OK);
@@ -286,7 +294,8 @@ pub extern "C" fn swr_measure_text(req: *const MeasureRequest, out: *mut Measure
             Ok(s) => s,
             Err(e) => return e,
         };
-        if text.contains('\n') || text.contains('\r') {
+        // Rev 0.6: '\n' separates paragraphs. '\r' is still unsupported.
+        if text.contains('\r') {
             return E_UNSUPPORTED;
         }
         let family = match unsafe { utf8(r.font_family, r.font_family_len) } {
@@ -459,9 +468,6 @@ pub extern "C" fn swr_request_modal(window: u64, req: *const ModalRequest) -> St
         if (r.struct_size as usize) < std::mem::size_of::<ModalRequest>() {
             return E_ABI;
         }
-        if r.kind != MODAL_MESSAGE || !(1..=3).contains(&r.buttons) {
-            return E_BAD_ARG;
-        }
         let title = match unsafe { utf8(r.title, r.title_len) } {
             Ok(s) => s.to_string(),
             Err(e) => return e,
@@ -470,7 +476,140 @@ pub extern "C" fn swr_request_modal(window: u64, req: *const ModalRequest) -> St
             Ok(s) => s.to_string(),
             Err(e) => return e,
         };
-        view::queue_modal(r.request_id, r.buttons, title, message)
+        let mut pending = view::ModalPending {
+            id: r.request_id,
+            kind: r.kind,
+            buttons: 0,
+            title,
+            message,
+            items: Vec::new(),
+            x: 0.0,
+            y: 0.0,
+            default_item: 0,
+        };
+        match r.kind {
+            MODAL_MESSAGE => {
+                if !(1..=3).contains(&r.buttons) {
+                    return E_BAD_ARG;
+                }
+                pending.buttons = r.buttons;
+            }
+            MODAL_MENU | MODAL_DIALOG => {
+                let max = if r.kind == MODAL_MENU { MODAL_ITEMS_MAX_MENU } else { MODAL_ITEMS_MAX_DIALOG };
+                if r.item_count == 0 {
+                    return E_BAD_ARG;
+                }
+                if r.item_count > max {
+                    return E_TOO_LARGE;
+                }
+                if r.items.is_null() || !r.x.is_finite() || !r.y.is_finite() {
+                    return E_BAD_ARG;
+                }
+                if r.kind == MODAL_DIALOG && r.default_item >= r.item_count {
+                    return E_BAD_ARG;
+                }
+                let raw = unsafe { std::slice::from_raw_parts(r.items, r.item_count as usize) };
+                let mut seen = std::collections::HashSet::new();
+                let mut any_selectable = false;
+                for it in raw {
+                    let sep = r.kind == MODAL_MENU && it.flags & MODAL_ITEM_SEPARATOR != 0;
+                    let text = match unsafe { utf8(it.text, it.text_len) } {
+                        Ok(s) => s.to_string(),
+                        Err(e) => return e,
+                    };
+                    if !sep {
+                        // Ids are non-zero and unique; a button needs a label.
+                        if it.id == 0 || it.id > i32::MAX as u32 || !seen.insert(it.id) {
+                            return E_BAD_ARG;
+                        }
+                        if r.kind == MODAL_DIALOG && text.is_empty() {
+                            return E_BAD_ARG;
+                        }
+                        any_selectable = true;
+                    }
+                    pending.items.push(view::ModalItemOwned { id: it.id, text, flags: it.flags });
+                }
+                if !any_selectable {
+                    return E_BAD_ARG;
+                }
+                pending.x = r.x;
+                pending.y = r.y;
+                pending.default_item = r.default_item;
+            }
+            _ => return E_BAD_ARG,
+        }
+        view::queue_modal(pending)
+    })
+}
+
+/// Rev 0.6. UI thread only. Copies RGBA8 pixels into a retained, generation-tagged image.
+#[no_mangle]
+pub extern "C" fn swr_image_register(
+    rgba: *const u8,
+    width: u32,
+    height: u32,
+    stride: u32,
+    out: *mut u64,
+) -> Status {
+    guard!({
+        if rgba.is_null() || out.is_null() || width == 0 || height == 0 {
+            return E_BAD_ARG;
+        }
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        if SHUTDOWN.load(SeqCst) {
+            return E_SHUTDOWN;
+        }
+        if width > IMAGE_MAX_DIM || height > IMAGE_MAX_DIM {
+            return E_TOO_LARGE;
+        }
+        let row = width as u64 * 4;
+        let stride = if stride == 0 { row } else { stride as u64 };
+        if stride < row {
+            return E_BAD_ARG;
+        }
+        if row * height as u64 > IMAGE_MAX_BYTES {
+            return E_TOO_LARGE;
+        }
+        // Copy row by row (the host buffer may carry row padding), swapping R and B: GPUI
+        // sprites are BGRA (gpui platform.rs Image::to_image_data does the same swap).
+        let mut px = Vec::with_capacity((row * height as u64) as usize);
+        for y in 0..height as u64 {
+            let line = unsafe { std::slice::from_raw_parts(rgba.add((y * stride) as usize), row as usize) };
+            for p in line.chunks_exact(4) {
+                px.extend_from_slice(&[p[2], p[1], p[0], p[3]]);
+            }
+        }
+        let Some(buf) = image::RgbaImage::from_raw(width, height, px) else {
+            return E_BAD_ARG;
+        };
+        let img = Arc::new(gpui::RenderImage::new(vec![image::Frame::new(buf)]));
+        match view::with_ui(|ui| ui.images.insert(img)) {
+            Err(e) | Ok(Err(e)) => e,
+            Ok(Ok(h)) => {
+                unsafe { *out = h };
+                SWR_OK
+            }
+        }
+    })
+}
+
+/// Rev 0.6. Owner frees; a stale or already released handle is SWR_E_STALE_HANDLE.
+#[no_mangle]
+pub extern "C" fn swr_image_release(image: u64) -> Status {
+    guard!({
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        match view::with_ui(|ui| ui.images.take(image)) {
+            Err(e) => e,
+            Ok(None) => E_STALE_HANDLE,
+            Ok(Some(img)) => {
+                view::queue_image_drop(img);
+                SWR_OK
+            }
+        }
     })
 }
 

@@ -7,6 +7,7 @@
 #  - types 'a' with a virtual-key (never Unicode packets) into the focused editable node
 #  - reads the edit node's UIA Value
 #  - finds every node by UIA AutomationId (ABI rev 0.4 identifier) with its control type and Name
+#  - ABI rev 0.6: new roles' UIA control types, TogglePattern state, SelectionItem IsSelected, IsEnabled (r06/* ids)
 #  - empty editable node before typing: UIA TextPattern present, selection degenerate at 0
 param(
   [string]$Bin = 'D:\Claude\sr0b-abi0\scratch\out\Products\Release-windows-x86_64',
@@ -156,6 +157,46 @@ if ($hwnd -ne [IntPtr]::Zero) {
   }
   Log ("automation_id_checks={0}/{1}" -f $idPass, $idChecks.Count)
   if ($idPass -eq $idChecks.Count) { Log 'AUTOMATIONID PASS' } else { Log 'AUTOMATIONID FAIL' }
+
+  # ABI rev 0.6: roles -> UIA control types, toggled -> TogglePattern, selected -> SelectionItemPattern,
+  # disabled -> IsEnabled (accesskit_windows 0.35.1 node.rs control_type / toggle_state / is_enabled)
+  $CT = [System.Windows.Automation.ControlType]
+  $AE = [System.Windows.Automation.AutomationElement]
+  $r06 = @(
+    @{ Id = 'r06/checkbox';     Type = $CT::CheckBox;  Toggle = 'On' },
+    @{ Id = 'r06/switch';       Type = $CT::Button;    Toggle = 'Off' },
+    @{ Id = 'r06/mixed';        Type = $CT::CheckBox;  Toggle = 'Indeterminate' },
+    @{ Id = 'r06/menu';         Type = $CT::Menu },
+    @{ Id = 'r06/menuitem';     Type = $CT::MenuItem },
+    @{ Id = 'r06/alert';        Type = $CT::Window },
+    @{ Id = 'r06/dialog';       Type = $CT::Window },
+    @{ Id = 'r06/row-selected'; Type = $CT::ListItem;  Selected = $true },
+    @{ Id = 'r06/disabled';     Type = $CT::Button;    Enabled = $false },
+    @{ Id = 'image/swatch';     Type = $CT::Image }
+  )
+  $r06Pass = 0
+  foreach ($c in $r06) {
+    $cond = New-Object System.Windows.Automation.AndCondition(
+      (New-Object System.Windows.Automation.PropertyCondition($AE::AutomationIdProperty, $c.Id)),
+      (New-Object System.Windows.Automation.PropertyCondition($AE::ControlTypeProperty, $c.Type)))
+    $el = $null
+    for ($k = 0; $k -lt 20 -and $el -eq $null; $k++) { $el = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond); if ($el -eq $null) { Start-Sleep -Milliseconds 250 } }
+    if ($el -eq $null) { Log ("r06[{0}]=NOT_FOUND (expected {1})" -f $c.Id, $c.Type.ProgrammaticName); continue }
+    $ok = $true; $detail = ''
+    if ($c.ContainsKey('Toggle')) {
+      try { $st = [string]$el.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Current.ToggleState; $detail += " toggle=$st"; if ($st -ne $c.Toggle) { $ok = $false } } catch { $ok = $false; $detail += " toggle=ERR" }
+    }
+    if ($c.ContainsKey('Selected')) {
+      try { $sel = $el.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected; $detail += " selected=$sel"; if ($sel -ne $c.Selected) { $ok = $false } } catch { $ok = $false; $detail += " selected=ERR" }
+    }
+    if ($c.ContainsKey('Enabled')) {
+      $en = $el.Current.IsEnabled; $detail += " enabled=$en"; if ($en -ne $c.Enabled) { $ok = $false }
+    }
+    if ($ok) { $r06Pass++ }
+    Log ("r06[{0}]={1} control_type={2}{3}" -f $c.Id, $(if ($ok) {'ok'} else {'FAIL'}), $el.Current.ControlType.ProgrammaticName, $detail)
+  }
+  Log ("rev06_uia_checks={0}/{1}" -f $r06Pass, $r06.Count)
+  if ($r06Pass -eq $r06.Count) { Log 'REV06 UIA PASS' } else { Log 'REV06 UIA FAIL' }
 }
 
 if (-not $proc.WaitForExit(60000)) { $proc.Kill(); Log 'TIMEOUT: killed after 60 s' }

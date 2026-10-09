@@ -1,7 +1,7 @@
 import Foundation
 import SwiftRightBridge
 
-// BridgeSmoke: end-to-end ABI rev 0.5 check. Opens a window, commits a hand-authored tree
+// BridgeSmoke: end-to-end ABI rev 0.6 check (rev 0.6 additions: Smoke.runRev06Checks). Opens a window, commits a hand-authored tree
 // (label, wrapped paragraph, button, editable text node, status), measures and wraps text
 // at two widths, handles an AX Invoke and a typed character (driven from outside by
 // scripts/drive-smoke.ps1: UIA Invoke + virtual-key input), then quits and prints a
@@ -251,6 +251,134 @@ final class Smoke: TextStore {
         add("stale run handle rejected", !stale, "second release returned \(stale)")
     }
 
+    // MARK: rev 0.6 checks (roles, state, images, multi-paragraph text, modal argument validation)
+    //
+    // No modal is ever OPENED here (a real menu or task dialog needs a human or a UIA driver);
+    // only requests the renderer must reject before queueing are sent. Exactly ONE commit is
+    // rejected on purpose (stale image handle): see the commits_rejected expectation.
+
+    func status(_ body: () throws -> Void) -> Int32 {
+        do { try body(); return 0 } catch BridgeError.status(let rc, _) { return rc } catch { return -999 }
+    }
+
+    func runRev06Checks(_ win: BridgeWindow) {
+        let b = bridge
+        let s = scale
+        let lh = 24 * s
+
+        // ---- images ----
+        var px: [UInt8] = []
+        for i in 0..<16 { px += [UInt8(i * 16), UInt8(255 - i * 16), 128, 255] }   // 4x4 RGBA
+        let live0 = b.stats().live_nodes
+        var image: ImageHandle?
+        let regRC = status { image = try b.registerImage(width: 4, height: 4, rgba: px) }
+        let live1 = b.stats().live_nodes
+        add("image registered (handle, live_nodes +1)", regRC == 0 && image != nil && live1 == live0 + 1,
+            "rc=\(statusName(regRC)) live_nodes \(live0)->\(live1)")
+        if let image {
+            let cx = 460 * s
+            let before = b.stats()
+            version += 1
+            let node = NodeUpsert(id: 7, order: 7, bounds: Rect(x: cx, y: 20 * s, w: 64 * s, h: 64 * s),
+                                  primitives: [.image(image, Rect(x: cx, y: 20 * s, w: 64 * s, h: 64 * s), radius: 8 * s)],
+                                  semantic: SemanticNode(role: .image, label: "swatch", identifier: "image/swatch"))
+            let rc = status { try win.commit(Transaction(version: version, upserts: [node])) }
+            let after = b.stats()
+            add("SWR_PRIM_IMAGE accepted (scaled 4x4 -> 64 DIP)", rc == 0 && after.commits_accepted == before.commits_accepted + 1,
+                "rc=\(statusName(rc)); limitation: painting is not asserted (no per-primitive draw counter)")
+            let rel1 = b.release(image)
+            let rel2 = b.release(image)
+            let live2 = b.stats().live_nodes
+            add("image released once; second release is stale", rel1 && !rel2 && live2 == live0,
+                "release=\(rel1) again=\(rel2) live_nodes back to \(live2) (was \(live0))")
+            // A commit that references the released handle is rejected (the ONE intended commit rejection).
+            version += 1
+            let stale = NodeUpsert(id: 8, order: 8, bounds: Rect(x: cx, y: 100 * s, w: 16, h: 16),
+                                   primitives: [.image(image, Rect(x: cx, y: 100 * s, w: 16, h: 16))])
+            let staleRC = status { try win.commit(Transaction(version: version, upserts: [stale])) }
+            add("commit with a released image handle rejected", staleRC == -6, statusName(staleRC))
+        }
+        let zeroRC = status { _ = try b.registerImage(width: 0, height: 4, rgba: []) }
+        let hugeRC = status { _ = try b.registerImage(width: 8193, height: 1, rgba: [UInt8](repeating: 0, count: 8193 * 4)) }
+        let strideRC = status { _ = try b.registerImage(width: 4, height: 2, rgba: [UInt8](repeating: 0, count: 64), stride: 4) }
+        add("image argument errors typed", zeroRC == -1 && hugeRC == -8 && strideRC == -1,
+            "zero_width=\(statusName(zeroRC)) 8193px=\(statusName(hugeRC)) stride<row=\(statusName(strideRC))")
+        // Left registered on purpose: closing the window must drop it (live_nodes -> 0 is asserted at teardown).
+        let leaked = try? b.registerImage(width: 2, height: 2, rgba: [UInt8](repeating: 255, count: 16))
+        add("image left registered for teardown check", leaked != nil, "dropped with the window; see live nodes zero after teardown")
+
+        // ---- roles and semantic state, one transaction ----
+        let cx = 460 * s
+        func box(_ id: UInt64, _ y: Float, _ sem: SemanticNode, hit: Bool = false) -> NodeUpsert {
+            NodeUpsert(id: id, order: UInt32(id), flags: hit ? [.hitTarget, .focusable] : [],
+                       bounds: Rect(x: cx, y: y * s, w: 150 * s, h: 20 * s), semantic: sem)
+        }
+        let roleNodes: [NodeUpsert] = [
+            box(10, 120, SemanticNode(role: .checkbox, label: "Check", actions: [.invoke, .focus], identifier: "r06/checkbox", toggled: .on)),
+            box(11, 145, SemanticNode(role: .switchControl, label: "Switch", actions: [.invoke, .focus], identifier: "r06/switch", toggled: .off)),
+            box(12, 170, SemanticNode(role: .checkbox, label: "Mixed", actions: [.invoke], identifier: "r06/mixed", toggled: .mixed)),
+            box(13, 195, SemanticNode(role: .menu, label: "Menu", identifier: "r06/menu")),
+            box(14, 220, SemanticNode(role: .menuItem, label: "Menu item", actions: [.invoke], identifier: "r06/menuitem", selected: false)),
+            box(15, 245, SemanticNode(role: .alert, label: "Alert", identifier: "r06/alert")),
+            box(16, 270, SemanticNode(role: .dialog, label: "Dialog", identifier: "r06/dialog")),
+            box(17, 295, SemanticNode(role: .listItem, label: "Row", actions: [.invoke], identifier: "r06/row-selected", selected: true)),
+            box(18, 320, SemanticNode(role: .button, label: "Off", actions: [.invoke, .focus], identifier: "r06/disabled", disabled: true), hit: true),
+        ]
+        let before = b.stats()
+        version += 1
+        let rolesRC = status { try win.commit(Transaction(version: version, upserts: roleNodes)) }
+        let after = b.stats()
+        add("rev 0.6 roles, toggled, selected and disabled accepted in one commit",
+            rolesRC == 0 && after.commits_accepted == before.commits_accepted + 1,
+            "rc=\(statusName(rolesRC)); UIA mapping is checked by scripts/drive-smoke.ps1 (see README-abi-v0.md rev 0.6)")
+
+        // ---- multi-paragraph text ----
+        let multi = "alpha\nbeta gamma\n\nz\n"          // 5 visual lines, trailing '\n'
+        if let m = measure(multi) {
+            let cells = (try? b.cells(of: m.run)) ?? []
+            let breaks = cells.filter { $0.lineBreak }
+            let bytes = m.lines.reduce(0) { $0 + Int($1.utf8Len) }
+            let contiguous = zip(m.lines, m.lines.dropFirst()).allSatisfy { $0.utf8Start + $0.utf8Len == $1.utf8Start }
+            add("multi-paragraph measure: lines partition the text, '\\n' is a zero-width cell",
+                m.lineCount == 5 && bytes == multi.utf8.count && contiguous && breaks.count == 4
+                    && cells.count == Int(m.charCount) && breaks.allSatisfy { $0.x0 == $0.x1 }
+                    && abs(m.height - 5 * lh) < 0.5,
+                "lines=\(m.lineCount) bytes=\(bytes)/\(multi.utf8.count) breaks=\(breaks.count) cells=\(cells.count)/\(m.charCount) height=\(m.height)")
+            let runs = makeAXTextRuns(text: multi, measurement: m, cells: cells, origin: (x: 0, y: 0), lineHeightPx: lh, firstRunID: 500)
+            add("per-line AX text runs keep the line break", runs.count == 5 && runs[0].text == "alpha\n" && runs[1].text == "beta gamma\n"
+                && runs[2].text == "\n" && runs[4].text == "",
+                "runs=\(runs.map { $0.text })")
+            let after = caretRect(cells: cells, lines: m.lines, index: cells.count, origin: (x: 0, y: 0), lineHeightPx: lh, width: 2)
+            add("caret after a trailing newline starts the next line", abs(after.y - 4 * lh) < 0.5 && after.x == 0, "y=\(after.y) x=\(after.x)")
+            b.release(m.run)
+        } else {
+            add("multi-paragraph measure", false, "measure threw")
+        }
+        let narrowText = "aaaa bbbb cccc\ndddd eeee ffff"
+        if let m = measure(narrowText, width: 60 * s), let one = measure("aaaa bbbb cccc", width: 60 * s) {
+            add("each paragraph wraps on its own", m.lineCount >= 2 * one.lineCount && m.lineCount > 2,
+                "paragraph alone=\(one.lineCount) lines, two paragraphs=\(m.lineCount)")
+            b.release(m.run); b.release(one.run)
+        }
+        let crRC = status { _ = try b.measure(MeasureRequest(text: "a\r\nb", scale: s)) }
+        add("'\\r' still rejected (SWR_E_UNSUPPORTED)", crRC == -15, statusName(crRC))
+
+        // ---- modal arguments the renderer must reject before queueing (nothing is opened) ----
+        typealias Item = BridgeWindow.ModalItem
+        let ok2 = [Item(id: 1, text: "Yes"), Item(id: 2, text: "No")]
+        let r1 = status { try win.requestDialog(requestID: 9001, title: "t", message: "m", buttons: []) }
+        let r2 = status { try win.requestDialog(requestID: 9002, title: "t", message: "m",
+                                                buttons: (1...9).map { Item(id: UInt32($0), text: "b\($0)") }) }
+        let r3 = status { try win.requestDialog(requestID: 9003, title: "t", message: "m",
+                                                buttons: [Item(id: 5, text: "a"), Item(id: 5, text: "b")]) }
+        let r4 = status { try win.requestDialog(requestID: 9004, title: "t", message: "m", buttons: ok2, defaultIndex: 2) }
+        let r5 = status { try win.requestMenu(requestID: 9005, items: [.separatorItem], x: 10, y: 10) }
+        let r6 = status { try win.requestMenu(requestID: 9006, items: (1...65).map { Item(id: UInt32($0), text: "i\($0)") }, x: 10, y: 10) }
+        add("menu and dialog arguments validated before queueing",
+            r1 == -1 && r2 == -8 && r3 == -1 && r4 == -1 && r5 == -1 && r6 == -8,
+            "0 buttons=\(statusName(r1)) 9 buttons=\(statusName(r2)) duplicate ids=\(statusName(r3)) default out of range=\(statusName(r4)) only separators=\(statusName(r5)) 65 items=\(statusName(r6)); opening a real menu/dialog needs a human or UIA driver")
+    }
+
     // MARK: events
 
     func handle(_ ev: BridgeEvent) {
@@ -436,7 +564,7 @@ func summarize(_ smoke: Smoke, runResult: String) -> Int32 {
               "selftest=\(b.reentrySelftest) swift_refused=\(b.drainReentryRefused) rust_refused=\(st.reentry_refused) drains=\(b.drainCalls)")
     smoke.add("no thread violations or host panics", st.thread_violations == 0 && st.host_panics == 0,
               "thread_violations=\(st.thread_violations) host_panics=\(st.host_panics)")
-    smoke.add("commits accepted; only the 4 injected faults rejected", st.commits_accepted >= 2 && st.commits_rejected == 4,
+    smoke.add("commits accepted; only the 5 injected faults rejected", st.commits_accepted >= 2 && st.commits_rejected == 5,
               "accepted=\(st.commits_accepted) rejected=\(st.commits_rejected) deferred_in_ime=\(st.commits_deferred)")
     smoke.add("window_closed delivered once", b.windowClosedCalls == 1 && smoke.closeCalls == 1, "calls=\(b.windowClosedCalls)")
     let lateOK = smoke.lateCommitRC == -13 && smoke.lateMeasureRC == -13
@@ -537,6 +665,7 @@ do {
         } catch {
             smoke.add("underline primitive (IME marked text) accepted", false, "\(error)")
         }
+        smoke.runRev06Checks(win)
         try? win.requestTicks(true)
         Task { @MainActor in
             for await ev in bridge.events { smoke.handle(ev) }

@@ -304,7 +304,7 @@ public final class Bridge {
         return (0..<Int(count)).map { i in
             let c = buf[i]
             return CharCell(utf8Offset: c.utf8_offset, utf8Len: c.utf8_len, line: c.line,
-                            wordStart: c.flags & 1 != 0, x0: c.x0, x1: c.x1)
+                            wordStart: c.flags & 0x1 != 0, lineBreak: c.flags & 0x2 != 0, x0: c.x0, x1: c.x1)
         }
     }
 
@@ -312,6 +312,27 @@ public final class Bridge {
     @discardableResult
     public func release(_ run: TextRunHandle) -> Bool {
         (api.text_run_release?(run.raw) ?? -3) == 0
+    }
+
+    /// ABI rev 0.6. Copies `width * height` RGBA8 pixels (straight alpha, byte order R,G,B,A;
+    /// `stride` bytes per row, 0 = tightly packed) into a retained image. Release it with
+    /// `release(_:)`. UI thread only.
+    public func registerImage(width: UInt32, height: UInt32, rgba: [UInt8], stride: UInt32 = 0) throws -> ImageHandle {
+        guard let fn = api.image_register else { throw BridgeError.status(-3, "image_register") }
+        let rowBytes = stride == 0 ? Int(width) * 4 : Int(stride)
+        // The renderer reads (height - 1) * rowBytes + width * 4 bytes; refuse a short buffer here.
+        let need = height == 0 ? 0 : (Int(height) - 1) * rowBytes + Int(width) * 4
+        if rgba.count < need { throw BridgeError.status(-1, "swr_image_register (buffer shorter than \(need) bytes)") }
+        var out: swr_image = 0
+        let rc = rgba.withUnsafeBufferPointer { fn($0.baseAddress, width, height, stride, &out) }
+        if rc != 0 { throw BridgeError.status(rc, "swr_image_register") }
+        return ImageHandle(raw: out)
+    }
+
+    /// Explicit release of a retained image (owner frees). Returns false for a stale handle.
+    @discardableResult
+    public func release(_ image: ImageHandle) -> Bool {
+        (api.image_release?(image.raw) ?? -3) == 0
     }
 
     public func stats() -> swr_stats {
@@ -366,17 +387,69 @@ public final class BridgeWindow {
 
     public enum ModalButtons: UInt32 { case ok = 1, okCancel = 2, yesNo = 3 }
 
+    /// One entry of a popup menu or one custom dialog button (ABI rev 0.6). `id` is host-chosen,
+    /// non-zero and unique within the request; separators ignore `text` and `id`.
+    public struct ModalItem {
+        public var id: UInt32
+        public var text: String
+        public var disabled: Bool
+        public var checked: Bool
+        public var separator: Bool
+        public init(id: UInt32, text: String, disabled: Bool = false, checked: Bool = false,
+                    separator: Bool = false) {
+            self.id = id; self.text = text; self.disabled = disabled
+            self.checked = checked; self.separator = separator
+        }
+        public static var separatorItem: ModalItem { ModalItem(id: 0, text: "", separator: true) }
+    }
+
     /// Opens a message box AFTER the current drain unwinds; the answer arrives as a
     /// `.modalResult` event with `arg == requestID` and `i0` = button code.
     public func requestModal(requestID: UInt64, title: String, message: String, buttons: ModalButtons) throws {
+        try sendModal(kind: 1, requestID: requestID, title: title, message: message,
+                      buttons: buttons.rawValue, items: [], x: 0, y: 0, defaultItem: 0)
+    }
+
+    /// ABI rev 0.6: popup menu (TrackPopupMenu) at `x`, `y` (physical px, window client coordinates;
+    /// both negative = at the pointer). Opened AFTER the current drain unwinds. The answer arrives
+    /// as a `.modalResult` event (`BridgeEvent.modalChoice`; nil choice = dismissed).
+    public func requestMenu(requestID: UInt64, items: [ModalItem], x: Float, y: Float) throws {
+        try sendModal(kind: 2, requestID: requestID, title: "", message: "", buttons: 0,
+                      items: items, x: x, y: y, defaultItem: 0)
+    }
+
+    /// ABI rev 0.6: task dialog with 1...8 custom buttons (TaskDialogIndirect). `title` is the window
+    /// title, `message` the content. The answer arrives as a `.modalResult` event
+    /// (`BridgeEvent.modalChoice`; nil choice = closed without pressing a button).
+    public func requestDialog(requestID: UInt64, title: String, message: String, buttons: [ModalItem],
+                              defaultIndex: Int = 0) throws {
+        try sendModal(kind: 3, requestID: requestID, title: title, message: message, buttons: 0,
+                      items: buttons, x: 0, y: 0, defaultItem: UInt32(max(defaultIndex, 0)))
+    }
+
+    private func sendModal(kind: UInt32, requestID: UInt64, title: String, message: String, buttons: UInt32,
+                           items: [ModalItem], x: Float, y: Float, defaultItem: UInt32) throws {
         let arena = Arena()
         var m = swr_modal_request()
         m.struct_size = UInt32(MemoryLayout<swr_modal_request>.size)
-        m.kind = 1
+        m.kind = kind
         m.request_id = requestID
         let t = arena.string(title); m.title = t.ptr; m.title_len = t.len
         let b = arena.string(message); m.message = b.ptr; m.message_len = b.len
-        m.buttons = buttons.rawValue
+        m.buttons = buttons
+        var cItems: [swr_modal_item] = []
+        for it in items {
+            var c = swr_modal_item()
+            let s = arena.string(it.text)
+            c.text = s.ptr; c.text_len = s.len
+            c.id = it.id
+            c.flags = (it.disabled ? 0x1 : 0) | (it.separator ? 0x2 : 0) | (it.checked ? 0x4 : 0)
+            cItems.append(c)
+        }
+        m.items = arena.array(cItems)
+        m.item_count = UInt32(cItems.count)
+        m.x = x; m.y = y
+        m.default_item = defaultItem
         let rc = withUnsafePointer(to: &m) { bridge.api.request_modal?(handle, $0) ?? -3 }
         if rc != 0 { throw BridgeError.status(rc, "swr_request_modal") }
     }

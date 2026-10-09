@@ -1,11 +1,11 @@
-//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.5).
+//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.6).
 //! Compile-time size asserts use the sizes measured with clang on the header.
 
 use std::ffi::{c_char, c_void};
 
 pub const ABI_MAJOR: u32 = 0;
-pub const ABI_MINOR: u32 = 5;
-pub const API_FN_COUNT: u32 = 14;
+pub const ABI_MINOR: u32 = 6;
+pub const API_FN_COUNT: u32 = 16;
 
 pub type Status = i32;
 pub const SWR_EMPTY: Status = 1;
@@ -48,6 +48,14 @@ pub const ROLE_TEXT_FIELD: u32 = 4;
 pub const ROLE_LIST: u32 = 5;
 pub const ROLE_LIST_ITEM: u32 = 6;
 pub const ROLE_GROUP: u32 = 7;
+// Rev 0.6.
+pub const ROLE_CHECKBOX: u32 = 8;
+pub const ROLE_SWITCH: u32 = 9;
+pub const ROLE_IMAGE: u32 = 10;
+pub const ROLE_MENU: u32 = 11;
+pub const ROLE_MENU_ITEM: u32 = 12;
+pub const ROLE_ALERT: u32 = 13;
+pub const ROLE_DIALOG: u32 = 14;
 
 pub const ACT_INVOKE: u32 = 0x1;
 pub const ACT_FOCUS: u32 = 0x2;
@@ -57,6 +65,18 @@ pub const ACT_SET_SELECTION: u32 = 0x8;
 pub const SEM_HAS_SELECTION: u32 = 0x1;
 pub const SEM_MULTILINE: u32 = 0x2;
 pub const SEM_DISABLED: u32 = 0x4;
+// Rev 0.6.
+pub const SEM_SELECTABLE: u32 = 0x8;
+pub const SEM_SELECTED: u32 = 0x10;
+
+pub const TOGGLED_NONE: u32 = 0;
+pub const TOGGLED_OFF: u32 = 1;
+pub const TOGGLED_ON: u32 = 2;
+pub const TOGGLED_MIXED: u32 = 3;
+
+pub const IMAGE_MAX_DIM: u32 = 8192;
+pub const IMAGE_MAX_BYTES: u64 = 64 * 1024 * 1024;
+pub const IMAGE_MAX_LIVE: usize = 4096;
 
 pub const EV_KEY: u32 = 1;
 pub const EV_POINTER: u32 = 2;
@@ -92,8 +112,16 @@ pub const IDENTIFIER_MAX: u32 = 256;
 pub const POST_CLOSE_TIMEOUT_MS: u64 = 5000;
 
 pub const MODAL_MESSAGE: u32 = 1;
+pub const MODAL_MENU: u32 = 2;
+pub const MODAL_DIALOG: u32 = 3;
+pub const MODAL_ITEM_DISABLED: u32 = 0x1;
+pub const MODAL_ITEM_SEPARATOR: u32 = 0x2;
+pub const MODAL_ITEM_CHECKED: u32 = 0x4;
+pub const MODAL_ITEMS_MAX_MENU: u32 = 64;
+pub const MODAL_ITEMS_MAX_DIALOG: u32 = 8;
 
 pub const CELL_WORD_START: u32 = 0x1;
+pub const CELL_LINE_BREAK: u32 = 0x2;
 
 pub const MAX_UPSERTS: u32 = 4096;
 pub const MAX_REMOVES: u32 = 4096;
@@ -225,7 +253,8 @@ pub struct Primitive {
     pub image_id: u32,
     pub text_run: u64,
     pub m: [f32; 6],
-    pub reserved: [u32; 2],
+    /// Rev 0.6, IMAGE: the former `reserved: [u32; 2]` (offset 72, 8 bytes).
+    pub image: u64,
 }
 
 #[repr(C)]
@@ -262,7 +291,8 @@ pub struct Semantic {
     pub sel_focus_char: u32,
     pub identifier: *const c_char,
     pub identifier_len: u32,
-    pub reserved: u32,
+    /// Rev 0.6: TOGGLED_*; the former `reserved`.
+    pub toggled: u32,
 }
 
 #[repr(C)]
@@ -407,6 +437,24 @@ pub struct ModalRequest {
     pub message_len: u32,
     pub buttons: u32,
     pub reserved: u32,
+    // ---- rev 0.6 tail ----
+    pub items: *const ModalItem,
+    pub x: f32,
+    pub y: f32,
+    pub item_count: u32,
+    pub flags: u32,
+    pub default_item: u32,
+    pub tail_reserved: u32,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ModalItem {
+    pub text: *const c_char,
+    pub text_len: u32,
+    pub id: u32,
+    pub flags: u32,
+    pub reserved: u32,
 }
 
 #[repr(C)]
@@ -458,12 +506,15 @@ pub struct Api {
     pub selftest_reentry: extern "C" fn() -> Status,
     pub get_stats: extern "C" fn(*mut Stats) -> Status,
     pub shutdown_complete: extern "C" fn() -> Status,
+    // Rev 0.6, appended.
+    pub image_register: extern "C" fn(*const u8, u32, u32, u32, *mut u64) -> Status,
+    pub image_release: extern "C" fn(u64) -> Status,
 }
 
 // Sizes measured with clang on swiftright.h (x86_64 / arm64 agree).
 const _: () = assert!(std::mem::size_of::<BootstrapInfo>() == 88);
 const _: () = assert!(std::mem::size_of::<HostCallbacks>() == 112);
-const _: () = assert!(std::mem::size_of::<Api>() == 120);
+const _: () = assert!(std::mem::size_of::<Api>() == 136);
 const _: () = assert!(std::mem::size_of::<Transaction>() == 72);
 const _: () = assert!(std::mem::size_of::<Node>() == 144);
 const _: () = assert!(std::mem::size_of::<Primitive>() == 80);
@@ -476,5 +527,14 @@ const _: () = assert!(std::mem::size_of::<LineInfo>() == 24);
 const _: () = assert!(std::mem::size_of::<CharCell>() == 24);
 const _: () = assert!(std::mem::size_of::<RunOptions>() == 40);
 const _: () = assert!(std::mem::size_of::<WindowMetrics>() == 24);
-const _: () = assert!(std::mem::size_of::<ModalRequest>() == 48);
+const _: () = assert!(std::mem::size_of::<ModalRequest>() == 80);
+const _: () = assert!(std::mem::size_of::<ModalItem>() == 24);
+// Offsets of the rev 0.6 reuses and tails, also clang-measured on swiftright.h.
+const _: () = assert!(std::mem::offset_of!(Primitive, image) == 72);
+const _: () = assert!(std::mem::offset_of!(Semantic, toggled) == 84);
+const _: () = assert!(std::mem::offset_of!(ModalRequest, items) == 48);
+const _: () = assert!(std::mem::offset_of!(ModalRequest, x) == 56);
+const _: () = assert!(std::mem::offset_of!(ModalRequest, item_count) == 64);
+const _: () = assert!(std::mem::offset_of!(ModalRequest, default_item) == 72);
+const _: () = assert!(std::mem::offset_of!(ModalItem, id) == 12);
 const _: () = assert!(std::mem::size_of::<Stats>() == 200);

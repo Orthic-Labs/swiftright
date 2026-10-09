@@ -9,7 +9,8 @@ use std::sync::Arc;
 use crate::abi::*;
 use crate::ax::{AxNode, AxRun, AxShared};
 use crate::rt::LIVE_TREE_NODES;
-use crate::text::{Measured, RunSlab};
+use crate::text::{Measured, RunSlab, Slab};
+use gpui::RenderImage;
 use std::sync::atomic::Ordering::SeqCst;
 
 #[derive(Clone)]
@@ -17,6 +18,8 @@ pub enum Prim {
     Rect { r: [f32; 4], color: u32, border_color: u32, border_w: f32, radius: f32 },
     Text { x: f32, y: f32, run: Arc<Measured> },
     Underline { r: [f32; 4], color: u32 },
+    /// Rev 0.6: the image scaled to fill `r`, corner radius `radius` (physical px).
+    Image { r: [f32; 4], radius: f32, img: Arc<RenderImage> },
     ClipPush([f32; 4]),
     ClipPop,
     TranslatePush(f32, f32),
@@ -42,6 +45,7 @@ pub struct Sem {
     pub label: String,
     pub value: String,
     pub identifier: String,
+    pub toggled: u32,
     pub runs: Vec<SemRun>,
     pub sel: Option<(u64, u32, u64, u32)>,
 }
@@ -74,7 +78,24 @@ impl Tree {
         LIVE_TREE_NODES.store(0, SeqCst);
     }
 
-    /// Topmost hit-target node containing the physical point.
+    /// True when the node or any ancestor carries SWR_SEM_DISABLED (rev 0.6).
+    pub fn is_disabled(&self, id: u64) -> bool {
+        let mut cur = id;
+        let mut hops = 0;
+        while cur != 0 && hops <= 256 {
+            let Some(n) = self.nodes.get(&cur) else { return false };
+            if n.sem.as_ref().is_some_and(|s| s.flags & SEM_DISABLED != 0) {
+                return true;
+            }
+            cur = n.parent;
+            hops += 1;
+        }
+        false
+    }
+
+    /// Topmost hit-target node containing the physical point. Rev 0.6: a disabled node
+    /// (or a node below a disabled one) swallows the press: the result is 0, not the
+    /// node underneath.
     pub fn hit(&self, x: f32, y: f32) -> u64 {
         for id in self.order.iter().rev() {
             if let Some(n) = self.nodes.get(id) {
@@ -84,7 +105,7 @@ impl Tree {
                     && x < n.bounds[0] + n.bounds[2]
                     && y < n.bounds[1] + n.bounds[3]
                 {
-                    return *id;
+                    return if self.is_disabled(*id) { 0 } else { *id };
                 }
             }
         }
@@ -144,7 +165,11 @@ fn rect4(r: &Rect) -> Result<[f32; 4], Status> {
     Ok([r.x, r.y, r.w, r.h])
 }
 
-unsafe fn convert_prims(prims: &[Primitive], runs: &RunSlab) -> Result<Vec<Prim>, Status> {
+unsafe fn convert_prims(
+    prims: &[Primitive],
+    runs: &RunSlab,
+    images: &Slab<RenderImage>,
+) -> Result<Vec<Prim>, Status> {
     let mut out = Vec::with_capacity(prims.len());
     let mut clip = 0i32;
     let mut xf = 0i32;
@@ -168,7 +193,11 @@ unsafe fn convert_prims(prims: &[Primitive], runs: &RunSlab) -> Result<Vec<Prim>
                 }
                 out.push(Prim::Underline { r, color: p.color });
             }
-            PRIM_IMAGE | PRIM_PATH => return Err(E_UNSUPPORTED),
+            PRIM_IMAGE => {
+                let img = images.get(p.image).ok_or(E_STALE_HANDLE)?;
+                out.push(Prim::Image { r: rect4(&p.rect)?, radius: p.radius.max(0.0), img });
+            }
+            PRIM_PATH => return Err(E_UNSUPPORTED),
             PRIM_CLIP_PUSH => {
                 clip += 1;
                 out.push(Prim::ClipPush(rect4(&p.rect)?));
@@ -208,6 +237,9 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
     if s.identifier_len > IDENTIFIER_MAX {
         return Err(E_TOO_LARGE);
     }
+    if s.toggled > TOGGLED_MIXED {
+        return Err(E_BAD_ARG);
+    }
     let rs = slice_of(s.runs, s.run_count)?;
     let mut runs = Vec::with_capacity(rs.len());
     for r in rs {
@@ -229,6 +261,7 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
         label: str_of(s.label, s.label_len)?,
         value: str_of(s.value, s.value_len)?,
         identifier: str_of(s.identifier, s.identifier_len)?,
+        toggled: s.toggled,
         runs,
         sel: if s.flags & SEM_HAS_SELECTION != 0 {
             Some((s.sel_anchor_run, s.sel_anchor_char, s.sel_focus_run, s.sel_focus_char))
@@ -239,7 +272,12 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
 }
 
 /// Validates and applies `t` to `tree`. All-or-nothing. Returns the AX snapshot to publish.
-pub unsafe fn commit(tree: &mut Tree, runs: &RunSlab, t: &Transaction) -> Result<AxShared, Status> {
+pub unsafe fn commit(
+    tree: &mut Tree,
+    runs: &RunSlab,
+    images: &Slab<RenderImage>,
+    t: &Transaction,
+) -> Result<AxShared, Status> {
     if t.upsert_count > MAX_UPSERTS || t.remove_count > MAX_REMOVES || t.primitive_count > MAX_PRIMITIVES {
         return Err(E_TOO_LARGE);
     }
@@ -281,7 +319,7 @@ pub unsafe fn commit(tree: &mut Tree, runs: &RunSlab, t: &Transaction) -> Result
         if end > prims.len() {
             return Err(E_BAD_ARG);
         }
-        let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs)?;
+        let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs, images)?;
         let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic)?) } else { None };
         staged.insert(
             n.id,
@@ -357,7 +395,9 @@ fn build_ax(tree: &Tree) -> AxShared {
             parent: anc,
             role: s.role,
             actions: s.actions,
-            flags: s.flags,
+            // SWR_SEM_DISABLED is inherited by semantic descendants of a disabled node.
+            flags: if tree.is_disabled(n.id) { s.flags | SEM_DISABLED } else { s.flags },
+            toggled: s.toggled,
             label: s.label.clone(),
             value: s.value.clone(),
             identifier: s.identifier.clone(),

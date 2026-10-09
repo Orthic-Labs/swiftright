@@ -97,3 +97,18 @@ Non-blocking but record in the freeze note: arm64 (README Deferred), packaging/c
 ## 4. Proposed freeze decision
 
 Freeze ABI 0.5 as the SR0 interface, built from renderer d45c98c (DLL sha256 `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1`). B1, B2, B5, B6, B7 are closed by receipts; B3/B4 close through the contract proposal (F1 compare rerun and C9); B8 decided (RESERVED). Changes after freeze append only (struct tails, function-table tail, new codes) and bump the minor; layout of existing fields and numeric constants in sections 1.3-1.9 do not change.
+
+## 5. After-freeze additions (ABI 0.6, SR1)
+
+The freeze rule stands: after 0.5, changes are append-only (struct tails, function-table tail, new codes and constants); no layout change to an existing field, constant or offset. ABI 0.6 (SR1, `render/README-abi-v0.md` "0.6") follows it and bumps the bootstrap minor to 6, so a 0.5 host or renderer is rejected at startup. Nothing in sections 1 to 4 changes meaning.
+
+| Addition | How it stays append-only |
+|---|---|
+| Roles 8..14 (`CHECKBOX`, `SWITCH`, `IMAGE`, `MENU`, `MENU_ITEM`, `ALERT`, `DIALOG`) | new constants after `GROUP 7`; AccessKit `Role` / UIA mapping cited in the README |
+| `swr_semantic.toggled`, `SWR_SEM_SELECTABLE 0x8`, `SWR_SEM_SELECTED 0x10`, `SWR_TOGGLED_*` | `toggled` reuses the former `reserved` slot (offset 84, size 4; old hosts zeroed it = NONE); flags are new bits. `swr_semantic` stays 88 bytes |
+| `SWR_SEM_DISABLED` now honoured | constant unchanged (declared since 0.4); behaviour was "ignored", now AccessKit disabled plus input routing |
+| `swr_image`, `swr_image_register`, `swr_image_release`, `SWR_PRIM_IMAGE` live | `swr_api` gains two function pointers at the TAIL (14 -> 16, 120 -> 136 bytes); `swr_primitive.image` reuses the former `reserved[2]` (offset 72, size 8; `swr_primitive` stays 80); `SWR_PRIM_IMAGE 3` was declared since v0 (it returned `SWR_E_UNSUPPORTED`) |
+| `SWR_MODAL_MENU 2`, `SWR_MODAL_DIALOG 3`, `swr_modal_item` | new kinds; `swr_modal_request` gains a TAIL (48 -> 80 bytes, old fields untouched); result events reuse `SWR_EV_MODAL_RESULT` (`action` = kind, `i0` = item id, `i1` = index) |
+| `\n` in `swr_measure_text`, `SWR_CELL_LINE_BREAK 0x2` | the v0 rejection (`SWR_E_UNSUPPORTED`) is lifted; the cell flag is a new bit; no struct changed. `\r` is still rejected |
+
+Consequences for this proposal: section 1.8's "`\n` rejected" and the IMAGE row of section 1.6 ("declared, `SWR_E_UNSUPPORTED`") describe 0.5; in 0.6 IMAGE is live and `\n` is accepted. Section 1.2's 14-function table is the 0.5 table; 0.6 appends `image_register` and `image_release`. The freeze hash in section 4 names the 0.5 renderer; a 0.6 freeze needs its own DLL hash after the Windows smoke (nothing about 0.6 has been run on a desktop yet).

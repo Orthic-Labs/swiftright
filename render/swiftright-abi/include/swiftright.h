@@ -1,5 +1,5 @@
 /*
- * swiftright.h - SwiftRight renderer bridge, C ABI v0 (revision 0.4).
+ * swiftright.h - SwiftRight renderer bridge, C ABI v0 (revision 0.6).
  *
  * Status: ABI v0 candidate consolidated from the SR0-B/SR0-D probes
  * (gpui-drain 0.1, frame-clock 0.2, bridge-faults, text-geometry, ime-text-node).
@@ -16,6 +16,17 @@
  * swr_shutdown_complete() or SWR_POST_CLOSE_TIMEOUT_MS elapses; commits, measurements
  * and modal requests stay rejected (SWR_E_SHUTDOWN). swr_api gains shutdown_complete at
  * the end (14 functions). (c) SWR_PRIM_UNDERLINE, a solid bar for IME marked text.
+ * Revision 0.6 (APPEND-ONLY after the SR0 freeze; no existing field, constant or offset
+ * moved): (a) roles CHECKBOX, SWITCH, IMAGE, MENU, MENU_ITEM, ALERT, DIALOG; (b) semantic
+ * state: swr_semantic.toggled (the former `reserved` slot) maps to AccessKit Toggled (UIA
+ * TogglePattern), SWR_SEM_SELECTABLE / SWR_SEM_SELECTED to AccessKit selected (UIA
+ * SelectionItemPattern), and SWR_SEM_DISABLED is now honoured (UIA IsEnabled, pointer and
+ * focus routing); (c) images: swr_image handles, swr_image_register / swr_image_release
+ * appended to swr_api (16 functions), swr_primitive.image (the former `reserved[2]`)
+ * and SWR_PRIM_IMAGE drawing it scaled into rect; (d) modal kinds SWR_MODAL_MENU and
+ * SWR_MODAL_DIALOG: swr_modal_request grows a tail (48 -> 80 bytes) with swr_modal_item
+ * entries; (e) multi-paragraph text: '\n' is accepted in swr_measure_text, see
+ * swr_measure_request. The bootstrap minor is 0.6, so a 0.5 host or renderer is rejected.
  *
  * The header is plain C99 with fixed-width types only, so the layout is the same
  * for the Rust renderer, the MSVC ABI and the Swift clang importer. No Swift
@@ -76,12 +87,14 @@
  *     by the renderer and never retained.
  *   - Pointers handed to host callbacks (UTF-16 text in ime_replace*) are valid
  *     only during that callback.
- *   - Handles (swr_window, swr_text_run) are opaque 64-bit values: low 32 bits slot,
+ *   - Handles (swr_window, swr_text_run, swr_image) are opaque 64-bit values: low 32 bits slot,
  *     high 32 bits generation. 0 is never valid. A handle is valid from the call
  *     that returned it until it is explicitly released (swr_text_run_release) or its
  *     owner dies (window closed). A stale handle fails with SWR_E_STALE_HANDLE and
  *     never touches a reused slot. swr_text_run handles are RETAINED by the caller
- *     until swr_text_run_release (owner frees).
+ *     until swr_text_run_release (owner frees). swr_image handles (rev 0.6) follow the
+ *     same rules: retained until swr_image_release or window close; the renderer copies
+ *     the pixels at registration, so the host's buffer is borrowed for the call only.
  *   - swr_node_id is host-owned and opaque to the renderer (non-zero, unique within
  *     a window generation). A host must mint a NEW id when a node is removed and a
  *     logically-same node is reinserted; the renderer rejects events for ids that
@@ -111,7 +124,7 @@ extern "C" {
 #endif
 
 #define SWR_ABI_MAJOR 0
-#define SWR_ABI_MINOR 5
+#define SWR_ABI_MINOR 6
 
 /* Longest accepted swr_semantic.identifier, in UTF-8 bytes. Longer -> SWR_E_TOO_LARGE. */
 #define SWR_IDENTIFIER_MAX 256
@@ -119,6 +132,11 @@ extern "C" {
 /* Post-close pump bound (rev 0.5): after window_closed the renderer drains for at most
  * this long unless swr_shutdown_complete() ends the phase first. */
 #define SWR_POST_CLOSE_TIMEOUT_MS 5000
+
+/* Image limits (rev 0.6). Larger -> SWR_E_TOO_LARGE. */
+#define SWR_IMAGE_MAX_DIM    8192u      /* width and height, pixels */
+#define SWR_IMAGE_MAX_BYTES  (64u * 1024u * 1024u)  /* width * height * 4 */
+#define SWR_IMAGE_MAX_LIVE   4096u      /* registered, unreleased images */
 
 /* ------------------------------------------------------------------ status */
 
@@ -146,6 +164,7 @@ typedef int32_t swr_status;
 
 typedef uint64_t swr_window;    /* generation-tagged; 0 invalid */
 typedef uint64_t swr_text_run;  /* generation-tagged, retained shaped text; 0 invalid */
+typedef uint64_t swr_image;     /* rev 0.6: generation-tagged, retained RGBA8 image; 0 invalid */
 typedef uint64_t swr_node_id;   /* host-owned, non-zero; 0 = the window root */
 
 typedef struct swr_api swr_api;  /* function table, defined below */
@@ -290,7 +309,10 @@ typedef struct swr_window_metrics {
 
 #define SWR_PRIM_RECT            1  /* fill rect (+ optional radius / border) */
 #define SWR_PRIM_TEXT_RUN        2  /* paint a retained shaped run at rect.x/rect.y */
-#define SWR_PRIM_IMAGE           3  /* declared; SWR_E_UNSUPPORTED in v0 */
+#define SWR_PRIM_IMAGE           3  /* rev 0.6: swr_primitive.image drawn scaled to fill
+                                       rect (corner radius honoured; color, border ignored).
+                                       A stale handle fails the commit with
+                                       SWR_E_STALE_HANDLE; width/height of rect may be 0. */
 #define SWR_PRIM_PATH            4  /* declared; SWR_E_UNSUPPORTED in v0 */
 #define SWR_PRIM_CLIP_PUSH       5  /* clip following primitives of this node to rect */
 #define SWR_PRIM_CLIP_POP        6
@@ -308,10 +330,12 @@ typedef struct swr_primitive {
     uint32_t     border_color;      /* 0xRRGGBBAA */
     float        border_width;      /* px */
     float        radius;            /* px */
-    uint32_t     image_id;          /* IMAGE: reserved */
+    uint32_t     image_id;          /* IMAGE: unused (reserved, 0) */
     swr_text_run text_run;          /* TEXT_RUN: handle from swr_measure_text */
     float        m[6];              /* TRANSFORM_PUSH */
-    uint32_t     reserved[2];
+    swr_image    image;             /* rev 0.6, IMAGE: handle from swr_image_register. This
+                                       is the former `reserved[2]` (same offset and size,
+                                       80 bytes): old hosts zeroed it. */
 } swr_primitive;
 
 #define SWR_ROLE_NONE       0
@@ -322,6 +346,23 @@ typedef struct swr_primitive {
 #define SWR_ROLE_LIST       5
 #define SWR_ROLE_LIST_ITEM  6
 #define SWR_ROLE_GROUP      7
+/* rev 0.6. AccessKit 0.25.1 Role / Windows UIA control type (accesskit_windows 0.35.1 node.rs):
+ *   CHECKBOX  -> Role::CheckBox   / UIA CheckBox   (TogglePattern when `toggled` is set)
+ *   SWITCH    -> Role::Switch     / UIA Button     (TogglePattern when `toggled` is set)
+ *   IMAGE     -> Role::Image      / UIA Image
+ *   MENU      -> Role::Menu       / UIA Menu
+ *   MENU_ITEM -> Role::MenuItem   / UIA MenuItem
+ *   ALERT     -> Role::AlertDialog / UIA Window    (an alert dialog; Role::Alert would map
+ *                                   to a UIA Text live region, which is not what an alert
+ *                                   surface is)
+ *   DIALOG    -> Role::Dialog     / UIA Window */
+#define SWR_ROLE_CHECKBOX   8
+#define SWR_ROLE_SWITCH     9
+#define SWR_ROLE_IMAGE      10
+#define SWR_ROLE_MENU       11
+#define SWR_ROLE_MENU_ITEM  12
+#define SWR_ROLE_ALERT      13
+#define SWR_ROLE_DIALOG     14
 
 #define SWR_ACT_INVOKE         0x1u
 #define SWR_ACT_FOCUS          0x2u
@@ -330,7 +371,23 @@ typedef struct swr_primitive {
 
 #define SWR_SEM_HAS_SELECTION  0x1u
 #define SWR_SEM_MULTILINE      0x2u
-#define SWR_SEM_DISABLED       0x4u
+#define SWR_SEM_DISABLED       0x4u   /* rev 0.6: honoured. AccessKit disabled (UIA IsEnabled
+                                         = false; UIA Invoke/Toggle/Select are refused) for
+                                         this node and its semantic descendants; a pointer
+                                         press whose topmost hit target is a disabled node
+                                         is reported with node 0 (swallowed, not passed
+                                         through); a disabled node is never the key-event or
+                                         IME target (events carry node 0). */
+#define SWR_SEM_SELECTABLE     0x8u   /* rev 0.6: publish AccessKit `selected` (UIA
+                                         SelectionItemPattern; list items, menu items). */
+#define SWR_SEM_SELECTED       0x10u  /* rev 0.6: with SELECTABLE, selected = true. */
+
+/* swr_semantic.toggled (rev 0.6): checked/pressed/on state, AccessKit Toggled
+ * (False/True/Mixed), UIA TogglePattern ToggleState Off/On/Indeterminate. */
+#define SWR_TOGGLED_NONE   0u         /* not a toggle (no TogglePattern) */
+#define SWR_TOGGLED_OFF    1u
+#define SWR_TOGGLED_ON     2u
+#define SWR_TOGGLED_MIXED  3u
 
 /* One visual line of a text node, published as an AccessKit TextRun child. All
  * per-character arrays have char_count entries; positions/widths are run-local
@@ -371,7 +428,9 @@ typedef struct swr_semantic {
      * are ambiguous otherwise. The renderer does not check uniqueness. */
     const char            *identifier;
     uint32_t               identifier_len;
-    uint32_t               reserved;
+    uint32_t               toggled;     /* rev 0.6: SWR_TOGGLED_*; the former `reserved` slot
+                                           (same offset and size; old hosts zeroed it = NONE).
+                                           Values > SWR_TOGGLED_MIXED -> SWR_E_BAD_ARG. */
 } swr_semantic;
 
 typedef struct swr_node {
@@ -423,7 +482,13 @@ typedef struct swr_line_info {      /* one visual (wrapped) line */
 typedef struct swr_measure_request {
     uint32_t       struct_size;
     uint32_t       flags;           /* reserved, 0 */
-    const char    *text;            /* UTF-8, single paragraph (no '\n'/'\r' in v0) */
+    const char    *text;            /* UTF-8. rev 0.6: '\n' separates paragraphs. Each is
+                                       shaped and wrapped on its own and stacked; the '\n'
+                                       is a zero-width char cell (SWR_CELL_LINE_BREAK) at the
+                                       end of the visual line it terminates, and belongs to
+                                       that line's swr_line_info (utf8_len includes it), so
+                                       lines partition the text. A trailing '\n' yields a final
+                                       empty line. '\r' is still SWR_E_UNSUPPORTED. */
     const char    *font_family;     /* UTF-8 */
     const char    *locale;          /* UTF-8, e.g. "en-US" (part of the cache key) */
     swr_line_info *lines_out;       /* optional caller buffer for line breaks */
@@ -468,6 +533,9 @@ typedef struct swr_char_cell {      /* per-character geometry of a shaped run */
 } swr_char_cell;
 
 #define SWR_CELL_WORD_START 0x1u
+#define SWR_CELL_LINE_BREAK 0x2u        /* rev 0.6: the '\n' character; x0 == x1 == the end of
+                                       its line's ink. A caret after it belongs on the
+                                       next line at x = 0. */
 
 /* ----------------------------------------------------------------- events */
 
@@ -523,6 +591,17 @@ typedef struct swr_event {
 
 #define SWR_MODAL_MESSAGE 1         /* MessageBox: opened AFTER the current drain/borrows
                                        unwind, result reported as SWR_EV_MODAL_RESULT */
+#define SWR_MODAL_MENU    2         /* rev 0.6: TrackPopupMenu at (x, y), items = swr_modal_item.
+                                       Same policy as MESSAGE: opened only after drains and
+                                       borrows unwind. Result event: i0 = chosen item id,
+                                       i1 = chosen item index, or i0 = 0 / i1 = -1 when the
+                                       menu was dismissed (i1 = -2: it could not be shown).
+                                       action = SWR_MODAL_MENU. */
+#define SWR_MODAL_DIALOG  3         /* rev 0.6: TaskDialogIndirect with custom buttons (items),
+                                       title = window title, message = content. Result as
+                                       MENU; closing the dialog (Esc, the close box) reports
+                                       i0 = 0 / i1 = -1; i1 = -2: the dialog could not be
+                                       shown. action = SWR_MODAL_DIALOG. */
 #define SWR_MODAL_BUTTONS_OK        1
 #define SWR_MODAL_BUTTONS_OK_CANCEL 2
 #define SWR_MODAL_BUTTONS_YES_NO    3
@@ -531,6 +610,24 @@ typedef struct swr_event {
 #define SWR_MODAL_RESULT_YES    6
 #define SWR_MODAL_RESULT_NO     7
 
+/* rev 0.6: item flags. */
+#define SWR_MODAL_ITEM_DISABLED   0x1u  /* MENU: greyed, not selectable */
+#define SWR_MODAL_ITEM_SEPARATOR  0x2u  /* MENU: a separator line (text and id ignored) */
+#define SWR_MODAL_ITEM_CHECKED    0x4u  /* MENU: check mark */
+#define SWR_MODAL_ITEMS_MAX_MENU   64u  /* more -> SWR_E_TOO_LARGE */
+#define SWR_MODAL_ITEMS_MAX_DIALOG 8u   /* 1..8 buttons */
+
+typedef struct swr_modal_item {
+    const char *text;               /* UTF-8, borrowed. DIALOG: the button label. */
+    uint32_t    text_len;
+    uint32_t    id;                 /* host-chosen, non-zero, unique within the request
+                                       (ignored for separators) */
+    uint32_t    flags;              /* SWR_MODAL_ITEM_* (DIALOG: none defined, 0) */
+    uint32_t    reserved;
+} swr_modal_item;
+
+/* The first 48 bytes are the 0.5 layout; the tail is appended (rev 0.6). Every kind needs
+ * struct_size >= sizeof(swr_modal_request) (80), else SWR_E_ABI. MESSAGE ignores the tail. */
 typedef struct swr_modal_request {
     uint32_t    struct_size;
     uint32_t    kind;               /* SWR_MODAL_* */
@@ -539,8 +636,16 @@ typedef struct swr_modal_request {
     const char *message;
     uint32_t    title_len;
     uint32_t    message_len;
-    uint32_t    buttons;            /* SWR_MODAL_BUTTONS_* */
+    uint32_t    buttons;            /* SWR_MODAL_BUTTONS_* (MESSAGE only) */
     uint32_t    reserved;
+    /* ---- rev 0.6 tail ---- */
+    const swr_modal_item *items;    /* MENU / DIALOG: item_count entries, borrowed */
+    float       x, y;               /* MENU: anchor, physical px, window client coordinates.
+                                       Negative x AND y: anchor at the pointer position. */
+    uint32_t    item_count;
+    uint32_t    flags;              /* reserved, 0 */
+    uint32_t    default_item;       /* DIALOG: index of the default button */
+    uint32_t    tail_reserved;
 } swr_modal_request;
 
 /* ------------------------------------------------------------------ stats */
@@ -570,7 +675,8 @@ typedef struct swr_stats {
     uint64_t ime_busy_rejected;
     uint64_t selftest_reentry_detected;
     /* rev 0.5. live_nodes is a GAUGE, not a counter: swr_node entries retained by the
-     * committed tree plus live (unreleased) swr_text_run handles. Zero after teardown.
+     * committed tree plus live (unreleased) swr_text_run and (rev 0.6) swr_image handles.
+     * Zero after teardown.
      * Readable from any thread (it is an atomic mirror). */
     uint64_t live_nodes;
     uint64_t post_close_drains;     /* drain calls during the post-close pump */
@@ -609,6 +715,18 @@ SWR_API swr_status swr_request_ticks(swr_window window, int32_t on);
 /* Opens asynchronously; never nests inside the caller. */
 SWR_API swr_status swr_request_modal(swr_window window, const swr_modal_request *req);
 
+/* rev 0.6. UI thread only. Copies width * height RGBA8 pixels (straight, non-premultiplied
+ * alpha; byte order R, G, B, A; row stride `stride` bytes, 0 = width * 4) and returns a
+ * RETAINED handle in *out. Release with swr_image_release (owner frees); every live handle
+ * is also dropped when the window closes. width/height 0 or > SWR_IMAGE_MAX_DIM,
+ * a stride below width * 4 or a null buffer -> SWR_E_BAD_ARG (dimensions over the limit,
+ * or more than SWR_IMAGE_MAX_BYTES / SWR_IMAGE_MAX_LIVE -> SWR_E_TOO_LARGE).
+ * SWR_E_SHUTDOWN after shutdown has begun. swr_stats.live_nodes counts live images. */
+SWR_API swr_status swr_image_register(const uint8_t *rgba, uint32_t width, uint32_t height,
+                                      uint32_t stride, swr_image *out);
+/* A stale or already released handle fails with SWR_E_STALE_HANDLE. */
+SWR_API swr_status swr_image_release(swr_image image);
+
 /* Inside a drain callback only: returns 1 when the renderer refuses a nested drain,
  * 0 when it did not, -1 outside a drain. For fault tests. */
 SWR_API swr_status swr_selftest_reentry(void);
@@ -637,9 +755,11 @@ struct swr_api {
     swr_status (*selftest_reentry)(void);
     swr_status (*get_stats)(swr_stats *);
     swr_status (*shutdown_complete)(void);   /* rev 0.5, appended */
+    swr_status (*image_register)(const uint8_t *, uint32_t, uint32_t, uint32_t, swr_image *); /* rev 0.6 */
+    swr_status (*image_release)(swr_image);  /* rev 0.6 */
 };
 
-#define SWR_API_FN_COUNT 14
+#define SWR_API_FN_COUNT 16
 
 #ifdef __cplusplus
 }

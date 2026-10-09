@@ -15,17 +15,17 @@ use std::sync::{Arc, Mutex};
 use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
 use gpui::{
     canvas, div, fill, point, prelude::*, px, rgba, size, App, AsyncApp, Application, Bounds,
-    ContentMask, Context, ElementInputHandler, Entity, EntityInputHandler, FocusHandle,
+    ContentMask, Context, Corners, ElementInputHandler, Entity, EntityInputHandler, FocusHandle,
     IntoElement, KeyDownEvent, MouseButton, MouseDownEvent, MouseUpEvent, Pixels, Render,
-    TextAlign, TitlebarOptions, UTF16Selection, Window, WindowBackgroundAppearance, WindowBounds,
-    WindowHandle, WindowOptions, WindowTextSystem,
+    RenderImage, TextAlign, TitlebarOptions, UTF16Selection, Window, WindowBackgroundAppearance,
+    WindowBounds, WindowHandle, WindowOptions, WindowTextSystem,
 };
 use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 
 use crate::abi::*;
 use crate::ax::{Actions, Activation};
 use crate::rt::*;
-use crate::text::{RunSlab, TextCache};
+use crate::text::{RunSlab, Slab, TextCache, MAX_RUNS};
 use crate::tree::{Prim, Tree};
 
 #[link(name = "user32")]
@@ -35,13 +35,98 @@ extern "system" {
     fn GetClientRect(hwnd: *mut c_void, rect: *mut [i32; 4]) -> i32;
     fn GetDpiForWindow(hwnd: *mut c_void) -> u32;
     fn SetProcessDpiAwarenessContext(context: isize) -> i32;
+    // Rev 0.6 popup menu.
+    fn CreatePopupMenu() -> *mut c_void;
+    fn AppendMenuW(menu: *mut c_void, flags: u32, id: usize, text: *const u16) -> i32;
+    fn TrackPopupMenu(
+        menu: *mut c_void,
+        flags: u32,
+        x: i32,
+        y: i32,
+        reserved: i32,
+        hwnd: *mut c_void,
+        rect: *const c_void,
+    ) -> i32;
+    fn DestroyMenu(menu: *mut c_void) -> i32;
+    fn ClientToScreen(hwnd: *mut c_void, pt: *mut [i32; 2]) -> i32;
+    fn GetCursorPos(pt: *mut [i32; 2]) -> i32;
+    fn SetForegroundWindow(hwnd: *mut c_void) -> i32;
+    fn PostMessageW(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> i32;
 }
+
+type TaskDialogCallback = unsafe extern "system" fn(*mut c_void, u32, usize, isize, isize) -> i32;
+
+// commctrl.h declares TASKDIALOGCONFIG and TASKDIALOG_BUTTON under #include <pshpack1.h>
+// (windows-0.61.3 Controls/mod.rs: `#[repr(C, packed(1))]`). Natural alignment moves
+// hwndParent from offset 4 to 8 and TaskDialogIndirect returns E_INVALIDARG (found and fixed
+// in probes/sr0-b/modal-loop, RESULT.md). cbSize is size_of::<Self>() of the packed layout.
+#[repr(C, packed(1))]
+struct TaskDialogConfig {
+    cb_size: u32,
+    hwnd_parent: *mut c_void,
+    h_instance: *mut c_void,
+    flags: u32,
+    common_buttons: u32,
+    window_title: *const u16,
+    main_icon: *const u16,
+    main_instruction: *const u16,
+    content: *const u16,
+    buttons_count: u32,
+    buttons: *const TaskDialogButton,
+    default_button: i32,
+    radio_count: u32,
+    radios: *const c_void,
+    default_radio: i32,
+    verification_text: *const u16,
+    expanded_info: *const u16,
+    expanded_control: *const u16,
+    collapsed_control: *const u16,
+    footer_icon: *const u16,
+    footer: *const u16,
+    callback: Option<TaskDialogCallback>,
+    callback_data: isize,
+    width: u32,
+}
+
+#[repr(C, packed(1))]
+struct TaskDialogButton {
+    id: i32,
+    text: *const u16,
+}
+
+// Both packed structs must stay the commctrl.h x64 sizes (cbSize 160 / 12 bytes).
+const _: () = assert!(std::mem::size_of::<TaskDialogConfig>() == 160);
+const _: () = assert!(std::mem::size_of::<TaskDialogButton>() == 12);
+
+#[link(name = "comctl32")]
+extern "system" {
+    fn TaskDialogIndirect(
+        cfg: *const TaskDialogConfig,
+        button: *mut i32,
+        radio: *mut i32,
+        verified: *mut i32,
+    ) -> i32;
+}
+
+const MF_GRAYED: u32 = 0x1;
+const MF_CHECKED: u32 = 0x8;
+const MF_SEPARATOR: u32 = 0x800;
+const TPM_RIGHTBUTTON: u32 = 0x2;
+const TPM_NONOTIFY: u32 = 0x80;
+const TPM_RETURNCMD: u32 = 0x100;
+const TDF_ALLOW_DIALOG_CANCELLATION: u32 = 0x8;
+const TDF_POSITION_RELATIVE_TO_WINDOW: u32 = 0x1000;
+const WM_NULL: u32 = 0;
+/// TaskDialog custom button ids are TD_BUTTON_BASE + item index (clear of IDOK/IDCANCEL...).
+const TD_BUTTON_BASE: i32 = 100;
 
 // ------------------------------------------------------------ UI-thread state
 
 pub struct Ui {
     pub text_system: Option<Arc<WindowTextSystem>>,
     pub runs: RunSlab,
+    /// Rev 0.6: registered swr_image handles (RGBA8 copied into GPUI RenderImages, BGRA).
+    pub images: Slab<RenderImage>,
     pub cache: TextCache,
     pub tree: Tree,
 }
@@ -49,7 +134,8 @@ pub struct Ui {
 thread_local! {
     static UI: RefCell<Ui> = RefCell::new(Ui {
         text_system: None,
-        runs: RunSlab::new(),
+        runs: Slab::new(&LIVE_RUNS, MAX_RUNS),
+        images: Slab::new(&LIVE_IMAGES, IMAGE_MAX_LIVE),
         cache: TextCache::new(),
         tree: Tree::default(),
     });
@@ -66,20 +152,39 @@ pub fn with_ui<R>(f: impl FnOnce(&mut Ui) -> R) -> Result<R, Status> {
 static PAINTS_INACTIVE: AtomicU64 = AtomicU64::new(0);
 static OPEN_FAILED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
-struct ModalPending {
-    id: u64,
-    buttons: u32,
-    title: String,
-    message: String,
+pub struct ModalItemOwned {
+    pub id: u32,
+    pub text: String,
+    pub flags: u32,
+}
+
+pub struct ModalPending {
+    pub id: u64,
+    pub kind: u32,
+    pub buttons: u32,
+    pub title: String,
+    pub message: String,
+    pub items: Vec<ModalItemOwned>,
+    pub x: f32,
+    pub y: f32,
+    pub default_item: u32,
 }
 static MODAL: Mutex<Option<ModalPending>> = Mutex::new(None);
 
-pub fn queue_modal(id: u64, buttons: u32, title: String, message: String) -> Status {
+/// Images released by the host: their GPUI sprite-atlas entries are removed at the start of
+/// the next paint (Window::drop_image needs the window).
+static DROPPED_IMAGES: Mutex<Vec<Arc<RenderImage>>> = Mutex::new(Vec::new());
+
+pub fn queue_image_drop(img: Arc<RenderImage>) {
+    DROPPED_IMAGES.lock().unwrap_or_else(|e| e.into_inner()).push(img);
+}
+
+pub fn queue_modal(p: ModalPending) -> Status {
     let mut m = MODAL.lock().unwrap_or_else(|e| e.into_inner());
     if m.is_some() {
         return E_QUEUE_FULL;
     }
-    *m = Some(ModalPending { id, buttons, title, message });
+    *m = Some(p);
     drop(m);
     signal_notify();
     SWR_OK
@@ -89,20 +194,146 @@ fn wide(s: &str) -> Vec<u16> {
     s.encode_utf16().chain(std::iter::once(0)).collect()
 }
 
+/// Result of a MENU / DIALOG: (item id, item index); (0, -1) = dismissed, (0, -2) = failed.
+type ItemResult = (i32, i32);
+
+/// TrackPopupMenu at the client-px anchor. Command ids are index + 1 (0 = dismissed).
+fn run_menu(req: &ModalPending) -> ItemResult {
+    let owner = MAIN_HWND.load(SeqCst) as *mut c_void;
+    if owner.is_null() {
+        return (0, -2);
+    }
+    unsafe {
+        let menu = CreatePopupMenu();
+        if menu.is_null() {
+            return (0, -2);
+        }
+        for (i, it) in req.items.iter().enumerate() {
+            if it.flags & MODAL_ITEM_SEPARATOR != 0 {
+                AppendMenuW(menu, MF_SEPARATOR, 0, std::ptr::null());
+                continue;
+            }
+            let mut f = 0u32; // MF_STRING
+            if it.flags & MODAL_ITEM_DISABLED != 0 {
+                f |= MF_GRAYED;
+            }
+            if it.flags & MODAL_ITEM_CHECKED != 0 {
+                f |= MF_CHECKED;
+            }
+            let t = wide(&it.text);
+            AppendMenuW(menu, f, i + 1, t.as_ptr());
+        }
+        let mut pt = [req.x as i32, req.y as i32];
+        if req.x < 0.0 && req.y < 0.0 {
+            GetCursorPos(&mut pt);
+        } else {
+            ClientToScreen(owner, &mut pt);
+        }
+        // The owner must be foreground or the menu does not dismiss on an outside click.
+        SetForegroundWindow(owner);
+        let cmd = TrackPopupMenu(
+            menu,
+            TPM_RETURNCMD | TPM_NONOTIFY | TPM_RIGHTBUTTON,
+            pt[0],
+            pt[1],
+            0,
+            owner,
+            std::ptr::null(),
+        );
+        PostMessageW(owner, WM_NULL, 0, 0);
+        DestroyMenu(menu);
+        if cmd >= 1 && (cmd as usize) <= req.items.len() {
+            let idx = cmd as usize - 1;
+            (req.items[idx].id as i32, idx as i32)
+        } else {
+            (0, -1)
+        }
+    }
+}
+
+/// TaskDialogIndirect with custom buttons (ids TD_BUTTON_BASE + index).
+fn run_dialog(req: &ModalPending) -> ItemResult {
+    let owner = MAIN_HWND.load(SeqCst) as *mut c_void;
+    let title = wide(&req.title);
+    let content = wide(&req.message);
+    let texts: Vec<Vec<u16>> = req.items.iter().map(|i| wide(&i.text)).collect();
+    let buttons: Vec<TaskDialogButton> = texts
+        .iter()
+        .enumerate()
+        .map(|(i, t)| TaskDialogButton { id: TD_BUTTON_BASE + i as i32, text: t.as_ptr() })
+        .collect();
+    let cfg = TaskDialogConfig {
+        cb_size: std::mem::size_of::<TaskDialogConfig>() as u32,
+        hwnd_parent: owner,
+        h_instance: std::ptr::null_mut(),
+        flags: TDF_ALLOW_DIALOG_CANCELLATION
+            | if owner.is_null() { 0 } else { TDF_POSITION_RELATIVE_TO_WINDOW },
+        common_buttons: 0,
+        window_title: title.as_ptr(),
+        main_icon: std::ptr::null(),
+        main_instruction: std::ptr::null(),
+        content: content.as_ptr(),
+        buttons_count: buttons.len() as u32,
+        buttons: buttons.as_ptr(),
+        default_button: TD_BUTTON_BASE + req.default_item as i32,
+        radio_count: 0,
+        radios: std::ptr::null(),
+        default_radio: 0,
+        verification_text: std::ptr::null(),
+        expanded_info: std::ptr::null(),
+        expanded_control: std::ptr::null(),
+        collapsed_control: std::ptr::null(),
+        footer_icon: std::ptr::null(),
+        footer: std::ptr::null(),
+        callback: None,
+        callback_data: 0,
+        width: 0,
+    };
+    let mut pressed = 0i32;
+    let hr = unsafe {
+        TaskDialogIndirect(&cfg, &mut pressed, std::ptr::null_mut(), std::ptr::null_mut())
+    };
+    if hr < 0 {
+        eprintln!("[swiftright-render] TaskDialogIndirect hr={:#x}", hr as u32);
+        return (0, -2);
+    }
+    let idx = pressed - TD_BUTTON_BASE;
+    if idx >= 0 && (idx as usize) < req.items.len() {
+        (req.items[idx as usize].id as i32, idx)
+    } else {
+        (0, -1)
+    }
+}
+
 /// Runs in its own foreground task: no App/Window borrow and no host callback is active.
 fn run_modal(req: ModalPending) {
-    let utype = match req.buttons {
-        2 => 1u32, // MB_OKCANCEL
-        3 => 4u32, // MB_YESNO
-        _ => 0u32, // MB_OK
-    };
-    let t = wide(&req.title);
-    let m = wide(&req.message);
-    let owner = MAIN_HWND.load(SeqCst) as *mut c_void;
-    let result = unsafe { MessageBoxW(owner, m.as_ptr(), t.as_ptr(), utype) };
     let mut ev = Event::new(EV_MODAL_RESULT, 0);
     ev.arg = req.id;
-    ev.i0 = result;
+    match req.kind {
+        MODAL_MENU => {
+            let (id, idx) = run_menu(&req);
+            ev.action = MODAL_MENU;
+            ev.i0 = id;
+            ev.i1 = idx;
+        }
+        MODAL_DIALOG => {
+            let (id, idx) = run_dialog(&req);
+            ev.action = MODAL_DIALOG;
+            ev.i0 = id;
+            ev.i1 = idx;
+        }
+        _ => {
+            let utype = match req.buttons {
+                2 => 1u32, // MB_OKCANCEL
+                3 => 4u32, // MB_YESNO
+                _ => 0u32, // MB_OK
+            };
+            let t = wide(&req.title);
+            let m = wide(&req.message);
+            let owner = MAIN_HWND.load(SeqCst) as *mut c_void;
+            ev.i0 = unsafe { MessageBoxW(owner, m.as_ptr(), t.as_ptr(), utype) };
+        }
+    }
     push_event(ev);
 }
 
@@ -234,14 +465,28 @@ fn paint_tree(
                     masked(window, clip, |w| w.paint_quad(q));
                 }
                 Prim::Text { x, y, run } => {
-                    if let Some(wl) = &run.wrapped {
+                    // Rev 0.6: one GPUI WrappedLine per paragraph, stacked by `top` (run-local px).
+                    let lh = px(run.line_height_dip);
+                    for (wl, top) in run.wrapped.iter() {
                         let o = point(
                             origin.x + px((*x + tx.0) * inv),
-                            origin.y + px((*y + tx.1) * inv),
+                            origin.y + px((*y + *top + tx.1) * inv),
                         );
-                        let lh = px(run.line_height_dip);
                         masked(window, clip, |w| {
                             let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);
+                        });
+                    }
+                }
+                Prim::Image { r, radius, img } => {
+                    if r[2] > 0.0 && r[3] > 0.0 {
+                        let b = Bounds::new(
+                            point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
+                            size(px(r[2] * inv), px(r[3] * inv)),
+                        );
+                        let corners = Corners::all(px(*radius * inv));
+                        let img = img.clone();
+                        masked(window, clip, |w| {
+                            let _ = w.paint_image(b, corners, img, 0, false);
                         });
                     }
                 }
@@ -314,6 +559,14 @@ fn paint_root(
         }
     }
     WIN_ACTIVE.store(window.is_window_active(), SeqCst);
+
+    // Released images leave the sprite atlas before this frame draws (a still-committed one
+    // is simply re-inserted by paint_image).
+    let dropped: Vec<Arc<RenderImage>> =
+        std::mem::take(&mut *DROPPED_IMAGES.lock().unwrap_or_else(|e| e.into_inner()));
+    for d in dropped {
+        let _ = window.drop_image(d);
+    }
 
     UI.with(|u| {
         if let Ok(ui) = u.try_borrow() {
@@ -702,7 +955,9 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
                 let _ = with_ui(|ui| {
                     ui.tree.clear();
                     ui.runs.clear();
+                    ui.images.clear();
                 });
+                DROPPED_IMAGES.lock().unwrap_or_else(|e| e.into_inner()).clear();
                 {
                     let mut a = crate::ax::lock_ax();
                     a.nodes.clear();

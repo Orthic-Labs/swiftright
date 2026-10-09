@@ -7,7 +7,7 @@ use std::sync::Mutex;
 
 use accesskit::{
     Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Node, NodeId, Rect, Role,
-    TextDirection, TextPosition, TextSelection, TreeId, TreeInfo, TreeUpdate,
+    TextDirection, TextPosition, TextSelection, Toggled, TreeId, TreeInfo, TreeUpdate,
 };
 
 use crate::abi::*;
@@ -31,6 +31,7 @@ pub struct AxNode {
     pub role: u32,
     pub actions: u32,
     pub flags: u32,
+    pub toggled: u32,
     pub label: String,
     pub value: String,
     pub identifier: String,
@@ -95,6 +96,16 @@ pub fn build_tree() -> TreeUpdate {
             ROLE_LIST => Role::List,
             ROLE_LIST_ITEM => Role::ListItem,
             ROLE_GROUP => Role::Group,
+            // Rev 0.6. accesskit 0.25.1 lib.rs Role::{CheckBox, Switch, Image, Menu, MenuItem,
+            // AlertDialog, Dialog}; UIA control types: accesskit_windows 0.35.1 node.rs
+            // control_type() (CheckBox, Button, Image, Menu, MenuItem, Window, Window).
+            ROLE_CHECKBOX => Role::CheckBox,
+            ROLE_SWITCH => Role::Switch,
+            ROLE_IMAGE => Role::Image,
+            ROLE_MENU => Role::Menu,
+            ROLE_MENU_ITEM => Role::MenuItem,
+            ROLE_ALERT => Role::AlertDialog,
+            ROLE_DIALOG => Role::Dialog,
             _ => Role::GenericContainer,
         };
         let mut node = Node::new(role);
@@ -124,6 +135,22 @@ pub fn build_tree() -> TreeUpdate {
         }
         if n.actions & ACT_SET_SELECTION != 0 {
             node.add_action(Action::SetTextSelection);
+        }
+        // Rev 0.6 state. Toggled -> UIA TogglePattern (node.rs is_toggle_pattern_supported /
+        // toggle_state); selected -> UIA SelectionItemPattern for list items (node.rs
+        // is_selection_item_pattern_supported needs `selected` to be Some); disabled -> UIA
+        // IsEnabled (node.rs is_enabled) and refused Invoke/Toggle/Select (node.rs do_action).
+        match n.toggled {
+            TOGGLED_OFF => node.set_toggled(Toggled::False),
+            TOGGLED_ON => node.set_toggled(Toggled::True),
+            TOGGLED_MIXED => node.set_toggled(Toggled::Mixed),
+            _ => {}
+        }
+        if n.flags & SEM_SELECTABLE != 0 {
+            node.set_selected(n.flags & SEM_SELECTED != 0);
+        }
+        if n.flags & SEM_DISABLED != 0 {
+            node.set_disabled();
         }
         node.set_bounds(rect(&n.bounds));
         let mut children: Vec<NodeId> = s.nodes.iter().filter(|c| c.parent == n.id).map(|c| NodeId(c.id)).collect();
@@ -186,13 +213,16 @@ impl ActionHandler for Actions {
                 let mut found = None;
                 for n in &s.nodes {
                     if n.id == target {
-                        found = Some((n.id, n.actions, None::<usize>, s.window, s.version));
+                        // Rev 0.6: a disabled node accepts no action.
+                        let actions = if n.flags & SEM_DISABLED != 0 { 0 } else { n.actions };
+                        found = Some((n.id, actions, None::<usize>, s.window, s.version));
                         break;
                     }
                     let mut base = 0usize;
                     for r in &n.runs {
                         if r.id == target {
-                            found = Some((n.id, n.actions, Some(base), s.window, s.version));
+                            let actions = if n.flags & SEM_DISABLED != 0 { 0 } else { n.actions };
+                            found = Some((n.id, actions, Some(base), s.window, s.version));
                             break;
                         }
                         base += r.lengths.len();

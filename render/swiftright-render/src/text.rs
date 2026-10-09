@@ -5,21 +5,24 @@
 
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
+use std::sync::atomic::{AtomicU64, Ordering::SeqCst};
 use std::sync::Arc;
 
 use gpui::{font, px, FontWeight, Hsla, Rgba, SharedString, TextRun, WindowTextSystem, WrappedLine};
 
 use crate::abi::*;
-use crate::rt::*;
 
 pub const MAX_RUNS: usize = 65536;
 pub const CACHE_CAP: usize = 512;
 
-/// A shaped, wrapped single-paragraph run plus plain per-character geometry.
+/// A shaped, wrapped run plus plain per-character geometry. Rev 0.6: the text may hold
+/// '\n'; each paragraph is one GPUI `WrappedLine` stacked below the previous one, and the
+/// '\n' is a zero-width cell (`CELL_LINE_BREAK`) ending the visual line it terminates.
 /// Geometry is physical px (logical shaping x `scale`).
 pub struct Measured {
     pub text: String,
-    pub wrapped: Option<WrappedLine>,
+    /// One entry per paragraph: the shaped paragraph and its top in run-local physical px.
+    pub wrapped: Vec<(WrappedLine, f32)>,
     pub cells: Vec<CharCell>,
     pub lines: Vec<LineInfo>,
     pub width: f32,
@@ -32,20 +35,27 @@ pub struct Measured {
     pub key: u64,
 }
 
-pub struct RunSlab {
-    slots: Vec<(u32, Option<Arc<Measured>>)>,
+/// Generation-tagged slab of retained, owner-freed objects (shaped runs, images). Handle:
+/// low 32 bits slot + 1, high 32 bits generation (>= 1); 0 is never valid. `live` mirrors
+/// the number of occupied slots for swr_stats.live_nodes.
+pub struct Slab<T> {
+    slots: Vec<(u32, Option<Arc<T>>)>,
+    live: &'static AtomicU64,
+    max: usize,
 }
 
-impl RunSlab {
-    pub fn new() -> RunSlab {
-        RunSlab { slots: Vec::new() }
+pub type RunSlab = Slab<Measured>;
+
+impl<T> Slab<T> {
+    pub fn new(live: &'static AtomicU64, max: usize) -> Slab<T> {
+        Slab { slots: Vec::new(), live, max }
     }
 
-    pub fn insert(&mut self, m: Arc<Measured>) -> Result<u64, Status> {
+    pub fn insert(&mut self, m: Arc<T>) -> Result<u64, Status> {
         let slot = match self.slots.iter().position(|s| s.1.is_none()) {
             Some(i) => i,
             None => {
-                if self.slots.len() >= MAX_RUNS {
+                if self.slots.len() >= self.max {
                     return Err(E_TOO_LARGE);
                 }
                 self.slots.push((1, None));
@@ -53,7 +63,7 @@ impl RunSlab {
             }
         };
         self.slots[slot].1 = Some(m);
-        LIVE_RUNS.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        self.live.fetch_add(1, SeqCst);
         Ok(((self.slots[slot].0 as u64) << 32) | (slot as u64 + 1))
     }
 
@@ -71,38 +81,44 @@ impl RunSlab {
         }
     }
 
-    pub fn get(&self, h: u64) -> Option<Arc<Measured>> {
+    pub fn get(&self, h: u64) -> Option<Arc<T>> {
         self.locate(h).and_then(|s| self.slots[s].1.clone())
     }
 
+    /// Releases the handle; the removed object is returned so the caller can finish with it.
+    pub fn take(&mut self, h: u64) -> Option<Arc<T>> {
+        let s = self.locate(h)?;
+        self.retire(s)
+    }
+
     pub fn release(&mut self, h: u64) -> Status {
-        match self.locate(h) {
+        match self.take(h) {
             None => E_STALE_HANDLE,
-            Some(s) => {
-                self.retire(s);
-                SWR_OK
-            }
+            Some(_) => SWR_OK,
         }
     }
 
-    /// Drops every live run (window closed: the owner died). Each dropped handle's
-    /// generation advances, so a later release fails with SWR_E_STALE_HANDLE.
-    pub fn clear(&mut self) {
+    /// Drops every live object (window closed: the owner died). Each dropped handle's
+    /// generation advances, so a later release fails with SWR_E_STALE_HANDLE. Returns them.
+    pub fn clear(&mut self) -> Vec<Arc<T>> {
+        let mut out = Vec::new();
         for s in 0..self.slots.len() {
-            if self.slots[s].1.is_some() {
-                self.retire(s);
+            if let Some(a) = self.retire(s) {
+                out.push(a);
             }
         }
+        out
     }
 
-    fn retire(&mut self, s: usize) {
-        self.slots[s].1 = None;
+    fn retire(&mut self, s: usize) -> Option<Arc<T>> {
+        let old = self.slots[s].1.take()?;
         let mut g = self.slots[s].0.wrapping_add(1);
         if g == 0 {
             g = 1;
         }
         self.slots[s].0 = g;
-        LIVE_RUNS.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+        self.live.fetch_sub(1, SeqCst);
+        Some(old)
     }
 }
 
@@ -175,16 +191,17 @@ impl TextCache {
     }
 }
 
-/// Shapes `r.text` (single paragraph) with GPUI's text system.
+/// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
 pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
     let scale = r.scale;
     let lh = r.line_height;
+    let line_px = lh * scale;
     let chars: Vec<char> = r.text.chars().collect();
 
     if r.text.is_empty() {
         return Ok(Measured {
             text: String::new(),
-            wrapped: None,
+            wrapped: Vec::new(),
             cells: Vec::new(),
             lines: vec![LineInfo {
                 utf8_start: 0,
@@ -221,75 +238,137 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     } else {
         None
     };
-    let lines = ts
+    let shaped = ts
         .shape_text(SharedString::from(r.text.to_string()), px(r.font_size), &[run], wrap, None)
         .map_err(|_| E_PLATFORM)?;
-    let wrapped = lines.into_iter().next().ok_or(E_PLATFORM)?;
-    let layout = wrapped.unwrapped_layout.clone();
-
-    // GPUI convention: each wrap-boundary glyph is the first glyph of the next visual line.
-    let mut starts = vec![0usize];
-    for b in wrapped.wrap_boundaries.iter() {
-        starts.push(layout.runs[b.run_ix].glyphs[b.glyph_ix].index);
+    let paragraph_texts: Vec<&str> = r.text.split('\n').collect();
+    if shaped.len() != paragraph_texts.len() {
+        return Err(E_PLATFORM);
     }
 
     let ws = word_starts_of(&chars);
     let mut cells: Vec<CharCell> = Vec::with_capacity(chars.len());
-    let mut line_first_byte: Vec<usize> = Vec::new();
-    let mut line_start_x: Vec<f32> = Vec::new();
-    let mut line_end_byte: Vec<usize> = Vec::new();
-    let mut line_width: Vec<f32> = Vec::new();
-    let mut byte = 0usize;
-    for (i, ch) in chars.iter().enumerate() {
-        let len = ch.len_utf8();
-        let line = starts.iter().rposition(|&s| s <= byte).unwrap_or(0);
-        while line_first_byte.len() <= line {
-            line_first_byte.push(byte);
-            line_start_x.push(f32::from(layout.x_for_index(byte)));
-            line_end_byte.push(byte);
+    let mut infos: Vec<LineInfo> = Vec::new();
+    let mut wrapped: Vec<(WrappedLine, f32)> = Vec::with_capacity(shaped.len());
+    let mut asc_desc: Option<(f32, f32)> = None;
+    let mut width = 0f32;
+    let mut char_ix = 0usize; // index into `chars` / `ws`
+    let mut para_base = 0usize; // byte offset of the paragraph start in r.text
+    let n_para = shaped.len();
+    let mut line_base = 0usize; // visual lines before this paragraph
+
+    struct Pending {
+        first: usize,
+        end: usize,
+        width: f32,
+        is_para_last: bool,
+        has_break: bool,
+    }
+    let mut pend: Vec<Pending> = Vec::new();
+
+    for (pi, wl) in shaped.into_iter().enumerate() {
+        let ptext = paragraph_texts[pi];
+        let layout = wl.unwrapped_layout.clone();
+        if asc_desc.is_none() && !ptext.is_empty() {
+            asc_desc = Some((f32::from(layout.ascent), f32::from(layout.descent)));
+        }
+
+        // GPUI convention: each wrap-boundary glyph is the first glyph of the next visual line.
+        let mut starts = vec![0usize];
+        for b in wl.wrap_boundaries.iter() {
+            starts.push(layout.runs[b.run_ix].glyphs[b.glyph_ix].index);
+        }
+
+        let mut line_first_byte: Vec<usize> = Vec::new();
+        let mut line_start_x: Vec<f32> = Vec::new();
+        let mut line_end_byte: Vec<usize> = Vec::new();
+        let mut line_width: Vec<f32> = Vec::new();
+        let mut byte = 0usize;
+        for ch in ptext.chars() {
+            let len = ch.len_utf8();
+            let line = starts.iter().rposition(|&s| s <= byte).unwrap_or(0);
+            while line_first_byte.len() <= line {
+                line_first_byte.push(byte);
+                line_start_x.push(f32::from(layout.x_for_index(byte)));
+                line_end_byte.push(byte);
+                line_width.push(0.0);
+            }
+            let xs = line_start_x[line];
+            let x0 = (f32::from(layout.x_for_index(byte)) - xs) * scale;
+            let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * scale;
+            if x1 > line_width[line] {
+                line_width[line] = x1;
+            }
+            line_end_byte[line] = byte + len;
+            cells.push(CharCell {
+                utf8_offset: (para_base + byte) as u32,
+                utf8_len: len as u32,
+                line: (line_base + line) as u32,
+                flags: if ws[char_ix] { CELL_WORD_START } else { 0 },
+                x0,
+                x1,
+            });
+            char_ix += 1;
+            byte += len;
+        }
+        if line_first_byte.is_empty() {
+            // Empty paragraph: one empty visual line.
+            line_first_byte.push(0);
+            line_start_x.push(0.0);
+            line_end_byte.push(0);
             line_width.push(0.0);
         }
-        let xs = line_start_x[line];
-        let x0 = (f32::from(layout.x_for_index(byte)) - xs) * scale;
-        let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * scale;
-        if x1 > line_width[line] {
-            line_width[line] = x1;
+        let n_local = line_first_byte.len();
+        let is_last_para = pi + 1 == n_para;
+        if !is_last_para {
+            // The '\n': a zero-width cell at the end of the paragraph's last visual line.
+            let last = n_local - 1;
+            cells.push(CharCell {
+                utf8_offset: (para_base + ptext.len()) as u32,
+                utf8_len: 1,
+                line: (line_base + last) as u32,
+                flags: CELL_LINE_BREAK,
+                x0: line_width[last],
+                x1: line_width[last],
+            });
+            char_ix += 1;
         }
-        line_end_byte[line] = byte + len;
-        cells.push(CharCell {
-            utf8_offset: byte as u32,
-            utf8_len: len as u32,
-            line: line as u32,
-            flags: if ws[i] { CELL_WORD_START } else { 0 },
-            x0,
-            x1,
-        });
-        byte += len;
+        for k in 0..n_local {
+            width = width.max(line_width[k]);
+            pend.push(Pending {
+                first: para_base + line_first_byte[k],
+                end: para_base + line_end_byte[k],
+                width: line_width[k],
+                is_para_last: k + 1 == n_local,
+                has_break: !is_last_para,
+            });
+        }
+        wrapped.push((wl, line_base as f32 * line_px));
+        line_base += n_local;
+        para_base += ptext.len() + 1;
     }
 
-    let ascent = f32::from(layout.ascent);
-    let descent = f32::from(layout.descent);
-    // GPUI places the baseline at half-leading + ascent inside each line box.
-    let baseline_in_line = ((lh - (ascent + descent)) / 2.0 + ascent) * scale;
-    let n_lines = line_first_byte.len().max(1);
-    let line_px = lh * scale;
-    let mut infos = Vec::with_capacity(n_lines);
-    for k in 0..n_lines {
-        let first = line_first_byte.get(k).copied().unwrap_or(0);
-        let end = line_end_byte.get(k).copied().unwrap_or(first);
+    let baseline_in_line = match asc_desc {
+        // GPUI places the baseline at half-leading + ascent inside each line box.
+        Some((ascent, descent)) => ((lh - (ascent + descent)) / 2.0 + ascent) * scale,
+        None => lh * scale * 0.8,
+    };
+    let n_lines = pend.len().max(1);
+    for (k, p) in pend.iter().enumerate() {
+        // The '\n' belongs to the line it terminates, so lines partition the text.
+        let extra = if p.is_para_last && p.has_break { 1 } else { 0 };
         infos.push(LineInfo {
-            utf8_start: first as u32,
-            utf8_len: (end - first) as u32,
-            width: line_width.get(k).copied().unwrap_or(0.0),
+            utf8_start: p.first as u32,
+            utf8_len: (p.end - p.first + extra) as u32,
+            width: p.width,
             top: k as f32 * line_px,
             baseline: k as f32 * line_px + baseline_in_line,
             reserved: 0.0,
         });
     }
-    let width = line_width.iter().cloned().fold(0f32, f32::max);
     Ok(Measured {
         text: r.text.to_string(),
-        wrapped: Some(wrapped),
+        wrapped,
         cells,
         width,
         height: n_lines as f32 * line_px,

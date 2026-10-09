@@ -20,6 +20,13 @@ public struct Rect: Equatable {
 
 public enum NodeRole: UInt32 {
     case none = 0, window, button, staticText, textField, list, listItem, group
+    /// ABI rev 0.6. AccessKit roles: CheckBox, Switch, Image, Menu, MenuItem, AlertDialog, Dialog.
+    case checkbox = 8, switchControl, image, menu, menuItem, alert, dialog
+}
+
+/// ABI rev 0.6: checked / pressed / on state (AccessKit Toggled, UIA TogglePattern).
+public enum ToggledState: UInt32 {
+    case none = 0, off, on, mixed
 }
 
 public struct AXActions: OptionSet {
@@ -46,12 +53,20 @@ public struct TextRunHandle: Hashable {
     public init(raw: UInt64) { self.raw = raw }
 }
 
-/// Retained-primitive vocabulary. `.image` and `.path` are declared by ABI v0 and
-/// rejected by the renderer with `unsupported` until a later revision.
+/// Retained RGBA8 image (ABI rev 0.6). Create with `Bridge.registerImage`, release with
+/// `Bridge.release(_:)` (owner frees). Opaque, generation-tagged; dropped when the window closes.
+public struct ImageHandle: Hashable {
+    public let raw: UInt64
+    public init(raw: UInt64) { self.raw = raw }
+}
+
+/// Retained-primitive vocabulary. `.path` is declared by ABI v0 and rejected by the
+/// renderer with `unsupported` until a later revision.
 public enum Primitive {
     case rect(Rect, color: UInt32, radius: Float = 0, borderColor: UInt32 = 0, borderWidth: Float = 0)
     case text(TextRunHandle, x: Float, y: Float)
-    case image(id: UInt32, Rect)
+    /// rev 0.6: the image scaled to fill the rect, with an optional corner radius (physical px).
+    case image(ImageHandle, Rect, radius: Float = 0)
     case path
     case clipPush(Rect)
     case clipPop
@@ -98,13 +113,24 @@ public struct SemanticNode {
     /// counterpart is AXIdentifier. Host-owned, UTF-8, at most 256 bytes, empty = none.
     /// Keep it unique among siblings.
     public var identifier: String
+    /// ABI rev 0.6: toggle state. `.none` = not a toggle. Checkbox, switch and toggle buttons
+    /// publish AccessKit Toggled (UIA TogglePattern).
+    public var toggled: ToggledState
+    /// ABI rev 0.6: nil = the concept does not apply; true/false publish AccessKit `selected`
+    /// (UIA SelectionItemPattern for list items).
+    public var selected: Bool?
+    /// ABI rev 0.6: SWR_SEM_DISABLED. UIA IsEnabled = false and no invoke/toggle/select; the
+    /// renderer also swallows pointer presses on a disabled node (event node 0).
+    public var disabled: Bool
     public init(role: NodeRole, label: String = "", value: String = "", actions: AXActions = [],
                 multiline: Bool = false, runs: [AXTextRun] = [],
                 selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)? = nil,
-                identifier: String = "") {
+                identifier: String = "", toggled: ToggledState = .none, selected: Bool? = nil,
+                disabled: Bool = false) {
         self.role = role; self.label = label; self.value = value; self.actions = actions
         self.multiline = multiline; self.runs = runs; self.selection = selection
-        self.identifier = identifier
+        self.identifier = identifier; self.toggled = toggled; self.selected = selected
+        self.disabled = disabled
     }
 }
 
@@ -137,6 +163,7 @@ public struct Transaction {
 // MARK: measurement
 
 public struct MeasureRequest {
+    /// Rev 0.6: '\n' separates paragraphs (each wraps on its own); '\r' is rejected.
     public var text: String
     public var fontFamily: String
     public var locale: String
@@ -175,6 +202,8 @@ public struct CharCell: Equatable {
     public var utf8Offset: UInt32, utf8Len: UInt32
     public var line: UInt32
     public var wordStart: Bool
+    /// Rev 0.6: this cell is the '\n' character (zero width, at the end of the line it ends).
+    public var lineBreak: Bool
     public var x0: Float, x1: Float      // physical px, relative to the start of the line
 }
 
@@ -200,6 +229,15 @@ public struct BridgeEvent {
     public var text: String
     /// KEY only: the typed character (may be empty).
     public var typed: String
+
+    /// Rev 0.6 `.modalResult` of a menu or custom-button dialog: the chosen item's host id and
+    /// its index, or nil when dismissed (and for plain message boxes, which report `i0`).
+    public var modalChoice: (itemID: UInt32, index: Int)? {
+        guard kind == .modalResult, action == 2 || action == 3, i1 >= 0, i0 > 0 else { return nil }
+        return (UInt32(i0), Int(i1))
+    }
+    /// Rev 0.6: true when a menu / dialog could not be shown at all (i1 == -2).
+    public var modalFailed: Bool { kind == .modalResult && (action == 2 || action == 3) && i1 == -2 }
 
     public var kind: Kind? { Kind(rawValue: kindRaw) }
     public var axAction: AXAction? { kind == .axAction ? AXAction(rawValue: action) : nil }
