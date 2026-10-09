@@ -33,3 +33,18 @@ Not decided. The only evidence is static: `syspolicy_check` calls the unstapled 
 2. `qualification/clean-machine/mac-clean-run.sh` refuses uid 501 and needs an allow-list; the VM user `admin` is uid 501, so it cannot run there unmodified. Not run; checks were done by hand.
 3. `sliceapp-base` Gatekeeper state (above). The stray 0-byte `/var/db/SystemPolicy` I created while probing was removed.
 4. Typing into a SwiftUI row field over Screen Sharing did not register; row edits were driven with the Insert above button instead.
+
+## Gatekeeper baseline (0.2.139)
+
+Re-run after Adrian set `sliceapp-base` to "App Store & Known Developers" (`spctl --status`: developer id enabled). Fresh clone, DMGs from @rightkit/release 0.2.139 (`.app` not stapled, DMG stapled). Quarantine set as `0083;...;Safari` on the DMG, app copied with `ditto --qtn` (what Finder does). Logs/screenshots: `/Volumes/D/sr0-artifacts/mac/r7/gb*`.
+
+| Check | Result |
+|---|---|
+| `spctl -a -t open` on quarantined DMG | PASS: accepted, Notarized Developer ID (`gb1`) |
+| `spctl -a -vv` on installed .app (0.1.0) | PASS: accepted, Notarized Developer ID (`gb1`) |
+| `syspolicy_check distribution` on .app | FAIL: Fatal "Notary Ticket Missing" (the .app staple gap) |
+| Quarantined first launch, online | PASS: translocated, standard "downloaded from the Internet" prompt ("Apple checked it for malicious software and none was detected"); after Open the app runs and writes `rows.json` (`gb2`, `gb2b`) |
+| Quarantined first launch, guest network OFF | PASS: v4 and v6 default routes removed, apple.com, ocsp.apple.com and cloudkit unreachable. 0.1.1 was used so its app hash had never been seen online by this clone. `spctl` accepted the DMG and the .app offline, the same prompt appeared with the text "As of October 9, 2026, Apple checked it for malicious software and none was detected", and after Open the app ran and wrote `rows.json` (`gb3`, `gb3b`) |
+| Real unpatched `right-release install-app` | REFUSES: fails at verify on `stapler-validate`. On the host the message is "SliceApp.app does not have a ticket stapled to it" (`install-app-host-0.1.0.log`); in the VM it fails earlier because the VM has no Xcode tools (`gb3`). Recorded as the result: the real install path cannot install a 0.2.139 DMG. |
+
+Staple-gap conclusion: with the stapled DMG as the carrier, Gatekeeper decides the copied, unstapled .app offline without any prompt or block beyond the normal first-open dialog. The ticket evidently comes from the DMG's staple when the app is opened from a quarantined DMG copy; this is not proven for an app delivered without the DMG (for example a zip), which is not a shipped format here. The real gap is `install-app`'s staple gate and `syspolicy_check`, not first launch. Re-run on 0.2.140.
