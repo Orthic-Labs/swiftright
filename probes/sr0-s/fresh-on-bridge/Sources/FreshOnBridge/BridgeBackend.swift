@@ -530,7 +530,7 @@ final class BridgeBackend {
                 if let row = rowByTextField[ev.node] { focusRow(row, source: "ax") }
                 else if buttonRuntimeID[ev.node] != nil {
                     axButtonFocus = ev.node; dirty = true
-                    log.emit("focus", node: "focus", payload: ["focused": "button:\(ev.node)", "source": "ax"])
+                    log.emit("ax-button-focus", node: "focus", payload: ["focused": "button:\(ev.node)", "source": "ax"])
                 }
             case .setValue?:
                 axSetValues += 1

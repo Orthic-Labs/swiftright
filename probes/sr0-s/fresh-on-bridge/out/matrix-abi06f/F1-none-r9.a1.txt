@@ -1,0 +1,106 @@
+ARTIFACT base=D:\Claude\sr0s-bridge06f exe_sha256=30FBE599B697F731CFB652586B81B7B9561BDA969990D82DCD0681532630D239 dll_sha256=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F expect_exe=30FBE599B697F731CFB652586B81B7B9561BDA969990D82DCD0681532630D239 expect_dll=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F
+ARTIFACT_OK
+registered=SR0S-Fix-F1noner9a1 at=2026-10-09T18:16:06.1036609+05:30
+state=Ready last_result=0
+deleted=SR0S-Fix-F1noner9a1 exists_after=False
+ARTIFACT base=D:\Claude\sr0s-bridge06f exe_sha256=30FBE599B697F731CFB652586B81B7B9561BDA969990D82DCD0681532630D239 dll_sha256=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F expect_exe=30FBE599B697F731CFB652586B81B7B9561BDA969990D82DCD0681532630D239 expect_dll=4FB068F0B6C73DE9A5DDE1A536E97EEDD08E2FEA3C0DD8B92FC0E4A78E53298F class=sr0 fixture=F1 variant=none tag=F1noner9a1
+host=BOGUS-DELL session=1 fixture=F1 variant=none args=--fixture F1 --ready-file "D:\Claude\sr0s-bridge06f\result-F1-F1noner9a1.txt.ready" started=2026-10-09T18:16:07.0551060+05:30
+window_hwnd=8392000 polls=2 exited_early=False
+focus[Row 5]=ok attempt=0
+focused_after_focus=[Row 5]
+fg_change at=key-65 from=0 to=8392000 title=[SwiftRight FreshOnBridge F1] probe=8392000
+key vk=65 char=97 mode=targeted-post keymode=char posted=True fg_before=8392000 fg_after=8392000
+key vk=66 char=98 mode=targeted-post keymode=char posted=True fg_before=8392000 fg_after=8392000
+key vk=67 char=99 mode=targeted-post keymode=char posted=True fg_before=8392000 fg_after=8392000
+wait_value[Row 5]=Row 5abc ok ms=27
+wait_element[inserted row 99 (Engine 0)] ok ms=6
+key vk=68 char=100 mode=targeted-post keymode=char posted=True fg_before=8392000 fg_after=8392000
+wait_value[Row 5]=Row 5abcd ok ms=19
+focused_final=[Row 5]
+ready_file=True waited_ms=34 exe_exited=False
+close_window=WM_CLOSE posted=True
+run_summary keymode=char delivery=targeted fg_changes=1 driver_abort=none
+exit=0 end=2026-10-09T18:16:11.1688071+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","mono_ns":14211259946700,"node_id":"selftest","payload":{"fixture":"F1","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":14211746154000,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":14211747638500,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":14211748367800,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":14211748667200,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":14211748941400,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":14211749201600,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":14211749481200,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":14211749730300,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":14211749986300,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":14211750235400,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":14211750480400,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":14211766913200,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":true,"reduce_source":"os","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":14211767151400,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
+EVT {"kind":"effect","mono_ns":14211767235600,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
+EVT {"kind":"focus","mono_ns":14213579630300,"node_id":"focus","payload":{"focused":"F0000001-0000-4000-8000-000000000005","source":"ax"},"seq":15}
+EVT {"kind":"lifecycle","mono_ns":14213595280700,"node_id":"selftest","payload":{"name":"row5 focused by AX","phase":"stage"},"seq":16}
+EVT {"kind":"state","mono_ns":14214166063800,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5a"},"seq":17}
+EVT {"kind":"lifecycle","mono_ns":14214166217600,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":1,"phase":"local-edit"},"seq":18}
+EVT {"kind":"input","mono_ns":14214166292300,"node_id":"row 5","payload":{"inserted":"a","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":19}
+EVT {"kind":"state","mono_ns":14214404923100,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5ab"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":14214405089200,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":2,"phase":"local-edit"},"seq":21}
+EVT {"kind":"input","mono_ns":14214405194200,"node_id":"row 5","payload":{"inserted":"b","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":22}
+EVT {"kind":"state","mono_ns":14214635252300,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abc"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":14214635381200,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":3,"phase":"local-edit"},"seq":24}
+EVT {"kind":"input","mono_ns":14214635446200,"node_id":"row 5","payload":{"inserted":"c","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":14214655284700,"node_id":"selftest","payload":{"name":"typed abc","phase":"stage"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":14214655424000,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":27}
+EVT {"kind":"effect","mono_ns":14214658194000,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":14214658357500,"node_id":"selftest","payload":{"name":"release insert-above","phase":"stage"},"seq":29}
+EVT {"kind":"effect","mono_ns":14214659239500,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":30}
+EVT {"kind":"effect","mono_ns":14214659342000,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":31}
+EVT {"kind":"state","mono_ns":14214659547000,"node_id":"model","payload":{"animated":false,"id":"F0000001-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":14214662585700,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":14214681487400,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":34}
+EVT {"kind":"state","mono_ns":14214918443000,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abcd"},"seq":35}
+EVT {"kind":"lifecycle","mono_ns":14214918567800,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"local-edit"},"seq":36}
+EVT {"kind":"input","mono_ns":14214918626800,"node_id":"row 5","payload":{"inserted":"d","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":14214937428000,"node_id":"selftest","payload":{"name":"typed d","phase":"stage"},"seq":38}
+EVT {"kind":"lifecycle","mono_ns":14214940860300,"node_id":"selftest","payload":{"name":"record row5 instance","phase":"stage"},"seq":39}
+EVT {"kind":"lifecycle","mono_ns":14215232408000,"node_id":"window","payload":{"phase":"closed"},"seq":40}
+EVT {"kind":"lifecycle","mono_ns":14215232683300,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":41}
+EVT {"kind":"lifecycle","mono_ns":14215244970500,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":42}
+EVT {"kind":"lifecycle","mono_ns":14215245260800,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":43}
+EVT {"kind":"lifecycle","mono_ns":14215245467600,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":44}
+EVT {"kind":"lifecycle","mono_ns":14215245657500,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":45}
+EVT {"kind":"lifecycle","mono_ns":14215245838300,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":46}
+EVT {"kind":"lifecycle","mono_ns":14215246009900,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"disappear"},"seq":47}
+EVT {"kind":"lifecycle","mono_ns":14215246467400,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":48}
+EVT {"kind":"lifecycle","mono_ns":14215246648800,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":49}
+EVT {"kind":"lifecycle","mono_ns":14215246840400,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":50}
+EVT {"kind":"lifecycle","mono_ns":14215247020300,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":51}
+EVT {"kind":"lifecycle","mono_ns":14215247190300,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":52}
+SELFTEST-STAGES F1: row5 focused by AX@2.34s | typed abc@3.40s | insert-above pending@3.40s | release insert-above@3.40s | insert committed@3.42s | typed d@3.68s | record row5 instance@3.68s | awaiting-driver-close end-reason=window-closed
+ASSERT F1 script-completed: PASS stages=row5 focused by AX@2.34s | typed abc@3.40s | insert-above pending@3.40s | release insert-above@3.40s | insert committed@3.42s | typed d@3.68s | record row5 instance@3.68s | awaiting-driver-close
+ASSERT F1 insert-committed-at-top: PASS top=Engine 0
+ASSERT F1 row5-text: PASS text=Row 5abcd
+ASSERT F1 row5-identity-index-shift: PASS index=5
+ASSERT F1 row5-not-torn-down: PASS appear=1 disappear=0
+ASSERT F1 row5-node-instance-kept: PASS instance before=42 after=42
+ASSERT F1 row5-state-continuous: PASS local=4 (keystrokes a,b,c,d; Mac oracle recorded local=2 for two programmatic steps; a reset would read 1)
+ASSERT F1 focus-stays-row5: PASS focus=F0000001-0000-4000-8000-000000000005
+ASSERT F1 no-rejected-effects: PASS 
+ASSERT F1 caret-follows-typing: PASS caret=9
+ASSERT F1 text-store-keystrokes: PASS replace calls=a,b,c,d
+ASSERT F1 ax-focus-delivered: PASS ax-focus=1
+ASSERT F1 renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F1 commits-accepted: PASS commits=9 errors=0 dropped-after-close=0
+ASSERT F1 no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F1: PASS (15/15 asserted; blocked=0; end=window-closed)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] ime_subclass installed=1
+[swiftright-render] window hwnd=0x800d40 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] ime_msg msg=0x0282 wparam=0x2 lparam=0x0
+[swiftright-render] ime_msg msg=0x0281 wparam=0x1 lparam=0xC000000F
+[swiftright-render] ime_msg msg=0x0282 wparam=0x1 lparam=0x0
+[swiftright-render] ime_msg msg=0x0281 wparam=0x0 lparam=0xC000000F
+[swiftright-render] shutdown paints=207 paints_while_inactive=2 drains=217 ticks_delivered=205 events_pushed=7 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
+
+ARTIFACTS exe=30fbe599b697f731cfb652586b81b7b9561bda969990d82dcd0681532630d239 renderer=4fb068f0b6c73de9a5dde1a536e97eedd08e2fea3c0dd8b92fc0e4a78e53298f trace=84224e2e95861909b284238dbe4e4b8f91574392546251b7e5d09e35eb67a2e6
