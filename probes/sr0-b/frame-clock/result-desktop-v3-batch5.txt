@@ -1,0 +1,1428 @@
+harness=run-desktop-v3 host=BOGUS-DELL user=adrds session=1 started=2026-10-09T07:11:05.8407912+05:30
+exe=D:\Claude\sr0b-frame-clock\b4\scratch-b4m\out\Products\Release-windows-x86_64\SwiftHost.exe exists=True dll_beside_exe=True bin=D:\Claude\sr0b-frame-clock\b4\scratch-b4m\out\Products\Release-windows-x86_64
+runs_per_variant=10 variants=base,tbp,nosamp rk_wait_s=60 runRoot=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105
+dpi_awareness_per_monitor_v2=True vdm_available=True stopwatch_freq=10000000
+=== RUN base-1 start=2026-10-09T07:11:05.9050363+05:30
+pid run=base-1 pid=29376 start_utc=2026-10-09T01:41:05.9702477Z qpc_start=211141197240 creation=2026-10-09T01:41:05.9484326Z
+change run=base-1 t=+0.112s fg=claude|Claude probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=-32000,-32000,-31609,-31939|0x280100|-31987,-32000,-31622,-31952
+fg_attempt run=base-1 t=+0.473s method=already ok=True hwnd=0x230BB2
+change run=base-1 t=+0.500s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-1 t=+12.839s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-1 pid=29376 qpc_end=211271006651 exit=0
+focus_samples: total=256 window_visible=246 window_foreground=246
+fg_samples=256 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=2
+  interrupter samples=8 claude|Claude
+  interrupter samples=2 heardright_next_bin|pill
+initial_thread_id=35716 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000028c)
+[sr0-b rust] active_state t_ns=21114616031800 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5151 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1987194815865 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0621 p95=0.1325 p99=0.3702 max=0.6165
+tick_entry_ms p50=0.2946 p95=0.4193 p99=0.5191 max=0.7132 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0005 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5150 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211186419438 we=211236437520 idleA=[211156324929,211186419396] idleB=[211239556470,211269557093]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.022 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11559 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.662 p95=16.834 p99=17.266 max=17.354
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.012 p99=0.090 max=0.134
+[frame-clock] paint_phase_ms(vblank) n=301 p50=5.291 p95=5.826 p99=5.931 max=6.122
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:11:18.9678840+05:30
+run_state id=base-1 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211186419438 we=211236437520
+=== RUN tbp-1 start=2026-10-09T07:11:19.1703387+05:30
+pid run=tbp-1 pid=42044 start_utc=2026-10-09T01:41:19.1803839Z qpc_start=211273425891 creation=2026-10-09T01:41:19.1733040Z
+change run=tbp-1 t=+0.021s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-1 t=+0.501s method=already ok=True hwnd=0x6606BA
+change run=tbp-1 t=+0.520s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-1 t=+12.843s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-1 pid=42044 qpc_end=211402707614 exit=0
+focus_samples: total=258 window_visible=246 window_foreground=246
+fg_samples=258 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=2604 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] active_state t_ns=21127845939300 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5148 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1986394497948 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0610 p95=0.1301 p99=0.3875 max=2.7309
+tick_entry_ms p50=0.2962 p95=0.4500 p99=0.6730 max=1.5215 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0006 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5147 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211318482798 we=211368511051 idleA=[211288479809,211318482768] idleB=[211371517794,211401523023]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11553 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.668 p95=16.831 p99=17.329 max=18.446
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.010 p99=0.087 max=0.383
+[frame-clock] paint_phase_ms(vblank) n=300 p50=1.385 p95=1.537 p99=2.037 max=3.335
+[frame-clock] paints_active_window=303 paints_total=303 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:11:32.1085422+05:30
+run_state id=tbp-1 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211318482798 we=211368511051
+=== RUN nosamp-1 start=2026-10-09T07:11:32.1532502+05:30
+pid run=nosamp-1 pid=24416 start_utc=2026-10-09T01:41:32.1602863Z qpc_start=211403226279 creation=2026-10-09T01:41:32.1562629Z
+change run=nosamp-1 t=+0.018s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-1 t=+0.527s method=already ok=True hwnd=0x14074A
+change run=nosamp-1 t=+0.538s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-1 t=+12.884s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-1 pid=24416 qpc_end=211532685534 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=39888 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-1
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21140841536300 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5140 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198519402131 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0620 p95=0.1349 p99=0.3773 max=0.8303
+tick_entry_ms p50=0.2942 p95=0.4512 p99=0.6204 max=0.8439 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0010 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5139 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211448446562 we=211498553223 idleA=[211418426275,211448446530] idleB=[211501665061,211531788931]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11547 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.661 p95=16.864 p99=17.273 max=17.541
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.012 p99=0.269 max=0.440
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:11:45.1066011+05:30
+run_state id=nosamp-1 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211448446562 we=211498553223
+=== RUN base-2 start=2026-10-09T07:11:45.1524564+05:30
+pid run=base-2 pid=33928 start_utc=2026-10-09T01:41:45.1590018Z qpc_start=211533226576 creation=2026-10-09T01:41:45.1546305Z
+change run=base-2 t=+0.017s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-2 t=+0.523s method=attach ok=True hwnd=0x12E0922
+change run=base-2 t=+0.532s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-2 t=+12.886s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-2 pid=33928 qpc_end=211662678949 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=31708 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-2
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000029c)
+[sr0-b rust] active_state t_ns=21153819515600 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5152 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5501 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1987594974873 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0625 p95=0.1234 p99=0.3619 max=1.1031
+tick_entry_ms p50=0.2952 p95=0.4120 p99=0.5334 max=0.6305 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0007 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5151 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211578311982 we=211628404649 idleA=[211548230308,211578311942] idleB=[211631522854,211661671942]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=55 dwm_fast_returns=0 event_count=11561 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/55 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.663 p95=16.807 p99=16.918 max=17.277
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.011 p99=0.049 max=0.282
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.344 p95=16.632 p99=16.659 max=16.666
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:11:58.1052853+05:30
+run_state id=base-2 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211578311982 we=211628404649
+=== RUN tbp-2 start=2026-10-09T07:11:58.1519518+05:30
+pid run=tbp-2 pid=34652 start_utc=2026-10-09T01:41:58.1583856Z qpc_start=211663207774 creation=2026-10-09T01:41:58.1530895Z
+change run=tbp-2 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-2 t=+0.504s method=direct ok=True hwnd=0x270BB2
+change run=tbp-2 t=+0.517s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-2 t=+12.831s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-2 pid=34652 qpc_end=211792037750 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=7372 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-2
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000290)
+[sr0-b rust] active_state t_ns=21166816071800 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5155 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1986994736375 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0610 p95=0.1360 p99=0.3886 max=0.9076
+tick_entry_ms p50=0.2994 p95=0.4570 p99=0.5603 max=0.6726 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0009 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5154 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211708175160 we=211758179895 idleA=[211678172582,211708175045] idleB=[211761183621,211791188525]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11561 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.663 p95=16.932 p99=17.477 max=17.859
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.010 p99=0.070 max=0.259
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.338 p95=16.616 p99=16.649 max=16.665
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:12:11.0418994+05:30
+run_state id=tbp-2 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211708175160 we=211758179895
+=== RUN nosamp-2 start=2026-10-09T07:12:11.0899594+05:30
+pid run=nosamp-2 pid=15884 start_utc=2026-10-09T01:42:11.0990215Z qpc_start=211792613466 creation=2026-10-09T01:42:11.0918908Z
+change run=nosamp-2 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-2 t=+0.523s method=attach ok=True hwnd=0x6A06BA
+change run=nosamp-2 t=+0.533s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-2 t=+12.902s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-2 pid=15884 qpc_end=211922031807 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=34248 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-2
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000028c)
+[sr0-b rust] active_state t_ns=21179773533000 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5147 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1988795452088 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0625 p95=0.1361 p99=0.3666 max=0.6511
+tick_entry_ms p50=0.2921 p95=0.4018 p99=0.5664 max=0.6801 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0014 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5146 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211837840856 we=211887882822 idleA=[211807814271,211837840825] idleB=[211890979898,211921091487]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11553 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.670 p95=16.813 p99=17.219 max=17.549
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.058 max=0.354
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:12:24.0430981+05:30
+run_state id=nosamp-2 valid=1 reason=- workload_samples=99 probe_fg_wl=99 hit_min_wl=100 ws=211837840856 we=211887882822
+=== RUN base-3 start=2026-10-09T07:12:24.0824447+05:30
+pid run=base-3 pid=46112 start_utc=2026-10-09T01:42:24.0985712Z qpc_start=211922612439 creation=2026-10-09T01:42:24.0941864Z
+change run=base-3 t=+0.018s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-3 t=+0.503s method=direct ok=True hwnd=0x4D0C22
+change run=base-3 t=+0.519s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-3 t=+12.890s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-3 pid=46112 qpc_end=212051899555 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=46648 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-3
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000290)
+[sr0-b rust] active_state t_ns=21192756345000 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5147 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985394100728 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0615 p95=0.1292 p99=0.3779 max=0.7383
+tick_entry_ms p50=0.2936 p95=0.4691 p99=0.5997 max=0.7603 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0006 max=0.0008 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5146 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=211967609263 we=212017685555 idleA=[211937594607,211967609230] idleB=[212020798661,212050881012]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=55 dwm_fast_returns=0 event_count=11556 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/55 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.662 p95=16.846 p99=17.237 max=17.346
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.011 p99=0.063 max=0.362
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.362 p95=16.623 p99=16.653 max=16.665
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:12:37.0271043+05:30
+run_state id=base-3 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=211967609263 we=212017685555
+=== RUN tbp-3 start=2026-10-09T07:12:37.0734288+05:30
+pid run=tbp-3 pid=24808 start_utc=2026-10-09T01:42:37.0784469Z qpc_start=212052413777 creation=2026-10-09T01:42:37.0747024Z
+change run=tbp-3 t=+0.021s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-3 t=+0.522s method=attach ok=True hwnd=0x19074A
+change run=tbp-3 t=+0.534s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-3 t=+12.860s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-3 pid=24808 qpc_end=212181496297 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=17104 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-3
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000028c)
+[sr0-b rust] active_state t_ns=21205749837000 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5152 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198679465689 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0627 p95=0.1324 p99=0.3927 max=1.2700
+tick_entry_ms p50=0.2971 p95=0.4202 p99=0.5824 max=0.7677 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0006 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5151 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212097525176 we=212147569489 idleA=[212067521644,212097525116] idleB=[212150573223,212180581297]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11558 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.663 p95=16.773 p99=17.069 max=17.225
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.068 max=0.256
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.352 p95=16.628 p99=16.656 max=16.664
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:12:49.9872607+05:30
+run_state id=tbp-3 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=212097525176 we=212147569489
+=== RUN nosamp-3 start=2026-10-09T07:12:50.0310175+05:30
+pid run=nosamp-3 pid=37388 start_utc=2026-10-09T01:42:50.0395478Z qpc_start=212182016788 creation=2026-10-09T01:42:50.0323391Z
+change run=nosamp-3 t=+0.020s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-3 t=+0.559s method=direct ok=True hwnd=0x7A0A44
+change run=nosamp-3 t=+0.573s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-3 t=+12.924s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-3 pid=37388 qpc_end=212311836294 exit=0
+focus_samples: total=258 window_visible=246 window_foreground=246
+fg_samples=258 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=36092 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-3
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21218725494200 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5150 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1988795452088 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0627 p95=0.1398 p99=0.3844 max=1.9338
+tick_entry_ms p50=0.2907 p95=0.4705 p99=0.5935 max=0.7696 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0006 max=0.0009 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5149 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212227365186 we=212277510411 idleA=[212197280770,212227365153] idleB=[212280625346,212310773499]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11559 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.670 p95=16.961 p99=17.472 max=17.929
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.011 p99=0.055 max=0.391
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:13:03.0216093+05:30
+run_state id=nosamp-3 valid=1 reason=- workload_samples=99 probe_fg_wl=99 hit_min_wl=100 ws=212227365186 we=212277510411
+=== RUN base-4 start=2026-10-09T07:13:03.0694248+05:30
+pid run=base-4 pid=24792 start_utc=2026-10-09T01:43:03.0853586Z qpc_start=212312483361 creation=2026-10-09T01:43:03.0816579Z
+change run=base-4 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-4 t=+0.521s method=attach ok=True hwnd=0x1340922
+change run=base-4 t=+0.535s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-4 t=+12.919s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-4 pid=24792 qpc_end=212441993644 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=45492 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-4
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000027c)
+[sr0-b rust] active_state t_ns=21231759157500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5170 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1983193227553 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0613 p95=0.1244 p99=0.3456 max=1.0740
+tick_entry_ms p50=0.2918 p95=0.4379 p99=0.5993 max=0.7650 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0007 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5169 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212357704620 we=212407829114 idleA=[212327688908,212357704475] idleB=[212410930724,212441067999]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11576 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.661 p95=16.842 p99=17.229 max=17.804
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.012 p99=0.062 max=0.224
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.315 p95=16.637 p99=16.661 max=16.665
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:13:16.0365054+05:30
+run_state id=base-4 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=212357704620 we=212407829114
+=== RUN tbp-4 start=2026-10-09T07:13:16.0674154+05:30
+pid run=tbp-4 pid=25832 start_utc=2026-10-09T01:43:16.0709282Z qpc_start=212442336965 creation=2026-10-09T01:43:16.0684020Z
+change run=tbp-4 t=+0.010s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-4 t=+0.517s method=direct ok=True hwnd=0x6F06BA
+change run=tbp-4 t=+0.529s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-4 t=+12.862s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-4 pid=25832 qpc_end=212571581320 exit=0
+focus_samples: total=257 window_visible=245 window_foreground=245
+fg_samples=257 probe_fg_samples=245 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=28724 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-4
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x00000000000002a0)
+[sr0-b rust] active_state t_ns=21244741669700 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5176 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5502 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985994339035 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0615 p95=0.1324 p99=0.3365 max=1.3506
+tick_entry_ms p50=0.2895 p95=0.3959 p99=0.5436 max=1.4299 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0006 max=0.0008 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5175 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212487440841 we=212537441835 idleA=[212457434257,212487440810] idleB=[212540445619,212570445743]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11584 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.669 p95=16.856 p99=17.152 max=17.397
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.062 max=1.181
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.315 p95=16.617 p99=16.655 max=16.663
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:13:28.9958827+05:30
+run_state id=tbp-4 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=212487440841 we=212537441835
+=== RUN nosamp-4 start=2026-10-09T07:13:29.0345536+05:30
+pid run=nosamp-4 pid=44976 start_utc=2026-10-09T01:43:29.0420897Z qpc_start=212572044701 creation=2026-10-09T01:43:29.0367229Z
+change run=nosamp-4 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-4 t=+0.519s method=attach ok=True hwnd=0x520C22
+change run=nosamp-4 t=+0.531s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-4 t=+12.900s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-4 pid=44976 qpc_end=212701514585 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=19348 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-4
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000298)
+[sr0-b rust] active_state t_ns=21257709666100 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5157 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198779505439 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0628 p95=0.1280 p99=0.3528 max=1.7740
+tick_entry_ms p50=0.2902 p95=0.4509 p99=0.5467 max=0.7857 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0007 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5156 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212617159147 we=212667233474 idleA=[212587115754,212617159114] idleB=[212670337941,212700459017]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11562 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.660 p95=16.889 p99=17.333 max=18.969
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.015 p99=0.164 max=0.313
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:13:41.9899086+05:30
+run_state id=nosamp-4 valid=1 reason=- workload_samples=101 probe_fg_wl=101 hit_min_wl=100 ws=212617159147 we=212667233474
+=== RUN base-5 start=2026-10-09T07:13:42.0350552+05:30
+pid run=base-5 pid=34216 start_utc=2026-10-09T01:43:42.0405906Z qpc_start=212702029853 creation=2026-10-09T01:43:42.0361897Z
+change run=base-5 t=+0.017s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-5 t=+0.502s method=direct ok=True hwnd=0x1E074A
+change run=base-5 t=+0.512s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-5 t=+12.888s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-5 pid=34216 qpc_end=212831664942 exit=0
+focus_samples: total=258 window_visible=246 window_foreground=246
+fg_samples=258 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=8456 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-5
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000027c)
+[sr0-b rust] active_state t_ns=21270696958800 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5150 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198359338624 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0615 p95=0.1356 p99=0.3753 max=1.6040
+tick_entry_ms p50=0.2888 p95=0.4149 p99=0.6163 max=1.3903 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0005 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5149 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212747191966 we=212797326895 idleA=[212717084093,212747191932] idleB=[212800443183,212830553623]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11558 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.659 p95=16.831 p99=17.210 max=17.860
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.010 p99=0.048 max=0.448
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.344 p95=16.632 p99=16.650 max=16.662
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:13:55.0043629+05:30
+run_state id=base-5 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=212747191966 we=212797326895
+=== RUN tbp-5 start=2026-10-09T07:13:55.0458465+05:30
+pid run=tbp-5 pid=44464 start_utc=2026-10-09T01:43:55.0873268Z qpc_start=212832500335 creation=2026-10-09T01:43:55.0520106Z
+change run=tbp-5 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-5 t=+0.516s method=attach ok=True hwnd=0x7F0A44
+change run=tbp-5 t=+0.530s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-5 t=+12.840s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=0 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=0 fg_geom=-
+change run=tbp-5 t=+12.866s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-5 pid=44464 qpc_end=212962033912 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=44668 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-5
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000027c)
+[sr0-b rust] active_state t_ns=21283739478100 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5149 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985394100728 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0614 p95=0.1375 p99=0.3591 max=2.8244
+tick_entry_ms p50=0.2837 p95=0.4552 p99=0.6861 max=0.7046 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0006 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5148 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=212877415435 we=212927445387 idleA=[212847400043,212877415334] idleB=[212930446204,212960453383]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11557 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.661 p95=16.844 p99=17.205 max=17.548
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.009 p99=0.065 max=0.338
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.298 p95=16.607 p99=16.651 max=16.666
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:14:08.0411738+05:30
+run_state id=tbp-5 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=212877415435 we=212927445387
+=== RUN nosamp-5 start=2026-10-09T07:14:08.0999631+05:30
+pid run=nosamp-5 pid=29164 start_utc=2026-10-09T01:44:08.1080097Z qpc_start=212962708317 creation=2026-10-09T01:44:08.1021574Z
+change run=nosamp-5 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-5 t=+0.511s method=direct ok=True hwnd=0x310BB2
+change run=nosamp-5 t=+0.529s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-5 t=+12.910s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-5 pid=29164 qpc_end=213095947134 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=26440 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-5
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21296774780900 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5143 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5499 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1981592593124 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0629 p95=0.1412 p99=0.3786 max=1.7874
+tick_entry_ms p50=0.3038 p95=0.4537 p99=0.5646 max=0.6014 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0006 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5142 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213007810028 we=213057842420 idleA=[212977798758,213007809987] idleB=[213060990963,213091050286]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11548 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.671 p95=16.917 p99=17.119 max=17.284
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.035 max=0.232
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:14:21.4327160+05:30
+run_state id=nosamp-5 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=213007810028 we=213057842420
+=== RUN base-6 start=2026-10-09T07:14:21.4736755+05:30
+pid run=base-6 pid=36764 start_utc=2026-10-09T01:44:21.4918114Z qpc_start=213096540359 creation=2026-10-09T01:44:21.4841519Z
+change run=base-6 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-6 t=+0.524s method=attach ok=True hwnd=0x13A0922
+change run=base-6 t=+0.535s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-6 t=+12.878s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-6 pid=36764 qpc_end=213226000998 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=39384 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-6
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] active_state t_ns=21310154802600 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5146 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1988995531652 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0616 p95=0.1214 p99=0.3710 max=1.1840
+tick_entry_ms p50=0.2895 p95=0.4799 p99=0.6182 max=0.6841 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0009 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5145 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213141819917 we=213191831809 idleA=[213111674019,213141819878] idleB=[213194835427,213224884767]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.008 qpc_freq=10000000 dwm_samples=55 dwm_fast_returns=0 event_count=11552 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/55 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.662 p95=16.983 p99=17.395 max=17.566
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.010 p99=0.216 max=0.348
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.911 p95=1.221 p99=1.630 max=1.793
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:14:34.4373398+05:30
+run_state id=base-6 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=213141819917 we=213191831809
+=== RUN tbp-6 start=2026-10-09T07:14:34.4775160+05:30
+pid run=tbp-6 pid=23888 start_utc=2026-10-09T01:44:34.4844859Z qpc_start=213226475261 creation=2026-10-09T01:44:34.4798206Z
+change run=tbp-6 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-6 t=+0.514s method=direct ok=True hwnd=0x22074A
+change run=tbp-6 t=+0.524s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-6 t=+12.867s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-6 pid=23888 qpc_end=213355836946 exit=0
+focus_samples: total=258 window_visible=246 window_foreground=246
+fg_samples=258 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=28376 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-6
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000027c)
+[sr0-b rust] active_state t_ns=21323150152900 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5156 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1984993941898 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0606 p95=0.1307 p99=0.3531 max=1.0116
+tick_entry_ms p50=0.2907 p95=0.4066 p99=0.6419 max=1.5096 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0009 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5155 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213271511433 we=213321544308 idleA=[213241510818,213271511399] idleB=[213324549701,213354553586]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11562 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.669 p95=16.863 p99=17.289 max=17.336
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.012 p99=0.070 max=0.341
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.311 p95=16.625 p99=16.657 max=16.664
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:14:47.4233199+05:30
+run_state id=tbp-6 valid=1 reason=- workload_samples=99 probe_fg_wl=99 hit_min_wl=100 ws=213271511433 we=213321544308
+=== RUN nosamp-6 start=2026-10-09T07:14:47.4830254+05:30
+pid run=nosamp-6 pid=40124 start_utc=2026-10-09T01:44:47.4906138Z qpc_start=213356530860 creation=2026-10-09T01:44:47.4847110Z
+change run=nosamp-6 t=+0.024s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-6 t=+0.519s method=attach ok=True hwnd=0x7606BA
+change run=nosamp-6 t=+0.530s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-6 t=+12.884s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-6 pid=40124 qpc_end=213485832553 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=35748 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-6
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000290)
+[sr0-b rust] active_state t_ns=21336149938700 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5143 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1989395690803 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0605 p95=0.1327 p99=0.3666 max=1.1679
+tick_entry_ms p50=0.2977 p95=0.5066 p99=0.6189 max=0.6471 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0007 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5142 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213401630906 we=213451647271 idleA=[213371520341,213401630865] idleB=[213454770203,213484860994]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11549 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.670 p95=16.808 p99=17.218 max=17.744
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.013 p99=0.124 max=0.306
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:15:00.4213958+05:30
+run_state id=nosamp-6 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=213401630906 we=213451647271
+=== RUN base-7 start=2026-10-09T07:15:00.4591573+05:30
+pid run=base-7 pid=13340 start_utc=2026-10-09T01:45:00.4656225Z qpc_start=213486280792 creation=2026-10-09T01:45:00.4612381Z
+change run=base-7 t=+0.015s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-7 t=+0.519s method=direct ok=True hwnd=0x590C22
+change run=base-7 t=+0.530s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-7 t=+12.879s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-7 pid=13340 qpc_end=213615706255 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=40604 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-7
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] active_state t_ns=21349124866100 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5139 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.19845937831 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0619 p95=0.1438 p99=0.3666 max=0.8202
+tick_entry_ms p50=0.2914 p95=0.4224 p99=0.6140 max=0.6808 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0005 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5138 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213531442591 we=213581528351 idleA=[213501391883,213531442555] idleB=[213584669434,213614686744]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=55 dwm_fast_returns=0 event_count=11548 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/55 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.663 p95=16.860 p99=17.137 max=17.229
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.011 p99=0.059 max=0.416
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.386 p95=16.608 p99=16.644 max=16.661
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:15:13.4084876+05:30
+run_state id=base-7 valid=1 reason=- workload_samples=101 probe_fg_wl=101 hit_min_wl=100 ws=213531442591 we=213581528351
+=== RUN tbp-7 start=2026-10-09T07:15:13.4474357+05:30
+pid run=tbp-7 pid=26524 start_utc=2026-10-09T01:45:13.4538198Z qpc_start=213616168276 creation=2026-10-09T01:45:13.4493893Z
+change run=tbp-7 t=+0.018s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-7 t=+0.513s method=attach ok=True hwnd=0x850A44
+change run=tbp-7 t=+0.523s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-7 t=+12.864s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-7 pid=26524 qpc_end=213745403182 exit=0
+focus_samples: total=257 window_visible=245 window_foreground=245
+fg_samples=257 probe_fg_samples=245 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=37816 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-7
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000298)
+[sr0-b rust] active_state t_ns=21362107054500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5142 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198359338624 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0625 p95=0.1399 p99=0.3739 max=0.8123
+tick_entry_ms p50=0.2952 p95=0.3844 p99=0.6294 max=0.7707 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0009 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5141 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213661090027 we=213711122258 idleA=[213631089598,213661089991] idleB=[213714125238,213744129923]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=54 dwm_fast_returns=0 event_count=11548 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/54 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.663 p95=16.804 p99=17.027 max=17.500
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.010 p99=0.034 max=0.344
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.349 p95=16.626 p99=16.657 max=16.665
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:15:26.3778170+05:30
+run_state id=tbp-7 valid=1 reason=- workload_samples=99 probe_fg_wl=99 hit_min_wl=100 ws=213661090027 we=213711122258
+=== RUN nosamp-7 start=2026-10-09T07:15:26.4198041+05:30
+pid run=nosamp-7 pid=46464 start_utc=2026-10-09T01:45:26.4454319Z qpc_start=213746082663 creation=2026-10-09T01:45:26.4352160Z
+change run=nosamp-7 t=+0.027s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-7 t=+0.512s method=direct ok=True hwnd=0x13F0922
+change run=nosamp-7 t=+0.528s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-7 t=+12.896s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-7 pid=46464 qpc_end=213875705622 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=45932 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-7
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] active_state t_ns=21375108096500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5146 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1983393306892 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0621 p95=0.1345 p99=0.3874 max=0.8398
+tick_entry_ms p50=0.2955 p95=0.4385 p99=0.5621 max=0.7399 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0006 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5145 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213791207027 we=213841353070 idleA=[213761200689,213791206996] idleB=[213844485877,213874640885]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11555 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.666 p95=16.883 p99=17.374 max=17.748
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.013 p99=0.050 max=0.393
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:15:39.4118816+05:30
+run_state id=nosamp-7 valid=1 reason=- workload_samples=101 probe_fg_wl=101 hit_min_wl=100 ws=213791207027 we=213841353070
+=== RUN base-8 start=2026-10-09T07:15:39.4526946+05:30
+pid run=base-8 pid=46636 start_utc=2026-10-09T01:45:39.4597516Z qpc_start=213876217712 creation=2026-10-09T01:45:39.4540852Z
+change run=base-8 t=+0.022s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-8 t=+0.524s method=attach ok=True hwnd=0x27074A
+change run=base-8 t=+0.536s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-8 t=+12.879s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-8 pid=46636 qpc_end=214005610459 exit=0
+focus_samples: total=258 window_visible=246 window_foreground=246
+fg_samples=258 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=12 heardright_next_bin|pill
+initial_thread_id=28228 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-8
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21388131412000 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5153 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1986194418488 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0613 p95=0.1230 p99=0.3539 max=0.8346
+tick_entry_ms p50=0.2949 p95=0.4081 p99=0.5413 max=0.6353 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0008 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5152 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=213921525286 we=213971543954 idleA=[213891436338,213921525247] idleB=[213974655753,214004666437]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11562 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.667 p95=16.851 p99=17.049 max=17.251
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.010 p99=0.103 max=0.258
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.336 p95=16.639 p99=16.661 max=16.666
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:15:52.4005655+05:30
+run_state id=base-8 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=213921525286 we=213971543954
+=== RUN tbp-8 start=2026-10-09T07:15:52.4437722+05:30
+pid run=tbp-8 pid=36932 start_utc=2026-10-09T01:45:52.4498394Z qpc_start=214006125321 creation=2026-10-09T01:45:52.4452560Z
+change run=tbp-8 t=+0.018s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-8 t=+0.506s method=direct ok=True hwnd=0x390BB2
+change run=tbp-8 t=+0.515s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-8 t=+12.879s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-8 pid=36932 qpc_end=214135242518 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=37076 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-8
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000028c)
+[sr0-b rust] active_state t_ns=21401128176900 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5155 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1989195611222 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0611 p95=0.1184 p99=0.3560 max=1.8313
+tick_entry_ms p50=0.2910 p95=0.4070 p99=0.6186 max=1.7715 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0004 max=0.0008 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5154 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214051306294 we=214101349482 idleA=[214021302929,214051306254] idleB=[214104361728,214134364562]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11564 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.662 p95=16.912 p99=17.319 max=17.735
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.010 p99=0.031 max=0.309
+[frame-clock] paint_phase_ms(vblank) n=301 p50=0.310 p95=16.629 p99=16.649 max=16.665
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:16:05.3619960+05:30
+run_state id=tbp-8 valid=1 reason=- workload_samples=101 probe_fg_wl=101 hit_min_wl=100 ws=214051306294 we=214101349482
+=== RUN nosamp-8 start=2026-10-09T07:16:05.4016695+05:30
+pid run=nosamp-8 pid=29980 start_utc=2026-10-09T01:46:05.4071966Z qpc_start=214135694855 creation=2026-10-09T01:46:05.4029749Z
+change run=nosamp-8 t=+0.017s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-8 t=+0.523s method=attach ok=True hwnd=0x1420922
+change run=nosamp-8 t=+0.533s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-8 t=+12.886s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-8 pid=29980 qpc_end=214264958286 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=46980 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-8
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000290)
+[sr0-b rust] active_state t_ns=21414059892400 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5150 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1983393306892 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0609 p95=0.1281 p99=0.3710 max=1.4263
+tick_entry_ms p50=0.2943 p95=0.4240 p99=0.5508 max=0.6808 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0010 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5149 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214180761152 we=214230829618 idleA=[214150606865,214180761116] idleB=[214233950938,214264026082]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11559 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.660 p95=16.857 p99=17.275 max=19.458
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.011 p99=0.280 max=0.349
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:16:18.3330574+05:30
+run_state id=nosamp-8 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214180761152 we=214230829618
+=== RUN base-9 start=2026-10-09T07:16:18.3702411+05:30
+pid run=base-9 pid=37676 start_utc=2026-10-09T01:46:18.3762008Z qpc_start=214265389809 creation=2026-10-09T01:46:18.3718675Z
+change run=base-9 t=+0.018s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-9 t=+0.505s method=direct ok=True hwnd=0x7D06BA
+change run=base-9 t=+0.523s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-9 t=+12.889s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-9 pid=37676 qpc_end=214395138488 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=43428 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-9
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21427050276500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5152 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1988595372532 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0620 p95=0.1378 p99=0.3618 max=0.7801
+tick_entry_ms p50=0.2916 p95=0.4274 p99=0.5765 max=0.9740 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0066 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5151 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214310542577 we=214360564905 idleA=[214280522466,214310542539] idleB=[214363665438,214393728693]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11557 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.661 p95=16.878 p99=17.194 max=18.414
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.009 p99=0.040 max=0.327
+[frame-clock] paint_phase_ms(vblank) n=300 p50=0.342 p95=16.639 p99=16.658 max=16.664
+[frame-clock] paints_active_window=303 paints_total=303 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:16:31.3522649+05:30
+run_state id=base-9 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214310542577 we=214360564905
+=== RUN tbp-9 start=2026-10-09T07:16:31.3983074+05:30
+pid run=tbp-9 pid=42756 start_utc=2026-10-09T01:46:31.4058551Z qpc_start=214395685831 creation=2026-10-09T01:46:31.4002991Z
+change run=tbp-9 t=+0.020s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-9 t=+0.553s method=attach ok=True hwnd=0x600C22
+change run=tbp-9 t=+0.569s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-9 t=+12.898s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=1 hit_pct=-1 fg_geom=-
+change run=tbp-9 t=+12.927s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-9 pid=42756 qpc_end=214525342808 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=8852 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-9
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x000000000000027c)
+[sr0-b rust] active_state t_ns=21440104916500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5150 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5501 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985394100728 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0627 p95=0.1435 p99=0.3820 max=2.2198
+tick_entry_ms p50=0.2990 p95=0.4941 p99=0.5676 max=0.6770 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0006 max=0.0011 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5149 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214441083387 we=214491126424 idleA=[214411077874,214441083355] idleB=[214494126368,214524128849]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.000 qpc_freq=10000000 dwm_samples=59 dwm_fast_returns=0 event_count=11556 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/59 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.663 p95=16.879 p99=17.179 max=18.551
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.042 max=0.283
+[frame-clock] paint_phase_ms(vblank) n=300 p50=5.826 p95=6.163 p99=6.327 max=8.025
+[frame-clock] paints_active_window=303 paints_total=303 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:16:44.3716393+05:30
+run_state id=tbp-9 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214441083387 we=214491126424
+=== RUN nosamp-9 start=2026-10-09T07:16:44.4147139+05:30
+pid run=nosamp-9 pid=8996 start_utc=2026-10-09T01:46:44.4217522Z qpc_start=214525847764 creation=2026-10-09T01:46:44.4171433Z
+change run=nosamp-9 t=+0.021s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-9 t=+0.522s method=direct ok=True hwnd=0x2C074A
+change run=nosamp-9 t=+0.544s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-9 t=+12.873s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-9 pid=8996 qpc_end=214655260551 exit=0
+focus_samples: total=255 window_visible=244 window_foreground=244
+fg_samples=255 probe_fg_samples=244 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=40296 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-9
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000294)
+[sr0-b rust] active_state t_ns=21453075071100 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5156 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=304 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.198399354496 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0621 p95=0.1411 p99=0.3751 max=1.6197
+tick_entry_ms p50=0.2912 p95=0.3974 p99=0.5779 max=2.1585 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0007 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5155 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214570775018 we=214620890532 idleA=[214540769643,214570774978] idleB=[214624025801,214654069156]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11564 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.669 p95=16.828 p99=17.064 max=17.480
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.010 p99=0.025 max=0.337
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=304 paints_total=304 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:16:57.3693088+05:30
+run_state id=nosamp-9 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214570775018 we=214620890532
+=== RUN base-10 start=2026-10-09T07:16:57.4339818+05:30
+pid run=base-10 pid=37692 start_utc=2026-10-09T01:46:57.4559487Z qpc_start=214656186134 creation=2026-10-09T01:46:57.4366664Z
+change run=base-10 t=+0.021s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=base-10 t=+0.532s method=attach ok=True hwnd=0x8D0A44
+change run=base-10 t=+0.542s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=base-10 t=+12.928s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=base-10 pid=37692 qpc_end=214785794316 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=44140 timer_resolution_1ms_requested=0 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\base-10
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000284)
+[sr0-b rust] active_state t_ns=21466127385600 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5143 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5500 wake_wait_failures=0 paints=305 stale_paints=1 ticks_requested=301 ticks_delivered=301 commits=301 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1984993941898 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0635 p95=0.1330 p99=0.4037 max=1.6712
+tick_entry_ms p50=0.2970 p95=0.4745 p99=0.5969 max=0.6757 n=301
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0005 max=0.0012 n=301
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5142 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=301 ticks_delivered=301
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214701448433 we=214751505410 idleA=[214671375953,214701448403] idleB=[214754647686,214784794750]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=56 dwm_fast_returns=0 event_count=11552 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/56 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=300 p50=16.665 p95=16.862 p99=17.190 max=17.432
+[frame-clock] paint_duration_ms(rust) n=301 p50=0.006 p95=0.010 p99=0.023 max=0.054
+[frame-clock] paint_phase_ms(vblank) n=301 p50=12.393 p95=12.570 p99=12.954 max=13.192
+[frame-clock] paints_active_window=305 paints_total=305 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=301 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:17:10.4262158+05:30
+run_state id=base-10 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214701448433 we=214751505410
+=== RUN tbp-10 start=2026-10-09T07:17:10.4784755+05:30
+pid run=tbp-10 pid=15376 start_utc=2026-10-09T01:47:10.4874351Z qpc_start=214786496575 creation=2026-10-09T01:47:10.4806067Z
+change run=tbp-10 t=+0.020s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=tbp-10 t=+0.517s method=direct ok=True hwnd=0x3F0BB2
+change run=tbp-10 t=+0.528s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=tbp-10 t=+12.888s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=tbp-10 pid=15376 qpc_end=214915751380 exit=0
+focus_samples: total=258 window_visible=247 window_foreground=247
+fg_samples=258 probe_fg_samples=247 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=40740 timer_resolution_1ms_requested=1 dwm_sampler_requested=1 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\tbp-10
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+timer_resolution_1ms_rc=0
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000288)
+[sr0-b rust] active_state t_ns=21479177911500 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5142 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5497 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1985994339035 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0625 p95=0.1429 p99=0.3998 max=1.9135
+tick_entry_ms p50=0.2981 p95=0.4834 p99=0.5611 max=0.8777 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0003 p99=0.0005 max=0.0005 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5141 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214831796663 we=214881832691 idleA=[214801796381,214831796633] idleB=[214884833387,214914833721]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=60.009 qpc_freq=10000000 dwm_samples=57 dwm_fast_returns=0 event_count=11544 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/57 probe_hwnd_found=true
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.667 p95=16.836 p99=17.335 max=18.312
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.010 p99=0.050 max=0.133
+[frame-clock] paint_phase_ms(vblank) n=300 p50=11.051 p95=11.203 p99=11.525 max=12.715
+[frame-clock] paints_active_window=303 paints_total=303 dwm_sampler_enabled=1
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:17:23.4127784+05:30
+run_state id=tbp-10 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214831796663 we=214881832691
+=== RUN nosamp-10 start=2026-10-09T07:17:23.4506658+05:30
+pid run=nosamp-10 pid=45488 start_utc=2026-10-09T01:47:23.4567085Z qpc_start=214916203683 creation=2026-10-09T01:47:23.4533705Z
+change run=nosamp-10 t=+0.019s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+fg_attempt run=nosamp-10 t=+0.513s method=attach ok=True hwnd=0x640C22
+change run=nosamp-10 t=+0.523s fg=SwiftHost|SR0-B frame-clock probe_fg=1 probe_visible=1 occluded_by=- cloaked=0 cur_desktop=1 hit_pct=100 fg_geom=-
+change run=nosamp-10 t=+12.906s fg=heardright_next_bin|pill probe_fg=0 probe_visible=0 occluded_by=- cloaked=-1 cur_desktop=-1 hit_pct=-1 fg_geom=1403,1895,2053,2035|0xC0138|1403,1895,2053,2035
+pid_exit run=nosamp-10 pid=45488 qpc_end=215045526051 exit=0
+focus_samples: total=257 window_visible=246 window_foreground=246
+fg_samples=257 probe_fg_samples=246 occluded_samples=0 distinct_interrupters=1
+  interrupter samples=11 heardright_next_bin|pill
+initial_thread_id=10248 timer_resolution_1ms_requested=0 dwm_sampler_requested=0 out=D:\Claude\sr0b-frame-clock\runs-b4\20261009-071105\nosamp-10
+bootstrap_query_rc=0 abi=0.2 pointer_width=64 fn_table_size=9
+dwm_sampler_rc=0
+main_queue_wake_handle=Optional(0x0000000000000280)
+[sr0-b rust] active_state t_ns=21492110967000 active=1 prev=none paint=1
+[sr0-b rust] loop_ready_calls=1 drain_calls=5142 drain_reentry_violations=0 thread_violations=0 selftest_detected=1 wake_signals=5497 wake_wait_failures=0 paints=303 stale_paints=1 ticks_requested=300 ticks_delivered=300 commits=300 window_closed_events=1 quit_requests=1 open_failed=false run_rc=0
+producer enqueue_rate_hz=1000.1989595770391 hops_enqueued=500
+jobs_run=5000/5000 jobs_done_counter=5000
+latency_ms p50=0.0613 p95=0.1392 p99=0.3787 max=1.8601
+tick_entry_ms p50=0.2919 p95=0.4462 p99=0.6369 max=0.7307 n=300
+tick_to_commit_ms p50=0.0002 p95=0.0004 p99=0.0007 max=0.0009 n=300
+thread_mismatches=0 (jobs=0 hops=0 drain=0 loop_ready=0)
+reentrancy_violations_swift=0 drain_calls_swift=5141 selftest_swift_result=1
+mainactor_hops=500/500
+idle_A_paints=0 idle_A_ticks=0 workload_ticks=300 ticks_delivered=300
+idle_B_paints=0 idle_B_ticks=0
+loop_ready_calls=1 window_closed_calls=1 watchdog_fired=false phases_done=true
+swr_set_wake_handle_rc=0 swr_run_rc=0 main_thread_after_run_same=true
+window_ticks ws=214961281193 we=215011395951 idleA=[214931194827,214961281157] idleB=[215014494524,215044556285]
+[frame-clock] monitor enum_display_hz=60 (ok=true) dwm_rate_hz=NaN qpc_freq=10000000 dwm_samples=0 dwm_fast_returns=0 event_count=11544 event_drops=0
+[frame-clock] presented_interval_ms(dwm) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] dwm_samples_foreground=0/0 probe_hwnd_found=false
+[frame-clock] presented_frames_in_workload=0 dwm_count_jumps=0 dwm_displayed_in_idle_A=0 dwm_displayed_in_idle_B=0 (desktop-global counters)
+[frame-clock] paint_interval_ms(rust) n=299 p50=16.668 p95=16.849 p99=17.295 max=17.401
+[frame-clock] paint_duration_ms(rust) n=300 p50=0.006 p95=0.011 p99=0.057 max=0.192
+[frame-clock] paint_phase_ms(vblank) n=0 p50=NaN p95=NaN p99=NaN max=NaN
+[frame-clock] paints_active_window=303 paints_total=303 dwm_sampler_enabled=0
+[frame-clock] paints_in_workload=300 paints_idle_A=0 paints_idle_B=0
+[frame-clock] ticks_idle_A_or_B=0
+[frame-clock] job_latency_over_16.7ms=0 of 5000
+[frame-clock] stall_cause_tally={}
+swr_dump_rc=0
+verdict=PASS
+
+
+exit=0 end=2026-10-09T07:17:36.3905338+05:30
+run_state id=nosamp-10 valid=1 reason=- workload_samples=100 probe_fg_wl=100 hit_min_wl=100 ws=214961281193 we=215011395951
+finished=2026-10-09T07:17:36.4135587+05:30

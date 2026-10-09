@@ -195,3 +195,32 @@ Capture integrity improved: 30/30 probe PIDs have PresentMon rows (all-process c
 Undisturbed runs (probe foreground 100 %, no occlusion, invalid only for the harness defect): tbp-1, nosamp-1, base-2, tbp-2, nosamp-2, tbp-3, tbp-4, tbp-6, nosamp-6, base-7, tbp-7 — zero drops, zero missed vblanks, displayed p95 16.684–16.702 ms, inside §11 rev 1 (≤ 16.764 ms). base-3, nosamp-7 and tbp-8 had 1–3 drops (single 33.3 ms intervals).
 
 Batch 5 needs: the fixed harness, no other SwiftRight GUI lane on the desktop, and an idle host for ~10 minutes.
+
+## PresentMon batch 5 (2026-10-09, elevated SSH capture + interactive scheduled task)
+
+Run by the orchestrator `scripts/batch5/run-batch5.ps1` (host copy `D:\Claude\sr0b-frame-clock\batch5\`). PresentMon 2.6.0, all processes, session SR0B5, `--timed 1200`. Desktop harness `scripts-v3/run-desktop-v3.ps1` (unchanged, hash-verified against the Mac copy) via one-shot interactive task `SR0B5Desktop` that first minimised all windows. `-Runs 10`, 30 launches, runRoot `runs-b4\20261009-071105`. Harness finished 07:17:36, task unregistered, PresentMon stopped and exited. Files: `result-desktop-v3-batch5.txt`, `analysis-batch5.txt`, `pm-batch5.console.txt`, `batch5-orchestrator.log` (in this directory). The CSV stays on the host.
+
+Two earlier start attempts (07:08 and 07:09) aborted before the harness started. They were orchestrator defects, not capture or desktop faults: PresentMon's redirected stdout is block-buffered, so `Started recording.` did not appear until exit, and the shared-read helper requested a share mode PresentMon's open file does not allow. The third attempt used the CSV byte count as the start signal and passed. Both defects are fixed in the Mac copy of `run-batch5.ps1`.
+
+**Capture integrity: PASS.** 30/30 probe PIDs have 360 to 366 rows, all join within the QPC range, console has no loss lines.
+
+**Per-run validity: 30/30 valid.** Every run has `valid=1 reason=-`, 100/100 workload samples probe-foreground, hit 100 %, no occlusion, no skip_run, no ABORT.
+
+**Budget verdict (§11 rev 1, valid runs):**
+
+| Variant | Valid | Missed vblanks (>24.996 ms) | Displayed p95 range | Verdict |
+|---|---|---|---|---|
+| base | 10/10 | 0 | 16.699 to 16.703 ms | PASS |
+| tbp (`--timer-res-1`) | 10/10 | 0 | 16.697 to 16.706 ms | PASS |
+| nosamp (`--no-dwm-sampler`) | 10/10 | 0 | 16.699 to 16.707 ms | PASS |
+
+Every p95 is at or below 16.764 ms. Zero `Dropped=1` in the workload window of any run. Some runs show `dropped all=1` outside the window; the window count is zero for all. Seven runs (tbp-2, base-6, nosamp-6, base-7, tbp-8, nosamp-8, nosamp-10) show one long-to-2T interval pair; per-frame maxima reach 16.8 to 17.1 ms in a few runs. These are inside the p95 criterion, which is what §11 rev 1 judges.
+
+**Variant comparison: not claimed.** Each variant has 10 valid runs, below the 20-per-variant minimum for the rank-sum test. No variant difference is claimed.
+
+**Interrupters seen (recorded, not fought):**
+- Pre-run foreground change: a `heardright_next_bin` pill window took foreground at each run's start (before the probe) and the probe regained it about 0.5 s later. This is outside the workload window; no workload sample was affected.
+- A `claude` process presented frames in the first ~0.1 s of capture.
+- No occlusion, no skipped launches, no `rk2*` waits.
+
+**Verdict:** batch 5 meets the §11 rev 1 budget for all three variants with 10 valid runs each. The rank-sum comparison needs at least 20 valid runs per variant, so a variant difference remains unclaimed. The next batch needs 20 valid runs per variant to test one.

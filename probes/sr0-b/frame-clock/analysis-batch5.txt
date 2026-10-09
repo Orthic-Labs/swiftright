@@ -1,0 +1,80 @@
+﻿NOTE: no [ETW Status] line (flag absent in 2.6.0); loss judged from exit warnings only
+== capture integrity ==
+csv_header_time_columns: qpc=QPCTime seconds=True rows_total=22043
+PresentMon console: etw_status_last=NONE
+console counters={} lost_lines=0 unrecognised_flag=0
+console_ok=True
+  base-1 pid=29376 rows=362 OK first_vs_start_ms=511.8 last_vs_end_ms=-3441.5
+  tbp-1 pid=42044 rows=361 OK first_vs_start_ms=519.7 last_vs_end_ms=-3413.1
+  nosamp-1 pid=24416 rows=362 OK first_vs_start_ms=532.0 last_vs_end_ms=-3403.2
+  base-2 pid=33928 rows=363 OK first_vs_start_ms=514.0 last_vs_end_ms=-3416.4
+  tbp-2 pid=34652 rows=362 OK first_vs_start_ms=509.6 last_vs_end_ms=-3379.7
+  nosamp-2 pid=15884 rows=362 OK first_vs_start_ms=539.2 last_vs_end_ms=-3405.1
+  base-3 pid=46112 rows=364 OK first_vs_start_ms=507.5 last_vs_end_ms=-3412.0
+  tbp-3 pid=24808 rows=362 OK first_vs_start_ms=538.3 last_vs_end_ms=-3388.6
+  nosamp-3 pid=37388 rows=366 OK first_vs_start_ms=529.7 last_vs_end_ms=-3422.4
+  base-4 pid=24792 rows=363 OK first_vs_start_ms=524.3 last_vs_end_ms=-3415.1
+  tbp-4 pid=25832 rows=363 OK first_vs_start_ms=516.4 last_vs_end_ms=-3410.7
+  nosamp-4 pid=44976 rows=363 OK first_vs_start_ms=506.6 last_vs_end_ms=-3422.6
+  base-5 pid=34216 rows=364 OK first_vs_start_ms=507.9 last_vs_end_ms=-3428.8
+  tbp-5 pid=44464 rows=365 OK first_vs_start_ms=496.3 last_vs_end_ms=-3442.8
+  nosamp-5 pid=29164 rows=363 OK first_vs_start_ms=505.8 last_vs_end_ms=-3801.4
+  base-6 pid=36764 rows=364 OK first_vs_start_ms=506.4 last_vs_end_ms=-3408.7
+  tbp-6 pid=23888 rows=362 OK first_vs_start_ms=519.5 last_vs_end_ms=-3423.0
+  nosamp-6 pid=40124 rows=362 OK first_vs_start_ms=518.6 last_vs_end_ms=-3415.4
+  base-7 pid=13340 rows=365 OK first_vs_start_ms=507.1 last_vs_end_ms=-3404.9
+  tbp-7 pid=26524 rows=362 OK first_vs_start_ms=502.8 last_vs_end_ms=-3423.1
+  nosamp-7 pid=46464 rows=364 OK first_vs_start_ms=520.4 last_vs_end_ms=-3427.4
+  base-8 pid=46636 rows=363 OK first_vs_start_ms=534.4 last_vs_end_ms=-3391.7
+  tbp-8 pid=36932 rows=363 OK first_vs_start_ms=522.6 last_vs_end_ms=-3375.6
+  nosamp-8 pid=29980 rows=365 OK first_vs_start_ms=498.6 last_vs_end_ms=-3397.2
+  base-9 pid=37676 rows=362 OK first_vs_start_ms=525.5 last_vs_end_ms=-3454.9
+  tbp-9 pid=42756 rows=362 OK first_vs_start_ms=567.6 last_vs_end_ms=-3416.5
+  nosamp-9 pid=8996 rows=364 OK first_vs_start_ms=504.8 last_vs_end_ms=-3422.4
+  base-10 pid=37692 rows=365 OK first_vs_start_ms=514.5 last_vs_end_ms=-3416.4
+  tbp-10 pid=15376 rows=362 OK first_vs_start_ms=540.8 last_vs_end_ms=-3387.2
+  nosamp-10 pid=45488 rows=362 OK first_vs_start_ms=505.3 last_vs_end_ms=-3412.4
+CAPTURE INTEGRITY: PASS
+
+== per run (valid=0 runs are reported, never dropped) ==
+run | valid | reason | rows | dropped all/win | disp p50/p95/p99/max | min/p1/p5 | missed>24.996 | long->2T pairs | lag1 ac | first-ws ms | last-we ms | drops by probe_fg (segment)
+base-1 | 1 | - | 362 | 0/0 | 16.665/16.703/16.712/16.726 | 16.607/16.618/16.625 | 0 | 0/0 | -0.490 | -4010.4 | 15.5 | -
+tbp-1 | 1 | - | 361 | 0/0 | 16.664/16.700/16.712/16.715 | 16.606/16.619/16.628 | 0 | 0/0 | -0.515 | -3986.0 | 6.6 | -
+nosamp-1 | 1 | - | 362 | 0/0 | 16.664/16.705/16.716/16.777 | 16.550/16.608/16.623 | 0 | 0/0 | -0.521 | -3990.0 | 10.1 | -
+base-2 | 1 | - | 363 | 1/0 | 16.665/16.703/16.711/16.733 | 16.611/16.616/16.625 | 0 | 0/0 | -0.512 | -3994.5 | 11.0 | -
+tbp-2 | 1 | - | 362 | 1/0 | 16.665/16.702/16.713/16.948 | 16.358/16.621/16.626 | 0 | 1/1 | -0.482 | -3987.1 | 6.0 | -
+nosamp-2 | 1 | - | 362 | 0/0 | 16.664/16.707/16.717/16.738 | 16.567/16.613/16.626 | 0 | 0/0 | -0.513 | -3983.5 | 9.8 | -
+base-3 | 1 | - | 364 | 1/0 | 16.663/16.703/16.710/16.747 | 16.582/16.621/16.626 | 0 | 0/0 | -0.543 | -3992.1 | 9.4 | -
+tbp-3 | 1 | - | 362 | 0/0 | 16.665/16.701/16.709/16.710 | 16.616/16.619/16.628 | 0 | 0/0 | -0.501 | -3972.8 | 4.1 | -
+nosamp-3 | 1 | - | 366 | 1/0 | 16.665/16.700/16.712/16.741 | 16.599/16.613/16.623 | 0 | 0/0 | -0.483 | -4005.2 | 10.2 | -
+base-4 | 1 | - | 363 | 0/0 | 16.664/16.702/16.716/16.749 | 16.613/16.616/16.627 | 0 | 0/0 | -0.478 | -3997.8 | 1.4 | -
+tbp-4 | 1 | - | 363 | 1/0 | 16.664/16.697/16.708/16.716 | 16.619/16.622/16.633 | 0 | 0/0 | -0.415 | -3994.0 | 3.2 | -
+nosamp-4 | 1 | - | 363 | 1/0 | 16.663/16.704/16.721/16.732 | 16.609/16.613/16.629 | 0 | 0/0 | -0.549 | -4004.9 | 5.5 | -
+base-5 | 1 | - | 364 | 1/0 | 16.665/16.701/16.709/16.716 | 16.576/16.608/16.624 | 0 | 0/0 | -0.477 | -4008.3 | 5.0 | -
+tbp-5 | 1 | - | 365 | 1/0 | 16.665/16.703/16.713/16.741 | 16.600/16.617/16.628 | 0 | 0/0 | -0.462 | -3995.2 | 16.0 | -
+nosamp-5 | 1 | - | 363 | 1/0 | 16.665/16.703/16.710/16.738 | 16.586/16.617/16.625 | 0 | 0/0 | -0.547 | -4004.4 | 9.0 | -
+base-6 | 1 | - | 364 | 1/0 | 16.664/16.699/16.712/16.816 | 16.515/16.622/16.629 | 0 | 1/1 | -0.480 | -4021.5 | 8.3 | -
+tbp-6 | 1 | - | 362 | 1/0 | 16.665/16.699/16.709/16.711 | 16.618/16.622/16.628 | 0 | 0/0 | -0.493 | -3984.2 | 6.2 | -
+nosamp-6 | 1 | - | 362 | 1/0 | 16.665/16.703/16.711/16.834 | 16.526/16.624/16.627 | 0 | 1/1 | -0.483 | -3991.4 | 3.2 | -
+base-7 | 1 | - | 365 | 1/0 | 16.665/16.702/16.709/16.829 | 16.498/16.617/16.626 | 0 | 1/1 | -0.463 | -4009.1 | 12.9 | -
+tbp-7 | 1 | - | 362 | 1/0 | 16.664/16.706/16.712/16.715 | 16.607/16.619/16.625 | 0 | 0/0 | -0.495 | -3989.4 | 5.0 | -
+nosamp-7 | 1 | - | 364 | 1/0 | 16.664/16.704/16.711/16.730 | 16.616/16.620/16.626 | 0 | 0/0 | -0.487 | -3992.0 | 7.8 | -
+base-8 | 1 | - | 363 | 0/0 | 16.664/16.700/16.707/16.709 | 16.616/16.621/16.629 | 0 | 0/0 | -0.466 | -3996.4 | 14.9 | -
+tbp-8 | 1 | - | 363 | 0/0 | 16.664/16.701/16.715/16.880 | 16.452/16.619/16.627 | 0 | 1/1 | -0.491 | -3995.5 | 13.8 | -
+nosamp-8 | 1 | - | 365 | 1/0 | 16.664/16.703/16.713/17.138 | 16.193/16.621/16.626 | 0 | 1/1 | -0.483 | -4008.0 | 15.7 | -
+base-9 | 1 | - | 362 | 0/0 | 16.664/16.703/16.712/16.723 | 16.564/16.617/16.627 | 0 | 0/0 | -0.474 | -3989.8 | 2.5 | -
+tbp-9 | 1 | - | 362 | 0/0 | 16.664/16.703/16.710/16.712 | 16.614/16.620/16.627 | 0 | 0/0 | -0.501 | -3972.2 | 5.1 | -
+nosamp-9 | 1 | - | 364 | 1/0 | 16.664/16.701/16.712/16.723 | 16.614/16.620/16.627 | 0 | 0/0 | -0.521 | -3987.9 | 14.6 | -
+base-10 | 1 | - | 365 | 1/0 | 16.665/16.702/16.709/16.723 | 16.599/16.619/16.627 | 0 | 0/0 | -0.541 | -4011.8 | 12.5 | -
+tbp-10 | 1 | - | 362 | 0/0 | 16.664/16.700/16.711/16.727 | 16.597/16.621/16.629 | 0 | 0/0 | -0.492 | -3989.2 | 4.7 | -
+nosamp-10 | 1 | - | 362 | 1/0 | 16.664/16.699/16.710/16.817 | 16.553/16.620/16.629 | 0 | 1/1 | -0.456 | -4002.4 | 0.6 | -
+
+== budget verdict (º11 rev 1, valid runs only) ==
+base: launched=10 valid=10 skipped=0 zero_missed_valid=True p95<=16.764_valid=True enough_valid(>=9 of 10)=True -> PASS
+tbp: launched=10 valid=10 skipped=0 zero_missed_valid=True p95<=16.764_valid=True enough_valid(>=9 of 10)=True -> PASS
+nosamp: launched=10 valid=10 skipped=0 zero_missed_valid=True p95<=16.764_valid=True enough_valid(>=9 of 10)=True -> PASS
+
+== variant comparisons (per-run displayed p95, valid runs) ==
+base vs nosamp: no test (valid n=10/10, need >= 20 each); no effect shown
+base vs tbp: no test (valid n=10/10, need >= 20 each); no effect shown
+nosamp vs tbp: no test (valid n=10/10, need >= 20 each); no effect shown
