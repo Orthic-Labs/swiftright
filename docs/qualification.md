@@ -92,3 +92,17 @@ Other results, same session:
 - The Windows matrix was not run. Stage P is blocked, and SR0-A depends on it.
 - The candidate lane has only been exercised by unit tests and by the pre-seed run, which wrote and then superseded candidates. It has not seen a real drift.
 - `promote` changes accepted files only through `--approved-by`. No candidate has been promoted.
+
+## 2026-10-09 note: F3-F9 accepted-baseline seeding blocked
+
+Status: **not seeded**. No file under `conformance/accepted/` was written for F3-F9. No Mac oracle verification ran for these configs. Nothing committed, pushed, or branched.
+
+- Source evidence: `probes/sr0-o/fixtures/REPEAT20.md`. All 16 configs read 20/20 PASS and canonical distinct = 1, so none is excluded for disagreement.
+- Blocker 1, approver: `run.py` `check_approver` (`APPROVER_RE`) rejects the required approver string (apostrophe, parentheses, semicolon, slash, length over 64). `seed --fixture F4` failed before any write: `qualification/out/20261009T060749.203Z-seed/events.jsonl`. F2's manifest already holds that string, so an earlier runner accepted it.
+- Blocker 2, configs: `validate_fixture` accepts only `F1`..`F9`, and `run.py` never passes `--f3-variant` or `--reduced-motion-variant`. The F3 variants (`list-1s`, `list-3s`, `vstack-1s`, `vstack-3s`, `lazy-1s`, `lazy-3s`) and `F6-reduced` cannot be seeded or verified. Original F3 (no variant flag) is the `list-0s` config and is seedable as `F3`, from `F3-run*.jsonl`.
+- Consulted `gpt-6-astra` (high effort): recommends stopping, since fixing blocker 1 requires editing `run.py`.
+- Decision needed: approve a small `run.py` change for the approver charset and for variant plumbing (`--variant` mapped to `--f3-variant`/`--reduced-motion-variant`), then re-run seeding for F3, F4-F9, and the variants.
+- Not touched: the G5 `FixtureApp` process (`probes/sr0-o/fixtures/.build/...`, `out/sr1-smoke/`) belongs to the SR1 lane.
+
+
+Approver IDs: `swiftright-primary@autonomy-2026-10-09` means the SwiftRight primary session approved under Adrian's standing autonomy grant of 9 Oct 2026, on the 20-run evidence in `probes/sr0-o/fixtures/REPEAT20.md`; Adrian did not review the traces individually.
