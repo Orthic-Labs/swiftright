@@ -9,7 +9,7 @@ import SwiftRightBridge
 //
 // Coordinates: runtime frames are logical points with the client top-left at 0,0. ABI geometry is physical
 // pixels, so the runtime's pixelFrame is used directly. Each runtime node id maps to a stable non-zero bridge
-// id (0 = window root). Each text run reserves a 32-id block per node so AX text-run ids never collide.
+// id (0 = window root). Each text node reserves an `axTextRunBlockSize` id block so AX text-run ids never collide.
 
 enum SliceStyle {
     static let fontFamily = "Segoe UI"
@@ -26,7 +26,6 @@ enum SliceStyle {
     static let fieldInsetX: Float = 6
     static let buttonInsetX: Float = 12
     static let buttonInsetY: Float = 6
-    static let runBlock: UInt64 = 32
 }
 
 func reportFailure(_ message: String) {
@@ -191,7 +190,7 @@ final class BridgeBackend {
     private func runBlock(_ key: String) -> UInt64 {
         if let base = idByKey["\(key)#runs"] { return base }
         let base = nextID
-        nextID += SliceStyle.runBlock
+        nextID += axTextRunBlockSize
         idByKey["\(key)#runs"] = base
         return base
     }
@@ -307,44 +306,50 @@ final class BridgeBackend {
             if let row {
                 runtimeFieldByRow[row] = node.id
             }
-            var runs: [AXTextRun] = []
-            var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
-            let runBase = runBlock(node.id)
-            if !text.isEmpty, let m = measure(text, color: SliceStyle.textColor, maxWidth: 0, into: &releasable) {
-                let cells = (try? bridge.cells(of: m.run)) ?? []
+            // Every editable node publishes at least one AX text run, empty or not. Empty text has no
+            // measurement: it gets the zero-length run at the origin and a degenerate selection at (first run, 0).
+            let measurement = text.isEmpty ? nil : measure(text, color: SliceStyle.textColor, maxWidth: 0, into: &releasable)
+            let cells = measurement.flatMap { try? bridge.cells(of: $0.run) } ?? []
+            let lines = measurement?.lines ?? []
+            if let m = measurement {
                 prims.append(.text(m.run, x: origin.x, y: origin.y))
-                // Caret or selection end, in displayed text (the runtime's TextInputState).
-                let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
-                let caretIndex = min(caretEnd, cells.count)
-                if let marked = node.marked, marked.length > 0 {
-                    let from = min(marked.location, cells.count)
-                    let to = min(marked.location + marked.length, cells.count)
-                    if to > from {
-                        let thickness = max(1, s)
-                        let x0 = origin.x + cells[from].x0
-                        let x1 = origin.x + cells[to - 1].x1
-                        let y = origin.y + Float(Int(cells[from].line) + 1) * lh - thickness
-                        prims.append(.rect(Rect(x: x0, y: y, w: max(1, x1 - x0), h: thickness), color: SliceStyle.caretColor))
-                    }
+            }
+            // Caret or selection end, in displayed text (the runtime's TextInputState).
+            let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
+            let caretIndex = min(caretEnd, cells.count)
+            if let marked = node.marked, marked.length > 0 {
+                let from = min(marked.location, cells.count)
+                let to = min(marked.location + marked.length, cells.count)
+                if to > from {
+                    let thickness = max(1, s)
+                    let x0 = origin.x + cells[from].x0
+                    let x1 = origin.x + cells[to - 1].x1
+                    let y = origin.y + Float(Int(cells[from].line) + 1) * lh - thickness
+                    prims.append(.rect(Rect(x: x0, y: y, w: max(1, x1 - x0), h: thickness), color: SliceStyle.caretColor))
                 }
-                if let row, row == focusedRow {
-                    let caret = caretRect(cells: cells, lines: m.lines, index: caretIndex, origin: origin,
-                                          lineHeightPx: lh, width: max(1, 1.5 * s))
-                    prims.append(.rect(caret, color: SliceStyle.caretColor))
-                }
-                runs = makeAXTextRuns(text: text, measurement: m, cells: cells, origin: origin,
-                                      lineHeightPx: lh, firstRunID: runBase)
-                if !runs.isEmpty {
-                    let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
-                    let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
-                    let position = TextSelectionPosition(run: runBase + UInt64(min(line, runs.count - 1)), character: UInt32(inLine))
-                    selection = (anchor: position, focus: position)
-                }
-                if let row {
-                    fieldGeometry[row] = FieldGeometry(origin: origin, cells: cells, lines: m.lines, lineHeightPx: lh)
-                }
-            } else if let row {
-                fieldGeometry[row] = FieldGeometry(origin: origin, cells: [], lines: [], lineHeightPx: lh)
+            }
+            if let row, row == focusedRow {
+                let caret = caretRect(cells: cells, lines: lines, index: caretIndex, origin: origin,
+                                      lineHeightPx: lh, width: max(1, 1.5 * s))
+                prims.append(.rect(caret, color: SliceStyle.caretColor))
+            }
+            let runBase = runBlock(node.id)
+            var runs: [AXTextRun] = []
+            do {
+                runs = try makeAXTextRunsChecked(text: text, measurement: measurement, cells: cells, origin: origin,
+                                                 lineHeightPx: lh, firstRunID: runBase)
+            } catch {
+                reportFailure("text runs for node \(node.id): \(error)")
+            }
+            var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
+            if !runs.isEmpty {
+                let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
+                let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
+                let position = TextSelectionPosition(run: runBase + UInt64(min(line, runs.count - 1)), character: UInt32(inLine))
+                selection = (anchor: position, focus: position)
+            }
+            if let row {
+                fieldGeometry[row] = FieldGeometry(origin: origin, cells: cells, lines: lines, lineHeightPx: lh)
             }
             if let row {
                 textFieldByRow[row] = id
