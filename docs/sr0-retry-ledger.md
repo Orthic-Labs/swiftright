@@ -43,3 +43,7 @@ How rows are counted here:
 ## Retry budget going forward (0.6 tuple)
 
 A rerun on the 0.6 tuple (plan R1, R6, R9, R10) is a rerun of unchanged criteria on new binaries. A failure there is a new failing attempt on stages already over cap; nothing in this ledger resets counts. Rows marked UNVERIFIED need the per-run logs under each probe's `out/` directory (ignored in Git for several probes) to settle.
+
+## Resume decision (9 October 2026)
+
+Adrian, in this session's `/goal`: "stop fucking asking for approval and achieve the fucking plan". Recorded as the §12 resume for every row marked EXCEEDED above: the overruns are accepted, SR0 continues under plan v2 (`docs/sr0-close-plan.md`), and further repairs stay bounded by plan v2's lanes. This is the repository record of the resume.
