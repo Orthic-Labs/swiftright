@@ -1,0 +1,58 @@
+registered=SR0S-Fix-F9notasksr4a1 at=2026-10-09T13:11:38.7261571+05:30
+state=Ready last_result=0
+deleted=SR0S-Fix-F9notasksr4a1 exists_after=False
+host=BOGUS-DELL session=1 fixture=F9 variant=notasks args=--fixture F9 --f9-variant notasks --ready-file "D:\Claude\sr0s-bridge\result-F9-F9notasksr4a1.txt.ready" started=2026-10-09T13:11:39.5621397+05:30
+window_hwnd=15797934 polls=2 exited_early=False
+uia_edit_count_before_close=10
+ready_file=True waited_ms=2 exe_exited=False
+close_window=WM_CLOSE posted=True
+run_summary keymode=char delivery=targeted fg_changes=0 driver_abort=none
+exit=0 end=2026-10-09T13:11:44.9563693+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","mono_ns":42747758766900,"node_id":"selftest","payload":{"fixture":"F9 notasks","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":42748219901500,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":42748221255800,"node_id":"F0000009-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":42748221866700,"node_id":"F0000009-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":42748222139800,"node_id":"F0000009-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":42748222385200,"node_id":"F0000009-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":42748222628800,"node_id":"F0000009-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":42748222881800,"node_id":"F0000009-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":42748223113100,"node_id":"F0000009-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":42748223334000,"node_id":"F0000009-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":42748223592400,"node_id":"F0000009-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":42748223815700,"node_id":"F0000009-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":42748239013800,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":true,"reduce_source":"os","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":42753038537700,"node_id":"window","payload":{"phase":"closed"},"seq":13}
+EVT {"kind":"lifecycle","mono_ns":42753038737500,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":14}
+EVT {"kind":"lifecycle","mono_ns":42753047996500,"node_id":"F0000009-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":15}
+EVT {"kind":"lifecycle","mono_ns":42753048315200,"node_id":"F0000009-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":16}
+EVT {"kind":"lifecycle","mono_ns":42753048494400,"node_id":"F0000009-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":17}
+EVT {"kind":"lifecycle","mono_ns":42753048670800,"node_id":"F0000009-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":42753048836600,"node_id":"F0000009-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":19}
+EVT {"kind":"lifecycle","mono_ns":42753049000600,"node_id":"F0000009-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":42753049141000,"node_id":"F0000009-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":42753049287700,"node_id":"F0000009-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":42753049437500,"node_id":"F0000009-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":42753049581500,"node_id":"F0000009-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":42753049742900,"node_id":"tree","payload":{"phase":"released"},"seq":25}
+SELFTEST-STAGES F9 notasks: awaiting-driver-close end-reason=window-closed
+ASSERT F9 notasks script-completed: PASS stages=awaiting-driver-close
+ASSERT F9 notasks tasks-cancelled-at-teardown: PASS task-cancel events=0 expected>=0 (row tasks and screen task, cancelled by runtime teardown)
+OBSERVE F9 notasks commits-after-close: commits at close=3 now=3 (the graph is closed by teardown: no later commit)
+ASSERT F9 notasks late-results-rejected: PASS rejected after post-close release=0 expected=0 (resumed continuations run in the post-close pump; commit gate refuses window-closed)
+ASSERT F9 notasks cleanup-after-close: PASS cleanup after post-close release=0 expected=0
+ASSERT F9 notasks tree-released: PASS probe deinit ran after runtime teardown and engine release, within the post-close pump (tree-released events=1)
+OBSERVE F9 notasks teardown-commit: not sent: the renderer sets SHUTDOWN before window_closed, so any commit then returns SWR_E_SHUTDOWN (errors=0); the renderer frees its own tree at close
+OBSERVE F9 notasks bridge-ledger-after-teardown: host ledger of renderer nodes after teardown=91 (trivial: the host drops its own state; live_nodes below is the real check)
+ASSERT F9 notasks renderer-live-nodes-zero: PASS swr_stats.live_nodes=0 read in the post-close pump before shutdownComplete
+OBSERVE F9 notasks view-bindings-cleared-by-host: 11 model-held view references dropped after teardown
+ASSERT F9 notasks renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F9 notasks commits-accepted: PASS commits=3 errors=0 dropped-after-close=0
+ASSERT F9 notasks no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F9 notasks: PASS (9/9 asserted; blocked=0; end=window-closed)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0xf10eae style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=290 paints_while_inactive=2 drains=293 ticks_delivered=288 events_pushed=2 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
+
