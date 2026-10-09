@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.invalid/qualification/clean-machine/receipt.schema.json",
+  "title": "clean-machine receipt (clean-machine-receipt/v1)",
+  "description": "Shared receipt format for the Windows Sandbox lane (R5) and the clean macOS lane (R7). Two record kinds: 'check' (one file per check, <check_id>.json) and 'run' (one aggregate per run). A check can never be status 'pass' unless it was implemented. artifact_ids follow the same convention as qualification/run.py validate_event (name -> sha256:<64 hex>). The automation lane should add 'package' to STAGES in qualification/run.py; this schema uses stage 'package' for both.",
+  "oneOf": [
+    { "$ref": "#/$defs/check" },
+    { "$ref": "#/$defs/run" }
+  ],
+  "$defs": {
+    "sha_ref": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "artifact_ids": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9_]+$" },
+      "additionalProperties": { "$ref": "#/$defs/sha_ref" }
+    },
+    "harness": {
+      "type": "object",
+      "required": ["name", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha_ref" }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": [
+        "schema", "record", "platform", "run_id", "check_id", "check_name", "stage",
+        "status", "implemented", "reason", "started_utc", "ended_utc", "exit_status",
+        "observed", "artifact_ids", "environment", "harness"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "const": "clean-machine-receipt/v1" },
+        "record": { "const": "check" },
+        "platform": { "enum": ["windows", "mac"] },
+        "run_id": { "type": "string", "minLength": 1 },
+        "check_id": { "type": "string", "pattern": "^[WM][0-9]{2}-[a-z0-9-]+$" },
+        "check_name": { "type": "string", "minLength": 1 },
+        "stage": { "const": "package" },
+        "status": { "enum": ["pass", "fail"] },
+        "implemented": { "type": "boolean" },
+        "reason": { "type": ["string", "null"] },
+        "started_utc": { "type": "string", "format": "date-time" },
+        "ended_utc": { "type": "string", "format": "date-time" },
+        "exit_status": { "type": ["integer", "null"] },
+        "observed": {
+          "type": "object",
+          "additionalProperties": { "type": ["string", "number", "boolean", "null"] }
+        },
+        "artifact_ids": { "$ref": "#/$defs/artifact_ids" },
+        "environment": {
+          "type": "object",
+          "required": ["host", "os_version", "user"],
+          "additionalProperties": { "type": ["string", "number", "boolean", "null"] },
+          "properties": {
+            "host": { "type": "string" },
+            "os_version": { "type": "string" },
+            "user": { "type": "string" }
+          }
+        },
+        "harness": { "$ref": "#/$defs/harness" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "implemented": { "const": false } }, "required": ["implemented"] },
+          "then": { "properties": { "status": { "const": "fail" } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "pass" } }, "required": ["status"] },
+          "then": { "properties": { "reason": { "type": "null" } } }
+        }
+      ]
+    },
+    "run": {
+      "type": "object",
+      "required": [
+        "schema", "record", "platform", "run_id", "status", "expected_checks", "checks",
+        "started_utc", "ended_utc", "reason", "artifact_ids", "harness"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "const": "clean-machine-receipt/v1" },
+        "record": { "const": "run" },
+        "platform": { "enum": ["windows", "mac"] },
+        "run_id": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["pass", "fail"] },
+        "expected_checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[WM][0-9]{2}-[a-z0-9-]+$" }
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["check_id", "status", "implemented"],
+            "additionalProperties": false,
+            "properties": {
+              "check_id": { "type": "string", "pattern": "^[WM][0-9]{2}-[a-z0-9-]+$" },
+              "status": { "enum": ["pass", "fail"] },
+              "implemented": { "type": "boolean" }
+            }
+          }
+        },
+        "started_utc": { "type": "string", "format": "date-time" },
+        "ended_utc": { "type": "string", "format": "date-time" },
+        "reason": { "type": ["string", "null"] },
+        "artifact_ids": { "$ref": "#/$defs/artifact_ids" },
+        "harness": { "$ref": "#/$defs/harness" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "pass" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "checks": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "status": { "const": "pass" },
+                    "implemented": { "const": true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

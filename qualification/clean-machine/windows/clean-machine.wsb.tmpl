@@ -1,0 +1,43 @@
+<!--
+  clean-machine.wsb.tmpl - Windows Sandbox configuration for SR0 R5. Template only.
+  run-sandbox.ps1 replaces the three __HOST_*__ tokens with absolute, XML-escaped host paths and writes
+  <run>\clean-machine.wsb. Do not hand-edit the generated file.
+
+  Schema (Microsoft Learn, "Use and configure Windows Sandbox"): Networking Disable removes the sandbox's
+  network; MappedFolder HostFolder must already exist or the sandbox does not start; ReadOnly defaults to false,
+  so the packages and harness are mapped read-only and only the receipts folder is writable; LogonCommand takes
+  a path with no arguments, hence logon.cmd.
+  vGPU is left at Default so the renderer path matches the shipped config (Disable would use WARP).
+  AudioInput, VideoInput, PrinterRedirection, ClipboardRedirection and ProtectedClient are disabled: the checks
+  need none of them, and clipboard is a host/guest data path we do not want in this run.
+-->
+<Configuration>
+  <vGPU>Default</vGPU>
+  <Networking>Disable</Networking>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <ProtectedClient>Disable</ProtectedClient>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <MemoryInMB>4096</MemoryInMB>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>__HOST_HARNESS__</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\clean-machine\harness</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>__HOST_PACKAGES__</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\clean-machine\packages</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>__HOST_RECEIPTS__</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\clean-machine\receipts</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>C:\Users\WDAGUtilityAccount\Desktop\clean-machine\harness\logon.cmd</Command>
+  </LogonCommand>
+</Configuration>
