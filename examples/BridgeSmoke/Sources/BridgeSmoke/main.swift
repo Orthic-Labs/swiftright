@@ -9,6 +9,9 @@ import SwiftRightBridge
 
 let env = ProcessInfo.processInfo.environment
 let expectEdgeClick = env["SWR_SMOKE_EXPECT_EDGE_CLICK"] == "1"
+/// SWR_SMOKE_SKIP_SHUTDOWN=1: the app never calls swr_shutdown_complete after close, so the
+/// post-close pump must end by its 5 s bound (post_close_timeouts == 1).
+let skipShutdown = env["SWR_SMOKE_SKIP_SHUTDOWN"] == "1"
 let timeoutSeconds = Double(env["SWR_SMOKE_TIMEOUT"] ?? "") ?? 45
 
 let paragraph = "The quick brown fox jumps over the lazy dog while SwiftRight wraps this text."
@@ -55,6 +58,10 @@ final class Smoke: TextStore {
     var cleanupRan = false
     var cleanupLiveNodes: UInt64?
     var cleanupShutdownRC: Int32?
+    var cleanupRepeatRC: Int32?          // second swr_shutdown_complete in the same pump (idempotence)
+    var earlyShutdownRC: Int32?          // swr_shutdown_complete while the window is still open
+    var earlyDrainsBefore: UInt64 = 0
+    var closedAt: Date?
 
     // measurement evidence
     var wrapWide: TextMeasurement?
@@ -294,6 +301,7 @@ final class Smoke: TextStore {
     /// rejected, and the cleanup job runs there and ends the pump with swr_shutdown_complete.
     func onClosed() {
         closeCalls += 1
+        closedAt = Date()
         let b = bridge
         let handle = lastHandle
         DispatchQueue.main.async { [self] in
@@ -320,14 +328,14 @@ final class Smoke: TextStore {
             // Cleanup in the post-close pump: the closed window must retain no nodes or runs.
             self.cleanupRan = true
             self.cleanupLiveNodes = b.stats().live_nodes
-            do {
-                try b.shutdownComplete()
-                self.cleanupShutdownRC = 0
-            } catch BridgeError.status(let rc, _) {
-                self.cleanupShutdownRC = rc
-            } catch {
-                self.cleanupShutdownRC = -999
+            if skipShutdown { return }   // timeout mode: leave the pump to its 5 s bound
+            func call() -> Int32 {
+                do { try b.shutdownComplete(); return 0 }
+                catch BridgeError.status(let rc, _) { return rc }
+                catch { return -999 }
             }
+            self.cleanupShutdownRC = call()
+            self.cleanupRepeatRC = call()   // already ended: must stay SWR_OK (idempotent)
         }
     }
 
@@ -405,6 +413,13 @@ final class Smoke: TextStore {
 
 // MARK: main
 
+/// swr_shutdown_complete from the (still UI) thread after swr_run returned.
+func lateShutdownRC(_ b: Bridge) -> Int32 {
+    do { try b.shutdownComplete(); return 0 }
+    catch BridgeError.status(let rc, _) { return rc }
+    catch { return -999 }
+}
+
 func summarize(_ smoke: Smoke, runResult: String) -> Int32 {
     let st = smoke.bridge.stats()
     let b = smoke.bridge
@@ -432,9 +447,25 @@ func summarize(_ smoke: Smoke, runResult: String) -> Int32 {
               "post_close_drains=\(st.post_close_drains)")
     smoke.add("live nodes zero after teardown", smoke.cleanupLiveNodes == 0 && st.live_nodes == 0,
               "at cleanup=\(liveAtCleanup) after run=\(st.live_nodes)")
-    smoke.add("pump ended by swr_shutdown_complete, not the timeout",
-              smoke.cleanupShutdownRC == 0 && st.post_close_timeouts == 0,
-              "shutdown=\(statusName(smoke.cleanupShutdownRC ?? -99)) timeouts=\(st.post_close_timeouts)")
+    smoke.add("swr_shutdown_complete before close returns SWR_E_STATE and has no effect",
+              smoke.earlyShutdownRC == -4 && smoke.earlyDrainsBefore == 0 && smoke.closeCalls == 1 && smoke.cleanupRan,
+              "rc=\(statusName(smoke.earlyShutdownRC ?? -99)) post_close_drains_at_call=\(smoke.earlyDrainsBefore) window kept running: close_calls=\(smoke.closeCalls)")
+    let sinceClose = smoke.closedAt.map { Date().timeIntervalSince($0) } ?? 0
+    if skipShutdown {
+        smoke.add("timeout mode: app never called swr_shutdown_complete", smoke.cleanupShutdownRC == nil && smoke.cleanupRepeatRC == nil, "")
+        smoke.add("pump ended by the 5 s timeout [SKIP_SHUTDOWN]",
+                  st.post_close_timeouts == 1 && sinceClose >= 4.5 && sinceClose < 15,
+                  "timeouts=\(st.post_close_timeouts) run returned \(String(format: "%.2f", sinceClose))s after window_closed (bound=5s)")
+        let lateRC = lateShutdownRC(b)
+        smoke.add("swr_shutdown_complete after timeout-ended run", lateRC == 0, "rc=\(statusName(lateRC)) (documented: idempotent, valid once window_closed entered)")
+    } else {
+        smoke.add("pump ended by swr_shutdown_complete, not the timeout",
+                  smoke.cleanupShutdownRC == 0 && st.post_close_timeouts == 0 && sinceClose < 4.5,
+                  "shutdown=\(statusName(smoke.cleanupShutdownRC ?? -99)) timeouts=\(st.post_close_timeouts) run returned \(String(format: "%.2f", sinceClose))s after window_closed")
+        smoke.add("repeat swr_shutdown_complete is idempotent (in pump and after run returned)",
+                  smoke.cleanupRepeatRC == 0 && lateShutdownRC(b) == 0,
+                  "second call in pump=\(statusName(smoke.cleanupRepeatRC ?? -99)) after run=\(statusName(lateShutdownRC(b)))")
+    }
     smoke.add("no stale or unknown-node events", smoke.staleEvents == 0 && smoke.unknownNodeEvents == 0,
               "stale=\(smoke.staleEvents) unknown=\(smoke.unknownNodeEvents) rust_dropped_stale=\(st.events_dropped_stale)")
     print("frames_while_not_foreground: ticks_with_inactive_window=\(smoke.ticksInactive) of \(smoke.ticks)")
@@ -466,6 +497,11 @@ do {
         } catch {
             print("metrics failed: \(error)")
         }
+        // swr_shutdown_complete while the window is open: SWR_E_STATE, no effect on the run.
+        smoke.earlyDrainsBefore = bridge.stats().post_close_drains
+        do { try bridge.shutdownComplete(); smoke.earlyShutdownRC = 0 }
+        catch BridgeError.status(let rc, _) { smoke.earlyShutdownRC = rc }
+        catch { smoke.earlyShutdownRC = -999 }
         smoke.runMeasurementChecks()
         smoke.render()
         // Post-run style check while live: an old snapshot version must be rejected.

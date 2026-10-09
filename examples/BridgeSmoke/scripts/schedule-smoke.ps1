@@ -1,10 +1,10 @@
 # Registers a one-shot INTERACTIVE scheduled task that runs drive-smoke.ps1 (GPUI needs the
 # desktop session; DXGI is unavailable over SSH), waits for it, then deletes the task.
-param([string]$Base = 'D:\Claude\sr0b-abi0', [string]$Tag = 'run1')
+param([string]$Base = 'D:\Claude\sr0b-abi0', [string]$Tag = 'run1', [switch]$SkipShutdown)
 $ErrorActionPreference = 'Stop'
 $task = "SR0B-Smoke-$Tag"
 $out = "$Base\result-smoke-$Tag.txt"
-$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\examples\BridgeSmoke\scripts\drive-smoke.ps1`" -Out `"$out`""
+$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\examples\BridgeSmoke\scripts\drive-smoke.ps1`" -Out `"$out`"$(if ($SkipShutdown) { ' -SkipShutdown' })"
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $taskArgs -WorkingDirectory $Base
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 5) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries

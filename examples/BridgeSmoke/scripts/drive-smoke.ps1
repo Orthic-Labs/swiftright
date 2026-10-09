@@ -10,7 +10,8 @@
 #  - empty editable node before typing: UIA TextPattern present, selection degenerate at 0
 param(
   [string]$Bin = 'D:\Claude\sr0b-abi0\scratch\out\Products\Release-windows-x86_64',
-  [string]$Out = 'D:\Claude\sr0b-abi0\result-smoke.txt'
+  [string]$Out = 'D:\Claude\sr0b-abi0\result-smoke.txt',
+  [switch]$SkipShutdown   # timeout mode: SWR_SMOKE_SKIP_SHUTDOWN=1, the app never calls swr_shutdown_complete (pump ends by the 5 s bound)
 )
 $ErrorActionPreference = 'Continue'
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
@@ -46,6 +47,7 @@ $psi.RedirectStandardError = $true
 $psi.EnvironmentVariables['Path'] = "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$Bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
 $psi.EnvironmentVariables['SWR_SMOKE_EXPECT_EDGE_CLICK'] = '1'
 $psi.EnvironmentVariables['SWR_SMOKE_LINGER_TICKS'] = '900'  # window stays ~15 s after typing so UIA lookups cannot race the self-quit
+if ($SkipShutdown) { $psi.EnvironmentVariables['SWR_SMOKE_SKIP_SHUTDOWN'] = '1' }
 $proc = [System.Diagnostics.Process]::Start($psi)
 $stdout = $proc.StandardOutput.ReadToEndAsync()
 $stderr = $proc.StandardError.ReadToEndAsync()
