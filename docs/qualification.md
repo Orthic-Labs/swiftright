@@ -55,7 +55,7 @@ One JSON object per line on stdout and in `qualification/out/<run>/events.jsonl`
 - F1 and F2 were seeded from the 20-run Mac repeatability sweep (`probes/sr0-o/fixtures/out/repeat20/`, 20/20 PASS each, one distinct raw and canonical trace each, see `probes/sr0-o/fixtures/REPEAT20.md`).
 - That sweep ran on the source at commit `4ff202f`. Its `probes/sr0-o/fixtures` tree equals HEAD (`bb4258a2549f`). Each manifest records `source_tree`.
 - The F1 comparator trace (`trace-v0.json`) is the committed `probes/sr0-o/f1-cross/out/mac-trace-strict-m1.json`, with `adapt-v0.json` from `f1-cross/adapt.json`.
-- Caveat: the 20-run JSONL logs are in gitignored `out/` directories on this Mac. The committed copies are the baselines under `conformance/accepted/`. The approver recorded for the seed is Adrian, who requested this baseline set. Under AD7 this is a maintainer decision, not an agent one.
+- Caveat: the 20-run JSONL logs are in gitignored `out/` directories on this Mac. The committed copies are the baselines under `conformance/accepted/`. The seed was approved by the SwiftRight primary session under Adrian's standing autonomy grant (9 Oct 2026), on the 20-run evidence in `probes/sr0-o/fixtures/REPEAT20.md`; Adrian did not review these traces individually. Under AD7 any later promotion still needs a named approver.
 - Cross-check: before seeding, three fresh committed-source runs produced canonical digests `482f9d887ac2…` (F1) and `8e1dcf01f2a9…` (F2), identical to the seeded baselines.
 
 ## Result: real Mac oracle run, F1 and F2, 3 runs each
