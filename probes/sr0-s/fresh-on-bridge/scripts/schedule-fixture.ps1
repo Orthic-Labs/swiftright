@@ -17,7 +17,8 @@ $ErrorActionPreference = 'Stop'
 # Artifact identity first: a run never starts on a tree whose exe or renderer DLL differs from the expected hashes.
 $verify = & "$PSScriptRoot\verify-artifacts.ps1" -Base $Base -ExpectExe $ExpectExe -ExpectDll $ExpectDll
 $verify
-if ($LASTEXITCODE -ne 0) { throw "artifact check failed; no task registered" }
+# $LASTEXITCODE is not set by a script invoked with &, so test the printed verdict instead.
+if ($verify -notcontains 'ARTIFACT_OK') { throw "artifact check failed; no task registered" }
 $artifactLine = ($verify | Where-Object { $_ -like 'ARTIFACT base=*' } | Select-Object -First 1).Trim()
 $task = "SR0S-Fix-$Tag"
 $out = "$Base\result-$Fixture-$Tag.txt"
