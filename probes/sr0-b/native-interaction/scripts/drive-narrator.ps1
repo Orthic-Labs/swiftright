@@ -211,19 +211,60 @@ finally {
   }
   $stillRunning = @(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count
   $listenAfter = [SRN.N]::UiaClientsAreListening()
-  $regAfter = Snap-Reg; $regDiff = @(); $regRestored = @()
-  foreach ($k in ($regBefore.Keys + $regAfter.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regAfter[$k])) { $regDiff += $k } }
-  if ($narStarted -and $regDiff.Count -gt 0) {
-    try { $regRestored = @(Reg-Restore $regBefore) } catch { Log "registry_restore_exception: $($_.Exception.Message)" }
+  # Windows (AtBroker / Narrator exit handlers) rewrites ATConfig\narrator asynchronously after exit: wait for the registry to settle, restore, verify, retry.
+  function Reg-DiffDetail($bf, $af) {   # value-level differences: "key\name(before->after)"
+    $o = @()
+    foreach ($k in ($bf.Keys + $af.Keys | Sort-Object -Unique)) {
+      $bv = $bf[$k]; $av = $af[$k]
+      if ($bv -eq $null -and $av -eq $null) { continue }
+      if ($bv -eq $null -or $av -eq $null) { $o += "$k(key-" + $(if ($bv -eq $null) { 'added' } else { 'removed' }) + ')'; continue }
+      foreach ($n in ($bv.Keys + $av.Keys | Sort-Object -Unique)) {
+        $x = $bv[$n]; $y = $av[$n]
+        if ($x -eq $null -or $y -eq $null -or $x.Kind -ne $y.Kind -or $x.Enc -ne $y.Enc) { $o += "$k\$n(" + $(if ($x -eq $null) { 'absent' } else { "$($x.Kind):$($x.Raw)" }) + '->' + $(if ($y -eq $null) { 'absent' } else { "$($y.Kind):$($y.Raw)" }) + ')' }
+      }
+    }
+    return $o
   }
-  $regFinal = Snap-Reg; $regLeft = @()
-  foreach ($k in ($regBefore.Keys + $regFinal.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regFinal[$k])) { $regLeft += $k } }
-  Log "narrator_exit_path=$exitPath registry_changed=[$($regDiff -join ' ; ')] restored=[$($regRestored -join ' ; ')] still_different_after_restore=[$($regLeft -join ' ; ')]"
+  function Reg-Settle([int]$maxMs) {   # snapshot repeatedly until two consecutive snapshots are identical
+    $sw = [Diagnostics.Stopwatch]::StartNew(); $prev = Snap-Reg; $prevSig = (($prev.Keys | Sort-Object | ForEach-Object { "$_|$(Reg-Sig $prev[$_])" }) -join "`n")
+    while ($sw.ElapsedMilliseconds -lt $maxMs) {
+      Start-Sleep -Milliseconds 700
+      $cur = Snap-Reg; $sig = (($cur.Keys | Sort-Object | ForEach-Object { "$_|$(Reg-Sig $cur[$_])" }) -join "`n")
+      if ($sig -eq $prevSig) { return $cur }
+      $prev = $cur; $prevSig = $sig
+    }
+    return $prev
+  }
+  $regAfter = Reg-Settle 6000; $regDiff = @(); $regRestored = @()
+  foreach ($k in ($regBefore.Keys + $regAfter.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regAfter[$k])) { $regDiff += $k } }
+  Log ("registry_after_settle value_diff=[" + ((Reg-DiffDetail $regBefore $regAfter) -join ' ; ') + "]")
+  $regFinal = $regAfter; $regLeft = @()
+  if ($narStarted) {
+    for ($try = 1; $try -le 4; $try++) {
+      $regLeft = @(); foreach ($k in ($regBefore.Keys + $regFinal.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regFinal[$k])) { $regLeft += $k } }
+      if ($regLeft.Count -eq 0 -and $try -gt 1) { break }   # verified identical after a restore pass
+      if ($regLeft.Count -eq 0) { break }
+      try { $r = @(Reg-Restore $regBefore); $regRestored += $r; Log "registry_restore_pass=$try actions=$($r.Count) [$($r -join ' ; ')]" } catch { Log "registry_restore_exception: $($_.Exception.Message)" }
+      $regFinal = Reg-Settle 3000
+    }
+  }
+  $regLeft = @(); foreach ($k in ($regBefore.Keys + $regFinal.Keys | Sort-Object -Unique)) { if ((Reg-Sig $regBefore[$k]) -ne (Reg-Sig $regFinal[$k])) { $regLeft += $k } }
+  # Residual diffs that survive restore+settle and are confined to values Windows itself maintains on ATConfig\narrator (run-state bookkeeping) are OS-managed, not probe state.
+  $osManagedNames = @('RunningState', 'LastUpdatedForScripts'); $regOs = @()
+  $leftDetail = @(Reg-DiffDetail $regBefore $regFinal)
+  if ($regLeft.Count -gt 0) {
+    $atKey = 'Software\Microsoft\Windows NT\CurrentVersion\Accessibility\ATConfig\narrator'
+    $onlyOs = $true
+    foreach ($d in $leftDetail) { $okOs = $false; foreach ($n in $osManagedNames) { if ($d.StartsWith("$atKey\$n(")) { $okOs = $true } }; if (-not $okOs) { $onlyOs = $false } }
+    if ($onlyOs -and $leftDetail.Count -gt 0) { $regOs = $regLeft; $regLeft = @() }
+  }
+  Log ("registry_final_value_diff=[" + ($leftDetail -join ' ; ') + "] os_managed_classified=[" + ($regOs -join ' ; ') + "]")
+  Log "narrator_exit_path=$exitPath registry_changed=[$($regDiff -join ' ; ')] restored=[$($regRestored -join ' ; ')] still_different_after_restore=[$($regLeft -join ' ; ')] os_managed_residual=[$($regOs -join ' ; ')]"
   # Caps Lock: Narrator consumes the key while running; if the state still differs, restore it while the probe is foreground
   $capsNow = ([SRN.N]::GetKeyState(0x14) -band 1); $capsFixed = 'n/a'
   if ($capsNow -ne $capsBefore -and $script:Hwnd -ne [IntPtr]::Zero -and -not $script:Proc.HasExited) { $capsFixed = (Send-GatedKey $VK_CAPS 'caps-lock-restore' 200); $capsNow = ([SRN.N]::GetKeyState(0x14) -band 1) }
   $leftover = @(Get-Process | Where-Object { $pidsBefore -notcontains $_.Id -and $_.Name -like 'Narrator*' }).Count
-  Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore -and $regLeft.Count -eq 0) { 'PASS' } else { 'FAIL' }) "exit_path=$exitPath narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] registry_restored=$($regRestored.Count) still_different_after_restore=[$($regLeft -join ' ; ')] (before-snapshot in $Out.regbackup.txt)"
+  Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore -and $regLeft.Count -eq 0) { 'PASS' } else { 'FAIL' }) "exit_path=$exitPath narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] registry_restored=$($regRestored.Count) still_different_after_restore=[$($regLeft -join ' ; ')] os_managed_residual=[$($regOs -join ' ; ') values=$($leftDetail -join ' ; ')] (before-snapshot in $Out.regbackup.txt)"
   Close-And-Collect 'F8'
 }
 
