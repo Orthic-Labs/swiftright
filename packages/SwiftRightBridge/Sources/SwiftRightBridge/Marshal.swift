@@ -68,6 +68,8 @@ func cSemantic(_ s: SemanticNode, _ arena: Arena) -> swr_semantic {
     c.label = label.ptr; c.label_len = label.len
     let value = arena.string(s.value)
     c.value = value.ptr; c.value_len = value.len
+    let identifier = arena.string(s.identifier)
+    c.identifier = identifier.ptr; c.identifier_len = identifier.len
     var runs: [swr_ax_text_run] = []
     for r in s.runs {
         var cr = swr_ax_text_run()
@@ -148,10 +150,16 @@ func decodeEvent(_ e: swr_event) -> BridgeEvent {
 /// Splits a measured run into per-visual-line AccessKit text runs (UTF-8 lengths, line-local
 /// positions/widths, word starts). `origin` is the run's top-left in physical window px;
 /// run ids are `firstRunID + lineIndex`.
+/// Empty text publishes ONE zero-length run (id `firstRunID`) at the origin: accesskit_consumer
+/// `supports_text_ranges` needs a text run before an editable node exposes UIA TextPattern.
 public func makeAXTextRuns(text: String, measurement m: TextMeasurement, cells: [CharCell],
                            origin: (x: Float, y: Float), lineHeightPx: Float,
                            firstRunID: NodeID) -> [AXTextRun] {
-    if cells.isEmpty { return [] }     // empty text publishes no runs
+    if cells.isEmpty {
+        return [AXTextRun(id: firstRunID, text: "", charLengths: [], charPositions: [],
+                          charWidths: [], wordStarts: [],
+                          bounds: Rect(x: origin.x, y: origin.y, w: 0, h: lineHeightPx))]
+    }
     let utf8 = Array(text.utf8)
     var runs: [AXTextRun] = []
     for (k, line) in m.lines.enumerated() {

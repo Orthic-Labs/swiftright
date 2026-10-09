@@ -38,6 +38,7 @@ pub struct Sem {
     pub flags: u32,
     pub label: String,
     pub value: String,
+    pub identifier: String,
     pub runs: Vec<SemRun>,
     pub sel: Option<(u64, u32, u64, u32)>,
 }
@@ -193,6 +194,9 @@ unsafe fn convert_prims(prims: &[Primitive], runs: &RunSlab) -> Result<Vec<Prim>
 }
 
 unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
+    if s.identifier_len > IDENTIFIER_MAX {
+        return Err(E_TOO_LARGE);
+    }
     let rs = slice_of(s.runs, s.run_count)?;
     let mut runs = Vec::with_capacity(rs.len());
     for r in rs {
@@ -213,6 +217,7 @@ unsafe fn convert_sem(s: &Semantic) -> Result<Sem, Status> {
         flags: s.flags,
         label: str_of(s.label, s.label_len)?,
         value: str_of(s.value, s.value_len)?,
+        identifier: str_of(s.identifier, s.identifier_len)?,
         runs,
         sel: if s.flags & SEM_HAS_SELECTION != 0 {
             Some((s.sel_anchor_run, s.sel_anchor_char, s.sel_focus_run, s.sel_focus_char))
@@ -343,6 +348,7 @@ fn build_ax(tree: &Tree) -> AxShared {
             flags: s.flags,
             label: s.label.clone(),
             value: s.value.clone(),
+            identifier: s.identifier.clone(),
             bounds: n.bounds,
             runs: s
                 .runs

@@ -102,7 +102,7 @@ final class Smoke: TextStore {
             nodes.append(NodeUpsert(
                 id: 1, order: 1, bounds: Rect(x: 20 * s, y: 20 * s, w: m.width, h: m.height),
                 primitives: [.text(m.run, x: 20 * s, y: 20 * s)],
-                semantic: SemanticNode(role: .staticText, label: labelText)))
+                semantic: SemanticNode(role: .staticText, label: labelText, identifier: "title/hello")))
         }
 
         // 4 wrapped paragraph (200 DIP wide)
@@ -112,7 +112,7 @@ final class Smoke: TextStore {
             nodes.append(NodeUpsert(
                 id: 4, order: 2, bounds: Rect(x: 20 * s, y: y, w: 200 * s, h: m.height),
                 primitives: [.text(m.run, x: 20 * s, y: y)],
-                semantic: SemanticNode(role: .staticText, label: paragraph)))
+                semantic: SemanticNode(role: .staticText, label: paragraph, identifier: "text/paragraph")))
             y += m.height + 20 * s
         }
 
@@ -127,7 +127,8 @@ final class Smoke: TextStore {
         nodes.append(NodeUpsert(
             id: 2, order: 3, flags: [.hitTarget, .focusable],
             bounds: Rect(x: 20 * s, y: by, w: bw, h: bh), primitives: buttonPrims,
-            semantic: SemanticNode(role: .button, label: "Press me", actions: [.invoke, .focus])))
+            semantic: SemanticNode(role: .button, label: "Press me", actions: [.invoke, .focus],
+                                       identifier: "toolbar/press")))
         y = by + bh + 20 * s
 
         // 3 editable text node
@@ -139,7 +140,8 @@ final class Smoke: TextStore {
                   borderColor: 0x888888FF, borderWidth: max(1, s)),
         ]
         var editSem = SemanticNode(role: .textField, label: "Edit", value: text,
-                                   actions: [.focus, .setValue, .setSelection])
+                                   actions: [.focus, .setValue, .setSelection],
+                                   identifier: "field/edit")
         let origin = (x: 20 * s + 8 * s, y: ey + (eh - lh) / 2)
         editOrigin = origin
         if let m = measure(text) {
@@ -157,7 +159,9 @@ final class Smoke: TextStore {
             editSem.runs = runs
             if !runs.isEmpty {
                 var line = 0, idxInLine = 0
-                if caretIndex < cells.count {
+                if cells.isEmpty {
+                    line = 0; idxInLine = 0          // empty text: the zero-length run, character 0
+                } else if caretIndex < cells.count {
                     line = Int(cells[caretIndex].line)
                     idxInLine = cells[..<caretIndex].filter { Int($0.line) == line }.count
                 } else {
@@ -180,7 +184,7 @@ final class Smoke: TextStore {
             nodes.append(NodeUpsert(
                 id: 5, order: 5, bounds: Rect(x: 20 * s, y: y, w: m.width, h: m.height),
                 primitives: [.text(m.run, x: 20 * s, y: y)],
-                semantic: SemanticNode(role: .staticText, label: status)))
+                semantic: SemanticNode(role: .staticText, label: status, identifier: "status/ax")))
         }
 
         version += 1

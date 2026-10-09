@@ -33,6 +33,7 @@ pub struct AxNode {
     pub flags: u32,
     pub label: String,
     pub value: String,
+    pub identifier: String,
     pub bounds: [f32; 4],
     pub runs: Vec<AxRun>,
     pub sel: Option<(u64, u32, u64, u32)>,
@@ -100,8 +101,17 @@ pub fn build_tree() -> TreeUpdate {
         if !n.label.is_empty() {
             node.set_label(n.label.clone());
         }
-        if !n.value.is_empty() || n.role == ROLE_TEXT_FIELD {
+        if n.role == ROLE_STATIC_TEXT {
+            // accesskit_consumer node.rs `label_comes_from_value` is true for Role::Label, and
+            // accesskit_windows `name()` then writes the VALUE as UIA Name. The bridge's text
+            // is the label, so a static text without a value publishes its label as the value.
+            node.set_value(if n.value.is_empty() { n.label.clone() } else { n.value.clone() });
+        } else if !n.value.is_empty() || n.role == ROLE_TEXT_FIELD {
             node.set_value(n.value.clone());
+        }
+        if !n.identifier.is_empty() {
+            // AccessKit author id -> UIA AutomationId (accesskit_windows node.rs automation_id).
+            node.set_author_id(n.identifier.clone());
         }
         if n.actions & ACT_INVOKE != 0 {
             node.add_action(Action::Click);

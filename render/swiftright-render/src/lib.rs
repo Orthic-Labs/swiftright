@@ -1,4 +1,4 @@
-//! swiftright-render: ABI v0 (revision 0.3) renderer for SwiftRight on Windows.
+//! swiftright-render: ABI v0 (revision 0.4) renderer for SwiftRight on Windows.
 //! See render/swiftright-abi/include/swiftright.h for the contract (threading,
 //! ownership, units). Every `extern "C"` entry contains panics (SWR_E_PANIC).
 //!

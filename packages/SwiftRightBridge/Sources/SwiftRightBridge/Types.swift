@@ -91,11 +91,17 @@ public struct SemanticNode {
     public var multiline: Bool
     public var runs: [AXTextRun]
     public var selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)?
+    /// Stable automation identifier (ABI rev 0.4): Windows UIA AutomationId; the Mac
+    /// counterpart is AXIdentifier. Host-owned, UTF-8, at most 256 bytes, empty = none.
+    /// Keep it unique among siblings.
+    public var identifier: String
     public init(role: NodeRole, label: String = "", value: String = "", actions: AXActions = [],
                 multiline: Bool = false, runs: [AXTextRun] = [],
-                selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)? = nil) {
+                selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)? = nil,
+                identifier: String = "") {
         self.role = role; self.label = label; self.value = value; self.actions = actions
         self.multiline = multiline; self.runs = runs; self.selection = selection
+        self.identifier = identifier
     }
 }
 

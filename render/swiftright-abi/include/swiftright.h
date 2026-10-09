@@ -1,10 +1,14 @@
 /*
- * swiftright.h - SwiftRight renderer bridge, C ABI v0 (revision 0.3).
+ * swiftright.h - SwiftRight renderer bridge, C ABI v0 (revision 0.4).
  *
  * Status: ABI v0 candidate consolidated from the SR0-B/SR0-D probes
  * (gpui-drain 0.1, frame-clock 0.2, bridge-faults, text-geometry, ime-text-node).
  * Not frozen: freezing needs the SR0-C contract freeze. Exact compatibility is
  * required (major AND minor must match; every struct size below must match).
+ * Revision 0.4: swr_semantic gains an optional stable identifier (identifier,
+ * identifier_len), exposed to Windows UI Automation as AutomationId. Appended at the
+ * end of swr_semantic, so every earlier field keeps its offset; the struct grows
+ * from 72 to 88 bytes and swr_node from 128 to 144 bytes.
  *
  * The header is plain C99 with fixed-width types only, so the layout is the same
  * for the Rust renderer, the MSVC ABI and the Swift clang importer. No Swift
@@ -94,7 +98,10 @@ extern "C" {
 #endif
 
 #define SWR_ABI_MAJOR 0
-#define SWR_ABI_MINOR 3
+#define SWR_ABI_MINOR 4
+
+/* Longest accepted swr_semantic.identifier, in UTF-8 bytes. Longer -> SWR_E_TOO_LARGE. */
+#define SWR_IDENTIFIER_MAX 256
 
 /* ------------------------------------------------------------------ status */
 
@@ -330,6 +337,15 @@ typedef struct swr_semantic {
     uint32_t               run_count;
     uint32_t               sel_anchor_char;  /* character index inside the anchor run */
     uint32_t               sel_focus_char;
+    /* Optional stable identifier (rev 0.4), UTF-8, borrowed, at most
+     * SWR_IDENTIFIER_MAX bytes; NULL/0 = none. Host-owned: it names the node for
+     * automation (Windows UIA AutomationId; the Mac counterpart is AXIdentifier, e.g.
+     * "row/<uuid>/field" or "toolbar/insert"). It is not a handle and not parsed by
+     * the renderer. Among siblings it should be unique: AutomationId lookups by value
+     * are ambiguous otherwise. The renderer does not check uniqueness. */
+    const char            *identifier;
+    uint32_t               identifier_len;
+    uint32_t               reserved;
 } swr_semantic;
 
 typedef struct swr_node {

@@ -1,10 +1,10 @@
-//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.3).
+//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.4).
 //! Compile-time size asserts use the sizes measured with clang on the header.
 
 use std::ffi::{c_char, c_void};
 
 pub const ABI_MAJOR: u32 = 0;
-pub const ABI_MINOR: u32 = 3;
+pub const ABI_MINOR: u32 = 4;
 pub const API_FN_COUNT: u32 = 13;
 
 pub type Status = i32;
@@ -84,6 +84,8 @@ pub const MOD_SHIFT: u32 = 0x4;
 pub const MOD_PLATFORM: u32 = 0x8;
 
 pub const EVENT_TEXT_CAP: usize = 64;
+
+pub const IDENTIFIER_MAX: u32 = 256;
 
 pub const MODAL_MESSAGE: u32 = 1;
 
@@ -254,6 +256,9 @@ pub struct Semantic {
     pub run_count: u32,
     pub sel_anchor_char: u32,
     pub sel_focus_char: u32,
+    pub identifier: *const c_char,
+    pub identifier_len: u32,
+    pub reserved: u32,
 }
 
 #[repr(C)]
@@ -452,9 +457,9 @@ const _: () = assert!(std::mem::size_of::<BootstrapInfo>() == 88);
 const _: () = assert!(std::mem::size_of::<HostCallbacks>() == 112);
 const _: () = assert!(std::mem::size_of::<Api>() == 112);
 const _: () = assert!(std::mem::size_of::<Transaction>() == 72);
-const _: () = assert!(std::mem::size_of::<Node>() == 128);
+const _: () = assert!(std::mem::size_of::<Node>() == 144);
 const _: () = assert!(std::mem::size_of::<Primitive>() == 80);
-const _: () = assert!(std::mem::size_of::<Semantic>() == 72);
+const _: () = assert!(std::mem::size_of::<Semantic>() == 88);
 const _: () = assert!(std::mem::size_of::<AxTextRun>() == 80);
 const _: () = assert!(std::mem::size_of::<Event>() == 136);
 const _: () = assert!(std::mem::size_of::<MeasureRequest>() == 88);

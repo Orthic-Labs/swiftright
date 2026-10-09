@@ -6,6 +6,8 @@
 #  - defocuses the window for ~2.5 s (frames must keep presenting), refocuses
 #  - types 'a' with a virtual-key (never Unicode packets) into the focused editable node
 #  - reads the edit node's UIA Value
+#  - finds every node by UIA AutomationId (ABI rev 0.4 identifier) with its control type and Name
+#  - empty editable node before typing: UIA TextPattern present, selection degenerate at 0
 param(
   [string]$Bin = 'D:\Claude\sr0b-abi0\scratch\out\Products\Release-windows-x86_64',
   [string]$Out = 'D:\Claude\sr0b-abi0\result-smoke.txt'
@@ -85,6 +87,30 @@ if ($hwnd -ne [IntPtr]::Zero) {
   }
   Start-Sleep -Milliseconds 500
 
+  # Empty editable node (nothing typed yet): UIA TextPattern present, selection degenerate at 0
+  $preCond = New-Object System.Windows.Automation.AndCondition(
+    (New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'field/edit')),
+    (New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)))
+  $preEdit = $null
+  for ($k = 0; $k -lt 20 -and $preEdit -eq $null; $k++) { $preEdit = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $preCond); if ($preEdit -eq $null) { Start-Sleep -Milliseconds 250 } }
+  if ($preEdit -eq $null) { Log 'empty_edit_textpattern=NOT_FOUND' } else {
+    $tpObj = $null
+    if (-not $preEdit.TryGetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern, [ref]$tpObj)) { Log 'empty_edit_textpattern=MISSING' } else {
+      $doc = $tpObj.DocumentRange
+      $sel = $tpObj.GetSelection()
+      $degenerate = $false
+      if ($sel.Length -eq 1) {
+        $r = $sel[0]
+        $startAtDoc = $r.CompareEndpoints([System.Windows.Automation.Text.TextPatternRangeEndpoint]::Start, $doc, [System.Windows.Automation.Text.TextPatternRangeEndpoint]::Start) -eq 0
+        $collapsed = $r.CompareEndpoints([System.Windows.Automation.Text.TextPatternRangeEndpoint]::Start, $r, [System.Windows.Automation.Text.TextPatternRangeEndpoint]::End) -eq 0
+        $degenerate = $startAtDoc -and $collapsed
+      }
+      $emptyText = ($doc.GetText(-1) -eq '')
+      $pass = $degenerate -and $emptyText
+      Log ("empty_edit_textpattern={0} selections={1} degenerate_at_0={2} text_empty={3}" -f $(if ($pass) {'PASS'} else {'FAIL'}), $sel.Length, $degenerate, $emptyText)
+    }
+  }
+
   # defocus, keep the window alive and presenting
   [void][SW.N]::SetForegroundWindow([SW.N]::GetShellWindow()); Start-Sleep -Milliseconds 300
   Log ("defocused foreground_is_target={0}" -f ([SW.N]::GetForegroundWindow() -eq $hwnd))
@@ -100,6 +126,33 @@ if ($hwnd -ne [IntPtr]::Zero) {
   if ($edit -eq $null) { Log 'uia_edit=NOT_FOUND' } else {
     try { $v = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value; Log "uia_edit_value=[$v]" } catch { Log "uia_edit_value=ERR $($_.Exception.Message)" }
   }
+
+  # ABI rev 0.4: each identifier must be reachable as a UIA AutomationId with the expected control type
+  # Static text Name comes from the label (ABI rev 0.4 publishes it as the AccessKit value)
+  $idChecks = @(
+    @{ Id = 'title/hello';    Type = [System.Windows.Automation.ControlType]::Text;   Name = 'Hello SwiftRight: bridge ABI v0' },
+    @{ Id = 'text/paragraph'; Type = [System.Windows.Automation.ControlType]::Text;   Name = 'The quick brown fox jumps over the lazy dog while SwiftRight wraps this text.' },
+    @{ Id = 'toolbar/press';  Type = [System.Windows.Automation.ControlType]::Button; Name = 'Press me' },
+    @{ Id = 'field/edit';     Type = [System.Windows.Automation.ControlType]::Edit;   Name = 'Edit' },
+    @{ Id = 'status/ax';      Type = [System.Windows.Automation.ControlType]::Text;   Name = 'AX invokes:' }
+  )
+  $idPass = 0
+  foreach ($c in $idChecks) {
+    $idCond = New-Object System.Windows.Automation.AndCondition(
+      (New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::AutomationIdProperty, $c.Id)),
+      (New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, $c.Type)))
+    $el = $null
+    for ($k = 0; $k -lt 20 -and $el -eq $null; $k++) { $el = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $idCond); if ($el -eq $null) { Start-Sleep -Milliseconds 250 } }
+    if ($el -eq $null) { Log ("automation_id[{0}]=NOT_FOUND" -f $c.Id) } else {
+      $nm = [string]$el.Current.Name
+      # 'status/ax' carries a live count, so its expected Name is a prefix
+      $nameOk = if ($c.Id -eq 'status/ax') { $nm.StartsWith($c.Name) } else { $nm -eq $c.Name }
+      if ($nameOk) { $idPass++ }
+      Log ("automation_id[{0}]={1} control_type={2} name=[{3}] name_ok={4}" -f $c.Id, $(if ($nameOk) {'ok'} else {'FAIL'}), $el.Current.ControlType.ProgrammaticName, $nm, $nameOk)
+    }
+  }
+  Log ("automation_id_checks={0}/{1}" -f $idPass, $idChecks.Count)
+  if ($idPass -eq $idChecks.Count) { Log 'AUTOMATIONID PASS' } else { Log 'AUTOMATIONID FAIL' }
 }
 
 if (-not $proc.WaitForExit(60000)) { $proc.Kill(); Log 'TIMEOUT: killed after 60 s' }

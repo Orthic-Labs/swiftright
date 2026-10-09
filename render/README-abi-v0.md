@@ -1,4 +1,4 @@
-# SwiftRight renderer bridge, ABI v0 (revision 0.3)
+# SwiftRight renderer bridge, ABI v0 (revision 0.4)
 
 Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freeze waits on the SR0-C contract freeze). Nothing committed.
 
@@ -8,6 +8,15 @@ Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freez
 | `render/swiftright-render/` | Rust cdylib `swiftright_render.dll` (gpui =0.2.2, accesskit =0.25.1, accesskit_windows =0.35.1, raw-window-handle =0.6.2; `Cargo.lock` from `probes/sr0-b/text-geometry`). |
 | `packages/SwiftRightBridge/` | Swift package: `CSwiftRight` systemLibrary (header is a symlink to the single source, no `link` directive), loader, marshalling, `Bridge` / `BridgeWindow`. Windows code behind `#if os(Windows)`; on macOS it builds and `Bridge.load` throws `unsupportedPlatform`. |
 | `examples/BridgeSmoke/` | Windows smoke executable + scripts (`build-smoke.ps1`, `drive-smoke.ps1`, `schedule-smoke.ps1`). |
+
+## Revision notes
+
+- **0.4** (SR0-B): `swr_semantic` gains an optional stable identifier, `identifier` (UTF-8 ptr + `identifier_len`, at most `SWR_IDENTIFIER_MAX` = 256 bytes, longer is `SWR_E_TOO_LARGE`; NULL/0 = none), plus a reserved word. Appended at the end of the struct: `swr_semantic` 72 -> 88 bytes, `swr_node` 128 -> 144 bytes (clang-measured; the Rust mirror asserts the same). The renderer maps it to AccessKit `Node::set_author_id` (accesskit 0.25.1, `src/lib.rs` `AuthorId` entry), which accesskit_windows 0.35.1 publishes as the UIA `AutomationId` (`src/node.rs` `automation_id`, falls back to `author_id` when no `html_id` is set; `UIA_AutomationIdPropertyId` mapping). Mac counterpart: `AXIdentifier`. Uniqueness among siblings is the host's job and is not checked. Swift: `SemanticNode(identifier:)`.
+  Same revision, two UIA mappings the SR0-O recorder found:
+  - Static text: accesskit_consumer `label_comes_from_value()` is true for `Role::Label` (`src/node.rs`), and accesskit_windows `name()` (`src/node.rs`) writes the value as the UIA Name. The renderer therefore publishes a static text's label as its AccessKit value when the value is empty, so UIA Name = label.
+  - Empty editable node: accesskit_consumer `supports_text_ranges()` (`src/text.rs`) needs at least one text run, and UIA TextPattern is offered only when it holds. `makeAXTextRuns` publishes one zero-length run for empty text, so an empty field exposes TextPattern with a degenerate selection at 0. Run id = `firstRunID`.
+  - Source citations: accesskit_consumer 0.39.1 (lockfile), docs.rs source; accesskit 0.25.1 `set_author_id`; accesskit_windows 0.35.1 `automation_id` and the `Role::Label` / `TextInput` / `Button` control-type mapping.
+- **0.3**: previous revision, no node identifier (the SR0-S gap: Windows rows could only be labelled "Row N").
 
 ## What v0 covers
 
