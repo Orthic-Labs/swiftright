@@ -1,0 +1,86 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-09T14:30:42.2266103+05:30
+window_hwnd=131872 polls=4 exited_early=False
+styles style=0x14CF0000 exstyle=0x240100 WS_EX_LAYERED=False WS_EX_TRANSPARENT=False WS_EX_NOREDIRECTIONBITMAP=True
+client=1600x1200 origin=(928,508) edge_point=(930,608) window_from_point_is_target=True wm_nchittest=1 (1=HTCLIENT)
+edge_click_sent=true
+uia_invoke=ok
+empty_edit_textpattern=PASS selections=1 degenerate_at_0=True text_empty=True
+defocused foreground_is_target=False
+refocused foreground_is_target=True
+uia_edit_value=[a]
+automation_id[title/hello]=ok control_type=ControlType.Text name=[Hello SwiftRight: bridge ABI v0] name_ok=True
+automation_id[text/paragraph]=ok control_type=ControlType.Text name=[The quick brown fox jumps over the lazy dog while SwiftRight wraps this text.] name_ok=True
+automation_id[toolbar/press]=ok control_type=ControlType.Button name=[Press me] name_ok=True
+automation_id[field/edit]=ok control_type=ControlType.Edit name=[Edit] name_ok=True
+automation_id[status/ax]=ok control_type=ControlType.Text name=[AX invokes: 1  typed: [a]] name_ok=True
+automation_id_checks=5/5
+AUTOMATIONID PASS
+r06[r06/checkbox]=ok control_type=ControlType.CheckBox toggle=On
+r06[r06/switch]=ok control_type=ControlType.Button toggle=Off
+r06[r06/mixed]=ok control_type=ControlType.CheckBox toggle=Indeterminate
+r06[r06/menu]=ok control_type=ControlType.Menu
+r06[r06/menuitem]=ok control_type=ControlType.MenuItem
+r06[r06/alert]=ok control_type=ControlType.Window
+r06[r06/dialog]=ok control_type=ControlType.Window
+r06[r06/row-selected]=ok control_type=ControlType.ListItem selected=True
+r06[r06/disabled]=ok control_type=ControlType.Button enabled=False
+r06[image/swatch]=ok control_type=ControlType.Image
+rev06_uia_checks=10/10
+REV06 UIA PASS
+exit=1 end=2026-10-09T14:31:04.6421434+05:30
+--- stdout ---
+ready: window=100000001 client=1600x1396px scale=2.5
+event: pointer down x=2.0 y=100.0 hit=0 snapshot=5 window_w=1600
+event: AX action=2 node=2
+event: AX invoke node=2 window=100000001 snapshot=5 (current 5)
+event: key a typed=a mods=0
+frames_while_not_foreground: ticks_with_inactive_window=170 of 1282
+renderer stats: paints=1284 commits=6 measure_calls=21 cache_hits=9 events=8 ax_enqueued=2 ax_rejected=0 ime_calls=2 ime_busy=0 live_nodes=0 post_close_drains=1 post_close_timeouts=0
+run: ok
+PASS wrap at 2 widths [wide(1050px)=2 lines 906.7x120.0; narrow(500px)=3 lines 487.5x180.0]
+PASS height = lines x line height
+PASS line breaks cover all bytes [utf8 77 wide=77 narrow=77]
+PASS cache hit on repeat measure [key f99cb0be541c5a26]
+PASS char cells [77 cells, last on line 2]
+PASS stale run handle rejected [second release returned false]
+PASS stale commit version rejected [SWR_E_STALE_VERSION]
+PASS bogus window generation rejected [SWR_E_STALE_HANDLE]
+PASS underline primitive (IME marked text) accepted [accepted 1->2 rejected 2->2; limitation: the renderer exposes no per-primitive draw counter, so painting is not asserted (stats.paints only counts frames)]
+PASS image registered (handle, live_nodes +1) [rc=SWR_OK live_nodes 6->7]
+PASS SWR_PRIM_IMAGE accepted (scaled 4x4 -> 64 DIP) [rc=SWR_OK; limitation: painting is not asserted (no per-primitive draw counter)]
+FAIL image released once; second release is stale [release=true again=false live_nodes back to 7 (was 6)]
+PASS commit with a released image handle rejected [SWR_E_STALE_HANDLE]
+PASS image argument errors typed [zero_width=SWR_E_BAD_ARG 8193px=SWR_E_TOO_LARGE stride<row=SWR_E_BAD_ARG]
+PASS image left registered for teardown check [dropped with the window; see live nodes zero after teardown]
+PASS rev 0.6 roles, toggled, selected and disabled accepted in one commit [rc=SWR_OK; UIA mapping is checked by scripts/drive-smoke.ps1 (see README-abi-v0.md rev 0.6)]
+PASS multi-paragraph measure: lines partition the text, '\n' is a zero-width cell [lines=5 bytes=20/20 breaks=4 cells=20/20 height=300.0]
+PASS per-line AX text runs keep the line break [runs=["alpha\n", "beta gamma\n", "\n", "z\n", ""]]
+PASS caret after a trailing newline starts the next line [y=240.0 x=0.0]
+FAIL each paragraph wraps on its own [paragraph alone=3 lines, two paragraphs=5]
+PASS '\r' still rejected (SWR_E_UNSUPPORTED) [SWR_E_UNSUPPORTED]
+PASS menu and dialog arguments validated before queueing [0 buttons=SWR_E_BAD_ARG 9 buttons=SWR_E_TOO_LARGE duplicate ids=SWR_E_BAD_ARG default out of range=SWR_E_BAD_ARG only separators=SWR_E_BAD_ARG 65 items=SWR_E_TOO_LARGE; opening a real menu/dialog needs a human or UIA driver]
+PASS commit after close rejected [SWR_E_SHUTDOWN]
+PASS startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS AX Invoke handled [invokes=1 window gen tag ok=true]
+PASS typed character reached the text store [typed=[a] ime_replace_calls=1 key_events=1]
+PASS click 2px inside the client edge reached the window [pointer_events=2]
+PASS display ticks delivered [ticks=1282 max_gap_ms=19.9 paints=1284]
+PASS non-reentrant drain [selftest=1 swift_refused=0 rust_refused=0 drains=1299]
+PASS no thread violations or host panics [thread_violations=0 host_panics=0]
+PASS commits accepted; only the 5 injected faults rejected [accepted=6 rejected=5 deferred_in_ime=1]
+PASS window_closed delivered once [calls=1]
+PASS late async result after close rejected [commit=SWR_E_SHUTDOWN measure=SWR_E_SHUTDOWN]
+PASS cleanup ran in post-close pump [post_close_drains=1]
+PASS live nodes zero after teardown [at cleanup=0 after run=0]
+PASS swr_shutdown_complete before close returns SWR_E_STATE and has no effect [rc=SWR_E_STATE post_close_drains_at_call=0 window kept running: close_calls=1]
+PASS pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.02s after window_closed]
+PASS repeat swr_shutdown_complete is idempotent (in pump and after run returned) [second call in pump=SWR_OK after run=SWR_OK]
+PASS no stale or unknown-node events [stale=0 unknown=0 rust_dropped_stale=0]
+SMOKE FAIL (37/39)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] window hwnd=0x20320 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] shutdown paints=1284 paints_while_inactive=172 drains=1299 ticks_delivered=1282 events_pushed=8 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
+
+ARTIFACTS exe=5729183122bc70f07ba3f77435f773999e271d2047b1ce75bf84923ab607b4b7 renderer=c80b9517b044968f3e13ee9d92eefc8704d000510b9a51b3245c885ce1a3fb30 trace=5534fb58d0f6b832d8ab3e87110e364ddef12feaba6b968913dff2c9ba1cea88

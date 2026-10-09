@@ -4,7 +4,9 @@ param([string]$Base = 'D:\Claude\sr0b-abi0', [string]$Tag = 'run1', [switch]$Ski
 $ErrorActionPreference = 'Stop'
 $task = "SR0B-Smoke-$Tag"
 $out = "$Base\result-smoke-$Tag.txt"
-$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\examples\BridgeSmoke\scripts\drive-smoke.ps1`" -Out `"$out`"$(if ($SkipShutdown) { ' -SkipShutdown' })"
+# Pass -Bin explicitly: drive-smoke.ps1 defaults to the sr0b-abi0 build, which is not the tree under $Base.
+$bin = "$Base\scratch\out\Products\Release-windows-x86_64"
+$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\examples\BridgeSmoke\scripts\drive-smoke.ps1`" -Bin `"$bin`" -Out `"$out`"$(if ($SkipShutdown) { ' -SkipShutdown' })"
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $taskArgs -WorkingDirectory $Base
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 5) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
