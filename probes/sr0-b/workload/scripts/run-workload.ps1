@@ -14,7 +14,10 @@ param(
   [string]$Tag = '',
   [string]$ExpectDll = '777F14C4FF11822BF6E2174E127B3A4A325D83A6B322FA599C7FC4408B335441',
   [double]$ExpectScale = 1.0,
-  [switch]$SkipQuietCheck
+  [int]$MaxIdleCpu = 15,              # abort if average total CPU % over the sample window exceeds this
+  [int]$CpuSampleSeconds = 20,
+  [switch]$Force,                     # bypass the quiet-host gate; receipt is marked host_quiet=forced
+  [switch]$SkipQuietCheck             # legacy alias for -Force
 )
 $ErrorActionPreference = 'Continue'
 if (-not $Tag) { $Tag = (Get-Date -Format 'yyyyMMdd-HHmmss') + "-$Instr" }
@@ -51,9 +54,69 @@ $null = Log ("whoami=" + (whoami) + " elevated=" + ([Security.Principal.WindowsP
 $art = & "$scripts\verify-artifacts.ps1" -Base $Base -ExpectDll $ExpectDll
 $art | ForEach-Object { Log $_ }
 if (-not ($art -match 'ARTIFACT_OK')) { Log 'ABORT: artifact gate failed'; exit 2 }
-if (-not $SkipQuietCheck) {
-  $busy = Get-Process | Where-Object { $_.ProcessName -match '^(rk2|swift-build|swift-frontend|swiftc|cargo|rustc|link|cl|msbuild|node|chrome|msedge)' } | Select-Object -ExpandProperty ProcessName -Unique
-  if ($busy) { Log ("ABORT: host not quiet, running: " + ($busy -join ',')); exit 3 }
+# 1b) quiet-host gate. BLOCKS only on build/test activity. Measures background CPU. Logs everything else.
+$forceQuiet = [bool]($Force.IsPresent -or $SkipQuietCheck.IsPresent)
+$hostRcpt   = "$runRoot\host-quiet.txt"
+function Write-HostReceipt([string]$state, [string[]]$lines) {
+  $hdr = @("host_quiet=$state", "max_idle_cpu_pct=$MaxIdleCpu", "sample_seconds=$CpuSampleSeconds") + $lines
+  Set-Content -Path $hostRcpt -Value $hdr -Encoding ascii
+}
+function Get-CpuMap {
+  $m = @{}
+  foreach ($p in (Get-Process -ErrorAction SilentlyContinue)) {
+    try { $m[$p.Id] = [pscustomobject]@{ Name = $p.ProcessName; Cpu = $p.TotalProcessorTime.TotalSeconds } } catch {}
+  }
+  return $m
+}
+$buildNames = @('cargo','rustc','swift-build','swift-frontend','swiftc','link','cl','clang','lld-link','msbuild','makeappx','signtool')
+$ownPattern = '^(FreshOnBridge|BridgeSmoke|SliceApp|Workload|SwiftHost)'
+$blockers = @()
+foreach ($p in (Get-Process -ErrorAction SilentlyContinue)) {
+  $pth = try { $p.Path } catch { $null }
+  $isOurs = [bool]($pth -and $pth.StartsWith($Base, [StringComparison]::OrdinalIgnoreCase))
+  if (($buildNames -contains $p.ProcessName) -or (($p.ProcessName -match $ownPattern) -and -not $isOurs)) {
+    $blockers += "$($p.ProcessName)($($p.Id))"
+  }
+}
+$hostLines = @()
+foreach ($t in @(Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like 'SR0*' -and $_.TaskName -ne $taskName })) {
+  $hostLines += "sched_sr0=$($t.TaskName) state=$($t.State)"
+  if ($t.State -eq 'Running') { $blockers += "task:$($t.TaskName)" }
+}
+$blockTxt = if ($blockers.Count) { $blockers -join ',' } else { 'none' }
+$hostLines = @("blockers=$blockTxt") + $hostLines
+if ($blockers.Count -and -not $forceQuiet) {
+  Log "ABORT: build/test activity running: $blockTxt"
+  Write-HostReceipt 'blocked' $hostLines
+  exit 3
+}
+if ($forceQuiet) {
+  Log "host_quiet=forced: quiet gate bypassed (-Force); blockers seen: $blockTxt"
+  Write-HostReceipt 'forced' (@('cpu_avg_pct=not_sampled') + $hostLines)
+} else {
+  Log "cpu sampling ${CpuSampleSeconds}s (gate: average total CPU <= $MaxIdleCpu%)"
+  $snapA = Get-CpuMap
+  $ctr = Get-Counter -Counter '\Processor(_Total)\% Processor Time' -SampleInterval 1 -MaxSamples $CpuSampleSeconds
+  $snapB = Get-CpuMap
+  $cpuAvg = [math]::Round(($ctr.CounterSamples | Measure-Object -Property CookedValue -Average).Average, 1)
+  $cores = [Environment]::ProcessorCount
+  $raw = foreach ($id in $snapA.Keys) {
+    if ($snapB.ContainsKey($id) -and $snapB[$id].Name -eq $snapA[$id].Name) {
+      $d = $snapB[$id].Cpu - $snapA[$id].Cpu
+      [pscustomobject]@{ Name = $snapA[$id].Name; Id = $id; Pct = [math]::Round($d / ($CpuSampleSeconds * $cores) * 100, 2) }
+    }
+  }
+  $rows = @($raw | Sort-Object Pct -Descending)
+  $cpuLines = $hostLines + @("cpu_avg_pct=$cpuAvg")
+  foreach ($r in ($rows | Select-Object -First 5)) { $l = "top_cpu=$($r.Name)($($r.Id)) $($r.Pct)%"; Log $l; $cpuLines += $l }
+  foreach ($r in ($rows | Select-Object -Skip 5 | Where-Object { $_.Pct -ge 1.0 })) { $l = "notable_cpu=$($r.Name)($($r.Id)) $($r.Pct)%"; Log $l; $cpuLines += $l }
+  if ($cpuAvg -gt $MaxIdleCpu) {
+    Log "ABORT: host busy, average total CPU $cpuAvg% > $MaxIdleCpu%"
+    Write-HostReceipt 'busy' $cpuLines
+    exit 5
+  }
+  Log "host_quiet=pass avg_cpu=$cpuAvg% blockers=$blockTxt"
+  Write-HostReceipt 'pass' $cpuLines
 }
 
 # 2) PresentMon: all-process capture, QPC time, no process filter. Total capture window with margin.

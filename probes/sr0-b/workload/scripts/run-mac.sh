@@ -24,7 +24,7 @@ REC="$OUTMAC/SckRecorder.app/Contents/MacOS/SckRecorder"
 APP="$OUTMAC/WorkloadMac.app/Contents/MacOS/WorkloadMac"
 [ -x "$REC" ] && [ -x "$APP" ] || { echo "build first: scripts/package-mac.sh" >&2; exit 2; }
 cp "$OUTMAC/build-mac.json" "$ROOT/build-mac.json"
-BUSY=$(pgrep -lf 'swift-build|swift-frontend|xcodebuild|Xcode|Simulator|rustc|cargo|node ' | grep -v pgrep || true)
+BUSY=$(pgrep -lf 'swift-build|swift-frontend|swiftc|xcodebuild|rustc|cargo|clang|lld' | grep -v pgrep || true)
 if [ -n "$BUSY" ]; then echo "host not quiet:"; echo "$BUSY"; exit 3; fi
 {
   echo "user=$(id -un) uid=$(id -u) console=$(stat -f %Su /dev/console)"
