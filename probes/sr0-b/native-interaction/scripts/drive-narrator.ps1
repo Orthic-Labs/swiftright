@@ -12,8 +12,8 @@
 #   * Narrator SPEECH (what it announces) cannot be read without audio: recorded as FAIL-not-automatable.
 # Narrator's prior state is recorded and restored: the run refuses to start if Narrator is already running.
 param(
-  [string]$Base = 'D:\Claude\sr0s-bridge06',
-  [string]$Out = 'D:\Claude\sr0s-bridge06\result-native-narrator.txt',
+  [string]$Base = 'D:\Claude\sr0s-bridge06b',
+  [string]$Out = 'D:\Claude\sr0s-bridge06b\result-native-narrator.txt',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
 )

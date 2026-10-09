@@ -545,6 +545,7 @@ final class BridgeBackend {
             }
         case .key:
             keyEvents += 1
+            if ev.action == 1 { handleKey(name: ev.text, modifiers: ev.modifiers) }
         case .windowMetrics:
             metricsEvents += 1
             applyMetrics(width: ev.i0, height: ev.i1, scale: ev.x)
@@ -553,6 +554,27 @@ final class BridgeBackend {
         }
         flushIfDirty()
         afterInput?()
+    }
+
+    /// Native key-down. Tab / Shift-Tab move focus through the runtime (CONTRACT section 4); the bridge's
+    /// modifier bits are 0x1 control (Cmd's Windows counterpart), 0x2 alt, 0x4 shift (see galleryModifiers
+    /// in probes/sr1-win-backend). Any other chord is left to the field.
+    private func handleKey(name: String, modifiers: UInt32) {
+        guard name == "tab", modifiers & ~0x4 == 0, let graph else { return }
+        let forward = modifiers & 0x4 == 0
+        let previous = focusedRow
+        // Focus leaving a composing field commits its composition (as the IME does on focus loss).
+        if let previous, let state = textState(for: previous) { _ = state.unmark() }
+        guard graph.moveFocus(forward: forward) else { return }
+        // The runtime committed the new focus; focusedRow now names it.
+        if let row = focusedRow {
+            placeCaretAtEnd(row)
+            log.emit("focus", node: "focus", payload: [
+                "focused": row.uuidString, "source": forward ? "tab" : "shift-tab",
+                "previous": previous?.uuidString ?? "none",
+            ])
+        }
+        dirty = true
     }
 
     private func invoke(node: UInt64, source: String) {
@@ -667,9 +689,22 @@ final class BridgeBackend {
     }
 
     func storeCaretBounds(node: UInt64, range: UTF16Span) -> Rect? {
-        guard let row = rowByTextField[node], let g = fieldGeometry[row] else { return nil }
-        return caretRect(cells: g.cells, lines: g.lines, index: Int(range.start), origin: g.origin,
-                         lineHeightPx: g.lineHeightPx, width: 2)
+        guard let row = rowByTextField[node], let g = fieldGeometry[row] else {
+            log.emit("ime", node: "caret-bounds", payload: [
+                "start": Int(range.start), "end": Int(range.end), "bounds": "nil", "node": Int(node),
+            ])
+            return nil
+        }
+        let rect = caretRect(cells: g.cells, lines: g.lines, index: Int(range.start), origin: g.origin,
+                             lineHeightPx: g.lineHeightPx, width: 2)
+        // Candidate-window placement evidence: the rectangle returned to the renderer for the IME (physical px,
+        // window client space). The driver compares it with the IME's candidate window.
+        log.emit("ime", node: "caret-bounds", payload: [
+            "row": row.uuidString, "node": Int(node), "start": Int(range.start), "end": Int(range.end),
+            "x": Double(rect.x), "y": Double(rect.y), "w": Double(rect.w), "h": Double(rect.h),
+            "scale": Double(scale),
+        ])
+        return rect
     }
 
     // MARK: queries for the self-test

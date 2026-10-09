@@ -4,9 +4,11 @@
 # could not take the foreground (keys are never sent to another application); each attempt is kept under $OUT.
 #
 # Required (the script refuses to start without them):
-#   BASE_DIR            Windows tree root that holds the build, e.g. D:\Claude\sr0s-bridge06
-#   EXPECT_EXE_SHA256   SHA-256 of FreshOnBridge.exe in <BASE_DIR>\scratch\out\Products\Release-windows-x86_64
-#   EXPECT_DLL_SHA256   SHA-256 of swiftright_render.dll in the same directory
+#   BASE_DIR            Windows tree root that holds the build. Default: the 0.6b build, D:\Claude\sr0s-bridge06b
+#   EXPECT_EXE_SHA256   SHA-256 of FreshOnBridge.exe in <BASE_DIR>\scratch\out\Products\Release-windows-x86_64.
+#                       Default: 3593209A... (0.6b: Tab / Shift-Tab traversal, IME hooks, per-line stdout flush)
+#   EXPECT_DLL_SHA256   SHA-256 of swiftright_render.dll in the same directory. Default: C80B9517... (ABI 0.6)
+# Defaults are the pinned 0.6b tuple; override all three together when a newer build exists.
 # Preflight (verify-artifacts.ps1) must pass before anything runs, and every run re-checks the hashes on the host.
 # Every result file starts with an ARTIFACT line that binds base dir and both hashes; a run whose ARTIFACT line does
 # not carry the expected hashes is recorded as ARTIFACT_MISMATCH and the matrix stops.
@@ -14,12 +16,12 @@
 # Configurations: the SR0 set is the 16 configurations of the Mac SR0-O REPEAT20 table (class=sr0). Diagnostic
 # variants (class=diagnostic, not part of the SR0 inventory) run only with DIAG=1 or when named explicitly.
 #
-# Usage: BASE_DIR=D:\Claude\sr0s-bridge06 EXPECT_EXE_SHA256=... EXPECT_DLL_SHA256=... [OUT_DIR=...] [RUNS=3] [DIAG=1] \
+# Usage: [BASE_DIR=D:\Claude\sr0s-bridge06b EXPECT_EXE_SHA256=... EXPECT_DLL_SHA256=...] [OUT_DIR=...] [RUNS=3] [DIAG=1] \
 #          sh scripts/run-matrix.sh [FIXTURE:VARIANT ...]
 # OUT_DIR overrides the evidence directory, so a new pass does not overwrite an earlier one.
-: "${BASE_DIR:?BASE_DIR is required (Windows tree root, e.g. D:\\Claude\\sr0s-bridge06)}"
-: "${EXPECT_EXE_SHA256:?EXPECT_EXE_SHA256 is required}"
-: "${EXPECT_DLL_SHA256:?EXPECT_DLL_SHA256 is required}"
+: "${BASE_DIR:=D:\\Claude\\sr0s-bridge06b}"
+: "${EXPECT_EXE_SHA256:=3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA}"
+: "${EXPECT_DLL_SHA256:=C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30}"
 EXPECT_EXE_SHA256=$(printf %s "$EXPECT_EXE_SHA256" | tr a-f A-F)
 EXPECT_DLL_SHA256=$(printf %s "$EXPECT_DLL_SHA256" | tr a-f A-F)
 for h in "$EXPECT_EXE_SHA256" "$EXPECT_DLL_SHA256"; do

@@ -57,12 +57,12 @@ function Verify-Tree([string]$Base, [string]$ExpectExe, [string]$ExpectDll) {
   return $ok
 }
 
-function Start-Fixture([string]$Base, [string]$Fixture, [string]$ReadyFile) {
+function Start-Fixture([string]$Base, [string]$Fixture, [string]$ReadyFile, [string]$ExtraArgs = '') {
   $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
   if (Test-Path $ReadyFile) { Remove-Item -LiteralPath $ReadyFile -Force }
   $psi = New-Object System.Diagnostics.ProcessStartInfo
   $psi.FileName = Join-Path $bin 'FreshOnBridge.exe'
-  $psi.Arguments = "--fixture $Fixture --ready-file `"$ReadyFile`""
+  $psi.Arguments = "--fixture $Fixture --ready-file `"$ReadyFile`"$(if ($ExtraArgs) { ' ' + $ExtraArgs })"
   $psi.WorkingDirectory = $bin
   $psi.UseShellExecute = $false
   $psi.RedirectStandardOutput = $true
@@ -85,6 +85,24 @@ function Start-Fixture([string]$Base, [string]$Fixture, [string]$ReadyFile) {
   Start-Sleep -Milliseconds 1500
   if ($h -eq [IntPtr]::Zero) { return $null }
   return [System.Windows.Automation.AutomationElement]::FromHandle($h)
+}
+
+# Fires the exe's in-process release hook (--release-event): performs the "insert row above" engine release at this
+# instant. No input is injected and no window is touched, so a real IME composition stays open.
+function Signal-Release([string]$Name) {
+  try { $h = [System.Threading.EventWaitHandle]::OpenExisting($Name); [void]$h.Set(); $h.Dispose(); Log "release_hook_signalled name=$Name"; return $true }
+  catch { Log "release_hook_signal_failed name=$Name err=$($_.Exception.Message)"; return $false }
+}
+
+# Last caret rectangle the exe returned for the IME (EVT ime/caret-bounds, window client px), as screen [L,T,W,H].
+# Null when the exe has logged none. The exe flushes stdout per EVT line, so this is live evidence.
+function Last-CaretBounds {
+  $evs = Parse-Evt $script:StdTap.Snapshot()
+  $cb = @($evs | Where-Object { $_.kind -eq 'ime' -and $_.node_id -eq 'caret-bounds' -and $_.payload.h -gt 0 })
+  if ($cb.Count -eq 0) { return $null }
+  $p = $cb[$cb.Count - 1].payload
+  $o = [SRN.N]::ClientOrigin($script:Hwnd)
+  return @(($o[0] + [int][math]::Round($p.x)), ($o[1] + [int][math]::Round($p.y)), [int][math]::Round($p.w), [int][math]::Round($p.h))
 }
 
 function Close-And-Collect([string]$ExpectedFixture) {

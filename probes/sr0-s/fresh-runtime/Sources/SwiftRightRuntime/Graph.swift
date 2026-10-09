@@ -406,6 +406,9 @@ public final class Graph {
     public var imageIntrinsicSize: (ImageReference) -> LayoutSize = { _ in LayoutSize(width: 24, height: 24) }
     /// Platform used to map native chords to logical commands (CONTRACT section 4).
     public var keyboardPlatform: KeyboardPlatform = .mac
+    /// Models macOS System Settings > Keyboard > "Keyboard navigation" turned on: Tab also stops on focus-bound
+    /// Buttons and Toggles. Default false (text fields and lists only). See FocusTraversal.swift.
+    public var tabFocusesAllControls = false
 
     public init(_ rootView: some View, measurer: (any TextMeasurer)? = nil, scale: CGFloat = 1) {
         self.measurer = measurer ?? FixedAdvanceTextMeasurer()

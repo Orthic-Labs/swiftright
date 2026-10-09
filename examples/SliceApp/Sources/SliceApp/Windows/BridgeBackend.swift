@@ -407,10 +407,23 @@ final class BridgeBackend {
             }
         case .windowMetrics:
             applyMetrics(width: ev.i0, height: ev.i1, scale: ev.x)
-        case .key, .ime, .focus, .modalResult:
+        case .key:
+            if ev.action == 1 { handleKey(name: ev.text, modifiers: ev.modifiers) }
+        case .ime, .focus, .modalResult:
             break
         }
         flushIfDirty()
+    }
+
+    /// Native key-down. Tab / Shift-Tab move focus through the runtime (CONTRACT section 4). Bridge modifier bits:
+    /// 0x1 control, 0x2 alt, 0x4 shift. Any other chord is left to the field.
+    private func handleKey(name: String, modifiers: UInt32) {
+        guard name == "tab", modifiers & ~0x4 == 0, let graph else { return }
+        // Focus leaving a composing field commits its composition (as the IME does on focus loss).
+        if let previous = focusedRow, let state = textState(for: previous) { _ = state.unmark() }
+        guard graph.moveFocus(forward: modifiers & 0x4 == 0) else { return }
+        if let row = focusedRow { placeCaretAtEnd(row) }
+        dirty = true
     }
 
     private func invoke(node: UInt64) {

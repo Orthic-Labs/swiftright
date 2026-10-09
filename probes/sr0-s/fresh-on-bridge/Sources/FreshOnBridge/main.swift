@@ -45,6 +45,15 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
         case "--reduced-motion-variant":
             options.reducedVariant = true
             label = "F6-reduced"
+        case "--release-event":
+            index += 1
+            options.releaseEvent = index < arguments.count ? arguments[index] : nil
+        case "--release-file":
+            index += 1
+            options.releaseFile = index < arguments.count ? arguments[index] : nil
+        case "--f7-live":
+            options.f7Live = true
+            label = "F7"
         case "--ready-file":
             index += 1
             options.readyFile = index < arguments.count ? arguments[index] : nil
@@ -83,14 +92,17 @@ func runFreshOnBridge(options: FixtureOptions) -> Int32 {
     let model = RowModel(fixtureNumber: options.fixture.number, log: log, engine: engine, reducedMotion: options.reducedVariant)
     let backend = BridgeBackend(bridge: bridge, model: model, log: log, options: options)
     bridge.textStore = FreshTextStore(backend: backend)
-    let test = SelfTest(bridge: bridge, backend: backend, model: model, log: log, engine: engine, options: options)
+    let hooks = AutomationHooks(options: options, engine: engine, backend: backend, log: log)
+    let test = SelfTest(bridge: bridge, backend: backend, model: model, log: log, engine: engine, options: options,
+                        hooks: hooks)
     test.requestQuit = { bridge.requestQuit() }
     backend.afterInput = { test.advance() }
     backend.afterClose = { test.windowClosed() }
 
+    hooks.start()
     bridge.onReady = { win in MainActor.assumeIsolated { backend.ready(win) } }
     bridge.onEvent = { ev in MainActor.assumeIsolated { backend.handle(ev) } }
-    bridge.onTick = { _, timestamp in MainActor.assumeIsolated { backend.tick(timestampNS: timestamp); test.tick() } }
+    bridge.onTick = { _, timestamp in MainActor.assumeIsolated { backend.tick(timestampNS: timestamp); hooks.poll(); test.tick() } }
     bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed() } }
 
     do {

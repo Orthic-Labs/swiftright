@@ -986,6 +986,11 @@ final class GalleryBackend {
             shortcutDispatches += 1
             return
         }
+        // Tab / Shift-Tab: runtime focus traversal (CONTRACT section 4).
+        if name == "tab", mods.subtracting(.shift).isEmpty,
+           graph?.moveFocus(forward: !mods.contains(.shift)) == true {
+            return
+        }
         guard let list = lists.values.first else { return }
         switch name {
         case "up", "down":

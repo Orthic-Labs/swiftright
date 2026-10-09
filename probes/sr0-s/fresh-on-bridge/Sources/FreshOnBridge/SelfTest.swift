@@ -41,6 +41,7 @@ final class SelfTest {
     private let log: EventLog
     private let engine: FakeEngine
     private let options: FixtureOptions
+    private let hooks: AutomationHooks
     private let started = Date()
     private var steps: [Step] = []
     private var cursor = 0
@@ -64,7 +65,9 @@ final class SelfTest {
     private(set) var exitCode: Int32 = 1
     var requestQuit: (() -> Void)?
 
-    init(bridge: Bridge, backend: BridgeBackend, model: RowModel, log: EventLog, engine: FakeEngine, options: FixtureOptions) {
+    init(bridge: Bridge, backend: BridgeBackend, model: RowModel, log: EventLog, engine: FakeEngine, options: FixtureOptions,
+         hooks: AutomationHooks) {
+        self.hooks = hooks
         self.bridge = bridge
         self.backend = backend
         self.model = model
@@ -305,6 +308,21 @@ final class SelfTest {
                 .wait("motion policy recorded") { self.count(kind: "lifecycle", node: "animation", phase: "policy") >= 1 },
                 .act("burst insert (same turn)") { self.model.burstInsert() },
                 .pause("animation window", 1500),
+                .awaitClose,
+            ]
+
+        case .F7 where options.f7Live:
+            // Real-IME variant: no programmatic composition. The driver composes with the real IME and fires the
+            // release hook mid-composition; the hook performs the engine release and logs the composition state.
+            return [
+                .wait("insert-above pending") { self.pendingHas("insert-above") },
+                .wait("row2 focused by AX") { self.lastFocusID() == self.rid(2) },
+                .wait("typed ka") { self.text(self.rid(2)) == "Row 2ka" },
+                .act("armed: waiting for the release hook") {
+                    self.log.emit("hook", node: "release-hook", payload: ["phase": "armed"])
+                },
+                .wait("release hook fired") { self.hooks.released > 0 },
+                .wait("insert committed") { self.model.rows.first?.text == "Engine 0" },
                 .awaitClose,
             ]
 
@@ -656,6 +674,17 @@ final class SelfTest {
                          "tick-commits=\(backend.tickCommits) ticks=\(backend.tickCount)"),
                 ]
             }
+
+        case .F7 where options.f7Live:
+            let r2 = rid(2)
+            checks += [
+                pass("insert-committed", model.rows.first?.text == "Engine 0", "top=\(model.rows.first?.text ?? "nil")"),
+                pass("identity-index-shift", index(r2) == 2, "index=\(index(r2).map(String.init) ?? "nil")"),
+                pass("no-teardown", count(node: r2.uuidString, phase: "disappear") == 0,
+                     "row2 disappear events before window close=\(count(node: r2.uuidString, phase: "disappear"))"),
+                pass("release-hook-fired", hooks.released > 0, "firings=\(hooks.fired) releases=\(hooks.released)"),
+                observe("live-composition-text", "row2 text=\(text(r2) ?? "nil") (real IME; composition state at release is in the EVT hook line)"),
+            ]
 
         case .F7:
             let r2 = rid(2)

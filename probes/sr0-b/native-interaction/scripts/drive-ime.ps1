@@ -1,15 +1,18 @@
 # SR0 lane R9 (a): real Microsoft Japanese IME composition against the ABI 0.6 FreshOnBridge fixtures.
 # Runs INSIDE an interactive desktop session (one-shot scheduled task, schedule-native.ps1). Not for SSH or a non-interactive shell.
 #   -Fixture F7  core IME checks (marked text, conversion, commit, Escape, candidate window placement)
+#   -Fixture F7live  F7 with a REAL composition and the exe's in-process release hook (--f7-live --release-event): the "insert row above"
+#                    engine release is fired mid-composition without any input or UIA action (identity + marked-range survival)
 #   -Fixture F8  identity under a structural change while a REAL composition is open (row removed above the composing row)
 # The probe window's input is switched to the Japanese IME with window-targeted messages (no global hotkey). Romaji is
 # typed only through the gated global SendInput path in native-common.ps1 (foreground lock, per-key re-check, abort).
 # Observation: UIA ValuePattern/TextPattern live (the AX value is the DISPLAY text: committed text with the marked text
 # inserted), and after exit the exe's EVT lines and its self-test ASSERT detail strings (the runtime text-store log).
 param(
-  [string]$Base = 'D:\Claude\sr0s-bridge06',
-  [ValidateSet('F7', 'F8')][string]$Fixture = 'F7',
-  [string]$Out = 'D:\Claude\sr0s-bridge06\result-native-ime.txt',
+  [string]$Base = 'D:\Claude\sr0s-bridge06b',
+  [ValidateSet('F7', 'F7live', 'F8')][string]$Fixture = 'F7',
+  [string]$ReleaseEvent = 'Local\SR0_RELEASE_HOOK',
+  [string]$Out = 'D:\Claude\sr0s-bridge06b\result-native-ime.txt',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
 )
@@ -39,7 +42,9 @@ Add-Check 'ime-installed' $(if ($regOk -and $userOk -and $jaHkls.Count -gt 0) { 
 if (-not ($regOk -and $userOk -and $jaHkls.Count -gt 0)) { Write-Result $Out "ime-$Fixture"; exit 3 }
 $hklJa = ($jaHkls | Sort-Object { ((($_ -shr 16) -band 0xFFFF) -eq 0xE001) } -Descending | Select-Object -First 1)
 
-$script:Root = Start-Fixture $Base $Fixture $ready
+$exeFixture = if ($Fixture -eq 'F7live') { 'F7' } else { $Fixture }
+$exeExtra = if ($Fixture -eq 'F7live') { "--f7-live --release-event `"$ReleaseEvent`"" } else { '' }
+$script:Root = Start-Fixture $Base $exeFixture $ready $exeExtra
 if ($script:Root -eq $null) { Add-Check 'window' 'FAIL' 'no probe window'; Close-And-Collect $Fixture; Write-Result $Out "ime-$Fixture"; exit 3 }
 $procIdOut = [uint32]0
 $tid = [SRN.N]::GetWindowThreadProcessId($script:Hwnd, [ref]$procIdOut)
@@ -139,13 +144,18 @@ function Measure-Candidate([string]$row, [string]$v0, $before) {
   $scale = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0
   $cand = $cw.Hit | Sort-Object { ($_.R - $_.L) * ($_.B - $_.T) } | Select-Object -First 1
   Log ("candidate_probe caret_rect=$(Fmt-Rect $caret.CaretRect) comp_start_rect=$(Fmt-Rect $startRect) new_windows=[" + (($cw.New | ForEach-Object { "$($_.Cls)|$($_.Title)|$($_.L),$($_.T),$($_.R),$($_.B)" }) -join '; ') + "] class_hits=$(@($cw.Hit).Count) scale=$scale")
-  return [pscustomobject]@{ Candidate = $cand; Caret = $caret; Start = $startRect; Scale = $scale; New = $cw.New }
+  $bounds = Last-CaretBounds
+  Log "candidate_probe exe_caret_bounds_screen=$(Fmt-Rect $bounds)"
+  return [pscustomobject]@{ Candidate = $cand; Caret = $caret; Start = $startRect; Bounds = $bounds; Scale = $scale; New = $cw.New }
 }
 function Eval-Anchor($m) {
   if ($m.Candidate -eq $null) { return $null }
-  if ($m.Start -eq $null) { return $null }
+  # reference = what the exe returned to the IME as the caret rectangle (storeCaretBounds, EVT ime/caret-bounds); the UIA
+  # rectangle of the first composed character is the fallback for an exe that does not log bounds.
+  $ref = if ($m.Bounds -ne $null) { $m.Bounds } else { $m.Start }
+  if ($ref -eq $null) { return $null }
   $c = $m.Candidate; $s = $m.Scale
-  $dx = $c.L - $m.Start[0]; $dy = $c.T - ($m.Start[1] + $m.Start[3])
+  $dx = $c.L - $ref[0]; $dy = $c.T - ($ref[1] + $ref[3])
   $ok = ([math]::Abs($dx) -le 60 * $s) -and ($dy -ge -20 * $s) -and ($dy -le 140 * $s)
   return [pscustomobject]@{ Ok = $ok; Dx = $dx; Dy = $dy }
 }
@@ -154,7 +164,22 @@ function Eval-Anchor($m) {
 $committedKana = $null
 $obs1 = @(); $obsC1 = $null
 try {
-  if ($Fixture -eq 'F7') {
+  if ($Fixture -eq 'F7live') {
+    # --- setup: "ka" through the gated VK path (IME still off), then NO programmatic composition: the exe waits for the hook
+    [void](Focus-Edit 'Row 2')
+    [void](Send-GatedKey 0x4B 'setup-k' 220); [void](Send-GatedKey 0x41 'setup-a' 220)
+    [void](Wait-Value 'Row 2' 'Row 2ka' 20000)
+    $armedSw = [Diagnostics.Stopwatch]::StartNew(); $armed = $false
+    while (-not $armed -and -not $script:Proc.HasExited -and $armedSw.ElapsedMilliseconds -lt 20000) {
+      $armed = @(Parse-Evt $script:StdTap.Snapshot() | Where-Object { $_.kind -eq 'hook' -and $_.payload.phase -eq 'armed' }).Count -gt 0
+      if (-not $armed) { Start-Sleep -Milliseconds 100 }
+    }
+    Log "hook_armed=$armed waited_ms=$($armedSw.ElapsedMilliseconds)"
+    $script:Budget = $null
+    $row = 'Row 2'
+    $v0 = Value-Of (Edit $row)
+    Add-Check 'precondition-row2' $(if ($v0 -eq 'Row 2ka' -and $armed) { 'PASS' } else { 'FAIL' }) "value=[$v0] release hook armed (exe EVT hook/armed)=$armed (F7live: no programmatic composition ran)"
+  } elseif ($Fixture -eq 'F7') {
     # --- setup exactly as scripts/drive-fixture.ps1 F7 (IME still off): "ka" through the gated VK path
     [void](Focus-Edit 'Row 2')
     [void](Send-GatedKey 0x4B 'setup-k' 220); [void](Send-GatedKey 0x41 'setup-a' 220)
@@ -206,6 +231,26 @@ try {
   if ($trackOk) { for ($i = 0; $i -lt $expect1.Count; $i++) { if ($norm1[$i] -ne $expect1[$i]) { $trackOk = $false } } }
   Add-Check 'marked-text-tracks-composition' $(if ($trackOk) { 'PASS' } else { 'FAIL' }) ("display minus committed prefix after each key n,i,h,o,n,n: observed=[" + ($obs1 -join ' | ') + "] expected(width-normalised)=[" + ($expect1 -join ' | ') + "]")
 
+  if ($Fixture -eq 'F7live') {
+    # ---------------------------------------------------------- real-IME insert-above: the engine release fires mid-composition
+    $uuid2 = Row-Uuid (Edit $row)
+    $focusBefore = Focused-Name
+    $dispBefore = Value-Of (Edit $row)
+    $sigOk = Signal-Release $ReleaseEvent
+    $ins = Wait-Element { Edit 'Row 99' } 'inserted row 99 (Engine 0)' 12000
+    $script:Budget = [Diagnostics.Stopwatch]::StartNew()   # the exe script is now at awaitClose: its 60 s limit starts here
+    Start-Sleep -Milliseconds 800
+    $e2 = Edit $row
+    $idxAfter = [array]::IndexOf((Edit-Names), $row)
+    $uuid2After = Row-Uuid $e2
+    $dispAfter = Value-Of $e2
+    $focusAfter = Focused-Name
+    $markedAfter = Marked-Of $row $v0
+    $hookEvt = @(Parse-Evt $script:StdTap.Snapshot() | Where-Object { $_.kind -eq 'hook' -and $_.payload.phase -eq 'release' }) | Select-Object -First 1
+    Add-Check 'insert-above-fires-mid-real-composition' $(if ($sigOk -and $ins -ne $null -and $hookEvt -ne $null -and $hookEvt.payload.key -eq 'insert-above' -and $hookEvt.payload.marked -ne 'none') { 'PASS' } else { 'FAIL' }) "signalled=$sigOk row99_present=$($ins -ne $null) hook EVT key=$($hookEvt.payload.key) marked_at_release=$($hookEvt.payload.marked) display_at_release=[$($hookEvt.payload.display)] committed_at_release=[$($hookEvt.payload.committed)] (a composition must be open at the release)"
+    Add-Check 'identity-and-composition-survive-insert-above-real-ime' $(if ($uuid2After -eq $uuid2 -and $idxAfter -eq ($idxBefore + 1) -and $dispAfter -eq $dispBefore -and $markedAfter -ne '' -and $focusAfter -eq $row) { 'PASS' } else { 'FAIL' }) "row inserted ABOVE the composing row during a REAL composition: uuid_before=$uuid2 uuid_after=$uuid2After index $idxBefore->$idxAfter (expect +1) display_before=[$dispBefore] display_after=[$dispAfter] marked_after=[$markedAfter] (non-empty expected) focus_before=$focusBefore focus_after=$focusAfter"
+  }
+
   if ($Fixture -eq 'F8') {
     # ---------------------------------------------------------- identity: remove a row ABOVE the composing row mid-composition
     $uuid7 = Row-Uuid (Edit $row); $uuid6 = Row-Uuid (Edit 'Row 6')
@@ -249,12 +294,13 @@ try {
     $a2 = Eval-Anchor $m2
     if ($m1.Candidate -eq $null -or $m2.Candidate -eq $null) {
       $newDesc = ((@($m1.New) + @($m2.New)) | ForEach-Object { "$($_.Cls)|$($_.Title)|$($_.L),$($_.T),$($_.R),$($_.B)" }) -join '; '
-      Add-Check 'candidate-window-anchored-to-caret' 'FAIL-not-automatable' "no visible top-level window with a class or title containing 'Candidate' was found after Space (comp1 found=$($m1.Candidate -ne $null) comp2 found=$($m2.Candidate -ne $null)). ImmGetCandidateWindow needs the probe thread's HIMC (cross-process ImmGetContext returns 0) and the pinned exe does not log bounds_for_range, so the only observable is the IME's own window; windows new after Space: [$newDesc]. A person (or an exe build that logs storeCaretBounds) must confirm placement."
+      Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "no visible top-level window with a class or title containing 'Candidate' was found after Space (comp1 found=$($m1.Candidate -ne $null) comp2 found=$($m2.Candidate -ne $null)); exe-logged caret bounds comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds) (screen px) so the expected anchor is known but the IME's window was not located; windows new after Space: [$newDesc]"
     } elseif ($a1 -eq $null -or $a2 -eq $null) {
-      Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "candidate window found (comp1 $($m1.Candidate.L),$($m1.Candidate.T); comp2 $($m2.Candidate.L),$($m2.Candidate.T)) but the UIA rectangle of the first composed character was unavailable (comp1=$(Fmt-Rect $m1.Start) comp2=$(Fmt-Rect $m2.Start)), so anchoring cannot be judged"
+      Add-Check 'candidate-window-anchored-to-caret' 'FAIL' "candidate window found (comp1 $($m1.Candidate.L),$($m1.Candidate.T); comp2 $($m2.Candidate.L),$($m2.Candidate.T)) but neither the exe-logged caret bounds (comp1=$(Fmt-Rect $m1.Bounds) comp2=$(Fmt-Rect $m2.Bounds)) nor the UIA rectangle (comp1=$(Fmt-Rect $m1.Start) comp2=$(Fmt-Rect $m2.Start)) was available, so anchoring cannot be judged"
     } else {
       $shiftCand = $m2.Candidate.L - $m1.Candidate.L
-      $shiftComp = $m2.Start[0] - $m1.Start[0]
+      $r1 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m1.Bounds } else { $m1.Start }; $r2 = if ($m1.Bounds -ne $null -and $m2.Bounds -ne $null) { $m2.Bounds } else { $m2.Start }
+      $shiftComp = $r2[0] - $r1[0]
       $shiftOk = ([math]::Abs($shiftCand - $shiftComp) -le 12 * $m1.Scale) -and ($shiftComp -gt 10 * $m1.Scale)
       Add-Check 'candidate-window-anchored-to-caret' $(if ($a1.Ok -and $a2.Ok) { 'PASS' } else { 'FAIL' }) ("candidate left/top vs composition start (screen px): comp1 cand=$($m1.Candidate.L),$($m1.Candidate.T) class=$($m1.Candidate.Cls) dx=$([math]::Round($a1.Dx)) dy_below_caret=$([math]::Round($a1.Dy)); comp2 cand=$($m2.Candidate.L),$($m2.Candidate.T) dx=$([math]::Round($a2.Dx)) dy=$([math]::Round($a2.Dy)); tolerance dx<=60*scale, dy in [-20,140]*scale, scale=$($m1.Scale)")
       Add-Check 'candidate-window-follows-caret-after-commit' $(if ($shiftOk) { 'PASS' } else { 'FAIL' }) "composition start moved by $([math]::Round($shiftComp)) px after the commit; candidate window moved by $([math]::Round($shiftCand)) px (tolerance 12*scale, and the caret must have moved > 10*scale)"
@@ -274,7 +320,7 @@ try {
   }
 
   # ------------------------------------------------------------ leave the fixture in its scripted end state
-  if ($Fixture -eq 'F7') { Set-Value $row 'Row 2kana' } else { [void](Focus-Edit 'Row 3') }
+  if ($Fixture -eq 'F7') { Set-Value $row 'Row 2kana' } elseif ($Fixture -eq 'F8') { [void](Focus-Edit 'Row 3') }
 }
 catch { Log "driver_exception: $($_.Exception.Message)"; Add-Check 'driver-run' 'FAIL' "exception: $($_.Exception.Message)" }
 finally {
@@ -290,7 +336,17 @@ $asserts = @($std | Where-Object { $_ -match '^ASSERT \S+ \S+: (PASS|FAIL)' })
 $verdict = ($std | Where-Object { $_ -like 'SELFTEST *' } | Select-Object -First 1)
 Log "selftest_verdict=[$verdict]"
 $failedAsserts = @($asserts | ForEach-Object { if ($_ -match '^ASSERT \S+ (\S+): FAIL') { $Matches[1] } })
-if ($Fixture -eq 'F7') {
+# caret bounds the exe returned to the IME (EVT ime/caret-bounds): the evidence the candidate window can be checked against
+$cbAll = @($evt | Where-Object { $_.kind -eq 'ime' -and $_.node_id -eq 'caret-bounds' })
+$cbOk = @($cbAll | Where-Object { $_.payload.h -gt 0 -and $_.payload.w -gt 0 })
+$cbX = @($cbOk | ForEach-Object { [math]::Round($_.payload.x) } | Sort-Object -Unique)
+Add-Check 'ime-caret-bounds-logged' $(if ($cbOk.Count -ge 2 -and $cbX.Count -ge 2) { 'PASS' } else { 'FAIL' }) "exe EVT ime/caret-bounds lines=$($cbAll.Count) with a non-empty rectangle=$($cbOk.Count) distinct x positions=$($cbX.Count) (expected >=2: the caret rectangle must move as the composition grows) last=$(if ($cbOk.Count) { $l = $cbOk[$cbOk.Count - 1].payload; "x=$($l.x) y=$($l.y) w=$($l.w) h=$($l.h) scale=$($l.scale)" } else { 'none' })"
+if ($Fixture -eq 'F7live') {
+  $failedOther = @($failedAsserts)
+  Add-Check 'f7live-selftest-verdict' $(if ($verdict -like '*: PASS*') { 'PASS' } else { 'FAIL' }) "failed asserts=[$($failedOther -join ',')] verdict=[$verdict] (live variant: insert-committed, identity-index-shift, no-teardown, release-hook-fired)"
+  $row2 = $evt | Where-Object { $_.kind -eq 'hook' -and $_.payload.phase -eq 'release' } | Select-Object -First 1
+  Add-Check 'f7live-hook-evidence-recorded' $(if ($row2 -ne $null -and $row2.payload.marked -ne 'none') { 'PASS' } else { 'FAIL' }) "release hook EVT: key=$($row2.payload.key) source=$($row2.payload.source) display=[$($row2.payload.display)] marked=$($row2.payload.marked)"
+} elseif ($Fixture -eq 'F7') {
   # the exact-list asserts compare against the programmatic calls only; real IME input legitimately adds calls
   $allowed = @('text-store-keystrokes', 'ime-calls-recorded')
   $unexpected = @($failedAsserts | Where-Object { $allowed -notcontains $_ })

@@ -34,6 +34,13 @@ struct FixtureOptions: Sendable {
     /// `--ready-file <path>`: the exe writes this file when its script reaches the close step (awaiting the driver's
     /// WM_CLOSE). drive-fixture.ps1 waits for it before closing, so the window never closes mid-settle.
     var readyFile: String? = nil
+    /// `--release-event <name>`: Windows named event the in-process release hook waits on (see Hooks.swift).
+    var releaseEvent: String? = nil
+    /// `--release-file <path>`: trigger file for the release hook, polled on the display tick, deleted when seen.
+    var releaseFile: String? = nil
+    /// `--f7-live`: F7 without the programmatic composition. The script waits for the release hook (fired by the
+    /// driver in the middle of a real IME composition), which performs the insert-above engine release.
+    var f7Live = false
 }
 
 /// Records events as dictionaries and echoes each as one `EVT {json}` line on stdout.
@@ -53,6 +60,8 @@ final class EventLog: @unchecked Sendable {
         if let data = try? JSONSerialization.data(withJSONObject: event, options: [.sortedKeys]),
            let line = String(data: data, encoding: .utf8) {
             print("EVT " + line)
+            // The Windows CRT treats line buffering as full buffering: flush per line so drivers read live.
+            fflush(stdout)
         }
     }
 

@@ -1,12 +1,12 @@
 # Registers a one-shot INTERACTIVE scheduled task that runs one native-interaction driver inside the desktop session
 # (UIA, the renderer window and the IME need it), waits for it, deletes the task, and prints the result file.
-#   -Check ime-f7 | ime-f8 | narrator      -Tag <unique run tag>
+#   -Check ime-f7 | ime-f7live | ime-f8 | narrator      -Tag <unique run tag>
 #   -ExpectExe / -ExpectDll  SHA-256 the build tree must hold (checked here before registering, and again by the driver)
 # Same pattern as probes/sr0-s/fresh-on-bridge/scripts/schedule-fixture.ps1. Run it through `win` as a file; it needs the
 # desktop lane to be free (nothing else may use the Dell desktop while it runs: it types real keys into the probe window).
 param(
-  [string]$Base = 'D:\Claude\sr0s-bridge06',
-  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f8', 'narrator')][string]$Check,
+  [string]$Base = 'D:\Claude\sr0s-bridge06b',
+  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f8', 'narrator')][string]$Check,
   [string]$Tag = 'run1',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
@@ -21,6 +21,7 @@ $out = "$Base\result-native-$Check-$Tag.txt"
 foreach ($f in @('NativeHelpers.cs', 'native-common.ps1', 'drive-ime.ps1', 'drive-narrator.ps1')) { if (-not (Test-Path -LiteralPath "$scripts\$f")) { throw "missing $scripts\$f (stage the scripts first, see run-native.sh)" } }
 switch ($Check) {
   'ime-f7' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7' }
+  'ime-f7live' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live' }
   'ime-f8' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F8' }
   'narrator' { $drv = 'drive-narrator.ps1'; $extra = '' }
 }

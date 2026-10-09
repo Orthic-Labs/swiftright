@@ -43,6 +43,10 @@ namespace SRN {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowTextW(IntPtr h, StringBuilder sb, int max);
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
     [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
+    [StructLayout(LayoutKind.Sequential)] public struct PT { public int X; public int Y; }
+    [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h, ref PT p);
+    /// Screen coordinates (physical px, the driver is per-monitor DPI aware) of the window's client origin.
+    public static int[] ClientOrigin(IntPtr h) { PT p = new PT(); ClientToScreen(h, ref p); return new int[] { p.X, p.Y }; }
     [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
     [DllImport("user32.dll")] public static extern int GetWindowLongW(IntPtr h, int index);
     [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
