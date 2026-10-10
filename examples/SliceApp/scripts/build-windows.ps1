@@ -21,13 +21,23 @@ $payload = Join-Path $app '.build\payload'
 Set-Location $app
 
 # ComCtl v6 and PerMonitorV2 come from the manifest file, embedded by the linker.
-& swift build -c release --scratch-path $scratch '-Xlinker' '/MANIFEST:EMBED' '-Xlinker' "/MANIFESTINPUT:$manifest"
+# GUI subsystem: the packaged exe must not open a console window. /SUBSYSTEM:WINDOWS alone makes the linker look for WinMain;
+# Swift's @main emits C `main`, so /ENTRY:mainCRTStartup keeps the CRT startup that calls it. Consumer link flags, not manifest
+# flags (no unsafeFlags in Package.swift). Windows/WindowsLog.swift sends stdout/stderr to a log file when no handle is attached.
+& swift build -c release --scratch-path $scratch '-Xlinker' '/MANIFEST:EMBED' '-Xlinker' "/MANIFESTINPUT:$manifest" '-Xlinker' '/SUBSYSTEM:WINDOWS' '-Xlinker' '/ENTRY:mainCRTStartup'
 "swift build exit=$LASTEXITCODE"
 if ($LASTEXITCODE -ne 0) { throw "swift build failed (exit $LASTEXITCODE); nothing verified or copied" }
 $bin = (& swift build -c release --scratch-path $scratch --show-bin-path).Trim()
 $exe = Join-Path $bin 'SliceApp.exe'
 if (-not (Test-Path $exe)) { throw "missing $exe" }
 "exe=$exe bytes=$((Get-Item $exe).Length)"
+
+# Subsystem check: PE optional header Subsystem (offset 68 in both PE32 and PE32+) must be 2 = IMAGE_SUBSYSTEM_WINDOWS_GUI.
+$peBytes = [IO.File]::ReadAllBytes($exe)
+$peOpt = [BitConverter]::ToInt32($peBytes, 0x3c) + 24
+$subsystem = [BitConverter]::ToUInt16($peBytes, $peOpt + 68)
+if ($subsystem -ne 2) { throw "SliceApp.exe PE subsystem is $subsystem, expected 2 (WINDOWS_GUI): a console window would open on launch" }
+'subsystem ok: Windows GUI (2), entry mainCRTStartup'
 
 # Embedded manifest check (mt.exe, x64 build of the Windows SDK).
 $mt = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin' -Recurse -Filter mt.exe -ErrorAction SilentlyContinue |

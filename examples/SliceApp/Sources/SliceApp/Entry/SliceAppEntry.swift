@@ -22,10 +22,12 @@ struct SliceAppMain: App {
 #else
 
 // Windows bootstrap entry. Synchronous on the initial thread (the bridge requires it); the work lives in
-// sliceAppWindowsMain (Windows/WindowsBootstrap.swift). Exit codes: see that function.
+// sliceAppWindowsMain (Windows/WindowsBootstrap.swift). Exit codes: see that function. The exe is linked as a GUI-subsystem
+// program (scripts/build-windows.ps1); Windows/WindowsLog.swift keeps the stdout/stderr diagnostics when no console exists.
 @main
 enum SliceAppMain {
     static func main() {
+        sliceAppRedirectStdioIfDetached()  // GUI-subsystem exe: no console, so log to a file when stdout/stderr are not backed
         let status = MainActor.assumeIsolated { sliceAppWindowsMain() }
         fflush(stdout)
         exit(status)

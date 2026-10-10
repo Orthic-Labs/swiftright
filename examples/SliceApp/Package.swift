@@ -7,8 +7,9 @@ import PackageDescription
 //
 // Build:
 //   macOS:    swift build -c release
-//   Windows:  run scripts/build-windows.ps1 through `win` (ComCtl v6 + DPI manifest must be embedded
-//             by the consumer link flags, not by this manifest: no unsafeFlags).
+//   Windows:  run scripts/build-windows.ps1 through `win` (ComCtl v6 + DPI manifest must be embedded, and the exe
+//             linked as a GUI-subsystem program with /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup, by the consumer link
+//             flags, not by this manifest: no unsafeFlags).
 let package = Package(
     name: "SliceApp",
     platforms: [.macOS(.v14)],
