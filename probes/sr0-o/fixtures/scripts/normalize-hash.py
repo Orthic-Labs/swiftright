@@ -27,20 +27,47 @@ def normalized_lines(path):
 CANONICAL_FORM = "sr0-a.canonical/v2"
 
 
-def canonical_digest(path):
-    """Canonical form v2 (CONTRACT section 3): group by driver step (steps keep their order), then by node.
-    Nodes inside a step may permute (sorted); each node's event sequence keeps its recorded order.
-    Must stay identical to qualification/run.py canonical_body. Reported separately from the raw hash."""
+def _is_f6_completion(event):
+    p = event.get("payload") or {}
+    return (event.get("fixture") == "F6" and event.get("node_id") == "animation"
+            and p.get("phase") == "complete" and p.get("tag") in ("A", "B"))
+
+
+def f6_unordered_completions(seq):
+    """CONTRACT C9 (proposed): the F6 animation A-complete/B-complete pair is unordered.
+    Only the two completion events permute: they keep their slots in the node sequence and are re-assigned in
+    tag order. Start events, every other event, slot positions, exactly-once and the final state stay exact:
+    a duplicate, missing or misplaced completion still changes the sequence. `seq` is a list of normalized
+    JSON lines of one node; returns the canonical list."""
+    events = [json.loads(line) for line in seq]
+    slots = [i for i, e in enumerate(events) if _is_f6_completion(e)]
+    if len(slots) < 2:
+        return seq
+    ordered = sorted((seq[i] for i in slots), key=lambda line: json.loads(line)["payload"]["tag"])
+    out = list(seq)
+    for i, line in zip(slots, ordered):
+        out[i] = line
+    return out
+
+
+def canonical_body(lines):
     steps = {}
-    for line in normalized_lines(path):
+    for line in lines:
         event = json.loads(line)
         nodes = steps.setdefault(event.get("step", ""), {})
         nodes.setdefault(event.get("node_id", ""), []).append(line)
     parts = [CANONICAL_FORM]
     for step, nodes in steps.items():
-        groups = sorted("\n".join(seq) for seq in nodes.values())
+        groups = sorted("\n".join(f6_unordered_completions(seq)) for seq in nodes.values())
         parts.append(f"#{step}\n" + "\n".join(groups))
-    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()
+    return "\n".join(parts)
+
+
+def canonical_digest(path):
+    """Canonical form v2 (CONTRACT section 3): group by driver step (steps keep their order), then by node.
+    Nodes inside a step may permute (sorted); each node's event sequence keeps its recorded order.
+    Must stay identical to qualification/run.py canonical_body. Reported separately from the raw hash."""
+    return hashlib.sha256(canonical_body(normalized_lines(path)).encode("utf-8")).hexdigest()
 
 
 def main(argv):

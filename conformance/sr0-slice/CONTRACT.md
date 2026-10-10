@@ -49,7 +49,9 @@ Each fixture names its source hash, initial state, stable node IDs, stimuli, set
 | F8 accessibility | Activation & editing via AX/UIA | AX press insert button; set value on row; move focus | Model state changes, roles/labels/actions per canonical map |
 | F9 window teardown | Close with live tasks | Close window with pending tasks & engine callbacks | Tasks cancelled, no commits after close (Mac oracle). Tree release after close is a Windows runtime requirement (architecture §6), not a Mac oracle assertion: AppKit keeps closed `NSWindow`s alive in the fixture host. |
 
-Within one step, sibling lifecycle events from different nodes are unordered unless a fixture declares an order; per-node event order is always significant. Each Mac fixture runs 20 times; all normalized assertions must agree before it becomes an oracle. Each Windows seed runs 20 times with all passing.
+Within one step, sibling lifecycle events from different nodes are unordered unless a fixture declares an order; per-node event order is always significant.
+
+**C9 (proposed, F6 decision): the F6 animation completion pair is unordered.** In F6 the `animation` node's `complete` events for tag A and tag B may occur in either order. Native SwiftUI swaps them in about 4% of runs (100-run Mac sample: 96 A-first, 4 B-first, clustered; `probes/sr0-o/r6/f6/`), so no order is a property of the platform. Only that pair permutes (canonical form: the two completion events keep their slots in the node sequence and are sorted by tag). Everything else stays exact: each tag's `start` precedes its `complete`, each completes exactly once, a missing, duplicated or relocated completion fails, all other events and lifecycle order are unchanged, and the final state must match. Implementation: `probes/sr0-o/fixtures/scripts/normalize-hash.py` (`f6_unordered_completions`); `qualification/run.py canonical_body` must mirror it. Accepted baselines are unchanged. Evidence: `probes/sr0-o/F6-UNORDERED.md`. Each Mac fixture runs 20 times; all normalized assertions must agree before it becomes an oracle. Each Windows seed runs 20 times with all passing.
 
 ## 4. Stimuli & native mappings
 
