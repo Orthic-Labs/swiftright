@@ -2,14 +2,15 @@
   "schema": 1,
   "file": "swiftright_render.dll",
   "abi": "0.6",
-  "sha256": "7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC",
-  "authenticodeSha256": "D8FB3B3BF57409FE5013B45F073801EEA455822AF8F9E8FCAF4F1A50D39F7EB1",
+  "sha256": "97CA28E84A58F0D3B44B5A6EAA8D7C912E673A07774123296C958E0D7ECCA26B",
+  "authenticodeSha256": "531F1093BFF83E25139AAF8FF5C991ABC39AE800525DD21C4A7CE91C0C4F5163",
   "authenticodeNote": "PE hash excluding CheckSum + certificate table; stable across RightKit signing. Equals the digest signtool reports for the signed packaged DLL.",
-  "sizeBytes": 11877888,
-  "defaultSource": "D:\\Claude\\sr0b-abi06f\\bin\\swiftright_render.dll",
+  "sizeBytes": 11882496,
+  "defaultSource": "D:\\Claude\\sr0-r07\\renderer\\swiftright_render.dll",
   "sourceEnv": "SWIFTRIGHT_RENDERER_SRC",
+  "provenance": "SR0 tuple 07 renderer (modal fix, no ABI change): built by RightKit from swiftright commit 02b3cc0 (request rr-1791600938761-0a7e48770d4544ce; committed-tree rebuild rr-1791603213701 produced the same bytes). Unsigned. See docs/sr0-tuple07-staging.md.",
   "closure": {
-    "note": "dumpbin /dependents of the pinned DLL (2026-10-09). Everything is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload. icuuc.dll is the OS ICU in System32 (Windows 10 1903+; package minimum is 10.0.19041.0), declared as a system DLL in swift-package.json and right-release.config.mjs.",
+    "note": "dumpbin /dependents of the pinned DLL (2026-10-09; re-run 2026-10-10 on the tuple 07 DLL 97CA28E8: identical import set). Everything is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload. icuuc.dll is the OS ICU in System32 (Windows 10 1903+; package minimum is 10.0.19041.0), declared as a system DLL in swift-package.json and right-release.config.mjs.",
     "shipped": [
       "VCRUNTIME140.dll"
     ],
