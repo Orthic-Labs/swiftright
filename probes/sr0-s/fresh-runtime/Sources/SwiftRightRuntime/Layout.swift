@@ -6,11 +6,42 @@ public protocol Layout {
     associatedtype Cache = Void
     func makeCache(subviews: Subviews) -> Cache
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> LayoutSize
+    @_disfavoredOverload
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize
     func placeSubviews(in bounds: LayoutRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache)
+    @_disfavoredOverload
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache)
 }
 
 extension Layout where Cache == Void {
     public func makeCache(subviews: Subviews) -> Cache { () }
+}
+
+extension Layout {
+    /// Adapts a SwiftUI-style size witness to the runtime's portable geometry path.
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> LayoutSize {
+        let size: CGSize = sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
+        return LayoutSize(size)
+    }
+
+    /// Existing `LayoutSize` implementations keep their original witness and behavior.
+    /// A `Layout` must implement one of the two size witnesses; this terminal default prevents
+    /// missing witnesses from silently producing an empty container.
+    @_disfavoredOverload
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
+        preconditionFailure("Layout must implement a LayoutSize or CGSize sizeThatFits witness")
+    }
+
+    /// Adapts runtime bounds for a SwiftUI-style CGRect placement witness.
+    public func placeSubviews(in bounds: LayoutRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
+        placeSubviews(in: bounds.cgRect, proposal: proposal, subviews: subviews, cache: &cache)
+    }
+
+    /// A `Layout` must implement one placement witness; this terminal default prevents silent omission.
+    @_disfavoredOverload
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
+        preconditionFailure("Layout must implement a LayoutRect or CGRect placeSubviews witness")
+    }
 }
 
 extension Layout {
@@ -31,11 +62,21 @@ public struct Subview {
         graph.measure(node, proposal)
     }
 
+    @_disfavoredOverload
+    public func sizeThatFits(_ proposal: ProposedViewSize) -> CGSize {
+        graph.measure(node, proposal).cgSize
+    }
+
     /// Places the child so that `anchor` lies at `position`, sized under `proposal`.
     public func place(at position: LayoutPoint, anchor: UnitPoint = .topLeading, proposal: ProposedViewSize) {
         let size = graph.measure(node, proposal)
         let origin = LayoutPoint(x: position.x - anchor.x * size.width, y: position.y - anchor.y * size.height)
         graph.place(node, in: LayoutRect(origin: origin, size: size), proposal: proposal)
+    }
+
+    @_disfavoredOverload
+    public func place(at position: CGPoint, anchor: UnitPoint = .topLeading, proposal: ProposedViewSize) {
+        place(at: LayoutPoint(position), anchor: anchor, proposal: proposal)
     }
 }
 
@@ -76,7 +117,7 @@ public struct LayoutRoot<L: Layout, Content: View>: View, PrimitiveView {
         return .layout(LayoutSpec(
             size: { proposal, subviews, storage in
                 var cache = (storage as? L.Cache) ?? layout.makeCache(subviews: subviews)
-                let size = layout.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
+                let size: LayoutSize = layout.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
                 storage = cache
                 return size
             },

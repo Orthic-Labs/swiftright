@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// A size proposal from parent to child. Each axis is nil (unspecified), finite, or infinite.
 public struct ProposedViewSize: Hashable, Sendable {
@@ -11,6 +14,11 @@ public struct ProposedViewSize: Hashable, Sendable {
     }
 
     public init(_ size: LayoutSize) {
+        self.init(width: size.width, height: size.height)
+    }
+
+    @_disfavoredOverload
+    public init(_ size: CGSize) {
         self.init(width: size.width, height: size.height)
     }
 
@@ -30,6 +38,12 @@ public struct LayoutPoint: Hashable, Sendable {
         self.y = y
     }
 
+    public init(_ point: CGPoint) {
+        self.init(x: point.x, y: point.y)
+    }
+
+    public var cgPoint: CGPoint { CGPoint(x: x, y: y) }
+
     public static let zero = LayoutPoint(x: 0, y: 0)
 }
 
@@ -41,6 +55,13 @@ public struct LayoutSize: Hashable, Sendable {
         self.width = width
         self.height = height
     }
+
+    @_disfavoredOverload
+    public init(_ size: CGSize) {
+        self.init(width: size.width, height: size.height)
+    }
+
+    public var cgSize: CGSize { CGSize(width: width, height: height) }
 
     public static let zero = LayoutSize(width: 0, height: 0)
 }
@@ -56,6 +77,15 @@ public struct LayoutRect: Hashable, Sendable {
 
     public init(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
         self.init(origin: LayoutPoint(x: x, y: y), size: LayoutSize(width: width, height: height))
+    }
+
+    @_disfavoredOverload
+    public init(_ rect: CGRect) {
+        self.init(x: rect.origin.x, y: rect.origin.y, width: rect.size.width, height: rect.size.height)
+    }
+
+    public var cgRect: CGRect {
+        CGRect(x: minX, y: minY, width: width, height: height)
     }
 
     public static let zero = LayoutRect(origin: .zero, size: .zero)

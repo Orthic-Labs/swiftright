@@ -3,6 +3,15 @@ import Observation
 import SwiftRightRuntime
 import XCTest
 
+// Compile-only source-compatibility probe: native geometry overloads must not make
+// common inferred portable calls ambiguous.
+@MainActor
+func legacyGeometryCallSites<L: Layout>(_ subview: Subview, layout: L, subviews: Subviews, cache: inout L.Cache) {
+    let _: ProposedViewSize = ProposedViewSize(.zero)
+    subview.place(at: .zero, proposal: .zero)
+    layout.placeSubviews(in: .zero, proposal: .zero, subviews: subviews, cache: &cache)
+}
+
 // Layout semantics on the headless engine. Geometry is in logical points unless named "pixel".
 
 /// Walks child indices from a snapshot root.
@@ -114,6 +123,32 @@ struct AdaptiveProbe: View {
             Text("two")
         }
     }
+}
+
+struct CGSizeLayoutProbe: Layout {
+    typealias Cache = Int
+
+    func makeCache(subviews: Subviews) -> Int { 0 }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Int) -> CGSize {
+        cache += 1
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let _: [LayoutSize] = sizes
+        return CGSize(width: sizes.reduce(0) { $0 + $1.width } + 20, height: sizes.map(\.height).max()! + 10)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Int) {
+        let childSize: CGSize = subviews[0].sizeThatFits(.unspecified)
+        subviews[0].place(
+            at: CGPoint(x: bounds.midX + CGFloat(cache), y: bounds.midY),
+            anchor: .center,
+            proposal: ProposedViewSize(childSize)
+        )
+    }
+}
+
+struct CGSizeLayoutContainer: View {
+    var body: some View { CGSizeLayoutProbe().callAsFunction { Text("x") } }
 }
 
 struct PixelProbe: View {
@@ -247,6 +282,15 @@ final class LayoutTests: XCTestCase {
         graph.flush()
         layout = try node(graph.snapshot(), 0)
         XCTAssertEqual(layout.children.map(\.frame.minX), [0, 24], "crossing back restores side by side")
+    }
+
+    func testSwiftUIGeometryLayoutWitnessesBridgeToPortableEngine() throws {
+        let graph = Graph(CGSizeLayoutContainer(), measurer: FixedAdvanceTextMeasurer())
+        graph.flush()
+        let layout = try node(graph.snapshot(), 0)
+        XCTAssertEqual(layout.frame, LayoutRect(x: 0, y: 0, width: 28, height: 26))
+        XCTAssertEqual(layout.children[0].frame.minY, 5)
+        XCTAssertGreaterThan(layout.children[0].frame.minX, 10, "native placement receives mutated native cache")
     }
 
     func testFramesArePixelAlignedAtScale2_5() throws {
