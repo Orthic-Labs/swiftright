@@ -57,6 +57,19 @@ final class FontAdditionTests: XCTestCase {
         XCTAssertEqual(measurer.requests.map { $0.fontMetadata?.design }, [.serif, .rounded])
     }
 
+    func testCustomFamilyMetadataSurvivesWeightModifier() {
+        let measurer = FixedAdvanceTextMeasurer()
+        let graph = Graph(Text("custom").font(.custom("Example Display", size: 19).weight(.bold)), measurer: measurer)
+        graph.flush()
+
+        let metadata = measurer.requests.first?.fontMetadata
+        XCTAssertEqual(metadata?.familyName, "Example Display")
+        XCTAssertEqual(metadata?.pointSize, 19)
+        XCTAssertEqual(metadata?.weight, .bold)
+        XCTAssertTrue(metadata?.isCustom == true)
+        XCTAssertNil(metadata?.design)
+    }
+
     func testLegacySystemFontLeavesMetadataUnset() {
         let measurer = FixedAdvanceTextMeasurer()
         let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)

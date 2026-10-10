@@ -317,6 +317,14 @@ public struct Font: Hashable, Sendable {
         )
     }
 
+    /// Creates a font for a named family. Family metadata is passed to measurers without claiming a rendered glyph identity.
+    public static func custom(_ name: String, size: CGFloat) -> Font {
+        Font(
+            id: "custom(\(name),\(size))",
+            metadata: Metadata(familyName: name, pointSize: size, isCustom: true)
+        )
+    }
+
     public func weight(_ weight: Font.Weight) -> Font {
         let metadata = self.metadata.map {
             Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom)

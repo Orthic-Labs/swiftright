@@ -1,0 +1,39 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+@@ -260,6 +260,14 @@
+         )
+     }
+ 
++    /// Creates a font for a named family. Family metadata is passed to measurers without claiming a rendered glyph identity.
++    public static func custom(_ name: String, size: CGFloat) -> Font {
++        Font(
++            id: "custom(\(name),\(size))",
++            metadata: Metadata(familyName: name, pointSize: size, isCustom: true)
++        )
++    }
++
+     public func weight(_ weight: Font.Weight) -> Font {
+         let metadata = self.metadata.map {
+             Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom)
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
+@@ -57,6 +57,19 @@
+         XCTAssertEqual(measurer.requests.map { $0.fontMetadata?.design }, [.serif, .rounded])
+     }
+ 
++    func testCustomFamilyMetadataSurvivesWeightModifier() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("custom").font(.custom("Example Display", size: 19).weight(.bold)), measurer: measurer)
++        graph.flush()
++
++        let metadata = measurer.requests.first?.fontMetadata
++        XCTAssertEqual(metadata?.familyName, "Example Display")
++        XCTAssertEqual(metadata?.pointSize, 19)
++        XCTAssertEqual(metadata?.weight, .bold)
++        XCTAssertTrue(metadata?.isCustom == true)
++        XCTAssertNil(metadata?.design)
++    }
++
+     func testLegacySystemFontLeavesMetadataUnset() {
+         let measurer = FixedAdvanceTextMeasurer()
+         let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)
