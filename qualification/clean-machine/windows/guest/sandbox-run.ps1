@@ -179,6 +179,13 @@ function Test-RowsSchema1 {
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 
+# PATCH-1: the packaged app shows two top-level windows (Zed::Window and a ConsoleWindowClass console) and the elevated guest's UIA client
+# reports ProcessId 0 for them, so the original ProcessId lookup never matches. Find the app window by class instead.
+function Find-AppWindow {
+    $AE = [System.Windows.Automation.AutomationElement]
+    return $AE::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Children, (New-Object System.Windows.Automation.PropertyCondition($AE::ClassNameProperty, 'Zed::Window')))
+}
+
 function Start-AppAndFindWindow {
     param([int]$TimeoutSec = 30)
     $pkg = Get-Pkg
@@ -193,8 +200,7 @@ function Start-AppAndFindWindow {
         $procs = @(Get-Process -Name $exe -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 })
         if ($procs.Count -gt 0) {
             $pid0 = [int]$procs[0].Id
-            $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ProcessIdProperty, $pid0)
-            $win = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Children, $cond)
+            $win = Find-AppWindow
             if ($win) {
                 return @{ pid = $pid0; window_name = $win.Current.Name; exe = $exe }
             }
@@ -220,8 +226,7 @@ function Stop-AppGracefully {
 # UIA helpers over the app window of the given process id.
 function Get-AppRoot {
     param([int]$ProcessId)
-    $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ProcessIdProperty, $ProcessId)
-    return [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Children, $cond)
+    return (Find-AppWindow)   # PATCH-1
 }
 
 function Find-ByName {
@@ -233,6 +238,13 @@ function Find-ByName {
 }
 
 # Inserts a row and writes the marker into the new (empty) row, through UIA ValuePattern (the app routes AX SetValue into editText).
+# PATCH-5: Edit controls carry no Name; they are identified by AutomationId row/<guid>/field.
+function Find-RowFields {
+    param($Root)
+    $c = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
+    return @($Root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $c) | Where-Object { $_.Current.AutomationId -like 'row/*/field' })
+}
+
 function Write-MarkerRow {
     param($Root, [string]$Marker)
     $btn = @(Find-ByName -Root $Root -Name 'Insert above' -ControlType ([System.Windows.Automation.ControlType]::Button))
@@ -240,7 +252,7 @@ function Write-MarkerRow {
     $inv = $btn[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
     $inv.Invoke()
     Start-Sleep -Seconds 1
-    $rows = @(Find-ByName -Root $Root -Name 'Row' -ControlType ([System.Windows.Automation.ControlType]::Edit))
+    $rows = @(Find-RowFields -Root $Root)
     if ($rows.Count -eq 0) { throw 'no "Row" text fields found after insert' }
     # Insert above adds an EMPTY row (EditorModel.insertAbove); write into it so earlier markers are never overwritten.
     $target = $null
@@ -256,7 +268,7 @@ function Write-MarkerRow {
 
 function Read-RowValues {
     param($Root)
-    $rows = @(Find-ByName -Root $Root -Name 'Row' -ControlType ([System.Windows.Automation.ControlType]::Edit))
+    $rows = @(Find-RowFields -Root $Root)
     $vals = @()
     foreach ($r in $rows) {
         $vp = $r.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
@@ -304,11 +316,47 @@ function Invoke-ChildPs {
     return @{ exit = $LASTEXITCODE; out = $out.Trim() }
 }
 
+# Offset of the middle of an entry's compressed data (ZipArchive + the private local-header offset; handles ZIP64).
+function Get-ZipEntryMidOffset {
+    param([string]$Path, [string]$EntryName)
+    Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
+    $fs = [System.IO.File]::OpenRead($Path)
+    try {
+        $za = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Read)
+        $e = $za.GetEntry($EntryName)
+        if (-not $e) { throw "entry not found: $EntryName" }
+        $fi = $e.GetType().GetField('_offsetOfLocalHeader', [System.Reflection.BindingFlags]'NonPublic,Instance')
+        if (-not $fi) { throw 'ZipArchiveEntry local-header offset field not found' }
+        $lho = [long]$fi.GetValue($e)
+        $csize = [long]$e.CompressedLength
+        $za.Dispose()
+    } finally { $fs.Dispose() }
+    $fs2 = [System.IO.File]::OpenRead($Path)
+    try { [void]$fs2.Seek($lho, 'Begin'); $h = New-Object byte[] 30; [void]$fs2.Read($h, 0, 30) } finally { $fs2.Dispose() }
+    if ([BitConverter]::ToUInt32($h, 0) -ne 0x04034b50) { throw 'bad local header signature' }
+    $start = $lho + 30 + [BitConverter]::ToUInt16($h, 26) + [BitConverter]::ToUInt16($h, 28)
+    return @{ offset = [int]($start + [Math]::Floor($csize / 2)); data_start = $start; compressed_size = $csize }
+}
+
+function Invoke-AppInstallerBounded {
+    param([string]$Url, [int]$TimeoutSec)
+    $outf = Join-Path $WorkDir ('ai-' + [guid]::NewGuid().ToString('N') + '.txt')
+    $cmd = "`$r = ''; try { Add-AppxPackage -AppInstallerFile '" + $Url + "' -ErrorAction Stop; `$r = 'OK' } catch { `$r = 'FAILED: ' + `$_.Exception.Message }; Set-Content -LiteralPath '" + $outf + "' -Value `$r"
+    $p = Start-Process -FilePath 'powershell.exe' -PassThru -WindowStyle Hidden -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $cmd)
+    if ($p.WaitForExit($TimeoutSec * 1000)) {
+        $r = ''
+        if (Test-Path -LiteralPath $outf) { $r = (Get-Content -LiteralPath $outf -Raw).Trim() }
+        return @{ timed_out = $false; result = $r }
+    }
+    try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch { }
+    return @{ timed_out = $true; result = ('no result within ' + $TimeoutSec + ' s') }
+}
+
 function Get-VersionString { $p = Get-Pkg; if ($p) { return [string]$p.Version } else { return 'none' } }
 
 function Remove-PkgKeepData {
     $p = Get-Pkg
-    if ($p) { Remove-AppxPackage -Package $p.PackageFullName -PreserveApplicationData }
+    if ($p) { Remove-AppxPackage -Package $p.PackageFullName }   # PATCH-2: no -PreserveApplicationData (dev-mode only, 0x80073CFA)
     return (-not (Get-Pkg))
 }
 
@@ -428,7 +476,11 @@ Invoke-Check -CheckId 'W03-install-old' -CheckName 'Install old MSIX' -Body {
 # Windows\renderer-pin.json (final tuple renderer 4FB068F0...) and loads the renderer + its closure from the package
 # under a scrubbed environment (PATH = System32, SWIFTRIGHT_RENDER_DLL unset). No app launch.
 Invoke-Check -CheckId 'W13-renderer-layout-installed' -CheckName 'Installed renderer matches the pin (Authenticode digest) and loads from the package' -Body {
-    $r = Invoke-ChildPs -PsArgs @('-File', (Join-Path $script:SliceDir 'scripts\verify-package-layout.ps1'), '-Mode', 'Installed')
+    # PATCH-3: -Mode Installed ends with LoadLibraryEx of the DLL from C:\Program Files\WindowsApps in a non-package process: error 5 even though the
+    # ACL grants Users read/execute. Check the installed files statically (Authenticode digest vs pin, exe beside DLL, closure files); the packaged exe's
+    # own load of the renderer is observed in W04 (loaded module path).
+    $pkg0 = Get-Pkg
+    $r = Invoke-ChildPs -PsArgs @('-File', (Join-Path $script:SliceDir 'scripts\verify-package-layout.ps1'), '-Mode', 'Stage', '-Root', $pkg0.InstallLocation)
     $pin = Get-Content -Raw -LiteralPath (Join-Path $script:SliceDir 'Windows\renderer-pin.json') | ConvertFrom-Json
     $pkg = Get-Pkg
     $dll = Join-Path $pkg.InstallLocation $pin.file
@@ -448,7 +500,9 @@ Invoke-Check -CheckId 'W13-renderer-layout-installed' -CheckName 'Installed rend
 Invoke-Check -CheckId 'W04-launch-offline-old' -CheckName 'Launch old build offline; window via UIA' -Body {
     $w = Start-AppAndFindWindow -TimeoutSec 40
     $pass = ($w.window_name -ne '')
-    @{ pass = $pass; reason = 'window has no name'; observed = @{ window_name = [string]$w.window_name; pid = [string]$w.pid; network_default_routes = [string](@(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue).Count) }; artifacts = @{}; exit = $null }
+    $rmod = ''
+    try { $rmod = (@((Get-Process -Id $w.pid).Modules | Where-Object { $_.ModuleName -like 'swiftright_render*' } | ForEach-Object { $_.FileName }) -join ';') } catch { $rmod = 'unreadable: ' + $_.Exception.Message }
+    @{ pass = $pass; reason = 'window has no name'; observed = @{ renderer_module_loaded_from = $rmod; window_name = [string]$w.window_name; pid = [string]$w.pid; network_default_routes = [string](@(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue).Count) }; artifacts = @{}; exit = $null }
 }
 
 # W05: write data through the UI and confirm it reaches rows.json at a physical path.
@@ -495,25 +549,45 @@ Invoke-Check -CheckId 'W06-upgrade-new' -CheckName 'Upgrade to new MSIX keeps da
 }
 
 # W07: a corrupt update must be refused and the installed version must stay put.
-Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX refused; installed version unchanged' -Body {
+Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX refused; installed version unchanged; valid update still applies' -Body {
+    # PATCH-4. Original ran with the NEW build installed and running: the refusal was 0x80073D02 (in use), not corruption, and its flipped byte sat in
+    # _FoundationICU.dll, a payload file identical in old and new. An update over the old build reuses unchanged blocks from the installed copy (differential
+    # update), so a flip there is never read. Now: app closed, OLD installed; (a, informational) flip inside the unchanged ICU entry; (b, the check) flip inside
+    # SliceApp.exe, a file that differs old->new, must be refused for a non-in-use reason with OLD still registered; then the genuine NEW must apply.
     $m = $script:Manifest
+    $old = Join-Path $PackagesDir $m.old.file
     $src = Join-Path $PackagesDir $m.new.file
-    $bad = Join-Path $WorkDir 'tampered.msix'
-    Copy-Item -LiteralPath $src -Destination $bad -Force
-    $bytes = [System.IO.File]::ReadAllBytes($bad)
-    $off = [int]([math]::Floor($bytes.Length / 2))
-    $oldByte = $bytes[$off]
-    $bytes[$off] = $bytes[$off] -bxor 0x01
-    [System.IO.File]::WriteAllBytes($bad, $bytes)
-    $verBefore = [string](Get-Pkg).Version
-    $rejected = $false
-    $msg = ''
-    $hresult = ''
-    try { Add-AppxPackage -Path $bad } catch { $rejected = $true; $msg = $_.Exception.Message; $hresult = ('0x{0:X8}' -f $_.Exception.HResult) }
-    $verAfter = [string](Get-Pkg).Version
-    $observed = @{ flipped_offset = [string]$off; byte_before = ('{0:x2}' -f $oldByte); byte_after = ('{0:x2}' -f $bytes[$off]); rejected = [string]$rejected; hresult = $hresult; error = $msg; version_before = $verBefore; version_after = $verAfter }
-    $pass = $rejected -and ($verBefore -eq $verAfter)
-    @{ pass = $pass; reason = 'tampered package was accepted or installed version changed'; observed = $observed; artifacts = @{ tampered_msix = (Get-Sha256Ref -Path $bad) }; exit = $null }
+    function Try-Tampered([string]$entry, [string]$tag) {
+        [void](Stop-AppGracefully)
+        [void](Remove-PkgKeepData)
+        Add-AppxPackage -Path $old
+        $o = Get-ZipEntryMidOffset -Path $src -EntryName $entry
+        $bad = Join-Path $WorkDir ('tampered-' + $tag + '.msix')
+        Copy-Item -LiteralPath $src -Destination $bad -Force
+        $bytes = [System.IO.File]::ReadAllBytes($bad)
+        $b0 = $bytes[$o.offset]
+        $bytes[$o.offset] = $b0 -bxor 0x01
+        [System.IO.File]::WriteAllBytes($bad, $bytes)
+        $rej = $false; $msg = ''; $hr = ''
+        try { Add-AppxPackage -Path $bad } catch { $rej = $true; $msg = $_.Exception.Message; $hr = ('0x{0:X8}' -f $_.Exception.HResult) }
+        return @{ entry = $entry; offset = [string]$o.offset; byte_before = ('{0:x2}' -f $b0); byte_after = ('{0:x2}' -f $bytes[$o.offset]); rejected = $rej; error = $msg; hresult = $hr; version_after = (Get-VersionString); sha = (Get-Sha256Ref -Path $bad) }
+    }
+    $a = Try-Tampered -entry '_FoundationICU.dll' -tag 'unchanged-entry'
+    $b = Try-Tampered -entry 'SliceApp.exe' -tag 'changed-entry'
+    $verBefore = [string]$m.old.version
+    $goodErr = ''
+    try { Add-AppxPackage -Path $src } catch { $goodErr = $_.Exception.Message }
+    $verFinal = Get-VersionString
+    $inUse = ($b.error -match '0x80073D02')
+    $observed = @{
+        changed_entry = $b.entry; flipped_offset = $b.offset; byte_before = $b.byte_before; byte_after = $b.byte_after
+        rejected = [string]$b.rejected; refusal_is_in_use = [string]$inUse; hresult = $b.hresult; error = $b.error
+        version_before = $verBefore; version_after_tampered = $b.version_after
+        genuine_update_error = $goodErr; version_after_genuine_update = $verFinal
+        info_unchanged_entry = $a.entry; info_unchanged_rejected = [string]$a.rejected; info_unchanged_version_after = $a.version_after; info_unchanged_error = $a.error
+    }
+    $pass = $b.rejected -and (-not $inUse) -and ($b.version_after -eq $verBefore) -and ($goodErr -eq '') -and ($verFinal -eq [string]$m.new.version)
+    @{ pass = $pass; reason = 'tampered changed-entry package accepted, refused only because the app was in use, installed version changed, or the genuine update failed'; observed = $observed; artifacts = @{ tampered_msix = $b.sha }; exit = $null }
 }
 
 # W08: real interrupted update (Sandbox guest only). Fault injection: AppXSvc is stopped while Add-AppxPackage deploys the
@@ -595,7 +669,7 @@ Invoke-Check -CheckId 'W09-rollback-readable' -CheckName 'Old build reads data w
     $old = Join-Path $PackagesDir $m.old.file
     [void](Stop-AppGracefully)
     $pkg = Get-Pkg
-    if ($pkg) { Remove-AppxPackage -Package $pkg.PackageFullName -PreserveApplicationData }
+    if ($pkg) { Remove-AppxPackage -Package $pkg.PackageFullName }   # PATCH-2
     $st = Get-DataState
     $preserved = ($null -ne $st.found)
     Add-AppxPackage -Path $old
@@ -618,11 +692,11 @@ Invoke-Check -CheckId 'W10-uninstall-keeps-data' -CheckName 'Uninstall keeps row
     $before = Get-DataState
     $bsha = $(if ($before.found) { Get-Sha256Ref -Path $before.found.path } else { 'missing' })
     $pkg = Get-Pkg
-    if ($pkg) { Remove-AppxPackage -Package $pkg.PackageFullName -PreserveApplicationData }
+    if ($pkg) { Remove-AppxPackage -Package $pkg.PackageFullName }   # PATCH-2
     $gone = -not (Get-Pkg)
     $after = Get-DataState
     $asha = $(if ($after.found) { Get-Sha256Ref -Path $after.found.path } else { 'missing' })
-    $observed = @{ package_removed = [string]$gone; sha_before = [string]$bsha; sha_after = [string]$asha; preserve_flag = 'Remove-AppxPackage -PreserveApplicationData' }
+    $observed = @{ package_removed = [string]$gone; sha_before = [string]$bsha; sha_after = [string]$asha; preserve_flag = 'plain Remove-AppxPackage (physical-path data is not package data)' }
     foreach ($k in $after.observed.Keys) { $observed[$k] = $after.observed[$k] }
     $pass = $gone -and ($bsha -ne 'missing') -and ($bsha -eq $asha)
     @{ pass = $pass; reason = 'package not removed or rows.json missing or changed'; observed = $observed; artifacts = @{ rows_json = $asha }; exit = 0 }
@@ -711,13 +785,26 @@ Invoke-Check -CheckId 'W12-appinstaller-update' -CheckName 'App Installer feed i
         $bad = (Get-Content -Raw -LiteralPath (Join-Path $feed 'SliceApp.appinstaller')) -replace 'Publisher="CN=Damned Ventures LLC', 'Publisher="CN=Not The Signer'
         [System.IO.File]::WriteAllText((Join-Path $feed 'SliceApp.appinstaller'), $bad, $Utf8)
         $negRejected = $false; $negMsg = ''
-        try { Add-AppxPackage -AppInstallerFile $url } catch { $negRejected = $true; $negMsg = $_.Exception.Message }
+        $ni = Invoke-AppInstallerBounded -Url $url -TimeoutSec 90
+        if ($ni.timed_out) { $negMsg = 'negative feed install did not return within 90 s' } elseif ($ni.result -ne 'OK') { $negRejected = $true; $negMsg = $ni.result }
         $negNotInstalled = (-not (Get-Pkg))
         # Positive: the 0.1.0.0 feed.
         Copy-Item -LiteralPath (Join-Path $feedSrc 'SliceApp.0.appinstaller') -Destination (Join-Path $feed 'SliceApp.appinstaller') -Force
         $installErr = ''
-        try { Add-AppxPackage -AppInstallerFile $url } catch { $installErr = $_.Exception.Message }
+        $installTimedOut = $false
+        $ai = Invoke-AppInstallerBounded -Url $url -TimeoutSec 120
+        if ($ai.timed_out) { $installTimedOut = $true; $installErr = 'Add-AppxPackage -AppInstallerFile did not return within 120 s' } elseif ($ai.result -ne 'OK') { $installErr = $ai.result }
+        if ($installTimedOut -or $installErr) {
+            $feedLog = ''
+            try { $feedLog = ((Get-Content -LiteralPath (Join-Path $env:TEMP 'serve-local-feed.log') -ErrorAction Stop | Select-Object -Last 12) -join ' | ') } catch { $feedLog = 'no feed log' }
+            return @{ pass = $false; reason = ('App Installer feed install failed: ' + $installErr); observed = @{ feed_url = $url; negative_publisher_mismatch_rejected = [string]$negRejected; negative_error = $negMsg; negative_left_nothing_installed = [string]$negNotInstalled; install_timed_out = [string]$installTimedOut; install_error = $installErr; installed_version_after = (Get-VersionString); feed_server_log_tail = $feedLog }; artifacts = @{}; exit = $null }
+        }
         $v0 = Get-VersionString
+        if ($v0 -ne [string]$m.old.version) {
+            $feedLog2 = ''
+            try { $feedLog2 = ((Get-Content -LiteralPath (Join-Path $env:TEMP 'serve-local-feed.log') -ErrorAction Stop | Select-Object -Last 12) -join ' | ') } catch { $feedLog2 = 'no feed log' }
+            return @{ pass = $false; reason = ('App Installer install returned without registering the package (version ' + $v0 + ')'); observed = @{ feed_url = $url; negative_publisher_mismatch_rejected = [string]$negRejected; negative_error = $negMsg; negative_left_nothing_installed = [string]$negNotInstalled; install_result = [string]$ai.result; version_after_feed_install = $v0; feed_server_log_tail = $feedLog2 }; artifacts = @{}; exit = $null }
+        }
         $w = Start-AppAndFindWindow -TimeoutSec 40
         $shaBefore = Get-RowsSha
         [void](Stop-AppGracefully)

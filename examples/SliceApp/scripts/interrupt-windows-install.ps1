@@ -37,7 +37,7 @@ function State([string]$when) {
         all_users_count = $all.Count
         rows_sha256 = $sha
     }
-    "[$when] registered: $(if ($pk) { ($pk | ForEach-Object { "$($_.PackageFullName) status=$($_.Status)" }) -join '; ' } else { 'NONE' }); rows.json $sha"
+    Write-Host "[$when] registered: $(if ($pk) { ($pk | ForEach-Object { "$($_.PackageFullName) status=$($_.Status)" }) -join '; ' } else { 'NONE' }); rows.json $sha"   # PATCH-6: Write-Host (a bare string polluted the return value, so `states` serialized as [string, object] pairs)
     return $o
 }
 $res = [ordered]@{ schema = 'sr0-interrupt/v1'; mode = $Mode; old_msix = $OldMsix; new_msix = $NewMsix; valid = $false; states = @() }
@@ -63,13 +63,20 @@ $job = Start-Job { param($m) Add-AppxPackage -Path $m } -ArgumentList $NewMsix
 $deadline = (Get-Date).AddSeconds(60)
 $start = Get-Date
 while ((Get-Date) -lt $deadline) {
-    $ev = Get-WinEvent -LogName 'Microsoft-Windows-AppXDeploymentServer/Operational' -MaxEvents 20 -ErrorAction SilentlyContinue | Where-Object { $_.TimeCreated -ge $start }
-    if ($ev) { break }
+    # PATCH-11b: the event-log query took longer than the whole (~1 s) deployment, so the interrupt never landed in flight. Trigger on the staging directory instead.
+    $ev = @([IO.Directory]::GetDirectories('C:\Program Files\WindowsApps', ($PackageName + '_*')) | Where-Object { $_ -match '_0\.1\.1\.0_' })
+    if ($ev.Count -gt 0) { break }
     if ($job.State -ne 'Running') { break }
     Start-Sleep -Milliseconds 20
 }
 $stoppedInFlight = ($job.State -eq 'Running')
-if ($stoppedInFlight) { Stop-Service -Name AppXSvc -Force; "AppXSvc stopped mid-deployment" } else { "deployment finished before the interrupt landed: result not valid, rerun" }
+if ($stoppedInFlight) {
+    # PATCH-11: Stop-Service waits for the in-flight deployment (observed: job Completed, nothing interrupted). Kill the service host process instead (disposable guest only).
+    $svcPid = [int](Get-CimInstance Win32_Service -Filter "Name='AppXSvc'").ProcessId
+    $killed = $false
+    if ($svcPid -gt 0) { & cmd.exe /c "taskkill.exe /F /PID $svcPid >nul 2>&1"; $killed = ($LASTEXITCODE -eq 0) }
+    if ($killed) { "AppXSvc host process $svcPid killed mid-deployment" } else { Stop-Service -Name AppXSvc -Force; "AppXSvc stopped mid-deployment (host process is protected: taskkill failed)" }
+} else { "deployment finished before the interrupt landed: result not valid, rerun" }
 $null = Wait-Job $job -Timeout 120
 try { Receive-Job $job -ErrorAction Stop | Out-Null } catch { $errText = $_.Exception.Message }
 $jobState = [string]$job.State
