@@ -109,6 +109,18 @@ extension Graph {
         case .image(let spec):
             let ideal = imageIntrinsicSize(spec.reference)
             guard spec.sizing.isResizable else { return ideal }
+            if spec.sizing.scalesToFit, ideal.width > 0, ideal.height > 0 {
+                let widthScale = finiteLength(proposal.width).map { $0 / ideal.width }
+                let heightScale = finiteLength(proposal.height).map { $0 / ideal.height }
+                let scale: CGFloat
+                switch (widthScale, heightScale) {
+                case let (width?, height?): scale = min(width, height)
+                case let (width?, nil): scale = width
+                case let (nil, height?): scale = height
+                case (nil, nil): return ideal
+                }
+                return LayoutSize(width: ideal.width * scale, height: ideal.height * scale)
+            }
             return LayoutSize(
                 width: finiteLength(proposal.width) ?? ideal.width,
                 height: finiteLength(proposal.height) ?? ideal.height

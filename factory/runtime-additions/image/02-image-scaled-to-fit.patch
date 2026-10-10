@@ -1,0 +1,78 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+index 585ab57..c950531 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+@@ -113,6 +113,14 @@ public struct Image: View, PrimitiveView {
+         return image
+     }
+ 
++    /// Fits a resizable image inside its proposed bounds while preserving its aspect ratio.
++    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaledtofit()
++    public func scaledToFit() -> Self {
++        var image = self
++        image.scalesToFit = true
++        return image
++    }
++
+     var sizing: ResolvedImageSizing {
+         ResolvedImageSizing(
+             isResizable: isResizable,
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+index d4debb4..7bca34b 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -109,6 +109,18 @@ extension Graph {
+         case .image(let spec):
+             let ideal = imageIntrinsicSize(spec.reference)
+             guard spec.sizing.isResizable else { return ideal }
++            if spec.sizing.scalesToFit, ideal.width > 0, ideal.height > 0 {
++                let widthScale = finiteLength(proposal.width).map { $0 / ideal.width }
++                let heightScale = finiteLength(proposal.height).map { $0 / ideal.height }
++                let scale: CGFloat
++                switch (widthScale, heightScale) {
++                case let (width?, height?): scale = min(width, height)
++                case let (width?, nil): scale = width
++                case let (nil, height?): scale = height
++                case (nil, nil): return ideal
++                }
++                return LayoutSize(width: ideal.width * scale, height: ideal.height * scale)
++            }
+             return LayoutSize(
+                 width: finiteLength(proposal.width) ?? ideal.width,
+                 height: finiteLength(proposal.height) ?? ideal.height
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+index 7d6bebc..1a7927c 100644
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+@@ -196,6 +196,31 @@ final class SR1ControlTests: XCTestCase {
+         XCTAssertEqual(image?.imageSizing?.scalesToFit, false)
+     }
+ 
++    func testScaledToFitPreservesAspectRatioInsideProposal() {
++        let graph = Graph(Image(systemName: "star.fill").resizable().scaledToFit())
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.frame.width, 30)
++        XCTAssertEqual(image?.frame.height, 9)
++        XCTAssertEqual(image?.imageSizing?.scalesToFit, true)
++        XCTAssertEqual(image?.accessibility.label, "star.fill")
++    }
++
++    func testScaledToFitWithoutResizableKeepsNaturalImageSize() {
++        let graph = Graph(Image(systemName: "star.fill").scaledToFit())
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.frame.width, 40)
++        XCTAssertEqual(image?.frame.height, 12)
++        XCTAssertEqual(image?.imageSizing?.isResizable, false)
++    }
++
+     // TextEditor is multi-line over the shared TextInputState model: Return inserts a line break, the height
+     // grows with the lines, and the field role is text-area.
+     // https://developer.apple.com/documentation/swiftui/texteditor

@@ -196,6 +196,31 @@ final class SR1ControlTests: XCTestCase {
         XCTAssertEqual(image?.imageSizing?.scalesToFit, false)
     }
 
+    func testScaledToFitPreservesAspectRatioInsideProposal() {
+        let graph = Graph(Image(systemName: "star.fill").resizable().scaledToFit())
+        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
+        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
+        graph.flush()
+
+        let image = graph.snapshot()
+        XCTAssertEqual(image?.frame.width, 30)
+        XCTAssertEqual(image?.frame.height, 9)
+        XCTAssertEqual(image?.imageSizing?.scalesToFit, true)
+        XCTAssertEqual(image?.accessibility.label, "star.fill")
+    }
+
+    func testScaledToFitWithoutResizableKeepsNaturalImageSize() {
+        let graph = Graph(Image(systemName: "star.fill").scaledToFit())
+        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
+        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
+        graph.flush()
+
+        let image = graph.snapshot()
+        XCTAssertEqual(image?.frame.width, 40)
+        XCTAssertEqual(image?.frame.height, 12)
+        XCTAssertEqual(image?.imageSizing?.isResizable, false)
+    }
+
     // TextEditor is multi-line over the shared TextInputState model: Return inserts a line break, the height
     // grows with the lines, and the field role is text-area.
     // https://developer.apple.com/documentation/swiftui/texteditor

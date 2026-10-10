@@ -113,6 +113,14 @@ public struct Image: View, PrimitiveView {
         return image
     }
 
+    /// Fits a resizable image inside its proposed bounds while preserving its aspect ratio.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaledtofit()
+    public func scaledToFit() -> Self {
+        var image = self
+        image.scalesToFit = true
+        return image
+    }
+
     var sizing: ResolvedImageSizing {
         ResolvedImageSizing(
             isResizable: isResizable,
