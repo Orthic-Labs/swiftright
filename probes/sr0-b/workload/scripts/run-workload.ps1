@@ -9,7 +9,7 @@
 # `--rows N`; an app build that ignores it is caught by the analyzer, which compares meta.json total_rows). Every run samples CPU / threads / memory / GPU
 # into <run>\resources.csv unless -NoResources (overhead A/B). scripts\run-stress.ps1 runs the Rows x KeyRate series through this script.
 param(
-  [string]$Base = 'D:\Claude\sr0-r08\workload',
+  [string]$Base = 'D:\Claude\sr0-r09\workload',
   [string]$Instr = 'full',            # full | light (light = overhead A/B baseline; analyzer reports it as such)
   [int]$Runs = 3,
   [int]$Warmup = 10,
