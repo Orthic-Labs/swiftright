@@ -958,7 +958,6 @@
         "rejected toolbar\/insert insert-above reason=task-cancelled",
         "cleanup toolbar\/insert insert-above"
       ],
-      "focusedNodeId" : "toolbar\/insert",
       "lifecycle" : [
         {
           "kind" : "taskStart",
@@ -2431,31 +2430,31 @@
       "id" : "initial",
       "logicalAction" : "launch-and-snapshot",
       "nativeMapping" : "UIA tree walk (RawView) from window root",
-      "timestamp" : "mono_ns 1967159740400"
+      "timestamp" : "mono_ns 17797800377300"
     },
     {
       "id" : "invoke_insert_above",
       "logicalAction" : "activate the Insert above button; the engine commits it, then two restarts and a stale release",
       "nativeMapping" : "UIA InvokePattern.Invoke [type=Button,name=Insert above]; UIA poll until node present [id=row\/F0000008-0000-4000-8000-000000000101\/field] (settlement, timeout 30000 ms)",
-      "timestamp" : "mono_ns 1967701227000"
+      "timestamp" : "mono_ns 17798354656700"
     },
     {
       "id" : "set_value_row3",
       "logicalAction" : "set row 3 value to 'AX value' through the accessibility text-replacement route (Mac: AXSelectedText over a full AXSelectedTextRange, because SwiftUI ignores AXValue writes; Windows: ValuePattern.SetValue)",
       "nativeMapping" : "UIA ValuePattern.SetValue(AX value) [id=row\/F0000008-0000-4000-8000-000000000003\/field]",
-      "timestamp" : "mono_ns 1971743607000"
+      "timestamp" : "mono_ns 17801448514100"
     },
     {
       "id" : "focus_row3",
       "logicalAction" : "focus row 3 field",
       "nativeMapping" : "UIA SetFocus [id=row\/F0000008-0000-4000-8000-000000000003\/field]",
-      "timestamp" : "mono_ns 1973809305800"
+      "timestamp" : "mono_ns 17802332720400"
     },
     {
       "id" : "delete_row6",
       "logicalAction" : "activate the Delete button of row 6",
       "nativeMapping" : "UIA InvokePattern.Invoke [type=Button,name=Delete,after=row\/F0000008-0000-4000-8000-000000000006\/field]; UIA poll until node absent [id=row\/F0000008-0000-4000-8000-000000000006\/field] (settlement, timeout 8000 ms)",
-      "timestamp" : "mono_ns 1974663632100"
+      "timestamp" : "mono_ns 17803138457600"
     }
   ]
 }

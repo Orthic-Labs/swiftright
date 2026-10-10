@@ -220,7 +220,7 @@ def adaptations(config, step_ids):
     Only differences with a standing reason remain (CROSS-ALL.md):
       N1  steps.nativeMapping, every step of the config (the declared per-platform input routes)
       P1  F2 stale Mac AX tree after the focused row moved                      status oracle-quirk
-      P2  F3 List after remove/reinsert: Mac AX focus (outline) vs FocusState    status unproven
+      P2  F3 List after remove/reinsert: Mac AX focus (outline) vs FocusState    status oracle-quirk (probe F3-list-1s-typeafter, tuple 09)
       P6  F9 treeReleased after close                                            status contract
     Removed after the review: P3 (F5 initial focus), P4 (F6 row rebuild), P5 (F8 focus after Invoke) are product differences
     and stay failing diffs; recorder artifacts are fixed in the recorders, runtime defects are never adapted."""
@@ -251,14 +251,15 @@ def adaptations(config, step_ids):
         pair("P1", "oracle-quirk", step, "axNodes.parent", {"anon:anon:window#1#1": "anon:anon:window#1#7"}, why, row(3) + "/field")
         pair("P1", "oracle-quirk", step, "axNodes.parent", {"anon:anon:window#1#1": "anon:anon:window#1#7"}, why, row(3) + "/local")
     if root in ("F3", "F3-list-1s", "F3-list-3s"):
-        why = ("UNPROVEN. F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md "
-               "oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder "
-               "is not restored on the recreated cell); Windows restores focus to the field and UIA reports it. Whether the AX "
-               "route is merely a quirk or Mac really has lost keyboard focus is not established: the probe plan "
-               "F3-list-1s-typeafter types one more character and records where it lands. Only this one transition is allowed.")
+        why = ("F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List "
+               "restores focus) but the Mac AX focused element is the outline, not the field, and a key typed afterwards lands "
+               "nowhere on the Mac (probe F3-list-1s-typeafter, 3 Mac runs: row 4 stays 'Row 4', no focus). Windows restores "
+               "focus to the field (selection 0+0) and a typed key lands in row 4 (3 Windows runs). The Mac keyboard focus is "
+               "really lost, so this is a Mac oracle quirk against its own FocusState event, not a Windows defect. Applies only "
+               "to the step that removes and reinserts the focused row; the later typed character is NOT allowed.")
         step = ["type_x_remove_reinsert"]
-        pair("P2", "unproven", step, "focusedNodeId", {"<none>": row(4) + "/field"}, why)
-        pair("P2", "unproven", step, "selection", {"<none>": "location=0 length=0"}, why)
+        pair("P2", "oracle-quirk", step, "focusedNodeId", {"<none>": row(4) + "/field"}, why)
+        pair("P2", "oracle-quirk", step, "selection", {"<none>": "location=0 length=0"}, why)
     if root == "F9":
         why = ("CONTRACT F9: tree release after close is a Windows runtime requirement, not a Mac oracle assertion "
                "(AppKit keeps closed NSWindows alive in the fixture host).")

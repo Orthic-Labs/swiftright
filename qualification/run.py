@@ -32,6 +32,13 @@ Rules (docs/architecture.md AD7 and section 11)
     The trace also carries run conditions (reduce motion): Mac and Windows traces recorded under different ones FAIL.
     Historical input: --win-candidate-dir.
     The caller holds the Dell desktop lock (D:\\Claude\\desktop.lock) for the recording jobs.
+  * workload (T14, R10) and native (T14, R9) evaluate the committed receipts of the final tuple; they drive nothing.
+    workload: the Windows analyzer receipt must be bound to the tuple renderer, every threshold PASS except the two the
+    section 11 bar (docs/sr0-findings.md) replaces: input-to-visible p95 (W4) and presented-interval p95 (W5) must be no
+    worse than the median of the Mac receipt's per-run values; missed vblanks are REPORTED, not gated. W7 must be measured.
+    native: preflight bound to the tuple fixture and renderer, static check OK, and the IME F7/F7live/F8 and Narrator
+    receipts with no failed check beyond the named known limitation; Narrator speech (audio) is reported as pending a person.
+    compare must cover all 16 configs; a narrowed --configs fails the closure gate.
   * smoke runs BridgeSmoke twice: normal mode and timeout mode (`-SkipShutdown`).
   * package accepts several run directories per platform (profiles) and evaluates the union of their checks.
   * Canonical digest form sr0-a.canonical/v2: group by step, then node; per-node event order is significant.
@@ -65,8 +72,8 @@ REPEAT_DIR = FIXTURES_PKG / "out" / "repeat20"
 MATRIX_SCRIPT = REPO / "probes" / "sr0-s" / "fresh-on-bridge" / "scripts" / "run-matrix.sh"
 SMOKE_SCRIPT = REPO / "examples" / "BridgeSmoke" / "scripts" / "schedule-smoke.ps1"
 
-STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package", "seed", "promote")
-RUN_STAGES = ("mac-oracle", "win-replay", "compare", "smoke", "package")  # default declared order
+STAGES = ("mac-oracle", "win-replay", "compare", "workload", "native", "smoke", "package", "seed", "promote")
+RUN_STAGES = ("mac-oracle", "win-replay", "compare", "workload", "native", "smoke", "package")  # default declared order (the closure gate)
 WINDOWS_PASS_IDS = ("windows_exe", "windows_renderer", "windows_trace")
 WINDOWS_STAGES = ("win-replay", "smoke")
 PACKAGE_RECEIPT_SCHEMA = "sr0-a.package-receipt/v2"
@@ -100,7 +107,7 @@ CROSS_DIR = F1_PACKAGE / "cross"  # per-config stimulus.json, steps-win.json, st
 TUPLE_FINAL = QUAL_DIR / "tuple-final.json"
 TUPLE_SCHEMA = "sr0-a.tuple/v1"
 TUPLE_MEMBERS = ("windows_renderer", "windows_fixture_exe", "windows_smoke_exe", "old_msix", "new_msix", "old_dmg", "new_dmg")
-PINNED_STAGES = ("win-replay", "smoke", "package")
+PINNED_STAGES = ("win-replay", "workload", "native", "smoke", "package")
 SHA_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 ARTIFACTS_LINE_RE = re.compile(r"^ARTIFACTS exe=([0-9a-f]{64}) renderer=([0-9a-f]{64}) trace=([0-9a-f]{64})\s*$", re.M)
 EVENTS = ("start", "pass", "fail", "skip")
@@ -1661,6 +1668,16 @@ def cmd_run(args):
                           tuple_pin=tuple_pin, cross_trace="compare" in stages)
             elif stage == "compare":
                 run_compare(log, args, stages, out_dir, dry)
+            elif stage == "workload":
+                if dry:
+                    log.emit(stage, "skip", None, reason="dry-run: workload evaluates receipts " + str(args.workload_windows))
+                else:
+                    workload_stage(log, args.workload_windows, args.workload_mac, tuple_pin=tuple_pin)
+            elif stage == "native":
+                if dry:
+                    log.emit(stage, "skip", None, reason="dry-run: native evaluates receipts in " + str(args.native_dir))
+                else:
+                    native_stage(log, args.native_dir, args.native_tag, tuple_pin=tuple_pin)
             elif stage == "smoke":
                 smoke_stage(log, out_dir, dry, args.confirm_windows_gui, tuple_pin=tuple_pin)
             elif stage == "package":
@@ -1710,6 +1727,10 @@ def run_compare(log, args, stages, out_dir, dry, comparator=None):
     except BuildError as exc:
         log.emit("compare", "fail", None, reason=str(exc))
         return
+    wanted = {cross_config_id(m) for m in args.configs}
+    if wanted != set(CONFIGS):
+        log.emit("compare", "fail", None, reason=f"closure gate: compare must cover all {len(CONFIGS)} configs, "
+                                                 f"got {len(wanted)} (missing {', '.join(sorted(set(CONFIGS) - wanted)) or 'none'})")
     for config, candidate, origin in compare_candidates(args, stages, out_dir):
         if candidate is None:
             log.emit("compare", "fail", config, reason=origin)
@@ -1722,6 +1743,174 @@ def run_compare(log, args, stages, out_dir, dry, comparator=None):
                 for kind in (*FAULT_CONTROLS.get(config, ()), *EVERY_CONFIG_FAULTS):
                     fault_control(log, config, kind, accepted, Path(candidate), adapt, out_dir, comparator)
                 allowance_fault_controls(log, config, accepted, Path(candidate), adapt, out_dir, comparator)
+
+
+# ---------------------------------------------------------------- closure gate: workload (R10) and native interaction (R9) receipts (T14)
+
+WORKLOAD_RECEIPT_DIR = REPO / "probes" / "sr0-b" / "workload" / "results"
+NATIVE_RECEIPT_DIR = REPO / "probes" / "sr0-b" / "native-interaction" / "out"
+# Defaults are the tuple 08 receipts; pass the tuple 09 files with --workload-windows/--workload-mac/--native-dir/--native-tag.
+DEFAULT_WORKLOAD_WINDOWS = WORKLOAD_RECEIPT_DIR / "r10-20261010-tuple08-renderere280-windows.txt"
+DEFAULT_WORKLOAD_MAC = WORKLOAD_RECEIPT_DIR / "r10-20261010-mac.txt"
+DEFAULT_NATIVE_TAG = "tuple08"
+NATIVE_RECEIPTS = ("ime-f7", "ime-f7live", "ime-f8", "narrator")
+# Known limitation (SR1, docs/sr0-status.md): the modern IME candidate list does not follow a mid-composition layout move.
+KNOWN_NATIVE_LIMITATIONS = frozenset({"candidate-window-follows-layout-move"})
+THRESHOLD_RE = re.compile(r"^THRESHOLD (\S+)\s+(\S+)\s+(PASS|FAIL|MISSING)\s+(.*)$")
+W4_P95_RE = re.compile(r"input->visible p95 \(ms\): ([0-9.]+)")
+W5_P95_RE = re.compile(r"presented interval p95 \(ms\) <= [^:]*: ([0-9.]+)")
+W5_MISSED_RE = re.compile(r"missed vblanks .*?: (\d+)")
+NATIVE_SUMMARY_RE = re.compile(r"NATIVE_SUMMARY (\S+) pass=(\d+) fail=(\d+) fail_not_automatable=(\d+) not_run=(\d+)")
+NATIVE_FAIL_RE = re.compile(r"CHECK (\S+) FAIL ::")
+ARTIFACT_HASH_RE = re.compile(r"(exe|dll)_sha256=([0-9A-Fa-f]{64})")
+
+
+def parse_workload(text):
+    """Thresholds of the LAST analysis in a receipt (a re-analysis appended below the orchestrator output replaces it)."""
+    marker = "=== RE-ANALYSIS"
+    if marker in text:
+        text = text[text.rindex(marker):]
+    rows = []
+    for line in text.splitlines():
+        m = THRESHOLD_RE.match(line.strip())
+        if m:
+            rows.append({"id": m.group(1), "run": m.group(2), "verdict": m.group(3), "text": m.group(4)})
+    return rows
+
+
+def _per_run(rows, regex):
+    """{run: [values]} for rows whose text matches regex (a run can appear in several analysis blocks)."""
+    out = {}
+    for r in rows:
+        m = regex.search(r["text"])
+        if m:
+            out.setdefault(r["run"], []).append(float(m.group(1)))
+    return out
+
+
+def _median(values):
+    v = sorted(values)
+    return v[len(v) // 2] if len(v) % 2 else (v[len(v) // 2 - 1] + v[len(v) // 2]) / 2
+
+
+def workload_problems(windows_text, mac_text, renderer_pin=None):
+    """(problems, report) for the section 11 bar. problems empty = pass."""
+    problems = []
+    win = parse_workload(windows_text)
+    mac = parse_workload(mac_text)
+    if not win:
+        return ["the Windows workload receipt has no THRESHOLD lines"], {}
+    if renderer_pin:
+        dlls = {h.lower() for kind, h in ARTIFACT_HASH_RE.findall(windows_text) if kind == "dll"}
+        if renderer_pin.lower() not in dlls:
+            problems.append(f"Windows workload receipt is not bound to the tuple renderer {renderer_pin[:12]}... (receipt: "
+                            f"{', '.join(sorted(d[:12] for d in dlls)) or 'no dll_sha256'})")
+    runs = sorted({r["run"] for r in win if r["run"].startswith("r")})
+    if len(runs) < 3:
+        problems.append(f"Windows workload receipt has {len(runs)} timed run(s), need 3")
+    w4_re, w5_re = W4_P95_RE, W5_P95_RE
+    gated = [r for r in win if not (w4_re.search(r["text"]) or w5_re.search(r["text"]) or W5_MISSED_RE.search(r["text"]))]
+    for r in gated:
+        if r["verdict"] != "PASS":
+            problems.append(f"{r['id']} {r['run']} {r['verdict']}: {r['text'][:110]}")
+    w4w, w5w = _per_run(win, w4_re), _per_run(win, w5_re)
+    w4m, w5m = _per_run(mac, w4_re), _per_run(mac, w5_re)
+    report = {}
+    for name, w, m in (("W4 input-to-visible p95 (ms)", w4w, w4m), ("W5 interval p95 (ms)", w5w, w5m)):
+        if not w or not m:
+            problems.append(f"{name}: missing in the {'Windows' if not w else 'Mac'} receipt")
+            continue
+        wv = [min(v) for v in w.values()]
+        mv = [min(v) for v in m.values()]
+        report[name] = (_median(wv), _median(mv))
+        if _median(wv) > _median(mv):
+            problems.append(f"{name}: Windows median {_median(wv):.2f} is worse than the Mac median {_median(mv):.2f}")
+    missed = _per_run(win, W5_MISSED_RE)
+    report["missed vblanks per run"] = {k: int(v[-1]) for k, v in sorted(missed.items())}
+    return problems, report
+
+
+def workload_stage(log, windows_receipt, mac_receipt, tuple_pin=None):
+    stage = "workload"
+    log.emit(stage, "start", None, reason=f"section 11 bar: {Path(windows_receipt).name} vs Mac {Path(mac_receipt).name}")
+    ids = {}
+    texts = []
+    for label, path in (("workload_windows_receipt", windows_receipt), ("workload_mac_receipt", mac_receipt)):
+        if not Path(path).exists():
+            log.emit(stage, "fail", None, ids, f"{label} missing: {path}")
+            return False
+        ids[label] = sha_ref(sha256_file(path))
+        texts.append(Path(path).read_text(encoding="utf-8", errors="replace"))
+    pin = tuple_pin["pins"].get("windows_renderer") if tuple_pin else None
+    problems, report = workload_problems(texts[0], texts[1], pin)
+    summary = "; ".join(f"{k} {v[0]:.2f} vs Mac {v[1]:.2f}" if isinstance(v, tuple) else f"{k} {v} (reported, not gated)" for k, v in report.items())
+    if problems:
+        log.emit(stage, "fail", None, ids, f"{len(problems)} problem(s): {' | '.join(problems)[:600]}; {summary}")
+        return False
+    log.emit(stage, "pass", None, ids, f"all thresholds PASS; {summary}")
+    return True
+
+
+def native_problems(directory, tag, pins=None):
+    """(problems, notes) for the R9 receipts <directory>/{preflight,static-check,native-<name>}-<tag>.txt."""
+    problems, notes = [], []
+    d = Path(directory)
+
+    def text(name):
+        path = d / f"{name}-{tag}.txt"
+        return path.read_text(encoding="utf-8", errors="replace") if path.exists() else None
+
+    pre = text("preflight")
+    if pre is None:
+        problems.append(f"preflight-{tag}.txt missing")
+    else:
+        found = {k: v.lower() for k, v in ARTIFACT_HASH_RE.findall(pre)}
+        if "ARTIFACT_OK" not in pre:
+            problems.append("preflight did not print ARTIFACT_OK")
+        for kind, member in (("exe", "windows_fixture_exe"), ("dll", "windows_renderer")):
+            want = (pins or {}).get(member)
+            if pins and want and found.get(kind) != want:
+                problems.append(f"preflight {kind} {found.get(kind, 'absent')[:12]} is not the tuple {member} {want[:12]}")
+    static = text("static-check")
+    if static is None or "CHECK_OK" not in static:
+        problems.append(f"static-check-{tag}.txt missing or without CHECK_OK")
+    for name in NATIVE_RECEIPTS:
+        body = text(f"native-{name}")
+        if body is None:
+            problems.append(f"native-{name}-{tag}.txt missing")
+            continue
+        summary = NATIVE_SUMMARY_RE.findall(body)
+        if not summary:
+            problems.append(f"native-{name}: no NATIVE_SUMMARY line")
+            continue
+        label, ok, fail, pending, not_run = summary[-1]
+        failed = set(NATIVE_FAIL_RE.findall(body))
+        unknown = failed - KNOWN_NATIVE_LIMITATIONS
+        if unknown:
+            problems.append(f"native-{name}: failed check(s) outside the known limitation: {', '.join(sorted(unknown))}")
+        if len(failed) != int(fail):
+            problems.append(f"native-{name}: summary says {fail} failed checks, the receipt lists {len(failed)}")
+        notes.append(f"{label} pass={ok} fail={fail}" + (f" (known: {', '.join(sorted(failed))})" if failed else "")
+                     + (f" not_run={not_run}" if int(not_run) else "") + (f" PENDING-A-PERSON={pending}" if int(pending) else ""))
+    return problems, notes
+
+
+def native_stage(log, directory, tag, tuple_pin=None):
+    stage = "native"
+    log.emit(stage, "start", None, reason=f"native-interaction receipts {tag} in {directory}")
+    ids = {}
+    d = Path(directory)
+    for name in ("preflight", "static-check", *[f"native-{n}" for n in NATIVE_RECEIPTS]):
+        path = d / f"{name}-{tag}.txt"
+        if path.exists():
+            ids[name.replace("-", "_") + "_receipt"] = sha_ref(sha256_file(path))
+    problems, notes = native_problems(d, tag, tuple_pin["pins"] if tuple_pin else None)
+    if problems:
+        log.emit(stage, "fail", None, ids, f"{len(problems)} problem(s): {' | '.join(problems)[:600]}")
+        return False
+    log.emit(stage, "pass", None, ids, "; ".join(notes))
+    return True
+
 
 
 def cmd_single(args, command):
@@ -1759,6 +1948,11 @@ def build_parser():
     run_p.add_argument("--package-receipts", nargs="+", type=Path,
                        help=f"run directories or parents (default {PACKAGE_RECEIPT_DIR}); several runs of one platform "
                             "are profiles of one artifact and are evaluated as a union")
+    run_p.add_argument("--workload-windows", type=Path, default=DEFAULT_WORKLOAD_WINDOWS,
+                       help="Windows R10 analyzer receipt for the workload stage")
+    run_p.add_argument("--workload-mac", type=Path, default=DEFAULT_WORKLOAD_MAC, help="Mac R10 receipt: the section 11 reference")
+    run_p.add_argument("--native-dir", type=Path, default=NATIVE_RECEIPT_DIR, help="directory of the R9 native-interaction receipts")
+    run_p.add_argument("--native-tag", default=DEFAULT_NATIVE_TAG, help="receipt suffix, native-ime-f7-<tag>.txt")
     pin_g = run_p.add_mutually_exclusive_group()
     pin_g.add_argument("--tuple", type=Path, default=None,
                        help=f"tuple pin file for exe/renderer/package hashes (default {TUPLE_FINAL})")

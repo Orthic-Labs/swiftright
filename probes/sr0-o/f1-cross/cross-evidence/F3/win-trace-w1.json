@@ -921,7 +921,7 @@
 
           ],
           "id" : "row\/F0000003-0000-4000-8000-000000000004\/local",
-          "label" : "local 1",
+          "label" : "local 2",
           "order" : 1,
           "parent" : "anon:anon:window#1#3",
           "role" : "static-text"
@@ -1158,6 +1158,10 @@
           "node" : "row\/F0000003-0000-4000-8000-000000000004"
         },
         {
+          "kind" : "localEdit",
+          "node" : "row\/F0000003-0000-4000-8000-000000000004"
+        },
+        {
           "kind" : "taskStart",
           "node" : "row\/F0000003-0000-4000-8000-000000000004"
         }
@@ -1194,19 +1198,19 @@
       "id" : "initial",
       "logicalAction" : "launch-and-snapshot",
       "nativeMapping" : "UIA tree walk (RawView) from window root",
-      "timestamp" : "mono_ns 90729084519000"
+      "timestamp" : "mono_ns 17167103067000"
     },
     {
       "id" : "focus_row4",
       "logicalAction" : "focus row 4 field",
       "nativeMapping" : "UIA SetFocus [id=row\/F0000003-0000-4000-8000-000000000004\/field]",
-      "timestamp" : "mono_ns 90729625589600"
+      "timestamp" : "mono_ns 17167646147800"
     },
     {
       "id" : "type_x_remove_reinsert",
       "logicalAction" : "type x; model removes row 4, reinserts it at index 3, engine releases all",
       "nativeMapping" : "type 'x' (SendInput VK keys, or WM_CHAR posted to the window when SR0O_KEY_DELIVERY=targeted)",
-      "timestamp" : "mono_ns 90730234540300"
+      "timestamp" : "mono_ns 17168262673900"
     }
   ]
 }

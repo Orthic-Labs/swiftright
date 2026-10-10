@@ -19,8 +19,8 @@
     "mapping": {
       "<none>": "row/F0000003-0000-4000-8000-000000000004/field"
     },
-    "reason": "UNPROVEN. F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder is not restored on the recreated cell); Windows restores focus to the field and UIA reports it. Whether the AX route is merely a quirk or Mac really has lost keyboard focus is not established: the probe plan F3-list-1s-typeafter types one more character and records where it lands. Only this one transition is allowed.",
-    "status": "unproven",
+    "reason": "F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field, and a key typed afterwards lands nowhere on the Mac (probe F3-list-1s-typeafter, 3 Mac runs: row 4 stays 'Row 4', no focus). Windows restores focus to the field (selection 0+0) and a typed key lands in row 4 (3 Windows runs). The Mac keyboard focus is really lost, so this is a Mac oracle quirk against its own FocusState event, not a Windows defect. Applies only to the step that removes and reinserts the focused row; the later typed character is NOT allowed.",
+    "status": "oracle-quirk",
     "steps": [
       "type_x_remove_reinsert"
     ]
@@ -32,8 +32,8 @@
     "mapping": {
       "<none>": "location=0 length=0"
     },
-    "reason": "UNPROVEN. F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder is not restored on the recreated cell); Windows restores focus to the field and UIA reports it. Whether the AX route is merely a quirk or Mac really has lost keyboard focus is not established: the probe plan F3-list-1s-typeafter types one more character and records where it lands. Only this one transition is allowed.",
-    "status": "unproven",
+    "reason": "F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field, and a key typed afterwards lands nowhere on the Mac (probe F3-list-1s-typeafter, 3 Mac runs: row 4 stays 'Row 4', no focus). Windows restores focus to the field (selection 0+0) and a typed key lands in row 4 (3 Windows runs). The Mac keyboard focus is really lost, so this is a Mac oracle quirk against its own FocusState event, not a Windows defect. Applies only to the step that removes and reinserts the focused row; the later typed character is NOT allowed.",
+    "status": "oracle-quirk",
     "steps": [
       "type_x_remove_reinsert"
     ]

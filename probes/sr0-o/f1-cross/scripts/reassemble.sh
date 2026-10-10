@@ -9,7 +9,7 @@
 set -eu
 ASM=$1; shift
 HERE=$(cd "$(dirname "$0")/.." && pwd)
-if [ "$#" -eq 0 ]; then set -- F1 F2 F3 F3-list-1s F3-list-3s F3-vstack-1s F3-vstack-3s F3-lazy-1s F3-lazy-3s F4 F5 F6 F6-reduced F7 F8 F9; fi
+if [ "$#" -eq 0 ]; then set -- F1 F2 F3 F3-list-1s F3-list-3s F3-vstack-1s F3-vstack-3s F3-lazy-1s F3-lazy-3s F4 F5 F6 F6-reduced F7 F8 F9 F3-list-1s-typeafter; fi
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/reassemble.XXXXXX")
 trap 'rm -rf "$TMP"' EXIT
 for c in "$@"; do

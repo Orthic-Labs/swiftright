@@ -5,7 +5,9 @@
 set -u
 OUT=$1; RUNS=$2; shift 2
 LOCK='D:\Claude\desktop.lock'
-OWNER=T1
+OWNER=${OWNER:-cross09}
+BIN=${BIN:-'D:\Claude\sr0-r09\src\scratch\out\Products\Release-windows-x86_64'}   # passed explicitly: the Dell copy of schedule-cross.ps1 keeps its own default
+EXPECT_EXE=${EXPECT_EXE:-8650bbfc4118f0793d71f84a51077d23d076e7dd1aa144c2ae7b60bac27161c8}   # a run on any other exe aborts the batch
 acquire() {
   win "\$l=(Get-Content -Raw $LOCK).Trim(); if (\$l -eq 'free') { Set-Content -NoNewline -Path $LOCK -Value ('$OWNER ' + (Get-Date -Format o)); 'ACQUIRED' } else { 'BUSY ' + \$l }" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'
 }
@@ -16,8 +18,9 @@ trap release EXIT
 mkdir -p "$OUT"
 for c in "$@"; do
   for i in $(seq "${FIRST:-1}" "$RUNS"); do
-    tag="$c-w$i"
-    win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\schedule-cross.ps1 -Config $c -Tag $tag" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > "$OUT/run-$tag.log"
+    tag="$c-${TAGP:-w}$i"
+    win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\schedule-cross.ps1 -Config $c -Tag $tag -Bin $BIN" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > "$OUT/run-$tag.log"
+    if ! grep -q "ARTIFACTS exe=$EXPECT_EXE" "$OUT/run-$tag.log"; then echo "ABORT $tag: the run did not use exe $EXPECT_EXE"; exit 3; fi
     for f in "winrec-$tag.json" "winside-$tag.json" "events-$tag.txt"; do
       win "Get-Content -Raw D:\\Claude\\sr0o-f1\\out\\$f" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > "$OUT/$f"
     done

@@ -1,8 +1,38 @@
 # CROSS-ALL: Mac SwiftUI vs Windows fresh runtime, schema-v0 cross-compare of all 16 configs (T1)
 
-**Current verdict: see "After review (10 Oct 2026)" below. 6 of 16 pass on today's Windows recordings; the first-pass "13 of 16" is superseded.**
+**Current verdict: see "Tuple 09" below: 11 of 16 configs pass, 5 fail on two real differences. The "After review" section is the pre-fix tuple 08 result; the first-pass "13 of 16" is superseded.**
 
 10 Oct 2026, repo HEAD cfca6d6 plus the uncommitted T1 changes. Mac: macOS 27.0.1 (26A434) arm64, Swift 6.4. Windows: Dell, tuple 08 FreshOnBridge `7673A2D5139172D8...` with renderer `E280F4A9FD9ECA0A...` (all 48 Windows runs record both hashes in `cross-evidence/<config>/win-run-w*.log`), UIARecorder `D255A25579C37751...` built on the Dell from `uia-recorder/`.
+
+## Tuple 09 (10 Oct 2026): Mac vs Windows after the product fixes
+
+Windows: FreshOnBridge `8650BBFC4118F079...` at `D:\Claude\sr0-r09\src`, renderer `E280F4A9FD9ECA0A...` (unchanged from tuple 08), UIARecorder `D255A25579C37751...` (unchanged); all 51 runs (16 configs x3 plus the P2 probe x3) record exe `8650bbfc...` in `cross-evidence/<config>/win-run-w*.log`, and `win-cross.sh` now aborts a batch whose run used another exe (a first batch of 51 runs went out on tuple 08 because the Dell copy of `schedule-cross.ps1` kept its old `-Bin` default; it was discarded, the script now passes `-Bin` and checks the exe hash). Lock `D:\Claude\desktop.lock` taken as `cross09`, freed after each batch; window-targeted input only; nothing deleted on the Dell; no window titles in the committed files. Mac: the recordings of the earlier sections (stimulus unchanged, Mac oracle unchanged) plus 3 new Mac runs of the P2 probe. Comparator and assembler from the working tree; reports and event log in `cross-evidence/runner-compare-tuple09/`.
+
+| Config | Diffs | Allowed (besides N1) | Verdict | Remaining diff |
+|---|---|---|---|---|
+| F1, F4, F6-reduced, F7, F8 | 0 | 0 | PASS | (F8: focus after Invoke now matches; F6-reduced: conditions equal) |
+| F2 | 0 | P1 x6 | PASS | |
+| F3, F3-list-1s, F3-list-3s | 0 | P2 x2 | PASS | D1 is gone: `localEdit` and `local N` match |
+| F9 | 0 | P6 x1 | PASS | |
+| F3-vstack-1s/3s, F3-lazy-1s/3s | 1 each | 0 | FAIL | D2 |
+| F5 | 1 | 0 | FAIL | D2 |
+| F6 | 4 | 0 | FAIL | D3 |
+
+11 of 16 pass, 5 fail, 9 diffs. The three Windows runs of every config agree, the Mac runs agree (`sr0o-trace repeat`). 65 negative controls, all rejected (event log: 16 compare verdicts, 11 pass and 5 fail, plus the 65 controls). Fixed since the pre-fix recordings: launch focus (the Windows build now focuses row 1 and logs `initialFocus`), focus after Invoke, the motion condition (`reduceMotion.effective` false on both: animations run on the Dell by design, OS animation setting not mapped to reduce motion), D1.
+
+### Remaining diffs and their classification
+
+- **D2 (5 configs): launch selection.** `initial` selection: Mac `location=0 length=5` (the whole text selected), Windows `location=5 length=0` (caret at the end). The focused node (row 1 field) and the `initialFocus` event now agree. Real difference, not recorder timing: the raw Mac AX at `initial` is an `AXTextField` without `AXIdentifier` holding selection 0+5, identical in 3 of 3 runs for each of the five configs, and Windows UIA reports the field with the caret at 5 in 3 of 3 runs. (The product agent's note that Mac AX reports no focus at `initial` was an artefact of the first-pass assembler, which dropped the unidentified field-editor focus; it is now named by the FocusState event, see "What changed" above.) Not allowed: it is a behaviour decision for the contract (AppKit selects all when a field becomes first responder at launch; the Windows runtime puts the caret at the end), either the Windows runtime selects all or CONTRACT F3/F5 states that launch selection is platform-defined, and then a scoped allowance on step `initial`, leaf `selection`, row 1 is justified.
+- **D3 (F6): row rebuild.** Rows 200 and 201: `appear` Mac 2 / Windows 1 and `disappear` Mac 1 / Windows 0. SwiftUI recreates the interrupted animated rows; the fresh runtime keeps the views (also in the earlier run with animations off, so this is not the motion condition). Real difference in view identity during an interrupted animation; the CONTRACT F6 assertions (interruption recorded, completion order, final layout) are met on both. Needs the same decision as D2: Windows reproduces the rebuild, or CONTRACT F6 declares row view recreation unspecified and a scoped allowance (step `initial`, those four `lifecycle.count` pairs) is added.
+- **P2 resolved by the probe `F3-list-1s-typeafter`** (3 Mac + 3 Windows runs). After the remove/reinsert the next typed `y` lands nowhere on the Mac (row 4 stays `Row 4`, no focus, `localEdit` 0) while on Windows it lands in row 4 (`yRow 4`, focus row 4 field, caret 1, `localEdit` 1). So the Mac's keyboard focus really is lost although its FocusState event says row 4 is focused: P2 is a Mac oracle quirk against its own FocusState event, not a Windows defect. P2 stays as a scoped allowance (step `type_x_remove_reinsert`, focus and selection only), status changed from unproven to oracle-quirk. The probe's own step is not allowed and fails by design (6 diffs: `model`, `focusedNodeId`, `selection`, `localEdit`, field value, `local` label); it is evidence, not one of the 16 configs.
+- **Still allowed with reasons:** N1 (native input routes), P1 (F2 stale Mac AX tree), P2 (above), P6 (F9 `treeReleased`). Still UNPROVEN: R5, R6, R8 (see above).
+
+### T14 closure gate (`qualification/run.py`)
+
+Stages `workload` and `native` are in the default run, tuple-pinned like `smoke` and `package`; compare fails unless it covers all 16 configs.
+- `workload`: the Windows R10 analyzer receipt must carry the tuple renderer hash, 3 timed runs, and every threshold PASS (W7 measured) except the two that section 11 of `docs/sr0-findings.md` replaces: W4 input-to-visible p95 and W5 presented-interval p95 must each be no worse than the median of the Mac receipt's per-run values (a re-analysis appended to a receipt replaces the orchestrator output). Missed vblanks are reported per run, not gated. Tuple 08 receipts: pass (Windows W4 p95 43.9 ms against Mac 75.9; interval p95 16.74 against 17.91).
+- `native`: `preflight` bound to the tuple fixture exe and renderer, `static-check` CHECK_OK, and the `ime-f7`, `ime-f7live`, `ime-f8`, `narrator` receipts each with a `NATIVE_SUMMARY`; the only failing check allowed is the known limitation `candidate-window-follows-layout-move` (SR1), and the Narrator speech checks are reported as pending a person (U1), not gated. Tuple 08 receipts: pass.
+- Defaults are the tuple 08 receipts; tuple 09 workload and native receipts do not exist yet: run with `--workload-windows`, `--workload-mac`, `--native-dir`, `--native-tag`. Two `TupleFileTests` fail until `qualification/tuple-final.json` is updated to tuple 09 (`run-matrix.sh` already defaults to tuple 09 hashes).
 
 ## After review (10 Oct 2026): the honest verdict on today's (pre-fix) Windows recordings
 

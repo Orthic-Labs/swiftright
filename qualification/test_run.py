@@ -450,7 +450,7 @@ class StrictRunnerTests(unittest.TestCase):
     def test_default_stages_cover_smoke_and_package_in_declared_order(self):
         stages, error = q.run_stage_order(run_args())
         self.assertIsNone(error)
-        self.assertEqual(stages, ["mac-oracle", "win-replay", "compare", "smoke", "package"])
+        self.assertEqual(stages, ["mac-oracle", "win-replay", "compare", "workload", "native", "smoke", "package"])
 
     def test_stages_honour_the_given_order(self):
         stages, _ = q.run_stage_order(run_args("--stages", "package", "mac-oracle"))
@@ -1672,12 +1672,12 @@ class CrossPlanTests(unittest.TestCase):
         for config, leaves in (("F5", ("focusedNodeId", "selection")), ("F6", ("lifecycle.count",)), ("F8", ("focusedNodeId",))):
             self.assertEqual([a for a in self.adapt(config) if a["field"] in leaves], [], config)
 
-    def test_unproven_allowances_say_so(self):
+    def test_p2_is_an_evidenced_oracle_quirk_scoped_to_one_step(self):
         for config in ("F3", "F3-list-1s", "F3-list-3s"):
             for a in self.adapt(config):
                 if a["id"] == "P2":
-                    self.assertEqual(a["status"], "unproven")
-                    self.assertTrue(a["reason"].startswith("UNPROVEN"))
+                    self.assertEqual(a["status"], "oracle-quirk")
+                    self.assertIn("F3-list-1s-typeafter", a["reason"])
                     self.assertEqual(a["steps"], ["type_x_remove_reinsert"])
 
     def test_baseline_prefers_the_accepted_v0_trace_and_labels_the_fallback(self):
@@ -1713,7 +1713,7 @@ class CrossPlanTests(unittest.TestCase):
         self.assertEqual({a["id"] for a in json.loads((probe / "adapt-v0.json").read_text(encoding="utf-8"))}, {"N1", "P2"})
 
     def test_traces_carry_the_run_conditions_of_f6(self):
-        for config, effective in (("F6", ("false", "true")), ("F6-reduced", ("true", "true"))):
+        for config, effective in (("F6", ("false", "false")), ("F6-reduced", ("true", "true"))):
             mac = json.loads((q.CROSS_DIR / config / "mac-trace-v0.json").read_text(encoding="utf-8"))
             win = json.loads((q.CROSS_DIR / config / q.WIN_TRACE_FILE).read_text(encoding="utf-8"))
             self.assertEqual((mac["conditions"]["reduceMotion.effective"], win["conditions"]["reduceMotion.effective"]), effective, config)
@@ -1739,12 +1739,12 @@ class CrossPlanTests(unittest.TestCase):
 
 
 class CommittedRecordingsVerdictTests(unittest.TestCase):
-    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the 10 Oct 2026 Windows
-    recordings, which predate the product fixes (initial focus, Invoke focus, animation setting, onChange after reinsertion).
+    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the tuple 09 Windows
+    recordings (10 Oct 2026, FreshOnBridge 8650BBFC, after the product fixes) against the Mac recordings.
     The comparator is built from the working tree (the runner itself builds from HEAD), under SR0A_BUILD_ROOT.
-    When Windows is re-recorded, update PRE_FIX_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
-    PRE_FIX_DIFFS = {"F1": 0, "F2": 0, "F3": 2, "F3-list-1s": 2, "F3-list-3s": 2, "F3-vstack-1s": 3, "F3-vstack-3s": 3,
-                     "F3-lazy-1s": 3, "F3-lazy-3s": 3, "F4": 0, "F5": 7, "F6": 5, "F6-reduced": 0, "F7": 0, "F8": 1, "F9": 0}
+    When Windows is re-recorded, update TUPLE09_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
+    TUPLE09_DIFFS = {"F1": 0, "F2": 0, "F3": 0, "F3-list-1s": 0, "F3-list-3s": 0, "F3-vstack-1s": 1, "F3-vstack-3s": 1,
+                     "F3-lazy-1s": 1, "F3-lazy-3s": 1, "F4": 0, "F5": 1, "F6": 4, "F6-reduced": 0, "F7": 0, "F8": 0, "F9": 0}
 
     @classmethod
     def setUpClass(cls):
@@ -1774,25 +1774,23 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
         return json.loads((self.dir / f"compare-{config}.json").read_text(encoding="utf-8"))
 
     def test_per_config_diff_counts_of_the_recordings(self):
-        got = {c: len(self.report(c)["diffs"]) for c in self.PRE_FIX_DIFFS}
-        self.assertEqual(got, self.PRE_FIX_DIFFS)
+        got = {c: len(self.report(c)["diffs"]) for c in self.TUPLE09_DIFFS}
+        self.assertEqual(got, self.TUPLE09_DIFFS)
 
-    def test_the_review_findings_fail_and_say_why(self):
-        paths = lambda c: {d["path"].split("[")[0] for d in self.report(c)["diffs"]}
-        self.assertEqual(paths("F5"), {"focusedNodeId", "selection", "lifecycle.count"})            # launch focus, was P3
-        self.assertEqual(paths("F3-vstack-1s"), {"focusedNodeId", "selection", "lifecycle.count"})  # launch focus, was R1
-        self.assertEqual(paths("F6"), {"conditions", "lifecycle.count"})                            # motion condition + rebuild, was P4
-        self.assertEqual(paths("F8"), {"focusedNodeId"})                                            # focus after Invoke, was P5
-        f6 = {d["path"]: (d["expected"], d["actual"]) for d in self.report("F6")["diffs"]}
-        self.assertEqual(f6["conditions[reduceMotion.effective]"], ("false", "true"), "Mac ran with motion, the Dell with animations off")
-        self.assertEqual(paths("F6-reduced"), set(), "both sides ran reduced")
+    def test_remaining_diffs_are_the_two_real_differences(self):
+        """Launch selection (Mac AppKit selects the whole text, Windows puts the caret at the end) and the F6 row rebuild."""
+        for config in ("F5", "F3-vstack-1s", "F3-vstack-3s", "F3-lazy-1s", "F3-lazy-3s"):
+            diffs = [(d["step"], d["path"], d["expected"], d["actual"]) for d in self.report(config)["diffs"]]
+            self.assertEqual(diffs, [("initial", "selection", "location=0 length=5", "location=5 length=0")], config)
+        self.assertEqual({d["path"].split("[")[0] for d in self.report("F6")["diffs"]}, {"lifecycle.count"})
+        self.assertEqual(self.report("F6-reduced")["diffs"], [])
 
     def test_remaining_allowances_forgave_only_their_own_diffs(self):
-        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.PRE_FIX_DIFFS}
+        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.TUPLE09_DIFFS}
         self.assertEqual({c: v for c, v in applied.items() if v},
                          {"F2": ["P1"], "F3": ["P2"], "F3-list-1s": ["P2"], "F3-list-3s": ["P2"], "F9": ["P6"]})
         self.assertEqual(len([a for a in self.report("F2")["allowed"] if a["allowance"] == "P1"]), 6)
-        self.assertTrue(all(a["status"] == "unproven" for a in self.report("F3")["allowed"] if a["allowance"] == "P2"))
+        self.assertTrue(all(a["status"] == "oracle-quirk" for a in self.report("F3")["allowed"] if a["allowance"] == "P2"))
 
     def test_every_fault_control_is_rejected(self):
         controls = [e for e in self.events if "negative control" in (e.get("reason") or "")]
@@ -1804,7 +1802,7 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
 
     def test_only_the_expected_configs_fail(self):
         failed = {e["fixture"] for e in self.events if e["event"] == "fail"}
-        self.assertEqual(failed, {c for c, n in self.PRE_FIX_DIFFS.items() if n})
+        self.assertEqual(failed, {c for c, n in self.TUPLE09_DIFFS.items() if n})
 
 
 class ReassemblyTests(unittest.TestCase):
@@ -1936,18 +1934,123 @@ class ReassemblyTests(unittest.TestCase):
         self.assertNotIn("focusedNodeId", outline)
         self.assertNotIn("selection", outline)
 
-    def test_launch_focus_and_the_motion_condition_are_not_normalised_away(self):
-        """The assembler rules the review removed: R1 (dropped the launch selection), the exclusion of launch focus events."""
+    def test_launch_focus_is_recorded_on_the_mac_and_now_matches_on_windows(self):
+        """Mac holds a whole-text selection on row 1 at launch (stable in 3 runs); Windows tuple 09 focuses the same row."""
         evidence = q.F1_PACKAGE / "cross-evidence"
         for config in ("F5", "F3-vstack-1s", "F3-lazy-3s"):
-            mac = json.loads((evidence / config / "mac-trace-n1.json").read_text(encoding="utf-8"))
-            initial = mac["observations"][0]
-            self.assertEqual(initial["stepId"], "initial")
-            self.assertTrue(initial["focusedNodeId"].endswith("/field"), config)
-            self.assertEqual(initial["selection"], {"location": 0, "length": 5}, config)
-            self.assertIn("initialFocus", [e["kind"] for e in initial["lifecycle"]], config)
-            win = json.loads((evidence / config / "win-trace-w1.json").read_text(encoding="utf-8"))
-            self.assertNotIn("focusedNodeId", win["observations"][0], f"{config}: the pre-fix Windows build had no launch focus")
+            mac = json.loads((evidence / config / "mac-trace-n1.json").read_text(encoding="utf-8"))["observations"][0]
+            win = json.loads((evidence / config / "win-trace-w1.json").read_text(encoding="utf-8"))["observations"][0]
+            self.assertEqual(mac["stepId"], "initial")
+            self.assertTrue(mac["focusedNodeId"].endswith("/field"), config)
+            self.assertEqual(mac["selection"], {"location": 0, "length": 5}, config)
+            self.assertIn("initialFocus", [e["kind"] for e in mac["lifecycle"]], config)
+            self.assertEqual(win["focusedNodeId"], mac["focusedNodeId"], config)
+            self.assertIn({"kind": "initialFocus", "node": mac["focusedNodeId"].rsplit("/field", 1)[0]}, win["lifecycle"], config)
+
+
+class ClosureGateTests(unittest.TestCase):
+    """T14: the closure gate evaluates the workload (R10) and native-interaction (R9) receipts and the all-config compare."""
+    DLL = "e" * 64
+
+    def win(self, w4=(44.0, 43.0, 45.0), w5=(16.74, 16.75, 16.7), missed=(1, 5, 0), other="PASS", w7="PASS", dll=None):
+        lines = [f"2026 ARTIFACT base=x exe_sha256={'0' * 64} dll_sha256={(dll or self.DLL).upper()}"]
+        for i in range(3):
+            r = f"r{i + 1}"
+            lines += [f"THRESHOLD W1   {r}   {other}    commit errors: 0 (limit == 0)",
+                      f"THRESHOLD W5   {r}   {'FAIL' if missed[i] else 'PASS'}    missed vblanks (interval > 1.5 x refresh): {missed[i]} (limit == 0) n=3599",
+                      f"THRESHOLD W5   {r}   PASS    presented interval p95 (ms) <= refresh + 0.1: {w5[i]} (limit <= 16.76) p50=16.6",
+                      f"THRESHOLD W4   {r}   {'PASS' if w4[i] <= 50 else 'FAIL'}    input->visible p95 (ms): {w4[i]} (limit <= 50.0) n=590"]
+        lines.append(f"THRESHOLD W7   set  {w7}    Rust compiler invocations during UI-only incremental builds: 0 (limit == 0) edits=3")
+        return "\n".join(lines) + "\n"
+
+    MAC = ("THRESHOLD W4   r1   FAIL    input->visible p95 (ms): 75.94 (limit <= 50.0) n=595\n"
+           "THRESHOLD W5   r1   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.94 (limit <= 16.7) p50=16.6\n"
+           "THRESHOLD W4   r2   FAIL    input->visible p95 (ms): 71.64 (limit <= 50.0) n=595\n"
+           "THRESHOLD W5   r2   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.82 (limit <= 16.7) p50=16.6\n"
+           "THRESHOLD W4   r3   FAIL    input->visible p95 (ms): 78.93 (limit <= 50.0) n=595\n"
+           "THRESHOLD W5   r3   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.91 (limit <= 16.7) p50=16.6\n")
+
+    def problems(self, text, pin=None):
+        return q.workload_problems(text, self.MAC, pin)
+
+    def test_section_11_bar_passes_with_missed_vblanks_reported_not_gated(self):
+        problems, report = self.problems(self.win(missed=(5, 1, 1)), self.DLL)
+        self.assertEqual(problems, [])
+        self.assertEqual(report["missed vblanks per run"], {"r1": 5, "r2": 1, "r3": 1})
+
+    def test_w4_or_w5_p95_worse_than_the_mac_median_fails(self):
+        self.assertTrue(any("W4" in p for p in self.problems(self.win(w4=(80.0, 81.0, 82.0)))[0]))
+        self.assertTrue(any("W5" in p for p in self.problems(self.win(w5=(18.5, 18.6, 18.7)))[0]))
+
+    def test_any_other_threshold_failure_or_missing_w7_fails(self):
+        self.assertTrue(any("W1" in p for p in self.problems(self.win(other="FAIL"))[0]))
+        self.assertTrue(any("W7" in p for p in self.problems(self.win(w7="MISSING"))[0]))
+
+    def test_the_last_reanalysis_replaces_the_orchestrator_output(self):
+        text = self.win(w7="MISSING") + "=== RE-ANALYSIS (appended)\n" + self.win()
+        self.assertEqual(self.problems(text)[0], [])
+
+    def test_receipt_must_be_bound_to_the_tuple_renderer(self):
+        self.assertTrue(any("not bound" in p for p in self.problems(self.win(dll="a" * 64), self.DLL)[0]))
+
+    def test_real_tuple_08_receipts_meet_the_bar(self):
+        problems, report = q.workload_problems(q.DEFAULT_WORKLOAD_WINDOWS.read_text(encoding="utf-8"),
+                                               q.DEFAULT_WORKLOAD_MAC.read_text(encoding="utf-8"),
+                                               None)
+        self.assertEqual(problems, [])
+        self.assertTrue(report["W4 input-to-visible p95 (ms)"][0] < report["W4 input-to-visible p95 (ms)"][1])
+
+    def native_dir(self, **over):
+        d = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.addCleanup(shutil.rmtree, d, True)
+        exe, dll = "1" * 64, "2" * 64
+        files = {"preflight": f"ARTIFACT base=x exe_sha256={exe.upper()} dll_sha256={dll.upper()}\nARTIFACT_OK\n",
+                 "static-check": "CHECK_OK\n"}
+        for n in q.NATIVE_RECEIPTS:
+            files[f"native-{n}"] = f"  1.0s CHECK a PASS :: x\n  2.0s NATIVE_SUMMARY {n} pass=3 fail=0 fail_not_automatable=0 not_run=0\n"
+        files.update(over)
+        for name, body in files.items():
+            if body is not None:
+                (d / f"{name}-t.txt").write_text(body, encoding="utf-8")
+        return d, {"windows_fixture_exe": exe, "windows_renderer": dll}
+
+    def test_native_receipts_bound_and_clean_pass(self):
+        d, pins = self.native_dir()
+        self.assertEqual(q.native_problems(d, "t", pins)[0], [])
+
+    def test_native_known_limitation_passes_unknown_failure_fails(self):
+        known = "  1.0s CHECK candidate-window-follows-layout-move FAIL :: x\n  2.0s NATIVE_SUMMARY ime-F8 pass=3 fail=1 fail_not_automatable=0 not_run=0\n"
+        d, pins = self.native_dir(**{"native-ime-f8": known})
+        self.assertEqual(q.native_problems(d, "t", pins)[0], [])
+        d, pins = self.native_dir(**{"native-ime-f8": known.replace("layout-move", "something-else")})
+        self.assertTrue(any("outside the known limitation" in p for p in q.native_problems(d, "t", pins)[0]))
+
+    def test_native_missing_unbound_or_pending_receipts(self):
+        d, pins = self.native_dir(**{"native-narrator": None})
+        self.assertTrue(any("native-narrator-t.txt missing" in p for p in q.native_problems(d, "t", pins)[0]))
+        d, pins = self.native_dir()
+        pins["windows_renderer"] = "3" * 64
+        self.assertTrue(any("not the tuple windows_renderer" in p for p in q.native_problems(d, "t", pins)[0]))
+        d, pins = self.native_dir(**{"native-narrator": "  1.0s NATIVE_SUMMARY narrator pass=8 fail=0 fail_not_automatable=2 not_run=0\n"})
+        problems, notes = q.native_problems(d, "t", pins)
+        self.assertEqual(problems, [])
+        self.assertTrue(any("PENDING-A-PERSON=2" in n for n in notes), "Narrator speech is reported as pending a person")
+
+    def test_real_tuple_08_native_receipts_meet_the_gate(self):
+        """Structure and known limitation only: binding to a tuple is covered with synthetic receipts above."""
+        problems, notes = q.native_problems(q.NATIVE_RECEIPT_DIR, q.DEFAULT_NATIVE_TAG, None)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(notes), 4)
+
+    def test_narrowed_compare_fails_the_closure_gate(self):
+        d = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.addCleanup(shutil.rmtree, d, True)
+        log = q.EventLog(d / "e.jsonl", echo=False)
+        q.run_compare(log, run_args("--stages", "compare", "--configs", "F1:none", "--win-candidate-dir", str(q.CROSS_DIR)),
+                      ["compare"], d, False, comparator=Path("/usr/bin/false"))
+        log.close()
+        events = [json.loads(l) for l in (d / "e.jsonl").read_text().splitlines() if l.strip()]
+        self.assertTrue(any(e["event"] == "fail" and "closure gate" in e["reason"] for e in events))
 
 
 class RunWiringTests(unittest.TestCase):

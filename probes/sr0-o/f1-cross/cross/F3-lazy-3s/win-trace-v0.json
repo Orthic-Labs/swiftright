@@ -237,6 +237,7 @@
         "engine-request row\/F0000003-0000-4000-8000-000000000009 load-F0000003-0000-4000-8000-000000000009-g0",
         "engine-request row\/F0000003-0000-4000-8000-000000000010 load-F0000003-0000-4000-8000-000000000010-g0"
       ],
+      "focusedNodeId" : "row\/F0000003-0000-4000-8000-000000000001\/field",
       "lifecycle" : [
         {
           "kind" : "appear",
@@ -281,6 +282,10 @@
         {
           "kind" : "appear",
           "node" : "row\/F0000003-0000-4000-8000-000000000010"
+        },
+        {
+          "kind" : "initialFocus",
+          "node" : "row\/F0000003-0000-4000-8000-000000000001"
         },
         {
           "kind" : "taskStart",
@@ -334,6 +339,10 @@
         "row\/F0000003-0000-4000-8000-000000000008" : "Row 8",
         "row\/F0000003-0000-4000-8000-000000000009" : "Row 9",
         "row\/F0000003-0000-4000-8000-000000000010" : "Row 10"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 5
       },
       "stepId" : "initial"
     },
@@ -892,19 +901,19 @@
       "id" : "initial",
       "logicalAction" : "launch-and-snapshot",
       "nativeMapping" : "UIA tree walk (RawView) from window root",
-      "timestamp" : "mono_ns 90829362722000"
+      "timestamp" : "mono_ns 17497536504900"
     },
     {
       "id" : "focus_row4",
       "logicalAction" : "focus row 4 field",
       "nativeMapping" : "UIA SetFocus [id=row\/F0000003-0000-4000-8000-000000000004\/field]",
-      "timestamp" : "mono_ns 90829894900100"
+      "timestamp" : "mono_ns 17498079914300"
     },
     {
       "id" : "type_x_remove_reinsert",
       "logicalAction" : "type x; model removes row 4, reinserts it at index 3, engine releases all",
       "nativeMapping" : "type 'x' (SendInput VK keys, or WM_CHAR posted to the window when SR0O_KEY_DELIVERY=targeted)",
-      "timestamp" : "mono_ns 90830495664700"
+      "timestamp" : "mono_ns 17498683239200"
     }
   ]
 }

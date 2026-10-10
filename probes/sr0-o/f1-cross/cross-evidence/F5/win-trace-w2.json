@@ -230,6 +230,7 @@
         "engine-request row\/F0000005-0000-4000-8000-000000000001 update-1",
         "engine-request screen insert-1"
       ],
+      "focusedNodeId" : "row\/F0000005-0000-4000-8000-000000000001\/field",
       "lifecycle" : [
         {
           "kind" : "appear",
@@ -276,6 +277,10 @@
           "node" : "row\/F0000005-0000-4000-8000-000000000010"
         },
         {
+          "kind" : "initialFocus",
+          "node" : "row\/F0000005-0000-4000-8000-000000000001"
+        },
+        {
           "kind" : "taskStart",
           "node" : "row\/F0000005-0000-4000-8000-000000000001"
         },
@@ -295,6 +300,10 @@
         "row\/F0000005-0000-4000-8000-000000000008" : "Row 8",
         "row\/F0000005-0000-4000-8000-000000000009" : "Row 9",
         "row\/F0000005-0000-4000-8000-000000000010" : "Row 10"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 5
       },
       "stepId" : "initial"
     },
@@ -549,14 +558,15 @@
         "cleanup screen insert-above",
         "insert-row index=0 row=F0000005-0000-4000-8000-000000000098"
       ],
+      "focusedNodeId" : "row\/F0000005-0000-4000-8000-000000000001\/field",
       "lifecycle" : [
-        {
-          "kind" : "localEdit",
-          "node" : "row\/F0000005-0000-4000-8000-000000000001"
-        },
         {
           "kind" : "appear",
           "node" : "row\/F0000005-0000-4000-8000-000000000098"
+        },
+        {
+          "kind" : "localEdit",
+          "node" : "row\/F0000005-0000-4000-8000-000000000001"
         }
       ],
       "model" : {
@@ -571,6 +581,10 @@
         "row\/F0000005-0000-4000-8000-000000000009" : "Row 9",
         "row\/F0000005-0000-4000-8000-000000000010" : "Row 10",
         "row\/F0000005-0000-4000-8000-000000000098" : "Engine 0"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 15
       },
       "stepId" : "resize_narrow_release"
     },
@@ -818,6 +832,7 @@
       "effects" : [
         "layout-mode wide"
       ],
+      "focusedNodeId" : "row\/F0000005-0000-4000-8000-000000000001\/field",
       "lifecycle" : [
 
       ],
@@ -833,6 +848,10 @@
         "row\/F0000005-0000-4000-8000-000000000009" : "Row 9",
         "row\/F0000005-0000-4000-8000-000000000010" : "Row 10",
         "row\/F0000005-0000-4000-8000-000000000098" : "Engine 0"
+      },
+      "selection" : {
+        "length" : 0,
+        "location" : 15
       },
       "stepId" : "resize_wide_again"
     }
@@ -850,19 +869,19 @@
       "id" : "initial",
       "logicalAction" : "launch; resize client to the common start size 720x560 DIP (wide); snapshot",
       "nativeMapping" : "MoveWindow client 720x560 DIP (window-targeted)",
-      "timestamp" : "mono_ns 2185570672800"
+      "timestamp" : "mono_ns 17618259446200"
     },
     {
       "id" : "resize_narrow_release",
       "logicalAction" : "resize client to 360x560 DIP; engine releases update-1 and insert-1",
       "nativeMapping" : "MoveWindow client 360x560 DIP (window-targeted)",
-      "timestamp" : "mono_ns 2187099825500"
+      "timestamp" : "mono_ns 17619810610500"
     },
     {
       "id" : "resize_wide_again",
       "logicalAction" : "resize client to 720x560 DIP",
       "nativeMapping" : "MoveWindow client 720x560 DIP (window-targeted)",
-      "timestamp" : "mono_ns 2190295638000"
+      "timestamp" : "mono_ns 17622487526400"
     }
   ]
 }
