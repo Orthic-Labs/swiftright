@@ -1,0 +1,999 @@
+{
+  "inputs": {
+    "frozenResponse": {
+      "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+      "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+    },
+    "interface": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+    },
+    "investigatorSource": {
+      "path": "factory/catalogue/duplicate-identity-spike/investigate_duplicates.py",
+      "sha256": "sha256:adedc492ec56fcb858a8f046976cae27feb80737e064f655bde4fdd92716416a"
+    },
+    "linkEvidence": {
+      "expectedSha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+      "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+      "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+    },
+    "request": {
+      "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+      "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+    },
+    "validatorSource": {
+      "path": "factory/catalogue/duplicate-identity-spike/duplicate_identity_validator.py",
+      "sha256": "sha256:1b6162a37294e9dda0c190552116a097c5ff4d42a9c84330b439274bef39e859"
+    }
+  },
+  "kind": "f1-duplicate-identity-spike",
+  "linkEvidenceSha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+  "receipts": {
+    "demangle": {
+      "argv": [
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+        "--expand"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "exitCode": 0,
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/catalogue/duplicate-identity-spike/usr-demangle.stderr",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdin": {
+        "bytes": 380,
+        "path": "factory/catalogue/duplicate-identity-spike/usr-input.txt",
+        "sha256": "sha256:10e5d039bb22cc2ebeefcd1065b9d73426174651b7c0777b8534fc8ad98d684b"
+      },
+      "stdout": {
+        "bytes": 3463,
+        "path": "factory/catalogue/duplicate-identity-spike/usr-demangle.txt",
+        "sha256": "sha256:bb47e5aecbf8c2d81a415daae7570d0b7b121d48ffa657e738daab789066f64c"
+      },
+      "tool": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+        "sha256": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe"
+      }
+    },
+    "sourcekit": {
+      "argv": [
+        "xcrun",
+        "sourcekit-lsp",
+        "debug",
+        "run-sourcekitd-request",
+        "--request-file",
+        "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/request-index-interface.yaml"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "dispatcher": {
+        "path": "/usr/bin/xcrun",
+        "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+      },
+      "exitCode": 0,
+      "frozenResponse": {
+        "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index.stderr",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 21408873,
+        "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+        "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+      },
+      "tool": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+        "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+      }
+    },
+    "tildeSendableBranch": {
+      "compile": {
+        "argv": [
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+          "-sdk",
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+          "-target",
+          "arm64-apple-macosx27.0",
+          "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/tilde-sendable-probe.swift",
+          "-o",
+          "/tmp/duplicate-identity-tilde-probe"
+        ],
+        "cwd": "/Volumes/D/claude/swiftright",
+        "exitCode": 0,
+        "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "stderr": {
+          "bytes": 0,
+          "path": "factory/catalogue/duplicate-identity-spike/branch-compile.stderr",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 0,
+          "path": "factory/catalogue/duplicate-identity-spike/branch-compile.stdout",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "target": "arm64-apple-macosx27.0",
+        "tool": {
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+          "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+        }
+      },
+      "run": {
+        "argv": [
+          "/tmp/duplicate-identity-tilde-probe"
+        ],
+        "cwd": "/Volumes/D/claude/swiftright",
+        "exitCode": 0,
+        "stderr": {
+          "bytes": 0,
+          "path": "factory/catalogue/duplicate-identity-spike/branch-run.stderr",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 16,
+          "path": "factory/catalogue/duplicate-identity-spike/branch-output.txt",
+          "sha256": "sha256:ef91c3c3676eb785cd57326857f9f22eca63bda787220a2fb8d2780e4e5e6d4c"
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "compilerEvidence": {
+        "compilerIdentity": "toolchainEvidence.compiler",
+        "method": "sourcekit-indexsource-exact-interface-line-and-declaration-name",
+        "request": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "requestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+        "response": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "responseSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+        "validatedTarget": "arm64-apple-macosx27.0"
+      },
+      "context": [
+        "ToggleStyleConfiguration"
+      ],
+      "decision": {
+        "promotion": null,
+        "reason": "Two exact-equal raw observations are preserved; bounded validator may accept only this exact duplicate shape.",
+        "status": "held"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        4080,
+        "var"
+      ],
+      "kind": "var",
+      "line": 4080,
+      "module": "SwiftUI",
+      "name": "$isOn",
+      "raw": {
+        "frozenRecords": [
+          {
+            "bytes": 762,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sha256": "sha256:d677ef07fc16d504bfee29d8541698f88900f514db266fa9ff0f09a874cc8a3d",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isOn\",\n          key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp\",\n          key.line: 4080,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isOn\",\n              key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvg\",\n              key.line: 4081,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          },
+          {
+            "bytes": 762,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sha256": "sha256:d677ef07fc16d504bfee29d8541698f88900f514db266fa9ff0f09a874cc8a3d",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isOn\",\n          key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp\",\n          key.line: 4080,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isOn\",\n              key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvg\",\n              key.line: 4081,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          }
+        ],
+        "frozenResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "fullRecordByteEqual": true,
+        "fullRecordShaEqual": true,
+        "parsedEntities": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ToggleStyleConfiguration",
+                "usr": "s:7SwiftUI24ToggleStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ToggleStyleConfiguration",
+                "usr": "s:7SwiftUI24ToggleStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          }
+        ],
+        "parsedEntityEqual": true,
+        "recordCount": 2,
+        "records": [
+          {
+            "bytes": 762,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sha256": "sha256:d677ef07fc16d504bfee29d8541698f88900f514db266fa9ff0f09a874cc8a3d",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isOn\",\n          key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp\",\n          key.line: 4080,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isOn\",\n              key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvg\",\n              key.line: 4081,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          },
+          {
+            "bytes": 762,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sha256": "sha256:d677ef07fc16d504bfee29d8541698f88900f514db266fa9ff0f09a874cc8a3d",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isOn\",\n          key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp\",\n          key.line: 4080,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isOn\",\n              key.usr: \"s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvg\",\n              key.line: 4081,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "usrSet": [
+          "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+        ]
+      },
+      "signature": "public var $isOn: SwiftUICore.Binding<Swift.Bool> {",
+      "source": {
+        "activeBranch": {
+          "active": true,
+          "conditions": [
+            "compiler(>=5.3) && $TildeSendable"
+          ],
+          "error": null
+        },
+        "enclosingScope": {
+          "line": 4067,
+          "name": "ToggleStyleConfiguration"
+        },
+        "exactDeclarationLineCount": 2,
+        "exactDeclarationLineNumbers": [
+          4080,
+          4101
+        ],
+        "excerpt": [
+          {
+            "line": 4078,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 4079,
+            "text": "  }"
+          },
+          {
+            "line": 4080,
+            "text": "  public var $isOn: SwiftUICore.Binding<Swift.Bool> {"
+          },
+          {
+            "line": 4081,
+            "text": "    get"
+          },
+          {
+            "line": 4082,
+            "text": "  }"
+          }
+        ],
+        "expectedCondition": "compiler(>=5.3) && $TildeSendable",
+        "lineNameOccurrenceCount": 1,
+        "lineText": "  public var $isOn: SwiftUICore.Binding<Swift.Bool> {",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    },
+    {
+      "compilerEvidence": {
+        "compilerIdentity": "toolchainEvidence.compiler",
+        "method": "sourcekit-indexsource-exact-interface-line-and-declaration-name",
+        "request": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "requestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+        "response": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "responseSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+        "validatedTarget": "arm64-apple-macosx27.0"
+      },
+      "context": [
+        "DisclosureGroupStyleConfiguration"
+      ],
+      "decision": {
+        "promotion": null,
+        "reason": "Two exact-equal raw observations are preserved; bounded validator may accept only this exact duplicate shape.",
+        "status": "held"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        5533,
+        "var"
+      ],
+      "kind": "var",
+      "line": 5533,
+      "module": "SwiftUI",
+      "name": "$isExpanded",
+      "raw": {
+        "frozenRecords": [
+          {
+            "bytes": 806,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sha256": "sha256:f3d26cd22f4d261234acb97cea10e93df89a506be87e4755232c39a38b1176b6",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isExpanded\",\n          key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp\",\n          key.line: 5533,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isExpanded\",\n              key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvg\",\n              key.line: 5534,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          },
+          {
+            "bytes": 806,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sha256": "sha256:f3d26cd22f4d261234acb97cea10e93df89a506be87e4755232c39a38b1176b6",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isExpanded\",\n          key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp\",\n          key.line: 5533,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isExpanded\",\n              key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvg\",\n              key.line: 5534,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          }
+        ],
+        "frozenResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "fullRecordByteEqual": true,
+        "fullRecordShaEqual": true,
+        "parsedEntities": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DisclosureGroupStyleConfiguration",
+                "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DisclosureGroupStyleConfiguration",
+                "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          }
+        ],
+        "parsedEntityEqual": true,
+        "recordCount": 2,
+        "records": [
+          {
+            "bytes": 806,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sha256": "sha256:f3d26cd22f4d261234acb97cea10e93df89a506be87e4755232c39a38b1176b6",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isExpanded\",\n          key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp\",\n          key.line: 5533,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isExpanded\",\n              key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvg\",\n              key.line: 5534,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          },
+          {
+            "bytes": 806,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sha256": "sha256:f3d26cd22f4d261234acb97cea10e93df89a506be87e4755232c39a38b1176b6",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$isExpanded\",\n          key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp\",\n          key.line: 5533,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$isExpanded\",\n              key.usr: \"s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvg\",\n              key.line: 5534,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "usrSet": [
+          "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+        ]
+      },
+      "signature": "public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {",
+      "source": {
+        "activeBranch": {
+          "active": true,
+          "conditions": [
+            "compiler(>=5.3) && $TildeSendable"
+          ],
+          "error": null
+        },
+        "enclosingScope": {
+          "line": 5507,
+          "name": "DisclosureGroupStyleConfiguration"
+        },
+        "exactDeclarationLineCount": 2,
+        "exactDeclarationLineNumbers": [
+          5533,
+          5567
+        ],
+        "excerpt": [
+          {
+            "line": 5531,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 5532,
+            "text": "  }"
+          },
+          {
+            "line": 5533,
+            "text": "  public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {"
+          },
+          {
+            "line": 5534,
+            "text": "    get"
+          },
+          {
+            "line": 5535,
+            "text": "  }"
+          }
+        ],
+        "expectedCondition": "compiler(>=5.3) && $TildeSendable",
+        "lineNameOccurrenceCount": 1,
+        "lineText": "  public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    },
+    {
+      "compilerEvidence": {
+        "compilerIdentity": "toolchainEvidence.compiler",
+        "method": "sourcekit-indexsource-exact-interface-line-and-declaration-name",
+        "request": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "requestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+        "response": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "responseSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+        "validatedTarget": "arm64-apple-macosx27.0"
+      },
+      "context": [
+        "ReferenceFileDocumentConfiguration"
+      ],
+      "decision": {
+        "promotion": null,
+        "reason": "Two exact-equal raw observations are preserved; bounded validator may accept only this exact duplicate shape.",
+        "status": "held"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        9717,
+        "var"
+      ],
+      "kind": "var",
+      "line": 9717,
+      "module": "SwiftUI",
+      "name": "$document",
+      "raw": {
+        "frozenRecords": [
+          {
+            "bytes": 1015,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sha256": "sha256:9e980a300020f8b4619ba7372b9d567178adb1f5457c49c84bd5d2cc5553596a",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp\",\n          key.line: 9717,\n          key.column: 54,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvg\",\n              key.line: 9718,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            },\n            {\n              key.attribute: source.decl.attribute.preconcurrency\n            },\n            {\n              key.attribute: source.decl.attribute._custom\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          },
+          {
+            "bytes": 1015,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sha256": "sha256:9e980a300020f8b4619ba7372b9d567178adb1f5457c49c84bd5d2cc5553596a",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp\",\n          key.line: 9717,\n          key.column: 54,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvg\",\n              key.line: 9718,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            },\n            {\n              key.attribute: source.decl.attribute.preconcurrency\n            },\n            {\n              key.attribute: source.decl.attribute._custom\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          }
+        ],
+        "frozenResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "fullRecordByteEqual": true,
+        "fullRecordShaEqual": true,
+        "parsedEntities": [
+          {
+            "column": 54,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ReferenceFileDocumentConfiguration",
+                "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          },
+          {
+            "column": 54,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ReferenceFileDocumentConfiguration",
+                "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          }
+        ],
+        "parsedEntityEqual": true,
+        "recordCount": 2,
+        "records": [
+          {
+            "bytes": 1015,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sha256": "sha256:9e980a300020f8b4619ba7372b9d567178adb1f5457c49c84bd5d2cc5553596a",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp\",\n          key.line: 9717,\n          key.column: 54,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvg\",\n              key.line: 9718,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            },\n            {\n              key.attribute: source.decl.attribute.preconcurrency\n            },\n            {\n              key.attribute: source.decl.attribute._custom\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          },
+          {
+            "bytes": 1015,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sha256": "sha256:9e980a300020f8b4619ba7372b9d567178adb1f5457c49c84bd5d2cc5553596a",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp\",\n          key.line: 9717,\n          key.column: 54,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvg\",\n              key.line: 9718,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            },\n            {\n              key.attribute: source.decl.attribute.preconcurrency\n            },\n            {\n              key.attribute: source.decl.attribute._custom\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "usrSet": [
+          "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+        ]
+      },
+      "signature": "@_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {",
+      "source": {
+        "activeBranch": {
+          "active": true,
+          "conditions": [
+            "compiler(>=5.3) && $TildeSendable"
+          ],
+          "error": null
+        },
+        "enclosingScope": {
+          "line": 9703,
+          "name": "ReferenceFileDocumentConfiguration"
+        },
+        "exactDeclarationLineCount": 4,
+        "exactDeclarationLineNumbers": [
+          9717,
+          9742,
+          23750,
+          23778
+        ],
+        "excerpt": [
+          {
+            "line": 9715,
+            "text": "    _modify"
+          },
+          {
+            "line": 9716,
+            "text": "  }"
+          },
+          {
+            "line": 9717,
+            "text": "  @_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {"
+          },
+          {
+            "line": 9718,
+            "text": "    get"
+          },
+          {
+            "line": 9719,
+            "text": "  }"
+          }
+        ],
+        "expectedCondition": "compiler(>=5.3) && $TildeSendable",
+        "lineNameOccurrenceCount": 1,
+        "lineText": "  @_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    },
+    {
+      "compilerEvidence": {
+        "compilerIdentity": "toolchainEvidence.compiler",
+        "method": "sourcekit-indexsource-exact-interface-line-and-declaration-name",
+        "request": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "requestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+        "response": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "responseSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+        "validatedTarget": "arm64-apple-macosx27.0"
+      },
+      "context": [
+        "FileDocumentConfiguration"
+      ],
+      "decision": {
+        "promotion": null,
+        "reason": "Two exact-equal raw observations are preserved; bounded validator may accept only this exact duplicate shape.",
+        "status": "held"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        23750,
+        "var"
+      ],
+      "kind": "var",
+      "line": 23750,
+      "module": "SwiftUI",
+      "name": "$document",
+      "raw": {
+        "frozenRecords": [
+          {
+            "bytes": 780,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sha256": "sha256:58fb6e0714faca6251b9c1cc63fe945abbf0c54fa12885a3ec4e97b84bbf04ae",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp\",\n          key.line: 23750,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvg\",\n              key.line: 23751,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          },
+          {
+            "bytes": 780,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sha256": "sha256:58fb6e0714faca6251b9c1cc63fe945abbf0c54fa12885a3ec4e97b84bbf04ae",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp\",\n          key.line: 23750,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvg\",\n              key.line: 23751,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          }
+        ],
+        "frozenResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "fullRecordByteEqual": true,
+        "fullRecordShaEqual": true,
+        "parsedEntities": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "FileDocumentConfiguration",
+                "usr": "s:7SwiftUI25FileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "FileDocumentConfiguration",
+                "usr": "s:7SwiftUI25FileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          }
+        ],
+        "parsedEntityEqual": true,
+        "recordCount": 2,
+        "records": [
+          {
+            "bytes": 780,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sha256": "sha256:58fb6e0714faca6251b9c1cc63fe945abbf0c54fa12885a3ec4e97b84bbf04ae",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp\",\n          key.line: 23750,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvg\",\n              key.line: 23751,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          },
+          {
+            "bytes": 780,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sha256": "sha256:58fb6e0714faca6251b9c1cc63fe945abbf0c54fa12885a3ec4e97b84bbf04ae",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$document\",\n          key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp\",\n          key.line: 23750,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$document\",\n              key.usr: \"s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvg\",\n              key.line: 23751,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "usrSet": [
+          "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+        ]
+      },
+      "signature": "public var $document: SwiftUICore.Binding<Document> {",
+      "source": {
+        "activeBranch": {
+          "active": true,
+          "conditions": [
+            "compiler(>=5.3) && $TildeSendable"
+          ],
+          "error": null
+        },
+        "enclosingScope": {
+          "line": 23734,
+          "name": "FileDocumentConfiguration"
+        },
+        "exactDeclarationLineCount": 4,
+        "exactDeclarationLineNumbers": [
+          9717,
+          9742,
+          23750,
+          23778
+        ],
+        "excerpt": [
+          {
+            "line": 23748,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 23749,
+            "text": "  }"
+          },
+          {
+            "line": 23750,
+            "text": "  public var $document: SwiftUICore.Binding<Document> {"
+          },
+          {
+            "line": 23751,
+            "text": "    get"
+          },
+          {
+            "line": 23752,
+            "text": "  }"
+          }
+        ],
+        "expectedCondition": "compiler(>=5.3) && $TildeSendable",
+        "lineNameOccurrenceCount": 1,
+        "lineText": "  public var $document: SwiftUICore.Binding<Document> {",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    },
+    {
+      "compilerEvidence": {
+        "compilerIdentity": "toolchainEvidence.compiler",
+        "method": "sourcekit-indexsource-exact-interface-line-and-declaration-name",
+        "request": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "requestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+        "response": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "responseSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+        "validatedTarget": "arm64-apple-macosx27.0"
+      },
+      "context": [
+        "DatePickerStyleConfiguration"
+      ],
+      "decision": {
+        "promotion": null,
+        "reason": "Two exact-equal raw observations are preserved; bounded validator may accept only this exact duplicate shape.",
+        "status": "held"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        32822,
+        "var"
+      ],
+      "kind": "var",
+      "line": 32822,
+      "module": "SwiftUI",
+      "name": "$selection",
+      "raw": {
+        "frozenRecords": [
+          {
+            "bytes": 822,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sha256": "sha256:155ca2179a38951e7532ea77e1e2f5cf7f7b8f40e65f1bf1c0b5bce4b95b42aa",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$selection\",\n          key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp\",\n          key.line: 32822,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$selection\",\n              key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvg\",\n              key.line: 32823,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          },
+          {
+            "bytes": 822,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sha256": "sha256:155ca2179a38951e7532ea77e1e2f5cf7f7b8f40e65f1bf1c0b5bce4b95b42aa",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$selection\",\n          key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp\",\n          key.line: 32822,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$selection\",\n              key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvg\",\n              key.line: 32823,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          }
+        ],
+        "frozenResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "fullRecordByteEqual": true,
+        "fullRecordShaEqual": true,
+        "parsedEntities": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DatePickerStyleConfiguration",
+                "usr": "s:7SwiftUI28DatePickerStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DatePickerStyleConfiguration",
+                "usr": "s:7SwiftUI28DatePickerStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          }
+        ],
+        "parsedEntityEqual": true,
+        "recordCount": 2,
+        "records": [
+          {
+            "bytes": 822,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sha256": "sha256:155ca2179a38951e7532ea77e1e2f5cf7f7b8f40e65f1bf1c0b5bce4b95b42aa",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$selection\",\n          key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp\",\n          key.line: 32822,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$selection\",\n              key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvg\",\n              key.line: 32823,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          },
+          {
+            "bytes": 822,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sha256": "sha256:155ca2179a38951e7532ea77e1e2f5cf7f7b8f40e65f1bf1c0b5bce4b95b42aa",
+            "text": "        {\n          key.kind: source.lang.swift.decl.var.instance,\n          key.name: \"$selection\",\n          key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp\",\n          key.line: 32822,\n          key.column: 14,\n          key.entities: [\n            {\n              key.kind: source.lang.swift.decl.function.accessor.getter,\n              key.name: \"getter:$selection\",\n              key.usr: \"s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvg\",\n              key.line: 32823,\n              key.column: 5\n            }\n          ],\n          key.attributes: [\n            {\n              key.attribute: source.decl.attribute.public\n            }\n          ],\n          key.effective_access: source.decl.effective_access.public\n        },\n",
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        },
+        "usrSet": [
+          "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+        ]
+      },
+      "signature": "public var $selection: SwiftUICore.Binding<Foundation.Date> {",
+      "source": {
+        "activeBranch": {
+          "active": true,
+          "conditions": [
+            "compiler(>=5.3) && $TildeSendable"
+          ],
+          "error": null
+        },
+        "enclosingScope": {
+          "line": 32806,
+          "name": "DatePickerStyleConfiguration"
+        },
+        "exactDeclarationLineCount": 2,
+        "exactDeclarationLineNumbers": [
+          32822,
+          32848
+        ],
+        "excerpt": [
+          {
+            "line": 32820,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 32821,
+            "text": "  }"
+          },
+          {
+            "line": 32822,
+            "text": "  public var $selection: SwiftUICore.Binding<Foundation.Date> {"
+          },
+          {
+            "line": 32823,
+            "text": "    get"
+          },
+          {
+            "line": 32824,
+            "text": "  }"
+          }
+        ],
+        "expectedCondition": "compiler(>=5.3) && $TildeSendable",
+        "lineNameOccurrenceCount": 1,
+        "lineText": "  public var $selection: SwiftUICore.Binding<Foundation.Date> {",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    }
+  ],
+  "status": "review-only-five-duplicate-rows",
+  "summary": {
+    "heldCaseCount": 5,
+    "promotionsMade": 0,
+    "rawDuplicateRows": 5
+  },
+  "toolchain": {
+    "compiler": {
+      "driverPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "executablePath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "version": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0"
+    },
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    },
+    "target": "arm64-apple-macosx27.0",
+    "xcodebuildVersion": "Xcode 27.0\nBuild version 27A266a"
+  },
+  "version": 1
+}

@@ -1,0 +1,40 @@
+{
+  "branch": {
+    "argv": [
+      "<internal-temporary-probe>"
+    ],
+    "exitCode": 0,
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdoutSha256": "sha256:ef91c3c3676eb785cd57326857f9f22eca63bda787220a2fb8d2780e4e5e6d4c"
+  },
+  "compile": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-sdk",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+      "-target",
+      "arm64-apple-macosx27.0",
+      "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/tilde-sendable-probe.swift",
+      "-o",
+      "<internal-temporary-probe>"
+    ],
+    "exitCode": 0,
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "demangle": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "--expand"
+    ],
+    "exitCode": 0,
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdoutSha256": "sha256:bb47e5aecbf8c2d81a415daae7570d0b7b121d48ffa657e738daab789066f64c"
+  },
+  "inputs": {
+    "compiler": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+    "demangle": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe",
+    "probe": "sha256:5855c068a23cb7690d57edc46897f75ed57f13e96839f8541fe755b5e468c6cd",
+    "usrInput": "sha256:10e5d039bb22cc2ebeefcd1065b9d73426174651b7c0777b8534fc8ad98d684b"
+  }
+}
