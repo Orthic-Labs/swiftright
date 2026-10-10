@@ -442,6 +442,22 @@ static AX_LAST_PUBLISH: AtomicI64 = AtomicI64::new(0);
 static AX_TRAILING: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub static AX_PUBLISHES: AtomicU64 = AtomicU64::new(0);
 pub static AX_THROTTLED: AtomicU64 = AtomicU64::new(0);
+/// Trailing-publish wakes that were throttled again (the timer fired before the interval was over) and re-armed.
+pub static AX_RETHROTTLED: AtomicU64 = AtomicU64::new(0);
+
+/// Throttle decision (pure: no clock, no statics). `Some(ticks)` = the interval since the last publish is not over yet and `ticks` remain.
+fn ax_throttle_rest(now: i64, last: i64, min_ticks: i64) -> Option<i64> {
+    if min_ticks > 0 && last != 0 && now - last < min_ticks {
+        Some(min_ticks - (now - last))
+    } else {
+        None
+    }
+}
+
+/// Floor on a trailing wait: a timer that fires early must not turn the retry into a busy loop.
+fn ax_retry_wait(rest_ns: u64) -> std::time::Duration {
+    std::time::Duration::from_nanos(rest_ns.max(1_000_000))
+}
 
 fn ax_policy() -> &'static AxPolicy {
     AX_POLICY.get_or_init(|| {
@@ -471,10 +487,9 @@ impl RootView {
         if pol.min_ticks > 0 {
             let now = qpc_now();
             let last = AX_LAST_PUBLISH.load(SeqCst);
-            if last != 0 && now - last < pol.min_ticks {
+            if let Some(rest) = ax_throttle_rest(now, last, pol.min_ticks) {
                 AX_THROTTLED.fetch_add(1, SeqCst);
-                let rest_ns = qpc_to_ns(pol.min_ticks - (now - last));
-                return Some(std::time::Duration::from_nanos(rest_ns.max(1_000_000)));
+                return Some(ax_retry_wait(qpc_to_ns(rest)));
             }
             AX_LAST_PUBLISH.store(now, SeqCst);
         }
@@ -1212,16 +1227,38 @@ fn present(cx: &mut AsyncApp, handle: WindowHandle<RootView>) {
         .flatten();
     PH_PRESENT.span(trace::K_PRESENT, t0, qpc_now());
     if let Some(wait) = wait {
-        // Throttled: publish the newest snapshot when the interval is over (once, however many commits arrive meanwhile).
+        // Throttled: publish the newest snapshot when the interval is over (one task, however many commits arrive meanwhile).
+        // The task re-arms itself while publish_ax still reports a wait (a timer that fires before the interval is over, or a
+        // publish by a newer commit that restarted the interval) and clears AX_TRAILING only once nothing is pending. It runs on the
+        // UI thread like present(), and no await sits between the final publish_ax() and the clear, so a commit cannot slip in
+        // between: it either arrived during a wait (publish_ax reads the newest SNAPSHOT) or comes after the clear (and spawns anew).
         if !AX_TRAILING.swap(true, SeqCst) {
             cx.spawn(async move |cx: &mut AsyncApp| {
-                cx.background_executor().timer(wait).await;
+                let mut wait = wait;
+                loop {
+                    cx.background_executor().timer(wait).await;
+                    if SHUTDOWN.load(SeqCst) || WINDOW_CLOSED.load(SeqCst) {
+                        break;
+                    }
+                    let next = cx
+                        .update(|cx| handle.update(cx, |view, _window, _cx| view.publish_ax()).ok().flatten())
+                        .ok()
+                        .flatten();
+                    let Some(next) = next else { break };
+                    // Throttled again: the newest snapshot is still unpublished. Log the first 64, then every 64th.
+                    let n = AX_RETHROTTLED.fetch_add(1, SeqCst) + 1;
+                    if n <= 64 || n % 64 == 0 {
+                        eprintln!(
+                            "[swiftright-render] ax trailing re-throttled snapshot={} published={} retry_ns={} n={}",
+                            SNAPSHOT.load(SeqCst),
+                            AX_PUBLISHED.load(SeqCst),
+                            next.as_nanos(),
+                            n
+                        );
+                    }
+                    wait = next;
+                }
                 AX_TRAILING.store(false, SeqCst);
-                let _ = cx.update(|cx| {
-                    let _ = handle.update(cx, |view, _window, _cx| {
-                        let _ = view.publish_ax();
-                    });
-                });
             })
             .detach();
         }
@@ -1561,17 +1598,103 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
     );
     let (private, ws) = trace::process_memory();
     eprintln!(
-        "[swiftright-render] memory rust_live_bytes={} rust_allocs={} private_bytes={} working_set={} ax_publishes={} ax_throttled={}",
+        "[swiftright-render] memory rust_live_bytes={} rust_allocs={} private_bytes={} working_set={} ax_publishes={} ax_throttled={} ax_rethrottled={}",
         trace::rust_live_bytes(),
         trace::rust_allocs(),
         private,
         ws,
         AX_PUBLISHES.load(SeqCst),
-        AX_THROTTLED.load(SeqCst)
+        AX_THROTTLED.load(SeqCst),
+        AX_RETHROTTLED.load(SeqCst)
     );
     if OPEN_FAILED.load(SeqCst) {
         E_PLATFORM
     } else {
         SWR_OK
+    }
+}
+
+#[cfg(test)]
+mod ax_throttle_tests {
+    use super::*;
+    use std::time::Duration;
+
+    // Ticks are nanoseconds here (a QPC frequency of 1 GHz), so a rest in ticks is also the rest in ns.
+    const MIN: i64 = 100_000_000;
+    const MS: i64 = 1_000_000;
+    const LAST: i64 = 5_000_000_000;
+
+    #[test]
+    fn rest_counts_down_inside_the_interval() {
+        assert_eq!(ax_throttle_rest(LAST + 10 * MS, LAST, MIN), Some(90 * MS));
+        assert_eq!(ax_throttle_rest(LAST + 99 * MS, LAST, MIN), Some(MS));
+    }
+
+    #[test]
+    fn no_rest_after_the_interval_before_the_first_publish_or_unthrottled() {
+        assert_eq!(ax_throttle_rest(LAST + MIN, LAST, MIN), None);
+        assert_eq!(ax_throttle_rest(LAST + 250 * MS, LAST, MIN), None);
+        assert_eq!(ax_throttle_rest(LAST + MS, 0, MIN), None, "nothing published yet");
+        assert_eq!(ax_throttle_rest(LAST + MS, LAST, 0), None, "SWR_AX_MIN_MS=0 publishes every snapshot");
+    }
+
+    #[test]
+    fn retry_wait_is_floored_at_one_millisecond() {
+        assert_eq!(ax_retry_wait(90 * MS as u64), Duration::from_millis(90));
+        assert_eq!(ax_retry_wait(1), Duration::from_millis(1));
+        assert_eq!(ax_retry_wait(0), Duration::from_millis(1));
+    }
+
+    /// The textgeom07 run 05 defect: a selection-only commit (v9) is throttled, the trailing timer fires slightly early, the
+    /// re-check is throttled again. The old task dropped that second answer (snapshot never published until the next commit);
+    /// the loop in `present` keeps waiting until the answer is None.
+    #[test]
+    fn early_timer_is_healed_by_the_retry_loop_but_not_by_a_single_check() {
+        // 5 percent early, like a coarse timer.
+        let fire = |wait: Duration| (wait.as_nanos() as i64) * 95 / 100;
+        let first_wait = ax_retry_wait(qpc_ns(ax_throttle_rest(LAST + 10 * MS, LAST, MIN).unwrap()));
+        assert_eq!(first_wait, Duration::from_millis(90));
+
+        // Old behaviour: one wake, one check, result discarded.
+        let now = LAST + 10 * MS + fire(first_wait);
+        assert!(ax_throttle_rest(now, LAST, MIN).is_some(), "the single check is throttled again: the publish would be lost");
+
+        // New behaviour: loop while throttled.
+        let mut now = LAST + 10 * MS;
+        let mut wait = first_wait;
+        let mut retries = 0;
+        let published_at = loop {
+            now += fire(wait);
+            match ax_throttle_rest(now, LAST, MIN) {
+                None => break now,
+                Some(rest) => {
+                    retries += 1;
+                    assert!(retries < 20, "the retry loop must converge");
+                    wait = ax_retry_wait(qpc_ns(rest));
+                }
+            }
+        };
+        assert!(retries >= 1, "the early wake was re-throttled and retried");
+        assert!(published_at - LAST >= MIN, "published only after the interval, never inside it");
+    }
+
+    /// A newer commit publishing during the wait restarts the interval: the loop waits that out too, then publishes the newest snapshot.
+    #[test]
+    fn a_publish_during_the_wait_restarts_the_interval_and_the_loop_follows_it() {
+        let mut last = LAST;
+        let mut now = LAST + 10 * MS;
+        let mut wait = ax_retry_wait(qpc_ns(ax_throttle_rest(now, last, MIN).unwrap()));
+        // At LAST+100 ms the wait ends exactly while present() has just published a newer commit (last = now).
+        now += wait.as_nanos() as i64;
+        last = now - MS;
+        let rest = ax_throttle_rest(now, last, MIN).expect("interval restarted by the other publish");
+        assert_eq!(rest, MIN - MS);
+        wait = ax_retry_wait(qpc_ns(rest));
+        now += wait.as_nanos() as i64;
+        assert_eq!(ax_throttle_rest(now, last, MIN), None, "the second wake publishes");
+    }
+
+    fn qpc_ns(ticks: i64) -> u64 {
+        ticks.max(0) as u64
     }
 }
