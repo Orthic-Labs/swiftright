@@ -1,0 +1,40 @@
+# gpu-routing 2026-10-10T15:07:46.8456450+05:30 host=BOGUS-DELL
+## DXGI adapters and outputs (default process, EnumAdapters1 order)
+adapter 0 luid=0x00000000_0x00017e7d name=Intel(R) Iris(R) Xe Graphics vendor=0x8086 device=0xa7a0 rev=4 dedicated_mb=128 shared_mb=48823 flags=0
+adapter 1 luid=0x00000000_0x00018254 name=NVIDIA GeForce RTX 4070 Laptop GPU vendor=0x10de device=0x2820 rev=161 dedicated_mb=7949 shared_mb=48823 flags=0
+adapter 2 luid=0x00000000_0x0001821f name=Microsoft Basic Render Driver vendor=0x1414 device=0x008c rev=0 dedicated_mb=0 shared_mb=48823 flags=2
+## Active display paths (QueryDisplayConfig, QDC_ONLY_ACTIVE_PATHS): source adapter owns the desktop surface / output
+QueryDisplayConfig rc=5
+## HAGS (HKLM GraphicsDrivers)
+HwSchMode= (1=default/off, 2=on) HwSchModeAtLastBoot? n/a; TdrDelay=
+## Win32_VideoController
+name=NVIDIA GeForce RTX 4070 Laptop GPU driver=32.0.16.1692 date=09/04/2026 05:30:00 pnp=PCI\VEN_10DE&DEV_2820&SUBSYS_0BEB1028&REV_A1\4&3A6078BA&0&0008 mode=x@ status=OK
+name=Intel(R) Iris(R) Xe Graphics driver=32.0.101.7084 date=01/15/2026 05:30:00 pnp=PCI\VEN_8086&DEV_A7A0&SUBSYS_0BEB1028&REV_04\3&11583659&0&10 mode=3456x2160@60 status=OK
+## Win32_DesktopMonitor / PnP monitors
+monitor name=Dell XPS 15 SDC414D Display id=DISPLAY\SDC414D\4&207F81B9&8&UID8388688 status=OK
+## nvidia-smi
+name, driver_version, pci.bus_id, display_mode, display_active, vbios_version, power.management, clocks.max.graphics [MHz]
+NVIDIA GeForce RTX 4070 Laptop GPU, 616.92, 00000000:01:00.0, [Requested functionality has been deprecated], Disabled, 95.06.18.00.1e, [Requested functionality has been deprecated], 3105 MHz
+    Performance State                                  : P8
+        Display Clock Setting                          : Not Active
+    Sparse Operation Mode                              : N/A
+## Per-app GPU preferences (HKCU\Software\Microsoft\DirectX\UserGpuPreferences)
+C:\Program Files\Adobe\Adobe Lightroom Classic\Lightroom.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Programs\LNV\Stremio-4\stremio.exe = GpuPreference=1;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\13b1dce62fc3204647ade625f7b4cb3f8d542a09\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\0d4a490e3a4c20bf204fb2326f1e9779241ce658\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Programs\Pinokio\Pinokio.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\b4ebb90d69b5fc8cf013f75341ee2a1192c9da8e\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\159dd2fdcdd1da8fc7d43041950039e0ff0792c3\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\d4588e6febc8d774fd5d880bfc18cfdef98a2fe4\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\7d8b8c0ef2b4849acc7b2160d29604cbfeb79030\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\9818f225bdb3e57ac4cfc40df722e236b172bb0e\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+DirectXUserGlobalSettings = SwapEffectUpgradeEnable=0;
+C:\Users\adrds\AppData\Local\Autodesk\webdeploy\production\7627f627889be835182cfc345110c3c9f5bc9cc3\FUSIONDOCSTREAM\Autodesk\FusionDocAcad\AcCoreConsole.exe = GpuPreference=2;
+C:\Program Files\Skylum\Luminar Neo\Luminar Neo.exe = GpuPreference=2;
+C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe = GpuPreference=1;
+## Global default GPU preference (DirectX\GraphicsSettings)
+SwapEffectUpgradeCache = 1
+## Battery / power
+battery status=2 charge=94
+powercfg scheme: Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)

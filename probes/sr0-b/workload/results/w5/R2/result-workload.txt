@@ -1,0 +1,19 @@
+harness=task-workload host=BOGUS-DELL user=adrds session=1 started=2026-10-10T15:15:21.2895318+05:30
+host qpc_freq=10000000 input_struct=0 gpu=Intel(R) Iris(R) Xe Graphics driver=32.0.101.7084 refresh_hz=60 res=3456x2160
+controller name=NVIDIA GeForce RTX 4070 Laptop GPU driver=32.0.16.1692 refresh_hz= res=x
+controller name=Intel(R) Iris(R) Xe Graphics driver=32.0.101.7084 refresh_hz=60 res=3456x2160
+exe=D:\Claude\sr0-r08\workload\scratch\out\Products\Release-windows-x86_64\WorkloadWin.exe exe_sha256=0815DF499371CEDE032758B00A6B254726DD524B9A0930C2D96B57089A74070F dll_sha256=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93 instr=full runs=1 warmup_s=10 measure_s=60 rate_hz=10 rows=200 key_tail_s=0.5 resources=on key_mode=char foreground_s=8 paint_phase_ms=default
+power=Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)
+=== RUN r1 start=2026-10-10T15:15:21.3137933+05:30
+pid run=r1 pid=48028 start_utc=2026-10-10T09:45:21.3964900Z qpc_start=897629617001
+sampler run=r1 pid=33272 target=48028
+window_ready run=r1 visible=1 consecutive_answers=3 hung=0 after_ms=636
+window run=r1 hwnd=28970732 foreground=skipped-user-active dpi=240 client_px=2400x1600 user_idle_ms=610
+context run=r1 phase=pre overlay_modules=nvspcap64.dll modules_total=109 overlay_procs=nvcontainer,NVDisplay.Container,NVIDIA Overlay
+inject run=r1 sent=679 fg_lost=0 send_fail=0 fg_events=0 fg_recovered=0 stop=deadline user_input_events=0 min_idle_ms=1094 minimized_samples=0 csv=D:\Claude\sr0-r08\workload\runs\w5ab-R2\r1\inject.csv key_mode=char rate_hz=10 key_deadline_ms_from_start=69500
+context run=r1 phase=post overlay_modules=nvspcap64.dll modules_total=109 overlay_procs=nvcontainer,NVDisplay.Container,NVIDIA Overlay
+host_top run=r1 span_s=68.1 logical_cpus=20 pct_of_machine_excluding_workload=membrane(30156):2.3;powershell(5440):0.28;logioptionsplus_agent(12908):0.19;powershell(33272):0.16;msedge(34376):0.14;pulse-hub(37368):0.11
+pid_exit run=r1 pid=48028 qpc_end=898369329652 exit=0
+resources run=r1 rows=71 sampler_exit=0 csv=D:\Claude\sr0-r08\workload\runs\w5ab-R2\r1\resources.csv
+run_state id=r1 valid=1 reason=ok
+finished=2026-10-10T15:16:40.9965120+05:30 runs_valid=1 of 1
