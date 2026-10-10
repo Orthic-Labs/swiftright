@@ -10,9 +10,12 @@ import Foundation
 //     transaction counts as finished;
 //   - a nil-animation transaction, a reduce-motion node, or a zero duration snaps to the target;
 //   - a newly inserted node fades in (opacity 0 to its target) under an animated transaction.
-// Motions advance only through `Graph.tick(now:)` (host clock). A transaction's completion runs once,
-// after every motion it started has finished or been superseded; a transaction that started none
-// completes at its commit. Completions run after the commit record has been delivered.
+// Motions advance only through `Graph.tick(now:)` (host clock). A motion begins at the first tick after it
+// was created: that tick is its progress 0, whatever the host clock reads (a real display tick carries an
+// absolute monotonic time, not a count from zero) and however long ticks were off before. A flush between
+// ticks never begins, advances or ends a motion. A transaction's completion runs once, after every motion
+// it started has finished or been superseded; a transaction that started none completes at its commit.
+// Completions run after the commit record has been delivered.
 
 /// A timing curve over normalized time.
 public struct Animation: Sendable, Equatable {
@@ -111,7 +114,8 @@ struct Motion {
     let to: LayoutRect
     let fromOpacity: Double
     let toOpacity: Double
-    let start: Double
+    /// Host time of progress 0. Nil until the first tick after the motion was created (`advanceMotions` fixes it).
+    var start: Double?
     let duration: Double
     let curve: Animation.Curve
     let transaction: AnimationTransaction
@@ -208,7 +212,7 @@ extension Graph {
             to: node.frame,
             fromOpacity: node.presentedOpacity,
             toOpacity: node.targetOpacity,
-            start: clock,
+            start: nil,
             duration: animation.duration,
             curve: animation.curve,
             transaction: transaction
@@ -232,8 +236,9 @@ extension Graph {
     }
 
     /// Interpolates every running motion to `now`. A motion that reaches its end presents its target
-    /// and finishes its transaction.
-    func advanceMotions(now: Double) {
+    /// and finishes its transaction. `anchoring` is true only for a display tick: a motion that has not begun
+    /// takes `now` as its progress 0 there. A commit (`anchoring` false) leaves such a motion as it is.
+    func advanceMotions(now: Double, anchoring: Bool) {
         guard !animating.isEmpty else { return }
         // Only nodes that hold a motion are visited, in path order so completion order does not depend on hashing.
         if animatingNeedsSort {
@@ -248,8 +253,13 @@ extension Graph {
             }
         }
         for node in animating {
-            guard let motion = node.motion else { continue }
-            let progress = (now - motion.start) / motion.duration
+            guard var motion = node.motion else { continue }
+            if motion.start == nil {
+                guard anchoring else { continue }
+                motion.start = now
+                node.motion = motion
+            }
+            let progress = (now - (motion.start ?? now)) / motion.duration
             if progress >= 1 {
                 node.motion = nil
                 node.presentedFrame = motion.to

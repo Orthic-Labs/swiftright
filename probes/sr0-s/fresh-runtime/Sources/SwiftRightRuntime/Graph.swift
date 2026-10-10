@@ -749,8 +749,9 @@ public final class Graph {
     private var flushScheduled = false
     private var sequence = 0
     private var instanceCounter = 0
-    /// Host-supplied time in seconds, set by `tick(now:)`. Animations start at this time.
-    var clock: Double = 0
+    /// Host-supplied time in seconds of the last `tick(now:)`; nil before the first tick. It has no required origin. A motion
+    /// does not start at it: a motion begins at the next tick (see `advanceMotions`).
+    var clock: Double?
     private var closed = false
     /// The focused node with the smallest id seen so far while resolving a record.
     private var resolveFocus: Node?
@@ -918,13 +919,14 @@ public final class Graph {
         dirty[root.id] = root
     }
 
-    /// Advances animations to `now` (host-supplied seconds, monotonic). Emits one commit record when
-    /// any animation was running, so the host can draw the interpolated values.
+    /// Advances animations to `now` (host-supplied seconds, monotonic; any origin). A motion created since the last tick
+    /// begins here (its progress 0). Emits one commit record when any animation was running, so the host can draw the
+    /// interpolated values.
     public func tick(now: Double) {
         guard !closed, root != nil else { return }
         let wasAnimating = animating.contains { $0.motion != nil && $0.alive }
         clock = now
-        advanceMotions(now: now)
+        advanceMotions(now: now, anchoring: true)
         if wasAnimating { emit(animationNames: []) }
         TransactionContext.drainDeferred()
     }
@@ -1432,7 +1434,7 @@ public final class Graph {
             add &+= t1 &- t0
             t0 = t1
         }
-        advanceMotions(now: clock)
+        if let clock { advanceMotions(now: clock, anchoring: false) }
         if profiling { lap(&profile!.transactionNS) }
         layoutRoot()
         assignOpacity(root, parent: 1)

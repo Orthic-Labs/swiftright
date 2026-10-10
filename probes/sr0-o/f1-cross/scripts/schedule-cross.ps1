@@ -2,7 +2,7 @@
 # Take D:\Claude\desktop.lock before calling (the caller owns the lock protocol).
 param([string]$Config = 'F1', [string]$Tag = 'r1', [string]$Base = 'D:\Claude\sr0o-f1',
       [string]$Recorder = 'D:\Claude\sr0o-f1\scratch\release\UIARecorder.exe',
-      [string]$Bin = 'D:\Claude\sr0-r08\src\scratch\out\Products\Release-windows-x86_64')
+      [string]$Bin = 'D:\Claude\sr0-r09\src\scratch\out\Products\Release-windows-x86_64')
 $ErrorActionPreference = 'Stop'
 $task = "SR0O-CROSS-$Config-$Tag"
 $taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$Base\scripts\run-cross.ps1`" -Config $Config -Tag $Tag -Recorder `"$Recorder`" -Bin `"$Bin`""
