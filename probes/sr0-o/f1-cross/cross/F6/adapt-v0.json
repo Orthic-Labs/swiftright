@@ -10,5 +10,61 @@
       "initial",
       "settled"
     ]
+  },
+  {
+    "field": "lifecycle.count",
+    "fixture": "F6",
+    "id": "C11",
+    "mapping": {
+      "2": "1"
+    },
+    "nodeId": "appear:row/F0000006-0000-4000-8000-000000000200",
+    "reason": "Proposed CONTRACT C11: onAppear/onDisappear counts for List rows inserted under an animation are unspecified. macOS SwiftUI re-creates every List row inserted under an animation when its insertion animation completes (row 201 too, which was never interrupted): appear twice, disappear once. The fresh runtime keeps the row views (appear once, disappear zero). Exactly these four counts, rows 200 and 201, step initial; the interruption record, completion pair, final layout and every other count stay exact.",
+    "status": "contract",
+    "steps": [
+      "initial"
+    ]
+  },
+  {
+    "field": "lifecycle.count",
+    "fixture": "F6",
+    "id": "C11",
+    "mapping": {
+      "1": "0"
+    },
+    "nodeId": "disappear:row/F0000006-0000-4000-8000-000000000200",
+    "reason": "Proposed CONTRACT C11: onAppear/onDisappear counts for List rows inserted under an animation are unspecified. macOS SwiftUI re-creates every List row inserted under an animation when its insertion animation completes (row 201 too, which was never interrupted): appear twice, disappear once. The fresh runtime keeps the row views (appear once, disappear zero). Exactly these four counts, rows 200 and 201, step initial; the interruption record, completion pair, final layout and every other count stay exact.",
+    "status": "contract",
+    "steps": [
+      "initial"
+    ]
+  },
+  {
+    "field": "lifecycle.count",
+    "fixture": "F6",
+    "id": "C11",
+    "mapping": {
+      "2": "1"
+    },
+    "nodeId": "appear:row/F0000006-0000-4000-8000-000000000201",
+    "reason": "Proposed CONTRACT C11: onAppear/onDisappear counts for List rows inserted under an animation are unspecified. macOS SwiftUI re-creates every List row inserted under an animation when its insertion animation completes (row 201 too, which was never interrupted): appear twice, disappear once. The fresh runtime keeps the row views (appear once, disappear zero). Exactly these four counts, rows 200 and 201, step initial; the interruption record, completion pair, final layout and every other count stay exact.",
+    "status": "contract",
+    "steps": [
+      "initial"
+    ]
+  },
+  {
+    "field": "lifecycle.count",
+    "fixture": "F6",
+    "id": "C11",
+    "mapping": {
+      "1": "0"
+    },
+    "nodeId": "disappear:row/F0000006-0000-4000-8000-000000000201",
+    "reason": "Proposed CONTRACT C11: onAppear/onDisappear counts for List rows inserted under an animation are unspecified. macOS SwiftUI re-creates every List row inserted under an animation when its insertion animation completes (row 201 too, which was never interrupted): appear twice, disappear once. The fresh runtime keeps the row views (appear once, disappear zero). Exactly these four counts, rows 200 and 201, step initial; the interruption record, completion pair, final layout and every other count stay exact.",
+    "status": "contract",
+    "steps": [
+      "initial"
+    ]
   }
 ]

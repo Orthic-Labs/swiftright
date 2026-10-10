@@ -222,6 +222,7 @@ def adaptations(config, step_ids):
       P1  F2 stale Mac AX tree after the focused row moved                      status oracle-quirk
       P2  F3 List after remove/reinsert: Mac AX focus (outline) vs FocusState    status oracle-quirk (probe F3-list-1s-typeafter, tuple 09)
       P6  F9 treeReleased after close                                            status contract
+      C11 F6 rows 200/201 appear/disappear counts (proposed CONTRACT C11)        status contract (proposed)
     Removed after the review: P3 (F5 initial focus), P4 (F6 row rebuild), P5 (F8 focus after Invoke) are product differences
     and stay failing diffs; recorder artifacts are fixed in the recorders, runtime defects are never adapted."""
     base = config.split("-")[0]
@@ -260,6 +261,15 @@ def adaptations(config, step_ids):
         step = ["type_x_remove_reinsert"]
         pair("P2", "oracle-quirk", step, "focusedNodeId", {"<none>": row(4) + "/field"}, why)
         pair("P2", "oracle-quirk", step, "selection", {"<none>": "location=0 length=0"}, why)
+    if root == "F6":
+        why = ("Proposed CONTRACT C11: onAppear/onDisappear counts for List rows inserted under an animation are unspecified. "
+               "macOS SwiftUI re-creates every List row inserted under an animation when its insertion animation completes "
+               "(row 201 too, which was never interrupted): appear twice, disappear once. The fresh runtime keeps the row views "
+               "(appear once, disappear zero). Exactly these four counts, rows 200 and 201, step initial; the interruption record, "
+               "completion pair, final layout and every other count stay exact.")
+        for slot in (200, 201):
+            pair("C11", "contract", ["initial"], "lifecycle.count", {"2": "1"}, why, f"appear:{row(slot)}")
+            pair("C11", "contract", ["initial"], "lifecycle.count", {"1": "0"}, why, f"disappear:{row(slot)}")
     if root == "F9":
         why = ("CONTRACT F9: tree release after close is a Windows runtime requirement, not a Mac oracle assertion "
                "(AppKit keeps closed NSWindows alive in the fixture host).")

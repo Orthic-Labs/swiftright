@@ -1,8 +1,26 @@
 # CROSS-ALL: Mac SwiftUI vs Windows fresh runtime, schema-v0 cross-compare of all 16 configs (T1)
 
-**Current verdict: see "Tuple 09" below: 11 of 16 configs pass, 5 fail on two real differences. The "After review" section is the pre-fix tuple 08 result; the first-pass "13 of 16" is superseded.**
+**Current verdict: see "Tuple 10" below: 11 of 16 configs pass, 5 fail on one remaining difference (launch selection). The tuple 09 section below is the previous run. The "After review" section is the pre-fix tuple 08 result; the first-pass "13 of 16" is superseded.**
 
 10 Oct 2026, repo HEAD cfca6d6 plus the uncommitted T1 changes. Mac: macOS 27.0.1 (26A434) arm64, Swift 6.4. Windows: Dell, tuple 08 FreshOnBridge `7673A2D5139172D8...` with renderer `E280F4A9FD9ECA0A...` (all 48 Windows runs record both hashes in `cross-evidence/<config>/win-run-w*.log`), UIARecorder `D255A25579C37751...` built on the Dell from `uia-recorder/`.
+
+## Tuple 10 (11 Oct 2026): Mac vs Windows after D2 and the D3 decision
+
+Windows: FreshOnBridge `F136046BEFE7EE99...` at `D:\Claude\sr0-r10\src` (runtime 8e47b89), renderer `E280F4A9FD9ECA0A...`, UIARecorder `D255A25579C37751...` (both unchanged); all 48 runs (16 configs x3) record exe `f136046b...` in `cross-evidence/<config>/win-run-w*.log` and `win-cross.sh` aborts on any other exe (`-Bin` passed explicitly, so the Dell copy of the script's own default does not matter). Lock `D:\Claude\desktop.lock` taken as `cross10` after matrix10 and r5-10, freed at 01:28 IST; window-targeted input only; nothing deleted on the Dell. Mac recordings unchanged (stimulus unchanged). Reports and event log: `cross-evidence/runner-compare-tuple10/`.
+
+| Config | Diffs | Allowed (besides N1) | Verdict |
+|---|---|---|---|
+| F1, F4, F6-reduced, F7, F8 | 0 | 0 | PASS |
+| F2 | 0 | P1 x6 | PASS |
+| F3, F3-list-1s, F3-list-3s | 0 | P2 x2 | PASS |
+| F6 | 0 | **C11 x4** | PASS |
+| F9 | 0 | P6 x1 | PASS |
+| F3-vstack-1s/3s, F3-lazy-1s/3s, F5 | 1 each | 0 | **FAIL** (D2, below) |
+
+11 of 16 pass, 5 fail, 5 diffs. Windows runs agree across the 3 runs of every config. 69 negative controls (65 plus the 4 new C11 ones), all rejected.
+
+- **C11 (was D3), now allowed.** Scoped allowance `C11` in `cross/F6/adapt-v0.json`: step `initial`, leaf `lifecycle.count`, exactly the pairs `appear:row/...200` and `...201` 2 to 1 and `disappear:row/...200` and `...201` 1 to 0, reason per the lead decision (Mac re-creates every List row inserted under an animation when its insertion animation completes, row 201 too). Fault controls: each of the four pairs gets the count set outside the allowed value (and clear of the Mac value), all rejected. Proposed contract change C11 is next to C9 in `conformance/sr0-slice/CONTRACT.md`.
+- **D2 is NOT fixed in the recordings (5 configs, 1 diff each).** `initial` selection: Mac `location=0 length=5`, Windows `location=5 length=0`, in 3 of 3 runs on each side, with the new exe. The focused node and `initialFocus` agree. The runtime does select all at launch (the new self-test assertion in the same F5 run: `selection-at-launch=0+5/5`, PASS), so the selection is correct in the runtime at the moment of focus but UIA (TextPattern selection of the focused field, read about 3 s after launch at the `initial` step) still reports the caret at the end. Either the selection is changed between launch and the snapshot (for example by the text-store focus handling or the AX publish) or the AccessKit text selection is published from a different source than the runtime selection. This is a product-side difference between runtime state and the published accessibility selection; it is not recorder timing (the same value in 3 of 3 runs and F5's later steps read 15, the end, as on the Mac). No allowance was added.
 
 ## Tuple 09 (10 Oct 2026): Mac vs Windows after the product fixes
 

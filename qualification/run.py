@@ -845,7 +845,7 @@ def inject_allowance_fault(trace, allowance, step):
         kind, _, lnode = node.partition(":")
         events = o.setdefault("lifecycle", [])
         have = sum(1 for e in events if e["kind"] == kind and e["node"] == lnode)
-        want = max([int(v) for v in allowed if v.isdigit()] + [have]) + 1
+        want = max([int(v) for v in allowed if v.isdigit()] + [have]) + 2   # +2: also clear of a baseline count that is one above (C11: 2 vs 1)
         events.extend({"kind": kind, "node": lnode} for _ in range(want - have))
         return t, f"step {step}: lifecycle {node} count {have} -> {want}", path
     if field == "axNodes.duplicateId":

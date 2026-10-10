@@ -1492,7 +1492,7 @@ class AllowanceFaultTests(unittest.TestCase):
             (self.allowance("selection", {"<none>": "location=0 length=0"}), "selection", lambda t: o(t)["selection"]["location"] == 9999),
             (self.allowance("effects", {"a": "b"}), "effects", lambda t: len(o(t)["effects"]) == 2),
             (self.allowance("lifecycle.count", {"0": "1"}, "treeReleased:tree"), "lifecycle.count[treeReleased:tree]",
-             lambda t: sum(1 for e in o(t)["lifecycle"] if e["kind"] == "treeReleased") == 2),
+             lambda t: sum(1 for e in o(t)["lifecycle"] if e["kind"] == "treeReleased") == 3),
             (self.allowance("axNodes.duplicateId", {"2 duplicates": "0 duplicates"}), "axNodes.duplicateId",
              lambda t: len(o(t)["axNodes"]) == 3 and len({n["id"] for n in o(t)["axNodes"]}) == 2),
             (self.allowance("axNodes.presence", {"<absent>": "role=text-field"}, "row/a/field"), "axNodes.presence[row/a/field]",
@@ -1514,7 +1514,7 @@ class AllowanceFaultTests(unittest.TestCase):
     def test_a_lifecycle_count_fault_lands_outside_the_allowed_actual(self):
         a = self.allowance("lifecycle.count", {"0": "3"}, "treeReleased:tree")
         altered, _, _ = self.inject(a)
-        self.assertEqual(sum(1 for e in altered["observations"][0]["lifecycle"] if e["kind"] == "treeReleased"), 4)
+        self.assertEqual(sum(1 for e in altered["observations"][0]["lifecycle"] if e["kind"] == "treeReleased"), 5)
 
     def test_an_unknown_step_node_or_leaf_is_reported_not_passed(self):
         self.assertIsNone(self.inject(self.allowance("model", {"a": "b"}, "row/a"), step="nope")[0])
@@ -1633,7 +1633,7 @@ class CrossPlanTests(unittest.TestCase):
                         "axNodes.value", "axNodes.actions", "axNodes.parent", "axNodes.order"}
     # the allowances that survived the review of the cross-compare (CROSS-ALL.md): P3 (F5 initial focus), P4 (F6 row rebuild) and
     # P5 (F8 focus after Invoke) are product differences and have no allowance
-    REMAINING = {"F2": {"N1", "P1"}, "F3": {"N1", "P2"}, "F3-list-1s": {"N1", "P2"}, "F3-list-3s": {"N1", "P2"}, "F9": {"N1", "P6"}}
+    REMAINING = {"F2": {"N1", "P1"}, "F3": {"N1", "P2"}, "F3-list-1s": {"N1", "P2"}, "F3-list-3s": {"N1", "P2"}, "F6": {"N1", "C11"}, "F9": {"N1", "P6"}}
 
     def adapt(self, config):
         return json.loads((q.CROSS_DIR / config / "adapt-v0.json").read_text(encoding="utf-8"))
@@ -1668,8 +1668,13 @@ class CrossPlanTests(unittest.TestCase):
             self.assertEqual({a["id"] for a in self.adapt(config)}, self.REMAINING.get(config, {"N1"}), config)
 
     def test_removed_allowances_cannot_come_back_unnoticed(self):
-        """P3 (F5 initial focus), P4 (F6 rebuild) and P5 (F8 focus on Invoke) mask product differences."""
-        for config, leaves in (("F5", ("focusedNodeId", "selection")), ("F6", ("lifecycle.count",)), ("F8", ("focusedNodeId",))):
+        """P3 (F5 initial focus) and P5 (F8 focus on Invoke) mask product differences; P4 returned as C11, exactly four F6 counts."""
+        c11 = [a for a in self.adapt("F6") if a["id"] == "C11"]
+        self.assertEqual(sorted((a["nodeId"], list(a["mapping"].items())[0]) for a in c11),
+                         sorted([(f"{k}:row/F0000006-0000-4000-8000-000000000{slot}", p)
+                                 for slot in (200, 201) for k, p in (("appear", ("2", "1")), ("disappear", ("1", "0")))]))
+        self.assertTrue(all(a["steps"] == ["initial"] and a["field"] == "lifecycle.count" for a in c11))
+        for config, leaves in (("F5", ("focusedNodeId", "selection")), ("F8", ("focusedNodeId",))):
             self.assertEqual([a for a in self.adapt(config) if a["field"] in leaves], [], config)
 
     def test_p2_is_an_evidenced_oracle_quirk_scoped_to_one_step(self):
@@ -1739,12 +1744,12 @@ class CrossPlanTests(unittest.TestCase):
 
 
 class CommittedRecordingsVerdictTests(unittest.TestCase):
-    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the tuple 09 Windows
-    recordings (10 Oct 2026, FreshOnBridge 8650BBFC, after the product fixes) against the Mac recordings.
+    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the tuple 10 Windows
+    recordings (11 Oct 2026, FreshOnBridge F136046B, after the product fixes) against the Mac recordings.
     The comparator is built from the working tree (the runner itself builds from HEAD), under SR0A_BUILD_ROOT.
-    When Windows is re-recorded, update TUPLE09_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
-    TUPLE09_DIFFS = {"F1": 0, "F2": 0, "F3": 0, "F3-list-1s": 0, "F3-list-3s": 0, "F3-vstack-1s": 1, "F3-vstack-3s": 1,
-                     "F3-lazy-1s": 1, "F3-lazy-3s": 1, "F4": 0, "F5": 1, "F6": 4, "F6-reduced": 0, "F7": 0, "F8": 0, "F9": 0}
+    When Windows is re-recorded, update TUPLE10_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
+    TUPLE10_DIFFS = {"F1": 0, "F2": 0, "F3": 0, "F3-list-1s": 0, "F3-list-3s": 0, "F3-vstack-1s": 1, "F3-vstack-3s": 1,
+                     "F3-lazy-1s": 1, "F3-lazy-3s": 1, "F4": 0, "F5": 1, "F6": 0, "F6-reduced": 0, "F7": 0, "F8": 0, "F9": 0}
 
     @classmethod
     def setUpClass(cls):
@@ -1774,22 +1779,24 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
         return json.loads((self.dir / f"compare-{config}.json").read_text(encoding="utf-8"))
 
     def test_per_config_diff_counts_of_the_recordings(self):
-        got = {c: len(self.report(c)["diffs"]) for c in self.TUPLE09_DIFFS}
-        self.assertEqual(got, self.TUPLE09_DIFFS)
+        got = {c: len(self.report(c)["diffs"]) for c in self.TUPLE10_DIFFS}
+        self.assertEqual(got, self.TUPLE10_DIFFS)
 
-    def test_remaining_diffs_are_the_two_real_differences(self):
-        """Launch selection (Mac AppKit selects the whole text, Windows puts the caret at the end) and the F6 row rebuild."""
+    def test_remaining_diff_is_the_launch_selection(self):
+        """Mac AppKit selects the whole text at launch (0+5); the tuple 10 runtime selects all (self-test selection-at-launch 0+5/5)
+        but UIA still reads the caret at the end (5+0) at the `initial` snapshot."""
         for config in ("F5", "F3-vstack-1s", "F3-vstack-3s", "F3-lazy-1s", "F3-lazy-3s"):
             diffs = [(d["step"], d["path"], d["expected"], d["actual"]) for d in self.report(config)["diffs"]]
             self.assertEqual(diffs, [("initial", "selection", "location=0 length=5", "location=5 length=0")], config)
-        self.assertEqual({d["path"].split("[")[0] for d in self.report("F6")["diffs"]}, {"lifecycle.count"})
+        self.assertEqual(self.report("F6")["diffs"], [], "the four row-rebuild counts are allowance C11")
         self.assertEqual(self.report("F6-reduced")["diffs"], [])
 
     def test_remaining_allowances_forgave_only_their_own_diffs(self):
-        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.TUPLE09_DIFFS}
+        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.TUPLE10_DIFFS}
         self.assertEqual({c: v for c, v in applied.items() if v},
-                         {"F2": ["P1"], "F3": ["P2"], "F3-list-1s": ["P2"], "F3-list-3s": ["P2"], "F9": ["P6"]})
+                         {"F2": ["P1"], "F3": ["P2"], "F3-list-1s": ["P2"], "F3-list-3s": ["P2"], "F6": ["C11"], "F9": ["P6"]})
         self.assertEqual(len([a for a in self.report("F2")["allowed"] if a["allowance"] == "P1"]), 6)
+        self.assertEqual(len([a for a in self.report("F6")["allowed"] if a["allowance"] == "C11"]), 4)
         self.assertTrue(all(a["status"] == "oracle-quirk" for a in self.report("F3")["allowed"] if a["allowance"] == "P2"))
 
     def test_every_fault_control_is_rejected(self):
@@ -1799,10 +1806,11 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
         self.assertTrue(any("allowance P1 rejected" in e["reason"] for e in controls))
         self.assertTrue(any("allowance P2 rejected" in e["reason"] for e in controls))
         self.assertTrue(any("allowance P6 rejected" in e["reason"] for e in controls))
+        self.assertEqual(sum("allowance C11 rejected" in e["reason"] for e in controls), 4)
 
     def test_only_the_expected_configs_fail(self):
         failed = {e["fixture"] for e in self.events if e["event"] == "fail"}
-        self.assertEqual(failed, {c for c, n in self.TUPLE09_DIFFS.items() if n})
+        self.assertEqual(failed, {c for c, n in self.TUPLE10_DIFFS.items() if n})
 
 
 class ReassemblyTests(unittest.TestCase):
