@@ -1,0 +1,209 @@
+{
+  "kind": "windows-owned-matched-runtime-timing",
+  "owner": "alchemist-f7-persistent-ecb35fa75a504e6199fdf9637d6be64e",
+  "baselineCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+  "candidateCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+  "performanceTestHash": "497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+  "swiftPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "swiftHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "pairsRequested": 3,
+  "rows": [
+    {
+      "pair": 1,
+      "label": "baseline",
+      "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+      "sourceTreeHash": "sha256:aeee01b6c6a827035c0e8d258ed82a0cb0f1f6e47dcd057175033c0f6a26555a",
+      "startedAt": "2026-10-10T20:52:20.1085500Z",
+      "finishedAt": "2026-10-10T20:53:41.9722239+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 1
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "772f1ebbda809caa78b615225264b05fd2aef311c9ca40669fb291f0b89d0c87"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "1de841e83cdcccfbf4bfbf7f86e027abe220401104db3ce3bcca422e305eefbd"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "465e04d5272b2ba1cbce4caca368a4f6176b056c9bac45dad694d4dfc5c2aa42"
+        }
+      ],
+      "directory": "pair-01-baseline",
+      "createNoWindow": true
+    },
+    {
+      "pair": 1,
+      "label": "candidate",
+      "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+      "sourceTreeHash": "sha256:db9cb1ef7c80c36e827255d0dc22364440ea0e285ecabb1f73b33692444705ab",
+      "startedAt": "2026-10-10T20:53:43.1916528Z",
+      "finishedAt": "2026-10-10T20:55:13.4340710+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 31
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "2a86332c8ca4d3ef460027982c09b4aed966aecb1f26f879f1231186164a9eb6"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "207067af411416342811f6e647bb79a4ed5d368ad93d83bddea87baea8daaf7b"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "eff58b2f178f0c5cf7a7f2d9dcb34dd8c4bc5c3a72354e66393effec92cf7136"
+        }
+      ],
+      "directory": "pair-01-candidate",
+      "createNoWindow": true
+    },
+    {
+      "pair": 2,
+      "label": "candidate",
+      "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+      "sourceTreeHash": "sha256:db9cb1ef7c80c36e827255d0dc22364440ea0e285ecabb1f73b33692444705ab",
+      "startedAt": "2026-10-10T20:55:14.6146321Z",
+      "finishedAt": "2026-10-10T20:55:17.2783907+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 10
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "f1aabb82274334272b45e6aafc029afb36060fe2551a57bb13508dc7f9507738"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "9557a9db41f1e3a8f37c84975fa4aa382f9336fcaded2e52e9aee334fd13d890"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "4b1c98cd87c76a65f6e8d8426f6b783c4606bde1a95d28cee2846ee9dba415e2"
+        }
+      ],
+      "directory": "pair-02-candidate",
+      "createNoWindow": true
+    },
+    {
+      "pair": 2,
+      "label": "baseline",
+      "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+      "sourceTreeHash": "sha256:aeee01b6c6a827035c0e8d258ed82a0cb0f1f6e47dcd057175033c0f6a26555a",
+      "startedAt": "2026-10-10T20:55:18.4434010Z",
+      "finishedAt": "2026-10-10T20:55:20.6191522+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 12
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "7f482801d214b500ad79e57c4b8d894e14ee2282c02089edb9180f1aa215c55e"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "ed848c6dafda742257d91d76083b64f7ab17a1fb60e99b7fc1dec97267d0959e"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "d24be118172cfe3a190f8e5bde343bce44805dce436afca55ee6d895d0a8de4d"
+        }
+      ],
+      "directory": "pair-02-baseline",
+      "createNoWindow": true
+    },
+    {
+      "pair": 3,
+      "label": "baseline",
+      "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+      "sourceTreeHash": "sha256:aeee01b6c6a827035c0e8d258ed82a0cb0f1f6e47dcd057175033c0f6a26555a",
+      "startedAt": "2026-10-10T20:55:21.8001156Z",
+      "finishedAt": "2026-10-10T20:55:24.7108823+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 45
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "e9a4101189775ef481fa3229567975ef328fe94255edbd3d9ca0572ff6b31f97"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "9cbd7d10124eea8572847ea7a7ddc8f2056f9157caa5a313401357d562e053a6"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "5c5554c60d4f49ac89c4d8cf8851ce3d5ec1f3a8eec861cb59228fd93fe712a6"
+        }
+      ],
+      "directory": "pair-03-baseline",
+      "createNoWindow": true
+    },
+    {
+      "pair": 3,
+      "label": "candidate",
+      "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+      "sourceTreeHash": "sha256:db9cb1ef7c80c36e827255d0dc22364440ea0e285ecabb1f73b33692444705ab",
+      "startedAt": "2026-10-10T20:55:25.8969536Z",
+      "finishedAt": "2026-10-10T20:55:28.4833716+00:00",
+      "exitCode": 1,
+      "timedOut": false,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 49
+        }
+      ],
+      "files": [
+        {
+          "path": "stdout.txt",
+          "sha256": "42dc2efbca9627b80019fe1d8818afbd09347a29f9bf3afd00b1e078b71b9bda"
+        },
+        {
+          "path": "stderr.txt",
+          "sha256": "13b109ab05484ab71e8f3807582bbdb9ca03ebae320ba6aca2b3e3476d603f71"
+        },
+        {
+          "path": "owned-process.json",
+          "sha256": "81adc578c17ed74eeabc77bdd8463cc306d8487113955fafa120406047b45b2d"
+        }
+      ],
+      "directory": "pair-03-candidate",
+      "createNoWindow": true
+    }
+  ],
+  "error": "",
+  "thresholdUnchanged": true,
+  "stageModified": false,
+  "nativeWindowOpened": false,
+  "finishedAt": "2026-10-10T20:55:28.5089234+00:00"
+}
