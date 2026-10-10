@@ -1,0 +1,96 @@
+{
+  "buildRequirements": [
+    "Use fresh owned factory copies, never original runtime/test roots or original cached binary directories.",
+    "Retain exact parent Package.swift and every Sources/SwiftRightRuntime file.",
+    "Only source delta is TaskIDTests.swift assertion message. Pin original and diagnostic complete source manifests.",
+    "Build release with same Swift toolchain, XCTest/Testing runtime loader and framework pins; archive diagnostics as distinct binaries with their own executable and DLL hashes.",
+    "Do not run full suite to seek passing results. No changed waits, graph uses, task code, assertions or thresholds."
+  ],
+  "diagnosticSource": {
+    "path": "/Volumes/D/claude/swiftright/factory/runtime-additions/task-id-investigation/trace-proposal/TaskIDTests.trace.swift",
+    "sha256": "bc720665b481a84ed717a6a8a20af721d8bfee7e29bcf984881e6dd4b6bed7c7"
+  },
+  "eventInterpretation": {
+    "cancelled a then commit=false a": "Existing task cancellation and rejected guarded commit observed; trace alone does not identify cancellation source.",
+    "commit=false a without cancelled a": "Guarded commit rejected. Existing KeyedWork false result can be nil TaskOwner.current or isLive false; trace does not distinguish missing task-local token, deallocated node, dead node or generation mismatch.",
+    "commit=true a": "Existing action accepted. If assertion still reports empty results, retain raw contradiction for separate investigation.",
+    "start a only": "Task start was observed; no existing completion or cancellation event had been logged by assertion failure. Late completion is consistent but exact scheduler mechanism is not proved."
+  },
+  "kind": "factory-only-task-id-message-trace-proposal",
+  "limits": [
+    "Changing diagnostic message changes compiled test bytes; diagnostic outcomes cannot replace original same-binary results.",
+    "All passing diagnostics produce no failure-event trace and cannot establish a cause.",
+    "No fixes until a concrete mechanism is independently evidenced."
+  ],
+  "messageOnlyDiff": {
+    "path": "/Volumes/D/claude/swiftright/factory/runtime-additions/task-id-investigation/trace-proposal/message-only.diff",
+    "sha256": "af1dc3b03dd870771cdaaf6528ae1c19885dd7563a9738d3f715886ae37f92c8"
+  },
+  "runRequirements": {
+    "capture": [
+      "Source, toolchain, loader, executable and DLL pins before and after runs",
+      "Selected test count, stdout, stderr, exit code, timeout, CPU load, owned process path/PID/start/end",
+      "Every pass and failure; preserve original full175, original10 and original8e47 five-run archives"
+    ],
+    "expectedTestsPerProcess": 1,
+    "filter": "SwiftRightRuntimeTests.TaskIDTests/testSameIdDoesNotRestartTask",
+    "maximumProcesses": 9,
+    "orders": [
+      [
+        "baseline",
+        "postshape",
+        "fontstorage"
+      ],
+      [
+        "postshape",
+        "fontstorage",
+        "baseline"
+      ],
+      [
+        "fontstorage",
+        "baseline",
+        "postshape"
+      ]
+    ],
+    "rounds": 3,
+    "serialOnly": true
+  },
+  "variants": [
+    {
+      "diagnosticDelta": "Replace copied Tests/SwiftRightRuntimeTests/TaskIDTests.swift with pinned TaskIDTests.trace.swift. All other runtime and test bytes must equal parent snapshot.",
+      "label": "baseline",
+      "originalPackage": "/Volumes/D/claude/swiftright/factory/native/windows/api-baseline-8e47b89-20261011/runtime/Package.swift",
+      "originalPackageHash": "106ab62beed1bb79feced15db2b6ace24c82e57e1548147d0a4e9b8f03bf43db",
+      "originalSourceReceipt": "/Volumes/D/claude/swiftright/factory/native/windows/api-baseline-8e47b89-20261011/runtime-source-receipt.json",
+      "originalSourceReceiptHash": "b62714036db26bedbdf3a1c7b074ac37589b84ef2cd541f44bc7692fb16af66b",
+      "originalSourceTreeHash": "sha256:aeee01b6c6a827035c0e8d258ed82a0cb0f1f6e47dcd057175033c0f6a26555a",
+      "originalTaskIDSource": "/Volumes/D/claude/swiftright/factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "originalTaskIDSourceHash": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "sourceCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d"
+    },
+    {
+      "diagnosticDelta": "Replace copied Tests/SwiftRightRuntimeTests/TaskIDTests.swift with pinned TaskIDTests.trace.swift. All other runtime and test bytes must equal parent snapshot.",
+      "label": "postshape",
+      "originalPackage": "/Volumes/D/claude/swiftright/factory/native/windows/api-shape-bbceb5a1-20261011/runtime/Package.swift",
+      "originalPackageHash": "106ab62beed1bb79feced15db2b6ace24c82e57e1548147d0a4e9b8f03bf43db",
+      "originalSourceReceipt": "/Volumes/D/claude/swiftright/factory/native/windows/api-shape-bbceb5a1-20261011/runtime-source-receipt.json",
+      "originalSourceReceiptHash": "3c47efc29c53d31cf09dd6f8767fecf1b6ccbb66b47673befa105b477226eca9",
+      "originalSourceTreeHash": "sha256:4e79df99ed49c638c563516163f738cd7ba7cc49ae470c2b3d888d7916ae9be7",
+      "originalTaskIDSource": "/Volumes/D/claude/swiftright/factory/native/windows/api-shape-bbceb5a1-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "originalTaskIDSourceHash": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "sourceCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7"
+    },
+    {
+      "diagnosticDelta": "Replace copied Tests/SwiftRightRuntimeTests/TaskIDTests.swift with pinned TaskIDTests.trace.swift. All other runtime and test bytes must equal parent snapshot.",
+      "label": "fontstorage",
+      "originalPackage": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/runtime/Package.swift",
+      "originalPackageHash": "106ab62beed1bb79feced15db2b6ace24c82e57e1548147d0a4e9b8f03bf43db",
+      "originalSourceReceipt": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/runtime-source-receipt.json",
+      "originalSourceReceiptHash": "66e98c24a2395c0c19fcdbc25da2ead7fd85982a221ea110c0d4b11640385166",
+      "originalSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "originalTaskIDSource": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "originalTaskIDSourceHash": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b"
+    }
+  ]
+}

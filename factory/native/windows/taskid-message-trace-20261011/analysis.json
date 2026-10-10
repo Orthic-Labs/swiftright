@@ -1,0 +1,82 @@
+{
+  "kind": "factory-taskid-diagnostic-message-analysis",
+  "diagnosticOnly": true,
+  "maximumProcesses": 9,
+  "actualProcesses": 9,
+  "rows": [
+    {
+      "round": 0,
+      "label": "baseline",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:f4be2225ded495ea741029400d8fa3d713cba3889c65eacb8b39a3488b34ba8d"
+    },
+    {
+      "round": 0,
+      "label": "postshape",
+      "exitCode": 1,
+      "eventsAtFailedAssertion": [
+        "start a"
+      ],
+      "rawStdoutHash": "sha256:74d644ce3e1d644cf097bda0a51d302352983ee2e59ba73b8402a9683ce969d6"
+    },
+    {
+      "round": 0,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:ca4076ed5a0cc01eb35f30b0098443bca8a43d08412be0265dc798f83a47fc8d"
+    },
+    {
+      "round": 1,
+      "label": "postshape",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:449d2c51a5ae8dbc19ed62f10ca12dc849318be737cc1e8547ffe2138dc36389"
+    },
+    {
+      "round": 1,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:f2d05c535a9be93bd61ae5dbcecdcc6c738ba87719f4184cbb9bbe51519b5fdc"
+    },
+    {
+      "round": 1,
+      "label": "baseline",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:3e6476005769d2982a63e5ef904c5aa6ff63e6b0172b005bc1b6ed9383cf5c5d"
+    },
+    {
+      "round": 2,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:b881d604cca4cfbdb97805e76b8da33de704058dfe32e029aeeddb0e89623dac"
+    },
+    {
+      "round": 2,
+      "label": "baseline",
+      "exitCode": 1,
+      "eventsAtFailedAssertion": [
+        "start a"
+      ],
+      "rawStdoutHash": "sha256:ec985f497e9e811547172645b0d62c2d295caa5c1f10b3aa4f1621d89c324e46"
+    },
+    {
+      "round": 2,
+      "label": "postshape",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:17325afb0e505fdd960e57f1340b2516b0cf9db24b79a64014c814f6db9466eb"
+    }
+  ],
+  "baselinePreAdditionFailureReproduced": true,
+  "observedFailedEvents": "start a only; completion/cancellation/commit absent by assertion",
+  "causeClaim": false,
+  "interpretation": "Original baseline &postshape each failed once. Trace does not identify scheduler, weak-node, cancellation or owner/token cause. Seven passes do not erase original failures.",
+  "furtherRepetition": false,
+  "runtimeTestsUnchangedExceptFailureMessage": true,
+  "traceReceiptHash": "sha256:ed4a787b685b14a0fb1a7e33e9e368a72675af791a3d1cf893a971a190c80483"
+}
