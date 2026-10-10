@@ -1,0 +1,464 @@
+R7 final: quarantined first launch on the stapled-.app build (R3 final DMG b976ac70...) - raw transcript
+Recorded 2026-10-10 (guest clock UTC 01:43-01:49). Lane R7 re-run, lead = Legion. Host: macOS 27.0.1 arm64, Tart 2.40.1 (TART_HOME=/Volumes/D/tart-home).
+Artifact: /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+Host-side hash check: b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4  /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+Raw per-phase logs: /Volumes/D/sr0-artifacts/mac/r7/final/ (full syspolicyd logs gk-show-*.log; this file keeps the decision lines only).
+
+VM method: tart clone sliceapp-base r7-final; tart run r7-final --no-graphics --vnc-experimental (no host window; the VZ VNC server is held by ONE headless client script for input only, never rendered); guest over SSH (admin, key vmkey).
+The first-launch dialog (CoreServicesUIAgent, type=QuarantineFirstOpen) was answered with Return (default button 'Open'), same as clicking Open in the 0.2.139 baseline.
+Harness notes: (1) attempt 1 on the first clean clone was discarded: the DMG arrived 0444 so 'xattr -w' failed (Permission denied) and nothing was quarantined; VM re-cloned, DMG chmod 644 first. (2) VZ VNC dies on a 2nd client / clients missing pseudo-encodings (two earlier VMs crashed while the input client was built, no test data from them); each reported run is on a fresh clone with a single persistent client. (3) guest has no Xcode CLT: xcrun/stapler shims unusable there, so stapler runs on the host. (4) in zsh 'log' is a builtin; /usr/bin/log is used.
+Phases: The ONLINE VM (checks 1-6) then OFFLINE-A (same VM, app moved aside, quarantine re-set, default routes removed); the OFFLINE-B VM = a fresh clone, network removed BEFORE the first delivery = OFFLINE-B (first-ever evaluation of this app offline).
+
+=================== PHASE ONLINE: delivery, assess, install (fresh clone, network up) ===================
+### guest: macOS 26.6.2 (25G83) arm64; date 2026-10-10T01:44:46Z
+$ spctl --status --verbose
+assessments enabled
+developer id enabled
+$ cd /Users/admin/r7f/q
+$ shasum -a 256 SliceApp_0.1.0_arm64.dmg
+b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4  SliceApp_0.1.0_arm64.dmg
+$ ls -l SliceApp_0.1.0_arm64.dmg
+-rw-r--r--  1 admin  staff  85918 Oct 10 01:44 SliceApp_0.1.0_arm64.dmg
+$$$ date +%s
+$$ printf %x 1791596686
+$$ uuidgen
+$ xattr -w com.apple.quarantine '0083;6ac9988e;Safari;109631E4-BBFC-476D-B464-30A6BEB539B3' SliceApp_0.1.0_arm64.dmg
+$ xattr -l SliceApp_0.1.0_arm64.dmg
+com.apple.quarantine: 0083;6ac9988e;Safari;109631E4-BBFC-476D-B464-30A6BEB539B3
+$ spctl -a -vv -t open --context context:primary-signature SliceApp_0.1.0_arm64.dmg
+SliceApp_0.1.0_arm64.dmg: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+$ echo rc=0
+$ hdiutil attach -nobrowse -noautoopen -readonly SliceApp_0.1.0_arm64.dmg
+/dev/disk8          	GUID_partition_scheme          	
+/dev/disk8s1        	Apple_HFS                      	/Volumes/SliceApp
+$ ls -la /Volumes/SliceApp
+drwxr-xr-x  6 admin  staff   272 Oct 10 01:28 .
+drwxr-xr-x  4 root   wheel   128 Oct 10 01:44 ..
+-rw-r--r--  1 admin  staff  8196 Oct 10 01:28 .DS_Store
+drwxr-xr-x  3 admin  staff   102 Oct 10 01:28 .background
+lrwxr-xr-x  1 admin  staff    13 Oct 10 01:28 Applications -> /Applications
+drwxr-xr-x  3 admin  staff   102 Oct 10 01:28 SliceApp.app
+$ xattr -l /Volumes/SliceApp/SliceApp.app
+$ ls -ld /Applications/SliceApp.app
+ls: /Applications/SliceApp.app: No such file or directory
+$ ditto --qtn /Volumes/SliceApp/SliceApp.app /Applications/SliceApp.app
+ditto-rc=0
+$ echo ditto-rc=0
+$ xattr -l /Applications/SliceApp.app
+com.apple.quarantine: 0083;6ac9988e;Safari;109631E4-BBFC-476D-B464-30A6BEB539B3
+$ spctl -a -vv -t exec /Applications/SliceApp.app
+/Applications/SliceApp.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+$ echo rc=0
+$ codesign --verify --deep --strict -vv /Applications/SliceApp.app
+/Applications/SliceApp.app: valid on disk
+/Applications/SliceApp.app: satisfies its Designated Requirement
+codesign-rc=0
+$ echo codesign-rc=0
+$ codesign -dvv /Applications/SliceApp.app
+$ egrep 'Identifier|Authority|TeamIdentifier|Timestamp|flags|Format'
+Identifier=dev.orthic.sliceapp
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20500 size=639 flags=0x10000(runtime) hashes=13+3 location=embedded
+Authority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+Authority=Developer ID Certification Authority
+Authority=Apple Root CA
+Timestamp=Oct 10, 2026 at 1:28:26 AM
+TeamIdentifier=6KLGD3LLKF
+$ ls -la /Applications/SliceApp.app/Contents
+drwxr-xr-x@ 8 admin  staff   256 Oct 10 01:28 .
+drwxr-xr-x@ 3 admin  staff    96 Oct 10 01:28 ..
+-rw-r--r--@ 1 admin  staff  1653 Oct 10 01:28 CodeResources
+-rw-r--r--@ 1 admin  staff   879 Oct 10 01:28 Info.plist
+drwxr-xr-x@ 3 admin  staff    96 Oct 10 01:28 MacOS
+-rw-r--r--@ 1 admin  staff     8 Oct 10 01:28 PkgInfo
+drwxr-xr-x@ 2 admin  staff    64 Oct 10 01:28 Resources
+drwxr-xr-x@ 3 admin  staff    96 Oct 10 01:28 _CodeSignature
+$ syspolicy_check distribution /Applications/SliceApp.app
+App passed all pre-distribution checks and is ready for distribution.
+syspolicy_check-rc=0
+$ echo syspolicy_check-rc=0
+$ /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' -c 'Print :CFBundleShortVersionString' /Applications/SliceApp.app/Contents/Info.plist
+dev.orthic.sliceapp
+0.1.0
+
+=================== HOST: stapler validate (guest installed copy and the DMG) ===================
+### host: stapler validate (guest has no Xcode CLT, xcrun/stapler shims unavailable there); host 27.0.1, /Applications/Xcode-27-RC.app/Contents/Developer/usr/bin/stapler
+$ (guest) tar -C /Applications -cf - SliceApp.app | (host) tar -xf -   # the guest-installed, quarantined copy
+$ xcrun stapler validate fromguest-1/SliceApp.app
+Processing: /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r7/fromguest-1/SliceApp.app
+The validate action worked!
+rc=0
+$ xcrun stapler validate -v fromguest-1/SliceApp.app
+            recordChangeTag = mv1ptzri;
+            recordName = "2/2/20ff48f663b6e56f991abd8efc1f122f55de1b0e";
+            recordType = DeveloperIDTicket;
+        }
+    );
+}
+Downloaded ticket has been stored at file:///var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/T/0ea7847f-5c14-479b-8805-70ffaf14f8ab.ticket.
+The validate action worked!
+$ hdiutil attach -nobrowse -noautoopen -readonly -mountpoint hostmnt-1 <dmg>
+hdiutil: WARNING: 'hdiutil attach -nobrowse -readonly -mountpoint ...' is deprecated. Please use 'diskutil image attach --mountOptions nobrowse --readOnly --mountPoint ...' instead.
+/dev/disk10s1       	Apple_HFS                      	/private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r7/hostmnt-1
+$ xcrun stapler validate hostmnt-1/SliceApp.app   # straight from the DMG
+Processing: /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r7/hostmnt-1/SliceApp.app
+The validate action worked!
+rc=0
+$ xcrun stapler validate <dmg>
+Processing: /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+The validate action worked!
+rc=0
+$ cmp ticket (guest copy vs DMG)
+ticket-identical
+hdiutil: WARNING: 'hdiutil detach ...' is deprecated. Please use 'diskutil eject ...' instead.
+"disk10" ejected.
+
+=================== PHASE ONLINE: first launch ===================
+### [online] launch sequence start 2026-10-10T01:45:27Z
+## network probe
+https://www.apple.com -> 200
+https://ocsp.apple.com -> 404
+https://api.apple-cloudkit.com -> 400
+## pre-launch state
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+no SliceApp process
+com.apple.quarantine: 0083;6ac9988e;Safari;109631E4-BBFC-476D-B464-30A6BEB539B3
+log stream started
+## guest start mark: 2026-10-10 01:45:30
+$ open /Applications/SliceApp.app
+open-rc=0
+## t+3s 01:45:33
+838 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Contents/MacOS/SliceApp
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:03   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## t+6s 01:45:36
+838 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Contents/MacOS/SliceApp
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:06   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## answering the first-launch dialog with Return (VNC key, no host window) 01:45:37
+key 0xff0d
+## after-Return +2s approx 01:45:40
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:10   0:00.39 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:45 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:45 rows.json
+## after-Return +5s approx 01:45:43
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:13   0:00.39 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:45 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:45 rows.json
+## after-Return +8s approx 01:45:46
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:16   0:00.39 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495D-8C21-6A7F6DDD2EF0/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:45 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:45 rows.json
+
+--- quit + post-state
+## state before quit 01:45:55
+  PID STAT ELAPSED      TIME COMMAND
+  838 S      00:25   0:00.39 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/37D8E9C7-10EF-495
+--- xattr /Applications/SliceApp.app
+com.apple.macl: 
+com.apple.provenance: 
+com.apple.quarantine: 00c3;6ac9988e;Safari;109631E4-BBFC-476D-B464-30A6BEB539B3
+--- rows.json
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:45 .
+drwx------+ 23 admin  staff  736 Oct 10 01:45 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:45 rows.json
+2a32ea479ec5117d7594df99f58e21976dea84703f2210f1184659303959ac5a  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- lsappinfo
+"CFBundleIdentifier"="dev.orthic.sliceapp"
+"pid"=838
+"ApplicationType"="Foreground"
+"isHidden"=[ NULL ] 
+$ osascript -l JavaScript -e "ObjC.import(\"AppKit\"); $.NSRunningApplication.runningApplicationsWithBundleIdentifier(\"dev.orthic.sliceapp\").firstObject.terminate"   # same as Cmd+Q
+pid=838
+true
+osascript-rc=0
+process 838 gone after ~1s
+no SliceApp process (quit)
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:45 .
+drwx------+ 23 admin  staff  736 Oct 10 01:45 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:45 rows.json
+2a32ea479ec5117d7594df99f58e21976dea84703f2210f1184659303959ac5a  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- crash reports
+drwxrwx---  9 root  _analyticsusers      288 Oct 10 01:44 .
+drwxr-xr-x  8 root  wheel                256 Aug 18 16:09 ..
+
+--- syspolicyd decision lines, /usr/bin/log show --predicate 'process == "syspolicyd" OR subsystem == "com.apple.syspolicy"' --start '2026-10-10 01:45:28' --end '2026-10-10 01:46:10' --info --debug (     492 lines total, de-duplicated key lines)
+2026-10-10 01:45:30.532 I  syspolicyd[246:14c4] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:45:30.589 I  syspolicyd[246:18f6] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:45:30.592 I  syspolicyd[246:14c4] [com.apple.syspolicy.exec:default] GK process assessment: <private> <-- (<private>, <private>)
+2026-10-10 01:45:30.604 I  syspolicyd[246:18f6] [com.apple.syspolicy:default] looking up ticket: <private>, 2, 1
+2026-10-10 01:45:30.604 I  syspolicyd[246:18f6] [com.apple.syspolicy:default] cloudkit record fetch: <private>, <private>
+2026-10-10 01:45:30.712 I  syspolicyd[246:1915] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:45:30.875 Df syspolicyd[246:1912] [com.apple.securityd:SecError] Error checking with notarization daemon: 3
+2026-10-10 01:45:30.922 I  syspolicyd[246:1917] [com.apple.syspolicy:default] CKTicketStore network reachability: 1, Sat Oct 10 01:44:16 2026
+2026-10-10 01:45:31.018 I  syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] GK scan complete: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: (null)), (bundle_id: (null)), 4, 4, 1
+2026-10-10 01:45:31.030 I  syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] App gets first launch prompt because responsibility: <private>, <private>
+2026-10-10 01:45:31.030 Df syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] GK evaluateScanResult: 0, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp), 1, 0, 1, 0, 4, 4, 1
+2026-10-10 01:45:31.031 I  syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] GK eval - was allowed: 1, show prompt: 1
+2026-10-10 01:45:31.031 I  syspolicyd[246:18f6] [com.apple.launchservices:code-evaluation] present prompt: uid=501, conn=yes, type=QuarantineFirstOpen, op.ident=1532F93A-7AEE-4FE3-A195-FA1102835BA9, info.ident=71330038-E65C-449C-81F8-9CA5127E59A9, info={<private>}
+2026-10-10 01:45:31.031 Df syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] Prompt shown (5, 0), waiting for response: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:45:36.298 I  syspolicyd[246:1912] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:45:37.077 I  syspolicyd[246:1917] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:45:37.091 Df syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] Marked application as user approved: 1, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:45:37.112 Df syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] Created provenance data for target: TA(d07a5707af3b952, 2), PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:45:37.112 Df syspolicyd[246:18f6] [com.apple.syspolicy.exec:default] Wrote provenance data on target: TA(d07a5707af3b952, 2), PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:45:53.463 I  syspolicyd[246:1939] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+rejected/denied/was allowed: 0 occurrences: 0
+
+=================== PHASE OFFLINE-A: same VM, app moved aside, quarantine re-set, v4+v6 default routes removed ===================
+
+### [offline1] launch sequence start 2026-10-10T01:47:01Z
+## network probe
+https://www.apple.com -> 000
+https://ocsp.apple.com -> 000
+https://api.apple-cloudkit.com -> 000
+## pre-launch state
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+no SliceApp process
+com.apple.quarantine: 0083;6ac9990f;Safari;FE4DEB70-969F-4F74-AAAB-4FD141B531FE
+## guest start mark: 2026-10-10 01:47:01
+$ open /Applications/SliceApp.app
+open-rc=0
+## t+3s 01:47:05
+1138 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Contents/MacOS/SliceApp
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:04   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## t+6s 01:47:08
+1138 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Contents/MacOS/SliceApp
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:07   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## answering the first-launch dialog with Return (VNC key, no host window) 01:47:08
+key 0xff0d
+## after-Return +2s approx 01:47:11
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:10   0:00.13 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Conte
+drwx------+ 24 admin  staff  768 Oct 10 01:47 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:47 rows.json
+## after-Return +5s approx 01:47:14
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:13   0:00.13 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Conte
+drwx------+ 24 admin  staff  768 Oct 10 01:47 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:47 rows.json
+## after-Return +8s approx 01:47:17
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:16   0:00.13 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B0-ABC3-C85D87C5F2D0/d/SliceApp.app/Conte
+drwx------+ 24 admin  staff  768 Oct 10 01:47 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:47 rows.json
+
+--- quit + post-state
+## state before quit 01:47:24
+  PID STAT ELAPSED      TIME COMMAND
+ 1138 S      00:23   0:00.13 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/47BAE2F3-B059-46B
+--- xattr /Applications/SliceApp.app
+com.apple.macl: 
+com.apple.provenance: 
+com.apple.quarantine: 00c3;6ac9990f;Safari;FE4DEB70-969F-4F74-AAAB-4FD141B531FE
+--- rows.json
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:47 .
+drwx------+ 24 admin  staff  768 Oct 10 01:47 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:47 rows.json
+defb41e7dcac70da88347101dc8ea426d04021d4c03538a34b7763f8e02fe7bd  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- lsappinfo
+"CFBundleIdentifier"="dev.orthic.sliceapp"
+"pid"=1138
+"ApplicationType"="Foreground"
+"isHidden"=[ NULL ] 
+$ osascript -l JavaScript -e "ObjC.import(\"AppKit\"); $.NSRunningApplication.runningApplicationsWithBundleIdentifier(\"dev.orthic.sliceapp\").firstObject.terminate"   # same as Cmd+Q
+pid=1138
+true
+osascript-rc=0
+process 1138 gone after ~1s
+no SliceApp process (quit)
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:47 .
+drwx------+ 24 admin  staff  768 Oct 10 01:47 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:47 rows.json
+defb41e7dcac70da88347101dc8ea426d04021d4c03538a34b7763f8e02fe7bd  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- crash reports
+drwxrwx---  9 root  _analyticsusers      288 Oct 10 01:44 .
+drwxr-xr-x  8 root  wheel                256 Aug 18 16:09 ..
+--- syspolicyd decision lines (log show 01:47:00-01:47:40,      284 lines total)
+2026-10-10 01:47:01.906 I  syspolicyd[246:2079] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:47:01.907 I  syspolicyd[246:2079] [com.apple.syspolicy.exec:default] GK process assessment: <private> <-- (<private>, <private>)
+2026-10-10 01:47:01.913 I  syspolicyd[246:208a] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:47:01.913 I  syspolicyd[246:208a] [com.apple.syspolicy:default] looking up ticket: <private>, 2, 1
+2026-10-10 01:47:01.913 I  syspolicyd[246:2079] [com.apple.syspolicy:default] cloudkit record fetch: <private>, <private>
+2026-10-10 01:47:01.914 E  syspolicyd[246:2177] [com.apple.syspolicy:default] cloudkit request failed: Error Domain=NSURLErrorDomain Code=-1009 UserInfo={_kCFStreamErrorCodeKey=50, NSUnderlyingError=0x960e62c10 {Error Domain=kCFErrorDomainCFNetwork Code=-1009 UserInfo={_kCFStreamErrorDomainKey=1, _k
+2026-10-10 01:47:01.915 I  syspolicyd[246:208a] [com.apple.syspolicy.exec:default] GK scan complete: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: (null)), (bundle_id: (null)), 4, 4, 1
+2026-10-10 01:47:01.916 I  syspolicyd[246:208a] [com.apple.syspolicy.exec:default] App gets first launch prompt because responsibility: <private>, <private>
+2026-10-10 01:47:01.916 Df syspolicyd[246:208a] [com.apple.syspolicy.exec:default] GK evaluateScanResult: 0, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp), 1, 0, 1, 0, 4, 4, 1
+2026-10-10 01:47:01.916 I  syspolicyd[246:208a] [com.apple.syspolicy.exec:default] GK eval - was allowed: 1, show prompt: 1
+2026-10-10 01:47:01.916 I  syspolicyd[246:208a] [com.apple.launchservices:code-evaluation] present prompt: uid=501, conn=yes, type=QuarantineFirstOpen, op.ident=F3E447FD-E8B9-4A01-9674-26A4CA659D7E, info.ident=81854FEF-85AB-4FAF-820C-35205588ABFD, info={<private>}
+2026-10-10 01:47:01.916 Df syspolicyd[246:208a] [com.apple.syspolicy.exec:default] Prompt shown (5, 0), waiting for response: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:47:01.925 I  syspolicyd[246:2177] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:47:01.939 I  syspolicyd[246:2176] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+2026-10-10 01:47:08.187 Df syspolicyd[246:208a] [com.apple.syspolicy.exec:default] Marked application as user approved: 1, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:47:08.195 Df syspolicyd[246:208a] [com.apple.syspolicy.exec:default] Wrote provenance data on target: TA(d07a5707af3b952, 2), PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:47:08.196 I  syspolicyd[246:2079] [com.apple.syspolicy.exec:default] GK eval - was allowed: 1, show prompt: 1
+2026-10-10 01:47:23.624 I  syspolicyd[246:217b] [com.apple.syspolicy:default] Newer ticket (1791595753) present in db, ignoring ticket (1791595718)
+rejected/denied/was allowed: 0 occurrences: 0
+
+=================== PHASE OFFLINE-B: fresh clone, default routes removed before the DMG was delivered ===================
+### guest: macOS 26.6.2 (25G83); date 2026-10-10T01:48:10Z; label=offline2
+$ mkdir -p /Users/admin/r7f/aside-offline2
+$ hdiutil detach /Volumes/SliceApp
+$ tail -1
+hdiutil: detach failed - No such file or directory
+$ '[' -e /Applications/SliceApp.app ']'
+$ '[' -e '/Users/admin/Library/Application Support/SliceApp' ']'
+$ ls -ld /Applications/SliceApp.app '/Users/admin/Library/Application Support/SliceApp'
+ls: /Applications/SliceApp.app: No such file or directory
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+delete net default
+$ netstat -rn
+$ grep -i default
+no default routes (v4 or v6)
+$ echo 'no default routes (v4 or v6)'
+$ set +x
+https://www.apple.com -> 000000
+https://ocsp.apple.com -> 000000
+https://api.apple-cloudkit.com -> 000000
+$ cd /Users/admin/r7f/q
+$$$ date +%s
+$$ printf %x 1791596890
+$$ uuidgen
+$ xattr -w com.apple.quarantine '0083;6ac9995a;Safari;A5130968-07DA-416A-8230-B80203E6B726' SliceApp_0.1.0_arm64.dmg
+$ xattr -l SliceApp_0.1.0_arm64.dmg
+com.apple.quarantine: 0083;6ac9995a;Safari;A5130968-07DA-416A-8230-B80203E6B726
+$ spctl -a -vv -t open --context context:primary-signature SliceApp_0.1.0_arm64.dmg
+SliceApp_0.1.0_arm64.dmg: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+$ echo rc=0
+$ hdiutil attach -nobrowse -noautoopen -readonly SliceApp_0.1.0_arm64.dmg
+$ tail -2
+/dev/disk8          	GUID_partition_scheme          	
+/dev/disk8s1        	Apple_HFS                      	/Volumes/SliceApp
+$ ditto --qtn /Volumes/SliceApp/SliceApp.app /Applications/SliceApp.app
+ditto-rc=0
+$ echo ditto-rc=0
+$ xattr -l /Applications/SliceApp.app
+com.apple.quarantine: 0083;6ac9995a;Safari;A5130968-07DA-416A-8230-B80203E6B726
+$ spctl -a -vv -t exec /Applications/SliceApp.app
+/Applications/SliceApp.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+$ echo rc=0
+$ syspolicy_check distribution /Applications/SliceApp.app
+App passed all pre-distribution checks and is ready for distribution.
+syspolicy_check-rc=0
+$ echo syspolicy_check-rc=0
+
+### [offline2] launch sequence start 2026-10-10T01:48:19Z
+## network probe
+https://www.apple.com -> 000
+https://ocsp.apple.com -> 000
+https://api.apple-cloudkit.com -> 000
+## pre-launch state
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+no SliceApp process
+com.apple.quarantine: 0083;6ac9995a;Safari;A5130968-07DA-416A-8230-B80203E6B726
+## guest start mark: 2026-10-10 01:48:19
+$ open /Applications/SliceApp.app
+open-rc=0
+## t+3s 01:48:22
+828 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Contents/MacOS/SliceApp
+847 zsh -c pgrep -fl SliceApp | cut -c1-200; ps -o pid,stat,etime,time,command -p $(pgrep -x SliceApp | head -1) 2>&1 | cut -c1-160; ls "$HOME/Library/Application Support/SliceApp" 2>&1 | head -3
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:03   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## t+6s 01:48:25
+828 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Contents/MacOS/SliceApp
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:06   0:00.00 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Conte
+ls: /Users/admin/Library/Application Support/SliceApp: No such file or directory
+## answering the first-launch dialog with Return (VNC key, no host window) 01:48:25
+key 0xff0d
+## after-Return +2s approx 01:48:28
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:09   0:00.22 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:48 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:48 rows.json
+## after-Return +5s approx 01:48:31
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:13   0:00.22 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:48 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:48 rows.json
+## after-Return +8s approx 01:48:35
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:16   0:00.22 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BEB-9747-0C1AC3657413/d/SliceApp.app/Conte
+drwx------+ 23 admin  staff  736 Oct 10 01:48 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:48 rows.json
+
+--- quit + post-state
+## state before quit 01:48:35
+  PID STAT ELAPSED      TIME COMMAND
+  828 S      00:16   0:00.22 /private/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/AppTranslocation/260E1368-87AB-4BE
+--- xattr /Applications/SliceApp.app
+com.apple.macl: 
+com.apple.provenance: 
+com.apple.quarantine: 00c3;6ac9995a;Safari;A5130968-07DA-416A-8230-B80203E6B726
+--- rows.json
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:48 .
+drwx------+ 23 admin  staff  736 Oct 10 01:48 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:48 rows.json
+72966d279590d8a198d738e58bdd4d76dc36327105a27a6a98aaf8cb4d0c9b9a  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- lsappinfo
+"CFBundleIdentifier"="dev.orthic.sliceapp"
+"pid"=828
+"ApplicationType"="Foreground"
+"isHidden"=[ NULL ] 
+$ osascript -l JavaScript -e "ObjC.import(\"AppKit\"); $.NSRunningApplication.runningApplicationsWithBundleIdentifier(\"dev.orthic.sliceapp\").firstObject.terminate"   # same as Cmd+Q
+pid=828
+true
+osascript-rc=0
+process 828 gone after ~1s
+no SliceApp process (quit)
+drwxr-xr-x@  3 admin  staff   96 Oct 10 01:48 .
+drwx------+ 23 admin  staff  736 Oct 10 01:48 ..
+-rw-r--r--@  1 admin  staff  480 Oct 10 01:48 rows.json
+72966d279590d8a198d738e58bdd4d76dc36327105a27a6a98aaf8cb4d0c9b9a  /Users/admin/Library/Application Support/SliceApp/rows.json
+--- crash reports
+drwxrwx---  9 root  _analyticsusers      288 Oct 10 01:47 .
+drwxr-xr-x  8 root  wheel                256 Aug 18 16:09 ..
+--- still offline: 000000
+no SliceApp crash/diag reports (user)
+no SliceApp crash/diag reports (system)
+     448 /Users/admin/r7f/gk-show-offline2.log
+--- last-5m form of the task command (count of lines):      767
+--- syspolicyd decision lines (log show 01:48:18-01:48:50,      448 lines total)
+2026-10-10 01:48:19.263 I  syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] GK process assessment: <private> <-- (<private>, <private>)
+2026-10-10 01:48:19.270 I  syspolicyd[247:13ec] [com.apple.syspolicy:default] looking up ticket: <private>, 2, 1
+2026-10-10 01:48:19.270 I  syspolicyd[247:13ed] [com.apple.syspolicy:default] cloudkit record fetch: <private>, <private>
+2026-10-10 01:48:19.271 E  syspolicyd[247:651] [com.apple.syspolicy:default] cloudkit request failed: Error Domain=NSURLErrorDomain Code=-1009 UserInfo={_kCFStreamErrorCodeKey=50, NSUnderlyingError=0xc4f03f2a0 {Error Domain=kCFErrorDomainCFNetwork Code=-1009 UserInfo={_kCFStreamErrorDomainKey=1, _kC
+2026-10-10 01:48:19.274 I  syspolicyd[247:13ec] [com.apple.syspolicy.exec:default] GK scan complete: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: (null)), (bundle_id: (null)), 4, 4, 1
+2026-10-10 01:48:19.274 I  syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] App gets first launch prompt because responsibility: <private>, <private>
+2026-10-10 01:48:19.274 Df syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] GK evaluateScanResult: 0, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp), 1, 0, 1, 0, 4, 4, 1
+2026-10-10 01:48:19.333 I  syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] GK eval - was allowed: 1, show prompt: 1
+2026-10-10 01:48:19.334 I  syspolicyd[247:13ed] [com.apple.launchservices:code-evaluation] present prompt: uid=501, conn=yes, type=QuarantineFirstOpen, op.ident=985206B4-203B-49E5-B2C8-1AE16F6B9CA3, info.ident=2693FE34-3331-432D-B8F3-23BC99841DB3, info={<private>}
+2026-10-10 01:48:19.334 Df syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] Prompt shown (5, 0), waiting for response: PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:48:19.370 Df syspolicyd[247:13e9] [com.apple.securityd:SecError] Error checking with notarization daemon: 3
+2026-10-10 01:48:25.621 Df syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] Marked application as user approved: 1, PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:48:25.634 Df syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] Created provenance data for target: TA(d5062a4b3eef3341, 2), PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:48:25.634 Df syspolicyd[247:13ed] [com.apple.syspolicy.exec:default] Wrote provenance data on target: TA(d5062a4b3eef3341, 2), PST: (path: 77c739c48412a2df), (team: 6KLGD3LLKF), (id: dev.orthic.sliceapp), (bundle_id: dev.orthic.sliceapp)
+2026-10-10 01:48:25.635 I  syspolicyd[247:1471] [com.apple.syspolicy.exec:default] GK eval - was allowed: 1, show prompt: 1
+rejected/denied/was allowed: 0 occurrences: 0
+
+--- the literal task command, run last on the OFFLINE-B VM (--last 5m): /Volumes/D/sr0-artifacts/mac/r7/final/gk-last5m-offline2.log has     1282 lines; rejected/denied/'was allowed: 0': 0
+
+=================== CLEANUP ===================
+tart stop r7-final; tart delete r7-final -> tart list now: sliceapp-base, sliceapp-clean-pristine, OCI cache only. No host mounts or tart/vnc processes left.
