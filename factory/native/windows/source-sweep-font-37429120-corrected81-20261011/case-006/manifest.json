@@ -1,0 +1,65 @@
+{
+  "block": "swiftui.custom-layout",
+  "case": {
+    "hash": "sha256:5f50548ad8c37db129f3fa73934a091f029f5791a61fa81a704a1d5854586dd7",
+    "id": "swiftui.custom-layout.recipe/case/6f604b656b080f22"
+  },
+  "caseInputs": {
+    "child-count": 2,
+    "layout-direction": "rightToLeft",
+    "proposal-width": 32
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "host-specific callback adapter required",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.custom-layout:swiftui.custom-layout.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.custom-layout.witness",
+        "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+    "id": "swiftui.custom-layout.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.custom-layout.recipe_case_6f604b656b080f22.swift",
+  "sourceHash": "sha256:927ce614d6a8a75b215f25004f0697eb1129131ebfd60c718118f5ae08220401",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.custom-layout.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.custom-layout.witness.swift",
+    "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+  },
+  "witnessType": "Witness_custom_layout"
+}

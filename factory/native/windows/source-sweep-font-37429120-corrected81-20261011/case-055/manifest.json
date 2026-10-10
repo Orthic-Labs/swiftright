@@ -1,0 +1,67 @@
+{
+  "block": "swiftui.shapes.fill-stroke",
+  "case": {
+    "hash": "sha256:c153daaa0ee33902e908790f83151711b38d8c2e13c4ae7b2a2513a3153393ea",
+    "id": "swiftui.shapes.fill-stroke.recipe/case/c74fe6d6657e9de9"
+  },
+  "caseInputs": {
+    "color-scheme": "dark",
+    "shape": "Rectangle()",
+    "style": "stroke(Color.blue, lineWidth: 2)"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.shapes.fill-stroke:swiftui.shapes.fill-stroke.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.shapes.fill-stroke.witness",
+        "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "dark"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+    "id": "swiftui.shapes.fill-stroke.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.shapes.fill-stroke.recipe_case_c74fe6d6657e9de9.swift",
+  "sourceHash": "sha256:a8f4f459657862d442f6131c0d98886792f5151930ca3d0d0074f7030b8a97d8",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.shapes.fill-stroke.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.shapes.fill-stroke.witness.swift",
+    "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+  },
+  "witnessType": "Witness_shapes_fill_stroke"
+}

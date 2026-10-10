@@ -1,0 +1,72 @@
+{
+  "kind": "read-only-task-id-source-investigation",
+  "observations": [
+    "Original TaskIDTests.swift & RuntimeTests.swift bytes identical across baseline/postshape/fontstorage.",
+    "startTask/runAppear/TaskOwnerToken/NodeHandle/AnyEquatable/settle blocks unchanged across all three sources.",
+    "settle is three yields plus 120ms sleep; KeyedWork sleeps 40ms. This is not a completion barrier.",
+    "Graph last explicit use occurs before settle; owner token weak node permits a lifetime-based hypothesis alongside scheduling order.",
+    "No font metadata box is allocated in this view; legacy Font initializer uses nil storage.",
+    "Failure stdout cannot distinguish delayed task completion from rejected owner token."
+  ],
+  "originalFailure": {
+    "actual": [],
+    "compileReceipt": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/headless-receipt.json",
+    "compileReceiptHash": "aafce45aca4f3028099a45a3b03afccec3c376b4afd3104c9b2964c3ee1cb897",
+    "expected": [
+      "a"
+    ],
+    "line": 91,
+    "precedingStartCountAssertionFailed": false,
+    "stdout": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/test.stdout.txt",
+    "stdoutHash": "fd5c38467922e1b1516698b9f1012939b13f091ac16a7298b6a5d066fe8f549e",
+    "test": "TaskIDTests.testSameIdDoesNotRestartTask"
+  },
+  "originalTestFileHashes": {
+    "Tests/SwiftRightRuntimeTests/RuntimeTests.swift": {
+      "baseline": "26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e",
+      "fontstorage": "26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e",
+      "postshape": "26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e"
+    },
+    "Tests/SwiftRightRuntimeTests/TaskIDTests.swift": {
+      "baseline": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "fontstorage": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "postshape": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc"
+    }
+  },
+  "postshapeToFontChangedSwiftFiles": [
+    "Sources/SwiftRightRuntime/Controls.swift",
+    "Tests/SwiftRightRuntimeTests/FontAdditionTests.swift"
+  ],
+  "runtimePaths": {
+    "baseline": "/Volumes/D/claude/swiftright/factory/native/windows/api-baseline-8e47b89-20261011/runtime",
+    "fontstorage": "/Volumes/D/claude/swiftright/factory/native/windows/api-font-37429120-20261011/runtime",
+    "postshape": "/Volumes/D/claude/swiftright/factory/native/windows/api-shape-bbceb5a1-20261011/runtime"
+  },
+  "scope": "Original failure retained. No flaky label or causal font regression conclusion. No native processes or original sources/index/Git modified.",
+  "taskCodeBlockHashes": {
+    "baseline": {
+      "idEquality": "bbf4d09d45df8a872280b504c77dc45082f842cb7be1a3b3fec8a1c6a83034bc",
+      "ownerToken": "a05526d02a434e606c748fc30f231bf9324130ccb69049b930fa090871281697",
+      "runAppear": "a9a1dbf9a8c9cf786dc7a38e42810c98ead096baee2f15a8b828a3e3f10a2492",
+      "settle": "ff42156a96e8b3cc5cf1a5513b562daef3f2d2a59f53e9a85575d1856955fa5c",
+      "startTask": "562a95b0f1a927a097d1005f9e2b5e7fd34fa1ae8c77d4394547b67035c520bc",
+      "weakHandle": "bd3a5b12fbf66e6d0db07b2671115f575042644248b96327d55185206f9e9bc8"
+    },
+    "fontstorage": {
+      "idEquality": "bbf4d09d45df8a872280b504c77dc45082f842cb7be1a3b3fec8a1c6a83034bc",
+      "ownerToken": "a05526d02a434e606c748fc30f231bf9324130ccb69049b930fa090871281697",
+      "runAppear": "a9a1dbf9a8c9cf786dc7a38e42810c98ead096baee2f15a8b828a3e3f10a2492",
+      "settle": "ff42156a96e8b3cc5cf1a5513b562daef3f2d2a59f53e9a85575d1856955fa5c",
+      "startTask": "562a95b0f1a927a097d1005f9e2b5e7fd34fa1ae8c77d4394547b67035c520bc",
+      "weakHandle": "bd3a5b12fbf66e6d0db07b2671115f575042644248b96327d55185206f9e9bc8"
+    },
+    "postshape": {
+      "idEquality": "bbf4d09d45df8a872280b504c77dc45082f842cb7be1a3b3fec8a1c6a83034bc",
+      "ownerToken": "a05526d02a434e606c748fc30f231bf9324130ccb69049b930fa090871281697",
+      "runAppear": "a9a1dbf9a8c9cf786dc7a38e42810c98ead096baee2f15a8b828a3e3f10a2492",
+      "settle": "ff42156a96e8b3cc5cf1a5513b562daef3f2d2a59f53e9a85575d1856955fa5c",
+      "startTask": "562a95b0f1a927a097d1005f9e2b5e7fd34fa1ae8c77d4394547b67035c520bc",
+      "weakHandle": "bd3a5b12fbf66e6d0db07b2671115f575042644248b96327d55185206f9e9bc8"
+    }
+  }
+}

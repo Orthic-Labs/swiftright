@@ -1,0 +1,65 @@
+{
+  "block": "swiftui.text.bundled-font",
+  "case": {
+    "hash": "sha256:1b6531564c67d9560eeaf40c908612d766996abc771bfbead0c575a97e192e1a",
+    "id": "swiftui.text.bundled-font.instrumentation-transparency"
+  },
+  "caseInputs": {
+    "size": 12,
+    "weight": "regular",
+    "width": 80
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "host-specific measurement adapter required"
+    },
+    "assertionChannels": [
+      "text"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.text.bundled-font:swiftui.text.bundled-font.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": true,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.text.bundled-font.witness",
+        "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+    "id": "swiftui.text.bundled-font.recipe"
+  },
+  "scenario": "instrumentation-transparency",
+  "sourceFile": "swiftui.text.bundled-font.instrumentation-transparency.swift",
+  "sourceHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.text.bundled-font.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.text.bundled-font.witness.swift",
+    "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70"
+  },
+  "witnessType": "Witness_text_bundled_font"
+}

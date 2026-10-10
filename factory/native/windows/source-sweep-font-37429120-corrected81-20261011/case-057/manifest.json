@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.stack-overlay",
+  "case": {
+    "hash": "sha256:7bb5ea4ffbfcc1138223fbdbc8d827fcb560b4c53ea39d5def5dc2b131b313a3",
+    "id": "swiftui.stack-overlay.instrumentation-transparency"
+  },
+  "caseInputs": {
+    "alignment": "leading",
+    "color-scheme": "light"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.stack-overlay:swiftui.stack-overlay.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": true,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.stack-overlay.witness",
+        "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "light"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+    "id": "swiftui.stack-overlay.recipe"
+  },
+  "scenario": "instrumentation-transparency",
+  "sourceFile": "swiftui.stack-overlay.instrumentation-transparency.swift",
+  "sourceHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.stack-overlay.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.stack-overlay.witness.swift",
+    "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+  },
+  "witnessType": "Witness_stack_overlay"
+}
