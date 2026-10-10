@@ -1,0 +1,40 @@
+diff --git a/Sources/SwiftRightRuntime/Modifiers.swift b/Sources/SwiftRightRuntime/Modifiers.swift
+index 6c57092..ac10dae 100644
+--- a/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -30,6 +30,11 @@ extension ModifierWrapper: @MainActor WrappedModifier {
+ }
+ 
+ extension View {
++    /// Insets all edges by a fixed length.
++    public func padding(_ length: CGFloat) -> some View {
++        padding(.all, length)
++    }
++
+     /// Proposes fixed dimensions to this view's content, then aligns content in the resulting frame.
+     public func frame(width: CGFloat? = nil, height: CGFloat? = nil, alignment: Alignment = .center) -> some View {
+         Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
+diff --git a/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift b/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift
+new file mode 100644
+index 0000000..df55765
+--- /dev/null
++++ b/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift
+@@ -0,0 +1,18 @@
++import SwiftRightRuntime
++import XCTest
++
++struct ScalarPaddingProbe: View {
++    var body: some View { Text("ab").padding(10) }
++}
++
++@MainActor
++final class ScalarPaddingTests: XCTestCase {
++    func testScalarPaddingInsetsEveryEdge() throws {
++        let graph = Graph(ScalarPaddingProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let padding = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(padding.kind, "modifier.padding")
++        XCTAssertEqual(padding.frame, LayoutRect(x: 0, y: 0, width: 36, height: 36))
++        XCTAssertEqual(padding.children[0].frame, LayoutRect(x: 10, y: 10, width: 16, height: 16))
++    }
++}

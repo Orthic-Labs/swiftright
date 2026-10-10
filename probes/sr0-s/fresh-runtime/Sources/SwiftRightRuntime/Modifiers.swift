@@ -30,6 +30,11 @@ extension ModifierWrapper: @MainActor WrappedModifier {
 }
 
 extension View {
+    /// Insets all edges by a fixed length.
+    public func padding(_ length: CGFloat) -> some View {
+        padding(.all, length)
+    }
+
     /// Proposes fixed dimensions to this view's content, then aligns content in the resulting frame.
     public func frame(width: CGFloat? = nil, height: CGFloat? = nil, alignment: Alignment = .center) -> some View {
         Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
