@@ -1,0 +1,109 @@
+## commit
+4496474d652aee1ed211a882a6a4c775e413088b
+## sha256
+b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4  /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4  /Volumes/D/sr0-build/r3-final/.right-release/sealed/sliceapp-0.1.0-4496474d/mac/SliceApp_0.1.0_arm64.dmg
+b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4  /Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg
+f4fc8e32d21ad8c777f631202397aae0f5e7414dbe3f0aa6fe4b55e3b603a491  /Volumes/D/sr0-artifacts/mac/r3-final/release-manifest.json
+3d37536cc3e190c9b12da6887fe100bf4f6ef451c2165d80172acc4733ab8507  /Volumes/D/sr0-artifacts/mac/r3-final/hardening.json
+## codesign -dvv dmg
+Executable=/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+Identifier=SliceApp_0.1.0_arm64
+Format=disk image
+CodeDirectory v=20200 size=308 flags=0x10000(runtime) hashes=1+6 location=embedded
+Signature size=9048
+Authority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+Authority=Developer ID Certification Authority
+Authority=Apple Root CA
+Timestamp=10 Oct 2026 at 6:58:58 AM
+Notarization Ticket=stapled
+Info.plist=not bound
+TeamIdentifier=6KLGD3LLKF
+Sealed Resources=none
+Internal requirements count=1 size=180
+Total signatures=1
+Chosen signature=1
+## codesign --verify --strict -vv dmg
+/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg: valid on disk
+/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg: satisfies its Designated Requirement
+rc=0
+## spctl -a -vv -t open --context context:primary-signature dmg
+/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+## stapler validate dmg
+Processing: /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg
+The validate action worked!
+rc=0
+## syspolicy_check distribution dmg
+Only one signature found in file:///Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg, skipping dual signature check
+App passed all pre-distribution checks and is ready for distribution.
+rc=0
+Checksumming Protective Master Boot Record (MBR : 0)…
+Protective Master Boot Record (MBR :: verified   CRC32 $38F8C464
+Checksumming GPT Header (Primary GPT Header : 1)…
+ GPT Header (Primary GPT Header : 1): verified   CRC32 $82FD7E29
+Checksumming GPT Partition Data (Primary GPT Table : 2)…
+GPT Partition Data (Primary GPT Tabl: verified   CRC32 $51B1D515
+Checksumming  (Apple_Free : 3)…
+                    (Apple_Free : 3): verified   CRC32 $00000000
+Checksumming disk image (Apple_HFS : 4)…
+          disk image (Apple_HFS : 4): verified   CRC32 $8C4A3B9E
+Checksumming  (Apple_Free : 5)…
+                    (Apple_Free : 5): verified   CRC32 $00000000
+Checksumming GPT Partition Data (Backup GPT Table : 6)…
+GPT Partition Data (Backup GPT Table: verified   CRC32 $51B1D515
+Checksumming GPT Header (Backup GPT Header : 7)…
+  GPT Header (Backup GPT Header : 7): verified   CRC32 $C3E80B18
+verified   CRC32 $7562EC4F
+hdiutil: WARNING: 'hdiutil attach -nobrowse -readonly -mountpoint ...' is deprecated. Please use 'diskutil image attach --mountOptions nobrowse --readOnly --mountPoint ...' instead.
+/dev/disk10         	GUID_partition_scheme          	
+/dev/disk10s1       	Apple_HFS                      	/Volumes/D/sr0-build/mnt.aRgZWx
+total 32
+drwxr-xr-x  6 adrdsouza  staff   272 Oct 10 06:58 .
+drwxr-xr-x  4 adrdsouza  staff   128 Oct 10 06:59 ..
+-rw-r--r--  1 adrdsouza  staff  8196 Oct 10 06:58 .DS_Store
+drwxr-xr-x  3 adrdsouza  staff   102 Oct 10 06:58 .background
+lrwxr-xr-x  1 adrdsouza  staff    13 Oct 10 06:58 Applications -> /Applications
+drwxr-xr-x  3 adrdsouza  staff   102 Oct 10 06:58 SliceApp.app
+## codesign -dvv app (in DMG)
+Executable=/Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app/Contents/MacOS/SliceApp
+Identifier=dev.orthic.sliceapp
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20500 size=639 flags=0x10000(runtime) hashes=13+3 location=embedded
+Signature size=9049
+Authority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+Authority=Developer ID Certification Authority
+Authority=Apple Root CA
+Timestamp=10 Oct 2026 at 6:58:26 AM
+Notarization Ticket=stapled
+Info.plist entries=12
+TeamIdentifier=6KLGD3LLKF
+Runtime Version=14.0.0
+Sealed Resources version=2 rules=13 files=0
+Internal requirements count=1 size=180
+Total signatures=1
+Chosen signature=1
+## codesign --verify --deep --strict -vv app
+/Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app: valid on disk
+/Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app: satisfies its Designated Requirement
+rc=0
+## spctl -a -vv app
+/Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+rc=0
+## stapler validate app
+Processing: /Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app
+The validate action worked!
+rc=0
+## syspolicy_check distribution app
+Only one signature found in file:///Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app, skipping dual signature check
+App passed all pre-distribution checks and is ready for distribution.
+rc=0
+## app exe sha256 + version
+66a4dbc94d59de65a7a9a18835739081cdf837293b84947d92847245e37263e9  /Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app/Contents/MacOS/SliceApp
+0.1.0
+## entitlements
+Executable=/Volumes/D/sr0-build/mnt.aRgZWx/SliceApp.app/Contents/MacOS/SliceApp

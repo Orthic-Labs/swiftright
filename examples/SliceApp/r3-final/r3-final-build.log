@@ -1,0 +1,44 @@
+[heavy-work] admitted memory-free=56% swap=2.4/4.0GiB thermal=ok jobs=2 waited slot=2ms resource=16ms
+[right-release] pre-broker waits: heavy-work-slot=18ms; suite-build-slot=0ms (inactive (non-shared cache mode)); total=18ms
+✓ Lockfile passes supply-chain policies (verified 4h ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+Done in 195ms using pnpm v11.24.0
+right-release 0.2.144: sliceapp mac package tier=neutral
+Building for production...
+Build complete! (0.25 sec)
+{"event":"mac-app-step","script":"sign-macos.mjs","ok":true}
+{
+  "app": "/Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/SliceApp.app",
+  "nested": [],
+  "signing": {
+    "plan": [
+      [
+        "sign-macos.mjs",
+        "--receipt",
+        "/Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/receipts/app-sign.receipt.json",
+        "--entitlements",
+        "/Volumes/D/sr0-build/r3-final/examples/SliceApp/Mac/SliceApp.entitlements",
+        "/Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/SliceApp.app"
+      ]
+    ]
+  }
+}
+right-release step: sh scripts/prepackage-mac.sh (3063ms)
+right-release: signing macOS Developer ID files
+right-release step: node /Volumes/D/sr0-build/r3-final/examples/SliceApp/node_modules/.pnpm/@rightkit+release@0.2.144/node_modules/@rightkit/release/sign-macos.mjs --receipt /Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-signing.json /Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/SliceApp.app (757ms)
+right-release: notarizing and stapling macOS app before packaging
+right-release: building macOS DMG from stapled app /Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/SliceApp.app
+{"event":"dmg-build-started","app":"/Volumes/D/sr0-build/r3-final/examples/SliceApp/dist/mac/SliceApp.app","out":"/Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg","volname":"SliceApp"}
+{"event":"dmg-build-completed","out":"/Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg","format":"UDZO"}
+right-release: signing macOS Developer ID files
+right-release step: node /Volumes/D/sr0-build/r3-final/examples/SliceApp/node_modules/.pnpm/@rightkit+release@0.2.144/node_modules/@rightkit/release/sign-macos.mjs --receipt /Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-dmg-signing.json /Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg (716ms)
+right-release: notarizing macOS archive
+right-release step: node /Volumes/D/sr0-build/r3-final/examples/SliceApp/node_modules/.pnpm/@rightkit+release@0.2.144/node_modules/@rightkit/release/notarize-macos.mjs --receipt /Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-notarization.json --profile apple-dev-notary /Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg (24688ms)
+hardeningscan: clean
+right-release step: node /Volumes/D/sr0-build/r3-final/examples/SliceApp/node_modules/.pnpm/@rightkit+release@0.2.144/node_modules/@rightkit/release/hardeningscan.mjs /Volumes/D/.rightkit-managed/artifacts/sliceapp/0.1.0/SliceApp_0.1.0_arm64.dmg (41ms)
+right-release: done (60597ms)
+[right-release] artifact retention skipped: publication state is unknown
+right-release build: sealed sliceapp-0.1.0-4496474d
+sealed: /Volumes/D/sr0-build/r3-final/.right-release/sealed/sliceapp-0.1.0-4496474d/mac

@@ -35,7 +35,7 @@ Policy change recorded: R10 runs are measured under normal host use, with no qui
 | 1 | R6 Mac oracle with the signed recorder, F1-F9 re-record, cross-platform compare, 100-run F6 sample | The Mac free about 10 min (Adrian); committed compare result |
 | 2 | R9 Narrator speech content | A person listening at the Dell, about 2 min (Adrian) |
 | 3 | R10 W5 zero missed vblanks | One run with the NVIDIA overlay off (Adrian); committed result file. Also commit the it6-it8 result files, and a Mac windowed workload result |
-| 4 | R3 final repo record | R3 final is PASS (SR0-P row); a committed `PACKAGING.md` section recording the DMG hash and verification results (evidence is under `/Volumes/D/sr0-artifacts/mac/r3-final/`, outside the repository) |
+| 4 | R3 final repo record | DONE: `examples/SliceApp/PACKAGING.md` "R3 final" section and `examples/SliceApp/r3-final/` |
 | 5 | R5 W08 | Routed to RightKit (`4496474`); recovery probe pending. Closes with the RightKit probe result plus a decision to accept as a known limitation, or a RightKit update repair and a Sandbox rerun |
 | 6 | R7 re-run of the quarantined launch on the stapled-`.app` build | Committed `RESULT-R7.md` section |
 | 7 | R8 full runner run on the final tuple; F6 A/B decision | Committed runner output; contract decision after item 1 |

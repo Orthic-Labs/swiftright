@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "stage": "source",
+  "app": "sliceapp",
+  "platform": "mac",
+  "releaseId": "sliceapp-0.1.0-4496474d",
+  "repositoryIdentity": "https://github.com/bogusyogi/swiftright",
+  "commit": "4496474d652aee1ed211a882a6a4c775e413088b",
+  "tree": "62852a0326539a52974b68200196a41adff442ac",
+  "dependencyClosure": {
+    "lockfiles": [
+      {
+        "path": "examples/SliceApp/pnpm-lock.yaml",
+        "sha256": "c7ae193928402909df49791e973d0ea644b7348cdc703deabe3a27b8a6e96015"
+      },
+      {
+        "path": "probes/sr0-b/frame-clock/swiftright-render-probe/Cargo.lock",
+        "sha256": "84b1fdc1febcd402cac307fedd8b7fd1191ba790ae4a6bdf57e4a3e9b60f2515"
+      },
+      {
+        "path": "probes/sr0-b/gpui-drain/swiftright-render-probe/Cargo.lock",
+        "sha256": "a148c449ab87b04259898ed6bf3280bee0504ac2710544dafcb54c2f58a36090"
+      },
+      {
+        "path": "probes/sr0-b/modal-loop/swiftright-render-probe/Cargo.lock",
+        "sha256": "bc8652a2c0f22b98461754db7667f900701de0e1461bd748328479e2aa8f3322"
+      },
+      {
+        "path": "probes/sr0-b/text-geometry/Cargo.lock",
+        "sha256": "6bab82393c9ed482b976b0679517976327e00c90d16b7b86c38aca6f4261564d"
+      },
+      {
+        "path": "probes/sr0-d/ime-text-node/Cargo.lock",
+        "sha256": "8db99ec4f40ea7aef2efd6b01854ec4de88e89b7e2d711d813ca95406bbef615"
+      },
+      {
+        "path": "probes/sr0-d/render-composition/Cargo.lock",
+        "sha256": "b6e4873a63e3e43d02e1960beb7b52babb8e4d57034f89c99da5f15727d69cee"
+      },
+      {
+        "path": "render/swiftright-render/Cargo.lock",
+        "sha256": "a8716a9803c04e04ba3e5ecafa94556b502c7692fc17b21ccfe384def8e7afd8"
+      }
+    ],
+    "digest": "098a6869dd3515c4e1ce762ecab786fe73940f34c13c1c744e832e715723c164"
+  },
+  "buildConfig": {
+    "releaseConfigSha256": "21769ec92bbf58893ad5e326de35ef1becd4b2c5a7e2a2fa6c5412d5646fd0fe",
+    "platform": "mac"
+  },
+  "qaPlan": {
+    "version": "1",
+    "configPath": "rightkit-qa.toml",
+    "planDigest": "c19a0361c7cbcb783718f1b5eb48496c7e004628bc5624511a4ad5de4fbe5bdb"
+  },
+  "floor": {
+    "version": 1,
+    "digest": "ee3135a7c6e7d833345b5a17286105f57b45c587fa509b3731e706b7cc0ef7cc"
+  },
+  "policyBundleDigest": "4fa03baa99f2676f202051808bdf5a736cab391c7c7a27425c7b8b68bb476c51",
+  "runner": {
+    "basename": "rightkit-qa",
+    "path": "/Volumes/D/sr0-artifacts/qa/bin/rightkit-qa",
+    "sha256": "68dd1fce4d8cc7ea9b70461d04c9f4b66c5178a5e337b3c3cfa1069b47b05a29"
+  },
+  "evidence": {
+    "sha256": "d1079a72b12aec199192dea8b3968bab46acf213ad5ed96601fe7dd9f8d0ad1d",
+    "runId": "f472aeba-aa3b-45d3-b3a7-7bf2c0bb8468",
+    "status": "passed",
+    "schemaVersion": 4
+  },
+  "required": [
+    {
+      "id": "smoke.launch",
+      "status": "passed",
+      "evidenceChecks": [
+        {
+          "name": "app.launch",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "id": "journey",
+      "status": "passed",
+      "evidenceChecks": [
+        {
+          "name": "journey.restart-keeps-data",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "app.build",
+      "status": "passed"
+    },
+    {
+      "name": "app.launch",
+      "status": "passed"
+    },
+    {
+      "name": "journey.restart-keeps-data",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [],
+  "sourceReceiptDigest": null,
+  "status": "passed",
+  "createdAt": "2026-10-10T01:28:10.735Z",
+  "digest": "b57eff38c721535cef29e51d7c04fd4aa6ede690524263336dfad011673bca9f",
+  "mac": "b7d1e8d09f148019eb224f8362e4b6bcd0e309a6bbcf814ab4096972af452ba6"
+}

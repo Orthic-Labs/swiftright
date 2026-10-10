@@ -469,3 +469,19 @@ per DMG); Swift-only rebuild proof and receipts not yet run.
 ## R2 result (2026-10-09): MSIX old + new built, signed, verified
 
 Passed on @rightkit/release 0.2.139 via the non-elevated scheduled-task route. Full table, hashes and three defects (proof script and installed check compare signed raw hashes; `.right-release/` not gitignored; use `right-release build`, not `release --tier patch`) in `RESULT-R2.md`.
+
+## R3 final (2026-10-10): Mac DMG on the final commit, @rightkit/release 0.2.144 — PASS
+
+Built from `4496474` (tree `62852a03`) in a branch-attached clone with `right-release` 0.2.144; QA source receipt first, then build, seal and notarize. Evidence copied from `/Volumes/D/sr0-artifacts/mac/r3-final/` into `examples/SliceApp/r3-final/`.
+
+| Check | Result |
+|---|---|
+| `SliceApp_0.1.0_arm64.dmg` sha256 | `b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4` (same bytes in the sealed dir and the RightKit managed artifact store) |
+| Inner `SliceApp` executable sha256 | `66a4dbc94d59de65a7a9a18835739081cdf837293b84947d92847245e37263e9`, version 0.1.0 |
+| QA source receipt (`right-release qa --stage source`) | passed, receipt `b57eff38c721535c`: `app.build`, `app.launch`, `journey.restart-keeps-data` 3/3 in the Tart VM (headless), plan digest `c19a0361` |
+| DMG `codesign --verify --strict` / `spctl -t open` / `stapler validate` / `syspolicy_check distribution` | valid / accepted, Notarized Developer ID / worked / passed |
+| `.app` `codesign --verify --deep --strict` / `spctl` / `stapler validate` / `syspolicy_check distribution` | valid / accepted, Notarized Developer ID / worked (ticket stapled on the `.app` before the DMG) / passed |
+| Hardened runtime | runtime flag set on DMG and app (`codesign -dvv` flags=0x10000); hardening check passed (`hardening.json`: `passed: true` on the DMG hash) |
+| DMG checksum (`hdiutil verify`) | verified |
+
+Only 0.1.0 was rebuilt on the final pin; the 0.1.1 update pair from 0.2.139 is history (R7 upgrade/rollback evidence stands on it). Quarantined first launch of this exact DMG: R7 final section in `RESULT-R7.md`.

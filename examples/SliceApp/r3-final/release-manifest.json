@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "releaseId": "sliceapp-0.1.0-4496474d",
+  "app": "sliceapp",
+  "version": "0.1.0",
+  "commit": "4496474d652aee1ed211a882a6a4c775e413088b",
+  "ownershipEvidence": {
+    "schema": 1,
+    "repositoryIdentity": "https://github.com/bogusyogi/swiftright",
+    "source": "committed-git-tree",
+    "commit": "4496474d652aee1ed211a882a6a4c775e413088b",
+    "tree": "62852a0326539a52974b68200196a41adff442ac",
+    "catalogDigest": "a7121f96d42457024f465e7da5f41d83f12971eff2988a9752ea557209317f84",
+    "catalogVersion": "3.0.0",
+    "scannerVersion": "2.6.0",
+    "approvalsDigest": "c674d42e4ce7a3d8d8ea3a97f0ebd435e70c2268e1a7e47a2c33f8800fe2c5f3",
+    "trustEnrolled": true,
+    "keyLogDigest": "0966be0b99f9cc36037d3427cdeb32017a2b37886cc58754206dbfb05e033ef4",
+    "keyCheckpoint": {
+      "sequence": 1,
+      "head": "1eedf843bd026f99140c277a19d66cb31763ec72889bbb6d5f9f17718a55af85"
+    },
+    "rootFingerprint": "932f0049acb4902f0bd0b49164b78826ba5b8974cbc3c15ef0be0c4501cb3f3d",
+    "keyAuthority": {
+      "repositoryIdentity": "https://github.com/bogusyogi/claude",
+      "commit": "0985ea43cdb57219ac77ace18d136fbd75b6abe3",
+      "tree": "6d1d294cb7fa7eb4e107067003b43c3d04b9cd73"
+    },
+    "floorOk": true,
+    "visibility": "private",
+    "registrationDigest": "941f62d5e55b9ea49222ef7e233d229293ef7fdac6e8a7007cb3edc792540e37",
+    "registeredRoots": [
+      "."
+    ],
+    "contentDigest": "b0d7c4d1767c25abc415a8722b40e93a7cb634bde40decc6135033a3eca14840",
+    "checkedAt": "2026-10-10T01:28:22.761Z"
+  },
+  "qa": {
+    "sourceReceiptDigest": "b57eff38c721535cef29e51d7c04fd4aa6ede690524263336dfad011673bca9f",
+    "floorDigest": "ee3135a7c6e7d833345b5a17286105f57b45c587fa509b3731e706b7cc0ef7cc"
+  },
+  "platform": "mac",
+  "cacheKey": "b36f09f8039738cb",
+  "signing": {
+    "contract": "macos-developer-id-notarized-portable-v1",
+    "pipeline": "c77f94445273cd9d",
+    "configSha256": "21769ec92bbf58893ad5e326de35ef1becd4b2c5a7e2a2fa6c5412d5646fd0fe",
+    "receiptInputs": [
+      "/Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-signing.json",
+      "/Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-notarization.json"
+    ],
+    "receipts": [
+      {
+        "file": "/Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-signing.json",
+        "sha256": "67ae2eb03c9d4693eff5ec493e93a81eb31eac0179345659f97f8c9fed01823f"
+      },
+      {
+        "file": "/Volumes/D/sr0-build/r3-final/.right-release/state/sliceapp-0.1.0-4496474d/mac/macos-notarization.json",
+        "sha256": "9ec3be6087f9f1f0cb46923122240dc36a398e303fd90617929e582c774380c3"
+      }
+    ]
+  },
+  "files": [
+    {
+      "role": "installer",
+      "name": "SliceApp_0.1.0_arm64.dmg",
+      "sha256": "b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4",
+      "sizeBytes": 85918
+    }
+  ],
+  "routes": {
+    "patch": [
+      {
+        "role": "installer",
+        "name": "SliceApp_0.1.0_arm64.dmg",
+        "bucket": "public",
+        "key": "sliceapp/installers/mac/current/SliceApp.dmg"
+      }
+    ],
+    "update": []
+  },
+  "inputs": {
+    "SliceApp/right-release.config.mjs": "21769ec92bbf58893ad5e326de35ef1becd4b2c5a7e2a2fa6c5412d5646fd0fe",
+    "SliceApp/Package.swift": "a8820915d8c543dab69b7ede5d02591a4e69fe9c234d8a03a37097692c42c981",
+    "SliceApp/package.json": "e6b4affd1cf30fda2afc747534331630b077f26d4d68e8da9f9d370385184bea",
+    "SliceApp/pnpm-lock.yaml": "c7ae193928402909df49791e973d0ea644b7348cdc703deabe3a27b8a6e96015",
+    ".right-release/signing-identity.json": "5aa6a6dde6d8de27ac0bce08a1b785878ef26c856c2fb106967c5283aa5f76d8"
+  },
+  "tools": {
+    "node": "v26.8.1",
+    "packageManager": "pnpm 11.24.0",
+    "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+    "cargo": null,
+    "rustc": null,
+    "rustHost": null,
+    "sccache": null
+  },
+  "checkpoints": [
+    "preflight_complete",
+    "build_complete",
+    "signed",
+    "hardened",
+    "sealed"
+  ],
+  "sealedAt": "2026-10-10T01:29:24.247Z"
+}
