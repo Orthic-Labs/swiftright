@@ -181,14 +181,26 @@ struct FaultTests {
         var b = a
         b.observations[0].axNodes = MacAXNormalizer.normalize(edited)
 
-        let unreasoned = Adaptation(field: "axNodes.label", nodeId: "toolbar/insert",
+        let unreasoned = Adaptation(fixture: "F1", steps: ["initial"], field: "axNodes.label", nodeId: "toolbar/insert",
                                     mapping: ["Insert above": "Insert below"], allowAnyValue: nil, reason: "")
         #expect(!TraceComparator.compare(accepted: a, candidate: b, adaptations: [unreasoned]).passed)
 
-        let reasoned = Adaptation(field: "axNodes.label", nodeId: "toolbar/insert",
+        let reasoned = Adaptation(fixture: "F1", steps: ["initial"], field: "axNodes.label", nodeId: "toolbar/insert",
                                   mapping: ["Insert above": "Insert below"], allowAnyValue: nil,
                                   reason: "test only: localized label mapping")
         #expect(TraceComparator.compare(accepted: a, candidate: b, adaptations: [reasoned]).passed)
+
+        // scoped to another step or another fixture it forgives nothing
+        var elsewhere = reasoned
+        elsewhere.steps = ["focus_row5"]
+        #expect(!TraceComparator.compare(accepted: a, candidate: b, adaptations: [elsewhere]).passed)
+        elsewhere = reasoned
+        elsewhere.fixture = "F2"
+        #expect(!TraceComparator.compare(accepted: a, candidate: b, adaptations: [elsewhere]).passed)
+        // the legacy unscoped form is no longer accepted
+        let legacy = Adaptation(field: "axNodes.label", nodeId: "toolbar/insert",
+                                mapping: ["Insert above": "Insert below"], allowAnyValue: nil, reason: "test only")
+        #expect(!TraceComparator.compare(accepted: a, candidate: b, adaptations: [legacy]).passed)
     }
 
     @Test func unlisted_stripped_name_is_not_silently_removed() throws {

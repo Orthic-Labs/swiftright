@@ -31,6 +31,7 @@ struct TTrace: Codable {
     var steps: [TStep]
     var observations: [TObservation]
     var declaredOrder: [TEdge]
+    var conditions: [String: String]?   // run conditions (reduceMotion.*), compared exactly and never adaptable; nil = none recorded
 }
 
 func encodePretty<T: Encodable>(_ v: T) throws -> Data {

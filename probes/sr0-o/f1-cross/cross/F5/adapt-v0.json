@@ -2,20 +2,14 @@
   {
     "allowAnyValue": true,
     "field": "steps.nativeMapping",
-    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"
-  },
-  {
-    "field": "focusedNodeId",
-    "mapping": {
-      "row/F0000005-0000-4000-8000-000000000001/field": "<none>"
-    },
-    "reason": "macOS (AppKit key-view loop) gives the first text field initial focus in this non-List window; Windows has no initial focus. Initial focus is not a CONTRACT F5 assertion (containment, caret clipping, AX bounds). The selection value is the Mac field's caret (at the end of 'Row 1 updated 0') while it holds that focus."
-  },
-  {
-    "field": "selection",
-    "mapping": {
-      "location=15 length=0": "<none>"
-    },
-    "reason": "macOS (AppKit key-view loop) gives the first text field initial focus in this non-List window; Windows has no initial focus. Initial focus is not a CONTRACT F5 assertion (containment, caret clipping, AX bounds). The selection value is the Mac field's caret (at the end of 'Row 1 updated 0') while it holds that focus."
+    "fixture": "F5",
+    "id": "N1",
+    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly",
+    "status": "contract",
+    "steps": [
+      "initial",
+      "resize_narrow_release",
+      "resize_wide_again"
+    ]
   }
 ]

@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -1327,12 +1328,16 @@ class WinReplayTupleTests(unittest.TestCase):
 
 class FaultInjectionTests(unittest.TestCase):
     """Negative controls of the compare stage: an altered Windows trace must be rejected on the named leaf."""
-    TRACE = {"fixtureId": "F8", "observations": [
-        {"stepId": "initial", "model": {}, "focusedNodeId": None, "lifecycle": [{"kind": "appear", "node": "row/a"}],
+    TRACE = {"fixtureId": "F8", "conditions": {"reduceMotion.effective": "false", "reduceMotion.variant": "false"},
+             "steps": [{"id": "initial", "logicalAction": "launch", "nativeMapping": "n", "timestamp": "t"},
+                       {"id": "focus_row3", "logicalAction": "focus", "nativeMapping": "n", "timestamp": "t"}],
+             "observations": [
+        {"stepId": "initial", "model": {"row/a": "Row a"}, "focusedNodeId": None, "lifecycle": [{"kind": "appear", "node": "row/a"}],
          "effects": [], "axNodes": [{"id": "window", "role": "window", "actions": [], "order": 0},
                                     {"id": "row/a/field", "role": "text-field", "actions": ["set-value"], "order": 1},
                                     {"id": "row/b/field", "role": "text-field", "actions": ["set-value"], "order": 2}]},
-        {"stepId": "focus_row3", "model": {}, "focusedNodeId": "row/a/field", "lifecycle": [], "effects": [], "axNodes": None}]}
+        {"stepId": "focus_row3", "model": {"row/a": "Row a"}, "focusedNodeId": "row/a/field", "lifecycle": [],
+         "effects": ["layout-mode wide"], "axNodes": None}]}
 
     def test_each_fault_changes_exactly_one_fact_of_a_copy(self):
         for kind in q.FAULT_KINDS:
@@ -1348,6 +1353,26 @@ class FaultInjectionTests(unittest.TestCase):
         self.assertEqual(missing["observations"][0]["lifecycle"], [])
         role, _ = q.inject_fault(self.TRACE, "wrong-role")
         self.assertEqual(role["observations"][0]["axNodes"][1]["role"], "button")
+        model, _ = q.inject_fault(self.TRACE, "wrong-model")
+        self.assertEqual(model["observations"][1]["model"], {"row/a": "Row a ~fault"})
+        effect, _ = q.inject_fault(self.TRACE, "wrong-effect")
+        self.assertEqual(effect["observations"][1]["effects"], ["layout-mode wide ~fault"])
+        condition, _ = q.inject_fault(self.TRACE, "wrong-condition")
+        self.assertEqual(condition["conditions"]["reduceMotion.effective"], "~fault")
+        self.assertEqual(condition["conditions"]["reduceMotion.variant"], "false")
+        logical, _ = q.inject_fault(self.TRACE, "wrong-logical-action")
+        self.assertEqual(logical["steps"][0]["logicalAction"], "launch ~fault")
+        self.assertEqual(logical["steps"][1]["logicalAction"], "focus")
+
+    def test_wrong_focus_still_applies_when_nothing_holds_focus(self):
+        """F5 before the launch-focus fix: no Windows observation has a focus, the fault focuses a text field anyway."""
+        unfocused = json.loads(json.dumps(self.TRACE))
+        for o in unfocused["observations"]:
+            o["focusedNodeId"] = None
+        unfocused["observations"][0]["axNodes"][1:] = [{"id": "row/a/field", "role": "text-field", "actions": [], "order": 1}]
+        altered, what = q.inject_fault(unfocused, "wrong-focus")
+        self.assertEqual(altered["observations"][0]["focusedNodeId"], "row/a/field", what)
+        self.assertIsNone(unfocused["observations"][0]["focusedNodeId"])
 
     def test_a_trace_with_nothing_to_alter_is_reported_not_passed(self):
         empty = {"observations": [{"stepId": "x", "focusedNodeId": None, "lifecycle": [], "axNodes": None}]}
@@ -1359,13 +1384,18 @@ class FaultInjectionTests(unittest.TestCase):
             q.inject_fault(self.TRACE, "bogus")
 
     def fake_comparator(self, reject):
-        """A script standing in for sr0o-trace: reports one diff on `reject` leaf only when the candidate carries the fault."""
+        """A script standing in for sr0o-trace: reports one diff on the `reject` leaf only when the candidate differs from the
+        pristine TRACE in that leaf's fact class (focus, lifecycle, role, model, effects, conditions, logical action)."""
         path = self.dir / "fake-comparator"
-        path.write_text("#!/usr/bin/env python3\nimport json,sys\nc=json.load(open(sys.argv[3]))\n"
+        path.write_text("#!/usr/bin/env python3\nimport json,sys\nc=json.load(open(sys.argv[3]))\nb=json.load(open(sys.argv[2]))\n"
                         f"leaf={reject!r}\n"
-                        "bad=(leaf=='focusedNodeId' and c['observations'][1]['focusedNodeId']!='row/a/field') or "
-                        "(leaf=='lifecycle.count' and not c['observations'][0]['lifecycle']) or "
-                        "(leaf=='axNodes.role' and c['observations'][0]['axNodes'][1]['role']!='text-field')\n"
+                        "def col(t,k): return [o.get(k) for o in t['observations']]\n"
+                        "def roles(t): return [[n['role'] for n in (o.get('axNodes') or [])] for o in t['observations']]\n"
+                        "bad={'focusedNodeId':col(c,'focusedNodeId')!=col(b,'focusedNodeId'),"
+                        "'lifecycle.count':col(c,'lifecycle')!=col(b,'lifecycle'),'axNodes.role':roles(c)!=roles(b),"
+                        "'model':col(c,'model')!=col(b,'model'),'effects':col(c,'effects')!=col(b,'effects'),"
+                        "'conditions':c.get('conditions')!=b.get('conditions'),"
+                        "'steps.logicalAction':[s['logicalAction'] for s in c['steps']]!=[s['logicalAction'] for s in b['steps']]}[leaf]\n"
                         "d=[{'fixture':'F8','step':'s','path':leaf+'[n]','expected':'a','actual':'b'}] if bad else []\n"
                         "print(json.dumps({'diffs':d,'passed':not d,'fixture':'F8','notes':[]}))\nsys.exit(1 if d else 0)\n")
         path.chmod(0o755)
@@ -1376,7 +1406,7 @@ class FaultInjectionTests(unittest.TestCase):
         self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
         self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
         for name in ("accepted.json", "adapt.json"):
-            (self.dir / name).write_text("[]" if name == "adapt.json" else "{}", encoding="utf-8")
+            (self.dir / name).write_text("[]" if name == "adapt.json" else json.dumps(self.TRACE), encoding="utf-8")
         (self.dir / "cand.json").write_text(json.dumps(self.TRACE), encoding="utf-8")
 
     def tearDown(self):
@@ -1410,7 +1440,177 @@ class FaultInjectionTests(unittest.TestCase):
             self.assertIn(config, q.CONFIGS)
             self.assertTrue(set(kinds) <= set(q.FAULT_KINDS))
         self.assertGreaterEqual(len(q.FAULT_CONTROLS), 3, "a few fixtures")
-        self.assertEqual({k for ks in q.FAULT_CONTROLS.values() for k in ks}, set(q.FAULT_KINDS), "all three fact classes")
+        every = {k for ks in q.FAULT_CONTROLS.values() for k in ks} | set(q.EVERY_CONFIG_FAULTS)
+        self.assertEqual(every, set(q.FAULT_KINDS), "every fact class has a control")
+
+    def test_review_controls_cover_f3_f5_f6_and_f8_focus(self):
+        for config in ("F3", *[f"F3-{v}" for v in q.F3_VARIANTS]):
+            self.assertTrue({"wrong-focus", "missing-lifecycle", "wrong-model"} <= set(q.FAULT_CONTROLS[config]), config)
+        self.assertTrue({"wrong-effect", "missing-lifecycle"} <= set(q.FAULT_CONTROLS["F5"]))
+        self.assertIn("wrong-condition", q.FAULT_CONTROLS["F6"])
+        self.assertIn("wrong-condition", q.FAULT_CONTROLS["F6-reduced"])
+        self.assertIn("wrong-focus", q.FAULT_CONTROLS["F8"])
+        self.assertEqual(q.EVERY_CONFIG_FAULTS, ("wrong-logical-action",))
+
+    def test_a_known_failing_diff_cannot_make_a_fault_look_rejected(self):
+        """The control needs a NEW (step, path, actual): the same path with the same actual as in the real comparison is not new."""
+        base = json.dumps({"diffs": [{"step": "s", "path": "focusedNodeId", "expected": "a", "actual": "b"}]})
+        same = json.dumps({"diffs": [{"step": "s", "path": "focusedNodeId", "expected": "a", "actual": "b"}]})
+        other = json.dumps({"diffs": [{"step": "s", "path": "focusedNodeId", "expected": "a", "actual": "c"}]})
+        self.assertEqual(q.diff_triples(same) - q.diff_triples(base), set())
+        self.assertEqual(len(q.diff_triples(other) - q.diff_triples(base)), 1)
+
+
+class AllowanceFaultTests(unittest.TestCase):
+    """One negative control per remaining allowance: the covered leaf takes a value outside the allowed pair."""
+    TRACE = {"fixtureId": "FX", "conditions": None, "observations": [
+        {"stepId": "s1", "model": {"row/a": "Row a"}, "focusedNodeId": None, "selection": None,
+         "lifecycle": [{"kind": "treeReleased", "node": "tree"}], "effects": ["e1"],
+         "axNodes": [{"id": "window", "role": "window", "actions": [], "order": 0},
+                     {"id": "row/a/field", "role": "text-field", "label": "l", "value": "v", "actions": ["set-value"],
+                      "parent": "window", "order": 1}]},
+        {"stepId": "s2", "model": {}, "focusedNodeId": None, "selection": None, "lifecycle": [], "effects": [], "axNodes": None}]}
+
+    def allowance(self, field, mapping, node=None, steps=("s1",)):
+        a = {"id": "T", "fixture": "FX", "steps": list(steps), "field": field, "mapping": mapping, "reason": "test"}
+        if node:
+            a["nodeId"] = node
+        return a
+
+    def inject(self, allowance, step="s1"):
+        original = json.dumps(self.TRACE, sort_keys=True)
+        altered, what, path = q.inject_allowance_fault(self.TRACE, allowance, step)
+        self.assertEqual(json.dumps(self.TRACE, sort_keys=True), original, "the input trace is never modified")
+        return altered, what, path
+
+    def test_each_covered_leaf_is_altered_to_a_value_outside_the_pair(self):
+        o = lambda t: t["observations"][0]
+        cases = [
+            (self.allowance("model", {"<absent>": "Row a"}, "row/a"), "model[row/a]", lambda t: o(t)["model"]["row/a"] == "Row a ~fault"),
+            (self.allowance("focusedNodeId", {"<none>": "row/a/field"}), "focusedNodeId",
+             lambda t: o(t)["focusedNodeId"] != "row/a/field" and o(t)["focusedNodeId"]),
+            (self.allowance("selection", {"<none>": "location=0 length=0"}), "selection", lambda t: o(t)["selection"]["location"] == 9999),
+            (self.allowance("effects", {"a": "b"}), "effects", lambda t: len(o(t)["effects"]) == 2),
+            (self.allowance("lifecycle.count", {"0": "1"}, "treeReleased:tree"), "lifecycle.count[treeReleased:tree]",
+             lambda t: sum(1 for e in o(t)["lifecycle"] if e["kind"] == "treeReleased") == 2),
+            (self.allowance("axNodes.duplicateId", {"2 duplicates": "0 duplicates"}), "axNodes.duplicateId",
+             lambda t: len(o(t)["axNodes"]) == 3 and len({n["id"] for n in o(t)["axNodes"]}) == 2),
+            (self.allowance("axNodes.presence", {"<absent>": "role=text-field"}, "row/a/field"), "axNodes.presence[row/a/field]",
+             lambda t: o(t)["axNodes"][1]["role"] == "fault-role"),
+            (self.allowance("axNodes.presence", {"<absent>": "role=text-field"}, "row/new"), "axNodes.presence[row/new]",
+             lambda t: o(t)["axNodes"][-1] == {"id": "row/new", "role": "fault-role", "actions": [], "order": 9999}),
+            (self.allowance("axNodes.parent", {"p": "q"}, "row/a/field"), "axNodes.parent[row/a/field]",
+             lambda t: o(t)["axNodes"][1]["parent"] == "anon:fault"),
+            (self.allowance("axNodes.label", {"p": "q"}, "row/a/field"), "axNodes.label[row/a/field]",
+             lambda t: o(t)["axNodes"][1]["label"] == "~fault"),
+        ]
+        for allowance, path, changed in cases:
+            with self.subTest(path):
+                altered, what, got = self.inject(allowance)
+                self.assertIsNotNone(altered, what)
+                self.assertEqual(got, path)
+                self.assertTrue(changed(altered), what)
+
+    def test_a_lifecycle_count_fault_lands_outside_the_allowed_actual(self):
+        a = self.allowance("lifecycle.count", {"0": "3"}, "treeReleased:tree")
+        altered, _, _ = self.inject(a)
+        self.assertEqual(sum(1 for e in altered["observations"][0]["lifecycle"] if e["kind"] == "treeReleased"), 4)
+
+    def test_an_unknown_step_node_or_leaf_is_reported_not_passed(self):
+        self.assertIsNone(self.inject(self.allowance("model", {"a": "b"}, "row/a"), step="nope")[0])
+        self.assertIsNone(self.inject(self.allowance("axNodes.parent", {"a": "b"}, "row/missing"))[0])
+        self.assertIsNone(self.inject(self.allowance("axNodes.duplicateId", {"a": "b"}), step="s2")[0], "no AX tree captured")
+        self.assertIsNone(self.inject(self.allowance("lifecycle.order", {"a": "b"}, "x before y"))[0])
+
+    def test_every_committed_allowance_has_an_applicable_fault_on_its_recording(self):
+        """No allowance without a control: each mapping allowance of each config injects at every step it names."""
+        checked = 0
+        for config in q.CONFIGS:
+            win = json.loads((q.CROSS_DIR / config / q.WIN_TRACE_FILE).read_text(encoding="utf-8"))
+            for a in json.loads((q.CROSS_DIR / config / "adapt-v0.json").read_text(encoding="utf-8")):
+                if not a.get("mapping"):
+                    continue
+                for step in a["steps"]:
+                    with self.subTest(config=config, allowance=a["id"], field=a["field"], step=step):
+                        altered, what, path = q.inject_allowance_fault(win, a, step)
+                        self.assertIsNotNone(altered, what)
+                        self.assertTrue(path.startswith(a["field"]))
+                        checked += 1
+        self.assertGreaterEqual(checked, 9, "P1 x6, P2 x2 per List config, P6")
+
+
+class AllowanceFaultControlTests(unittest.TestCase):
+    """allowance_fault_control against a stand-in comparator."""
+    TRACE = AllowanceFaultTests.TRACE
+
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+        (self.dir / "accepted.json").write_text(json.dumps(self.TRACE), encoding="utf-8")
+        (self.dir / "cand.json").write_text(json.dumps(self.TRACE), encoding="utf-8")
+        self.allowance = {"id": "P6", "fixture": "FX", "steps": ["s1"], "field": "lifecycle.count", "nodeId": "treeReleased:tree",
+                          "mapping": {"0": "1"}, "reason": "test"}
+        (self.dir / "adapt.json").write_text(json.dumps([self.allowance]), encoding="utf-8")
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def comparator(self, body):
+        path = self.dir / "fake-comparator"
+        path.write_text("#!/usr/bin/env python3\nimport json,sys\nc=json.load(open(sys.argv[3]))\n"
+                        "n=sum(1 for e in c['observations'][0]['lifecycle'] if e['kind']=='treeReleased')\n" + body)
+        path.chmod(0o755)
+        return path
+
+    def run_control(self, comparator):
+        return q.allowance_fault_control(self.log, "F8", self.allowance, "s1", self.dir / "accepted.json", self.dir / "cand.json",
+                                         self.dir / "adapt.json", self.dir, comparator)
+
+    def last(self):
+        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()][-1]
+
+    def test_a_comparator_that_rejects_the_value_outside_the_pair_passes_the_control(self):
+        # one treeReleased is the allowed (candidate 1); the fault makes it 2, which this comparator reports with actual '2'
+        ok = self.run_control(self.comparator(
+            "d=[{'fixture':'FX','step':'s1','path':'lifecycle.count[treeReleased:tree]','expected':'0','actual':str(n)}] if n!=1 else []\n"
+            "print(json.dumps({'diffs':d}))\nsys.exit(1 if d else 0)\n"))
+        self.assertTrue(ok)
+        self.assertEqual(self.last()["event"], "pass")
+        self.assertIn("allowance P6 rejected", self.last()["reason"])
+
+    def test_a_comparator_that_still_allows_the_altered_value_fails_the_control(self):
+        # an allowance that became allow-anything would pass every count
+        ok = self.run_control(self.comparator("print(json.dumps({'diffs':[]}))\nsys.exit(0)\n"))
+        self.assertFalse(ok)
+        self.assertEqual(self.last()["event"], "fail")
+        self.assertIn("NOT rejected", self.last()["reason"])
+
+    def test_a_diff_on_the_permitted_value_does_not_count_as_a_rejection(self):
+        # the comparator reports a diff whose actual IS the allowed value: that is not "outside the pair"
+        ok = self.run_control(self.comparator(
+            "d=[{'fixture':'FX','step':'s1','path':'lifecycle.count[treeReleased:tree]','expected':'0','actual':'1'}] if n!=1 else []\n"
+            "print(json.dumps({'diffs':d}))\nsys.exit(1 if d else 0)\n"))
+        self.assertFalse(ok)
+
+    def test_only_mapping_allowances_get_controls(self):
+        (self.dir / "adapt.json").write_text(json.dumps([
+            {"id": "N1", "fixture": "FX", "steps": ["s1", "s2"], "field": "steps.nativeMapping", "allowAnyValue": True, "reason": "x"},
+            self.allowance]), encoding="utf-8")
+        ok = q.allowance_fault_controls(self.log, "F8", self.dir / "accepted.json", self.dir / "cand.json", self.dir / "adapt.json",
+                                        self.dir, self.comparator(
+            "d=[{'fixture':'FX','step':'s1','path':'lifecycle.count[treeReleased:tree]','expected':'0','actual':str(n)}] if n!=1 else []\n"
+            "print(json.dumps({'diffs':d}))\nsys.exit(1 if d else 0)\n"))
+        self.assertTrue(ok)
+        events = [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()]
+        self.assertEqual([e["event"] for e in events], ["pass"], "one control: N1 allows any value and has no outside value")
+
+    def test_allowed_summary_names_unproven_allowances(self):
+        report = json.dumps({"allowed": [{"allowance": "N1", "step": "a"}, {"allowance": "P1", "status": "oracle-quirk"},
+                                         {"allowance": "P1", "status": "oracle-quirk"}, {"allowance": "P2", "status": "unproven"}]})
+        self.assertEqual(q.allowed_summary(report), "P1 x2, P2 x1 (UNPROVEN)")
+        self.assertEqual(q.allowed_summary("not json"), "")
 
 
 class CrossPlanTests(unittest.TestCase):
@@ -1429,19 +1629,61 @@ class CrossPlanTests(unittest.TestCase):
                 self.assertEqual(ids[0], "initial")
                 self.assertTrue(all(s["logicalAction"] for s in stim["steps"]))
 
-    def test_adaptations_are_reasoned_narrow_value_mappings(self):
+    LEAVES_WITH_NODE = {"model", "lifecycle.count", "lifecycle.order", "axNodes.presence", "axNodes.role", "axNodes.label",
+                        "axNodes.value", "axNodes.actions", "axNodes.parent", "axNodes.order"}
+    # the allowances that survived the review of the cross-compare (CROSS-ALL.md): P3 (F5 initial focus), P4 (F6 row rebuild) and
+    # P5 (F8 focus after Invoke) are product differences and have no allowance
+    REMAINING = {"F2": {"N1", "P1"}, "F3": {"N1", "P2"}, "F3-list-1s": {"N1", "P2"}, "F3-list-3s": {"N1", "P2"}, "F9": {"N1", "P6"}}
+
+    def adapt(self, config):
+        return json.loads((q.CROSS_DIR / config / "adapt-v0.json").read_text(encoding="utf-8"))
+
+    def test_adaptations_are_scoped_reasoned_value_pairs(self):
+        """Fixture, steps, leaf and node are named in every allowance: it applies nowhere else (TraceKit Adaptation)."""
         for config in q.CONFIGS:
-            adapt = json.loads((q.CROSS_DIR / config / "adapt-v0.json").read_text(encoding="utf-8"))
-            self.assertEqual(adapt[0]["field"], "steps.nativeMapping", config)
-            for a in adapt[1:]:
-                with self.subTest(config=config, field=a["field"]):
+            stim = json.loads((q.CROSS_DIR / config / "stimulus.json").read_text(encoding="utf-8"))
+            step_ids = [s["id"] for s in stim["steps"]]
+            for a in self.adapt(config):
+                with self.subTest(config=config, id=a.get("id"), field=a["field"]):
+                    self.assertTrue(a["id"])
+                    self.assertEqual(a["fixture"], config)
+                    self.assertTrue(a["steps"] and set(a["steps"]) <= set(step_ids), "named steps exist in the stimulus")
                     self.assertTrue(a["reason"].strip())
-                    self.assertTrue(a.get("mapping"), "no allowAnyValue beyond N1: a mapping names the exact allowed values")
-                    self.assertNotIn("allowAnyValue", a)
+                    self.assertIn(a["status"], ("contract", "oracle-quirk", "unproven"))
+                    self.assertNotIn(a["field"], ("fixtureId", "schemaVersion", "sourceHash", "conditions", "steps.order"))
+                    if a["field"] in self.LEAVES_WITH_NODE:
+                        self.assertTrue(a.get("nodeId"), "a node leaf names its node")
+                    else:
+                        self.assertNotIn("nodeId", a)
+                    if a["id"] == "N1":
+                        self.assertEqual(a["field"], "steps.nativeMapping")
+                        self.assertIs(a["allowAnyValue"], True)
+                        self.assertEqual(a["steps"], step_ids, "N1 names every step of its config, no more")
+                    else:
+                        self.assertTrue(a.get("mapping"), "no allowAnyValue beyond N1: a mapping names the exact allowed values")
+                        self.assertNotIn("allowAnyValue", a)
+
+    def test_only_the_reviewed_allowances_remain(self):
+        for config in q.CONFIGS:
+            self.assertEqual({a["id"] for a in self.adapt(config)}, self.REMAINING.get(config, {"N1"}), config)
+
+    def test_removed_allowances_cannot_come_back_unnoticed(self):
+        """P3 (F5 initial focus), P4 (F6 rebuild) and P5 (F8 focus on Invoke) mask product differences."""
+        for config, leaves in (("F5", ("focusedNodeId", "selection")), ("F6", ("lifecycle.count",)), ("F8", ("focusedNodeId",))):
+            self.assertEqual([a for a in self.adapt(config) if a["field"] in leaves], [], config)
+
+    def test_unproven_allowances_say_so(self):
+        for config in ("F3", "F3-list-1s", "F3-list-3s"):
+            for a in self.adapt(config):
+                if a["id"] == "P2":
+                    self.assertEqual(a["status"], "unproven")
+                    self.assertTrue(a["reason"].startswith("UNPROVEN"))
+                    self.assertEqual(a["steps"], ["type_x_remove_reinsert"])
 
     def test_baseline_prefers_the_accepted_v0_trace_and_labels_the_fallback(self):
         trace, adapt, origin = q.cross_baseline("F1")
         self.assertEqual((trace, origin), (q.ACCEPTED_ROOT / "F1" / "trace-v0.json", "accepted Mac baseline"))
+        self.assertEqual(adapt, q.CROSS_DIR / "F1" / "adapt-v0.json", "scoped allowances come from the cross plan, never a promoted file")
         saved = q.ACCEPTED_ROOT
         with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
             q.ACCEPTED_ROOT = Path(tmp)
@@ -1452,6 +1694,33 @@ class CrossPlanTests(unittest.TestCase):
         self.assertEqual(trace, q.CROSS_DIR / "F2" / "mac-trace-v0.json")
         self.assertEqual(adapt, q.CROSS_DIR / "F2" / "adapt-v0.json")
         self.assertIn("unpromoted", origin)
+
+    def test_the_f3_typeafter_probe_is_additive_and_not_one_of_the_sixteen(self):
+        probe = q.CROSS_DIR / "F3-list-1s-typeafter"
+        self.assertNotIn("F3-list-1s-typeafter", q.CONFIGS)
+        base = {n: json.loads((q.CROSS_DIR / "F3-list-1s" / n).read_text(encoding="utf-8")) for n in ("stimulus.json", "steps-win.json", "steps-mac.json")}
+        for name, plan in base.items():
+            extra = json.loads((probe / name).read_text(encoding="utf-8"))
+            self.assertEqual(extra["steps"][:len(plan["steps"])], plan["steps"], f"{name}: the base steps are untouched")
+            self.assertEqual([s["id"] for s in extra["steps"]][len(plan["steps"]):], ["type_after_reinsert"])
+        mac = json.loads((probe / "steps-mac.json").read_text(encoding="utf-8"))["steps"][-1]
+        win = json.loads((probe / "steps-win.json").read_text(encoding="utf-8"))["steps"][-1]
+        self.assertEqual([o["op"] for o in mac["ops"]], ["type"])
+        self.assertEqual([o["op"] for o in win["ops"]], ["type"])
+        self.assertNotIn("expectId", mac["ops"][0], "no expectation: where the character lands is the finding")
+        cfg = json.loads((q.CROSS_DIR / "configs.json").read_text(encoding="utf-8"))["F3-list-1s-typeafter"]
+        self.assertEqual(cfg["winArgs"], "--fixture F3 --f3-variant list-1s")
+        self.assertEqual({a["id"] for a in json.loads((probe / "adapt-v0.json").read_text(encoding="utf-8"))}, {"N1", "P2"})
+
+    def test_traces_carry_the_run_conditions_of_f6(self):
+        for config, effective in (("F6", ("false", "true")), ("F6-reduced", ("true", "true"))):
+            mac = json.loads((q.CROSS_DIR / config / "mac-trace-v0.json").read_text(encoding="utf-8"))
+            win = json.loads((q.CROSS_DIR / config / q.WIN_TRACE_FILE).read_text(encoding="utf-8"))
+            self.assertEqual((mac["conditions"]["reduceMotion.effective"], win["conditions"]["reduceMotion.effective"]), effective, config)
+        for config in q.CONFIGS:
+            if not config.startswith("F6"):
+                win = json.loads((q.CROSS_DIR / config / q.WIN_TRACE_FILE).read_text(encoding="utf-8"))
+                self.assertNotIn("conditions", win, config)
 
     def test_compare_reads_one_windows_trace_per_config_from_a_directory(self):
         args = run_args("--stages", "compare", "--win-candidate-dir", "/x/cross")
@@ -1467,6 +1736,218 @@ class CrossPlanTests(unittest.TestCase):
     def test_compare_with_no_source_names_the_missing_input(self):
         got = q.compare_candidates(run_args("--stages", "compare"), ["compare"], Path("/out"))
         self.assertTrue(all(p is None and "win-candidate-dir" in why for _, p, why in got))
+
+
+class CommittedRecordingsVerdictTests(unittest.TestCase):
+    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the 10 Oct 2026 Windows
+    recordings, which predate the product fixes (initial focus, Invoke focus, animation setting, onChange after reinsertion).
+    The comparator is built from the working tree (the runner itself builds from HEAD), under SR0A_BUILD_ROOT.
+    When Windows is re-recorded, update PRE_FIX_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
+    PRE_FIX_DIFFS = {"F1": 0, "F2": 0, "F3": 2, "F3-list-1s": 2, "F3-list-3s": 2, "F3-vstack-1s": 3, "F3-vstack-3s": 3,
+                     "F3-lazy-1s": 3, "F3-lazy-3s": 3, "F4": 0, "F5": 7, "F6": 5, "F6-reduced": 0, "F7": 0, "F8": 1, "F9": 0}
+
+    @classmethod
+    def setUpClass(cls):
+        if not shutil.which("swift") or not os.environ.get("SR0A_BUILD_ROOT"):
+            raise unittest.SkipTest("needs swift and SR0A_BUILD_ROOT (an internal-disk path: a fresh binary run from /Volumes/D triggers TCC prompts)")
+        scratch = Path(os.environ["SR0A_BUILD_ROOT"]) / "comparator-worktree"
+        built = subprocess.run(["swift", "build", "--package-path", str(q.COMPARATOR_PKG), "--scratch-path", str(scratch),
+                                "--product", "sr0o-trace"], capture_output=True, text=True)
+        if built.returncode != 0:
+            raise unittest.SkipTest(f"comparator build failed: {built.stderr.strip()[-200:]}")
+        bin_dir = subprocess.run(["swift", "build", "--package-path", str(q.COMPARATOR_PKG), "--scratch-path", str(scratch),
+                                  "--show-bin-path"], capture_output=True, text=True).stdout.strip()
+        cls.comparator = Path(bin_dir) / "sr0o-trace"
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        cls.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        log = q.EventLog(cls.dir / "events.jsonl", echo=False)
+        args = q.build_parser().parse_args(["run", "--stages", "compare", "--win-candidate-dir", str(q.CROSS_DIR)])
+        q.run_compare(log, args, ["compare"], cls.dir, False, comparator=cls.comparator)
+        log.close()
+        cls.events = [json.loads(l) for l in (cls.dir / "events.jsonl").read_text().splitlines() if l.strip()]
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(getattr(cls, "dir", SCRATCH / "none"), ignore_errors=True)
+
+    def report(self, config):
+        return json.loads((self.dir / f"compare-{config}.json").read_text(encoding="utf-8"))
+
+    def test_per_config_diff_counts_of_the_recordings(self):
+        got = {c: len(self.report(c)["diffs"]) for c in self.PRE_FIX_DIFFS}
+        self.assertEqual(got, self.PRE_FIX_DIFFS)
+
+    def test_the_review_findings_fail_and_say_why(self):
+        paths = lambda c: {d["path"].split("[")[0] for d in self.report(c)["diffs"]}
+        self.assertEqual(paths("F5"), {"focusedNodeId", "selection", "lifecycle.count"})            # launch focus, was P3
+        self.assertEqual(paths("F3-vstack-1s"), {"focusedNodeId", "selection", "lifecycle.count"})  # launch focus, was R1
+        self.assertEqual(paths("F6"), {"conditions", "lifecycle.count"})                            # motion condition + rebuild, was P4
+        self.assertEqual(paths("F8"), {"focusedNodeId"})                                            # focus after Invoke, was P5
+        f6 = {d["path"]: (d["expected"], d["actual"]) for d in self.report("F6")["diffs"]}
+        self.assertEqual(f6["conditions[reduceMotion.effective]"], ("false", "true"), "Mac ran with motion, the Dell with animations off")
+        self.assertEqual(paths("F6-reduced"), set(), "both sides ran reduced")
+
+    def test_remaining_allowances_forgave_only_their_own_diffs(self):
+        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.PRE_FIX_DIFFS}
+        self.assertEqual({c: v for c, v in applied.items() if v},
+                         {"F2": ["P1"], "F3": ["P2"], "F3-list-1s": ["P2"], "F3-list-3s": ["P2"], "F9": ["P6"]})
+        self.assertEqual(len([a for a in self.report("F2")["allowed"] if a["allowance"] == "P1"]), 6)
+        self.assertTrue(all(a["status"] == "unproven" for a in self.report("F3")["allowed"] if a["allowance"] == "P2"))
+
+    def test_every_fault_control_is_rejected(self):
+        controls = [e for e in self.events if "negative control" in (e.get("reason") or "")]
+        self.assertGreaterEqual(len(controls), 60)
+        self.assertEqual([e["reason"] for e in controls if e["event"] != "pass"], [])
+        self.assertTrue(any("allowance P1 rejected" in e["reason"] for e in controls))
+        self.assertTrue(any("allowance P2 rejected" in e["reason"] for e in controls))
+        self.assertTrue(any("allowance P6 rejected" in e["reason"] for e in controls))
+
+    def test_only_the_expected_configs_fail(self):
+        failed = {e["fixture"] for e in self.events if e["event"] == "fail"}
+        self.assertEqual(failed, {c for c, n in self.PRE_FIX_DIFFS.items() if n})
+
+
+class ReassemblyTests(unittest.TestCase):
+    """Every committed schema-v0 trace is the F1Assemble output of the committed raw recordings and in-process events, so a
+    changed assembler rule shows up as a changed trace (probes/sr0-o/f1-cross/scripts/reassemble.sh regenerates them)."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not shutil.which("swift") or not os.environ.get("SR0A_BUILD_ROOT"):
+            raise unittest.SkipTest("needs swift and SR0A_BUILD_ROOT (an internal-disk path)")
+        scratch = Path(os.environ["SR0A_BUILD_ROOT"]) / "f1cross-worktree"
+        base = ["swift", "build", "--package-path", str(q.F1_PACKAGE), "--scratch-path", str(scratch)]
+        built = subprocess.run(base + ["--product", "F1Assemble"], capture_output=True, text=True)
+        if built.returncode != 0:
+            raise unittest.SkipTest(f"F1Assemble build failed: {built.stderr.strip()[-200:]}")
+        cls.assembler = Path(subprocess.run(base + ["--show-bin-path"], capture_output=True, text=True).stdout.strip()) / "F1Assemble"
+
+    def assemble(self, work, mode, raw, events, stimulus):
+        import gzip
+        out = work / f"{mode}-trace.json"
+        files = {}
+        for key, (path, gz) in raw.items():
+            target = work / f"{mode}-{key}.json"
+            target.write_bytes(gzip.decompress(path.read_bytes()) if gz else path.read_bytes())
+            files[key] = target
+        shutil.copyfile(events, work / f"{mode}-events.txt")
+        shutil.copyfile(stimulus, work / "stimulus.json")
+        argv = [str(self.assembler), mode, *[x for k, v in files.items() for x in (f"--{k}", str(v))],
+                "--events", str(work / f"{mode}-events.txt"), "--stimulus", str(work / "stimulus.json"), "--out", str(out), "--keep-lists"]
+        result = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(out.read_text(encoding="utf-8"))
+
+    def test_committed_traces_equal_the_reassembled_raw_recordings(self):
+        evidence = q.F1_PACKAGE / "cross-evidence"
+        work = Path(tempfile.mkdtemp())
+        try:
+            checked = 0
+            for config in q.CONFIGS:
+                ev, stim = evidence / config, q.CROSS_DIR / config / "stimulus.json"
+                for i in (1, 2, 3):
+                    with self.subTest(config=config, run=i):
+                        mac = self.assemble(work, "mac", {"raw": (ev / "raw" / f"mac-raw-n{i}.json.gz", True)},
+                                            ev / f"mac-ev-n{i}.jsonl", stim)
+                        self.assertEqual(mac, json.loads((ev / f"mac-trace-n{i}.json").read_text(encoding="utf-8")))
+                        win = self.assemble(work, "win", {"rec": (ev / "raw" / f"win-rec-w{i}.json.gz", True),
+                                                          "side": (ev / "raw" / f"win-side-w{i}.json.gz", True)},
+                                            ev / f"win-events-w{i}.txt", stim)
+                        self.assertEqual(win, json.loads((ev / f"win-trace-w{i}.json").read_text(encoding="utf-8")))
+                        checked += 2
+                cross_win = json.loads((q.CROSS_DIR / config / q.WIN_TRACE_FILE).read_text(encoding="utf-8"))
+                self.assertEqual(cross_win, json.loads((ev / "win-trace-w1.json").read_text(encoding="utf-8")), config)
+                if config != "F1":
+                    cross_mac = json.loads((q.CROSS_DIR / config / "mac-trace-v0.json").read_text(encoding="utf-8"))
+                    self.assertEqual(cross_mac, json.loads((ev / "mac-trace-n1.json").read_text(encoding="utf-8")), config)
+            self.assertEqual(checked, 96)
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+    ROW = "F0000001-0000-4000-8000-000000000001"
+
+    def mac_launch(self, focus, event=True):
+        """One-step synthetic Mac recording: a window with one text field, the given AX focus, optionally the launch focus event."""
+        work = Path(tempfile.mkdtemp())
+        try:
+            tree = {"role": "AXApplication", "children": [{"role": "AXWindow", "identifier": "main", "children": [
+                {"role": "AXTextField", "identifier": f"row/{self.ROW}/field", "value": "Row 1", "actions": [], "valueSettable": True}]}]}
+            raw = {"platform": {"os": "macos", "osBuild": "1", "arch": "arm64", "toolchain": "t"},
+                   "steps": [{"id": "initial", "nativeMapping": "walk", "monoStartNs": 0, "monoEndNs": 100, "tree": tree, "focus": focus}]}
+            (work / "raw.json").write_text(json.dumps(raw), encoding="utf-8")
+            (work / "stimulus.json").write_text(json.dumps({"fixtureId": "T", "modelRows": "all",
+                                                            "steps": [{"id": "initial", "logicalAction": "launch"}]}), encoding="utf-8")
+            line = json.dumps({"kind": "focus", "node_id": "focus", "payload": {"focused": self.ROW}, "mono_ns": 5})
+            (work / "events.jsonl").write_text(line + "\n" if event else "", encoding="utf-8")
+            result = subprocess.run([str(self.assembler), "mac", "--raw", str(work / "raw.json"), "--events", str(work / "events.jsonl"),
+                                     "--stimulus", str(work / "stimulus.json"), "--out", str(work / "out.json"), "--keep-lists"],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return json.loads((work / "out.json").read_text(encoding="utf-8"))["observations"][0]
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+    def test_an_unidentified_launch_focus_is_named_by_the_event_or_stays_visible(self):
+        field_editor = {"role": "AXTextField", "identifier": "", "selection": {"location": 0, "length": 5}}
+        named = self.mac_launch(field_editor)
+        self.assertEqual(named["focusedNodeId"], f"row/{self.ROW}/field")
+        self.assertEqual(named["selection"], {"location": 0, "length": 5})
+        self.assertIn({"kind": "initialFocus", "node": f"row/{self.ROW}"}, named["lifecycle"])
+        unnamed = self.mac_launch(field_editor, event=False)
+        self.assertEqual(unnamed["focusedNodeId"], "unmapped:AXTextField", "never dropped, even without a naming event")
+        self.assertEqual(unnamed["selection"], {"location": 0, "length": 5}, "the selection is no longer dropped with the focus (R1)")
+        self.assertNotIn("initialFocus", [e["kind"] for e in unnamed["lifecycle"]])
+
+    def test_motion_conditions_come_from_the_policy_event_of_either_platform(self):
+        cases = [
+            ({"enabled": True, "system_reduce": False, "variant_reduce": False}, ("false", "false")),                    # Mac, no reduction
+            ({"enabled": False, "system_reduce": False, "variant_reduce": True}, ("true", "true")),                      # Mac, reduced variant
+            ({"enabled": True, "system_reduce": True, "variant_reduce": False}, ("true", "false")),                      # Mac, OS Reduce Motion
+            ({"enabled": True, "effective_reduce": True, "system_reduce": "on", "variant_reduce": False,
+              "reduce_source": "os"}, ("true", "false")),                                                               # Windows, animations off
+            ({"enabled": True, "effective_reduce": False, "system_reduce": "off", "variant_reduce": False}, ("false", "false")),
+            ({"enabled": True, "system_reduce": "off", "variant_reduce": False}, ("false", "false")),                    # derived
+            ({"enabled": True, "system_reduce": "unavailable", "variant_reduce": False}, ("unknown", "false")),
+        ]
+        for payload, (effective, variant) in cases:
+            with self.subTest(payload=payload):
+                work = Path(tempfile.mkdtemp())
+                try:
+                    tree = {"role": "AXApplication", "children": [{"role": "AXWindow", "identifier": "main", "children": []}]}
+                    raw = {"platform": {"os": "macos", "osBuild": "1", "arch": "arm64", "toolchain": "t"},
+                           "steps": [{"id": "initial", "nativeMapping": "walk", "monoStartNs": 0, "monoEndNs": 100, "tree": tree, "focus": {}}]}
+                    (work / "raw.json").write_text(json.dumps(raw), encoding="utf-8")
+                    (work / "stimulus.json").write_text(json.dumps({"fixtureId": "T", "modelRows": "all",
+                                                                    "steps": [{"id": "initial", "logicalAction": "launch"}]}), encoding="utf-8")
+                    event = {"kind": "lifecycle", "node_id": "animation", "payload": {**payload, "phase": "policy"}, "mono_ns": 5}
+                    (work / "events.jsonl").write_text(json.dumps(event) + "\n", encoding="utf-8")
+                    result = subprocess.run([str(self.assembler), "mac", "--raw", str(work / "raw.json"), "--events", str(work / "events.jsonl"),
+                                             "--stimulus", str(work / "stimulus.json"), "--out", str(work / "out.json"), "--keep-lists"],
+                                            capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    trace = json.loads((work / "out.json").read_text(encoding="utf-8"))
+                    self.assertEqual(trace["conditions"], {"reduceMotion.effective": effective, "reduceMotion.variant": variant})
+                    self.assertEqual(trace["observations"][0]["effects"], [f"animation-policy enabled={'true' if payload['enabled'] else 'false'}"])
+                finally:
+                    shutil.rmtree(work, ignore_errors=True)
+
+    def test_container_focus_is_no_element_focus(self):
+        outline = self.mac_launch({"role": "AXOutline", "identifier": "", "selection": None}, event=False)
+        self.assertNotIn("focusedNodeId", outline)
+        self.assertNotIn("selection", outline)
+
+    def test_launch_focus_and_the_motion_condition_are_not_normalised_away(self):
+        """The assembler rules the review removed: R1 (dropped the launch selection), the exclusion of launch focus events."""
+        evidence = q.F1_PACKAGE / "cross-evidence"
+        for config in ("F5", "F3-vstack-1s", "F3-lazy-3s"):
+            mac = json.loads((evidence / config / "mac-trace-n1.json").read_text(encoding="utf-8"))
+            initial = mac["observations"][0]
+            self.assertEqual(initial["stepId"], "initial")
+            self.assertTrue(initial["focusedNodeId"].endswith("/field"), config)
+            self.assertEqual(initial["selection"], {"location": 0, "length": 5}, config)
+            self.assertIn("initialFocus", [e["kind"] for e in initial["lifecycle"]], config)
+            win = json.loads((evidence / config / "win-trace-w1.json").read_text(encoding="utf-8"))
+            self.assertNotIn("focusedNodeId", win["observations"][0], f"{config}: the pre-fix Windows build had no launch focus")
 
 
 class RunWiringTests(unittest.TestCase):

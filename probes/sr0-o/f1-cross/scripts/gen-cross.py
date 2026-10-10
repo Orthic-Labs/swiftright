@@ -11,6 +11,14 @@ driver so that the same model-level steps happen: each Mac step mirrors what the
 the external inputs. Logical steps are therefore coarse: every external input is a step, and the autonomous work that
 follows it on Windows belongs to that step on both platforms.
 
+adapt-v0.json holds the comparator allowances. Every allowance is scoped to ONE fixture (the config id), named steps, one leaf,
+and for node leaves one node, with exact value pairs (TraceKit `Adaptation`): it never applies anywhere else, and an entry that
+is not fully scoped is ignored by the comparator. `status` says how well the reason is established: "contract" (CONTRACT text),
+"oracle-quirk" (Mac oracle behaviour probed), "unproven" (plausible, not yet settled by a probe: see PROBES and CROSS-ALL.md).
+
+PROBES are extra plans that are not part of the 16 SR0 configs: the same recording plan plus steps that would settle an
+unproven allowance. They have no recordings yet and are never compared by the runner until recorded on both platforms.
+
 Run:  python3 probes/sr0-o/f1-cross/scripts/gen-cross.py
 """
 import json
@@ -21,6 +29,8 @@ OUT = Path(__file__).resolve().parent.parent / "cross"
 FIXTURE_NUMBER = {f"F{n}": n for n in range(1, 10)}
 F3_VARIANTS = ["list-1s", "list-3s", "vstack-1s", "vstack-3s", "lazy-1s", "lazy-3s"]
 CONFIGS = ["F1", "F2", "F3", *[f"F3-{v}" for v in F3_VARIANTS], "F4", "F5", "F6", "F6-reduced", "F7", "F8", "F9"]
+# probe id -> (base config, extra steps appended to the base plan)
+PROBES = {"F3-list-1s-typeafter": "F3-list-1s"}
 
 
 def rid(n, slot):
@@ -56,7 +66,22 @@ def type_step(n, slot, sid, text, expect, win_extra=None, mac_extra=None, settle
                 win_settle=400 + settle_extra, mac_settle=400 + settle_extra)
 
 
+def probe_steps(probe):
+    """Steps appended to the base plan of a probe (purely additive: the base steps and their order are unchanged)."""
+    if probe == "F3-list-1s-typeafter":
+        # Settles P2 (F3 List after remove/reinsert: Mac AX focus is the outline, the FocusState event and Windows say row 4):
+        # where does a typed character land? No expectation is set, the model and the focus say where it went.
+        return [step("type_after_reinsert", "type y once more; where it lands shows whether row 4 really holds focus",
+                     win=[{"op": "type", "text": "y"}], mac=[{"op": "type", "text": "y"}], win_settle=800, mac_settle=800)]
+    raise KeyError(probe)
+
+
 def plan_for(config):
+    if config in PROBES:
+        plan = plan_for(PROBES[config])
+        plan["config"] = config
+        plan["steps"] = plan["steps"] + probe_steps(config)
+        return plan
     base = config.split("-")[0]
     n = FIXTURE_NUMBER[base]
     variant = config.split("-", 1)[1] if "-" in config else ""
@@ -184,63 +209,67 @@ def plan_for(config):
             "steps": steps, "number": n}
 
 
-N1 = {"field": "steps.nativeMapping", "allowAnyValue": True,
-      "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"}
+N1_REASON = ("N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); "
+             "logical intent is compared exactly")
 
 
-def adaptations(config):
-    """Reasoned, narrow allowances per config (value mappings Mac -> Windows, never allowAnyValue). Every entry is a diff
-    classified `contract-permitted` in CROSS-ALL.md; recorder artifacts are fixed in the recorders instead, and runtime
-    defects are NOT adapted (they stay as failing diffs)."""
-    n = FIXTURE_NUMBER[config.split("-")[0]]
+def adaptations(config, step_ids):
+    """The comparator allowances of one config, in the scoped TraceKit format. Every entry is bound to this config (`fixture`),
+    its `steps`, one leaf and, for node leaves, one node, with exact Mac -> Windows value pairs.
+
+    Only differences with a standing reason remain (CROSS-ALL.md):
+      N1  steps.nativeMapping, every step of the config (the declared per-platform input routes)
+      P1  F2 stale Mac AX tree after the focused row moved                      status oracle-quirk
+      P2  F3 List after remove/reinsert: Mac AX focus (outline) vs FocusState    status unproven
+      P6  F9 treeReleased after close                                            status contract
+    Removed after the review: P3 (F5 initial focus), P4 (F6 row rebuild), P5 (F8 focus after Invoke) are product differences
+    and stay failing diffs; recorder artifacts are fixed in the recorders, runtime defects are never adapted."""
+    base = config.split("-")[0]
+    n = FIXTURE_NUMBER[base]
     row = lambda slot: f"row/{rid(n, slot)}"
-    out = [N1]
-    if config == "F2":
+    out = [{"id": "N1", "status": "contract", "fixture": config, "steps": list(step_ids), "field": "steps.nativeMapping",
+            "allowAnyValue": True, "reason": N1_REASON}]
+
+    def pair(allowance_id, status, steps, field, mapping, why, node=None):
+        entry = {"id": allowance_id, "status": status, "fixture": config, "steps": steps, "field": field, "mapping": mapping, "reason": why}
+        if node:
+            entry["nodeId"] = node
+        out.append(entry)
+
+    root = config[:-len("-typeafter")] if config in PROBES else config      # a probe carries its base config's allowances
+    if root == "F2":
         why = ("F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX "
                "tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals "
-               "after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: "
-               "the expected value here is the stale Mac one, the allowed Windows value is the correct order.")
-        out += [{"field": "model", "nodeId": row(2), "mapping": {"<absent>": "Row 2"}, "reason": why},
-                {"field": "axNodes.duplicateId", "mapping": {"2 duplicates": "0 duplicates"}, "reason": why},
-                {"field": "axNodes.presence", "nodeId": row(2) + "/field", "mapping": {"<absent>": "role=text-field"}, "reason": why},
-                {"field": "axNodes.presence", "nodeId": row(2) + "/local", "mapping": {"<absent>": "role=static-text"}, "reason": why},
-                {"field": "axNodes.parent", "nodeId": row(3) + "/field", "mapping": {"anon:anon:window#1#1": "anon:anon:window#1#7"}, "reason": why},
-                {"field": "axNodes.parent", "nodeId": row(3) + "/local", "mapping": {"anon:anon:window#1#1": "anon:anon:window#1#7"}, "reason": why}]
-    if config in ("F3", "F3-list-1s", "F3-list-3s"):
-        why = ("F3 List: after the remove/reinsert the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List "
-               "restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder is not "
-               "restored on the recreated cell). Windows restores focus to the field and UIA reports it, matching the FocusState "
-               "oracle. Only this one transition is allowed.")
-        out += [{"field": "focusedNodeId", "mapping": {"<none>": row(4) + "/field"}, "reason": why},
-                {"field": "selection", "mapping": {"<none>": "location=0 length=0"}, "reason": why}]
-    if config == "F5":
-        why = ("macOS (AppKit key-view loop) gives the first text field initial focus in this non-List window; Windows has no "
-               "initial focus. Initial focus is not a CONTRACT F5 assertion (containment, caret clipping, AX bounds). The "
-               "selection value is the Mac field's caret (at the end of 'Row 1 updated 0') while it holds that focus.")
-        out += [{"field": "focusedNodeId", "mapping": {row(1) + "/field": "<none>"}, "reason": why},
-                {"field": "selection", "mapping": {"location=15 length=0": "<none>"}, "reason": why}]
-    if config == "F6":
-        why = ("SwiftUI rebuilds the interrupted animated rows (extra disappear/appear pair per row, fixtures RESULT.md: the B pair "
-               "even varies run to run on the Mac). Row view rebuild during an animated insert is not a CONTRACT F6 assertion "
-               "(interruption recorded, final layout settled, completion order); the fresh runtime keeps the row views.")
-        for slot in (200, 201):
-            out += [{"field": "lifecycle.count", "nodeId": f"appear:{row(slot)}", "mapping": {"2": "1"}, "reason": why},
-                    {"field": "lifecycle.count", "nodeId": f"disappear:{row(slot)}", "mapping": {"1": "0"}, "reason": why}]
-    if config == "F8":
-        why = ("Activation by the accessibility route: AccessKit/UIA Invoke moves keyboard focus to the invoked control (the "
-               "runtime logs ax-button-focus), AXPress on macOS does not. CONTRACT F8 does not specify focus after an activation.")
-        out += [{"field": "focusedNodeId", "mapping": {"<none>": "toolbar/insert"}, "reason": why}]
-    if config == "F9":
+               "after focusing another row; absent when the moved row is not focused). CONTRACT F2 asserts the accessibility order "
+               "is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the "
+               "correct order. Applies only to the step that moves the focused row.")
+        step = ["type_dash_x_then_move"]
+        pair("P1", "oracle-quirk", step, "model", {"<absent>": "Row 2"}, why, row(2))
+        pair("P1", "oracle-quirk", step, "axNodes.duplicateId", {"2 duplicates": "0 duplicates"}, why)
+        pair("P1", "oracle-quirk", step, "axNodes.presence", {"<absent>": "role=text-field"}, why, row(2) + "/field")
+        pair("P1", "oracle-quirk", step, "axNodes.presence", {"<absent>": "role=static-text"}, why, row(2) + "/local")
+        pair("P1", "oracle-quirk", step, "axNodes.parent", {"anon:anon:window#1#1": "anon:anon:window#1#7"}, why, row(3) + "/field")
+        pair("P1", "oracle-quirk", step, "axNodes.parent", {"anon:anon:window#1#1": "anon:anon:window#1#7"}, why, row(3) + "/local")
+    if root in ("F3", "F3-list-1s", "F3-list-3s"):
+        why = ("UNPROVEN. F3 List after the remove/reinsert: the Mac @FocusState event reports row 4 focused (the RESULT.md "
+               "oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder "
+               "is not restored on the recreated cell); Windows restores focus to the field and UIA reports it. Whether the AX "
+               "route is merely a quirk or Mac really has lost keyboard focus is not established: the probe plan "
+               "F3-list-1s-typeafter types one more character and records where it lands. Only this one transition is allowed.")
+        step = ["type_x_remove_reinsert"]
+        pair("P2", "unproven", step, "focusedNodeId", {"<none>": row(4) + "/field"}, why)
+        pair("P2", "unproven", step, "selection", {"<none>": "location=0 length=0"}, why)
+    if root == "F9":
         why = ("CONTRACT F9: tree release after close is a Windows runtime requirement, not a Mac oracle assertion "
                "(AppKit keeps closed NSWindows alive in the fixture host).")
-        out += [{"field": "lifecycle.count", "nodeId": "treeReleased:tree", "mapping": {"0": "1"}, "reason": why}]
+        pair("P6", "contract", ["close_window"], "lifecycle.count", {"0": "1"}, why, "treeReleased:tree")
     return out
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     index = {}
-    for config in CONFIGS:
+    for config in [*CONFIGS, *PROBES]:
         p = plan_for(config)
         d = OUT / config
         d.mkdir(parents=True, exist_ok=True)
@@ -250,7 +279,7 @@ def main():
             (d / "steps-mac.json").write_text(json.dumps({"launchArgs": p["macLaunchArgs"], "steps": [
                 {"id": s["id"], "logicalAction": s["logical"], "ops": s["mac"], "settleMs": s["macSettle"]} for s in p["steps"]]},
                 indent=2, sort_keys=True) + "\n")
-            (d / "adapt-v0.json").write_text(json.dumps(adaptations(config), indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+            (d / "adapt-v0.json").write_text(json.dumps(adaptations(config, [s["id"] for s in p["steps"]]), indent=2, sort_keys=True, ensure_ascii=False) + "\n")
             index[config] = {"fixture": p["fixture"], "winArgs": " ".join(p["winArgs"]), "releaseFlag": p["flags"]["release_flag"]}
             continue
         stim = {"fixtureId": config, "description": f"{config} cross-platform logical script (gen-cross.py)",
@@ -270,10 +299,12 @@ def main():
             {"id": s["id"], "logicalAction": s["logical"], "ops": s["mac"], "settleMs": s["macSettle"]} for s in p["steps"]]}
         for name, obj in (("stimulus.json", stim), ("steps-win.json", win), ("steps-mac.json", mac)):
             (d / name).write_text(json.dumps(obj, indent=2, sort_keys=True) + "\n")
-        (d / "adapt-v0.json").write_text(json.dumps(adaptations(config), indent=2, sort_keys=True, ensure_ascii=False) + "\n")
+        (d / "adapt-v0.json").write_text(json.dumps(adaptations(config, [s["id"] for s in p["steps"]]), indent=2, sort_keys=True, ensure_ascii=False) + "\n")
         index[config] = {"fixture": p["fixture"], "winArgs": " ".join(p["winArgs"]), "releaseFlag": p["flags"]["release_flag"]}
+        if config in PROBES:
+            index[config]["probe"] = PROBES[config]    # not one of the 16 SR0 configs: no recordings, never compared by the runner
     (OUT / "configs.json").write_text(json.dumps(index, indent=2, sort_keys=True) + "\n")
-    print(f"wrote {len(CONFIGS)} configs under {OUT}")
+    print(f"wrote {len(CONFIGS)} configs and {len(PROBES)} probe plans under {OUT}")
 
 
 if __name__ == "__main__":

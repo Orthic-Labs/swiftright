@@ -1,0 +1,62 @@
+{
+  "allowed" : [
+    {
+      "actual" : "UIA tree walk (RawView) from window root",
+      "allowance" : "N1",
+      "expected" : "fixture stdin driver: burst-insert",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "initial"
+    },
+    {
+      "actual" : "UIA tree walk (RawView) from window root",
+      "allowance" : "N1",
+      "expected" : "AX tree walk from application root",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "settled"
+    }
+  ],
+  "diffs" : [
+    {
+      "actual" : "true",
+      "expected" : "false",
+      "fixture" : "F6",
+      "path" : "conditions[reduceMotion.effective]",
+      "step" : "-"
+    },
+    {
+      "actual" : "1",
+      "expected" : "2",
+      "fixture" : "F6",
+      "path" : "lifecycle.count[appear:row\/F0000006-0000-4000-8000-000000000200]",
+      "step" : "initial"
+    },
+    {
+      "actual" : "1",
+      "expected" : "2",
+      "fixture" : "F6",
+      "path" : "lifecycle.count[appear:row\/F0000006-0000-4000-8000-000000000201]",
+      "step" : "initial"
+    },
+    {
+      "actual" : "0",
+      "expected" : "1",
+      "fixture" : "F6",
+      "path" : "lifecycle.count[disappear:row\/F0000006-0000-4000-8000-000000000200]",
+      "step" : "initial"
+    },
+    {
+      "actual" : "0",
+      "expected" : "1",
+      "fixture" : "F6",
+      "path" : "lifecycle.count[disappear:row\/F0000006-0000-4000-8000-000000000201]",
+      "step" : "initial"
+    }
+  ],
+  "fixture" : "F6",
+  "notes" : [
+    "platform differs (not compared): accepted PlatformTuple(os: \"macos\", osBuild: \"27.0.1 (26A434)\", arch: \"arm64\", toolchain: \"Swift 6.4\") candidate PlatformTuple(os: \"windows\", osBuild: \"10.0.26300\", arch: \"x64\", toolchain: \"Swift 6.4.0 (swift-6.4-RELEASE)\")"
+  ],
+  "passed" : false
+}

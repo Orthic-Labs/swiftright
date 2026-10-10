@@ -114,9 +114,26 @@ for s in raw {
     let n = mode == "mac" ? Cross.normalizeMac(s.tree, opt) : Cross.normalizeWin(s.tree, opt)
     applied.formUnion(n.applied)
     // Focus: Mac reports the focused element's identifier; Windows marks the focused node in the tree.
+    // The focus and the selection are recorded as the platform reported them, at launch like in every other step.
+    // (R1 used to drop the selection whenever the focused element had no canonical node, which hid the launch focus of
+    // F3 VStack/LazyVStack and F5: Mac's first text field holds focus and a whole-text selection at launch.)
     var focused: String?
     if mode == "mac" {
-        if let f = s.focusedIdentifier, n.nodes.contains(where: { $0.id == f }) { focused = f }
+        if let f = s.focusedIdentifier, n.nodes.contains(where: { $0.id == f }) {
+            focused = f
+        } else if s.focusRole == "AXTextField" {
+            // The AppKit field editor of a focused text field carries no AXIdentifier. The AX tree still proves a text field
+            // holds focus (and its selection); the in-process FocusState names which one. If that does not name a text
+            // field of this tree the element stays visible as `unmapped:AXTextField` instead of vanishing.
+            if s.focusedIdentifier == nil, let named = (mapping.focusAtEnd[s.id] ?? nil),
+               n.nodes.contains(where: { $0.id == named + "/field" && $0.role == "text-field" }) {
+                focused = named + "/field"
+                applied.insert("R1-field-editor")
+            } else {
+                focused = "unmapped:AXTextField"
+                applied.insert("R1-unmapped")
+            }
+        }
     } else {
         focused = n.focusedId
     }
@@ -132,12 +149,13 @@ for s in raw {
     let m = mapping.perStep[s.id] ?? MappedStep()
     steps.append(TStep(id: s.id, logicalAction: logicalById[s.id]!, nativeMapping: s.native, timestamp: "mono_ns \(s.startNs)"))
     observations.append(TObservation(stepId: s.id, model: s.closed ? [:] : model, focusedNodeId: s.closed ? nil : focused,
-                                     selection: (s.closed || focused == nil) ? nil : s.selection,   // the selection belongs to the focused canonical node
+                                     selection: s.closed ? nil : s.selection,
                                      lifecycle: m.lifecycle, effects: ignoreEffectsInSteps.contains(s.id) ? [] : canonicalEffects(m.effects),
                                      axNodes: s.closed ? nil : n.nodes))
 }
 
-let trace = TTrace(fixtureId: fixtureId, sourceHash: sourceHash, platform: platform, steps: steps, observations: observations, declaredOrder: declaredEdges)
+let trace = TTrace(fixtureId: fixtureId, sourceHash: sourceHash, platform: platform, steps: steps, observations: observations, declaredOrder: declaredEdges,
+                  conditions: mapping.conditions.isEmpty ? nil : mapping.conditions)
 try encodePretty(trace).write(to: URL(fileURLWithPath: outPath))
 let notes: [String: Any] = ["mode": mode, "keepLists": keepLists, "adaptationsApplied": applied.sorted(), "excludedEvents": mapping.excluded,
                             "eventCount": events.count, "sourceHash": sourceHash]

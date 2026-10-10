@@ -1,8 +1,92 @@
 # CROSS-ALL: Mac SwiftUI vs Windows fresh runtime, schema-v0 cross-compare of all 16 configs (T1)
 
+**Current verdict: see "After review (10 Oct 2026)" below. 6 of 16 pass on today's Windows recordings; the first-pass "13 of 16" is superseded.**
+
 10 Oct 2026, repo HEAD cfca6d6 plus the uncommitted T1 changes. Mac: macOS 27.0.1 (26A434) arm64, Swift 6.4. Windows: Dell, tuple 08 FreshOnBridge `7673A2D5139172D8...` with renderer `E280F4A9FD9ECA0A...` (all 48 Windows runs record both hashes in `cross-evidence/<config>/win-run-w*.log`), UIARecorder `D255A25579C37751...` built on the Dell from `uia-recorder/`.
 
-## Result
+## After review (10 Oct 2026): the honest verdict on today's (pre-fix) Windows recordings
+
+An independent review found the first-pass allowances too broad and some masking real Windows differences. This section is the
+current verdict; everything below it ("Result" onward) is the first pass, kept as history, and is superseded where it disagrees.
+No Mac GUI run and no Dell run were made: the 96 recordings are the same raw files, re-assembled and re-compared offline
+(`scripts/reassemble.sh`; raw recorder output and in-process events are now committed under `cross-evidence/<config>/raw/` and
+`mac-ev-*`/`win-events-*`; `ReassemblyTests` proves every committed trace is the assembler output of them).
+The Windows recordings predate the product fixes (initial focus at launch, Invoke not moving focus, animations independent of the
+Windows animation setting, `onChange` after List reinsertion), so the expected result is failures; a rerun after a new Windows
+recording replaces this table.
+
+### Result
+
+Comparator and assembler from the working tree; event log, per-config reports and counts in `cross-evidence/runner-compare-after-review/`.
+
+| Config | Diffs | Allowed (besides N1) | Verdict | What fails |
+|---|---|---|---|---|
+| F1 | 0 | 0 | PASS (promoted Mac baseline) | |
+| F2 | 0 | P1 x6 | PASS | |
+| F3 (List, 0 s) | **2** | P2 x2 (UNPROVEN) | FAIL | D1: `localEdit` 2 vs 1, label `local 2` vs `local 1` (recording predates the `onChange` fix 3ffcf95) |
+| F3-list-1s | **2** | P2 x2 (UNPROVEN) | FAIL | D1, as F3 |
+| F3-list-3s | **2** | P2 x2 (UNPROVEN) | FAIL | D1, as F3 |
+| F3-vstack-1s | **3** | 0 | **FAIL (new)** | launch focus: Mac holds focus on row 1 (selection 0+5, `initialFocus` event), Windows none |
+| F3-vstack-3s | **3** | 0 | **FAIL (new)** | launch focus, as above |
+| F3-lazy-1s | **3** | 0 | **FAIL (new)** | launch focus, as above |
+| F3-lazy-3s | **3** | 0 | **FAIL (new)** | launch focus, as above |
+| F4 | 0 | 0 | PASS | |
+| F5 | **7** | 0 | **FAIL (new)** | launch focus (3, as F3-vstack) and focus after launch in both later steps (4; was P3) |
+| F6 | **5** | 0 | **FAIL (new)** | motion condition `reduceMotion.effective` false (Mac) vs true (Dell: Windows animation effects were off, `system_reduce: "on"`, `reduce_source: "os"`); rows 200/201 appear/disappear counts 2/1 vs 1/0 (4; was P4) |
+| F6-reduced | 0 | 0 | PASS | both sides ran reduced (variant flag) |
+| F7 | 0 | 0 | PASS | |
+| F8 | **1** | 0 | **FAIL (new)** | focus after Invoke: Mac none, Windows `toolbar/insert` (was P5) |
+| F9 | 0 | P6 x1 | PASS | |
+
+6 of 16 configs pass (F1, F2, F4, F6-reduced, F7, F9), 10 fail, 31 diffs: 15 launch focus (F3-vstack/lazy x4, F5), 4 F5 focus after launch,
+5 F6 (1 condition, 4 row rebuild), 1 F8, 6 D1 (F3 List x3). Before the review: 13 of 16 passed. The three Windows traces of a config
+still agree in every compared field, and so do the three Mac traces (`sr0o-trace repeat`, 32 sets; the earlier F2 "2 duplicates | 2 duplicates"
+comparator quirk is fixed: duplicate ids are a diff only when the two sides show different counts).
+
+### What changed in the comparison
+
+1. **Allowances are scoped.** Every allowance in `cross/<config>/adapt-v0.json` names `fixture`, `steps[]`, the leaf `field`, for node leaves the `nodeId`, and exact
+   `expected -> actual` value pairs (plus `id`, `status`, `reason`). TraceKit `Adaptation` applies it only when all of them match; an entry missing any scope, with
+   both or neither of `mapping`/`allowAnyValue`, with `allowAnyValue` anywhere but `steps.nativeMapping` (N1), or on `fixtureId`, `schemaVersion`, `sourceHash`,
+   `conditions`, `steps.order` is ignored and the report notes why. The report lists every forgiven diff under `allowed`. N1 names every step of its own config
+   and nothing else. The runner takes allowances from the cross plan only (a promoted `conformance/accepted/<config>/adapt-v0.json` predates the format; F1's is
+   still the old unscoped N1 and is now unused).
+2. **Allowances removed (product differences, not oracle facts):** P3 (F5 initial focus), P4 (F6 row rebuild), P5 (F8 focus after Invoke). They are failing diffs now.
+3. **Recorder normalisations removed:** R1 (the assembler dropped the selection whenever the focused element had no canonical node; that hid the launch focus of
+   F3 VStack/LazyVStack and F5, where the Mac field editor holds a 0+5 selection at launch) and the exclusion of in-process focus events. Now the selection is always
+   kept; an unidentified focused Mac text field is named by the latest in-process FocusState event (`R1-field-editor`) or stays visible as `unmapped:AXTextField`;
+   focus held by a container (outline, window) is still "no element focus" (A9). Launch focus events become the lifecycle fact `initialFocus:<row>` (later focus events are
+   not compared as events: the Mac fixture logs every FocusState change, the Windows runtime only AX-sourced ones, payload `source: "ax"`; AX focus and selection of every step are compared).
+4. **Run conditions are in the trace** (`conditions`: `reduceMotion.variant`, `reduceMotion.effective`; effective = the platform's `effective_reduce`, or `system_reduce || variant_reduce` on the Mac).
+   They are compared exactly and cannot be allowed: Mac and Windows traces recorded under different motion conditions FAIL.
+5. **Kept, with reasons:** P1 (F2 stale Mac AX tree after the focused row moved: CONTRACT F2 asserts the order is updated; scoped to step `type_dash_x_then_move`, 6 pairs, status oracle-quirk),
+   P6 (F9 `treeReleased` after close: a Windows requirement, not a Mac oracle assertion; step `close_window`, status contract), N1.
+6. **UNPROVEN, not settled, listed so nobody reads a PASS as proof** (each says what would settle it):
+
+| ID | What is assumed | Why it is not proven | Probe that settles it |
+|---|---|---|---|
+| P2 (F3 List) | After remove/reinsert the Mac AX focus is the outline only because the AX route lags; Windows restoring focus to row 4 matches the FocusState oracle | the Mac AX focus (outline, no selection) disagrees with Mac's own FocusState event; nothing shows where a key would land | **Plan added: `cross/F3-list-1s-typeafter`** = F3-list-1s plus step `type_after_reinsert` (type `y`, no expectation). Record both platforms: if the character lands in row 4 on both (model, focus, selection agree) P2 is an AX-route quirk; if it lands nowhere on the Mac, Windows restores focus where the Mac does not and P2 is a product difference. Purely additive (base steps unchanged); needs one Mac and one Dell recording, not made here |
+| R5 (F5 start size) | Both platforms resize to 720x560 in `initial`, so the first layout is comparable | hides that the platforms' own default sizes (Mac 480x560, Windows exe 640x480) pick different first layout modes; the intermediate layout passes while a window settles are not compared (only the mode a step ends in) | F5 launched at each platform's own default size with the expected layout mode taken from the contract breakpoint (not from the other platform), and all layout passes recorded to require a monotone settle |
+| R6 (F7 composition) | One key event carrying `na` on the Mac is the same stimulus as the Windows in-process text-store composition | the Mac never composes (no IME), so Windows' marked text, underline and commit-on-focus-change have no Mac counterpart; only the committed outcome is compared | A Mac recording with a real input method (Kana) reading the field's marked range per step through a fixture debug event, against the Windows TSF text store driven by the same input source |
+| R8 (F9 late results) | Ignoring effects in step `close_window` is harmless because the Windows self-test asserts the late-result rejection | Mac exits when its last window closes, so late engine releases never exist on the Mac; the Windows behaviour is never compared | An F9 Mac fixture variant that stays alive after the last window closes, the same late releases sent, then `ignoreEffectsInSteps` dropped |
+
+### Fault controls (65, all rejected)
+
+Each alters one fact of a copy of the Windows trace and must produce a NEW diff (new step, path and actual value) on the named leaf, otherwise the stage fails.
+Per-config: F2 wrong focus; F3 and its six variants wrong focus, missing lifecycle event, wrong model text (21); F4 missing lifecycle; F5 wrong focus, wrong layout effect,
+missing lifecycle; F6 wrong run condition, wrong effect, missing lifecycle; F6-reduced wrong run condition; F7 wrong focus, wrong role; F8 wrong focus (new), wrong role,
+missing lifecycle; F9 missing lifecycle. Every config: altered logical action (proves N1 does not leak into the neighbouring leaf, 16). Every remaining allowance: the covered leaf set
+to a value outside its pair at each step it names (P1 x6, P2 x2 in each of the three List configs, P6 x1 = 13). Unit tests: scoping (an allowance must not apply at another step, node,
+fixture or value pair), invalid allowances, run conditions and duplicate ids (`AllowanceScopeTests.swift`; `swift test` in `comparator/`: 35 tests), allowance injectors and controls against stand-in comparators, the assembler rules,
+and the real comparator over the committed recordings (`qualification/test_run.py`: 163 tests with `SR0A_BUILD_ROOT` set, was 136).
+
+### Reproduce offline (no GUI, no Dell)
+1. `swift build` the comparator (`probes/sr0-o/comparator`) and F1Assemble (`probes/sr0-o/f1-cross`) under a scratch root on the internal disk.
+2. `probes/sr0-o/f1-cross/scripts/reassemble.sh <F1Assemble>` rebuilds the 96 traces and the compare inputs from the raw recordings.
+3. `SR0A_BUILD_ROOT=<scratch> SR0A_OUT_ROOT=<scratch> python3 -I qualification/run.py run --stages compare --win-candidate-dir probes/sr0-o/f1-cross/cross`
+   (the runner builds the comparator from the committed tree, so commit the comparator first).
+
+## First pass (superseded by the review above): Result
 
 | Config | Mac runs (3) | Win runs (3) | Raw diffs (only N1 allowed) | After the reasoned allowances | Verdict |
 |---|---|---|---|---|---|
@@ -33,21 +117,21 @@ Raw diffs first pass (before any recorder fix, after removing one assembler bug 
 
 | # | Artifact | Configs (first pass) | Fix |
 |---|---|---|---|
-| R1 | Mac reported the selection of a focused element without an `AXIdentifier` (AppKit field editor / first responder), Windows reports none | F3-vstack, F3-lazy, F5 | `F1Assemble`: selection belongs to the focused canonical node |
+| R1 | Mac reported the selection of a focused element without an `AXIdentifier` (AppKit field editor / first responder), Windows reports none | F3-vstack, F3-lazy, F5 | **WITHDRAWN by the review**: `F1Assemble` dropped the selection with the focus, which hid the Mac's launch focus (a real difference). The selection is kept; the field editor is named by FocusState or shown as `unmapped:AXTextField` |
 | R2 | Effect order across nodes: sibling `.task` start order over 10 rows and the engine's release order are scheduler order; the comparator compares `effects` as an ordered list | F4, F3-vstack, F3-lazy, F5 | `F1Assemble` canonicalizes like digest v2: between two driver operations lines are grouped by node, per-node order kept |
 | R3 | `AXOpaqueProviderGroup`, the AX wrapper SwiftUI adds around LazyVStack content, was not a named stripped container (123 diffs) | F3-lazy x2 | added to the stripped Mac containers (adaptation A10); CONTRACT §5 list should name it |
 | R4 | `AXZoomButton` window chrome (resizable window) was not in the dropped chrome subroles | F5 | added to A4 |
-| R5 | Initial window size differs (Mac 480x560, Windows exe 640x480), so the first layout mode differed; the mode also flickers while a window settles | F5 | both platforms resize to 720x560 in `initial`; only the mode a step ends in is compared |
-| R6 | Mac typed the IME stimulus as two commits (`n`, `a`), the Windows runtime commits `na` once (`onChange` count 2 vs 1) | F7 | new op `typeChunk`: one key event carrying `na` (single commit). Composition mid-state is not comparable on Mac (CONTRACT §5) |
+| R5 | Initial window size differs (Mac 480x560, Windows exe 640x480), so the first layout mode differed; the mode also flickers while a window settles | F5 | both platforms resize to 720x560 in `initial`; only the mode a step ends in is compared. **UNPROVEN** (see After review) |
+| R6 | Mac typed the IME stimulus as two commits (`n`, `a`), the Windows runtime commits `na` once (`onChange` count 2 vs 1) | F7 | new op `typeChunk`: one key event carrying `na` (single commit). Composition mid-state is not comparable on Mac (CONTRACT §5). **UNPROVEN** (see After review) |
 | R7 | Mac `AXValue` writes are ignored by SwiftUI `TextField` (probed: model unchanged with AXValue, AXValue+AXConfirm, or focus first), so the "set value" step never reached the model | F8 | new op `replaceText`: AXSelectedTextRange=all, then AXSelectedText (reaches the model, `local-edit` fires) |
-| R8 | Interactive Mac fixture exits when its last window closes, so late engine releases (Windows script releases after close) cannot exist | F9 | stimulus `ignoreEffectsInSteps: ["close_window"]`; Windows self-test asserts the late-result rejection itself |
+| R8 | Interactive Mac fixture exits when its last window closes, so late engine releases (Windows script releases after close) cannot exist | F9 | stimulus `ignoreEffectsInSteps: ["close_window"]`; Windows self-test asserts the late-result rejection itself. **UNPROVEN** (see After review) |
 | R9 | AppKit restores the previous window frame from the app defaults | F5 | `F1MacRecord` clears `NSWindow Frame *` before launch |
 | R10 | The Mac AX tree was read once; a re-walk until two consecutive trees agree (bounded 6 s) is used, duplicates stay visible if they persist | all | `F1MacRecord` settle loop |
 | R11 | Assembler mapped any Windows `start` lifecycle event (the self-test's own) to an animation start | all Windows | mapping now requires node `animation` |
 
 Windows side: typing is window-targeted `WM_CHAR` posted to the fixture HWND (`SR0O_KEY_DELIVERY=targeted`), resize is `MoveWindow` and close is `WM_CLOSE` on that HWND, activation is UIA Invoke, value is ValuePattern. No global input was sent.
 
-### Contract-permitted (22 diffs, each a narrow Mac-to-Windows value mapping with a written reason in `cross/<config>/adapt-v0.json`)
+### Contract-permitted in the first pass (22 diffs). Withdrawn by the review: P3, P4, P5. Kept: P1, P6. P2 is UNPROVEN. Allowances now carry fixture, steps and node (see above)
 
 | ID | Config | Diffs | Mac | Windows | Reason |
 |---|---|---|---|---|---|
@@ -82,7 +166,7 @@ Evidence: `cross-evidence/F3*/mac-ev-n{1,2,3}.jsonl` (`local-edit` for row 4: 2 
 | F8 | missing lifecycle event | drop `appear` row 10 | `lifecycle.count[appear:row/...010]` |
 | F9 | missing lifecycle event | drop `taskStart` row 10 | `lifecycle.count[taskStart:row/...010]` |
 
-Unit tests (`qualification/test_run.py`, 136 tests, all pass, 1 skipped: needs `SR0A_BUILD_ROOT`): fault injection alters a copy only, a comparator that passes the altered trace fails the control, every config has matching stimulus and step files, adaptations are reasoned value mappings (no `allowAnyValue` beyond N1), compare input resolution, per-config win-replay recording, and the F6 mirror below.
+Unit tests (first pass: `qualification/test_run.py`, 136 tests, all pass, 1 skipped: needs `SR0A_BUILD_ROOT`): fault injection alters a copy only, a comparator that passes the altered trace fails the control, every config has matching stimulus and step files, adaptations are reasoned value mappings (no `allowAnyValue` beyond N1), compare input resolution, per-config win-replay recording, and the F6 mirror below.
 
 ## F6 unordered completions (653b253)
 `qualification/run.py` `canonical_body` now mirrors `normalize-hash.py f6_unordered_completions`. Tests: B-first completion passes, duplicate or missing or relocated completion fails, other fixtures untouched. Both candidate directories under `conformance/candidates/F6/` and `r6/f6/run{1,13,23,24,25}.jsonl` canonicalize to the accepted F6 digest, so mac-oracle F6 no longer reports 2 variants. The cross-compare itself never needs the order: lifecycle is compared as a multiset and all 6 cross runs completed `A,B`.
@@ -92,9 +176,9 @@ Unit tests (`qualification/test_run.py`, 136 tests, all pass, 1 skipped: needs `
 - Mac baselines for F2-F9 are the first Mac recording (`cross/<config>/mac-trace-v0.json`, evidence of three equal runs in `cross-evidence/`). They are **not promoted**: `conformance/accepted/<config>/trace-v0.json` exists only for F1, and only `promote --approved-by` may write it. The runner prefers an accepted file and labels the fallback "unpromoted Mac cross recording". `sourceHash` is the hash of `stimulus.json`, so a changed stimulus invalidates its baselines.
 - F7: Windows composition is driven in-process through the text-store API, Mac commits `na` with one key event; only the committed outcome, identity, focus and AX tree are compared, not the open marked-text state.
 - F5 containment, paint, hit-test and AX bounds are not in schema v0 (frames excluded). F6 intermediate frames are not compared. F9 post-close late-result rejection is not compared (R8).
-- Initial focus, the AX tree under List after moves, and focus after activation differ by platform (P1-P5); they are allowed only as the exact value pairs listed, never as `allowAnyValue`.
+- (First pass, superseded) Initial focus, the AX tree under List after moves and focus after activation were allowed as exact value pairs (P1-P5). The review withdrew P3, P4, P5 and the R1 launch-focus rule; P1 and P6 stay scoped to one step; P2, R5, R6, R8 are UNPROVEN (see After review).
 - The runner's `win-replay` per-config recording path (`win_cross_trace`) is unit-tested with a fake transport only. The 96 live recordings used `scripts/win-cross.sh`, which calls the same `schedule-cross.ps1`; the `win-replay` stage assembles with `F1Assemble` built from the committed tree, so it needs the T1 changes committed first.
-- Comparator notes (not edited): `axNodes.duplicateId` reports a diff whenever either side has duplicate ids even when the two counts are equal; `declaredOrder` is read from the accepted side only.
+- Comparator notes: `axNodes.duplicateId` used to report a diff whenever either side had duplicate ids even when the two counts were equal (fixed in the review: only unequal counts differ); `declaredOrder` is read from the accepted side only.
 
 ## Dell protocol
 Lock `D:\Claude\desktop.lock` taken as `T1 <timestamp>` and written `free` after each batch by `scripts/win-cross.sh` (waits in a background loop while another owner holds it; batches 15:30-15:35, 18:48-18:49, 18:49-18:57, 18:59-19:00 IST). Window-targeted input only. Nothing was deleted on the Dell: the temp archives of the file sync were left in `%TEMP%` (a copy of `scripts/sync-to-win.sh` without its cleanup was used), the first F5 attempt files were overwritten by the rerun with the same tags, and each run's one-shot scheduled task unregisters itself as in the existing `schedule-f1.ps1` pattern. No window titles are in the committed logs (the harness never reads them).

@@ -25,8 +25,12 @@ Rules (docs/architecture.md AD7 and section 11)
     pinned stage emits a skip, so the exit is 1).
   * win-replay also records one Windows schema-v0 trace per config (UIARecorder + F1Assemble) when compare is in the run;
     compare checks all 16 configs against the Mac schema-v0 baseline (conformance/accepted/<config>/trace-v0.json, else the
-    unpromoted Mac cross recording probes/sr0-o/f1-cross/cross/<config>/mac-trace-v0.json) with the reasoned adapt-v0.json, then
-    rejects the injected-fault traces (wrong focus, missing lifecycle event, wrong AX role). Historical input: --win-candidate-dir.
+    unpromoted Mac cross recording probes/sr0-o/f1-cross/cross/<config>/mac-trace-v0.json) with the scoped allowances of
+    probes/sr0-o/f1-cross/cross/<config>/adapt-v0.json (fixture, steps, leaf, node, exact value pair), then rejects the
+    injected-fault traces: per-config facts (wrong focus, missing lifecycle event, wrong AX role, wrong model, effect or run
+    condition), the logical action of every config, and one fault per allowance with a value outside its allowed pair.
+    The trace also carries run conditions (reduce motion): Mac and Windows traces recorded under different ones FAIL.
+    Historical input: --win-candidate-dir.
     The caller holds the Dell desktop lock (D:\\Claude\\desktop.lock) for the recording jobs.
   * smoke runs BridgeSmoke twice: normal mode and timeout mode (`-SkipShutdown`).
   * package accepts several run directories per platform (profiles) and evaluates the union of their checks.
@@ -667,6 +671,23 @@ def build_comparator():
     return swift_product(package, BUILD_ROOT / "comparator" / tree_sha[:12], "sr0o-trace")
 
 
+def allowed_summary(report_text):
+    """'P1 x6, P2 x2 (UNPROVEN)' from a comparator report: the non-N1 allowances that forgave a diff, so a verdict never hides them."""
+    try:
+        allowed = json.loads(report_text).get("allowed", [])
+    except (json.JSONDecodeError, AttributeError):
+        return ""
+    counts = {}
+    unproven = set()
+    for a in allowed:
+        if a.get("allowance") == "N1":
+            continue
+        counts[a["allowance"]] = counts.get(a["allowance"], 0) + 1
+        if a.get("status") == "unproven":
+            unproven.add(a["allowance"])
+    return ", ".join(f"{k} x{v}" + (" (UNPROVEN)" if k in unproven else "") for k, v in sorted(counts.items()))
+
+
 def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir, comparator=None, baseline="accepted Mac baseline"):
     stage = "compare"
     log.emit(stage, "start", fixture, reason=f"sr0o-trace compare {baseline} {accepted_v0.name} vs {candidate_v0.name}")
@@ -685,15 +706,17 @@ def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir, compa
     result = subprocess.run([str(comparator), "compare", str(accepted_v0), str(candidate_v0), "--adapt", str(adapt)],
                             capture_output=True, text=True)
     report.write_text(result.stdout, encoding="utf-8")
+    allowed = allowed_summary(result.stdout)
+    allowed = f"; allowances applied: {allowed}" if allowed else ""
     if result.returncode == 0:
-        log.emit(stage, "pass", fixture, ids, f"0 diffs against the {baseline}; report {report.name}")
+        log.emit(stage, "pass", fixture, ids, f"0 diffs against the {baseline}{allowed}; report {report.name}")
         return True
     if result.returncode == 1:
         try:
             diffs = len(json.loads(result.stdout).get("diffs", []))
         except (json.JSONDecodeError, AttributeError):
             diffs = "?"
-        log.emit(stage, "fail", fixture, ids, f"comparator reported {diffs} diffs against the {baseline}; report {report.name}")
+        log.emit(stage, "fail", fixture, ids, f"comparator reported {diffs} diffs against the {baseline}{allowed}; report {report.name}")
         return False
     log.emit(stage, "fail", fixture, ids, f"comparator error rc={result.returncode}: {result.stderr.strip()[:200]}")
     return False
@@ -702,11 +725,22 @@ def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir, compa
 # ---- injected semantic faults: a deliberately altered Windows trace must FAIL the comparison. Each control alters one
 # fact of the candidate (never the accepted baseline) and requires the comparator to report a NEW diff on the named leaf.
 # A comparator that passes the altered trace is vacuous, which fails the control (and the stage).
+# Two families: (1) per-config fact faults (wrong focus, missing lifecycle, ...), (2) one fault for every allowance, on the
+# leaf the allowance covers, with a value OUTSIDE the allowed pair: an allowance must never be wider than its pair.
 
-FAULT_KINDS = {"wrong-focus": "focusedNodeId", "missing-lifecycle": "lifecycle.count", "wrong-role": "axNodes.role"}
+FAULT_KINDS = {"wrong-focus": "focusedNodeId", "missing-lifecycle": "lifecycle.count", "wrong-role": "axNodes.role",
+               "wrong-model": "model", "wrong-effect": "effects", "wrong-condition": "conditions",
+               "wrong-logical-action": "steps.logicalAction"}
 # config -> fault kinds applied after that config's real comparison (a few fixtures, different fact classes)
-FAULT_CONTROLS = {"F2": ("wrong-focus",), "F4": ("missing-lifecycle",), "F7": ("wrong-focus", "wrong-role"),
-                  "F8": ("wrong-role", "missing-lifecycle"), "F9": ("missing-lifecycle",)}
+_F3_FAULTS = ("wrong-focus", "missing-lifecycle", "wrong-model")
+FAULT_CONTROLS = {"F2": ("wrong-focus",), "F3": _F3_FAULTS, **{f"F3-{v}": _F3_FAULTS for v in F3_VARIANTS},
+                  "F4": ("missing-lifecycle",), "F5": ("wrong-focus", "wrong-effect", "missing-lifecycle"),
+                  "F6": ("wrong-condition", "wrong-effect", "missing-lifecycle"), "F6-reduced": ("wrong-condition",),
+                  "F7": ("wrong-focus", "wrong-role"), "F8": ("wrong-role", "missing-lifecycle", "wrong-focus"),
+                  "F9": ("missing-lifecycle",)}
+# Applied to every config: N1 allows ANY native-input mapping (steps.nativeMapping), so the neighbouring leaf, the logical
+# action, is the fault that proves the tolerance does not leak.
+EVERY_CONFIG_FAULTS = ("wrong-logical-action",)
 
 
 def inject_fault(trace, kind):
@@ -722,6 +756,12 @@ def inject_fault(trace, kind):
                 was = o["focusedNodeId"]
                 o["focusedNodeId"] = other or "row/00000000-0000-4000-8000-000000000000/field"
                 return t, f"step {o['stepId']}: focus {was} -> {o['focusedNodeId']}"
+        # nothing holds focus anywhere (for example F5 before the launch-focus fix): focus a text field that should not have it
+        for o in reversed(obs):
+            field = next((n["id"] for n in (o.get("axNodes") or []) if n["id"].endswith("/field") and n.get("role") == "text-field"), None)
+            if field:
+                o["focusedNodeId"] = field
+                return t, f"step {o['stepId']}: focus <none> -> {field}"
         return None, "no observation has a focused node"
     if kind == "missing-lifecycle":
         for o in obs:
@@ -736,7 +776,97 @@ def inject_fault(trace, kind):
                     n["role"] = "button"
                     return t, f"step {o['stepId']}: node {n['id']} role text-field -> button"
         return None, "no text-field node"
+    if kind == "wrong-model":
+        for o in reversed(obs):
+            if o.get("model"):
+                key = sorted(o["model"])[0]
+                was = o["model"][key]
+                o["model"][key] = was + " ~fault"
+                return t, f"step {o['stepId']}: model {key} {was!r} -> {o['model'][key]!r}"
+        return None, "no observation has a model"
+    if kind == "wrong-effect":
+        for o in reversed(obs):
+            if o.get("effects"):
+                was = o["effects"][-1]
+                o["effects"][-1] = was + " ~fault"
+                return t, f"step {o['stepId']}: effect {was!r} altered"
+        return None, "no observation has effects"
+    if kind == "wrong-condition":
+        conditions = t.get("conditions") or {}
+        if not conditions:
+            return None, "the trace records no run conditions"
+        key = sorted(conditions)[0]
+        was = conditions[key]
+        conditions[key] = "~fault"      # neither side's value, so it differs from the baseline whether or not the real run already differs
+        return t, f"condition {key} {was} -> {conditions[key]}"
+    if kind == "wrong-logical-action":
+        if not t.get("steps"):
+            return None, "the trace has no steps"
+        step = t["steps"][0]
+        step["logicalAction"] = step["logicalAction"] + " ~fault"
+        return t, f"step {step['id']}: logical action altered"
     raise ValueError(f"unknown fault kind {kind!r}")
+
+
+def inject_allowance_fault(trace, allowance, step):
+    """Alters the leaf an allowance covers, at the step it names, to a value outside its allowed pair.
+    Returns (altered copy, description, expected diff path) or (None, reason, None)."""
+    import copy
+    t = copy.deepcopy(trace)
+    o = next((x for x in t.get("observations", []) if x.get("stepId") == step), None)
+    field, node = allowance["field"], allowance.get("nodeId")
+    path = f"{field}[{node}]" if node else field
+    if o is None:
+        return None, f"step {step} is not in the trace", None
+    allowed = set((allowance.get("mapping") or {}).values())
+    nodes = o.get("axNodes") or []
+    target = next((n for n in nodes if n["id"] == node), None)
+    if field == "model":
+        was = (o.get("model") or {}).get(node, "")
+        o.setdefault("model", {})[node] = was + " ~fault"
+        return t, f"step {step}: model {node} -> {was + ' ~fault'!r}", path
+    if field == "focusedNodeId":
+        o["focusedNodeId"] = "row/00000000-0000-4000-8000-0000000000FF/field"
+        return t, f"step {step}: focus -> a row the allowance never names", path
+    if field == "selection":
+        o["selection"] = {"location": 9999, "length": 0}
+        return t, f"step {step}: selection -> location=9999", path
+    if field == "effects":
+        o["effects"] = list(o.get("effects") or []) + ["fault-effect ~fault"]
+        return t, f"step {step}: an extra effect line", path
+    if field == "lifecycle.count":
+        kind, _, lnode = node.partition(":")
+        events = o.setdefault("lifecycle", [])
+        have = sum(1 for e in events if e["kind"] == kind and e["node"] == lnode)
+        want = max([int(v) for v in allowed if v.isdigit()] + [have]) + 1
+        events.extend({"kind": kind, "node": lnode} for _ in range(want - have))
+        return t, f"step {step}: lifecycle {node} count {have} -> {want}", path
+    if field == "axNodes.duplicateId":
+        if not nodes:
+            return None, f"step {step} captured no AX tree", None
+        have = len(nodes) - len({n["id"] for n in nodes})
+        for extra in range(1, 6):
+            if f"{have + extra} duplicates" not in allowed:
+                nodes.extend(copy.deepcopy(nodes[0]) for _ in range(extra))
+                return t, f"step {step}: {extra} duplicated AX node(s)", path
+        return None, "no duplicate count outside the allowed pair", None
+    if field == "axNodes.presence":
+        if target is not None:
+            target["role"] = "fault-role"
+        else:
+            nodes.append({"id": node, "role": "fault-role", "actions": [], "order": 9999})
+            o["axNodes"] = nodes
+        return t, f"step {step}: node {node} present with role fault-role", path
+    leaf_values = {"axNodes.role": ("role", "fault-role"), "axNodes.label": ("label", "~fault"), "axNodes.value": ("value", "~fault"),
+                   "axNodes.actions": ("actions", ["fault-action"]), "axNodes.parent": ("parent", "anon:fault"),
+                   "axNodes.order": ("order", 9999)}
+    if field in leaf_values:
+        if target is None:
+            return None, f"step {step}: node {node} is not in the trace", None
+        key, value = leaf_values[field]
+        target[key] = value
+        return t, f"step {step}: node {node} {key} -> {value!r}", path
+    return None, f"no injector for leaf {field}", None
 
 
 def diff_paths(report_text):
@@ -746,12 +876,25 @@ def diff_paths(report_text):
         return set()
 
 
+def diff_triples(report_text):
+    """(step, path, actual) per diff: a fault must produce a diff whose ACTUAL value is new, so a leaf that already differs in
+    the real comparison (a known failing diff) cannot make a fault look rejected."""
+    try:
+        return {(d["step"], d["path"], d["actual"]) for d in json.loads(report_text).get("diffs", [])}
+    except (json.JSONDecodeError, AttributeError, KeyError):
+        return set()
+
+
+def _compare_raw(comparator, accepted_v0, candidate_v0, adapt):
+    return subprocess.run([str(comparator), "compare", str(accepted_v0), str(candidate_v0), "--adapt", str(adapt)],
+                          capture_output=True, text=True)
+
+
 def fault_control(log, config, kind, accepted_v0, candidate_v0, adapt, out_dir, comparator):
     """One negative control. Emits a compare pass when the altered trace is rejected on the expected leaf."""
     stage = "compare"
     leaf = FAULT_KINDS[kind]
-    base = subprocess.run([str(comparator), "compare", str(accepted_v0), str(candidate_v0), "--adapt", str(adapt)],
-                          capture_output=True, text=True)
+    base = _compare_raw(comparator, accepted_v0, candidate_v0, adapt)
     altered, what = inject_fault(json.loads(Path(candidate_v0).read_text(encoding="utf-8")), kind)
     if altered is None:
         log.emit(stage, "fail", config, reason=f"fault control {kind} not applicable: {what}")
@@ -760,16 +903,65 @@ def fault_control(log, config, kind, accepted_v0, candidate_v0, adapt, out_dir, 
     fault_dir.mkdir(parents=True, exist_ok=True)
     path = fault_dir / f"{config}-{kind}.json"
     path.write_text(json.dumps(altered, indent=2, sort_keys=True), encoding="utf-8")
-    result = subprocess.run([str(comparator), "compare", str(accepted_v0), str(path), "--adapt", str(adapt)],
-                            capture_output=True, text=True)
+    result = _compare_raw(comparator, accepted_v0, path, adapt)
     (fault_dir / f"{config}-{kind}-report.json").write_text(result.stdout, encoding="utf-8")
     ids = {"fault_candidate": sha_ref(sha256_file(path))}
-    new = sorted(p for _, p in (diff_paths(result.stdout) - diff_paths(base.stdout)) if p == leaf or p.startswith(leaf + "["))
+    new = sorted(p for _, p, _ in (diff_triples(result.stdout) - diff_triples(base.stdout)) if p == leaf or p.startswith(leaf + "["))
     if result.returncode == 1 and new:
         log.emit(stage, "pass", config, ids, f"negative control {kind} rejected ({what}); new diff {new[0]}")
         return True
     log.emit(stage, "fail", config, ids, f"negative control {kind} NOT rejected on {leaf} (rc={result.returncode}, {what})")
     return False
+
+
+def load_allowances(adapt):
+    try:
+        data = json.loads(Path(adapt).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    return [a for a in data if isinstance(a, dict)] if isinstance(data, list) else []
+
+
+def allowance_fault_control(log, config, allowance, step, accepted_v0, candidate_v0, adapt, out_dir, comparator):
+    """Negative control for one allowance at one named step: the covered leaf takes a value outside the allowed pair, and the
+    comparator must report that exact (step, path) with an actual value the allowance does not permit."""
+    stage = "compare"
+    name = allowance.get("id") or allowance["field"]
+    base = _compare_raw(comparator, accepted_v0, candidate_v0, adapt)
+    altered, what, path = inject_allowance_fault(json.loads(Path(candidate_v0).read_text(encoding="utf-8")), allowance, step)
+    if altered is None:
+        log.emit(stage, "fail", config, reason=f"allowance fault {name} {allowance['field']} not applicable: {what}")
+        return False
+    fault_dir = out_dir / "compare-faults"
+    fault_dir.mkdir(parents=True, exist_ok=True)
+    where = hashlib.sha256(f"{step}|{allowance.get('nodeId')}".encode("utf-8")).hexdigest()[:8]
+    stem = f"{config}-allow-{name}-{allowance['field']}-{where}"
+    candidate = fault_dir / f"{stem}.json"
+    candidate.write_text(json.dumps(altered, indent=2, sort_keys=True), encoding="utf-8")
+    result = _compare_raw(comparator, accepted_v0, candidate, adapt)
+    (fault_dir / f"{stem}-report.json").write_text(result.stdout, encoding="utf-8")
+    ids = {"fault_candidate": sha_ref(sha256_file(candidate))}
+    permitted = set((allowance.get("mapping") or {}).values())
+    new = [(s, p, a) for s, p, a in diff_triples(result.stdout) - diff_triples(base.stdout)
+           if s == step and p == path and a not in permitted]
+    if result.returncode == 1 and new:
+        log.emit(stage, "pass", config, ids, f"negative control allowance {name} rejected ({what}); new diff {step} {path}")
+        return True
+    log.emit(stage, "fail", config, ids,
+             f"negative control allowance {name} NOT rejected on {path} at {step} (rc={result.returncode}, {what})")
+    return False
+
+
+def allowance_fault_controls(log, config, accepted_v0, candidate_v0, adapt, out_dir, comparator):
+    """Every remaining mapping allowance of the config gets one control per named step. allowAnyValue allowances (N1) have no
+    value outside them; their neighbour leaf is covered by EVERY_CONFIG_FAULTS."""
+    ok = True
+    for allowance in load_allowances(adapt):
+        if not allowance.get("mapping"):
+            continue
+        for step in allowance.get("steps") or []:
+            ok = allowance_fault_control(log, config, allowance, step, accepted_v0, candidate_v0, adapt, out_dir, comparator) and ok
+    return ok
 
 
 # ---------------------------------------------------------------- smoke and win-replay
@@ -883,9 +1075,12 @@ def cross_baseline(config):
     otherwise the Mac cross recording kept next to the recorder plans is used and the origin says it is not promoted
     (only `promote --approved-by` writes conformance/accepted)."""
     accepted = ACCEPTED_ROOT / config / "trace-v0.json"
+    # The allowances always come from the cross plan (scoped to fixture/steps/leaf/node, generated by gen-cross.py): a
+    # promoted adapt-v0.json predates the scoped format, and an allowance is a property of the comparison, not of a baseline.
+    adapt = CROSS_DIR / config / "adapt-v0.json"
     if accepted.exists():
-        return accepted, ACCEPTED_ROOT / config / "adapt-v0.json", "accepted Mac baseline"
-    return CROSS_DIR / config / "mac-trace-v0.json", CROSS_DIR / config / "adapt-v0.json", "unpromoted Mac cross recording"
+        return accepted, adapt, "accepted Mac baseline"
+    return CROSS_DIR / config / "mac-trace-v0.json", adapt, "unpromoted Mac cross recording"
 
 
 def cross_trace_path(out_dir, config):
@@ -1524,8 +1719,9 @@ def run_compare(log, args, stages, out_dir, dry, comparator=None):
             accepted, adapt, baseline = cross_baseline(config)
             compare_stage(log, config, accepted, Path(candidate), adapt, out_dir, comparator=comparator, baseline=baseline)
             if accepted.exists() and adapt.exists():
-                for kind in FAULT_CONTROLS.get(config, ()):
+                for kind in (*FAULT_CONTROLS.get(config, ()), *EVERY_CONFIG_FAULTS):
                     fault_control(log, config, kind, accepted, Path(candidate), adapt, out_dir, comparator)
+                allowance_fault_controls(log, config, accepted, Path(candidate), adapt, out_dir, comparator)
 
 
 def cmd_single(args, command):

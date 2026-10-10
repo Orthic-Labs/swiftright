@@ -40,6 +40,31 @@ struct MappedStep {
 struct EventMapping {
     var perStep: [String: MappedStep] = [:]
     var excluded: [String: Int] = [:]    // "kind/phase" -> count, so nothing is dropped silently
+    /// Run conditions read from the events (for example the motion policy). Compared by the comparator and never adaptable.
+    var conditions: [String: String] = [:]
+    /// Canonical node of the latest in-process focus event at or before the end of each step (nil = none / cleared).
+    /// Only used to NAME the Mac's unidentified focused text field (the AppKit field editor has no AXIdentifier).
+    var focusAtEnd: [String: String?] = [:]
+}
+
+/// Reduce-motion facts of a policy event. Mac logs `system_reduce` as a Bool; Windows logs `system_reduce` as
+/// "on" | "off" | "unavailable" and the runtime's own `effective_reduce` (OS setting or override or variant).
+/// `variant_reduce` is the fixture's reduced-motion flag on both. Effective = the platform's own value when it logs one,
+/// else system || variant; "unknown" when the system value is unavailable and the platform logs no effective value.
+func motionConditions(_ payload: [String: Any]) -> [String: String] {
+    let variant = payload["variant_reduce"] as? Bool
+    var effective: Bool?
+    if let e = payload["effective_reduce"] as? Bool {
+        effective = e
+    } else {
+        var system: Bool?
+        if let b = payload["system_reduce"] as? Bool { system = b }
+        else if let t = payload["system_reduce"] as? String { system = t == "on" ? true : (t == "off" ? false : nil) }
+        if let system { effective = system || (variant ?? false) }
+        else if variant == true { effective = true }
+    }
+    func show(_ b: Bool?) -> String { b.map { $0 ? "true" : "false" } ?? "unknown" }
+    return ["reduceMotion.variant": show(variant), "reduceMotion.effective": show(effective)]
 }
 
 /// Mapping rules (recorded as adaptations E1..E4 in RESULT.md).
@@ -53,10 +78,26 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
         return chosen
     }
     var endMode: [String: String] = [:]
+    var currentFocus: String?
     for e in events {
         guard let sid = step(for: e.mono) else { m.excluded["after-last-observation/\(e.kind)/\(e.phase)", default: 0] += 1; continue }
         let node = nodeKey(e.node)
         let ph = e.phase
+        if e.kind == "focus" {
+            // In-process focus (FocusState). Launch focus is compared: the focus the fixture holds before the first external
+            // input is a lifecycle fact `initialFocus:<row>`. Later focus changes are not compared as events because the
+            // platforms log them differently (the Mac fixture logs every FocusState change, the Windows runtime logs
+            // AX-sourced changes, payload source=ax); the AX focus and selection of every step are compared instead.
+            let focused = e.payload["focused"] as? String
+            currentFocus = (focused == nil || focused == "none") ? nil : nodeKey(focused!)
+            m.focusAtEnd[sid] = .some(currentFocus)
+            if sid == stepStarts[0].id, let current = currentFocus {
+                m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "initialFocus", node: current))
+            } else {
+                m.excluded["focus/\(sid == stepStarts[0].id ? "cleared-at-launch" : "after-launch")", default: 0] += 1
+            }
+            continue
+        }
         switch (e.kind, ph) {
         case ("lifecycle", "appear"), ("lifecycle", "disappear"):
             m.perStep[sid]!.lifecycle.append(TLifecycle(kind: ph, node: node))
@@ -73,6 +114,7 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
             // F6 animation transactions (node `animation`): per-tag start/complete lifecycle, policy as an effect line.
             if ph == "policy" {
                 m.perStep[sid]!.effects.append("animation-policy enabled=\(e.payload["enabled"] as? Bool ?? false)")
+                for (k, v) in motionConditions(e.payload) { m.conditions[k] = v }
             } else {
                 let tag = (e.payload["tag"] as? String) ?? "?"
                 m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "animation-\(ph)", node: "animation/\(tag)"))
@@ -101,6 +143,11 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
         default:
             m.excluded["\(e.kind)/\(ph)", default: 0] += 1
         }
+    }
+    // Fill the focus-at-end table forward so every step has the focus it ended with.
+    var carried: String?
+    for st in stepStarts {
+        if let seen = m.focusAtEnd[st.id] { carried = seen } else { m.focusAtEnd[st.id] = .some(carried) }
     }
     var previous: String?
     for st in stepStarts {

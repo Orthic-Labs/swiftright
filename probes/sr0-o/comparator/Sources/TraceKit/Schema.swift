@@ -68,6 +68,10 @@ public struct Trace: Codable, Sendable, Equatable {
     public var steps: [TraceStep]
     public var observations: [Observation]
     public var declaredOrder: [OrderEdge]
+    /// Conditions the run was made under (for example `reduceMotion.effective`). Compared exactly and never adaptable:
+    /// two traces recorded under different conditions are not comparable, so a difference is a failure of its own.
+    /// Absent (nil) when the fixture records none.
+    public var conditions: [String: String]?
 }
 
 public enum TraceCodec {

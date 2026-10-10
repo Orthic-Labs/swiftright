@@ -9,15 +9,71 @@ public struct Diff: Codable, Sendable, Equatable {
     public var actual: String
 }
 
-/// A declared, reasoned allowance for one field (and optionally one node).
-/// `mapping` lists accepted -> candidate values that are permitted; `allowAnyValue` permits any difference.
-/// Entries with an empty `reason` are ignored, so every allowance must be justified.
+/// A declared, reasoned allowance for one value pair at one place. It applies to exactly the named fixture, the named
+/// step(s), the leaf `field` and, for node leaves, the named `nodeId`; it never applies anywhere else.
+///
+/// `mapping` lists accepted -> candidate value pairs that are permitted. `allowAnyValue` is reserved for the declared
+/// native-input leaf `steps.nativeMapping` (the platforms drive the same logical step differently by contract); it is
+/// still bound to the fixture and steps. An allowance that is not fully scoped, has no reason, or names an unadaptable
+/// leaf is INVALID: it is ignored (the diff stays) and the report notes why.
 public struct Adaptation: Codable, Sendable, Equatable {
+    public var id: String?             // short handle used in reports, e.g. "P1"
+    public var status: String?         // "contract" | "oracle-quirk" | "unproven"; free text for the reader, never for matching
+    public var fixture: String?        // config id the allowance applies to (the trace's fixtureId)
+    public var steps: [String]?        // step ids the allowance applies to
     public var field: String           // leaf field, e.g. "axNodes.label"
-    public var nodeId: String?         // nil = any node
+    public var nodeId: String?         // required for node leaves, forbidden for the others
     public var mapping: [String: String]?
     public var allowAnyValue: Bool?
     public var reason: String
+
+    public init(id: String? = nil, status: String? = nil, fixture: String? = nil, steps: [String]? = nil,
+                field: String, nodeId: String? = nil, mapping: [String: String]? = nil,
+                allowAnyValue: Bool? = nil, reason: String) {
+        self.id = id; self.status = status; self.fixture = fixture; self.steps = steps
+        self.field = field; self.nodeId = nodeId; self.mapping = mapping
+        self.allowAnyValue = allowAnyValue; self.reason = reason
+    }
+
+    /// Leaves that identify a node in their path (`leaf[node]`); an allowance on one must name that node.
+    static let nodeLeaves: Set<String> = [
+        "model", "lifecycle.count", "lifecycle.order", "axNodes.presence", "axNodes.role", "axNodes.label",
+        "axNodes.value", "axNodes.actions", "axNodes.parent", "axNodes.order",
+    ]
+    /// Leaves no allowance may touch: they say whether the two traces are comparable at all.
+    static let unadaptable: Set<String> = ["fixtureId", "schemaVersion", "sourceHash", "conditions", "steps.order", "observation"]
+    /// The one leaf where `allowAnyValue` is accepted.
+    static let anyValueLeaf = "steps.nativeMapping"
+
+    var label: String { id ?? field }
+
+    /// nil when the allowance is valid, else the reason it is ignored.
+    var problem: String? {
+        if reason.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "no reason" }
+        guard let fixture, !fixture.isEmpty else { return "no fixture" }
+        guard let steps, !steps.isEmpty, steps.allSatisfy({ !$0.isEmpty && $0 != "-" }) else { return "no steps" }
+        if Adaptation.unadaptable.contains(field) { return "leaf \(field) is never adaptable" }
+        if Adaptation.nodeLeaves.contains(field) {
+            if nodeId == nil || nodeId == "" { return "leaf \(field) needs a nodeId" }
+        } else if nodeId != nil {
+            return "leaf \(field) has no node, nodeId must be absent"
+        }
+        let any = allowAnyValue == true
+        let pairs = mapping.map { !$0.isEmpty } ?? false
+        if any == pairs { return "needs exactly one of mapping or allowAnyValue" }
+        if any && field != Adaptation.anyValueLeaf { return "allowAnyValue is only for \(Adaptation.anyValueLeaf)" }
+        return nil
+    }
+}
+
+/// A difference that an allowance forgave, kept in the report so the verdict shows what was allowed.
+public struct AllowedDiff: Codable, Sendable, Equatable {
+    public var allowance: String
+    public var status: String?
+    public var step: String
+    public var path: String
+    public var expected: String
+    public var actual: String
 }
 
 public struct ComparisonReport: Codable, Sendable, Equatable {
@@ -25,14 +81,16 @@ public struct ComparisonReport: Codable, Sendable, Equatable {
     public var passed: Bool
     public var diffs: [Diff]
     public var notes: [String]
+    public var allowed: [AllowedDiff] = []
 }
 
 public enum TraceComparator {
     /// Exact semantic comparison of normalized traces. Timestamps and platform tuples are not failing
     /// fields: a platform difference is noted, because cross-platform comparison is expected.
     public static func compare(accepted: Trace, candidate: Trace, adaptations: [Adaptation] = []) -> ComparisonReport {
-        var c = Collector(fixture: accepted.fixtureId, adaptations: adaptations.filter { !$0.reason.isEmpty })
+        var c = Collector(fixture: accepted.fixtureId, adaptations: adaptations)
         var notes: [String] = []
+        for a in adaptations { if let why = a.problem { notes.append("allowance \(a.label) ignored: \(why)") } }
 
         if candidate.fixtureId != accepted.fixtureId {
             c.report(step: "-", leaf: "fixtureId", node: nil, expected: accepted.fixtureId, actual: candidate.fixtureId)
@@ -45,6 +103,12 @@ public enum TraceComparator {
         }
         if candidate.platform != accepted.platform {
             notes.append("platform differs (not compared): accepted \(accepted.platform) candidate \(candidate.platform)")
+        }
+
+        let conditionsA = accepted.conditions ?? [:], conditionsB = candidate.conditions ?? [:]
+        for key in Set(conditionsA.keys).union(conditionsB.keys).sorted() where conditionsA[key] != conditionsB[key] {
+            c.report(step: "-", leaf: "conditions", node: key,
+                     expected: conditionsA[key] ?? "<absent>", actual: conditionsB[key] ?? "<absent>")
         }
 
         compareSteps(accepted.steps, candidate.steps, into: &c)
@@ -62,7 +126,8 @@ public enum TraceComparator {
 
         compareOrder(accepted: accepted, candidate: candidate, into: &c)
 
-        return ComparisonReport(fixture: accepted.fixtureId, passed: c.diffs.isEmpty, diffs: c.diffs, notes: notes)
+        notes += c.unusedNotes()
+        return ComparisonReport(fixture: accepted.fixtureId, passed: c.diffs.isEmpty, diffs: c.diffs, notes: notes, allowed: c.allowed)
     }
 
     private static func compareSteps(_ a: [TraceStep], _ b: [TraceStep], into c: inout Collector) {
@@ -126,7 +191,8 @@ public enum TraceComparator {
     private static func compareNodes(_ a: [CanonicalNode], _ b: [CanonicalNode], step s: String, into c: inout Collector) {
         let mapA = Dictionary(a.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let mapB = Dictionary(b.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        if mapA.count != a.count || mapB.count != b.count {
+        // Duplicate ids (a stale or malformed tree): the two sides must show the same number; equal counts are agreement.
+        if a.count - mapA.count != b.count - mapB.count {
             c.report(step: s, leaf: "axNodes.duplicateId", node: nil,
                      expected: "\(a.count - mapA.count) duplicates", actual: "\(b.count - mapB.count) duplicates")
         }
@@ -181,11 +247,14 @@ public enum TraceComparator {
     private static func show(_ s: String?) -> String { s ?? "<nil>" }
 }
 
-/// Collects diffs and applies adaptations at the leaf level.
+/// Collects diffs and applies adaptations at the leaf level. An adaptation applies to a diff only when fixture, step,
+/// leaf, node and the exact value pair all match; invalid adaptations never apply.
 struct Collector {
     let fixture: String
     let adaptations: [Adaptation]
     var diffs: [Diff] = []
+    var allowed: [AllowedDiff] = []
+    private var used: Set<Int> = []
 
     init(fixture: String, adaptations: [Adaptation]) {
         self.fixture = fixture
@@ -193,16 +262,27 @@ struct Collector {
     }
 
     mutating func report(step: String, leaf: String, node: String?, expected: String, actual: String) {
-        if isAdapted(leaf: leaf, node: node, expected: expected, actual: actual) { return }
         let path = node.map { "\(leaf)[\($0)]" } ?? leaf
+        if let index = adaptation(step: step, leaf: leaf, node: node, expected: expected, actual: actual) {
+            used.insert(index)
+            allowed.append(AllowedDiff(allowance: adaptations[index].label, status: adaptations[index].status, step: step, path: path, expected: expected, actual: actual))
+            return
+        }
         diffs.append(Diff(fixture: fixture, step: step, path: path, expected: expected, actual: actual))
     }
 
-    private func isAdapted(leaf: String, node: String?, expected: String, actual: String) -> Bool {
-        for a in adaptations where a.field == leaf && (a.nodeId == nil || a.nodeId == node) {
-            if a.allowAnyValue == true { return true }
-            if let mapping = a.mapping, mapping[expected] == actual { return true }
+    private func adaptation(step: String, leaf: String, node: String?, expected: String, actual: String) -> Int? {
+        for (index, a) in adaptations.enumerated() where a.problem == nil {
+            guard a.fixture == fixture, a.steps?.contains(step) == true, a.field == leaf, a.nodeId == node else { continue }
+            if a.allowAnyValue == true { return index }
+            if let mapping = a.mapping, mapping[expected] == actual { return index }
         }
-        return false
+        return nil
+    }
+
+    /// Valid allowances that forgave nothing: harmless for the verdict, but worth a reader's attention.
+    func unusedNotes() -> [String] {
+        adaptations.enumerated().filter { $0.element.problem == nil && !used.contains($0.offset) }
+            .map { "allowance \($0.element.label) (\($0.element.field)) was not exercised" }
     }
 }

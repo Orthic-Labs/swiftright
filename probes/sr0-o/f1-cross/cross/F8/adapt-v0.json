@@ -2,13 +2,16 @@
   {
     "allowAnyValue": true,
     "field": "steps.nativeMapping",
-    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"
-  },
-  {
-    "field": "focusedNodeId",
-    "mapping": {
-      "<none>": "toolbar/insert"
-    },
-    "reason": "Activation by the accessibility route: AccessKit/UIA Invoke moves keyboard focus to the invoked control (the runtime logs ax-button-focus), AXPress on macOS does not. CONTRACT F8 does not specify focus after an activation."
+    "fixture": "F8",
+    "id": "N1",
+    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly",
+    "status": "contract",
+    "steps": [
+      "initial",
+      "invoke_insert_above",
+      "set_value_row3",
+      "focus_row3",
+      "delete_row6"
+    ]
   }
 ]
