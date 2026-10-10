@@ -472,3 +472,7 @@ Source: `docs/sr0-findings-review-astra.md`. Each finding was checked against th
 | 10 MAJOR: visual/accessibility gates | Accepted. Verified: `run.py:61` stages omit workload and native-interaction | T4, T14, U1, L4, L6, section 3.10; work list items 6-7 |
 | 11 MINOR: omitted controls and regressions | Accepted. Verified `ITERATION.md:62-66`, `:104-108`, commits `2aa1983`, `c31f1b5` | Four rows added (AX-off control, sampler-off control, rev2 regression, F8 0/20 regression), each marked as actually run or regression |
 | 12 MINOR: DirectML categorical | Accepted | Section 8 intro, 8.2 and 8.5 reworded: useful for Parakeet inference; can take part in ML upscaling and denoising; cannot replace D3D drawing; no demonstrated W5 benefit; sustained-engineering statement kept |
+
+## 11. Decision: performance bar (Adrian, 2026-10-10)
+
+The zero-missed-vblank criterion (W5) is dropped: "We don't need that zero-missed screen refresh … Change the bar." The §11 performance bar for SR0 is: no worse than Mac SwiftUI on the same workload for input-to-visible latency and frame-interval p95, with missed vblanks reported, not gated. Evidence: Windows tuple 08 W4 p95 43–49 ms, W5 interval p95 about 16.76 ms, 1–6 missed vblanks per 60 s (`probes/sr0-b/workload/results/r10-20261010-tuple08-renderere280-windows.txt`, `W5-EXPERIMENTS.md`); Mac SwiftUI W4 p95 72–79 ms, interval p95 17.9 ms, 0 missed (`MAC-WORKLOAD.md`, with its caveats). To apply: `docs/architecture.md` §11, `conformance/sr0-slice/CONTRACT.md` (proposed change C10), the workload analyzer's W5 verdict.
