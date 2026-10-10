@@ -124,3 +124,8 @@ Not obtained. The guest was gone by the time the request arrived: the harness en
 - The run used software rendering (vGPU Disable); hardware-GPU rendering in the guest is not covered. The production App Installer host and TLS chain are untested (W12 used a guest-local self-signed feed).
 - W08 is a known platform limitation (MSIX deployment cancelled in the registration phase); the offline-2 verdict is perturbed by the manual Repair and is not a clean result either way.
 - The extra stage-time dry run `r5-07-dry` and the `unpack\` directories remain on the Dell under `D:\Claude\sr0-r5-07` (kept until the lead says).
+
+### Dell stage root removed (2026-10-10, before tuple 08)
+
+On the lead's instruction `D:\Claude\sr0-r5-07` was cleared of read-only attributes and removed with `Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(..., SendToRecycleBin)` from the SSH session. The Recycle Bin on D: and C: holds no item for it (no `$R`/`$I` entry), so the tree was deleted permanently, not recycled (cause not established; deep `node_modules\.pnpm` paths or the non-interactive session are the suspects). Kept beforehand under `/Volumes/D/sr0-artifacts/win/r5-07/`: both msix, seals, release manifests, QA receipts, logs, the three run record sets, feeds, helper scripts, and the clone-local commit as `clone-local/clone-local-54480b6d.patch` (sha256 `9bde3279b387485580cae7c0387a39dc93ea3be0260e65bc76215fe7cbdc6ec0`) and `.bundle`. Not kept: the clones' RightKit signing receipts (`.right-release\state\...\windows-raw-exe.json`, `windows-installer.json`, `windows-embedding.json`; their sha256 values are in `release-manifest-0.1.x.json`), `hardening.json` (168 bytes), the unpacked payloads, the dry-run staging; the msix themselves are unchanged.
+
