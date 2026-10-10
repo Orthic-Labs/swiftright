@@ -638,6 +638,7 @@ enum LayoutKey: Equatable {
     case padding(EdgeInsets)
     case frame(FrameSpec)
     case spacer(CGFloat)
+    case toggleLabelHidden
     case image(ImageSpec)
     case scrollView(ScrollViewConfiguration)
 }
@@ -688,6 +689,8 @@ public struct ResolvedNode: Equatable, Sendable {
     /// TextField only: the marked (composing) range in displayed text.
     public let marked: UTF16Range?
     public let children: [ResolvedNode]
+    /// True for a labeled control whose label was hidden by `.labelsHidden()`; nil for other nodes.
+    public let labelsHidden: Bool?
     /// Role, label, value, enablement and selection for the accessibility backend.
     public let accessibility: ResolvedAccessibility
     /// Font and foreground colour in effect at this node (inherited through the environment).
@@ -1467,6 +1470,8 @@ public final class Graph {
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)
         case .spacer(let length): key = .spacer(length)
+        case .toggle where node.environment.labelsHidden: key = .toggleLabelHidden
+        case .toggle: key = .none
         case .image(let spec): key = .image(spec)
         case .scrollView(let configuration): key = .scrollView(configuration)
         case .layout: key = .always
@@ -1649,7 +1654,12 @@ public final class Graph {
         if node.focused, node.alive, resolveFocus.map({ node.idString < $0.idString }) ?? true { resolveFocus = node }
         let hasSelection = node.selection != nil
         let selectedTags = node.selection?.current() ?? []
-        let childNodes = node.childNodes
+        let childNodes: [Node]
+        if node.environment.labelsHidden, case .toggle = kind {
+            childNodes = []
+        } else {
+            childNodes = node.childNodes
+        }
         var children: [ResolvedNode] = []
         children.reserveCapacity(childNodes.count)
         for child in childNodes {
@@ -1668,6 +1678,15 @@ public final class Graph {
         if case .color(let resolved) = kind { color = resolved }
         var shape: ResolvedShape?
         if case .shape(let resolvedShape) = kind { shape = resolvedShape }
+        let labelsHidden: Bool?
+        if node.environment.labelsHidden {
+            switch kind {
+            case .toggle(_), .textField(_): labelsHidden = true
+            default: labelsHidden = nil
+            }
+        } else {
+            labelsHidden = nil
+        }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1686,6 +1705,7 @@ public final class Graph {
             selection: selection,
             marked: marked,
             children: children,
+            labelsHidden: labelsHidden,
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,

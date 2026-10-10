@@ -1,0 +1,206 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -638,6 +638,7 @@
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
+     case spacer(CGFloat)
++    case toggleLabelHidden
+     case image(ImageSpec)
+     case scrollView(ScrollViewConfiguration)
+ }
+@@ -688,6 +689,8 @@
+     /// TextField only: the marked (composing) range in displayed text.
+     public let marked: UTF16Range?
+     public let children: [ResolvedNode]
++    /// True for a labeled control whose label was hidden by `.labelsHidden()`; nil for other nodes.
++    public let labelsHidden: Bool?
+     /// Role, label, value, enablement and selection for the accessibility backend.
+     public let accessibility: ResolvedAccessibility
+     /// Font and foreground colour in effect at this node (inherited through the environment).
+@@ -1467,6 +1470,8 @@
+         case .modifier(.padding(let insets)): key = .padding(insets)
+         case .modifier(.frame(let frame)): key = .frame(frame)
+         case .spacer(let length): key = .spacer(length)
++        case .toggle where node.environment.labelsHidden: key = .toggleLabelHidden
++        case .toggle: key = .none
+         case .image(let spec): key = .image(spec)
+         case .scrollView(let configuration): key = .scrollView(configuration)
+         case .layout: key = .always
+@@ -1649,7 +1654,12 @@
+         if node.focused, node.alive, resolveFocus.map({ node.idString < $0.idString }) ?? true { resolveFocus = node }
+         let hasSelection = node.selection != nil
+         let selectedTags = node.selection?.current() ?? []
+-        let childNodes = node.childNodes
++        let childNodes: [Node]
++        if node.environment.labelsHidden, case .toggle = kind {
++            childNodes = []
++        } else {
++            childNodes = node.childNodes
++        }
+         var children: [ResolvedNode] = []
+         children.reserveCapacity(childNodes.count)
+         for child in childNodes {
+@@ -1668,6 +1678,15 @@
+         if case .color(let resolved) = kind { color = resolved }
+         var shape: ResolvedShape?
+         if case .shape(let resolvedShape) = kind { shape = resolvedShape }
++        let labelsHidden: Bool?
++        if node.environment.labelsHidden {
++            switch kind {
++            case .toggle(_), .textField(_): labelsHidden = true
++            default: labelsHidden = nil
++            }
++        } else {
++            labelsHidden = nil
++        }
+         var shortcut: ResolvedShortcut?
+         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
+             shortcut = ResolvedShortcut(
+@@ -1686,6 +1705,7 @@
+             selection: selection,
+             marked: marked,
+             children: children,
++            labelsHidden: labelsHidden,
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -471,7 +471,8 @@
+     }
+ 
+     func childNodes(_ node: Node) -> [Node] {
+-        node.childNodes
++        if node.environment.labelsHidden, case .toggle = node.kind { return [] }
++        return node.childNodes
+     }
+ 
+     func subviews(of node: Node) -> Subviews {
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -152,6 +152,13 @@
+         Modified(content: self, spec: .accessibilityLabel(label))
+     }
+ 
++    /// Hides control labels from resolved content while preserving their accessibility titles.
++    public func labelsHidden() -> some View {
++        Modified(content: self, spec: .environment({ environment in
++            environment.labelsHidden = true
++        }))
++    }
++
+     /// Registers a keyboard shortcut for the button inside this view. `modifiers` defaults to `.command`, the
+     /// platform's primary modifier. Apple: https://developer.apple.com/documentation/swiftui/view/keyboardshortcut(_:modifiers:)
+     public func keyboardShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command) -> some View {
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+@@ -201,9 +201,19 @@
+         get { self[ReduceMotionKey.self] }
+         set { self[ReduceMotionKey.self] = newValue }
+     }
++
++    /// True when labels of labeled controls are removed from resolved layout content.
++    public var labelsHidden: Bool {
++        get { self[LabelsHiddenKey.self] }
++        set { self[LabelsHiddenKey.self] = newValue }
++    }
+ }
+ 
+ private enum ReduceMotionKey: EnvironmentKey {
++    static var defaultValue: Bool { false }
++}
++
++private enum LabelsHiddenKey: EnvironmentKey {
+     static var defaultValue: Bool { false }
+ }
+ 
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LabelsHiddenTests.swift
+@@ -0,0 +1,87 @@
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++private final class LabelsModel {
++    var enabled = false
++}
++
++private struct HiddenToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled).labelsHidden()
++    }
++}
++
++private struct VisibleToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled)
++    }
++}
++
++private struct RootEnvironmentToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled)
++    }
++}
++
++@MainActor
++final class LabelsHiddenTests: XCTestCase {
++    func testHiddenToggleCarriesOptionalVisibilityAndKeepsAccessibilityTitle() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(HiddenToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++
++        let toggle = graph.snapshot()?.children.first?.children.first
++        XCTAssertEqual(toggle?.labelsHidden, true)
++        XCTAssertEqual(toggle?.accessibility.label, "Wi-Fi")
++        XCTAssertEqual(toggle?.children, [])
++        XCTAssertEqual(toggle?.frame.size, .zero)
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 0)
++    }
++
++    func testLegacyToggleKeepsOptionalVisibilityNil() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(VisibleToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++
++        let toggle = graph.snapshot()?.children.first
++        XCTAssertNil(toggle?.labelsHidden)
++        XCTAssertEqual(toggle?.children.first?.text, "Wi-Fi")
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 1)
++    }
++
++    func testRootEnvironmentVisibilityChangeInvalidatesToggleAndAncestorSizes() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(RootEnvironmentToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++        let initial = graph.snapshot()?.children.first
++        XCTAssertEqual(initial?.frame.width, 40)
++        XCTAssertEqual(initial?.frame.height, 16)
++
++        graph.setRootEnvironment { $0.labelsHidden = true }
++        graph.flush()
++        let hidden = graph.snapshot()?.children.first
++        XCTAssertEqual(hidden?.labelsHidden, true)
++        XCTAssertEqual(hidden?.children, [])
++        XCTAssertEqual(hidden?.frame.size, .zero)
++        XCTAssertEqual(hidden?.instance, initial?.instance)
++
++        graph.setRootEnvironment { $0.labelsHidden = false }
++        graph.flush()
++        let visible = graph.snapshot()?.children.first
++        XCTAssertNil(visible?.labelsHidden)
++        XCTAssertEqual(visible?.children.first?.text, "Wi-Fi")
++        XCTAssertEqual(visible?.frame.width, 40)
++        XCTAssertEqual(visible?.frame.height, 16)
++        XCTAssertEqual(visible?.instance, initial?.instance)
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 1, "cached text metrics remain reusable across visibility changes")
++    }
++}

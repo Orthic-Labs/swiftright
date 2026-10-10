@@ -201,9 +201,19 @@ public struct EnvironmentValues {
         get { self[ReduceMotionKey.self] }
         set { self[ReduceMotionKey.self] = newValue }
     }
+
+    /// True when labels of labeled controls are removed from resolved layout content.
+    public var labelsHidden: Bool {
+        get { self[LabelsHiddenKey.self] }
+        set { self[LabelsHiddenKey.self] = newValue }
+    }
 }
 
 private enum ReduceMotionKey: EnvironmentKey {
+    static var defaultValue: Bool { false }
+}
+
+private enum LabelsHiddenKey: EnvironmentKey {
     static var defaultValue: Bool { false }
 }
 

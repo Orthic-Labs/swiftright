@@ -471,7 +471,8 @@ extension Graph {
     }
 
     func childNodes(_ node: Node) -> [Node] {
-        node.childNodes
+        if node.environment.labelsHidden, case .toggle = node.kind { return [] }
+        return node.childNodes
     }
 
     func subviews(of node: Node) -> Subviews {

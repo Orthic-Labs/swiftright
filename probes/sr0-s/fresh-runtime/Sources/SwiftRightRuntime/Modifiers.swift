@@ -152,6 +152,13 @@ extension View {
         Modified(content: self, spec: .accessibilityLabel(label))
     }
 
+    /// Hides control labels from resolved content while preserving their accessibility titles.
+    public func labelsHidden() -> some View {
+        Modified(content: self, spec: .environment({ environment in
+            environment.labelsHidden = true
+        }))
+    }
+
     /// Registers a keyboard shortcut for the button inside this view. `modifiers` defaults to `.command`, the
     /// platform's primary modifier. Apple: https://developer.apple.com/documentation/swiftui/view/keyboardshortcut(_:modifiers:)
     public func keyboardShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command) -> some View {
