@@ -1,0 +1,75 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+@@ -197,5 +197,13 @@ public struct EnvironmentValues {
+         set { self[ColorSchemeKey.self] = newValue }
+     }
+ 
++    /// Display scale used by image & provider consumers. Headless runtime defaults to one;
++    /// host may provide its actual backing scale through environment.
++    /// Apple: https://developer.apple.com/documentation/swiftui/environmentvalues/displayscale
++    public var displayScale: CGFloat {
++        get { self[DisplayScaleKey.self] }
++        set { self[DisplayScaleKey.self] = newValue }
++    }
++
+     /// Animations jump to their final values and still deliver completions. Tests set it directly; a
+     /// host feeds an explicit app or test override through `Graph.setRootEnvironment`. A Windows host does not map the OS
+@@ -217,4 +223,8 @@ public struct EnvironmentValues {
+     }
+ }
+ 
++private enum DisplayScaleKey: EnvironmentKey {
++    static var defaultValue: CGFloat { 1 }
++}
++
+ private enum ReduceMotionKey: EnvironmentKey {
+     static var defaultValue: Bool { false }
+ }
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift
+new file mode 100644
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift
+@@ -0,0 +1,42 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++private struct DisplayScaleProbe: View {
++    @Environment(\.displayScale) private var displayScale
++
++    var body: some View {
++        Text("scale-\(Int(displayScale))")
++    }
++}
++
++@MainActor
++final class DisplayScaleTests: XCTestCase {
++    func testDisplayScaleDefaultsToUnitScaleAndAcceptsNativeScalar() {
++        var values = EnvironmentValues()
++        XCTAssertEqual(values.displayScale, CGFloat(1))
++
++        values.displayScale = 2.0
++        XCTAssertEqual(values.displayScale, CGFloat(2))
++    }
++
++    func testDisplayScaleEnvironmentModifierPropagatesToDescendant() {
++        let graph = Graph(VStack {
++            DisplayScaleProbe()
++            DisplayScaleProbe().environment(\.displayScale, 3)
++        })
++        graph.flush()
++
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-1", "scale-3"])
++    }
++
++    func testDisplayScaleRootOverrideReevaluatesEnvironmentReader() {
++        let graph = Graph(DisplayScaleProbe())
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-1"])
++
++        graph.setRootEnvironment { $0.displayScale = 2 }
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-2"])
++    }
++}

@@ -194,6 +194,14 @@ public struct EnvironmentValues {
         set { self[ColorSchemeKey.self] = newValue }
     }
 
+    /// Display scale used by image & provider consumers. Headless runtime defaults to one;
+    /// host may provide its actual backing scale through environment.
+    /// Apple: https://developer.apple.com/documentation/swiftui/environmentvalues/displayscale
+    public var displayScale: CGFloat {
+        get { self[DisplayScaleKey.self] }
+        set { self[DisplayScaleKey.self] = newValue }
+    }
+
     /// Animations jump to their final values and still deliver completions. Tests set it directly; a
     /// host feeds an explicit app or test override through `Graph.setRootEnvironment`. A Windows host does not map the OS
     /// "Animation effects" setting here (decision 2026-10-10: animations must work with the OS setting off); macOS supplies its own.
@@ -207,6 +215,10 @@ public struct EnvironmentValues {
         get { self[LabelsHiddenKey.self] }
         set { self[LabelsHiddenKey.self] = newValue }
     }
+}
+
+private enum DisplayScaleKey: EnvironmentKey {
+    static var defaultValue: CGFloat { 1 }
 }
 
 private enum ReduceMotionKey: EnvironmentKey {
