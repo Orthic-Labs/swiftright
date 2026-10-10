@@ -9,7 +9,7 @@
 # `--rows N`; an app build that ignores it is caught by the analyzer, which compares meta.json total_rows). Every run samples CPU / threads / memory / GPU
 # into <run>\resources.csv unless -NoResources (overhead A/B). scripts\run-stress.ps1 runs the Rows x KeyRate series through this script.
 param(
-  [string]$Base = 'D:\Claude\sr0b-workload',
+  [string]$Base = 'D:\Claude\sr0-r07\workload',
   [string]$Instr = 'full',            # full | light (light = overhead A/B baseline; analyzer reports it as such)
   [int]$Runs = 3,
   [int]$Warmup = 10,
@@ -20,7 +20,7 @@ param(
   [string]$PaintPhaseMs = '',         # R10 A/B: SWR_PAINT_PHASE_MS handed to the renderer through task-workload.ps1 (0 = pacing off; '' = renderer default)
   [switch]$MemDeep,                   # R10 memory diagnosis: SWR_MEM_DEEP=1 for the renderer (heap and address-space walk every 5th memory sample; diagnostic run, perturbs timing)
   [string]$Tag = '',
-  [string]$ExpectDll = '7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC',
+  [string]$ExpectDll = '97CA28E84A58F0D3B44B5A6EAA8D7C912E673A07774123296C958E0D7ECCA26B',
   [double]$ExpectScale = 2.5,         # Dell tuple: 250% (dpi 240); every SR0 Dell record is scale 2.5
   [int]$MaxIdleCpu = 25,              # ignored since R10 (no quiet-host gate; the host is in normal use)
   [int]$CpuSampleSeconds = 20,        # ignored since R10

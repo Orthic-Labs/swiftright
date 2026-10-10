@@ -9,9 +9,9 @@
 # Steps: stage the scripts to <BASE_DIR>\probes\sr0-b\native-interaction\scripts, static check on the host (parse + compile,
 # no input), preflight hash check, then one one-shot interactive scheduled task per check (schedule-native.ps1).
 # Nothing is committed, branched or pushed by this script. The Mac GUI is never used.
-BASE_DIR="${BASE_DIR:-D:\\Claude\\sr0s-bridge06b}"
-EXPECT_EXE_SHA256="${EXPECT_EXE_SHA256:-3593209A49BC540FD0FAB2EC7AD14390A60C9E30042D8B7E23852D48000D68BA}"
-EXPECT_DLL_SHA256="${EXPECT_DLL_SHA256:-C80B9517B044968F3E13EE9D92EEFC8704D000510B9A51B3245C885CE1A3FB30}"
+BASE_DIR="${BASE_DIR:-D:\\Claude\\sr0-r07\\src}"
+EXPECT_EXE_SHA256="${EXPECT_EXE_SHA256:-7673A2D5139172D890D3882D332C3C72321F2372D343319A1065CFEEEDFDB960}"
+EXPECT_DLL_SHA256="${EXPECT_DLL_SHA256:-97CA28E84A58F0D3B44B5A6EAA8D7C912E673A07774123296C958E0D7ECCA26B}"
 [ "${DESKTOP_LANE_FREE:-0}" = 1 ] || { echo "refused: set DESKTOP_LANE_FREE=1 once the Dell desktop lane is reserved for this run (no other GUI work, no person typing)" >&2; exit 2; }
 HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="${OUT_DIR:-$HERE/../out}"; mkdir -p "$OUT"
