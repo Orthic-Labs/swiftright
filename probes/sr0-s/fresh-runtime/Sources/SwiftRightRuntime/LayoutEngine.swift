@@ -106,8 +106,13 @@ extension Graph {
                 width: finiteLength(proposal.width) ?? measured.width,
                 height: finiteLength(proposal.height) ?? measured.height
             )
-        case .image(let reference):
-            return imageIntrinsicSize(reference)
+        case .image(let spec):
+            let ideal = imageIntrinsicSize(spec.reference)
+            guard spec.sizing.isResizable else { return ideal }
+            return LayoutSize(
+                width: finiteLength(proposal.width) ?? ideal.width,
+                height: finiteLength(proposal.height) ?? ideal.height
+            )
         case .color:
             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
         case .shape:

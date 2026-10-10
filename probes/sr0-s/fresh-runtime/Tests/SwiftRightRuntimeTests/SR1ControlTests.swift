@@ -158,8 +158,10 @@ final class SR1ControlTests: XCTestCase {
         XCTAssertEqual(images[0].image, .system("star.fill"))
         XCTAssertEqual(images[0].accessibility.role, "image")
         XCTAssertEqual(images[0].accessibility.label, "star.fill")
+        XCTAssertNil(images[0].imageSizing)
         XCTAssertEqual(images[1].image, .named("logo"))
         XCTAssertEqual(images[1].accessibility.label, "logo")
+        XCTAssertNil(images[1].imageSizing)
 
         let override = sr1Kind(graph, "modifier.accessibilityLabel")
         XCTAssertEqual(override.first?.accessibility.label, "Company logo")
@@ -172,6 +174,26 @@ final class SR1ControlTests: XCTestCase {
         let first = sr1Kind(graph, "Image").first
         XCTAssertEqual(first?.frame.width, 40)
         XCTAssertEqual(first?.frame.height, 12)
+        XCTAssertEqual(first?.accessibility.label, "star.fill")
+        XCTAssertNil(first?.imageSizing)
+    }
+
+    func testResizableImageUsesProposalAndRetainsResizeOptions() {
+        let insets = EdgeInsets(top: 1, leading: 2, bottom: 3, trailing: 4)
+        let graph = Graph(Image(systemName: "star.fill").resizable(capInsets: insets, resizingMode: .tile))
+        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
+        graph.rootProposal = ProposedViewSize(width: 80, height: 30)
+        graph.flush()
+
+        let image = graph.snapshot()
+        XCTAssertEqual(image?.image, .system("star.fill"))
+        XCTAssertEqual(image?.frame.width, 80)
+        XCTAssertEqual(image?.frame.height, 30)
+        XCTAssertEqual(image?.accessibility.label, "star.fill")
+        XCTAssertEqual(image?.imageSizing?.isResizable, true)
+        XCTAssertEqual(image?.imageSizing?.capInsets, insets)
+        XCTAssertEqual(image?.imageSizing?.resizingMode, .tile)
+        XCTAssertEqual(image?.imageSizing?.scalesToFit, false)
     }
 
     // TextEditor is multi-line over the shared TextInputState model: Return inserts a line break, the height

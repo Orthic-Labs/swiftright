@@ -60,12 +60,42 @@ public enum ImageReference: Hashable, Sendable {
     }
 }
 
+/// Image resize details resolved for a host renderer.
+public struct ResolvedImageSizing: Hashable, Sendable {
+    public let isResizable: Bool
+    public let capInsets: EdgeInsets
+    public let resizingMode: Image.ResizingMode
+    public let scalesToFit: Bool
+
+    init(isResizable: Bool, capInsets: EdgeInsets, resizingMode: Image.ResizingMode, scalesToFit: Bool) {
+        self.isResizable = isResizable
+        self.capInsets = capInsets
+        self.resizingMode = resizingMode
+        self.scalesToFit = scalesToFit
+    }
+}
+
+struct ImageSpec: Hashable, Sendable {
+    let reference: ImageReference
+    let sizing: ResolvedImageSizing
+}
+
 /// Apple: https://developer.apple.com/documentation/swiftui/image
 /// Image accessibility label defaults to the symbol or asset name until `.accessibilityLabel(_:)` overrides it.
 /// Apple's default label derivation is not documented per symbol, so this is a chosen default (see RESULT.md).
 @MainActor
 public struct Image: View, PrimitiveView {
     let reference: ImageReference
+    private var capInsets = EdgeInsets()
+    private var resizingMode: ResizingMode = .stretch
+    private var isResizable = false
+    private var scalesToFit = false
+
+    /// How a resizable image fills space beyond its cap insets.
+    public enum ResizingMode: Hashable, Sendable {
+        case stretch
+        case tile
+    }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(systemname:)
     public init(systemName: String) { reference = .system(systemName) }
@@ -73,8 +103,27 @@ public struct Image: View, PrimitiveView {
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(_:)
     public init(_ name: String) { reference = .named(name) }
 
+    /// Lets image content resize to proposed dimensions.
+    /// Apple: https://developer.apple.com/documentation/swiftui/image/resizable(capInsets:resizingMode:)
+    public func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: ResizingMode = .stretch) -> Self {
+        var image = self
+        image.capInsets = capInsets
+        image.resizingMode = resizingMode
+        image.isResizable = true
+        return image
+    }
+
+    var sizing: ResolvedImageSizing {
+        ResolvedImageSizing(
+            isResizable: isResizable,
+            capInsets: capInsets,
+            resizingMode: resizingMode,
+            scalesToFit: scalesToFit
+        )
+    }
+
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .image(reference) }
+    var nodeKind: NodeKind { .image(ImageSpec(reference: reference, sizing: sizing)) }
     var nodeContent: (any View)? { nil }
 }
 

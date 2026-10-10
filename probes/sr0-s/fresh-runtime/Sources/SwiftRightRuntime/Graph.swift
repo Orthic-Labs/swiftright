@@ -263,7 +263,7 @@ enum NodeKind {
     case modifier(ModifierSpec)
     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
     case toggle(Binding<Bool>)
-    case image(ImageReference)
+    case image(ImageSpec)
     case color(ResolvedColor)
     case textEditor(Binding<String>)
     case divider
@@ -614,7 +614,7 @@ enum LayoutKey: Equatable {
     case padding(EdgeInsets)
     case frame(FrameSpec)
     case spacer(CGFloat)
-    case image(ImageReference)
+    case image(ImageSpec)
 }
 
 /// Guarded commit for async work started by `.task`. A commit is accepted only while the
@@ -669,6 +669,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let style: ResolvedStyle
     /// Image nodes only: the reference the backend loads.
     public let image: ImageReference?
+    /// Image nodes only: resizing metadata for the backend.
+    public let imageSizing: ResolvedImageSizing?
     /// Color views only: the resolved fill value; nil for existing node kinds.
     public let color: ResolvedColor?
     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
@@ -1340,7 +1342,7 @@ public final class Graph {
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)
         case .spacer(let length): key = .spacer(length)
-        case .image(let reference): key = .image(reference)
+        case .image(let spec): key = .image(spec)
         case .layout: key = .always
         default: key = .none
         }
@@ -1529,7 +1531,13 @@ public final class Graph {
             children.append(resolve(child, selected: isSelected))
         }
         var image: ImageReference?
-        if case .image(let reference) = kind { image = reference }
+        var imageSizing: ResolvedImageSizing?
+        if case .image(let spec) = kind {
+            image = spec.reference
+            if spec.sizing.isResizable || spec.sizing.scalesToFit {
+                imageSizing = spec.sizing
+            }
+        }
         var color: ResolvedColor?
         if case .color(let resolved) = kind { color = resolved }
         var shape: ResolvedShape?
@@ -1555,6 +1563,7 @@ public final class Graph {
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,
+            imageSizing: imageSizing,
             color: color,
             shape: shape,
             menu: node.menuEntries.map(resolveMenu),
@@ -1587,9 +1596,9 @@ public final class Graph {
             role = "checkbox"
             label = titleOf(node) ?? joinedText(children)
             value = binding.wrappedValue ? "1" : "0"
-        case .image(let reference):
+        case .image(let spec):
             role = "image"
-            label = reference.name
+            label = spec.reference.name
         case .menu:
             role = "menu"
             label = joinedText(children)

@@ -1,0 +1,213 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+index b07d99c..585ab57 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+@@ -60,12 +60,42 @@ public enum ImageReference: Hashable, Sendable {
+     }
+ }
+ 
++/// Image resize details resolved for a host renderer.
++public struct ResolvedImageSizing: Hashable, Sendable {
++    public let isResizable: Bool
++    public let capInsets: EdgeInsets
++    public let resizingMode: Image.ResizingMode
++    public let scalesToFit: Bool
++
++    init(isResizable: Bool, capInsets: EdgeInsets, resizingMode: Image.ResizingMode, scalesToFit: Bool) {
++        self.isResizable = isResizable
++        self.capInsets = capInsets
++        self.resizingMode = resizingMode
++        self.scalesToFit = scalesToFit
++    }
++}
++
++struct ImageSpec: Hashable, Sendable {
++    let reference: ImageReference
++    let sizing: ResolvedImageSizing
++}
++
+ /// Apple: https://developer.apple.com/documentation/swiftui/image
+ /// Image accessibility label defaults to the symbol or asset name until `.accessibilityLabel(_:)` overrides it.
+ /// Apple's default label derivation is not documented per symbol, so this is a chosen default (see RESULT.md).
+ @MainActor
+ public struct Image: View, PrimitiveView {
+     let reference: ImageReference
++    private var capInsets = EdgeInsets()
++    private var resizingMode: ResizingMode = .stretch
++    private var isResizable = false
++    private var scalesToFit = false
++
++    /// How a resizable image fills space beyond its cap insets.
++    public enum ResizingMode: Hashable, Sendable {
++        case stretch
++        case tile
++    }
+ 
+     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(systemname:)
+     public init(systemName: String) { reference = .system(systemName) }
+@@ -73,8 +103,27 @@ public struct Image: View, PrimitiveView {
+     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(_:)
+     public init(_ name: String) { reference = .named(name) }
+ 
++    /// Lets image content resize to proposed dimensions.
++    /// Apple: https://developer.apple.com/documentation/swiftui/image/resizable(capInsets:resizingMode:)
++    public func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: ResizingMode = .stretch) -> Self {
++        var image = self
++        image.capInsets = capInsets
++        image.resizingMode = resizingMode
++        image.isResizable = true
++        return image
++    }
++
++    var sizing: ResolvedImageSizing {
++        ResolvedImageSizing(
++            isResizable: isResizable,
++            capInsets: capInsets,
++            resizingMode: resizingMode,
++            scalesToFit: scalesToFit
++        )
++    }
++
+     @MainActor public var body: Never { return fatalError("primitive view has no body") }
+-    var nodeKind: NodeKind { .image(reference) }
++    var nodeKind: NodeKind { .image(ImageSpec(reference: reference, sizing: sizing)) }
+     var nodeContent: (any View)? { nil }
+ }
+ 
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+index ff5ded9..5d84343 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -263,7 +263,7 @@ enum NodeKind {
+     case modifier(ModifierSpec)
+     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
+     case toggle(Binding<Bool>)
+-    case image(ImageReference)
++    case image(ImageSpec)
+     case color(ResolvedColor)
+     case textEditor(Binding<String>)
+     case divider
+@@ -614,7 +614,7 @@ enum LayoutKey: Equatable {
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
+     case spacer(CGFloat)
+-    case image(ImageReference)
++    case image(ImageSpec)
+ }
+ 
+ /// Guarded commit for async work started by `.task`. A commit is accepted only while the
+@@ -669,6 +669,8 @@ public struct ResolvedNode: Equatable, Sendable {
+     public let style: ResolvedStyle
+     /// Image nodes only: the reference the backend loads.
+     public let image: ImageReference?
++    /// Image nodes only: resizing metadata for the backend.
++    public let imageSizing: ResolvedImageSizing?
+     /// Color views only: the resolved fill value; nil for existing node kinds.
+     public let color: ResolvedColor?
+     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
+@@ -1340,7 +1342,7 @@ public final class Graph {
+         case .modifier(.padding(let insets)): key = .padding(insets)
+         case .modifier(.frame(let frame)): key = .frame(frame)
+         case .spacer(let length): key = .spacer(length)
+-        case .image(let reference): key = .image(reference)
++        case .image(let spec): key = .image(spec)
+         case .layout: key = .always
+         default: key = .none
+         }
+@@ -1529,7 +1531,13 @@ public final class Graph {
+             children.append(resolve(child, selected: isSelected))
+         }
+         var image: ImageReference?
+-        if case .image(let reference) = kind { image = reference }
++        var imageSizing: ResolvedImageSizing?
++        if case .image(let spec) = kind {
++            image = spec.reference
++            if spec.sizing.isResizable || spec.sizing.scalesToFit {
++                imageSizing = spec.sizing
++            }
++        }
+         var color: ResolvedColor?
+         if case .color(let resolved) = kind { color = resolved }
+         var shape: ResolvedShape?
+@@ -1555,6 +1563,7 @@ public final class Graph {
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
++            imageSizing: imageSizing,
+             color: color,
+             shape: shape,
+             menu: node.menuEntries.map(resolveMenu),
+@@ -1587,9 +1596,9 @@ public final class Graph {
+             role = "checkbox"
+             label = titleOf(node) ?? joinedText(children)
+             value = binding.wrappedValue ? "1" : "0"
+-        case .image(let reference):
++        case .image(let spec):
+             role = "image"
+-            label = reference.name
++            label = spec.reference.name
+         case .menu:
+             role = "menu"
+             label = joinedText(children)
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+index 540c315..d4debb4 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -106,8 +106,13 @@ extension Graph {
+                 width: finiteLength(proposal.width) ?? measured.width,
+                 height: finiteLength(proposal.height) ?? measured.height
+             )
+-        case .image(let reference):
+-            return imageIntrinsicSize(reference)
++        case .image(let spec):
++            let ideal = imageIntrinsicSize(spec.reference)
++            guard spec.sizing.isResizable else { return ideal }
++            return LayoutSize(
++                width: finiteLength(proposal.width) ?? ideal.width,
++                height: finiteLength(proposal.height) ?? ideal.height
++            )
+         case .color:
+             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
+         case .shape:
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+index 88ad1f5..7d6bebc 100644
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+@@ -158,8 +158,10 @@ final class SR1ControlTests: XCTestCase {
+         XCTAssertEqual(images[0].image, .system("star.fill"))
+         XCTAssertEqual(images[0].accessibility.role, "image")
+         XCTAssertEqual(images[0].accessibility.label, "star.fill")
++        XCTAssertNil(images[0].imageSizing)
+         XCTAssertEqual(images[1].image, .named("logo"))
+         XCTAssertEqual(images[1].accessibility.label, "logo")
++        XCTAssertNil(images[1].imageSizing)
+ 
+         let override = sr1Kind(graph, "modifier.accessibilityLabel")
+         XCTAssertEqual(override.first?.accessibility.label, "Company logo")
+@@ -172,6 +174,26 @@ final class SR1ControlTests: XCTestCase {
+         let first = sr1Kind(graph, "Image").first
+         XCTAssertEqual(first?.frame.width, 40)
+         XCTAssertEqual(first?.frame.height, 12)
++        XCTAssertEqual(first?.accessibility.label, "star.fill")
++        XCTAssertNil(first?.imageSizing)
++    }
++
++    func testResizableImageUsesProposalAndRetainsResizeOptions() {
++        let insets = EdgeInsets(top: 1, leading: 2, bottom: 3, trailing: 4)
++        let graph = Graph(Image(systemName: "star.fill").resizable(capInsets: insets, resizingMode: .tile))
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 80, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.image, .system("star.fill"))
++        XCTAssertEqual(image?.frame.width, 80)
++        XCTAssertEqual(image?.frame.height, 30)
++        XCTAssertEqual(image?.accessibility.label, "star.fill")
++        XCTAssertEqual(image?.imageSizing?.isResizable, true)
++        XCTAssertEqual(image?.imageSizing?.capInsets, insets)
++        XCTAssertEqual(image?.imageSizing?.resizingMode, .tile)
++        XCTAssertEqual(image?.imageSizing?.scalesToFit, false)
+     }
+ 
+     // TextEditor is multi-line over the shared TextInputState model: Return inserts a line break, the height
