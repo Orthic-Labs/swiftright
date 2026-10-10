@@ -1,0 +1,192 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+index 3e55c50..c7b2dd0 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -691,6 +691,8 @@ public struct ResolvedNode: Equatable, Sendable {
+     public let children: [ResolvedNode]
+     /// True for a labeled control whose label was hidden by `.labelsHidden()`; nil for other nodes.
+     public let labelsHidden: Bool?
++    /// Explicit Toggle style type metadata; nil when no `.toggleStyle` modifier applies.
++    public let toggleStyle: String?
+     /// Role, label, value, enablement and selection for the accessibility backend.
+     public let accessibility: ResolvedAccessibility
+     /// Font and foreground colour in effect at this node (inherited through the environment).
+@@ -1685,6 +1687,9 @@ public final class Graph {
+         default:
+             labelsHidden = nil
+         }
++        let toggleStyle: String?
++        if case .toggle = kind { toggleStyle = node.environment.toggleStyleMetadata }
++        else { toggleStyle = nil }
+         var shortcut: ResolvedShortcut?
+         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
+             shortcut = ResolvedShortcut(
+@@ -1704,6 +1709,7 @@ public final class Graph {
+             marked: marked,
+             children: children,
+             labelsHidden: labelsHidden,
++            toggleStyle: toggleStyle,
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+index fbb7c30..6dcf99e 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -152,6 +152,13 @@ extension View {
+         Modified(content: self, spec: .accessibilityLabel(label))
+     }
+ 
++    /// Records selected Toggle style metadata. Headless rendering behavior is unchanged.
++    public func toggleStyle<S: ToggleStyle>(_ style: S) -> some View {
++        Modified(content: self, spec: .environment({ environment in
++            environment.toggleStyleMetadata = String(describing: S.self)
++        }))
++    }
++
+     /// Hides control labels from resolved content while preserving their accessibility titles.
+     public func labelsHidden() -> some View {
+         Modified(content: self, spec: .environment({ environment in
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+index 49e087a..4babe1c 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+@@ -215,6 +215,11 @@ public struct EnvironmentValues {
+         get { self[LabelsHiddenKey.self] }
+         set { self[LabelsHiddenKey.self] = newValue }
+     }
++
++    var toggleStyleMetadata: String? {
++        get { self[ToggleStyleMetadataKey.self] }
++        set { self[ToggleStyleMetadataKey.self] = newValue }
++    }
+ }
+ 
+ private enum DisplayScaleKey: EnvironmentKey {
+@@ -229,6 +234,10 @@ private enum LabelsHiddenKey: EnvironmentKey {
+     static var defaultValue: Bool { false }
+ }
+ 
++private enum ToggleStyleMetadataKey: EnvironmentKey {
++    static var defaultValue: String? { nil }
++}
++
+ @MainActor
+ final class EnvironmentCell {
+     weak var node: Node?
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/ToggleStyles.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/ToggleStyles.swift
+new file mode 100644
+index 0000000..c3d3887
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/ToggleStyles.swift
+@@ -0,0 +1,22 @@
++import Foundation
++
++/// Marker for Toggle style selection metadata. Rendering remains host-owned.
++public protocol ToggleStyle: Sendable {}
++
++/// The default style selected by `.automatic`.
++public struct DefaultToggleStyle: ToggleStyle {
++    public init() {}
++}
++
++/// A switch-style Toggle marker. This runtime records selection metadata only.
++public struct SwitchToggleStyle: ToggleStyle {
++    public init() {}
++}
++
++public extension ToggleStyle where Self == DefaultToggleStyle {
++    static var automatic: DefaultToggleStyle { DefaultToggleStyle() }
++}
++
++public extension ToggleStyle where Self == SwitchToggleStyle {
++    static var `switch`: SwitchToggleStyle { SwitchToggleStyle() }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift
+new file mode 100644
+index 0000000..6fb5fa7
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift
+@@ -0,0 +1,8 @@
++import SwiftRightRuntime
++
++struct Witness_toggle: View {
++    @State private var enabled = true
++    var body: some View {
++        Toggle("Enabled", isOn: $enabled).labelsHidden().toggleStyle(.automatic)
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift
+new file mode 100644
+index 0000000..e10cced
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift
+@@ -0,0 +1,68 @@
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++private final class ToggleStyleModel {
++    var enabled = true
++}
++
++private struct AutomaticStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden().toggleStyle(.automatic) }
++}
++
++private struct SwitchStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden().toggleStyle(.switch) }
++}
++
++private struct LegacyStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden() }
++}
++
++@MainActor
++final class ToggleStyleTests: XCTestCase {
++    private func toggle(in node: ResolvedNode?) -> ResolvedNode? {
++        guard let node else { return nil }
++        if node.kind == "Toggle" { return node }
++        for child in node.children {
++            if let result = toggle(in: child) { return result }
++        }
++        return nil
++    }
++
++    func testAutomaticStyleMetadataLeavesLegacyToggleGeometryAndAccessibilityUnchanged() {
++        let legacyGraph = Graph(LegacyStyleScreen(model: ToggleStyleModel()))
++        let styledGraph = Graph(AutomaticStyleScreen(model: ToggleStyleModel()))
++        legacyGraph.flush()
++        styledGraph.flush()
++
++        let legacyToggle = toggle(in: legacyGraph.snapshot())
++        let styledToggle = toggle(in: styledGraph.snapshot())
++        XCTAssertNil(legacyToggle?.toggleStyle)
++        XCTAssertEqual(styledToggle?.toggleStyle, "DefaultToggleStyle")
++        XCTAssertEqual(styledToggle?.frame, legacyToggle?.frame)
++        XCTAssertEqual(styledToggle?.children, legacyToggle?.children)
++        XCTAssertEqual(styledToggle?.labelsHidden, legacyToggle?.labelsHidden)
++        XCTAssertEqual(styledToggle?.accessibility, legacyToggle?.accessibility)
++
++        let id = styledGraph.ids(ofKind: "Toggle").first!
++        XCTAssertTrue(styledGraph.activateToggle(id))
++        styledGraph.flush()
++        XCTAssertEqual(toggle(in: styledGraph.snapshot())?.accessibility.value, "0")
++    }
++
++    func testSwitchStyleMetadataIsRecordedWithoutChangingToggleKind() {
++        let graph = Graph(SwitchStyleScreen(model: ToggleStyleModel()))
++        graph.flush()
++
++        let toggle = toggle(in: graph.snapshot())
++        XCTAssertEqual(toggle?.kind, "Toggle")
++        XCTAssertEqual(toggle?.toggleStyle, "SwitchToggleStyle")
++        XCTAssertEqual(toggle?.accessibility.role, "checkbox")
++        XCTAssertEqual(toggle?.accessibility.value, "1")
++    }
++}

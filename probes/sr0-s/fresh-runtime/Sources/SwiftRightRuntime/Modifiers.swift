@@ -152,6 +152,13 @@ extension View {
         Modified(content: self, spec: .accessibilityLabel(label))
     }
 
+    /// Records selected Toggle style metadata. Headless rendering behavior is unchanged.
+    public func toggleStyle<S: ToggleStyle>(_ style: S) -> some View {
+        Modified(content: self, spec: .environment({ environment in
+            environment.toggleStyleMetadata = String(describing: S.self)
+        }))
+    }
+
     /// Hides control labels from resolved content while preserving their accessibility titles.
     public func labelsHidden() -> some View {
         Modified(content: self, spec: .environment({ environment in

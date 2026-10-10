@@ -691,6 +691,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let children: [ResolvedNode]
     /// True for a labeled control whose label was hidden by `.labelsHidden()`; nil for other nodes.
     public let labelsHidden: Bool?
+    /// Explicit Toggle style type metadata; nil when no `.toggleStyle` modifier applies.
+    public let toggleStyle: String?
     /// Role, label, value, enablement and selection for the accessibility backend.
     public let accessibility: ResolvedAccessibility
     /// Font and foreground colour in effect at this node (inherited through the environment).
@@ -1685,6 +1687,9 @@ public final class Graph {
         default:
             labelsHidden = nil
         }
+        let toggleStyle: String?
+        if case .toggle = kind { toggleStyle = node.environment.toggleStyleMetadata }
+        else { toggleStyle = nil }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1704,6 +1709,7 @@ public final class Graph {
             marked: marked,
             children: children,
             labelsHidden: labelsHidden,
+            toggleStyle: toggleStyle,
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,

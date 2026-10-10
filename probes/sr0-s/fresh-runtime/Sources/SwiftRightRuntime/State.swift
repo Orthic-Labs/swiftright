@@ -215,6 +215,11 @@ public struct EnvironmentValues {
         get { self[LabelsHiddenKey.self] }
         set { self[LabelsHiddenKey.self] = newValue }
     }
+
+    var toggleStyleMetadata: String? {
+        get { self[ToggleStyleMetadataKey.self] }
+        set { self[ToggleStyleMetadataKey.self] = newValue }
+    }
 }
 
 private enum DisplayScaleKey: EnvironmentKey {
@@ -227,6 +232,10 @@ private enum ReduceMotionKey: EnvironmentKey {
 
 private enum LabelsHiddenKey: EnvironmentKey {
     static var defaultValue: Bool { false }
+}
+
+private enum ToggleStyleMetadataKey: EnvironmentKey {
+    static var defaultValue: String? { nil }
 }
 
 @MainActor
