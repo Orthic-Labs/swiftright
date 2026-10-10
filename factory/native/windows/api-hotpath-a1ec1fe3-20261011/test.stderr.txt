@@ -1,0 +1,20 @@
+Building for production...
+[Computing dependencies]
+[Pre-planning 1ΓÇë/ΓÇë124]
+[Planning deferred tasks]
+[12ΓÇë/ΓÇë27] SwiftRightRuntime
+[20ΓÇë/ΓÇë30] SwiftRightRuntime-product
+[20ΓÇë/ΓÇë30] SwiftRightRuntimeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: [1;33mwarning: [1;39mreference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'[0;0m
+[0;36m1 |[0;0m _Builtin_stddef.wchar_t
+  [0;36m|[0;0m |- [1;33mwarning: [1;39mreference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported[0;0m
+  [0;36m|[0;0m `- [1;39mnote: [1;39mdeclarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros[0;0m
+<unknown>:0: [1;39mnote: [1;39mattempting to recover from the previous modularization issue[0;0m
+
+[24ΓÇë/ΓÇë30] SwiftRightRuntimeTests-product
+[28ΓÇë/ΓÇë32] SwiftRightRuntimeTests-test-runner
+[32ΓÇë/ΓÇë32] SwiftRightRuntimeTests-test-runner
+Build complete! (86.11 secs)
