@@ -1,0 +1,12 @@
+/Volumes/D/claude/swiftright/factory/catalogue/access-inheritance-spike/ImportPrivateNegative.swift:2:33: error: 'ExplicitPrivateNested' is inaccessible due to 'private' protection level
+1 | import AccessFixture
+2 | let value = PublicParentFixture.ExplicitPrivateNested.hidden
+  |                                 `- error: 'ExplicitPrivateNested' is inaccessible due to 'private' protection level
+3 | 
+
+AccessFixture.PublicParentFixture.ExplicitPrivateNested:2:48: note: 'ExplicitPrivateNested' declared here
+1 | enum PublicParentFixture {
+2 | private enum AccessFixture.PublicParentFixture.ExplicitPrivateNested {
+  |                                                `- note: 'ExplicitPrivateNested' declared here
+3 |     case hidden
+4 |     fileprivate static func __derived_enum_equals(_ a: AccessFixture.PublicParentFixture.ExplicitPrivateNested, _ b: AccessFixture.PublicParentFixture.ExplicitPrivateNested) -> Bool

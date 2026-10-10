@@ -1,0 +1,223 @@
+{
+  key.dependencies: [
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_StringProcessing.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        }
+      ]
+    },
+    {
+      key.kind: source.lang.swift.import.module.clang,
+      key.name: "_SwiftConcurrencyShims",
+      key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/_SwiftConcurrencyShims-375CYD2JCZPG2.pcm",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_Concurrency.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        },
+        {
+          key.kind: source.lang.swift.import.module.clang,
+          key.name: "SwiftShims",
+          key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/SwiftShims-375CYD2JCZPG2.pcm",
+          key.is_system: 1
+        }
+      ]
+    }
+  ],
+  key.entities: [
+    {
+      key.kind: source.lang.swift.decl.enum,
+      key.name: "PublicFixture",
+      key.usr: "s:13AccessFixture06PublicB0O",
+      key.line: 1,
+      key.column: 13,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.enumelement,
+          key.name: "visible",
+          key.usr: "s:13AccessFixture06PublicB0O7visibleyA2CmF",
+          key.line: 2,
+          key.column: 8,
+          key.effective_access: source.decl.effective_access.public
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.public
+        }
+      ],
+      key.effective_access: source.decl.effective_access.public
+    },
+    {
+      key.kind: source.lang.swift.decl.enum,
+      key.name: "InternalFixture",
+      key.usr: "s:13AccessFixture08InternalB0O",
+      key.line: 5,
+      key.column: 15,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.enumelement,
+          key.name: "hidden",
+          key.usr: "s:13AccessFixture08InternalB0O6hiddenyA2CmF",
+          key.line: 6,
+          key.column: 8,
+          key.effective_access: source.decl.effective_access.internal
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.internal
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.decl.enum,
+      key.name: "FilePrivateFixture",
+      key.usr: "s:13AccessFixture011FilePrivateB033_430D2F3B515546F2ABA10E3FEEEA5503LLO",
+      key.line: 9,
+      key.column: 14,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.enumelement,
+          key.name: "hidden",
+          key.usr: "s:13AccessFixture011FilePrivateB033_430D2F3B515546F2ABA10E3FEEEA5503LLO6hiddenyA2DmF",
+          key.line: 10,
+          key.column: 8,
+          key.effective_access: source.decl.effective_access.fileprivate
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.private
+        }
+      ],
+      key.effective_access: source.decl.effective_access.fileprivate
+    },
+    {
+      key.kind: source.lang.swift.decl.enum,
+      key.name: "PublicParentFixture",
+      key.usr: "s:13AccessFixture012PublicParentB0O",
+      key.line: 13,
+      key.column: 13,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.enum,
+          key.name: "ExplicitPublicNested",
+          key.usr: "s:13AccessFixture012PublicParentB0O08ExplicitC6NestedO",
+          key.line: 14,
+          key.column: 15,
+          key.entities: [
+            {
+              key.kind: source.lang.swift.decl.enumelement,
+              key.name: "visible",
+              key.usr: "s:13AccessFixture012PublicParentB0O08ExplicitC6NestedO7visibleyA2EmF",
+              key.line: 15,
+              key.column: 10,
+              key.effective_access: source.decl.effective_access.public
+            }
+          ],
+          key.attributes: [
+            {
+              key.attribute: source.decl.attribute.public
+            }
+          ],
+          key.effective_access: source.decl.effective_access.public
+        },
+        {
+          key.kind: source.lang.swift.decl.enum,
+          key.name: "ExplicitInternalNested",
+          key.usr: "s:13AccessFixture012PublicParentB0O22ExplicitInternalNestedO",
+          key.line: 18,
+          key.column: 17,
+          key.entities: [
+            {
+              key.kind: source.lang.swift.decl.enumelement,
+              key.name: "hidden",
+              key.usr: "s:13AccessFixture012PublicParentB0O22ExplicitInternalNestedO6hiddenyA2EmF",
+              key.line: 19,
+              key.column: 10,
+              key.effective_access: source.decl.effective_access.internal
+            }
+          ],
+          key.attributes: [
+            {
+              key.attribute: source.decl.attribute.internal
+            }
+          ],
+          key.effective_access: source.decl.effective_access.internal
+        },
+        {
+          key.kind: source.lang.swift.decl.enum,
+          key.name: "ExplicitPrivateNested",
+          key.usr: "s:13AccessFixture012PublicParentB0O21ExplicitPrivateNested33_430D2F3B515546F2ABA10E3FEEEA5503LLO",
+          key.line: 22,
+          key.column: 16,
+          key.entities: [
+            {
+              key.kind: source.lang.swift.decl.enumelement,
+              key.name: "hidden",
+              key.usr: "s:13AccessFixture012PublicParentB0O21ExplicitPrivateNested33_430D2F3B515546F2ABA10E3FEEEA5503LLO6hiddenyA2FmF",
+              key.line: 23,
+              key.column: 10,
+              key.effective_access: source.decl.effective_access.less_than_fileprivate
+            }
+          ],
+          key.attributes: [
+            {
+              key.attribute: source.decl.attribute.private
+            }
+          ],
+          key.effective_access: source.decl.effective_access.less_than_fileprivate
+        },
+        {
+          key.kind: source.lang.swift.decl.enum,
+          key.name: "DefaultNested",
+          key.usr: "s:13AccessFixture012PublicParentB0O13DefaultNestedO",
+          key.line: 26,
+          key.column: 8,
+          key.entities: [
+            {
+              key.kind: source.lang.swift.decl.enumelement,
+              key.name: "hidden",
+              key.usr: "s:13AccessFixture012PublicParentB0O13DefaultNestedO6hiddenyA2EmF",
+              key.line: 27,
+              key.column: 10,
+              key.effective_access: source.decl.effective_access.internal
+            }
+          ],
+          key.effective_access: source.decl.effective_access.internal
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.public
+        }
+      ],
+      key.effective_access: source.decl.effective_access.public
+    }
+  ]
+}

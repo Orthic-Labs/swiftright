@@ -1,0 +1,12 @@
+/Volumes/D/claude/swiftright/factory/catalogue/access-inheritance-spike/ImportDefaultNestedNegative.swift:2:33: error: 'DefaultNested' is inaccessible due to 'internal' protection level
+1 | import AccessFixture
+2 | let value = PublicParentFixture.DefaultNested.hidden
+  |                                 `- error: 'DefaultNested' is inaccessible due to 'internal' protection level
+3 | 
+
+AccessFixture.PublicParentFixture.DefaultNested:2:49: note: 'DefaultNested' declared here
+1 | enum PublicParentFixture {
+2 | internal enum AccessFixture.PublicParentFixture.DefaultNested {
+  |                                                 `- note: 'DefaultNested' declared here
+3 |     case hidden
+4 |     internal static func __derived_enum_equals(_ a: AccessFixture.PublicParentFixture.DefaultNested, _ b: AccessFixture.PublicParentFixture.DefaultNested) -> Bool
