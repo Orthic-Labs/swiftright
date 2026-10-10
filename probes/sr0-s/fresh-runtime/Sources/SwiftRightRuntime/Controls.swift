@@ -249,14 +249,48 @@ extension ShapeStyle where Self == Color {
 /// Apple: https://developer.apple.com/documentation/swiftui/font
 public struct Font: Hashable, Sendable {
     public let id: String
+    /// Explicit family and style facts used by text measurement. Legacy font values leave this unset.
+    public let metadata: Metadata?
 
-    init(id: String) { self.id = id }
+    public struct Metadata: Hashable, Sendable {
+        public let familyName: String?
+        public let pointSize: CGFloat?
+        public let weight: Weight?
+        public let design: Design?
+        public let isCustom: Bool
+
+        public init(familyName: String? = nil, pointSize: CGFloat? = nil, weight: Weight? = nil,
+                    design: Design? = nil, isCustom: Bool = false) {
+            self.familyName = familyName
+            self.pointSize = pointSize
+            self.weight = weight
+            self.design = design
+            self.isCustom = isCustom
+        }
+    }
+
+    init(id: String) {
+        self.id = id
+        metadata = nil
+    }
+
+    private init(id: String, metadata: Metadata) {
+        self.id = id
+        self.metadata = metadata
+    }
 
     public enum Weight: String, Hashable, Sendable {
         case regular
         case medium
         case semibold
         case bold
+    }
+
+    public enum Design: String, Hashable, Sendable {
+        case `default`
+        case serif
+        case rounded
+        case monospaced
     }
 
     public static let largeTitle = Font(id: "textStyle.largeTitle")
@@ -275,8 +309,20 @@ public struct Font: Hashable, Sendable {
         Font(id: "system(\(size),\(weight.rawValue))")
     }
 
+    /// Creates a system font with an explicit design descriptor for measurement backends.
+    public static func system(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design) -> Font {
+        Font(
+            id: "system(\(size),\(weight.rawValue))",
+            metadata: Metadata(pointSize: size, weight: weight, design: design)
+        )
+    }
+
     public func weight(_ weight: Font.Weight) -> Font {
-        Font(id: "\(id)|weight(\(weight.rawValue))")
+        let metadata = self.metadata.map {
+            Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom)
+        }
+        if let metadata { return Font(id: "\(id)|weight(\(weight.rawValue))", metadata: metadata) }
+        return Font(id: "\(id)|weight(\(weight.rawValue))")
     }
 }
 

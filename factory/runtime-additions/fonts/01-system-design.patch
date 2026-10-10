@@ -1,0 +1,227 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+@@ -192,14 +192,48 @@
+ /// Apple: https://developer.apple.com/documentation/swiftui/font
+ public struct Font: Hashable, Sendable {
+     public let id: String
+-
+-    init(id: String) { self.id = id }
++    /// Explicit family and style facts used by text measurement. Legacy font values leave this unset.
++    public let metadata: Metadata?
++
++    public struct Metadata: Hashable, Sendable {
++        public let familyName: String?
++        public let pointSize: CGFloat?
++        public let weight: Weight?
++        public let design: Design?
++        public let isCustom: Bool
++
++        public init(familyName: String? = nil, pointSize: CGFloat? = nil, weight: Weight? = nil,
++                    design: Design? = nil, isCustom: Bool = false) {
++            self.familyName = familyName
++            self.pointSize = pointSize
++            self.weight = weight
++            self.design = design
++            self.isCustom = isCustom
++        }
++    }
++
++    init(id: String) {
++        self.id = id
++        metadata = nil
++    }
++
++    private init(id: String, metadata: Metadata) {
++        self.id = id
++        self.metadata = metadata
++    }
+ 
+     public enum Weight: String, Hashable, Sendable {
+         case regular
+         case medium
+         case semibold
+         case bold
++    }
++
++    public enum Design: String, Hashable, Sendable {
++        case `default`
++        case serif
++        case rounded
++        case monospaced
+     }
+ 
+     public static let largeTitle = Font(id: "textStyle.largeTitle")
+@@ -218,8 +252,20 @@
+         Font(id: "system(\(size),\(weight.rawValue))")
+     }
+ 
++    /// Creates a system font with an explicit design descriptor for measurement backends.
++    public static func system(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design) -> Font {
++        Font(
++            id: "system(\(size),\(weight.rawValue))",
++            metadata: Metadata(pointSize: size, weight: weight, design: design)
++        )
++    }
++
+     public func weight(_ weight: Font.Weight) -> Font {
+-        Font(id: "\(id)|weight(\(weight.rawValue))")
++        let metadata = self.metadata.map {
++            Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom)
++        }
++        if let metadata { return Font(id: "\(id)|weight(\(weight.rawValue))", metadata: metadata) }
++        return Font(id: "\(id)|weight(\(weight.rawValue))")
+     }
+ }
+ 
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/TextMeasurement.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/TextMeasurement.swift
+@@ -4,12 +4,15 @@
+ public struct TextMeasureRequest: Hashable, Sendable {
+     public let text: String
+     public let fontID: String
++    /// Optional descriptor for explicit system designs and custom families. Legacy requests leave it nil.
++    public let fontMetadata: Font.Metadata?
+     public let proposedWidth: CGFloat?
+     public let scale: CGFloat
+ 
+-    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat) {
++    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil) {
+         self.text = text
+         self.fontID = fontID
++        self.fontMetadata = fontMetadata
+         self.proposedWidth = proposedWidth
+         self.scale = scale
+     }
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -492,8 +492,8 @@
+     var motion: Motion?
+     /// Per-field text input state (TextField and TextEditor nodes only).
+     var textInput: TextInputState?
+-    /// Font identifier of the last measurement (the memo is keyed by text, font and width).
+-    var memoFont: String?
++    /// Font value of the last measurement (the memo is keyed by text, font metadata and width).
++    var memoFont: Font?
+     /// Selection binding of a List node, set at evaluation.
+     var selection: SelectionAccess?
+     /// Anchor and cursor of a List's keyboard and click selection, as row tags.
+@@ -610,6 +610,8 @@
+     /// A custom `Layout`, which can depend on anything its owner holds: never cached across evaluations.
+     case always
+     case text(String, String?)
++    /// Text whose measurement depends on additive font metadata.
++    case styledText(String, Font?)
+     case stack(StackSpec)
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
+@@ -1334,8 +1336,13 @@
+     private func noteLayoutContent(_ node: Node, _ kind: NodeKind) {
+         let key: LayoutKey
+         switch kind {
+-        case .text(let string): key = .text(string, node.environment.font?.id)
+-        case .textField, .textEditor: key = .text(node.textInput?.display ?? "", node.environment.font?.id)
++        case .text(let string):
++            let font = node.environment.font
++            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
++        case .textField, .textEditor:
++            let font = node.environment.font
++            let string = node.textInput?.display ?? ""
++            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
+         case .stack(let spec): key = .stack(spec)
+         case .modifier(.padding(let insets)): key = .padding(insets)
+         case .modifier(.frame(let frame)): key = .frame(frame)
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -406,14 +406,16 @@
+ 
+     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
+         let wrapWidth = finiteLength(width)
+-        let fontID = node.environment.font?.id ?? "body"
+-        if node.memoText != string || node.memoFont != fontID {
++        let font = node.environment.font ?? Font(id: "body")
++        if node.memoText != string || node.memoFont != font {
+             node.memoText = string
+-            node.memoFont = fontID
++            node.memoFont = font
+             node.memo.removeAll()
+         }
+         if let cached = node.memo[wrapWidth] { return cached }
+-        let request = TextMeasureRequest(text: string, fontID: fontID, proposedWidth: wrapWidth, scale: scale)
++        let request = TextMeasureRequest(
++            text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale, fontMetadata: font.metadata
++        )
+         let size = measurer.measure(request).size
+         node.memo[wrapWidth] = size
+         return size
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
+@@ -0,0 +1,69 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++final class MutableFontModel {
++    var design: Font.Design = .serif
++}
++
++struct MutableDesignFontProbe: View {
++    let model: MutableFontModel
++    var body: some View { Text("descriptor").font(.system(size: 16, design: model.design)) }
++}
++
++@MainActor
++final class DescriptorTextMeasurer: TextMeasurer {
++    var requests: [TextMeasureRequest] = []
++
++    func measure(_ request: TextMeasureRequest) -> TextMeasurement {
++        requests.append(request)
++        let height: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
++        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: height * 0.75, lineCount: 1)
++    }
++}
++
++@MainActor
++final class FontAdditionTests: XCTestCase {
++    func testSystemDesignIsPassedAsMetadataWithoutChangingLegacyID() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("design").font(.system(size: 17, weight: .medium, design: .serif)), measurer: measurer)
++        graph.flush()
++
++        let font = Font.system(size: 17, weight: .medium, design: .serif)
++        let request = measurer.requests.first
++        XCTAssertEqual(font.id, Font.system(size: 17, weight: .medium).id)
++        XCTAssertEqual(request?.fontID, font.id)
++        XCTAssertEqual(request?.fontMetadata?.pointSize, 17)
++        XCTAssertEqual(request?.fontMetadata?.weight, .medium)
++        XCTAssertEqual(request?.fontMetadata?.design, .serif)
++        XCTAssertNil(request?.fontMetadata?.familyName)
++    }
++
++    func testSameTextNodeInvalidatesWhenDesignChangesWithoutChangingID() {
++        let model = MutableFontModel()
++        let measurer = DescriptorTextMeasurer()
++        let graph = Graph(MutableDesignFontProbe(model: model), measurer: measurer)
++        graph.flush()
++        let textID = graph.ids(ofKind: "Text").first
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 10)
++
++        model.design = .rounded
++        graph.flush()
++        XCTAssertEqual(graph.ids(ofKind: "Text").first, textID)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 13)
++        XCTAssertEqual(measurer.requests.map { $0.fontMetadata?.design }, [.serif, .rounded])
++    }
++
++    func testLegacySystemFontLeavesMetadataUnset() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)
++        graph.flush()
++
++        XCTAssertEqual(measurer.requests.first?.fontID, "system(17.0,medium)")
++        XCTAssertNil(measurer.requests.first?.fontMetadata)
++        XCTAssertNil(Font.system(size: 17, weight: .medium).metadata)
++    }
++}

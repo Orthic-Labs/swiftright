@@ -492,8 +492,8 @@ final class Node {
     var motion: Motion?
     /// Per-field text input state (TextField and TextEditor nodes only).
     var textInput: TextInputState?
-    /// Font identifier of the last measurement (the memo is keyed by text, font and width).
-    var memoFont: String?
+    /// Font value of the last measurement (the memo is keyed by text, font metadata and width).
+    var memoFont: Font?
     /// Selection binding of a List node, set at evaluation.
     var selection: SelectionAccess?
     /// Anchor and cursor of a List's keyboard and click selection, as row tags.
@@ -610,6 +610,8 @@ enum LayoutKey: Equatable {
     /// A custom `Layout`, which can depend on anything its owner holds: never cached across evaluations.
     case always
     case text(String, String?)
+    /// Text whose measurement depends on additive font metadata.
+    case styledText(String, Font?)
     case stack(StackSpec)
     case padding(EdgeInsets)
     case frame(FrameSpec)
@@ -1336,8 +1338,13 @@ public final class Graph {
     private func noteLayoutContent(_ node: Node, _ kind: NodeKind) {
         let key: LayoutKey
         switch kind {
-        case .text(let string): key = .text(string, node.environment.font?.id)
-        case .textField, .textEditor: key = .text(node.textInput?.display ?? "", node.environment.font?.id)
+        case .text(let string):
+            let font = node.environment.font
+            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
+        case .textField, .textEditor:
+            let font = node.environment.font
+            let string = node.textInput?.display ?? ""
+            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
         case .stack(let spec): key = .stack(spec)
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)

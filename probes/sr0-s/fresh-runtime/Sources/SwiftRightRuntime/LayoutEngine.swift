@@ -423,14 +423,16 @@ extension Graph {
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
         let wrapWidth = finiteLength(width)
-        let fontID = node.environment.font?.id ?? "body"
-        if node.memoText != string || node.memoFont != fontID {
+        let font = node.environment.font ?? Font(id: "body")
+        if node.memoText != string || node.memoFont != font {
             node.memoText = string
-            node.memoFont = fontID
+            node.memoFont = font
             node.memo.removeAll()
         }
         if let cached = node.memo[wrapWidth] { return cached }
-        let request = TextMeasureRequest(text: string, fontID: fontID, proposedWidth: wrapWidth, scale: scale)
+        let request = TextMeasureRequest(
+            text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale, fontMetadata: font.metadata
+        )
         let size = measurer.measure(request).size
         node.memo[wrapWidth] = size
         return size

@@ -4,12 +4,15 @@ import Foundation
 public struct TextMeasureRequest: Hashable, Sendable {
     public let text: String
     public let fontID: String
+    /// Optional descriptor for explicit system designs and custom families. Legacy requests leave it nil.
+    public let fontMetadata: Font.Metadata?
     public let proposedWidth: CGFloat?
     public let scale: CGFloat
 
-    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat) {
+    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil) {
         self.text = text
         self.fontID = fontID
+        self.fontMetadata = fontMetadata
         self.proposedWidth = proposedWidth
         self.scale = scale
     }
