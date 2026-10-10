@@ -4,9 +4,10 @@ import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from tools.canonical_json import CanonicalJSONError, dumps, loads, sha256
+from factory.tools.canonical_json import CanonicalJSONError, dumps, loads, sha256
 
 
 class CanonicalJSONTests(unittest.TestCase):

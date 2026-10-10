@@ -5,10 +5,11 @@ import unittest
 import json
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from tools.schema_validate import ValidationSetupError, load_registry, validate_artifact
-from tools.canonical_json import CanonicalJSONError, loads
+from factory.tools.schema_validate import ValidationSetupError, load_registry, validate_artifact
+from factory.tools.canonical_json import CanonicalJSONError, loads
 
 
 ROOT = Path(__file__).resolve().parents[1]

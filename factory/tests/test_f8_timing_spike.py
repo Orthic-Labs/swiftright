@@ -5,9 +5,10 @@ import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spikes" / "timing"))
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from f8_timing_spike import EvidenceError, compare, deterministic_example, selftest
+from factory.spikes.timing.f8_timing_spike import EvidenceError, compare, deterministic_example, selftest
 
 
 class F8TimingSpikeTests(unittest.TestCase):
