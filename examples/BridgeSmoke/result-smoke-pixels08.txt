@@ -1,0 +1,233 @@
+SR0 T4 result: rendered-output (pixel) assertions, tuple 08 (renderer E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93), Dell BOGUS-DELL, 2026-10-10. 10 runs per target, both capture methods, all PASS.
+
+WHAT WAS DONE
+  Driver: examples/BridgeSmoke/scripts/drive-pixels.ps1 (scheduled by scripts/schedule-pixels.ps1 under D:\Claude\desktop.lock; built by scripts/build-pixels.ps1). Window-targeted input only (UIA Invoke, PostMessage to the app window). Window titles are not recorded.
+  Capture, two independent ways on each run, both asserted: (1) PrintWindow(hwnd, PW_CLIENTONLY | PW_RENDERFULLCONTENT = 3) of the client area; (2) a copy of the window's client rectangle from the composed desktop (CopyFromScreen). The first method that returns a non-uniform frame is the verdict, the other is reported beside it.
+  Run validity: the window must not be occluded (WindowFromPoint grid over the client area must resolve to the target) and must be in the foreground. The window scale (2.5) must equal the scale the host reported.
+  Window: the host's own "ready" line reports a 1600x1396 client; the client rectangle at capture time is 1600x1200 (window 912,436 to 2544,1724). Positions below are for the 1600x1200 client at scale 2.5 (1 DIP = 2.5 px).
+
+THE EXE QUESTION (the exe hash is in the tuple)
+  BridgeSmoke.exe (21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5) was NOT changed and was NOT rebuilt: it is the tuple 08 binary at D:\Claude\sr0-r08\smoke\scratch\out\Products\Release-windows-x86_64, driven as drive-smoke.ps1 does (UIA Invoke on "Press me", a posted 'a'), and it still passes 39/39 of its own checks in every run.
+  What its FINAL frame can prove: the underline (node 6, 120 DIP at (20,440), D97706), the label glyphs, the button (fill 2563EB, rounded corner, white label) and the edit box (white fill, 888888 border). Those are asserted below.
+  What it cannot prove, so the exe would have to change: the image and clipping. BridgeSmoke commits the 4x4 swatch (node 7) and re-commits node 7 without the image primitive in the same startup turn (the lifetime check, main.swift lines ~280-305), so no image is on screen in its final frame, and it never emits clipPush/clipPop or translatePush. REPORT: asserting image colors/corners and clipping on BridgeSmoke itself needs a different exe.
+  Instead of changing it, this adds a separate exe, examples/BridgeSmoke/Sources/BridgePixels (target BridgePixels in Package.swift): BridgePixels.exe a7b6bf507bd64ff37af24eec68be40a36d2b76899aacc0f1fe47fb1352b7d012, built on the Dell from this tree against the same renderer DLL (hash-checked). It is not part of tuple 08; whether to pin it is the lead's decision. BridgeSmoke.exe and the tuple are untouched.
+
+SCENE ASSERTED ON BridgePixels (committed as one node; DIP x scale 2.5)
+  bg F5F5F5 full client; image A (4x4 gradient, cell i = (16i, 255-16i, 128)) 64 DIP at (20,20) radius 8; image B same, square, at (120,20); text "Marked text" at (20,120) with an underline D97706 directly under its measured box;
+  clip 1 clipPush(20,220,100x40) around a 300x40 C0392B rect; clip 2 clipPush(200,230,100x20) around an 100x80 2E86C1 rect; clip 3 clipPush(340,20,32x64) around a 64x64 copy of the image; translatePush(400,220) around a 60x40 27AE60 rect drawn at (0,0).
+
+RESULTS (details and every assertion of run 1 are in the data below)
+  BridgeSmoke final frame, 10 runs: PASS 10 of 10 on PrintWindow and on the screen copy. Underline: interior D97706 at fraction 1.000, first pixel x=50, last x=349 (120 DIP = 300 px), 5 px thick, the three rows above and below are background, no D97706 outside its rows.
+  BridgePixels, 10 runs: PASS 10 of 10 on both captures. Image cell centers: 16 of 16 within 12 per channel of the source colors, for the rounded and the square image. Image extent 160 px with background on both sides. Rounded corners: along each diagonal the first non-background pixel is 6 px in (a radius-20 circle crosses the diagonal at 5.9 px); square corners: 0 px. Clips: horizontal clip leaves C0392B exactly at x=50..299 and nothing beyond; vertical clip shows only rows 575..624; the image clip shows cells in the left half and background in the right half. Translate: the rect lands at (1000,550)..(1149,...), nothing at the origin. Underline under the text: x=50..261 (the measured 211.875 px), rows 360..364, interior fraction 1.000.
+  The two captures agree: in run 1 they differ in 166 pixels, all in the bottom 17 rows (y 1183..1199), which no assertion reads (cause not investigated). Everything the assertions read is identical.
+
+NEGATIVE CONTROLS (the assertions can fail): the captured run-1 frames were damaged in a copy (PIL on the Mac) and fed to the same assertion code with -AssertPng (no window, no desktop). The undamaged copies PASS (15 of 15 and 11 of 11). Each single defect fails the assertion that targets it and no other (negctl-result.txt, below):
+  underline erased / shortened / 3 px thick / wrong color / shifted / 1 px; clip 1, 2 and 3 breached; rounded image with a square corner; square image with a rounded corner; one image cell recolored; translate drawn at the origin or shifted by 12 px; text erased; button square or missing; blank frame (13 of 15 assertions fail).
+
+OBSERVED RENDERER BEHAVIOUR WORTH KNOWING
+  Images are drawn with smoothed (linear-looking) sampling, not nearest-neighbour: the 16 cell colors are exact at the cell centers, and the outermost half texel blends toward its neighbours (for example image B's top-left pixel is (181,198,189), not the cell color (0,255,128)). Pixel-exact corner colors are therefore not asserted; corner SHAPE and cell-center colors are.
+  BridgeSmoke clears to white (#FFFFFF), BridgePixels draws F5F5F5 itself; both are what was committed.
+
+LIMITS (not covered)
+  One machine, one display scale (2.5), Windows only; no second GPU/driver; the Mac is not covered. The underline is asserted as a standalone SWR_PRIM_UNDERLINE node, not drawn over IME marked text in a live composition. Primitive not exercised: path (declared in Types.swift, not tested here). Tolerances: colors +-6 for flat fills, +-12 for sampled image cells.
+  Evidence images: examples/BridgeSmoke/evidence/smoke08-run01-printwindow.png and pixels08-run01-printwindow.png (the PrintWindow capture of run 1); the screen copies and the other nine runs' PNGs are not kept in the repository (Dell: D:\Claude\sr0-t4\out\smoke10 and pixels10).
+  Harness history: three one-run trials before these passes found and fixed three harness bugs (an unflushed pipe in BridgePixels that made the driver wait for the host to exit, a PowerShell alias collision, and a wrong expectation of pure cell colors at the image edge); their results are in D:\Claude\sr0-t4\out\trial*-*, not counted.
+
+==================== DATA: BridgeSmoke (target Smoke), scripts\drive-pixels.ps1 -Target Smoke -Runs 10
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T18:45:22.6610487+05:30 target=Smoke runs=10
+ARTIFACTS BridgeSmoke.exe=21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5 renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+
+RUNS: PASS=10 FAIL=0 INVALID=0 of 10 (attempts total 10)
+
+== assertions, primary capture (verdict), count of passing runs
+10/10 frame is not blank (distinct colors sampled)
+10/10 background is one uniform color in the four corners and bottom edge
+10/10 label glyphs painted at (20,20) DIP
+10/10 underline interior is D97706 (>= 99% of 294 x 3 px)
+10/10 underline starts at x=50 and ends at x=349 (+-1 px)
+10/10 underline is 5 px thick: the 3 rows above and below are background
+10/10 button fill is 2563EB (left padding strip)
+10/10 button corner is rounded (corner pixel is background, top edge past the radius is fill)
+10/10 button label glyphs (white) painted inside the button
+10/10 edit box interior is white
+10/10 edit box has a 888888 border on its left edge and background outside it
+10/10 the unchanged BridgeSmoke.exe still passes its own checks in this run (exit 0, SMOKE PASS)
+10/10 host-reported window scale equals the scale used for the pixel positions (2.5)
+
+== capture methods: runs in which each method gave a non-uniform frame, and all-assertions-pass per method
+printwindow  non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+screen       non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+
+== per run
+run 01 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 02 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 03 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 04 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 05 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 06 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 07 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 08 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 09 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 10 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+
+== details of run 1 (every assertion, both captures)
+  PASS printwindow frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS printwindow background is one uniform color in the four corners and bottom edge [bg=#FFFFFF]
+  PASS printwindow label glyphs painted at (20,20) DIP [dark_px=4020 bbox=(54,66)-(586,104) expect origin (50,50)]
+  PASS printwindow underline interior is D97706 (>= 99% of 294 x 3 px) [fraction=1.000 region=(53,1101)-(347,1104)]
+  PASS printwindow underline starts at x=50 and ends at x=349 (+-1 px) [first=50 last=349]
+  PASS printwindow underline is 5 px thick: the 3 rows above and below are background [above=1.000 below=1.000 underline_colored_outside=0]
+  PASS printwindow button fill is 2563EB (left padding strip) [fraction=1.000 button=(50,380) 400x100 px]
+  PASS printwindow button corner is rounded (corner pixel is background, top edge past the radius is fill) [corner_is_bg=True top_edge_fill=1.000 radius=15]
+  PASS printwindow button label glyphs (white) painted inside the button [light_px=1127]
+  PASS printwindow edit box interior is white [fraction=1.000 edit=(50,530) 1000x90 px]
+  PASS printwindow edit box has a 888888 border on its left edge and background outside it [border_px=6 outside_bg=1.000]
+  PASS screen frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS screen background is one uniform color in the four corners and bottom edge [bg=#FFFFFF]
+  PASS screen label glyphs painted at (20,20) DIP [dark_px=4020 bbox=(54,66)-(586,104) expect origin (50,50)]
+  PASS screen underline interior is D97706 (>= 99% of 294 x 3 px) [fraction=1.000 region=(53,1101)-(347,1104)]
+  PASS screen underline starts at x=50 and ends at x=349 (+-1 px) [first=50 last=349]
+  PASS screen underline is 5 px thick: the 3 rows above and below are background [above=1.000 below=1.000 underline_colored_outside=0]
+  PASS screen button fill is 2563EB (left padding strip) [fraction=1.000 button=(50,380) 400x100 px]
+  PASS screen button corner is rounded (corner pixel is background, top edge past the radius is fill) [corner_is_bg=True top_edge_fill=1.000 radius=15]
+  PASS screen button label glyphs (white) painted inside the button [light_px=1127]
+  PASS screen edit box interior is white [fraction=1.000 edit=(50,530) 1000x90 px]
+  PASS screen edit box has a 888888 border on its left edge and background outside it [border_px=6 outside_bg=1.000]
+  PASS the unchanged BridgeSmoke.exe still passes its own checks in this run (exit 0, SMOKE PASS) [exit=0 SMOKE PASS (39/39)]
+  PASS host-reported window scale equals the scale used for the pixel positions (2.5) [host=2.5]
+
+==================== DATA: BridgePixels (target Pixels), scripts\drive-pixels.ps1 -Target Pixels -Runs 10
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T18:42:37.7543158+05:30 target=Pixels runs=10
+ARTIFACTS BridgePixels.exe=a7b6bf507bd64ff37af24eec68be40a36d2b76899aacc0f1fe47fb1352b7d012 renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+
+RUNS: PASS=10 FAIL=0 INVALID=0 of 10 (attempts total 10)
+
+== assertions, primary capture (verdict), count of passing runs
+10/10 frame is not blank (distinct colors sampled)
+10/10 background rect painted F5F5F5 (corners, bottom edge)
+10/10 image A rounded: all 16 cell centers have the source colors (+-12)
+10/10 image A rounded: extent is 64 DIP (160 px): background just left and right of it
+10/10 image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image
+10/10 image B square: all 16 cell centers have the source colors (+-12)
+10/10 image B square: extent is 64 DIP (160 px): background just left and right of it
+10/10 image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image
+10/10 text run painted: glyph pixels inside its measured box (212 x 60 px)
+10/10 underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+10/10 underline color appears only in its own rows (not in the glyph box, not below)
+10/10 clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip
+10/10 clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band
+10/10 clip 3 (image): the left half of the image shows its cells, the right half is background
+10/10 translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin
+10/10 BridgePixels host reports PIXELS-HOST PASS (scene committed, no rejection)
+10/10 host-reported window scale equals the scale used for the pixel positions (2.5)
+
+== capture methods: runs in which each method gave a non-uniform frame, and all-assertions-pass per method
+printwindow  non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+screen       non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+
+== per run
+run 01 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 02 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 03 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 04 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 05 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 06 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 07 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 08 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 09 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 10 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+
+== details of run 1 (every assertion, both captures)
+  PASS printwindow frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS printwindow background rect painted F5F5F5 (corners, bottom edge) [observed=#F5F5F5]
+  PASS printwindow image A rounded: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS printwindow image A rounded: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS printwindow image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=6 TR=6 BL=6 BR=6 edge_midpoints_background=0]
+  PASS printwindow image B square: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS printwindow image B square: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS printwindow image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=0 TR=0 BL=0 BR=0 edge_midpoints_background=0]
+  PASS printwindow text run painted: glyph pixels inside its measured box (212 x 60 px) [dark_px=1613 bbox=(54,316)-(260,345) box x=[50,262) y=[300,360)]
+  PASS printwindow underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick [interior=1.000 first=50 last=261 want=[50,261] rows=[360,365)]
+  PASS printwindow underline color appears only in its own rows (not in the glyph box, not below) [outside_px=0]
+  PASS printwindow clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip [inside=1.000 colored_outside_clip=0 first=50 last=299 want=[50,299]]
+  PASS printwindow clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band [inside=1.000 colored_above_or_below=0 band_rows=[575,625)]
+  PASS printwindow clip 3 (image): the left half of the image shows its cells, the right half is background [left_cells_bad=0 right_half_bg=1.000]
+  PASS printwindow translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin [inside=1.000 colored_at_origin=0 first=1000 last=1149]
+  PASS screen frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS screen background rect painted F5F5F5 (corners, bottom edge) [observed=#F5F5F5]
+  PASS screen image A rounded: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS screen image A rounded: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS screen image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=6 TR=6 BL=6 BR=6 edge_midpoints_background=0]
+  PASS screen image B square: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS screen image B square: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS screen image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=0 TR=0 BL=0 BR=0 edge_midpoints_background=0]
+  PASS screen text run painted: glyph pixels inside its measured box (212 x 60 px) [dark_px=1613 bbox=(54,316)-(260,345) box x=[50,262) y=[300,360)]
+  PASS screen underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick [interior=1.000 first=50 last=261 want=[50,261] rows=[360,365)]
+  PASS screen underline color appears only in its own rows (not in the glyph box, not below) [outside_px=0]
+  PASS screen clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip [inside=1.000 colored_outside_clip=0 first=50 last=299 want=[50,299]]
+  PASS screen clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band [inside=1.000 colored_above_or_below=0 band_rows=[575,625)]
+  PASS screen clip 3 (image): the left half of the image shows its cells, the right half is background [left_cells_bad=0 right_half_bg=1.000]
+  PASS screen translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin [inside=1.000 colored_at_origin=0 first=1000 last=1149]
+  PASS BridgePixels host reports PIXELS-HOST PASS (scene committed, no rejection) [exit=0]
+  PASS host-reported window scale equals the scale used for the pixel positions (2.5) [host=2.5]
+
+==================== NEGATIVE CONTROLS (drive-pixels.ps1 -AssertPng on damaged copies of the run-1 frames)
+pix-blank.png                      ASSERT-PNG FAIL failed=13 of 15
+    failed: frame is not blank (distinct colors sampled)
+    failed: background rect painted F5F5F5 (corners, bottom edge)
+    failed: image A rounded: all 16 cell centers have the source colors (+-12)
+    failed: image A rounded: extent is 64 DIP (160 px): background just left and right of it
+    failed: image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image
+    failed: image B square: all 16 cell centers have the source colors (+-12)
+    failed: image B square: extent is 64 DIP (160 px): background just left and right of it
+    failed: text run painted: glyph pixels inside its measured box (212 x 60 px)
+    failed: underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+    failed: clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip
+    failed: clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band
+    failed: clip 3 (image): the left half of the image shows its cells, the right half is background
+    failed: translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin
+pix-clip1-breach.png               ASSERT-PNG FAIL failed=1 of 15
+    failed: clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip
+pix-clip2-breach.png               ASSERT-PNG FAIL failed=1 of 15
+    failed: clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band
+pix-clip3-no-clip.png              ASSERT-PNG FAIL failed=1 of 15
+    failed: clip 3 (image): the left half of the image shows its cells, the right half is background
+pix-image-B-corner-rounded.png     ASSERT-PNG FAIL failed=1 of 15
+    failed: image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image
+pix-image-cell-swapped.png         ASSERT-PNG FAIL failed=1 of 15
+    failed: image A rounded: all 16 cell centers have the source colors (+-12)
+pix-image-corner-square.png        ASSERT-PNG FAIL failed=1 of 15
+    failed: image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image
+pix-no-underline.png               ASSERT-PNG FAIL failed=1 of 15
+    failed: underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+pix-ok.png                         ASSERT-PNG PASS failed=0 of 15
+pix-text-missing.png               ASSERT-PNG FAIL failed=1 of 15
+    failed: text run painted: glyph pixels inside its measured box (212 x 60 px)
+pix-translate-at-origin.png        ASSERT-PNG FAIL failed=4 of 15
+    failed: background rect painted F5F5F5 (corners, bottom edge)
+    failed: image A rounded: extent is 64 DIP (160 px): background just left and right of it
+    failed: image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image
+    failed: translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin
+pix-translate-moved.png            ASSERT-PNG FAIL failed=1 of 15
+    failed: translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin
+pix-underline-short.png            ASSERT-PNG FAIL failed=1 of 15
+    failed: underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+pix-underline-thin.png             ASSERT-PNG FAIL failed=1 of 15
+    failed: underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+smoke-button-missing.png           ASSERT-PNG FAIL failed=2 of 11
+    failed: button fill is 2563EB (left padding strip)
+    failed: button corner is rounded (corner pixel is background, top edge past the radius is fill)
+smoke-button-square.png            ASSERT-PNG FAIL failed=1 of 11
+    failed: button corner is rounded (corner pixel is background, top edge past the radius is fill)
+smoke-no-underline.png             ASSERT-PNG FAIL failed=2 of 11
+    failed: underline interior is D97706 (>= 99% of 294 x 3 px)
+    failed: underline starts at x=50 and ends at x=349 (+-1 px)
+smoke-ok.png                       ASSERT-PNG PASS failed=0 of 11
+smoke-underline-1px.png            ASSERT-PNG FAIL failed=1 of 11
+    failed: underline interior is D97706 (>= 99% of 294 x 3 px)
+smoke-underline-shifted.png        ASSERT-PNG FAIL failed=2 of 11
+    failed: underline interior is D97706 (>= 99% of 294 x 3 px)
+    failed: underline starts at x=50 and ends at x=349 (+-1 px)
+smoke-underline-wrong-color.png    ASSERT-PNG FAIL failed=2 of 11
+    failed: underline interior is D97706 (>= 99% of 294 x 3 px)
+    failed: underline starts at x=50 and ends at x=349 (+-1 px)

@@ -5,6 +5,7 @@ import PackageDescription
 // SR0 snapshot rows 6 and 7 on the final tuple:
 //   TextGeom06  text geometry (UIA TextPattern vs the measured cells), single- and multi-paragraph text
 //   Modal06     the real SWR_MODAL_MENU / SWR_MODAL_DIALOG paths
+//   ColdOpen06  (SR0 T10) one modal in a fresh process, with main-queue blocking and request-to-visible measured separately
 // Both build on macOS too (they then report "unsupported platform" at run time; SWR_GM_DRYRUN=1 runs only the
 // pure-logic self-test there). Windows build needs the ComCtl v6 manifest link flags: see scripts/build.ps1.
 let package = Package(
@@ -23,6 +24,11 @@ let package = Package(
             name: "Modal06",
             dependencies: [.product(name: "SwiftRightBridge", package: "SwiftRightBridge")],
             path: "Sources/Modal06"
+        ),
+        .executableTarget(
+            name: "ColdOpen06",
+            dependencies: [.product(name: "SwiftRightBridge", package: "SwiftRightBridge")],
+            path: "Sources/ColdOpen06"
         ),
     ],
     swiftLanguageModes: [.v5]

@@ -23,13 +23,13 @@ if ($LASTEXITCODE -ne 0) { throw "swift build failed" }
 $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
 if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path) }
 "bin=$bin"
-foreach ($e in 'TextGeom06.exe', 'Modal06.exe') { Copy-Item (Join-Path $bin $e) "$Base\bin\$e" -Force }
+foreach ($e in 'TextGeom06.exe', 'Modal06.exe', 'ColdOpen06.exe') { Copy-Item (Join-Path $bin $e) "$Base\bin\$e" -Force }
 Copy-Item "$Base\payload\bin\swiftright_render.dll" "$Base\bin\swiftright_render.dll" -Force
 Get-ChildItem "$Base\bin\*" -Include *.exe, *.dll | ForEach-Object { "{0} {1} bytes {2} sha256={3}" -f $_.Name, $_.Length, $_.LastWriteTime.ToString('o'), (Get-FileHash -Algorithm SHA256 -LiteralPath $_.FullName).Hash.ToLower() }
 # manifest check (best effort): the embedded manifest must carry the comctl32 v6 dependency
 $mt = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\mt.exe' -ErrorAction SilentlyContinue | Sort-Object FullName | Select-Object -Last 1
 if ($mt) {
-  foreach ($e in 'TextGeom06.exe', 'Modal06.exe') {
+  foreach ($e in 'TextGeom06.exe', 'Modal06.exe', 'ColdOpen06.exe') {
     $tmp = Join-Path $env:TEMP "$e.manifest"
     & $mt.FullName "-inputresource:$Base\bin\$e;#1" "-out:$tmp" | Out-Null
     "{0} manifest comctl32 v6 dependency: {1}" -f $e, ((Test-Path $tmp) -and ((Get-Content -Raw $tmp) -match 'Microsoft.Windows.Common-Controls'))

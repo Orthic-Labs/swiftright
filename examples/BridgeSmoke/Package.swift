@@ -22,6 +22,12 @@ let package = Package(
             dependencies: [.product(name: "SwiftRightBridge", package: "SwiftRightBridge")],
             path: "Sources/BridgeSmoke"
         ),
+        // SR0 T4: a fixed scene (image, text + underline, clips, translate) whose rendered pixels scripts/drive-pixels.ps1 asserts.
+        .executableTarget(
+            name: "BridgePixels",
+            dependencies: [.product(name: "SwiftRightBridge", package: "SwiftRightBridge")],
+            path: "Sources/BridgePixels"
+        ),
     ],
     swiftLanguageModes: [.v5]
 )
