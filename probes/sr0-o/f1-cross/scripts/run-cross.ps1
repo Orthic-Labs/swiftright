@@ -7,7 +7,7 @@ param(
   [string]$Tag = 'r1',
   [string]$Base = 'D:\Claude\sr0o-f1',
   [string]$Recorder = 'D:\Claude\sr0o-f1\scratch\release\UIARecorder.exe',
-  [string]$Bin = 'D:\Claude\sr0-r10\src\scratch\out\Products\Release-windows-x86_64',
+  [string]$Bin = 'D:\Claude\sr0-r11\src\scratch\out\Products\Release-windows-x86_64',
   [string]$OutDir = 'D:\Claude\sr0o-f1\out'
 )
 $ErrorActionPreference = 'Continue'

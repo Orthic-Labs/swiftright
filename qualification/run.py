@@ -99,7 +99,7 @@ SMOKE_VERDICT_RE = re.compile(r"^SMOKE PASS \((\d+)/(\d+)\)\s*$", re.M)
 SMOKE_MODE_MARKERS = {"normal": "PASS pump ended by swr_shutdown_complete", "timeout": "PASS pump ended by the 5 s timeout"}
 # F1 schema-v0 recording on the Dell (probes/sr0-o/f1-cross/scripts/schedule-f1.ps1 writes under F1_BASE/out).
 F1_BASE = "D:\\Claude\\sr0o-f1"  # holds scripts/, f1-steps-win.json and scratch/release/UIARecorder.exe
-F1_TREE = "D:\\Claude\\sr0-r10\\src"  # tuple 10 FreshOnBridge tree (verify-artifacts.ps1 lives under it)
+F1_TREE = "D:\\Claude\\sr0-r11\\src"  # tuple 10 FreshOnBridge tree (verify-artifacts.ps1 lives under it)
 F1_BIN = F1_TREE + "\\scratch\\out\\Products\\Release-windows-x86_64"
 F1_PACKAGE = REPO / "probes" / "sr0-o" / "f1-cross"
 F1_STIMULUS = F1_PACKAGE / "f1-stimulus.json"
