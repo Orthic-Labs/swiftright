@@ -2,49 +2,50 @@
   "schema": "sr0-a.tuple/v1",
   "name": "final",
   "recorded": "2026-10-10",
-  "note": "Final SR0 tuple, docs/sr0-snapshot.md section 2c (HEAD 4496474). Hashes are lowercase sha256 hex copied from the cited path:line (test_run.py TupleFileTests re-reads every citation). sha256 null = member not built or not receipted yet (PENDING): a record that carries it fails the package stage. Names in members equal the artifact_ids names the stages record. Used by `run.py run` unless --no-tuple.",
+  "note": "Final SR0 tuple, docs/sr0-snapshot.md section 2d, tuple 08 (HEAD d4d2ca4; section 2c is superseded). Hashes are lowercase sha256 hex copied from the cited path:line (test_run.py TupleFileTests re-reads every citation). sha256 null = member not built or not receipted yet (PENDING): a record that carries it fails the package stage. Names in members equal the artifact_ids names the stages record. Used by `run.py run` unless --no-tuple.",
   "members": {
     "windows_renderer": {
-      "what": "swiftright_render.dll, ABI 0.6, source through 65cd886",
-      "sha256": "7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc",
+      "what": "swiftright_render.dll, ABI 0.6, built from 9c261d4 on top of 02b3cc0 (tuple 08)",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
       "source": [
-        "docs/sr0-snapshot.md:64",
+        "docs/sr0-snapshot.md:89",
+        "examples/SliceApp/Windows/renderer-pin.json:5",
         "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:24",
-        "examples/BridgeSmoke/result-smoke-rev06final.txt:103"
+        "examples/BridgeSmoke/result-smoke-rev08.txt:104"
       ]
     },
     "windows_fixture_exe": {
-      "what": "FreshOnBridge.exe, runtime b8702bb (win-replay and the F1 trace)",
-      "sha256": "aa4353ce5ec2dea7b3c00c68cc4e160789ccdd3b14dca41494b8509b34be1d7e",
+      "what": "FreshOnBridge.exe, runtime b8702bb, built from c0fc401 (F1 release gate in source; win-replay and the F1 trace)",
+      "sha256": "7673a2d5139172d890d3882d332c3c72321f2372d343319a1065cfeeedfdb960",
       "source": [
-        "docs/sr0-snapshot.md:65",
+        "docs/sr0-snapshot.md:90",
         "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:23",
-        "probes/sr0-s/fresh-on-bridge/out/matrix-final/F1-none-r1.txt:110"
+        "probes/sr0-s/fresh-on-bridge/out/matrix-08/F1-none-r1.txt:111"
       ]
     },
     "windows_smoke_exe": {
-      "what": "BridgeSmoke.exe (smoke stage, normal and timeout mode)",
+      "what": "BridgeSmoke.exe (smoke stage, normal and timeout mode; unchanged)",
       "sha256": "21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5",
       "source": [
-        "docs/sr0-snapshot.md:66",
-        "examples/BridgeSmoke/result-smoke-rev06final.txt:103",
-        "examples/BridgeSmoke/result-smoke-timeout06final.txt:104"
+        "docs/sr0-snapshot.md:91",
+        "examples/BridgeSmoke/result-smoke-rev08.txt:104",
+        "examples/BridgeSmoke/result-smoke-timeout08.txt:105"
       ]
     },
     "old_msix": {
-      "what": "SliceApp_0.1.0.0_x64.msix (R5 final2, from 0751951)",
-      "sha256": "4cc9a7f0a05c05561432ddf536179ae18b6e2aeabbc0f6c245397de38edf2f4a",
+      "what": "SliceApp_0.1.0.0_x64.msix (R5-08, from a6d657b, @rightkit/release 0.2.146)",
+      "sha256": "c80c694735754f7bff892a74e2335c2d8cd7a87e8555f2e5233bd47392a7a0c4",
       "source": [
-        "docs/sr0-snapshot.md:68",
-        "examples/SliceApp/RESULT-R5.md:30"
+        "docs/sr0-snapshot.md:93",
+        "examples/SliceApp/RESULT-R5-08.md:12"
       ]
     },
     "new_msix": {
-      "what": "SliceApp_0.1.1.0_x64.msix (R5 final2)",
-      "sha256": "c2897a68d1a4555da92155f4192dc53c77a5803e5932a821ab3fed465de2f432",
+      "what": "SliceApp_0.1.1.0_x64.msix (R5-08, clone-local 5e6338b6)",
+      "sha256": "0ff6516543d2c2dec49dd41a65ae3ef0a7eb9c7d34f9c05321534f731b6bc8e8",
       "source": [
-        "docs/sr0-snapshot.md:69",
-        "examples/SliceApp/RESULT-R5.md:31"
+        "docs/sr0-snapshot.md:94",
+        "examples/SliceApp/RESULT-R5-08.md:12"
       ]
     },
     "old_dmg": {
@@ -70,8 +71,8 @@
     "normal": 40,
     "timeout": 41,
     "source": [
-      "examples/BridgeSmoke/result-smoke-rev06final.txt:83",
-      "examples/BridgeSmoke/result-smoke-timeout06final.txt:84"
+      "examples/BridgeSmoke/result-smoke-rev08.txt:83",
+      "examples/BridgeSmoke/result-smoke-timeout08.txt:84"
     ]
   }
 }

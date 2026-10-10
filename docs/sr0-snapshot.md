@@ -2,7 +2,7 @@
 
 Written 9 October 2026 against repository HEAD `6263841` (lane R0 of `docs/sr0-close-plan.md` v2). Mac-side text work plus read-only inspection (`win` for hashes and file listings, no GUI, nothing built or run). Every row cites a path, commit, or a command run for this document; anything not checked is marked UNVERIFIED.
 
-**Status (updated 10 October 2026, HEAD `4496474`): the FINAL tuple is named and receipted (section 2c).** Renderer DLL `7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC` (ABI 0.6, source commits through `65cd886`), runtime `b8702bb`, fixture host FreshOnBridge `AA4353CE5EC2DEA7B3C00C68CC4E160789CCDD3B14DCA41494B8509B34BE1D7E` (matrix-final 320/320, `5a67f23`), BridgeSmoke `21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5` (40/40 and 41/41, `541129c`), SliceApp MSIX 0.1.0.0 / 0.1.1.0 from `0751951` (`examples/SliceApp/RESULT-R5.md`), SliceApp DMG 0.1.0 `b976ac70…` from `4496474` (R3 final), `@rightkit/release` 0.2.144. Everything named in sections 1 and 2 as a renderer `777F14C4` / `4FB068F0` or fixture `3593209A` / `30FBE599` / `AFE131A1` row is history; where a row below still carries its 9 October text it is marked SUPERSEDED. The tuple is complete except for the items marked PENDING in section 5 (R6, R10 W5 overlay-off run, Narrator speech, R8 full runner run, the repo record of the R3 final DMG); R5 W08 is a recorded FAIL routed to RightKit.
+**Status (updated 10 October 2026, HEAD `d4d2ca4`): the FINAL tuple is tuple 08 (section 2d; section 2c, tuple 06, is superseded and kept as history).** Tuple 08 pins renderer `E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93`, FreshOnBridge `7673A2D5139172D890D3882D332C3C72321F2372D343319A1065CFEEEDFDB960`, MSIX 0.1.0.0 `c80c6947…` / 0.1.1.0 `0ff65165…`, `@rightkit/release` 0.2.146; the text below that names `7533963D`, `AA4353CE` or `4496474` describes tuple 06 and is superseded. Renderer DLL `7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC` (ABI 0.6, source commits through `65cd886`), runtime `b8702bb`, fixture host FreshOnBridge `AA4353CE5EC2DEA7B3C00C68CC4E160789CCDD3B14DCA41494B8509B34BE1D7E` (matrix-final 320/320, `5a67f23`), BridgeSmoke `21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5` (40/40 and 41/41, `541129c`), SliceApp MSIX 0.1.0.0 / 0.1.1.0 from `0751951` (`examples/SliceApp/RESULT-R5.md`), SliceApp DMG 0.1.0 `b976ac70…` from `4496474` (R3 final), `@rightkit/release` 0.2.144. Everything named in sections 1 and 2 as a renderer `777F14C4` / `4FB068F0` or fixture `3593209A` / `30FBE599` / `AFE131A1` row is history; where a row below still carries its 9 October text it is marked SUPERSEDED. The tuple is complete except for the items marked PENDING in section 5 (R6, R10 W5 overlay-off run, Narrator speech, R8 full runner run, the repo record of the R3 final DMG); R5 W08 is a recorded FAIL routed to RightKit.
 
 Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit, bridge/header commit, renderer DLL sha256, app/fixture binary sha256. Existing 0.5 evidence stays as history.
 
@@ -52,7 +52,7 @@ Rule (close plan, Decisions): all SR0 receipts bind to one tuple: runtime commit
 | SliceApp DMG 0.1.0 / 0.1.1 (R3) | `/Volumes/D/sr0-artifacts/mac/` (`0.1.0`, `0.1.1`, `0.1.0-rk0140`, `0.1.0-rk0142`) | 0.2.139 DMGs `81742a7c…64b661` / `c75155b4…071a8a` (`RESULT-R7.md`); 0.2.142 0.1.0 DMG `363c8768…0d5ea` | SliceApp clones, Developer ID signed, notarized, `.app` stapled before DMG since 0.2.140 | built; Mac packages carry no Windows renderer, no tuple change |
 | Windows Sandbox harness (R5) | `qualification/clean-machine/windows/`, `examples/SliceApp/R5-RUNBOOK.md` | n/a | run (final2 round, `4496474`): 14/15, W08 FAIL | section 2c |
 
-## 2c. Final tuple (10 October 2026; supersedes 2b)
+## 2c. Tuple 06 final (10 October 2026; supersedes 2b; SUPERSEDED by section 2d, tuple 08; history, rows below unedited)
 
 All rows verified against the committed files named; hashes are copied from them. HEAD at writing: `4496474`.
 
@@ -79,6 +79,21 @@ History in 2b and section 2: renderers `777F14C4…` and `4FB068F0…`, fixtures
 |---|---|---|
 | Renderer DLL, ABI 0.5, built from `d45c98c` | `D:\Claude\sr0s-bridge\scratch\release\swiftright_render.dll` (11,742,208 bytes, 09:45:50) | `2DC4B6F783EF7BC78163C3B02B6413CD4539CD0F9A0D64C92C0B4C0254EBF1E1` (also in `docs/sr0-freeze-*.md` and `matrix-rev4/RESULT.md`) |
 | FreshOnBridge.exe used by matrix-20b | `D:\Claude\sr0s-bridge\scratch\release\FreshOnBridge.exe` (2,987,520 bytes, 11:18:16) | `DD6C9CE69F06D9C28EF300E7FEA5B499AEA0F7AF9AF364C3F2B4C4D67BED8CC6` (matches the "binary DD6C9CE6…" in commit `65e0f29`) |
+
+## 2d. Tuple 08 (10 October 2026; supersedes 2c; the final tuple)
+
+Hashes copied from the committed files named. HEAD at writing: `d4d2ca4`. Tuple 07 (renderer `97CA28E8`, modal lost-wake fix `02b3cc0`) was an intermediate: its receipts are history (`docs/sr0-retry-ledger.md`). Section 2c rows for the renderer, FreshOnBridge and the MSIX pair are superseded; BridgeSmoke is unchanged, the DMG rows of 2c remain current (the Mac does not use the renderer).
+
+| Artifact | Path / pin | sha256 | Built from | State |
+|---|---|---|---|---|
+| Renderer DLL ABI 0.6 (tuple 08) | `examples/SliceApp/Windows/renderer-pin.json`; Dell `D:\Claude\sr0-r08\renderer\swiftright_render.dll` | `E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93` (11,885,056 bytes; Authenticode digest `E713BF405FEF43835576ACAC418C99E6D95BA5112E6FB628481B8B641D4F9B0E`) | `9c261d4` (AX trailing publish re-arm) on top of `02b3cc0` (modal lost-wake fix); no ABI change; committed-tree rebuild was a no-op and hashes equal (provenance in the pin file) | pinned; unsigned |
+| FreshOnBridge fixture host (tuple 08) | Dell `D:\Claude\sr0-r08\src`; defaults in `probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh` | `7673A2D5139172D890D3882D332C3C72321F2372D343319A1065CFEEEDFDB960` | `c0fc401` (F1 cross-compare release gate in source, `SR0O_RELEASE_FLAG`) | RUN: matrix-08 319/320, the failure is external typed input, rerun 3/3 (`probes/sr0-s/fresh-on-bridge/out/matrix-08/RESULT.md`) |
+| BridgeSmoke.exe (unchanged) | `examples/BridgeSmoke/` | `21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5` | bridge package, renderer `E280F4A9` | RUN: smoke 40/40 (`examples/BridgeSmoke/result-smoke-rev08.txt`), timeout 41/41 (`examples/BridgeSmoke/result-smoke-timeout08.txt`) |
+| WorkloadWin.exe | Dell `D:\Claude\sr0-r08\workload` | `0815DF499371CEDE032758B00A6B254726DD524B9A0930C2D96B57089A74070F` | `33987c2`, unchanged exe | measured: W5 FAIL, leak PASS (`probes/sr0-b/workload/results/r10-20261010-tuple08-renderere280-windows.txt`) |
+| SliceApp MSIX 0.1.0.0 | `examples/SliceApp/RESULT-R5-08.md` | `c80c694735754f7bff892a74e2335c2d8cd7a87e8555f2e5233bd47392a7a0c4` | SliceApp `a6d657b`, renderer pin `E280F4A9`, `@rightkit/release` 0.2.146 | built, signed; Sandbox offline 13/14 (W08 FAIL), network W00/W01/W12 PASS |
+| SliceApp MSIX 0.1.1.0 | same | `0ff6516543d2c2dec49dd41a65ae3ef0a7eb9c7d34f9c05321534f731b6bc8e8` | clone-local `5e6338b6` on `a6d657b` | built, signed; swift-only proof `ok: true` |
+| SliceApp DMG 0.1.0 / 0.1.1 | section 2c rows and `tuple-final.json` | `b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4` / `75f3cd75cbd5e0f2eb1f561ae4d273f2522dedc19c75713b138a919678dd4b3b` | unchanged | PASS; no Windows renderer inside |
+| `@rightkit/release` | `examples/SliceApp/package.json` | n/a | 0.2.146 | used for tuple 08 MSIX |
 
 ## 3. Toolchains and hosts
 

@@ -1,6 +1,6 @@
 # SR0 retry ledger
 
-Written 9 October 2026 (close plan v2 lane R0) from commit history (`git log`, HEAD `6263841`) and the RESULT.md files named in each row. Updated 10 October 2026 (HEAD `4496474`) with the ABI 0.6 tuple lanes R1, R9, R10, R5 (section "Ledger, ABI 0.6 tuple" below, from `git log --since='2026-10-09 18:00'`, the 9 October evening commits and the result files they touch). Nothing was rerun to produce either version.
+Written 9 October 2026 (close plan v2 lane R0) from commit history (`git log`, HEAD `6263841`) and the RESULT.md files named in each row. Updated 10 October 2026 (HEAD `4496474`) with the ABI 0.6 tuple lanes R1, R9, R10, R5 (section "Ledger, ABI 0.6 tuple" below, from `git log --since='2026-10-09 18:00'`, the 9 October evening commits and the result files they touch). Updated again 10 October 2026 (HEAD `d4d2ca4`) with tuples 07 and 08 (section "Ledger, tuples 07 and 08"). Nothing was rerun to produce any version.
 
 ## Cap and counting rules
 
@@ -62,9 +62,24 @@ In addition to the three 9 October entries above:
 6. **W, §11 workload (R10):** 4 repairs against a cap of 1; W5 still fails and is reported (close plan R10: "every threshold met or reported").
 7. **P, packaged qualification:** 1 repair (`0751951`) and a W08 FAIL on a platform behaviour: flagged for Adrian's decision, no further repair attempted in this repository.
 
+## Ledger, tuples 07 and 08 (10 October 2026)
+
+Same counting rules. Tuple 06 (renderer `7533963D`, fixture `AA4353CE`) was the first "final" tuple. Two product defects and one runner-compare defect found after it produced tuples 07 and 08; every receipt on 06 and 07 for the Windows renderer, fixture or MSIX is history (`docs/sr0-snapshot.md` section 2d). The Mac DMGs and BridgeSmoke did not change.
+
+| Tuple | Why it exists | Repair | Receipts | vs cap |
+|---|---|---|---|---|
+| 06 to 07 (renderer `97CA28E8` from `02b3cc0`, FreshOnBridge `7673A2D5` from `c0fc401`, `@rightkit/release` 0.2.145) | **Modal lost-wake stall.** Modal06 on tuple 06 (`a3c9a9f`) found that in 2 of 20 runs the Swift main queue stopped draining for the whole modal: the modal ran inside a drain snapshot and the drain task's wake runnable queued behind it. **F1 compare step shift.** The first runner compare on tuple 06 failed with 28 diffs (`0d89b36`): the FreshOnBridge F1 release gate was patched in by `build-fob.ps1`, and the engine insert released 1.2 ms after the last key with the unpatched exe | `02b3cc0` starts bridge modals from a posted `WM_SWR_MODAL` at top-level dispatch (no ABI change); A/B proof `d7c8bb5`: legacy path 2 stalls in 180 modals, posted path 0 stalls in 360 modals (`examples/BridgeGeoModal/result-modalfix-legacy.txt:128`, `result-modalfix-fixed.txt:178`). `c0fc401` puts the release gate in FreshOnBridge source (`SR0O_RELEASE_FLAG`; unset env = unchanged matrix behaviour) | matrix 07 320/320 (`47b4572`), MSIX `850fa66` / `0c00316` (0.1.0.0 `c1f12ee2…`, 0.1.1.0 `c1863d4c…`), smoke 40/40 and 41/41, TextGeom06 19/20 (run 05: UIA caret rect stale after `Select()`, one AX publish lost), Modal06 19/20 with 0 stalls in 120 modals and run 01 cold first open 60.9 ms (`61b8698`; `examples/BridgeGeoModal/result-modal07.txt:4`), Sandbox offline W08 FAIL perturbed by a manual Settings Repair (`cb76701`) | **B** (already EXCEEDED): 1 more repair; **A**: 1 tooling repair (fixture, not a stage attempt) |
+| 07 to 08 (renderer `E280F4A9` from `9c261d4`, `@rightkit/release` 0.2.146) | **TextGeom06 run 05 on tuple 07:** a selection-only commit never reached AccessKit when the GPUI timer fired before the 100 ms throttle interval ended (stale UIA caret rect) | `9c261d4`: the trailing AX publish re-arms while still throttled instead of dropping (no ABI change, 5 unit tests). Proof `bf11876`: TextGeom06 60/60, the re-throttle path hit once and healed (`result-textgeom-axfix.txt:132`) | matrix 08 319/320 (`820eb26`; the one failure is external typed input, rerun 3/3), smoke 40/40 and 41/41, TextGeom06 20/20, Modal06 20/20 first attempt with 0 stalls in 120 modals, R9 F7 20/20, F7live 20/21, F8 18/19, Narrator 8/8, R10 W5 FAIL (5, 1, 1), leak PASS (`840f9ec`); R5 MSIX 0.1.0.0 `c80c6947…` / 0.1.1.0 `0ff65165…`, Sandbox offline 13/14 (W08 FAIL), network W00/W01/W12 PASS (`d4d2ca4`) | **B** (already EXCEEDED): 1 more repair. Tuple 08 is the final tuple; no further repair is proposed |
+
+Not counted (harness, not product): `290f129` BridgeGeoModal harness records the foreground owner per modal and retries once a failure whose every failing check sits in a modal where another process held the foreground (the `bf11876` Modal06 16/20 shape); stalls, idle latency and the 50 ms bound are never retried. Matrix 08 had three such foreground-loss retries (F1 r20, F3 list-3s r17, F7 r20, all passed on attempt 2).
+
+**R5 W08 is unchanged across tuples 06, 07 and 08** (14/15, perturbed run, 13/14): the update cancelled in the registration phase leaves `NeedsRemediation` on a platform-initiated path; a platform `RegisterByPackageFullName` at the end of the 10-min hold did not come from a person (`examples/SliceApp/RESULT-R5-08.md:32-34`). It is not a product repair target; the recovery is documented by RightKit (`@rightkit/release` README `e93ac2df`). Whether it counts as a second failing P attempt or a platform limitation is Adrian's decision (PENDING).
+
+Stages that exceeded the cap (addition): **B** now carries two further repairs on the 0.6 renderer (`02b3cc0`, `9c261d4`); no repository record of a resume covers them (the resume below predates them).
+
 ## Retry budget going forward (final tuple)
 
-Updated: the final tuple (`docs/sr0-snapshot.md` section 2c) is receipted. Any further failure of an existing criterion on it is a new failing attempt on a stage already over cap and is a stop until Adrian resumes. The next actions are measurements and a decision, not repairs: R6 (Adrian, Mac free about 10 min), the R10 overlay-off run (Adrian), Narrator speech (Adrian), the W08 RightKit recovery probe, R8 full runner run.
+Updated: the final tuple is tuple 08 (`docs/sr0-snapshot.md` section 2d; 2c is superseded) and is receipted. Any further failure of an existing criterion on it is a new failing attempt on a stage already over cap and is a stop until Adrian resumes. The remaining actions are measurements and decisions, not repairs: R6 Mac oracle (Mac free about 10 min), Narrator listen (about 2 min), the R10 overlay-off run, and the decision to accept W08 and W5 as known limitations.
 
 ## Retry budget going forward (0.6 tuple, 9 October text)
 
