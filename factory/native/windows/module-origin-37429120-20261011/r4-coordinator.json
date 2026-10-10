@@ -1,0 +1,6 @@
+{
+  "ProcessId": 16688,
+  "ExecutablePath": "c:\\program files\\powershell\\7\\pwsh.exe",
+  "CommandLine": "\"c:\\program files\\powershell\\7\\pwsh.exe\" -c \"Set-Location -LiteralPath 'D:\\Claude'; $root=\\\"D:\\Claude\\factory-swiftright-module-origin-37429120-20261011\\\";$p=Join-Path $root \\\"module-origin-build-r4.ps1\\\";$t=$null;$e=$null;[Management.Automation.Language.Parser]::ParseFile($p,[ref]$t,[ref]$e)|Out-Null;@{kind=\\\"factory-module-r4-helper-parse\\\";scriptHash=(Get-FileHash $p).Hash.ToLowerInvariant();version=$PSVersionTable.PSVersion.ToString();errors=@($e|ForEach-Object{$_.Message});parsePassed=($e.Count -eq 0)}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $root \\\"r4-helper-parse.json\\\");if($e.Count){throw \\\"Parse failed\\\"}; & $p -SourceRoot (Join-Path $root \\\"runtime\\\") -Receipt (Join-Path $root \\\"runtime-source-receipt.json\\\") -RunRoot (Join-Path $root \\\"module-provenance-run-r4\\\")\"",
+  "CreationDate": "2026-10-11T04:23:21.868559+05:30"
+}

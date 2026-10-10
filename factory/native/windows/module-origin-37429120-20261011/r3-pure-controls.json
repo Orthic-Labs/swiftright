@@ -1,0 +1,39 @@
+{
+  "kind": "pure-powershell-traversal-controls",
+  "synthetic": true,
+  "nativeProcessLaunched": false,
+  "zeroChildCount": 0,
+  "acceptedChildCount": 2,
+  "controls": [
+    {
+      "control": "cyclic-child",
+      "rejected": true,
+      "reason": "Cyclic process ancestry"
+    },
+    {
+      "control": "duplicate-child-pid",
+      "rejected": true,
+      "reason": "Duplicate process PID"
+    },
+    {
+      "control": "missing-child-time",
+      "rejected": true,
+      "reason": "Malformed owned child identity"
+    },
+    {
+      "control": "missing-child-path",
+      "rejected": true,
+      "reason": "Malformed owned child identity"
+    },
+    {
+      "control": "malformed-child-pid",
+      "rejected": true,
+      "reason": "Malformed process identity"
+    },
+    {
+      "control": "depth-bound",
+      "rejected": true,
+      "reason": "Descendant traversal depth exceeded"
+    }
+  ]
+}
