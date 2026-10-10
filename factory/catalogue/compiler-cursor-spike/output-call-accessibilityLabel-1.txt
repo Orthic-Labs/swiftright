@@ -1,0 +1,48 @@
+{
+  key.kind: source.lang.swift.ref.function.method.instance,
+  key.name: "accessibilityLabel(content:)",
+  key.usr: "s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF",
+  key.doc.full_as_xml: "<Function><Name>accessibilityLabel(content:)</Name><USR>s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF</USR><Declaration>nonisolated func accessibilityLabel&lt;V&gt;(@ContentBuilder content: (_ label: PlaceholderContentView&lt;Self&gt;) -&gt; V) -&gt; some View where V : View</Declaration><CommentParts><Abstract><Para>Adds a label to the view that describes its contents.</Para></Abstract><Parameters><Parameter><Name>content</Name><Direction isExplicit=\"0\">in</Direction><Discussion><Para>A content builder closure that takes a proxy value representing the modified view. You can combine the modified view with other content to create a new accessibility label for the original view.</Para></Discussion></Parameter></Parameters><Discussion><Para>Use this method to append content to the accessibility label for a view. For example, you could use this method to label a badge or alert that is custom drawn without removing the existing accessibility label.</Para></Discussion></CommentParts></Function>",
+  key.doc_comment: "Adds a label to the view that describes its contents.\n\nUse this method to append content to the accessibility label for a view.\nFor example, you could use this method to label a badge or alert that\nis custom drawn without removing the existing accessibility label.\n- Parameters:\n  - content: A content builder closure that takes a proxy\n    value representing the modified view. You can combine the modified\n    view with other content to create a new accessibility label for\n    the original view.",
+  key.receivers: [
+    {
+      key.usr: "s:7SwiftUI4TextV"
+    }
+  ],
+  key.is_dynamic: 1,
+  key.typename: "<Self, V where Self : View, V : View> (Self) -> ((PlaceholderContentView<Self>) -> V) -> some View",
+  key.annotated_decl: "<Declaration>nonisolated func accessibilityLabel&lt;<Type usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</Type>&gt;(@<Type usr=\"s:7SwiftUI14ContentBuildera\">ContentBuilder</Type> content: (<Type usr=\"s:7SwiftUI22PlaceholderContentViewV\">PlaceholderContentView</Type>&lt;<Type usr=\"s:7SwiftUI4TextV\">Text</Type>&gt;) -&gt; <Type usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</Type>) -&gt; some <Type usr=\"s:7SwiftUI4ViewP\">View</Type> where <Type usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</Type> : <Type usr=\"s:7SwiftUI4ViewP\">View</Type></Declaration>",
+  key.fully_annotated_decl: "<decl.function.method.instance><syntaxtype.attribute.builtin><syntaxtype.attribute.name>nonisolated</syntaxtype.attribute.name></syntaxtype.attribute.builtin> <syntaxtype.keyword>func</syntaxtype.keyword> <decl.name>accessibilityLabel</decl.name>&lt;<ref.generic_type_param usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</ref.generic_type_param>&gt;(<decl.var.parameter><syntaxtype.attribute.builtin><syntaxtype.attribute.name>@<ref.typealias usr=\"s:7SwiftUI14ContentBuildera\">ContentBuilder</ref.typealias></syntaxtype.attribute.name></syntaxtype.attribute.builtin> <decl.var.parameter.argument_label>content</decl.var.parameter.argument_label>: <decl.var.parameter.type>(<decl.var.parameter><decl.var.parameter.type><ref.struct usr=\"s:7SwiftUI22PlaceholderContentViewV\">PlaceholderContentView</ref.struct>&lt;<ref.struct usr=\"s:7SwiftUI4TextV\">Text</ref.struct>&gt;</decl.var.parameter.type></decl.var.parameter>) -&gt; <decl.function.returntype><ref.generic_type_param usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</ref.generic_type_param></decl.function.returntype></decl.var.parameter.type></decl.var.parameter>) -&gt; <decl.function.returntype><syntaxtype.keyword>some</syntaxtype.keyword> <ref.protocol usr=\"s:7SwiftUI4ViewP\">View</ref.protocol></decl.function.returntype> <syntaxtype.keyword>where</syntaxtype.keyword> <decl.generic_type_requirement><ref.generic_type_param usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF1VL_qd__mfp\">V</ref.generic_type_param> : <ref.protocol usr=\"s:7SwiftUI4ViewP\">View</ref.protocol></decl.generic_type_requirement></decl.function.method.instance>",
+  key.is_system: 1,
+  key.typeusr: "$s7contentQrqd__7SwiftUI22PlaceholderContentViewVyxGXE_tcAB0F0Rd__luD",
+  key.containertypeusr: "$s7SwiftUI4TextVD",
+  key.modulename: "SwiftUI",
+  key.related_decls: [
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel_9isEnabledAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGAA4TextV_SbtF\">accessibilityLabel(_: Text, isEnabled: Bool) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel_9isEnabledAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGAA18LocalizedStringKeyV_SbtF\">accessibilityLabel(_: LocalizedStringKey, isEnabled: Bool) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel_9isEnabledAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVG10Foundation23LocalizedStringResourceV_SbtF\">accessibilityLabel(_: LocalizedStringResource, isEnabled: Bool) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabel_9isEnabledAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGqd___SbtSyRd__lF\">accessibilityLabel&lt;S&gt;(_: S, isEnabled: Bool) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt; where S : StringProtocol</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabelyAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGAA4TextVF\">accessibilityLabel(_: Text) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabelyAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGAA18LocalizedStringKeyVF\">accessibilityLabel(_: LocalizedStringKey) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabelyAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVG10Foundation23LocalizedStringResourceVF\">accessibilityLabel(_: LocalizedStringResource) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt;</RelatedName>"
+    },
+    {
+      key.annotated_decl: "<RelatedName usr=\"s:7SwiftUI4ViewPAAE18accessibilityLabelyAA15ModifiedContentVyxAA31AccessibilityAttachmentModifierVGqd__SyRd__lF\">accessibilityLabel&lt;S&gt;(_: S) -&gt; ModifiedContent&lt;Text, AccessibilityAttachmentModifier&gt; where S : StringProtocol</RelatedName>"
+    }
+  ],
+  key.reusingastcontext: 0,
+  key.decl_lang: source.lang.swift
+}

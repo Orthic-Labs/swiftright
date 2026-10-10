@@ -1,0 +1,253 @@
+{
+  "summary": {
+    "residualRows": 2549,
+    "exactSingleIndexMatch": 2285,
+    "singleDistinctUsrRows": 2290,
+    "repeatedEntityRowsHeld": 5,
+    "noOrMultipleIndexMatch": 264,
+    "exactlyOneSourceKitEntity": 2285,
+    "repeatedSameUsrEntityRows": 5,
+    "sourceKitEntityOccurrences": 2295,
+    "sameLineNameCandidates": 2548,
+    "sameLineNameKindCandidates": 2547,
+    "sameLineNameKindContextCandidates": 2341,
+    "sameLineNameKindContextAccessCandidates": 2290,
+    "exactMatchesWithSymbolGraphUsr": 135,
+    "exactMatchesWithoutSymbolGraphUsr": 2150,
+    "byReason": {
+      "context-name-candidates-fail-exact-signature": 114,
+      "interface-parameter-signature-not-parseable": 20,
+      "multiple-signature-compatible-usrs": 149,
+      "no-public-candidate-at-exact-context-and-name": 2266
+    },
+    "heldByGate": {
+      "declaration-kind-mismatch": 1,
+      "duplicate-raw-entity-records": 5,
+      "enclosing-context-mismatch": 206,
+      "expected-access-unavailable": 51,
+      "no-same-line-name-entity": 1
+    }
+  },
+  "exampleRows": [
+    {
+      "module": "SwiftUI",
+      "line": 852,
+      "name": "accessibilityLabel",
+      "classification": "unexplained",
+      "indexMatchCount": 1,
+      "indexMatches": [
+        {
+          "kind": "source.lang.swift.decl.function.method.instance",
+          "usr": "s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF",
+          "sourcekitContexts": [
+            [
+              {
+                "kind": "source.lang.swift.decl.extension.protocol",
+                "name": "View",
+                "usr": "s:e:s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF"
+              }
+            ]
+          ],
+          "effectiveAccesses": [
+            "source.decl.effective_access.public"
+          ],
+          "sourcekitEntityOccurrences": 1,
+          "columns": [
+            27
+          ],
+          "occurrences": [
+            {
+              "kind": "source.lang.swift.decl.function.method.instance",
+              "name": "accessibilityLabel(content:)",
+              "usr": "s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF",
+              "line": 852,
+              "column": 27,
+              "effective_access": "source.decl.effective_access.public",
+              "sourcekitContext": [
+                {
+                  "kind": "source.lang.swift.decl.extension.protocol",
+                  "name": "View",
+                  "usr": "s:e:s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF"
+                }
+              ],
+              "is_implicit": null
+            }
+          ],
+          "symbolGraphMatches": [
+            {
+              "path": "SwiftUI.View.accessibilityLabel(content:)",
+              "precise": "s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF",
+              "status": "inventory",
+              "usr": "s:7SwiftUI4ViewPAAE18accessibilityLabel7contentQrqd__AA018PlaceholderContentC0VyxGXE_tAaBRd__lF"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "module": "SwiftUI",
+      "line": 2690,
+      "name": "sensoryFeedback",
+      "classification": "ambiguous-context-signature",
+      "indexMatchCount": 1,
+      "indexMatches": [
+        {
+          "kind": "source.lang.swift.decl.function.method.instance",
+          "usr": "s:7SwiftUI4ViewPAAE15sensoryFeedback7trigger_Qrqd___AA07SensoryE0VSgqd___qd__tctSQRd__lF",
+          "sourcekitContexts": [
+            [
+              {
+                "kind": "source.lang.swift.decl.extension.protocol",
+                "name": "View",
+                "usr": "s:e:s:7SwiftUI4ViewPAAE15sensoryFeedback_7triggerQrAA07SensoryE0V_qd__tSQRd__lF"
+              }
+            ]
+          ],
+          "effectiveAccesses": [
+            "source.decl.effective_access.public"
+          ],
+          "sourcekitEntityOccurrences": 1,
+          "columns": [
+            27
+          ],
+          "occurrences": [
+            {
+              "kind": "source.lang.swift.decl.function.method.instance",
+              "name": "sensoryFeedback(trigger:_:)",
+              "usr": "s:7SwiftUI4ViewPAAE15sensoryFeedback7trigger_Qrqd___AA07SensoryE0VSgqd___qd__tctSQRd__lF",
+              "line": 2690,
+              "column": 27,
+              "effective_access": "source.decl.effective_access.public",
+              "sourcekitContext": [
+                {
+                  "kind": "source.lang.swift.decl.extension.protocol",
+                  "name": "View",
+                  "usr": "s:e:s:7SwiftUI4ViewPAAE15sensoryFeedback_7triggerQrAA07SensoryE0V_qd__tSQRd__lF"
+                }
+              ],
+              "is_implicit": null
+            }
+          ],
+          "symbolGraphMatches": [
+            {
+              "path": "SwiftUI.View.sensoryFeedback(trigger:_:)",
+              "precise": "s:7SwiftUI4ViewPAAE15sensoryFeedback7trigger_Qrqd___AA07SensoryE0VSgqd___qd__tctSQRd__lF",
+              "status": "inventory",
+              "usr": "s:7SwiftUI4ViewPAAE15sensoryFeedback7trigger_Qrqd___AA07SensoryE0VSgqd___qd__tctSQRd__lF"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "module": "SwiftUI",
+      "line": 2701,
+      "name": "onDrop",
+      "classification": "ambiguous-context-signature",
+      "indexMatchCount": 1,
+      "indexMatches": [
+        {
+          "kind": "source.lang.swift.decl.function.method.instance",
+          "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF",
+          "sourcekitContexts": [
+            [
+              {
+                "kind": "source.lang.swift.decl.extension.protocol",
+                "name": "View",
+                "usr": "s:e:s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF"
+              }
+            ]
+          ],
+          "effectiveAccesses": [
+            "source.decl.effective_access.public"
+          ],
+          "sourcekitEntityOccurrences": 1,
+          "columns": [
+            27
+          ],
+          "occurrences": [
+            {
+              "kind": "source.lang.swift.decl.function.method.instance",
+              "name": "onDrop(of:isTargeted:perform:)",
+              "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF",
+              "line": 2701,
+              "column": 27,
+              "effective_access": "source.decl.effective_access.public",
+              "sourcekitContext": [
+                {
+                  "kind": "source.lang.swift.decl.extension.protocol",
+                  "name": "View",
+                  "usr": "s:e:s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF"
+                }
+              ],
+              "is_implicit": null
+            }
+          ],
+          "symbolGraphMatches": [
+            {
+              "path": "SwiftUI.View.onDrop(of:isTargeted:perform:)",
+              "precise": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF",
+              "status": "inventory",
+              "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "module": "SwiftUI",
+      "line": 2703,
+      "name": "onDrop",
+      "classification": "ambiguous-context-signature",
+      "indexMatchCount": 1,
+      "indexMatches": [
+        {
+          "kind": "source.lang.swift.decl.function.method.instance",
+          "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCG_So7CGPointVtctF",
+          "sourcekitContexts": [
+            [
+              {
+                "kind": "source.lang.swift.decl.extension.protocol",
+                "name": "View",
+                "usr": "s:e:s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF"
+              }
+            ]
+          ],
+          "effectiveAccesses": [
+            "source.decl.effective_access.public"
+          ],
+          "sourcekitEntityOccurrences": 1,
+          "columns": [
+            27
+          ],
+          "occurrences": [
+            {
+              "kind": "source.lang.swift.decl.function.method.instance",
+              "name": "onDrop(of:isTargeted:perform:)",
+              "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCG_So7CGPointVtctF",
+              "line": 2703,
+              "column": 27,
+              "effective_access": "source.decl.effective_access.public",
+              "sourcekitContext": [
+                {
+                  "kind": "source.lang.swift.decl.extension.protocol",
+                  "name": "View",
+                  "usr": "s:e:s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCGctF"
+                }
+              ],
+              "is_implicit": null
+            }
+          ],
+          "symbolGraphMatches": [
+            {
+              "path": "SwiftUI.View.onDrop(of:isTargeted:perform:)",
+              "precise": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCG_So7CGPointVtctF",
+              "status": "inventory",
+              "usr": "s:7SwiftUI4ViewPAAE6onDrop2of10isTargeted7performQrSay22UniformTypeIdentifiers6UTTypeVG_AA7BindingVySbGSgSbSaySo14NSItemProviderCG_So7CGPointVtctF"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

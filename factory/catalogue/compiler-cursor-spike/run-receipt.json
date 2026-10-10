@@ -1,0 +1,41 @@
+{
+  "commands": [
+    "xcrun sourcekit-lsp debug run-sourcekitd-request --request-file factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+    "xcrun sourcekit-lsp debug run-sourcekitd-request --request-file factory/catalogue/compiler-cursor-spike/request-index-core.yaml",
+    "xcrun sourcekit-lsp debug run-sourcekitd-request --request-file factory/catalogue/compiler-cursor-spike/request-interface-module-name.yaml",
+    "xcrun swiftc -typecheck -sdk /Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macosx27.0 factory/catalogue/compiler-cursor-spike/probe.swift",
+    "python3 factory/catalogue/compiler-cursor-spike/test_strict_match.py -v",
+    "python3 factory/catalogue/compiler-cursor-spike/analyze_index.py"
+  ],
+  "kind": "sourcekit-cursor-spike-run-receipt",
+  "outputs": {
+    "linkEvidence": "link-evidence.json",
+    "linkEvidenceSha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+  },
+  "toolchain": {
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "sourcekitLspSha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396",
+    "sourcekitdSha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b",
+    "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+    "swiftFrontendSha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+    "target": "arm64-apple-macosx27.0",
+    "xcode": "Xcode 27.0 (27A266a)"
+  },
+  "validation": {
+    "interfaceCursorReproduction": {
+      "byteIdentical": true,
+      "expectedResponse": "interface-cursor-module-name-output.txt",
+      "request": "request-interface-module-name.yaml",
+      "sha256": "sha256:9ba6980eafd249645ecda03283ed7573b81d7e433a321246905385b5ce12d3b9"
+    },
+    "rawIndexResponseBytes": {
+      "SwiftUI": 21408873,
+      "SwiftUICore": 14594769
+    },
+    "strictMatcherFailures": 0,
+    "strictMatcherTests": 9,
+    "swiftcTypecheckExitCode": 0,
+    "swiftcTypecheckStderrBytes": 0
+  },
+  "version": 1
+}
