@@ -156,6 +156,15 @@ extension Graph {
             let width = finiteLength(proposal.width)
             let content = measureGroup(node, ProposedViewSize(width: width, height: nil))
             return LayoutSize(width: width ?? content.width, height: finiteLength(proposal.height) ?? content.height)
+        case .scrollView(let configuration):
+            let width = finiteLength(proposal.width)
+            let height = finiteLength(proposal.height)
+            let contentProposal = ProposedViewSize(
+                width: configuration.axes.contains(.horizontal) ? nil : width,
+                height: configuration.axes.contains(.vertical) ? nil : height
+            )
+            let content = measureGroup(node, contentProposal)
+            return LayoutSize(width: width ?? content.width, height: height ?? content.height)
         case .user, .button, .modifier, .toggle, .menu:
             return measureGroup(node, proposal)
         }
@@ -207,6 +216,25 @@ extension Graph {
             node.scrollOffset = min(max(0, node.scrollOffset), maxOffset)
             let contentRect = LayoutRect(x: rect.minX, y: rect.minY - node.scrollOffset, width: rect.width, height: content.height)
             placeGroup(node, in: contentRect, proposal: ProposedViewSize(width: rect.width, height: nil))
+        case .scrollView(let configuration):
+            let contentProposal = ProposedViewSize(
+                width: configuration.axes.contains(.horizontal) ? nil : rect.width,
+                height: configuration.axes.contains(.vertical) ? nil : rect.height
+            )
+            let content = measureGroup(node, contentProposal)
+            let maxX = configuration.axes.contains(.horizontal) ? max(0, content.width - rect.width) : 0
+            let maxY = configuration.axes.contains(.vertical) ? max(0, content.height - rect.height) : 0
+            let offsetX = min(max(0, node.scrollOffsetX ?? 0), maxX)
+            let offsetY = min(max(0, node.scrollOffsetY ?? 0), maxY)
+            node.scrollOffsetX = offsetX
+            node.scrollOffsetY = offsetY
+            let contentRect = LayoutRect(
+                x: rect.minX - offsetX,
+                y: rect.minY - offsetY,
+                width: configuration.axes.contains(.horizontal) ? content.width : rect.width,
+                height: configuration.axes.contains(.vertical) ? content.height : rect.height
+            )
+            placeGroup(node, in: contentRect, proposal: contentProposal)
         case .user, .button, .modifier, .toggle, .menu:
             placeGroup(node, in: rect, proposal: proposal)
         }

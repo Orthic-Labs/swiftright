@@ -1,0 +1,382 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Axis.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Axis.swift
+new file mode 100644
+index 0000000..3ca6cb8
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Axis.swift
+@@ -0,0 +1,24 @@
++import Foundation
++
++/// An axis in a two-dimensional coordinate system.
++public enum Axis: Sendable, CaseIterable, Equatable {
++    case horizontal
++    case vertical
++
++    /// A set of axes represented as a compact bit field.
++    public struct Set: OptionSet, Sendable {
++        public typealias Element = Self
++
++        public static let horizontal = Set(rawValue: 1)
++        public static let vertical = Set(rawValue: 2)
++
++        public let rawValue: UInt8
++
++        public init(rawValue: UInt8) { self.rawValue = rawValue }
++
++        public func contains(_ axis: Axis) -> Bool {
++            let bit = axis == .horizontal ? Self.horizontal.rawValue : Self.vertical.rawValue
++            return rawValue & bit != 0
++        }
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+index 2bca5c6..10ffa41 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -260,6 +260,8 @@ enum NodeKind {
+     case layout(LayoutSpec)
+     /// Vertical scroll container. Its scroll offset lives on the node.
+     case scroll
++    /// Axis-configured scroll container. Kept separate so legacy layout remains unchanged.
++    case scrollView(ScrollViewConfiguration)
+     case modifier(ModifierSpec)
+     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
+     case toggle(Binding<Bool>)
+@@ -290,6 +292,11 @@ enum NodeKind {
+     }
+ }
+ 
++struct ScrollViewConfiguration: Equatable {
++    var axes: Axis.Set
++    var showsIndicators: Bool
++}
++
+ struct AnyEquatable {
+     let value: Any
+     private let equals: (Any) -> Bool
+@@ -481,6 +488,9 @@ final class Node {
+     var rowCache = RowStateCache()
+     /// Scroll offset of a ScrollView node, in logical points, clamped by the layout pass.
+     var scrollOffset: CGFloat = 0
++    /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
++    var scrollOffsetX: CGFloat?
++    var scrollOffsetY: CGFloat?
+     /// Target opacity (own `.opacity` times the parent's target).
+     var targetOpacity: Double = 1
+     /// Presented (animated) values: what the last commit showed.
+@@ -590,6 +600,8 @@ final class Node {
+         selectionCursor = nil
+         menuEntries = nil
+         presented = nil
++        scrollOffsetX = nil
++        scrollOffsetY = nil
+     }
+ }
+ 
+@@ -618,6 +630,7 @@ enum LayoutKey: Equatable {
+     case frame(FrameSpec)
+     case spacer(CGFloat)
+     case image(ImageSpec)
++    case scrollView(ScrollViewConfiguration)
+ }
+ 
+ /// Guarded commit for async work started by `.task`. A commit is accepted only while the
+@@ -914,14 +927,40 @@ public final class Graph {
+     }
+ 
+     /// Sets the vertical scroll offset of a live ScrollView. The next flush lays it out, and the
+-    /// offset is clamped to the content.
++    /// offset is clamped to the content. Configured scroll views map this scalar to their enabled axis.
+     public func scroll(_ id: String, to offset: CGFloat) {
+-        node(id)?.scrollOffset = offset
++        guard let node = node(id) else { return }
++        node.scrollOffset = offset
++        if case .scrollView(let configuration) = node.kind {
++            if configuration.axes.contains(.vertical) {
++                node.scrollOffsetY = offset
++            } else if configuration.axes.contains(.horizontal) {
++                node.scrollOffsetX = offset
++            }
++        }
++    }
++
++    /// Sets configured horizontal & vertical offsets. Each enabled axis is clamped during layout.
++    public func scroll(_ id: String, to offset: LayoutPoint) {
++        guard let node = node(id), case .scrollView(let configuration) = node.kind else { return }
++        if configuration.axes.contains(.horizontal) { node.scrollOffsetX = offset.x }
++        if configuration.axes.contains(.vertical) { node.scrollOffsetY = offset.y }
+     }
+ 
+     /// The last laid-out scroll offset of a live ScrollView.
+     public func scrollOffset(_ id: String) -> CGFloat? {
+-        node(id).map(\.scrollOffset)
++        guard let node = node(id) else { return nil }
++        guard case .scrollView(let configuration) = node.kind else { return node.scrollOffset }
++        if configuration.axes.contains(.vertical) { return node.scrollOffsetY ?? 0 }
++        if configuration.axes.contains(.horizontal) { return node.scrollOffsetX ?? 0 }
++        return node.scrollOffset
++    }
++
++    /// Last laid-out offsets of a configured ScrollView, or nil for a legacy view.
++    public func scrollOffsets(_ id: String) -> LayoutPoint? {
++        guard let node = node(id), case .scrollView(let configuration) = node.kind else { return nil }
++        return LayoutPoint(x: configuration.axes.contains(.horizontal) ? (node.scrollOffsetX ?? 0) : 0,
++                           y: configuration.axes.contains(.vertical) ? (node.scrollOffsetY ?? 0) : 0)
+     }
+ 
+     /// Edits the root environment (for example a host feeds the OS reduce-motion setting) and
+@@ -1354,6 +1393,7 @@ public final class Graph {
+         case .modifier(.frame(let frame)): key = .frame(frame)
+         case .spacer(let length): key = .spacer(length)
+         case .image(let spec): key = .image(spec)
++        case .scrollView(let configuration): key = .scrollView(configuration)
+         case .layout: key = .always
+         default: key = .none
+         }
+@@ -1615,7 +1655,7 @@ public final class Graph {
+             label = joinedText(children)
+         case .divider:
+             role = "separator"
+-        case .scroll:
++        case .scroll, .scrollView:
+             role = "scroll-area"
+         case .stack(let spec) where spec.name == "List":
+             role = "list"
+@@ -1669,7 +1709,7 @@ public final class Graph {
+         case .textField: return "TextField"
+         case .stack(let spec): return spec.name
+         case .layout: return "Layout"
+-        case .scroll: return "ScrollView"
++        case .scroll, .scrollView: return "ScrollView"
+         case .modifier(let spec): return spec.kindName
+         case .toggle: return "Toggle"
+         case .image: return "Image"
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+index b1555c2..581bd5b 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -156,6 +156,15 @@ extension Graph {
+             let width = finiteLength(proposal.width)
+             let content = measureGroup(node, ProposedViewSize(width: width, height: nil))
+             return LayoutSize(width: width ?? content.width, height: finiteLength(proposal.height) ?? content.height)
++        case .scrollView(let configuration):
++            let width = finiteLength(proposal.width)
++            let height = finiteLength(proposal.height)
++            let contentProposal = ProposedViewSize(
++                width: configuration.axes.contains(.horizontal) ? nil : width,
++                height: configuration.axes.contains(.vertical) ? nil : height
++            )
++            let content = measureGroup(node, contentProposal)
++            return LayoutSize(width: width ?? content.width, height: height ?? content.height)
+         case .user, .button, .modifier, .toggle, .menu:
+             return measureGroup(node, proposal)
+         }
+@@ -207,6 +216,25 @@ extension Graph {
+             node.scrollOffset = min(max(0, node.scrollOffset), maxOffset)
+             let contentRect = LayoutRect(x: rect.minX, y: rect.minY - node.scrollOffset, width: rect.width, height: content.height)
+             placeGroup(node, in: contentRect, proposal: ProposedViewSize(width: rect.width, height: nil))
++        case .scrollView(let configuration):
++            let contentProposal = ProposedViewSize(
++                width: configuration.axes.contains(.horizontal) ? nil : rect.width,
++                height: configuration.axes.contains(.vertical) ? nil : rect.height
++            )
++            let content = measureGroup(node, contentProposal)
++            let maxX = configuration.axes.contains(.horizontal) ? max(0, content.width - rect.width) : 0
++            let maxY = configuration.axes.contains(.vertical) ? max(0, content.height - rect.height) : 0
++            let offsetX = min(max(0, node.scrollOffsetX ?? 0), maxX)
++            let offsetY = min(max(0, node.scrollOffsetY ?? 0), maxY)
++            node.scrollOffsetX = offsetX
++            node.scrollOffsetY = offsetY
++            let contentRect = LayoutRect(
++                x: rect.minX - offsetX,
++                y: rect.minY - offsetY,
++                width: configuration.axes.contains(.horizontal) ? content.width : rect.width,
++                height: configuration.axes.contains(.vertical) ? content.height : rect.height
++            )
++            placeGroup(node, in: contentRect, proposal: contentProposal)
+         case .user, .button, .modifier, .toggle, .menu:
+             placeGroup(node, in: rect, proposal: proposal)
+         }
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
+index 2c8a9d9..013d46c 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
+@@ -345,18 +345,26 @@ public struct LazyVStack<Content: View>: View, PrimitiveView {
+     var nodeContent: (any View)? { content }
+ }
+ 
+-/// Vertical scroll container. It takes the proposed size, lays its content out unbounded in height, and
+-/// offsets the content by the scroll offset (see `Graph.scroll(_:to:)`). Horizontal scrolling is not modeled.
++/// Scroll container. The content-only initializer preserves the legacy vertical behavior.
+ public struct ScrollView<Content: View>: View, PrimitiveView {
+     let content: Content
++    let configuration: ScrollViewConfiguration?
+     public init(@ViewBuilder content: () -> Content) {
+         self.content = content()
++        self.configuration = nil
+     }
+     @MainActor public var body: Never { return fatalError("primitive view has no body") }
+-    var nodeKind: NodeKind { .scroll }
++    var nodeKind: NodeKind { configuration.map(NodeKind.scrollView) ?? .scroll }
+     var nodeContent: (any View)? { content }
+ }
+ 
++extension ScrollView {
++    public init(_ axes: Axis.Set = .vertical, showsIndicators: Bool = true, @ViewBuilder content: () -> Content) {
++        self.content = content()
++        self.configuration = ScrollViewConfiguration(axes: axes, showsIndicators: showsIndicators)
++    }
++}
++
+ /// Apple: https://developer.apple.com/documentation/swiftui/list
+ public struct List<SelectionValue: Hashable, Content: View>: View, PrimitiveView {
+     let content: Content
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift
+new file mode 100644
+index 0000000..1e0d6dc
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift
+@@ -0,0 +1,144 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++final class ScrollAxisModel {
++    var isHorizontal = true
++}
++
++@MainActor
++final class ScrollViewAxisTests: XCTestCase {
++    struct HorizontalContent: View {
++        var body: some View {
++            ScrollView(.horizontal, showsIndicators: false) {
++                HStack(spacing: 0) {
++                    Text("1234567890")
++                    Text("abcdefghij")
++                }
++            }
++        }
++    }
++
++    struct VerticalContent: View {
++        var body: some View {
++            ScrollView(.vertical, showsIndicators: true) {
++                VStack(spacing: 0) {
++                    Text("line 0")
++                    Text("line 1")
++                    Text("line 2")
++                    Text("line 3")
++                    Text("line 4")
++                }
++            }
++        }
++    }
++
++    private func text(_ graph: Graph, _ value: String) -> ResolvedNode? {
++        var nodes: [ResolvedNode] = []
++        collect(graph.snapshot(), into: &nodes) { $0.kind == "Text" && $0.text == value }
++        return nodes.first
++    }
++
++    func testConfiguredHorizontalScrollUsesWidthForContentAndClamping() throws {
++        let graph = Graph(HorizontalContent())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        let first = try XCTUnwrap(text(graph, "1234567890"))
++        let second = try XCTUnwrap(text(graph, "abcdefghij"))
++
++        XCTAssertEqual(graph.snapshot()?.frame.width, 40)
++        XCTAssertGreaterThan(second.frame.minX, first.frame.minX)
++        XCTAssertEqual(first.frame.minX, 0)
++
++        graph.scroll(id, to: 24)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 24)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minX, -24)
++
++        graph.scroll(id, to: 999)
++        graph.flush()
++        XCTAssertGreaterThan(graph.scrollOffset(id) ?? 0, 24)
++        XCTAssertLessThan(text(graph, "1234567890")?.frame.minX ?? 0, -24)
++    }
++
++    func testConfiguredVerticalScrollUsesHeightForContentAndClamping() throws {
++        let graph = Graph(VerticalContent())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 40)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++
++        XCTAssertEqual(text(graph, "line 4")?.frame.minY, 64)
++        graph.scroll(id, to: 24)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 24)
++        XCTAssertEqual(text(graph, "line 0")?.frame.minY, -24)
++        XCTAssertEqual(text(graph, "line 4")?.frame.minY, 40)
++
++        graph.scroll(id, to: 999)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 40)
++        XCTAssertEqual(text(graph, "line 0")?.frame.minY, -40)
++    }
++
++    func testConfiguredTwoAxisOffsetsClampIndependently() throws {
++        struct BothAxes: View {
++            var body: some View {
++                ScrollView([.horizontal, .vertical]) {
++                    VStack(spacing: 0) {
++                        HStack(spacing: 0) {
++                            Text("1234567890")
++                            Text("abcdefghij")
++                        }
++                        Text("lower")
++                        Text("lowest")
++                        Text("extra 0")
++                        Text("extra 1")
++                        Text("extra 2")
++                        Text("extra 3")
++                    }
++                }
++            }
++        }
++        let graph = Graph(BothAxes())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 40)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        graph.scroll(id, to: LayoutPoint(x: 20, y: 20))
++        graph.flush()
++
++        XCTAssertEqual(graph.scrollOffsets(id)?.x, 20)
++        XCTAssertEqual(graph.scrollOffsets(id)?.y, 20)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minX, -20)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minY, -20)
++    }
++
++    func testChangingAxesOnSameScrollViewInvalidatesWrappedContentSize() throws {
++        struct AxisChangingScreen: View {
++            @Bindable var model: ScrollAxisModel
++
++            var body: some View {
++                ScrollView(model.isHorizontal ? .horizontal : .vertical) {
++                    Text(String(repeating: "wrap ", count: 16))
++                }
++            }
++        }
++        let model = ScrollAxisModel()
++        let graph = Graph(AxisChangingScreen(model: model))
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        let instance = try XCTUnwrap(graph.nodeInstance(id))
++        let horizontalHeight = try XCTUnwrap(everyNode(graph.snapshot()).first { $0.kind == "ScrollView" }?.frame.height)
++
++        model.isHorizontal = false
++        graph.flush()
++
++        XCTAssertEqual(graph.nodeInstance(id), instance, "axis update keeps same ScrollView node")
++        let verticalHeight = try XCTUnwrap(everyNode(graph.snapshot()).first { $0.kind == "ScrollView" }?.frame.height)
++        XCTAssertGreaterThan(verticalHeight, horizontalHeight, "finite-width vertical content wraps into more height")
++    }
++}

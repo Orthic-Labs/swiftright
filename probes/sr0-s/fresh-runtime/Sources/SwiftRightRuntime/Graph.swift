@@ -260,6 +260,8 @@ enum NodeKind {
     case layout(LayoutSpec)
     /// Vertical scroll container. Its scroll offset lives on the node.
     case scroll
+    /// Axis-configured scroll container. Kept separate so legacy layout remains unchanged.
+    case scrollView(ScrollViewConfiguration)
     case modifier(ModifierSpec)
     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
     case toggle(Binding<Bool>)
@@ -288,6 +290,11 @@ enum NodeKind {
         default: return false
         }
     }
+}
+
+struct ScrollViewConfiguration: Equatable {
+    var axes: Axis.Set
+    var showsIndicators: Bool
 }
 
 struct AnyEquatable {
@@ -481,6 +488,9 @@ final class Node {
     var rowCache = RowStateCache()
     /// Scroll offset of a ScrollView node, in logical points, clamped by the layout pass.
     var scrollOffset: CGFloat = 0
+    /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
+    var scrollOffsetX: CGFloat?
+    var scrollOffsetY: CGFloat?
     /// Target opacity (own `.opacity` times the parent's target).
     var targetOpacity: Double = 1
     /// Presented (animated) values: what the last commit showed.
@@ -590,6 +600,8 @@ final class Node {
         selectionCursor = nil
         menuEntries = nil
         presented = nil
+        scrollOffsetX = nil
+        scrollOffsetY = nil
     }
 }
 
@@ -618,6 +630,7 @@ enum LayoutKey: Equatable {
     case frame(FrameSpec)
     case spacer(CGFloat)
     case image(ImageSpec)
+    case scrollView(ScrollViewConfiguration)
 }
 
 /// Guarded commit for async work started by `.task`. A commit is accepted only while the
@@ -914,14 +927,40 @@ public final class Graph {
     }
 
     /// Sets the vertical scroll offset of a live ScrollView. The next flush lays it out, and the
-    /// offset is clamped to the content.
+    /// offset is clamped to the content. Configured scroll views map this scalar to their enabled axis.
     public func scroll(_ id: String, to offset: CGFloat) {
-        node(id)?.scrollOffset = offset
+        guard let node = node(id) else { return }
+        node.scrollOffset = offset
+        if case .scrollView(let configuration) = node.kind {
+            if configuration.axes.contains(.vertical) {
+                node.scrollOffsetY = offset
+            } else if configuration.axes.contains(.horizontal) {
+                node.scrollOffsetX = offset
+            }
+        }
+    }
+
+    /// Sets configured horizontal & vertical offsets. Each enabled axis is clamped during layout.
+    public func scroll(_ id: String, to offset: LayoutPoint) {
+        guard let node = node(id), case .scrollView(let configuration) = node.kind else { return }
+        if configuration.axes.contains(.horizontal) { node.scrollOffsetX = offset.x }
+        if configuration.axes.contains(.vertical) { node.scrollOffsetY = offset.y }
     }
 
     /// The last laid-out scroll offset of a live ScrollView.
     public func scrollOffset(_ id: String) -> CGFloat? {
-        node(id).map(\.scrollOffset)
+        guard let node = node(id) else { return nil }
+        guard case .scrollView(let configuration) = node.kind else { return node.scrollOffset }
+        if configuration.axes.contains(.vertical) { return node.scrollOffsetY ?? 0 }
+        if configuration.axes.contains(.horizontal) { return node.scrollOffsetX ?? 0 }
+        return node.scrollOffset
+    }
+
+    /// Last laid-out offsets of a configured ScrollView, or nil for a legacy view.
+    public func scrollOffsets(_ id: String) -> LayoutPoint? {
+        guard let node = node(id), case .scrollView(let configuration) = node.kind else { return nil }
+        return LayoutPoint(x: configuration.axes.contains(.horizontal) ? (node.scrollOffsetX ?? 0) : 0,
+                           y: configuration.axes.contains(.vertical) ? (node.scrollOffsetY ?? 0) : 0)
     }
 
     /// Edits the root environment (for example a host feeds the OS reduce-motion setting) and
@@ -1354,6 +1393,7 @@ public final class Graph {
         case .modifier(.frame(let frame)): key = .frame(frame)
         case .spacer(let length): key = .spacer(length)
         case .image(let spec): key = .image(spec)
+        case .scrollView(let configuration): key = .scrollView(configuration)
         case .layout: key = .always
         default: key = .none
         }
@@ -1615,7 +1655,7 @@ public final class Graph {
             label = joinedText(children)
         case .divider:
             role = "separator"
-        case .scroll:
+        case .scroll, .scrollView:
             role = "scroll-area"
         case .stack(let spec) where spec.name == "List":
             role = "list"
@@ -1669,7 +1709,7 @@ public final class Graph {
         case .textField: return "TextField"
         case .stack(let spec): return spec.name
         case .layout: return "Layout"
-        case .scroll: return "ScrollView"
+        case .scroll, .scrollView: return "ScrollView"
         case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
         case .image: return "Image"

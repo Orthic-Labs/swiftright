@@ -345,16 +345,24 @@ public struct LazyVStack<Content: View>: View, PrimitiveView {
     var nodeContent: (any View)? { content }
 }
 
-/// Vertical scroll container. It takes the proposed size, lays its content out unbounded in height, and
-/// offsets the content by the scroll offset (see `Graph.scroll(_:to:)`). Horizontal scrolling is not modeled.
+/// Scroll container. The content-only initializer preserves the legacy vertical behavior.
 public struct ScrollView<Content: View>: View, PrimitiveView {
     let content: Content
+    let configuration: ScrollViewConfiguration?
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
+        self.configuration = nil
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .scroll }
+    var nodeKind: NodeKind { configuration.map(NodeKind.scrollView) ?? .scroll }
     var nodeContent: (any View)? { content }
+}
+
+extension ScrollView {
+    public init(_ axes: Axis.Set = .vertical, showsIndicators: Bool = true, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self.configuration = ScrollViewConfiguration(axes: axes, showsIndicators: showsIndicators)
+    }
 }
 
 /// Apple: https://developer.apple.com/documentation/swiftui/list
