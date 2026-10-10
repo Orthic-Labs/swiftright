@@ -32,6 +32,7 @@ func sliceAppWindowsMain() -> Int32 {
     bridge.textStore = SliceTextStore(backend: backend)
     bridge.onReady = { window in MainActor.assumeIsolated { backend.ready(window) } }
     bridge.onEvent = { event in MainActor.assumeIsolated { backend.handle(event) } }
+    bridge.onTick = { _, _ in MainActor.assumeIsolated { backend.tick() } }
     bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed() } }
 
     do {

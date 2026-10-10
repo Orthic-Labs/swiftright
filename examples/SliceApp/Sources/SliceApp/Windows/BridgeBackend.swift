@@ -10,6 +10,14 @@ import SwiftRightBridge
 // Coordinates: runtime frames are logical points with the client top-left at 0,0. ABI geometry is physical
 // pixels, so the runtime's pixelFrame is used directly. Each runtime node id maps to a stable non-zero bridge
 // id (0 = window root). Each text node reserves an `axTextRunBlockSize` id block so AX text-run ids never collide.
+//
+// 2026-10-10 parity pass (ported from probes/sr0-s/fresh-on-bridge, SR0-O cross-compare, Mac SwiftUI as oracle):
+//   - initial focus: `ready` calls `Graph.applyInitialFocus()` once, after the first commit (the runtime decides; with the
+//     List-first EditorScreen it focuses nothing, as the Mac window does);
+//   - a UIA Invoke on a button no longer moves the focus: the AX `focus` action UIA sends in front of it is held by a
+//     `ButtonFocusGate` and dropped when the invoke follows (a real SetFocus on a button, Narrator, still lands). The gate is
+//     polled from the display tick, and ticks run only while a request is held (`updateTicks`): on when one is held, off
+//     once it is applied or dropped.
 
 enum SliceStyle {
     static let fontFamily = "Segoe UI"
@@ -120,7 +128,15 @@ final class BridgeBackend {
     private var focusedRow: UUID?
     private var focusTarget: UInt64 = 0
     /// Bridge id of a button focused through AX/UIA SetFocus (Narrator item navigation). Cleared by any row focus.
+    /// It is the screen reader's focus: it moves the tree focus the renderer reports to UIA, and leaves the runtime
+    /// `FocusState` (the keyboard focus, `focusedRow`) alone, as VoiceOver's cursor does on the Mac.
     private var axButtonFocus: UInt64 = 0
+    /// Holds a button focus request until it is clear that no invoke of the same button follows (see `ButtonFocusGate`).
+    private var buttonFocusGate = ButtonFocusGate()
+    /// Button focus requests dropped because an invoke of the same node followed at once (diagnostic).
+    private(set) var coalescedButtonFocus = 0
+    /// Whether display ticks are currently requested from the renderer (only while the gate holds a request).
+    private var ticksOn = false
 
     init(bridge: Bridge, model: EditorModel) {
         self.bridge = bridge
@@ -146,8 +162,42 @@ final class BridgeBackend {
                 MainActor.assumeIsolated { self?.dirty = true }
             }
             g.flush()
+            giveInitialFocus(g)
         } catch {
             reportFailure("ready failed: \(error)")
+        }
+    }
+
+    /// Gives the window's initial focus (runtime rule: `Graph.applyInitialFocus`, from the Mac oracle). Runs once from `ready`,
+    /// after the first commit. The EditorScreen is List-first, so the runtime returns nil here (the Mac window reports no focus
+    /// either); the call keeps the host on the same rule if the screen changes. The caret goes to the end of the field.
+    private func giveInitialFocus(_ g: Graph) {
+        guard let node = g.applyInitialFocus(), let row = rowUUID(in: node) else { return }
+        placeCaretAtEnd(row)
+        dirty = true
+        flushIfDirty()
+    }
+
+    /// Display tick (bridge `onTick`), delivered only while a button focus request is held. Lets the request land once its
+    /// window has passed, then flushes pending model edits and stops the ticks when nothing is held any more.
+    func tick() {
+        let now = monotonicNS()
+        if let node = buttonFocusGate.expired(at: now) { applyButtonFocus(node) }
+        flushIfDirty()
+        updateTicks()
+    }
+
+    /// Keeps the renderer's display ticks on exactly while the gate holds a request (nothing else in this host needs ticks).
+    /// Called after every event and tick, so every way a request is taken, dropped or replaced is covered. The renderer's
+    /// `swr_request_ticks` is idempotent and UI-thread only, as are all callers here.
+    private func updateTicks() {
+        let wanted = buttonFocusGate.pending != nil
+        guard wanted != ticksOn, !isClosed, let window else { return }
+        do {
+            try window.requestTicks(wanted)
+            ticksOn = wanted
+        } catch {
+            reportFailure("request_ticks(\(wanted)) failed: \(error)")
         }
     }
 
@@ -389,11 +439,23 @@ final class BridgeBackend {
         case .axAction:
             switch ev.axAction {
             case .invoke?:
+                // UIA sends a focus request on the button right in front of an Invoke; an activation alone must not move the
+                // focus (Mac AXPress does not), so that request is dropped. Any other held request stands first.
+                if buttonFocusGate.cancelForInvoke(of: ev.node, at: monotonicNS()) {
+                    coalescedButtonFocus += 1
+                } else {
+                    confirmButtonFocus()
+                }
                 invoke(node: ev.node)
             case .focus?:
-                if let row = rowByTextField[ev.node] { focusRow(row) }
-                else if buttonRuntimeID[ev.node] != nil { axButtonFocus = ev.node; dirty = true }
+                if let row = rowByTextField[ev.node] {
+                    confirmButtonFocus()
+                    focusRow(row)
+                } else if buttonRuntimeID[ev.node] != nil {
+                    if let earlier = buttonFocusGate.request(ev.node, at: monotonicNS()) { applyButtonFocus(earlier) }
+                }
             case .setValue?:
+                confirmButtonFocus()
                 if let row = rowByTextField[ev.node] {
                     model.editText(row, ev.text)
                     placeCaretAtEnd(row)
@@ -403,6 +465,7 @@ final class BridgeBackend {
             }
         case .pointer:
             if ev.action == 1 {
+                confirmButtonFocus()
                 if buttonRuntimeID[ev.node] != nil {
                     invoke(node: ev.node)
                 } else if let row = rowByTextField[ev.node] {
@@ -412,11 +475,30 @@ final class BridgeBackend {
         case .windowMetrics:
             applyMetrics(width: ev.i0, height: ev.i1, scale: ev.x)
         case .key:
-            if ev.action == 1 { handleKey(name: ev.text, modifiers: ev.modifiers) }
+            if ev.action == 1 {
+                confirmButtonFocus()
+                handleKey(name: ev.text, modifiers: ev.modifiers)
+            }
         case .ime, .focus, .modalResult:
             break
         }
         flushIfDirty()
+        updateTicks()
+    }
+
+    private func monotonicNS() -> UInt64 { DispatchTime.now().uptimeNanoseconds }
+
+    /// Makes `node` the screen reader's focus (the tree focus the renderer reports). A node that left the tree in the
+    /// meantime is ignored.
+    private func applyButtonFocus(_ node: UInt64) {
+        guard buttonRuntimeID[node] != nil else { return }
+        axButtonFocus = node
+        dirty = true
+    }
+
+    /// Another input arrived while a button focus request was held: the request stood on its own, so it lands now.
+    private func confirmButtonFocus() {
+        if let node = buttonFocusGate.confirm() { applyButtonFocus(node) }
     }
 
     /// Native key-down. Tab / Shift-Tab move focus through the runtime (CONTRACT section 4). Bridge modifier bits:
