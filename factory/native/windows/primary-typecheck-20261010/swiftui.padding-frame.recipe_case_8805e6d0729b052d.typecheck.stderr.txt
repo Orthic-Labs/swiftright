@@ -1,0 +1,15 @@
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.padding-frame.recipe_case_8805e6d0729b052d.swift:9:29: error: cannot convert value of type 'Int' to expected argument type 'Edge.Set'
+ 7 | struct Witness_padding_frame: View {
+ 8 |     var body: some View {
+ 9 |         Text("Box").padding(8).frame(width: 96, height: 40, alignment: .trailing)
+   |                             `- error: cannot convert value of type 'Int' to expected argument type 'Edge.Set'
+10 |     }
+11 | }
+
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.padding-frame.recipe_case_8805e6d0729b052d.swift:9:32: error: value of type 'some View' has no member 'frame'
+ 7 | struct Witness_padding_frame: View {
+ 8 |     var body: some View {
+ 9 |         Text("Box").padding(8).frame(width: 96, height: 40, alignment: .trailing)
+   |                                `- error: value of type 'some View' has no member 'frame'
+10 |     }
+11 | }

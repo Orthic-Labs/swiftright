@@ -1,0 +1,180 @@
+{
+  "acceptance": "not-promoted",
+  "adapterSourceHash": "sha256:a4070d2c1cb11f6a1de90cec025b225ec0af03ba27ef1fa20ab5bff396b1f59c",
+  "binaryHash": "sha256:afa526d4f1e4addaa29b3a379d1c6719eb60bd26dd771a6c91587d184bfe4914",
+  "block": "swiftui.stack-overlay",
+  "candidateOnly": true,
+  "case": {
+    "hash": "sha256:7bb5ea4ffbfcc1138223fbdbc8d827fcb560b4c53ea39d5def5dc2b131b313a3",
+    "id": "swiftui.stack-overlay.instrumentation-transparency"
+  },
+  "channels": {
+    "animation": "NOT_ATTEMPTED: static pilot",
+    "compositorPaint": "OBSERVED",
+    "events": "OBSERVED: render clock & host window display only",
+    "externalAX": "OBSERVED",
+    "offscreenPaint": "OBSERVED",
+    "rootLayout": "OBSERVED",
+    "textRenderer": "OBSERVED",
+    "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+    "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+  },
+  "compiledAdapterHash": "sha256:6f3e07e04bbcaa4fe0b2bf82df6d7575576520812caa7de5989fa5c352dd5571",
+  "executionRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swiftui.stack-overlay.instrumentation-transparency",
+  "freshAXClient": {
+    "binaryHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+    "executable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/external-ax-client/f5-ax-client",
+    "externalAX": "AVAILABLE",
+    "identityDetails": "Executable=/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/external-ax-client/f5-ax-client\nIdentifier=f5-ax-client\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=805 flags=0x20002(adhoc,linker-signed) hashes=22+0 location=embedded\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nCandidateCDHashFull sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nHash choices=sha256\nCMSDigest=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=17992\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n",
+    "kind": "fresh-client",
+    "permissionRequests": false,
+    "preflight": {
+      "axTrusted": true,
+      "permissionRequests": false,
+      "pid": 19460
+    },
+    "sourceHash": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+  },
+  "independentProcessesPerRun": true,
+  "kind": "macos-host-capture-candidate",
+  "permissionCapabilities": {
+    "axTrusted": true,
+    "permissionRequests": false,
+    "pid": 19901,
+    "screenCaptureGranted": true
+  },
+  "probeManifest": {
+    "block": "swiftui.stack-overlay",
+    "case": {
+      "hash": "sha256:7bb5ea4ffbfcc1138223fbdbc8d827fcb560b4c53ea39d5def5dc2b131b313a3",
+      "id": "swiftui.stack-overlay.instrumentation-transparency"
+    },
+    "caseInputs": {
+      "alignment": "leading",
+      "color-scheme": "light"
+    },
+    "channels": {
+      "adapters": {
+        "customLayout": "not-declared",
+        "native": "native host capture required",
+        "provider": "host-specific adapter required; no renderer ABI assumed",
+        "text": "not-declared"
+      },
+      "assertionChannels": [
+        "layout"
+      ],
+      "geometry": [
+        {
+          "channel": "layout",
+          "hostHookRequired": true,
+          "probeTag": "swiftui.stack-overlay:swiftui.stack-overlay.witness",
+          "viewInstrumentationInserted": false
+        }
+      ],
+      "native": [],
+      "provider": [],
+      "transparency": {
+        "channels": [
+          "layout",
+          "paint"
+        ],
+        "enabled": true,
+        "viewIsolatedFromInstrumentation": true
+      },
+      "witnesses": [
+        {
+          "id": "swiftui.stack-overlay.witness",
+          "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+        }
+      ]
+    },
+    "compileExpectation": "success",
+    "environmentInputs": {
+      "colorScheme": "light"
+    },
+    "executionEligible": true,
+    "kind": "generated-probe",
+    "recipe": {
+      "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+      "id": "swiftui.stack-overlay.recipe"
+    },
+    "scenario": "instrumentation-transparency",
+    "sourceFile": "swiftui.stack-overlay.instrumentation-transparency.swift",
+    "sourceHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+    "version": "0.1",
+    "witness": {
+      "id": "swiftui.stack-overlay.witness",
+      "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+    },
+    "witnessType": "Witness_stack_overlay"
+  },
+  "provenance": {
+    "createdAt": "2026-10-10T17:51:12.321982Z",
+    "producer": "factory/native/macos",
+    "sourceHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7"
+  },
+  "recorder": {
+    "axTrusted": true,
+    "copiedBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "copiedExecutable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/existing-recorder/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "externalAX": "HELD",
+    "genericProtocolSupported": false,
+    "identityDetails": "Executable=/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app/Contents/MacOS/F1MacRecord\nIdentifier=com.orthiclabs.swiftright.f1macrecord\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=497 flags=0x10000(runtime) hashes=8+3 location=embedded\nVersionPlatform=1\nVersionMin=983040\nVersionSDK=983040\nHash type=sha256 size=32\nCandidateCDHash sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nCandidateCDHashFull sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nHash choices=sha256\nCMSDigest=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=49152\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nSignature size=9048\nAuthority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=9 Oct 2026 at 8:17:30\u202fAM\nInfo.plist entries=9\nTeamIdentifier=6KLGD3LLKF\nRuntime Version=15.0.0\nSealed Resources version=2 rules=13 files=0\nInternal requirements count=1 size=200\nTotal signatures=1\nChosen signature=1\n",
+    "permissionRequests": false,
+    "preflightExit": 2,
+    "preflightMethod": "AXIsProcessTrusted in unchanged signed recorder, then missing-fixture launch",
+    "reason": "signed binary hard-codes F1 stimuli & lacks generic --steps/launchArgs support; current source is newer than signed binary",
+    "sourceApp": "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+    "sourceBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "sourceBinaryProtocol": "F1-only"
+  },
+  "runs": [
+    {
+      "captureHash": "sha256:bcb413fddef134381aad688b4bb767710f829aa958b9069cc0e3164d6bf130cd",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:7bd88770aa020fe6eabc046d0fa41601ddcfb6e8a59014f39e0dcd87e235135b",
+      "compositorRawHash": "sha256:868556d9b73a0fa79275613835722598757839c66c6e89df960f4b55372260e1",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:5724a4cc6a71924b1ffa53fee8dd3344ce3571311cd5e7501c77110bcb92476f",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 51,
+          "width": 48
+        },
+        "pid": 19908,
+        "pngHash": "sha256:4801a693a5b181d33fee147dbe5afdbc19940cd497cd0efb221960e8916d9614",
+        "rawHash": "sha256:7bd34169806cfd3252650108771dc034136c295de19d3f19639fe18cca6ca6f3",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 51,
+          "width": 48
+        },
+        "pid": 19905,
+        "pngHash": "sha256:4801a693a5b181d33fee147dbe5afdbc19940cd497cd0efb221960e8916d9614",
+        "rawHash": "sha256:1b3c8dbb6db0d2efef97be31ed3bd9cb6adb7af3a82e8e2ad16db56873475c47",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "run": 1
+    }
+  ],
+  "sourceHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+  "status": "CANDIDATE_CAPTURED",
+  "version": "0.1"
+}

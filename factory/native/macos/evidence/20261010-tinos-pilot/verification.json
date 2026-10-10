@@ -1,0 +1,32 @@
+{
+  "candidateOnly": true,
+  "cases": [
+    {
+      "case": {
+        "hash": "sha256:3779402919e31bd6cbddc947ee89ff32602380006f093eb7a2cbe7c5b894dca1",
+        "id": "swiftui.text.bundled-font.tinos-pilot.recipe/case/78a82158596d0836"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "registeredFontProvider": "OBSERVED: hash-bound process CoreText font descriptor identity",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "independentPIDs": {
+        "compositor": 20,
+        "externalAX": 20,
+        "instrumented": 20,
+        "plain": 20
+      },
+      "runs": 20,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,89 @@
+{
+  "kind": "windows-stage-inventory",
+  "version": "0.1",
+  "observedAt": "2026-10-10T18:10:02.4836166+00:00",
+  "stage": "D:\\Claude\\sr0-r09",
+  "sourceCommit": "be9a922028079fb8a51c6bb47299dfb6e9965d06",
+  "desktopLock": {
+    "path": "D:\\Claude\\desktop.lock",
+    "state": "matrix10 lead",
+    "acquired": false
+  },
+  "os": {
+    "caption": "Microsoft Windows 11 Pro",
+    "version": "10.0.26300",
+    "build": "26300"
+  },
+  "session": {
+    "collectorSessionId": 0,
+    "query": [
+      " SESSIONNAME               USERNAME                 ID  STATE   TYPE        DEVICE ",
+      ">services                                            0  Disc                        ",
+      " console                   adrds                     1  Active                      ",
+      " rdp-tcp                                         65536  Listen                      "
+    ],
+    "dpi": "not-measured-services-session"
+  },
+  "files": [
+    {
+      "path": "D:\\Claude\\sr0-r09\\renderer\\swiftright_render.dll",
+      "bytes": 11885056,
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\src\\scratch\\out\\Products\\Release-windows-x86_64\\FreshOnBridge.exe",
+      "bytes": 4195840,
+      "sha256": "8650bbfc4118f0793d71f84a51077d23d076e7dd1aa144c2ae7b60bac27161c8"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\smoke\\bin\\BridgePixels.exe",
+      "bytes": 660992,
+      "sha256": "452110b5508533751f2e70c69d1008f484bd5c833c3f743850b7ace50dabd0f7"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\workload\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+      "bytes": 4711936,
+      "sha256": "27e781b85e54f1213ce46c170c31eb9e351bdb00a97b37fe453d084a745c079c"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\src\\probes\\sr0-s\\fresh-runtime\\Package.swift",
+      "bytes": 578,
+      "sha256": "fbaff88a218621b829d938e76e8866dffe104739a3c93b36d7b9d6c794fe4f3c"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\src\\packages\\SwiftRightBridge\\Package.swift",
+      "bytes": 1563,
+      "sha256": "626a3fcd2e02930b3bbb6f0e92e2a81aa7066555e91a0ebc8ec3b83a9fe260c5"
+    },
+    {
+      "path": "D:\\Claude\\sr0-r09\\src\\render\\swiftright-abi\\include\\swiftright.h",
+      "bytes": 42707,
+      "sha256": "d7e0dc20261574eda91ac74a714d6460b21e45cdf6335b4fb64a30db5876f649"
+    }
+  ],
+  "tools": [
+    {
+      "name": "swift",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe"
+    },
+    {
+      "name": "clang",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\clang.exe"
+    },
+    {
+      "name": "clang-cl",
+      "path": "D:\\.rightkit-managed\\agent-bin\\clang-cl.exe"
+    },
+    {
+      "name": "python",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Python\\Python310\\python.exe"
+    },
+    {
+      "name": "rightkit",
+      "path": "D:\\.rightkit-managed\\agent-bin\\rightkit.cmd"
+    }
+  ],
+  "swiftVersion": "Swift version 6.4 (swift-6.4-RELEASE)\r\nTarget: x86_64-unknown-windows-msvc\r\nBuild config: +assertions",
+  "windowedRunPerformed": false,
+  "stageModified": false
+}

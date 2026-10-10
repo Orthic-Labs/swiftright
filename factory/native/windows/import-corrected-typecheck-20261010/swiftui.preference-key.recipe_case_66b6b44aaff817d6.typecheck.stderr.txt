@@ -1,0 +1,23 @@
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift:19:23: error: cannot find type 'PreferenceKey' in scope
+17 | }
+18 | 
+19 | struct WitnessWidths: PreferenceKey {
+   |                       `- error: cannot find type 'PreferenceKey' in scope
+20 |     static var defaultValue: CGFloat = 0
+21 |     static let reductionMode = "sum"
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift:13:34: error: value of type 'Text' has no member 'preference'
+11 |         VStack {
+12 |             ForEach(0..<3, id: \.self) { index in
+13 |                 Text("\(index)").preference(key: WitnessWidths.self, value: CGFloat((index + 2) * 10))
+   |                                  `- error: value of type 'Text' has no member 'preference'
+14 |             }
+15 |         }.onPreferenceChange(WitnessWidths.self) { _ in }
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift:15:11: error: value of type 'VStack<Content>' has no member 'onPreferenceChange'
+13 |                 Text("\(index)").preference(key: WitnessWidths.self, value: CGFloat((index + 2) * 10))
+14 |             }
+15 |         }.onPreferenceChange(WitnessWidths.self) { _ in }
+   |           `- error: value of type 'VStack<Content>' has no member 'onPreferenceChange'
+16 |     }
+17 | }

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/queue/v0.1/receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "version", "id", "provenance", "operation", "status", "mode", "synthetic", "startedAt", "finishedAt", "inputs", "outputs", "details", "hash"],
+  "properties": {
+    "kind": {"const": "queue-receipt"},
+    "version": {"const": "0.1"},
+    "id": {"type": "string", "minLength": 1},
+    "provenance": {"type": "object"},
+    "operation": {"enum": ["enqueue", "claim", "renew", "expire", "close", "waiver"]},
+    "status": {"enum": ["pass", "blocked", "conflict"]},
+    "mode": {"const": "unit"},
+    "synthetic": {"const": true},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "finishedAt": {"type": "string", "format": "date-time"},
+    "inputs": {"type": "array", "items": {"type": "object"}},
+    "outputs": {"type": "array", "items": {"type": "object"}},
+    "details": {"type": "object"},
+    "hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

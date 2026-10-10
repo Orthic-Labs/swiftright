@@ -1,0 +1,56 @@
+{
+  "candidateOnly": true,
+  "cases": [
+    {
+      "case": {
+        "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "HELD",
+        "offscreenPaint": "OBSERVED",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "NOT_APPLICABLE_OR_HELD",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "independentPIDs": {
+        "compositor": 20,
+        "externalAX": 20,
+        "instrumented": 20,
+        "plain": 20
+      },
+      "runs": 20,
+      "status": "PASS"
+    },
+    {
+      "case": {
+        "hash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "id": "swiftui.preference-key.recipe/case/66b6b44aaff817d6"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "independentPIDs": {
+        "compositor": 20,
+        "externalAX": 20,
+        "instrumented": 20,
+        "plain": 20
+      },
+      "runs": 20,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

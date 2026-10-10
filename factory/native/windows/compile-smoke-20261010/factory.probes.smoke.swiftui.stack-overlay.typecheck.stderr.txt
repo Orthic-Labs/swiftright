@@ -1,0 +1,31 @@
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.stack-overlay.swift:9:9: error: cannot find 'ZStack' in scope
+ 7 | struct Witness_stack_overlay: View {
+ 8 |     var body: some View {
+ 9 |         ZStack(alignment: .leading) {
+   |         `- error: cannot find 'ZStack' in scope
+10 |             Rectangle().fill(Color.blue).frame(width: 48, height: 32)
+11 |             Circle().fill(Color.red).frame(width: 12, height: 12)
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.stack-overlay.swift:10:13: error: cannot find 'Rectangle' in scope
+ 8 |     var body: some View {
+ 9 |         ZStack(alignment: .leading) {
+10 |             Rectangle().fill(Color.blue).frame(width: 48, height: 32)
+   |             `- error: cannot find 'Rectangle' in scope
+11 |             Circle().fill(Color.red).frame(width: 12, height: 12)
+12 |         }.overlay(alignment: .bottomTrailing) { Text("+") }
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.stack-overlay.swift:11:13: error: cannot find 'Circle' in scope
+ 9 |         ZStack(alignment: .leading) {
+10 |             Rectangle().fill(Color.blue).frame(width: 48, height: 32)
+11 |             Circle().fill(Color.red).frame(width: 12, height: 12)
+   |             `- error: cannot find 'Circle' in scope
+12 |         }.overlay(alignment: .bottomTrailing) { Text("+") }
+13 |             .environment(\.colorScheme, .light)
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.stack-overlay.swift:13:26: error: cannot infer key path type from context; consider explicitly specifying a root type
+11 |             Circle().fill(Color.red).frame(width: 12, height: 12)
+12 |         }.overlay(alignment: .bottomTrailing) { Text("+") }
+13 |             .environment(\.colorScheme, .light)
+   |                          `- error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |     }
+15 | }

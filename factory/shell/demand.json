@@ -1,0 +1,596 @@
+{
+  "schema_version": 1,
+  "pilot_blocks": {
+    "round_1": [
+      "shape",
+      "image",
+      "stack-overlay",
+      "text",
+      "custom-layout"
+    ],
+    "round_2": [
+      "scroll",
+      "toggle",
+      "disabled",
+      "padding-frame",
+      "preference"
+    ],
+    "shared_pilot_block_ids": [
+      "shape",
+      "image",
+      "stack-overlay",
+      "text",
+      "custom-layout",
+      "scroll",
+      "toggle",
+      "disabled",
+      "padding-frame",
+      "preference"
+    ]
+  },
+  "journey_demands": [
+    {
+      "journey_id": "navigation",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "sidebar selection state",
+        "keyboard focus/roving selection",
+        "command palette modal and focus trap",
+        "navigation transitions"
+      ],
+      "service_dependencies": [
+        "App-owned destination state; optional command registry and native bridge for menu/deep-link actions."
+      ]
+    },
+    {
+      "journey_id": "settings",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "TextField/control variety",
+        "keyboard focus and navigation",
+        "validation/errors",
+        "async loading and external-change reconciliation",
+        "settings storage/revision service"
+      ],
+      "service_dependencies": [
+        "SettingsBackend load/patch/subscribe; Tauri-backed rightkit-settings adapter in production; section-specific adapters."
+      ]
+    },
+    {
+      "journey_id": "onboarding",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "ordered multi-step flow",
+        "permission prompts",
+        "download progress/cancel/retry",
+        "legal modal/eligibility controls",
+        "durable state + service sequencing"
+      ],
+      "service_dependencies": [
+        "SettingsBackend; PermissionsBackend; ModelsBackend; optional LicenseBackend; optional app-owned LegalReceiptPort; callbacks."
+      ]
+    },
+    {
+      "journey_id": "media-playback",
+      "pilot_blocks": [
+        "image",
+        "stack-overlay",
+        "text",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "HTML media element and codec recovery",
+        "keyboard transport shortcuts",
+        "fullscreen host API",
+        "time/progress animation",
+        "media conversion service"
+      ],
+      "service_dependencies": [
+        "MediaAdapters resolveSrc/preparePlayback/cancelPlayback/setFullscreen; app owns playback preparation implementation and notification/log hooks."
+      ]
+    },
+    {
+      "journey_id": "image-view-edit",
+      "pilot_blocks": [
+        "image",
+        "stack-overlay",
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "canvas/image transform",
+        "custom pointer gestures",
+        "crop/text editing controls",
+        "native open/save/print dialogs",
+        "large resource lifecycle"
+      ],
+      "service_dependencies": [
+        "MediaAdapters listImageSiblings/listSystemFonts/saveImage/printImage/acquireResource; app owns dialogs/filesystem writes."
+      ]
+    },
+    {
+      "journey_id": "pdf-reading",
+      "pilot_blocks": [
+        "image",
+        "scroll",
+        "text",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "PDF.js worker/render pipeline",
+        "document/file adapter",
+        "find input and IME",
+        "sidebar panels",
+        "view-state persistence",
+        "external-link policy"
+      ],
+      "service_dependencies": [
+        "PdfSource supplied by host; optional openExternal adapter; host may persist PdfViewState."
+      ]
+    },
+    {
+      "journey_id": "legal-acceptance",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "document scroll/acknowledgement gating",
+        "radio/checkbox controls",
+        "receipt persistence/hash",
+        "version policy",
+        "quit/close action"
+      ],
+      "service_dependencies": [
+        "App-owned acceptance receipt is truth when injected; onboarding SettingsBackend stores progress; external URL opener optional."
+      ]
+    },
+    {
+      "journey_id": "shortcuts",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "key event routing",
+        "focus/IME behavior",
+        "sequence timeout",
+        "rebinding capture/conflict UX"
+      ],
+      "service_dependencies": [
+        "ShortcutRegistry; platform resolver; persistence adapter for overrides supplied by app/settings integration."
+      ]
+    },
+    {
+      "journey_id": "tray-menu",
+      "pilot_blocks": [
+        "text"
+      ],
+      "extended_demands": [
+        "native menu/tray lifecycle",
+        "deep-link parsing/routing",
+        "duplicate/window targeting policy"
+      ],
+      "service_dependencies": [
+        "Optional AppShellBridge.onMenuAction; host Tauri menu/tray/deep-link adapters."
+      ]
+    },
+    {
+      "journey_id": "dialogs",
+      "pilot_blocks": [
+        "text",
+        "stack-overlay",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "modal stacking/focus restoration",
+        "text entry/IME",
+        "animation and dismiss interactions"
+      ],
+      "service_dependencies": [
+        "ShellProvider dialog and command state; app supplies command callback."
+      ]
+    },
+    {
+      "journey_id": "persistence",
+      "pilot_blocks": [
+        "toggle",
+        "text",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "storage adapters and cross-process consistency",
+        "schema migration",
+        "crash-safe atomic write"
+      ],
+      "service_dependencies": [
+        "ThemeStorage/localStorage default; SettingsBackend/rightkit-settings; app-owned LegalReceiptPort; SliceApp RowStore (source evidence only)."
+      ]
+    },
+    {
+      "journey_id": "updates",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "download/install progress",
+        "update service/auth",
+        "restart/recovery strategy",
+        "platform installer and rollback"
+      ],
+      "service_dependencies": [
+        "ViewRight update/license service and OS package replacement; dirty-document recovery guard."
+      ]
+    },
+    {
+      "journey_id": "recovery",
+      "pilot_blocks": [
+        "text",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "error classification",
+        "startup/window recovery",
+        "document/session restoration",
+        "diagnostics and logs"
+      ],
+      "service_dependencies": [
+        "React error boundary; settings loader; app document saver/update recovery services."
+      ]
+    },
+    {
+      "journey_id": "slice-editor",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "TextField/FocusState",
+        "List/ForEach/onMove",
+        "Button actions",
+        "Binding(get:set:)",
+        "persistence"
+      ],
+      "service_dependencies": [
+        "SliceApp EditorModel and RowStore persistence."
+      ]
+    }
+  ],
+  "unmapped_demands": [
+    {
+      "demand": "Binding(get:set:)",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "Button actions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "HTML media element and codec recovery",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "List/ForEach/onMove",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "PDF.js worker/render pipeline",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "TextField/FocusState",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "TextField/control variety",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "animation and dismiss interactions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "async loading and external-change reconciliation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "canvas/image transform",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "command palette modal and focus trap",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "crash-safe atomic write",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "crop/text editing controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "custom pointer gestures",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "deep-link parsing/routing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "diagnostics and logs",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document scroll/acknowledgement gating",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document/file adapter",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document/session restoration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "download progress/cancel/retry",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "download/install progress",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "duplicate/window targeting policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "durable state + service sequencing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "error classification",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "external-link policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "find input and IME",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "focus/IME behavior",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "fullscreen host API",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "key event routing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard focus and navigation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard focus/roving selection",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard transport shortcuts",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "large resource lifecycle",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "legal modal/eligibility controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "media conversion service",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "modal stacking/focus restoration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "native menu/tray lifecycle",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "native open/save/print dialogs",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "navigation transitions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "ordered multi-step flow",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "permission prompts",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "persistence",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "platform installer and rollback",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "quit/close action",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "radio/checkbox controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "rebinding capture/conflict UX",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "receipt persistence/hash",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "restart/recovery strategy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "schema migration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sequence timeout",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "settings storage/revision service",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sidebar panels",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sidebar selection state",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "startup/window recovery",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "storage adapters and cross-process consistency",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "text entry/IME",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "time/progress animation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "update service/auth",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "validation/errors",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "version policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "view-state persistence",
+      "registry_block_id": null,
+      "status": "unmapped"
+    }
+  ],
+  "gate_note": "Demand map is for planning only. No registry block IDs are inferred for unsupported/unlisted constructs. Service integration, engine integration, reliability and performance remain SR2–SR4 gates; compiling/capturing screens does not establish journey acceptance."
+}

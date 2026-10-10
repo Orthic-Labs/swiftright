@@ -1,0 +1,15 @@
+{
+  "probe_id": "windows-session-isolation-readonly-2026-10-10",
+  "captured_at_local": "2026-10-10T23:19:39.7900177+05:30; shell-process check shortly afterward",
+  "host": "BOGUS-DELL",
+  "transport": "Mac-to-Windows SSH through /Users/adrdsouza/bin/win",
+  "remote_command_argument": "Get-Date -Format o; qwinsta; quser; whoami; Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,BuildNumber,ProductType,OperatingSystemSKU; Get-CimInstance Win32_ComputerSystem | Select-Object Name,Domain,PartOfDomain,UserName,Model; Get-Service -Name TermService,SessionEnv,UmRdpService,sshd | Select-Object Name,Status,StartType; Get-ItemProperty -LiteralPath 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server' | Select-Object fDenyTSConnections; Get-ItemProperty -LiteralPath 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp' | Select-Object UserAuthentication,SecurityLayer,MaxInstanceCount; Get-CimInstance Win32_Process -Filter 'Name = \\\"pwsh.exe\\\"' | Select-Object ProcessId,SessionId,Name; Get-CimInstance Win32_Process -Filter 'Name = \\\"sshd.exe\\\"' | Select-Object ProcessId,SessionId,Name",
+  "classification": "read-only host query; no RDP connection, UI, input, service/config/user/process mutation or process launch",
+  "output_file": "probe-output.txt",
+  "shell_process_check": {
+    "remote_command_argument": "Get-Process -Id ([System.Diagnostics.Process]::GetCurrentProcess().Id) | Format-List Id,SessionId,ProcessName",
+    "output_file": "shell-process-output.txt"
+  },
+  "runbook": "/Volumes/D/claude/docs/rules/ssh-server-access.md#mac--windows-bridge",
+  "win_helper": "/Users/adrdsouza/bin/win"
+}

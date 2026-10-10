@@ -1,0 +1,23 @@
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.image.recipe_case_32dcccabb3fbd94b.swift:9:40: error: value of type 'Image' has no member 'resizable'
+ 7 | struct Witness_image: View {
+ 8 |     var body: some View {
+ 9 |         Image(systemName: "star.fill").resizable().scaledToFit().frame(width: 32, height: 32)
+   |                                        `- error: value of type 'Image' has no member 'resizable'
+10 |             .foregroundStyle(.yellow)
+11 |             .environment(\.displayScale, 3)
+
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.image.recipe_case_32dcccabb3fbd94b.swift:11:26: error: cannot infer key path type from context; consider explicitly specifying a root type
+ 9 |         Image(systemName: "star.fill").resizable().scaledToFit().frame(width: 32, height: 32)
+10 |             .foregroundStyle(.yellow)
+11 |             .environment(\.displayScale, 3)
+   |                          `- error: cannot infer key path type from context; consider explicitly specifying a root type
+12 |             .environment(\.colorScheme, .light)
+13 |     }
+
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.image.recipe_case_32dcccabb3fbd94b.swift:12:26: error: cannot infer key path type from context; consider explicitly specifying a root type
+10 |             .foregroundStyle(.yellow)
+11 |             .environment(\.displayScale, 3)
+12 |             .environment(\.colorScheme, .light)
+   |                          `- error: cannot infer key path type from context; consider explicitly specifying a root type
+13 |     }
+14 | }

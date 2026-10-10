@@ -1,0 +1,73 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.stack-overlay.recipe",
+  "provenance": {
+    "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.stack-overlay",
+  "witnesses": [
+    {
+      "id": "swiftui.stack-overlay.witness",
+      "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+      "resources": [
+        {
+          "id": "swiftui.stack-overlay.witness.swift",
+          "hash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.stack-overlay.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "composition": "ZStack-with-overlay",
+        "alignment": "topLeading+bottomTrailing"
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "alignment",
+      "values": [
+        "leading",
+        "center",
+        "trailing"
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "color-scheme",
+      "values": [
+        "light",
+        "dark"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.stack-overlay.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:993a7c1fa3354ef3169330573c01bb102d220937e500f03c1ef31ba259ede153"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.stack-overlay.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

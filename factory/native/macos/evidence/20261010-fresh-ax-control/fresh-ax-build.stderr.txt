@@ -1,0 +1,15 @@
+/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/external-ax-client/AXClient.swift:44:47: error: cannot find 'PROC_PIDPATHINFO_MAXSIZE' in scope
+42 | guard trusted else { emit(["status": "HELD", "reason": "no-prompt AX trust preflight denied", "permissionRequests": false]); exit(0) }
+43 | guard let pid = arg("--pid").flatMap(Int32.init), let expectedPath = arg("--owner-path"), let expectedHash = arg("--owner-hash"), let title = arg("--window-title"), expectedPath.hasPrefix("/Users/adrdsouza/Library/Caches/SwiftRightFactory/") else { exit(64) }
+44 | var buffer = [CChar](repeating: 0, count: Int(PROC_PIDPATHINFO_MAXSIZE))
+   |                                               `- error: cannot find 'PROC_PIDPATHINFO_MAXSIZE' in scope
+45 | guard proc_pidpath(pid, &buffer, UInt32(buffer.count)) > 0 else { emit(["status": "HELD", "reason": "target owner PID path unavailable"]); exit(0) }
+46 | let actualPath = String(cString: buffer)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/include/sys/proc_info.h:749:9: note: macro 'PROC_PIDPATHINFO_MAXSIZE' unavailable: structure not supported
+747 | #define PROC_PIDPATHINFO                11
+748 | #define PROC_PIDPATHINFO_SIZE           (MAXPATHLEN)
+749 | #define PROC_PIDPATHINFO_MAXSIZE        (4*MAXPATHLEN)
+    |         `- note: macro 'PROC_PIDPATHINFO_MAXSIZE' unavailable: structure not supported
+750 | 
+751 | #define PROC_PIDWORKQUEUEINFO           12

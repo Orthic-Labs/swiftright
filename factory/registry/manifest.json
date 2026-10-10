@@ -1,0 +1,178 @@
+{
+  "version": "0.1",
+  "id": "swiftui-pilot-rounds-1-2",
+  "blocks": [
+    {
+      "id": "swiftui.shapes.fill-stroke",
+      "symbols": [
+        "usr:s:7SwiftUI9RectangleV",
+        "usr:s:7SwiftUI9RectangleVACycfc",
+        "usr:s:7SwiftUI16RoundedRectangleV",
+        "usr:s:7SwiftUI16RoundedRectangleV10cornerSize5styleACSo6CGSizeV_AA0C11CornerStyleOtcfc",
+        "usr:s:7SwiftUI16RoundedRectangleV12cornerRadius5styleAC14CoreFoundation7CGFloatV_AA0C11CornerStyleOtcfc",
+        "usr:s:7SwiftUI5ShapeP",
+        "usr:s:7SwiftUI15InsettableShapeP",
+        "usr:s:7SwiftUI5ShapePAAE4fill5styleQrAA9FillStyleV_tF",
+        "usr:s:7SwiftUI5ShapePAAE4fill_5styleAA01_C4ViewVyxqd__Gqd___AA9FillStyleVtAA0cH0Rd__lF",
+        "usr:s:7SwiftUI5ShapePAAE4fill_5styleQrqd___AA9FillStyleVtAA0cG0Rd__lF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke5styleQrAA11StrokeStyleV_tF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke9lineWidthQr14CoreFoundation7CGFloatV_tF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke_5style11antialiasedAA06StrokeC4ViewVyxqd__AA05EmptyH0VGqd___AA0G5StyleVSbtAA0cJ0Rd__lF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke_5styleQrqd___AA11StrokeStyleVtAA0cG0Rd__lF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke_9lineWidth11antialiasedAA06StrokeC4ViewVyxqd__AA05EmptyI0VGqd___14CoreFoundation7CGFloatVSbtAA0C5StyleRd__lF",
+        "usr:s:7SwiftUI5ShapePAAE6stroke_9lineWidthQrqd___14CoreFoundation7CGFloatVtAA0C5StyleRd__lF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder5style11antialiasedQrAA11StrokeStyleV_SbtF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder9lineWidth11antialiasedQr14CoreFoundation7CGFloatV_SbtF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder_5style11antialiasedAA06StrokefD4ViewVyxqd__AA05EmptyJ0VGqd___AA0I5StyleVSbtAA0dL0Rd__lF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder_5style11antialiasedQrqd___AA11StrokeStyleVSbtAA0dJ0Rd__lF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder_9lineWidth11antialiasedAA06StrokefD4ViewVyxqd__AA05EmptyK0VGqd___14CoreFoundation7CGFloatVSbtAA0D5StyleRd__lF",
+        "usr:s:7SwiftUI15InsettableShapePAAE12strokeBorder_9lineWidth11antialiasedQrqd___14CoreFoundation7CGFloatVSbtAA0D5StyleRd__lF"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [],
+      "bootstrapGroup": "layout-paint"
+    },
+    {
+      "id": "swiftui.image",
+      "symbols": [
+        "usr:s:7SwiftUI5ImageV",
+        "usr:s:7SwiftUI5ImageV10systemNameACSS_tcfc",
+        "usr:s:7SwiftUI5ImageV_6bundleACSS_So8NSBundleCSgtcfc"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": []
+    },
+    {
+      "id": "swiftui.stack-overlay",
+      "symbols": [
+        "usr:s:7SwiftUI6ZStackV",
+        "usr:s:7SwiftUI6ZStackV9alignment7contentACyxGAA9AlignmentV_xyXEtcfc",
+        "usr:s:7SwiftUI4ViewPAAE7overlay9alignment7contentQrAA9AlignmentV_qd__yXEtAaBRd__lF"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.shapes.fill-stroke",
+        "swiftui.preference-key"
+      ],
+      "bootstrapGroup": "layout-paint"
+    },
+    {
+      "id": "swiftui.text.bundled-font",
+      "symbols": [
+        "usr:s:7SwiftUI4TextV",
+        "usr:s:7SwiftUI4FontV",
+        "usr:s:7SwiftUI4TextV4fontyAcA4FontVSgF",
+        "usr:s:7SwiftUI4TextV8verbatimACSS_tcfc",
+        "usr:s:7SwiftUI4FontV6custom_4size10relativeToACSS_14CoreFoundation7CGFloatVAC9TextStyleOtFZ",
+        "usr:s:7SwiftUI4FontV6custom_4sizeACSS_14CoreFoundation7CGFloatVtFZ",
+        "usr:s:7SwiftUI4FontV6custom_9fixedSizeACSS_14CoreFoundation7CGFloatVtFZ"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "blocked",
+      "semanticDependencies": [],
+      "blocked": {
+        "reason": "Bundled font recipe is held pending an actual font resource & its qualification.",
+        "openedAt": "2026-10-10T17:30:00Z",
+        "owner": "factory/recipes"
+      }
+    },
+    {
+      "id": "swiftui.custom-layout",
+      "symbols": [
+        "usr:s:7SwiftUI6LayoutP",
+        "usr:s:7SwiftUI6LayoutP12sizeThatFits8proposal8subviews5cacheSo6CGSizeVAA16ProposedViewSizeV_AA0C8SubviewsV5CacheQzztF",
+        "usr:s:7SwiftUI6LayoutP13placeSubviews2in8proposal8subviews5cacheySo6CGRectV_AA16ProposedViewSizeVAA0cE0V5CacheQzztF",
+        "usr:s:7SwiftUI6LayoutP9makeCache8subviews0E0QzAA0C8SubviewsV_tF",
+        "usr:s:7SwiftUI6LayoutPAAyt5CacheRtzrlE04makeD08subviewsyAA0C8SubviewsV_tF",
+        "usr:s:7SwiftUI6LayoutP11updateCache_8subviewsy0E0Qzz_AA0C8SubviewsVtF",
+        "usr:s:7SwiftUI6LayoutPAAE11updateCache_8subviewsy0E0Qzz_AA0C8SubviewsVtF",
+        "usr:s:7SwiftUI13LayoutSubviewV",
+        "usr:s:7SwiftUI13LayoutSubviewV12sizeThatFitsySo6CGSizeVAA16ProposedViewSizeVF",
+        "usr:s:7SwiftUI13LayoutSubviewV5place2at6anchor8proposalySo7CGPointV_AA9UnitPointVAA16ProposedViewSizeVtF"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.padding-frame"
+      ],
+      "bootstrapGroup": "layout-paint"
+    },
+    {
+      "id": "swiftui.scroll-view",
+      "symbols": [
+        "usr:s:7SwiftUI10ScrollViewV",
+        "usr:s:7SwiftUI10ScrollViewV_15showsIndicators7contentACyxGAA4AxisO3SetV_SbxyXEtcfc",
+        "usr:s:7SwiftUI10ScrollViewV_7contentACyxGAA4AxisO3SetV_xyXEtcfc"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.stack-overlay"
+      ]
+    },
+    {
+      "id": "swiftui.toggle",
+      "symbols": [
+        "usr:s:7SwiftUI6ToggleV",
+        "usr:s:7SwiftUI6ToggleV4isOn5labelACyxGAA7BindingVySbG_xyXEtcfc",
+        "usr:s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEG10Foundation23LocalizedStringResourceV_AA7BindingVySbGtcfc",
+        "usr:s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEGAA18LocalizedStringKeyV_AA7BindingVySbGtcfc",
+        "usr:s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEGqd___AA7BindingVySbGtcSyRd__lufc"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.disabled"
+      ],
+      "bootstrapGroup": "control-state"
+    },
+    {
+      "id": "swiftui.disabled",
+      "symbols": [
+        "usr:s:7SwiftUI4ViewPAAE8disabledyQrSbF"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.toggle"
+      ],
+      "bootstrapGroup": "control-state"
+    },
+    {
+      "id": "swiftui.padding-frame",
+      "symbols": [
+        "usr:s:7SwiftUI4ViewPAAE7paddingyQr14CoreFoundation7CGFloatVF",
+        "usr:s:7SwiftUI4ViewPAAE7paddingyQrAA10EdgeInsetsVF",
+        "usr:s:7SwiftUI4ViewPAAE7paddingyQrAA4EdgeO3SetV_14CoreFoundation7CGFloatVSgtF",
+        "usr:s:7SwiftUI4ViewPAAE5frame5width6height9alignmentQr14CoreFoundation7CGFloatVSg_AkA9AlignmentVtF",
+        "usr:s:7SwiftUI4ViewPAAE5frame8minWidth05idealF003maxF00E6Height0gI00hI09alignmentQr14CoreFoundation7CGFloatVSg_A5oA9AlignmentVtF",
+        "usr:s:7SwiftUI4ViewPAAE5frameQryF"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.custom-layout"
+      ],
+      "bootstrapGroup": "layout-paint"
+    },
+    {
+      "id": "swiftui.preference-key",
+      "symbols": [
+        "usr:s:7SwiftUI13PreferenceKeyP",
+        "usr:s:7SwiftUI13PreferenceKeyP5ValueQa",
+        "usr:s:7SwiftUI13PreferenceKeyP12defaultValue0F0QzvpZ",
+        "usr:s:7SwiftUI13PreferenceKeyPAAs23ExpressibleByNilLiteral5ValueRpzrlE07defaultI0AFvpZ",
+        "usr:s:7SwiftUI13PreferenceKeyP6reduce5value9nextValuey0H0Qzz_AHyXEtFZ"
+      ],
+      "inventoryStatus": "inventory",
+      "progress": "not-started",
+      "semanticDependencies": [
+        "swiftui.stack-overlay"
+      ],
+      "bootstrapGroup": "layout-paint"
+    }
+  ]
+}

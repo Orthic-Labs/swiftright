@@ -1,0 +1,58 @@
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift:21:8: error: type 'WitnessMeasuredLayout' does not conform to protocol 'Layout'
+19 | }
+20 | 
+21 | struct WitnessMeasuredLayout: Layout {
+   |        |- error: type 'WitnessMeasuredLayout' does not conform to protocol 'Layout'
+   |        `- note: add stubs for conformance
+22 |     var spacing: CGFloat
+23 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+   |          `- note: candidate has non-matching type '(ProposedViewSize, Subviews, inout ()) -> CGSize' [with Cache = Void]
+24 |         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+25 |         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, sizes.count - 1)), height: sizes.map(\.height).max() ?? 0)
+26 |     }
+27 |     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+   |          `- note: candidate has non-matching type '(CGRect, ProposedViewSize, Subviews, inout ()) -> ()' [with Cache = Void]
+28 |         var x = bounds.minX
+29 |         for subview in subviews {
+
+D:\Claude\sr0-r09\src\probes\sr0-s\fresh-runtime\Sources\SwiftRightRuntime\Layout.swift:8:10: note: protocol requires function 'sizeThatFits(proposal:subviews:cache:)' with type '(ProposedViewSize, Subviews, inout Void) -> LayoutSize'
+ 6 |     associatedtype Cache = Void
+ 7 |     func makeCache(subviews: Subviews) -> Cache
+ 8 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> LayoutSize
+   |          `- note: protocol requires function 'sizeThatFits(proposal:subviews:cache:)' with type '(ProposedViewSize, Subviews, inout Void) -> LayoutSize'
+ 9 |     func placeSubviews(in bounds: LayoutRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache)
+   |          `- note: protocol requires function 'placeSubviews(in:proposal:subviews:cache:)' with type '(LayoutRect, ProposedViewSize, Subviews, inout Void) -> ()'
+10 | }
+11 | 
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift:13:27: error: value of type 'Color' has no member 'frame'
+11 |         WitnessMeasuredLayout(spacing: 4) {
+12 |             ForEach(0..<1, id: \.self) { index in
+13 |                 Color.red.frame(width: 12 + CGFloat(index) * 4, height: 10 + CGFloat(index) * 4)
+   |                           `- error: value of type 'Color' has no member 'frame'
+14 |             }
+15 |         }
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift:16:10: error: value of type 'LayoutRoot<WitnessMeasuredLayout, Content>' has no member 'frame'
+14 |             }
+15 |         }
+16 |         .frame(width: 32, height: 32)
+   |          `- error: value of type 'LayoutRoot<WitnessMeasuredLayout, Content>' has no member 'frame'
+17 |         .environment(\.layoutDirection, .leftToRight)
+18 |     }
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift:17:22: error: cannot infer key path type from context; consider explicitly specifying a root type
+15 |         }
+16 |         .frame(width: 32, height: 32)
+17 |         .environment(\.layoutDirection, .leftToRight)
+   |                      `- error: cannot infer key path type from context; consider explicitly specifying a root type
+18 |     }
+19 | }
+
+D:\Claude\swiftright\factory\native\windows\import-corrected-typecheck-20261010\swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift:31:31: error: cannot convert value of type 'CGPoint' to expected argument type 'LayoutPoint'
+29 |         for subview in subviews {
+30 |             let size = subview.sizeThatFits(.unspecified)
+31 |             subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: ProposedViewSize(size))
+   |                               `- error: cannot convert value of type 'CGPoint' to expected argument type 'LayoutPoint'
+32 |             x += size.width + spacing
+33 |         }

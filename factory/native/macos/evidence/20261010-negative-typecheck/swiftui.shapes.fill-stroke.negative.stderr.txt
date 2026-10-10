@@ -1,0 +1,7 @@
+/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/negative-typecheck/swiftui.shapes.fill-stroke.negative.invalid-member.swift:8:43: error: value of type 'Text' has no member 'swiftRightDefinitelyMissingMember'
+ 6 | 
+ 7 | struct Witness_swiftui_shapes_fill_stroke_negative_invalid_member: View {
+ 8 |     var body: some View { Text("invalid").swiftRightDefinitelyMissingMember() }
+   |                                           `- error: value of type 'Text' has no member 'swiftRightDefinitelyMissingMember'
+ 9 | }
+10 | 

@@ -1,0 +1,63 @@
+{
+  "block": "swiftui.toggle",
+  "case": {
+    "hash": "sha256:7113610be80860ddf6b73d6b640fd19729288131f0b0ce712740f874f726da2f",
+    "id": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "caseInputs": {
+    "initial": true,
+    "style": "switch"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "events/state"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.toggle:swiftui.toggle.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.toggle.witness",
+        "sourceHash": "sha256:9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+    "id": "swiftui.toggle.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.swift",
+  "sourceHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.toggle.witness",
+    "sourceHash": "sha256:9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c"
+  },
+  "witnessType": "Witness_toggle"
+}

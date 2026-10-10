@@ -1,0 +1,36 @@
+# Running held-work list
+
+Updated 11 October 2026. Candidate implementation continues independently of these holds. No row grants parity or promotes a golden.
+
+| Item | Why held | Release condition |
+|---|---|---|
+| Frozen-contract/ABI binding, trusted rebuild & final parity signoff | `docs/sr0-status.md` still says SR0 OPEN; staged r09 is observational evidence | Recorded SR0 closure, then measured contract/ABI hashes & rebuild from merged commit |
+| Protected baseline profile | Original observational acceptance config predates baseline seed/projection binding; F10 now requires independent recipe expansion instead of caller-defined expected lists | Reviewed configuration pins versioned recipe/seed/case projections; new tuple-bound captures follow that configuration. Existing observations stay archived |
+| Runtime, renderer, bridge, qualification & SR0 probe changes | Swift Mac session owns protected paths while SR0 closes | SR0 closure & required factory foundation identified |
+| Nine Windows primary witnesses | Corrected same-source typechecks still fail against staged r09 APIs; see [compile summary](native/windows/primary-typecheck-summary-import-corrected-20261010.json) | SR0 closes; then implement missing APIs in protected runtime paths & rerun same sources |
+| `.disabled` Windows native qualification | Native host builds; [final six-minute wait](native/windows/native-comparison-holds-final-20261010.json) retained SR0's `matrix10 lead` lock. Zero usable Windows captures. Protected provider readback/layout/timing exports remain unavailable; corrected launch guards passed review | Free desktop lock permits observational primary/seed replay; SR0 closure permits required provider/ABI work & channel qualification. Exact pending commands are archived |
+| Isolated IME/Narrator session | Read-only [session spike](native/windows/session-isolation/assessment.md) observed one active console on Windows 11 Pro; RDP listener does not qualify a second isolated desktop | Supported isolated interactive environment is provisioned & qualified; use shared lock plus foreground/abort checks meanwhile |
+| Windows paint qualification | Staged DLL has no provider paint/readback export; background screen pixels can be occluded | SR0 closure permits provider/ABI integration; qualify native readback or an independently qualified unoccluded capture channel |
+| VM compositor/AX capture | VM spike observed SCK `-3801` & AX `-25204` | Later VM permission provisioning & capture qualification |
+| Legacy signed recorder for arbitrary cases | Existing granted recorder binary implements hardcoded F1 protocol | Fresh owned-PID AX client now supplies available host AX evidence; legacy failures remain archived |
+| Permission-dependent capture channels | User forbids permission prompts; existing host AX/SCK preflights succeeded | Use only established no-prompt capabilities; stop any item requiring a grant |
+| Full recipe qualification | 81 required cases remain fixed denominator; baseline & seeded batches are separate observations, not full-case parity | Every required case gets matching 20-run Mac/Windows evidence, semantic repeatability, timing & fault controls |
+| Missing Mac witness observations | ScrollView offscreen render is blank; shapes/custom layout expose no witness AX nodes; wrapper records root layout, not internal witness callbacks | Qualify alternative native channels or record reviewed observability limits; never infer missing values |
+| Native animation, presented-frame timing & channel calibration | Static pilots do not supply complete dynamic observations, reviewed timing bounds or native mutation calibration for every required channel | Clock-correlated native samples, reviewed fault controls & channel qualification; frozen ABI integration follows SR0 closure |
+| Bundled-font pilot acceptance | Separate Tinos candidate has 20 Mac captures plus transparency control; isolated DirectWrite collection resolves exact font. Actual staged Swift APIs lack `Font.custom` & `lineLimit`; glyph-run font identity remains unresolved | SR0 closure, native Swift font integration & complete text-channel qualification, then review. Original text snapshot stays immutable |
+| Catalogue completeness certification | [Audit v5](catalogue/evidence/interface-audit-v5.json) proves compiler branch selection on arm64 & arm64e: 2,893 rows are inactive. Remaining live rows: 1,056 unmapped, 218 ambiguous & 1,438 unexplained. Graph USR sets agree exactly | Every active public interface declaration maps to graph evidence or exact compiler/platform evidence; conditional rows never count as hidden by assumption |
+| Candidate golden promotion | Acceptance criteria & promotions require reviewed evidence | Real repeated captures, fault controls & maintainer review |
+| Contributor queue activation | Plan opens queue after Round 3 exit | All required rounds pass with no factory change & all seeded faults detected |
+| Shell services/reliability/performance acceptance | Architecture places these in SR2–SR4 | Respective later gates; F12 inventory proceeds now |
+
+Windows API gaps: shapes (`RoundedRectangle`), images (`resizable`), stack/overlay (`ZStack`, `Rectangle`, `Circle`), text (`Font.system` design, `lineLimit`), custom layout (protocol conformance, `Color`, `LayoutRoot.frame`, placement types), scrolling (initializer & frame), toggle (`labelsHidden`), padding/frame overloads, preferences (`PreferenceKey`, `preference`, `onPreferenceChange`). Foundation imports were corrected & rechecked before assigning these runtime holds.
+
+Mac primary observations: 200 fresh captures across ten cases; compositor 200/200, nonblank offscreen 180/200, external witness AX 160/200. Plain/instrumented pixels agree in all 180 nonblank pairs. These counts describe available observations, not accepted baselines.
+
+Seeded observations: ten distinct cases from recorded gate seed `14577611000270672472`, each with its own 20 Mac captures; 200 seeded captures archived separately. [Current gate reevaluation](pipeline/CURRENT.md) preserves exact seed/case hashes & records missing Windows evidence plus protected baseline profile. Baseline captures never satisfy seeded case references.
+
+Host capture total: 471 verified captures: original 400 primary/seed captures, 20 separate Tinos candidates, 11 independent transparency controls & 40 corrected-source primary captures. Fresh binaries run from internal scratch; no permission-request API was used. [Original Mac receipt](native/macos/evidence/F5-receipt.json) & [correction lineage](native/macos/evidence/20261010-correction-lineage.json). Current reports supersede stale primary source observations; matching seeded source hashes remain unchanged.
+
+Future recipe snapshots now derive provenance timestamps from pinned recipe metadata, so complete case hashes repeat across expansion times. Original 81-case snapshot & recorded seed cases retain their original bytes.
+
+[Final staged-build verification](native/windows/stage-readonly-final-verification-20261010.json) confirms source commit, seven selected file hashes & Swift module stayed unchanged. No owned Dell coordinator/task remains active; foreign desktop lock stays intact.

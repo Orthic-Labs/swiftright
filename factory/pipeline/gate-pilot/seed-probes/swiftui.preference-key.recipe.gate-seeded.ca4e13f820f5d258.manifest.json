@@ -1,0 +1,63 @@
+{
+  "block": "swiftui.preference-key",
+  "case": {
+    "hash": "sha256:d908821e18c8ad4e45eed24b446cf3d126fdbf18e17030be45bbbb7105b8459c",
+    "id": "swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "caseInputs": {
+    "child-count": 2,
+    "reduction": "max"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.preference-key:swiftui.preference-key.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.preference-key.witness",
+        "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+    "id": "swiftui.preference-key.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258.swift",
+  "sourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.preference-key.witness",
+    "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83"
+  },
+  "witnessType": "Witness_preference_key"
+}

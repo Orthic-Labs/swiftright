@@ -1,0 +1,9 @@
+# Dell interactive-session isolation check
+
+**Verdict: unsupported / unqualified for an isolated second interactive desktop on this host.** Windows reports `Microsoft Windows 11 Pro`, build `26300`, `ProductType=1`; `quser` shows one active `adrds` console session (ID 1). Direct check shows SSH command's current PowerShell process in session 0. See [host/session output](probe-output.txt), [current shell process output](shell-process-output.txt) & [probe metadata](probe.json).
+
+RDP is listening and enabled in configuration (`TermService` running; `fDenyTSConnections=0`; `rdp-tcp` listener present). That only establishes an available RDP endpoint. It does not establish multi-session support: current evidence shows one interactive console, while Microsoft identifies concurrent interactive sessions as a Windows Enterprise multi-session capability, previously available on Windows Server; Microsoft describes Windows 11 Enterprise multi-session as exclusive to Azure Virtual Desktop. This Pro host therefore has no documented supported second interactive desktop path in evidence reviewed. The RDP listener and `MaxInstanceCount=4294967295` are not proof of that capability. This conclusion is an inference from observed SKU/session state & Microsoft’s published platform scope. [Windows Enterprise multi-session FAQ](https://learn.microsoft.com/en-us/azure/virtual-desktop/windows-multisession-faq) · [Azure Virtual Desktop overview](https://learn.microsoft.com/en-us/azure/virtual-desktop/overview)
+
+Keep native IME/Narrator work on shared desktop behind desktop lock & foreground-window checks until an actually isolated session is separately qualified. No RDP login was attempted, so active console was left untouched.
+
+Probe was read-only through the documented Mac-to-Windows `win` SSH helper; command & capture time are recorded in `probe.json`. No service, registry, account, license or session state was changed.

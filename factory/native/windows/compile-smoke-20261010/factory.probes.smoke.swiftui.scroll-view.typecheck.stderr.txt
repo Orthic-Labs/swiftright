@@ -1,0 +1,32 @@
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.scroll-view.swift:9:31: error: extra trailing closure passed in call
+ 7 | struct Witness_scroll_view: View {
+ 8 |     var body: some View {
+ 9 |         ScrollView(.vertical) {
+   |                               `- error: extra trailing closure passed in call
+10 |             VStack(alignment: .leading, spacing: 4) {
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.scroll-view.swift:9:9: error: generic parameter 'Content' could not be inferred
+ 7 | struct Witness_scroll_view: View {
+ 8 |     var body: some View {
+ 9 |         ScrollView(.vertical) {
+   |         |- error: generic parameter 'Content' could not be inferred
+   |         `- note: explicitly specify the generic arguments to fix this issue
+10 |             VStack(alignment: .leading, spacing: 4) {
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.scroll-view.swift:9:21: error: type '() -> Content' has no member 'vertical'
+ 7 | struct Witness_scroll_view: View {
+ 8 |     var body: some View {
+ 9 |         ScrollView(.vertical) {
+   |                     `- error: type '() -> Content' has no member 'vertical'
+10 |             VStack(alignment: .leading, spacing: 4) {
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+
+D:\Claude\swiftright\factory\native\windows\compile-smoke-20261010\factory.probes.smoke.swiftui.scroll-view.swift:13:11: error: value of type 'ScrollView<Content>' has no member 'frame'
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+12 |             }
+13 |         }.frame(width: 120, height: 48)
+   |           `- error: value of type 'ScrollView<Content>' has no member 'frame'
+14 |     }
+15 | }

@@ -1,0 +1,25 @@
+{
+  "candidateOnly": true,
+  "createdAt": "2026-10-10T17:58:38.807272+00:00",
+  "results": [
+    {
+      "case": {
+        "hash": "sha256:d77f438f3499cea698853fa3a8cf212b6e638605081d8b513c23656683589da4",
+        "id": "swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "registeredFontProvider": "OBSERVED: hash-bound process CoreText font descriptor identity",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    }
+  ]
+}

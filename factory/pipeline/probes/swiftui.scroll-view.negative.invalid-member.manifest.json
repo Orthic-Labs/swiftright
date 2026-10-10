@@ -1,0 +1,60 @@
+{
+  "block": "swiftui.scroll-view",
+  "case": {
+    "hash": "sha256:315bebf6154df8e4b7263335561c15546878c201a15c46802d53e47e5ff1ef90",
+    "id": "swiftui.scroll-view.negative.invalid-member"
+  },
+  "caseInputs": {},
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.scroll-view:swiftui.scroll-view.negative.invalid-member",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.scroll-view.negative.invalid-member",
+        "sourceHash": "sha256:1f693f439a086a21365235063745ec2a3153c53b10fa95795dbe5a226b86dde4"
+      }
+    ]
+  },
+  "compileExpectation": "failure",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+    "id": "swiftui.scroll-view.recipe"
+  },
+  "scenario": "negative:must-not-compile",
+  "sourceFile": "swiftui.scroll-view.negative.invalid-member.swift",
+  "sourceHash": "sha256:bdb4873d994f38ba2f0a2f1b6bdafe57c7a4c8aec66f7ac6d6d5899de75d6803",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.scroll-view.negative.invalid-member",
+    "sourceHash": "sha256:1f693f439a086a21365235063745ec2a3153c53b10fa95795dbe5a226b86dde4"
+  },
+  "witnessType": "Witness_swiftui_scroll_view_negative_invalid_member"
+}

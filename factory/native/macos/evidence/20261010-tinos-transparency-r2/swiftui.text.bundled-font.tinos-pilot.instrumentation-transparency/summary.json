@@ -1,0 +1,200 @@
+{
+  "acceptance": "not-promoted",
+  "adapterSourceHash": "sha256:23d7c032277485cdee47f92e92a73289f5f7c390d7449681fe0673eb5e30c084",
+  "binaryHash": "sha256:c6be8932de8d08ce81a4861d177b38e9c5569068f3cd1b0725ffe55ffcc265ed",
+  "block": "swiftui.text.bundled-font",
+  "candidateOnly": true,
+  "case": {
+    "hash": "sha256:d77f438f3499cea698853fa3a8cf212b6e638605081d8b513c23656683589da4",
+    "id": "swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency"
+  },
+  "channels": {
+    "animation": "NOT_ATTEMPTED: static pilot",
+    "compositorPaint": "OBSERVED",
+    "events": "OBSERVED: render clock & host window display only",
+    "externalAX": "OBSERVED",
+    "offscreenPaint": "OBSERVED",
+    "registeredFontProvider": "OBSERVED: hash-bound process CoreText font descriptor identity",
+    "rootLayout": "OBSERVED",
+    "textRenderer": "OBSERVED",
+    "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+    "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+  },
+  "compiledAdapterHash": "sha256:3e3434698c317dfd651083dffb7504fe42a50660dee1114fbe3ef46239bb10d7",
+  "executionRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency",
+  "fontResource": {
+    "copiedHash": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "copiedPath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency/private-font.ttf",
+    "family": "Tinos",
+    "hash": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "path": "factory/resources/fonts/Tinos-Regular.ttf",
+    "postScriptName": "Tinos-Regular",
+    "scope": "process"
+  },
+  "freshAXClient": {
+    "binaryHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+    "executable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/external-ax-client/f5-ax-client",
+    "externalAX": "AVAILABLE",
+    "identityDetails": "Executable=/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/external-ax-client/f5-ax-client\nIdentifier=f5-ax-client\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=805 flags=0x20002(adhoc,linker-signed) hashes=22+0 location=embedded\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nCandidateCDHashFull sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nHash choices=sha256\nCMSDigest=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=17992\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n",
+    "kind": "fresh-client",
+    "permissionRequests": false,
+    "preflight": {
+      "axTrusted": true,
+      "permissionRequests": false,
+      "pid": 45867
+    },
+    "sourceHash": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+  },
+  "independentProcessesPerRun": true,
+  "kind": "macos-host-capture-candidate",
+  "permissionCapabilities": {
+    "axTrusted": true,
+    "permissionRequests": false,
+    "pid": 46050,
+    "screenCaptureGranted": true
+  },
+  "probeManifest": {
+    "block": "swiftui.text.bundled-font",
+    "case": {
+      "hash": "sha256:d77f438f3499cea698853fa3a8cf212b6e638605081d8b513c23656683589da4",
+      "id": "swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency"
+    },
+    "caseInputs": {
+      "size": 18,
+      "text": "\"SwiftRight bundled Tinos font witness\"",
+      "width": 128
+    },
+    "channels": {
+      "adapters": {
+        "customLayout": "not-declared",
+        "native": "native host capture required",
+        "provider": "host-specific adapter required; no renderer ABI assumed",
+        "text": "host-specific measurement adapter required"
+      },
+      "assertionChannels": [
+        "layout",
+        "text"
+      ],
+      "geometry": [
+        {
+          "channel": "layout",
+          "hostHookRequired": true,
+          "probeTag": "swiftui.text.bundled-font:swiftui.text.bundled-font.tinos-pilot.witness",
+          "viewInstrumentationInserted": false
+        }
+      ],
+      "native": [],
+      "provider": [],
+      "transparency": {
+        "channels": [
+          "layout",
+          "paint"
+        ],
+        "enabled": true,
+        "viewIsolatedFromInstrumentation": true
+      },
+      "witnesses": [
+        {
+          "id": "swiftui.text.bundled-font.tinos-pilot.witness",
+          "sourceHash": "sha256:65f2a993080e86fa3fe1f87f20e625f1c0777ff91dc0ea2c3063ed26635eb131"
+        }
+      ]
+    },
+    "compileExpectation": "success",
+    "environmentInputs": {},
+    "executionEligible": true,
+    "kind": "generated-probe",
+    "providerResources": {
+      "font": {
+        "family": "Tinos",
+        "hash": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+        "path": "factory/resources/fonts/Tinos-Regular.ttf",
+        "postScriptName": "Tinos-Regular"
+      }
+    },
+    "recipe": {
+      "hash": "sha256:4a83fbc31c6fb6c1cae20a2f77d1f84798be6ede3799727dfc827feb53cfd374",
+      "id": "swiftui.text.bundled-font.tinos-pilot.recipe"
+    },
+    "recipeFile": "factory/resources/fonts/pilot/recipe.json",
+    "scenario": "instrumentation-transparency",
+    "sourceFile": "swiftui.text.bundled-font.tinos-pilot.instrumentation-transparency.swift",
+    "sourceHash": "sha256:cf94af5dba086f0afff45e1d1d99107413366311214471642aae4621c85a3963",
+    "version": "0.1",
+    "witness": {
+      "id": "swiftui.text.bundled-font.tinos-pilot.witness",
+      "resourcePath": "factory/resources/fonts/pilot/swiftui.text.bundled-font.tinos-pilot.witness.swift",
+      "sourceHash": "sha256:65f2a993080e86fa3fe1f87f20e625f1c0777ff91dc0ea2c3063ed26635eb131"
+    },
+    "witnessType": "Witness_tinos_bundled_text_pilot"
+  },
+  "provenance": {
+    "createdAt": "2026-10-10T17:58:37.540394Z",
+    "producer": "factory/native/macos",
+    "sourceHash": "sha256:cf94af5dba086f0afff45e1d1d99107413366311214471642aae4621c85a3963"
+  },
+  "recorder": {
+    "axTrusted": true,
+    "copiedBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "copiedExecutable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/existing-recorder/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "externalAX": "HELD",
+    "genericProtocolSupported": false,
+    "identityDetails": "Executable=/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app/Contents/MacOS/F1MacRecord\nIdentifier=com.orthiclabs.swiftright.f1macrecord\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=497 flags=0x10000(runtime) hashes=8+3 location=embedded\nVersionPlatform=1\nVersionMin=983040\nVersionSDK=983040\nHash type=sha256 size=32\nCandidateCDHash sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nCandidateCDHashFull sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nHash choices=sha256\nCMSDigest=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=49152\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nSignature size=9048\nAuthority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=9 Oct 2026 at 8:17:30\u202fAM\nInfo.plist entries=9\nTeamIdentifier=6KLGD3LLKF\nRuntime Version=15.0.0\nSealed Resources version=2 rules=13 files=0\nInternal requirements count=1 size=200\nTotal signatures=1\nChosen signature=1\n",
+    "permissionRequests": false,
+    "preflightExit": 2,
+    "preflightMethod": "AXIsProcessTrusted in unchanged signed recorder, then missing-fixture launch",
+    "reason": "signed binary hard-codes F1 stimuli & lacks generic --steps/launchArgs support; current source is newer than signed binary",
+    "sourceApp": "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+    "sourceBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "sourceBinaryProtocol": "F1-only"
+  },
+  "runs": [
+    {
+      "captureHash": "sha256:eb2142e11460590d07985f95de1d2a6e1b79da99cd860976ba5ee581ef7a2fee",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:147cc75ed5c65b244e528ad345445ab0f762da0b683c7373338d58c42fb4485d",
+      "compositorRawHash": "sha256:f28c62929e7d793e0b15d9c46bb7c7adaa06f61022ef58848cb0dd8dbf1674cb",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:a45170277b6e811a8990e904876166ee4a6a7be4eaf69c5289beca8088c7af20",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 512,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 179,
+          "width": 128
+        },
+        "pid": 46072,
+        "pngHash": "sha256:d2ea32b33f41a8f2be13b5c83962522ad5b99f665fad9778552ab4eaa51c5f1a",
+        "rawHash": "sha256:c7595cb48c29cea487fcf777fcd9ad2608111a89ed7b68faa3a37bbc5b6b15d3",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 4
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 512,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 179,
+          "width": 128
+        },
+        "pid": 46062,
+        "pngHash": "sha256:d2ea32b33f41a8f2be13b5c83962522ad5b99f665fad9778552ab4eaa51c5f1a",
+        "rawHash": "sha256:1e10ae0aa72ecfb828f3a150bec43721c9690248d099080bdd87216fcf609626",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "run": 1
+    }
+  ],
+  "sourceHash": "sha256:cf94af5dba086f0afff45e1d1d99107413366311214471642aae4621c85a3963",
+  "status": "CANDIDATE_CAPTURED",
+  "version": "0.1"
+}

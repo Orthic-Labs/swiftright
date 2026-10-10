@@ -1,0 +1,15 @@
+D:\Claude\swiftright\factory\native\windows\font-typecheck-20261010\swiftui.text.bundled-font.tinos-pilot.recipe_case_78a82158596d0836.swift:10:20: error: type 'Font?' has no member 'custom'
+ 8 |     var body: some View {
+ 9 |         Text("SwiftRight bundled Tinos font witness")
+10 |             .font(.custom("Tinos-Regular", size: 18))
+   |                    `- error: type 'Font?' has no member 'custom'
+11 |             .lineLimit(1)
+12 |             .truncationMode(.tail)
+
+D:\Claude\swiftright\factory\native\windows\font-typecheck-20261010\swiftui.text.bundled-font.tinos-pilot.recipe_case_78a82158596d0836.swift:11:14: error: value of type 'some View' has no member 'lineLimit'
+ 9 |         Text("SwiftRight bundled Tinos font witness")
+10 |             .font(.custom("Tinos-Regular", size: 18))
+11 |             .lineLimit(1)
+   |              `- error: value of type 'some View' has no member 'lineLimit'
+12 |             .truncationMode(.tail)
+13 |             .frame(width: 128, alignment: .leading)

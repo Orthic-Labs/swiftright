@@ -1,0 +1,3 @@
+struct Witness_swiftui_scroll_view_negative_invalid_member: View {
+    var body: some View { Text("invalid").swiftRightDefinitelyMissingMember() }
+}

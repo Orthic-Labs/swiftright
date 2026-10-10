@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/queue/v0.1/waiver.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "version", "id", "provenance", "scope", "reason", "maintainer", "approvedAt", "expiresAt", "evidence", "signature"],
+  "properties": {
+    "kind": {"const": "waiver"},
+    "version": {"const": "0.1"},
+    "id": {"type": "string", "minLength": 1},
+    "provenance": {"type": "object"},
+    "scope": {"type": "object", "additionalProperties": false, "required": ["block", "dependency"], "properties": {"block": {"type": "string", "minLength": 1}, "dependency": {"type": "string", "minLength": 1}}},
+    "reason": {"type": "string", "minLength": 1},
+    "maintainer": {"type": "string", "minLength": 1},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "evidence": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "signature": {"type": "object", "required": ["keyId", "value"], "properties": {"keyId": {"type": "string", "minLength": 1}, "value": {"type": "string", "minLength": 1}}, "additionalProperties": false}
+  }
+}

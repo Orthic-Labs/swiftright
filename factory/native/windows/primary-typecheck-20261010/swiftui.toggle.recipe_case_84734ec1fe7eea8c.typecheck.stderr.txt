@@ -1,0 +1,7 @@
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.toggle.recipe_case_84734ec1fe7eea8c.swift:10:43: error: value of type 'Toggle<Text>' has no member 'labelsHidden'
+ 8 |     @State private var enabled = true
+ 9 |     var body: some View {
+10 |         Toggle("Enabled", isOn: $enabled).labelsHidden().toggleStyle(.automatic)
+   |                                           `- error: value of type 'Toggle<Text>' has no member 'labelsHidden'
+11 |     }
+12 | }

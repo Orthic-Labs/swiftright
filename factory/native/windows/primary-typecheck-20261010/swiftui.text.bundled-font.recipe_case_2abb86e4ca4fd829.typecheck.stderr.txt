@@ -1,0 +1,23 @@
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.swift:10:61: error: extra argument 'design' in call
+ 8 |     var body: some View {
+ 9 |         Text("SwiftRight AV")
+10 |             .font(.system(size: 16, weight: .bold, design: .rounded))
+   |                                                             `- error: extra argument 'design' in call
+11 |             .lineLimit(2)
+12 |             .frame(width: 120, alignment: .leading)
+
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.swift:10:61: error: cannot infer contextual base in reference to member 'rounded'
+ 8 |     var body: some View {
+ 9 |         Text("SwiftRight AV")
+10 |             .font(.system(size: 16, weight: .bold, design: .rounded))
+   |                                                             `- error: cannot infer contextual base in reference to member 'rounded'
+11 |             .lineLimit(2)
+12 |             .frame(width: 120, alignment: .leading)
+
+D:\Claude\swiftright\factory\native\windows\primary-typecheck-20261010\swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.swift:11:14: error: value of type 'some View' has no member 'lineLimit'
+ 9 |         Text("SwiftRight AV")
+10 |             .font(.system(size: 16, weight: .bold, design: .rounded))
+11 |             .lineLimit(2)
+   |              `- error: value of type 'some View' has no member 'lineLimit'
+12 |             .frame(width: 120, alignment: .leading)
+13 |     }

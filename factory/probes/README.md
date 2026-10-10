@@ -1,0 +1,7 @@
+# Probe generator
+
+`factory.probes.generate_probe(recipe, case, output_dir, witness_root=None)` accepts recipe/case mappings or JSON paths. It validates both local schemas, verifies recipe references & witness byte hashes, specializes every `{{axis-id}}` placeholder from case input, then writes `<case-id>.swift` & `<case-id>.manifest.json`. Default witness root is `factory/recipes/witnesses`; an explicit root must resolve to a real directory inside `factory/`, with no symlink component or source escaping root. Swift source imports `SwiftRightRuntime` on Windows & `SwiftUI` elsewhere; generated witness declaration is returned as manifest `witnessType`, while `witness.resourcePath` records repo-relative source location. Foundation is imported for custom-layout & preference-key witnesses that use Foundation geometry types.
+
+Instrumentation stays outside measured view source. Manifest `channels` records geometry tags plus provider/native channels; `environmentInputs.colorScheme` carries light/dark case setup. `executionEligible` is false for synthetic tuples.
+
+Run `factory/.venv/bin/python -m factory.probes` to regenerate checked-in samples. Use `--witness-root factory/resources/fonts/pilot` for the isolated font pilot. With no expanded cases in `factory/recipes/cases`, command emits one schema-valid compile-only smoke source per recipe using synthetic example tuple. These sources support generator review & compile checks only. Once measured case artifacts exist in that directory, generator emits those cases instead.

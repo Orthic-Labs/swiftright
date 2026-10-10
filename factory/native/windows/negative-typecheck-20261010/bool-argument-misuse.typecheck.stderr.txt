@@ -1,0 +1,7 @@
+D:\Claude\swiftright\factory\native\windows\negative-typecheck-20261010\bool-argument-misuse.swift:9:40: error: cannot convert value of type 'String' to expected argument type 'Bool'
+ 7 | struct Witness_disabled: View {
+ 8 |     var body: some View {
+ 9 |         Button("Continue") {}.disabled("invalid-bool")
+   |                                        `- error: cannot convert value of type 'String' to expected argument type 'Bool'
+10 |             .environment(\.colorScheme, .light)
+11 |     }

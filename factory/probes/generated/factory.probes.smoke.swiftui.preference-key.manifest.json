@@ -1,0 +1,63 @@
+{
+  "block": "swiftui.preference-key",
+  "case": {
+    "hash": "sha256:598cf725ecab66684869e5e84a911a46c14fd47cf3d81a720d0c0b47a1a0129b",
+    "id": "factory.probes.smoke.swiftui.preference-key"
+  },
+  "caseInputs": {
+    "child-count": 1,
+    "reduction": "sum"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.preference-key:swiftui.preference-key.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.preference-key.witness",
+        "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": false,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+    "id": "swiftui.preference-key.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "factory.probes.smoke.swiftui.preference-key.swift",
+  "sourceHash": "sha256:721a5d9260de88936e3b8a643a19f59af5b14d7d17c3be0a438967f1d0b94ae5",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.preference-key.witness",
+    "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83"
+  },
+  "witnessType": "Witness_preference_key"
+}

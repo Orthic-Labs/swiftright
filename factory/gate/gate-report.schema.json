@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/spec/v0.1/gate-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "version", "id", "status", "seed", "recipe", "tuple", "caseSetHash", "cases", "captureIds", "semanticRepeatability", "timing", "faultControlsPassed", "promotion", "parityGranted", "issues", "reportHash"],
+  "properties": {
+    "kind": {"const": "gate-report"},
+    "version": {"const": "0.1"},
+    "id": {"$ref": "common.schema.json#/$defs/id"},
+    "status": {"enum": ["pass", "blocked"]},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "recipe": {"$ref": "common.schema.json#/$defs/hashRef"},
+    "tuple": {"$ref": "common.schema.json#/$defs/tuple"},
+    "caseSetHash": {"$ref": "common.schema.json#/$defs/sha256"},
+    "cases": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/hashRef"}},
+    "captureIds": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/id"}, "uniqueItems": true},
+    "semanticRepeatability": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "timing": {"type": "object"},
+    "faultControlsPassed": {"type": "boolean"},
+    "promotion": {"type": "object"},
+    "parityGranted": {"type": "boolean"},
+    "issues": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "reportHash": {"$ref": "common.schema.json#/$defs/sha256"}
+  }
+}

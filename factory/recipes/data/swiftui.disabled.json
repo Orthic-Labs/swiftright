@@ -1,0 +1,72 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.disabled.recipe",
+  "provenance": {
+    "sourceHash": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.disabled",
+  "witnesses": [
+    {
+      "id": "swiftui.disabled.witness",
+      "sourceHash": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+      "resources": [
+        {
+          "id": "swiftui.disabled.witness.swift",
+          "hash": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.disabled.assertion.primary",
+      "channel": "hit-testing",
+      "expected": {
+        "disabled": true,
+        "expectedActionCount": 0
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "disabled",
+      "values": [
+        true,
+        false
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "color-scheme",
+      "values": [
+        "light",
+        "dark"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.disabled.negative.disabled-action",
+      "mode": "apple-behaviour",
+      "sourceHash": "sha256:c70568f284de73c863bc5f656853b060619988b059c64b59da921b0aa20e444d"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.disabled.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

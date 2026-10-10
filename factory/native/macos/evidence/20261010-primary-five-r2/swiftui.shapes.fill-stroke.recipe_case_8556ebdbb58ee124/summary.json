@@ -1,0 +1,190 @@
+{
+  "acceptance": "not-promoted",
+  "adapterSourceHash": "sha256:a4070d2c1cb11f6a1de90cec025b225ec0af03ba27ef1fa20ab5bff396b1f59c",
+  "binaryHash": "sha256:8f11e3c2f0a38fe23817bd6220fdad1121fa81c384613dcd0724b6220967aa7f",
+  "block": "swiftui.shapes.fill-stroke",
+  "candidateOnly": true,
+  "case": {
+    "hash": "sha256:7bac9892662ab5da224703041c1e20490418fa3d919c2dc70987dc7bb0406d59",
+    "id": "swiftui.shapes.fill-stroke.recipe/case/8556ebdbb58ee124"
+  },
+  "channels": {},
+  "compiledAdapterHash": "sha256:e846845f3635478f526904aa6d6ae5111da218d17d1ece143884dfacfd9c4abe",
+  "executionRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124",
+  "independentProcessesPerRun": true,
+  "kind": "macos-host-capture-candidate",
+  "permissionCapabilities": {
+    "axTrusted": true,
+    "permissionRequests": false,
+    "pid": 93889,
+    "screenCaptureGranted": true
+  },
+  "probeManifest": {
+    "block": "swiftui.shapes.fill-stroke",
+    "case": {
+      "hash": "sha256:7bac9892662ab5da224703041c1e20490418fa3d919c2dc70987dc7bb0406d59",
+      "id": "swiftui.shapes.fill-stroke.recipe/case/8556ebdbb58ee124"
+    },
+    "caseInputs": {
+      "color-scheme": "light",
+      "shape": "RoundedRectangle(cornerRadius: 6)",
+      "style": "fill(Color.red)"
+    },
+    "channels": {
+      "adapters": {
+        "customLayout": "not-declared",
+        "native": "native host capture required",
+        "provider": "host-specific adapter required; no renderer ABI assumed",
+        "text": "not-declared"
+      },
+      "assertionChannels": [
+        "layout"
+      ],
+      "geometry": [
+        {
+          "channel": "layout",
+          "hostHookRequired": true,
+          "probeTag": "swiftui.shapes.fill-stroke:swiftui.shapes.fill-stroke.witness",
+          "viewInstrumentationInserted": false
+        }
+      ],
+      "native": [],
+      "provider": [],
+      "transparency": {
+        "channels": [
+          "layout",
+          "paint"
+        ],
+        "enabled": false,
+        "viewIsolatedFromInstrumentation": true
+      },
+      "witnesses": [
+        {
+          "id": "swiftui.shapes.fill-stroke.witness",
+          "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+        }
+      ]
+    },
+    "compileExpectation": "success",
+    "environmentInputs": {
+      "colorScheme": "light"
+    },
+    "executionEligible": true,
+    "kind": "generated-probe",
+    "recipe": {
+      "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+      "id": "swiftui.shapes.fill-stroke.recipe"
+    },
+    "scenario": "baseline",
+    "sourceFile": "swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124.swift",
+    "sourceHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda",
+    "version": "0.1",
+    "witness": {
+      "id": "swiftui.shapes.fill-stroke.witness",
+      "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+    },
+    "witnessType": "Witness_shapes_fill_stroke"
+  },
+  "provenance": {
+    "createdAt": "2026-10-10T17:37:49.747363Z",
+    "producer": "factory/native/macos",
+    "sourceHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda"
+  },
+  "recorder": {
+    "copiedBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "copiedExecutable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/existing-recorder/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "externalAX": "AVAILABLE",
+    "identityDetails": "Executable=/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app/Contents/MacOS/F1MacRecord\nIdentifier=com.orthiclabs.swiftright.f1macrecord\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=497 flags=0x10000(runtime) hashes=8+3 location=embedded\nVersionPlatform=1\nVersionMin=983040\nVersionSDK=983040\nHash type=sha256 size=32\nCandidateCDHash sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nCandidateCDHashFull sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nHash choices=sha256\nCMSDigest=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=49152\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nSignature size=9048\nAuthority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=9 Oct 2026 at 8:17:30\u202fAM\nInfo.plist entries=9\nTeamIdentifier=6KLGD3LLKF\nRuntime Version=15.0.0\nSealed Resources version=2 rules=13 files=0\nInternal requirements count=1 size=200\nTotal signatures=1\nChosen signature=1\n",
+    "permissionRequests": false,
+    "preflightExit": 2,
+    "preflightMethod": "AXIsProcessTrusted in unchanged signed recorder, then missing-fixture launch",
+    "sourceApp": "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+    "sourceBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4"
+  },
+  "runs": [
+    {
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:50a28e59e31e3186f9279445854d8328eb09dee1b39b6516a9aa3633af325aac",
+      "compositorRawHash": "sha256:a829d364a7bb9e1f52ae550e89a9bf210681e825a67625dde8e51cfe253a187a",
+      "compositorScope": "owned window including chrome; witness render corroborated by nonvacuous offscreen capture",
+      "externalAX": "HELD",
+      "externalAXReason": "recorder exit 1",
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 160,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 22,
+          "width": 40
+        },
+        "pid": 93916,
+        "pngHash": "sha256:dd01b0d68729bb69da98ff2b9af3c24aef7066b51ff842842cbd7616f3d5290c",
+        "rawHash": "sha256:e72d102614cf77d3973f930ef22bba8e4c446aaa4d9c2bee5d0687e8f9216020",
+        "rootLayoutCallbacks": 1,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 160,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 22,
+          "width": 40
+        },
+        "pid": 93914,
+        "pngHash": "sha256:dd01b0d68729bb69da98ff2b9af3c24aef7066b51ff842842cbd7616f3d5290c",
+        "rawHash": "sha256:712888c09245240b8af1f026084c4fe8c7bbdb8951524927811480dd2fa45f65",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "run": 1
+    },
+    {
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:50a28e59e31e3186f9279445854d8328eb09dee1b39b6516a9aa3633af325aac",
+      "compositorRawHash": "sha256:b7dce9a2e3ed5f60ffbb1e5c5bbfd7602532343177c01a72ec4ddb3e3bffb079",
+      "compositorScope": "owned window including chrome; witness render corroborated by nonvacuous offscreen capture",
+      "externalAX": "HELD",
+      "externalAXReason": "recorder exit 1",
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 160,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 22,
+          "width": 40
+        },
+        "pid": 94768,
+        "pngHash": "sha256:dd01b0d68729bb69da98ff2b9af3c24aef7066b51ff842842cbd7616f3d5290c",
+        "rawHash": "sha256:82fb175a8729dff74896f20bbf02fa027e624afbe63430ac7c020407d3ba2047",
+        "rootLayoutCallbacks": 1,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 160,
+          "height": 20,
+          "scale": 1,
+          "uniqueByteValues": 22,
+          "width": 40
+        },
+        "pid": 94766,
+        "pngHash": "sha256:dd01b0d68729bb69da98ff2b9af3c24aef7066b51ff842842cbd7616f3d5290c",
+        "rawHash": "sha256:7e72577a926115c3b4e8a38e235dd471c35fe1503ad9111b65695234c6fdac29",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "run": 2
+    }
+  ],
+  "sourceHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda",
+  "version": "0.1"
+}
