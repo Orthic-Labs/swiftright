@@ -1,0 +1,149 @@
+{
+  "analyzer": {
+    "hash": "sha256:dc411db78488e9c5fcf3807978431f1f8aac9856d1eab767e84e32dba633a9a7",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/analyze.py"
+  },
+  "archiveFiles": [
+    {
+      "hash": "sha256:c16b20e98e3556f2052ad77510528bc800bcf8ea403e72c98fc824fcd6b098db",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/analysis.json"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/build.stderr.txt"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/build.stdout.txt"
+    },
+    {
+      "hash": "sha256:5c2ad9f431ecc6aa2fbbc3601461419bc56172799fa2d3a494e1b0fec47dbe88",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/execution.json"
+    },
+    {
+      "hash": "sha256:c2d7f7f798e4f958827a9e187a1139b684f164d9602d4323a5d4d372362bd6ef",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/launch-review.json"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/preflight.stderr.txt"
+    },
+    {
+      "hash": "sha256:8cb6dfd6862df93824cf24de6f0bd9b0c4db77ddc9f662b858a36f6674609faf",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/preflight.stdout.txt"
+    },
+    {
+      "hash": "sha256:557415d7b5cb9a96f728037b47c510683d19986f08da98dfaabc3d20e8a1cdc6",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/prepared.json"
+    },
+    {
+      "hash": "sha256:0ec8855c9789914570ef3b83f8d614dd4046f0e049dbed9ebb17913ce1d74eb5",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/raw.jsonl"
+    },
+    {
+      "hash": "sha256:c2d7f7f798e4f958827a9e187a1139b684f164d9602d4323a5d4d372362bd6ef",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/review-current.json"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/run.stderr.txt"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-03/run.stdout.txt"
+    }
+  ],
+  "faultControlStatus": "PASS",
+  "installedSDKSupport": {
+    "hash": "sha256:9738ef1674ea7c85a9fbec92d7fc05becedc7b2e3d2fd07a4ffa2e60a7c66734",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/sdk-support.json"
+  },
+  "kind": "independent-native-timing-control-receipt",
+  "launcher": {
+    "hash": "sha256:faf429212a83c0ae20ee72b7631a0eac3f91000c4d882940dcfccd66895ea9c4",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/run.py"
+  },
+  "nativeBinary": {
+    "hash": "sha256:7c356ea631bfee724c369c49908db93df9835b232a5976ef5fb7fbfd7c3f85f8",
+    "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/timing-spike/e2dbe4f0-175a-4439-a482-50d0c3112da2/timing-control"
+  },
+  "nativeSource": {
+    "hash": "sha256:625e13bfa8061a8fbdc73566212995e93cfba6b3688ee09089aea16599bdc256",
+    "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/timing-spike/e2dbe4f0-175a-4439-a482-50d0c3112da2/TimingControl.swift"
+  },
+  "observations": {
+    "contentMutations": 49,
+    "convertedPTSMinusWindowServerEventNs": {
+      "count": 289,
+      "max": "0",
+      "min": "-41.66666666666666666666666667",
+      "scope": "observed API-converted host time versus native event tick value; not scanout"
+    },
+    "durationAndDecodeAvailability": {
+      "validDecodeTimes": 0,
+      "validDurations": 0
+    },
+    "faultControlStatus": "PASS",
+    "frameStatusRawCounts": {
+      "0": 285,
+      "3": 4
+    },
+    "intentionalProducerStall": {
+      "frameStatusesDuringStall": {
+        "0": 21
+      },
+      "largestMutationGapNs": 355138459,
+      "measuredNs": 354736875,
+      "requestedNs": 350000000,
+      "sampleCallbacksEnteredDuringStall": 21
+    },
+    "kind": "independent-native-timing-control-analysis",
+    "knownContentMutationObserved": true,
+    "nativeErrors": [],
+    "pixelReadScope": "verified nonplanar packed BGRA/lock-success only; legacy planar base-address hashes unqualified",
+    "producerStallControlStatus": "PASS",
+    "rawClockCorrelation": {
+      "callbackSamples": 289,
+      "cmHostSystemUnitsBracketedAtCallbackEntry": 289,
+      "convertedPresentationHostTimeValid": 289,
+      "machTimebase": {
+        "denom": 3,
+        "numer": 125
+      },
+      "streamSynchronizationClockAvailable": 289
+    },
+    "samples": 289,
+    "scope": "observational control; not frozen/case/parity evidence",
+    "timestampSemantics": {
+      "GPUCompletion": "UNAVAILABLE",
+      "appkitDrawReturn": "CPU draw callback return only",
+      "callbackEntry": "consumer callback entry bracketed host clocks",
+      "physicalDisplayScanout": "UNAVAILABLE",
+      "samplePresentation": "CMSampleBuffer PTS; synchronizationClock conversion archived separately",
+      "windowServerDisplayMachTime": "SDK-documented WindowServer display event in mach absolute ticks; not physical scanout"
+    },
+    "uniqueCapturedByteRegionHashes": 20,
+    "validatedPackedBGRAPixelHashVariants": 20,
+    "validatedPackedBGRASamples": 285
+  },
+  "outcomeRegressionChecks": {
+    "hash": "sha256:98e4c05bf175d3d6330499a86d908d7c52a3375306c712eda7ce1d56a7f2701f",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/outcome-checks.json"
+  },
+  "ownership": {
+    "appActive": false,
+    "isKeyWindow": false,
+    "pid": 91301,
+    "remainingOwnedProcesses": [],
+    "windowID": 16774
+  },
+  "preservedPreparation": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-01",
+  "recordedAt": "2026-10-10T21:04:22.701976+00:00",
+  "repeatability": {
+    "earlierTimingOnlyRun": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-02",
+    "packedBGRARuns": 1,
+    "sameSourceRepeatabilityQualified": false
+  },
+  "scope": "observational control only; separate from frozen cases, tuple, parity & performance acceptance",
+  "status": "SAMPLE_TIMING_OBSERVED"
+}

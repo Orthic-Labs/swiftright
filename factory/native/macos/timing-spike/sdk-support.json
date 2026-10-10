@@ -1,0 +1,36 @@
+{
+  "nativeDocumentation": [
+    {
+      "hash": "sha256:11633abf2df86bd6c92345a9c4804a0746e18d4db39994ae29243671f332825b",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/ScreenCaptureKit.framework/Headers/SCStream.h",
+      "semantics": {
+        "MinimumFrameInterval": "desired throttle; not guaranteed frame delivery cadence, lines237-240",
+        "SCStreamFrameInfoDisplayTime": "mach absolute time of WindowServer frame event, lines418-421",
+        "SCStreamSynchronizationClock": "media capture synchronization clock, lines477-480",
+        "StartStop": "completion handler denotes capture start/stop; no GPU fence promise"
+      }
+    },
+    {
+      "hash": "sha256:20f25b6eb8228216b9cd6c73986e7d2adb240731bd60af39fbf85b1c38fe6ced",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreMedia.framework/Headers/CMSync.h",
+      "semantics": {
+        "CMClockGetHostTimeClock": "CPU mach_absolute_time clock, host CMTime conversion",
+        "CMSyncConvertTime": "clock/timebase conversion to host; records converted CMTime"
+      }
+    },
+    {
+      "hash": "sha256:2347e8412351529947d4f794781203f64eb01eb62ea086231551ee63ccaad0a6",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreVideo.framework/Headers/CVPixelBuffer.h",
+      "semantics": {
+        "CVPixelBufferGetBaseAddress": "packed pixel pointer vs planar descriptor; planar output requires plane APIs",
+        "CVPixelBufferLockBaseAddress": "must lock before read; return code archived",
+        "control03": "explicit packed BGRA rejects planar/mismatched buffers before hashing"
+      }
+    }
+  ],
+  "source": "installed SDK headers read locally",
+  "unsupported": [
+    "true GPU completion",
+    "physical display scanout"
+  ]
+}
