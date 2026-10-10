@@ -40,6 +40,45 @@ final class DescriptorTextMeasurer: TextMeasurer {
 
 @MainActor
 final class FontAdditionTests: XCTestCase {
+    func testIndependentlyConstructedMetadataFontsCompareAndHashByValue() {
+        let first = Font.system(size: 17, weight: .medium, design: .serif)
+        let second = Font.system(size: 17, weight: .medium, design: .serif)
+
+        XCTAssertEqual(first, second)
+        XCTAssertEqual(Set([first, second]).count, 1)
+    }
+
+    func testMetadataFontEqualityIncludesMetadataValue() {
+        let serif = Font.system(size: 17, design: .serif)
+        let rounded = Font.system(size: 17, design: .rounded)
+
+        XCTAssertNotEqual(serif, rounded)
+        XCTAssertEqual(Set([serif, rounded]).count, 2)
+    }
+
+    func testLegacyFontAndExplicitMetadataFontWithSameIDRemainDistinct() {
+        let legacy = Font.system(size: 17)
+        let explicit = Font.system(size: 17, design: .default)
+
+        XCTAssertEqual(legacy.id, explicit.id)
+        XCTAssertNil(legacy.metadata)
+        XCTAssertNotNil(explicit.metadata)
+        XCTAssertNotEqual(legacy, explicit)
+    }
+
+    func testRetainedSnapshotKeepsFontMetadataAfterDesignChanges() {
+        let model = MutableFontModel()
+        let graph = Graph(MutableDesignFontProbe(model: model))
+        graph.flush()
+        let retained = graph.snapshot()
+
+        model.design = .rounded
+        graph.flush()
+
+        XCTAssertEqual(firstFont(in: retained)?.metadata?.design, .serif)
+        XCTAssertEqual(firstFont(in: graph.snapshot())?.metadata?.design, .rounded)
+    }
+
     func testSystemDesignIsPassedAsMetadataWithoutChangingLegacyID() {
         let measurer = FixedAdvanceTextMeasurer()
         let graph = Graph(Text("design").font(.system(size: 17, weight: .medium, design: .serif)), measurer: measurer)
@@ -112,9 +151,21 @@ final class FontAdditionTests: XCTestCase {
         let measurer = FixedAdvanceTextMeasurer()
         let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)
         graph.flush()
+        graph.flush()
 
         XCTAssertEqual(measurer.requests.first?.fontID, "system(17.0,medium)")
+        XCTAssertEqual(measurer.requests.count, 1)
         XCTAssertNil(measurer.requests.first?.fontMetadata)
         XCTAssertNil(Font.system(size: 17, weight: .medium).metadata)
     }
+}
+
+@MainActor
+private func firstFont(in node: ResolvedNode?) -> Font? {
+    guard let node else { return nil }
+    if let font = node.style.font { return font }
+    for child in node.children {
+        if let font = firstFont(in: child) { return font }
+    }
+    return nil
 }

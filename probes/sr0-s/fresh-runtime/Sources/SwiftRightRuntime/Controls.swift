@@ -250,7 +250,26 @@ extension ShapeStyle where Self == Color {
 public struct Font: Hashable, Sendable {
     public let id: String
     /// Explicit family and style facts used by text measurement. Legacy font values leave this unset.
-    public let metadata: Metadata?
+    private let metadataStorage: MetadataStorage?
+
+    public var metadata: Metadata? { metadataStorage?.value }
+
+    /// Immutable indirect storage keeps optional font metadata off every legacy Font value.
+    private final class MetadataStorage: Hashable, Sendable {
+        let value: Metadata
+
+        init(_ value: Metadata) {
+            self.value = value
+        }
+
+        static func == (lhs: MetadataStorage, rhs: MetadataStorage) -> Bool {
+            lhs.value == rhs.value
+        }
+
+        func hash(into hasher: inout Hasher) {
+            value.hash(into: &hasher)
+        }
+    }
 
     public struct Metadata: Hashable, Sendable {
         public let familyName: String?
@@ -271,12 +290,12 @@ public struct Font: Hashable, Sendable {
 
     init(id: String) {
         self.id = id
-        metadata = nil
+        metadataStorage = nil
     }
 
     private init(id: String, metadata: Metadata) {
         self.id = id
-        self.metadata = metadata
+        metadataStorage = MetadataStorage(metadata)
     }
 
     public enum Weight: String, Hashable, Sendable {
