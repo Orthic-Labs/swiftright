@@ -381,6 +381,33 @@ class CanonicalV2Tests(unittest.TestCase):
             self.assertNotEqual(digest(a, "a"), digest(reversed_node, "b"))
             self.assertEqual(digest(a, "a"), digest(different_nodes, "c"))
 
+    @staticmethod
+    def f6_lines(sequence):
+        """F6 animation-node events: sequence of ("start"|"complete", tag) in recorded order, one step."""
+        return [json.dumps({"fixture": "F6", "kind": "lifecycle", "node_id": "animation",
+                            "payload": {"phase": phase, "tag": tag}, "step": "burst-insert"},
+                           sort_keys=True, separators=(",", ":")) for phase, tag in sequence]
+
+    def test_f6_completion_pair_is_unordered(self):
+        a = self.f6_lines([("start", "A"), ("start", "B"), ("complete", "A"), ("complete", "B")])
+        b = self.f6_lines([("start", "A"), ("start", "B"), ("complete", "B"), ("complete", "A")])
+        self.assertEqual(q.canonical_digest(a), q.canonical_digest(b))
+
+    def test_f6_duplicate_missing_or_misplaced_completion_fails(self):
+        a = self.f6_lines([("start", "A"), ("start", "B"), ("complete", "A"), ("complete", "B")])
+        for bad in ([("start", "A"), ("start", "B"), ("complete", "B"), ("complete", "B")],
+                    [("start", "A"), ("start", "B"), ("complete", "A")],
+                    [("start", "A"), ("complete", "B"), ("start", "B"), ("complete", "A")],
+                    [("start", "B"), ("start", "A"), ("complete", "A"), ("complete", "B")]):
+            self.assertNotEqual(q.canonical_digest(a), q.canonical_digest(self.f6_lines(bad)), bad)
+
+    def test_f6_rule_does_not_apply_to_other_fixtures(self):
+        def other(seq):
+            return [l.replace('"F6"', '"F2"') for l in self.f6_lines(seq)]
+        a = other([("complete", "A"), ("complete", "B")])
+        b = other([("complete", "B"), ("complete", "A")])
+        self.assertNotEqual(q.canonical_digest(a), q.canonical_digest(b))
+
     def test_accepted_manifest_with_old_canonical_form_is_refused(self):
         with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
             root = Path(tmp)
@@ -435,13 +462,13 @@ class StrictRunnerTests(unittest.TestCase):
 
     def test_compare_without_any_windows_trace_fails(self):
         args = run_args("--stages", "compare")
-        q.run_compare(self.log, args, ["compare"], self.dir, dry=False)
-        self.assertEqual(self.log.failures, 1)
+        q.run_compare(self.log, args, ["compare"], self.dir, dry=False, comparator=Path(__file__))
+        self.assertEqual(self.log.failures, 16, "every one of the 16 configs needs its own Windows trace")
 
     def test_compare_after_replay_fails_when_replay_wrote_no_trace(self):
         args = run_args("--stages", "win-replay", "compare")
-        q.run_compare(self.log, args, ["win-replay", "compare"], self.dir, dry=False)
-        self.assertEqual(self.log.failures, 1)
+        q.run_compare(self.log, args, ["win-replay", "compare"], self.dir, dry=False, comparator=Path(__file__))
+        self.assertEqual(self.log.failures, 16)
 
     def test_dry_run_skips_exit_zero_but_real_skip_is_failure(self):
         self.assertEqual(q.cmd_run(run_args("--stages", "smoke", "package", "--dry-run")), 0)
@@ -1126,7 +1153,7 @@ class WinReplayTupleTests(unittest.TestCase):
                 return argparse.Namespace(returncode=0, stdout="\n".join(lines), stderr="")
             if "verify-artifacts.ps1" in command[1]:
                 return argparse.Namespace(returncode=0, stdout=verify, stderr="")
-            if "schedule-f1.ps1" in command[1]:
+            if "schedule-cross.ps1" in command[1]:
                 return argparse.Namespace(returncode=0, stdout=record, stderr="")
             if "cat.ps1" in command[1]:
                 return argparse.Namespace(returncode=0 if pull_ok else 1, stdout="\x1b[0m{}\n" if pull_ok else "", stderr="")
@@ -1141,11 +1168,11 @@ class WinReplayTupleTests(unittest.TestCase):
             return rc, "wrote" if rc == 0 else "boom"
         return assemble
 
-    def stage(self, runner, tuple_pin=None, f1=False, assembler=None):
-        recorder = lambda out_dir, exe, renderer, runner=None: q.win_f1_trace(
-            out_dir, exe, renderer, runner=runner, assembler=assembler or self.assembler())
-        return q.win_stage(self.log, ["F1:none"], 1, self.dir, False, True, runner=runner, which=lambda n: "w",
-                           tuple_pin=tuple_pin, f1_trace=f1, f1_recorder=recorder)
+    def stage(self, runner, tuple_pin=None, cross=False, assembler=None, configs=("F1:none",)):
+        recorder = lambda out_dir, config, exe, renderer, runner=None: q.win_cross_trace(
+            out_dir, config, exe, renderer, runner=runner, assembler=assembler or self.assembler())
+        return q.win_stage(self.log, list(configs), 1, self.dir, False, True, runner=runner, which=lambda n: "w",
+                           tuple_pin=tuple_pin, cross_trace=cross, cross_recorder=recorder)
 
     # ---- D5: tuple pins
     def test_unpinned_replay_passes_and_says_so(self):
@@ -1200,28 +1227,56 @@ class WinReplayTupleTests(unittest.TestCase):
         self.assertFalse(q.win_stage(self.log, configs, 20, self.dir, False, True, runner=runner, which=lambda n: "w",
                                      tuple_pin=wrong))
 
-    # ---- D3: win-replay produces the schema-v0 trace that compare consumes
-    def test_replay_with_f1_trace_writes_the_file_compare_reads(self):
-        self.assertTrue(self.stage(self.windows(), f1=True))
-        trace = self.dir / "win-matrix" / q.WIN_TRACE_FILE
+    # ---- D3: win-replay produces the schema-v0 traces that compare consumes (one per config)
+    def test_replay_with_cross_trace_writes_the_file_compare_reads(self):
+        self.assertTrue(self.stage(self.windows(), cross=True))
+        trace = q.cross_trace_path(self.dir, "F1")
         self.assertTrue(trace.exists())
         last = self.events()[-1]
-        self.assertEqual(last["artifact_ids"]["windows_f1_trace_v0"], "sha256:" + q.sha256_file(trace))
+        self.assertIn("windows_cross_traces_v0", last["artifact_ids"])
         steps = [c[1] if c[0] == "win" else "assemble" for c in self.calls if c[0] != "bash"]
-        self.assertTrue("verify-artifacts.ps1" in steps[0] and "schedule-f1.ps1" in steps[1] and steps[-1] == "assemble", steps)
+        self.assertTrue("verify-artifacts.ps1" in steps[0] and "schedule-cross.ps1 -Config F1" in steps[1] and steps[-1] == "assemble", steps)
         self.assertIn(f"-ExpectExe {self.EXE.upper()}", steps[0])
         assemble = [c for c in self.calls if c[0] == "F1Assemble"][0]
         self.assertEqual(assemble[1], "win")
         self.assertIn("--keep-lists", assemble)
-        self.assertEqual(Path(assemble[assemble.index("--stimulus") + 1]), q.F1_STIMULUS)
-        self.assertEqual(len(list((self.dir / "win-matrix" / "f1").glob("*"))), 3)
+        self.assertEqual(Path(assemble[assemble.index("--stimulus") + 1]), q.CROSS_DIR / "F1" / "stimulus.json")
+        self.assertEqual(sorted(p.name for p in trace.parent.glob("*")).count("record.log"), 1)
 
-    def test_without_f1_trace_nothing_is_recorded(self):
-        self.assertTrue(self.stage(self.windows(), f1=False))
-        self.assertFalse((self.dir / "win-matrix" / q.WIN_TRACE_FILE).exists())
-        self.assertFalse(any("schedule-f1" in c[1] for c in self.calls if c[0] == "win"))
+    def test_replay_records_one_trace_per_config_with_its_own_stimulus_and_flags(self):
+        configs = list(q.DEFAULT_MATRIX_CONFIGS)
+        self.assertTrue(self.stage(self.windows(), cross=True, configs=configs))
+        ids = [q.cross_config_id(c) for c in configs]
+        self.assertEqual(sorted(ids), sorted(q.CONFIGS), "the 16 matrix configs are the 16 cross configs")
+        for config in ids:
+            self.assertTrue(q.cross_trace_path(self.dir, config).exists(), config)
+            self.assertTrue((q.CROSS_DIR / config / "stimulus.json").exists(), config)
+            self.assertTrue((q.CROSS_DIR / config / "steps-win.json").exists(), config)
+        stimuli = [Path(c[c.index("--stimulus") + 1]) for c in self.calls if c[0] == "F1Assemble"]
+        self.assertEqual([p.parent.name for p in stimuli], ids)
+        records = [c[1] for c in self.calls if c[0] == "win" and "schedule-cross.ps1" in c[1]]
+        self.assertEqual([re.search(r"-Config (\S+)", r).group(1) for r in records], ids)
 
-    def test_f1_trace_failures_fail_the_stage_with_a_reason(self):
+    def test_one_failing_config_fails_the_stage_and_names_it(self):
+        def assembler(argv):
+            out = Path(argv[argv.index("--out") + 1])
+            if out.parent.name == "F5":
+                return 1, "boom"
+            out.write_text("{}", encoding="utf-8")
+            return 0, "wrote"
+        self.assertFalse(self.stage(self.windows(), cross=True, assembler=assembler, configs=["F4:none", "F5:none", "F6:none"]))
+        self.assertIn("for F5", self.events()[-1]["reason"])
+
+    def test_cross_config_ids_follow_the_accepted_directory_names(self):
+        self.assertEqual([q.cross_config_id(c) for c in ("F1:none", "F3:list-0s", "F3:list-3s", "F3:lazy-1s", "F6:reduced", "F9:none")],
+                         ["F1", "F3", "F3-list-3s", "F3-lazy-1s", "F6-reduced", "F9"])
+
+    def test_without_cross_trace_nothing_is_recorded(self):
+        self.assertTrue(self.stage(self.windows(), cross=False))
+        self.assertFalse(q.cross_trace_path(self.dir, "F1").exists())
+        self.assertFalse(any("schedule-cross" in c[1] for c in self.calls if c[0] == "win"))
+
+    def test_cross_trace_failures_fail_the_stage_with_a_reason(self):
         cases = {"build changed": (self.windows(verify="ARTIFACT_MISMATCH\n"), None, "no longer equals the matrix build"),
                  "recorder job failed": (self.windows(record="state=Ready last_result=1\nno run log\n"), None, "did not finish cleanly"),
                  "recorder timeout": (self.windows(record="last_result=0\nrecorder exit=0\nRECORDER TIMEOUT\n"), None, "did not finish"),
@@ -1231,20 +1286,21 @@ class WinReplayTupleTests(unittest.TestCase):
             with self.subTest(name):
                 self.log.close()
                 self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
-                self.assertFalse(self.stage(runner, f1=True, assembler=assembler))
+                self.assertFalse(self.stage(runner, cross=True, assembler=assembler))
                 self.assertEqual(self.events()[-1]["event"], "fail")
                 self.assertIn(text, self.events()[-1]["reason"])
                 if name == "recorder job failed":
                     self.assertIn("UIARecorder.exe", self.events()[-1]["reason"], "names the missing recorder tree")
 
-    def test_dry_run_plan_names_the_f1_steps(self):
-        plan = q.win_plan(["F1:none"], 1, Path("/x"), f1_trace=True)
-        f1 = plan["f1_trace"]
-        self.assertIn("-Mode record", f1["record"][1])
+    def test_dry_run_plan_names_the_cross_steps_of_every_config(self):
+        plan = q.win_plan(list(q.DEFAULT_MATRIX_CONFIGS), 1, Path("/x"), cross_trace=True)
+        self.assertEqual(sorted(plan["cross_traces"]), sorted(q.CONFIGS))
+        f1 = plan["cross_traces"]["F1"]
+        self.assertIn("schedule-cross.ps1 -Config F1", f1["record"][1])
         self.assertIn("-Bin " + q.F1_BIN, f1["record"][1])
         self.assertIn("verify-artifacts.ps1", f1["verify"][1])
         self.assertEqual(f1["assemble"][:2], ["F1Assemble", "win"])
-        self.assertNotIn("f1_trace", q.win_plan(["F1:none"], 1, Path("/x")))
+        self.assertNotIn("cross_traces", q.win_plan(["F1:none"], 1, Path("/x")))
 
     def test_f1_assemble_command_reproduces_the_committed_windows_trace(self):
         """Same flags as the committed strict W6 trace: build F1Assemble from committed source and rerun it."""
@@ -1267,6 +1323,150 @@ class WinReplayTupleTests(unittest.TestCase):
             self.assertEqual(json.loads(target.read_text()), json.loads(needed[3].read_text()))
         finally:
             shutil.rmtree(work, ignore_errors=True)
+
+
+class FaultInjectionTests(unittest.TestCase):
+    """Negative controls of the compare stage: an altered Windows trace must be rejected on the named leaf."""
+    TRACE = {"fixtureId": "F8", "observations": [
+        {"stepId": "initial", "model": {}, "focusedNodeId": None, "lifecycle": [{"kind": "appear", "node": "row/a"}],
+         "effects": [], "axNodes": [{"id": "window", "role": "window", "actions": [], "order": 0},
+                                    {"id": "row/a/field", "role": "text-field", "actions": ["set-value"], "order": 1},
+                                    {"id": "row/b/field", "role": "text-field", "actions": ["set-value"], "order": 2}]},
+        {"stepId": "focus_row3", "model": {}, "focusedNodeId": "row/a/field", "lifecycle": [], "effects": [], "axNodes": None}]}
+
+    def test_each_fault_changes_exactly_one_fact_of_a_copy(self):
+        for kind in q.FAULT_KINDS:
+            with self.subTest(kind):
+                original = json.dumps(self.TRACE, sort_keys=True)
+                altered, what = q.inject_fault(self.TRACE, kind)
+                self.assertIsNotNone(altered, what)
+                self.assertEqual(json.dumps(self.TRACE, sort_keys=True), original, "the input trace is never modified")
+                self.assertNotEqual(json.dumps(altered, sort_keys=True), original)
+        wrong_focus, _ = q.inject_fault(self.TRACE, "wrong-focus")
+        self.assertEqual(wrong_focus["observations"][1]["focusedNodeId"], "row/b/field")
+        missing, _ = q.inject_fault(self.TRACE, "missing-lifecycle")
+        self.assertEqual(missing["observations"][0]["lifecycle"], [])
+        role, _ = q.inject_fault(self.TRACE, "wrong-role")
+        self.assertEqual(role["observations"][0]["axNodes"][1]["role"], "button")
+
+    def test_a_trace_with_nothing_to_alter_is_reported_not_passed(self):
+        empty = {"observations": [{"stepId": "x", "focusedNodeId": None, "lifecycle": [], "axNodes": None}]}
+        for kind in q.FAULT_KINDS:
+            altered, why = q.inject_fault(empty, kind)
+            self.assertIsNone(altered)
+            self.assertTrue(why)
+        with self.assertRaises(ValueError):
+            q.inject_fault(self.TRACE, "bogus")
+
+    def fake_comparator(self, reject):
+        """A script standing in for sr0o-trace: reports one diff on `reject` leaf only when the candidate carries the fault."""
+        path = self.dir / "fake-comparator"
+        path.write_text("#!/usr/bin/env python3\nimport json,sys\nc=json.load(open(sys.argv[3]))\n"
+                        f"leaf={reject!r}\n"
+                        "bad=(leaf=='focusedNodeId' and c['observations'][1]['focusedNodeId']!='row/a/field') or "
+                        "(leaf=='lifecycle.count' and not c['observations'][0]['lifecycle']) or "
+                        "(leaf=='axNodes.role' and c['observations'][0]['axNodes'][1]['role']!='text-field')\n"
+                        "d=[{'fixture':'F8','step':'s','path':leaf+'[n]','expected':'a','actual':'b'}] if bad else []\n"
+                        "print(json.dumps({'diffs':d,'passed':not d,'fixture':'F8','notes':[]}))\nsys.exit(1 if d else 0)\n")
+        path.chmod(0o755)
+        return path
+
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+        for name in ("accepted.json", "adapt.json"):
+            (self.dir / name).write_text("[]" if name == "adapt.json" else "{}", encoding="utf-8")
+        (self.dir / "cand.json").write_text(json.dumps(self.TRACE), encoding="utf-8")
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def run_control(self, kind, leaf):
+        return q.fault_control(self.log, "F8", kind, self.dir / "accepted.json", self.dir / "cand.json", self.dir / "adapt.json",
+                               self.dir, self.fake_comparator(leaf))
+
+    def last(self):
+        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()][-1]
+
+    def test_a_comparator_that_rejects_the_altered_trace_passes_the_control(self):
+        for kind, leaf in q.FAULT_KINDS.items():
+            with self.subTest(kind):
+                self.assertTrue(self.run_control(kind, leaf))
+                self.assertEqual(self.last()["event"], "pass")
+                self.assertIn(f"new diff {leaf}", self.last()["reason"])
+                self.assertTrue((self.dir / "compare-faults" / f"F8-{kind}.json").exists())
+
+    def test_a_comparator_that_passes_the_altered_trace_fails_the_control(self):
+        # the comparator only looks at lifecycle: the wrong-focus trace sails through, so that control must fail
+        self.assertFalse(self.run_control("wrong-focus", "lifecycle.count"))
+        self.assertEqual(self.last()["event"], "fail")
+        self.assertIn("NOT rejected", self.last()["reason"])
+
+    def test_every_control_names_a_config_with_a_committed_accepted_trace(self):
+        self.assertTrue(q.FAULT_CONTROLS)
+        for config, kinds in q.FAULT_CONTROLS.items():
+            self.assertIn(config, q.CONFIGS)
+            self.assertTrue(set(kinds) <= set(q.FAULT_KINDS))
+        self.assertGreaterEqual(len(q.FAULT_CONTROLS), 3, "a few fixtures")
+        self.assertEqual({k for ks in q.FAULT_CONTROLS.values() for k in ks}, set(q.FAULT_KINDS), "all three fact classes")
+
+
+class CrossPlanTests(unittest.TestCase):
+    """The 16 per-config recorder plans (probes/sr0-o/f1-cross/cross) and how compare resolves its inputs."""
+
+    def test_every_config_has_matching_stimulus_and_both_step_files(self):
+        for config in q.CONFIGS:
+            with self.subTest(config):
+                d = q.CROSS_DIR / config
+                stim, win, mac = (json.loads((d / n).read_text(encoding="utf-8")) for n in ("stimulus.json", "steps-win.json", "steps-mac.json"))
+                self.assertEqual(stim["fixtureId"], config)
+                self.assertEqual(win["fixtureId"], config)
+                ids = [s["id"] for s in stim["steps"]]
+                self.assertEqual([s["id"] for s in win["steps"]], ids)
+                self.assertEqual([s["id"] for s in mac["steps"]], ids)
+                self.assertEqual(ids[0], "initial")
+                self.assertTrue(all(s["logicalAction"] for s in stim["steps"]))
+
+    def test_adaptations_are_reasoned_narrow_value_mappings(self):
+        for config in q.CONFIGS:
+            adapt = json.loads((q.CROSS_DIR / config / "adapt-v0.json").read_text(encoding="utf-8"))
+            self.assertEqual(adapt[0]["field"], "steps.nativeMapping", config)
+            for a in adapt[1:]:
+                with self.subTest(config=config, field=a["field"]):
+                    self.assertTrue(a["reason"].strip())
+                    self.assertTrue(a.get("mapping"), "no allowAnyValue beyond N1: a mapping names the exact allowed values")
+                    self.assertNotIn("allowAnyValue", a)
+
+    def test_baseline_prefers_the_accepted_v0_trace_and_labels_the_fallback(self):
+        trace, adapt, origin = q.cross_baseline("F1")
+        self.assertEqual((trace, origin), (q.ACCEPTED_ROOT / "F1" / "trace-v0.json", "accepted Mac baseline"))
+        saved = q.ACCEPTED_ROOT
+        with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
+            q.ACCEPTED_ROOT = Path(tmp)
+            try:
+                trace, adapt, origin = q.cross_baseline("F2")
+            finally:
+                q.ACCEPTED_ROOT = saved
+        self.assertEqual(trace, q.CROSS_DIR / "F2" / "mac-trace-v0.json")
+        self.assertEqual(adapt, q.CROSS_DIR / "F2" / "adapt-v0.json")
+        self.assertIn("unpromoted", origin)
+
+    def test_compare_reads_one_windows_trace_per_config_from_a_directory(self):
+        args = run_args("--stages", "compare", "--win-candidate-dir", "/x/cross")
+        got = q.compare_candidates(args, ["compare"], Path("/out"))
+        self.assertEqual([c for c, _, _ in got], sorted(q.CONFIGS, key=[q.cross_config_id(m) for m in q.DEFAULT_MATRIX_CONFIGS].index))
+        self.assertTrue(all(p == Path("/x/cross") / c / q.WIN_TRACE_FILE for c, p, _ in got))
+
+    def test_compare_after_replay_reads_the_fresh_per_config_traces(self):
+        got = q.compare_candidates(run_args("--stages", "win-replay", "compare"), ["win-replay", "compare"], Path("/out"))
+        self.assertEqual(len(got), 16)
+        self.assertTrue(all(p == q.cross_trace_path(Path("/out"), c) for c, p, _ in got))
+
+    def test_compare_with_no_source_names_the_missing_input(self):
+        got = q.compare_candidates(run_args("--stages", "compare"), ["compare"], Path("/out"))
+        self.assertTrue(all(p is None and "win-candidate-dir" in why for _, p, why in got))
 
 
 class RunWiringTests(unittest.TestCase):
@@ -1312,11 +1512,11 @@ class RunWiringTests(unittest.TestCase):
         bad.write_text("{}")
         self.assertEqual(q.cmd_run(run_args("--stages", "package", "--tuple", str(bad))), 2)
 
-    def test_f1_trace_is_requested_only_when_compare_follows_win_replay(self):
+    def test_cross_trace_is_requested_only_when_compare_follows_win_replay(self):
         q.cmd_run(run_args("--stages", "win-replay", "compare", "--dry-run"))
-        self.assertTrue(self.seen["win-replay"]["f1_trace"])
+        self.assertTrue(self.seen["win-replay"]["cross_trace"])
         q.cmd_run(run_args("--stages", "win-replay", "--dry-run"))
-        self.assertFalse(self.seen["win-replay"]["f1_trace"])
+        self.assertFalse(self.seen["win-replay"]["cross_trace"])
 
     def test_win_replay_defaults_to_the_sixteen_sr0_configs(self):
         configs = run_args().configs

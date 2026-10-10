@@ -1,0 +1,70 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F1"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "id": "focus_row5",
+      "logicalAction": "focus row 5 field",
+      "ops": [
+        {
+          "id": "row/F0000001-0000-4000-8000-000000000005/field",
+          "op": "focus"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "type_abc",
+      "logicalAction": "type abc",
+      "ops": [
+        {
+          "expectId": "row/F0000001-0000-4000-8000-000000000005/field",
+          "expectValue": "Row 5abc",
+          "op": "type",
+          "text": "abc"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "engine_insert_above",
+      "logicalAction": "engine inserts row at index 0",
+      "ops": [
+        {
+          "json": {
+            "key": "insert-above",
+            "step": "release",
+            "value": 0
+          },
+          "op": "stdin"
+        },
+        {
+          "id": "row/F0000001-0000-4000-8000-000000000099/field",
+          "op": "waitNode"
+        }
+      ],
+      "settleMs": 500
+    },
+    {
+      "id": "type_d",
+      "logicalAction": "type d",
+      "ops": [
+        {
+          "expectId": "row/F0000001-0000-4000-8000-000000000005/field",
+          "expectValue": "Row 5abcd",
+          "op": "type",
+          "text": "d"
+        }
+      ],
+      "settleMs": 500
+    }
+  ]
+}

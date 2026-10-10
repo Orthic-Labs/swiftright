@@ -71,6 +71,19 @@ cuia_bool cuia_activate(void *hwnd) {
 
 int32_t cuia_dpi_for_window(void *hwnd) { return (int32_t)GetDpiForWindow((HWND)hwnd); }
 
+int32_t cuia_set_client_dip(void *hwnd, int32_t width_dip, int32_t height_dip) {
+    HWND h = (HWND)hwnd;
+    double scale = (double)GetDpiForWindow(h) / 96.0;
+    RECT wr, cr;
+    if (!GetWindowRect(h, &wr) || !GetClientRect(h, &cr)) return 0;
+    int frameW = (wr.right - wr.left) - (cr.right - cr.left);
+    int frameH = (wr.bottom - wr.top) - (cr.bottom - cr.top);
+    int cw = (int)(width_dip * scale + 0.5), ch = (int)(height_dip * scale + 0.5);
+    return MoveWindow(h, wr.left, wr.top, cw + frameW, ch + frameH, TRUE) ? 1 : 0;
+}
+
+int32_t cuia_close_window(void *hwnd) { return PostMessageW((HWND)hwnd, WM_CLOSE, 0, 0) ? 1 : 0; }
+
 uint32_t cuia_send_vk(uint16_t vk, int32_t key_up, int32_t extended) {
     INPUT in;
     ZeroMemory(&in, sizeof(in));
@@ -85,6 +98,13 @@ int32_t cuia_vk_for_char(uint16_t unit) {
     SHORT r = VkKeyScanW((WCHAR)unit);
     if (r == -1) return -1;
     return (int32_t)(uint16_t)r;
+}
+
+int32_t cuia_post_char(void *hwnd, uint16_t unit) {
+    SHORT r = VkKeyScanW((WCHAR)unit);
+    WORD scan = r == -1 ? 0 : (WORD)MapVirtualKeyW((UINT)(r & 0xFF), MAPVK_VK_TO_VSC);
+    LPARAM down = (LPARAM)(1 | ((LPARAM)scan << 16));
+    return PostMessageW((HWND)hwnd, WM_CHAR, (WPARAM)unit, down) ? 1 : 0;
 }
 
 int32_t cuia_element_from_window(void *hwnd, cuia_el *out) {

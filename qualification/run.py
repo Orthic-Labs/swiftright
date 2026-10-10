@@ -23,7 +23,11 @@ Rules (docs/architecture.md AD7 and section 11)
   * Tuple pinning: every stage that records exe, renderer or package hashes compares them with qualification/
     tuple-final.json (`--tuple FILE` picks another). `--no-tuple` runs unpinned and the run is non-qualifying (every
     pinned stage emits a skip, so the exit is 1).
-  * win-replay also records the Windows F1 schema-v0 trace (UIARecorder + F1Assemble) when compare is in the run.
+  * win-replay also records one Windows schema-v0 trace per config (UIARecorder + F1Assemble) when compare is in the run;
+    compare checks all 16 configs against the Mac schema-v0 baseline (conformance/accepted/<config>/trace-v0.json, else the
+    unpromoted Mac cross recording probes/sr0-o/f1-cross/cross/<config>/mac-trace-v0.json) with the reasoned adapt-v0.json, then
+    rejects the injected-fault traces (wrong focus, missing lifecycle event, wrong AX role). Historical input: --win-candidate-dir.
+    The caller holds the Dell desktop lock (D:\\Claude\\desktop.lock) for the recording jobs.
   * smoke runs BridgeSmoke twice: normal mode and timeout mode (`-SkipShutdown`).
   * package accepts several run directories per platform (profiles) and evaluates the union of their checks.
   * Canonical digest form sr0-a.canonical/v2: group by step, then node; per-node event order is significant.
@@ -88,6 +92,7 @@ F1_TREE = "D:\\Claude\\sr0-r08\\src"  # tuple 08 FreshOnBridge tree (verify-arti
 F1_BIN = F1_TREE + "\\scratch\\out\\Products\\Release-windows-x86_64"
 F1_PACKAGE = REPO / "probes" / "sr0-o" / "f1-cross"
 F1_STIMULUS = F1_PACKAGE / "f1-stimulus.json"
+CROSS_DIR = F1_PACKAGE / "cross"  # per-config stimulus.json, steps-win.json, steps-mac.json (scripts/gen-cross.py)
 TUPLE_FINAL = QUAL_DIR / "tuple-final.json"
 TUPLE_SCHEMA = "sr0-a.tuple/v1"
 TUPLE_MEMBERS = ("windows_renderer", "windows_fixture_exe", "windows_smoke_exe", "old_msix", "new_msix", "old_dmg", "new_dmg")
@@ -112,6 +117,15 @@ DEFAULT_MATRIX_CONFIGS = ("F1:none", "F2:none", "F3:list-0s", "F3:list-1s", "F3:
                           "F3:lazy-1s", "F3:lazy-3s", "F4:none", "F5:none", "F6:none", "F6:reduced", "F7:none",
                           "F8:none", "F9:none")
 DEFAULT_FIXTURES = tuple(CONFIGS)  # full manifest: all 16 SR0 configs
+
+
+def cross_config_id(matrix_config):
+    """Matrix config `FIXTURE:VARIANT` (run-matrix.sh) -> config id (accepted directory name): F3:list-0s is plain F3,
+    F6:reduced is F6-reduced, FIXTURE:none is the fixture."""
+    fixture, _, variant = matrix_config.partition(":")
+    if variant in ("", "none") or (fixture == "F3" and variant == "list-0s"):
+        return fixture
+    return f"{fixture}-{variant}"
 
 
 def config_spec(config):
@@ -210,6 +224,27 @@ def raw_digest(lines):
 CANONICAL_FORM = "sr0-a.canonical/v2"
 
 
+def _is_f6_completion(event):
+    p = event.get("payload") or {}
+    return (event.get("fixture") == "F6" and event.get("node_id") == "animation"
+            and p.get("phase") == "complete" and p.get("tag") in ("A", "B"))
+
+
+def f6_unordered_completions(seq):
+    """CONTRACT C9 (proposed): the F6 animation A-complete/B-complete pair is unordered. Only the two completion
+    events permute: they keep their slots and are re-assigned in tag order, so a duplicate, missing or misplaced
+    completion still changes the sequence. Mirrors normalize-hash.py f6_unordered_completions."""
+    events = [json.loads(line) for line in seq]
+    slots = [i for i, e in enumerate(events) if _is_f6_completion(e)]
+    if len(slots) < 2:
+        return seq
+    ordered = sorted((seq[i] for i in slots), key=lambda line: json.loads(line)["payload"]["tag"])
+    out = list(seq)
+    for i, line in zip(slots, ordered):
+        out[i] = line
+    return out
+
+
 def canonical_body(lines):
     """Canonical form v2 (CONTRACT section 3): group by driver step (steps keep their order), then by node.
     Nodes inside a step may permute, so node groups are sorted; each node's event sequence keeps its
@@ -222,7 +257,7 @@ def canonical_body(lines):
         nodes.setdefault(event.get("node_id", ""), []).append(line)
     parts = [CANONICAL_FORM]
     for step, nodes in steps.items():
-        groups = sorted(("\n".join(seq) for seq in nodes.values()))
+        groups = sorted("\n".join(f6_unordered_completions(seq)) for seq in nodes.values())
         parts.append(f"#{step}\n" + "\n".join(groups))
     return "\n".join(parts)
 
@@ -627,12 +662,16 @@ def mac_oracle_dry(log, fixtures, runs):
 
 # ---------------------------------------------------------------- compare stage (Mac accepted vs Windows candidate)
 
-def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir):
+def build_comparator():
+    package, tree_sha, _ = committed_package(COMPARATOR_PKG.relative_to(REPO))
+    return swift_product(package, BUILD_ROOT / "comparator" / tree_sha[:12], "sr0o-trace")
+
+
+def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir, comparator=None, baseline="accepted Mac baseline"):
     stage = "compare"
-    log.emit(stage, "start", fixture, reason=f"sr0o-trace compare {accepted_v0.name} vs {candidate_v0.name}")
+    log.emit(stage, "start", fixture, reason=f"sr0o-trace compare {baseline} {accepted_v0.name} vs {candidate_v0.name}")
     try:
-        package, tree_sha, _ = committed_package(COMPARATOR_PKG.relative_to(REPO))
-        comparator = swift_product(package, BUILD_ROOT / "comparator" / tree_sha[:12], "sr0o-trace")
+        comparator = comparator or build_comparator()
     except BuildError as exc:
         log.emit(stage, "fail", fixture, reason=str(exc))
         return False
@@ -647,16 +686,89 @@ def compare_stage(log, fixture, accepted_v0, candidate_v0, adapt, out_dir):
                             capture_output=True, text=True)
     report.write_text(result.stdout, encoding="utf-8")
     if result.returncode == 0:
-        log.emit(stage, "pass", fixture, ids, f"0 diffs; report {report.name}")
+        log.emit(stage, "pass", fixture, ids, f"0 diffs against the {baseline}; report {report.name}")
         return True
     if result.returncode == 1:
         try:
             diffs = len(json.loads(result.stdout).get("diffs", []))
         except (json.JSONDecodeError, AttributeError):
             diffs = "?"
-        log.emit(stage, "fail", fixture, ids, f"comparator reported {diffs} diffs; report {report.name}")
+        log.emit(stage, "fail", fixture, ids, f"comparator reported {diffs} diffs against the {baseline}; report {report.name}")
         return False
     log.emit(stage, "fail", fixture, ids, f"comparator error rc={result.returncode}: {result.stderr.strip()[:200]}")
+    return False
+
+
+# ---- injected semantic faults: a deliberately altered Windows trace must FAIL the comparison. Each control alters one
+# fact of the candidate (never the accepted baseline) and requires the comparator to report a NEW diff on the named leaf.
+# A comparator that passes the altered trace is vacuous, which fails the control (and the stage).
+
+FAULT_KINDS = {"wrong-focus": "focusedNodeId", "missing-lifecycle": "lifecycle.count", "wrong-role": "axNodes.role"}
+# config -> fault kinds applied after that config's real comparison (a few fixtures, different fact classes)
+FAULT_CONTROLS = {"F2": ("wrong-focus",), "F4": ("missing-lifecycle",), "F7": ("wrong-focus", "wrong-role"),
+                  "F8": ("wrong-role", "missing-lifecycle"), "F9": ("missing-lifecycle",)}
+
+
+def inject_fault(trace, kind):
+    """Returns (altered copy of the trace dict, description) or (None, reason) when the trace has nothing to alter."""
+    import copy
+    t = copy.deepcopy(trace)
+    obs = t.get("observations", [])
+    if kind == "wrong-focus":
+        for o in reversed(obs):
+            if o.get("focusedNodeId"):
+                other = next((n["id"] for ob in obs for n in (ob.get("axNodes") or [])
+                              if n["id"] != o["focusedNodeId"] and n["id"].endswith("/field")), None)
+                was = o["focusedNodeId"]
+                o["focusedNodeId"] = other or "row/00000000-0000-4000-8000-000000000000/field"
+                return t, f"step {o['stepId']}: focus {was} -> {o['focusedNodeId']}"
+        return None, "no observation has a focused node"
+    if kind == "missing-lifecycle":
+        for o in obs:
+            if o.get("lifecycle"):
+                gone = o["lifecycle"].pop()
+                return t, f"step {o['stepId']}: dropped lifecycle {gone['kind']} {gone['node']}"
+        return None, "no observation has lifecycle events"
+    if kind == "wrong-role":
+        for o in obs:
+            for n in o.get("axNodes") or []:
+                if n["role"] == "text-field":
+                    n["role"] = "button"
+                    return t, f"step {o['stepId']}: node {n['id']} role text-field -> button"
+        return None, "no text-field node"
+    raise ValueError(f"unknown fault kind {kind!r}")
+
+
+def diff_paths(report_text):
+    try:
+        return {(d["step"], d["path"]) for d in json.loads(report_text).get("diffs", [])}
+    except (json.JSONDecodeError, AttributeError, KeyError):
+        return set()
+
+
+def fault_control(log, config, kind, accepted_v0, candidate_v0, adapt, out_dir, comparator):
+    """One negative control. Emits a compare pass when the altered trace is rejected on the expected leaf."""
+    stage = "compare"
+    leaf = FAULT_KINDS[kind]
+    base = subprocess.run([str(comparator), "compare", str(accepted_v0), str(candidate_v0), "--adapt", str(adapt)],
+                          capture_output=True, text=True)
+    altered, what = inject_fault(json.loads(Path(candidate_v0).read_text(encoding="utf-8")), kind)
+    if altered is None:
+        log.emit(stage, "fail", config, reason=f"fault control {kind} not applicable: {what}")
+        return False
+    fault_dir = out_dir / "compare-faults"
+    fault_dir.mkdir(parents=True, exist_ok=True)
+    path = fault_dir / f"{config}-{kind}.json"
+    path.write_text(json.dumps(altered, indent=2, sort_keys=True), encoding="utf-8")
+    result = subprocess.run([str(comparator), "compare", str(accepted_v0), str(path), "--adapt", str(adapt)],
+                            capture_output=True, text=True)
+    (fault_dir / f"{config}-{kind}-report.json").write_text(result.stdout, encoding="utf-8")
+    ids = {"fault_candidate": sha_ref(sha256_file(path))}
+    new = sorted(p for _, p in (diff_paths(result.stdout) - diff_paths(base.stdout)) if p == leaf or p.startswith(leaf + "["))
+    if result.returncode == 1 and new:
+        log.emit(stage, "pass", config, ids, f"negative control {kind} rejected ({what}); new diff {new[0]}")
+        return True
+    log.emit(stage, "fail", config, ids, f"negative control {kind} NOT rejected on {leaf} (rc={result.returncode}, {what})")
     return False
 
 
@@ -746,40 +858,56 @@ def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=s
     return True
 
 
-def win_plan(configs, runs, out_dir, f1_trace=False):
+def win_plan(configs, runs, out_dir, cross_trace=False):
     plan = {"configs": list(configs), "runs_per_config": runs,
             "command": ["bash", str(MATRIX_SCRIPT), *configs],
             "env": {"OUT_DIR": str(out_dir / "win-matrix"), "RUNS": str(runs)},
             "transport": "win bridge (ssh) starting one interactive scheduled task per run",
             "desktop": "interactive Windows desktop session required"}
-    if f1_trace:
-        plan["f1_trace"] = f1_plan("<tag>", "<exe sha256 of the matrix runs>", "<renderer sha256 of the matrix runs>", out_dir)
+    if cross_trace:
+        plan["cross_traces"] = {cross_config_id(c): cross_plan(cross_config_id(c), "<tag>", "<exe sha256 of the matrix runs>",
+                                                               "<renderer sha256 of the matrix runs>", out_dir) for c in configs}
     return plan
 
 
-# ---- Windows F1 schema-v0 trace (compare input). The matrix self-test replay holds no UIA observations, so the trace
-# is a separate interactive job: UIARecorder (record) against FreshOnBridge --fixture F1 on the final build, then
-# F1Assemble win --keep-lists on the Mac (the form behind conformance/accepted/F1/trace-v0.json and win-trace-strict-w6).
+# ---- Windows schema-v0 cross traces (compare input), one per config. The matrix self-test replay holds no UIA
+# observations, so each trace is a separate interactive job: UIARecorder (record, window-targeted typing) against
+# FreshOnBridge with the config's flags on the final build, then F1Assemble win --keep-lists on the Mac (the form behind
+# conformance/accepted/F1/trace-v0.json). The Dell desktop lock (D:\Claude\desktop.lock) is the caller's to take.
 
-def f1_plan(tag, exe, renderer, out_dir):
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def cross_baseline(config):
+    """(Mac schema-v0 baseline, adaptations, origin) for one config. A promoted baseline in conformance/accepted/<config>/ wins;
+    otherwise the Mac cross recording kept next to the recorder plans is used and the origin says it is not promoted
+    (only `promote --approved-by` writes conformance/accepted)."""
+    accepted = ACCEPTED_ROOT / config / "trace-v0.json"
+    if accepted.exists():
+        return accepted, ACCEPTED_ROOT / config / "adapt-v0.json", "accepted Mac baseline"
+    return CROSS_DIR / config / "mac-trace-v0.json", CROSS_DIR / config / "adapt-v0.json", "unpromoted Mac cross recording"
+
+
+def cross_trace_path(out_dir, config):
+    return out_dir / "win-matrix" / "cross" / config / WIN_TRACE_FILE
+
+
+def cross_plan(config, tag, exe, renderer, out_dir):
     ps = "powershell -NoProfile -ExecutionPolicy Bypass -File"
     base_out = F1_BASE + "\\out"
     pulls = {"rec": f"winrec-{tag}.json", "side": f"winside-{tag}.json", "events": f"events-{tag}.txt"}
-    local = out_dir / "win-matrix" / "f1"
-    return {"tag": tag,
+    local = out_dir / "win-matrix" / "cross" / config
+    return {"config": config, "tag": tag,
             "verify": ["win", f"{ps} {F1_TREE}\\probes\\sr0-s\\fresh-on-bridge\\scripts\\verify-artifacts.ps1 -Base {F1_TREE} "
                               f"-ExpectExe {exe.upper()} -ExpectDll {renderer.upper()}"],
-            "record": ["win", f"{ps} {F1_BASE}\\scripts\\schedule-f1.ps1 -Mode record -Tag {tag} -Base {F1_BASE} "
-                              f"-Steps {F1_BASE}\\f1-steps-win.json -Recorder {F1_BASE}\\scratch\\release\\UIARecorder.exe -Bin {F1_BIN}"],
+            "record": ["win", f"{ps} {F1_BASE}\\scripts\\schedule-cross.ps1 -Config {config} -Tag {tag} "
+                              f"-Recorder {F1_BASE}\\scratch\\release\\UIARecorder.exe -Bin {F1_BIN}"],
             "pull": {key: ["win", f"{ps} {F1_BASE}\\scripts\\cat.ps1 -P {base_out}\\{name}"] for key, name in pulls.items()},
             "assemble": ["F1Assemble", "win", "--rec", str(local / pulls["rec"]), "--side", str(local / pulls["side"]),
-                         "--events", str(local / pulls["events"]), "--stimulus", str(F1_STIMULUS),
-                         "--out", str(out_dir / "win-matrix" / WIN_TRACE_FILE), "--keep-lists"],
-            "transport": "win bridge (ssh): one interactive scheduled task (schedule-f1.ps1), then read-only file pulls",
-            "desktop": "interactive Windows desktop session required"}
-
-
-ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+                         "--events", str(local / pulls["events"]), "--stimulus", str(CROSS_DIR / config / "stimulus.json"),
+                         "--out", str(cross_trace_path(out_dir, config)), "--keep-lists"],
+            "transport": "win bridge (ssh): one interactive scheduled task (schedule-cross.ps1), then read-only file pulls",
+            "desktop": "interactive Windows desktop session required (hold D:\\Claude\\desktop.lock)"}
 
 
 def f1_assemble(argv):
@@ -793,46 +921,45 @@ def f1_assemble(argv):
     return result.returncode, (result.stdout or "") + (result.stderr or "")
 
 
-def win_f1_trace(out_dir, exe, renderer, runner=subprocess.run, assembler=f1_assemble):
-    """Records the final-build Windows F1 trace and assembles out_dir/win-matrix/win-trace-v0.json.
+def win_cross_trace(out_dir, config, exe, renderer, runner=subprocess.run, assembler=f1_assemble):
+    """Records the final-build Windows trace of one config and assembles out_dir/win-matrix/cross/<config>/win-trace-v0.json.
     Returns (trace path or None, reason). The build must still be the matrix build (verify-artifacts.ps1)."""
-    tag = "qual-" + stamp().replace(":", "").replace(".", "")
-    plan = f1_plan(tag, exe, renderer, out_dir)
-    hint = (f"the F1 recorder tree {F1_BASE} needs scripts\\schedule-f1.ps1, f1-steps-win.json and "
-            f"scratch\\release\\UIARecorder.exe (probes/sr0-o/f1-cross/scripts/build-rec.ps1)")
+    tag = f"{config}-qual-" + stamp().replace(":", "").replace(".", "")
+    plan = cross_plan(config, tag, exe, renderer, out_dir)
+    hint = (f"the recorder tree {F1_BASE} needs scripts\\schedule-cross.ps1, run-cross.ps1, cross\\{config}\\steps-win.json "
+            f"and scratch\\release\\UIARecorder.exe (probes/sr0-o/f1-cross/scripts/build-rec.ps1)")
     verify = runner(plan["verify"], capture_output=True, text=True)
     if "ARTIFACT_OK" not in (verify.stdout or ""):
-        return None, f"F1 record refused: the Dell build no longer equals the matrix build ({(verify.stdout or '').strip()[-160:]})"
+        return None, f"{config} record refused: the Dell build no longer equals the matrix build ({(verify.stdout or '').strip()[-160:]})"
     record = runner(plan["record"], capture_output=True, text=True)
     text = (record.stdout or "") + (record.stderr or "")
-    (out_dir / "win-matrix").mkdir(parents=True, exist_ok=True)
-    (out_dir / "win-matrix" / "f1-record.log").write_text(text, encoding="utf-8")
-    if "last_result=0" not in text or "recorder exit=0" not in text or "RECORDER TIMEOUT" in text:
-        return None, f"F1 recorder job did not finish cleanly ({text.strip()[-160:] or 'no output'}); {hint}"
-    local = out_dir / "win-matrix" / "f1"
+    local = out_dir / "win-matrix" / "cross" / config
     local.mkdir(parents=True, exist_ok=True)
+    (local / "record.log").write_text(text, encoding="utf-8")
+    if "last_result=0" not in text or "recorder exit=0" not in text or "RECORDER TIMEOUT" in text:
+        return None, f"{config} recorder job did not finish cleanly ({text.strip()[-160:] or 'no output'}); {hint}"
     names = {"rec": f"winrec-{tag}.json", "side": f"winside-{tag}.json", "events": f"events-{tag}.txt"}
     for key, command in plan["pull"].items():
         pulled = runner(command, capture_output=True, text=True)
         body = ANSI_RE.sub("", pulled.stdout or "")
         if pulled.returncode != 0 or not body.strip():
-            return None, f"F1 file pull failed: {names[key]} (rc={pulled.returncode})"
+            return None, f"{config} file pull failed: {names[key]} (rc={pulled.returncode})"
         (local / names[key]).write_text(body, encoding="utf-8")
     rc, output = assembler(plan["assemble"])
-    trace = out_dir / "win-matrix" / WIN_TRACE_FILE
+    trace = cross_trace_path(out_dir, config)
     if rc != 0 or not trace.exists():
-        return None, f"F1Assemble failed rc={rc}: {output.strip()[-160:]}"
-    return trace, f"F1 schema-v0 trace {trace.name} from tag {tag}"
+        return None, f"F1Assemble failed rc={rc} for {config}: {output.strip()[-160:]}"
+    return trace, f"{config} schema-v0 trace from tag {tag}"
 
 
 def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which,
-              tuple_pin=None, f1_trace=False, f1_recorder=win_f1_trace):
-    """Replays the SR0 matrix on Windows. f1_trace also records the Windows F1 schema-v0 trace that compare consumes
-    (out_dir/win-matrix/win-trace-v0.json). With a tuple the exe and renderer must be the tuple's FreshOnBridge and
-    renderer."""
+              tuple_pin=None, cross_trace=False, cross_recorder=win_cross_trace):
+    """Replays the SR0 matrix on Windows. cross_trace also records one Windows schema-v0 trace per config, which compare
+    consumes (out_dir/win-matrix/cross/<config>/win-trace-v0.json). With a tuple the exe and renderer must be the tuple's
+    FreshOnBridge and renderer."""
     stage = "win-replay"
-    plan = win_plan(configs, runs, out_dir, f1_trace)
-    log.emit(stage, "start", None, reason=f"{len(configs)} configs x {runs} runs" + (" + F1 schema-v0 trace" if f1_trace else ""))
+    plan = win_plan(configs, runs, out_dir, cross_trace)
+    log.emit(stage, "start", None, reason=f"{len(configs)} configs x {runs} runs" + (f" + {len(configs)} schema-v0 cross traces" if cross_trace else ""))
     if dry_run:
         print("PLAN " + json.dumps(plan, indent=2), file=sys.stderr)
         log.emit(stage, "skip", None, reason="dry-run: plan printed to stderr; no Windows job started")
@@ -878,13 +1005,17 @@ def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess
         log.emit(stage, "fail", None, ids, "Windows build is not the tuple build: " + "; ".join(problems))
         return False
     note = ""
-    if f1_trace:
-        trace, note = f1_recorder(out_dir, exes[0], renderers[0], runner=runner)
-        if trace is None:
-            log.emit(stage, "fail", None, ids, note)
-            return False
-        ids["windows_f1_trace_v0"] = sha_ref(sha256_file(trace))
-        note = "; " + note
+    if cross_trace:
+        digests = []
+        for config in configs:
+            config_id = cross_config_id(config)
+            trace, why = cross_recorder(out_dir, config_id, exes[0], renderers[0], runner=runner)
+            if trace is None:
+                log.emit(stage, "fail", None, ids, why)
+                return False
+            digests.append(f"{config_id}:{sha256_file(trace)}")
+        ids["windows_cross_traces_v0"] = sha_ref(sha256_text("\n".join(digests)))
+        note = f"; {len(digests)} schema-v0 cross traces"
     log.emit(stage, "pass", None, {**ids, **tuple_ids(tuple_pin)},
              f"{len(passed)}/{expected} Windows runs PASS with artifact ids" + (" (tuple-pinned)" if tuple_pin else " (unpinned)") + note)
     return True
@@ -1332,7 +1463,7 @@ def cmd_run(args):
                     cmd_mac_oracle_real(log, args.fixtures, args.runs, out_dir / "mac-oracle")
             elif stage == "win-replay":
                 win_stage(log, args.configs, args.win_runs, out_dir, dry, args.confirm_windows_gui,
-                          tuple_pin=tuple_pin, f1_trace="compare" in stages)
+                          tuple_pin=tuple_pin, cross_trace="compare" in stages)
             elif stage == "compare":
                 run_compare(log, args, stages, out_dir, dry)
             elif stage == "smoke":
@@ -1356,23 +1487,45 @@ def cmd_run(args):
     return 1 if (log.failures or log.skips) else 0
 
 
-def run_compare(log, args, stages, out_dir, dry):
+def compare_candidates(args, stages, out_dir):
+    """Returns [(config id, candidate path or None, origin)] for every config of --configs (default: all 16)."""
+    out = []
+    for matrix_config in args.configs:
+        config = cross_config_id(matrix_config)
+        if "win-replay" in stages:
+            out.append((config, cross_trace_path(out_dir, config), "fresh from win-replay"))
+        elif args.win_candidate_dir:
+            out.append((config, Path(args.win_candidate_dir) / config / WIN_TRACE_FILE, "historical directory --win-candidate-dir"))
+        elif args.win_candidate and config == "F1":
+            out.append((config, Path(args.win_candidate), "historical file named by --win-candidate"))
+        else:
+            out.append((config, None, "no Windows trace: run win-replay first or name --win-candidate-dir"))
+    return out
+
+
+def run_compare(log, args, stages, out_dir, dry, comparator=None):
+    """Compares the Windows schema-v0 trace of every config with its accepted Mac schema-v0 trace (conformance/accepted/
+    <config>/trace-v0.json, reasoned adaptations in adapt-v0.json), then runs the injected-fault controls of the configs
+    that have them. A missing trace or baseline is a failure."""
     if dry:
-        log.emit("compare", "skip", "F1", reason="dry-run: compare needs a built comparator and a Windows trace; plan only")
+        log.emit("compare", "skip", None, reason=f"dry-run: compare needs a built comparator and {len(args.configs)} Windows traces; plan only")
         return
-    if "win-replay" in stages:
-        candidate = out_dir / "win-matrix" / WIN_TRACE_FILE
-        origin = "fresh from win-replay"
-    elif args.win_candidate:
-        candidate, origin = args.win_candidate, "historical file named by --win-candidate"
-    else:
-        log.emit("compare", "fail", "F1", reason="no Windows trace: run win-replay first or name --win-candidate")
+    try:
+        comparator = comparator or build_comparator()
+    except BuildError as exc:
+        log.emit("compare", "fail", None, reason=str(exc))
         return
-    if not Path(candidate).exists():
-        log.emit("compare", "fail", "F1", reason=f"Windows trace missing ({origin}): {candidate}")
-        return
-    compare_stage(log, "F1", ACCEPTED_ROOT / "F1" / "trace-v0.json", Path(candidate),
-                  ACCEPTED_ROOT / "F1" / "adapt-v0.json", out_dir)
+    for config, candidate, origin in compare_candidates(args, stages, out_dir):
+        if candidate is None:
+            log.emit("compare", "fail", config, reason=origin)
+        elif not Path(candidate).exists():
+            log.emit("compare", "fail", config, reason=f"Windows trace missing ({origin}): {candidate}")
+        else:
+            accepted, adapt, baseline = cross_baseline(config)
+            compare_stage(log, config, accepted, Path(candidate), adapt, out_dir, comparator=comparator, baseline=baseline)
+            if accepted.exists() and adapt.exists():
+                for kind in FAULT_CONTROLS.get(config, ()):
+                    fault_control(log, config, kind, accepted, Path(candidate), adapt, out_dir, comparator)
 
 
 def cmd_single(args, command):
@@ -1404,7 +1557,9 @@ def build_parser():
                        help="win-replay configs FIXTURE:VARIANT (default: the 16 SR0 configs)")
     run_p.add_argument("--win-runs", type=int, default=3)
     run_p.add_argument("--win-candidate", type=Path, default=None,
-                       help="historical Windows schema-v0 trace for compare when win-replay is not in this run")
+                       help="historical Windows schema-v0 trace of F1 for compare when win-replay is not in this run")
+    run_p.add_argument("--win-candidate-dir", type=Path, default=None,
+                       help="historical directory <config>/win-trace-v0.json for compare when win-replay is not in this run")
     run_p.add_argument("--package-receipts", nargs="+", type=Path,
                        help=f"run directories or parents (default {PACKAGE_RECEIPT_DIR}); several runs of one platform "
                             "are profiles of one artifact and are evaluated as a union")

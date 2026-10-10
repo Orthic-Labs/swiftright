@@ -24,12 +24,22 @@ let sourceHash = "sha256:" + SHA256.hash(data: stimData).map { String(format: "%
 let stim = try JSONSerialization.jsonObject(with: stimData) as! [String: Any]
 let logicalById: [String: String] = Dictionary(uniqueKeysWithValues: (stim["steps"] as! [[String: Any]]).map { ($0["id"] as! String, $0["logicalAction"] as! String) })
 let stepOrder = (stim["steps"] as! [[String: Any]]).map { $0["id"] as! String }
-let modelRows = (stim["modelRows"] as! [String])     // identifiers to put in `model`
+// `modelRows`: a list of field identifiers to put in `model`, or "all" for every row/<uuid>/field node in the tree.
+let modelRowsAll = (stim["modelRows"] as? String) == "all"
+let modelRows = (stim["modelRows"] as? [String]) ?? []
+let fixtureId = (stim["fixtureId"] as? String) ?? "F1"
+// Steps whose effect lines are not compared (stimulus.json `ignoreEffectsInSteps`, each with a documented reason): F9 close.
+let ignoreEffectsInSteps = Set((stim["ignoreEffectsInSteps"] as? [String]) ?? [])
+let declaredEdges: [TEdge] = ((stim["declaredOrder"] as? [[String: String]]) ?? []).compactMap {
+    guard let b = $0["before"], let a = $0["after"] else { return nil }
+    return TEdge(before: b, after: a)
+}
 
 struct RawStep {
     var id: String, native: String
     var startNs: UInt64, endNs: UInt64
     var tree: RNode
+    var closed = false      // the step closed the window: no tree is observable
     var focusedIdentifier: String?
     var focusRole: String?
     var selection: TRange?
@@ -67,7 +77,8 @@ if mode == "mac" {
         if let o = focus["selection"] as? [String: Any] { sel = TRange(location: (o["location"] as! NSNumber).intValue, length: (o["length"] as! NSNumber).intValue) }
         raw.append(RawStep(id: s["id"] as! String, native: s["nativeMapping"] as! String,
                            startNs: (s["monoStartNs"] as! NSNumber).uint64Value, endNs: (s["monoEndNs"] as! NSNumber).uint64Value,
-                           tree: macNode(s["tree"] as! [String: Any]),
+                           tree: (s["tree"] as? [String: Any]).map(macNode) ?? RNode(role: "AXApplication"),
+                           closed: (s["closed"] as? Bool) ?? (s["tree"] == nil),
                            focusedIdentifier: (focus["identifier"] as? String).flatMap { $0.isEmpty ? nil : $0 },
                            focusRole: focus["role"] as? String, selection: sel))
     }
@@ -86,7 +97,8 @@ if mode == "mac" {
         let tree = winNode(extras[i]["tree"] as! [String: Any])
         raw.append(RawStep(id: steps[i]["id"] as! String, native: steps[i]["nativeMapping"] as! String,
                            startNs: (extras[i]["monoStartNs"] as! NSNumber).uint64Value, endNs: (extras[i]["monoEndNs"] as! NSNumber).uint64Value,
-                           tree: tree, focusedIdentifier: nil, focusRole: nil, selection: sel))
+                           tree: tree, closed: obs[i]["axNodes"] == nil || obs[i]["axNodes"] is NSNull,
+                           focusedIdentifier: nil, focusRole: nil, selection: sel))
     }
 } else { eprint("mode must be mac or win"); exit(2) }
 
@@ -110,7 +122,8 @@ for s in raw {
     }
     if focused == "window" { focused = nil; applied.insert("A9") }   // A9: window-level focus == nothing focused
     var model: [String: String] = [:]
-    for ident in modelRows {
+    let idents = modelRowsAll ? n.nodes.map(\.id).filter { $0.hasPrefix("row/") && $0.hasSuffix("/field") } : modelRows
+    for ident in idents {
         if let node = n.nodes.first(where: { $0.id == ident }), let v = node.value {
             let key = ident.hasSuffix("/field") ? String(ident.dropLast("/field".count)) : ident
             model[key] = v
@@ -118,11 +131,13 @@ for s in raw {
     }
     let m = mapping.perStep[s.id] ?? MappedStep()
     steps.append(TStep(id: s.id, logicalAction: logicalById[s.id]!, nativeMapping: s.native, timestamp: "mono_ns \(s.startNs)"))
-    observations.append(TObservation(stepId: s.id, model: model, focusedNodeId: focused, selection: s.selection,
-                                     lifecycle: m.lifecycle, effects: m.effects, axNodes: n.nodes))
+    observations.append(TObservation(stepId: s.id, model: s.closed ? [:] : model, focusedNodeId: s.closed ? nil : focused,
+                                     selection: (s.closed || focused == nil) ? nil : s.selection,   // the selection belongs to the focused canonical node
+                                     lifecycle: m.lifecycle, effects: ignoreEffectsInSteps.contains(s.id) ? [] : canonicalEffects(m.effects),
+                                     axNodes: s.closed ? nil : n.nodes))
 }
 
-let trace = TTrace(fixtureId: "F1", sourceHash: sourceHash, platform: platform, steps: steps, observations: observations, declaredOrder: [])
+let trace = TTrace(fixtureId: fixtureId, sourceHash: sourceHash, platform: platform, steps: steps, observations: observations, declaredOrder: declaredEdges)
 try encodePretty(trace).write(to: URL(fileURLWithPath: outPath))
 let notes: [String: Any] = ["mode": mode, "keepLists": keepLists, "adaptationsApplied": applied.sorted(), "excludedEvents": mapping.excluded,
                             "eventCount": events.count, "sourceHash": sourceHash]

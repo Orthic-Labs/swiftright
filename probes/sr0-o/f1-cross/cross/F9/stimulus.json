@@ -1,0 +1,19 @@
+{
+  "description": "F9 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F9",
+  "ignoreEffectsInSteps": [
+    "close_window"
+  ],
+  "ignoreEffectsReason": "Windows' in-process script releases the pending engine calls after the close (late results rejected); the Mac interactive process exits when its last window closes, so it can never receive that release. The Windows self-test asserts the late-result rejection itself.",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; row tasks and the screen task pending; snapshot"
+    },
+    {
+      "id": "close_window",
+      "logicalAction": "close the window; the runtime tears down tasks and rejects late results"
+    }
+  ]
+}

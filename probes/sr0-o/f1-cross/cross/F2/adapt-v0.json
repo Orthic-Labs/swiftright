@@ -1,0 +1,54 @@
+[
+  {
+    "allowAnyValue": true,
+    "field": "steps.nativeMapping",
+    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"
+  },
+  {
+    "field": "model",
+    "mapping": {
+      "<absent>": "Row 2"
+    },
+    "nodeId": "row/F0000002-0000-4000-8000-000000000002",
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  },
+  {
+    "field": "axNodes.duplicateId",
+    "mapping": {
+      "2 duplicates": "0 duplicates"
+    },
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  },
+  {
+    "field": "axNodes.presence",
+    "mapping": {
+      "<absent>": "role=text-field"
+    },
+    "nodeId": "row/F0000002-0000-4000-8000-000000000002/field",
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  },
+  {
+    "field": "axNodes.presence",
+    "mapping": {
+      "<absent>": "role=static-text"
+    },
+    "nodeId": "row/F0000002-0000-4000-8000-000000000002/local",
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  },
+  {
+    "field": "axNodes.parent",
+    "mapping": {
+      "anon:anon:window#1#1": "anon:anon:window#1#7"
+    },
+    "nodeId": "row/F0000002-0000-4000-8000-000000000003/field",
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  },
+  {
+    "field": "axNodes.parent",
+    "mapping": {
+      "anon:anon:window#1#1": "anon:anon:window#1#7"
+    },
+    "nodeId": "row/F0000002-0000-4000-8000-000000000003/local",
+    "reason": "F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals after focusing another row). CONTRACT F2 asserts the accessibility order is UPDATED, which Windows meets: the expected value here is the stale Mac one, the allowed Windows value is the correct order."
+  }
+]

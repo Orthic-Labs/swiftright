@@ -1,0 +1,19 @@
+{
+  "description": "F2 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F2",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot"
+    },
+    {
+      "id": "focus_row3",
+      "logicalAction": "focus row 3 field"
+    },
+    {
+      "id": "type_dash_x_then_move",
+      "logicalAction": "type -x; model moves row 3 to offset 8"
+    }
+  ]
+}

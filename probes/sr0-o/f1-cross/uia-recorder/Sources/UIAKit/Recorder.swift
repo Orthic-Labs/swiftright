@@ -15,6 +15,7 @@ public final class Recorder {
     let opts: RecorderOptions
     var hwnd: UnsafeMutableRawPointer
     var root: UIAElement
+    var closed = false
 
     public init(_ opts: RecorderOptions) throws {
         self.opts = opts
@@ -59,6 +60,14 @@ public final class Recorder {
         case "wait":
             Thread.sleep(forTimeInterval: Double(op.ms ?? 0) / 1000)
             return "waited \(op.ms ?? 0) ms"
+        case "resize":
+            guard let w = op.width, let h = op.height else { throw UIAError(what: "resize needs width and height") }
+            guard cuia_set_client_dip(hwnd, Int32(w), Int32(h)) == 1 else { throw UIAError(what: "MoveWindow failed") }
+            return "resized \(w)x\(h) DIP"
+        case "close":
+            guard cuia_close_window(hwnd) == 1 else { throw UIAError(what: "PostMessage(WM_CLOSE) failed") }
+            closed = true
+            return "WM_CLOSE posted"
         case "touch":
             // Harness release signal: creates the file named by env SR0O_RELEASE_FLAG (read by the fixture's driver).
             guard let path = ProcessInfo.processInfo.environment["SR0O_RELEASE_FLAG"], !path.isEmpty else { throw UIAError(what: "touch: SR0O_RELEASE_FLAG not set") }
@@ -70,7 +79,10 @@ public final class Recorder {
             repeat {
                 let tree = auto.walk(root)
                 let norm = WinNormalizer.normalize(tree)
-                if let n = Resolve.find(t, in: tree, ids: norm.idByIndex), op.value == nil || n.value == op.value {
+                let hit = Resolve.find(t, in: tree, ids: norm.idByIndex)
+                if op.absent == true {
+                    if hit == nil { return "absent" }
+                } else if let n = hit, op.value == nil || n.value == op.value {
                     return "found"
                 }
                 Thread.sleep(forTimeInterval: 0.05)
@@ -94,6 +106,10 @@ public final class Recorder {
             return "selected \(op.location ?? 0)+\(op.length ?? 0)"
         case "type", "key", "command":
             if let t = op.target { try focus(try resolve(t)) }
+            if op.op == "type", ProcessInfo.processInfo.environment["SR0O_KEY_DELIVERY"] == "targeted" {
+                try VKInput.typeTargeted(op.text ?? "", hwnd: hwnd)
+                return "posted (window-targeted WM_CHAR)"
+            }
             guard ensureForeground() else { throw UIAError(what: "target window is not foreground; refusing to send keys") }
             switch op.op {
             case "type": try VKInput.type(op.text ?? "")
@@ -146,6 +162,12 @@ public final class Recorder {
     }
 
     private func observe(_ spec: StepSpec, results: [OpResult]) -> (WObservation, StepExtra) {
+        if closed {
+            // The window is gone (close op): nothing is observable. The sidecar tree is a bare window node.
+            var extra = StepExtra(stepId: spec.id, opResults: results, tree: UIANode(index: 0, controlType: "Window"))
+            extra.focusedAutomationId = nil
+            return (WObservation(stepId: spec.id, model: [:], focusedNodeId: nil, selection: nil, lifecycle: [], effects: [], axNodes: nil), extra)
+        }
         let tree = auto.walk(root)
         let norm = WinNormalizer.normalize(tree)
         var extra = StepExtra(stepId: spec.id, opResults: results, tree: tree)

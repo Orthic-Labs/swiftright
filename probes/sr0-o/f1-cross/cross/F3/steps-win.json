@@ -1,0 +1,39 @@
+{
+  "fixtureId": "F3",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "capture": true,
+      "id": "focus_row4",
+      "logicalAction": "focus row 4 field",
+      "ops": [
+        {
+          "op": "focus",
+          "target": {
+            "id": "row/F0000003-0000-4000-8000-000000000004/field"
+          }
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "capture": true,
+      "id": "type_x_remove_reinsert",
+      "logicalAction": "type x; model removes row 4, reinserts it at index 3, engine releases all",
+      "ops": [
+        {
+          "op": "type",
+          "text": "x"
+        }
+      ],
+      "settleMs": 3500
+    }
+  ]
+}

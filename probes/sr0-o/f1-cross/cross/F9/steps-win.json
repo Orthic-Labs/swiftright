@@ -1,0 +1,24 @@
+{
+  "fixtureId": "F9",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch; row tasks and the screen task pending; snapshot",
+      "ops": [],
+      "settleMs": 3000
+    },
+    {
+      "capture": true,
+      "id": "close_window",
+      "logicalAction": "close the window; the runtime tears down tasks and rejects late results",
+      "ops": [
+        {
+          "op": "close"
+        }
+      ],
+      "settleMs": 1500
+    }
+  ]
+}

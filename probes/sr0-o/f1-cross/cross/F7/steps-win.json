@@ -1,0 +1,65 @@
+{
+  "fixtureId": "F7",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "capture": true,
+      "id": "focus_row2",
+      "logicalAction": "focus row 2 field",
+      "ops": [
+        {
+          "op": "focus",
+          "target": {
+            "id": "row/F0000007-0000-4000-8000-000000000002/field"
+          }
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "capture": true,
+      "id": "type_ka",
+      "logicalAction": "type ka",
+      "ops": [
+        {
+          "op": "type",
+          "text": "ka"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "capture": true,
+      "id": "release_and_compose",
+      "logicalAction": "engine releases insert-above; the IME composition n, na commits as 'na'",
+      "ops": [
+        {
+          "op": "touch"
+        },
+        {
+          "ms": 15000,
+          "op": "waitFor",
+          "target": {
+            "id": "row/F0000007-0000-4000-8000-000000000099/field"
+          }
+        },
+        {
+          "ms": 15000,
+          "op": "waitFor",
+          "target": {
+            "id": "row/F0000007-0000-4000-8000-000000000002/field"
+          },
+          "value": "Row 2kana"
+        }
+      ],
+      "settleMs": 1000
+    }
+  ]
+}

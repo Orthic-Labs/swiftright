@@ -1,0 +1,27 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F9"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; row tasks and the screen task pending; snapshot",
+      "ops": [],
+      "settleMs": 3000
+    },
+    {
+      "id": "close_window",
+      "logicalAction": "close the window; the runtime tears down tasks and rejects late results",
+      "ops": [
+        {
+          "json": {
+            "step": "close-window"
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 1500
+    }
+  ]
+}

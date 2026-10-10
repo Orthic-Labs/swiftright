@@ -1,0 +1,23 @@
+{
+  "description": "F7 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F7",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot"
+    },
+    {
+      "id": "focus_row2",
+      "logicalAction": "focus row 2 field"
+    },
+    {
+      "id": "type_ka",
+      "logicalAction": "type ka"
+    },
+    {
+      "id": "release_and_compose",
+      "logicalAction": "engine releases insert-above; the IME composition n, na commits as 'na'"
+    }
+  ]
+}

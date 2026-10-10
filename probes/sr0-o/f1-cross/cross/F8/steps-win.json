@@ -1,0 +1,88 @@
+{
+  "fixtureId": "F8",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "capture": true,
+      "id": "invoke_insert_above",
+      "logicalAction": "activate the Insert above button; the engine commits it, then two restarts and a stale release",
+      "ops": [
+        {
+          "op": "invoke",
+          "target": {
+            "name": "Insert above",
+            "type": "Button"
+          }
+        },
+        {
+          "ms": 30000,
+          "op": "waitFor",
+          "target": {
+            "id": "row/F0000008-0000-4000-8000-000000000101/field"
+          }
+        }
+      ],
+      "settleMs": 2500
+    },
+    {
+      "capture": true,
+      "id": "set_value_row3",
+      "logicalAction": "set row 3 value to 'AX value' through the accessibility text-replacement route (Mac: AXSelectedText over a full AXSelectedTextRange, because SwiftUI ignores AXValue writes; Windows: ValuePattern.SetValue)",
+      "ops": [
+        {
+          "op": "setValue",
+          "target": {
+            "id": "row/F0000008-0000-4000-8000-000000000003/field"
+          },
+          "value": "AX value"
+        }
+      ],
+      "settleMs": 600
+    },
+    {
+      "capture": true,
+      "id": "focus_row3",
+      "logicalAction": "focus row 3 field",
+      "ops": [
+        {
+          "op": "focus",
+          "target": {
+            "id": "row/F0000008-0000-4000-8000-000000000003/field"
+          }
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "capture": true,
+      "id": "delete_row6",
+      "logicalAction": "activate the Delete button of row 6",
+      "ops": [
+        {
+          "op": "invoke",
+          "target": {
+            "after": "row/F0000008-0000-4000-8000-000000000006/field",
+            "name": "Delete",
+            "type": "Button"
+          }
+        },
+        {
+          "absent": true,
+          "ms": 8000,
+          "op": "waitFor",
+          "target": {
+            "id": "row/F0000008-0000-4000-8000-000000000006/field"
+          }
+        }
+      ],
+      "settleMs": 800
+    }
+  ]
+}

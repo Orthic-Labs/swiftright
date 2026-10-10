@@ -1,0 +1,39 @@
+{
+  "fixtureId": "F2",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "capture": true,
+      "id": "focus_row3",
+      "logicalAction": "focus row 3 field",
+      "ops": [
+        {
+          "op": "focus",
+          "target": {
+            "id": "row/F0000002-0000-4000-8000-000000000003/field"
+          }
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "capture": true,
+      "id": "type_dash_x_then_move",
+      "logicalAction": "type -x; model moves row 3 to offset 8",
+      "ops": [
+        {
+          "op": "type",
+          "text": "-x"
+        }
+      ],
+      "settleMs": 1500
+    }
+  ]
+}

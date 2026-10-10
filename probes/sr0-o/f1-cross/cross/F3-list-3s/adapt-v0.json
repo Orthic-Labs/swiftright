@@ -1,0 +1,21 @@
+[
+  {
+    "allowAnyValue": true,
+    "field": "steps.nativeMapping",
+    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"
+  },
+  {
+    "field": "focusedNodeId",
+    "mapping": {
+      "<none>": "row/F0000003-0000-4000-8000-000000000004/field"
+    },
+    "reason": "F3 List: after the remove/reinsert the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder is not restored on the recreated cell). Windows restores focus to the field and UIA reports it, matching the FocusState oracle. Only this one transition is allowed."
+  },
+  {
+    "field": "selection",
+    "mapping": {
+      "<none>": "location=0 length=0"
+    },
+    "reason": "F3 List: after the remove/reinsert the Mac @FocusState event reports row 4 focused (the RESULT.md oracle: List restores focus) but the Mac AX focused element is the outline, not the field (AppKit first responder is not restored on the recreated cell). Windows restores focus to the field and UIA reports it, matching the FocusState oracle. Only this one transition is allowed."
+  }
+]

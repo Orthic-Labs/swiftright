@@ -156,8 +156,9 @@ public struct Selector: Codable, Sendable, Equatable {
     public var name: String?
     public var type: String?      // UIA control type name, e.g. "Button"
     public var nth: Int?          // pick the nth match (0-based) when several match
-    public init(id: String? = nil, name: String? = nil, type: String? = nil, nth: Int? = nil) {
-        self.id = id; self.name = name; self.type = type; self.nth = nth
+    public var after: String?     // only nodes after (document order) the node with this AutomationId / canonical id
+    public init(id: String? = nil, name: String? = nil, type: String? = nil, nth: Int? = nil, after: String? = nil) {
+        self.id = id; self.name = name; self.type = type; self.nth = nth; self.after = after
     }
     public var summary: String {
         var parts: [String] = []
@@ -165,6 +166,7 @@ public struct Selector: Codable, Sendable, Equatable {
         if let type { parts.append("type=\(type)") }
         if let name { parts.append("name=\(name)") }
         if let nth { parts.append("nth=\(nth)") }
+        if let after { parts.append("after=\(after)") }
         return parts.joined(separator: ",")
     }
 }
@@ -178,10 +180,13 @@ public struct Op: Codable, Sendable, Equatable {
     public var location: Int?      // select (UTF-16)
     public var length: Int?
     public var ms: Int?            // wait
+    public var width: Int?         // resize: client width in DIP
+    public var height: Int?        // resize: client height in DIP
+    public var absent: Bool?       // waitFor: wait until the node is gone instead of present
     public init(op: String, target: Selector? = nil, text: String? = nil, value: String? = nil,
-                location: Int? = nil, length: Int? = nil, ms: Int? = nil) {
+                location: Int? = nil, length: Int? = nil, ms: Int? = nil, width: Int? = nil, height: Int? = nil, absent: Bool? = nil) {
         self.op = op; self.target = target; self.text = text; self.value = value
-        self.location = location; self.length = length; self.ms = ms
+        self.location = location; self.length = length; self.ms = ms; self.width = width; self.height = height; self.absent = absent
     }
 }
 
@@ -221,15 +226,17 @@ public enum NativeMapping {
         case "focus": return "UIA SetFocus\(t)"
         case "invoke": return "UIA InvokePattern.Invoke\(t)"
         case "setValue": return "UIA ValuePattern.SetValue(\(o.value ?? ""))\(t)"
-        case "type": return "SendInput VK keys '\(o.text ?? "")'\(t)"
+        case "type": return "type '\(o.text ?? "")'\(t) (SendInput VK keys, or WM_CHAR posted to the window when SR0O_KEY_DELIVERY=targeted)"
         case "key": return "SendInput VK \(o.text ?? "")\(t)"
         case "command":
             let m = ["copy": "Ctrl-C", "paste": "Ctrl-V", "undo": "Ctrl-Z", "redo": "Ctrl-Y", "selectAll": "Ctrl-A"]
             return "SendInput \(m[o.text ?? ""] ?? o.text ?? "?")\(t)"
         case "select": return "UIA TextPattern select UTF-16 \(o.location ?? 0)+\(o.length ?? 0)\(t)"
         case "wait": return "wait \(o.ms ?? 0) ms"
+        case "resize": return "MoveWindow client \(o.width ?? 0)x\(o.height ?? 0) DIP (window-targeted)"
+        case "close": return "WM_CLOSE posted to the fixture window"
         case "touch": return "harness release signal file (fake-engine release)"
-        case "waitFor": return "UIA poll until node present\(t) (settlement, timeout \(o.ms ?? 10000) ms)"
+        case "waitFor": return "UIA poll until node \(o.absent == true ? "absent" : "present")\(t) (settlement, timeout \(o.ms ?? 10000) ms)"
         default: return o.op
         }
     }
@@ -239,7 +246,13 @@ public enum NativeMapping {
 
 public enum Resolve {
     public static func find(_ s: Selector, in root: UIANode, ids: [Int: String]) -> UIANode? {
-        let hits = root.flatten().filter { n in
+        let all = root.flatten()
+        var start = 0
+        if let anchor = s.after {
+            guard let at = all.firstIndex(where: { $0.automationId == anchor || ids[$0.index] == anchor }) else { return nil }
+            start = at + 1
+        }
+        let hits = all[start...].filter { n in
             if let id = s.id, n.automationId != id, ids[n.index] != id { return false }
             if let t = s.type, n.controlType != t { return false }
             if let nm = s.name, n.name != nm { return false }

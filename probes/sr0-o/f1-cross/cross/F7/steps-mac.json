@@ -1,0 +1,63 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F7"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "id": "focus_row2",
+      "logicalAction": "focus row 2 field",
+      "ops": [
+        {
+          "id": "row/F0000007-0000-4000-8000-000000000002/field",
+          "op": "focus"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "type_ka",
+      "logicalAction": "type ka",
+      "ops": [
+        {
+          "expectId": "row/F0000007-0000-4000-8000-000000000002/field",
+          "expectValue": "Row 2ka",
+          "op": "type",
+          "text": "ka"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "release_and_compose",
+      "logicalAction": "engine releases insert-above; the IME composition n, na commits as 'na'",
+      "ops": [
+        {
+          "json": {
+            "key": "insert-above",
+            "step": "release",
+            "value": 0
+          },
+          "op": "stdin"
+        },
+        {
+          "id": "row/F0000007-0000-4000-8000-000000000099/field",
+          "op": "waitNode"
+        },
+        {
+          "expectId": "row/F0000007-0000-4000-8000-000000000002/field",
+          "expectValue": "Row 2kana",
+          "op": "typeChunk",
+          "text": "na"
+        }
+      ],
+      "settleMs": 1000
+    }
+  ]
+}

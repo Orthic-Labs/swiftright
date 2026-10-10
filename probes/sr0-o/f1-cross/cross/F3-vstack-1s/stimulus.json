@@ -1,0 +1,19 @@
+{
+  "description": "F3-vstack-1s cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F3-vstack-1s",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot"
+    },
+    {
+      "id": "focus_row4",
+      "logicalAction": "focus row 4 field"
+    },
+    {
+      "id": "type_x_remove_reinsert",
+      "logicalAction": "type x; model removes row 4, reinserts it at index 3, engine releases all"
+    }
+  ]
+}

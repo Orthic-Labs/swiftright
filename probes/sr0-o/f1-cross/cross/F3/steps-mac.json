@@ -1,0 +1,61 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F3"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "id": "focus_row4",
+      "logicalAction": "focus row 4 field",
+      "ops": [
+        {
+          "id": "row/F0000003-0000-4000-8000-000000000004/field",
+          "op": "focus"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "type_x_remove_reinsert",
+      "logicalAction": "type x; model removes row 4, reinserts it at index 3, engine releases all",
+      "ops": [
+        {
+          "expectId": "row/F0000003-0000-4000-8000-000000000004/field",
+          "expectValue": "Row 4x",
+          "op": "type",
+          "text": "x"
+        },
+        {
+          "json": {
+            "ms": 0,
+            "row": 4,
+            "step": "remove-row"
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "index": 3,
+            "row": 4,
+            "step": "insert-row",
+            "text": "Row 4"
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "step": "release-all"
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 1500
+    }
+  ]
+}

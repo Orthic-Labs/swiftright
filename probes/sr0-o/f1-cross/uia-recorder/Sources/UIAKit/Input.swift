@@ -62,6 +62,15 @@ public enum VKInput {
         }
     }
 
+    /// Window-targeted typing: one WM_CHAR per UTF-16 unit posted to the fixture HWND (the `char` key mode of
+    /// drive-fixture.ps1). No global input, no foreground requirement; a keystroke cannot reach another application.
+    public static func typeTargeted(_ text: String, hwnd: UnsafeMutableRawPointer) throws {
+        for u in text.utf16 {
+            guard cuia_post_char(hwnd, u) == 1 else { throw UIAError(what: "PostMessage(WM_CHAR) failed for U+\(String(u, radix: 16))") }
+            Thread.sleep(forTimeInterval: 0.22)
+        }
+    }
+
     public static let commandChords: [String: String] = [
         "copy": "ctrl+c", "paste": "ctrl+v", "undo": "ctrl+z", "redo": "ctrl+y", "selectAll": "ctrl+a",
     ]

@@ -1,0 +1,15 @@
+{
+  "description": "F6-reduced cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F6-reduced",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model bursts two animated inserts; snapshot after the animation window"
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot"
+    }
+  ]
+}

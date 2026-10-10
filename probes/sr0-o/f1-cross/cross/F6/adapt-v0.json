@@ -1,0 +1,39 @@
+[
+  {
+    "allowAnyValue": true,
+    "field": "steps.nativeMapping",
+    "reason": "N1: native input per platform is declared in CONTRACT §4/§5 (AX/CGEvent.postToPid on Mac, UIA/SendInput VK on Windows); logical intent is compared exactly"
+  },
+  {
+    "field": "lifecycle.count",
+    "mapping": {
+      "2": "1"
+    },
+    "nodeId": "appear:row/F0000006-0000-4000-8000-000000000200",
+    "reason": "SwiftUI rebuilds the interrupted animated rows (extra disappear/appear pair per row, fixtures RESULT.md: the B pair even varies run to run on the Mac). Row view rebuild during an animated insert is not a CONTRACT F6 assertion (interruption recorded, final layout settled, completion order); the fresh runtime keeps the row views."
+  },
+  {
+    "field": "lifecycle.count",
+    "mapping": {
+      "1": "0"
+    },
+    "nodeId": "disappear:row/F0000006-0000-4000-8000-000000000200",
+    "reason": "SwiftUI rebuilds the interrupted animated rows (extra disappear/appear pair per row, fixtures RESULT.md: the B pair even varies run to run on the Mac). Row view rebuild during an animated insert is not a CONTRACT F6 assertion (interruption recorded, final layout settled, completion order); the fresh runtime keeps the row views."
+  },
+  {
+    "field": "lifecycle.count",
+    "mapping": {
+      "2": "1"
+    },
+    "nodeId": "appear:row/F0000006-0000-4000-8000-000000000201",
+    "reason": "SwiftUI rebuilds the interrupted animated rows (extra disappear/appear pair per row, fixtures RESULT.md: the B pair even varies run to run on the Mac). Row view rebuild during an animated insert is not a CONTRACT F6 assertion (interruption recorded, final layout settled, completion order); the fresh runtime keeps the row views."
+  },
+  {
+    "field": "lifecycle.count",
+    "mapping": {
+      "1": "0"
+    },
+    "nodeId": "disappear:row/F0000006-0000-4000-8000-000000000201",
+    "reason": "SwiftUI rebuilds the interrupted animated rows (extra disappear/appear pair per row, fixtures RESULT.md: the B pair even varies run to run on the Mac). Row view rebuild during an animated insert is not a CONTRACT F6 assertion (interruption recorded, final layout settled, completion order); the fresh runtime keeps the row views."
+  }
+]

@@ -18,10 +18,13 @@ void *cuia_find_window(uint32_t pid);                      // largest visible un
 uint32_t cuia_foreground_pid(void);
 cuia_bool cuia_activate(void *hwnd);                       // bring to foreground; 1 when foreground afterwards
 int32_t cuia_dpi_for_window(void *hwnd);
+int32_t cuia_set_client_dip(void *hwnd, int32_t width_dip, int32_t height_dip);  // window-targeted resize (MoveWindow); 1 = ok
+int32_t cuia_close_window(void *hwnd);                      // posts WM_CLOSE to that window only; 1 = posted
 
 // Input (virtual keys only; no KEYEVENTF_UNICODE)
 uint32_t cuia_send_vk(uint16_t vk, int32_t key_up, int32_t extended);
-int32_t cuia_vk_for_char(uint16_t unit);                   // vk | shift_state << 8, or -1
+int32_t cuia_vk_for_char(uint16_t unit);
+int32_t cuia_post_char(void *hwnd, uint16_t unit);         // window-targeted: WM_CHAR posted to that HWND only (never global input); 1 = posted                   // vk | shift_state << 8, or -1
 
 // Elements
 int32_t cuia_element_from_window(void *hwnd, cuia_el *out);  // 0 = ok else HRESULT

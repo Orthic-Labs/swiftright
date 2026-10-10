@@ -52,6 +52,7 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
         for s in stepStarts where s.start <= t { chosen = s.id }
         return chosen
     }
+    var endMode: [String: String] = [:]
     for e in events {
         guard let sid = step(for: e.mono) else { m.excluded["after-last-observation/\(e.kind)/\(e.phase)", default: 0] += 1; continue }
         let node = nodeKey(e.node)
@@ -67,6 +68,23 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
             m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "taskStart", node: node))
         case ("lifecycle", "task-cancel"):
             m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "taskCancel", node: node))
+        case ("lifecycle", "start"), ("lifecycle", "complete"), ("lifecycle", "policy"):
+            guard e.node == "animation" else { m.excluded["\(e.kind)/\(ph)", default: 0] += 1; continue }
+            // F6 animation transactions (node `animation`): per-tag start/complete lifecycle, policy as an effect line.
+            if ph == "policy" {
+                m.perStep[sid]!.effects.append("animation-policy enabled=\(e.payload["enabled"] as? Bool ?? false)")
+            } else {
+                let tag = (e.payload["tag"] as? String) ?? "?"
+                m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "animation-\(ph)", node: "animation/\(tag)"))
+            }
+        case ("state", ""):
+            // F5 layout passes (node `layout`): only changes of the non-degenerate layout mode are compared.
+            // Only the mode a step ENDS in is compared (a step may pass through intermediate modes while the window settles).
+            if e.node == "layout", (e.payload["degenerate"] as? Bool) != true, let mode = e.payload["mode"] as? String {
+                endMode[sid] = mode
+            } else { m.excluded["\(e.kind)/\(ph)", default: 0] += 1 }
+        case ("lifecycle", "released") where e.node == "tree":
+            m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "treeReleased", node: "tree"))
         case ("lifecycle", "local-edit"):
             // @State write count per row identity (the row's `local N` counter).
             m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "localEdit", node: node))
@@ -84,5 +102,57 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
             m.excluded["\(e.kind)/\(ph)", default: 0] += 1
         }
     }
+    var previous: String?
+    for st in stepStarts {
+        if let mode = endMode[st.id] {
+            if mode != previous { m.perStep[st.id]!.effects.insert("layout-mode \(mode)", at: 0) }
+            previous = mode
+        }
+    }
     return m
+}
+
+
+/// Node an effect line belongs to. Effects follow the oracle digest rule (sr0-a.canonical/v2): sibling events of different
+/// nodes between two driver operations are unordered (sibling `.task` start order across rows, the engine's release order),
+/// while each node's own sequence keeps its recorded order. The comparator compares `effects` as an ordered list, so both
+/// platforms are stored grouped by node.
+func effectNode(_ line: String) -> String {
+    let parts = line.split(separator: " ", maxSplits: 2).map(String.init)
+    guard let head = parts.first else { return "" }
+    switch head {
+    case "insert-row":
+        if let r = line.range(of: " row=") { return "row/" + String(line[r.upperBound...]) }
+        return "model"
+    case "remove-row":
+        if let r = line.range(of: " row=") { return "row/" + String(line[r.upperBound...]) }
+        return "model"
+    case "layout-mode": return "layout"
+    case "animation-policy": return "animation"
+    default: return parts.count > 1 ? parts[1] : head
+    }
+}
+
+private func isModelOp(_ line: String) -> Bool {
+    let head = line.split(separator: " ", maxSplits: 1).first.map(String.init) ?? ""
+    return ["insert-row", "remove-row", "layout-mode", "animation-policy"].contains(head)
+}
+
+/// Model-level operations (driver-ordered) keep their place; the scheduler-ordered lines between two of them (engine
+/// requests, releases, commits, rejections, cleanups across different nodes) are grouped by node, per-node order stable.
+func canonicalEffects(_ effects: [String]) -> [String] {
+    var out: [String] = []
+    var run: [String] = []
+    func flush() {
+        out += run.enumerated().sorted { a, b in
+            let ka = effectNode(a.element), kb = effectNode(b.element)
+            return ka == kb ? a.offset < b.offset : ka < kb
+        }.map(\.element)
+        run = []
+    }
+    for line in effects {
+        if isModelOp(line) { flush(); out.append(line) } else { run.append(line) }
+    }
+    flush()
+    return out
 }

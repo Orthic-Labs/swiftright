@@ -33,9 +33,9 @@ private func ne(_ s: String?) -> String? {
 }
 
 enum Cross {
-    // Named Mac platform containers (CONTRACT §5) plus AXToolbar (A2).
-    static let macStripped: Set<String> = ["AXCell", "AXColumn", "AXScrollArea", "AXHostingView", "AXGroup", "AXToolbar"]
-    static let macChromeSubroles: Set<String> = ["AXCloseButton", "AXFullScreenButton", "AXMinimizeButton"]
+    // Named Mac platform containers (CONTRACT §5) plus AXToolbar (A2) and AXOpaqueProviderGroup (A10: the AX wrapper SwiftUI adds around LazyVStack content).
+    static let macStripped: Set<String> = ["AXCell", "AXColumn", "AXScrollArea", "AXHostingView", "AXGroup", "AXToolbar", "AXOpaqueProviderGroup"]
+    static let macChromeSubroles: Set<String> = ["AXCloseButton", "AXFullScreenButton", "AXMinimizeButton", "AXZoomButton"]   // A4 (AXZoomButton: the green button of a resizable window, F5)
     static let macRoleMap: [String: String] = [
         "AXOutline": "list", "AXButton": "button", "AXTextField": "text-field", "AXStaticText": "static-text", "AXWindow": "window",
     ]

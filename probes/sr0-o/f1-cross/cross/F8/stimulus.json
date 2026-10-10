@@ -1,0 +1,27 @@
+{
+  "description": "F8 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F8",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot"
+    },
+    {
+      "id": "invoke_insert_above",
+      "logicalAction": "activate the Insert above button; the engine commits it, then two restarts and a stale release"
+    },
+    {
+      "id": "set_value_row3",
+      "logicalAction": "set row 3 value to 'AX value' through the accessibility text-replacement route (Mac: AXSelectedText over a full AXSelectedTextRange, because SwiftUI ignores AXValue writes; Windows: ValuePattern.SetValue)"
+    },
+    {
+      "id": "focus_row3",
+      "logicalAction": "focus row 3 field"
+    },
+    {
+      "id": "delete_row6",
+      "logicalAction": "activate the Delete button of row 6"
+    }
+  ]
+}

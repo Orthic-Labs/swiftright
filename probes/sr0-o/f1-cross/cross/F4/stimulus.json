@@ -1,0 +1,15 @@
+{
+  "description": "F4 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F4",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model removes row 2, engine releases loads; snapshot"
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot"
+    }
+  ]
+}
