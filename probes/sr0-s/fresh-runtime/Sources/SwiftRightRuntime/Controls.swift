@@ -166,6 +166,12 @@ public struct Color: ShapeStyle, Hashable, Sendable {
     }
 }
 
+extension Color: View, PrimitiveView {
+    @MainActor public var body: Never { return fatalError("Color has no body") }
+    var nodeKind: NodeKind { .color(resolvedColor) }
+    var nodeContent: (any View)? { nil }
+}
+
 /// Static members are reached as `Color.red` and so on, as in SwiftUI. Names are semantic, not RGB.
 extension ShapeStyle where Self == Color {
     public static var primary: Color { Color(semantic: "label") }

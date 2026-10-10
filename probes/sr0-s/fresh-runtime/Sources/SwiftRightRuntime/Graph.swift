@@ -264,6 +264,7 @@ enum NodeKind {
     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
     case toggle(Binding<Bool>)
     case image(ImageReference)
+    case color(ResolvedColor)
     case textEditor(Binding<String>)
     case divider
     case shape(ResolvedShape)
@@ -668,6 +669,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let style: ResolvedStyle
     /// Image nodes only: the reference the backend loads.
     public let image: ImageReference?
+    /// Color views only: the resolved fill value; nil for existing node kinds.
+    public let color: ResolvedColor?
     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
     public let shape: ResolvedShape?
     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
@@ -1527,6 +1530,8 @@ public final class Graph {
         }
         var image: ImageReference?
         if case .image(let reference) = kind { image = reference }
+        var color: ResolvedColor?
+        if case .color(let resolved) = kind { color = resolved }
         var shape: ResolvedShape?
         if case .shape(let resolvedShape) = kind { shape = resolvedShape }
         var shortcut: ResolvedShortcut?
@@ -1550,6 +1555,7 @@ public final class Graph {
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,
+            color: color,
             shape: shape,
             menu: node.menuEntries.map(resolveMenu),
             presentation: node.presented.map(resolvePresentation),
@@ -1647,6 +1653,7 @@ public final class Graph {
         case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
         case .image: return "Image"
+        case .color: return "Color"
         case .shape(let shape):
             switch shape.geometry {
             case .rectangle: return "Rectangle"

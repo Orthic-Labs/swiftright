@@ -1,0 +1,111 @@
+diff --git a/Sources/SwiftRightRuntime/Controls.swift b/Sources/SwiftRightRuntime/Controls.swift
+index 24f6220..b07d99c 100644
+--- a/Sources/SwiftRightRuntime/Controls.swift
++++ b/Sources/SwiftRightRuntime/Controls.swift
+@@ -166,6 +166,12 @@ public struct Color: ShapeStyle, Hashable, Sendable {
+     }
+ }
+ 
++extension Color: View, PrimitiveView {
++    @MainActor public var body: Never { return fatalError("Color has no body") }
++    var nodeKind: NodeKind { .color(resolvedColor) }
++    var nodeContent: (any View)? { nil }
++}
++
+ /// Static members are reached as `Color.red` and so on, as in SwiftUI. Names are semantic, not RGB.
+ extension ShapeStyle where Self == Color {
+     public static var primary: Color { Color(semantic: "label") }
+diff --git a/Sources/SwiftRightRuntime/Graph.swift b/Sources/SwiftRightRuntime/Graph.swift
+index 9fbc669..ff5ded9 100644
+--- a/Sources/SwiftRightRuntime/Graph.swift
++++ b/Sources/SwiftRightRuntime/Graph.swift
+@@ -264,6 +264,7 @@ enum NodeKind {
+     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
+     case toggle(Binding<Bool>)
+     case image(ImageReference)
++    case color(ResolvedColor)
+     case textEditor(Binding<String>)
+     case divider
+     case shape(ResolvedShape)
+@@ -668,6 +669,8 @@ public struct ResolvedNode: Equatable, Sendable {
+     public let style: ResolvedStyle
+     /// Image nodes only: the reference the backend loads.
+     public let image: ImageReference?
++    /// Color views only: the resolved fill value; nil for existing node kinds.
++    public let color: ResolvedColor?
+     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
+     public let shape: ResolvedShape?
+     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
+@@ -1527,6 +1530,8 @@ public final class Graph {
+         }
+         var image: ImageReference?
+         if case .image(let reference) = kind { image = reference }
++        var color: ResolvedColor?
++        if case .color(let resolved) = kind { color = resolved }
+         var shape: ResolvedShape?
+         if case .shape(let resolvedShape) = kind { shape = resolvedShape }
+         var shortcut: ResolvedShortcut?
+@@ -1550,6 +1555,7 @@ public final class Graph {
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
++            color: color,
+             shape: shape,
+             menu: node.menuEntries.map(resolveMenu),
+             presentation: node.presented.map(resolvePresentation),
+@@ -1647,6 +1653,7 @@ public final class Graph {
+         case .modifier(let spec): return spec.kindName
+         case .toggle: return "Toggle"
+         case .image: return "Image"
++        case .color: return "Color"
+         case .shape(let shape):
+             switch shape.geometry {
+             case .rectangle: return "Rectangle"
+diff --git a/Sources/SwiftRightRuntime/LayoutEngine.swift b/Sources/SwiftRightRuntime/LayoutEngine.swift
+index aa6af10..540c315 100644
+--- a/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -108,6 +108,8 @@ extension Graph {
+             )
+         case .image(let reference):
+             return imageIntrinsicSize(reference)
++        case .color:
++            return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
+         case .shape:
+             return LayoutSize(width: finiteLength(proposal.width) ?? 10, height: finiteLength(proposal.height) ?? 10)
+         case .divider:
+@@ -145,7 +147,7 @@ extension Graph {
+     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+         node.frame = snapToPixelGrid(rect, scale: scale)
+         switch node.kind {
+-        case .text, .textField, .textEditor, .spacer, .image, .divider, .shape:
++        case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape:
+             break
+         case .modifier(.padding(let insets)):
+             guard let child = childNodes(node).first else { return }
+diff --git a/Tests/SwiftRightRuntimeTests/ColorViewTests.swift b/Tests/SwiftRightRuntimeTests/ColorViewTests.swift
+new file mode 100644
+index 0000000..bfdf732
+--- /dev/null
++++ b/Tests/SwiftRightRuntimeTests/ColorViewTests.swift
+@@ -0,0 +1,20 @@
++import SwiftRightRuntime
++import XCTest
++
++struct ColorViewProbe: View {
++    var body: some View { Color.red.frame(width: 50, height: 20) }
++}
++
++@MainActor
++final class ColorViewTests: XCTestCase {
++    func testColorIsFlexibleViewWithResolvedColor() throws {
++        let graph = Graph(ColorViewProbe())
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot()).children[0]
++        let color = try XCTUnwrap(frame.children.first)
++        XCTAssertEqual(frame.frame.size, LayoutSize(width: 50, height: 20))
++        XCTAssertEqual(color.kind, "Color")
++        XCTAssertEqual(color.frame, LayoutRect(x: 0, y: 0, width: 50, height: 20))
++        XCTAssertEqual(color.color, .semantic("system.red"))
++    }
++}
