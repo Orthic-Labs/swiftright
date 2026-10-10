@@ -485,3 +485,7 @@ Built from `4496474` (tree `62852a03`) in a branch-attached clone with `right-re
 | DMG checksum (`hdiutil verify`) | verified |
 
 Only 0.1.0 was rebuilt on the final pin; the 0.1.1 update pair from 0.2.139 is history (R7 upgrade/rollback evidence stands on it). Quarantined first launch of this exact DMG: R7 final section in `RESULT-R7.md`.
+
+## @rightkit/release 0.2.145 stage subsystem gate (2026-10-10)
+
+`f2def6b` pins 0.2.145 and declares `windows.subsystem: "gui"`; our PowerShell PE subsystem checks are removed. On the Dell, a fresh clone of `f2def6b` with `pnpm install --frozen-lockfile` and `scripts\prepackage-windows.ps1` exits 0. The renderer matched its pin `7533963D…`, and `windows-stage` accepted `SliceApp.exe` (PE subsystem 2). Negative control: `stageSwiftWindows` on a console exe (`where.exe`, subsystem 3) declared `gui` throws `SWIFT_STAGE_SUBSYSTEM`, naming `-Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup`. Stage only: nothing signed, packed or installed. The R5 MSIX receipts (0.2.144, `0751951`) stand; the next Windows build needs a renewed signing certificate (current one expires 2026-10-12).
