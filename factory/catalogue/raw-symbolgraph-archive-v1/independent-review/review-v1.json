@@ -1,0 +1,62 @@
+{
+  "status": "held-reader-guard-repairs",
+  "scope": "exact eleven immutable836 graph byte archival; no API eligibility or native claims",
+  "checks": [
+    "all19 gzip compressed/raw fragment SHA256s",
+    "all11 ordered descriptor equality &whole original SHA256s",
+    "581998365 original bytes equal reconstructed bytes",
+    "changed compressed/raw/whole byte faults rejected before paths exposed",
+    "existing corrupted cache rejected without reuse"
+  ],
+  "blockers": [
+    {
+      "path": "archive.py",
+      "reason": "load_archive accepts scratch under supplied workspace; workspace_root unused"
+    },
+    {
+      "path": "archive.py",
+      "reason": "captureSources source pins never verified by reader"
+    },
+    {
+      "path": "archive.py",
+      "reason": "version/ordinal/index/offset accept boolean values instead of exact integers"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "reviewed-source-v1/archive.py",
+      "sha256": "d4d01ad4ef818fa14ee4afef9a511446fcad9bb2348bbcb1f7c03c7f05d76144",
+      "size": 12521
+    },
+    {
+      "path": "reviewed-source-v1/test_archive.py",
+      "sha256": "e3dda82977b6c23cf4c1465bdffd6300380cf74dad65049a7bda9b4b07f420db",
+      "size": 9993
+    },
+    {
+      "path": "reviewed-source-v1/README.md",
+      "sha256": "fae80321238c8d641475109be0f4897e0cd6a4af2d6b0932ca1f77952d24eea6",
+      "size": 1285
+    },
+    {
+      "path": "reviewed-source-v1/archive-manifest.json",
+      "sha256": "c89e5ba8c92e71ccc805aa82ef2dc02703bab70aad7cdef4595b53da8fe0ea19",
+      "size": 10252
+    },
+    {
+      "path": "lossless-replay-v1.json",
+      "sha256": "c81e4595ea91a92a1f7ec787f42f480c6c35e8b99ec39cdd9ecc297056e2be76",
+      "size": 3182
+    },
+    {
+      "path": "changed-byte-faults-v1.json",
+      "sha256": "b13192dbeda909fdbfcbeff9ecb7da3cdeee1eef79102150a49b073ef349f0ef",
+      "size": 543
+    },
+    {
+      "path": "initial-fault-observations.json",
+      "sha256": "fffe1a7aae7fc40b390809e25f9e031c45eaadb5959a6a2bbebd9fa3b7ffe6e8",
+      "size": 197
+    }
+  ]
+}

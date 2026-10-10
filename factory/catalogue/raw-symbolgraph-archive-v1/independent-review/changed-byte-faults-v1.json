@@ -1,0 +1,22 @@
+[
+  {
+    "fault": "same_length_compressed_byte",
+    "rejected": true,
+    "reason": "compressed chunk hash changed"
+  },
+  {
+    "fault": "raw_fragment_after_compressed_rebind",
+    "rejected": true,
+    "reason": "raw chunk hash changed"
+  },
+  {
+    "fault": "whole_hash_after_fragment_rebind",
+    "rejected": true,
+    "reason": "reconstructed whole-file SHA-256 differs from immutable descriptor"
+  },
+  {
+    "fault": "existing_corrupt_cache",
+    "rejected": true,
+    "reason": "content-addressed archive cache already exists"
+  }
+]

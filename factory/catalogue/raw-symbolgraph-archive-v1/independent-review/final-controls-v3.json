@@ -1,0 +1,45 @@
+{
+  "tests": 11,
+  "faults": [
+    {
+      "fault": "false_ordinal",
+      "rejected": true,
+      "reason": "archive input order or ordinal changed"
+    },
+    {
+      "fault": "false_index",
+      "rejected": true,
+      "reason": "archive chunk order/index changed"
+    },
+    {
+      "fault": "false_offset",
+      "rejected": true,
+      "reason": "archive chunk offset has a gap or overlap"
+    },
+    {
+      "fault": "same_length_compressed_byte",
+      "rejected": true,
+      "reason": "compressed chunk hash changed"
+    },
+    {
+      "fault": "raw_fragment_after_compressed_rebind",
+      "rejected": true,
+      "reason": "raw chunk hash changed"
+    },
+    {
+      "fault": "whole_hash_after_fragment_rebind",
+      "rejected": true,
+      "reason": "reconstructed whole-file SHA-256 differs from immutable descriptor"
+    },
+    {
+      "fault": "existing_corrupt_cache",
+      "rejected": true,
+      "reason": "content-addressed archive cache already exists"
+    }
+  ],
+  "actualReaderReturnedFiles": 11,
+  "actualReaderReturnedBytes": 581998365,
+  "manifestSha256": "6ddc54fe90bffd954f415963450cfa04d19d94070631b88619635826ce9139e3",
+  "internalScratchRoot": "/Users/adrdsouza/Library/Caches/swiftright/raw-symbolgraph-archive-v1",
+  "internalDevice": 16777232
+}
