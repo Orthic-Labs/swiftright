@@ -1,0 +1,224 @@
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:4268:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 4266 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 4267 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 4268 | @_functionBuilder public struct KeyframesBuilder<Value> : ~Swift::Sendable {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 4269 |   public static func buildExpression<K>(_ expression: K) -> K where Value == K.Value, K : SwiftUICore::KeyframeTrackContent
+ 4270 |   public static func buildArray(_ components: [some KeyframeTrackContent<Value>]) -> some SwiftUICore::KeyframeTrackContent<Value>
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5557:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 5555 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 5556 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 5557 | @_functionBuilder public struct ViewBuilder {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 5558 |   #if compiler(>=5.3) && $InlineAlways
+ 5559 |   @export(implementation) @inline(always) public static func buildBlock() -> SwiftUICore::EmptyContent {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:11964:4: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+11962 |   #if compiler(>=5.3) && $TildeSendable
+11963 |   @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+11964 |   @_functionBuilder public struct DefinitionBuilder<Scope> : ~Swift::Sendable {
+      |    `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+11965 |     #if compiler(>=5.3) && $InlineAlways
+11966 |     @export(implementation) @inline(always) public static func buildExpression<D>(_ definition: D) -> D where Scope == D.Scope, D : SwiftUICore::AttributedTextFormattingDefinition {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:18322:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+18320 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18321 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18322 | @_functionBuilder public struct KeyframeTrackContentBuilder<Value> : ~Swift::Sendable where Value : SwiftUICore::Animatable {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+18323 |   public static func buildExpression<K>(_ expression: K) -> K where Value == K.Value, K : SwiftUICore::KeyframeTrackContent
+18324 |   public static func buildArray(_ components: [some KeyframeTrackContent<Value>]) -> some SwiftUICore::KeyframeTrackContent<Value>
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3595:75: warning: external macro implementation type 'SwiftUIMacros.EntryMacro' could not be found for macro 'Entry()'; plugin for module 'SwiftUIMacros' not found
+ 3593 |   public static func timingCurve(_ curve: SwiftUICore::UnitCurve, duration: Foundation::TimeInterval) -> SwiftUICore::Animation
+ 3594 | }
+ 3595 | @attached(accessor) @attached(peer, names: prefixed(__Key_)) public macro Entry() = #externalMacro(
+      |                                                                           `- warning: external macro implementation type 'SwiftUIMacros.EntryMacro' could not be found for macro 'Entry()'; plugin for module 'SwiftUIMacros' not found
+ 3596 |     module: "SwiftUIMacros", type: "EntryMacro"
+ 3597 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3598:34: warning: external macro implementation type 'SwiftUIMacros.EntryDefaultValueMacro' could not be found for macro '__EntryDefaultValue()'; plugin for module 'SwiftUIMacros' not found
+ 3596 |     module: "SwiftUIMacros", type: "EntryMacro"
+ 3597 | )
+ 3598 | @attached(accessor) public macro __EntryDefaultValue() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.EntryDefaultValueMacro' could not be found for macro '__EntryDefaultValue()'; plugin for module 'SwiftUIMacros' not found
+ 3599 |     module: "SwiftUIMacros", type: "EntryDefaultValueMacro"
+ 3600 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3601:69: warning: external macro implementation type 'SwiftUIMacros.SendableEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3599 |     module: "SwiftUIMacros", type: "EntryDefaultValueMacro"
+ 3600 | )
+ 3601 | @freestanding(declaration, names: named(defaultValue)) public macro _EntryDefaultValue<T>(_ value: T, macroName: Swift::String) = #externalMacro(
+      |                                                                     `- warning: external macro implementation type 'SwiftUIMacros.SendableEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3602 |     module: "SwiftUIMacros", type: "SendableEntryDefaultMacro"
+ 3603 | ) where T : Swift::Sendable
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3604:69: warning: external macro implementation type 'SwiftUIMacros.UnsafeEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3602 |     module: "SwiftUIMacros", type: "SendableEntryDefaultMacro"
+ 3603 | ) where T : Swift::Sendable
+ 3604 | @freestanding(declaration, names: named(defaultValue)) public macro _EntryDefaultValue<T>(_ value: T, macroName: Swift::String) = #externalMacro(
+      |                                                                     `- warning: external macro implementation type 'SwiftUIMacros.UnsafeEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3605 |     module: "SwiftUIMacros", type: "UnsafeEntryDefaultMacro"
+ 3606 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3607:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3605 |     module: "SwiftUIMacros", type: "UnsafeEntryDefaultMacro"
+ 3606 | )
+ 3607 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: T.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3608 |     module: "SwiftUIMacros", type: "EntryTypeCheckMacro"
+ 3609 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3610:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3608 |     module: "SwiftUIMacros", type: "EntryTypeCheckMacro"
+ 3609 | )
+ 3610 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: T.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3611 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3612 | ) where T : AnyObject
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3613:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3611 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3612 | ) where T : AnyObject
+ 3613 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: Swift::Optional<T>.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3614 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3615 | ) where T : AnyObject
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:8138:53: warning: external macro implementation type 'SwiftUIMacros.ProjectedValueMacro' could not be found for macro '_PropertyWrapperProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+ 8136 |   public typealias Element = SwiftUICore::AccessibilityDirectTouchOptions
+ 8137 | }
+ 8138 | @attached(accessor, names: named(get)) public macro _PropertyWrapperProjectedValue() = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.ProjectedValueMacro' could not be found for macro '_PropertyWrapperProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+ 8139 |     module: "SwiftUIMacros", type: "ProjectedValueMacro"
+ 8140 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19893:122: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesMacro' could not be found for macro 'Animatable()'; plugin for module 'SwiftUIMacros' not found
+19891 | }
+19892 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19893 | @attached(extension, conformances: SwiftUICore::Animatable) @attached(member, names: named(animatableData)) public macro Animatable() = #externalMacro(
+      |                                                                                                                          `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesMacro' could not be found for macro 'Animatable()'; plugin for module 'SwiftUIMacros' not found
+19894 |     module: "SwiftUIMacros", type: "AnimatableValuesMacro"
+19895 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19897:57: warning: external macro implementation type 'SwiftUIMacros.AnimatableIgnoredMacro' could not be found for macro 'AnimatableIgnored()'; plugin for module 'SwiftUIMacros' not found
+19895 | )
+19896 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19897 | @attached(accessor, names: named(willSet)) public macro AnimatableIgnored() = #externalMacro(
+      |                                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatableIgnoredMacro' could not be found for macro 'AnimatableIgnored()'; plugin for module 'SwiftUIMacros' not found
+19898 |     module: "SwiftUIMacros", type: "AnimatableIgnoredMacro"
+19899 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19901:41: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19899 | )
+19900 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+19901 | @freestanding(declaration) public macro _SwiftUIAnimatableDataProperty(animatableMacroContext: Swift::String, kind: SwiftUICore::AnimatableValues<>) = #externalMacro(
+      |                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19902 |     module: "SwiftUIMacros", type: "AnimatableValuesDataPropertyMacro"
+19903 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19909:41: warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19907 | @available(watchOS, introduced: 6.0, deprecated: 26.0, obsoleted: 26.0)
+19908 | @available(visionOS, introduced: 1.0, deprecated: 26.0, obsoleted: 26.0)
+19909 | @freestanding(declaration) public macro _SwiftUIAnimatableDataProperty(animatableMacroContext: Swift::String, kind: SwiftUICore::AnimatablePair<SwiftUICore::EmptyAnimatableData, SwiftUICore::EmptyAnimatableData>) = #externalMacro(
+      |                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19910 |     module: "SwiftUIMacros", type: "AnimatablePairDataPropertyMacro"
+19911 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19913:34: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataMacro' could not be found for macro '_AnimatableData()'; plugin for module 'SwiftUIMacros' not found
+19911 | )
+19912 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+19913 | @attached(accessor) public macro _AnimatableData() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataMacro' could not be found for macro '_AnimatableData()'; plugin for module 'SwiftUIMacros' not found
+19914 |     module: "SwiftUIMacros", type: "AnimatableValuesDataMacro")
+19915 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19916:34: warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataMacro' could not be found for macro '_AnimatablePairData()'; plugin for module 'SwiftUIMacros' not found
+19914 |     module: "SwiftUIMacros", type: "AnimatableValuesDataMacro")
+19915 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19916 | @attached(accessor) public macro _AnimatablePairData() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataMacro' could not be found for macro '_AnimatablePairData()'; plugin for module 'SwiftUIMacros' not found
+19917 |     module: "SwiftUIMacros", type: "AnimatablePairDataMacro")
+19918 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19919:40: warning: external macro implementation type 'SwiftUIMacros.AnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19917 |     module: "SwiftUIMacros", type: "AnimatablePairDataMacro")
+19918 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19919 | @freestanding(expression) public macro _SwiftUIAnimatableProperty<T>(_ t: T.Type) -> T.Type = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19920 |     module: "SwiftUIMacros", type: "AnimatablePropertyMacro"
+19921 | ) where T : SwiftUICore::VectorArithmetic
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19923:40: warning: external macro implementation type 'SwiftUIMacros.InvalidAnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19921 | ) where T : SwiftUICore::VectorArithmetic
+19922 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19923 | @freestanding(expression) public macro _SwiftUIAnimatableProperty<T>(_ t: T.Type) -> SwiftUICore::EmptyAnimatableData.Type = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.InvalidAnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19924 |     module: "SwiftUIMacros", type: "InvalidAnimatablePropertyMacro"
+19925 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20038:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State()'; plugin for module 'SwiftUIMacros' not found
+20036 |     }
+20037 | }
+20038 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State() = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State()'; plugin for module 'SwiftUIMacros' not found
+20039 |     module: "SwiftUIMacros", type: "StateMacro"
+20040 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20041:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20039 |     module: "SwiftUIMacros", type: "StateMacro"
+20040 | )
+20041 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State<Value>(initialValue: Value) = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20042 |     module: "SwiftUIMacros", type: "StateMacro"
+20043 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20044:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(wrappedValue:)'; plugin for module 'SwiftUIMacros' not found
+20042 |     module: "SwiftUIMacros", type: "StateMacro"
+20043 | )
+20044 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State<Value>(wrappedValue: Value) = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(wrappedValue:)'; plugin for module 'SwiftUIMacros' not found
+20045 |     module: "SwiftUIMacros", type: "StateMacro"
+20046 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20047:78: warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20045 |     module: "SwiftUIMacros", type: "StateMacro"
+20046 | )
+20047 | @attached(accessor, names: named(init), named(get), named(set)) public macro _StatePropertyWrapperStorage(initialValue: Swift::String) = #externalMacro(
+      |                                                                              `- warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20048 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20049 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20050:78: warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage()'; plugin for module 'SwiftUIMacros' not found
+20048 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20049 | )
+20050 | @attached(accessor, names: named(init), named(get), named(set)) public macro _StatePropertyWrapperStorage() = #externalMacro(
+      |                                                                              `- warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage()'; plugin for module 'SwiftUIMacros' not found
+20051 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20052 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20053:53: warning: external macro implementation type 'SwiftUIMacros.StateInitialStoredValueMacro' could not be found for macro '_StateInitialStoredValue'; plugin for module 'SwiftUIMacros' not found
+20051 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20052 | )
+20053 | @attached(accessor, names: named(get)) public macro _StateInitialStoredValue(_ initialValue: Swift::String) = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.StateInitialStoredValueMacro' could not be found for macro '_StateInitialStoredValue'; plugin for module 'SwiftUIMacros' not found
+20054 |     module: "SwiftUIMacros", type: "StateInitialStoredValueMacro"
+20055 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20056:53: warning: external macro implementation type 'SwiftUIMacros.StateProjectedValueMacro' could not be found for macro '_StateProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+20054 |     module: "SwiftUIMacros", type: "StateInitialStoredValueMacro"
+20055 | )
+20056 | @attached(accessor, names: named(get)) public macro _StateProjectedValue() = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.StateProjectedValueMacro' could not be found for macro '_StateProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+20057 |     module: "SwiftUIMacros", type: "StateProjectedValueMacro"
+20058 | )
+
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20059:59: warning: external macro implementation type 'SwiftUIMacros.StateTypeMacro' could not be found for macro '_SwiftUIState'; plugin for module 'SwiftUIMacros' not found
+20057 |     module: "SwiftUIMacros", type: "StateProjectedValueMacro"
+20058 | )
+20059 | @freestanding(declaration, names: arbitrary) public macro _SwiftUIState<T>(_ type: T.Type, _ named: Swift::String) = #externalMacro(
+      |                                                           `- warning: external macro implementation type 'SwiftUIMacros.StateTypeMacro' could not be found for macro '_SwiftUIState'; plugin for module 'SwiftUIMacros' not found
+20060 |     module: "SwiftUIMacros", type: "StateTypeMacro"
+20061 | )
