@@ -14,14 +14,27 @@ struct MutableDesignFontProbe: View {
     var body: some View { Text("descriptor").font(.system(size: 16, design: model.design)) }
 }
 
+@Observable
+@MainActor
+final class MutableLineLimitModel {
+    var limit = 1
+}
+
+struct MutableLineLimitProbe: View {
+    let model: MutableLineLimitModel
+    var body: some View { Text("three lines").lineLimit(model.limit) }
+}
+
 @MainActor
 final class DescriptorTextMeasurer: TextMeasurer {
     var requests: [TextMeasureRequest] = []
 
     func measure(_ request: TextMeasureRequest) -> TextMeasurement {
         requests.append(request)
-        let height: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
-        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: height * 0.75, lineCount: 1)
+        let lineHeight: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
+        let lines = min(3, request.lineLimit ?? 1)
+        let height = CGFloat(lines) * lineHeight
+        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: lineHeight * 0.75, lineCount: lines)
     }
 }
 
@@ -68,6 +81,31 @@ final class FontAdditionTests: XCTestCase {
         XCTAssertEqual(metadata?.weight, .bold)
         XCTAssertTrue(metadata?.isCustom == true)
         XCTAssertNil(metadata?.design)
+    }
+
+    func testSameTextNodeInvalidatesWhenLineLimitChanges() {
+        let model = MutableLineLimitModel()
+        let measurer = DescriptorTextMeasurer()
+        let graph = Graph(MutableLineLimitProbe(model: model), measurer: measurer)
+        graph.flush()
+        let textID = graph.ids(ofKind: "Text").first
+        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 10)
+
+        model.limit = 2
+        graph.flush()
+        XCTAssertEqual(graph.ids(ofKind: "Text").first, textID)
+        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 20)
+        XCTAssertEqual(measurer.requests.map(\.lineLimit), [1, 2])
+    }
+
+    func testLineLimitReachesMeasurerAndCapsTextHeight() {
+        let measurer = FixedAdvanceTextMeasurer()
+        let graph = Graph(Text("aa bb cc dd ee").lineLimit(2), measurer: measurer)
+        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
+        graph.flush()
+
+        XCTAssertEqual(measurer.requests.first?.lineLimit, 2)
+        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 32)
     }
 
     func testLegacySystemFontLeavesMetadataUnset() {

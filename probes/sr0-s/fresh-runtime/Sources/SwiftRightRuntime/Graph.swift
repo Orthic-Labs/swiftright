@@ -492,8 +492,9 @@ final class Node {
     var motion: Motion?
     /// Per-field text input state (TextField and TextEditor nodes only).
     var textInput: TextInputState?
-    /// Font value of the last measurement (the memo is keyed by text, font metadata and width).
+    /// Font value of the last measurement (the memo is keyed by text, font metadata, line limit and width).
     var memoFont: Font?
+    var memoLineLimit: Int?
     /// Selection binding of a List node, set at evaluation.
     var selection: SelectionAccess?
     /// Anchor and cursor of a List's keyboard and click selection, as row tags.
@@ -610,8 +611,8 @@ enum LayoutKey: Equatable {
     /// A custom `Layout`, which can depend on anything its owner holds: never cached across evaluations.
     case always
     case text(String, String?)
-    /// Text whose measurement depends on additive font metadata.
-    case styledText(String, Font?)
+    /// Text whose measurement depends on additive font metadata and/or line limit.
+    case styledText(String, Font?, Int?)
     case stack(StackSpec)
     case padding(EdgeInsets)
     case frame(FrameSpec)
@@ -1340,11 +1341,14 @@ public final class Graph {
         switch kind {
         case .text(let string):
             let font = node.environment.font
-            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
+            let lineLimit = node.environment.lineLimit
+            key = font?.metadata == nil && lineLimit == nil
+                ? .text(string, font?.id)
+                : .styledText(string, font, lineLimit)
         case .textField, .textEditor:
             let font = node.environment.font
             let string = node.textInput?.display ?? ""
-            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
+            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font, nil)
         case .stack(let spec): key = .stack(spec)
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)

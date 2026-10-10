@@ -1,0 +1,201 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Controls.swift
+@@ -287,6 +287,10 @@
+     static var defaultValue: Font? { nil }
+ }
+ 
++private enum LineLimitKey: EnvironmentKey {
++    static var defaultValue: Int? { nil }
++}
++
+ private enum ForegroundStyleKey: EnvironmentKey {
+     static var defaultValue: ResolvedColor? { nil }
+ }
+@@ -303,6 +307,12 @@
+         set { self[FontKey.self] = newValue }
+     }
+ 
++    /// Maximum visible line count for descendant Text views; nil leaves text unbounded.
++    public var lineLimit: Int? {
++        get { self[LineLimitKey.self] }
++        set { self[LineLimitKey.self] = newValue }
++    }
++
+     public var foregroundStyle: ResolvedColor? {
+         get { self[ForegroundStyleKey.self] }
+         set { self[ForegroundStyleKey.self] = newValue }
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -160,6 +160,13 @@
+         }))
+     }
+ 
++    /// Limits descendant Text views to at most `number` lines; nil removes the limit.
++    public func lineLimit(_ number: Int?) -> some View {
++        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
++            environment.lineLimit = number
++        }))
++    }
++
+     /// Foreground colour of the content. Apple: https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:)
+     public func foregroundStyle<S: ShapeStyle>(_ style: S) -> some View {
+         let color = style.resolvedColor
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/TextMeasurement.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/TextMeasurement.swift
+@@ -6,13 +6,17 @@
+     public let fontID: String
+     /// Optional descriptor for explicit system designs and custom families. Legacy requests leave it nil.
+     public let fontMetadata: Font.Metadata?
++    /// Maximum visible line count, nil when no `.lineLimit` applies.
++    public let lineLimit: Int?
+     public let proposedWidth: CGFloat?
+     public let scale: CGFloat
+ 
+-    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil) {
++    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil,
++                lineLimit: Int? = nil) {
+         self.text = text
+         self.fontID = fontID
+         self.fontMetadata = fontMetadata
++        self.lineLimit = lineLimit
+         self.proposedWidth = proposedWidth
+         self.scale = scale
+     }
+@@ -52,7 +56,8 @@
+ 
+     public func measure(_ request: TextMeasureRequest) -> TextMeasurement {
+         requests.append(request)
+-        let lines = wrap(request.text, width: request.proposedWidth)
++        let wrappedLines = wrap(request.text, width: request.proposedWidth)
++        let lines = request.lineLimit.map { Array(wrappedLines.prefix(max(0, $0))) } ?? wrappedLines
+         guard !lines.isEmpty else {
+             return TextMeasurement(size: .zero, baseline: 0, lineCount: 0)
+         }
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -492,8 +492,9 @@
+     var motion: Motion?
+     /// Per-field text input state (TextField and TextEditor nodes only).
+     var textInput: TextInputState?
+-    /// Font value of the last measurement (the memo is keyed by text, font metadata and width).
++    /// Font value of the last measurement (the memo is keyed by text, font metadata, line limit and width).
+     var memoFont: Font?
++    var memoLineLimit: Int?
+     /// Selection binding of a List node, set at evaluation.
+     var selection: SelectionAccess?
+     /// Anchor and cursor of a List's keyboard and click selection, as row tags.
+@@ -610,8 +611,8 @@
+     /// A custom `Layout`, which can depend on anything its owner holds: never cached across evaluations.
+     case always
+     case text(String, String?)
+-    /// Text whose measurement depends on additive font metadata.
+-    case styledText(String, Font?)
++    /// Text whose measurement depends on additive font metadata and/or line limit.
++    case styledText(String, Font?, Int?)
+     case stack(StackSpec)
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
+@@ -1338,11 +1339,14 @@
+         switch kind {
+         case .text(let string):
+             let font = node.environment.font
+-            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
++            let lineLimit = node.environment.lineLimit
++            key = font?.metadata == nil && lineLimit == nil
++                ? .text(string, font?.id)
++                : .styledText(string, font, lineLimit)
+         case .textField, .textEditor:
+             let font = node.environment.font
+             let string = node.textInput?.display ?? ""
+-            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font)
++            key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font, nil)
+         case .stack(let spec): key = .stack(spec)
+         case .modifier(.padding(let insets)): key = .padding(insets)
+         case .modifier(.frame(let frame)): key = .frame(frame)
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -407,14 +407,18 @@
+     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
+         let wrapWidth = finiteLength(width)
+         let font = node.environment.font ?? Font(id: "body")
+-        if node.memoText != string || node.memoFont != font {
++        let lineLimit: Int?
++        if case .text = node.kind { lineLimit = node.environment.lineLimit } else { lineLimit = nil }
++        if node.memoText != string || node.memoFont != font || node.memoLineLimit != lineLimit {
+             node.memoText = string
+             node.memoFont = font
++            node.memoLineLimit = lineLimit
+             node.memo.removeAll()
+         }
+         if let cached = node.memo[wrapWidth] { return cached }
+         let request = TextMeasureRequest(
+-            text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale, fontMetadata: font.metadata
++            text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale,
++            fontMetadata: font.metadata, lineLimit: lineLimit
+         )
+         let size = measurer.measure(request).size
+         node.memo[wrapWidth] = size
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
+@@ -14,14 +14,27 @@
+     var body: some View { Text("descriptor").font(.system(size: 16, design: model.design)) }
+ }
+ 
++@Observable
++@MainActor
++final class MutableLineLimitModel {
++    var limit = 1
++}
++
++struct MutableLineLimitProbe: View {
++    let model: MutableLineLimitModel
++    var body: some View { Text("three lines").lineLimit(model.limit) }
++}
++
+ @MainActor
+ final class DescriptorTextMeasurer: TextMeasurer {
+     var requests: [TextMeasureRequest] = []
+ 
+     func measure(_ request: TextMeasureRequest) -> TextMeasurement {
+         requests.append(request)
+-        let height: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
+-        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: height * 0.75, lineCount: 1)
++        let lineHeight: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
++        let lines = min(3, request.lineLimit ?? 1)
++        let height = CGFloat(lines) * lineHeight
++        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: lineHeight * 0.75, lineCount: lines)
+     }
+ }
+ 
+@@ -70,6 +83,31 @@
+         XCTAssertNil(metadata?.design)
+     }
+ 
++    func testSameTextNodeInvalidatesWhenLineLimitChanges() {
++        let model = MutableLineLimitModel()
++        let measurer = DescriptorTextMeasurer()
++        let graph = Graph(MutableLineLimitProbe(model: model), measurer: measurer)
++        graph.flush()
++        let textID = graph.ids(ofKind: "Text").first
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 10)
++
++        model.limit = 2
++        graph.flush()
++        XCTAssertEqual(graph.ids(ofKind: "Text").first, textID)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 20)
++        XCTAssertEqual(measurer.requests.map(\.lineLimit), [1, 2])
++    }
++
++    func testLineLimitReachesMeasurerAndCapsTextHeight() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("aa bb cc dd ee").lineLimit(2), measurer: measurer)
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++
++        XCTAssertEqual(measurer.requests.first?.lineLimit, 2)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 32)
++    }
++
+     func testLegacySystemFontLeavesMetadataUnset() {
+         let measurer = FixedAdvanceTextMeasurer()
+         let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)

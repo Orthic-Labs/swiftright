@@ -160,6 +160,13 @@ extension View {
         }))
     }
 
+    /// Limits descendant Text views to at most `number` lines; nil removes the limit.
+    public func lineLimit(_ number: Int?) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.lineLimit = number
+        }))
+    }
+
     /// Foreground colour of the content. Apple: https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:)
     public func foregroundStyle<S: ShapeStyle>(_ style: S) -> some View {
         let color = style.resolvedColor

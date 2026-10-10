@@ -344,6 +344,10 @@ private enum FontKey: EnvironmentKey {
     static var defaultValue: Font? { nil }
 }
 
+private enum LineLimitKey: EnvironmentKey {
+    static var defaultValue: Int? { nil }
+}
+
 private enum ForegroundStyleKey: EnvironmentKey {
     static var defaultValue: ResolvedColor? { nil }
 }
@@ -358,6 +362,12 @@ extension EnvironmentValues {
     public var font: Font? {
         get { self[FontKey.self] }
         set { self[FontKey.self] = newValue }
+    }
+
+    /// Maximum visible line count for descendant Text views; nil leaves text unbounded.
+    public var lineLimit: Int? {
+        get { self[LineLimitKey.self] }
+        set { self[LineLimitKey.self] = newValue }
     }
 
     public var foregroundStyle: ResolvedColor? {

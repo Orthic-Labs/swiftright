@@ -6,13 +6,17 @@ public struct TextMeasureRequest: Hashable, Sendable {
     public let fontID: String
     /// Optional descriptor for explicit system designs and custom families. Legacy requests leave it nil.
     public let fontMetadata: Font.Metadata?
+    /// Maximum visible line count, nil when no `.lineLimit` applies.
+    public let lineLimit: Int?
     public let proposedWidth: CGFloat?
     public let scale: CGFloat
 
-    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil) {
+    public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil,
+                lineLimit: Int? = nil) {
         self.text = text
         self.fontID = fontID
         self.fontMetadata = fontMetadata
+        self.lineLimit = lineLimit
         self.proposedWidth = proposedWidth
         self.scale = scale
     }
@@ -52,7 +56,8 @@ public final class FixedAdvanceTextMeasurer: TextMeasurer {
 
     public func measure(_ request: TextMeasureRequest) -> TextMeasurement {
         requests.append(request)
-        let lines = wrap(request.text, width: request.proposedWidth)
+        let wrappedLines = wrap(request.text, width: request.proposedWidth)
+        let lines = request.lineLimit.map { Array(wrappedLines.prefix(max(0, $0))) } ?? wrappedLines
         guard !lines.isEmpty else {
             return TextMeasurement(size: .zero, baseline: 0, lineCount: 0)
         }
