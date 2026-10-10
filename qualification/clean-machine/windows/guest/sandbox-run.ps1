@@ -31,6 +31,7 @@ $HarnessName = 'sandbox-run.ps1'
 $HarnessPath = $PSCommandPath
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 
+# Declared order = run.py PACKAGE_CHECKS (qualification/test_run.py HarnessDriftTests compares this block).
 $ExpectedChecks = @(
     'W00-environment', 'W01-artifacts-bound', 'W02-signer-trust', 'W03-install-old',
     'W04-launch-offline-old', 'W05-write-data', 'W06-upgrade-new', 'W07-corrupt-update-rejected',
@@ -38,6 +39,15 @@ $ExpectedChecks = @(
     'W11-legacy-data-physical-path', 'W12-appinstaller-update', 'W13-renderer-layout-installed',
     'W14-deferred-update-in-use'
 )
+# R5 final: two runs. 'offline' (Networking Disable) runs every check except W12; 'network' (Networking Enable) runs W00, W01 and W12 only,
+# because the App Installer route needs a connected guest (Delivery Optimization stalls without a network profile) while the install,
+# signer-trust and offline-launch checks must stay offline. The profile comes from manifest.json (run-sandbox.ps1 -RunProfile).
+$ProfileChecks = @{
+    offline = @($ExpectedChecks | Where-Object { $_ -ne 'W12-appinstaller-update' })
+    network = @('W00-environment', 'W01-artifacts-bound', 'W12-appinstaller-update')
+}
+$RunChecks = $ProfileChecks['offline']
+$script:Profile = 'offline'
 
 $script:Results = New-Object System.Collections.ArrayList
 $script:Pfn = $null
@@ -111,6 +121,7 @@ function Write-CheckReceipt {
 # Invoke-Check runs a body that returns @{ pass = $bool; reason = ''; observed = @{}; artifacts = @{}; exit = $null }.
 function Invoke-Check {
     param([string]$CheckId, [string]$CheckName, [scriptblock]$Body, [bool]$Implemented = $true, [string]$NotImplementedReason = '')
+    if ($RunChecks -notcontains $CheckId) { return }   # not part of this run's profile
     $started = Get-UtcStamp
     if (-not $Implemented) {
         Write-CheckReceipt -CheckId $CheckId -CheckName $CheckName -Started $started -Status 'fail' -Implemented $false `
@@ -124,6 +135,12 @@ function Invoke-Check {
         $pass = [bool]$r.pass
         $status = $(if ($pass) { 'pass' } else { 'fail' })
         $reason = $(if ($pass) { '' } else { [string]$r.reason })
+        # PASS / FAIL / NOT-DEMONSTRABLE (the schema only has pass|fail, so NOT-DEMONSTRABLE is a fail receipt whose reason and
+        # observations.verdict say the experiment could not be performed, not that the product failed).
+        if (-not $r.observed) { $r.observed = @{} }
+        $verdict = $(if ($pass) { 'PASS' } elseif ($r.ContainsKey('verdict') -and $r['verdict']) { [string]$r['verdict'] } else { 'FAIL' })
+        $r.observed['verdict'] = $verdict
+        if ($verdict -eq 'NOT-DEMONSTRABLE') { $reason = 'NOT-DEMONSTRABLE: ' + $reason }
         Write-CheckReceipt -CheckId $CheckId -CheckName $CheckName -Started $started -Status $status -Implemented $true `
             -Reason $reason -ExitStatus $r.exit -Observed $r.observed -Artifacts $r.artifacts
     }
@@ -251,16 +268,20 @@ function Write-MarkerRow {
     if ($btn.Count -eq 0) { throw 'button "Insert above" not found in UIA tree' }
     $inv = $btn[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
     $inv.Invoke()
-    Start-Sleep -Seconds 1
-    $rows = @(Find-RowFields -Root $Root)
-    if ($rows.Count -eq 0) { throw 'no "Row" text fields found after insert' }
-    # Insert above adds an EMPTY row (EditorModel.insertAbove); write into it so earlier markers are never overwritten.
-    $target = $null
-    foreach ($r in $rows) {
-        $v = $r.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-        if ([string]$v.Current.Value -eq '') { $target = $r; break }
+    # Insert above adds an EMPTY row (EditorModel.insertAbove); write into it so earlier markers are never overwritten. The software-rendered guest
+    # can take longer than a second to reflect the insert in the UIA tree, so poll for up to 15 s.
+    $target = $null; $rows = @()
+    $deadlineRow = (Get-Date).AddSeconds(15)
+    while ((Get-Date) -lt $deadlineRow -and -not $target) {
+        Start-Sleep -Milliseconds 500
+        $rows = @(Find-RowFields -Root $Root)
+        foreach ($r in $rows) {
+            $v = $r.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+            if ([string]$v.Current.Value -eq '') { $target = $r; break }
+        }
     }
-    if (-not $target) { throw 'no empty Row field after Insert above' }
+    if ($rows.Count -eq 0) { throw 'no "Row" text fields found after insert' }
+    if (-not $target) { throw 'no empty Row field after Insert above (15 s)' }
     $vp = $target.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
     $vp.SetValue($Marker)
     return @{ row_fields = $rows.Count }
@@ -394,6 +415,10 @@ if (Test-Path -LiteralPath $manifestPath) {
     $script:Manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 }
 $script:RunId = $(if ($script:Manifest) { [string]$script:Manifest.run_id } else { 'unknown-no-manifest' })
+if ($script:Manifest -and $script:Manifest.PSObject.Properties['profile'] -and $ProfileChecks.ContainsKey([string]$script:Manifest.profile)) {
+    $script:Profile = [string]$script:Manifest.profile
+    $RunChecks = $ProfileChecks[$script:Profile]
+}
 $script:RunStarted = Get-UtcStamp
 
 # W00: environment. Offline must be real (no default route) and the logon must be elevated.
@@ -403,13 +428,16 @@ Invoke-Check -CheckId 'W00-environment' -CheckName 'Sandbox environment, elevati
     $defaultRoutes = @(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue).Count
     $adapters = @(Get-NetAdapter -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })
     $observed = @{
+        profile = $script:Profile
         elevated = [string]$elevated
         default_routes = [string]$defaultRoutes
         adapters = ($adapters -join ',')
         manifest_present = [string]($null -ne $script:Manifest)
     }
-    $pass = $elevated -and ($defaultRoutes -eq 0) -and ($null -ne $script:Manifest)
-    @{ pass = $pass; reason = 'need elevated, no default route, and a manifest'; observed = $observed; artifacts = @{}; exit = $null }
+    # offline: no default route (Networking Disable is real). network: a default route exists (Networking Enable), needed by W12 only.
+    $netOk = $(if ($script:Profile -eq 'network') { $defaultRoutes -gt 0 } else { $defaultRoutes -eq 0 })
+    $pass = $elevated -and $netOk -and ($null -ne $script:Manifest)
+    @{ pass = $pass; reason = ('need elevated, a manifest, and ' + $(if ($script:Profile -eq 'network') { 'a default route (profile network)' } else { 'no default route (profile offline)' })); observed = $observed; artifacts = @{}; exit = $null }
 }
 
 # W01: staged artifacts match the host-side hashes in the manifest.
@@ -502,7 +530,28 @@ Invoke-Check -CheckId 'W04-launch-offline-old' -CheckName 'Launch old build offl
     $pass = ($w.window_name -ne '')
     $rmod = ''
     try { $rmod = (@((Get-Process -Id $w.pid).Modules | Where-Object { $_.ModuleName -like 'swiftright_render*' } | ForEach-Object { $_.FileName }) -join ';') } catch { $rmod = 'unreadable: ' + $_.Exception.Message }
-    @{ pass = $pass; reason = 'window has no name'; observed = @{ renderer_module_loaded_from = $rmod; window_name = [string]$w.window_name; pid = [string]$w.pid; network_default_routes = [string](@(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue).Count) }; artifacts = @{}; exit = $null }
+    # R5 final (product fix P1): SliceApp.exe is a GUI-subsystem exe. (a) no console window is opened for it (top-level ConsoleWindowClass / Windows Terminal
+    # host window whose title names SliceApp.exe; the harness's own console never carries that title); (b) with no standard handles the packaged launch logs
+    # to %LOCALAPPDATA%\SliceApp\slice-app.log: the log must hold this process's banner (pid).
+    $AE = [System.Windows.Automation.AutomationElement]
+    $consoleWins = @($AE::RootElement.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition) |
+        Where-Object { ($_.Current.ClassName -in @('ConsoleWindowClass', 'CASCADIA_HOSTING_WINDOW_CLASS')) -and ($_.Current.Name -match 'SliceApp') })
+    $logPath = Join-Path $script:LocalAppData 'slice-app.log'
+    # The shipped build opens the log exclusively while it runs (CRT freopen; a shared-read variant is a follow-up, RESULT-R5.md), so close the app first and
+    # read the log afterwards. The pid and exe path are read before the app exits.
+    $exePath = ''
+    try { $exePath = (Get-Process -Id $w.pid).MainModule.FileName } catch { $exePath = '' }
+    $closedForLog = Stop-AppGracefully
+    $logText = ''
+    if (Test-Path -LiteralPath $logPath) {
+        $lfs = [IO.File]::Open($logPath, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+        try { $lsr = New-Object IO.StreamReader($lfs); $logText = $lsr.ReadToEnd() } finally { $lfs.Dispose() }
+    }
+    $bannerForPid = ($logText -match ('slice-app: log opened \S+ pid=' + $w.pid + ' '))
+    $subsystem = ''
+    try { $b = [IO.File]::ReadAllBytes($exePath); $subsystem = [string][BitConverter]::ToUInt16($b, [BitConverter]::ToInt32($b, 0x3c) + 24 + 68) } catch { $subsystem = 'unreadable: ' + $_.Exception.Message }
+    $pass = $pass -and ($consoleWins.Count -eq 0) -and $bannerForPid -and ($subsystem -eq '2')
+    @{ pass = $pass; reason = 'window has no name, a console window opened for SliceApp.exe, the packaged launch left no log banner for its pid, or the exe is not subsystem 2'; observed = @{ renderer_module_loaded_from = $rmod; window_name = [string]$w.window_name; pid = [string]$w.pid; network_default_routes = [string](@(Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue).Count); console_windows_for_app = [string]$consoleWins.Count; console_window_titles = (($consoleWins | ForEach-Object { $_.Current.Name }) -join ';'); log_banner_for_pid = [string]$bannerForPid; app_closed_for_log_read = [string]$closedForLog; log_path = $logPath; log_tail = (($logText -split "`r?`n" | Where-Object { $_ } | Select-Object -Last 3) -join ' | '); pe_subsystem = $subsystem }; artifacts = @{}; exit = $null }
 }
 
 # W05: write data through the UI and confirm it reaches rows.json at a physical path.
@@ -590,51 +639,94 @@ Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX re
     @{ pass = $pass; reason = 'tampered changed-entry package accepted, refused only because the app was in use, installed version changed, or the genuine update failed'; observed = $observed; artifacts = @{ tampered_msix = $b.sha }; exit = $null }
 }
 
-# W08: real interrupted update (Sandbox guest only). Fault injection: AppXSvc is stopped while Add-AppxPackage deploys the
-# new package (scripts\interrupt-windows-install.ps1 -Mode KillDeployment). Valid only if the stop landed mid-flight and the
-# cmdlet failed. Pass = exactly one version registered with status Ok (no none/both/partial), data byte-identical, the
-# registered build launches, and a rerun of the update registers the new version. Not a Microsoft-documented procedure.
-Invoke-Check -CheckId 'W08-interrupted-update' -CheckName 'Interrupted update (AppXSvc stopped mid-deployment): consistent state, data intact, recovery' -Body {
+# W08: real interrupted update (Sandbox guest only; R5 final). The earlier AppXSvc kill is gone: the service host is protected and Stop-Service lets the
+# deployment finish. Interruption now comes from the deployment CLIENT, at a measured point (scripts\interrupt-windows-install.ps1):
+#   KillClient      Stop-Process -Force on the powershell.exe that runs `Add-AppxPackage <new>`, when the new version's staging directory appears;
+#   CancelOperation the documented WinRT route: PackageManager.AddPackageAsync(<new>) cancelled with IAsyncInfo.Cancel() at the same point.
+# Eleven cases (2 client kills, 9 cancels at different phases of the ~0.5 s deployment). An interruption is GENUINE when the client/operation was alive at the interrupt, the
+# deployment was demonstrably under way, and the new version is not registered afterwards (if the service completed the update anyway, only the client was
+# interrupted: `completed-anyway`). Every genuine interruption is then judged: exactly one version registered (the old one), data byte-identical, that
+# build launches, and a second Add-AppxPackage registers the new version with status Ok (a non-Ok status right after the interrupt, e.g.
+# NeedsRemediation, is recorded in status_not_ok_after_interrupt). Verdicts: PASS = at least one genuine interruption and every one judged ok;
+# FAIL = a genuine interruption left a bad state; NOT-DEMONSTRABLE = no method ever interrupted the update (evidence: per-case timelines and
+# deployment-service events in receipts\evidence-W08-*.json).
+# No reboot, no service kill, no guest power loss (Sandbox state is discarded on close, so a power-off could not be inspected).
+Invoke-Check -CheckId 'W08-interrupted-update' -CheckName 'Interrupted update (deployment client killed / operation cancelled mid-deployment): state, data, launch, recovery per interruption' -Body {
     $m = $script:Manifest
     $old = Join-Path $PackagesDir $m.old.file
     $new = Join-Path $PackagesDir $m.new.file
+    $script08 = Join-Path $script:SliceDir 'scripts\interrupt-windows-install.ps1'
     [void](Stop-AppGracefully)
     $shaBefore = Get-RowsSha
-    $removed = Remove-PkgKeepData
-    $resFile = Join-Path $WorkDir 'interrupt-kill.json'
-    Remove-Item -LiteralPath $resFile -ErrorAction SilentlyContinue
-    $r = Invoke-ChildPs -PsArgs @('-File', (Join-Path $script:SliceDir 'scripts\interrupt-windows-install.ps1'), '-OldMsix', $old, '-NewMsix', $new, '-Mode', 'KillDeployment', '-ResultJson', $resFile, '-DisposableGuest')
-    if (-not (Test-Path -LiteralPath $resFile)) { throw ('interrupt script wrote no result: ' + $r.out) }
-    $res = Get-Content -Raw -LiteralPath $resFile | ConvertFrom-Json
-    $after = $res.states | Where-Object { $_.when -eq 'after interrupt' } | Select-Object -Last 1
-    $oneRegistered = ($after.registered_count -eq 1) -and ($after.all_users_count -le 1)
-    $statusOk = $oneRegistered -and ([string]$after.registered[0].status -eq 'Ok')
-    $versionAfter = $(if ($oneRegistered) { [string]$after.registered[0].version } else { 'none-or-many' })
-    $oneOfTwo = ($versionAfter -eq [string]$m.old.version) -or ($versionAfter -eq [string]$m.new.version)
-    $shaAfterInterrupt = Get-RowsSha
-    # The registered build must launch.
-    $launched = $false; $launchErr = ''
-    if ($oneRegistered) {
-        try { $w = Start-AppAndFindWindow -TimeoutSec 40; $launched = ($w.window_name -ne '') } catch { $launchErr = $_.Exception.Message }
+    $cases = @(
+        @{ mode = 'KillClient'; trigger = 'staging'; delay = 0 }, @{ mode = 'KillClient'; trigger = 'staging'; delay = 150 },
+        @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 0 }, @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 160 },
+        @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 200 }, @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 240 },
+        @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 280 }, @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 300 },
+        @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 320 }, @{ mode = 'CancelOperation'; trigger = 'staging'; delay = 360 },
+        @{ mode = 'CancelOperation'; trigger = 'start'; delay = 0 }
+    )
+    $obs = @{}; $lines = @(); $json = @()
+    $genuineCount = 0; $genuineOk = 0; $killAnyway = 0; $statusNotOk = @(); $badCases = @()
+    $i = 0
+    foreach ($c in $cases) {
+        $i++
+        $cid = ('c' + $i + '-' + $c.mode + '-' + $c.trigger + '+' + $c.delay + 'ms')
         [void](Stop-AppGracefully)
+        [void](Remove-PkgKeepData)
+        $resFile = Join-Path $WorkDir ('interrupt-' + $cid + '.json')
+        Remove-Item -LiteralPath $resFile -ErrorAction SilentlyContinue
+        $r = Invoke-ChildPs -PsArgs @('-File', $script08, '-OldMsix', $old, '-NewMsix', $new, '-Mode', $c.mode, '-Trigger', $c.trigger, '-ExtraDelayMs', [string]$c.delay, '-ResultJson', $resFile, '-DisposableGuest')
+        if (-not (Test-Path -LiteralPath $resFile)) { $lines += ($cid + ': script wrote no result: ' + $r.out); $badCases += $cid; continue }
+        Copy-Item -LiteralPath $resFile -Destination (Join-Path $ReceiptsDir ('evidence-W08-' + $cid + '.json')) -Force
+        $res = Get-Content -Raw -LiteralPath $resFile | ConvertFrom-Json
+        $att = @($res.attempts)[0]
+        $case = [ordered]@{ id = $cid; interrupted = [bool]$att.interrupted; client_alive = [bool]$att.client_alive_at_interrupt; outcome = [string]$att.outcome; registered_after = [string]$att.registered_after; failed_to_reach_state = [string]$att.failed_to_reach_state; t_trigger_ms = [int]$att.t_trigger_ms; t_interrupt_ms = [int]$att.t_interrupt_ms }
+        if ($c.mode -eq 'KillClient' -and $att.client_alive_at_interrupt -and $att.outcome -eq 'completed-anyway') { $killAnyway++ }
+        if ($att.interrupted) {
+            $genuineCount++
+            # Judge this interruption: live registration, data, launch of the registered build, then a second update.
+            $pk = @(Get-AppxPackage -Name $m.identity_name -ErrorAction SilentlyContinue)
+            $allUsers = @(Get-AppxPackage -AllUsers -Name $m.identity_name -ErrorAction SilentlyContinue)
+            $oneRegistered = ($pk.Count -eq 1) -and ($allUsers.Count -le 1)
+            $verAfter = $(if ($oneRegistered) { [string]$pk[0].Version } else { 'none-or-many' })
+            $statusAfter = $(if ($oneRegistered) { [string]$pk[0].Status } else { 'n/a' })
+            $shaAfterInterrupt = Get-RowsSha
+            $launched = $false; $launchErr = ''
+            if ($oneRegistered) {
+                try { $w = Start-AppAndFindWindow -TimeoutSec 40; $launched = ($w.window_name -ne '') } catch { $launchErr = $_.Exception.Message }
+                [void](Stop-AppGracefully)
+            }
+            $rerunErr = ''
+            try { Add-AppxPackage -Path $new -ErrorAction Stop } catch { $rerunErr = $_.Exception.Message }
+            $verRerun = Get-VersionString
+            $pk2 = @(Get-AppxPackage -Name $m.identity_name -ErrorAction SilentlyContinue)
+            $statusRerun = $(if ($pk2.Count -eq 1) { [string]$pk2[0].Status } else { 'n/a' })
+            $shaFinal = Get-RowsSha
+            $ok = $oneRegistered -and ($verAfter -eq [string]$m.old.version) -and ($shaAfterInterrupt -eq $shaBefore) -and $launched -and ($rerunErr -eq '') -and ($verRerun -eq [string]$m.new.version) -and ($statusRerun -eq 'Ok') -and ($shaFinal -eq $shaBefore)
+            if ($statusAfter -ne 'Ok') { $statusNotOk += ($cid + ':' + $statusAfter) }
+            $case['one_registered'] = $oneRegistered; $case['version_after_interrupt'] = $verAfter; $case['status_after_interrupt'] = $statusAfter
+            $case['data_intact'] = ($shaAfterInterrupt -eq $shaBefore); $case['launched'] = $launched; $case['launch_error'] = $launchErr
+            $case['rerun_error'] = $rerunErr; $case['version_after_rerun'] = $verRerun; $case['status_after_rerun'] = $statusRerun; $case['data_intact_final'] = ($shaFinal -eq $shaBefore); $case['ok'] = $ok
+            if ($ok) { $genuineOk++ } else { $badCases += $cid }
+        }
+        $json += $case
+        $lines += ($cid + ': ' + $(if ($att.interrupted) { 'INTERRUPTED' } else { 'not interrupted' }) + ' outcome=' + $att.outcome + ' registered=' + $att.registered_after + $(if ($att.failed_to_reach_state) { ' failed-to-reach=' + $att.failed_to_reach_state } else { '' }) + $(if ($att.interrupted) { ' launched=' + $case['launched'] + ' rerun=' + $case['version_after_rerun'] + '/' + $case['status_after_rerun'] + ' ok=' + $case['ok'] } else { '' }))
     }
-    # Recovery: rerun the update; the new version must register.
-    $rerunErr = ''
-    try { Add-AppxPackage -Path $new } catch { $rerunErr = $_.Exception.Message }
-    $versionRerun = Get-VersionString
-    $shaFinal = Get-RowsSha
-    $observed = @{
-        removed_before = [string]$removed; interrupt_valid = [string]$res.valid; stopped_in_flight = [string]$res.stopped_in_flight
-        job_state = [string]$res.job_state; job_error = [string]$res.job_error
-        registered_count_after_interrupt = [string]$after.registered_count; all_users_count_after_interrupt = [string]$after.all_users_count
-        status_after_interrupt = $(if ($oneRegistered) { [string]$after.registered[0].status } else { 'n/a' })
-        version_after_interrupt = $versionAfter
-        rows_sha_before = $shaBefore; rows_sha_after_interrupt = $shaAfterInterrupt; rows_sha_after_rerun = $shaFinal
-        launched_after_interrupt = [string]$launched; launch_error = $launchErr
-        rerun_error = $rerunErr; version_after_rerun = $versionRerun; script_output = $r.out
+    $obs['rows_sha_before'] = $shaBefore
+    $obs['cases'] = ($lines -join ' || ')
+    $obs['cases_json'] = ($json | ConvertTo-Json -Depth 4 -Compress)
+    $obs['genuine_interruptions'] = [string]$genuineCount
+    $obs['genuine_interruptions_ok'] = [string]$genuineOk
+    $obs['killclient_alive_then_completed_anyway'] = [string]$killAnyway
+    $obs['status_not_ok_after_interrupt'] = ($statusNotOk -join ',')
+    $obs['bad_cases'] = ($badCases -join ',')
+    $obs['final_registered_version'] = Get-VersionString
+    if ($genuineCount -eq 0) {
+        return @{ pass = $false; verdict = 'NOT-DEMONSTRABLE'; reason = ('no method interrupted the update in flight (every attempt ended completed-anyway, or the trigger never landed): ' + ($lines -join ' || ')); observed = $obs; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = $null }
     }
-    $pass = [bool]$res.valid -and $oneRegistered -and $statusOk -and $oneOfTwo -and ($shaBefore -eq $shaAfterInterrupt) -and $launched -and ($versionRerun -eq [string]$m.new.version)
-    @{ pass = $pass; reason = 'run invalid (not interrupted in flight), inconsistent registration, data changed, build did not launch, or rerun did not register the new version'; observed = $observed; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = $r.exit }
+    $pass = ($badCases.Count -eq 0) -and ($genuineOk -eq $genuineCount)
+    @{ pass = $pass; reason = ('an interruption left a bad state: ' + ($badCases -join ',') + ' (not exactly one old version registered, data changed, the build did not launch, or the second update did not register the new version with status Ok)'); observed = $obs; artifacts = @{ new_msix = (Get-Sha256Ref -Path $new) }; exit = $null }
 }
 
 # W08b: update while the app is running. Add-AppxPackage -DeferRegistrationWhenPackagesAreInUse must leave the old version
@@ -835,7 +927,7 @@ Invoke-Check -CheckId 'W12-appinstaller-update' -CheckName 'App Installer feed i
 # ---------------------------------------------------------------- run summary
 
 $checks = @($script:Results | ForEach-Object { @{ check_id = $_.check_id; status = $_.status; implemented = $_.implemented } })
-$missing = @($ExpectedChecks | Where-Object { $id = $_; -not ($script:Results | Where-Object { $_.check_id -eq $id }) })
+$missing = @($RunChecks | Where-Object { $id = $_; -not ($script:Results | Where-Object { $_.check_id -eq $id }) })
 $notPassing = @($script:Results | Where-Object { $_.status -ne 'pass' -or -not $_.implemented } | ForEach-Object { $_.check_id })
 $ok = ($missing.Count -eq 0) -and ($notPassing.Count -eq 0)
 $reason = $null
@@ -852,7 +944,7 @@ $summary = [ordered]@{
     platform = 'windows-x64'
     run_id = $script:RunId
     status = $(if ($ok) { 'pass' } else { 'fail' })
-    expected_checks = $ExpectedChecks
+    expected_checks = $RunChecks
     checks = $checks
     started_utc = $script:RunStarted
     ended_utc = Get-UtcStamp

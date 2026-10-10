@@ -21,7 +21,7 @@
 #   .\run-sandbox.ps1 ... -DryRun     # stage and write the .wsb only; does not start the sandbox
 #
 # Requirements on the host: Windows Sandbox feature enabled (restart after enabling). Nothing here changes Windows
-# settings. Sandbox networking is disabled in the .wsb, so no network is needed.
+# settings. -RunProfile Offline (default) disables Sandbox networking; -RunProfile Network enables it (W12 only).
 
 [CmdletBinding()]
 param(
@@ -38,6 +38,9 @@ param(
     # R5: the sealed hashes the packages must equal (msix-seal-*.json msix.sha256); the run refuses any other bytes.
     [Parameter(Mandatory = $true)][string]$ExpectOldSha256,
     [Parameter(Mandatory = $true)][string]$ExpectNewSha256,
+    # R5 final: 'Offline' (Networking Disable) runs every check except W12; 'Network' (Networking Enable) runs W00, W01 and W12 only.
+    # Run both; the offline-launch checks (W01..W04) must never see a network.
+    [ValidateSet('Offline', 'Network')][string]$RunProfile = 'Offline',
     [switch]$DryRun
 )
 
@@ -54,6 +57,8 @@ $ExpectedChecks = @(
     'W11-legacy-data-physical-path', 'W12-appinstaller-update', 'W13-renderer-layout-installed',
     'W14-deferred-update-in-use'
 )
+# Checks this run expects: Offline = all but W12; Network = W00, W01, W12 (same lists as the guest's $ProfileChecks).
+$RunChecks = $(if ($RunProfile -eq 'Network') { @('W00-environment', 'W01-artifacts-bound', 'W12-appinstaller-update') } else { @($ExpectedChecks | Where-Object { $_ -ne 'W12-appinstaller-update' }) })
 
 $GuestDir = Join-Path $PSScriptRoot 'guest'
 $TemplatePath = Join-Path $PSScriptRoot 'clean-machine.wsb.tmpl'
@@ -161,6 +166,7 @@ $manifest = [ordered]@{
     identity_name = $oldId.identity_name
     publisher = $oldId.publisher
     expected_schema = 1
+    profile = $RunProfile.ToLowerInvariant()
     old = [ordered]@{ file = 'old.msix'; sha256 = $oldSha; version = $oldId.version }
     new = [ordered]@{ file = 'new.msix'; sha256 = $newSha; version = $newId.version }
     signer_cer = [ordered]@{
@@ -190,6 +196,7 @@ $wsbText = [System.IO.File]::ReadAllText($TemplatePath, $Utf8)
 $wsbText = $wsbText.Replace('__HOST_HARNESS__', (Get-XmlEscapedPath -Path $HarnessStage))
 $wsbText = $wsbText.Replace('__HOST_PACKAGES__', (Get-XmlEscapedPath -Path $PkgStage))
 $wsbText = $wsbText.Replace('__HOST_RECEIPTS__', (Get-XmlEscapedPath -Path $ReceiptsDir))
+$wsbText = $wsbText.Replace('__NETWORKING__', $(if ($RunProfile -eq 'Network') { 'Enable' } else { 'Disable' }))
 if ($wsbText -match '__HOST_[A-Z]+__') { throw 'unreplaced token in .wsb' }
 $wsbXml = [xml]$wsbText   # throws if the generated XML is malformed
 if (-not $wsbXml.Configuration) { throw 'generated .wsb has no Configuration root' }
@@ -242,13 +249,13 @@ try {
     if ($timedOut) { $reasons += "timeout: no guest-run.json after $TimeoutMinutes min" }
     if ($guest) {
         if ([string]$guest.run_id -ne $RunId) { $reasons += 'guest run_id differs from host run_id' }
-        if (($guest.expected_checks -join ',') -ne ($ExpectedChecks -join ',')) { $reasons += 'guest expected_checks differ from host list' }
+        if (($guest.expected_checks -join ',') -ne ($RunChecks -join ',')) { $reasons += 'guest expected_checks differ from host list' }
         if ($guest.harness.sha256 -ne $guestHarnessSha) { $reasons += 'guest harness hash differs from staged harness' }
         if ($guest.status -ne 'pass') { $reasons += 'guest summary status is ' + $guest.status }
     }
 
     $rows = @()
-    foreach ($id in $ExpectedChecks) {
+    foreach ($id in $RunChecks) {
         $path = Join-Path $ReceiptsDir ($id + '.json')
         if (-not (Test-Path -LiteralPath $path)) {
             $rows += [ordered]@{ check_id = $id; status = 'fail'; implemented = $false }
@@ -277,7 +284,7 @@ try {
         platform = 'windows-x64'
         run_id = $RunId
         status = $(if ($ok) { 'pass' } else { 'fail' })
-        expected_checks = $ExpectedChecks
+        expected_checks = $RunChecks
         checks = $rows
         started_utc = $startedUtc
         ended_utc = Get-UtcStamp

@@ -1,77 +1,92 @@
-# R5 Windows Sandbox clean-guest result (2026-10-10)
+# R5 Windows Sandbox clean-guest result, final2 round (2026-10-10)
 
-Host: Dell (Bogus-Dell, Windows 11 24H2 build 26100.9550), non-elevated one-shot Interactive/Limited task for every Sandbox launch, no upload. Guest: Windows Sandbox (Store app 0.8.107.0, installed by the first launch), guest OS 10.0.26100.9550, offline (`Networking Disable`, W00 confirms 0 default routes).
-Harness: pushed commit 54d480c (`run-sandbox.ps1` sha256 7cb1f2f2..., guest `sandbox-run.ps1` sha256 5cc7207e...). Artifact dir: `/Volumes/D/sr0-artifacts/win/r5-final/` (all paths below are relative to it).
+Host: Dell (Bogus-Dell, Windows 11 24H2 build 26100.9550). Guest: Windows Sandbox (Store app 0.8.107.0), guest OS 10.0.26100.9550, `<vGPU>Disable</vGPU>` (software rendering; see "Environment"). Two runs, because W12 needs a connected guest and W01 to W04 must never see a network:
 
-**Verdict: R5 is NOT PASS.** The pinned harness (with the one environment change below) passes 5 of 15 checks (W07 only vacuously); 10 fail on harness or environment defects. With a patched harness (patch: `examples/SliceApp/RESULT-R5-harness.patch`) 13 of 15 pass; W08 and W12 cannot be demonstrated in this guest. Packages, signatures and renderer pin are good.
+| Run | Profile | Networking | Checks | Run id | run.json sha256 | Guest harness sha256 |
+|---|---|---|---|---|---|---|
+| Offline | `Offline` | `Disable` (W00: 0 default routes) | W00 to W11, W13, W14 | `r5-final2-offline-4` | 329a2d84e8c6c0fde1497d0118f7052370a8065573d112e299a71b48096960d1 | 42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42 |
+| Network | `Network` | `Enable` (W00: 1 default route) | W00, W01, W12 | `r5-final2-network-2` | e21305cd5439b7f2ddf1cb1934aeafac7dd641e8d8ba8c4ad82742117548a3f9 | 42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42 |
 
-## Inputs (host-side verification, all PASS)
+Host harness `run-sandbox.ps1` sha256 c3305a704d2d93ed85e7cbb861957f41979c1e681a6f7a0a3734b0015694e4aa (both runs started through the non-elevated one-shot Interactive/Limited task, `logs/log-sandbox-r5-final2-*.txt` first line `elevated=False`). The harness changes (four files, listed below) are UNCOMMITTED working-tree changes on top of 0751951 (copies and the diff are in `harness/`). Artifacts and logs: `/Volumes/D/sr0-artifacts/win/r5-final2/` (every path below is relative to it).
+
+**Verdict: R5 is NOT PASS. 14 of 15 checks PASS; W08 FAILS** (an update cancelled in the registration phase leaves the previous version unlaunchable until the update is re-applied; data intact, recovery works). Nothing is NOT-DEMONSTRABLE any more except the Stop-Process interrupt method on its own (see W08). The package, signature, renderer pin and the product fix are good.
+
+## Product fix (P1, commit 0751951623d962e15ea3ce2c5fd7f56db6f592df, pushed to master)
+
+`SliceApp.exe` was a console-subsystem exe, so a packaged launch opened a `ConsoleWindowClass` window. Now:
+- `scripts/build-windows.ps1` passes `-Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup` (Swift's `@main` emits C `main`; `/SUBSYSTEM:WINDOWS` alone makes the linker look for `WinMain`) and fails closed unless the PE Subsystem field is 2. Consumer link flags, no `unsafeFlags` in `Package.swift`.
+- `Sources/SliceApp/Windows/WindowsLog.swift` + one call at the top of `main`: when stdout or stderr has no usable handle (packaged launch), the C stream and process standard handle are pointed at `%LOCALAPPDATA%\SliceApp\slice-app.log` (else `%TEMP%`), unbuffered, with a first line `slice-app: log opened <utc> pid=<pid> exe=<path>`. Pipes, files and consoles are left alone, so the QA driver's `SWR_`/`SLICE_` diagnostics still arrive.
+- `scripts/verify-package-layout.ps1` (Stage and Installed modes) rejects a console-subsystem exe.
+- Verification (headless, Dell, on the signed payloads unpacked from the final MSIX, PATH = System32 only, renderer removed so the app exits 78 at once; `logs/log-headless-logging-test.txt`): PE subsystem 2; pipes give the diagnostic on stdout and create no log; no handles give banner plus diagnostic in the log and a second launch appends; stdout to a file with stderr detached keeps the diagnostic in the file and logs the banner; no `LOCALAPPDATA` falls back to `%TEMP%`. The previous console stage is rejected by the new check (subsystem 3).
+- In the Sandbox (W04, 0.1.0 packaged, AUMID launch): window `SliceApp`, PE subsystem 2, 0 console windows naming SliceApp, banner for the running pid in `slice-app.log`. Negative control (`probes/P40`, the previous round's console build 85bea609...): subsystem 3, one `ConsoleWindowClass` window titled with the exe path, no log: the W04 check can fail.
+- **Known limit of the shipped commit:** the CRT's `freopen` opens the log exclusively, so it cannot be read while the app runs (W04 closes the app first, then reads it). A shared-read variant (`CreateFileW` with `FILE_SHARE_READ|WRITE|DELETE` + `_dup2`) compiles and passes the same headless tests; it is NOT committed (one commit was authorised) and NOT in the packages: `candidate-WindowsLog-shared-read.swift` / `.patch`. Apply it in a follow-up commit if live log reading matters.
+
+## Inputs (all PASS)
 
 | Item | Result |
 |---|---|
-| SliceApp_0.1.0.0_x64.msix | sha256 85bea609fef423544bda408e60e304b7790959ffc24229e8460f9a198dbcdb7a (29,038,137 B), equals seal `sliceapp-0.1.0-54d480c4`; clone commit 54d480c4 |
-| SliceApp_0.1.1.0_x64.msix | sha256 893a3ec499ab35a9aec31fcda50153a07b8d9e661ae9d4f08ab682158b41a2bc (29,038,011 B), equals seal `sliceapp-0.1.1-f1e35e9f`; clone commit f1e35e9f |
-| `signtool verify /pa /v` both | Successfully verified, exit 0, 0 warnings; chain Microsoft Identity Verification Root CA 2020 > ID Verified Code Signing PCA 2021 > ID Verified CS EOC CA 03 > Damned Ventures LLC (70C72673...); RFC3161 timestamps 03:26:40 / 03:29:15. `log-host-verify.txt` |
-| `verify-package-layout.ps1 -Mode Stage` on both unpacked payloads (makeappx unpack, 27 files each) | OK both: renderer beside exe, Authenticode digest = pin (D8FB3B3B..., ABI 0.6; raw sha256 in packages 6C80D968... / 4406990B..., both Valid). Run with the clone script (Loader.swift check included) and the harness copy. |
-| `swift-only-proof.mjs` 0.1.0 vs 0.1.1 (Dell, `--repo clean2`, build logs = QA logs) | `ok: true`; changed payload = `appxmanifest.xml`, `sliceapp.exe` only; renderer digest equal and = pin. `log-swift-only-proof.txt` |
-| App Installer feeds via `make-local-appinstaller.mjs` (RightKit 0.2.144, Mac) | `feed/SliceApp.0.appinstaller` 87d7e8cd..., `feed/SliceApp.1.appinstaller` 5eb70594...; Publisher equals the MSIX identity publisher. |
+| Build commits | clone `clean` (0.1.0): 0751951623d962e15ea3ce2c5fd7f56db6f592df on branch `master` (git bundle of the pushed master; Dell HTTPS auth is broken). Clone `clean2` (0.1.1): clone-local commit b545c34f13f3a91b48d1096d688af057bd767d94 on top of 0751951 (`bump-version-win.ps1`: version fields + one Swift diagnostic string) |
+| QA source receipts (@rightkit/release 0.2.144) | 0.1.0 digest 4e07cf051b96c500b144c64391abc38c90f2267c565017a75f9e82d30426d559, 0.1.1 digest 05bf97ddbfc65620e57aea22f44a05ee9684b1e7e362c5b93c8366679eb90ba2; each `app.build`, `app.launch`, `journey.restart-keeps-data` passed (`qa-receipts/`, `inputs/log-qa-*.txt`) |
+| SliceApp_0.1.0.0_x64.msix | sha256 4cc9a7f0a05c05561432ddf536179ae18b6e2aeabbc0f6c245397de38edf2f4a (29,048,635 B), equals seal `sliceapp-0.1.0-07519516` |
+| SliceApp_0.1.1.0_x64.msix | sha256 c2897a68d1a4555da92155f4192dc53c77a5803e5932a821ab3fed465de2f432 (29,048,705 B), equals seal `sliceapp-0.1.1-b545c34f` |
+| Seals | `inputs/msix-seal-0.1.{0,1}.json` (148039fc..., afc81bf1...), `inputs/release-manifest-0.1.{0,1}.json` |
+| `signtool verify /pa /v` both | Successfully verified, exit 0, 0 warnings; chain Microsoft Identity Verification Root CA 2020 > ID Verified Code Signing PCA 2021 > ID Verified CS AOC CA 03 > Damned Ventures LLC (SHA1 121FD7B569E256DA0AF63B1BF8E3CD5AEDF888D3); RFC3161 timestamps 06:03:48 / 06:06:10. `log-host-verify.txt` |
+| `verify-package-layout.ps1 -Mode Stage` on both unpacked payloads (27 files) | OK both: renderer beside exe, Authenticode digest = pin D8FB3B3B... (ABI 0.6; raw sha256 in the packages 3658385B... / F13AAD22..., both Valid), exe subsystem 2 and Valid |
+| `swift-only-proof.mjs` 0751951 vs b545c34f (`--repo clean2`, QA logs as build logs) | `ok: true`; changed payload = `appxmanifest.xml`, `sliceapp.exe` only; renderer digest equal and = pin. `log-swift-only-proof.txt` |
+| App Installer feeds (`make-local-appinstaller.mjs`, RightKit 0.2.144) | `feed/SliceApp.0.appinstaller` 87d7e8cd6801a0bd8696a94492c1e39c150f213ecb606f5483498548c00d04c6, `feed/SliceApp.1.appinstaller` 5eb7059488a6ff705262..., unchanged from the previous round (they depend only on identity and version) |
 
-Signing certificate expires **2026-10-11 05:22:22 (Dell local, +05:30)**, about a day after this run. Installs of these packages keep validating (RFC3161 timestamp), but any new build needs a renewed certificate.
+The first `build` of each clone was refused by RightKit ("version 0.1.0 already sealed from commit 54d480c4; bump the version before rebuilding"). The previous round's sealed directories were moved out of the clones' `.right-release\sealed` into `D:\Claude\sr0-r5\archive\r5-final-seals\` (copies of those packages and seals are in `/Volumes/D/sr0-artifacts/win/r5-final/inputs/`); no RightKit file was edited, the versions stay 0.1.0 and 0.1.1.
 
-## Trust prerequisites in the guest
-
-- Package signature: none. W02 observed `Valid` offline before anything was imported (`imported_public_cer: False`, `in_trusted_people: False`); the chain roots in the Windows root program. The harness imports the public `.cer` into TrustedPeople only when the status is not Valid; it did not.
-- W12 only: `serve-local-feed.ps1` adds a self-signed `CN=localhost` certificate to the guest LocalMachine\Root store (disposable guest). Nothing else is imported.
-
-## Environment deviation (required to run at all)
-
-`<vGPU>Default</vGPU>` in `clean-machine.wsb.tmpl` makes the guest drop its RDP session about 16 to 30 s after connect ("connection lost", RDP disconnect reason 3; guest never logs on, zero receipts). Reproduced with a minimal .wsb on this Dell (attempts r5-final, r5-final-b, probes A). `<vGPU>Disable</vGPU>` works (probe B: LogonCommand ran after 6 s). All runs below use Disable (template sha256 59b27c11... to d7f11003..., in the patch). The guest therefore renders in software (display adapter "Microsoft Remote Display Adapter"); the runbook note that the Sandbox uses the desktop vGPU no longer holds on this machine. Also: the first `WindowsSandbox.exe` launch installed the Store Sandbox app; `wsb` is not on PATH; one Sandbox at a time, and a launch within seconds of a teardown fails with "failed to initialize".
+Signing certificate (this round): Damned Ventures LLC, thumbprint 121FD7B5..., expires **2026-10-12 05:16:54 (Dell local, +05:30)**; the previous round's certificate (70C72673...) was a different one. Installs keep validating through the RFC3161 timestamp, but any new build needs a renewed certificate.
 
 ## Results per check
 
-Pinned harness = run `r5-final-c` (`receipts-r5-final-c/`, run.json sha256 4bc84ae4fe8bb26b714b8992845a80c96ff4d38f60d6f4e1443d332aa2df5625, guest-run.json bcd07263..., log `logs/log-sandbox-c.txt`). Patched harness = run `r5-patched8` (`receipts-r5-patched8/`, run.json f8c59997c129990eec9c6d7114d10a6192df0dbafdd8a0fb1820b87a67a5824e, guest harness sha256 2c73a6db..., log `logs/log-sandbox-p8.txt`). Earlier patched iterations are kept in `receipts-r5-patched`, `-patched2`, `-patched4`, `-patched5`, `-patched6`, `-patched7` (patched3 receipts were not pulled; runs 4 and 5 were stopped when W12 hung, so they have no run.json).
-
-| Check | Pinned | Patched | Notes |
+| Check | Run | Result | Notes |
 |---|---|---|---|
-| W00 environment | PASS | PASS | elevated, 0 default routes, no adapters |
-| W01 artifacts bound | PASS | PASS | old/new/cer/feed/scripts hashes = host manifest |
-| W02 signer trust | PASS | PASS | Valid offline, no import |
-| W03 install old (= plan "install") | PASS | PASS | 0.1.0.0 registered |
-| W04 launch offline (= plan "offline launch") | FAIL | PASS | pinned: "no window within 40 s" (H1). Patched: window `SliceApp`; the running exe loaded `swiftright_render.dll` from `C:\Program Files\WindowsApps\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\` with no env var set (name-resolution half of F1 proven) |
-| W05 write data | FAIL | PASS | pinned: cascade from W04/H2. Patched: marker in `%LOCALAPPDATA%\SliceApp\rows.json`, no `Packages\...\LocalCache` copy |
-| W06 upgrade 0.1.0 to 0.1.1 (local msix) | FAIL | PASS | version 0.1.1.0, rows.json hash unchanged by install, old marker shown, new build wrote its own row |
-| W07 corrupt update rejected | PASS (vacuous) | PASS | pinned refusal was 0x80073D02 "app in use", not corruption (H5). Patched: bit flipped inside `SliceApp.exe` (changed file) refused with **0x80080207 "computed hash of the block does not match the one stored in the block map"**, 0.1.0.0 stayed, genuine 0.1.1.0 then applied |
-| W08 real interrupted update | FAIL | FAIL | NOT DEMONSTRATED (H7): interrupt cannot land in flight, so the run is invalid by design. Observations: exactly one version registered, status Ok, rows.json hash identical, build launches, rerun registers 0.1.1.0 |
-| W09 rollback readable | FAIL | PASS | old build reads data written by the new build; schema 1 |
-| W10 uninstall keeps data | FAIL | PASS | plain `Remove-AppxPackage`; rows.json byte-identical after removal, no LocalCache copy |
-| W11 legacy data / physical path | FAIL | PASS | manifest: `FileSystemWriteVirtualization=disabled` + `unvirtualizedResources`; a rows.json written by a non-package process is read by the packaged app; the next edit lands in the same file; no LocalCache copy |
-| W12 App Installer feed install + OnLaunch update | FAIL | FAIL | NOT DEMONSTRATED (H8). Publisher-mismatch rejection and the positive install both stall offline; the OnLaunch update was never reached. App Installer update route stays UNTESTED. Production host/TLS chain also UNTESTED |
-| W13 installed renderer layout | FAIL | PASS | pinned: `LoadLibraryEx` of the WindowsApps DLL from a non-package process returns error 5 (H4). Patched: static check on the install location, Authenticode digest = pin (D8FB3B3B...), plus the W04 loaded-module path |
-| W14 update deferred while running | FAIL | PASS | `-DeferRegistrationWhenPackagesAreInUse`: 0.1.0.0 stays registered while running, 0.1.1.0 after relaunch, data unchanged |
+| W00 environment | offline / network | PASS / PASS | offline: elevated, 0 default routes. network: elevated, 1 default route (adapter Ethernet) |
+| W01 artifacts bound | offline / network | PASS / PASS | old, new, cer, feed, scripts hashes = host manifest |
+| W02 signer trust | offline | PASS | `Valid` offline, no import |
+| W03 install old (plan "install") | offline | PASS | 0.1.0.0 registered |
+| W04 launch offline (plan "offline launch") | offline | PASS | window `SliceApp`, renderer loaded from the package directory, 0 default routes; NEW: PE subsystem 2, 0 console windows, log banner for the pid |
+| W05 write data | offline | PASS | marker in `%LOCALAPPDATA%\SliceApp\rows.json`, no `Packages\...\LocalCache` copy |
+| W06 upgrade 0.1.0 to 0.1.1 (local msix) | offline | PASS | version 0.1.1.0, rows.json hash unchanged by install, marker shown, new build wrote its own row |
+| W07 corrupt update rejected | offline | PASS | bit flipped inside `SliceApp.exe` refused (0x80080207, block hash mismatch), 0.1.0.0 stayed, genuine 0.1.1.0 then applied |
+| **W08 interrupted update** | offline | **FAIL** | see below |
+| W09 rollback readable | offline | PASS | old build reads data written by the new build; schema 1 |
+| W10 uninstall keeps data | offline | PASS | rows.json byte-identical after removal, no LocalCache copy |
+| W11 legacy data / physical path | offline | PASS | manifest `FileSystemWriteVirtualization=disabled` + `unvirtualizedResources`; legacy rows.json read and edited in place |
+| W12 App Installer feed install + OnLaunch update | network | **PASS** | see below |
+| W13 installed renderer layout | offline | PASS | static check on the install location (digest = pin) now also requires subsystem 2 |
+| W14 update deferred while running | offline | PASS | `-DeferRegistrationWhenPackagesAreInUse`: 0.1.0.0 stays while running, 0.1.1.0 after relaunch, data unchanged |
 
-## Defects found
+### W08 (FAIL): interrupted update, real interruption in the guest, no reboot
 
-Harness (fixed in the patch unless noted):
-- H1: UIA `ProcessId` is 0 for the packaged app's windows when read from the elevated guest, and the exe also opens a console window, so `Start-AppAndFindWindow`/`Get-AppRoot` never match. Patch: find the `Zed::Window` by class (probe `probes/P4-probe.txt`).
-- H2: the row text fields are Edit controls with empty Name and AutomationId `row/<guid>/field`; the harness looked for Name `Row` (`probes/P7-probe.txt`).
-- H3: `Remove-AppxPackage -PreserveApplicationData` fails with 0x80073CFA for a non-dev-mode package (breaks W08 to W12, W14). Data at the physical path survives a plain removal, which is what W09/W10 need.
-- H4: W13's scrubbed `LoadLibraryEx` fails with error 5 on the WindowsApps copy (ACL shows Users RX) and with 182 on a Temp copy of the DLLs; neither is a product failure, the packaged exe loads the renderer fine (W04). The `-Mode Installed` closure test needs another mechanism or should stay the Stage-mode check.
-- H5: the original W07 flipped a byte in `_FoundationICU.dll`, which is identical in 0.1.0 and 0.1.1. An update over the installed old build reuses unchanged blocks, so that flip is accepted and the installed file still hashes to the signed value (`receipts-r5-patched8/W07...json`, `info_unchanged_*`). It was also run with the app in use. Patched W07 tampers `SliceApp.exe`.
-- H6: `interrupt-windows-install.ps1` `State()` printed a bare string into its return value (W08 "property 'when' not found"); `serve-local-feed.ps1` bound TLS only to 127.0.0.1 (`localhost` resolves to `::1` first), answered HEAD and Range requests with an exception that ended the server, and was single-threaded.
-- H7 (not fixable here): AppXSvc's service host is protected (`taskkill /F` fails) and `Stop-Service` lets the deployment finish (job Completed, new version registered Ok). Triggering on the staging directory (instead of the slow event-log poll) made the stop land in flight (`stopped_in_flight: True`), still no failure. Needs another injection (for example a hard guest power-off with the data on a mapped folder).
-- H8: with the feed fixed, App Installer fetches the .appinstaller (HEAD + Range) and Delivery Optimization sends one `Range: bytes=0-1` GET of the msix, then nothing (guest has no network profile). Probable cause: Delivery Optimization waiting for connectivity (not proven). A W12 run needs a guest with a network adapter, which conflicts with the offline W00/W04 premise, or another feed mechanism.
-- The pinned W12 and W13 can never pass as written; the pinned run also lacks per-step timeouts around `-AppInstallerFile` (hangs without the patch).
+Method (`scripts/interrupt-windows-install.ps1`, modes `KillClient` and `CancelOperation`; receipt `receipts-offline-4/W08-interrupted-update.json`, per-case evidence `receipts-offline-4/evidence-W08-c*.json` with timelines and AppXDeploymentServer events). Eleven cases, each: remove, install 0.1.0.0, start the update to 0.1.1.0, interrupt when the new version's staging directory appears under `C:\Program Files\WindowsApps` plus a delay, then judge the live state, `rows.json` hash, launch of the registered build through UIA, and a second `Add-AppxPackage` of 0.1.1.0.
+- **KillClient** (`Stop-Process -Force` on the `powershell.exe` running `Add-AppxPackage`, at staging+0 and +150 ms, client alive at the kill): NOT an interruption. The deployment service finishes the update anyway (0.1.1.0 Ok in both cases, in every run). On its own this method is NOT-DEMONSTRABLE. (AppXSvc cannot be killed either, previous round H7.)
+- **CancelOperation** (the documented WinRT route: `PackageManager.AddPackageAsync` cancelled with `IAsyncInfo.Cancel()`; the service logs "cancelled by the caller", error 0x80073CF8): the deployment is about 0.5 s long; cancels at staging+0, +160, +200, +240, +280, +300, +320, +360 ms and immediately after the call. Final run: 5 genuine interruptions (old version registered, new version not), the +280 ms and later ones were too late (completed anyway).
+  - 4 of 5 (the service reports failed to reach state `PrerequisitesChecked`, `PackagesInUseClosed`, `StageUserDataProcessed`, `DeQueued`): old 0.1.0.0 stays registered with status Ok, data intact, it launches, the second update registers 0.1.1.0 Ok.
+  - **1 of 5 (cancel at +240 ms, failed to reach state `RegistrationChanged`)**: 0.1.0.0 stays the only registered version but with status **`Modified, NeedsRemediation`**; the build does NOT launch (no window within 40 s); `rows.json` is byte-identical; a second `Add-AppxPackage` of 0.1.1.0 completes and registers it Ok.
+  - Reproducible but timing dependent (the phase window is about 200 to 280 ms after staging appears): the earlier iterations of the same harness showed it in 1 of 4 genuine interruptions (`receipts-offline-2`) and 3 of 6 (`receipts-offline-3`, +200, +240, +280 ms), always with data intact and always recovered by the second update.
+- Verdict FAIL by the stated criteria (previous version still launches, data intact, second update completes): the first does not hold for cancels landing in the registration phase. This is platform (MSIX deployment) behaviour that the package cannot change; recovery is re-running the update (the App Installer route does that on the next launch), data is never touched. No guest power-off was attempted: Sandbox state is discarded on close, so it could not be inspected.
 
-Product:
-- P1: `SliceApp.exe` is a console-subsystem executable: the packaged launch shows a `ConsoleWindowClass` window (title = exe path) beside the app window. Not covered by any check.
+### W12 (PASS): App Installer route, networking enabled
 
-## Not tested / limits
+`receipts-network-2/W12-appinstaller-update.json` (`receipts-network/` is the same result from the previous harness iteration). Loopback https feed inside the guest (`serve-local-feed.ps1`, self-signed `CN=localhost` in the guest Root store), Delivery Optimization no longer stalls once the guest has a network profile (previous round H8 was the missing connectivity, not the feed): a feed whose Publisher differs from the signer is rejected (0x8008020C, ".appinstaller file is invalid"), nothing installed; the correct 0.1.0.0 feed installs; swapping to the 0.1.1.0 feed and relaunching (`OnLaunch HoursBetweenUpdateChecks=0`) registers 0.1.1.0; `rows.json` hash unchanged. Production App Installer host and TLS chain remain UNTESTED.
 
-- Production App Installer host and TLS chain; the OnLaunch update path (W12).
-- A truly interrupted deployment (W08). The AppXSvc stop is fault injection, not a Microsoft procedure, and did not interrupt anything here.
-- Hardware GPU in the guest (software rendering only, see environment deviation).
-- The patched results are patched-harness evidence (guest harness sha256 2c73a6db2db42be976a99a4a2188b359d0caa19920c73fa8c1bc7956a0203049), not the pinned harness.
+## Harness changes in this round (uncommitted, `harness/`)
+
+`run-sandbox.ps1`: `-RunProfile Offline|Network` (checks per profile, `__NETWORKING__` token in the .wsb template, `profile` in manifest.json). `guest/sandbox-run.ps1`: profile-aware W00 and check list; verdict PASS/FAIL/NOT-DEMONSTRABLE in `observations.verdict` (the receipt schema only has pass|fail, so NOT-DEMONSTRABLE would be a fail receipt with that reason); W04 console and log checks; W08 rewritten (per-case judging); `Write-MarkerRow` polls up to 15 s for the new empty row (software-rendered guest). `interrupt-windows-install.ps1`: `KillClient` and `CancelOperation` modes (one attempt per call). `clean-machine.wsb.tmpl`: networking token, stale vGPU comment fixed. `build-windows.ps1` and `verify-package-layout.ps1` are the committed 0751951 versions.
+
+Iterations kept as evidence: `receipts-offline-1` (W04 log read hit the exclusive log; W08 first draft), `receipts-offline-2` (W04 same, W08 1 bad case of 4 genuine), `receipts-offline-3` and `receipts-network` (same harness logic as the final runs, 13 of 14 plus W12 PASS, W08 3 bad cases of 6 genuine; superseded because the harness variable layout was then changed to satisfy `qualification/test_run.py` HarnessDriftTests, 74/74 pass, and both runs were repeated so the receipts bind to the final files). Host console output of every run: `logs/host-output-*.txt`.
+
+## Environment and limits
+
+- `<vGPU>Default</vGPU>` drops the guest's RDP session on this Dell (previous round); all runs use `Disable`, so rendering is software (display adapter "Microsoft Remote Display Adapter"). Hardware-GPU rendering in the guest is not covered.
+- The final two runs, the builds and QA ran through the non-elevated one-shot task (`elevated=False` in their logs). The earlier iterations and the probes were started from the SSH admin session (`WindowsSandbox.exe <wsb>`) because a quoting slip (`-Cmd ''& ...''` through `sh`, then PowerShell 7 reads the bare `&` as a background operator) skipped the wrapper; the guest is unaffected.
+- Production App Installer host and TLS chain (W12 used a guest-local self-signed feed); hardware GPU; the shared-read log variant (candidate only); a guest power loss during deployment (not inspectable in Sandbox); the AppXSvc stop (fault injection, did not interrupt).
+- Probe evidence (not harness evidence): `probes/` (`P31` first W08 attempt, `P32`/`P36`/`P37` phase surveys, `P38` W12 with networking, `P40` console negative control, `guest-probe*.ps1`).
+- The previous round's results (pinned harness 5 of 15, patched harness 13 of 15; defects H1 to H8) are superseded by this table; H7 and H8 are resolved as described above, and P1 is fixed.
 
 ## Files
 
-`inputs/` (msix, seals, QA logs), `qa-receipts/`, `feed/`, `log-host-verify.txt`, `log-swift-only-proof.txt`, `log-appinstaller-gen.txt`, `receipts-r5-*/`, `staging-manifests/`, `logs/` (Sandbox host logs, launch scripts), `probes/` (diagnostic guest probes and outputs, not harness evidence), `harness-patched/` (patched scripts and unified diffs). Patch in the working tree: `examples/SliceApp/RESULT-R5-harness.patch` (sha256 d6897a4f4a5ed6f792981d9f0d8821da7398a22fc48394236441b42185066812; `git apply --check` clean at 54d480c). Dell working files remain in `D:\Claude\sr0-r5` (clones, `runs\`, `probe\`); nothing outside it was touched.
+`inputs/` (msix, seals, release manifests, QA logs), `qa-receipts/`, `feed/`, `log-host-verify.txt`, `log-swift-only-proof.txt`, `log-appinstaller-gen.txt`, `logs/`, `receipts-offline-{1,2,3,4}/`, `receipts-network{,-2}/`, `probes/`, `harness/` (the harness files as run and `harness-final2-vs-0751951.patch`, sha256 c929bfc851e1dfcd65913f42a76a7c806fd0176434117972107131f6c9c6d12b), `candidate-WindowsLog-shared-read.{swift,patch}`. Dell working files remain in `D:\Claude\sr0-r5` (clones `clean`/`clean2` with the new seals, `in2`, `harness2`, `runs`, `probe`, `archive`); scratch dirs went to the Recycle Bin.

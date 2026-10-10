@@ -3,6 +3,8 @@
 Status: PREP. Nothing below has been run. The Dell hosts a timing-sensitive matrix at the time of writing: run nothing until the Dell is
 declared free (builds and the Sandbox window both need a quiet desktop; coordinate per the peer-session rule).
 
+**Update 2026-10-10 (final2 round, RESULT-R5.md):** the Sandbox is now run twice per tuple: `run-sandbox.ps1 -RunProfile Offline` (networking disabled; every check except W12) and `-RunProfile Network` (networking enabled; W00, W01, W12). Use a distinct `-RunId` per run. W08 interrupts through `interrupt-windows-install.ps1 -Mode KillClient|CancelOperation` (no AppXSvc kill, no reboot). RightKit refuses to rebuild a version already sealed in the clone from another commit: move the old `.right-release\sealed\<release>` directory out of the clone (do not edit RightKit state). Gotcha: through `win` and `sh`, `-Cmd ''& script''` loses its quotes and the remote PowerShell 7 treats the bare `&` as a background operator, so the wrapper never runs; write the launch into a .ps1 and pass its path.
+
 ## 0. Facts established (read-only, 2026-10-09)
 
 | Question | Answer |

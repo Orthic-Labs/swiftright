@@ -1,19 +1,21 @@
 <!--
   clean-machine.wsb.tmpl - Windows Sandbox configuration for SR0 R5. Template only.
-  run-sandbox.ps1 replaces the three __HOST_*__ tokens with absolute, XML-escaped host paths and writes
-  <run>\clean-machine.wsb. Do not hand-edit the generated file.
+  run-sandbox.ps1 replaces the three __HOST_*__ tokens with absolute, XML-escaped host paths and __NETWORKING__ with
+  Disable (run profile Offline: every check except W12) or Enable (profile Network: W00, W01, W12 only; the App Installer
+  route needs a connected guest), and writes <run>\clean-machine.wsb. Do not hand-edit the generated file.
 
   Schema (Microsoft Learn, "Use and configure Windows Sandbox"): Networking Disable removes the sandbox's
   network; MappedFolder HostFolder must already exist or the sandbox does not start; ReadOnly defaults to false,
   so the packages and harness are mapped read-only and only the receipts folder is writable; LogonCommand takes
   a path with no arguments, hence logon.cmd.
-  vGPU is left at Default so the renderer path matches the shipped config (Disable would use WARP).
+  vGPU is Disable (software rendering): with Default the guest drops its RDP session 16 to 30 s after connect on the Dell
+  and never logs on (RESULT-R5.md "Environment deviation").
   AudioInput, VideoInput, PrinterRedirection, ClipboardRedirection and ProtectedClient are disabled: the checks
   need none of them, and clipboard is a host/guest data path we do not want in this run.
 -->
 <Configuration>
   <vGPU>Disable</vGPU>
-  <Networking>Disable</Networking>
+  <Networking>__NETWORKING__</Networking>
   <AudioInput>Disable</AudioInput>
   <VideoInput>Disable</VideoInput>
   <ProtectedClient>Disable</ProtectedClient>
