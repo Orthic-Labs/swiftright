@@ -6,7 +6,7 @@ set -u
 OUT=$1; RUNS=$2; shift 2
 LOCK='D:\Claude\desktop.lock'
 OWNER=${OWNER:-cross09}
-BIN=${BIN:-'D:\Claude\sr0-r09\src\scratch\out\Products\Release-windows-x86_64'}   # passed explicitly: the Dell copy of schedule-cross.ps1 keeps its own default
+BIN=${BIN:-'D:\Claude\sr0-r10\src\scratch\out\Products\Release-windows-x86_64'}   # passed explicitly: the Dell copy of schedule-cross.ps1 keeps its own default
 EXPECT_EXE=${EXPECT_EXE:-8650bbfc4118f0793d71f84a51077d23d076e7dd1aa144c2ae7b60bac27161c8}   # a run on any other exe aborts the batch
 acquire() {
   win "\$l=(Get-Content -Raw $LOCK).Trim(); if (\$l -eq 'free') { Set-Content -NoNewline -Path $LOCK -Value ('$OWNER ' + (Get-Date -Format o)); 'ACQUIRED' } else { 'BUSY ' + \$l }" 2>&1 | sed 's/\x1b\[[0-9;]*m//g'
