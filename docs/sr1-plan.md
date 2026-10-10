@@ -1,12 +1,54 @@
 # SR1 plan: the parity factory and the full shell
 
-Status: plan rev 2, 9 October 2026. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
+Status: plan rev 2 (9 October 2026), existing-assets section added 10 October 2026. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
 dispositions are at the end. The plan itself is not implemented, but SR1 head-start work exists: ABI 0.6 (`4df7e67`), runtime inventory controls 62/62 (`14106d6`), Windows gallery build (`47e9066`), Mac oracle fixtures G1-G8 (`c9347a0`, sweep interrupted).
 
 ## Entry criteria (checked mechanically, not asserted)
 SR1 starts only when `docs/sr0-status.md` shows every SR0 row PASS with receipts bound to the frozen SR0 tuple
-(bridge ABI 0.6, renderer `E280F4A9…`, fixture host `7673A2D5…`, tuple 08 per `docs/sr0-snapshot.md` section 2d), and slice contract v1.0 and the bridge interface are
+(bridge ABI 0.6, renderer `E280F4A9…`; the pinned final tuple is tuple 08 in `docs/sr0-snapshot.md` section 2d and `qualification/tuple-final.json`, but desktop receipts were since re-run on tuple 09, staged in `docs/sr0-tuple09-staging.md` (FreshOnBridge `8650BBFC…`, same renderer); read the current tuple and status from `docs/sr0-status.md` and `docs/sr0-snapshot.md`, not from this line), and slice contract v1.0 and the bridge interface are
 frozen. SR0's results are bounded slice evidence for the SR0 inventory only; SR1 must not assume anything outside it.
+
+## What already exists (reuse, do not rebuild)
+Verified present in the repository on 10 October 2026. SR0 is still OPEN (`docs/sr0-status.md:7`); these are probe-grade assets, so reuse them and harden them under the factory's own specs rather than rewriting them.
+
+**Start here.** Do Phase 0 first, before any component. Read in order: `docs/architecture.md`, `docs/sr0-findings.md` (lessons, gaps, decisions), then this plan. SR0's final tuple and per-stage status live in `docs/sr0-status.md` and `docs/sr0-snapshot.md`; check them for the current tuple before binding any receipt.
+
+- Recorders and assembler (Mac and Windows): `probes/sr0-o/f1-cross/` has `Sources/F1MacRecord`, `Sources/F1Assemble`, `uia-recorder/` (Windows UIA), `scripts/` (record-mac, run-cross, schedule-cross, pull-win, win-cross), recordings in `cross/` (F1-F9 plus F3 variants and F6-reduced), and the results in `CROSS-ALL.md`.
+- Comparator: `probes/sr0-o/comparator/Sources/TraceKit` (`Comparator.swift`, `Normalizer.swift`, `Repeatability.swift`, `Schema.swift`) and `TraceTool`. Allowances are scoped to fixture, step, leaf and node; the schema carries test conditions including motion, and a condition mismatch fails.
+- Runner, fault controls and tuple pinning: `qualification/run.py` (declared stage order with closure gate; injected-fault traces per config and per allowance), `qualification/tuple-final.json`, `qualification/test_run.py`.
+- Canonicalizer: `probes/sr0-o/fixtures/scripts/normalize-hash.py` (with `test_normalize_hash.py`), including the unordered-completion rule for the F6 A/B pair (`f6_unordered_completions`, marked "proposed" contract C9). Repeat harness: `repeat20.sh`, `sr1-repeat20.sh`, `sr1-summary.py`, `run-self-test.sh`.
+- Clean-machine harnesses: `qualification/clean-machine/windows/` (Windows Sandbox: `run-sandbox.ps1`, `sandbox-background.ps1`, `run-w08-recovery.ps1` for MSIX interrupted-update recovery, `with-desktop-lock.ps1`) and macOS `mac-clean-run.sh`, `mac-vm-offline.sh`, `mac-clean-checklist.md` (Tart VM); `receipt.schema.json`.
+- Pixel assertions and capture: `examples/BridgeSmoke` (`Sources/BridgePixels`, `scripts/drive-pixels.ps1`, `schedule-pixels.ps1`; results `result-bridgepixels09.txt`).
+- Text geometry, modal and cold-open probes: `examples/BridgeGeoModal` (`Sources/TextGeom06`, `Modal06`, `ColdOpen06`; `result-*09.txt`).
+- Workload, analyzer and Mac workload: `probes/sr0-b/workload` (`WorkloadCore`, `WorkloadWin`, `WorkloadMac`, `SckRecorder`, `analysis/analyze_workload.py`); Mac result `probes/sr0-b/MAC-WORKLOAD.md`.
+- Runtime features added since rev 2: `onChange`, initial focus and motion start on first tick in `probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime` (`FocusTraversal.swift`, `Animation.swift`, `Graph.swift`); `ButtonFocusGate` in `packages/SwiftRightBridge/Sources/SwiftRightBridge/ButtonFocusGate.swift`.
+
+**Decisions to carry (Adrian, 10 October 2026 unless noted):**
+- Windows OS animation setting is not mapped to reduce motion; traces record the motion condition instead.
+- Performance bar is no worse than Mac SwiftUI on the same workload; missed vblanks are reported, not gated (`docs/sr0-findings.md` section 11).
+- Dell cleanup only through an interactive scheduled task, never `SendToRecycleBin` over SSH (`docs/sr0-findings.md:290`).
+- One desktop lane: hold the lock file `D:\Claude\desktop.lock` (`with-desktop-lock.ps1`). Run test windows in the background.
+
+**Lessons that change the factory design:**
+- An allowance is scoped to fixture, step, leaf and node, with a reason; anything broader is rejected.
+- Traces must carry their test conditions (for example motion) and a mismatch fails the comparison.
+- Recorder normalisations can hide product defects, so every normalisation needs its own injected-fault control.
+- Three runs per side is below the contract's 20; a verdict from fewer is not evidence.
+- A self-test that never ran a path (the animated path) passes vacuously; require a positive observation per path.
+
+**Starting point per component:**
+- F1 Catalogue: new.
+- F2 Block registry: new.
+- F3 Cases: new; axes follow the F1-F9 configs in `probes/sr0-o/f1-cross/cross/configs.json`.
+- F4 Probes: starts from the frozen same-source fixtures in `probes/sr0-c/same-source` and `probes/sr0-o/fixtures`.
+- F5 Mac capture: `F1MacRecord`, the Tart VM harness, `SckRecorder`, and the `normalize-hash.py` canonicalizer.
+- F6 Headless replay: `probes/sr0-s/fresh-runtime` (runtime without renderer; its Tests).
+- F7 Windows replay: `uia-recorder`, `examples/BridgeSmoke`, `examples/BridgeGeoModal`, Windows Sandbox and desktop-lock scripts.
+- F8 Comparator: `probes/sr0-o/comparator/TraceKit`.
+- F9 Report: new; `CROSS-ALL.md` and the `qualification/run.py` stage output are the prototypes.
+- F10 Trusted gate: `qualification/run.py` closure gate, `tuple-final.json` and `test_run.py`.
+- F11 Queue: new.
+- F12 Shell journeys and demand map: new.
 
 ## Goal
 Rebuild the full desktop shell that ships today as Tauri + React (RightKit `app-shell`, `settings-ui`,
