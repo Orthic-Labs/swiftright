@@ -1,0 +1,1331 @@
+{
+  "controls": {
+    "actorFixtureReproducesProductionKind": true,
+    "actorProductionGateRejectsBeforeBridge": true,
+    "conditionalBranchProbeActive": true,
+    "conditionalInactiveCursorUnresolved": true,
+    "duplicateCardinalityRejectsAllFive": true,
+    "frozenLinkHashVerified": true
+  },
+  "inputs": {
+    "actorBridgeValidator": {
+      "path": "factory/catalogue/compiler-edge-spike/actor_bridge_validator.py",
+      "sha256": "sha256:f0f75cf4b7228067de0eb7e2862a117aed736b191e21e528b0b7adba559f60b4"
+    },
+    "actorFixtureSource": {
+      "path": "factory/catalogue/compiler-edge-spike/actor-kind-probe.swift",
+      "sha256": "sha256:992dec34f9b1dc71e5d33f0e26cd030771fda76a61efecb8ad2ed781eaaa8bf0"
+    },
+    "edgeInvestigator": {
+      "path": "factory/catalogue/compiler-edge-spike/investigate_edges.py",
+      "sha256": "sha256:c2f94626577053f7162d6dc1a0bc56d7f57962a0cc21bdb695633e8729054b63"
+    },
+    "linkEvidence": {
+      "expectedSha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+      "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+      "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+    },
+    "residualEvidence": {
+      "path": "factory/catalogue/residual-investigation/residual-evidence.json",
+      "sha256": "sha256:bcbb6c95220cd91caece94950146fb88bf307cec884f77531641ce8e72465ae0"
+    },
+    "residualInvestigatorSource": {
+      "path": "factory/catalogue/residual-investigation/investigate.py",
+      "sha256": "sha256:4747107ff13d77d808cafcd9e259480735486d437a90376107e652cacfc319de"
+    },
+    "strictMatcherSource": {
+      "path": "factory/catalogue/compiler-cursor-spike/strict_match.py",
+      "sha256": "sha256:089ed03a7738cfe3ee456e0517acb8039517b562a7237592f4c4d4cad4729f8a"
+    },
+    "v6Audit": {
+      "path": "factory/catalogue/evidence/interface-audit-v6.json",
+      "sha256": "sha256:27ea2a1b479361bcecaa61fcd2852e26b799afd56f02ca4a444357bc1c589dfc"
+    }
+  },
+  "kind": "f1-compiler-edge-spike",
+  "method": "Read frozen link evidence by exact module/interface/line/name; verify interface source, SourceKit request/response, compiler conditional branch, and pinned toolchain. No adapter or frozen evidence is edited.",
+  "rows": [
+    {
+      "category": "duplicate-sourcekit-usr",
+      "classification": "active-compiler-conditional-unmapped",
+      "decision": {
+        "promotion": null,
+        "reason": "Two raw records remain two observations even though their full declaration cards and USR are identical; no blind deduplication is allowed.",
+        "status": "held"
+      },
+      "holdReason": "duplicate-raw-entity-records",
+      "interface": {
+        "conditionalResolution": {
+          "branch": "active",
+          "condition": "compiler(>=5.3) && $TildeSendable",
+          "evidenceHash": "sha256:1435e5f7c3d66f9e7dbdb1a12f1125724d987d2cffa0eeb6f4f4a16341a534b4",
+          "otherConditions": []
+        },
+        "context": [
+          "ToggleStyleConfiguration"
+        ],
+        "enclosingScopes": [
+          {
+            "access": "public",
+            "declaration": "public struct ToggleStyleConfiguration : ~Swift.Sendable {",
+            "depth": 1,
+            "kind": "struct",
+            "line": 4067,
+            "target": "ToggleStyleConfiguration"
+          }
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "public var $isOn: SwiftUICore.Binding<Swift.Bool> {",
+        "sourceExcerpt": [
+          {
+            "line": 4065,
+            "text": "#if compiler(>=5.3) && $TildeSendable"
+          },
+          {
+            "line": 4066,
+            "text": "@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+          },
+          {
+            "line": 4067,
+            "text": "public struct ToggleStyleConfiguration : ~Swift.Sendable {"
+          },
+          {
+            "line": 4068,
+            "text": "  @_Concurrency.MainActor @preconcurrency public struct Label : SwiftUICore.View, ~Swift.Sendable {"
+          },
+          {
+            "line": 4069,
+            "text": "    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)"
+          },
+          {
+            "line": 4070,
+            "text": "    public typealias Body = Swift.Never"
+          },
+          {
+            "line": 4071,
+            "text": "  }"
+          },
+          {
+            "line": 4072,
+            "text": "  public let label: SwiftUI.ToggleStyleConfiguration.Label"
+          },
+          {
+            "line": 4073,
+            "text": "  @SwiftUICore.Binding @_projectedValueProperty($isOn) public var isOn: Swift.Bool {"
+          },
+          {
+            "line": 4074,
+            "text": "    get"
+          },
+          {
+            "line": 4075,
+            "text": "    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)"
+          },
+          {
+            "line": 4076,
+            "text": "    nonmutating set"
+          },
+          {
+            "line": 4077,
+            "text": "    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)"
+          },
+          {
+            "line": 4078,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 4079,
+            "text": "  }"
+          },
+          {
+            "line": 4080,
+            "text": "  public var $isOn: SwiftUICore.Binding<Swift.Bool> {"
+          },
+          {
+            "line": 4081,
+            "text": "    get"
+          },
+          {
+            "line": 4082,
+            "text": "  }"
+          }
+        ],
+        "sourceLine": 4080,
+        "sourceName": "$isOn"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        4080,
+        "var"
+      ],
+      "raw": {
+        "cardCount": 2,
+        "cardDigests": [
+          "sha256:b98efd676cad827517912593df5f190b8c5752dfd3c94a52cc2e8e325958cdd9",
+          "sha256:b98efd676cad827517912593df5f190b8c5752dfd3c94a52cc2e8e325958cdd9"
+        ],
+        "cards": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ToggleStyleConfiguration",
+                "usr": "s:7SwiftUI24ToggleStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 4080,
+            "name": "$isOn",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ToggleStyleConfiguration",
+                "usr": "s:7SwiftUI24ToggleStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+          }
+        ],
+        "distinctUsrCount": 1,
+        "parsedCardsIdentical": true,
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "symbolGraph": [
+        {
+          "path": "SwiftUI.ToggleStyleConfiguration.$isOn",
+          "precise": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp",
+          "status": "inventory",
+          "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp"
+        }
+      ]
+    },
+    {
+      "category": "duplicate-sourcekit-usr",
+      "classification": "active-compiler-conditional-unmapped",
+      "decision": {
+        "promotion": null,
+        "reason": "Two raw records remain two observations even though their full declaration cards and USR are identical; no blind deduplication is allowed.",
+        "status": "held"
+      },
+      "holdReason": "duplicate-raw-entity-records",
+      "interface": {
+        "conditionalResolution": {
+          "branch": "active",
+          "condition": "compiler(>=5.3) && $TildeSendable",
+          "evidenceHash": "sha256:1435e5f7c3d66f9e7dbdb1a12f1125724d987d2cffa0eeb6f4f4a16341a534b4",
+          "otherConditions": []
+        },
+        "context": [
+          "DisclosureGroupStyleConfiguration"
+        ],
+        "enclosingScopes": [
+          {
+            "access": "public",
+            "declaration": "public struct DisclosureGroupStyleConfiguration : ~Swift.Sendable {",
+            "depth": 1,
+            "kind": "struct",
+            "line": 5507,
+            "target": "DisclosureGroupStyleConfiguration"
+          }
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {",
+        "sourceExcerpt": [],
+        "sourceLine": 5533,
+        "sourceName": "$isExpanded"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        5533,
+        "var"
+      ],
+      "raw": {
+        "cardCount": 2,
+        "cardDigests": [
+          "sha256:d854ea1b7a8b649dfa537c861659d33725f78e01dee86d6fa04a257f212150bf",
+          "sha256:d854ea1b7a8b649dfa537c861659d33725f78e01dee86d6fa04a257f212150bf"
+        ],
+        "cards": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DisclosureGroupStyleConfiguration",
+                "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 5533,
+            "name": "$isExpanded",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DisclosureGroupStyleConfiguration",
+                "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+          }
+        ],
+        "distinctUsrCount": 1,
+        "parsedCardsIdentical": true,
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "symbolGraph": [
+        {
+          "path": "SwiftUI.DisclosureGroupStyleConfiguration.$isExpanded",
+          "precise": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp",
+          "status": "inventory",
+          "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp"
+        }
+      ]
+    },
+    {
+      "category": "duplicate-sourcekit-usr",
+      "classification": "active-compiler-conditional-unmapped",
+      "decision": {
+        "promotion": null,
+        "reason": "Two raw records remain two observations even though their full declaration cards and USR are identical; no blind deduplication is allowed.",
+        "status": "held"
+      },
+      "holdReason": "duplicate-raw-entity-records",
+      "interface": {
+        "conditionalResolution": {
+          "branch": "active",
+          "condition": "compiler(>=5.3) && $TildeSendable",
+          "evidenceHash": "sha256:1435e5f7c3d66f9e7dbdb1a12f1125724d987d2cffa0eeb6f4f4a16341a534b4",
+          "otherConditions": []
+        },
+        "context": [
+          "ReferenceFileDocumentConfiguration"
+        ],
+        "enclosingScopes": [
+          {
+            "access": "public",
+            "declaration": "@_Concurrency.MainActor @preconcurrency public struct ReferenceFileDocumentConfiguration<Document> : ~Swift.Sendable where Document : SwiftUI.ReferenceFileDocument {",
+            "depth": 1,
+            "kind": "struct",
+            "line": 9703,
+            "target": "ReferenceFileDocumentConfiguration"
+          }
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "@_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {",
+        "sourceExcerpt": [
+          {
+            "line": 9699,
+            "text": "@available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9700,
+            "text": "@available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9701,
+            "text": "@available(tvOS, unavailable)"
+          },
+          {
+            "line": 9702,
+            "text": "@available(watchOS, unavailable)"
+          },
+          {
+            "line": 9703,
+            "text": "@_Concurrency.MainActor @preconcurrency public struct ReferenceFileDocumentConfiguration<Document> : ~Swift.Sendable where Document : SwiftUI.ReferenceFileDocument {"
+          },
+          {
+            "line": 9704,
+            "text": "  @SwiftUICore.ObservedObject<Document> @_projectedValueProperty($document) @_Concurrency.MainActor @preconcurrency public var document: Document {"
+          },
+          {
+            "line": 9705,
+            "text": "    get"
+          },
+          {
+            "line": 9706,
+            "text": "    @available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9707,
+            "text": "    @available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9708,
+            "text": "    @available(tvOS, unavailable, introduced: 13.0)"
+          },
+          {
+            "line": 9709,
+            "text": "    @available(watchOS, unavailable, introduced: 6.0)"
+          },
+          {
+            "line": 9710,
+            "text": "    set"
+          },
+          {
+            "line": 9711,
+            "text": "    @available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9712,
+            "text": "    @available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Use Document protocol and URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 9713,
+            "text": "    @available(tvOS, unavailable, introduced: 13.0)"
+          },
+          {
+            "line": 9714,
+            "text": "    @available(watchOS, unavailable, introduced: 6.0)"
+          },
+          {
+            "line": 9715,
+            "text": "    _modify"
+          },
+          {
+            "line": 9716,
+            "text": "  }"
+          },
+          {
+            "line": 9717,
+            "text": "  @_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {"
+          },
+          {
+            "line": 9718,
+            "text": "    get"
+          },
+          {
+            "line": 9719,
+            "text": "  }"
+          }
+        ],
+        "sourceLine": 9717,
+        "sourceName": "$document"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        9717,
+        "var"
+      ],
+      "raw": {
+        "cardCount": 2,
+        "cardDigests": [
+          "sha256:42cf601d3a402f9fb9bf1b904a896387cbf41847e9ede8f30bb1cc6080ec412e",
+          "sha256:42cf601d3a402f9fb9bf1b904a896387cbf41847e9ede8f30bb1cc6080ec412e"
+        ],
+        "cards": [
+          {
+            "column": 54,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ReferenceFileDocumentConfiguration",
+                "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          },
+          {
+            "column": 54,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9717,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "ReferenceFileDocumentConfiguration",
+                "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+          }
+        ],
+        "distinctUsrCount": 1,
+        "parsedCardsIdentical": true,
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "symbolGraph": [
+        {
+          "path": "SwiftUI.ReferenceFileDocumentConfiguration.$document",
+          "precise": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp",
+          "status": "inventory",
+          "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp"
+        }
+      ]
+    },
+    {
+      "category": "duplicate-sourcekit-usr",
+      "classification": "active-compiler-conditional-unmapped",
+      "decision": {
+        "promotion": null,
+        "reason": "Two raw records remain two observations even though their full declaration cards and USR are identical; no blind deduplication is allowed.",
+        "status": "held"
+      },
+      "holdReason": "duplicate-raw-entity-records",
+      "interface": {
+        "conditionalResolution": {
+          "branch": "active",
+          "condition": "compiler(>=5.3) && $TildeSendable",
+          "evidenceHash": "sha256:1435e5f7c3d66f9e7dbdb1a12f1125724d987d2cffa0eeb6f4f4a16341a534b4",
+          "otherConditions": []
+        },
+        "context": [
+          "FileDocumentConfiguration"
+        ],
+        "enclosingScopes": [
+          {
+            "access": "public",
+            "declaration": "public struct FileDocumentConfiguration<Document> : ~Swift.Sendable where Document : SwiftUI.FileDocument {",
+            "depth": 1,
+            "kind": "struct",
+            "line": 23734,
+            "target": "FileDocumentConfiguration"
+          }
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "public var $document: SwiftUICore.Binding<Document> {",
+        "sourceExcerpt": [
+          {
+            "line": 23729,
+            "text": "@available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23730,
+            "text": "@available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23731,
+            "text": "@available(tvOS, unavailable)"
+          },
+          {
+            "line": 23732,
+            "text": "@available(watchOS, unavailable)"
+          },
+          {
+            "line": 23733,
+            "text": "@available(visionOS, introduced: 1.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23734,
+            "text": "public struct FileDocumentConfiguration<Document> : ~Swift.Sendable where Document : SwiftUI.FileDocument {"
+          },
+          {
+            "line": 23735,
+            "text": "  @SwiftUICore.Binding @_projectedValueProperty($document) public var document: Document {"
+          },
+          {
+            "line": 23736,
+            "text": "    get"
+          },
+          {
+            "line": 23737,
+            "text": "    @available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23738,
+            "text": "    @available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23739,
+            "text": "    @available(tvOS, unavailable, introduced: 13.0)"
+          },
+          {
+            "line": 23740,
+            "text": "    @available(watchOS, unavailable, introduced: 6.0)"
+          },
+          {
+            "line": 23741,
+            "text": "    @available(visionOS, introduced: 1.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23742,
+            "text": "    nonmutating set"
+          },
+          {
+            "line": 23743,
+            "text": "    @available(macOS, introduced: 11.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23744,
+            "text": "    @available(iOS, introduced: 14.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23745,
+            "text": "    @available(tvOS, unavailable, introduced: 13.0)"
+          },
+          {
+            "line": 23746,
+            "text": "    @available(watchOS, unavailable, introduced: 6.0)"
+          },
+          {
+            "line": 23747,
+            "text": "    @available(visionOS, introduced: 1.0, deprecated: 100000.0, message: \"Conform your type to Document and use URLDocumentConfiguration instead.\")"
+          },
+          {
+            "line": 23748,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 23749,
+            "text": "  }"
+          },
+          {
+            "line": 23750,
+            "text": "  public var $document: SwiftUICore.Binding<Document> {"
+          },
+          {
+            "line": 23751,
+            "text": "    get"
+          },
+          {
+            "line": 23752,
+            "text": "  }"
+          }
+        ],
+        "sourceLine": 23750,
+        "sourceName": "$document"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        23750,
+        "var"
+      ],
+      "raw": {
+        "cardCount": 2,
+        "cardDigests": [
+          "sha256:64ea560272f5753e022eb6f27ab703b06532dc0f1fdf3650a25530d121267b45",
+          "sha256:64ea560272f5753e022eb6f27ab703b06532dc0f1fdf3650a25530d121267b45"
+        ],
+        "cards": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "FileDocumentConfiguration",
+                "usr": "s:7SwiftUI25FileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 23750,
+            "name": "$document",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "FileDocumentConfiguration",
+                "usr": "s:7SwiftUI25FileDocumentConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+          }
+        ],
+        "distinctUsrCount": 1,
+        "parsedCardsIdentical": true,
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "symbolGraph": [
+        {
+          "path": "SwiftUI.FileDocumentConfiguration.$document",
+          "precise": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp",
+          "status": "inventory",
+          "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp"
+        }
+      ]
+    },
+    {
+      "category": "duplicate-sourcekit-usr",
+      "classification": "active-compiler-conditional-unmapped",
+      "decision": {
+        "promotion": null,
+        "reason": "Two raw records remain two observations even though their full declaration cards and USR are identical; no blind deduplication is allowed.",
+        "status": "held"
+      },
+      "holdReason": "duplicate-raw-entity-records",
+      "interface": {
+        "conditionalResolution": {
+          "branch": "active",
+          "condition": "compiler(>=5.3) && $TildeSendable",
+          "evidenceHash": "sha256:1435e5f7c3d66f9e7dbdb1a12f1125724d987d2cffa0eeb6f4f4a16341a534b4",
+          "otherConditions": []
+        },
+        "context": [
+          "DatePickerStyleConfiguration"
+        ],
+        "enclosingScopes": [
+          {
+            "access": "public",
+            "declaration": "public struct DatePickerStyleConfiguration : ~Swift.Sendable {",
+            "depth": 1,
+            "kind": "struct",
+            "line": 32806,
+            "target": "DatePickerStyleConfiguration"
+          }
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "public var $selection: SwiftUICore.Binding<Foundation.Date> {",
+        "sourceExcerpt": [
+          {
+            "line": 32804,
+            "text": "@available(iOS 16.0, macOS 13.0, watchOS 10.0, *)"
+          },
+          {
+            "line": 32805,
+            "text": "@available(tvOS, unavailable)"
+          },
+          {
+            "line": 32806,
+            "text": "public struct DatePickerStyleConfiguration : ~Swift.Sendable {"
+          },
+          {
+            "line": 32807,
+            "text": "  @_Concurrency.MainActor @preconcurrency public struct Label : SwiftUICore.View, ~Swift.Sendable {"
+          },
+          {
+            "line": 32808,
+            "text": "    @available(macOS 13.0, iOS 16.0, watchOS 10.0, *)"
+          },
+          {
+            "line": 32809,
+            "text": "    @available(tvOS, unavailable)"
+          },
+          {
+            "line": 32810,
+            "text": "    public typealias Body = Swift.Never"
+          },
+          {
+            "line": 32811,
+            "text": "  }"
+          },
+          {
+            "line": 32812,
+            "text": "  public let label: SwiftUI.DatePickerStyleConfiguration.Label"
+          },
+          {
+            "line": 32813,
+            "text": "  @SwiftUICore.Binding @_projectedValueProperty($selection) public var selection: Foundation.Date {"
+          },
+          {
+            "line": 32814,
+            "text": "    get"
+          },
+          {
+            "line": 32815,
+            "text": "    @available(macOS 13.0, iOS 16.0, watchOS 10.0, *)"
+          },
+          {
+            "line": 32816,
+            "text": "    @available(tvOS, unavailable)"
+          },
+          {
+            "line": 32817,
+            "text": "    nonmutating set"
+          },
+          {
+            "line": 32818,
+            "text": "    @available(macOS 13.0, iOS 16.0, watchOS 10.0, *)"
+          },
+          {
+            "line": 32819,
+            "text": "    @available(tvOS, unavailable)"
+          },
+          {
+            "line": 32820,
+            "text": "    nonmutating _modify"
+          },
+          {
+            "line": 32821,
+            "text": "  }"
+          },
+          {
+            "line": 32822,
+            "text": "  public var $selection: SwiftUICore.Binding<Foundation.Date> {"
+          },
+          {
+            "line": 32823,
+            "text": "    get"
+          },
+          {
+            "line": 32824,
+            "text": "  }"
+          }
+        ],
+        "sourceLine": 32822,
+        "sourceName": "$selection"
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        32822,
+        "var"
+      ],
+      "raw": {
+        "cardCount": 2,
+        "cardDigests": [
+          "sha256:4ed888c2b2b7e465fadea676730a3b8972434bfcf5b01b1976d867003eecee9f",
+          "sha256:4ed888c2b2b7e465fadea676730a3b8972434bfcf5b01b1976d867003eecee9f"
+        ],
+        "cards": [
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DatePickerStyleConfiguration",
+                "usr": "s:7SwiftUI28DatePickerStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          },
+          {
+            "column": 14,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 32822,
+            "name": "$selection",
+            "sourcekitContext": [
+              {
+                "kind": "source.lang.swift.decl.struct",
+                "name": "DatePickerStyleConfiguration",
+                "usr": "s:7SwiftUI28DatePickerStyleConfigurationV"
+              }
+            ],
+            "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+          }
+        ],
+        "distinctUsrCount": 1,
+        "parsedCardsIdentical": true,
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+        "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+      },
+      "symbolGraph": [
+        {
+          "path": "SwiftUI.DatePickerStyleConfiguration.$selection",
+          "precise": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp",
+          "status": "inventory",
+          "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp"
+        }
+      ]
+    },
+    {
+      "actorBridgeValidation": {
+        "accepted": true,
+        "reasons": []
+      },
+      "actorFaultControls": {
+        "acceptedBaseline": true,
+        "changedInterfaceBytesRejected": true,
+        "classMarkerRejected": true,
+        "duplicateDemangleModuleRejected": true,
+        "duplicateDemangleNameRejected": true,
+        "duplicateDemangleSectionRejected": true,
+        "duplicateRawCardRejected": true,
+        "wrongAccessRejected": true,
+        "wrongContextRejected": true,
+        "wrongDemangleModuleRejected": true,
+        "wrongDemangleNameRejected": true,
+        "wrongLineRejected": true,
+        "wrongModuleRejected": true,
+        "wrongNameRejected": true,
+        "wrongSourceHashRejected": true,
+        "wrongSourceMarkerRejected": true,
+        "wrongUsrRejected": true
+      },
+      "category": "wrong-kind",
+      "classification": "unexplained",
+      "compilerKindControl": {
+        "actorAndClassDemangleRootKind": "Class",
+        "actorRawKindMatchesProduction": true,
+        "actorSourceFixtureRaw": {
+          "column": 14,
+          "effective_access": "source.decl.effective_access.public",
+          "is_implicit": null,
+          "kind": "source.lang.swift.decl.class",
+          "line": 2,
+          "name": "ProbeActor",
+          "sourcekitContext": [],
+          "usr": "s:14ActorKindProbe0cA0C"
+        },
+        "classSourceFixtureRaw": {
+          "column": 14,
+          "effective_access": "source.decl.effective_access.public",
+          "is_implicit": null,
+          "kind": "source.lang.swift.decl.class",
+          "line": 6,
+          "name": "ProbeClass",
+          "sourcekitContext": [],
+          "usr": "s:14ActorKindProbe0C5ClassC"
+        },
+        "demangleExitCode": 0,
+        "demangleInvocationReceipt": {
+          "argv": [
+            "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+            "--expand"
+          ],
+          "cwd": "/Volumes/D/claude/swiftright",
+          "exitCode": 0,
+          "stderr": {
+            "bytes": 0,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-demangle.stderr",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdin": {
+            "bytes": 87,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-demangle-input.txt",
+            "sha256": "sha256:82785b7d4e2852d6a10aec410ba48b4c5c36d1a320d58396a8f97ae0875a4d14"
+          },
+          "stdout": {
+            "bytes": 525,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-demangle.txt",
+            "sha256": "sha256:0a6d5855d6e0b3b8d6944c77a3b3c39788429be3a1d6d04d79418ff0975b6940"
+          },
+          "tool": {
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+            "sha256": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe"
+          }
+        },
+        "fixtureDemangle": {
+          "path": "factory/catalogue/compiler-edge-spike/actor-kind-demangle.txt",
+          "sha256": "sha256:0a6d5855d6e0b3b8d6944c77a3b3c39788429be3a1d6d04d79418ff0975b6940"
+        },
+        "fixtureRequest": {
+          "path": "factory/catalogue/compiler-edge-spike/request-actor-kind.yaml",
+          "sha256": "sha256:95ca3c6f6fd396bc0eef78b643d399b98b2e0a0875ae3719116932dd80bd8f6f"
+        },
+        "fixtureResponse": {
+          "path": "factory/catalogue/compiler-edge-spike/actor-kind-output.txt",
+          "sha256": "sha256:75b492a2996e0eaae23745f870254c2058ed6f7666e00397ede68ad663da4951"
+        },
+        "fixtureSource": {
+          "path": "factory/catalogue/compiler-edge-spike/actor-kind-probe.swift",
+          "sha256": "sha256:992dec34f9b1dc71e5d33f0e26cd030771fda76a61efecb8ad2ed781eaaa8bf0"
+        },
+        "fixtureTypecheckStderr": {
+          "path": "factory/catalogue/compiler-edge-spike/actor-kind-typecheck.stderr",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "probeReceipts": {
+          "path": "factory/catalogue/compiler-edge-spike/probe-receipts.json",
+          "sha256": "sha256:8eb2085c02a0d7ac0a30ae1f9b970264f728b2d949fa089e21ae8f3e8d41ffd7"
+        },
+        "sourcekitInvocationReceipt": {
+          "argv": [
+            "xcrun",
+            "sourcekit-lsp",
+            "debug",
+            "run-sourcekitd-request",
+            "--request-file",
+            "/Volumes/D/claude/swiftright/factory/catalogue/compiler-edge-spike/request-actor-kind.yaml"
+          ],
+          "cwd": "/Volumes/D/claude/swiftright",
+          "dispatcher": {
+            "path": "/usr/bin/xcrun",
+            "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+          },
+          "exitCode": 0,
+          "request": {
+            "path": "factory/catalogue/compiler-edge-spike/request-actor-kind.yaml",
+            "sha256": "sha256:95ca3c6f6fd396bc0eef78b643d399b98b2e0a0875ae3719116932dd80bd8f6f"
+          },
+          "stderr": {
+            "bytes": 0,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-sourcekit.stderr",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 6849,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-output.txt",
+            "sha256": "sha256:75b492a2996e0eaae23745f870254c2058ed6f7666e00397ede68ad663da4951"
+          },
+          "tool": {
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+            "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+          }
+        },
+        "typecheckExitCode": 0,
+        "typecheckInvocationReceipt": {
+          "argv": [
+            "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+            "-typecheck",
+            "-sdk",
+            "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+            "-target",
+            "arm64-apple-macosx27.0",
+            "/Volumes/D/claude/swiftright/factory/catalogue/compiler-edge-spike/actor-kind-probe.swift"
+          ],
+          "cwd": "/Volumes/D/claude/swiftright",
+          "exitCode": 0,
+          "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+          "stderr": {
+            "bytes": 0,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-typecheck.stderr",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout": {
+            "bytes": 0,
+            "path": "factory/catalogue/compiler-edge-spike/actor-kind-typecheck.stdout",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "target": "arm64-apple-macosx27.0",
+          "tool": {
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+            "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+          }
+        }
+      },
+      "controls": {
+        "actorMarkerRequired": true,
+        "classShapeCannotUseActorBridge": true,
+        "productionStrictMatcherAcceptsExplicitClassShape": true,
+        "productionStrictMatcherRejectsActorAsClass": true
+      },
+      "decision": {
+        "promotion": null,
+        "reason": "Pinned SourceKit emits class for exact actor source; fixture actor reproduces same raw class kind while ordinary class fixture is also class. Mangled kind alone cannot distinguish them.",
+        "reviewProposal": "actor-kind-bridge-requires-interface-actor-marker-and-exact-line/name/context/access/module/source-hash/USR-tree; class interface rows remain ineligible",
+        "status": "proposed-review-only"
+      },
+      "holdReason": "declaration-kind-mismatch",
+      "interface": {
+        "context": [],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13",
+        "signature": "@globalActor public actor _ImpossibleActor : Swift::Sendable {",
+        "sourceExcerpt": [
+          {
+            "line": 18130,
+            "text": "#endif"
+          },
+          {
+            "line": 18131,
+            "text": "@_hasMissingDesignatedInitializers @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+          },
+          {
+            "line": 18132,
+            "text": "@globalActor public actor _ImpossibleActor : Swift::Sendable {"
+          },
+          {
+            "line": 18133,
+            "text": "  nonisolated(unsafe) public static var shared: SwiftUICore::_ImpossibleActor"
+          },
+          {
+            "line": 18134,
+            "text": "  nonisolated public var unownedExecutor: _Concurrency::UnownedSerialExecutor {"
+          },
+          {
+            "line": 18135,
+            "text": "    get"
+          }
+        ],
+        "sourceLine": 18132
+      },
+      "key": [
+        "SwiftUICore",
+        "arm64e-apple-macos.swiftinterface",
+        18132,
+        "_ImpossibleActor"
+      ],
+      "raw": {
+        "cards": [
+          {
+            "column": 27,
+            "effective_access": "source.decl.effective_access.public",
+            "is_implicit": null,
+            "kind": "source.lang.swift.decl.class",
+            "line": 18132,
+            "name": "_ImpossibleActor",
+            "sourcekitContext": [],
+            "usr": "s:11SwiftUICore16_ImpossibleActorC"
+          }
+        ],
+        "response": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-core-output.txt",
+          "sha256": "sha256:293b704c69ef4e80c577a79b23e556f1c480417caac656fddd3b75c2f6ffd506"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-index-core.yaml",
+        "sha256": "sha256:a015dd80fef49c539edc1464d397a2d973ae8fbc8bebda3aef7c213cedf53afa"
+      }
+    },
+    {
+      "category": "conditional-no-index-entity",
+      "classification": "ambiguous-context-signature",
+      "compilerConditionalControl": {
+        "inlineAlwaysControlOutput": {
+          "path": "factory/catalogue/compiler-cursor-spike/inline-always-conditional-output.txt",
+          "sha256": "sha256:54cfab151989db3d24d2ca3f08ad0b7e6c4d736854dc8cfcbac7c4464a2fedc6"
+        },
+        "inlineAlwaysControlSource": {
+          "path": "factory/catalogue/compiler-cursor-spike/inline-always-conditional-probe.swift",
+          "sha256": "sha256:969621f5a426e0c512f83e9b25cfb2cdb0193b32e7b75fa0faae7fecdf4a5ec7"
+        },
+        "inlineAlwaysResult": "selected=InlineAlways",
+        "probeOutput": {
+          "path": "factory/catalogue/compiler-edge-spike/tilde-sendable-branch-output.txt",
+          "sha256": "sha256:ef91c3c3676eb785cd57326857f9f22eca63bda787220a2fb8d2780e4e5e6d4c"
+        },
+        "probeResult": "selected=active",
+        "probeSource": {
+          "path": "factory/catalogue/compiler-edge-spike/tilde-sendable-branch-probe.swift",
+          "sha256": "sha256:5855c068a23cb7690d57edc46897f75ed57f13e96839f8541fe755b5e468c6cd"
+        }
+      },
+      "decision": {
+        "promotion": null,
+        "reason": "Compiler selects #if compiler(>=5.3) && $InlineAlways; requested line 28491 is inactive #else. No raw SourceKit entity or cursor USR exists for inactive declaration, while two symbol-graph overloads remain signature-ambiguous.",
+        "status": "held"
+      },
+      "holdReason": "no-same-line-name-entity",
+      "interface": {
+        "conditions": [
+          "else(compiler(>=5.3) && $InlineAlways)"
+        ],
+        "context": [
+          "WidgetBundleBuilder"
+        ],
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+        "signature": "@_disfavoredOverload @export(implementation) @inline(__always) @inlinable public static func buildLimitedAvailability(_ widget: any SwiftUI.Widget) -> any SwiftUI.Widget & SwiftUI._LimitedAvailabilityWidgetMarker {",
+        "sourceExcerpt": [
+          {
+            "line": 28480,
+            "text": "  #if compiler(>=5.3) && $InlineAlways"
+          },
+          {
+            "line": 28481,
+            "text": "  @available(iOS, deprecated: 14.0, obsoleted: 16.1, message: \"this code may crash on earlier versions of the OS; specify '#available(iOS 16.1, *)' or newer instead\")"
+          },
+          {
+            "line": 28482,
+            "text": "  @available(macOS, deprecated: 11.0, obsoleted: 13.0, message: \"this code may crash on earlier versions of the OS; specify '#available(macOS 13.0, *)' or newer instead\")"
+          },
+          {
+            "line": 28483,
+            "text": "  @available(watchOS, deprecated: 9.0, obsoleted: 9.1, message: \"this code may crash on earlier versions of the OS; specify '#available(watchOS 9.1, *)' or newer instead\")"
+          },
+          {
+            "line": 28484,
+            "text": "  @_disfavoredOverload @export(implementation) @inline(always) public static func buildLimitedAvailability(_ widget: any SwiftUI.Widget) -> any SwiftUI.Widget & SwiftUI._LimitedAvailabilityWidgetMarker {"
+          },
+          {
+            "line": 28485,
+            "text": "        fatalError(\"Unavailable\")"
+          },
+          {
+            "line": 28486,
+            "text": "    }"
+          },
+          {
+            "line": 28487,
+            "text": "  #else"
+          },
+          {
+            "line": 28488,
+            "text": "  @available(iOS, deprecated: 14.0, obsoleted: 16.1, message: \"this code may crash on earlier versions of the OS; specify '#available(iOS 16.1, *)' or newer instead\")"
+          },
+          {
+            "line": 28489,
+            "text": "  @available(macOS, deprecated: 11.0, obsoleted: 13.0, message: \"this code may crash on earlier versions of the OS; specify '#available(macOS 13.0, *)' or newer instead\")"
+          },
+          {
+            "line": 28490,
+            "text": "  @available(watchOS, deprecated: 9.0, obsoleted: 9.1, message: \"this code may crash on earlier versions of the OS; specify '#available(watchOS 9.1, *)' or newer instead\")"
+          },
+          {
+            "line": 28491,
+            "text": "  @_disfavoredOverload @export(implementation) @inline(__always) @inlinable public static func buildLimitedAvailability(_ widget: any SwiftUI.Widget) -> any SwiftUI.Widget & SwiftUI._LimitedAvailabilityWidgetMarker {"
+          },
+          {
+            "line": 28492,
+            "text": "        fatalError(\"Unavailable\")"
+          },
+          {
+            "line": 28493,
+            "text": "    }"
+          },
+          {
+            "line": 28494,
+            "text": "  #endif"
+          }
+        ],
+        "sourceLine": 28491
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        28491,
+        "buildLimitedAvailability"
+      ],
+      "raw": {
+        "cursorOffset": 1605000,
+        "cursorResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/buildLimitedAvailability-output.txt",
+          "sha256": "sha256:707805e81d39b3d01b3da810060cc2582a3e7afe5f49cdce363234d21596ce00"
+        },
+        "cursorResult": "Unable to resolve cursor info.",
+        "indexExactLineNameCount": 0,
+        "indexResponse": {
+          "path": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+          "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+        }
+      },
+      "request": {
+        "path": "factory/catalogue/compiler-cursor-spike/request-buildLimitedAvailability.yaml",
+        "sha256": "sha256:55d83ee600896b0755cc1e336b95455f337af9257d6ebe9889b0d9ccedbcfd07"
+      },
+      "symbolGraphCandidates": [
+        {
+          "graph": "SwiftUI.symbols.json",
+          "labels": [
+            "_"
+          ],
+          "parameterTypes": [
+            "someWidget"
+          ],
+          "pathComponents": [
+            "WidgetBundleBuilder",
+            "buildLimitedAvailability(_:)"
+          ],
+          "returnType": "anyWidget&_LimitedAvailabilityWidgetMarker",
+          "usr": "s:7SwiftUI19WidgetBundleBuilderV24buildLimitedAvailabilityyAA0C0_AA01_ghC6MarkerpxAaERzlFZ",
+          "whereConstraints": []
+        },
+        {
+          "graph": "SwiftUI.symbols.json",
+          "labels": [
+            "_"
+          ],
+          "parameterTypes": [
+            "someControlWidget"
+          ],
+          "pathComponents": [
+            "WidgetBundleBuilder",
+            "buildLimitedAvailability(_:)"
+          ],
+          "returnType": "anyWidget&_LimitedAvailabilityWidgetMarker",
+          "usr": "s:7SwiftUI19WidgetBundleBuilderV24buildLimitedAvailabilityyAA0C0_AA01_ghC6MarkerpxAA07ControlC0RzlFZ",
+          "whereConstraints": []
+        }
+      ]
+    }
+  ],
+  "status": "review-only-seven-held-cases",
+  "summary": {
+    "actorBridgeReviewCandidate": 1,
+    "actorKindMismatch": 1,
+    "conditionalNoIndexEntity": 1,
+    "duplicateSourceKitUsr": 5,
+    "explicitHolds": 6,
+    "heldCaseCount": 7,
+    "promotionsMade": 0
+  },
+  "toolchain": {
+    "compiler": {
+      "driverPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "executablePath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "version": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0"
+    },
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    },
+    "target": "arm64-apple-macosx27.0",
+    "xcodebuildVersion": "Xcode 27.0\nBuild version 27A266a"
+  },
+  "version": 1
+}

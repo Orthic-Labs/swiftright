@@ -1,0 +1,201 @@
+{
+  key.dependencies: [
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_StringProcessing.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        }
+      ]
+    },
+    {
+      key.kind: source.lang.swift.import.module.clang,
+      key.name: "_SwiftConcurrencyShims",
+      key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/_SwiftConcurrencyShims-375CYD2JCZPG2.pcm",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_Concurrency.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        },
+        {
+          key.kind: source.lang.swift.import.module.clang,
+          key.name: "SwiftShims",
+          key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/SwiftShims-375CYD2JCZPG2.pcm",
+          key.is_system: 1
+        }
+      ]
+    }
+  ],
+  key.entities: [
+    {
+      key.kind: source.lang.swift.decl.class,
+      key.name: "ProbeActor",
+      key.usr: "s:14ActorKindProbe0cA0C",
+      key.line: 2,
+      key.column: 14,
+      key.related: [
+        {
+          key.kind: source.lang.swift.ref.protocol,
+          key.name: "Sendable",
+          key.usr: "s:s8SendableP",
+          key.line: 2,
+          key.column: 26
+        }
+      ],
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.var.static,
+          key.usr: "s:12_Concurrency11GlobalActorPAAE21sharedUnownedExecutorScevpZ",
+          key.line: 2,
+          key.column: 14,
+          key.is_implicit: 1,
+          key.related: [
+            {
+              key.kind: source.lang.swift.ref.var.static,
+              key.name: "sharedUnownedExecutor",
+              key.usr: "s:12_Concurrency11GlobalActorP21sharedUnownedExecutorScevpZ"
+            }
+          ],
+          key.effective_access: source.decl.effective_access.public
+        },
+        {
+          key.kind: source.lang.swift.ref.protocol,
+          key.name: "Sendable",
+          key.usr: "s:s8SendableP",
+          key.line: 2,
+          key.column: 26
+        },
+        {
+          key.kind: source.lang.swift.decl.var.static,
+          key.name: "shared",
+          key.usr: "s:14ActorKindProbe0cA0C6sharedACvpZ",
+          key.line: 3,
+          key.column: 21,
+          key.related: [
+            {
+              key.kind: source.lang.swift.ref.var.static,
+              key.name: "shared",
+              key.usr: "s:12_Concurrency11GlobalActorP6shared0C4TypeQzvpZ"
+            }
+          ],
+          key.entities: [
+            {
+              key.kind: source.lang.swift.decl.function.accessor.getter,
+              key.usr: "s:14ActorKindProbe0cA0C6sharedACvgZ",
+              key.line: 3,
+              key.column: 21,
+              key.is_implicit: 1,
+              key.attributes: [
+                {
+                  key.attribute: source.decl.attribute.final
+                },
+                {
+                  key.attribute: source.decl.attribute.public
+                }
+              ]
+            },
+            {
+              key.kind: source.lang.swift.decl.function.accessor.setter,
+              key.usr: "s:14ActorKindProbe0cA0C6sharedACvsZ",
+              key.line: 3,
+              key.column: 21,
+              key.is_implicit: 1,
+              key.attributes: [
+                {
+                  key.attribute: source.decl.attribute.final
+                },
+                {
+                  key.attribute: source.decl.attribute.public
+                }
+              ]
+            }
+          ],
+          key.attributes: [
+            {
+              key.attribute: source.decl.attribute.final
+            },
+            {
+              key.attribute: source.decl.attribute.public
+            }
+          ],
+          key.effective_access: source.decl.effective_access.public
+        },
+        {
+          key.kind: source.lang.swift.ref.class,
+          key.name: "ProbeActor",
+          key.usr: "s:14ActorKindProbe0cA0C",
+          key.line: 3,
+          key.column: 30
+        },
+        {
+          key.kind: source.lang.swift.ref.function.constructor,
+          key.name: "init()",
+          key.usr: "s:14ActorKindProbe0cA0CACycfc",
+          key.line: 3,
+          key.column: 30
+        },
+        {
+          key.kind: source.lang.swift.decl.function.constructor,
+          key.usr: "s:14ActorKindProbe0cA0CACycfc",
+          key.line: 2,
+          key.column: 14,
+          key.is_implicit: 1,
+          key.effective_access: source.decl.effective_access.internal
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.public
+        },
+        {
+          key.attribute: source.decl.attribute.globalActor
+        }
+      ],
+      key.effective_access: source.decl.effective_access.public
+    },
+    {
+      key.kind: source.lang.swift.decl.class,
+      key.name: "ProbeClass",
+      key.usr: "s:14ActorKindProbe0C5ClassC",
+      key.line: 6,
+      key.column: 14,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.constructor,
+          key.usr: "s:14ActorKindProbe0C5ClassCACycfc",
+          key.line: 6,
+          key.column: 14,
+          key.is_implicit: 1,
+          key.effective_access: source.decl.effective_access.internal
+        }
+      ],
+      key.attributes: [
+        {
+          key.attribute: source.decl.attribute.public
+        }
+      ],
+      key.effective_access: source.decl.effective_access.public
+    }
+  ]
+}
