@@ -1,0 +1,277 @@
+diff --git a/Sources/SwiftRightRuntime/Geometry.swift b/Sources/SwiftRightRuntime/Geometry.swift
+index ed8a864..b32e57b 100644
+--- a/Sources/SwiftRightRuntime/Geometry.swift
++++ b/Sources/SwiftRightRuntime/Geometry.swift
+@@ -120,6 +120,12 @@ public struct UnitPoint: Hashable, Sendable {
+     public static let bottomTrailing = UnitPoint(x: 1, y: 1)
+ }
+ 
++struct FrameSpec: Equatable {
++    let width: CGFloat?
++    let height: CGFloat?
++    let alignment: Alignment
++}
++
+ /// A frame in physical device pixels.
+ public struct PixelRect: Hashable, Sendable {
+     public let x: Int
+diff --git a/Sources/SwiftRightRuntime/Graph.swift b/Sources/SwiftRightRuntime/Graph.swift
+index 16abbf2..9fbc669 100644
+--- a/Sources/SwiftRightRuntime/Graph.swift
++++ b/Sources/SwiftRightRuntime/Graph.swift
+@@ -180,6 +180,7 @@ struct FocusLink {
+ 
+ enum ModifierSpec {
+     case padding(EdgeInsets)
++    case frame(FrameSpec)
+     case appear(() -> Void)
+     case disappear(() -> Void)
+     /// `id` is nil for `task(name:...)`; a non-nil id restarts the task when it changes.
+@@ -207,6 +208,7 @@ enum ModifierSpec {
+     var kindName: String {
+         switch self {
+         case .padding: return "modifier.padding"
++        case .frame: return "modifier.frame"
+         case .appear: return "modifier.onAppear"
+         case .disappear: return "modifier.onDisappear"
+         case .task: return "modifier.task"
+@@ -228,6 +230,7 @@ enum ModifierSpec {
+     var name: String {
+         switch self {
+         case .padding: return "padding"
++        case .frame: return "frame"
+         case .appear: return "onAppear"
+         case .disappear: return "onDisappear"
+         case .task: return "task"
+@@ -279,6 +282,7 @@ enum NodeKind {
+         switch self {
+         case .user, .button: return true
+         case .modifier(.padding): return false
++        case .modifier(.frame): return true
+         case .modifier: return true
+         default: return false
+         }
+@@ -607,6 +611,7 @@ enum LayoutKey: Equatable {
+     case text(String, String?)
+     case stack(StackSpec)
+     case padding(EdgeInsets)
++    case frame(FrameSpec)
+     case spacer(CGFloat)
+     case image(ImageReference)
+ }
+@@ -1330,6 +1335,7 @@ public final class Graph {
+         case .textField, .textEditor: key = .text(node.textInput?.display ?? "", node.environment.font?.id)
+         case .stack(let spec): key = .stack(spec)
+         case .modifier(.padding(let insets)): key = .padding(insets)
++        case .modifier(.frame(let frame)): key = .frame(frame)
+         case .spacer(let length): key = .spacer(length)
+         case .image(let reference): key = .image(reference)
+         case .layout: key = .always
+diff --git a/Sources/SwiftRightRuntime/LayoutEngine.swift b/Sources/SwiftRightRuntime/LayoutEngine.swift
+index 42d36fe..aa6af10 100644
+--- a/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -121,6 +121,13 @@ extension Graph {
+             )
+             let inside = childNodes(node).first.map { measure($0, inner) } ?? .zero
+             return LayoutSize(width: inside.width + insets.horizontal, height: inside.height + insets.vertical)
++        case .modifier(.frame(let frame)):
++            let childProposal = ProposedViewSize(
++                width: frame.width ?? proposal.width,
++                height: frame.height ?? proposal.height
++            )
++            let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
++            return LayoutSize(width: frame.width ?? inside.width, height: frame.height ?? inside.height)
+         case .stack(let spec):
+             return stackPlan(childNodes(node), spec, proposal).size
+         case .layout(let spec):
+@@ -153,6 +160,22 @@ extension Graph {
+                 height: proposal.height.map { max(0, $0 - insets.vertical) }
+             )
+             place(child, in: inner, proposal: innerProposal)
++        case .modifier(.frame(let frame)):
++            guard let child = childNodes(node).first else { return }
++            let childProposal = ProposedViewSize(
++                width: frame.width ?? proposal.width,
++                height: frame.height ?? proposal.height
++            )
++            let childSize = measure(child, childProposal)
++            let x = alignmentOffset(frame.alignment.horizontal, available: rect.width - childSize.width)
++            let y = alignmentOffset(frame.alignment.vertical, available: rect.height - childSize.height)
++            let inner = LayoutRect(
++                x: rect.minX + x,
++                y: rect.minY + y,
++                width: childSize.width,
++                height: childSize.height
++            )
++            place(child, in: inner, proposal: childProposal)
+         case .stack(let spec):
+             placeStack(childNodes(node), spec, in: rect, proposal: proposal)
+         case .layout(let spec):
+@@ -185,7 +208,7 @@ extension Graph {
+         let axis = spec.axis
+         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
+         let crossLimit = axis.crossLimit(proposal)
+-        let minLengths: [CGFloat?] = children.map { spacerLength($0) }
++        let minLengths: [CGFloat?] = children.map { spacerLength($0, axis) }
+         let fixed: [LayoutSize?] = children.map { fixedStackSize($0, axis, crossLimit) }
+         var sizes = Array(repeating: LayoutSize.zero, count: children.count)
+         var proposals = Array(repeating: ProposedViewSize.unspecified, count: children.count)
+@@ -207,7 +230,8 @@ extension Graph {
+                 let proposal = axis.proposal(main: share, cross: crossLimit)
+                 let size: LayoutSize
+                 if let minLength = minLengths[index] {
+-                    size = axis.size(main: max(minLength, share), cross: 0)
++                    let measured = measure(children[index], proposal)
++                    size = axis.size(main: max(minLength, share), cross: axis.cross(measured))
+                 } else if let fixedSize = fixed[index] {
+                     size = fixedSize
+                 } else {
+@@ -223,7 +247,8 @@ extension Graph {
+             for index in children.indices {
+                 let proposal = axis.proposal(main: nil, cross: crossLimit)
+                 if let minLength = minLengths[index] {
+-                    sizes[index] = axis.size(main: minLength, cross: 0)
++                    let measured = measure(children[index], proposal)
++                    sizes[index] = axis.size(main: minLength, cross: axis.cross(measured))
+                 } else if let fixedSize = fixed[index] {
+                     sizes[index] = fixedSize
+                 } else {
+@@ -349,12 +374,32 @@ extension Graph {
+         return axis.size(main: dividerThickness, cross: crossLimit ?? 0)
+     }
+ 
++    private func alignmentOffset(_ alignment: HorizontalAlignment, available: CGFloat) -> CGFloat {
++        switch alignment.kind {
++        case .leading: return 0
++        case .center: return available / 2
++        case .trailing: return available
++        }
++    }
++
++    private func alignmentOffset(_ alignment: VerticalAlignment, available: CGFloat) -> CGFloat {
++        switch alignment.kind {
++        case .top: return 0
++        case .center: return available / 2
++        case .bottom: return available
++        }
++    }
++
+     /// A spacer's minimum length, seen through single-child wrappers; nil for other views.
+-    private func spacerLength(_ node: Node) -> CGFloat? {
++    private func spacerLength(_ node: Node, _ axis: StackAxis) -> CGFloat? {
+         if case .spacer(let minLength) = node.kind { return minLength }
++        if case .modifier(.frame(let frame)) = node.kind {
++            let fixesMainAxis = axis == .horizontal ? frame.width != nil : frame.height != nil
++            if fixesMainAxis { return nil }
++        }
+         guard node.kind.passesThrough else { return nil }
+         let children = childNodes(node)
+-        return children.count == 1 ? spacerLength(children[0]) : nil
++        return children.count == 1 ? spacerLength(children[0], axis) : nil
+     }
+ 
+     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
+diff --git a/Sources/SwiftRightRuntime/Modifiers.swift b/Sources/SwiftRightRuntime/Modifiers.swift
+index da0cc5b..6c57092 100644
+--- a/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -30,6 +30,11 @@ extension ModifierWrapper: @MainActor WrappedModifier {
+ }
+ 
+ extension View {
++    /// Proposes fixed dimensions to this view's content, then aligns content in the resulting frame.
++    public func frame(width: CGFloat? = nil, height: CGFloat? = nil, alignment: Alignment = .center) -> some View {
++        Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
++    }
++
+     /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
+     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
+         Modified(content: self, spec: .padding(EdgeInsets(edges, length ?? defaultPaddingLength)))
+diff --git a/Tests/SwiftRightRuntimeTests/LayoutTests.swift b/Tests/SwiftRightRuntimeTests/LayoutTests.swift
+index 8ca85b0..82e0747 100644
+--- a/Tests/SwiftRightRuntimeTests/LayoutTests.swift
++++ b/Tests/SwiftRightRuntimeTests/LayoutTests.swift
+@@ -49,6 +49,40 @@ struct PadProbe: View {
+     var body: some View { Text("ab").padding(.all, 10) }
+ }
+ 
++struct FixedFrameProbe: View {
++    var body: some View { Text("x").frame(width: 100, height: 40, alignment: .bottomTrailing) }
++}
++
++struct FramedSpacerProbe: View {
++    var body: some View {
++        HStack {
++            Text("A")
++            Spacer().frame(width: 20)
++            Text("B")
++        }
++    }
++}
++
++struct CrossAxisFramedHStackSpacerProbe: View {
++    var body: some View {
++        HStack {
++            Text("A")
++            Spacer().frame(height: 10)
++            Text("B")
++        }
++    }
++}
++
++struct CrossAxisFramedVStackSpacerProbe: View {
++    var body: some View {
++        VStack {
++            Text("A")
++            Spacer().frame(width: 10)
++            Text("B")
++        }
++    }
++}
++
+ /// Two subviews side by side when the proposed width reaches the threshold, stacked otherwise.
+ struct SideBySide: Layout {
+     let threshold: CGFloat
+@@ -112,6 +146,41 @@ struct LabelProbe: View {
+ @MainActor
+ final class LayoutTests: XCTestCase {
+ 
++    func testFrameSetsDimensionsAndAlignsChild() throws {
++        let graph = Graph(FixedFrameProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let frame = try node(graph.snapshot(), 0)
++        XCTAssertEqual(frame.kind, "modifier.frame")
++        XCTAssertEqual(frame.frame, LayoutRect(x: 0, y: 0, width: 100, height: 40))
++        XCTAssertEqual(frame.children[0].frame, LayoutRect(x: 92, y: 24, width: 8, height: 16))
++    }
++
++    func testFixedFrameStopsSpacerFromTakingRemainingStackSpace() throws {
++        let graph = Graph(FramedSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
++        graph.flush()
++        let stack = try node(graph.snapshot(), 0)
++        XCTAssertEqual(stack.children.map(\.frame.width), [8, 20, 8])
++    }
++
++    func testCrossAxisFramePreservesHStackSpacerFlexibilityAndHeight() throws {
++        let graph = Graph(CrossAxisFramedHStackSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
++        graph.flush()
++        let spacerFrame = try node(graph.snapshot(), 0, 1)
++        XCTAssertGreaterThan(spacerFrame.frame.width, 100)
++        XCTAssertEqual(spacerFrame.frame.height, 10)
++    }
++
++    func testCrossAxisFramePreservesVStackSpacerFlexibilityAndWidth() throws {
++        let graph = Graph(CrossAxisFramedVStackSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: nil, height: 300)
++        graph.flush()
++        let spacerFrame = try node(graph.snapshot(), 0, 1)
++        XCTAssertGreaterThan(spacerFrame.frame.height, 100)
++        XCTAssertEqual(spacerFrame.frame.width, 10)
++    }
++
+     func testTextWrapsWhenProposedWidthShrinks() throws {
+         let measurer = FixedAdvanceTextMeasurer()
+         let graph = Graph(WrapProbe(), measurer: measurer)

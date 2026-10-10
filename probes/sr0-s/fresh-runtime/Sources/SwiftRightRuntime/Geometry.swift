@@ -120,6 +120,12 @@ public struct UnitPoint: Hashable, Sendable {
     public static let bottomTrailing = UnitPoint(x: 1, y: 1)
 }
 
+struct FrameSpec: Equatable {
+    let width: CGFloat?
+    let height: CGFloat?
+    let alignment: Alignment
+}
+
 /// A frame in physical device pixels.
 public struct PixelRect: Hashable, Sendable {
     public let x: Int

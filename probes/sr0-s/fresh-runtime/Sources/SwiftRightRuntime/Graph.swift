@@ -180,6 +180,7 @@ struct FocusLink {
 
 enum ModifierSpec {
     case padding(EdgeInsets)
+    case frame(FrameSpec)
     case appear(() -> Void)
     case disappear(() -> Void)
     /// `id` is nil for `task(name:...)`; a non-nil id restarts the task when it changes.
@@ -207,6 +208,7 @@ enum ModifierSpec {
     var kindName: String {
         switch self {
         case .padding: return "modifier.padding"
+        case .frame: return "modifier.frame"
         case .appear: return "modifier.onAppear"
         case .disappear: return "modifier.onDisappear"
         case .task: return "modifier.task"
@@ -228,6 +230,7 @@ enum ModifierSpec {
     var name: String {
         switch self {
         case .padding: return "padding"
+        case .frame: return "frame"
         case .appear: return "onAppear"
         case .disappear: return "onDisappear"
         case .task: return "task"
@@ -279,6 +282,7 @@ enum NodeKind {
         switch self {
         case .user, .button: return true
         case .modifier(.padding): return false
+        case .modifier(.frame): return true
         case .modifier: return true
         default: return false
         }
@@ -607,6 +611,7 @@ enum LayoutKey: Equatable {
     case text(String, String?)
     case stack(StackSpec)
     case padding(EdgeInsets)
+    case frame(FrameSpec)
     case spacer(CGFloat)
     case image(ImageReference)
 }
@@ -1330,6 +1335,7 @@ public final class Graph {
         case .textField, .textEditor: key = .text(node.textInput?.display ?? "", node.environment.font?.id)
         case .stack(let spec): key = .stack(spec)
         case .modifier(.padding(let insets)): key = .padding(insets)
+        case .modifier(.frame(let frame)): key = .frame(frame)
         case .spacer(let length): key = .spacer(length)
         case .image(let reference): key = .image(reference)
         case .layout: key = .always

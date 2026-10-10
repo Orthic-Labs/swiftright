@@ -121,6 +121,13 @@ extension Graph {
             )
             let inside = childNodes(node).first.map { measure($0, inner) } ?? .zero
             return LayoutSize(width: inside.width + insets.horizontal, height: inside.height + insets.vertical)
+        case .modifier(.frame(let frame)):
+            let childProposal = ProposedViewSize(
+                width: frame.width ?? proposal.width,
+                height: frame.height ?? proposal.height
+            )
+            let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
+            return LayoutSize(width: frame.width ?? inside.width, height: frame.height ?? inside.height)
         case .stack(let spec):
             return stackPlan(childNodes(node), spec, proposal).size
         case .layout(let spec):
@@ -153,6 +160,22 @@ extension Graph {
                 height: proposal.height.map { max(0, $0 - insets.vertical) }
             )
             place(child, in: inner, proposal: innerProposal)
+        case .modifier(.frame(let frame)):
+            guard let child = childNodes(node).first else { return }
+            let childProposal = ProposedViewSize(
+                width: frame.width ?? proposal.width,
+                height: frame.height ?? proposal.height
+            )
+            let childSize = measure(child, childProposal)
+            let x = alignmentOffset(frame.alignment.horizontal, available: rect.width - childSize.width)
+            let y = alignmentOffset(frame.alignment.vertical, available: rect.height - childSize.height)
+            let inner = LayoutRect(
+                x: rect.minX + x,
+                y: rect.minY + y,
+                width: childSize.width,
+                height: childSize.height
+            )
+            place(child, in: inner, proposal: childProposal)
         case .stack(let spec):
             placeStack(childNodes(node), spec, in: rect, proposal: proposal)
         case .layout(let spec):
@@ -185,7 +208,7 @@ extension Graph {
         let axis = spec.axis
         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
         let crossLimit = axis.crossLimit(proposal)
-        let minLengths: [CGFloat?] = children.map { spacerLength($0) }
+        let minLengths: [CGFloat?] = children.map { spacerLength($0, axis) }
         let fixed: [LayoutSize?] = children.map { fixedStackSize($0, axis, crossLimit) }
         var sizes = Array(repeating: LayoutSize.zero, count: children.count)
         var proposals = Array(repeating: ProposedViewSize.unspecified, count: children.count)
@@ -207,7 +230,8 @@ extension Graph {
                 let proposal = axis.proposal(main: share, cross: crossLimit)
                 let size: LayoutSize
                 if let minLength = minLengths[index] {
-                    size = axis.size(main: max(minLength, share), cross: 0)
+                    let measured = measure(children[index], proposal)
+                    size = axis.size(main: max(minLength, share), cross: axis.cross(measured))
                 } else if let fixedSize = fixed[index] {
                     size = fixedSize
                 } else {
@@ -223,7 +247,8 @@ extension Graph {
             for index in children.indices {
                 let proposal = axis.proposal(main: nil, cross: crossLimit)
                 if let minLength = minLengths[index] {
-                    sizes[index] = axis.size(main: minLength, cross: 0)
+                    let measured = measure(children[index], proposal)
+                    sizes[index] = axis.size(main: minLength, cross: axis.cross(measured))
                 } else if let fixedSize = fixed[index] {
                     sizes[index] = fixedSize
                 } else {
@@ -349,12 +374,32 @@ extension Graph {
         return axis.size(main: dividerThickness, cross: crossLimit ?? 0)
     }
 
+    private func alignmentOffset(_ alignment: HorizontalAlignment, available: CGFloat) -> CGFloat {
+        switch alignment.kind {
+        case .leading: return 0
+        case .center: return available / 2
+        case .trailing: return available
+        }
+    }
+
+    private func alignmentOffset(_ alignment: VerticalAlignment, available: CGFloat) -> CGFloat {
+        switch alignment.kind {
+        case .top: return 0
+        case .center: return available / 2
+        case .bottom: return available
+        }
+    }
+
     /// A spacer's minimum length, seen through single-child wrappers; nil for other views.
-    private func spacerLength(_ node: Node) -> CGFloat? {
+    private func spacerLength(_ node: Node, _ axis: StackAxis) -> CGFloat? {
         if case .spacer(let minLength) = node.kind { return minLength }
+        if case .modifier(.frame(let frame)) = node.kind {
+            let fixesMainAxis = axis == .horizontal ? frame.width != nil : frame.height != nil
+            if fixesMainAxis { return nil }
+        }
         guard node.kind.passesThrough else { return nil }
         let children = childNodes(node)
-        return children.count == 1 ? spacerLength(children[0]) : nil
+        return children.count == 1 ? spacerLength(children[0], axis) : nil
     }
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {

@@ -49,6 +49,40 @@ struct PadProbe: View {
     var body: some View { Text("ab").padding(.all, 10) }
 }
 
+struct FixedFrameProbe: View {
+    var body: some View { Text("x").frame(width: 100, height: 40, alignment: .bottomTrailing) }
+}
+
+struct FramedSpacerProbe: View {
+    var body: some View {
+        HStack {
+            Text("A")
+            Spacer().frame(width: 20)
+            Text("B")
+        }
+    }
+}
+
+struct CrossAxisFramedHStackSpacerProbe: View {
+    var body: some View {
+        HStack {
+            Text("A")
+            Spacer().frame(height: 10)
+            Text("B")
+        }
+    }
+}
+
+struct CrossAxisFramedVStackSpacerProbe: View {
+    var body: some View {
+        VStack {
+            Text("A")
+            Spacer().frame(width: 10)
+            Text("B")
+        }
+    }
+}
+
 /// Two subviews side by side when the proposed width reaches the threshold, stacked otherwise.
 struct SideBySide: Layout {
     let threshold: CGFloat
@@ -111,6 +145,41 @@ struct LabelProbe: View {
 
 @MainActor
 final class LayoutTests: XCTestCase {
+
+    func testFrameSetsDimensionsAndAlignsChild() throws {
+        let graph = Graph(FixedFrameProbe(), measurer: FixedAdvanceTextMeasurer())
+        graph.flush()
+        let frame = try node(graph.snapshot(), 0)
+        XCTAssertEqual(frame.kind, "modifier.frame")
+        XCTAssertEqual(frame.frame, LayoutRect(x: 0, y: 0, width: 100, height: 40))
+        XCTAssertEqual(frame.children[0].frame, LayoutRect(x: 92, y: 24, width: 8, height: 16))
+    }
+
+    func testFixedFrameStopsSpacerFromTakingRemainingStackSpace() throws {
+        let graph = Graph(FramedSpacerProbe())
+        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
+        graph.flush()
+        let stack = try node(graph.snapshot(), 0)
+        XCTAssertEqual(stack.children.map(\.frame.width), [8, 20, 8])
+    }
+
+    func testCrossAxisFramePreservesHStackSpacerFlexibilityAndHeight() throws {
+        let graph = Graph(CrossAxisFramedHStackSpacerProbe())
+        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
+        graph.flush()
+        let spacerFrame = try node(graph.snapshot(), 0, 1)
+        XCTAssertGreaterThan(spacerFrame.frame.width, 100)
+        XCTAssertEqual(spacerFrame.frame.height, 10)
+    }
+
+    func testCrossAxisFramePreservesVStackSpacerFlexibilityAndWidth() throws {
+        let graph = Graph(CrossAxisFramedVStackSpacerProbe())
+        graph.rootProposal = ProposedViewSize(width: nil, height: 300)
+        graph.flush()
+        let spacerFrame = try node(graph.snapshot(), 0, 1)
+        XCTAssertGreaterThan(spacerFrame.frame.height, 100)
+        XCTAssertEqual(spacerFrame.frame.width, 10)
+    }
 
     func testTextWrapsWhenProposedWidthShrinks() throws {
         let measurer = FixedAdvanceTextMeasurer()
