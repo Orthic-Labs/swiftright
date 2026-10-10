@@ -147,6 +147,10 @@ extension Graph {
             )
             let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
             return LayoutSize(width: frame.width ?? inside.width, height: frame.height ?? inside.height)
+        case .modifier(.flexibleFrame(let frame)):
+            let childProposal = frame.childProposal(proposal)
+            let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
+            return frame.frameSize(for: inside, proposal: proposal)
         case .stack(let spec):
             return stackPlan(childNodes(node), spec, proposal).size
         case .layout(let spec):
@@ -194,6 +198,19 @@ extension Graph {
                 width: frame.width ?? proposal.width,
                 height: frame.height ?? proposal.height
             )
+            let childSize = measure(child, childProposal)
+            let x = alignmentOffset(frame.alignment.horizontal, available: rect.width - childSize.width)
+            let y = alignmentOffset(frame.alignment.vertical, available: rect.height - childSize.height)
+            let inner = LayoutRect(
+                x: rect.minX + x,
+                y: rect.minY + y,
+                width: childSize.width,
+                height: childSize.height
+            )
+            place(child, in: inner, proposal: childProposal)
+        case .modifier(.flexibleFrame(let frame)):
+            guard let child = childNodes(node).first else { return }
+            let childProposal = frame.childProposal(proposal)
             let childSize = measure(child, childProposal)
             let x = alignmentOffset(frame.alignment.horizontal, available: rect.width - childSize.width)
             let y = alignmentOffset(frame.alignment.vertical, available: rect.height - childSize.height)
@@ -443,6 +460,18 @@ extension Graph {
         if case .modifier(.frame(let frame)) = node.kind {
             let fixesMainAxis = axis == .horizontal ? frame.width != nil : frame.height != nil
             if fixesMainAxis { return nil }
+        }
+        if case .modifier(.flexibleFrame(let frame)) = node.kind {
+            let minimum = axis == .horizontal ? frame.minWidth : frame.minHeight
+            let maximum = axis == .horizontal ? frame.maxWidth : frame.maxHeight
+            // A finite main-axis maximum makes this a bounded flexible child, not an unbounded
+            // spacer. Let normal stack proposal distribution measure it so its maximum is honored.
+            if let maximum, maximum.isFinite { return nil }
+            guard node.kind.passesThrough else { return nil }
+            let children = childNodes(node)
+            guard children.count == 1, let childMinimum = spacerLength(children[0], axis) else { return nil }
+            // Infinite maximums preserve spacer flexibility; a main-axis minimum raises its floor.
+            return max(childMinimum, minimum ?? 0)
         }
         guard node.kind.passesThrough else { return nil }
         let children = childNodes(node)

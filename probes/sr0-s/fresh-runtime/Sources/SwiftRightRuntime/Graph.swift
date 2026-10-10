@@ -181,6 +181,7 @@ struct FocusLink {
 enum ModifierSpec {
     case padding(EdgeInsets)
     case frame(FrameSpec)
+    case flexibleFrame(FlexibleFrameSpec)
     case appear(() -> Void)
     case disappear(() -> Void)
     /// `id` is nil for `task(name:...)`; a non-nil id restarts the task when it changes.
@@ -211,6 +212,7 @@ enum ModifierSpec {
         switch self {
         case .padding: return "modifier.padding"
         case .frame: return "modifier.frame"
+        case .flexibleFrame: return "modifier.frame"
         case .appear: return "modifier.onAppear"
         case .disappear: return "modifier.onDisappear"
         case .task: return "modifier.task"
@@ -235,6 +237,7 @@ enum ModifierSpec {
         switch self {
         case .padding: return "padding"
         case .frame: return "frame"
+        case .flexibleFrame: return "frame"
         case .appear: return "onAppear"
         case .disappear: return "onDisappear"
         case .task: return "task"
@@ -637,6 +640,7 @@ enum LayoutKey: Equatable {
     case stack(StackSpec)
     case padding(EdgeInsets)
     case frame(FrameSpec)
+    case flexibleFrame(FlexibleFrameSpec)
     case spacer(CGFloat)
     case toggleLabelHidden
     case image(ImageSpec)
@@ -1471,6 +1475,7 @@ public final class Graph {
         case .stack(let spec): key = .stack(spec)
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)
+        case .modifier(.flexibleFrame(let frame)): key = .flexibleFrame(frame)
         case .spacer(let length): key = .spacer(length)
         case .toggle where node.environment.labelsHidden: key = .toggleLabelHidden
         case .toggle: key = .none

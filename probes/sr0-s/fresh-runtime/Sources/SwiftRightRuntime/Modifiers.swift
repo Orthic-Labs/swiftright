@@ -40,6 +40,20 @@ extension View {
         Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
     }
 
+    /// Offers size within width bounds & aligns content in resulting frame.
+    public func frame(minWidth: CGFloat? = nil, maxWidth: CGFloat, alignment: Alignment = .center) -> some View {
+        Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
+            minWidth: minWidth, maxWidth: maxWidth, minHeight: nil, maxHeight: nil, alignment: alignment
+        )))
+    }
+
+    /// Offers size within height bounds & aligns content in resulting frame.
+    public func frame(minHeight: CGFloat? = nil, maxHeight: CGFloat, alignment: Alignment = .center) -> some View {
+        Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
+            minWidth: nil, maxWidth: nil, minHeight: minHeight, maxHeight: maxHeight, alignment: alignment
+        )))
+    }
+
     /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
         Modified(content: self, spec: .padding(EdgeInsets(edges, length ?? defaultPaddingLength)))

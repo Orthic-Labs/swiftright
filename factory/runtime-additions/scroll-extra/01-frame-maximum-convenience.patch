@@ -1,0 +1,459 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Geometry.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Geometry.swift
+index e0a7468..581bb44 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Geometry.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Geometry.swift
+@@ -156,6 +156,71 @@ struct FrameSpec: Equatable {
+     let alignment: Alignment
+ }
+ 
++/// Flexible frame bounds, separate from legacy fixed dimensions.
++/// The headless runtime clamps negative/NaN minima to zero, treats a NaN maximum as zero,
++/// preserves positive infinity, and raises a maximum below the minimum to the minimum.
++/// This keeps malformed inputs finite without asserting native SDK parity for those inputs.
++struct FlexibleFrameSpec: Equatable {
++    let minWidth: CGFloat?
++    let maxWidth: CGFloat?
++    let minHeight: CGFloat?
++    let maxHeight: CGFloat?
++    let alignment: Alignment
++
++    init(minWidth: CGFloat?, maxWidth: CGFloat?, minHeight: CGFloat?, maxHeight: CGFloat?, alignment: Alignment) {
++        self.minWidth = Self.normalizedMinimum(minWidth)
++        self.maxWidth = Self.normalizedMaximum(maxWidth, minimum: self.minWidth)
++        self.minHeight = Self.normalizedMinimum(minHeight)
++        self.maxHeight = Self.normalizedMaximum(maxHeight, minimum: self.minHeight)
++        self.alignment = alignment
++    }
++
++    func childProposal(_ proposal: ProposedViewSize) -> ProposedViewSize {
++        ProposedViewSize(
++            width: childDimension(proposal.width, minimum: minWidth, maximum: maxWidth),
++            height: childDimension(proposal.height, minimum: minHeight, maximum: maxHeight)
++        )
++    }
++
++    func frameSize(for child: LayoutSize, proposal: ProposedViewSize) -> LayoutSize {
++        LayoutSize(
++            width: frameDimension(child.width, offered: proposal.width, minimum: minWidth, maximum: maxWidth),
++            height: frameDimension(child.height, offered: proposal.height, minimum: minHeight, maximum: maxHeight)
++        )
++    }
++
++    private func bounds(minimum: CGFloat?, maximum: CGFloat?) -> (minimum: CGFloat, maximum: CGFloat) {
++        (minimum ?? 0, maximum ?? .infinity)
++    }
++
++    private static func normalizedMinimum(_ value: CGFloat?) -> CGFloat? {
++        guard let value else { return nil }
++        return max(0, finiteLength(value) ?? 0)
++    }
++
++    private static func normalizedMaximum(_ value: CGFloat?, minimum: CGFloat?) -> CGFloat? {
++        guard let value else { return nil }
++        let normalized = value.isNaN ? CGFloat.zero : max(0, value)
++        return max(minimum ?? 0, normalized)
++    }
++
++    private func childDimension(_ offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat? {
++        guard minimum != nil || maximum != nil else { return offered }
++        let limits = bounds(minimum: minimum, maximum: maximum)
++        guard let offered = finiteLength(offered) else {
++            return limits.minimum > 0 ? limits.minimum : nil
++        }
++        return min(max(offered, limits.minimum), limits.maximum)
++    }
++
++    private func frameDimension(_ child: CGFloat, offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat {
++        guard minimum != nil || maximum != nil else { return child }
++        let limits = bounds(minimum: minimum, maximum: maximum)
++        let target = finiteLength(offered) ?? child
++        return min(max(target, limits.minimum), limits.maximum)
++    }
++}
++
+ /// A frame in physical device pixels.
+ public struct PixelRect: Hashable, Sendable {
+     public let x: Int
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+index c7b2dd0..a713bcc 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -181,6 +181,7 @@ struct FocusLink {
+ enum ModifierSpec {
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
++    case flexibleFrame(FlexibleFrameSpec)
+     case appear(() -> Void)
+     case disappear(() -> Void)
+     /// `id` is nil for `task(name:...)`; a non-nil id restarts the task when it changes.
+@@ -211,6 +212,7 @@ enum ModifierSpec {
+         switch self {
+         case .padding: return "modifier.padding"
+         case .frame: return "modifier.frame"
++        case .flexibleFrame: return "modifier.frame"
+         case .appear: return "modifier.onAppear"
+         case .disappear: return "modifier.onDisappear"
+         case .task: return "modifier.task"
+@@ -235,6 +237,7 @@ enum ModifierSpec {
+         switch self {
+         case .padding: return "padding"
+         case .frame: return "frame"
++        case .flexibleFrame: return "frame"
+         case .appear: return "onAppear"
+         case .disappear: return "onDisappear"
+         case .task: return "task"
+@@ -637,6 +640,7 @@ enum LayoutKey: Equatable {
+     case stack(StackSpec)
+     case padding(EdgeInsets)
+     case frame(FrameSpec)
++    case flexibleFrame(FlexibleFrameSpec)
+     case spacer(CGFloat)
+     case toggleLabelHidden
+     case image(ImageSpec)
+@@ -1471,6 +1475,7 @@ public final class Graph {
+         case .stack(let spec): key = .stack(spec)
+         case .modifier(.padding(let insets)): key = .padding(insets)
+         case .modifier(.frame(let frame)): key = .frame(frame)
++        case .modifier(.flexibleFrame(let frame)): key = .flexibleFrame(frame)
+         case .spacer(let length): key = .spacer(length)
+         case .toggle where node.environment.labelsHidden: key = .toggleLabelHidden
+         case .toggle: key = .none
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+index 2e46a0c..052b048 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -147,6 +147,10 @@ extension Graph {
+             )
+             let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
+             return LayoutSize(width: frame.width ?? inside.width, height: frame.height ?? inside.height)
++        case .modifier(.flexibleFrame(let frame)):
++            let childProposal = frame.childProposal(proposal)
++            let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
++            return frame.frameSize(for: inside, proposal: proposal)
+         case .stack(let spec):
+             return stackPlan(childNodes(node), spec, proposal).size
+         case .layout(let spec):
+@@ -204,6 +208,19 @@ extension Graph {
+                 height: childSize.height
+             )
+             place(child, in: inner, proposal: childProposal)
++        case .modifier(.flexibleFrame(let frame)):
++            guard let child = childNodes(node).first else { return }
++            let childProposal = frame.childProposal(proposal)
++            let childSize = measure(child, childProposal)
++            let x = alignmentOffset(frame.alignment.horizontal, available: rect.width - childSize.width)
++            let y = alignmentOffset(frame.alignment.vertical, available: rect.height - childSize.height)
++            let inner = LayoutRect(
++                x: rect.minX + x,
++                y: rect.minY + y,
++                width: childSize.width,
++                height: childSize.height
++            )
++            place(child, in: inner, proposal: childProposal)
+         case .stack(let spec):
+             placeStack(childNodes(node), spec, in: rect, proposal: proposal)
+         case .layout(let spec):
+@@ -444,6 +461,18 @@ extension Graph {
+             let fixesMainAxis = axis == .horizontal ? frame.width != nil : frame.height != nil
+             if fixesMainAxis { return nil }
+         }
++        if case .modifier(.flexibleFrame(let frame)) = node.kind {
++            let minimum = axis == .horizontal ? frame.minWidth : frame.minHeight
++            let maximum = axis == .horizontal ? frame.maxWidth : frame.maxHeight
++            // A finite main-axis maximum makes this a bounded flexible child, not an unbounded
++            // spacer. Let normal stack proposal distribution measure it so its maximum is honored.
++            if let maximum, maximum.isFinite { return nil }
++            guard node.kind.passesThrough else { return nil }
++            let children = childNodes(node)
++            guard children.count == 1, let childMinimum = spacerLength(children[0], axis) else { return nil }
++            // Infinite maximums preserve spacer flexibility; a main-axis minimum raises its floor.
++            return max(childMinimum, minimum ?? 0)
++        }
+         guard node.kind.passesThrough else { return nil }
+         let children = childNodes(node)
+         return children.count == 1 ? spacerLength(children[0], axis) : nil
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+index 6dcf99e..f49c99e 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Modifiers.swift
+@@ -40,6 +40,20 @@ extension View {
+         Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
+     }
+ 
++    /// Offers size within width bounds & aligns content in resulting frame.
++    public func frame(minWidth: CGFloat? = nil, maxWidth: CGFloat, alignment: Alignment = .center) -> some View {
++        Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
++            minWidth: minWidth, maxWidth: maxWidth, minHeight: nil, maxHeight: nil, alignment: alignment
++        )))
++    }
++
++    /// Offers size within height bounds & aligns content in resulting frame.
++    public func frame(minHeight: CGFloat? = nil, maxHeight: CGFloat, alignment: Alignment = .center) -> some View {
++        Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
++            minWidth: nil, maxWidth: nil, minHeight: minHeight, maxHeight: maxHeight, alignment: alignment
++        )))
++    }
++
+     /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
+     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
+         Modified(content: self, spec: .padding(EdgeInsets(edges, length ?? defaultPaddingLength)))
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift
+new file mode 100644
+index 0000000..df32696
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift
+@@ -0,0 +1,254 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++struct ScrollFrameMaximumWitness: View {
++    var body: some View {
++        ScrollView(.horizontal) {
++            VStack(alignment: .leading, spacing: 4) {
++                ForEach(0..<4, id: \.self) { index in
++                    Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading)
++                }
++            }
++        }
++        .frame(width: 120, height: 48)
++    }
++}
++
++@Observable
++@MainActor
++final class FlexibleFrameModel {
++    var maxWidth: CGFloat = 20
++}
++
++@MainActor
++final class FrameMaximumTests: XCTestCase {
++    private func nodes(_ graph: Graph, matching predicate: (ResolvedNode) -> Bool) -> [ResolvedNode] {
++        var found: [ResolvedNode] = []
++        collect(graph.snapshot(), into: &found, where: predicate)
++        return found
++    }
++
++    func testLegacyFixedAndDefaultFrameCallsRemainAvailable() {
++        struct LegacyCalls: View {
++            var body: some View {
++                Text("legacy").frame().frame(alignment: .leading).frame(width: 42, height: 27)
++            }
++        }
++        let graph = Graph(LegacyCalls())
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 42)
++        XCTAssertEqual(graph.snapshot()?.frame.height, 27)
++    }
++
++    func testFiniteMaximumClampsFiniteParentProposal() {
++        struct MaxWidthFill: View {
++            var body: some View { Color.red.frame(maxWidth: 60) }
++        }
++        let bounded = Graph(MaxWidthFill())
++        bounded.rootProposal = ProposedViewSize(width: 120, height: 30)
++        bounded.flush()
++        XCTAssertEqual(bounded.snapshot()?.frame.width, 60)
++
++        let offered = Graph(MaxWidthFill())
++        offered.rootProposal = ProposedViewSize(width: 40, height: 30)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.width, 40)
++    }
++
++    func testMinimumAndMaximumClampChildProposalAndReportedFrame() {
++        struct BoundedFill: View {
++            var body: some View { Color.red.frame(minWidth: 80, maxWidth: 100) }
++        }
++        let graph = Graph(BoundedFill())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 80)
++        XCTAssertEqual(nodes(graph) { $0.kind == "Color" }.first?.frame.width, 80)
++    }
++
++    func testChangedMaximumInvalidatesSameIdentityContentMeasurement() throws {
++        struct UpdatingFrame: View {
++            @Bindable var model: FlexibleFrameModel
++            var body: some View {
++                Text(String(repeating: "word ", count: 20)).frame(maxWidth: model.maxWidth)
++            }
++        }
++        let model = FlexibleFrameModel()
++        let graph = Graph(UpdatingFrame(model: model))
++        graph.rootProposal = ProposedViewSize(width: 120, height: nil)
++        graph.flush()
++        let nodeID = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first?.id)
++        let instance = try XCTUnwrap(graph.nodeInstance(nodeID))
++        let narrowHeight = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first?.frame.height)
++
++        model.maxWidth = 80
++        graph.flush()
++
++        let updated = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(graph.nodeInstance(nodeID), instance)
++        XCTAssertEqual(updated.frame.width, 80)
++        XCTAssertLessThan(updated.frame.height, narrowHeight)
++    }
++
++    func testInfiniteMaximumAcceptsFiniteProposalAndUnspecifiedWidthStaysIntrinsic() throws {
++        struct FlexibleText: View {
++            var body: some View { Text("intrinsic width").frame(maxWidth: .infinity, alignment: .leading) }
++        }
++        let offered = Graph(FlexibleText())
++        offered.rootProposal = ProposedViewSize(width: 120, height: 30)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.width, 120)
++
++        let intrinsic = Graph(FlexibleText())
++        intrinsic.flush()
++        let width = try XCTUnwrap(intrinsic.snapshot()?.frame.width)
++        XCTAssertGreaterThan(width, 0)
++        XCTAssertTrue(width.isFinite)
++        XCTAssertEqual(width, nodes(intrinsic) { $0.kind == "Text" }.first?.frame.width)
++    }
++
++    func testFlexibleFrameAlignmentPositionsChildInsideExpandedFrame() throws {
++        struct TrailingText: View {
++            var body: some View { Text("x").frame(maxWidth: .infinity, alignment: .trailing) }
++        }
++        let graph = Graph(TrailingText())
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot())
++        let text = try XCTUnwrap(nodes(graph) { $0.kind == "Text" }.first)
++        XCTAssertEqual(frame.frame.width, 40)
++        XCTAssertEqual(text.frame.minX, frame.frame.width - text.frame.width, accuracy: 0.001)
++    }
++
++    func testMaximumHeightClampsAndExpandsByHeightProposal() {
++        struct MaxHeightFill: View {
++            var body: some View { Color.red.frame(maxHeight: 24) }
++        }
++        let bounded = Graph(MaxHeightFill())
++        bounded.rootProposal = ProposedViewSize(width: 30, height: 60)
++        bounded.flush()
++        XCTAssertEqual(bounded.snapshot()?.frame.height, 24)
++
++        let offered = Graph(MaxHeightFill())
++        offered.rootProposal = ProposedViewSize(width: 30, height: 18)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.height, 18)
++
++        struct InfiniteMaxHeight: View {
++            var body: some View { Color.red.frame(maxHeight: .infinity) }
++        }
++        let flexible = Graph(InfiniteMaxHeight())
++        flexible.rootProposal = ProposedViewSize(width: 30, height: 48)
++        flexible.flush()
++        XCTAssertEqual(flexible.snapshot()?.frame.height, 48)
++    }
++
++    func testFiniteMaximumConstrainsWrappedSpacerInStack() throws {
++        struct BoundedSpacer: View {
++            var body: some View { HStack(spacing: 0) { Spacer(minLength: 0).frame(maxWidth: 20) } }
++        }
++        let graph = Graph(BoundedSpacer())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 20)
++        XCTAssertLessThanOrEqual(frame.frame.width, 20)
++    }
++
++    func testMinimumBoundSurvivesStackShareSmallerThanMinimum() throws {
++        struct MinimumSpacer: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Text("x")
++                    Spacer(minLength: 0).frame(minWidth: 80, maxWidth: .infinity)
++                }
++            }
++        }
++        let graph = Graph(MinimumSpacer())
++        graph.rootProposal = ProposedViewSize(width: 30, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 80)
++    }
++
++    func testBoundedAndBareSpacersKeepIndependentStackFlexibility() throws {
++        struct FlexibleSpacerRow: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Spacer(minLength: 0).frame(maxWidth: 20)
++                    Spacer(minLength: 0)
++                }
++            }
++        }
++        let graph = Graph(FlexibleSpacerRow())
++        graph.rootProposal = ProposedViewSize(width: 120, height: 24)
++        graph.flush()
++        let flexibleFrame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        let spacerWidths = nodes(graph) { $0.kind == "Spacer" }.map(\.frame.width)
++        XCTAssertEqual(flexibleFrame.frame.width, 20)
++        XCTAssertEqual(spacerWidths.count, 2)
++        let bareSpacerWidth = try XCTUnwrap(spacerWidths.max())
++        XCTAssertGreaterThan(bareSpacerWidth, flexibleFrame.frame.width)
++        XCTAssertTrue(flexibleFrame.frame.width.isFinite)
++        XCTAssertTrue(bareSpacerWidth.isFinite)
++    }
++
++    func testCrossAxisFlexibleBoundPreservesSpacerMainAxisFlexibility() throws {
++        struct CrossBoundSpacer: View {
++            var body: some View {
++                HStack(spacing: 0) { Spacer(minLength: 0).frame(maxHeight: 10) }
++            }
++        }
++        let graph = Graph(CrossBoundSpacer())
++        graph.rootProposal = ProposedViewSize(width: 90, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 90)
++        XCTAssertEqual(frame.frame.height, 10)
++    }
++
++    func testBareSpacerStillTakesRemainingStackShare() throws {
++        struct BareSpacerRow: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Text("A")
++                    Spacer(minLength: 0)
++                    Text("B")
++                }
++            }
++        }
++        let graph = Graph(BareSpacerRow())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 24)
++        graph.flush()
++        let spacer = try XCTUnwrap(nodes(graph) { $0.kind == "Spacer" }.first)
++        XCTAssertGreaterThan(spacer.frame.width, 0)
++        XCTAssertTrue(spacer.frame.width.isFinite)
++    }
++
++    func testMalformedFlexibleBoundsNormalizeToFiniteGeometry() throws {
++        struct MalformedBounds: View {
++            var body: some View {
++                Color.red.frame(minWidth: 30, maxWidth: 10)
++                    .frame(minHeight: .nan, maxHeight: -.infinity)
++            }
++        }
++        let graph = Graph(MalformedBounds())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 40)
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot()?.frame)
++        XCTAssertEqual(frame.width, 30)
++        XCTAssertTrue(frame.width.isFinite && frame.height.isFinite)
++    }
++
++    func testHorizontalScrollPilotWitnessHasFiniteFrames() {
++        let graph = Graph(ScrollFrameMaximumWitness())
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 120)
++        XCTAssertEqual(graph.snapshot()?.frame.height, 48)
++        let rows = nodes(graph) { $0.kind == "Text" && $0.text?.hasPrefix("Row ") == true }
++        XCTAssertEqual(rows.count, 4)
++        XCTAssertTrue(rows.allSatisfy { $0.frame.width.isFinite && $0.frame.height.isFinite })
++    }
++}

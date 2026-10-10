@@ -156,6 +156,71 @@ struct FrameSpec: Equatable {
     let alignment: Alignment
 }
 
+/// Flexible frame bounds, separate from legacy fixed dimensions.
+/// The headless runtime clamps negative/NaN minima to zero, treats a NaN maximum as zero,
+/// preserves positive infinity, and raises a maximum below the minimum to the minimum.
+/// This keeps malformed inputs finite without asserting native SDK parity for those inputs.
+struct FlexibleFrameSpec: Equatable {
+    let minWidth: CGFloat?
+    let maxWidth: CGFloat?
+    let minHeight: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    init(minWidth: CGFloat?, maxWidth: CGFloat?, minHeight: CGFloat?, maxHeight: CGFloat?, alignment: Alignment) {
+        self.minWidth = Self.normalizedMinimum(minWidth)
+        self.maxWidth = Self.normalizedMaximum(maxWidth, minimum: self.minWidth)
+        self.minHeight = Self.normalizedMinimum(minHeight)
+        self.maxHeight = Self.normalizedMaximum(maxHeight, minimum: self.minHeight)
+        self.alignment = alignment
+    }
+
+    func childProposal(_ proposal: ProposedViewSize) -> ProposedViewSize {
+        ProposedViewSize(
+            width: childDimension(proposal.width, minimum: minWidth, maximum: maxWidth),
+            height: childDimension(proposal.height, minimum: minHeight, maximum: maxHeight)
+        )
+    }
+
+    func frameSize(for child: LayoutSize, proposal: ProposedViewSize) -> LayoutSize {
+        LayoutSize(
+            width: frameDimension(child.width, offered: proposal.width, minimum: minWidth, maximum: maxWidth),
+            height: frameDimension(child.height, offered: proposal.height, minimum: minHeight, maximum: maxHeight)
+        )
+    }
+
+    private func bounds(minimum: CGFloat?, maximum: CGFloat?) -> (minimum: CGFloat, maximum: CGFloat) {
+        (minimum ?? 0, maximum ?? .infinity)
+    }
+
+    private static func normalizedMinimum(_ value: CGFloat?) -> CGFloat? {
+        guard let value else { return nil }
+        return max(0, finiteLength(value) ?? 0)
+    }
+
+    private static func normalizedMaximum(_ value: CGFloat?, minimum: CGFloat?) -> CGFloat? {
+        guard let value else { return nil }
+        let normalized = value.isNaN ? CGFloat.zero : max(0, value)
+        return max(minimum ?? 0, normalized)
+    }
+
+    private func childDimension(_ offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat? {
+        guard minimum != nil || maximum != nil else { return offered }
+        let limits = bounds(minimum: minimum, maximum: maximum)
+        guard let offered = finiteLength(offered) else {
+            return limits.minimum > 0 ? limits.minimum : nil
+        }
+        return min(max(offered, limits.minimum), limits.maximum)
+    }
+
+    private func frameDimension(_ child: CGFloat, offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat {
+        guard minimum != nil || maximum != nil else { return child }
+        let limits = bounds(minimum: minimum, maximum: maximum)
+        let target = finiteLength(offered) ?? child
+        return min(max(target, limits.minimum), limits.maximum)
+    }
+}
+
 /// A frame in physical device pixels.
 public struct PixelRect: Hashable, Sendable {
     public let x: Int
