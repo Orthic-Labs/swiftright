@@ -1,0 +1,29 @@
+{
+  "swiftc": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "--version"
+    ],
+    "exit": 0,
+    "stdout": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0\n",
+    "stderr": "swift-driver version: 1.168.6 "
+  },
+  "sourcekitLspVersion": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "--version"
+    ],
+    "exit": 64,
+    "stdout": "",
+    "stderr": "Error: Unknown option '--version'\nUsage: sourcekit-lsp <options> <subcommand>\n  See 'sourcekit-lsp --help' for more information.\n"
+  },
+  "sourcekitLspHelp": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "--help"
+    ],
+    "exit": 0,
+    "stdout": "OVERVIEW: Language Server Protocol implementation for Swift and C-based\nlanguages\n\nUSAGE: sourcekit-lsp <options> <subcommand>\n\nOPTIONS:\n  --configuration <configuration>\n                          Build with configuration [debug|release]\n  --scratch-path, --build-path <scratch-path>\n                          Specify build/cache directory (--build-path option is\n                          deprecated, --scratch-path should be used instead)\n  -Xcc <Xcc>              Pass flag through to all C compiler invocations\n  -Xcxx <Xcxx>            Pass flag through to all C++ compiler invocations\n  -Xlinker <Xlinker>      Pass flag through to all linker invocations\n  -Xswiftc <Xswiftc>      Pass flag through to all Swift compiler invocations\n  -Xclangd <Xclangd>      Pass options to clangd command-line\n  -index-prefix-map <index-prefix-map>\n                          Override the prefix map from the build system, values\n                          of form 'remote=local'\n  --default-workspace-type <default-workspace-type>\n                          Override default workspace type selection; one of\n                          'swiftPM', 'compilationDatabase', or 'buildServer'\n  --compilation-db-search-path <compilation-db-search-path>\n                          Specify a relative path where sourcekit-lsp should\n                          search for `compile_commands.json` or\n                          `compile_flags.txt` relative to the root of a\n                          workspace. Multiple search paths may be specified by\n                          repeating this option.\n  --generated-files-path <generated-files-path>\n                          Specify the directory where generated files will be\n                          stored\n  --experimental-feature <experimental-feature>\n                          Enable an experimental sourcekit-lsp feature.\n                          Available features are: on-type-formatting,\n                          structured-logs\n  --bypass-workspace-trust\n                          Skip the workspace trust prompt and always load\n                          workspace-scoped configuration. Use when the LSP\n                          client (e.g. VS Code) already provides its own\n                          workspace trust gating.\n  -h, --help              Show help information.\n\nSUBCOMMANDS:\n  diagnose                Creates a bundle containing information that help\n                          diagnose issues with sourcekit-lsp\n  debug                   Commands to debug sourcekit-lsp. Intended for\n                          developers of sourcekit-lsp\n\n  See 'sourcekit-lsp help <subcommand>' for detailed help.\n",
+    "stderr": ""
+  }
+}
