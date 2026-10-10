@@ -1,0 +1,447 @@
+{
+  "schema_version": 1,
+  "title": "F12 concrete Tauri/React shell journey correction proposal",
+  "scope": "Source inventory only; ViewRight Tauri/React, RightKit desktop template, and SwiftUI/SwiftRight SliceApp boundary.",
+  "current_inventory": "factory/shell/inventory.json",
+  "status_values": [
+    "actual_source_journey",
+    "intentional_future_package_only",
+    "sliceapp_swift_boundary"
+  ],
+  "findings": [
+    {
+      "id": "vr-entry-window",
+      "status": "actual_source_journey",
+      "title": "Startup reveal, legal gate, workspace window, and print preview",
+      "trigger": "Tauri launches hidden window; legal receipt may be absent; print-preview query may be present.",
+      "action": "React mounts; pre-reveal window state is prepared; legal gate accepts or quits; print preview loads payload and invokes native print.",
+      "outcome": "Window reveals once; accepted workspace is maximized; print preview closes after print.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "entry-main",
+        "entry-show",
+        "entry-root",
+        "entry-print"
+      ]
+    },
+    {
+      "id": "vr-format-routes",
+      "status": "actual_source_journey",
+      "title": "Format router and document panes",
+      "trigger": "User opens supported local file or web URL.",
+      "action": "Route by format to web, PDF, DOCX, image, TXT, HTML, MDX, or Markdown pane; mount lazy viewer under per-document error boundary.",
+      "outcome": "Format-specific viewer/editor exposes its own save/find/view/print hooks.",
+      "current_f12": "omitted; existing media/PDF rows do not enumerate consumer routes",
+      "evidence_ids": [
+        "route-switch"
+      ]
+    },
+    {
+      "id": "vr-launch-open",
+      "status": "actual_source_journey",
+      "title": "Cold launch, open-file handoff, and initial paths",
+      "trigger": "Cold launch, argv file association, Finder open, or second-instance path.",
+      "action": "Register listeners before initial path drain; broker paths; open launch paths before saved session; preserve launch activation.",
+      "outcome": "Requested file is visible; failures stay in error banner; saved tabs follow launch tab ordering.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "runtime-launch",
+        "initial-paths",
+        "second-instance",
+        "mac-opened"
+      ]
+    },
+    {
+      "id": "vr-session-restore",
+      "status": "actual_source_journey",
+      "title": "Session, draft, view-state, and setup recovery",
+      "trigger": "Relaunch with saved tabs, untitled drafts, view metadata, or recovery snapshot.",
+      "action": "Load localStorage/SQLite records; regrant file tokens; restore active/background tabs; restore recovery snapshot; report missing files.",
+      "outcome": "Prior tabs/drafts resume without wiping initial saved session; missing files produce info toast.",
+      "current_f12": "persistence/error rows are too broad",
+      "evidence_ids": [
+        "runtime-persist",
+        "runtime-restore",
+        "library-session"
+      ]
+    },
+    {
+      "id": "vr-settings-shell",
+      "status": "actual_source_journey",
+      "title": "Settings modal and persistence",
+      "trigger": "User opens settings from app shell or native macOS menu.",
+      "action": "Focus-trapped modal changes section and controls; localStorage fast path hydrates SQLite mirror when empty; updates are debounced to mirror.",
+      "outcome": "Settings sections/values remain available across reload; Escape/backdrop closes modal.",
+      "current_f12": "generic settings row",
+      "evidence_ids": [
+        "settings-panel",
+        "settings-provider",
+        "settings-menu"
+      ]
+    },
+    {
+      "id": "vr-native-menu",
+      "status": "actual_source_journey",
+      "title": "Native menu to renderer command bridge",
+      "trigger": "User selects macOS native menu item.",
+      "action": "Tauri menu maps `vr-key`, `vr-event`, and `vr-cmd` IDs to KeyboardEvent or window events; quit closes through dirty-save gate.",
+      "outcome": "Existing web shortcut/document command executes; menu state reflects active format.",
+      "current_f12": "native menu row lacks concrete commands",
+      "evidence_ids": [
+        "native-menu-build",
+        "native-menu-dispatch"
+      ]
+    },
+    {
+      "id": "vr-single-instance-window",
+      "status": "actual_source_journey",
+      "title": "Single instance, Finder open, and macOS reopen",
+      "trigger": "Second process launch, macOS Opened event, or Dock reopen with hidden window.",
+      "action": "Show/unminimize/focus main window; emit prepare-setup or route paths; macOS event loop handles Opened/Reopen.",
+      "outcome": "Existing process receives request; no duplicate main workspace is needed.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "second-instance",
+        "mac-opened",
+        "mac-reopen"
+      ]
+    },
+    {
+      "id": "vr-native-drop",
+      "status": "actual_source_journey",
+      "title": "Native drag/drop broker and React claim",
+      "trigger": "User drags files into Tauri window.",
+      "action": "Rust grants paths and emits scaled coordinates; React gives active Markdown target up to 4s to claim images, then opens remaining paths in order.",
+      "outcome": "Claimed images insert into active editor; unclaimed files open as tabs.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "native-drop",
+        "drop-route"
+      ]
+    },
+    {
+      "id": "vr-web-deeplink",
+      "status": "actual_source_journey",
+      "title": "Web URL tab, context link, and external opener",
+      "trigger": "Open URL, link new tab/window, native context action, or allowed external navigation.",
+      "action": "Normalize URL; add foreground/background web tab; record recent; route allowed `http(s)`/`mailto`; explicit browser escape uses opener.",
+      "outcome": "URL stays in ViewRight tab or opens in system browser per action.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "deeplink-context",
+        "deeplink-lifecycle",
+        "deeplink-plugin"
+      ]
+    },
+    {
+      "id": "vr-file-authority",
+      "status": "actual_source_journey",
+      "title": "Purpose-scoped file grants and streams",
+      "trigger": "Open/save dialog, recent/pin selection, local linked path, HTML/MDX relative resource, or binary viewer load.",
+      "action": "Rust grants/regrants path token; renderer invokes typed bridge; binary formats use revocable stream/site tokens.",
+      "outcome": "Only user-selected or already-authorized paths open; revoked/invalid grants fail cleanly.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "authority-dialogs",
+        "authority-bridge"
+      ]
+    },
+    {
+      "id": "vr-watch-conflict",
+      "status": "actual_source_journey",
+      "title": "External file change and dirty conflict",
+      "trigger": "Open file or HTML subpage changes outside ViewRight.",
+      "action": "Re-arm one watcher over all open/subpage paths; reload clean tab or enter dirty conflict decision flow.",
+      "outcome": "Clean content refreshes; dirty edits remain protected until user chooses reload/keep.",
+      "current_f12": "omitted",
+      "evidence_ids": [
+        "watch-lifecycle",
+        "watch-conflict"
+      ]
+    },
+    {
+      "id": "vr-updates-license",
+      "status": "actual_source_journey",
+      "title": "Update check, license eligibility, install, relaunch, and recovery",
+      "trigger": "Manual or enabled automatic update check; signed release available; install fails.",
+      "action": "Check updater; map tier/license state; install and relaunch; retry or open public installer after failure.",
+      "outcome": "UI reports current/available/license-required/failed/installing states; successful install relaunches.",
+      "current_f12": "update row lacks license/auto-check/install recovery detail",
+      "evidence_ids": [
+        "update-section",
+        "update-check",
+        "update-install",
+        "update-background"
+      ]
+    },
+    {
+      "id": "vr-slice-boundary",
+      "status": "sliceapp_swift_boundary",
+      "title": "SliceApp single SwiftUI/SwiftRight editor root",
+      "trigger": "SliceApp starts on macOS or Windows.",
+      "action": "Create one `Window(\"SliceApp\", id: \"main\")`; editor inserts, edits, moves, nudges, or deletes rows; model persists each mutation.",
+      "outcome": "Rows render and reload from RowStore; no Tauri/React route exists.",
+      "current_f12": "slice-editor retained",
+      "evidence_ids": [
+        "slice-entry",
+        "slice-screen",
+        "slice-model"
+      ]
+    }
+  ],
+  "package_only_rows": [
+    "generic onboarding/model-permission flow",
+    "generic audio/video media playback",
+    "generic app-shell navigation and shortcut registry",
+    "generic settings backend revision conflict",
+    "generic legal receipt port",
+    "generic dialog/provider contracts"
+  ],
+  "evidence": [
+    {
+      "id": "entry-main",
+      "path": "/Volumes/D/claude/viewright/src/main.tsx",
+      "sha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+      "line": 33,
+      "text": "if (isPrintPreviewWindow()) {"
+    },
+    {
+      "id": "entry-show",
+      "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+      "sha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+      "line": 98,
+      "text": "      await win.show();"
+    },
+    {
+      "id": "entry-root",
+      "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+      "sha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+      "line": 117,
+      "text": "export function AppRoot() {"
+    },
+    {
+      "id": "entry-print",
+      "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+      "sha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+      "line": 7,
+      "text": "export function isPrintPreviewWindow(): boolean {"
+    },
+    {
+      "id": "route-switch",
+      "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+      "sha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+      "line": 242,
+      "text": "  switch (doc.format) {"
+    },
+    {
+      "id": "runtime-launch",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "line": 157,
+      "text": "        // Register BEFORE `initial_open_paths`: that native command atomically marks the renderer"
+    },
+    {
+      "id": "runtime-persist",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "line": 106,
+      "text": "  // Persist the open-tab session (all tabs incl. untitled, + active) so it restores on next launch."
+    },
+    {
+      "id": "runtime-restore",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "line": 299,
+      "text": "        if (sessionLoad) {"
+    },
+    {
+      "id": "initial-paths",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "sha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "line": 70,
+      "text": "pub fn initial_open_paths("
+    },
+    {
+      "id": "second-instance",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "sha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "line": 44,
+      "text": "pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, _cwd: String) {"
+    },
+    {
+      "id": "mac-opened",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "sha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "line": 84,
+      "text": "pub fn on_opened_urls(app: &AppHandle, urls: Vec<tauri::Url>) {"
+    },
+    {
+      "id": "mac-reopen",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "line": 680,
+      "text": "                    tauri::RunEvent::Reopen {"
+    },
+    {
+      "id": "library-session",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+      "sha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+      "line": 217,
+      "text": "pub async fn save_session(tabs: Vec<(String, bool)>, app: AppHandle) -> Result<(), ViewRightError> {"
+    },
+    {
+      "id": "settings-panel",
+      "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+      "sha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+      "line": 35,
+      "text": "export function SettingsPanel({ onClose }: { onClose: () => void }) {"
+    },
+    {
+      "id": "settings-provider",
+      "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+      "sha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+      "line": 352,
+      "text": "export function SettingsProvider({ children }: { children: React.ReactNode }) {"
+    },
+    {
+      "id": "settings-menu",
+      "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+      "sha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+      "line": 744,
+      "text": "    window.addEventListener(\"viewright:open-settings\", handleOpenSettings);"
+    },
+    {
+      "id": "native-menu-build",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "line": 373,
+      "text": "            // macOS: build a standard menu bar so Cmd+H (Hide), Cmd+Q (Quit), Cmd+M (Minimize),"
+    },
+    {
+      "id": "native-menu-dispatch",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "line": 514,
+      "text": "        .on_menu_event(|app, event| {"
+    },
+    {
+      "id": "native-drop",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "line": 546,
+      "text": "                WindowEvent::DragDrop(drag) => handle_drag_drop(window.app_handle(), window, drag),"
+    },
+    {
+      "id": "drop-route",
+      "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+      "sha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+      "line": 121,
+      "text": "/** Route one brokered native drop, preserving source order for insertion & fallback opens. */"
+    },
+    {
+      "id": "deeplink-context",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+      "sha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+      "line": 246,
+      "text": "/// Route new-window requests — `target=\"_blank\"`, middle-click, and the native \"open in new window\""
+    },
+    {
+      "id": "deeplink-lifecycle",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "line": 69,
+      "text": "  // Open an explicit URL preview as a VR web tab. Sources: the Open URL dialog/clipboard, a"
+    },
+    {
+      "id": "deeplink-plugin",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+      "sha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+      "line": 19,
+      "text": "pub fn plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {"
+    },
+    {
+      "id": "authority-dialogs",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "sha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "line": 117,
+      "text": "pub async fn open_file_dialog("
+    },
+    {
+      "id": "authority-bridge",
+      "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+      "sha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+      "line": 245,
+      "text": "export async function grantSiteRoot("
+    },
+    {
+      "id": "watch-lifecycle",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "line": 37,
+      "text": "  // Watch EVERY open file-backed tab plus each HTML session's visited sub-pages, in the one watcher."
+    },
+    {
+      "id": "watch-conflict",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+      "sha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+      "line": 403,
+      "text": "  const reload = useCallback("
+    },
+    {
+      "id": "update-section",
+      "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+      "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "line": 174,
+      "text": "          <button"
+    },
+    {
+      "id": "update-check",
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "sha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "line": 509,
+      "text": "export async function checkForUpdate("
+    },
+    {
+      "id": "update-install",
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "sha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "line": 622,
+      "text": "export async function installPendingUpdate("
+    },
+    {
+      "id": "update-background",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "line": 47,
+      "text": "    if (!autoCheckUpdates || autoUpdateCheckRan.current) return;"
+    },
+    {
+      "id": "slice-entry",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Entry/SliceAppEntry.swift",
+      "sha256": "2db58ced1c6ecac3efcc2b4d2f71edbf87f94520380c6185124d4347793334c9",
+      "line": 16,
+      "text": "        Window(\"SliceApp\", id: \"main\") {"
+    },
+    {
+      "id": "slice-screen",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+      "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "line": 23,
+      "text": "                Button(\"Insert above\", action: { model.insertAbove(focusedID: focusBinding.wrappedValue) })"
+    },
+    {
+      "id": "slice-model",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+      "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "line": 117,
+      "text": "    private func persist() {"
+    }
+  ],
+  "rightkit_template_boundary": {
+    "path": "/Volumes/D/claude/rightkit/desktop-app-template/src/App.tsx",
+    "sha256": "f4b71308edb7b413f88b55f9684b1403f5a705264f87a68b8ebc22e3756ec3e6",
+    "line": 8,
+    "text": "const NAV: readonly NavGroup[] = [{ items: [{ id: \"home\", label: \"Home\" }] }];",
+    "finding": "Template has one Home destination; no React Router route table."
+  }
+}
