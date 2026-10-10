@@ -1,11 +1,11 @@
 # SR1 plan: the parity factory and the full shell
 
 Status: plan rev 2, 9 October 2026. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
-dispositions are at the end. Nothing here is implemented.
+dispositions are at the end. The plan itself is not implemented, but SR1 head-start work exists: ABI 0.6 (`4df7e67`), runtime inventory controls 62/62 (`14106d6`), Windows gallery build (`47e9066`), Mac oracle fixtures G1-G8 (`c9347a0`, sweep interrupted).
 
 ## Entry criteria (checked mechanically, not asserted)
 SR1 starts only when `docs/sr0-status.md` shows every SR0 row PASS with receipts bound to the frozen SR0 tuple
-(bridge ABI 0.6, renderer `4FB068F0…`, fixture `AFE131A1…`), and slice contract v1.0 and the bridge interface are
+(bridge ABI 0.6, renderer `E280F4A9…`, fixture host `7673A2D5…`, tuple 08 per `docs/sr0-snapshot.md` section 2d), and slice contract v1.0 and the bridge interface are
 frozen. SR0's results are bounded slice evidence for the SR0 inventory only; SR1 must not assume anything outside it.
 
 ## Goal
