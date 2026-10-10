@@ -2,15 +2,15 @@
   "schema": 1,
   "file": "swiftright_render.dll",
   "abi": "0.6",
-  "sha256": "97CA28E84A58F0D3B44B5A6EAA8D7C912E673A07774123296C958E0D7ECCA26B",
-  "authenticodeSha256": "531F1093BFF83E25139AAF8FF5C991ABC39AE800525DD21C4A7CE91C0C4F5163",
+  "sha256": "E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93",
+  "authenticodeSha256": "E713BF405FEF43835576ACAC418C99E6D95BA5112E6FB628481B8B641D4F9B0E",
   "authenticodeNote": "PE hash excluding CheckSum + certificate table; stable across RightKit signing. Equals the digest signtool reports for the signed packaged DLL.",
-  "sizeBytes": 11882496,
-  "defaultSource": "D:\\Claude\\sr0-r07\\renderer\\swiftright_render.dll",
+  "sizeBytes": 11885056,
+  "defaultSource": "D:\\Claude\\sr0-r08\\renderer\\swiftright_render.dll",
   "sourceEnv": "SWIFTRIGHT_RENDERER_SRC",
-  "provenance": "SR0 tuple 07 renderer (modal fix, no ABI change): built by RightKit from swiftright commit 02b3cc0 (request rr-1791600938761-0a7e48770d4544ce; committed-tree rebuild rr-1791603213701 produced the same bytes). Unsigned. See docs/sr0-tuple07-staging.md.",
+  "provenance": "SR0 tuple 08 renderer (AX publish re-arm fix, no ABI change): built by RightKit from the 9c261d4 renderer source (request rr-1791609573333-3f0deba6cd2f4102); committed-tree rebuild rr-1791610542759-f2807c78964847ba at 9340390 was a no-op (NO_COMPILATION) and the artifact hashes e280f4a9, so the bytes match the committed source. Unsigned.",
   "closure": {
-    "note": "dumpbin /dependents of the pinned DLL (2026-10-09; re-run 2026-10-10 on the tuple 07 DLL 97CA28E8: identical import set). Everything is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload. icuuc.dll is the OS ICU in System32 (Windows 10 1903+; package minimum is 10.0.19041.0), declared as a system DLL in swift-package.json and right-release.config.mjs.",
+    "note": "dumpbin /dependents of the pinned DLL (2026-10-09; re-run 2026-10-10 on the tuple 07 DLL 97CA28E8 and on the tuple 08 DLL E280F4A9: identical import set). Everything is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload. icuuc.dll is the OS ICU in System32 (Windows 10 1903+; package minimum is 10.0.19041.0), declared as a system DLL in swift-package.json and right-release.config.mjs.",
     "shipped": [
       "VCRUNTIME140.dll"
     ],

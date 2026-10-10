@@ -41,6 +41,10 @@ param(
     # R5 final: 'Offline' (Networking Disable) runs every check except W12; 'Network' (Networking Enable) runs W00, W01 and W12 only.
     # Run both; the offline-launch checks (W01..W04) must never see a network.
     [ValidateSet('Offline', 'Network')][string]$RunProfile = 'Offline',
+    # R5-08 (opt-in, default 0 = off): after the first W08 case that leaves the package NeedsRemediation, the guest holds this many minutes so a person can try
+    # Settings > Advanced options > Repair; the guest logs 'awaiting manual Repair' to receipts\hold-open-W08.log (relayed to this console) and records the state
+    # before and after. The run timeout grows by the same number of minutes. Creating <run>\receipts\hold-release.txt ends the hold early.
+    [int]$HoldOpenForRepairMinutes = 0,
     [switch]$DryRun
 )
 
@@ -167,6 +171,7 @@ $manifest = [ordered]@{
     publisher = $oldId.publisher
     expected_schema = 1
     profile = $RunProfile.ToLowerInvariant()
+    hold_open_for_repair_minutes = $HoldOpenForRepairMinutes
     old = [ordered]@{ file = 'old.msix'; sha256 = $oldSha; version = $oldId.version }
     new = [ordered]@{ file = 'new.msix'; sha256 = $newSha; version = $newId.version }
     signer_cer = [ordered]@{
@@ -235,12 +240,22 @@ Write-Output "launched via $launchedWith (sandbox id: $(if ($sandboxId) { $sandb
 
 $startedUtc = Get-UtcStamp
 $summaryPath = Join-Path $ReceiptsDir 'guest-run.json'
-$deadline = (Get-Date).AddMinutes($TimeoutMinutes)
+$deadline = (Get-Date).AddMinutes($TimeoutMinutes + $HoldOpenForRepairMinutes)
+$holdLog = Join-Path $ReceiptsDir 'hold-open-W08.log'
+$holdSeen = 0
+# Relays new lines of the guest's W08 hold-open log (absent unless the opt-in hold ran) to this console.
+function Send-HoldLines {
+    if (-not (Test-Path -LiteralPath $holdLog)) { return }
+    $hl = @(Get-Content -LiteralPath $holdLog -ErrorAction SilentlyContinue)
+    if ($hl.Count -gt $script:holdSeen) { foreach ($hline in $hl[$script:holdSeen..($hl.Count - 1)]) { Write-Output ('hold-open: ' + $hline) }; $script:holdSeen = $hl.Count }
+}
 try {
     while (-not (Test-Path -LiteralPath $summaryPath) -and (Get-Date) -lt $deadline) {
+        Send-HoldLines
         Start-Sleep -Seconds 15
     }
     $timedOut = -not (Test-Path -LiteralPath $summaryPath)
+    Send-HoldLines
 
     $guest = $null
     if (-not $timedOut) { $guest = Get-Content -Raw -LiteralPath $summaryPath | ConvertFrom-Json }

@@ -404,6 +404,105 @@ function Wait-PkgVersion {
     return (Get-VersionString)
 }
 
+# W08 hold-open (opt-in: manifest hold_open_for_repair_minutes > 0; default 0 = nothing below runs). After the FIRST genuine interruption that leaves
+# the package with a status other than Ok (NeedsRemediation), W08 keeps the guest up so a person can try Settings > Apps > Installed apps > SliceApp >
+# Advanced options > Repair, and records the package state around it. It runs after the case's own launch attempt and BEFORE the case's second
+# Add-AppxPackage, and nothing it records feeds the case verdict, so W08 judges exactly what it judges without it. Evidence (neither name matches the package
+# stage's check-record pattern, so the runner ignores them): receipts\hold-open-W08.log (timestamped lines, readable on the host while the guest runs; the
+# host relays them) and receipts\hold-open-W08-state.json (snapshots: package status/version, rows sha, launch + marker + log banner, AppXDeploymentServer
+# events since the hold began). Creating receipts\hold-release.txt on the host ends the hold early.
+function Add-HoldLog {
+    param([string]$Text)
+    $now = Get-Date
+    $line = ($now.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')) + ' (guest local ' + $now.ToString('HH:mm:ss') + ') ' + $Text
+    [System.IO.File]::AppendAllText((Join-Path $ReceiptsDir 'hold-open-W08.log'), $line + [Environment]::NewLine, $Utf8)
+    Write-Host $line
+}
+
+function Get-HoldSnapshot {
+    param([string]$Label, [datetime]$Since, [bool]$TryLaunch)
+    $m = $script:Manifest
+    $s = [ordered]@{ label = $Label; utc = (Get-UtcStamp) }
+    $pk = @(Get-AppxPackage -Name $m.identity_name -ErrorAction SilentlyContinue)
+    $all = @(Get-AppxPackage -AllUsers -Name $m.identity_name -ErrorAction SilentlyContinue)
+    $s['registered_count'] = $pk.Count
+    $s['all_users_count'] = $all.Count
+    $s['version'] = $(if ($pk.Count -eq 1) { [string]$pk[0].Version } else { 'none-or-many' })
+    $s['status'] = $(if ($pk.Count -eq 1) { [string]$pk[0].Status } else { 'n/a' })
+    $s['rows_sha'] = (Get-RowsSha)
+    $s['launched'] = 'not-attempted'; $s['window_name'] = ''; $s['marker_shown'] = 'not-attempted'; $s['log_banner_for_pid'] = 'not-attempted'; $s['launch_error'] = ''
+    if ($TryLaunch -and $pk.Count -eq 1) {
+        try {
+            $w = Start-AppAndFindWindow -TimeoutSec 40
+            $s['launched'] = 'True'; $s['window_name'] = [string]$w.window_name
+            try { $vals = Read-RowValues -Root (Get-AppRoot -ProcessId $w.pid); $s['marker_shown'] = [string]($vals -contains ('rightkit-check-' + $script:RunId)) } catch { $s['marker_shown'] = 'unreadable: ' + $_.Exception.Message }
+            $pidNow = [string]$w.pid
+            [void](Stop-AppGracefully)
+            $logPath = Join-Path $script:LocalAppData 'slice-app.log'
+            $logText = ''
+            if (Test-Path -LiteralPath $logPath) {
+                $lfs = [IO.File]::Open($logPath, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+                try { $lsr = New-Object IO.StreamReader($lfs); $logText = $lsr.ReadToEnd() } finally { $lfs.Dispose() }
+            }
+            $s['log_banner_for_pid'] = [string]($logText -match ('slice-app: log opened \S+ pid=' + $pidNow + ' '))
+        }
+        catch { $s['launched'] = 'False'; $s['launch_error'] = $_.Exception.Message; [void](Stop-AppGracefully) }
+    }
+    $s['events'] = @(Get-WinEvent -FilterHashtable @{ LogName = 'Microsoft-Windows-AppXDeploymentServer/Operational'; StartTime = $Since.AddSeconds(-1) } -ErrorAction SilentlyContinue |
+        Sort-Object TimeCreated | Select-Object -First 200 | ForEach-Object {
+            $msg = ([string]$_.Message) -replace '\s+', ' '
+            ('{0:HH:mm:ss.fff} id={1} {2}: {3}' -f $_.TimeCreated, $_.Id, $_.LevelDisplayName, $msg.Substring(0, [Math]::Min(220, $msg.Length)))
+        })
+    return $s
+}
+
+function Invoke-RepairHoldOpen {
+    param([string]$CaseId, [int]$Minutes)
+    $m = $script:Manifest
+    $release = Join-Path $ReceiptsDir 'hold-release.txt'
+    Remove-Item -LiteralPath $release -ErrorAction SilentlyContinue
+    $since = Get-Date
+    $startedUtc = Get-UtcStamp
+    $before = Get-HoldSnapshot -Label 'before' -Since $since -TryLaunch $false
+    $snaps = New-Object System.Collections.ArrayList
+    [void]$snaps.Add($before)
+    Add-HoldLog ('awaiting manual Repair: case ' + $CaseId + ', package ' + $before['version'] + ' status "' + $before['status'] + '". Holding the guest up for ' + $Minutes + ' min. Try Settings > Apps > Installed apps > SliceApp > Advanced options > Repair. To end the hold early create ' + $release + ' on the host.')
+    $deadline = $since.AddMinutes($Minutes)
+    $lastKey = [string]$before['version'] + '|' + [string]$before['status']
+    $changed = $false; $repairSeen = $false; $afterTaken = $false; $settleAt = $null; $endReason = 'timeout'
+    while ((Get-Date) -lt $deadline) {
+        if (Test-Path -LiteralPath $release) { $endReason = 'released'; Add-HoldLog 'hold-release.txt seen; ending the hold'; break }
+        $pk = @(Get-AppxPackage -Name $m.identity_name -ErrorAction SilentlyContinue)
+        $key = $(if ($pk.Count -eq 1) { [string]$pk[0].Version + '|' + [string]$pk[0].Status } else { 'none-or-many|n/a' })
+        if ($key -ne $lastKey) {
+            Add-HoldLog ('package state changed: ' + $key + ' (was ' + $lastKey + ')')
+            $lastKey = $key; $changed = $true
+            if ($pk.Count -eq 1 -and [string]$pk[0].Status -eq 'Ok' -and -not $repairSeen) { $repairSeen = $true; $settleAt = (Get-Date).AddSeconds(10) }
+        }
+        if ($repairSeen -and -not $afterTaken -and $settleAt -and (Get-Date) -ge $settleAt) {
+            $afterTaken = $true
+            Add-HoldLog 'status is Ok again after the hold began: capturing the state after the Repair (launch, rows, marker, events)'
+            [void]$snaps.Add((Get-HoldSnapshot -Label 'after-repair' -Since $since -TryLaunch $true))
+            Add-HoldLog 'state after the Repair captured; still holding until the window ends or hold-release.txt appears'
+        }
+        Start-Sleep -Seconds 3
+    }
+    Add-HoldLog ('hold ending (' + $endReason + '); capturing the end-of-hold state')
+    $final = Get-HoldSnapshot -Label 'end-of-hold' -Since $since -TryLaunch $true
+    [void]$snaps.Add($final)
+    $endedUtc = Get-UtcStamp
+    Add-HoldLog ('hold ended: package ' + $final['version'] + ' status "' + $final['status'] + '", launched=' + $final['launched'] + ', marker_shown=' + $final['marker_shown'] + ', rows_sha_equal_before=' + [string]($final['rows_sha'] -eq $before['rows_sha']))
+    $doc = [ordered]@{ schema = 'sr0-hold-open/v1'; case = $CaseId; minutes = $Minutes; started_utc = $startedUtc; ended_utc = $endedUtc; end_reason = $endReason; snapshots = @($snaps) }
+    [System.IO.File]::WriteAllText((Join-Path $ReceiptsDir 'hold-open-W08-state.json'), ($doc | ConvertTo-Json -Depth 6), $Utf8)
+    return @{
+        hold_open_case = $CaseId; hold_open_minutes = [string]$Minutes; hold_open_started_utc = $startedUtc; hold_open_ended_utc = $endedUtc; hold_open_end_reason = $endReason
+        hold_open_status_before = [string]$before['status']; hold_open_status_end = [string]$final['status']; hold_open_version_end = [string]$final['version']
+        hold_open_state_changed = [string]$changed; hold_open_status_ok_seen = [string]$repairSeen; hold_open_end_launched = [string]$final['launched']
+        hold_open_end_marker_shown = [string]$final['marker_shown']; hold_open_end_rows_sha_equal_before = [string]($final['rows_sha'] -eq $before['rows_sha'])
+        hold_open_events_count = [string]@($final['events']).Count
+    }
+}
+
 # ---------------------------------------------------------------- start
 
 if (-not (Test-Path -LiteralPath $ReceiptsDir)) { throw "receipts folder not mapped: $ReceiptsDir" }
@@ -419,6 +518,10 @@ if ($script:Manifest -and $script:Manifest.PSObject.Properties['profile'] -and $
     $script:Profile = [string]$script:Manifest.profile
     $RunChecks = $ProfileChecks[$script:Profile]
 }
+# Opt-in W08 hold-open (see Invoke-RepairHoldOpen); absent or 0 means W08 runs exactly as before.
+$script:HoldOpenMinutes = 0
+$script:HoldOpenDone = $false
+if ($script:Manifest -and $script:Manifest.PSObject.Properties['hold_open_for_repair_minutes']) { $script:HoldOpenMinutes = [int]$script:Manifest.hold_open_for_repair_minutes }
 $script:RunStarted = Get-UtcStamp
 
 # W00: environment. Offline must be real (no default route) and the logon must be elevated.
@@ -696,6 +799,12 @@ Invoke-Check -CheckId 'W08-interrupted-update' -CheckName 'Interrupted update (d
             if ($oneRegistered) {
                 try { $w = Start-AppAndFindWindow -TimeoutSec 40; $launched = ($w.window_name -ne '') } catch { $launchErr = $_.Exception.Message }
                 [void](Stop-AppGracefully)
+            }
+            if ($script:HoldOpenMinutes -gt 0 -and -not $script:HoldOpenDone -and $oneRegistered -and ($statusAfter -ne 'Ok')) {
+                # Hold-open: only after the launch attempt above and before the second update, once per run, and never part of the verdict.
+                $script:HoldOpenDone = $true
+                $holdObs = @(Invoke-RepairHoldOpen -CaseId $cid -Minutes $script:HoldOpenMinutes) | Where-Object { $_ -is [hashtable] } | Select-Object -Last 1
+                if ($holdObs) { foreach ($hk in $holdObs.Keys) { $obs[$hk] = $holdObs[$hk] } }
             }
             $rerunErr = ''
             try { Add-AppxPackage -Path $new -ErrorAction Stop } catch { $rerunErr = $_.Exception.Message }
