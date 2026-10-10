@@ -1337,10 +1337,84 @@ class HarnessDriftTests(unittest.TestCase):
     GUEST = CLEAN / "windows" / "guest" / "sandbox-run.ps1"
     HOST = CLEAN / "windows" / "run-sandbox.ps1"
 
-    def test_mac_harness_declares_the_package_checks(self):
+    def mac_profile(self, name):
         text = self.MAC.read_text(encoding="utf-8")
-        ids = tuple(re.findall(r"M\d{2}-[a-z0-9-]+", re.search(r"EXPECTED=\((.*?)\)", text, re.S).group(1)))
-        self.assertEqual(ids, q.PACKAGE_CHECKS["macos-arm64"])
+        return tuple(re.findall(r"M\d{2}-[a-z0-9-]+", re.search(rf"{name}=\((.*?)\)", text, re.S).group(1)))
+
+    def test_mac_harness_profiles_cover_the_package_checks(self):
+        """The runner takes the union of the profiles: automated (M00-M10) + manual (M11) = PACKAGE_CHECKS."""
+        automated, manual, window = (self.mac_profile(n) for n in ("EXPECTED_AUTOMATED", "EXPECTED_MANUAL", "EXPECTED_WINDOW"))
+        self.assertEqual(automated + manual, q.PACKAGE_CHECKS["macos-arm64"])
+        self.assertEqual(manual, tuple(q.MANUAL_CHECKS))
+        self.assertEqual(window, manual, "the window-server profile is another way to record the same check as manual")
+        self.assertFalse(set(automated) & set(manual), "M11 is never in the automated profile")
+
+    def test_mac_harness_guard_refuses_uid_501_only_outside_a_vm(self):
+        text = self.MAC.read_text(encoding="utf-8")
+        self.assertIn('[ "$uid" -ne "$MAIN_UID" ] || in_vm || die', text)
+        # values observed in a Tart guest on 10 Oct 2026 (macOS 26.6.2): kern.hv_vmm_present=1, hw.model=VirtualMac2,1
+        self.assertRegex(text, r'sysctl -n kern\.hv_vmm_present[^\n]*= 1 \]')
+        self.assertIn("VirtualMac*", text)
+        for refusal in ('refusing to run as root', 'refusing to run as $MAIN_USER', "is not listed in", "must be owned by",
+                        "group/world writable", "is not /Users/$me", "must be under $HOME"):
+            self.assertIn(refusal, text)
+
+    def test_mac_harness_never_calls_python3_or_the_xcrun_shims(self):
+        """The vanilla guest has only Command Line Tools shims: each call pops an install dialog."""
+        code = "\n".join(line for line in self.MAC.read_text(encoding="utf-8").splitlines() if not line.lstrip().startswith("#"))
+        self.assertIsNone(re.search(r"\bpython3\s+-", code))
+        self.assertNotIn("xcrun", code)
+        self.assertNotIn("stapler", code)
+        self.assertIn("syspolicy_check distribution", code)
+
+    def test_mac_harness_m08_uses_the_r7_interrupt_method_in_all_three_modes(self):
+        text = self.MAC.read_text(encoding="utf-8")
+        self.assertIn("for mode in copy swap swap-term", text)
+        self.assertIn("interrupt-mac-install-hook.mjs", text)
+        self.assertIn("RIGHT_RELEASE=", text)
+        self.assertNotIn("interrupted_install_placeholder", text)
+
+    def extract_perl(self, name):
+        """The perl program of one heredoc in the harness (check_finish, write_run_record), in file order."""
+        blocks = re.findall(r"<<'PL'\n(.*?)\nPL\n", self.MAC.read_text(encoding="utf-8"), re.S)
+        return blocks[name]
+
+    def run_perl(self, program, *args):
+        import subprocess
+        return subprocess.run(["perl", "-", *map(str, args)], input=program, text=True, capture_output=True, check=False)
+
+    @unittest.skipUnless(shutil.which("perl"), "perl not available")
+    def test_mac_harness_receipt_writers_produce_records_the_runner_accepts(self):
+        """Runs the harness's own perl writers (not the harness) on synthetic input and loads the result with the runner."""
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        work = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.addCleanup(shutil.rmtree, work, ignore_errors=True)
+        rdir = work / "run"
+        (work / "env.tsv").write_text("host\tVM\nos_version\tmacOS 26.6.2 (25G83)\nuser\tadmin\narch\tarm64\nvm\ttrue\n")
+        sha = "sha256:" + "ab" * 32
+        checks = self.mac_profile("EXPECTED_AUTOMATED")
+        for index, cid in enumerate(checks):
+            (work / "o.tsv").write_text("launch_first_alive\ttrue\nquarantine_OLD\t0081;6ac;Safari;U\n")
+            (work / "a.tsv").write_text(f"old_dmg\t{sha}\n")
+            fail = cid == "M08-interrupted-install"
+            done = self.run_perl(self.extract_perl(0), rdir, "RUN1", cid, "name " + cid, "true", "fail" if fail else "pass",
+                                 "boom" if fail else "-", "-" if index == 0 else str(index),
+                                 "2026-10-10T00:00:00Z", "2026-10-10T00:00:01Z", work / "o.tsv", work / "a.tsv",
+                                 work / "env.tsv", "mac-clean-run.sh", sha)
+            self.assertEqual(done.returncode, 0, done.stderr)
+        run = self.run_perl(self.extract_perl(1), rdir, "RUN1", "2026-10-10T00:00:00Z", "mac-clean-run.sh", sha, sha,
+                            "sha256:" + "cd" * 32, *checks)
+        self.assertEqual(run.returncode, 1, "a failing M08 fails the run")
+        rec, problems, records = q.load_package_run(rdir)
+        self.assertEqual(rec["status"], "fail")
+        self.assertEqual(rec["expected_checks"], list(checks))
+        self.assertEqual(rec["artifact_ids"], {"old_dmg": sha, "new_dmg": "sha256:" + "cd" * 32})
+        self.assertEqual(q.validate_check_record(records["M08-interrupted-install"][0], "macos-arm64", "RUN1",
+                                                 "M08-interrupted-install"), [])
+        self.assertEqual(records["M00-environment"][0]["exit_status"], None)
+        self.assertEqual(records["M03-gatekeeper-dmg"][0]["exit_status"], 3)
+        self.assertEqual(len(problems), 2, problems)  # M08 fail: run status and the check; every other record is accepted
+        self.assertTrue(all("M08" in p or "run status" in p for p in problems), problems)
 
     def test_windows_harnesses_declare_the_package_checks(self):
         for path in (self.GUEST, self.HOST):

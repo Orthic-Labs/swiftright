@@ -1,0 +1,40 @@
+{
+   "artifact_ids" : {},
+   "check_id" : "M07-corrupt-binary-rejected",
+   "check_name" : "Corrupt binary rejected by the install gate",
+   "ended_utc" : "2026-10-10T02:44:55Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : 1,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "flipped_offset_before_after" : "112576 a8 a9",
+      "gate_bundle_id" : "dev.orthic.sliceapp",
+      "gate_codesign_rc" : "1",
+      "gate_rc_on_corrupt" : "1",
+      "gate_spctl_rc" : "1",
+      "gate_version" : "0.1.1",
+      "installed_binary_sha_after" : "sha256:21a17265f5221c95cae84a67eaa42abdaa861d4f6e6e6f3ae0a4d1e0596497d2",
+      "installed_binary_sha_before" : "sha256:21a17265f5221c95cae84a67eaa42abdaa861d4f6e6e6f3ae0a4d1e0596497d2"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "20261010T024420Z-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-10T02:44:55Z",
+   "status" : "pass"
+}
