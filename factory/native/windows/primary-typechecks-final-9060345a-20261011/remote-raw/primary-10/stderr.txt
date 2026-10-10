@@ -1,0 +1,7 @@
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-10\Witness.swift:10:58: error: value of type 'some View' has no member 'toggleStyle'
+ 8 |     @State private var enabled = true
+ 9 |     var body: some View {
+10 |         Toggle("Enabled", isOn: $enabled).labelsHidden().toggleStyle(.automatic)
+   |                                                          `- error: value of type 'some View' has no member 'toggleStyle'
+11 |     }
+12 | }

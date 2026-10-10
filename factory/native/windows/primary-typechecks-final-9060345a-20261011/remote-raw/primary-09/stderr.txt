@@ -1,0 +1,15 @@
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-09\Witness.swift:11:93: error: extra argument 'maxWidth' in call
+ 9 |         ScrollView(.horizontal) {
+10 |             VStack(alignment: .leading, spacing: 4) {
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+   |                                                                                             `- error: extra argument 'maxWidth' in call
+12 |             }
+13 |         }.frame(width: 120, height: 48)
+
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-09\Witness.swift:11:93: error: cannot infer contextual base in reference to member 'infinity'
+ 9 |         ScrollView(.horizontal) {
+10 |             VStack(alignment: .leading, spacing: 4) {
+11 |                 ForEach(0..<4, id: \.self) { index in Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading) }
+   |                                                                                             `- error: cannot infer contextual base in reference to member 'infinity'
+12 |             }
+13 |         }.frame(width: 120, height: 48)

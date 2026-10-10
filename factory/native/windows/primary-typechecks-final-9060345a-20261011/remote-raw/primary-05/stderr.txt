@@ -1,0 +1,7 @@
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-05\Witness.swift:13:17: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+11 |         WitnessMeasuredLayout(spacing: 4) {
+12 |             ForEach(0..<1, id: \.self) { index in
+13 |                 Color.red.frame(width: 12 + CGFloat(index) * 4, height: 10 + CGFloat(index) * 4)
+   |                 `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+14 |             }
+15 |         }

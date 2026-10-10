@@ -36,6 +36,10 @@ def normalize(package: Path, tuple_path: Path, output: Path) -> list[Path]:
         raise ValueError('expected 20 complete independent native observations')
     if sorted(row.get('index', 0) for row in observations) != list(range(1, 21)):
         raise ValueError('native replay indices must be unique 1 through 20')
+    additive_copies = {}
+    if plan.get('closureBinding'):
+        from .additive_archive import validate as validate_additive
+        additive_copies = validate_additive(package,plan,observations,tuple_path)
     prepared = []
     for row in observations:
         if row['case'] != plan['case'] or row['sourceHash'] != plan['sourceHash']:
@@ -50,7 +54,7 @@ def normalize(package: Path, tuple_path: Path, output: Path) -> list[Path]:
             relative = Path(binding['path'].replace('\\', '/'))
             if relative.is_absolute() or '..' in relative.parts or ':' in relative.as_posix():
                 raise ValueError('raw file escapes replay archive')
-            if relative.as_posix() in ('capture.json', 'Witness.swift', 'plan.json', 'native-observation.json', 'tuple.json', 'FactoryProbe.exe'):
+            if relative in additive_copies or relative.as_posix() in ('capture.json', 'Witness.swift', 'plan.json', 'native-observation.json', 'tuple.json', 'FactoryProbe.exe'):
                 raise ValueError('raw file collides with archive metadata')
             path = (run_dir / relative).resolve()
             if not path.is_relative_to(run_dir.resolve()): raise ValueError('raw file escapes replay')
@@ -64,6 +68,9 @@ def normalize(package: Path, tuple_path: Path, output: Path) -> list[Path]:
             raise ValueError('native renderer differs from declared observational tuple')
         uia_path = run_dir / 'native.uia.json'
         uia = json.loads(uia_path.read_text(encoding='utf-8-sig'))
+        if additive_copies:
+            from .additive_archive import synthetic
+            if synthetic(uia): raise ValueError('nested synthetic additive UIA receipt rejected')
         ax = []
         def walk(node, location='root'):
             identity = node.get('automationId') or location
@@ -95,6 +102,8 @@ def normalize(package: Path, tuple_path: Path, output: Path) -> list[Path]:
                       'tupleWindowsHostHash': tuple_value['hostHashes']['windows'],
                       'rawReceiptHash': file_hash(observation_path), 'rawUIAHash': file_hash(uia_path),
                       'rawPlanHash': file_hash(package / 'plan.json'), 'rawWitnessHash': file_hash(witness)}
+        if additive_copies:
+            conditions.update(runtimeSourceCommit=plan['runtimeSourceCommit'], runtimeSourceTreeHash=plan['runtimeSourceTreeHash'], closureReceiptHash=plan['closureBinding']['receiptHash'], closedAt=plan['closureBinding']['closedAt'])
         if plan.get('synthetic') or row.get('synthetic') or uia.get('synthetic'):
             conditions['synthetic'] = True
         capture = {'kind': 'capture', 'version': '0.1', 'id': row['case']['id'] + f'.windows.r{run:02d}',
@@ -110,6 +119,7 @@ def normalize(package: Path, tuple_path: Path, output: Path) -> list[Path]:
         if archive.exists(): raise ValueError('normalized replay archive exists')
         copies.update({Path('Witness.swift'): witness, Path('plan.json'): package / 'plan.json',
                        Path('native-observation.json'): observation_path, Path('tuple.json'): tuple_path})
+        copies.update(additive_copies)
         if archived_exe.exists(): copies[Path('FactoryProbe.exe')] = archived_exe
         prepared.append((archive, capture, copies))
     outputs = []

@@ -1,0 +1,759 @@
+=== host ===
+2026-10-10T07:07:13.7795926+05:30
+hostname=Bogus-Dell os=Microsoft Windows 11 Pro version=10.0.26300 arch=AMD64
+SDKROOT=C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\
+C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin\swift.exe
+Swift version 6.4 (swift-6.4-RELEASE)
+Target: x86_64-unknown-windows-msvc
+Build config: +assertions
+commit: 252a598c0e40a137a40d0f95f3551cf4c5bf8758
+
+=== probes\sr0-s\fresh-runtime ===
+$ cd D:\Claude\sr0-swifttest\repo\probes\sr0-s\fresh-runtime ; swift test --scratch-path D:\Claude\sr0-swifttest\scratch\fresh-runtime
+Building for debugging...
+[Pre-planning 1 / 124]
+[Planning deferred tasks]
+[27 / 49] SwiftRightRuntime
+[43 / 64] SwiftRightRuntime
+[49 / 65] SwiftRightRuntimeTests-product
+[55 / 80] SwiftRightRuntimeTests-product
+[57 / 80] SwiftRightRuntimeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[57 / 80] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[62 / 80] SwiftRightRuntime
+[62 / 80] SwiftRightRuntimeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[63 / 80] SwiftRightRuntimeTests-test-runner
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[68 / 80]
+[68 / 80] SwiftRightRuntimeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[68 / 80] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[68 / 80] SwiftRightRuntimeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[70 / 81] SwiftRightRuntime
+[73 / 82] SwiftRightRuntime
+[75 / 82] SwiftRightRuntime-product
+[75 / 82] SwiftRightRuntimeTests-product
+[79 / 85] SwiftRightRuntimeTests-test-runner
+[83 / 85] SwiftRightRuntimeTests-test-runner
+[83 / 86] SwiftRightRuntimeTests-test-runner
+[86 / 86] SwiftRightRuntimeTests-test-runner
+Build complete! (54.72 secs)
+Test Suite 'All tests' started at 2026-10-10 07:08:11.087
+Test Suite 'Debug-windows-x86_64.xctest' started at 2026-10-10 07:08:11.093
+Test Suite 'AnimationTests' started at 2026-10-10 07:08:11.093
+Test Case 'AnimationTests.testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce' started at 2026-10-10 07:08:11.093
+Test Case 'AnimationTests.testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce' passed (0.008 seconds)
+Test Case 'AnimationTests.testAnimationWithoutChangeCompletesAtCommit' started at 2026-10-10 07:08:11.100
+Test Case 'AnimationTests.testAnimationWithoutChangeCompletesAtCommit' passed (0.0 seconds)
+Test Case 'AnimationTests.testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce' started at 2026-10-10 07:08:11.101
+Test Case 'AnimationTests.testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce' passed (0.001 seconds)
+Test Case 'AnimationTests.testOpacityChangeInterpolates' started at 2026-10-10 07:08:11.101
+Test Case 'AnimationTests.testOpacityChangeInterpolates' passed (0.001 seconds)
+Test Case 'AnimationTests.testReduceMotionJumpsToFinalValueAndStillCompletes' started at 2026-10-10 07:08:11.102
+Test Case 'AnimationTests.testReduceMotionJumpsToFinalValueAndStillCompletes' passed (0.0 seconds)
+Test Suite 'AnimationTests' passed at 2026-10-10 07:08:11.103
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.01 (0.01) seconds
+Test Suite 'BindingCollectionTests' started at 2026-10-10 07:08:11.103
+Test Case 'BindingCollectionTests.testBindableProjectedRowsSupportCountAndSubscript' started at 2026-10-10 07:08:11.103
+Test Case 'BindingCollectionTests.testBindableProjectedRowsSupportCountAndSubscript' passed (0.0 seconds)
+Test Case 'BindingCollectionTests.testBindingIsRandomAccessCollection' started at 2026-10-10 07:08:11.103
+Test Case 'BindingCollectionTests.testBindingIsRandomAccessCollection' passed (0.0 seconds)
+Test Case 'BindingCollectionTests.testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove' started at 2026-10-10 07:08:11.103
+Test Case 'BindingCollectionTests.testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove' passed (0.002 seconds)
+Test Suite 'BindingCollectionTests' passed at 2026-10-10 07:08:11.104
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'FocusContainerTests' started at 2026-10-10 07:08:11.104
+Test Case 'FocusContainerTests.testListReinsertRestoresFocus' started at 2026-10-10 07:08:11.105
+Test Case 'FocusContainerTests.testListReinsertRestoresFocus' passed (0.008 seconds)
+Test Case 'FocusContainerTests.testRemovingFocusedRowClearsFocusInEveryContainer' started at 2026-10-10 07:08:11.112
+Test Case 'FocusContainerTests.testRemovingFocusedRowClearsFocusInEveryContainer' passed (0.014 seconds)
+Test Case 'FocusContainerTests.testRemovingUnfocusedRowKeepsFocus' started at 2026-10-10 07:08:11.126
+Test Case 'FocusContainerTests.testRemovingUnfocusedRowKeepsFocus' passed (0.005 seconds)
+Test Case 'FocusContainerTests.testVStackAndLazyReinsertDoesNotRestoreFocus' started at 2026-10-10 07:08:11.131
+Test Case 'FocusContainerTests.testVStackAndLazyReinsertDoesNotRestoreFocus' passed (0.009 seconds)
+Test Suite 'FocusContainerTests' passed at 2026-10-10 07:08:11.140
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.036 (0.036) seconds
+Test Suite 'FocusTraversalTests' started at 2026-10-10 07:08:11.140
+Test Case 'FocusTraversalTests.testBackwardStartsAtLastAndWraps' started at 2026-10-10 07:08:11.140
+Test Case 'FocusTraversalTests.testBackwardStartsAtLastAndWraps' passed (0.003 seconds)
+Test Case 'FocusTraversalTests.testButtonsAreStopsOnlyWhenAllControlsEnabled' started at 2026-10-10 07:08:11.144
+Test Case 'FocusTraversalTests.testButtonsAreStopsOnlyWhenAllControlsEnabled' passed (0.001 seconds)
+Test Case 'FocusTraversalTests.testDisabledStopsAreSkipped' started at 2026-10-10 07:08:11.145
+Test Case 'FocusTraversalTests.testDisabledStopsAreSkipped' passed (0.002 seconds)
+Test Case 'FocusTraversalTests.testForwardFollowsTreeOrderAndWraps' started at 2026-10-10 07:08:11.147
+Test Case 'FocusTraversalTests.testForwardFollowsTreeOrderAndWraps' passed (0.003 seconds)
+Test Case 'FocusTraversalTests.testKeyDispatchMapsTabAndShiftTab' started at 2026-10-10 07:08:11.150
+Test Case 'FocusTraversalTests.testKeyDispatchMapsTabAndShiftTab' passed (0.002 seconds)
+Test Case 'FocusTraversalTests.testNoStopsReturnsFalse' started at 2026-10-10 07:08:11.152
+Test Case 'FocusTraversalTests.testNoStopsReturnsFalse' passed (0.0 seconds)
+Test Case 'FocusTraversalTests.testOrderFollowsRowOrderAfterInsertAbove' started at 2026-10-10 07:08:11.153
+Test Case 'FocusTraversalTests.testOrderFollowsRowOrderAfterInsertAbove' passed (0.003 seconds)
+Test Case 'FocusTraversalTests.testTabContinuesFromPointerFocus' started at 2026-10-10 07:08:11.156
+Test Case 'FocusTraversalTests.testTabContinuesFromPointerFocus' passed (0.004 seconds)
+Test Suite 'FocusTraversalTests' passed at 2026-10-10 07:08:11.160
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.019 (0.019) seconds
+Test Suite 'LayoutTests' started at 2026-10-10 07:08:11.160
+Test Case 'LayoutTests.testCustomLayoutSwitchesAtWidthThreshold' started at 2026-10-10 07:08:11.160
+Test Case 'LayoutTests.testCustomLayoutSwitchesAtWidthThreshold' passed (0.002 seconds)
+Test Case 'LayoutTests.testFramesArePixelAlignedAtScale2_5' started at 2026-10-10 07:08:11.161
+Test Case 'LayoutTests.testFramesArePixelAlignedAtScale2_5' passed (0.011 seconds)
+Test Case 'LayoutTests.testHStackDistributesWidthToSpacer' started at 2026-10-10 07:08:11.173
+Test Case 'LayoutTests.testHStackDistributesWidthToSpacer' passed (0.001 seconds)
+Test Case 'LayoutTests.testPaddingInsetsChild' started at 2026-10-10 07:08:11.174
+Test Case 'LayoutTests.testPaddingInsetsChild' passed (0.0 seconds)
+Test Case 'LayoutTests.testRelayoutRemeasuresOnlyChangedText' started at 2026-10-10 07:08:11.174
+Test Case 'LayoutTests.testRelayoutRemeasuresOnlyChangedText' passed (0.001 seconds)
+Test Case 'LayoutTests.testTextWrapsWhenProposedWidthShrinks' started at 2026-10-10 07:08:11.175
+Test Case 'LayoutTests.testTextWrapsWhenProposedWidthShrinks' passed (0.0 seconds)
+Test Case 'LayoutTests.testVStackAlignmentLeadingCenterTrailing' started at 2026-10-10 07:08:11.175
+Test Case 'LayoutTests.testVStackAlignmentLeadingCenterTrailing' passed (0.001 seconds)
+Test Suite 'LayoutTests' passed at 2026-10-10 07:08:11.176
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.016 (0.016) seconds
+Test Suite 'LazyContainerTests' started at 2026-10-10 07:08:11.176
+Test Case 'LazyContainerTests.testLazyVStackReinsertResetsStateWhileLifecycleFires' started at 2026-10-10 07:08:11.176
+Test Case 'LazyContainerTests.testLazyVStackReinsertResetsStateWhileLifecycleFires' passed (0.261 seconds)
+Test Suite 'LazyContainerTests' passed at 2026-10-10 07:08:11.437
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.261 (0.261) seconds
+Test Suite 'PerformanceTests' started at 2026-10-10 07:08:11.437
+Test Case 'PerformanceTests.testIncrementalCommitsEqualAFreshGraph' started at 2026-10-10 07:08:11.437
+Test Case 'PerformanceTests.testIncrementalCommitsEqualAFreshGraph' passed (2.34 seconds)
+Test Case 'PerformanceTests.testRemovedRowsLeaveNoObservationRegistrationsBehind' started at 2026-10-10 07:08:13.778
+Test Case 'PerformanceTests.testRemovedRowsLeaveNoObservationRegistrationsBehind' passed (0.34 seconds)
+Test Case 'PerformanceTests.testRepeatedEvaluationDoesNotStackObservationRegistrations' started at 2026-10-10 07:08:14.117
+Test Case 'PerformanceTests.testRepeatedEvaluationDoesNotStackObservationRegistrations' passed (0.007 seconds)
+Test Case 'PerformanceTests.testRowEditWorkIsLinearAndMeasuresOnlyChangedText' started at 2026-10-10 07:08:14.124
+Test Case 'PerformanceTests.testRowEditWorkIsLinearAndMeasuresOnlyChangedText' passed (0.173 seconds)
+Test Case 'PerformanceTests.testScrollOnlyCommitEvaluatesAndMeasuresNothing' started at 2026-10-10 07:08:14.296
+Test Case 'PerformanceTests.testScrollOnlyCommitEvaluatesAndMeasuresNothing' passed (0.187 seconds)
+Test Case 'PerformanceTests.testSingleRowEditCommitTime' started at 2026-10-10 07:08:14.483
+PERF 200-row commit medians (ms): typing 16.3093, scroll-only 23.8218, row edit 19.4792  optimized=false
+Test Case 'PerformanceTests.testSingleRowEditCommitTime' passed (1.922 seconds)
+Test Case 'PerformanceTests.testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows' started at 2026-10-10 07:08:16.406
+Test Case 'PerformanceTests.testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows' passed (0.176 seconds)
+Test Suite 'PerformanceTests' passed at 2026-10-10 07:08:16.581
+	 Executed 7 tests, with 0 failures (0 unexpected) in 5.144 (5.144) seconds
+Test Suite 'RowRefreshTests' started at 2026-10-10 07:08:16.581
+Test Case 'RowRefreshTests.testEditingOneRowEvaluatesThatRowOnly' started at 2026-10-10 07:08:16.581
+Test Case 'RowRefreshTests.testEditingOneRowEvaluatesThatRowOnly' passed (0.02 seconds)
+Test Case 'RowRefreshTests.testInsertRemoveAndReorderEvaluateOnlyNewRows' started at 2026-10-10 07:08:16.601
+Test Case 'RowRefreshTests.testInsertRemoveAndReorderEvaluateOnlyNewRows' passed (0.021 seconds)
+Test Case 'RowRefreshTests.testNonEquatableElementsStillUpdate' started at 2026-10-10 07:08:16.622
+Test Case 'RowRefreshTests.testNonEquatableElementsStillUpdate' passed (0.002 seconds)
+Test Case 'RowRefreshTests.testParentChangeReachesRowsWhoseElementsDidNotChange' started at 2026-10-10 07:08:16.624
+Test Case 'RowRefreshTests.testParentChangeReachesRowsWhoseElementsDidNotChange' passed (0.01 seconds)
+Test Case 'RowRefreshTests.testRemovedRowsStopObserving' started at 2026-10-10 07:08:16.635
+Test Case 'RowRefreshTests.testRemovedRowsStopObserving' passed (0.004 seconds)
+Test Case 'RowRefreshTests.testRowBindingReadsAndWritesLiveOutsideEvaluation' started at 2026-10-10 07:08:16.639
+Test Case 'RowRefreshTests.testRowBindingReadsAndWritesLiveOutsideEvaluation' passed (0.0 seconds)
+Test Case 'RowRefreshTests.testTypingIntoARowFieldUpdatesModelAndDisplay' started at 2026-10-10 07:08:16.639
+Test Case 'RowRefreshTests.testTypingIntoARowFieldUpdatesModelAndDisplay' passed (0.007 seconds)
+Test Suite 'RowRefreshTests' passed at 2026-10-10 07:08:16.646
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.065 (0.065) seconds
+Test Suite 'RuntimeTests' started at 2026-10-10 07:08:16.646
+Test Case 'RuntimeTests.testBindingWriteBackThroughForEach' started at 2026-10-10 07:08:16.646
+Test Case 'RuntimeTests.testBindingWriteBackThroughForEach' passed (0.002 seconds)
+Test Case 'RuntimeTests.testCommitSinkReceivesResolvedTree' started at 2026-10-10 07:08:16.648
+Test Case 'RuntimeTests.testCommitSinkReceivesResolvedTree' passed (0.001 seconds)
+Test Case 'RuntimeTests.testEnvironmentOverridePropagation' started at 2026-10-10 07:08:16.649
+Test Case 'RuntimeTests.testEnvironmentOverridePropagation' passed (0.001 seconds)
+Test Case 'RuntimeTests.testF1_SurvivingRowIdentityAcrossInsertAbove' started at 2026-10-10 07:08:16.650
+Test Case 'RuntimeTests.testF1_SurvivingRowIdentityAcrossInsertAbove' passed (0.011 seconds)
+Test Case 'RuntimeTests.testF2_ReorderPreservesStateAndFocus' started at 2026-10-10 07:08:16.661
+Test Case 'RuntimeTests.testF2_ReorderPreservesStateAndFocus' passed (0.01 seconds)
+Test Case 'RuntimeTests.testF3_ListReinsertPreservesStateWhileLifecycleFires' started at 2026-10-10 07:08:16.670
+Test Case 'RuntimeTests.testF3_ListReinsertPreservesStateWhileLifecycleFires' passed (0.254 seconds)
+Test Case 'RuntimeTests.testF3_ListRetainedStateIsBounded' started at 2026-10-10 07:08:16.924
+Test Case 'RuntimeTests.testF3_ListRetainedStateIsBounded' passed (0.195 seconds)
+Test Case 'RuntimeTests.testF3_VStackReinsertResetsState' started at 2026-10-10 07:08:17.119
+Test Case 'RuntimeTests.testF3_VStackReinsertResetsState' passed (0.26 seconds)
+Test Case 'RuntimeTests.testF4_StaleAsyncResultIsRejectedAfterRemoval' started at 2026-10-10 07:08:17.380
+Test Case 'RuntimeTests.testF4_StaleAsyncResultIsRejectedAfterRemoval' passed (0.138 seconds)
+Test Case 'RuntimeTests.testObservationFineGrainedInvalidation' started at 2026-10-10 07:08:17.517
+Test Case 'RuntimeTests.testObservationFineGrainedInvalidation' passed (0.002 seconds)
+Test Case 'RuntimeTests.testTransactionAnimationTagRecorded' started at 2026-10-10 07:08:17.519
+Test Case 'RuntimeTests.testTransactionAnimationTagRecorded' passed (0.001 seconds)
+Test Suite 'RuntimeTests' passed at 2026-10-10 07:08:17.521
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.874 (0.874) seconds
+Test Suite 'SR1ControlTests' started at 2026-10-10 07:08:17.521
+Test Case 'SR1ControlTests.testDisabledBlocksButtonsAndNestedFalseDoesNotReenable' started at 2026-10-10 07:08:17.521
+Test Case 'SR1ControlTests.testDisabledBlocksButtonsAndNestedFalseDoesNotReenable' passed (0.002 seconds)
+Test Case 'SR1ControlTests.testDisabledToggleDoesNotFlip' started at 2026-10-10 07:08:17.523
+Test Case 'SR1ControlTests.testDisabledToggleDoesNotFlip' passed (0.002 seconds)
+Test Case 'SR1ControlTests.testImageReferencesAndLabels' started at 2026-10-10 07:08:17.525
+Test Case 'SR1ControlTests.testImageReferencesAndLabels' passed (0.001 seconds)
+Test Case 'SR1ControlTests.testImageUsesHostIntrinsicSize' started at 2026-10-10 07:08:17.526
+Test Case 'SR1ControlTests.testImageUsesHostIntrinsicSize' passed (0.001 seconds)
+Test Case 'SR1ControlTests.testLabelDividerAndStyleResolve' started at 2026-10-10 07:08:17.527
+Test Case 'SR1ControlTests.testLabelDividerAndStyleResolve' passed (0.003 seconds)
+Test Case 'SR1ControlTests.testReturnCommitsCompositionAndSingleLineRejectsBreaks' started at 2026-10-10 07:08:17.530
+Test Case 'SR1ControlTests.testReturnCommitsCompositionAndSingleLineRejectsBreaks' passed (0.001 seconds)
+Test Case 'SR1ControlTests.testTextEditorInsertsLineBreaksAndMeasuresLines' started at 2026-10-10 07:08:17.531
+Test Case 'SR1ControlTests.testTextEditorInsertsLineBreaksAndMeasuresLines' passed (0.001 seconds)
+Test Case 'SR1ControlTests.testToggleFlipsBindingAndReportsCheckboxState' started at 2026-10-10 07:08:17.532
+Test Case 'SR1ControlTests.testToggleFlipsBindingAndReportsCheckboxState' passed (0.001 seconds)
+Test Suite 'SR1ControlTests' passed at 2026-10-10 07:08:17.532
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.011 (0.011) seconds
+Test Suite 'SR1SelectionMenuTests' started at 2026-10-10 07:08:17.533
+Test Case 'SR1SelectionMenuTests.testAlertPresentationAndActionDispatch' started at 2026-10-10 07:08:17.533
+Test Case 'SR1SelectionMenuTests.testAlertPresentationAndActionDispatch' passed (0.001 seconds)
+Test Case 'SR1SelectionMenuTests.testConfirmationDialogVisibilityAndDisabledAction' started at 2026-10-10 07:08:17.534
+Test Case 'SR1SelectionMenuTests.testConfirmationDialogVisibilityAndDisabledAction' passed (0.001 seconds)
+Test Case 'SR1SelectionMenuTests.testContextMenuAndMenuItemsDispatch' started at 2026-10-10 07:08:17.535
+Test Case 'SR1SelectionMenuTests.testContextMenuAndMenuItemsDispatch' passed (0.107 seconds)
+Test Case 'SR1SelectionMenuTests.testDeleteWithoutHandlerReturnsFalse' started at 2026-10-10 07:08:17.642
+Test Case 'SR1SelectionMenuTests.testDeleteWithoutHandlerReturnsFalse' passed (0.002 seconds)
+Test Case 'SR1SelectionMenuTests.testKeyboardRegistryLogicalMappingAndDispatch' started at 2026-10-10 07:08:17.643
+Test Case 'SR1SelectionMenuTests.testKeyboardRegistryLogicalMappingAndDispatch' passed (0.002 seconds)
+Test Case 'SR1SelectionMenuTests.testMultipleSelectionModifiersAndRanges' started at 2026-10-10 07:08:17.646
+Test Case 'SR1SelectionMenuTests.testMultipleSelectionModifiersAndRanges' passed (0.003 seconds)
+Test Case 'SR1SelectionMenuTests.testOnDeleteRunsWithRowOffsets' started at 2026-10-10 07:08:17.648
+Test Case 'SR1SelectionMenuTests.testOnDeleteRunsWithRowOffsets' passed (0.003 seconds)
+Test Case 'SR1SelectionMenuTests.testSingleSelectionClickAndKeyboardNavigation' started at 2026-10-10 07:08:17.652
+Test Case 'SR1SelectionMenuTests.testSingleSelectionClickAndKeyboardNavigation' passed (0.002 seconds)
+Test Suite 'SR1SelectionMenuTests' passed at 2026-10-10 07:08:17.654
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.121 (0.121) seconds
+Test Suite 'ScrollViewTests' started at 2026-10-10 07:08:17.654
+Test Case 'ScrollViewTests.testScrollOffsetShiftsContentAndClamps' started at 2026-10-10 07:08:17.654
+Test Case 'ScrollViewTests.testScrollOffsetShiftsContentAndClamps' passed (0.002 seconds)
+Test Suite 'ScrollViewTests' passed at 2026-10-10 07:08:17.655
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+Test Suite 'TaskIDTests' started at 2026-10-10 07:08:17.655
+Test Case 'TaskIDTests.testDisappearCancelsTask' started at 2026-10-10 07:08:17.655
+Test Case 'TaskIDTests.testDisappearCancelsTask' passed (0.129 seconds)
+Test Case 'TaskIDTests.testIdChangeCancelsAndRestartsTask' started at 2026-10-10 07:08:17.784
+Test Case 'TaskIDTests.testIdChangeCancelsAndRestartsTask' passed (0.124 seconds)
+Test Case 'TaskIDTests.testSameIdDoesNotRestartTask' started at 2026-10-10 07:08:17.908
+Test Case 'TaskIDTests.testSameIdDoesNotRestartTask' passed (0.125 seconds)
+Test Suite 'TaskIDTests' passed at 2026-10-10 07:08:18.033
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.378 (0.378) seconds
+Test Suite 'TeardownTests' started at 2026-10-10 07:08:18.033
+Test Case 'TeardownTests.testNothingCommitsAfterTearDown' started at 2026-10-10 07:08:18.033
+Test Case 'TeardownTests.testNothingCommitsAfterTearDown' passed (0.001 seconds)
+Test Case 'TeardownTests.testTearDownReleasesGraphNodesStateAndTaskCaptures' started at 2026-10-10 07:08:18.035
+Test Case 'TeardownTests.testTearDownReleasesGraphNodesStateAndTaskCaptures' passed (0.123 seconds)
+Test Case 'TeardownTests.testTearDownReleasesListRowsAndRowCache' started at 2026-10-10 07:08:18.158
+Test Case 'TeardownTests.testTearDownReleasesListRowsAndRowCache' passed (0.125 seconds)
+Test Case 'TeardownTests.testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord' started at 2026-10-10 07:08:18.283
+Test Case 'TeardownTests.testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord' passed (0.124 seconds)
+Test Suite 'TeardownTests' passed at 2026-10-10 07:08:18.407
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.374 (0.374) seconds
+Test Suite 'TextInputTests' started at 2026-10-10 07:08:18.408
+Test Case 'TextInputTests.testCompositionStaysWithRowWhenRowInsertedAbove' started at 2026-10-10 07:08:18.408
+Test Case 'TextInputTests.testCompositionStaysWithRowWhenRowInsertedAbove' passed (0.003 seconds)
+Test Case 'TextInputTests.testEmptyReplaceEndsCompositionWithoutCommit' started at 2026-10-10 07:08:18.410
+Test Case 'TextInputTests.testEmptyReplaceEndsCompositionWithoutCommit' passed (0.001 seconds)
+Test Case 'TextInputTests.testMarkedTextDoesNotLeakIntoBindingUntilCommitted' started at 2026-10-10 07:08:18.411
+Test Case 'TextInputTests.testMarkedTextDoesNotLeakIntoBindingUntilCommitted' passed (0.0 seconds)
+Test Case 'TextInputTests.testOutOfRangeOperationsAreRefused' started at 2026-10-10 07:08:18.411
+Test Case 'TextInputTests.testOutOfRangeOperationsAreRefused' passed (0.0 seconds)
+Test Case 'TextInputTests.testReplaceCommitsDirectlyAndEndsComposition' started at 2026-10-10 07:08:18.412
+Test Case 'TextInputTests.testReplaceCommitsDirectlyAndEndsComposition' passed (0.0 seconds)
+Test Case 'TextInputTests.testSelectionOutsideCompositionCommits' started at 2026-10-10 07:08:18.412
+Test Case 'TextInputTests.testSelectionOutsideCompositionCommits' passed (0.0 seconds)
+Test Case 'TextInputTests.testUTF16RangesCountSurrogatePairs' started at 2026-10-10 07:08:18.412
+Test Case 'TextInputTests.testUTF16RangesCountSurrogatePairs' passed (0.002 seconds)
+Test Suite 'TextInputTests' passed at 2026-10-10 07:08:18.414
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+Test Suite 'Debug-windows-x86_64.xctest' passed at 2026-10-10 07:08:18.414
+	 Executed 84 tests, with 0 failures (0 unexpected) in 7.319 (7.319) seconds
+Test Suite 'All tests' passed at 2026-10-10 07:08:18.414
+	 Executed 84 tests, with 0 failures (0 unexpected) in 7.319 (7.319) seconds
+◊ Test run started.
+→ Testing Library Version: 6.4 (efd8d65801f569d)
+→ Target Platform: x86_64-unknown-windows-msvc
+√ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+exit=0 wall_seconds=64
+
+=== probes\sr0-s\fresh-on-bridge ===
+$ cd D:\Claude\sr0-swifttest\repo\probes\sr0-s\fresh-on-bridge ; swift test --scratch-path D:\Claude\sr0-swifttest\scratch\fresh-on-bridge
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1 / 128]
+[Planning deferred tasks]
+[30 / 48] CDispatchPrivate
+[37 / 55] SwiftRightRuntime
+[53 / 70] SwiftRightRuntime
+[63 / 70] SwiftRightRuntime
+[64 / 71]
+[66 / 79] FreshOnBridge-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[66 / 79] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[70 / 79] SwiftRightRuntime
+[70 / 79] FreshOnBridge-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[72 / 79] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[73 / 79] FreshOnBridge-product
+[73 / 79] AllIncludingTests
+[73 / 79] FreshOnBridge-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[73 / 79] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+D:\Claude\sr0-swifttest\repo\probes\sr0-s\fresh-on-bridge\Sources\FreshOnBridge\Hooks.swift:52:60: warning: reference to captured var 'self' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+50 |                         if WaitForSingleObject(box.handle, 250) == WAIT_OBJECT_0 {
+51 |                             DispatchQueue.main.async {
+52 |                                 MainActor.assumeIsolated { self?.fire(source: "event") }
+   |                                                            `- warning: reference to captured var 'self' in concurrently-executing code; this is an error in the Swift 6 language mode [#SendableClosureCaptures]
+53 |                             }
+54 |                         }
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[73 / 79] SwiftRightBridge
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[74 / 80] FreshOnBridge-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[76 / 80] FreshOnBridge-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[76 / 80] SwiftRightRuntime
+D:\Claude\sr0-swifttest\repo\probes\sr0-s\fresh-on-bridge\Sources\FreshOnBridge\SelfTest.swift:426:29: warning: result of call to 'createFile(atPath:contents:attributes:)' is unused [#NoUsage]
+424 |         guard let path = options.readyFile else { return }
+425 |         let body = "ready \(String(format: "%.2f", Date().timeIntervalSince(started)))s\n"
+426 |         FileManager.default.createFile(atPath: path, contents: Data(body.utf8))
+    |                             `- warning: result of call to 'createFile(atPath:contents:attributes:)' is unused [#NoUsage]
+427 |     }
+428 | 
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+
+[79 / 81] FreshOnBridge-product
+[82 / 82] FreshOnBridge-product
+Build complete! (33.34 secs)
+error: no tests found; create a target in the 'Tests' directory
+exit=1 wall_seconds=36
+
+=== packages\SwiftRightBridge ===
+$ cd D:\Claude\sr0-swifttest\repo\packages\SwiftRightBridge ; swift test --scratch-path D:\Claude\sr0-swifttest\scratch\SwiftRightBridge
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1 / 155]
+[Planning deferred tasks]
+[31 / 54] SwiftRightBridge
+[37 / 58] SwiftRightBridge
+[46 / 62] SwiftRightBridgeTests-product
+[50 / 62] SwiftRightBridgeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[50 / 62] SwiftRightBridge
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[50 / 62] SwiftRightBridgeTests-product
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+[52 / 63] SwiftRightBridge
+[57 / 64] SwiftRightBridge-product
+[57 / 64] SwiftRightBridgeTests-product
+[61 / 67] SwiftRightBridgeTests-test-runner
+[65 / 67] SwiftRightBridgeTests-test-runner
+[65 / 68] SwiftRightBridgeTests-test-runner
+[68 / 68] SwiftRightBridgeTests-test-runner
+Build complete! (20.92 secs)
+Test Suite 'All tests' started at 2026-10-10 07:09:16.729
+Test Suite 'Debug-windows-x86_64.xctest' started at 2026-10-10 07:09:16.731
+Test Suite 'AXTextRunTests' started at 2026-10-10 07:09:16.731
+Test Case 'AXTextRunTests.testBlockSizeIsTwoToTheSixteenth' started at 2026-10-10 07:09:16.731
+Test Case 'AXTextRunTests.testBlockSizeIsTwoToTheSixteenth' passed (0.001 seconds)
+Test Case 'AXTextRunTests.testEmptyTextPublishesOneZeroLengthRunAtFirstID' started at 2026-10-10 07:09:16.732
+Test Case 'AXTextRunTests.testEmptyTextPublishesOneZeroLengthRunAtFirstID' passed (0.0 seconds)
+Test Case 'AXTextRunTests.testExactlyOneBlockOfLinesIsAccepted' started at 2026-10-10 07:09:16.732
+Test Case 'AXTextRunTests.testExactlyOneBlockOfLinesIsAccepted' passed (0.065 seconds)
+Test Case 'AXTextRunTests.testFortyLineEditorStaysInsideItsBlock' started at 2026-10-10 07:09:16.797
+Test Case 'AXTextRunTests.testFortyLineEditorStaysInsideItsBlock' passed (0.001 seconds)
+Test Case 'AXTextRunTests.testMeasuredButEmptyCellsStillOneRun' started at 2026-10-10 07:09:16.798
+Test Case 'AXTextRunTests.testMeasuredButEmptyCellsStillOneRun' passed (0.0 seconds)
+Test Case 'AXTextRunTests.testMultiLineRunIdsAreContiguousFromTheBlockBase' started at 2026-10-10 07:09:16.798
+Test Case 'AXTextRunTests.testMultiLineRunIdsAreContiguousFromTheBlockBase' passed (0.182 seconds)
+Test Case 'AXTextRunTests.testOneLineOverTheBlockThrowsTypedError' started at 2026-10-10 07:09:16.981
+Test Case 'AXTextRunTests.testOneLineOverTheBlockThrowsTypedError' passed (0.01 seconds)
+Test Case 'AXTextRunTests.testUnCheckedWrapperHasTheSameEmptyBehaviour' started at 2026-10-10 07:09:16.991
+Test Case 'AXTextRunTests.testUnCheckedWrapperHasTheSameEmptyBehaviour' passed (0.0 seconds)
+Test Suite 'AXTextRunTests' passed at 2026-10-10 07:09:16.991
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.26 (0.26) seconds
+Test Suite 'Debug-windows-x86_64.xctest' passed at 2026-10-10 07:09:16.991
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.26 (0.26) seconds
+Test Suite 'All tests' passed at 2026-10-10 07:09:16.991
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.26 (0.26) seconds
+◊ Test run started.
+→ Testing Library Version: 6.4 (efd8d65801f569d)
+→ Target Platform: x86_64-unknown-windows-msvc
+√ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+exit=0 wall_seconds=22
+=== done ===

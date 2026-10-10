@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\factory\native\windows\channel-control.ps1"" -Config ""D:\Claude\swiftright\factory\native\windows\channel-control-20261011-r1\config.json""", 0, True

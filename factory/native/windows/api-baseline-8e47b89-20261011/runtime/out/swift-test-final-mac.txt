@@ -1,0 +1,362 @@
+=== host ===
+2026-10-10T01:36:23Z
+swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+Target: arm64-apple-macosx27.0.0
+ProductName:		macOS
+ProductVersion:		27.0.1
+BuildVersion:		26A434
+arm64
+commit: 252a598c0e40a137a40d0f95f3551cf4c5bf8758
+
+=== probes/sr0-s/fresh-runtime ===
+$ cd /Volumes/D/claude/swiftright/probes/sr0-s/fresh-runtime && swift test --scratch-path /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/swifttest-mac/fresh-runtime
+Building for debugging...
+[Planning deferred tasks]
+[28 / 52]
+[29 / 53] SwiftRightRuntime
+[39 / 100]
+[46 / 100]
+[48 / 100]
+[53 / 100]
+[57 / 100]
+[60 / 100]
+[62 / 100]
+[63 / 100]
+[76 / 100] SwiftRightRuntime
+[84 / 100] SwiftRightRuntime
+[90 / 101] SwiftRightRuntimeTests-product
+[107 / 147]
+[111 / 147]
+[113 / 147]
+[116 / 147]
+[119 / 147]
+[122 / 147]
+[123 / 147]
+[136 / 147] SwiftRightRuntimeTests-product
+[137 / 147] SwiftRightRuntimeTests-product
+[141 / 147] SwiftRightRuntimeTests-product
+[143 / 147] SwiftRightRuntimeTests-product
+Build complete! (9.36 sec)
+Test Suite 'All tests' started at 2026-10-10 07:06:34.688.
+Test Suite 'SwiftRightRuntimeTests.xctest' started at 2026-10-10 07:06:34.697.
+Test Suite 'AnimationTests' started at 2026-10-10 07:06:34.697.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce]' started.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce]' passed (0.004 seconds).
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testAnimationWithoutChangeCompletesAtCommit]' started.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testAnimationWithoutChangeCompletesAtCommit]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce]' started.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testOpacityChangeInterpolates]' started.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testOpacityChangeInterpolates]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testReduceMotionJumpsToFinalValueAndStillCompletes]' started.
+Test Case '-[SwiftRightRuntimeTests.AnimationTests testReduceMotionJumpsToFinalValueAndStillCompletes]' passed (0.000 seconds).
+Test Suite 'AnimationTests' passed at 2026-10-10 07:06:34.704.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'BindingCollectionTests' started at 2026-10-10 07:06:34.704.
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testBindableProjectedRowsSupportCountAndSubscript]' started.
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testBindableProjectedRowsSupportCountAndSubscript]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testBindingIsRandomAccessCollection]' started.
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testBindingIsRandomAccessCollection]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove]' started.
+Test Case '-[SwiftRightRuntimeTests.BindingCollectionTests testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove]' passed (0.002 seconds).
+Test Suite 'BindingCollectionTests' passed at 2026-10-10 07:06:34.706.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'FocusContainerTests' started at 2026-10-10 07:06:34.706.
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testListReinsertRestoresFocus]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testListReinsertRestoresFocus]' passed (0.009 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testRemovingFocusedRowClearsFocusInEveryContainer]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testRemovingFocusedRowClearsFocusInEveryContainer]' passed (0.017 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testRemovingUnfocusedRowKeepsFocus]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testRemovingUnfocusedRowKeepsFocus]' passed (0.004 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testVStackAndLazyReinsertDoesNotRestoreFocus]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusContainerTests testVStackAndLazyReinsertDoesNotRestoreFocus]' passed (0.009 seconds).
+Test Suite 'FocusContainerTests' passed at 2026-10-10 07:06:34.746.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.039 (0.039) seconds
+Test Suite 'FocusTraversalTests' started at 2026-10-10 07:06:34.746.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testBackwardStartsAtLastAndWraps]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testBackwardStartsAtLastAndWraps]' passed (0.004 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testButtonsAreStopsOnlyWhenAllControlsEnabled]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testButtonsAreStopsOnlyWhenAllControlsEnabled]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testDisabledStopsAreSkipped]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testDisabledStopsAreSkipped]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testForwardFollowsTreeOrderAndWraps]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testForwardFollowsTreeOrderAndWraps]' passed (0.004 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testKeyDispatchMapsTabAndShiftTab]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testKeyDispatchMapsTabAndShiftTab]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testNoStopsReturnsFalse]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testNoStopsReturnsFalse]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testOrderFollowsRowOrderAfterInsertAbove]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testOrderFollowsRowOrderAfterInsertAbove]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testTabContinuesFromPointerFocus]' started.
+Test Case '-[SwiftRightRuntimeTests.FocusTraversalTests testTabContinuesFromPointerFocus]' passed (0.004 seconds).
+Test Suite 'FocusTraversalTests' passed at 2026-10-10 07:06:34.770.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.023 (0.024) seconds
+Test Suite 'LayoutTests' started at 2026-10-10 07:06:34.770.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testCustomLayoutSwitchesAtWidthThreshold]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testCustomLayoutSwitchesAtWidthThreshold]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testFramesArePixelAlignedAtScale2_5]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testFramesArePixelAlignedAtScale2_5]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testHStackDistributesWidthToSpacer]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testHStackDistributesWidthToSpacer]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testPaddingInsetsChild]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testPaddingInsetsChild]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testRelayoutRemeasuresOnlyChangedText]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testRelayoutRemeasuresOnlyChangedText]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testTextWrapsWhenProposedWidthShrinks]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testTextWrapsWhenProposedWidthShrinks]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testVStackAlignmentLeadingCenterTrailing]' started.
+Test Case '-[SwiftRightRuntimeTests.LayoutTests testVStackAlignmentLeadingCenterTrailing]' passed (0.001 seconds).
+Test Suite 'LayoutTests' passed at 2026-10-10 07:06:34.776.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+Test Suite 'LazyContainerTests' started at 2026-10-10 07:06:34.776.
+Test Case '-[SwiftRightRuntimeTests.LazyContainerTests testLazyVStackReinsertResetsStateWhileLifecycleFires]' started.
+Test Case '-[SwiftRightRuntimeTests.LazyContainerTests testLazyVStackReinsertResetsStateWhileLifecycleFires]' passed (0.252 seconds).
+Test Suite 'LazyContainerTests' passed at 2026-10-10 07:06:35.029.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.252 (0.253) seconds
+Test Suite 'PerformanceTests' started at 2026-10-10 07:06:35.029.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testIncrementalCommitsEqualAFreshGraph]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testIncrementalCommitsEqualAFreshGraph]' passed (2.286 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRemovedRowsLeaveNoObservationRegistrationsBehind]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRemovedRowsLeaveNoObservationRegistrationsBehind]' passed (0.319 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRepeatedEvaluationDoesNotStackObservationRegistrations]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRepeatedEvaluationDoesNotStackObservationRegistrations]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRowEditWorkIsLinearAndMeasuresOnlyChangedText]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testRowEditWorkIsLinearAndMeasuresOnlyChangedText]' passed (0.079 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testScrollOnlyCommitEvaluatesAndMeasuresNothing]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testScrollOnlyCommitEvaluatesAndMeasuresNothing]' passed (0.097 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime]' passed (1.192 seconds).
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows]' started.
+Test Case '-[SwiftRightRuntimeTests.PerformanceTests testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows]' passed (0.091 seconds).
+Test Suite 'PerformanceTests' passed at 2026-10-10 07:06:39.097.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 4.067 (4.068) seconds
+Test Suite 'RowRefreshTests' started at 2026-10-10 07:06:39.097.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testEditingOneRowEvaluatesThatRowOnly]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testEditingOneRowEvaluatesThatRowOnly]' passed (0.009 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testInsertRemoveAndReorderEvaluateOnlyNewRows]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testInsertRemoveAndReorderEvaluateOnlyNewRows]' passed (0.008 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testNonEquatableElementsStillUpdate]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testNonEquatableElementsStillUpdate]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testParentChangeReachesRowsWhoseElementsDidNotChange]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testParentChangeReachesRowsWhoseElementsDidNotChange]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testRemovedRowsStopObserving]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testRemovedRowsStopObserving]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testRowBindingReadsAndWritesLiveOutsideEvaluation]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testRowBindingReadsAndWritesLiveOutsideEvaluation]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testTypingIntoARowFieldUpdatesModelAndDisplay]' started.
+Test Case '-[SwiftRightRuntimeTests.RowRefreshTests testTypingIntoARowFieldUpdatesModelAndDisplay]' passed (0.004 seconds).
+Test Suite 'RowRefreshTests' passed at 2026-10-10 07:06:39.126.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.028 (0.029) seconds
+Test Suite 'RuntimeTests' started at 2026-10-10 07:06:39.126.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testBindingWriteBackThroughForEach]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testBindingWriteBackThroughForEach]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testCommitSinkReceivesResolvedTree]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testCommitSinkReceivesResolvedTree]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testEnvironmentOverridePropagation]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testEnvironmentOverridePropagation]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF1_SurvivingRowIdentityAcrossInsertAbove]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF1_SurvivingRowIdentityAcrossInsertAbove]' passed (0.010 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF2_ReorderPreservesStateAndFocus]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF2_ReorderPreservesStateAndFocus]' passed (0.005 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_ListReinsertPreservesStateWhileLifecycleFires]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_ListReinsertPreservesStateWhileLifecycleFires]' passed (0.254 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_ListRetainedStateIsBounded]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_ListRetainedStateIsBounded]' passed (0.146 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_VStackReinsertResetsState]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF3_VStackReinsertResetsState]' passed (0.248 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF4_StaleAsyncResultIsRejectedAfterRemoval]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testF4_StaleAsyncResultIsRejectedAfterRemoval]' passed (0.123 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testObservationFineGrainedInvalidation]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testObservationFineGrainedInvalidation]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testTransactionAnimationTagRecorded]' started.
+Test Case '-[SwiftRightRuntimeTests.RuntimeTests testTransactionAnimationTagRecorded]' passed (0.001 seconds).
+Test Suite 'RuntimeTests' passed at 2026-10-10 07:06:39.918.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.791 (0.792) seconds
+Test Suite 'SR1ControlTests' started at 2026-10-10 07:06:39.918.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testDisabledBlocksButtonsAndNestedFalseDoesNotReenable]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testDisabledBlocksButtonsAndNestedFalseDoesNotReenable]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testDisabledToggleDoesNotFlip]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testDisabledToggleDoesNotFlip]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testImageReferencesAndLabels]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testImageReferencesAndLabels]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testImageUsesHostIntrinsicSize]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testImageUsesHostIntrinsicSize]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testLabelDividerAndStyleResolve]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testLabelDividerAndStyleResolve]' passed (0.003 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testReturnCommitsCompositionAndSingleLineRejectsBreaks]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testReturnCommitsCompositionAndSingleLineRejectsBreaks]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testTextEditorInsertsLineBreaksAndMeasuresLines]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testTextEditorInsertsLineBreaksAndMeasuresLines]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testToggleFlipsBindingAndReportsCheckboxState]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1ControlTests testToggleFlipsBindingAndReportsCheckboxState]' passed (0.001 seconds).
+Test Suite 'SR1ControlTests' passed at 2026-10-10 07:06:39.929.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.010 (0.011) seconds
+Test Suite 'SR1SelectionMenuTests' started at 2026-10-10 07:06:39.929.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testAlertPresentationAndActionDispatch]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testAlertPresentationAndActionDispatch]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testConfirmationDialogVisibilityAndDisabledAction]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testConfirmationDialogVisibilityAndDisabledAction]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testContextMenuAndMenuItemsDispatch]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testContextMenuAndMenuItemsDispatch]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testDeleteWithoutHandlerReturnsFalse]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testDeleteWithoutHandlerReturnsFalse]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testKeyboardRegistryLogicalMappingAndDispatch]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testKeyboardRegistryLogicalMappingAndDispatch]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testMultipleSelectionModifiersAndRanges]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testMultipleSelectionModifiersAndRanges]' passed (0.001 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testOnDeleteRunsWithRowOffsets]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testOnDeleteRunsWithRowOffsets]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testSingleSelectionClickAndKeyboardNavigation]' started.
+Test Case '-[SwiftRightRuntimeTests.SR1SelectionMenuTests testSingleSelectionClickAndKeyboardNavigation]' passed (0.002 seconds).
+Test Suite 'SR1SelectionMenuTests' passed at 2026-10-10 07:06:39.941.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.011 (0.012) seconds
+Test Suite 'ScrollViewTests' started at 2026-10-10 07:06:39.941.
+Test Case '-[SwiftRightRuntimeTests.ScrollViewTests testScrollOffsetShiftsContentAndClamps]' started.
+Test Case '-[SwiftRightRuntimeTests.ScrollViewTests testScrollOffsetShiftsContentAndClamps]' passed (0.001 seconds).
+Test Suite 'ScrollViewTests' passed at 2026-10-10 07:06:39.942.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'TaskIDTests' started at 2026-10-10 07:06:39.942.
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testDisappearCancelsTask]' started.
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testDisappearCancelsTask]' passed (0.123 seconds).
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testIdChangeCancelsAndRestartsTask]' started.
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testIdChangeCancelsAndRestartsTask]' passed (0.129 seconds).
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testSameIdDoesNotRestartTask]' started.
+Test Case '-[SwiftRightRuntimeTests.TaskIDTests testSameIdDoesNotRestartTask]' passed (0.123 seconds).
+Test Suite 'TaskIDTests' passed at 2026-10-10 07:06:40.318.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.375 (0.375) seconds
+Test Suite 'TeardownTests' started at 2026-10-10 07:06:40.318.
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testNothingCommitsAfterTearDown]' started.
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testNothingCommitsAfterTearDown]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownReleasesGraphNodesStateAndTaskCaptures]' started.
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownReleasesGraphNodesStateAndTaskCaptures]' passed (0.123 seconds).
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownReleasesListRowsAndRowCache]' started.
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownReleasesListRowsAndRowCache]' passed (0.131 seconds).
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord]' started.
+Test Case '-[SwiftRightRuntimeTests.TeardownTests testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord]' passed (0.129 seconds).
+Test Suite 'TeardownTests' passed at 2026-10-10 07:06:40.703.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.385 (0.386) seconds
+Test Suite 'TextInputTests' started at 2026-10-10 07:06:40.703.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testCompositionStaysWithRowWhenRowInsertedAbove]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testCompositionStaysWithRowWhenRowInsertedAbove]' passed (0.002 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testEmptyReplaceEndsCompositionWithoutCommit]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testEmptyReplaceEndsCompositionWithoutCommit]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testMarkedTextDoesNotLeakIntoBindingUntilCommitted]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testMarkedTextDoesNotLeakIntoBindingUntilCommitted]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testOutOfRangeOperationsAreRefused]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testOutOfRangeOperationsAreRefused]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testReplaceCommitsDirectlyAndEndsComposition]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testReplaceCommitsDirectlyAndEndsComposition]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testSelectionOutsideCompositionCommits]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testSelectionOutsideCompositionCommits]' passed (0.000 seconds).
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testUTF16RangesCountSurrogatePairs]' started.
+Test Case '-[SwiftRightRuntimeTests.TextInputTests testUTF16RangesCountSurrogatePairs]' passed (0.000 seconds).
+Test Suite 'TextInputTests' passed at 2026-10-10 07:06:40.708.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'SwiftRightRuntimeTests.xctest' passed at 2026-10-10 07:06:40.708.
+	 Executed 84 tests, with 0 failures (0 unexpected) in 6.000 (6.012) seconds
+Test Suite 'All tests' passed at 2026-10-10 07:06:40.708.
+	 Executed 84 tests, with 0 failures (0 unexpected) in 6.000 (6.020) seconds
+PERF 200-row commit medians (ms): typing 9.397292, scroll-only 14.832458, row edit 14.019209  optimized=false
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+exit=0 wall_seconds=17
+
+=== probes/sr0-s/fresh-on-bridge ===
+$ cd /Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge && swift test --scratch-path /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/swifttest-mac/fresh-on-bridge
+Building for debugging...
+[Pre-planning 1 / 128]
+[Planning deferred tasks]
+[33 / 59]
+[37 / 61] CDispatchPrivate
+[38 / 61] SwiftRightBridge
+[51 / 148]
+[60 / 148]
+[71 / 148]
+[76 / 148]
+[77 / 148]
+[85 / 148]
+[89 / 148]
+[95 / 148]
+[101 / 148]
+[105 / 148]
+[107 / 148]
+[120 / 148] SwiftRightRuntime
+[121 / 148] SwiftRightBridge
+[133 / 148] SwiftRightRuntime-product
+[140 / 149] SwiftRightRuntime
+[142 / 149] SwiftRightRuntime
+[142 / 149] SwiftRightBridge
+[142 / 149] SwiftRightRuntime
+[150 / 157] SwiftRightRuntime
+[152 / 157] FreshOnBridge-product
+[153 / 157] FreshOnBridge-product
+[155 / 157] FreshOnBridge-product
+Build complete! (9.62 sec)
+error: no tests found; create a target in the 'Tests' directory
+exit=1 wall_seconds=13
+
+=== packages/SwiftRightBridge ===
+$ cd /Volumes/D/claude/swiftright/packages/SwiftRightBridge && swift test --scratch-path /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/swifttest-mac/SwiftRightBridge
+Building for debugging...
+[Planning deferred tasks]
+[32 / 59]
+[35 / 60] CDispatchPrivate
+[36 / 60] SwiftRightBridge
+[45 / 100]
+[48 / 100]
+[54 / 100]
+[56 / 100]
+[60 / 100]
+[62 / 100]
+[65 / 100]
+[68 / 100]
+[70 / 100]
+[71 / 100]
+[76 / 100] SwiftRightBridge
+[84 / 100] SwiftRightBridge
+[86 / 100] SwiftRightBridge
+[90 / 101] SwiftRightBridgeTests-product
+[107 / 137]
+[111 / 137]
+[114 / 137]
+[116 / 137]
+[119 / 137]
+[122 / 137]
+[123 / 137]
+[126 / 137] SwiftRightBridgeTests-product
+[131 / 137] SwiftRightBridgeTests-product
+[133 / 137] SwiftRightBridgeTests-product
+Build complete! (11.18 sec)
+Test Suite 'All tests' started at 2026-10-10 07:07:08.399.
+Test Suite 'SwiftRightBridgeTests.xctest' started at 2026-10-10 07:07:08.405.
+Test Suite 'AXTextRunTests' started at 2026-10-10 07:07:08.405.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testBlockSizeIsTwoToTheSixteenth]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testBlockSizeIsTwoToTheSixteenth]' passed (0.001 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testEmptyTextPublishesOneZeroLengthRunAtFirstID]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testEmptyTextPublishesOneZeroLengthRunAtFirstID]' passed (0.000 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testExactlyOneBlockOfLinesIsAccepted]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testExactlyOneBlockOfLinesIsAccepted]' passed (0.060 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testFortyLineEditorStaysInsideItsBlock]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testFortyLineEditorStaysInsideItsBlock]' passed (0.001 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testMeasuredButEmptyCellsStillOneRun]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testMeasuredButEmptyCellsStillOneRun]' passed (0.000 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testMultiLineRunIdsAreContiguousFromTheBlockBase]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testMultiLineRunIdsAreContiguousFromTheBlockBase]' passed (0.000 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testOneLineOverTheBlockThrowsTypedError]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testOneLineOverTheBlockThrowsTypedError]' passed (0.013 seconds).
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testUnCheckedWrapperHasTheSameEmptyBehaviour]' started.
+Test Case '-[SwiftRightBridgeTests.AXTextRunTests testUnCheckedWrapperHasTheSameEmptyBehaviour]' passed (0.000 seconds).
+Test Suite 'AXTextRunTests' passed at 2026-10-10 07:07:08.481.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.075 (0.076) seconds
+Test Suite 'SwiftRightBridgeTests.xctest' passed at 2026-10-10 07:07:08.481.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.075 (0.076) seconds
+Test Suite 'All tests' passed at 2026-10-10 07:07:08.481.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.075 (0.083) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+exit=0 wall_seconds=15
+=== done ===

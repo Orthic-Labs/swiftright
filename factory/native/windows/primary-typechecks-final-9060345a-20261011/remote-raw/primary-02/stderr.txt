@@ -1,0 +1,15 @@
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-02\Witness.swift:11:26: error: cannot convert value of type 'KeyPath<EnvironmentValues, V>' to expected argument type 'WritableKeyPath<EnvironmentValues, V>'
+ 9 |         Image(systemName: "star.fill").resizable().scaledToFit().frame(width: 32, height: 32)
+10 |             .foregroundStyle(.yellow)
+11 |             .environment(\.displayScale, 3)
+   |                          `- error: cannot convert value of type 'KeyPath<EnvironmentValues, V>' to expected argument type 'WritableKeyPath<EnvironmentValues, V>'
+12 |             .environment(\.colorScheme, .light)
+13 |     }
+
+D:\Claude\swiftright\factory\native\windows\primary-typechecks-final-9060345a-20261011\primary-02\Witness.swift:11:26: error: value of type 'EnvironmentValues' has no member 'displayScale'
+ 9 |         Image(systemName: "star.fill").resizable().scaledToFit().frame(width: 32, height: 32)
+10 |             .foregroundStyle(.yellow)
+11 |             .environment(\.displayScale, 3)
+   |                          `- error: value of type 'EnvironmentValues' has no member 'displayScale'
+12 |             .environment(\.colorScheme, .light)
+13 |     }
