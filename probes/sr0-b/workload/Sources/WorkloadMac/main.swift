@@ -51,6 +51,9 @@ final class MacHost: NSObject {
     var finished = false
     var attachTicks: UInt64 = 0
     var frames = 0
+    /// Once a second: is the app active, is the window key and unoccluded, who is frontmost (foreground-loss evidence, `focus.csv`).
+    var focusRows: [String] = []
+    var lastFocusSecond = -1
 
     override init() {
         model = WorkloadModel(config: args.config, recorder: recorder)
@@ -97,6 +100,13 @@ final class MacHost: NSObject {
             }
         }
         model.advance(nowTicks: now)
+        let second = Int(WClock.seconds(now &- attachTicks))
+        if second != lastFocusSecond {
+            lastFocusSecond = second
+            let w = window
+            let front = NSWorkspace.shared.frontmostApplication?.localizedName ?? ""
+            focusRows.append("\(now),\(NSApp.isActive ? 1 : 0),\(w?.isKeyWindow == true ? 1 : 0),\(w?.occlusionState.contains(.visible) == true ? 1 : 0),\"\(front)\"")
+        }
         if model.phase(nowTicks: now) == .finished {
             finish()
         }
@@ -143,6 +153,8 @@ final class MacHost: NSObject {
 
     func writeOutputs(dir: String) {
         recorder.write(dir: dir)
+        try? ("uptime_ns,app_active,window_key,window_visible,frontmost\n" + focusRows.joined(separator: "\n") + "\n")
+            .write(toFile: dir + "/focus.csv", atomically: true, encoding: .utf8)
         let i = model.finalIntegrity()
         let extra: [String: Any] = ["app_exit": "complete", "run_id": args.config.runID, "frames_driven": frames]
         try? WorkloadModel.integrityJSON(i, extra: extra).write(toFile: dir + "/integrity.json", atomically: true, encoding: .utf8)
@@ -189,7 +201,15 @@ struct WindowGrabber: NSViewRepresentable {
     func updateNSView(_ nsView: NSView, context: Context) {}
 }
 
+/// Closing the window is the workload's teardown step, not the end of the process: the outputs are written 0.6 s later, so the
+/// app must not terminate when its last window closes (a SwiftUI `Window` app otherwise quits and writes nothing).
+final class WorkloadAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
+}
+
 struct WorkloadApp: App {
+    @NSApplicationDelegateAdaptor(WorkloadAppDelegate.self) private var appDelegate
+
     init() {
         NSApplication.shared.setActivationPolicy(.regular)
     }

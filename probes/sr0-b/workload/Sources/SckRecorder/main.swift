@@ -2,6 +2,7 @@ import AppKit
 import CoreGraphics
 import CoreMedia
 import Foundation
+import ImageIO
 import QuartzCore
 import ScreenCaptureKit
 
@@ -70,6 +71,12 @@ let instr = opts["instr"] ?? "full"
 let calibFlips = Int(opts["calib-flips"] ?? "") ?? 120
 let appPath = opts["app"]
 let calibrateOnly = opts["calibrate-only"] != nil
+/// Keys are posted only until this long before the app's measured window ends: a key posted while the app closes its window is
+/// lost by design and is not an edit the run owes (the Windows harness stops its script the same way, `key_tail_s`).
+let keyTailS = Double(opts["key-tail-s"] ?? "") ?? 0.5
+/// Smallest changed-pixel count that counts as the counter text having changed (per-channel difference > 24). One digit of 13 pt text
+/// on a 1x display changes on the order of 20-60 pixels; the static region has a noise floor of 0 (measured and reported per run).
+let minResponsePx = Int(opts["min-response-px"] ?? "") ?? 12
 
 // Keys: the same cycle as the Windows script ("mwqogdhbnk"), US ANSI virtual key codes.
 let keyChars: [Character] = Array("mwqogdhbnk")
@@ -114,6 +121,9 @@ final class StreamSink: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked S
     var crop: CGRect          // pixels, origin top-left of the captured image
     var onFrame: (FrameSample) -> Void
     var stopped = false
+    /// When set, the next complete frame is written to this path as a PNG (full captured window) with the crop rectangle outlined.
+    /// Verifies the response-region crop against the pixels actually captured; never used for detection.
+    var snapshotPath: String?
     private(set) var framesSeen = 0
     private(set) var lastWidth = 0
     private(set) var lastHeight = 0
@@ -150,6 +160,10 @@ final class StreamSink: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked S
         framesSeen += 1
         lastWidth = w
         lastHeight = h
+        if let path = snapshotPath {
+            snapshotPath = nil
+            writeSnapshot(path: path, base: base, width: w, height: h, stride: stride)
+        }
         let x0 = max(0, min(w - 1, Int(crop.minX)))
         let y0 = max(0, min(h - 1, Int(crop.minY)))
         let cw = max(1, min(w - x0, Int(crop.width)))
@@ -174,6 +188,20 @@ final class StreamSink: NSObject, SCStreamOutput, SCStreamDelegate, @unchecked S
         }
         onFrame(FrameSample(displayNS: displayNS, arrivalNS: arrival, width: w, height: h, region: region,
                             cropW: cw, cropH: ch, luma: n > 0 ? sum / Double(n) : 0))
+    }
+
+    private func writeSnapshot(path: String, base: UnsafeMutableRawPointer, width: Int, height: Int, stride: Int) {
+        guard let ctx = CGContext(data: base, width: width, height: height, bitsPerComponent: 8, bytesPerRow: stride,
+                                  space: CGColorSpaceCreateDeviceRGB(),
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue) else { return }
+        ctx.setStrokeColor(CGColor(red: 1, green: 0, blue: 0, alpha: 1))
+        ctx.setLineWidth(1)
+        // CGContext origin is bottom-left; the crop is top-left based.
+        ctx.stroke(CGRect(x: crop.minX, y: CGFloat(height) - crop.maxY, width: crop.width, height: crop.height))
+        guard let image = ctx.makeImage(),
+              let dest = CGImageDestinationCreateWithURL(URL(fileURLWithPath: path) as CFURL, "public.png" as CFString, 1, nil) else { return }
+        CGImageDestinationAddImage(dest, image, nil)
+        CGImageDestinationFinalize(dest)
     }
 
     func stream(_ stream: SCStream, didStopWithError error: Error) {
@@ -288,10 +316,15 @@ final class KeyTracker: @unchecked Sendable {
     private let lock = NSLock()
     private var history: [(display: UInt64, region: [UInt8])] = []
     private var pending: [PendingKey] = []
-    var resolved: [(seq: Int, ch: Character, tPost: UInt64, tDisplay: UInt64, status: String)] = []
+    var resolved: [(seq: Int, ch: Character, tPost: UInt64, tDisplay: UInt64, status: String, diffPx: Int)] = []
     var frameDisplayNS: [UInt64] = []
+    /// FNV-1a of the response-region bytes of every frame (frames_display.csv column `region_hash`): independent re-matching of
+    /// distinct counter states to keys, and proof of how many distinct states the region showed.
+    var frameRegionHash: [UInt64] = []
     var threshold: Int
     private(set) var noiseMax = 0
+    /// Every frame-to-frame changed-pixel count of the static response region while no key was posted.
+    private(set) var noiseSeries: [Int] = []
     var collectingNoise = false
     private var lastNoiseRegion: [UInt8]?
 
@@ -312,8 +345,15 @@ final class KeyTracker: @unchecked Sendable {
     func onFrame(_ f: FrameSample) {
         lock.lock(); defer { lock.unlock() }
         frameDisplayNS.append(f.displayNS)
+        var h: UInt64 = 0xcbf29ce484222325
+        for b in f.region { h = (h ^ UInt64(b)) &* 0x100000001b3 }
+        frameRegionHash.append(h)
         if collectingNoise {
-            if let last = lastNoiseRegion { noiseMax = max(noiseMax, Self.diffPixels(last, f.region)) }
+            if let last = lastNoiseRegion {
+                let d = Self.diffPixels(last, f.region)
+                noiseSeries.append(d)
+                noiseMax = max(noiseMax, d)
+            }
             lastNoiseRegion = f.region
         }
         history.append((f.displayNS, f.region))
@@ -322,15 +362,16 @@ final class KeyTracker: @unchecked Sendable {
         var i = 0
         while i < pending.count {
             let key = pending[i]
-            if f.displayNS > key.tPost, Self.diffPixels(key.ref, f.region) >= threshold {
-                resolved.append((key.seq, key.ch, key.tPost, f.displayNS, "ok"))
+            let diff = f.displayNS > key.tPost ? Self.diffPixels(key.ref, f.region) : 0
+            if f.displayNS > key.tPost, diff >= threshold {
+                resolved.append((key.seq, key.ch, key.tPost, f.displayNS, "ok", diff))
                 pending.remove(at: i)
                 // Every other pending key now needs a LATER change than this frame.
                 for j in 0..<pending.count where pending[j].tPost < f.displayNS { pending[j].ref = f.region }
                 continue
             }
             if MachClock.now() > key.tPost + 1_000_000_000 {
-                resolved.append((key.seq, key.ch, key.tPost, 0, "timeout"))
+                resolved.append((key.seq, key.ch, key.tPost, 0, "timeout", diff))
                 pending.remove(at: i)
                 continue
             }
@@ -342,19 +383,19 @@ final class KeyTracker: @unchecked Sendable {
     func willPost(seq: Int, ch: Character, tPost: UInt64) {
         lock.lock(); defer { lock.unlock() }
         let ref = history.last(where: { $0.display <= tPost })?.region ?? history.last?.region ?? []
-        if !pending.isEmpty { resolved.append((-1, ch, tPost, 0, "overlap-note")) }
+        if !pending.isEmpty { resolved.append((-1, ch, tPost, 0, "overlap-note", 0)) }
         pending.append(PendingKey(seq: seq, ch: ch, tPost: tPost, ref: ref))
     }
 
     func flushTimeouts() {
         lock.lock(); defer { lock.unlock() }
-        for key in pending { resolved.append((key.seq, key.ch, key.tPost, 0, "timeout")) }
+        for key in pending { resolved.append((key.seq, key.ch, key.tPost, 0, "timeout", 0)) }
         pending.removeAll()
     }
 
-    var snapshot: (resolved: [(seq: Int, ch: Character, tPost: UInt64, tDisplay: UInt64, status: String)], frames: [UInt64]) {
+    var snapshot: (resolved: [(seq: Int, ch: Character, tPost: UInt64, tDisplay: UInt64, status: String, diffPx: Int)], frames: [UInt64], hashes: [UInt64]) {
         lock.lock(); defer { lock.unlock() }
-        return (resolved, frameDisplayNS)
+        return (resolved, frameDisplayNS, frameRegionHash)
     }
 }
 
@@ -457,13 +498,18 @@ func run() async -> Int32 {
     let winW = frameRect["w"] ?? 960, winH = frameRect["h"] ?? 668
     let titlebar = max(0, winH - (content["h"] ?? winH))
     let pad = 3.0
-    let crop = CGRect(x: ((counter["x"] ?? 0) - pad) * scale, y: (titlebar + (counter["y"] ?? 0) - pad) * scale,
-                      width: ((counter["w"] ?? 60) + 2 * pad) * scale, height: ((counter["h"] ?? 20) + 2 * pad) * scale)
+    // ready.json reports the counter at "typed 0"; the label grows a digit at 10, 100 and 1000 keys (about 600 per run), and the text is
+    // leading-aligned with empty space to its right, so the crop extends to the right by room for four more digits.
+    let counterGrowthPt = 40.0
+    // `counter_rect_pt` is SwiftUI's `.global` frame, which is already in window coordinates (title bar included: the counter sits at
+    // y = 28 + 12). Adding the title bar again put the crop on the editor field below the counter (window.png shows the outline).
+    let crop = CGRect(x: ((counter["x"] ?? 0) - pad) * scale, y: ((counter["y"] ?? 0) - pad) * scale,
+                      width: ((counter["w"] ?? 60) + 2 * pad + counterGrowthPt) * scale, height: ((counter["h"] ?? 20) + 2 * pad) * scale)
     meta["crop_px"] = ["x": crop.minX, "y": crop.minY, "w": crop.width, "h": crop.height]
     meta["titlebar_pt"] = titlebar
 
     // 3) capture stream on the app window
-    let tracker = KeyTracker(threshold: 40)
+    let tracker = KeyTracker(threshold: minResponsePx)
     let sink = StreamSink(crop: crop) { f in tracker.onFrame(f) }
     let queue = DispatchQueue(label: "sr0.app.frames", qos: .userInteractive)
     let stream: SCStream
@@ -477,18 +523,26 @@ func run() async -> Int32 {
         return 7
     }
     // Noise floor of the response region with no input (the region is static text; caret blink is outside it).
+    sink.snapshotPath = outDir + "/window.png"
+    try? await Task.sleep(nanoseconds: 800_000_000)      // settle: the first captured frames can predate the window's final drawing
     tracker.collectingNoise = true
-    try? await Task.sleep(nanoseconds: 2_500_000_000)
+    try? await Task.sleep(nanoseconds: 1_700_000_000)
     tracker.collectingNoise = false
     let noise = tracker.noiseMax
-    tracker.threshold = max(40, noise * 3)
+    tracker.threshold = max(minResponsePx, noise * 3)
     meta["noise_floor_px"] = noise
+    meta["noise_series_px"] = tracker.noiseSeries
     meta["response_threshold_px"] = tracker.threshold
     meta["captured_size_px"] = ["w": sink.lastWidth, "h": sink.lastHeight]
     meta["expected_size_px"] = ["w": Int(winW * scale), "h": Int(winH * scale)]
 
     // 4) post the script until the app exits
     let startNS = MachClock.now() + 300_000_000
+    // The app's run clock starts at the frame that wrote ready.json (t0 is that frame's tick, a few ms before ready_ticks).
+    let readyTicks = UInt64(max(0, (ready["ready_ticks"] as? Int) ?? 0))
+    let keyDeadlineNS: UInt64 = readyTicks > 0 ? readyTicks + UInt64(max(0, warmupS + measureS - keyTailS) * 1_000_000_000) : UInt64.max
+    meta["key_deadline_uptime_ns"] = readyTicks > 0 ? Int(keyDeadlineNS) : 0
+    meta["key_tail_s"] = keyTailS
     let stepNS = UInt64(1_000_000_000 / rateHz)
     let maxNS = UInt64((warmupS + measureS + 8) * 1_000_000_000)
     let poster = DispatchQueue(label: "sr0.poster", qos: .userInteractive)
@@ -501,7 +555,7 @@ func run() async -> Int32 {
     poster.async {
         while !stopBox.value {
             let due = startNS + UInt64(seq) * stepNS
-            if due - startNS > maxNS || !proc.isRunning { break }
+            if due - startNS > maxNS || !proc.isRunning || due >= keyDeadlineNS { break }
             while true {
                 let now = MachClock.now()
                 if now >= due { break }
@@ -534,10 +588,11 @@ func run() async -> Int32 {
     for r in snap.resolved where r.seq >= 0 {
         let lat = r.status == "ok" ? Double(r.tDisplay &- r.tPost) / 1_000_000 : Double.nan
         if r.status == "ok" { okLat.append(lat) }
-        rows.append("\(r.seq),\(r.ch),\(r.tPost),\(r.tDisplay),\(lat.isNaN ? "" : String(lat)),\(r.status)")
+        rows.append("\(r.seq),\(r.ch),\(r.tPost),\(r.tDisplay),\(lat.isNaN ? "" : String(lat)),\(r.status),\(r.diffPx)")
     }
-    writeText(outDir + "/keys.csv", "seq,char,t_post_ns,t_display_ns,latency_ms,status\n" + rows.sorted().joined(separator: "\n") + "\n")
-    writeText(outDir + "/frames_display.csv", "display_ns\n" + snap.frames.map(String.init).joined(separator: "\n") + "\n")
+    writeText(outDir + "/keys.csv", "seq,char,t_post_ns,t_display_ns,latency_ms,status,diff_px\n" + rows.sorted().joined(separator: "\n") + "\n")
+    writeText(outDir + "/frames_display.csv", "display_ns,region_hash\n" +
+        zip(snap.frames, snap.hashes).map { "\($0),\(String($1, radix: 16))" }.joined(separator: "\n") + "\n")
     meta["keys_sent"] = sent
     meta["post_failures"] = postFailures
     meta["keys_resolved_ok"] = okLat.count

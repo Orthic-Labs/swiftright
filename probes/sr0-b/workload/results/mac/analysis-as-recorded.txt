@@ -1,0 +1,89 @@
+THRESHOLD P    r1   PASS    window size pinned (960x640 pt): True (limit bool True)
+THRESHOLD P    r1   PASS    release build: True (limit bool True)
+THRESHOLD P    r1   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r1   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r1   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r1   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r1   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r1   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r1   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1397 want>=1330 skipped=4
+THRESHOLD W0   r1   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r1   PASS    lost valid edits (keys posted - applied): 0 (limit == 0) posted=664 typed=664
+THRESHOLD W1   r1   PASS    active text equals posted sequence: True (limit bool True)
+THRESHOLD CAL  r1   PASS    recorder calibration present and valid: True (limit bool True) detected=120/120
+THRESHOLD CAL  r1   PASS    recorder latency floor p95 (ms): 23.2945 (limit <= 34.0) p50=15.33
+THRESHOLD CAL  r1   PASS    response-region self-check (>= 90% of keys resolved): True (limit bool True)
+THRESHOLD CAL  r1   PASS    captured frame size equals window pixel size (+-2 px): True (limit bool True) captured={'h': 668, 'w': 960} expected={'h': 668, 'w': 960}
+THRESHOLD P    r1   PASS    recorder permissions: True (limit bool True)
+THRESHOLD W4   r1   FAIL    every key in the window has a visible response: 2 (limit == 0) keys=595
+THRESHOLD W4   r1   FAIL    input->visible p95 (ms): 273.5626 (limit <= 50.0) n=593 p50=223.80 (raw, uncorrected)
+THRESHOLD W4   r1   FAIL    input->visible p99 (ms): 291.1469 (limit <= 100.0) max=308.46
+THRESHOLD CAL  r1   PASS    keys in window (script delivered 10/s): True (limit bool True)
+THRESHOLD W5   r1   PASS    display refresh 60 Hz (CGDisplayMode): True (limit bool True) hz=60.0
+THRESHOLD W5   r1   PASS    missed vblanks (SCK display-time interval > 1.5 x refresh): 0 (limit == 0) n=3599 (SCK proxy; frames only on change)
+THRESHOLD W5   r1   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.9441 (limit <= 16.76666666666667) p50=16.646 p99=18.877
+THRESHOLD W6   r1   INFO    main-actor enqueue->exec p99 (ms) (Windows-only threshold; reported): 68.2067 (limit info 16.7) n=9838
+THRESHOLD P    r2   PASS    window size pinned (960x640 pt): True (limit bool True)
+THRESHOLD P    r2   PASS    release build: True (limit bool True)
+THRESHOLD P    r2   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r2   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r2   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r2   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r2   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r2   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r2   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1400 want>=1330 skipped=1
+THRESHOLD W0   r2   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r2   PASS    lost valid edits (keys posted - applied): 0 (limit == 0) posted=666 typed=666
+THRESHOLD W1   r2   PASS    active text equals posted sequence: True (limit bool True)
+THRESHOLD CAL  r2   PASS    recorder calibration present and valid: True (limit bool True) detected=120/120
+THRESHOLD CAL  r2   PASS    recorder latency floor p95 (ms): 23.7569 (limit <= 34.0) p50=16.24
+THRESHOLD CAL  r2   PASS    response-region self-check (>= 90% of keys resolved): True (limit bool True)
+THRESHOLD CAL  r2   PASS    captured frame size equals window pixel size (+-2 px): True (limit bool True) captured={'h': 668, 'w': 960} expected={'h': 668, 'w': 960}
+THRESHOLD P    r2   PASS    recorder permissions: True (limit bool True)
+THRESHOLD W4   r2   PASS    every key in the window has a visible response: 0 (limit == 0) keys=595
+THRESHOLD W4   r2   FAIL    input->visible p95 (ms): 71.6462 (limit <= 50.0) n=595 p50=37.72 (raw, uncorrected)
+THRESHOLD W4   r2   PASS    input->visible p99 (ms): 88.2370 (limit <= 100.0) max=121.29
+THRESHOLD CAL  r2   PASS    keys in window (script delivered 10/s): True (limit bool True)
+THRESHOLD W5   r2   PASS    display refresh 60 Hz (CGDisplayMode): True (limit bool True) hz=60.0
+THRESHOLD W5   r2   PASS    missed vblanks (SCK display-time interval > 1.5 x refresh): 0 (limit == 0) n=3599 (SCK proxy; frames only on change)
+THRESHOLD W5   r2   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.8242 (limit <= 16.76666666666667) p50=16.643 p99=18.629
+THRESHOLD W6   r2   INFO    main-actor enqueue->exec p99 (ms) (Windows-only threshold; reported): 65.9581 (limit info 16.7) n=9863
+THRESHOLD P    r3   PASS    window size pinned (960x640 pt): True (limit bool True)
+THRESHOLD P    r3   PASS    release build: True (limit bool True)
+THRESHOLD P    r3   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r3   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r3   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r3   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r3   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r3   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r3   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1399 want>=1330 skipped=1
+THRESHOLD W0   r3   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r3   PASS    lost valid edits (keys posted - applied): 0 (limit == 0) posted=666 typed=666
+THRESHOLD W1   r3   PASS    active text equals posted sequence: True (limit bool True)
+THRESHOLD CAL  r3   PASS    recorder calibration present and valid: True (limit bool True) detected=120/120
+THRESHOLD CAL  r3   PASS    recorder latency floor p95 (ms): 23.2168 (limit <= 34.0) p50=15.59
+THRESHOLD CAL  r3   PASS    response-region self-check (>= 90% of keys resolved): True (limit bool True)
+THRESHOLD CAL  r3   PASS    captured frame size equals window pixel size (+-2 px): True (limit bool True) captured={'h': 668, 'w': 960} expected={'h': 668, 'w': 960}
+THRESHOLD P    r3   PASS    recorder permissions: True (limit bool True)
+THRESHOLD W4   r3   PASS    every key in the window has a visible response: 0 (limit == 0) keys=595
+THRESHOLD W4   r3   FAIL    input->visible p95 (ms): 78.9379 (limit <= 50.0) n=595 p50=29.55 (raw, uncorrected)
+THRESHOLD W4   r3   PASS    input->visible p99 (ms): 95.6121 (limit <= 100.0) max=129.22
+THRESHOLD CAL  r3   PASS    keys in window (script delivered 10/s): True (limit bool True)
+THRESHOLD W5   r3   PASS    display refresh 60 Hz (CGDisplayMode): True (limit bool True) hz=60.0
+THRESHOLD W5   r3   PASS    missed vblanks (SCK display-time interval > 1.5 x refresh): 0 (limit == 0) n=3599 (SCK proxy; frames only on change)
+THRESHOLD W5   r3   FAIL    presented interval p95 (ms) <= refresh + 0.1: 17.9136 (limit <= 16.76666666666667) p50=16.646 p99=18.772
+THRESHOLD W6   r3   INFO    main-actor enqueue->exec p99 (ms) (Windows-only threshold; reported): 59.2097 (limit info 16.7) n=9885
+THRESHOLD W7   set  PASS    Rust compiler invocations during UI-only incremental builds: 0 (limit == 0) edits=3
+THRESHOLD W7   set  PASS    renderer / engine artifact hashes identical: True (limit bool True)
+THRESHOLD W7   set  PASS    incremental builds succeeded: True (limit bool True)
+OVERALL: FAIL
+report: /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/mac-workload/runs/final/report-full/report.json, /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/mac-workload/runs/final/report-full/report.md, raw samples: /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/mac-workload/runs/final/report-full/raw/

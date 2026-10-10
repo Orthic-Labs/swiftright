@@ -670,6 +670,11 @@ public final class WorkloadModel {
     /// The single UI write path: every TextField binding setter lands here.
     public func userEdit(_ id: UUID, _ newValue: String) {
         guard !closed else { return }
+        #if !WORKLOAD_RUNTIME
+        // Real SwiftUI on macOS calls a TextField's binding setter twice per keystroke and once when focus is applied, each time with the
+        // text the field already holds. Only a changed value is an edit (the runtime on Windows sets once per change).
+        if id == active.id, newValue == active.text { return }
+        #endif
         if id == active.id {
             active.text = newValue
             typedCount += 1
