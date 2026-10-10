@@ -4,6 +4,14 @@ import XCTest
 
 @MainActor
 final class ShapeTests: XCTestCase {
+    func testRoundedRectangleDefaultMatchesSDKContinuousStyle() {
+        let graph = Graph(RoundedRectangle(cornerRadius: 6))
+        graph.flush()
+        XCTAssertEqual(graph.snapshot()?.shape?.geometry, .roundedRectangle(cornerRadius: 6, style: .continuous))
+        XCTAssertEqual(RoundedRectangle(cornerRadius: 6, style: .circular).shapeGeometry,
+                       .roundedRectangle(cornerRadius: 6, style: .circular))
+    }
+
     func testRoundedRectangleStrokeRecordsGeometryAndLineWidth() {
         let graph = Graph(RoundedRectangle(cornerRadius: 6, style: .continuous).stroke(Color.blue, lineWidth: 2.5))
         graph.rootProposal = ProposedViewSize(width: 32, height: 24)

@@ -77,7 +77,7 @@ public struct RoundedRectangle: Shape, PrimitiveView {
     public let cornerRadius: CGFloat
     public let style: RoundedCornerStyle
 
-    public init(cornerRadius: CGFloat, style: RoundedCornerStyle = .circular) {
+    public init(cornerRadius: CGFloat, style: RoundedCornerStyle = .continuous) {
         self.cornerRadius = max(0, cornerRadius)
         self.style = style
     }
