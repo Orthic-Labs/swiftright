@@ -1,0 +1,71 @@
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:20:18: error: cannot find type 'CGFloat' in scope
+18 | 
+19 | struct WitnessMeasuredLayout: Layout {
+20 |     var spacing: CGFloat
+   |                  `- error: cannot find type 'CGFloat' in scope
+21 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+22 |         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:21:91: error: cannot find type 'CGSize' in scope
+19 | struct WitnessMeasuredLayout: Layout {
+20 |     var spacing: CGFloat
+21 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+   |                                                                                           `- error: cannot find type 'CGSize' in scope
+22 |         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+23 |         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, sizes.count - 1)), height: sizes.map(\.height).max() ?? 0)
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:25:35: error: cannot find type 'CGRect' in scope
+23 |         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, sizes.count - 1)), height: sizes.map(\.height).max() ?? 0)
+24 |     }
+25 |     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+   |                                   `- error: cannot find type 'CGRect' in scope
+26 |         var x = bounds.minX
+27 |         for subview in subviews {
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:11:45: error: cannot find 'CGFloat' in scope
+ 9 |         WitnessMeasuredLayout(spacing: 4) {
+10 |             ForEach(0..<1, id: \.self) { index in
+11 |                 Color.red.frame(width: 12 + CGFloat(index) * 4, height: 10 + CGFloat(index) * 4)
+   |                                             `- error: cannot find 'CGFloat' in scope
+12 |             }
+13 |         }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:11:78: error: cannot find 'CGFloat' in scope
+ 9 |         WitnessMeasuredLayout(spacing: 4) {
+10 |             ForEach(0..<1, id: \.self) { index in
+11 |                 Color.red.frame(width: 12 + CGFloat(index) * 4, height: 10 + CGFloat(index) * 4)
+   |                                                                              `- error: cannot find 'CGFloat' in scope
+12 |             }
+13 |         }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:15:22: error: cannot infer key path type from context; consider explicitly specifying a root type
+13 |         }
+14 |         .frame(width: 32, height: 32)
+15 |         .environment(\.layoutDirection, .leftToRight)
+   |                      `- error: cannot infer key path type from context; consider explicitly specifying a root type
+16 |     }
+17 | }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:23:16: error: cannot find 'CGSize' in scope
+21 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+22 |         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+23 |         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, sizes.count - 1)), height: sizes.map(\.height).max() ?? 0)
+   |                `- error: cannot find 'CGSize' in scope
+24 |     }
+25 |     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:23:76: error: cannot find 'CGFloat' in scope
+21 |     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+22 |         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+23 |         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, sizes.count - 1)), height: sizes.map(\.height).max() ?? 0)
+   |                                                                            `- error: cannot find 'CGFloat' in scope
+24 |     }
+25 |     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-001\Witness.swift:29:31: error: cannot find 'CGPoint' in scope
+27 |         for subview in subviews {
+28 |             let size = subview.sizeThatFits(.unspecified)
+29 |             subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: ProposedViewSize(size))
+   |                               `- error: cannot find 'CGPoint' in scope
+30 |             x += size.width + spacing
+31 |         }

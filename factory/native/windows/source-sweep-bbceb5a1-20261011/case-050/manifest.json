@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.shapes.fill-stroke",
+  "case": {
+    "hash": "sha256:3f7e8c52cab4198282705942c942dde3f56633b8b9e1e5b4224c8d43d44ce2a1",
+    "id": "swiftui.shapes.fill-stroke.instrumentation-transparency"
+  },
+  "caseInputs": {
+    "color-scheme": "light",
+    "shape": "Rectangle()",
+    "style": "fill(Color.red)"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.shapes.fill-stroke:swiftui.shapes.fill-stroke.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": true,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.shapes.fill-stroke.witness",
+        "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "light"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+    "id": "swiftui.shapes.fill-stroke.recipe"
+  },
+  "scenario": "instrumentation-transparency",
+  "sourceFile": "swiftui.shapes.fill-stroke.instrumentation-transparency.swift",
+  "sourceHash": "sha256:39ca7e776d3cb39ee8447d8e3bad939803f3783cee02a3321ca2bd783acccd03",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.shapes.fill-stroke.witness",
+    "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+  },
+  "witnessType": "Witness_shapes_fill_stroke"
+}

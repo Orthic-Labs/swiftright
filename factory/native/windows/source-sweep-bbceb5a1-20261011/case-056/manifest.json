@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.shapes.fill-stroke",
+  "case": {
+    "hash": "sha256:afe92a0d696d5fa683931c97e9cc056e1326ff96b7357b2062b64ec0e53f223b",
+    "id": "swiftui.shapes.fill-stroke.recipe/case/f7f53c246821e147"
+  },
+  "caseInputs": {
+    "color-scheme": "dark",
+    "shape": "RoundedRectangle(cornerRadius: 6)",
+    "style": "stroke(Color.blue, lineWidth: 2)"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.shapes.fill-stroke:swiftui.shapes.fill-stroke.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.shapes.fill-stroke.witness",
+        "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "dark"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+    "id": "swiftui.shapes.fill-stroke.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.shapes.fill-stroke.recipe_case_f7f53c246821e147.swift",
+  "sourceHash": "sha256:e114645e45646305f86c1be9fbb53fc6641382a4d1b47dd0c8bc94f774d3f51f",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.shapes.fill-stroke.witness",
+    "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+  },
+  "witnessType": "Witness_shapes_fill_stroke"
+}

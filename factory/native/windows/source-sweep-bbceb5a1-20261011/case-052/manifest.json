@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.shapes.fill-stroke",
+  "case": {
+    "hash": "sha256:f55d570bcd1009df58654d6b620fa0ad708feae60c31b09c68d35ea12e248055",
+    "id": "swiftui.shapes.fill-stroke.recipe/case/04cc198078a27515"
+  },
+  "caseInputs": {
+    "color-scheme": "dark",
+    "shape": "Rectangle()",
+    "style": "fill(Color.red)"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.shapes.fill-stroke:swiftui.shapes.fill-stroke.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.shapes.fill-stroke.witness",
+        "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "dark"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+    "id": "swiftui.shapes.fill-stroke.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.shapes.fill-stroke.recipe_case_04cc198078a27515.swift",
+  "sourceHash": "sha256:d5bc4180c50f7b713e8bcd32c77a009a62ca426218145e053c5bafc1c27e41d7",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.shapes.fill-stroke.witness",
+    "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+  },
+  "witnessType": "Witness_shapes_fill_stroke"
+}

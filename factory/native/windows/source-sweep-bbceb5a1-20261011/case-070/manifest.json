@@ -1,0 +1,64 @@
+{
+  "block": "swiftui.text.bundled-font",
+  "case": {
+    "hash": "sha256:95ed8c16e761dc0507b80ad4e06e6ac669ba95e2e47a34d410d700f106ad5f52",
+    "id": "swiftui.text.bundled-font.recipe/case/9296961256b0bd97"
+  },
+  "caseInputs": {
+    "size": 12,
+    "weight": "regular",
+    "width": 80
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "host-specific measurement adapter required"
+    },
+    "assertionChannels": [
+      "text"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.text.bundled-font:swiftui.text.bundled-font.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.text.bundled-font.witness",
+        "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+    "id": "swiftui.text.bundled-font.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.text.bundled-font.recipe_case_9296961256b0bd97.swift",
+  "sourceHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.text.bundled-font.witness",
+    "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70"
+  },
+  "witnessType": "Witness_text_bundled_font"
+}

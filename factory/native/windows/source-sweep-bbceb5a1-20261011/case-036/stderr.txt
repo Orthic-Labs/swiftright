@@ -1,0 +1,69 @@
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:18:30: error: cannot find type 'CGFloat' in scope
+16 | 
+17 | struct WitnessWidths: PreferenceKey {
+18 |     static var defaultValue: CGFloat = 0
+   |                              `- error: cannot find type 'CGFloat' in scope
+19 |     static let reductionMode = "sum"
+20 |     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:20:37: error: cannot find type 'CGFloat' in scope
+18 |     static var defaultValue: CGFloat = 0
+19 |     static let reductionMode = "sum"
+20 |     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+   |                                     `- error: cannot find type 'CGFloat' in scope
+21 |         let next = nextValue()
+22 |         if reductionMode == "sum" { value += next } else { value = max(value, next) }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:20:63: error: cannot find type 'CGFloat' in scope
+18 |     static var defaultValue: CGFloat = 0
+19 |     static let reductionMode = "sum"
+20 |     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+   |                                                               `- error: cannot find type 'CGFloat' in scope
+21 |         let next = nextValue()
+22 |         if reductionMode == "sum" { value += next } else { value = max(value, next) }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:17:8: error: type 'WitnessWidths' does not conform to protocol 'PreferenceKey'
+15 | }
+16 | 
+17 | struct WitnessWidths: PreferenceKey {
+   |        |- error: type 'WitnessWidths' does not conform to protocol 'PreferenceKey'
+   |        `- note: add stubs for conformance
+18 |     static var defaultValue: CGFloat = 0
+19 |     static let reductionMode = "sum"
+
+SwiftRightRuntime.PreferenceKey.Value:2:16: note: protocol requires nested type 'Value'
+1 | protocol PreferenceKey {
+2 | associatedtype Value}
+  |                `- note: protocol requires nested type 'Value'
+3 | 
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:11:77: error: cannot find 'CGFloat' in scope
+ 9 |         VStack {
+10 |             ForEach(0..<1, id: \.self) { index in
+11 |                 Text("\(index)").preference(key: WitnessWidths.self, value: CGFloat((index + 2) * 10))
+   |                                                                             `- error: cannot find 'CGFloat' in scope
+12 |             }
+13 |         }.onPreferenceChange(WitnessWidths.self) { _ in }
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:13:11: error: instance method 'onPreferenceChange(_:perform:)' requires that 'WitnessWidths.Value' conform to 'Equatable'
+11 |                 Text("\(index)").preference(key: WitnessWidths.self, value: CGFloat((index + 2) * 10))
+12 |             }
+13 |         }.onPreferenceChange(WitnessWidths.self) { _ in }
+   |           `- error: instance method 'onPreferenceChange(_:perform:)' requires that 'WitnessWidths.Value' conform to 'Equatable'
+14 |     }
+15 | }
+
+SwiftRightRuntime.View.onPreferenceChange:2:24: note: where 'Key.Value' = 'WitnessWidths.Value'
+1 | protocol View {
+2 | @MainActor public func onPreferenceChange<Key>(_ key: Key.Type, perform action: @escaping (Key.Value) -> Void) -> some SwiftRightRuntime.View where Key : SwiftRightRuntime.PreferenceKey, Key.Value : Equatable
+  |                        `- note: where 'Key.Value' = 'WitnessWidths.Value'
+3 |   }
+4 | 
+
+D:\Claude\swiftright\factory\native\windows\source-sweep-bbceb5a1-20261011\case-036\Witness.swift:13:52: error: cannot infer type of closure parameter '_' without a type annotation
+11 |                 Text("\(index)").preference(key: WitnessWidths.self, value: CGFloat((index + 2) * 10))
+12 |             }
+13 |         }.onPreferenceChange(WitnessWidths.self) { _ in }
+   |                                                    `- error: cannot infer type of closure parameter '_' without a type annotation
+14 |     }
+15 | }
