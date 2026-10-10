@@ -1,0 +1,145 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -8,6 +8,7 @@
+ enum StackAxis: Sendable {
+     case horizontal
+     case vertical
++    case overlap
+ 
+     func main(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.height : size.width }
+     func cross(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.width : size.height }
+@@ -39,12 +40,24 @@
+     let name: String
+     let axis: StackAxis
+     let cross: CrossAlignment
++    let alignment: Alignment
+     let spacing: CGFloat
+     /// List-style: the stack takes the full finite cross proposal.
+     let fillsCross: Bool
+     /// Keeps `@State` of keyed rows removed from this container, so a reinserted row with the same
+     /// id gets its old state back. Only List does this on the recorded macOS 27 oracle (SR0-O F3).
+     var retainsRemovedRowState = false
++
++    init(name: String, axis: StackAxis, cross: CrossAlignment, alignment: Alignment = .center,
++         spacing: CGFloat, fillsCross: Bool, retainsRemovedRowState: Bool = false) {
++        self.name = name
++        self.axis = axis
++        self.cross = cross
++        self.alignment = alignment
++        self.spacing = spacing
++        self.fillsCross = fillsCross
++        self.retainsRemovedRowState = retainsRemovedRowState
++    }
+ }
+ 
+ /// Result of distributing a stack's main axis under one proposal.
+@@ -164,6 +177,7 @@
+     }
+ 
+     func stackPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
++        if spec.axis == .overlap { return overlapPlan(children, spec, proposal) }
+         let axis = spec.axis
+         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
+         let crossLimit = axis.crossLimit(proposal)
+@@ -222,6 +236,10 @@
+     }
+ 
+     private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
++        if spec.axis == .overlap {
++            placeOverlap(children, spec, in: rect, proposal: proposal)
++            return
++        }
+         let axis = spec.axis
+         let plan = stackPlan(children, spec, proposal)
+         let crossLength = axis.cross(rect.size)
+@@ -243,6 +261,37 @@
+         }
+     }
+ 
++
++    private func overlapPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
++        let sizes = children.map { measure($0, proposal) }
++        let width = sizes.map(\.width).max() ?? 0
++        let height = sizes.map(\.height).max() ?? 0
++        let childProposals = Array(repeating: proposal, count: children.count)
++        return StackPlan(children: children, sizes: sizes, proposals: childProposals,
++                         size: LayoutSize(width: width, height: height))
++    }
++
++    private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
++        for child in children {
++            let size = measure(child, proposal)
++            let xSlack = rect.width - size.width
++            let ySlack = rect.height - size.height
++            let x: CGFloat
++            switch spec.alignment.horizontal.kind {
++            case .leading: x = rect.minX
++            case .center: x = rect.minX + xSlack / 2
++            case .trailing: x = rect.minX + xSlack
++            }
++            let y: CGFloat
++            switch spec.alignment.vertical.kind {
++            case .top: y = rect.minY
++            case .center: y = rect.minY + ySlack / 2
++            case .bottom: y = rect.minY + ySlack
++            }
++            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: proposal)
++        }
++    }
++
+     private func measureGroup(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
+         let children = childNodes(node)
+         if children.count == 1 { return measure(children[0], proposal) }
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
+@@ -281,6 +281,21 @@
+     var nodeKind: NodeKind {
+         .stack(StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
+                          spacing: spacing ?? defaultStackSpacing, fillsCross: false))
++    }
++    var nodeContent: (any View)? { content }
++}
++
++/// Overlapping stack whose children keep declaration order for painting and hit testing.
++public struct ZStack<Content: View>: View, PrimitiveView {
++    let alignment: Alignment
++    let content: Content
++    public init(alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
++        self.alignment = alignment
++        self.content = content()
++    }
++    @MainActor public var body: Never { return fatalError("primitive view has no body") }
++    var nodeKind: NodeKind {
++        .stack(StackSpec(name: "ZStack", axis: .overlap, cross: .middle, alignment: alignment, spacing: 0, fillsCross: false))
+     }
+     var nodeContent: (any View)? { content }
+ }
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift
+@@ -0,0 +1,26 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++struct ZStackProbe: View {
++    let alignment: Alignment
++    var body: some View {
++        ZStack(alignment: alignment) {
++            Text("long")
++            Text("x")
++        }
++    }
++}
++
++@MainActor
++final class StackAdditionTests: XCTestCase {
++    func testZStackMeasuresLargestChildPlacesByAlignmentAndKeepsOrder() throws {
++        let graph = Graph(ZStackProbe(alignment: .bottomTrailing), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let stack = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(stack.kind, "ZStack")
++        XCTAssertEqual(stack.frame.size, LayoutSize(width: 32, height: 16))
++        XCTAssertEqual(stack.children.map(\.text), ["long", "x"])
++        XCTAssertEqual(stack.children.map(\.frame.origin), [LayoutPoint(x: 0, y: 0), LayoutPoint(x: 24, y: 0)])
++    }
++}

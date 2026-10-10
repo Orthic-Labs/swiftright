@@ -285,6 +285,21 @@ public struct HStack<Content: View>: View, PrimitiveView {
     var nodeContent: (any View)? { content }
 }
 
+/// Overlapping stack whose children keep declaration order for painting and hit testing.
+public struct ZStack<Content: View>: View, PrimitiveView {
+    let alignment: Alignment
+    let content: Content
+    public init(alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
+        self.alignment = alignment
+        self.content = content()
+    }
+    @MainActor public var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "ZStack", axis: .overlap, cross: .middle, alignment: alignment, spacing: 0, fillsCross: false))
+    }
+    var nodeContent: (any View)? { content }
+}
+
 /// Vertical stack that realizes every row (no virtualization yet). Like VStack, a reinserted row's
 /// `@State` resets (SR0-O F3: macOS 27 LazyVStack in a ScrollView resets it, unlike List).
 public struct LazyVStack<Content: View>: View, PrimitiveView {

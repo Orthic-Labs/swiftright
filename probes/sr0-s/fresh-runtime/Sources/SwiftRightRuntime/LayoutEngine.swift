@@ -8,6 +8,7 @@ let defaultPaddingLength: CGFloat = 16
 enum StackAxis: Sendable {
     case horizontal
     case vertical
+    case overlap
 
     func main(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.height : size.width }
     func cross(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.width : size.height }
@@ -39,12 +40,24 @@ struct StackSpec: Sendable, Equatable {
     let name: String
     let axis: StackAxis
     let cross: CrossAlignment
+    let alignment: Alignment
     let spacing: CGFloat
     /// List-style: the stack takes the full finite cross proposal.
     let fillsCross: Bool
     /// Keeps `@State` of keyed rows removed from this container, so a reinserted row with the same
     /// id gets its old state back. Only List does this on the recorded macOS 27 oracle (SR0-O F3).
     var retainsRemovedRowState = false
+
+    init(name: String, axis: StackAxis, cross: CrossAlignment, alignment: Alignment = .center,
+         spacing: CGFloat, fillsCross: Bool, retainsRemovedRowState: Bool = false) {
+        self.name = name
+        self.axis = axis
+        self.cross = cross
+        self.alignment = alignment
+        self.spacing = spacing
+        self.fillsCross = fillsCross
+        self.retainsRemovedRowState = retainsRemovedRowState
+    }
 }
 
 /// Result of distributing a stack's main axis under one proposal.
@@ -166,6 +179,7 @@ extension Graph {
     }
 
     func stackPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
+        if spec.axis == .overlap { return overlapPlan(children, spec, proposal) }
         let axis = spec.axis
         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
         let crossLimit = axis.crossLimit(proposal)
@@ -224,6 +238,10 @@ extension Graph {
     }
 
     private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+        if spec.axis == .overlap {
+            placeOverlap(children, spec, in: rect, proposal: proposal)
+            return
+        }
         let axis = spec.axis
         let plan = stackPlan(children, spec, proposal)
         let crossLength = axis.cross(rect.size)
@@ -242,6 +260,37 @@ extension Graph {
                 : LayoutPoint(x: offset, y: rect.minY + crossOffset)
             place(child, in: LayoutRect(origin: origin, size: size), proposal: plan.proposals[index])
             offset += axis.main(size) + spec.spacing
+        }
+    }
+
+
+    private func overlapPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
+        let sizes = children.map { measure($0, proposal) }
+        let width = sizes.map(\.width).max() ?? 0
+        let height = sizes.map(\.height).max() ?? 0
+        let childProposals = Array(repeating: proposal, count: children.count)
+        return StackPlan(children: children, sizes: sizes, proposals: childProposals,
+                         size: LayoutSize(width: width, height: height))
+    }
+
+    private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+        for child in children {
+            let size = measure(child, proposal)
+            let xSlack = rect.width - size.width
+            let ySlack = rect.height - size.height
+            let x: CGFloat
+            switch spec.alignment.horizontal.kind {
+            case .leading: x = rect.minX
+            case .center: x = rect.minX + xSlack / 2
+            case .trailing: x = rect.minX + xSlack
+            }
+            let y: CGFloat
+            switch spec.alignment.vertical.kind {
+            case .top: y = rect.minY
+            case .center: y = rect.minY + ySlack / 2
+            case .bottom: y = rect.minY + ySlack
+            }
+            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: proposal)
         }
     }
 
