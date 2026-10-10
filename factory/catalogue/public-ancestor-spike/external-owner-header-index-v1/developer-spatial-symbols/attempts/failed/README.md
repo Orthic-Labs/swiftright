@@ -1,0 +1,1 @@
+Failed preimage retained for audit. CoreFoundation first request exited 1 because driver rejected -enable-experimental-concurrency. Corrected request forwards this header flag through -Xfrontend, then one successful CoreFoundation capture was performed. Failed bytes are excluded from accepted evidence.
