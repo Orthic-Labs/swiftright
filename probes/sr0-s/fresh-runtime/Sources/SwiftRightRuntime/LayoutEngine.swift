@@ -9,6 +9,7 @@ enum StackAxis: Sendable {
     case horizontal
     case vertical
     case overlap
+    case overlay
 
     func main(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.height : size.width }
     func cross(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.width : size.height }
@@ -180,6 +181,7 @@ extension Graph {
 
     func stackPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
         if spec.axis == .overlap { return overlapPlan(children, spec, proposal) }
+        if spec.axis == .overlay { return overlayPlan(children, spec, proposal) }
         let axis = spec.axis
         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
         let crossLimit = axis.crossLimit(proposal)
@@ -242,6 +244,10 @@ extension Graph {
             placeOverlap(children, spec, in: rect, proposal: proposal)
             return
         }
+        if spec.axis == .overlay {
+            placeOverlay(children, spec, in: rect, proposal: proposal)
+            return
+        }
         let axis = spec.axis
         let plan = stackPlan(children, spec, proposal)
         let crossLength = axis.cross(rect.size)
@@ -271,6 +277,42 @@ extension Graph {
         let childProposals = Array(repeating: proposal, count: children.count)
         return StackPlan(children: children, sizes: sizes, proposals: childProposals,
                          size: LayoutSize(width: width, height: height))
+    }
+
+    private func overlayPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
+        guard let base = children.first else {
+            return StackPlan(children: [], sizes: [], proposals: [], size: .zero)
+        }
+        let baseSize = measure(base, proposal)
+        let overlayProposal = ProposedViewSize(baseSize)
+        let sizes = [baseSize] + children.dropFirst().map { measure($0, overlayProposal) }
+        let proposals = [proposal] + Array(repeating: overlayProposal, count: children.count - 1)
+        return StackPlan(children: children, sizes: sizes, proposals: proposals, size: baseSize)
+    }
+
+    private func placeOverlay(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+        guard let base = children.first else { return }
+        let plan = overlayPlan(children, spec, proposal)
+        place(base, in: rect, proposal: plan.proposals[0])
+        for index in 1..<children.count {
+            let child = children[index]
+            let size = plan.sizes[index]
+            let xSlack = rect.width - size.width
+            let ySlack = rect.height - size.height
+            let x: CGFloat
+            switch spec.alignment.horizontal.kind {
+            case .leading: x = rect.minX
+            case .center: x = rect.minX + xSlack / 2
+            case .trailing: x = rect.minX + xSlack
+            }
+            let y: CGFloat
+            switch spec.alignment.vertical.kind {
+            case .top: y = rect.minY
+            case .center: y = rect.minY + ySlack / 2
+            case .bottom: y = rect.minY + ySlack
+            }
+            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: plan.proposals[index])
+        }
     }
 
     private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {

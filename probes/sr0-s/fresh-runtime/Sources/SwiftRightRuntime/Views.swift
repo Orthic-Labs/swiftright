@@ -249,6 +249,32 @@ public struct VerticalAlignment: Sendable, Equatable {
     }
 }
 
+// MARK: - Overlay
+
+struct OverlayStack<Base: View, Overlay: View>: View, PrimitiveView {
+    let base: Base
+    let overlay: Overlay
+    let alignment: Alignment
+
+    @MainActor public var body: Never { return fatalError("overlay has no body") }
+    var nodeKind: NodeKind {
+        .stack(StackSpec(name: "Overlay", axis: .overlay, cross: .middle, alignment: alignment, spacing: 0, fillsCross: false))
+    }
+    var nodeContent: (any View)? {
+        TupleView<(Base, Overlay)>(value: (base, overlay), listed: [base, overlay])
+    }
+}
+
+extension View {
+    /// Draws overlay content above this view; base view determines measured size.
+    public func overlay<Overlay: View>(
+        alignment: Alignment = .center,
+        @ViewBuilder content: () -> Overlay
+    ) -> some View {
+        OverlayStack(base: self, overlay: content(), alignment: alignment)
+    }
+}
+
 // MARK: - Stacks
 
 public struct VStack<Content: View>: View, PrimitiveView {

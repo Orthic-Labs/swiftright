@@ -1,0 +1,132 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -9,6 +9,7 @@
+     case horizontal
+     case vertical
+     case overlap
++    case overlay
+ 
+     func main(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.height : size.width }
+     func cross(_ size: LayoutSize) -> CGFloat { self == .vertical ? size.width : size.height }
+@@ -178,6 +179,7 @@
+ 
+     func stackPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
+         if spec.axis == .overlap { return overlapPlan(children, spec, proposal) }
++        if spec.axis == .overlay { return overlayPlan(children, spec, proposal) }
+         let axis = spec.axis
+         let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
+         let crossLimit = axis.crossLimit(proposal)
+@@ -240,6 +242,10 @@
+             placeOverlap(children, spec, in: rect, proposal: proposal)
+             return
+         }
++        if spec.axis == .overlay {
++            placeOverlay(children, spec, in: rect, proposal: proposal)
++            return
++        }
+         let axis = spec.axis
+         let plan = stackPlan(children, spec, proposal)
+         let crossLength = axis.cross(rect.size)
+@@ -271,6 +277,42 @@
+                          size: LayoutSize(width: width, height: height))
+     }
+ 
++    private func overlayPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
++        guard let base = children.first else {
++            return StackPlan(children: [], sizes: [], proposals: [], size: .zero)
++        }
++        let baseSize = measure(base, proposal)
++        let overlayProposal = ProposedViewSize(baseSize)
++        let sizes = [baseSize] + children.dropFirst().map { measure($0, overlayProposal) }
++        let proposals = [proposal] + Array(repeating: overlayProposal, count: children.count - 1)
++        return StackPlan(children: children, sizes: sizes, proposals: proposals, size: baseSize)
++    }
++
++    private func placeOverlay(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
++        guard let base = children.first else { return }
++        let plan = overlayPlan(children, spec, proposal)
++        place(base, in: rect, proposal: plan.proposals[0])
++        for index in 1..<children.count {
++            let child = children[index]
++            let size = plan.sizes[index]
++            let xSlack = rect.width - size.width
++            let ySlack = rect.height - size.height
++            let x: CGFloat
++            switch spec.alignment.horizontal.kind {
++            case .leading: x = rect.minX
++            case .center: x = rect.minX + xSlack / 2
++            case .trailing: x = rect.minX + xSlack
++            }
++            let y: CGFloat
++            switch spec.alignment.vertical.kind {
++            case .top: y = rect.minY
++            case .center: y = rect.minY + ySlack / 2
++            case .bottom: y = rect.minY + ySlack
++            }
++            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: plan.proposals[index])
++        }
++    }
++
+     private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+         for child in children {
+             let size = measure(child, proposal)
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Views.swift
+@@ -246,6 +246,32 @@
+         case .center: return .middle
+         case .bottom: return .end
+         }
++    }
++}
++
++// MARK: - Overlay
++
++struct OverlayStack<Base: View, Overlay: View>: View, PrimitiveView {
++    let base: Base
++    let overlay: Overlay
++    let alignment: Alignment
++
++    @MainActor public var body: Never { return fatalError("overlay has no body") }
++    var nodeKind: NodeKind {
++        .stack(StackSpec(name: "Overlay", axis: .overlay, cross: .middle, alignment: alignment, spacing: 0, fillsCross: false))
++    }
++    var nodeContent: (any View)? {
++        TupleView<(Base, Overlay)>(value: (base, overlay), listed: [base, overlay])
++    }
++}
++
++extension View {
++    /// Draws overlay content above this view; base view determines measured size.
++    public func overlay<Overlay: View>(
++        alignment: Alignment = .center,
++        @ViewBuilder content: () -> Overlay
++    ) -> some View {
++        OverlayStack(base: self, overlay: content(), alignment: alignment)
+     }
+ }
+ 
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift
+@@ -24,3 +24,22 @@
+         XCTAssertEqual(stack.children.map(\.frame.origin), [LayoutPoint(x: 0, y: 0), LayoutPoint(x: 24, y: 0)])
+     }
+ }
++
++struct OverlayProbe: View {
++    var body: some View {
++        Text("base").overlay(alignment: .bottomTrailing) { Text("longlong") }
++    }
++}
++
++extension StackAdditionTests {
++    func testOverlayKeepsBaseMeasurementPlacesAboveBaseAndPreservesOrder() throws {
++        let graph = Graph(OverlayProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let overlay = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(overlay.kind, "Overlay")
++        XCTAssertEqual(overlay.frame.size, LayoutSize(width: 32, height: 16))
++        XCTAssertEqual(overlay.children.map(\.text), ["base", "longlong"])
++        XCTAssertEqual(overlay.children[0].frame, LayoutRect(x: 0, y: 0, width: 32, height: 16))
++        XCTAssertEqual(overlay.children[1].frame, LayoutRect(x: -32, y: 0, width: 64, height: 16))
++    }
++}
