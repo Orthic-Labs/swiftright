@@ -1,0 +1,286 @@
+2026-10-10T12:54:21.8848524+05:30 run-workload tag=tuple08 instr=full runs=3 warmup=10 measure=60 rows=200 key_rate=10 resources=on paint_phase_ms=default
+2026-10-10T12:54:22.1086708+05:30 ARTIFACT base=D:\Claude\sr0-r08\workload bin=D:\Claude\sr0-r08\workload\scratch\out\Products\Release-windows-x86_64 exe_sha256=0815DF499371CEDE032758B00A6B254726DD524B9A0930C2D96B57089A74070F dll_sha256=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93 expect_exe= expect_dll=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93
+2026-10-10T12:54:22.1086708+05:30 ARTIFACT_OK
+2026-10-10T12:54:25.5809287+05:30 host context (not a gate): build/test processes seen=none
+2026-10-10T12:54:32.9695045+05:30 presentmon started=True csv_bytes=3
+2026-10-10T12:54:38.1364563+05:30 registered SR0BWorkload
+2026-10-10T12:58:39.9818224+05:30 harness finished=True task_state=Ready
+2026-10-10T12:58:43.8201641+05:30 stop presentmon (terminate_existing_session)
+THRESHOLD P    r1   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r1   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r1   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r1   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r1   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r1   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r1   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r1   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r1   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r1   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r1   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r1   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r1   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=678 in_run=678 post_run=0 typed=678
+THRESHOLD W1   r1   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r1   PASS    bridge time per input p95 (ms): 0.5028 (limit <= 1.0) n=589
+THRESHOLD W2   r1   PASS    bridge time per input p99 (ms): 0.8771 (limit <= 2.0)
+THRESHOLD W3   r1   PASS    bridge time per committed frame p95 (ms): 0.9971 (limit <= 2.0) n=5301
+THRESHOLD W3   r1   PASS    bridge time per committed frame p99 (ms): 1.1554 (limit <= 4.0)
+THRESHOLD W6   r1   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11264 need>=5000
+THRESHOLD W6   r1   PASS    main-actor enqueue->exec p99 (ms): 10.5750 (limit <= 16.7) n=11264 max=24.47
+THRESHOLD R    r1   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 3.6073 (limit <= 5.0) raw_slope=4.214 trace_slope=0.607 n=57 first=298.02MB last=302.53MB ws_slope=6.265MB/min
+THRESHOLD C    r1   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=8852
+THRESHOLD W5   r1   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.664 hz=60.009
+THRESHOLD W5   r1   FAIL    missed vblanks (interval > 1.5 x refresh): 5 (limit == 0) n=3595
+THRESHOLD W5   r1   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.6998 (limit <= 16.764300000000002) p50=16.664 p99=16.710 max=33.346
+THRESHOLD CAL  r1   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1622 (limit <= 2.0) n=3600 p50=0.122
+THRESHOLD W4   r1   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=589
+THRESHOLD W4   r1   PASS    input->visible p95 (ms): 43.8921 (limit <= 50.0) n=589 p50=40.26
+THRESHOLD W4   r1   PASS    input->visible p99 (ms): 44.3362 (limit <= 100.0) max=48.82
+THRESHOLD CAL  r1   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=589 need>=559 (key schedule covers 58.9 of 60.0 s)
+THRESHOLD CAL  r1   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.9 of 60.0 s
+THRESHOLD P    r2   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r2   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r2   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r2   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r2   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r2   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r2   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r2   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r2   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r2   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r2   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r2   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r2   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=677 in_run=677 post_run=0 typed=677
+THRESHOLD W1   r2   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r2   PASS    bridge time per input p95 (ms): 0.5230 (limit <= 1.0) n=587
+THRESHOLD W2   r2   PASS    bridge time per input p99 (ms): 0.8153 (limit <= 2.0)
+THRESHOLD W3   r2   PASS    bridge time per committed frame p95 (ms): 0.8380 (limit <= 2.0) n=5281
+THRESHOLD W3   r2   PASS    bridge time per committed frame p99 (ms): 0.9727 (limit <= 4.0)
+THRESHOLD W6   r2   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11226 need>=5000
+THRESHOLD W6   r2   PASS    main-actor enqueue->exec p99 (ms): 8.3659 (limit <= 16.7) n=11226 max=20.19
+THRESHOLD R    r2   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 3.8186 (limit <= 5.0) raw_slope=4.424 trace_slope=0.605 n=58 first=298.14MB last=303.29MB ws_slope=6.469MB/min
+THRESHOLD C    r2   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=45176
+THRESHOLD W5   r2   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.665 hz=60.008
+THRESHOLD W5   r2   FAIL    missed vblanks (interval > 1.5 x refresh): 1 (limit == 0) n=3599
+THRESHOLD W5   r2   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.7368 (limit <= 16.7645) p50=16.665 p99=16.768 max=33.318
+THRESHOLD CAL  r2   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1338 (limit <= 2.0) n=3600 p50=0.098
+THRESHOLD W4   r2   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=587
+THRESHOLD W4   r2   PASS    input->visible p95 (ms): 45.7965 (limit <= 50.0) n=587 p50=41.95
+THRESHOLD W4   r2   PASS    input->visible p99 (ms): 46.1352 (limit <= 100.0) max=47.55
+THRESHOLD CAL  r2   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=587 need>=557 (key schedule covers 58.7 of 60.0 s)
+THRESHOLD CAL  r2   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.7 of 60.0 s
+THRESHOLD P    r3   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r3   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r3   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r3   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r3   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r3   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r3   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r3   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r3   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r3   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r3   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r3   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r3   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=681 in_run=681 post_run=0 typed=681
+THRESHOLD W1   r3   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r3   PASS    bridge time per input p95 (ms): 0.4210 (limit <= 1.0) n=590
+THRESHOLD W2   r3   PASS    bridge time per input p99 (ms): 0.7552 (limit <= 2.0)
+THRESHOLD W3   r3   PASS    bridge time per committed frame p95 (ms): 0.8276 (limit <= 2.0) n=5302
+THRESHOLD W3   r3   PASS    bridge time per committed frame p99 (ms): 0.9465 (limit <= 4.0)
+THRESHOLD W6   r3   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11208 need>=5000
+THRESHOLD W6   r3   PASS    main-actor enqueue->exec p99 (ms): 8.3567 (limit <= 16.7) n=11208 max=21.08
+THRESHOLD R    r3   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 2.6046 (limit <= 5.0) raw_slope=3.211 trace_slope=0.606 n=58 first=299.12MB last=303.03MB ws_slope=5.23MB/min
+THRESHOLD C    r3   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=40212
+THRESHOLD W5   r3   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.664 hz=60.009
+THRESHOLD W5   r3   FAIL    missed vblanks (interval > 1.5 x refresh): 1 (limit == 0) n=3599
+THRESHOLD W5   r3   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.7438 (limit <= 16.764200000000002) p50=16.664 p99=16.782 max=33.359
+THRESHOLD CAL  r3   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1252 (limit <= 2.0) n=3601 p50=0.098
+THRESHOLD W4   r3   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=590
+THRESHOLD W4   r3   PASS    input->visible p95 (ms): 43.9020 (limit <= 50.0) n=590 p50=39.98
+THRESHOLD W4   r3   PASS    input->visible p99 (ms): 47.4485 (limit <= 100.0) max=59.12
+THRESHOLD CAL  r3   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=590 need>=560 (key schedule covers 58.9 of 60.0 s)
+THRESHOLD CAL  r3   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.9 of 60.0 s
+THRESHOLD W7   set  MISSING UI-only incremental build record present: None (limit bool True) D:\Claude\sr0-r08\workload\runs\tuple08/incremental.json missing: run scripts/build-incremental.*
+RESOURCES r1 samples=57 cpu_total_avg=25.13 proc_core_avg=60.02 proc_core_peak=74.62 private_mb_peak=302.53 private_slope_mb_min=4.214 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r1: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r1: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r1: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):6.32;powershell(36424):0.35;logioptionsplus_agent(12908):0.25;msedge(4532):0.24;powershell(32464):0.19;msedge(34376):0.15
+FLAG r1: CONTEXT: msUntilRenderComplete p50 6.06 p95 9.14 p99 10.94 max 13.92 ms; dropped (replaced) presents 5 of 3600
+RESOURCES r2 samples=58 cpu_total_avg=15.78 proc_core_avg=49.79 proc_core_peak=60.59 private_mb_peak=303.29 private_slope_mb_min=4.424 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r2: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r2: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r2: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):5.88;powershell(36424):0.36;logioptionsplus_agent(12908):0.21;powershell(47896):0.18;msedge(34376):0.14;claude(10428):0.12
+FLAG r2: CONTEXT: msUntilRenderComplete p50 6.13 p95 9.45 p99 11.01 max 14.17 ms; dropped (replaced) presents 1 of 3600
+RESOURCES r3 samples=58 cpu_total_avg=15.29 proc_core_avg=50.35 proc_core_peak=59.91 private_mb_peak=303.03 private_slope_mb_min=3.211 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r3: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r3: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r3: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):5.82;powershell(36424):0.31;logioptionsplus_agent(12908):0.21;msedge(46608):0.18;powershell(25296):0.16;LogiPluginService(23248):0.09
+FLAG r3: CONTEXT: msUntilRenderComplete p50 6.18 p95 9.16 p99 11.18 max 13.94 ms; dropped (replaced) presents 1 of 3600
+REFUSED: set: W7 UI-only incremental build record present not measurable
+OVERALL: INCOMPLETE
+report: D:\Claude\sr0-r08\workload\runs\tuple08\report/report.json, D:\Claude\sr0-r08\workload\runs\tuple08\report/report.md, raw samples: D:\Claude\sr0-r08\workload\runs\tuple08\report/raw/
+2026-10-10T12:58:44.4747025+05:30 analysis rc=2 report=D:\Claude\sr0-r08\workload\runs\tuple08\report
+
+=== RE-ANALYSIS (appended on the Mac after the run; every line ABOVE this one is verbatim stdout of run-workload.ps1) ===
+The orchestrator analysis above is INCOMPLETE only because D:\Claude\sr0-r08\workload has no incremental.json (W7 UI-only incremental build record). The analyzer was re-run on the same run root with the record it-8 used (D:\Claude\sr0b-workload\incremental.json, written 2026-10-09 21:35 by build-incremental.ps1: 3 edits, 0 Rust invocations, DLL hashes identical; it is a carried-over build-graph record, not re-measured on tuple 08, exactly as tuple 07 did; the workload exe is the same copied 0815DF49, the renderer is copied, not built, in this tree). No run data differs between the two analyses except W7. Report: D:\Claude\sr0-r08\workloaduns	uple08eport-incr
+command: py -3.11 -I analyze_workload.py --os windows --root D:\Claude\sr0-r08\workloaduns	uple08 --expect-scale 2.5 --out ...eport-incr --incremental D:\Claude\sr0b-workload\incremental.json
+THRESHOLD P    r1   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r1   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r1   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r1   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r1   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r1   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r1   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r1   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r1   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r1   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r1   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r1   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r1   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r1   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=678 in_run=678 post_run=0 typed=678
+THRESHOLD W1   r1   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r1   PASS    bridge time per input p95 (ms): 0.5028 (limit <= 1.0) n=589
+THRESHOLD W2   r1   PASS    bridge time per input p99 (ms): 0.8771 (limit <= 2.0)
+THRESHOLD W3   r1   PASS    bridge time per committed frame p95 (ms): 0.9971 (limit <= 2.0) n=5301
+THRESHOLD W3   r1   PASS    bridge time per committed frame p99 (ms): 1.1554 (limit <= 4.0)
+THRESHOLD W6   r1   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11264 need>=5000
+THRESHOLD W6   r1   PASS    main-actor enqueue->exec p99 (ms): 10.5750 (limit <= 16.7) n=11264 max=24.47
+THRESHOLD R    r1   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 3.6073 (limit <= 5.0) raw_slope=4.214 trace_slope=0.607 n=57 first=298.02MB last=302.53MB ws_slope=6.265MB/min
+THRESHOLD C    r1   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=8852
+THRESHOLD W5   r1   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.664 hz=60.009
+THRESHOLD W5   r1   FAIL    missed vblanks (interval > 1.5 x refresh): 5 (limit == 0) n=3595
+THRESHOLD W5   r1   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.6998 (limit <= 16.764300000000002) p50=16.664 p99=16.710 max=33.346
+THRESHOLD CAL  r1   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1622 (limit <= 2.0) n=3600 p50=0.122
+THRESHOLD W4   r1   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=589
+THRESHOLD W4   r1   PASS    input->visible p95 (ms): 43.8921 (limit <= 50.0) n=589 p50=40.26
+THRESHOLD W4   r1   PASS    input->visible p99 (ms): 44.3362 (limit <= 100.0) max=48.82
+THRESHOLD CAL  r1   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=589 need>=559 (key schedule covers 58.9 of 60.0 s)
+THRESHOLD CAL  r1   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.9 of 60.0 s
+THRESHOLD P    r2   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r2   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r2   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r2   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r2   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r2   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r2   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r2   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r2   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r2   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r2   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r2   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r2   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r2   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=677 in_run=677 post_run=0 typed=677
+THRESHOLD W1   r2   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r2   PASS    bridge time per input p95 (ms): 0.5230 (limit <= 1.0) n=587
+THRESHOLD W2   r2   PASS    bridge time per input p99 (ms): 0.8153 (limit <= 2.0)
+THRESHOLD W3   r2   PASS    bridge time per committed frame p95 (ms): 0.8380 (limit <= 2.0) n=5281
+THRESHOLD W3   r2   PASS    bridge time per committed frame p99 (ms): 0.9727 (limit <= 4.0)
+THRESHOLD W6   r2   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11226 need>=5000
+THRESHOLD W6   r2   PASS    main-actor enqueue->exec p99 (ms): 8.3659 (limit <= 16.7) n=11226 max=20.19
+THRESHOLD R    r2   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 3.8186 (limit <= 5.0) raw_slope=4.424 trace_slope=0.605 n=58 first=298.14MB last=303.29MB ws_slope=6.469MB/min
+THRESHOLD C    r2   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=45176
+THRESHOLD W5   r2   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.665 hz=60.008
+THRESHOLD W5   r2   FAIL    missed vblanks (interval > 1.5 x refresh): 1 (limit == 0) n=3599
+THRESHOLD W5   r2   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.7368 (limit <= 16.7645) p50=16.665 p99=16.768 max=33.318
+THRESHOLD CAL  r2   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1338 (limit <= 2.0) n=3600 p50=0.098
+THRESHOLD W4   r2   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=587
+THRESHOLD W4   r2   PASS    input->visible p95 (ms): 45.7965 (limit <= 50.0) n=587 p50=41.95
+THRESHOLD W4   r2   PASS    input->visible p99 (ms): 46.1352 (limit <= 100.0) max=47.55
+THRESHOLD CAL  r2   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=587 need>=557 (key schedule covers 58.7 of 60.0 s)
+THRESHOLD CAL  r2   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.7 of 60.0 s
+THRESHOLD P    r3   PASS    DPI scale pinned: 2.5000 (limit == 2.5)
+THRESHOLD P    r3   PASS    window size pinned (960x640 DIP): True (limit bool True)
+THRESHOLD P    r3   PASS    ABI 0.6: True (limit bool True) abi=0.6
+THRESHOLD P    r3   PASS    no debugger attached: True (limit bool True)
+THRESHOLD P    r3   PASS    full instrumentation level: True (limit bool True) instr=full
+THRESHOLD W1   r3   PASS    wrong-node edits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    stale-owner result commits: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    commits after window close: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    row count constant (min=max=200): True (limit bool True) min=200 max=200
+THRESHOLD W1   r3   PASS    unique stable row ids: True (limit bool True)
+THRESHOLD W1   r3   PASS    run completed (app_exit complete, window closed): True (limit bool True)
+THRESHOLD W1   r3   PASS    cancellation exercised (stale results rejected > 0): True (limit bool True)
+THRESHOLD W1   r3   PASS    interrupted animation exercised: True (limit bool True)
+THRESHOLD W0   r3   PASS    async ops delivered (>= 95% of 20/s): True (limit bool True) started=1401 want>=1330 skipped=0
+THRESHOLD W0   r3   PASS    reorders delivered (>= 1/s): True (limit bool True) reorders=70
+THRESHOLD W1   r3   PASS    commit errors: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer commits rejected: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer live nodes after teardown: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    renderer host panics / thread violations / reentry / dropped events: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    measure/draw failures: 0 (limit == 0)
+THRESHOLD W1   r3   PASS    lost valid edits (posted up to measure end - applied): 0 (limit == 0) injected=681 in_run=681 post_run=0 typed=681
+THRESHOLD W1   r3   PASS    active text equals injected sequence: True (limit bool True)
+THRESHOLD W2   r3   PASS    bridge time per input p95 (ms): 0.4210 (limit <= 1.0) n=590
+THRESHOLD W2   r3   PASS    bridge time per input p99 (ms): 0.7552 (limit <= 2.0)
+THRESHOLD W3   r3   PASS    bridge time per committed frame p95 (ms): 0.8276 (limit <= 2.0) n=5302
+THRESHOLD W3   r3   PASS    bridge time per committed frame p99 (ms): 0.9465 (limit <= 4.0)
+THRESHOLD W6   r3   PASS    main-actor samples sufficient (starvation guard): True (limit bool True) n=11208 need>=5000
+THRESHOLD W6   r3   PASS    main-actor enqueue->exec p99 (ms): 8.3567 (limit <= 16.7) n=11208 max=21.08
+THRESHOLD R    r3   PASS    private bytes growth slope in the measured window, trace buffers excluded (MB/min), leak flag: 2.6046 (limit <= 5.0) raw_slope=3.211 trace_slope=0.606 n=58 first=299.12MB last=303.03MB ws_slope=5.23MB/min
+THRESHOLD C    r3   PASS    PresentMon rows in measured window (capture integrity): True (limit bool True) rows=3600 expect~3600 pid=40212
+THRESHOLD W5   r3   PASS    refresh period measured (ms) within 60 Hz +-0.5%: True (limit bool True) refresh_ms=16.664 hz=60.009
+THRESHOLD W5   r3   FAIL    missed vblanks (interval > 1.5 x refresh): 1 (limit == 0) n=3599
+THRESHOLD W5   r3   PASS    presented interval p95 (ms) <= refresh + 0.1: 16.7438 (limit <= 16.764200000000002) p50=16.664 p99=16.782 max=33.359
+THRESHOLD CAL  r3   PASS    clock correlation: |tick QPC - nearest present start| p95 (ms): 0.1252 (limit <= 2.0) n=3601 p50=0.098
+THRESHOLD W4   r3   PASS    every injected key in the window has a visible response: 0 (limit == 0) keys=590
+THRESHOLD W4   r3   PASS    input->visible p95 (ms): 43.9020 (limit <= 50.0) n=590 p50=39.98
+THRESHOLD W4   r3   PASS    input->visible p99 (ms): 47.4485 (limit <= 100.0) max=59.12
+THRESHOLD CAL  r3   PASS    keys in window (script delivered 10/s): True (limit bool True) keys=590 need>=560 (key schedule covers 58.9 of 60.0 s)
+THRESHOLD CAL  r3   PASS    key schedule covers >= 90% of the measured window: True (limit bool True) 58.9 of 60.0 s
+THRESHOLD W7   set  PASS    Rust compiler invocations during UI-only incremental builds: 0 (limit == 0) edits=3
+THRESHOLD W7   set  PASS    renderer / engine artifact hashes identical: True (limit bool True)
+THRESHOLD W7   set  PASS    incremental builds succeeded: True (limit bool True)
+RESOURCES r1 samples=57 cpu_total_avg=25.13 proc_core_avg=60.02 proc_core_peak=74.62 private_mb_peak=302.53 private_slope_mb_min=4.214 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r1: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r1: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r1: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):6.32;powershell(36424):0.35;logioptionsplus_agent(12908):0.25;msedge(4532):0.24;powershell(32464):0.19;msedge(34376):0.15
+FLAG r1: CONTEXT: msUntilRenderComplete p50 6.06 p95 9.14 p99 10.94 max 13.92 ms; dropped (replaced) presents 5 of 3600
+RESOURCES r2 samples=58 cpu_total_avg=15.78 proc_core_avg=49.79 proc_core_peak=60.59 private_mb_peak=303.29 private_slope_mb_min=4.424 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r2: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r2: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r2: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):5.88;powershell(36424):0.36;logioptionsplus_agent(12908):0.21;powershell(47896):0.18;msedge(34376):0.14;claude(10428):0.12
+FLAG r2: CONTEXT: msUntilRenderComplete p50 6.13 p95 9.45 p99 11.01 max 14.17 ms; dropped (replaced) presents 1 of 3600
+RESOURCES r3 samples=58 cpu_total_avg=15.29 proc_core_avg=50.35 proc_core_peak=59.91 private_mb_peak=303.03 private_slope_mb_min=3.211 gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU
+FLAG r3: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []
+FLAG r3: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 109 modules)
+FLAG r3: CONTEXT: busiest other processes over the key script (% of the whole machine): membrane(30156):5.82;powershell(36424):0.31;logioptionsplus_agent(12908):0.21;msedge(46608):0.18;powershell(25296):0.16;LogiPluginService(23248):0.09
+FLAG r3: CONTEXT: msUntilRenderComplete p50 6.18 p95 9.16 p99 11.18 max 13.94 ms; dropped (replaced) presents 1 of 3600
+OVERALL: FAIL
+report: D:\Claude\sr0-r08\workloaduns	uple08eport-incr/report.json, D:\Claude\sr0-r08\workloaduns	uple08eport-incr/report.md, raw samples: D:\Claude\sr0-r08\workloaduns	uple08eport-incr/raw/

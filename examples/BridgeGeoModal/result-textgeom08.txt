@@ -1,0 +1,94 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T12:44:55.4688977+05:30 runs=20
+ARTIFACTS TextGeom06.exe=9694afb8aeb6a1b8a5c513c37cc5f163ccaf0dba20eaeffb3779cadf8871216b renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+RUN 01 PASS checks=66/66 exit=0 ms=4401
+RUN 02 PASS checks=66/66 exit=0 ms=3528
+RUN 03 PASS checks=66/66 exit=0 ms=3383
+RUN 04 PASS checks=66/66 exit=0 ms=4043
+RUN 05 PASS checks=66/66 exit=0 ms=3574
+RUN 06 PASS checks=66/66 exit=0 ms=4238
+RUN 07 PASS checks=66/66 exit=0 ms=3492
+RUN 08 PASS checks=66/66 exit=0 ms=3241
+RUN 09 PASS checks=66/66 exit=0 ms=3598
+RUN 10 PASS checks=66/66 exit=0 ms=3203
+RUN 11 PASS checks=66/66 exit=0 ms=3202
+RUN 12 PASS checks=66/66 exit=0 ms=3166
+RUN 13 PASS checks=66/66 exit=0 ms=3724
+RUN 14 PASS checks=66/66 exit=0 ms=3535
+RUN 15 PASS checks=66/66 exit=0 ms=3525
+RUN 16 PASS checks=66/66 exit=0 ms=3968
+RUN 17 PASS checks=66/66 exit=0 ms=3620
+RUN 18 PASS checks=66/66 exit=0 ms=3612
+RUN 19 PASS checks=66/66 exit=0 ms=3752
+RUN 20 PASS checks=66/66 exit=0 ms=3100
+
+--- run 01 checks (what is asserted) ---
+PASS TextPattern present [control=ControlType.Edit patterns=ValuePatternIdentifiers.Pattern,TextPatternIdentifiers.Pattern]
+PASS document text equals TEXT [uia_len=77 expected_len=77 converge_ms=68]
+PASS phase0 char navigation [moves=74 expected=74 first_char_uia='A']
+PASS phase0 word navigation (boundaries + end of document) [word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia='Alpha ' expected='Alpha ']
+PASS phase0 rect agreement (UIA vs cells, UIA vs AX, <=1px) [width=260 max_err_cells=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 cells=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_cells=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 cells=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_...]
+PASS phase0 app self-check (cells/AX/lines) [chars=74 lines=3 runs=3 breaks=0 pass=true]
+PASS caret: degenerate range reports caret rect (zero-width, raw provider array) [caret_idx_app=6 uia_selection_count=1 uia_text='' raw_degenerate=142.00,30.00,0.00,60.00 raw_selection=142.00,30.00,0.00,60.00 managed_degenerate=none app_caret=142.95,30.00,3.75,60.00]
+PASS caret location via one-character range matches app caret (<=1px) [caret_idx_app=6 one_char_text='b' one_char_rect=142.00,30.00,23.00,60.00 app_caret=142.95,30.00,3.75,60.00]
+PASS selection set via TextPatternRange.Select (SetTextSelection logged and applied) [action_and_apply_logged=True uia_selection_text='Alpha' expected='Alpha']
+PASS phase1 char navigation [moves=74 expected=74 first_char_uia='A']
+PASS phase1 word navigation (boundaries + end of document) [word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia='Alpha ' expected='Alpha ']
+PASS phase1 rect agreement (UIA vs cells, UIA vs AX, <=1px) [width=180 max_err_cells=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 cells=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_cells=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 cells=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_...]
+PASS phase1 app self-check (cells/AX/lines) [chars=74 lines=4 runs=4 breaks=0 pass=true]
+PASS phase1 selection persists across width change [uia_selection_text='Alpha' expected='Alpha' width=180]
+PASS phase2 char navigation [moves=74 expected=74 first_char_uia='A']
+PASS phase2 word navigation (boundaries + end of document) [word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia='Alpha ' expected='Alpha ']
+PASS phase2 rect agreement (UIA vs cells, UIA vs AX, <=1px) [width=340 max_err_cells=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 cells=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_cells=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 cells=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_...]
+PASS phase2 app self-check (cells/AX/lines) [chars=74 lines=2 runs=2 breaks=0 pass=true]
+PASS phase2 selection persists across width change [uia_selection_text='Alpha' expected='Alpha' width=340]
+PASS phase3 char navigation [moves=74 expected=74 first_char_uia='A']
+PASS phase3 word navigation (boundaries + end of document) [word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia='Alpha ' expected='Alpha ']
+PASS phase3 rect agreement (UIA vs cells, UIA vs AX, <=1px) [width=260 max_err_cells=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 cells=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_cells=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 cells=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_...]
+PASS phase3 app self-check (cells/AX/lines) [chars=74 lines=3 runs=3 breaks=0 pass=true]
+PASS phase3 selection persists across width change [uia_selection_text='Alpha' expected='Alpha' width=260]
+PASS phase4 char navigation [moves=74 expected=74 first_char_uia='A']
+PASS phase4 word navigation (boundaries + end of document) [word_moves=23 expected=23 (= 22 word starts after index 0 + end-of-document) sequence_mismatches=[] first_word_uia='Alpha ' expected='Alpha ']
+PASS phase4 rect agreement (UIA vs cells, UIA vs AX, <=1px) [width=180 max_err_cells=0.99 max_err_ax=0.99 :: [Alpha] text_ok=True uia=30.00,30.00,101.00,60.00 cells=30.00,30.00,101.99,60.00 ax=30.00,30.00,101.99,60.00 err_cells=0.99 err_ax=0.99 ; [日本語] text_ok=True uia=232.00,30.00,120.00,60.00 cells=232.25,30.00,120.00,60.00 ax=232.25,30.00,120.00,60.00 err_...]
+PASS phase4 app self-check (cells/AX/lines) [chars=74 lines=4 runs=4 breaks=0 pass=true]
+PASS phase4 selection persists across width change [uia_selection_text='Alpha' expected='Alpha' width=180]
+PASS B document text equals the multi-paragraph TEXT (newline characters included) [uia_len=64 expected_len=64 converge_ms=6]
+PASS B phase5 char navigation (each newline is one character) [moves=63 expected=63 first_char_uia='a']
+PASS B phase5 word navigation (boundaries + end of document) [word_moves=21 expected=21 sequence_mismatches=[] first_word_uia='alpha ' expected='alpha ']
+PASS B phase5 rect agreement of sample ranges (UIA vs cells, UIA vs AX, <=1px) [width=200 max_err_cells=0.92 max_err_ax=0.92 :: [alpha] text_ok=True uia=30.00,30.00,96.00,60.00 cells=30.00,30.00,96.54,60.00 ax=30.00,30.00,96.54,60.00 err_cells=0.54 err_ax=0.54 ; [日本語] text_ok=True uia=137.00,30.00,120.00,60.00 cells=137.50,30.00,120.00,60.00 ax=137.50,30.00,120.00,60.00 err_cel...]
+PASS B phase5 visual lines: Line unit text and rectangle per line [lines_checked=5 bad=[]]
+PASS B phase5 newline cells: one-character range is the newline, zero width at the end of its line [newlines_checked=4 bad=[]]
+PASS B phase5 caret rectangles via Select(): blank line, paragraph start, end after the trailing newline (UIA selection rectangle = host caret) [carets_checked=3 bad=[] :: blank@57 host_caret=30.00,210.00,3.75,60.00 uia_selection_raw=30.00,210.00,0.00,60.00 client_range_raw=30.00,210.00,0.00,60.00 ; p2start@15 host_caret=30.00,90.00,3.75,60.00 uia_selection_raw=30.00,90.00,0.00,60.00 client_range_raw=30.00,90.00,0.00,60.00 ; end@63 host_care...]
+PASS B phase5 app self-check (cells, newline cells, AX runs, lines partition the text) [chars=63 lines=6 runs=6 breaks=4 pass=true | width=200 scale=2.500 lines=6 line0_phys=378.125 expect_phys=378.125 pass=true]
+PASS B selection across paragraph breaks via Select(): text, character indices and per-line rectangles [applied=True uia_selection_text='theta\n\nz' expected='theta\n\nz' uia_rects=317.00,150.00,91.00,60.00 | 30.00,270.00,18.00,60.00 host_rects_nonzero=317.46,150.00,91.02,60.00 | 30.00,270.00,18.09,60.00]
+PASS B phase6 char navigation (each newline is one character) [moves=63 expected=63 first_char_uia='a']
+PASS B phase6 word navigation (boundaries + end of document) [word_moves=21 expected=21 sequence_mismatches=[] first_word_uia='alpha ' expected='alpha ']
+PASS B phase6 rect agreement of sample ranges (UIA vs cells, UIA vs AX, <=1px) [width=120 max_err_cells=0.92 max_err_ax=0.92 :: [alpha] text_ok=True uia=30.00,30.00,96.00,60.00 cells=30.00,30.00,96.54,60.00 ax=30.00,30.00,96.54,60.00 err_cells=0.54 err_ax=0.54 ; [日本語] text_ok=True uia=137.00,30.00,120.00,60.00 cells=137.50,30.00,120.00,60.00 ax=137.50,30.00,120.00,60.00 err_cel...]
+PASS B phase6 visual lines: Line unit text and rectangle per line [lines_checked=7 bad=[]]
+PASS B phase6 newline cells: one-character range is the newline, zero width at the end of its line [newlines_checked=4 bad=[]]
+PASS B phase6 spanning selection persists across width change [uia_selection_text='theta\n\nz' expected='theta\n\nz' width=120]
+PASS B phase6 caret rectangles via Select(): blank line, paragraph start, end after the trailing newline (UIA selection rectangle = host caret) [carets_checked=3 bad=[] :: blank@57 host_caret=30.00,330.00,3.75,60.00 uia_selection_raw=30.00,330.00,0.00,60.00 client_range_raw=30.00,330.00,0.00,60.00 ; p2start@15 host_caret=30.00,150.00,3.75,60.00 uia_selection_raw=30.00,150.00,0.00,60.00 client_range_raw=30.00,150.00,0.00,60.00 ; end@63 host_c...]
+PASS B phase6 app self-check (cells, newline cells, AX runs, lines partition the text) [chars=63 lines=8 runs=8 breaks=4 pass=true | width=120 scale=2.500 lines=8 line0_phys=290.137 expect_phys=290.137 pass=true]
+PASS app ran all phases and shut down [DONE line present=True exit=0]
+PASS measurement cached (A: misses on the 3 new widths, hits on the 2 repeats) [cache per phase: p0=miss p1=miss p2=miss p3=hit p4=hit p5=miss p6=miss]
+PASS all measurements synchronous (UI thread, before commit) [COMMIT lines=7/7 (swr_measure_text is a synchronous UI-thread call; an off-thread call returns SWR_E_WRONG_THREAD and a commit follows each measure in the same turn)]
+PASS physical-px commit (logical x scale_factor, per commit) [w=260 scale=2.500 line0_phys=549.707 expect=549.707; w=180 scale=2.500 line0_phys=445.273 expect=445.273; w=340 scale=2.500 line0_phys=832.852 expect=832.852; w=260 scale=2.500 line0_phys=549.707 expect=549.707; w=180 scale=2.500 line0_phys=445.273 expect=445.273; w=200 scale=2.500 line0_phys=378.12...]
+PASS DPI recorded and matches window scale [GetDpiForWindow=240 host_dpi=240]
+PASS AccessKit action requests logged [ACTION setSelection lines=8 (expect 8: A alpha; B phase 5: blank, p2start, end, span; B phase 6: blank, p2start, end)]
+PASS host: startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS host: run returned ok [ok]
+PASS host: all phases ran and acknowledged [completed=7/7 timed_out=false]
+PASS host: every phase measured, laid out and committed [not_rendered=[] measure_failures=0 commit_failures=0]
+PASS host: measurement cache: miss on a new (text, width), hit on repeat; re-measure after a selection hits [wrong=[] reselects=8 reselect_hits=8 renderer measure_calls=22 cache_hits=12]
+PASS host: physical-px commit (logical x scale, per phase) [all 7 phases]
+PASS host: cells, lines, newline cells and AX runs self-consistent (per phase) [all 7 phases]
+PASS host: AX set-selection requests received and applied [received=8 applied=8]
+PASS host: no stale or unknown-node events [stale=0 unknown=0 rust_dropped_stale=0]
+PASS host: no thread violations or host panics [thread_violations=0 host_panics=0]
+PASS host: commits all accepted (no injected faults here) [accepted=15 rejected=0 deferred_in_ime=0]
+PASS host: window_closed delivered once [calls=1]
+PASS host: live nodes zero after teardown [at cleanup=0 after run=0]
+PASS host: post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.02s after window_closed]
+
+SUMMARY runs=20 pass=20 fail=0 checks_per_run=66
+ROW6 TEXTGEOM PASS (20/20 runs)
+ended=2026-10-10T12:46:38.1121133+05:30
