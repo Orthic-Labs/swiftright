@@ -1,0 +1,11 @@
+--- a/diagnostic-runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift
++++ b/diagnostic-runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift
+@@ -88,7 +88,7 @@
+         graph.flush()
+         try await settle()
+         XCTAssertEqual(log.events.filter { $0 == "start a" }.count, 1, "no restart for an unchanged id")
+-        XCTAssertEqual(log.results, ["a"])
++        XCTAssertEqual(log.results, ["a"], "events: \(log.events)")
+     }
+ 
+     // Disappearing cancels the task, and its commit is rejected.
