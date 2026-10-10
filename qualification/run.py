@@ -39,8 +39,10 @@ from pathlib import Path
 
 QUAL_DIR = Path(__file__).resolve().parent
 REPO = QUAL_DIR.parent
-OUT_ROOT = QUAL_DIR / "out"
-BUILD_ROOT = QUAL_DIR / ".build"
+# SR0A_OUT_ROOT / SR0A_BUILD_ROOT move run output and SwiftPM scratch off /Volumes/D (removable-volume privacy
+# prompts for freshly built Mac binaries); defaults stay under qualification/.
+OUT_ROOT = Path(os.environ.get("SR0A_OUT_ROOT") or QUAL_DIR / "out")
+BUILD_ROOT = Path(os.environ.get("SR0A_BUILD_ROOT") or QUAL_DIR / ".build")
 ACCEPTED_ROOT = REPO / "conformance" / "accepted"
 CANDIDATE_ROOT = REPO / "conformance" / "candidates"
 FIXTURES_PKG = REPO / "probes" / "sr0-o" / "fixtures"
@@ -69,7 +71,7 @@ PACKAGE_CHECKS = {
 }
 PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
 WIN_TRACE_FILE = "win-trace-v0.json"
-SMOKE_BASE = "D:\\Claude\\sr0b-abi0"
+SMOKE_BASE = "D:\\Claude\\sr0b-abi06c"  # Dell tree holding the final BridgeSmoke 21992F16 + renderer 7533963D
 SHA_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 ARTIFACTS_LINE_RE = re.compile(r"^ARTIFACTS exe=([0-9a-f]{64}) renderer=([0-9a-f]{64}) trace=([0-9a-f]{64})\s*$", re.M)
 EVENTS = ("start", "pass", "fail", "skip")
@@ -604,7 +606,7 @@ def windows_ids(exes, renderers, traces):
 
 def smoke_plan(tag):
     script = f"{SMOKE_BASE}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
-    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Tag {tag}"],
+    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {SMOKE_BASE} -Tag {tag}"],
             "transport": "win bridge (ssh) starting one interactive scheduled task",
             "desktop": "interactive Windows desktop session required",
             "pass_markers": ["AUTOMATIONID PASS", "run: ok"],

@@ -1,0 +1,318 @@
+
+======================================================================
+== R8 partial qualification run on the FINAL tuple (no Mac GUI, no Dell desktop)
+======================================================================
+written 2026-10-10T01:44:37Z by SR0 lane R8; HEAD c370228; python Python 3.14.6
+host: macOS 27.0.1 (26A434) arm64; swift: swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+final tuple: renderer 7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC; FreshOnBridge AA4353CE5EC2DEA7B3C00C68CC4E160789CCDD3B14DCA41494B8509B34BE1D7E; BridgeSmoke 21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5 (docs/sr0-snapshot.md 2c)
+constraints: no windowed Mac program, no Dell interactive desktop; Dell read-only through win; fresh Mac builds under SR0A_BUILD_ROOT=/private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build (not /Volumes/D)
+runner sha256 before edits: 2226aef098119c22dfa598d705fd1933882c68bca253044b4eeadd7748cdcdf6; after edits: 043e1e5cf7f452c583ef48ee9677880411520a1040dd8fcee158977a79115761
+NOTE: unit tests ran 74/74 OK on the unedited runner at 2026-10-10T01:37Z (before the three edits below); re-run after the edits is in section 2.
+
+======================================================================
+== 1. Defect D1 evidence: smoke plan targets a Dell tree that does not exist (pre-fix runner)
+======================================================================
+pre-fix plan (captured from the unedited runner: run --stages smoke --dry-run):
+  win "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0b-abi0\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1 -Tag qual-..."   (no -Base; the script default is also D:\Claude\sr0b-abi0)
+$ bash /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/dell.sh
+Test-Path D:\Claude\sr0b-abi0 (base used by the pre-fix smoke plan):
+False
+Test-Path D:\Claude\sr0b-abi06c\examples\BridgeSmoke\scripts\schedule-smoke.ps1 (tree that produced result-smoke-rev06final.txt):
+True
+sha256 of final BridgeSmoke.exe and renderer in D:\Claude\sr0b-abi06c\scratch\out\Products\Release-windows-x86_64:
+21992F16954E92449F467BD137C3DEE9F0812377E9122179A10E4F3B981DF1A5
+7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC
+sha256 of FreshOnBridge.exe and renderer in D:\Claude\sr0s-bridge06f\scratch\out\Products\Release-windows-x86_64:
+AA4353CE5EC2DEA7B3C00C68CC4E160789CCDD3B14DCA41494B8509B34BE1D7E
+7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC
+sha256 of Dell schedule-smoke.ps1 / drive-smoke.ps1 (repo copies: 0be1ed64... / 44dc7a3a...):
+0BE1ED64C135BECDB75E09484E127F45C0AE79AE781C9624094D7C45951955CB
+44DC7A3A19A286C887A44F85AFA16CE3FC3F5DB21DC72ED76D61B5A070D9743C
+[exit 0]
+
+======================================================================
+== 2. Runner edits (minimal) and unit tests after them
+======================================================================
+$ git diff -- qualification/run.py
+diff --git a/qualification/run.py b/qualification/run.py
+index 4c72cec..60abc7c 100644
+--- a/qualification/run.py
++++ b/qualification/run.py
+@@ -39,8 +39,10 @@ from pathlib import Path
+ 
+ QUAL_DIR = Path(__file__).resolve().parent
+ REPO = QUAL_DIR.parent
+-OUT_ROOT = QUAL_DIR / "out"
+-BUILD_ROOT = QUAL_DIR / ".build"
++# SR0A_OUT_ROOT / SR0A_BUILD_ROOT move run output and SwiftPM scratch off /Volumes/D (removable-volume privacy
++# prompts for freshly built Mac binaries); defaults stay under qualification/.
++OUT_ROOT = Path(os.environ.get("SR0A_OUT_ROOT") or QUAL_DIR / "out")
++BUILD_ROOT = Path(os.environ.get("SR0A_BUILD_ROOT") or QUAL_DIR / ".build")
+ ACCEPTED_ROOT = REPO / "conformance" / "accepted"
+ CANDIDATE_ROOT = REPO / "conformance" / "candidates"
+ FIXTURES_PKG = REPO / "probes" / "sr0-o" / "fixtures"
+@@ -69,7 +71,7 @@ PACKAGE_CHECKS = {
+ }
+ PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
+ WIN_TRACE_FILE = "win-trace-v0.json"
+-SMOKE_BASE = "D:\\Claude\\sr0b-abi0"
++SMOKE_BASE = "D:\\Claude\\sr0b-abi06c"  # Dell tree holding the final BridgeSmoke 21992F16 + renderer 7533963D
+ SHA_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
+ ARTIFACTS_LINE_RE = re.compile(r"^ARTIFACTS exe=([0-9a-f]{64}) renderer=([0-9a-f]{64}) trace=([0-9a-f]{64})\s*$", re.M)
+ EVENTS = ("start", "pass", "fail", "skip")
+@@ -604,7 +606,7 @@ def windows_ids(exes, renderers, traces):
+ 
+ def smoke_plan(tag):
+     script = f"{SMOKE_BASE}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
+-    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Tag {tag}"],
++    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {SMOKE_BASE} -Tag {tag}"],
+             "transport": "win bridge (ssh) starting one interactive scheduled task",
+             "desktop": "interactive Windows desktop session required",
+             "pass_markers": ["AUTOMATIONID PASS", "run: ok"],
+[exit 0]
+$ python3 -I -m unittest discover -s qualification -p 'test_*.py' 2>&1 | grep -v '^PLAN\|^  \|^{\|^}\|^\]' | tail -8
+.{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "no", "stage": "package", "ts": "2026-10-10T01:44:42.124Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014442.124Z-run/events.jsonl
+..PLAN {
+.......
+----------------------------------------------------------------------
+Ran 74 tests in 0.302s
+
+OK
+[exit 0]
+
+======================================================================
+== 3. Stage: mac-oracle, offline half only (accepted-baseline integrity; FixtureApp NOT launched)
+======================================================================
+mac-oracle proper builds FixtureApp from the committed tree and launches it 3x per config (window on screen): BLOCKED, needs the Mac free.
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py baselines
+OFFLINE accepted-baseline integrity (run.load_accepted: trace bytes vs manifest digests, canonical v2). This is the non-GUI half of mac-oracle; it does NOT launch FixtureApp.
+ok   F1             canonical 9dcbcacce832 raw 88fbd120b8a4 events  27 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F2             canonical 02846814d4c1 raw 3d70dd034fd3 events  18 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3             canonical 9d551a551979 raw d1daf6403ec0 events  93 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F4             canonical 44db0a72cce1 raw 03f3c4bdbb85 events  44 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F5             canonical c9185200420e raw 89859611c557 events  82 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F6             canonical 0a24aa9a3a7d raw 9cdf52070c40 events  25 seed rev 4ff202f tree bb4258a2549f distinct_canonical 2 UNSTABLE(canonical_variance)
+ok   F7             canonical 29bcff0cb5d2 raw d52939abb2c6 events  27 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F8             canonical 28141973826e raw 1cf050bd40e9 events  28 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F9             canonical 8e5ea06a9101 raw 1a384ab66ffb events  90 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-list-1s     canonical 9d551a551979 raw 00acb65b47fe events  93 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-list-3s     canonical 9d551a551979 raw 00acb65b47fe events  93 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-vstack-1s   canonical 6295a43e0b63 raw bf91fc602b98 events  91 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-vstack-3s   canonical 6295a43e0b63 raw 7381ee8fde38 events  91 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-lazy-1s     canonical 6295a43e0b63 raw e5a81c43f13a events  91 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F3-lazy-3s     canonical 6295a43e0b63 raw 7fc24fa12b20 events  91 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+ok   F6-reduced     canonical a30f0f00c419 raw 363598884a26 events  17 seed rev 4ff202f tree bb4258a2549f distinct_canonical 1
+result: 16/16 baselines intact
+[exit 0]
+mac-oracle build half (no launch): does the committed fixtures tree at HEAD build, so the 10-minute Mac window is not spent on a build failure?
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py build-fixture
+BUILD ONLY: the runner's own committed-source build of FixtureApp (committed_package + swift_product), output under SR0A_BUILD_ROOT. The binary is NOT launched (no GUI).
+built FixtureApp from committed tree 1b4affaf44f8 (accepted baselines were seeded from tree bb4258a2549f); 0 uncommitted change(s) under probes/sr0-o/fixtures not built; binary sha256 5b71cb56e035f9f3dec6c7c1d6904a1ddc5cda8beafbd75d3149c1417aada3b7
+binary path: /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures/1b4affaf44f8/out/Products/Debug/FixtureApp
+[exit 0]
+
+======================================================================
+== 4. Stage: smoke (real dispatch BLOCKED: needs the Dell desktop). Ingestion of the committed final receipts through smoke_stage
+======================================================================
+Replay = run.smoke_stage with an injected runner that returns the committed result text. Proves the runner's pass rule (AUTOMATIONID PASS + 'run: ok' + ARTIFACTS line) accepts the final receipts. It is NOT a fresh run.
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py smoke examples/BridgeSmoke/result-smoke-rev06final.txt
+REPLAY smoke_stage over committed receipt examples/BridgeSmoke/result-smoke-rev06final.txt (injected runner returns the file text)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows", "stage": "smoke", "ts": "2026-10-10T01:44:44.797Z"}
+{"artifact_ids": {"windows_exe": "sha256:21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5", "windows_renderer": "sha256:7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc", "windows_trace": "sha256:4bacbb9d5fb8387d21fc5bae32a073367459146bb79234219cceb4d392404866"}, "event": "pass", "fixture": null, "reason": "BridgeSmoke PASS with artifact ids", "stage": "smoke", "ts": "2026-10-10T01:44:44.798Z"}
+tuple-binding (not checked by the runner): exe==final BridgeSmoke True, renderer==final 7533963D True -> BOUND
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T014444.795Z-r8-replay-smoke/events.jsonl
+[exit 0]
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py smoke examples/BridgeSmoke/result-smoke-timeout06final.txt
+REPLAY smoke_stage over committed receipt examples/BridgeSmoke/result-smoke-timeout06final.txt (injected runner returns the file text)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows", "stage": "smoke", "ts": "2026-10-10T01:44:44.866Z"}
+{"artifact_ids": {"windows_exe": "sha256:21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5", "windows_renderer": "sha256:7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc", "windows_trace": "sha256:4942102b16d785faeb68bd9085f5fa020a7a391ef841419f14326a67a64399c0"}, "event": "pass", "fixture": null, "reason": "BridgeSmoke PASS with artifact ids", "stage": "smoke", "ts": "2026-10-10T01:44:44.866Z"}
+tuple-binding (not checked by the runner): exe==final BridgeSmoke True, renderer==final 7533963D True -> BOUND
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T014444.865Z-r8-replay-smoke/events.jsonl
+[exit 0]
+negative control: an OLD-renderer receipt (rev06c, renderer 777F14C4, history). A tuple-bound runner must refuse it; this one does not check the pins.
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py smoke examples/BridgeSmoke/result-smoke-rev06c.txt
+REPLAY smoke_stage over committed receipt examples/BridgeSmoke/result-smoke-rev06c.txt (injected runner returns the file text)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows", "stage": "smoke", "ts": "2026-10-10T01:44:44.918Z"}
+{"artifact_ids": {"windows_exe": "sha256:517600dc635d38a4581fe34347c13a4d57557c5080246d77a73bea28dfd25b12", "windows_renderer": "sha256:777f14c4ff11822bf6e2174e127b3a4a325d83a6b322fa599c7fc4408b335441", "windows_trace": "sha256:ae6fcdf746f2f6cfcb5013abc4ecddc2beb4e77f3446f25adf87392fbaf827f1"}, "event": "pass", "fixture": null, "reason": "BridgeSmoke PASS with artifact ids", "stage": "smoke", "ts": "2026-10-10T01:44:44.919Z"}
+tuple-binding (not checked by the runner): exe==final BridgeSmoke False, renderer==final 7533963D False -> NOT-FINAL-TUPLE
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T014444.918Z-r8-replay-smoke/events.jsonl
+[exit 0]
+
+======================================================================
+== 5. Stage: win-replay (real dispatch BLOCKED: needs the Dell desktop). Ingestion of committed matrix-final through win_stage, 16 configs x 20 runs
+======================================================================
+$ python3 -I /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/replay_ingest.py win-replay
+REPLAY win_stage over committed probes/sr0-s/fresh-on-bridge/out/matrix-final (injected runner copies the 320 committed run records into <out>/win-matrix and returns the run-matrix.sh echo lines rebuilt from their SELFTEST lines)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "16 configs x 20 runs", "stage": "win-replay", "ts": "2026-10-10T01:44:44.961Z"}
+{"artifact_ids": {"windows_exe": "sha256:aa4353ce5ec2dea7b3c00c68cc4e160789ccdd3b14dca41494b8509b34be1d7e", "windows_renderer": "sha256:7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc", "windows_trace": "sha256:84c2f00be2372311742be85621c0a5479b4ff28c5d17b7591e24790725ba85b2"}, "event": "pass", "fixture": null, "reason": "320/320 Windows runs PASS with artifact ids", "stage": "win-replay", "ts": "2026-10-10T01:44:45.404Z"}
+supplementary audit (not a runner stage): 320/320 records carry ARTIFACT header + ARTIFACTS line with final FreshOnBridge AA4353CE / renderer 7533963D and SELFTEST PASS
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T014444.961Z-r8-replay-win/events.jsonl
+[exit 0]
+
+======================================================================
+== 6. Stage: compare (F1, real run of the runner stage; comparator built by the runner under SR0A_BUILD_ROOT)
+======================================================================
+Runner rule: compare after win-replay needs win-matrix/win-trace-v0.json, which nothing writes (defect D3), so the only runnable form is --win-candidate with a HISTORICAL Windows trace.
+Tuple of the inputs (NOT the final tuple): Mac side conformance/accepted/F1/trace-v0.json = probes/sr0-o/f1-cross/out/mac-trace-strict-m1.json (recorded 9 Oct, commit eaf40dc, before the R6 signed-recorder re-record); Windows side win-trace-strict-w6.json recorded on the 0.5 stack (snapshot section 4 row 4: exact binary UNVERIFIED).
+$ python3 -I qualification/run.py run --stages compare --win-candidate probes/sr0-o/f1-cross/out/win-trace-strict-w6.json
+{"artifact_ids": {}, "event": "start", "fixture": "F1", "reason": "sr0o-trace compare trace-v0.json vs win-trace-strict-w6.json", "stage": "compare", "ts": "2026-10-10T01:44:45.554Z"}
+{"artifact_ids": {"accepted_v0": "sha256:2cd868bdbefbc42d2be031c3cb0d490577f3c35272ae5c84c29889d53c7ced46", "adapt": "sha256:51610f236d47a78a0ea28e74f1bb0f411814454d0adac1d6400ca6659e2d9a31", "candidate_v0": "sha256:8876fbb641a753c9a0a735a863d1785be5e6651abdf0892395392a798e21cbb1", "comparator_binary": "sha256:3493a525e64582df2c179eca9e50161d955bc61c039e529b79a24beba3da6036"}, "event": "pass", "fixture": "F1", "reason": "0 diffs; report compare-F1.json", "stage": "compare", "ts": "2026-10-10T01:44:47.540Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014445.553Z-run/events.jsonl
+[exit 0]
+
+======================================================================
+== 7. Stage: package (real run of the runner stage, read-only) on the R5 final2 Windows receipts; macOS has no run records
+======================================================================
+R5 final2 ran as two profiles (offline: W00-W11,W13,W14; network: W00,W01,W12). R3 final / R7 evidence is not in the sr0-a.package-receipt/v2 form (examples/SliceApp/r3-final/*, /Volumes/D/sr0-artifacts/mac/r7/*.log); mac-clean-run.sh has never produced a run (RESULT-R7.md harness defect 2).
+$ python3 -I qualification/run.py run --stages package --package-receipts /Volumes/D/sr0-artifacts/win/r5-final2/receipts-offline-4 /Volumes/D/sr0-artifacts/win/r5-final2/receipts-network-2
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T01:44:47.634Z"}
+{"artifact_ids": {"package_run": "sha256:329a2d84e8c6c0fde1497d0118f7052370a8065573d112e299a71b48096960d1"}, "event": "fail", "fixture": null, "reason": "receipts-offline-4: expected_checks differ from the declared checks for windows-x64; checks must list exactly the declared checks for windows-x64, in order; run status is 'fail': every declared check must be implemented and pass; W08-interrupted-update: must be implemented and pass (status 'fail', implemented True); W12-appinstaller-update: check record missing", "stage": "package", "ts": "2026-10-10T01:44:47.640Z"}
+{"artifact_ids": {"package_run": "sha256:e21305cd5439b7f2ddf1cb1934aeafac7dd641e8d8ba8c4ad82742117548a3f9"}, "event": "fail", "fixture": null, "reason": "receipts-network-2: expected_checks differ from the declared checks for windows-x64; checks must list exactly the declared checks for windows-x64, in order; W02-signer-trust: check record missing; W03-install-old: check record missing; W04-launch-offline-old: check record missing; W05-write-data: check record missing; W06-upgrade-new: check record missing; W07-corrupt-update-rejected: check record missing; W08-interrupted-update: check record missing; W09-rollback-readable: check record missing; W10-uninstall-keeps-data: check record missing; W11-legacy-data-physical-path: check record missing; W13-renderer-layout-installed: check record missing; W14-deferred-update-in-use: check record missing", "stage": "package", "ts": "2026-10-10T01:44:47.643Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "no valid PASS run for platform(s): windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T01:44:47.643Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "required stage produced no pass (skip or missing evidence)", "stage": "package", "ts": "2026-10-10T01:44:47.643Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014447.633Z-run/events.jsonl
+[exit 1]
+$ python3 -I qualification/run.py run --stages package
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T01:44:47.727Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "no package run records found (looked in /Volumes/D/claude/swiftright/qualification/receipts/package)", "stage": "package", "ts": "2026-10-10T01:44:47.727Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "required stage produced no pass (skip or missing evidence)", "stage": "package", "ts": "2026-10-10T01:44:47.727Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014447.724Z-run/events.jsonl
+[exit 1]
+
+======================================================================
+== 8. Strict mode (no-skip rules) exercised on the real runner, nothing started on either host
+======================================================================
+a) GUI stages without --confirm-windows-gui are refused (fail, exit 1)
+$ python3 -I qualification/run.py run --stages smoke win-replay
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows", "stage": "smoke", "ts": "2026-10-10T01:44:47.817Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "refused: Windows GUI jobs need --confirm-windows-gui (desktop is busy)", "stage": "smoke", "ts": "2026-10-10T01:44:47.817Z"}
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "2 configs x 3 runs", "stage": "win-replay", "ts": "2026-10-10T01:44:47.817Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "refused: Windows GUI jobs need --confirm-windows-gui (desktop is busy)", "stage": "win-replay", "ts": "2026-10-10T01:44:47.817Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "required stage produced no pass (skip or missing evidence)", "stage": "smoke", "ts": "2026-10-10T01:44:47.817Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "required stage produced no pass (skip or missing evidence)", "stage": "win-replay", "ts": "2026-10-10T01:44:47.817Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014447.816Z-run/events.jsonl
+[exit 1]
+b) compare with no Windows trace is a fail, not a skip (exit 1)
+$ python3 -I qualification/run.py run --stages compare
+{"artifact_ids": {}, "event": "fail", "fixture": "F1", "reason": "no Windows trace: run win-replay first or name --win-candidate", "stage": "compare", "ts": "2026-10-10T01:44:47.926Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "required stage produced no pass (skip or missing evidence)", "stage": "compare", "ts": "2026-10-10T01:44:47.926Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014447.924Z-run/events.jsonl
+[exit 1]
+c) compare declared before win-replay is a usage error (exit 2)
+$ python3 -I qualification/run.py run --stages compare win-replay
+usage error: compare is declared before win-replay and would compare a historical file; reorder
+[exit 2]
+
+======================================================================
+== 9. Dry-run of the proposed full-run commands (plans only; emits skip events by design; NOT qualification evidence)
+======================================================================
+Invocation A (Mac free + Dell desktop): mac-oracle compare smoke package
+$ python3 -I qualification/run.py run --dry-run --stages mac-oracle compare smoke package --runs 3 --win-candidate /PATH/fresh-final-win-f1-trace-v0.json --confirm-windows-gui --package-receipts /PATH/win-run /PATH/mac-run
+{"artifact_ids": {}, "event": "start", "fixture": "F1", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F1", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F1 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F1/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F2", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F2", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F2 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F2/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F4", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F4", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F4 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F4/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F5", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F5", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F5 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F5/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F6", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.979Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F6", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F6 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F6/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F7", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F7", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F7 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F7/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F8", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F8", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F8 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F8/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F9", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F9", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F9 --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F9/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-list-1s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-list-1s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-list-1s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-list-1s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-list-3s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-list-3s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-list-3s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-list-3s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-vstack-1s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-vstack-1s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-vstack-1s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-vstack-1s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-vstack-3s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-vstack-3s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-vstack-3s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-vstack-3s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-lazy-1s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-lazy-1s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-lazy-1s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-lazy-1s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F3-lazy-3s", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F3-lazy-3s", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F3-lazy-3s --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F3-lazy-3s/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "start", "fixture": "F6-reduced", "reason": "dry-run", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F6-reduced", "reason": "dry-run plan: build FixtureApp (scratch /private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/r8/build/fixtures), run --fixture F6-reduced --events <run>.jsonl --self-test x3, normalize, compare with /Volumes/D/claude/swiftright/conformance/accepted/F6-reduced/manifest.json", "stage": "mac-oracle", "ts": "2026-10-10T01:44:48.980Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F1", "reason": "dry-run: compare needs a built comparator and a Windows trace; plan only", "stage": "compare", "ts": "2026-10-10T01:44:48.981Z"}
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows", "stage": "smoke", "ts": "2026-10-10T01:44:48.981Z"}
+PLAN {
+  "command": [
+    "win",
+    "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0b-abi06c\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1 -Base D:\\Claude\\sr0b-abi06c -Tag qual-20261010T014448981Z"
+  ],
+  "transport": "win bridge (ssh) starting one interactive scheduled task",
+  "desktop": "interactive Windows desktop session required",
+  "pass_markers": [
+    "AUTOMATIONID PASS",
+    "run: ok"
+  ],
+  "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"
+}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: BridgeSmoke plan printed to stderr; no Windows job started", "stage": "smoke", "ts": "2026-10-10T01:44:48.981Z"}
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T01:44:48.981Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: would read run directories /PATH/win-run, /PATH/mac-run", "stage": "package", "ts": "2026-10-10T01:44:48.981Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014448.978Z-run/events.jsonl
+dry-run: plans only, not qualification evidence
+[exit 0]
+Invocation B (Dell desktop): win-replay, 16 configs
+$ python3 -I qualification/run.py run --dry-run --stages win-replay --configs F1:none F2:none F3:list-0s F3:list-1s F3:list-3s F3:vstack-1s F3:vstack-3s F3:lazy-1s F3:lazy-3s F4:none F5:none F6:none F6:reduced F7:none F8:none F9:none --win-runs 3 --confirm-windows-gui
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "16 configs x 3 runs", "stage": "win-replay", "ts": "2026-10-10T01:44:49.043Z"}
+PLAN {
+  "configs": [
+    "F1:none",
+    "F2:none",
+    "F3:list-0s",
+    "F3:list-1s",
+    "F3:list-3s",
+    "F3:vstack-1s",
+    "F3:vstack-3s",
+    "F3:lazy-1s",
+    "F3:lazy-3s",
+    "F4:none",
+    "F5:none",
+    "F6:none",
+    "F6:reduced",
+    "F7:none",
+    "F8:none",
+    "F9:none"
+  ],
+  "runs_per_config": 3,
+  "command": [
+    "bash",
+    "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh",
+    "F1:none",
+    "F2:none",
+    "F3:list-0s",
+    "F3:list-1s",
+    "F3:list-3s",
+    "F3:vstack-1s",
+    "F3:vstack-3s",
+    "F3:lazy-1s",
+    "F3:lazy-3s",
+    "F4:none",
+    "F5:none",
+    "F6:none",
+    "F6:reduced",
+    "F7:none",
+    "F8:none",
+    "F9:none"
+  ],
+  "env": {
+    "OUT_DIR": "/Volumes/D/claude/swiftright/qualification/out/20261010T014449.042Z-run/win-matrix",
+    "RUNS": "3"
+  },
+  "transport": "win bridge (ssh) starting one interactive scheduled task per run",
+  "desktop": "interactive Windows desktop session required"
+}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: plan printed to stderr; no Windows job started", "stage": "win-replay", "ts": "2026-10-10T01:44:49.043Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T014449.042Z-run/events.jsonl
+dry-run: plans only, not qualification evidence
+[exit 0]
