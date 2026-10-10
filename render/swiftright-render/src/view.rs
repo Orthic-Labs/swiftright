@@ -173,6 +173,56 @@ pub struct ModalPending {
 }
 static MODAL: Mutex<Option<ModalPending>> = Mutex::new(None);
 
+/// WM_APP + 0x5A2 (WM_SWR_PAINT in pace.rs is + 0x5A1): posted to the main window by the drain task when a modal request is
+/// pending. The subclass handler runs the modal from the thread's top-level DispatchMessage, outside every GPUI foreground drain.
+pub const WM_SWR_MODAL: u32 = 0x8000 + 0x5A2;
+/// A WM_SWR_MODAL is in flight (posted, handler not yet entered): at most one is posted per pending request.
+static MODAL_POSTED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+/// QPC at the post, for the `queued_ms` field of the modal log line.
+static MODAL_POSTED_QPC: AtomicI64 = AtomicI64::new(0);
+static MODAL_LEGACY_SPAWN: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+
+/// Diagnostic toggle (environment, read once): `SWR_MODAL_LEGACY_SPAWN=1` starts modals the old way, as a GPUI foreground runnable
+/// (`cx.spawn(run_modal)`), so the lost-wake stall can be reproduced for an A/B proof. Default: the posted-message path.
+fn modal_legacy_spawn() -> bool {
+    *MODAL_LEGACY_SPAWN.get_or_init(|| {
+        let v = std::env::var("SWR_MODAL_LEGACY_SPAWN").map(|v| v.trim() == "1").unwrap_or(false);
+        eprintln!("[swiftright-render] modal start path: {}", if v { "spawn (SWR_MODAL_LEGACY_SPAWN=1, diagnostic)" } else { "posted (WM_SWR_MODAL)" });
+        v
+    })
+}
+
+/// Posts WM_SWR_MODAL to the main window, once per pending request. True when a start message is in flight (posted now or
+/// earlier); false when it could not be posted (the caller then starts the modal the legacy way so the request is not lost).
+fn post_modal_start() -> bool {
+    if MODAL_POSTED.swap(true, SeqCst) {
+        return true;
+    }
+    MODAL_POSTED_QPC.store(qpc_now(), SeqCst);
+    let hwnd = MAIN_HWND.load(SeqCst) as *mut c_void;
+    let posted = !hwnd.is_null() && unsafe { PostMessageW(hwnd, WM_SWR_MODAL, 0, 0) } != 0;
+    if !posted {
+        MODAL_POSTED.store(false, SeqCst);
+    }
+    posted
+}
+
+/// WM_SWR_MODAL handler (main window subclass, UI thread, top-level dispatch): takes the pending request and runs it.
+/// A request that arrives after shutdown began is dropped, as the drain task always did.
+fn on_modal_message() {
+    MODAL_POSTED.store(false, SeqCst);
+    let queued = MODAL_POSTED_QPC.load(SeqCst);
+    let pending = MODAL.lock().unwrap_or_else(|e| e.into_inner()).take();
+    if let Some(req) = pending {
+        if !SHUTDOWN.load(SeqCst) {
+            // A panic must not unwind out of the window procedure.
+            if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| run_modal(req, "posted", queued))).is_err() {
+                eprintln!("[swiftright-render] modal panicked (path=posted)");
+            }
+        }
+    }
+}
+
 /// Images released by the host: their GPUI sprite-atlas entries are removed at the start of
 /// the next paint (Window::drop_image needs the window).
 static DROPPED_IMAGES: Mutex<Vec<Arc<RenderImage>>> = Mutex::new(Vec::new());
@@ -307,8 +357,19 @@ fn run_dialog(req: &ModalPending) -> ItemResult {
     }
 }
 
-/// Runs in its own foreground task: no App/Window borrow and no host callback is active.
-fn run_modal(req: ModalPending) {
+/// Runs one modal (TrackPopupMenu / TaskDialogIndirect / MessageBoxW); it blocks in the OS modal loop until dismissed.
+/// `path`: "posted" = the WM_SWR_MODAL handler (top-level DispatchMessage: no GPUI drain is on the stack, so a drain-task wake
+/// runnable can still run while the modal pumps), "spawn" = the legacy GPUI foreground runnable (the modal then runs INSIDE a
+/// drain of the foreground queue; a wake runnable queued behind it in the same drain snapshot cannot run until the modal returns).
+/// `queued_qpc`: when the start was posted or spawned. No App/Window borrow and no host callback is active here.
+/// Logs one line per modal: `waker_none` is the drain task's waker slot at entry (true = a wake already took it, or the drain task
+/// is being polled), `wakes_during` / `drain_calls_during` are the host-wake and host-drain counter deltas across the modal
+/// (`drain_calls_during=0` with `wakes_during>0` is the stall).
+fn run_modal(req: ModalPending, path: &'static str, queued_qpc: i64) {
+    let t_enter = qpc_now();
+    let waker_none = signal_waker_is_none();
+    let wakes0 = stat(S_WAKES);
+    let drains0 = stat(S_DRAIN_CALLS);
     let mut ev = Event::new(EV_MODAL_RESULT, 0);
     ev.arg = req.id;
     match req.kind {
@@ -336,6 +397,24 @@ fn run_modal(req: ModalPending) {
             ev.i0 = unsafe { MessageBoxW(owner, m.as_ptr(), t.as_ptr(), utype) };
         }
     }
+    let t_exit = qpc_now();
+    eprintln!(
+        "[swiftright-render] modal id={} kind={} path={} waker_none={} queued_ms={:.2} elapsed_ms={:.2} wakes_during={} drain_calls_during={} i0={} i1={}",
+        req.id,
+        match req.kind {
+            MODAL_MENU => "menu",
+            MODAL_DIALOG => "dialog",
+            _ => "message",
+        },
+        path,
+        waker_none,
+        qpc_to_ns(t_enter - queued_qpc) as f64 / 1e6,
+        qpc_to_ns(t_exit - t_enter) as f64 / 1e6,
+        stat(S_WAKES) - wakes0,
+        stat(S_DRAIN_CALLS) - drains0,
+        ev.i0,
+        ev.i1
+    );
     push_event(ev);
 }
 
@@ -1058,6 +1137,10 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
         pace::run_deferred_paint(hwnd);
         return 0;
     }
+    if msg == WM_SWR_MODAL {
+        on_modal_message();
+        return 0;
+    }
     let out = DefSubclassProc(hwnd, msg, w, l);
     match msg {
         WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
@@ -1228,6 +1311,8 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
         signal_notify();
     });
 
+    let _ = modal_legacy_spawn(); // read the diagnostic toggle now so its log line precedes any modal
+
     // Drain task: its body runs as a GPUI foreground runnable, outside every App and
     // Window borrow. All host callbacks except ime_* are issued from here.
     cx.spawn(async move |cx: &mut AsyncApp| {
@@ -1279,11 +1364,22 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
                 });
             }
 
-            let pending = MODAL.lock().unwrap_or_else(|e| e.into_inner()).take();
-            if let Some(req) = pending {
-                if !close_issued {
-                    cx.spawn(async move |_cx: &mut AsyncApp| run_modal(req)).detach();
+            // Modal start. Default: a posted WM_SWR_MODAL, so the modal runs from the top-level DispatchMessage and not as a
+            // foreground runnable (a runnable runs inside a drain snapshot of the foreground queue; the wake runnable of this
+            // task, queued behind it in the same snapshot, would then wait for the whole modal: the Modal06 stall).
+            // SWR_MODAL_LEGACY_SPAWN=1 keeps the old spawn for the A/B proof; a failed post falls back to it.
+            let modal_waiting = MODAL.lock().unwrap_or_else(|e| e.into_inner()).is_some();
+            if modal_legacy_spawn() || (modal_waiting && !close_issued && !post_modal_start()) {
+                let pending = MODAL.lock().unwrap_or_else(|e| e.into_inner()).take();
+                if let Some(req) = pending {
+                    if !close_issued {
+                        let queued = qpc_now();
+                        cx.spawn(async move |_cx: &mut AsyncApp| run_modal(req, "spawn", queued)).detach();
+                    }
                 }
+            } else if close_issued {
+                // Closing: a request that is still pending is dropped (as before).
+                drop(MODAL.lock().unwrap_or_else(|e| e.into_inner()).take());
             }
 
             if WINDOW_CLOSED.load(SeqCst) {

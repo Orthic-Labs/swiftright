@@ -302,6 +302,12 @@ pub fn signal_notify() {
     }
 }
 
+/// Diagnostics only (the per-modal log line in view.rs): true when no drain-task waker is registered, i.e. the drain
+/// task is being polled right now, or a wake already took its waker and the wake runnable has not run yet.
+pub fn signal_waker_is_none() -> bool {
+    lock_signal().waker.is_none()
+}
+
 /// Resolves once per batch of signals; pending wakes coalesce into one poll so no
 /// wake is lost between a drain and the next wait.
 pub struct WaitSignal;
