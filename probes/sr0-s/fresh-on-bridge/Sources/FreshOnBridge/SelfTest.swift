@@ -247,8 +247,11 @@ final class SelfTest {
             + "first-focus-event-is-initial=\(firstFocusEvent.map { (payload($0)["source"] as? String) == "initial" } ?? false) "
             + "after-appears-before-tasks=\(ordered) (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)"
         if let expected {
+            // D2 (Mac oracle F5, F3 vstack/lazy `initial`): launch focus selects all, selection 0..count.
+            let selectsAll = backend.initialFocusSelection.map { $0.location == 0 && $0.length == backend.initialFocusTextCount } ?? false
             return pass("initial-focus-matches-mac-oracle",
-                        initial.count == 1 && focused == expected.uuidString && ordered && backend.initialFocusRow == expected, detail)
+                        initial.count == 1 && focused == expected.uuidString && ordered && backend.initialFocusRow == expected && selectsAll,
+                        detail + " selection-at-launch=\(backend.initialFocusSelection.map { "\($0.location)+\($0.length)" } ?? "nil")/\(backend.initialFocusTextCount.map(String.init) ?? "nil")")
         }
         return pass("initial-focus-matches-mac-oracle", initial.isEmpty && backend.initialFocusRow == nil, detail)
     }

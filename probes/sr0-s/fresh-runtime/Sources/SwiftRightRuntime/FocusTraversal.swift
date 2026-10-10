@@ -93,7 +93,23 @@ extension Graph {
         }
         link.focus()
         flush()
+        selectAllInitially(under: node)
         return node.id.description
+    }
+
+    /// Launch focus selects the whole text of the field it lands on (macOS oracle, SR0-O cross-compare D2: AppKit selects all
+    /// when a field is first responder at launch, selection 0+5 in F5 and the F3 VStack/lazy configurations). Focus given
+    /// later by accessibility, pointer, Tab or `@FocusState` keeps the caret-at-end rule (F1, F2, F5 step 2, F7: 5+0).
+    private func selectAllInitially(under node: Node) {
+        var input: TextInputState?
+        func find(_ n: Node) {
+            guard input == nil, n.alive else { return }
+            if let state = n.textInput { input = state; return }
+            childNodes(n).forEach(find)
+        }
+        find(node)
+        guard let input else { return }
+        _ = input.setSelection(UTF16Range(location: 0, length: input.display.utf16.count))
     }
 
     /// Dispatches a native key to focus traversal: Tab and Shift-Tab with no other modifier.

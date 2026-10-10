@@ -239,6 +239,23 @@ final class InitialFocusTests: XCTestCase {
         XCTAssertEqual(graph.focusStops().map(\.isFocused), [true, false, false, false])
     }
 
+    // D2: launch focus selects all of the focused field (Mac 0+5); typing replaces it; later focus keeps caret-at-end.
+    func testInitialFocusSelectsAllAndTypingReplaces() {
+        let store = makeStore(2)
+        store.rows[0].text = "Row 1"
+        let (graph, _) = make(FieldVStackScreen(store: store))
+        graph.applyInitialFocus()
+        let fields = graph.ids(ofKind: "TextField")
+        let input = graph.textInput(fields[0])!
+        XCTAssertEqual(input.selection, UTF16Range(location: 0, length: 5))
+        XCTAssertEqual(graph.textInput(fields[1])!.selection.length, 0, "other rows are untouched")
+        XCTAssertTrue(input.replace(text: "x"))
+        XCTAssertEqual(input.committed, "x")
+        XCTAssertEqual(input.selection, UTF16Range(location: 1, length: 0))
+        graph.flush()
+        XCTAssertEqual(store.rows[0].text, "x")
+    }
+
     // F5: the focused field's text is set from outside (async row update); the caret then reads the end of the new text.
     func testExternalTextChangeMovesFocusedCaretToEnd() {
         let store = makeStore(2)
@@ -247,6 +264,7 @@ final class InitialFocusTests: XCTestCase {
         graph.applyInitialFocus()
         let field = graph.ids(ofKind: "TextField")[0]
         let input = graph.textInput(field)!
+        XCTAssertEqual(input.selection, UTF16Range(location: 0, length: 5))
         XCTAssertTrue(input.setSelection(UTF16Range(location: 5, length: 0)))
         store.rows[0].text = "Row 1 updated 0"
         graph.flush()

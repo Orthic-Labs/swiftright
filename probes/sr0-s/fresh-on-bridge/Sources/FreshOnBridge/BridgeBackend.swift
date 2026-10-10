@@ -151,6 +151,9 @@ final class BridgeBackend {
     /// The initial focus the window gave (runtime node id, row), nil when it focused nothing.
     private(set) var initialFocusNode: String?
     private(set) var initialFocusRow: UUID?
+    /// Selection of the initial-focus field right after launch focus (Mac oracle: the whole text, 0+count).
+    private(set) var initialFocusSelection: UTF16Range?
+    private(set) var initialFocusTextCount: Int?
 
     // Input and renderer bookkeeping (read by the self-test).
     /// Text-store replace calls (the keystroke path: VK input through the renderer).
@@ -267,12 +270,14 @@ final class BridgeBackend {
 
     /// Gives the window's initial focus (runtime rule: `Graph.applyInitialFocus`, from the Mac oracle). Runs once from `ready`,
     /// after the first commit and before the main actor is yielded, so the event follows every `appear` and precedes every
-    /// task start, the Mac log order. The caret goes to the end of the field, as for any other focus.
+    /// task start, the Mac log order. The whole text is selected (D2), unlike later focus.
     private func giveInitialFocus(_ g: Graph) {
         guard let node = g.applyInitialFocus(), let row = rowUUID(in: node) else { return }
         initialFocusNode = node
         initialFocusRow = row
-        placeCaretAtEnd(row)
+        initialFocusSelection = textState(for: row)?.selection
+        initialFocusTextCount = textState(for: row)?.display.utf16.count
+        // The runtime selected the whole text (Mac oracle: launch focus selects all); the host keeps that selection.
         model.logFocus(row, source: "initial")
         dirty = true
         flushIfDirty()

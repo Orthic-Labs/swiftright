@@ -170,10 +170,10 @@ final class BridgeBackend {
 
     /// Gives the window's initial focus (runtime rule: `Graph.applyInitialFocus`, from the Mac oracle). Runs once from `ready`,
     /// after the first commit. The EditorScreen is List-first, so the runtime returns nil here (the Mac window reports no focus
-    /// either); the call keeps the host on the same rule if the screen changes. The caret goes to the end of the field.
+    /// either); the call keeps the host on the same rule if the screen changes. The whole text is selected (D2), unlike later focus.
     private func giveInitialFocus(_ g: Graph) {
-        guard let node = g.applyInitialFocus(), let row = rowUUID(in: node) else { return }
-        placeCaretAtEnd(row)
+        guard let node = g.applyInitialFocus(), rowUUID(in: node) != nil else { return }
+        // The runtime selected the whole text; the host keeps that selection.
         dirty = true
         flushIfDirty()
     }
