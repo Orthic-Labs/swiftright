@@ -170,6 +170,13 @@ public enum ColorScheme: Hashable, Sendable {
     case dark
 }
 
+/// Direction value available to layout & text-flow providers.
+/// Reading this value does not perform automatic bidirectional layout.
+public enum LayoutDirection: Hashable, Sendable {
+    case leftToRight
+    case rightToLeft
+}
+
 public protocol EnvironmentKey {
     associatedtype Value
     static var defaultValue: Value { get }
@@ -192,6 +199,11 @@ public struct EnvironmentValues {
     public var colorScheme: ColorScheme {
         get { self[ColorSchemeKey.self] }
         set { self[ColorSchemeKey.self] = newValue }
+    }
+
+    public var layoutDirection: LayoutDirection {
+        get { self[LayoutDirectionKey.self] }
+        set { self[LayoutDirectionKey.self] = newValue }
     }
 
     /// Display scale used by image & provider consumers. Headless runtime defaults to one;
@@ -220,6 +232,10 @@ public struct EnvironmentValues {
         get { self[ToggleStyleMetadataKey.self] }
         set { self[ToggleStyleMetadataKey.self] = newValue }
     }
+}
+
+private enum LayoutDirectionKey: EnvironmentKey {
+    static var defaultValue: LayoutDirection { .leftToRight }
 }
 
 private enum DisplayScaleKey: EnvironmentKey {

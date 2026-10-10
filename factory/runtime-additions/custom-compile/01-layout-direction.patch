@@ -1,0 +1,72 @@
+diff --git a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+index 4babe1c..843c8f0 100644
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/State.swift
+@@ -170,6 +170,13 @@ public enum ColorScheme: Hashable, Sendable {
+     case dark
+ }
+ 
++/// Direction value available to layout & text-flow providers.
++/// Reading this value does not perform automatic bidirectional layout.
++public enum LayoutDirection: Hashable, Sendable {
++    case leftToRight
++    case rightToLeft
++}
++
+ public protocol EnvironmentKey {
+     associatedtype Value
+     static var defaultValue: Value { get }
+@@ -194,6 +201,11 @@ public struct EnvironmentValues {
+         set { self[ColorSchemeKey.self] = newValue }
+     }
+ 
++    public var layoutDirection: LayoutDirection {
++        get { self[LayoutDirectionKey.self] }
++        set { self[LayoutDirectionKey.self] = newValue }
++    }
++
+     /// Display scale used by image & provider consumers. Headless runtime defaults to one;
+     /// host may provide its actual backing scale through environment.
+     /// Apple: https://developer.apple.com/documentation/swiftui/environmentvalues/displayscale
+@@ -222,6 +234,10 @@ public struct EnvironmentValues {
+     }
+ }
+ 
++private enum LayoutDirectionKey: EnvironmentKey {
++    static var defaultValue: LayoutDirection { .leftToRight }
++}
++
+ private enum DisplayScaleKey: EnvironmentKey {
+     static var defaultValue: CGFloat { 1 }
+ }
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift
+new file mode 100644
+index 0000000..47ed8a1
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift
+@@ -0,0 +1,25 @@
++import SwiftRightRuntime
++import XCTest
++
++private struct LayoutDirectionProbe: View {
++    @Environment(\.layoutDirection) private var direction
++
++    var body: some View {
++        Text(direction == .leftToRight ? "ltr" : "rtl")
++    }
++}
++
++@MainActor
++final class LayoutDirectionTests: XCTestCase {
++    func testLayoutDirectionRoundTripAndEnvironmentReader() {
++        var values = EnvironmentValues()
++        XCTAssertEqual(values.layoutDirection, .leftToRight)
++
++        values.layoutDirection = .rightToLeft
++        XCTAssertEqual(values.layoutDirection, .rightToLeft)
++
++        let graph = Graph(LayoutDirectionProbe().environment(\.layoutDirection, .rightToLeft))
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["rtl"])
++    }
++}
