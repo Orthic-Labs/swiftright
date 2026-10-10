@@ -1,0 +1,126 @@
+{
+  "counts": {
+    "analyzerHash": "sha256:9fad54e7e71818a4af715f70b7a188c9ad3962eddcd47f5258532982eb597aeb",
+    "exactRationalCMTimeOutsideMachBracket": 10191,
+    "exactRationalCMTimeWithinMachBracket": 9809,
+    "floorScaleConversionModelFailures": [],
+    "hostReads": 20000,
+    "interpretation": "Floor-scale models are tested observations on these bytes, not documented universal error guarantees. Original timing controls retain exact strict results.",
+    "kind": "headless-host-clock-calibration-analysis",
+    "makeHostFloorCMTimeModelFailures": [],
+    "makeHostResidualNs": {
+      "-1/3": 10000,
+      "-2/3": 10000,
+      "0": 10000
+    },
+    "observedMakeFloorInverseCeilingOutsideMachBracket": 0,
+    "observedMakeFloorInverseCeilingRoundTripMatches": 30000,
+    "observedMakeFloorInverseCeilingRoundTripMismatches": 0,
+    "observedMakeFloorInverseCeilingWithinMachBracket": 20000,
+    "rawHash": "sha256:bdf903c21881826ed5a1313647fe1f0e602bf3e01b85420c50a4124aa5908ae6",
+    "roundTripDeltaTicks": {
+      "-1": 20000,
+      "0": 10000
+    },
+    "roundTrips": 30000,
+    "strictBrackets": 9809,
+    "tickNs": "125/3"
+  },
+  "evidenceFiles": [
+    {
+      "hash": "sha256:bab43002590432f0b8e003de8df63b6ec11150ecace4acd03f7b3a7b0157477f",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/analysis.json"
+    },
+    {
+      "hash": "sha256:c4880082055e9b587db0a21d42572ce02a17e12597bdabd507872be47a9f283c",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/analyze.stdout.json"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/build.stderr.txt"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/build.stdout.txt"
+    },
+    {
+      "hash": "sha256:74df2af02f0fe1d199a50fef3c1f8cdddd02ca523de39d06ff92db646f811b7a",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/original-sample48.json"
+    },
+    {
+      "hash": "sha256:bdf903c21881826ed5a1313647fe1f0e602bf3e01b85420c50a4124aa5908ae6",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/raw.jsonl"
+    },
+    {
+      "hash": "sha256:0267feb14f252623cdcc304bb57de85128cc14ee211ab9c01b003fcd2c4aac2d",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/receipt.json"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/run.stderr.txt"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/run.stdout.txt"
+    },
+    {
+      "hash": "sha256:b23dc66a4d60019d7e82671ff4de8f327e929795fcd375473f9cd58b8d1f4e76",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/sdk-support.json"
+    },
+    {
+      "hash": "sha256:0d5a67191843abaa6acf40bb4b60af2b10b535f5edc67f0b664052ad76d5aa6c",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/tests.stderr.txt"
+    },
+    {
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/evidence/49bd8dbe-202f-43db-8d02-f2fff41f7116/tests.stdout.txt"
+    }
+  ],
+  "faultControls": {
+    "baseline": "accepted as observational candidate",
+    "indefiniteTime": "rejected",
+    "missingRows": "rejected",
+    "rawClockShift": "rejected",
+    "reversedBracket": "rejected",
+    "status": "PASS",
+    "tests": 9,
+    "wrongCMTimeValue": "rejected",
+    "wrongNativeConvertedTicks": "rejected",
+    "wrongTimebase": "rejected",
+    "wrongTimescale": "rejected"
+  },
+  "kind": "headless-host-clock-calibration-index",
+  "nativeBinary": {
+    "hash": "sha256:274196bca0fde820d46da232c548b5d990935af471483fafbb22b8b540373091",
+    "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/clock-calibration/e3624791-209c-4dc3-abe2-46b2a4dcd744/clock-calibration"
+  },
+  "nativeSource": {
+    "hash": "sha256:56b0f19f83e82eae5f7ae24d21fbe137db76537fc093909ef56fcee8ead05183",
+    "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/clock-calibration/e3624791-209c-4dc3-abe2-46b2a4dcd744/ClockCalibration.swift"
+  },
+  "originalRawReadOnly": {
+    "hash": "sha256:5dcc14adb5e3a7cf75b65603f491d5a8465575a3009997c0271039582fb6612f",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-05/raw.jsonl"
+  },
+  "recordedAt": "2026-10-10T21:44:03.976932+00:00",
+  "remainingOwnedProcesses": [],
+  "scope": "observational candidate only; independent review pending, no old analyzer/controls modified",
+  "sourceFiles": [
+    {
+      "hash": "sha256:56b0f19f83e82eae5f7ae24d21fbe137db76537fc093909ef56fcee8ead05183",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/ClockCalibration.swift"
+    },
+    {
+      "hash": "sha256:9fad54e7e71818a4af715f70b7a188c9ad3962eddcd47f5258532982eb597aeb",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/analyze.py"
+    },
+    {
+      "hash": "sha256:b4e8a23ff09ca568c4957688fcdebb982dd36923d33424d223b8cf3998f98d6e",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/run.py"
+    },
+    {
+      "hash": "sha256:28acb8ef64baa5b0580729dffa622fb6785cbc94ecebbc8ef20adc4bbabb1a2a",
+      "path": "/Volumes/D/claude/swiftright/factory/native/macos/clock-calibration/test_analyze.py"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "exactRationalCMTimeNs": "225147953668208",
+  "floorTicksFromRational": 5403550888036,
+  "inverseCeilingCandidateTicks": 5403550888037,
+  "inverseCeilingCandidateWithinBracket": true,
+  "kind": "read-only-original-clock-miss-analysis",
+  "makeHostFloorModelWouldProduceSameCMTimeFromMachBefore": true,
+  "nativeConvertedTicks": 5403550888036,
+  "originalCallbackEntryClocks": {
+    "cmHostSystemUnits": 5403550888036,
+    "cmHostTime": {
+      "epoch": 0,
+      "flags": 1,
+      "indefinite": false,
+      "timescale": 1000000000,
+      "valid": true,
+      "value": 225147953668208
+    },
+    "dispatchUptimeNs": 225147953668208,
+    "machAfter": 5403550888038,
+    "machBefore": 5403550888037,
+    "machTimebase": {
+      "denom": 3,
+      "numer": 125
+    }
+  },
+  "originalRaw": {
+    "hash": "sha256:5dcc14adb5e3a7cf75b65603f491d5a8465575a3009997c0271039582fb6612f",
+    "path": "/Volumes/D/claude/swiftright/factory/native/macos/timing-spike/evidence/20261011-control-05/raw.jsonl"
+  },
+  "rationalMinusAfterNs": "-42",
+  "rationalMinusBeforeNs": "-1/3",
+  "sampleIndex": 48,
+  "scope": "Consistent with independently observed native scale quantization. Candidate inverse is observational, not original analyzer acceptance or guaranteed uncertainty interval.",
+  "strictSystemTickWithinBracket": false,
+  "tickNs": "125/3"
+}
