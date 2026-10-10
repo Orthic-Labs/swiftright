@@ -263,6 +263,7 @@ enum NodeKind {
     case image(ImageReference)
     case textEditor(Binding<String>)
     case divider
+    case shape(ResolvedShape)
     /// Menu label is the child; its items are a model (`Node.menuEntries`).
     case menu
 
@@ -662,6 +663,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let style: ResolvedStyle
     /// Image nodes only: the reference the backend loads.
     public let image: ImageReference?
+    /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
+    public let shape: ResolvedShape?
     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
     public let menu: [ResolvedMenuItem]?
     /// Alert and confirmation dialog nodes, while presented.
@@ -1518,6 +1521,8 @@ public final class Graph {
         }
         var image: ImageReference?
         if case .image(let reference) = kind { image = reference }
+        var shape: ResolvedShape?
+        if case .shape(let resolvedShape) = kind { shape = resolvedShape }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1539,6 +1544,7 @@ public final class Graph {
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,
+            shape: shape,
             menu: node.menuEntries.map(resolveMenu),
             presentation: node.presented.map(resolvePresentation),
             shortcut: shortcut
@@ -1635,6 +1641,12 @@ public final class Graph {
         case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
         case .image: return "Image"
+        case .shape(let shape):
+            switch shape.geometry {
+            case .rectangle: return "Rectangle"
+            case .roundedRectangle: return "RoundedRectangle"
+            case .circle: return "Circle"
+            }
         case .textEditor: return "TextEditor"
         case .divider: return "Divider"
         case .menu: return "Menu"

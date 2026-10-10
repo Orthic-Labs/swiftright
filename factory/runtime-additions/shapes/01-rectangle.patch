@@ -1,0 +1,167 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -263,6 +263,7 @@
+     case image(ImageReference)
+     case textEditor(Binding<String>)
+     case divider
++    case shape(ResolvedShape)
+     /// Menu label is the child; its items are a model (`Node.menuEntries`).
+     case menu
+ 
+@@ -662,6 +663,8 @@
+     public let style: ResolvedStyle
+     /// Image nodes only: the reference the backend loads.
+     public let image: ImageReference?
++    /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
++    public let shape: ResolvedShape?
+     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
+     public let menu: [ResolvedMenuItem]?
+     /// Alert and confirmation dialog nodes, while presented.
+@@ -1518,6 +1521,8 @@
+         }
+         var image: ImageReference?
+         if case .image(let reference) = kind { image = reference }
++        var shape: ResolvedShape?
++        if case .shape(let resolvedShape) = kind { shape = resolvedShape }
+         var shortcut: ResolvedShortcut?
+         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
+             shortcut = ResolvedShortcut(
+@@ -1539,6 +1544,7 @@
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
++            shape: shape,
+             menu: node.menuEntries.map(resolveMenu),
+             presentation: node.presented.map(resolvePresentation),
+             shortcut: shortcut
+@@ -1635,6 +1641,12 @@
+         case .modifier(let spec): return spec.kindName
+         case .toggle: return "Toggle"
+         case .image: return "Image"
++        case .shape(let shape):
++            switch shape.geometry {
++            case .rectangle: return "Rectangle"
++            case .roundedRectangle: return "RoundedRectangle"
++            case .circle: return "Circle"
++            }
+         case .textEditor: return "TextEditor"
+         case .divider: return "Divider"
+         case .menu: return "Menu"
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/LayoutEngine.swift
+@@ -94,6 +94,8 @@
+             )
+         case .image(let reference):
+             return imageIntrinsicSize(reference)
++        case .shape:
++            return LayoutSize(width: finiteLength(proposal.width) ?? 10, height: finiteLength(proposal.height) ?? 10)
+         case .divider:
+             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: dividerThickness)
+         case .spacer:
+@@ -122,7 +124,7 @@
+     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+         node.frame = snapToPixelGrid(rect, scale: scale)
+         switch node.kind {
+-        case .text, .textField, .textEditor, .spacer, .image, .divider:
++        case .text, .textField, .textEditor, .spacer, .image, .divider, .shape:
+             break
+         case .modifier(.padding(let insets)):
+             guard let child = childNodes(node).first else { return }
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Shapes.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Shapes.swift
+@@ -0,0 +1,72 @@
++import Foundation
++
++/// Geometry metadata for a headless SwiftRight shape.
++public enum ShapeGeometry: Equatable, Sendable {
++    case rectangle
++    case roundedRectangle(cornerRadius: CGFloat, style: RoundedCornerStyle)
++    case circle
++}
++
++/// Corner treatment used by `RoundedRectangle`.
++public enum RoundedCornerStyle: Hashable, Sendable {
++    case circular
++    case continuous
++}
++
++/// A resolved fill or centered stroke recorded for a shape node.
++public struct ShapePaint: Equatable, Sendable {
++    public enum Kind: Hashable, Sendable {
++        case fill
++        case stroke
++    }
++
++    public let kind: Kind
++    public let color: ResolvedColor
++    /// Nil for fills; stroke width is measured in logical points.
++    public let lineWidth: CGFloat?
++
++    init(kind: Kind, color: ResolvedColor, lineWidth: CGFloat?) {
++        self.kind = kind
++        self.color = color
++        self.lineWidth = lineWidth
++    }
++}
++
++/// Shape facts attached to a resolved node. Bounds are provided by `ResolvedNode.frame`.
++public struct ResolvedShape: Equatable, Sendable {
++    public let geometry: ShapeGeometry
++    public let paint: ShapePaint?
++}
++
++/// Shared shape API for rectangle, rounded rectangle & circle.
++public protocol Shape: View {
++    var shapeGeometry: ShapeGeometry { get }
++}
++
++extension Shape {
++    public func fill<S: ShapeStyle>(_ style: S) -> some View {
++        ShapePaintView(shape: self, paint: ShapePaint(kind: .fill, color: style.resolvedColor, lineWidth: nil))
++    }
++
++    public func stroke<S: ShapeStyle>(_ style: S, lineWidth: CGFloat = 1) -> some View {
++        ShapePaintView(shape: self, paint: ShapePaint(kind: .stroke, color: style.resolvedColor, lineWidth: max(0, lineWidth)))
++    }
++}
++
++private struct ShapePaintView<Content: Shape>: View, PrimitiveView {
++    let shape: Content
++    let paint: ShapePaint
++
++    @MainActor var body: Never { return fatalError("primitive shape paint has no body") }
++    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shape.shapeGeometry, paint: paint)) }
++    var nodeContent: (any View)? { nil }
++}
++
++/// Rectangular path that fills its proposed bounds.
++public struct Rectangle: Shape, PrimitiveView {
++    public init() {}
++    public var shapeGeometry: ShapeGeometry { .rectangle }
++    @MainActor public var body: Never { return fatalError("primitive shape has no body") }
++    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
++    var nodeContent: (any View)? { nil }
++}
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
+@@ -0,0 +1,20 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++@MainActor
++final class ShapeTests: XCTestCase {
++    func testRectangleFillRecordsProposedBoundsAndResolvedPaint() {
++        let graph = Graph(Rectangle().fill(Color.red))
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++
++        let node = graph.snapshot()
++        XCTAssertEqual(node?.kind, "Rectangle")
++        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 40, height: 20))
++        XCTAssertEqual(node?.shape?.geometry, .rectangle)
++        XCTAssertEqual(node?.shape?.paint?.kind, .fill)
++        XCTAssertEqual(node?.shape?.paint?.color, Color.red.resolvedColor)
++        XCTAssertNil(node?.shape?.paint?.lineWidth)
++    }
++}

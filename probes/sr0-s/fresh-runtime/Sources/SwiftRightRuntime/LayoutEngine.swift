@@ -94,6 +94,8 @@ extension Graph {
             )
         case .image(let reference):
             return imageIntrinsicSize(reference)
+        case .shape:
+            return LayoutSize(width: finiteLength(proposal.width) ?? 10, height: finiteLength(proposal.height) ?? 10)
         case .divider:
             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: dividerThickness)
         case .spacer:
@@ -122,7 +124,7 @@ extension Graph {
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
         switch node.kind {
-        case .text, .textField, .textEditor, .spacer, .image, .divider:
+        case .text, .textField, .textEditor, .spacer, .image, .divider, .shape:
             break
         case .modifier(.padding(let insets)):
             guard let child = childNodes(node).first else { return }
