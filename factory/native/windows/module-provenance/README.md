@@ -1,0 +1,9 @@
+# Fresh Windows module origin
+
+One compiler-only build pins unchanged runtime commit `37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b`, source tree `c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e`, complete snapshot, source receipt, archive & installed compiler bytes. No tests or GUI run.
+
+`module-origin-build.ps1` requires exact fresh source/receipt/run paths, complete nonempty unique canonical bindings & full disk coverage before/after compilation. It launches fixed `swift build -c release` argv with actual source cwd, records OS PID/path/start/command line & archives this observation. Deadline is 15 minutes including output drain; cleanup targets only matching owned PID/path/start. Success requires compiler exit 0, unchanged inputs & exact two nonempty target `.swiftmodule`/`.swiftdoc` files copied immediately from fresh scratch output.
+
+`verify_module_origin.py` independently reads actual input/output/module files, validates fixed hashes, command/process/time/cleanup joins, full source coverage & byte-identical module archives. CLI uses actual Windows paths. Synthetic unit fixtures map those paths into temporary storage & substitute only known compiler-byte pin; fixture compiler/module bytes are never executed & establish guard behavior only. Accepted fixture plus missing/changed files, process/argv/cwd/time, duplicate/empty bindings, coverage, copy & duplicate JSON controls exercise production verifier.
+
+F7 executes one fresh compiler build after independent source review. Actual receipt, stdout/stderr, source snapshot, helper copy, process observation & module bytes require independent review before any downstream module-origin claim. Earlier receipts remain historical. This proof concerns owned compiler output origin; no renderer, tests, native parity or OS-signed provenance is claimed.
