@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 4,
+  "app": "sliceapp",
+  "platform": "darwin",
+  "runId": "d9944402-8c41-4a3f-805e-ccf605ea61ff",
+  "startedAt": "2026-10-10T02:04:51.096401Z",
+  "finishedAt": "2026-10-10T02:05:47.574926Z",
+  "status": "passed",
+  "identity": {
+    "config": {
+      "path": "/Volumes/D/sr0-build/r3-final-011/examples/SliceApp/rightkit-qa.toml",
+      "sha256": "400b6f27806e6f7cfc329ec1333de3e29548f46e9a938fcc01cce9495847e94c"
+    },
+    "engine": {
+      "path": "/Volumes/D/sr0-build/r3-final-011/examples/SliceApp/qa/drive-mac.sh",
+      "sha256": "b77370a3678bc355cefbff6456506ae8661d3679ac2e1fee179fb442222241df"
+    },
+    "scenarios": [
+      {
+        "file": "qa/scenarios/macos/10-build.scenario.toml",
+        "name": "app.build",
+        "sha256": "6680e048c91612c7467548b2bd8540f24e67c99406fd27aa1c1612702c6765c6"
+      },
+      {
+        "file": "qa/scenarios/macos/20-launch.scenario.toml",
+        "name": "app.launch",
+        "sha256": "1d88a99918714b813bea9d317433d4b21952a9a6c598b0a98dd374b73bb09614"
+      },
+      {
+        "file": "qa/scenarios/macos/30-journey.scenario.toml",
+        "name": "journey.restart-keeps-data",
+        "sha256": "bfdd88a9979fa9d9949cc87f4832cf69ca75596abd7584b249acef45baabea0d"
+      }
+    ],
+    "source": {
+      "dirty": false,
+      "head": "c946d1d432b02faaa5d3851d20a19a4fa75a0142"
+    },
+    "ui": null
+  },
+  "checks": [
+    {
+      "name": "app.build",
+      "status": "passed",
+      "details": {
+        "error": null,
+        "file": "qa/scenarios/macos/10-build.scenario.toml",
+        "steps": 1,
+        "tier": "fast"
+      },
+      "artifacts": [
+        "app.build/01-cli.log"
+      ]
+    },
+    {
+      "name": "app.launch",
+      "status": "passed",
+      "details": {
+        "error": null,
+        "file": "qa/scenarios/macos/20-launch.scenario.toml",
+        "steps": 1,
+        "tier": "fast"
+      },
+      "artifacts": [
+        "app.launch/01-cli.log"
+      ]
+    },
+    {
+      "name": "journey.restart-keeps-data",
+      "status": "passed",
+      "details": {
+        "error": null,
+        "file": "qa/scenarios/macos/30-journey.scenario.toml",
+        "steps": 1,
+        "tier": "fast"
+      },
+      "artifacts": [
+        "journey.restart-keeps-data/01-cli.log"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "app.build/01-cli.log",
+      "path": "/Volumes/D/.rightkit-managed/runs/sliceapp/d9944402-8c41-4a3f-805e-ccf605ea61ff/evidence/app_build-146928de/01-cli.log",
+      "sha256": "af723c5ac2e8c39ead75e0350f4fd58d40332bc7f51df462d2b0a950fb4efc18",
+      "size_bytes": 1040,
+      "recorded_at": "2026-10-10T02:05:00.437645Z"
+    },
+    {
+      "name": "app.launch/01-cli.log",
+      "path": "/Volumes/D/.rightkit-managed/runs/sliceapp/d9944402-8c41-4a3f-805e-ccf605ea61ff/evidence/app_launch-af85972b/01-cli.log",
+      "sha256": "05d8e197dd5b9d74644c9942e126743536465654916cd41dee24c5e3dfcb9f0d",
+      "size_bytes": 1003,
+      "recorded_at": "2026-10-10T02:05:22.140799Z"
+    },
+    {
+      "name": "journey.restart-keeps-data/01-cli.log",
+      "path": "/Volumes/D/.rightkit-managed/runs/sliceapp/d9944402-8c41-4a3f-805e-ccf605ea61ff/evidence/journey_restart-keeps-data-8376e1be/01-cli.log",
+      "sha256": "d09528197fcafd74b45404728eeceacb22f700ba0f28cb09157ff44c3efba12e",
+      "size_bytes": 1250,
+      "recorded_at": "2026-10-10T02:05:47.574912Z"
+    }
+  ]
+}

@@ -968,14 +968,15 @@ class PackageStageTests(unittest.TestCase):
 
     def test_a_pending_tuple_member_fails_a_record_that_carries_it(self):
         final = q.load_tuple(q.TUPLE_FINAL)["pins"]
-        self.assertIsNone(final["new_dmg"], "the 0.1.1 DMG on the final chain is not built yet")
+        self.assertIsNotNone(final["new_dmg"], "the 0.1.1 DMG on the final chain is pinned")
+        pending = self.pinned(new_dmg=None)  # the tuple as it was before the 0.1.1 DMG was built
         self.write_run("windows", passing_checks("windows-x64"), run=run_record(
             "windows-x64", passing_checks("windows-x64"),
             artifact_ids={"old_msix": "sha256:" + final["old_msix"], "new_msix": "sha256:" + final["new_msix"]}))
         self.write_run("mac", passing_checks("macos-arm64"), run=run_record(
             "macos-arm64", passing_checks("macos-arm64"),
             artifact_ids={"old_dmg": "sha256:" + final["old_dmg"], "new_dmg": sha_ref_of(b"0.1.1 dmg")}))
-        self.assertFalse(q.package_stage(self.log, [self.root], tuple_pin=q.load_tuple(q.TUPLE_FINAL)))
+        self.assertFalse(q.package_stage(self.log, [self.root], tuple_pin=pending))
         self.assertIn("new_dmg is not pinned in tuple final (PENDING)", " ".join(self.fail_reasons()))
 
 
@@ -995,7 +996,8 @@ class TupleFileTests(unittest.TestCase):
         self.assertTrue(pin["pins"]["windows_fixture_exe"].startswith("aa4353ce"))
         self.assertTrue(pin["pins"]["windows_smoke_exe"].startswith("21992f16"))
         self.assertTrue(pin["pins"]["old_dmg"].startswith("b976ac70"))
-        self.assertIsNone(pin["pins"]["new_dmg"], "0.1.1 DMG on the final chain is PENDING")
+        self.assertTrue(pin["pins"]["new_dmg"].startswith("75f3cd75"))
+        self.assertNotEqual(pin["pins"]["new_dmg"], pin["pins"]["old_dmg"])
 
     def test_every_pinned_hash_is_on_every_cited_line(self):
         doc = json.loads(q.TUPLE_FINAL.read_text(encoding="utf-8"))
