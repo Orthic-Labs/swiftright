@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.stack-overlay",
+  "case": {
+    "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+    "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515"
+  },
+  "caseInputs": {
+    "alignment": "trailing",
+    "color-scheme": "light"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.stack-overlay:swiftui.stack-overlay.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.stack-overlay.witness",
+        "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "light"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+    "id": "swiftui.stack-overlay.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.stack-overlay.recipe_case_aac89c30fbc61515.swift",
+  "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.stack-overlay.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.stack-overlay.witness.swift",
+    "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+  },
+  "witnessType": "Witness_stack_overlay"
+}

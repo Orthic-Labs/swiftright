@@ -1,0 +1,2639 @@
+{
+  "expectedChanges": {
+    "existingPrimaryCorrectionCases": [
+      "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29",
+      "swiftui.preference-key.recipe/case/66b6b44aaff817d6"
+    ],
+    "existingPrimaryCorrectionCount": 2,
+    "foundationImportCases": [
+      "swiftui.custom-layout.instrumentation-transparency",
+      "swiftui.custom-layout.recipe/case/53a3a703460913a1",
+      "swiftui.custom-layout.recipe/case/6617ee20b02cdf59",
+      "swiftui.custom-layout.recipe/case/6ed908118b5337e9",
+      "swiftui.custom-layout.recipe/case/6f604b656b080f22",
+      "swiftui.custom-layout.recipe/case/9e168af9151444e6",
+      "swiftui.custom-layout.recipe/case/cbdbf98fe2727aef",
+      "swiftui.custom-layout.recipe/case/d81b5c097a3f5e47",
+      "swiftui.preference-key.instrumentation-transparency",
+      "swiftui.preference-key.recipe/case/0e9ebd67e2f285f7",
+      "swiftui.preference-key.recipe/case/505d1942c4bf9e7a",
+      "swiftui.preference-key.recipe/case/9b0b6768e0fdf331",
+      "swiftui.preference-key.recipe/case/a7479c2eb0cd172b",
+      "swiftui.preference-key.recipe/case/d041707386f50f19"
+    ],
+    "foundationImportPositiveCount": 14,
+    "negativeGeneratorRefreshCases": [
+      "swiftui.custom-layout.negative.invalid-member",
+      "swiftui.preference-key.negative.invalid-member"
+    ],
+    "negativeGeneratorRefreshCount": 2,
+    "unchangedCount": 63
+  },
+  "generatorHash": "sha256:03b08aca5c04fb988c1262e35c3506cf06bfcac699c7eb384dc034a8419f659d",
+  "generatorPath": "factory/probes/generator.py",
+  "kind": "fixed81-foundation-correction-lineage",
+  "originalSet": {
+    "caseCount": 81,
+    "caseDir": "factory/pipeline/cases",
+    "recipeDir": "factory/recipes/data",
+    "sourceDir": "factory/pipeline/probes"
+  },
+  "rows": [
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:27eac1853a09fc5b642122d54564907bc600612faeb46924d2db0ca2adeedfe6",
+        "hash": "sha256:27eac1853a09fc5b642122d54564907bc600612faeb46924d2db0ca2adeedfe6",
+        "id": "swiftui.custom-layout.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.instrumentation-transparency.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 1,
+      "manifest": {
+        "currentHash": "sha256:9ccfad6f2967b01d67281eeb6704e6de581a66a71b3f697e83b1ed9205286d8a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:a686e8354a50e728c7437997670d0470a7ed255a84b765e502e8c022cd7bc200",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.instrumentation-transparency.swift",
+        "macOSHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+        "oldHash": "sha256:1a5052068801697c9cd5c7a24e511e4f47e3961c8c7c5eb17206b1626e1c1847",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.instrumentation-transparency.swift",
+        "windowsHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:d6d8bf95112e4086783ba0b6744d77f8a5f2dc2b0cce6a3c4ab62c81fb9d8ba3",
+        "hash": "sha256:d6d8bf95112e4086783ba0b6744d77f8a5f2dc2b0cce6a3c4ab62c81fb9d8ba3",
+        "id": "swiftui.custom-layout.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.negative.invalid-member.json"
+      },
+      "change": "negative-generator-refresh",
+      "classification": "expected-negative",
+      "index": 2,
+      "manifest": {
+        "currentHash": "sha256:33f32374d4910c3bac4faba7fd565c0c20654c6c1dc4f70d8dd5309b1480fe5d",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:a5d2f4beb450c7be5f498b1a12c9cf2215fbcb845e0fb100a59a8026515b9989",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:67f944f82a12aa6c0ff778df81d550485ab7141143443de7525ad4452bef3bee",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.negative.invalid-member.swift",
+        "macOSHash": "sha256:67f944f82a12aa6c0ff778df81d550485ab7141143443de7525ad4452bef3bee",
+        "oldHash": "sha256:305b3beca1914ad30ddd23135afb5a581785d8de6db0102c0a956925b3032525",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.negative.invalid-member.swift",
+        "windowsHash": "sha256:67f944f82a12aa6c0ff778df81d550485ab7141143443de7525ad4452bef3bee"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:da22911387b28a0c80486fcd8e6b1bbdc47140a2c407c6a362253d1ab410350b",
+        "hash": "sha256:da22911387b28a0c80486fcd8e6b1bbdc47140a2c407c6a362253d1ab410350b",
+        "id": "swiftui.custom-layout.recipe/case/53a3a703460913a1",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--53a3a703460913a1.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 3,
+      "manifest": {
+        "currentHash": "sha256:db8c2d2f17fe8b9a56ab2cafb4d8d687b0f046fcfb2dd3b53f0c862aeba0e89c",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_53a3a703460913a1.manifest.json",
+        "oldHash": "sha256:7eb4d60cdfa9daa29b338a34c1fee44c4f11ad183f92ea43220b0506197edbab",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_53a3a703460913a1.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:e5d83565ee02794b30b8c1712c05147bd518da74c69f436d7ae362f01ad1f1fe",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_53a3a703460913a1.swift",
+        "macOSHash": "sha256:e5d83565ee02794b30b8c1712c05147bd518da74c69f436d7ae362f01ad1f1fe",
+        "oldHash": "sha256:04c4cd4c07cbbb091f18e324f58ce695d8baee0c73e1f9d74d8ec16e499d7c57",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_53a3a703460913a1.swift",
+        "windowsHash": "sha256:e5d83565ee02794b30b8c1712c05147bd518da74c69f436d7ae362f01ad1f1fe"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:51f18256951f45ad35662db18ee3643d73664fc9bd9876a461f49b9fc8359ea0",
+        "hash": "sha256:51f18256951f45ad35662db18ee3643d73664fc9bd9876a461f49b9fc8359ea0",
+        "id": "swiftui.custom-layout.recipe/case/6617ee20b02cdf59",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--6617ee20b02cdf59.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 4,
+      "manifest": {
+        "currentHash": "sha256:607efd2719d9e53b7c420e3894518a7462ff186fef32736dc8bfe2613e386207",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_6617ee20b02cdf59.manifest.json",
+        "oldHash": "sha256:79b833e4456c9359a552812d0ed25362f2df3d8c2df83dc476150e2542eb485b",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6617ee20b02cdf59.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:25023fe34660dbd921f9458f4a82c0ddeabb46be4f93e32dd70c351595639084",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_6617ee20b02cdf59.swift",
+        "macOSHash": "sha256:25023fe34660dbd921f9458f4a82c0ddeabb46be4f93e32dd70c351595639084",
+        "oldHash": "sha256:fbc4950e4f04e4466a2ccb6d248db1277c1e41f05c123862fbcc9be230ac1d1b",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6617ee20b02cdf59.swift",
+        "windowsHash": "sha256:25023fe34660dbd921f9458f4a82c0ddeabb46be4f93e32dd70c351595639084"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:5006bdf49a7fbccb2bdf7fe9d0119fa775627e7deaade0817d534437e393002c",
+        "hash": "sha256:5006bdf49a7fbccb2bdf7fe9d0119fa775627e7deaade0817d534437e393002c",
+        "id": "swiftui.custom-layout.recipe/case/6ed908118b5337e9",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--6ed908118b5337e9.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 5,
+      "manifest": {
+        "currentHash": "sha256:d74698f264764516ba788966224bc4403cb6dd99eef7d3c151ecf5880f041b0a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_6ed908118b5337e9.manifest.json",
+        "oldHash": "sha256:b4b8eeaac79179b1cdfc9da612b1a55f68ea0060f4c243430d0141511b523ce7",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6ed908118b5337e9.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:0d9fc7147eb3c9629ea5a340a02beb4cfb6dc6e8bddd455b0fbc78f74e1cad92",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_6ed908118b5337e9.swift",
+        "macOSHash": "sha256:0d9fc7147eb3c9629ea5a340a02beb4cfb6dc6e8bddd455b0fbc78f74e1cad92",
+        "oldHash": "sha256:a0a7901c94d708cfd18f1aeb921c3e04670c158821dc2adde300a04922f3adc8",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6ed908118b5337e9.swift",
+        "windowsHash": "sha256:0d9fc7147eb3c9629ea5a340a02beb4cfb6dc6e8bddd455b0fbc78f74e1cad92"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:5f50548ad8c37db129f3fa73934a091f029f5791a61fa81a704a1d5854586dd7",
+        "hash": "sha256:5f50548ad8c37db129f3fa73934a091f029f5791a61fa81a704a1d5854586dd7",
+        "id": "swiftui.custom-layout.recipe/case/6f604b656b080f22",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--6f604b656b080f22.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 6,
+      "manifest": {
+        "currentHash": "sha256:b71214f9759703582565ccd312933fe6bc87d4d52d183da877d2cc95d0981300",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_6f604b656b080f22.manifest.json",
+        "oldHash": "sha256:bdb2b060a1f3d3d06b35d9674da2765cb74d53d88824b8983cb6d898559c47c8",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6f604b656b080f22.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:927ce614d6a8a75b215f25004f0697eb1129131ebfd60c718118f5ae08220401",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_6f604b656b080f22.swift",
+        "macOSHash": "sha256:927ce614d6a8a75b215f25004f0697eb1129131ebfd60c718118f5ae08220401",
+        "oldHash": "sha256:1a0ffbae735522a47504bdb56e9e8459fd26b9d391673af591c4253d483fb2b8",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_6f604b656b080f22.swift",
+        "windowsHash": "sha256:927ce614d6a8a75b215f25004f0697eb1129131ebfd60c718118f5ae08220401"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:04331378d32943d64027982742e4867a78f307f671cec6787535b099676656ad",
+        "hash": "sha256:04331378d32943d64027982742e4867a78f307f671cec6787535b099676656ad",
+        "id": "swiftui.custom-layout.recipe/case/9e168af9151444e6",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--9e168af9151444e6.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 7,
+      "manifest": {
+        "currentHash": "sha256:64fa21c243144a91876ad9cb0b29215ed967e77f4709111b60b54a2f213001a3",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_9e168af9151444e6.manifest.json",
+        "oldHash": "sha256:340d1be550bd3015aefad3e78ed1057b6f61dd78efe9b6e9e2331a4947f78352",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_9e168af9151444e6.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_9e168af9151444e6.swift",
+        "macOSHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+        "oldHash": "sha256:c37913c6946805ab6a5a1d4af9c392e28a43e3be7ed182ebb9e5d09b827539c7",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_9e168af9151444e6.swift",
+        "windowsHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--b30ed0b185e8cb29.json"
+      },
+      "change": "existing-primary-correction",
+      "classification": "positive-pass",
+      "index": 8,
+      "manifest": {
+        "currentHash": "sha256:c3d28ff284e3460b377d0fa0a991caf4600da062f79ea55e18d6b0e63cf5baca",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.manifest.json",
+        "oldHash": "sha256:e201d294a2221ee8fbe35c2ae9848de2fa6757d429f8f76d6290ba78866d6ae5",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift",
+        "macOSHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+        "oldHash": "sha256:1a5052068801697c9cd5c7a24e511e4f47e3961c8c7c5eb17206b1626e1c1847",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29.swift",
+        "windowsHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:2eb09912649b2ec39b3282adff350520789b89844c5dc38aa81d3182b1face68",
+        "hash": "sha256:2eb09912649b2ec39b3282adff350520789b89844c5dc38aa81d3182b1face68",
+        "id": "swiftui.custom-layout.recipe/case/cbdbf98fe2727aef",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--cbdbf98fe2727aef.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 9,
+      "manifest": {
+        "currentHash": "sha256:611a1ac74846dc4cc2b6db50a58f1e9fb9b80949bc27281ffaef848a9ec43c69",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_cbdbf98fe2727aef.manifest.json",
+        "oldHash": "sha256:d88fd7b351b0758672f2421793073ea91c808800e15aefd97f74db4f4a5c866f",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_cbdbf98fe2727aef.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:9424c2d48b0909cc91e3d3a3c9bb267428559c6c97e9e4155c9368796761a041",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_cbdbf98fe2727aef.swift",
+        "macOSHash": "sha256:9424c2d48b0909cc91e3d3a3c9bb267428559c6c97e9e4155c9368796761a041",
+        "oldHash": "sha256:15ee0d8a3c63e116d9bfc32052cd728048162a6976288f87addab47c84afdba5",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_cbdbf98fe2727aef.swift",
+        "windowsHash": "sha256:9424c2d48b0909cc91e3d3a3c9bb267428559c6c97e9e4155c9368796761a041"
+      }
+    },
+    {
+      "block": "swiftui.custom-layout",
+      "case": {
+        "fileHash": "sha256:582b0b0ff845dfea78d829cfc0ce7879b54c2269217c689e0d7dfd3bb8de39c5",
+        "hash": "sha256:582b0b0ff845dfea78d829cfc0ce7879b54c2269217c689e0d7dfd3bb8de39c5",
+        "id": "swiftui.custom-layout.recipe/case/d81b5c097a3f5e47",
+        "path": "factory/pipeline/cases/swiftui.custom-layout.recipe--case--d81b5c097a3f5e47.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 10,
+      "manifest": {
+        "currentHash": "sha256:43224a934c05fa46909981291133ca8d6dc6dbac1699145b782e8dc26e8f8ede",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.custom-layout.recipe_case_d81b5c097a3f5e47.manifest.json",
+        "oldHash": "sha256:2f0d1a28c863da74cc014a22419a7c29924103837cf5af3bfaf3262c95c66d90",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_d81b5c097a3f5e47.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+        "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+        "id": "swiftui.custom-layout.recipe",
+        "path": "factory/recipes/data/swiftui.custom-layout.json"
+      },
+      "source": {
+        "currentHash": "sha256:a80c3fe0c36264f2183ce5ec43ae02114a62d646e78c160a2d763adfa4c11c64",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.custom-layout.recipe_case_d81b5c097a3f5e47.swift",
+        "macOSHash": "sha256:a80c3fe0c36264f2183ce5ec43ae02114a62d646e78c160a2d763adfa4c11c64",
+        "oldHash": "sha256:7cf552d8d9b3a34c6b8d485f52906f03a6ce25c477232e8de2ef476f3bd434a1",
+        "oldPath": "factory/pipeline/probes/swiftui.custom-layout.recipe_case_d81b5c097a3f5e47.swift",
+        "windowsHash": "sha256:a80c3fe0c36264f2183ce5ec43ae02114a62d646e78c160a2d763adfa4c11c64"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:62e74b7efdd8f43d258c64e7ba1a0b9e2aa3366d23f1b4b03c7907bfaaddcf81",
+        "hash": "sha256:62e74b7efdd8f43d258c64e7ba1a0b9e2aa3366d23f1b4b03c7907bfaaddcf81",
+        "id": "swiftui.disabled.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.disabled.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 11,
+      "manifest": {
+        "currentHash": "sha256:864f2ca0b549af1f859baa0ff1957111ea1344b198bb5d88b489c8bcb6e697e5",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:1497ed21b77a8a9bb4810cf97860f90e493c97cef4014a2e705d2c8dedd94c80",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.instrumentation-transparency.swift",
+        "macOSHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "oldHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.instrumentation-transparency.swift",
+        "windowsHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:e5dd691e9be02d5a2c537ef9cc5a632483e3472843d07f4ceb5c90d480381a1e",
+        "hash": "sha256:e5dd691e9be02d5a2c537ef9cc5a632483e3472843d07f4ceb5c90d480381a1e",
+        "id": "swiftui.disabled.negative.disabled-action",
+        "path": "factory/pipeline/cases/swiftui.disabled.negative.disabled-action.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 12,
+      "manifest": {
+        "currentHash": "sha256:dbd4bc71315284a0c2a0146d39b375411e1d01659edc696eb224acd04c1762a9",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.negative.disabled-action.manifest.json",
+        "oldHash": "sha256:d8aa7fe56c9187b1df0c7c826f360187716bcb8d8e7d72c8b912d79ebf3bf585",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.negative.disabled-action.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:091199458271a2aabac14d937a31964e11af44f0ccd0650f36139d4116849ac7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.negative.disabled-action.swift",
+        "macOSHash": "sha256:091199458271a2aabac14d937a31964e11af44f0ccd0650f36139d4116849ac7",
+        "oldHash": "sha256:091199458271a2aabac14d937a31964e11af44f0ccd0650f36139d4116849ac7",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.negative.disabled-action.swift",
+        "windowsHash": "sha256:091199458271a2aabac14d937a31964e11af44f0ccd0650f36139d4116849ac7"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:9a3b48b6a4a5d1ef4b1153e2132ed520cf1d2abf8e17ce2fd39d21363f342dd0",
+        "hash": "sha256:9a3b48b6a4a5d1ef4b1153e2132ed520cf1d2abf8e17ce2fd39d21363f342dd0",
+        "id": "swiftui.disabled.recipe/case/24d8fb68cd7316b5",
+        "path": "factory/pipeline/cases/swiftui.disabled.recipe--case--24d8fb68cd7316b5.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 13,
+      "manifest": {
+        "currentHash": "sha256:b819b1edba469f127baeeaf52c8bc342dc5d828a3fb3ec2af17280840458c2b1",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.recipe_case_24d8fb68cd7316b5.manifest.json",
+        "oldHash": "sha256:1eefb067adb3f04cdf41621fe8f3bc1308bab3ecff231ee9dc02160a2fdddf2c",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_24d8fb68cd7316b5.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.recipe_case_24d8fb68cd7316b5.swift",
+        "macOSHash": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+        "oldHash": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_24d8fb68cd7316b5.swift",
+        "windowsHash": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:83c9421681f13f886995ff7a364e05531d986a8a21ced74cc626f7c3967aede6",
+        "hash": "sha256:83c9421681f13f886995ff7a364e05531d986a8a21ced74cc626f7c3967aede6",
+        "id": "swiftui.disabled.recipe/case/2d2f5da4f245920b",
+        "path": "factory/pipeline/cases/swiftui.disabled.recipe--case--2d2f5da4f245920b.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 14,
+      "manifest": {
+        "currentHash": "sha256:910af0fa505d6c58b9f6efc5253971a26542bcef08a0b0f45297191c96d8c74e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.recipe_case_2d2f5da4f245920b.manifest.json",
+        "oldHash": "sha256:b2abdf5c7a8f9ed85f85d2f4580d400617664c42a5f5e0cabaf47fd28da35e8b",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_2d2f5da4f245920b.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:280074f4eba715ae465c96bb231d08fa903d6d2d627e3ccc013a55ed23d9b6e2",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.recipe_case_2d2f5da4f245920b.swift",
+        "macOSHash": "sha256:280074f4eba715ae465c96bb231d08fa903d6d2d627e3ccc013a55ed23d9b6e2",
+        "oldHash": "sha256:280074f4eba715ae465c96bb231d08fa903d6d2d627e3ccc013a55ed23d9b6e2",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_2d2f5da4f245920b.swift",
+        "windowsHash": "sha256:280074f4eba715ae465c96bb231d08fa903d6d2d627e3ccc013a55ed23d9b6e2"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:7c2a173cc73ba7e19e01cf785f5a2794bf9f30656aa43c66700a20d4e66fac43",
+        "hash": "sha256:7c2a173cc73ba7e19e01cf785f5a2794bf9f30656aa43c66700a20d4e66fac43",
+        "id": "swiftui.disabled.recipe/case/bde7de986a733d29",
+        "path": "factory/pipeline/cases/swiftui.disabled.recipe--case--bde7de986a733d29.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 15,
+      "manifest": {
+        "currentHash": "sha256:1f89dcf9768692817929ce8ac64611ca86371073dc54995f095bedab28b10722",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.recipe_case_bde7de986a733d29.manifest.json",
+        "oldHash": "sha256:f3b3ce4a5edfa46ab44824db11754d40287fc3a1b03c4caff5f8ca83e0d77428",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_bde7de986a733d29.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.recipe_case_bde7de986a733d29.swift",
+        "macOSHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "oldHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_bde7de986a733d29.swift",
+        "windowsHash": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "case": {
+        "fileHash": "sha256:d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+        "hash": "sha256:d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+        "id": "swiftui.disabled.recipe/case/f113195a59446fc4",
+        "path": "factory/pipeline/cases/swiftui.disabled.recipe--case--f113195a59446fc4.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 16,
+      "manifest": {
+        "currentHash": "sha256:3f2e2fbccffd2a0665ed55f5bca14e3a3c46b932b20e8708016bc40d25173f0c",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.disabled.recipe_case_f113195a59446fc4.manifest.json",
+        "oldHash": "sha256:5e155ed85464617856bff8796c548a4bca943b0a4e1176425a6f8f3e63a4b27e",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_f113195a59446fc4.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "hash": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+        "id": "swiftui.disabled.recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json"
+      },
+      "source": {
+        "currentHash": "sha256:68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.disabled.recipe_case_f113195a59446fc4.swift",
+        "macOSHash": "sha256:68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+        "oldHash": "sha256:68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+        "oldPath": "factory/pipeline/probes/swiftui.disabled.recipe_case_f113195a59446fc4.swift",
+        "windowsHash": "sha256:68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:aa49694d0a6d1beb2e980749b19ef4b1eafe1f92b3e5974ed4ff5b3c89143cc9",
+        "hash": "sha256:aa49694d0a6d1beb2e980749b19ef4b1eafe1f92b3e5974ed4ff5b3c89143cc9",
+        "id": "swiftui.image.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.image.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 17,
+      "manifest": {
+        "currentHash": "sha256:daff5e3d13263e3379a40a5abb2ae8318ae448ae0432a5857bafdb95250627ee",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:96a8c24a54082646fd08e2c00196d334a73ff996e1cc90937cb1b96fb368d15f",
+        "oldPath": "factory/pipeline/probes/swiftui.image.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.instrumentation-transparency.swift",
+        "macOSHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "oldHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "oldPath": "factory/pipeline/probes/swiftui.image.instrumentation-transparency.swift",
+        "windowsHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:308ea1e11648b93f45ca74c8d0ee07ad110683e307febd36fa68e19b39863e66",
+        "hash": "sha256:308ea1e11648b93f45ca74c8d0ee07ad110683e307febd36fa68e19b39863e66",
+        "id": "swiftui.image.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.image.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 18,
+      "manifest": {
+        "currentHash": "sha256:db761edfacbb4984d1c21a82bd00e15b14455770b30a6f28822e917bd36b939d",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:34dbc02eb9bb79e33295437714f0ac1ba1e2e6b79d673544a7edd1732ff14840",
+        "oldPath": "factory/pipeline/probes/swiftui.image.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:835fd3604b0ad59585b0758aa3d0bd17aac7162bddccde362a996add8cef5385",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.negative.invalid-member.swift",
+        "macOSHash": "sha256:835fd3604b0ad59585b0758aa3d0bd17aac7162bddccde362a996add8cef5385",
+        "oldHash": "sha256:835fd3604b0ad59585b0758aa3d0bd17aac7162bddccde362a996add8cef5385",
+        "oldPath": "factory/pipeline/probes/swiftui.image.negative.invalid-member.swift",
+        "windowsHash": "sha256:835fd3604b0ad59585b0758aa3d0bd17aac7162bddccde362a996add8cef5385"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:57aa228580207603a914d82b2de090c9a616a412553094c4f10d43590d709a16",
+        "hash": "sha256:57aa228580207603a914d82b2de090c9a616a412553094c4f10d43590d709a16",
+        "id": "swiftui.image.recipe/case/14061ee9ab0215a3",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--14061ee9ab0215a3.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 19,
+      "manifest": {
+        "currentHash": "sha256:be515c3f0d84df7de8d9718cb542552ada43632d1556d61521b887facc50d661",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_14061ee9ab0215a3.manifest.json",
+        "oldHash": "sha256:3bf22c323b7706f48a169459a109b1618a46f999e218dd85c7b083421a89197d",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_14061ee9ab0215a3.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:c8fc6680496f45c08376ade5f0069fea355038faa4645cce8401ab23d4e21892",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_14061ee9ab0215a3.swift",
+        "macOSHash": "sha256:c8fc6680496f45c08376ade5f0069fea355038faa4645cce8401ab23d4e21892",
+        "oldHash": "sha256:c8fc6680496f45c08376ade5f0069fea355038faa4645cce8401ab23d4e21892",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_14061ee9ab0215a3.swift",
+        "windowsHash": "sha256:c8fc6680496f45c08376ade5f0069fea355038faa4645cce8401ab23d4e21892"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:6a7c0f9b88f39b38743d182233853a10eeafb887e78ac539cac55519833b2345",
+        "hash": "sha256:6a7c0f9b88f39b38743d182233853a10eeafb887e78ac539cac55519833b2345",
+        "id": "swiftui.image.recipe/case/32dcccabb3fbd94b",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--32dcccabb3fbd94b.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 20,
+      "manifest": {
+        "currentHash": "sha256:8f174cd033716fadff88b5f2ac201a087e13d6ac28bb71037081e41ed35cd2b1",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_32dcccabb3fbd94b.manifest.json",
+        "oldHash": "sha256:bdbe76e9a9632f4501089ee21b1f292921bd8e89a82d04512624832f20497143",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_32dcccabb3fbd94b.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:fb9b53712e292462800e31c8b2b722d282d54ed940e7993782af736878f1f936",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_32dcccabb3fbd94b.swift",
+        "macOSHash": "sha256:fb9b53712e292462800e31c8b2b722d282d54ed940e7993782af736878f1f936",
+        "oldHash": "sha256:fb9b53712e292462800e31c8b2b722d282d54ed940e7993782af736878f1f936",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_32dcccabb3fbd94b.swift",
+        "windowsHash": "sha256:fb9b53712e292462800e31c8b2b722d282d54ed940e7993782af736878f1f936"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:d57ea4fefb38b11e5668630ac7f029fd1969db79a0cd15176f7f7f63f581b3d5",
+        "hash": "sha256:d57ea4fefb38b11e5668630ac7f029fd1969db79a0cd15176f7f7f63f581b3d5",
+        "id": "swiftui.image.recipe/case/54264295066aaf8c",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--54264295066aaf8c.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 21,
+      "manifest": {
+        "currentHash": "sha256:fa3c76dbab8fdfd643b2593f6853d8cca303108d4f6d22408f740e050be8d0eb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_54264295066aaf8c.manifest.json",
+        "oldHash": "sha256:baac6f2d39a2c55f172fd489614c1a9f0f61f1ef83d3b60bbc573c3026f314ea",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_54264295066aaf8c.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:67bb6cfef96b302613e7f469749f64a9184b65555106fd49b59cba4cc74b4609",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_54264295066aaf8c.swift",
+        "macOSHash": "sha256:67bb6cfef96b302613e7f469749f64a9184b65555106fd49b59cba4cc74b4609",
+        "oldHash": "sha256:67bb6cfef96b302613e7f469749f64a9184b65555106fd49b59cba4cc74b4609",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_54264295066aaf8c.swift",
+        "windowsHash": "sha256:67bb6cfef96b302613e7f469749f64a9184b65555106fd49b59cba4cc74b4609"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:ea534425b3ad3ec2efae03bf2eb10629e98a3857c987790a10f4ef6b793b40e4",
+        "hash": "sha256:ea534425b3ad3ec2efae03bf2eb10629e98a3857c987790a10f4ef6b793b40e4",
+        "id": "swiftui.image.recipe/case/8116a9594583af90",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--8116a9594583af90.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 22,
+      "manifest": {
+        "currentHash": "sha256:6de138f572d5ab3bd761f8a630ee12abb59fa10048ef39eaffa6d47e53b1a31a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_8116a9594583af90.manifest.json",
+        "oldHash": "sha256:8ee056cc7f4897492fa9779eb565d945275ee816501326a8275cd3f6e8ce65bd",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_8116a9594583af90.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_8116a9594583af90.swift",
+        "macOSHash": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171",
+        "oldHash": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_8116a9594583af90.swift",
+        "windowsHash": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:4878554a05eb0193072463b0302b4ee9b2f99329eb760e24d88e4e9d7cebdc6b",
+        "hash": "sha256:4878554a05eb0193072463b0302b4ee9b2f99329eb760e24d88e4e9d7cebdc6b",
+        "id": "swiftui.image.recipe/case/af74cc03db87b14e",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--af74cc03db87b14e.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 23,
+      "manifest": {
+        "currentHash": "sha256:dbb2341048ac15ad3671a6838647215d4b5676184040c25174325deaf9189479",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_af74cc03db87b14e.manifest.json",
+        "oldHash": "sha256:901faa4c5f9a916d4cfebf2b41a4022f293c307cdea56724019999a253586aa6",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_af74cc03db87b14e.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_af74cc03db87b14e.swift",
+        "macOSHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "oldHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_af74cc03db87b14e.swift",
+        "windowsHash": "sha256:aeac38dc9cf0d37f9c7506704f3f5f9ebf4f2cca080f0573fc2a6ed68661729a"
+      }
+    },
+    {
+      "block": "swiftui.image",
+      "case": {
+        "fileHash": "sha256:bd249934be5acb06d4b982f4dc9a0a85884c5aa68b47ea6c1a163deee02e3229",
+        "hash": "sha256:bd249934be5acb06d4b982f4dc9a0a85884c5aa68b47ea6c1a163deee02e3229",
+        "id": "swiftui.image.recipe/case/d22d1a20752f2ba4",
+        "path": "factory/pipeline/cases/swiftui.image.recipe--case--d22d1a20752f2ba4.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 24,
+      "manifest": {
+        "currentHash": "sha256:af066335c27b776fda275e7b18b18e4cb19d5b74d6e1043ac6dc81aeb43e6a0b",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.image.recipe_case_d22d1a20752f2ba4.manifest.json",
+        "oldHash": "sha256:640c6a818c280adb5d524af399e008b7c61b39118fe748bea92abc756d7717eb",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_d22d1a20752f2ba4.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+        "hash": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+        "id": "swiftui.image.recipe",
+        "path": "factory/recipes/data/swiftui.image.json"
+      },
+      "source": {
+        "currentHash": "sha256:012bf5eaff452b45b96977d84181fa4b3be904ea1d2849f91c2e89590e605602",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.image.recipe_case_d22d1a20752f2ba4.swift",
+        "macOSHash": "sha256:012bf5eaff452b45b96977d84181fa4b3be904ea1d2849f91c2e89590e605602",
+        "oldHash": "sha256:012bf5eaff452b45b96977d84181fa4b3be904ea1d2849f91c2e89590e605602",
+        "oldPath": "factory/pipeline/probes/swiftui.image.recipe_case_d22d1a20752f2ba4.swift",
+        "windowsHash": "sha256:012bf5eaff452b45b96977d84181fa4b3be904ea1d2849f91c2e89590e605602"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:1e28f6a7b4de859d43c1fe616687f93f7e1aa4c28c87e839f862421295a80bc3",
+        "hash": "sha256:1e28f6a7b4de859d43c1fe616687f93f7e1aa4c28c87e839f862421295a80bc3",
+        "id": "swiftui.padding-frame.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 25,
+      "manifest": {
+        "currentHash": "sha256:c001bab72b894ea6ad3f97192e053dfef8c2d263451c4f2947836f47af255b71",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:e047d89cf602cdb5363b18fb5b86a4b5a7123a8136627c1f27037f4f59fdae70",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.instrumentation-transparency.swift",
+        "macOSHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "oldHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.instrumentation-transparency.swift",
+        "windowsHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:ffcc2f104ded12b8e0344967c95e896500347e7183fd3ac48d210291f3ac8d79",
+        "hash": "sha256:ffcc2f104ded12b8e0344967c95e896500347e7183fd3ac48d210291f3ac8d79",
+        "id": "swiftui.padding-frame.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 26,
+      "manifest": {
+        "currentHash": "sha256:40ff51db5a8de2e26ed6ada4a61ccfb5caaa90816979bc26bf019b6fa6928c1e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:5b77038b9bfcbcf9f7b23d3337d61b93debdd8a912f0fb13f49f9f33ec037b91",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:573ccba07f80c9214e01afbce1ea4ddb321ab53bb590494f7e5726025edf15d8",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.negative.invalid-member.swift",
+        "macOSHash": "sha256:573ccba07f80c9214e01afbce1ea4ddb321ab53bb590494f7e5726025edf15d8",
+        "oldHash": "sha256:573ccba07f80c9214e01afbce1ea4ddb321ab53bb590494f7e5726025edf15d8",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.negative.invalid-member.swift",
+        "windowsHash": "sha256:573ccba07f80c9214e01afbce1ea4ddb321ab53bb590494f7e5726025edf15d8"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:b982341ff58a7532085c8daaf772cca1833a8d3a571b42299dcee29493623c74",
+        "hash": "sha256:b982341ff58a7532085c8daaf772cca1833a8d3a571b42299dcee29493623c74",
+        "id": "swiftui.padding-frame.recipe/case/15aee4f153f23149",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--15aee4f153f23149.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 27,
+      "manifest": {
+        "currentHash": "sha256:f60a282c2461254e1325a9f8f26d24889b6db0cc2a4ba08310ee0a6d31b5f8f0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_15aee4f153f23149.manifest.json",
+        "oldHash": "sha256:5572e4621e0d3f732101789dbd725728d3dcbdde8d85e7ea382bc91f0c44d3df",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_15aee4f153f23149.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:c33ddd08e111e08316ce6cf364d0579e90f2e3a7816491ee4de8f5bc5d3fd3f6",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_15aee4f153f23149.swift",
+        "macOSHash": "sha256:c33ddd08e111e08316ce6cf364d0579e90f2e3a7816491ee4de8f5bc5d3fd3f6",
+        "oldHash": "sha256:c33ddd08e111e08316ce6cf364d0579e90f2e3a7816491ee4de8f5bc5d3fd3f6",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_15aee4f153f23149.swift",
+        "windowsHash": "sha256:c33ddd08e111e08316ce6cf364d0579e90f2e3a7816491ee4de8f5bc5d3fd3f6"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:5f8edb1bcf085ac082d88a2f3bce5d5c648817485498eac3c98dd3b40d3ac633",
+        "hash": "sha256:5f8edb1bcf085ac082d88a2f3bce5d5c648817485498eac3c98dd3b40d3ac633",
+        "id": "swiftui.padding-frame.recipe/case/416710cfd2a546ea",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--416710cfd2a546ea.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 28,
+      "manifest": {
+        "currentHash": "sha256:a24ca0b4e7de239ea12a21f639f2c478e5986be0cdc82edefe53caf4520bd525",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_416710cfd2a546ea.manifest.json",
+        "oldHash": "sha256:4041467100e5ce8eb6063774582c2ca3782c5b4d74b46fb9ce62db718b3229ee",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_416710cfd2a546ea.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:7bf3d395a412347acdb62650ee022254e57269dbef7c8cfc1ffe6978651acb10",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_416710cfd2a546ea.swift",
+        "macOSHash": "sha256:7bf3d395a412347acdb62650ee022254e57269dbef7c8cfc1ffe6978651acb10",
+        "oldHash": "sha256:7bf3d395a412347acdb62650ee022254e57269dbef7c8cfc1ffe6978651acb10",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_416710cfd2a546ea.swift",
+        "windowsHash": "sha256:7bf3d395a412347acdb62650ee022254e57269dbef7c8cfc1ffe6978651acb10"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:19115a44808953a419939c722087924d39d1de2adfb3163892a90904b4b93378",
+        "hash": "sha256:19115a44808953a419939c722087924d39d1de2adfb3163892a90904b4b93378",
+        "id": "swiftui.padding-frame.recipe/case/43246ae53f435c43",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--43246ae53f435c43.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 29,
+      "manifest": {
+        "currentHash": "sha256:1a3cf53aa17bf82ff7074c00eb65cdbf847fceee5e2e3644ec6a493056fcd2d5",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_43246ae53f435c43.manifest.json",
+        "oldHash": "sha256:357ef40552dc6b637519c50b87fe60c14c71207eeee108cdf574ed5515b14d12",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_43246ae53f435c43.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:ad3766c643f0dc6706ba82b300abf591516c44aef5a5b322c2d7a727b7d19ce0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_43246ae53f435c43.swift",
+        "macOSHash": "sha256:ad3766c643f0dc6706ba82b300abf591516c44aef5a5b322c2d7a727b7d19ce0",
+        "oldHash": "sha256:ad3766c643f0dc6706ba82b300abf591516c44aef5a5b322c2d7a727b7d19ce0",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_43246ae53f435c43.swift",
+        "windowsHash": "sha256:ad3766c643f0dc6706ba82b300abf591516c44aef5a5b322c2d7a727b7d19ce0"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:41303bbc74c1ebfb47304878fdc6c420f548fd5990a4d16e193aea9331e2c811",
+        "hash": "sha256:41303bbc74c1ebfb47304878fdc6c420f548fd5990a4d16e193aea9331e2c811",
+        "id": "swiftui.padding-frame.recipe/case/7ef49c4172c2f9e8",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--7ef49c4172c2f9e8.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 30,
+      "manifest": {
+        "currentHash": "sha256:a84b6156ca78c977bd3cdbd97192737655d33a330c34f2c7b1b7ce6567245f61",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_7ef49c4172c2f9e8.manifest.json",
+        "oldHash": "sha256:861b62cbd6103b43b19a7cfe84046138be05a743cfe6e95df6eac0f5918f38a2",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_7ef49c4172c2f9e8.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:b2a16b5a3a403aecfdde2be885ea8791e4f609923e8112bb327cc9a9fcbaa72a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_7ef49c4172c2f9e8.swift",
+        "macOSHash": "sha256:b2a16b5a3a403aecfdde2be885ea8791e4f609923e8112bb327cc9a9fcbaa72a",
+        "oldHash": "sha256:b2a16b5a3a403aecfdde2be885ea8791e4f609923e8112bb327cc9a9fcbaa72a",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_7ef49c4172c2f9e8.swift",
+        "windowsHash": "sha256:b2a16b5a3a403aecfdde2be885ea8791e4f609923e8112bb327cc9a9fcbaa72a"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+        "hash": "sha256:58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+        "id": "swiftui.padding-frame.recipe/case/8805e6d0729b052d",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--8805e6d0729b052d.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 31,
+      "manifest": {
+        "currentHash": "sha256:967de2c1f26a062b1fcb3a3510cecae64a2997107036f5e436d02a05b7bc61e8",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_8805e6d0729b052d.manifest.json",
+        "oldHash": "sha256:08ad578fe79d51db845b01493f22a08c0ed81b51d83c2ec4841a8c8e1fbd7915",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_8805e6d0729b052d.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_8805e6d0729b052d.swift",
+        "macOSHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+        "oldHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_8805e6d0729b052d.swift",
+        "windowsHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:f6157a5174fb0abd79f31c1dbd21ab41e938900da3b35ba708a1ba1f5a6c43cc",
+        "hash": "sha256:f6157a5174fb0abd79f31c1dbd21ab41e938900da3b35ba708a1ba1f5a6c43cc",
+        "id": "swiftui.padding-frame.recipe/case/934d45084a9430bc",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--934d45084a9430bc.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 32,
+      "manifest": {
+        "currentHash": "sha256:3274ecc8196a7a8b2f940bceccee8467519cb9a04f6747834482b86a0f902439",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_934d45084a9430bc.manifest.json",
+        "oldHash": "sha256:1530d29e6a20157effeb288422ec55aa5484edb4eac84239b92d3f6e7f3cc384",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_934d45084a9430bc.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:5fe7eba76fe37103a388a7de31a4cd47e5b4fe5400fa2e4ce3b7eddcd9260acb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_934d45084a9430bc.swift",
+        "macOSHash": "sha256:5fe7eba76fe37103a388a7de31a4cd47e5b4fe5400fa2e4ce3b7eddcd9260acb",
+        "oldHash": "sha256:5fe7eba76fe37103a388a7de31a4cd47e5b4fe5400fa2e4ce3b7eddcd9260acb",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_934d45084a9430bc.swift",
+        "windowsHash": "sha256:5fe7eba76fe37103a388a7de31a4cd47e5b4fe5400fa2e4ce3b7eddcd9260acb"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:b02639f92563c56689a085c4206f2ae934d68b0a22708cd94107f4b31677bf83",
+        "hash": "sha256:b02639f92563c56689a085c4206f2ae934d68b0a22708cd94107f4b31677bf83",
+        "id": "swiftui.padding-frame.recipe/case/ae8f3eaa88df989f",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--ae8f3eaa88df989f.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 33,
+      "manifest": {
+        "currentHash": "sha256:f348ff2d9a0ce8034c369d7bbb87b7a79b28accb4035c3d2ba39f5dcf06667c7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_ae8f3eaa88df989f.manifest.json",
+        "oldHash": "sha256:92459d41d8ff12b3b01339292e53753919772232dac948ae935313e6fac4e83d",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_ae8f3eaa88df989f.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:11a93985c3fdc62de6cb2665898d12f818ac3635d2d8d6b735cd072f438e5e62",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_ae8f3eaa88df989f.swift",
+        "macOSHash": "sha256:11a93985c3fdc62de6cb2665898d12f818ac3635d2d8d6b735cd072f438e5e62",
+        "oldHash": "sha256:11a93985c3fdc62de6cb2665898d12f818ac3635d2d8d6b735cd072f438e5e62",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_ae8f3eaa88df989f.swift",
+        "windowsHash": "sha256:11a93985c3fdc62de6cb2665898d12f818ac3635d2d8d6b735cd072f438e5e62"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:d89aa136075eac9a0722682c8a7545baae5efb79bfe1e4d8902dacd7502b5cb2",
+        "hash": "sha256:d89aa136075eac9a0722682c8a7545baae5efb79bfe1e4d8902dacd7502b5cb2",
+        "id": "swiftui.padding-frame.recipe/case/cbd6a5a16037f758",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--cbd6a5a16037f758.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 34,
+      "manifest": {
+        "currentHash": "sha256:f087e37d10954a53d181472b5b2c04cb0457ba089ce5b40b35035b1a776b4536",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_cbd6a5a16037f758.manifest.json",
+        "oldHash": "sha256:e570d590ad90a64ecdc51d29c9e002bd248edbea882f9e6943bc9450d26add54",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_cbd6a5a16037f758.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:39ff8d4c831c30a9190f8c1fdf2ec0a61ac12a51ac3e767c013b78081ef47676",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_cbd6a5a16037f758.swift",
+        "macOSHash": "sha256:39ff8d4c831c30a9190f8c1fdf2ec0a61ac12a51ac3e767c013b78081ef47676",
+        "oldHash": "sha256:39ff8d4c831c30a9190f8c1fdf2ec0a61ac12a51ac3e767c013b78081ef47676",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_cbd6a5a16037f758.swift",
+        "windowsHash": "sha256:39ff8d4c831c30a9190f8c1fdf2ec0a61ac12a51ac3e767c013b78081ef47676"
+      }
+    },
+    {
+      "block": "swiftui.padding-frame",
+      "case": {
+        "fileHash": "sha256:a8607bafcb96ca9d539e8a3649007c6d2caec7c9d2da78987ebbeab1776aecb9",
+        "hash": "sha256:a8607bafcb96ca9d539e8a3649007c6d2caec7c9d2da78987ebbeab1776aecb9",
+        "id": "swiftui.padding-frame.recipe/case/eeac15f049dceeaf",
+        "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--eeac15f049dceeaf.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 35,
+      "manifest": {
+        "currentHash": "sha256:2d9d09d4f5f623e44cb1b5ef5598ee59c1e682575b88a93f84475a4dd26acb62",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.padding-frame.recipe_case_eeac15f049dceeaf.manifest.json",
+        "oldHash": "sha256:e3760971a17165b827671168f795647ac2c1cb677c01c165261060de8bf69f42",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_eeac15f049dceeaf.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+        "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+        "id": "swiftui.padding-frame.recipe",
+        "path": "factory/recipes/data/swiftui.padding-frame.json"
+      },
+      "source": {
+        "currentHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.padding-frame.recipe_case_eeac15f049dceeaf.swift",
+        "macOSHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "oldHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654",
+        "oldPath": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_eeac15f049dceeaf.swift",
+        "windowsHash": "sha256:efbdc267c605a62eaf687752f0dddb833fcd2d9a54174291153e898cecbeb654"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:2c4cc322fbe50efd7ca74d8e96cbafd2d5cedadd0966d1cb18a16321b9ce2c06",
+        "hash": "sha256:2c4cc322fbe50efd7ca74d8e96cbafd2d5cedadd0966d1cb18a16321b9ce2c06",
+        "id": "swiftui.preference-key.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.preference-key.instrumentation-transparency.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 36,
+      "manifest": {
+        "currentHash": "sha256:ab0391c11f8cbc399666685e654e62213c1919ba10f0c80d72228e14017053b6",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:e1d1c581699392432f2e6e4b43b67a20b28777cf44a70ea982c0fdb1af366177",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.instrumentation-transparency.swift",
+        "macOSHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb",
+        "oldHash": "sha256:721a5d9260de88936e3b8a643a19f59af5b14d7d17c3be0a438967f1d0b94ae5",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.instrumentation-transparency.swift",
+        "windowsHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:e003f8eda4e6b6bfa31d178593c9ce7cc9c4eb6d7cafb1a81d526f1bcfd31990",
+        "hash": "sha256:e003f8eda4e6b6bfa31d178593c9ce7cc9c4eb6d7cafb1a81d526f1bcfd31990",
+        "id": "swiftui.preference-key.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.preference-key.negative.invalid-member.json"
+      },
+      "change": "negative-generator-refresh",
+      "classification": "expected-negative",
+      "index": 37,
+      "manifest": {
+        "currentHash": "sha256:5c39552706d2b60dc15c59c463dbc6209429546d356b400e609a4c858549d6de",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:1883d00137ac6b8a3f3bd67a0efb7e540ad414e414f8924cfca6d5256cc19342",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:0db7f7d9d6499fd98b7fa967bcc9fe8babd9f7475f2f5b08311fdc8e22ccf5b4",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.negative.invalid-member.swift",
+        "macOSHash": "sha256:0db7f7d9d6499fd98b7fa967bcc9fe8babd9f7475f2f5b08311fdc8e22ccf5b4",
+        "oldHash": "sha256:9fcd3298d6aa5bca66379eeba330a5b3150acc4f87710aab72b6fb8d7589d952",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.negative.invalid-member.swift",
+        "windowsHash": "sha256:0db7f7d9d6499fd98b7fa967bcc9fe8babd9f7475f2f5b08311fdc8e22ccf5b4"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:7af5ab437525e3d2fc4135b86f87c716640b4acbb1878fc711432054c5afcfb1",
+        "hash": "sha256:7af5ab437525e3d2fc4135b86f87c716640b4acbb1878fc711432054c5afcfb1",
+        "id": "swiftui.preference-key.recipe/case/0e9ebd67e2f285f7",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--0e9ebd67e2f285f7.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 38,
+      "manifest": {
+        "currentHash": "sha256:22df8f7d6cb08741bc3d948f11daba74dd895bd0e1b32c98c8413eea21832d57",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_0e9ebd67e2f285f7.manifest.json",
+        "oldHash": "sha256:c0e7ef3ff673c11bd89ea440cd05e7af6d2faa5f2cd4f673961ddc7c1909a45c",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_0e9ebd67e2f285f7.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_0e9ebd67e2f285f7.swift",
+        "macOSHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb",
+        "oldHash": "sha256:721a5d9260de88936e3b8a643a19f59af5b14d7d17c3be0a438967f1d0b94ae5",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_0e9ebd67e2f285f7.swift",
+        "windowsHash": "sha256:eaea6eb8de29ba797ab624064dff93f3626abc606b719f4275799b6bee01fafb"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:025620bd5bbd55b64dbbe90cf8b7883625ea56ec615dd7669f4ae949a82b332b",
+        "hash": "sha256:025620bd5bbd55b64dbbe90cf8b7883625ea56ec615dd7669f4ae949a82b332b",
+        "id": "swiftui.preference-key.recipe/case/505d1942c4bf9e7a",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--505d1942c4bf9e7a.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 39,
+      "manifest": {
+        "currentHash": "sha256:8adeede54e4aa68751d4748bb2614f86de373e42149cf139b02288062bef3a3a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_505d1942c4bf9e7a.manifest.json",
+        "oldHash": "sha256:6234cfeb67f0291b18c2e94904f825dd7ab61f4db5e1cbf092200907c503f8f2",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_505d1942c4bf9e7a.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_505d1942c4bf9e7a.swift",
+        "macOSHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+        "oldHash": "sha256:bfc9b3e2751c8ea5a74ca3be6994ab1ad8b09055a2b9fe90f94a7d42b25b8be4",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_505d1942c4bf9e7a.swift",
+        "windowsHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "hash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "id": "swiftui.preference-key.recipe/case/66b6b44aaff817d6",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--66b6b44aaff817d6.json"
+      },
+      "change": "existing-primary-correction",
+      "classification": "positive-pass",
+      "index": 40,
+      "manifest": {
+        "currentHash": "sha256:fd81aec2df0d035ecd2f2a4ea58fc50ec1d0af23f1a997c436e3a15bbb942233",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_66b6b44aaff817d6.manifest.json",
+        "oldHash": "sha256:70be3dacd49484bcd1f625c1e8a2a414c63c7d13c6a4279e59e9435faa970376",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_66b6b44aaff817d6.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift",
+        "macOSHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+        "oldHash": "sha256:f3445c5dbdf72a931105fa201d20d4df18266957f2373e437beb154bfc70b127",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift",
+        "windowsHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:dd251f738fe023bdfc6563923d47e0e1d27cabd5d106b7e6275dcc294a24a5b4",
+        "hash": "sha256:dd251f738fe023bdfc6563923d47e0e1d27cabd5d106b7e6275dcc294a24a5b4",
+        "id": "swiftui.preference-key.recipe/case/9b0b6768e0fdf331",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--9b0b6768e0fdf331.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 41,
+      "manifest": {
+        "currentHash": "sha256:69de68eaa3120d64cff3dc434f45e0067f78b72c396c6a443676fae675531df7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_9b0b6768e0fdf331.manifest.json",
+        "oldHash": "sha256:3991f6cd016a70fd0e81122c4fa3c413f4f359a07f9461400b13499a99441134",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_9b0b6768e0fdf331.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:378fe844ccdd09009b75826f48c67c2f23799041b2547769c5eafd704233428f",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_9b0b6768e0fdf331.swift",
+        "macOSHash": "sha256:378fe844ccdd09009b75826f48c67c2f23799041b2547769c5eafd704233428f",
+        "oldHash": "sha256:990a5b6695f0ac5b0dee20797f39e7983360d7aa276a5cd4831deea53ee5c42f",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_9b0b6768e0fdf331.swift",
+        "windowsHash": "sha256:378fe844ccdd09009b75826f48c67c2f23799041b2547769c5eafd704233428f"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:1a96d211bb7cea57bc4fc39ca10fdce9b14642b1c77a0aa3259e72f4461730aa",
+        "hash": "sha256:1a96d211bb7cea57bc4fc39ca10fdce9b14642b1c77a0aa3259e72f4461730aa",
+        "id": "swiftui.preference-key.recipe/case/a7479c2eb0cd172b",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--a7479c2eb0cd172b.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 42,
+      "manifest": {
+        "currentHash": "sha256:0ba10b7343e595a5d96182bbcf253f147b0cd190cb6b82258d82f3697d260ec0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_a7479c2eb0cd172b.manifest.json",
+        "oldHash": "sha256:be36c58f59cd997bc392183a60393483de050e7e3d162cee9cdf2e38d4f7ad42",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_a7479c2eb0cd172b.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:3cf0a24b2a173af0447bc24c987fa05cec04b215772655bc7b3260e4b042bd5e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_a7479c2eb0cd172b.swift",
+        "macOSHash": "sha256:3cf0a24b2a173af0447bc24c987fa05cec04b215772655bc7b3260e4b042bd5e",
+        "oldHash": "sha256:368444c0c1b0ce03ac068be0cba03b06f5976d7bb2ac6ebd0ba5e30aa4711286",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_a7479c2eb0cd172b.swift",
+        "windowsHash": "sha256:3cf0a24b2a173af0447bc24c987fa05cec04b215772655bc7b3260e4b042bd5e"
+      }
+    },
+    {
+      "block": "swiftui.preference-key",
+      "case": {
+        "fileHash": "sha256:65e485efbd63141d138e3be39a303d883740438f86326978af6ef94e1edfac01",
+        "hash": "sha256:65e485efbd63141d138e3be39a303d883740438f86326978af6ef94e1edfac01",
+        "id": "swiftui.preference-key.recipe/case/d041707386f50f19",
+        "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--d041707386f50f19.json"
+      },
+      "change": "foundation-import",
+      "classification": "foundation-import-gap",
+      "index": 43,
+      "manifest": {
+        "currentHash": "sha256:a624de6d14b2b3da72d246407fca052557a97c755b5e3e1fbd1dfd26c8fad7f0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.preference-key.recipe_case_d041707386f50f19.manifest.json",
+        "oldHash": "sha256:620e0f2b31bb538c3138e7230beb5a5f4ada0aa2963f67bb4921470e3a829ef7",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_d041707386f50f19.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+        "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+        "id": "swiftui.preference-key.recipe",
+        "path": "factory/recipes/data/swiftui.preference-key.json"
+      },
+      "source": {
+        "currentHash": "sha256:3a27659944b5ed40187bb7a96443a4cd237ec52f51e9303d073862d1c35844c7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.preference-key.recipe_case_d041707386f50f19.swift",
+        "macOSHash": "sha256:3a27659944b5ed40187bb7a96443a4cd237ec52f51e9303d073862d1c35844c7",
+        "oldHash": "sha256:91370a85a05cf84f8af9b309d7ad07a533f293e8f1a4d793248d1fdbe870175d",
+        "oldPath": "factory/pipeline/probes/swiftui.preference-key.recipe_case_d041707386f50f19.swift",
+        "windowsHash": "sha256:3a27659944b5ed40187bb7a96443a4cd237ec52f51e9303d073862d1c35844c7"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:7614b1bda0b8b7f58e86ef1887b94c41909d6c9940ffdc6d316e2129b0a60ad6",
+        "hash": "sha256:7614b1bda0b8b7f58e86ef1887b94c41909d6c9940ffdc6d316e2129b0a60ad6",
+        "id": "swiftui.scroll-view.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 44,
+      "manifest": {
+        "currentHash": "sha256:8e3ada109b4f83c40e5d205a1071f5b7fc793ac4f6519dfbc8f5e125d36ee2ee",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:76b9aa5c95d45c88c10eecf3560cfd849d1216fa4d15236ff9791befe286f474",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.instrumentation-transparency.swift",
+        "macOSHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "oldHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.instrumentation-transparency.swift",
+        "windowsHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:315bebf6154df8e4b7263335561c15546878c201a15c46802d53e47e5ff1ef90",
+        "hash": "sha256:315bebf6154df8e4b7263335561c15546878c201a15c46802d53e47e5ff1ef90",
+        "id": "swiftui.scroll-view.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 45,
+      "manifest": {
+        "currentHash": "sha256:9ef85137cacec6cc5acbd7346d9372051ca7ae7b0c269db5d41517dbfa2764fb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:8c04d01ba188112ce9a4087cd8637ff2dc4fdaabcbf6eab7d8ebb14be3f0b2cb",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:bdb4873d994f38ba2f0a2f1b6bdafe57c7a4c8aec66f7ac6d6d5899de75d6803",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.negative.invalid-member.swift",
+        "macOSHash": "sha256:bdb4873d994f38ba2f0a2f1b6bdafe57c7a4c8aec66f7ac6d6d5899de75d6803",
+        "oldHash": "sha256:bdb4873d994f38ba2f0a2f1b6bdafe57c7a4c8aec66f7ac6d6d5899de75d6803",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.negative.invalid-member.swift",
+        "windowsHash": "sha256:bdb4873d994f38ba2f0a2f1b6bdafe57c7a4c8aec66f7ac6d6d5899de75d6803"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:bb86ddea544582e1d74c627babb9a0b12250bc857fc1eaa1c9067c00961b7d12",
+        "hash": "sha256:bb86ddea544582e1d74c627babb9a0b12250bc857fc1eaa1c9067c00961b7d12",
+        "id": "swiftui.scroll-view.recipe/case/22801dcb2298bfea",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.recipe--case--22801dcb2298bfea.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 46,
+      "manifest": {
+        "currentHash": "sha256:28a9afb9d33645a5fca2f9275e0c3f35a0b5fe6d193648bfecbad21c46e26ae7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.recipe_case_22801dcb2298bfea.manifest.json",
+        "oldHash": "sha256:388ec8ec069e84d528c517234b89a7fc487c52c350edc90de85b404fc2f36a45",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_22801dcb2298bfea.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.recipe_case_22801dcb2298bfea.swift",
+        "macOSHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "oldHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_22801dcb2298bfea.swift",
+        "windowsHash": "sha256:1d575dbbf74c1cf02aefb3c9950db09370e61fe61864577d073474862347c3f1"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:5b5b41c0238dddd625e5ad07a2dae1e6450b30db9f9db90593ea597a6997e4dd",
+        "hash": "sha256:5b5b41c0238dddd625e5ad07a2dae1e6450b30db9f9db90593ea597a6997e4dd",
+        "id": "swiftui.scroll-view.recipe/case/22f196743a8f03ab",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.recipe--case--22f196743a8f03ab.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 47,
+      "manifest": {
+        "currentHash": "sha256:44a601e0080566a30128c491be82c414516e23b288449cad74fb39285d26b4fe",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.recipe_case_22f196743a8f03ab.manifest.json",
+        "oldHash": "sha256:a6e3a6722e67d4640eb2dfe59a106ed6a90d2ca600ab4bb23a966e502feb4b48",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_22f196743a8f03ab.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:390e9c348808d98b0bcba337a595ffecd65f04f9d0c8f68867359de131af853e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.recipe_case_22f196743a8f03ab.swift",
+        "macOSHash": "sha256:390e9c348808d98b0bcba337a595ffecd65f04f9d0c8f68867359de131af853e",
+        "oldHash": "sha256:390e9c348808d98b0bcba337a595ffecd65f04f9d0c8f68867359de131af853e",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_22f196743a8f03ab.swift",
+        "windowsHash": "sha256:390e9c348808d98b0bcba337a595ffecd65f04f9d0c8f68867359de131af853e"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:56c2625f63e7e633c18ea0cdfca37545748f1d098622391e3c270be07895dc98",
+        "hash": "sha256:56c2625f63e7e633c18ea0cdfca37545748f1d098622391e3c270be07895dc98",
+        "id": "swiftui.scroll-view.recipe/case/6716afb4fb55269b",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.recipe--case--6716afb4fb55269b.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 48,
+      "manifest": {
+        "currentHash": "sha256:7e7de8d6af7791c10e50b0cb2626e5e8a4063281f30b4d3d3a67b0607553b21e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.recipe_case_6716afb4fb55269b.manifest.json",
+        "oldHash": "sha256:3b6c0bc71691f3b7fcbcc40de333b9105b7b102dc8e5a835da3100bff45dc106",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_6716afb4fb55269b.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.recipe_case_6716afb4fb55269b.swift",
+        "macOSHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+        "oldHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_6716afb4fb55269b.swift",
+        "windowsHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4"
+      }
+    },
+    {
+      "block": "swiftui.scroll-view",
+      "case": {
+        "fileHash": "sha256:3d67a842afa3dbb1d93e4f63fe38100d93146c01335c884abb7a6a17830a837b",
+        "hash": "sha256:3d67a842afa3dbb1d93e4f63fe38100d93146c01335c884abb7a6a17830a837b",
+        "id": "swiftui.scroll-view.recipe/case/d3531b02ed538a96",
+        "path": "factory/pipeline/cases/swiftui.scroll-view.recipe--case--d3531b02ed538a96.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 49,
+      "manifest": {
+        "currentHash": "sha256:a3516f30b3d71af8068f1297502f79f49aa37eaf04167285914e683bbb0afb83",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.scroll-view.recipe_case_d3531b02ed538a96.manifest.json",
+        "oldHash": "sha256:c2fc7745e56b0ec01418cf1097a0b2de887328c6c751df87fa35dd092a6b689f",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_d3531b02ed538a96.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+        "hash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+        "id": "swiftui.scroll-view.recipe",
+        "path": "factory/recipes/data/swiftui.scroll-view.json"
+      },
+      "source": {
+        "currentHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.scroll-view.recipe_case_d3531b02ed538a96.swift",
+        "macOSHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+        "oldHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+        "oldPath": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_d3531b02ed538a96.swift",
+        "windowsHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:3f7e8c52cab4198282705942c942dde3f56633b8b9e1e5b4224c8d43d44ce2a1",
+        "hash": "sha256:3f7e8c52cab4198282705942c942dde3f56633b8b9e1e5b4224c8d43d44ce2a1",
+        "id": "swiftui.shapes.fill-stroke.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 50,
+      "manifest": {
+        "currentHash": "sha256:899317ad2ede794085160aef8dfe79b58aa2e18918cba3e406dd81055672932a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:6073d405b6f7e2e640e184db2bf769eaf3e95778fb18eb8e3264011a8b6b61c4",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:39ca7e776d3cb39ee8447d8e3bad939803f3783cee02a3321ca2bd783acccd03",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.instrumentation-transparency.swift",
+        "macOSHash": "sha256:39ca7e776d3cb39ee8447d8e3bad939803f3783cee02a3321ca2bd783acccd03",
+        "oldHash": "sha256:39ca7e776d3cb39ee8447d8e3bad939803f3783cee02a3321ca2bd783acccd03",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.instrumentation-transparency.swift",
+        "windowsHash": "sha256:39ca7e776d3cb39ee8447d8e3bad939803f3783cee02a3321ca2bd783acccd03"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:8859f634abe9e66ac3569d8712214bd29a6d38cb7aa6ec5e42618110cad9cf2a",
+        "hash": "sha256:8859f634abe9e66ac3569d8712214bd29a6d38cb7aa6ec5e42618110cad9cf2a",
+        "id": "swiftui.shapes.fill-stroke.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 51,
+      "manifest": {
+        "currentHash": "sha256:e5cdb2591101179d519278bd299581705ef89e519196f63777a9cfaed2e0b395",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:4fd728f0c50578f7ab2ae622c20c3110beec9e143ccff33c2269a227d99c5c9d",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:ae327f70f7f553d461c9949bc3250d3efc1012fbd57beb70f91870d1a61050e0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.negative.invalid-member.swift",
+        "macOSHash": "sha256:ae327f70f7f553d461c9949bc3250d3efc1012fbd57beb70f91870d1a61050e0",
+        "oldHash": "sha256:ae327f70f7f553d461c9949bc3250d3efc1012fbd57beb70f91870d1a61050e0",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.negative.invalid-member.swift",
+        "windowsHash": "sha256:ae327f70f7f553d461c9949bc3250d3efc1012fbd57beb70f91870d1a61050e0"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:f55d570bcd1009df58654d6b620fa0ad708feae60c31b09c68d35ea12e248055",
+        "hash": "sha256:f55d570bcd1009df58654d6b620fa0ad708feae60c31b09c68d35ea12e248055",
+        "id": "swiftui.shapes.fill-stroke.recipe/case/04cc198078a27515",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.recipe--case--04cc198078a27515.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 52,
+      "manifest": {
+        "currentHash": "sha256:652365b04477f314d0c36a15cdb4d5abfe8febbf12ea86c100bfa514415b3984",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.recipe_case_04cc198078a27515.manifest.json",
+        "oldHash": "sha256:87f1a6789c78d1799a69c67bf0734f9851fa9d63ce17041bcedf395e89e285c4",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_04cc198078a27515.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:d5bc4180c50f7b713e8bcd32c77a009a62ca426218145e053c5bafc1c27e41d7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.recipe_case_04cc198078a27515.swift",
+        "macOSHash": "sha256:d5bc4180c50f7b713e8bcd32c77a009a62ca426218145e053c5bafc1c27e41d7",
+        "oldHash": "sha256:d5bc4180c50f7b713e8bcd32c77a009a62ca426218145e053c5bafc1c27e41d7",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_04cc198078a27515.swift",
+        "windowsHash": "sha256:d5bc4180c50f7b713e8bcd32c77a009a62ca426218145e053c5bafc1c27e41d7"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:44561f536ff593efebe0533ba47f39c7707fb218ca7ffd7e8cf4abc9d27a978e",
+        "hash": "sha256:44561f536ff593efebe0533ba47f39c7707fb218ca7ffd7e8cf4abc9d27a978e",
+        "id": "swiftui.shapes.fill-stroke.recipe/case/5c7f3e66ec5e32ed",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.recipe--case--5c7f3e66ec5e32ed.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 53,
+      "manifest": {
+        "currentHash": "sha256:a7f97b1f39b3cd0d980d67989de6e8f4d74ee99e21314c7433fef86c854ecde2",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.recipe_case_5c7f3e66ec5e32ed.manifest.json",
+        "oldHash": "sha256:144c8788a74bd870e5f4aa8594928649ad12b6eb0a2698b4b5a24e557970ad97",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_5c7f3e66ec5e32ed.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:628820bd9a86b1c0d458a62e5db6e836281b7368d9b698ab1d134820cf7cd068",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.recipe_case_5c7f3e66ec5e32ed.swift",
+        "macOSHash": "sha256:628820bd9a86b1c0d458a62e5db6e836281b7368d9b698ab1d134820cf7cd068",
+        "oldHash": "sha256:628820bd9a86b1c0d458a62e5db6e836281b7368d9b698ab1d134820cf7cd068",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_5c7f3e66ec5e32ed.swift",
+        "windowsHash": "sha256:628820bd9a86b1c0d458a62e5db6e836281b7368d9b698ab1d134820cf7cd068"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:7bac9892662ab5da224703041c1e20490418fa3d919c2dc70987dc7bb0406d59",
+        "hash": "sha256:7bac9892662ab5da224703041c1e20490418fa3d919c2dc70987dc7bb0406d59",
+        "id": "swiftui.shapes.fill-stroke.recipe/case/8556ebdbb58ee124",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.recipe--case--8556ebdbb58ee124.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 54,
+      "manifest": {
+        "currentHash": "sha256:c1e453398839a8db0eb97b85fe3435219a1e026f12f1fe99157a58d4df1190c9",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124.manifest.json",
+        "oldHash": "sha256:83b0d56af85fbba0cf7d6666c62d864c7b8f41221a423e280c7d9f0cd994420c",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124.swift",
+        "macOSHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda",
+        "oldHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_8556ebdbb58ee124.swift",
+        "windowsHash": "sha256:33e3ea5bc84d8bb6b8c178bcb40041fe9d72eb5a739c9287e8eddfd79fc13eda"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:c153daaa0ee33902e908790f83151711b38d8c2e13c4ae7b2a2513a3153393ea",
+        "hash": "sha256:c153daaa0ee33902e908790f83151711b38d8c2e13c4ae7b2a2513a3153393ea",
+        "id": "swiftui.shapes.fill-stroke.recipe/case/c74fe6d6657e9de9",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.recipe--case--c74fe6d6657e9de9.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 55,
+      "manifest": {
+        "currentHash": "sha256:801d5c606ecbcf8160c76f01f1dfb33b87a679959ec635f0a53e78065a53d0d0",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.recipe_case_c74fe6d6657e9de9.manifest.json",
+        "oldHash": "sha256:e8ac46b62e3f3a714d90167007e13bfba7da35c03bcbbb323450e51745a43db2",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_c74fe6d6657e9de9.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:a8f4f459657862d442f6131c0d98886792f5151930ca3d0d0074f7030b8a97d8",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.recipe_case_c74fe6d6657e9de9.swift",
+        "macOSHash": "sha256:a8f4f459657862d442f6131c0d98886792f5151930ca3d0d0074f7030b8a97d8",
+        "oldHash": "sha256:a8f4f459657862d442f6131c0d98886792f5151930ca3d0d0074f7030b8a97d8",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_c74fe6d6657e9de9.swift",
+        "windowsHash": "sha256:a8f4f459657862d442f6131c0d98886792f5151930ca3d0d0074f7030b8a97d8"
+      }
+    },
+    {
+      "block": "swiftui.shapes.fill-stroke",
+      "case": {
+        "fileHash": "sha256:afe92a0d696d5fa683931c97e9cc056e1326ff96b7357b2062b64ec0e53f223b",
+        "hash": "sha256:afe92a0d696d5fa683931c97e9cc056e1326ff96b7357b2062b64ec0e53f223b",
+        "id": "swiftui.shapes.fill-stroke.recipe/case/f7f53c246821e147",
+        "path": "factory/pipeline/cases/swiftui.shapes.fill-stroke.recipe--case--f7f53c246821e147.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 56,
+      "manifest": {
+        "currentHash": "sha256:8f3cd49923ecd5ec58fa7206178601dc6d0a4c23291da54d9cd275b49b9225cd",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.shapes.fill-stroke.recipe_case_f7f53c246821e147.manifest.json",
+        "oldHash": "sha256:222e9cc74a64247a602bc19722321aca354efdeeb9bfbab31436e68c373f4034",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_f7f53c246821e147.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+        "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json"
+      },
+      "source": {
+        "currentHash": "sha256:e114645e45646305f86c1be9fbb53fc6641382a4d1b47dd0c8bc94f774d3f51f",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.shapes.fill-stroke.recipe_case_f7f53c246821e147.swift",
+        "macOSHash": "sha256:e114645e45646305f86c1be9fbb53fc6641382a4d1b47dd0c8bc94f774d3f51f",
+        "oldHash": "sha256:e114645e45646305f86c1be9fbb53fc6641382a4d1b47dd0c8bc94f774d3f51f",
+        "oldPath": "factory/pipeline/probes/swiftui.shapes.fill-stroke.recipe_case_f7f53c246821e147.swift",
+        "windowsHash": "sha256:e114645e45646305f86c1be9fbb53fc6641382a4d1b47dd0c8bc94f774d3f51f"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:7bb5ea4ffbfcc1138223fbdbc8d827fcb560b4c53ea39d5def5dc2b131b313a3",
+        "hash": "sha256:7bb5ea4ffbfcc1138223fbdbc8d827fcb560b4c53ea39d5def5dc2b131b313a3",
+        "id": "swiftui.stack-overlay.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 57,
+      "manifest": {
+        "currentHash": "sha256:4ae6c0ce163b2dc617c7c41c4120f3485fc077b4bbc4c608c9d57b4207006ebd",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:18f8051457c7f0781adfdae1889ff6673ed900beabe19f72a1c97f71a6963a62",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.instrumentation-transparency.swift",
+        "macOSHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "oldHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.instrumentation-transparency.swift",
+        "windowsHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:50aca87debc7222395c0cbd7ae8cfc885a212c50137bf8941fde99805f79d9a2",
+        "hash": "sha256:50aca87debc7222395c0cbd7ae8cfc885a212c50137bf8941fde99805f79d9a2",
+        "id": "swiftui.stack-overlay.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 58,
+      "manifest": {
+        "currentHash": "sha256:91f26b8c5e849c563c277ae85357d0c7fe08f6eb73dd930a4e106ff7b8f36b5a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:36a73b87fa7a6de3aeed5ebbb45086b4d6d4c0454c69a40a2bc712474312a383",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:72e60b379a584d2d443465e22e62d107fad1c80fd54a4f62510da62638f85cf3",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.negative.invalid-member.swift",
+        "macOSHash": "sha256:72e60b379a584d2d443465e22e62d107fad1c80fd54a4f62510da62638f85cf3",
+        "oldHash": "sha256:72e60b379a584d2d443465e22e62d107fad1c80fd54a4f62510da62638f85cf3",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.negative.invalid-member.swift",
+        "windowsHash": "sha256:72e60b379a584d2d443465e22e62d107fad1c80fd54a4f62510da62638f85cf3"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:70b2503b63128fb2c0bc63d0642b2fdd63d8ae0089c2791f2f47e113a318d3be",
+        "hash": "sha256:70b2503b63128fb2c0bc63d0642b2fdd63d8ae0089c2791f2f47e113a318d3be",
+        "id": "swiftui.stack-overlay.recipe/case/06665b3676307a0c",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--06665b3676307a0c.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 59,
+      "manifest": {
+        "currentHash": "sha256:458ddcbecb6e26804df0748e983246ee9cbc8dfc8cae4dde2f1b5d2af2f32fbb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_06665b3676307a0c.manifest.json",
+        "oldHash": "sha256:d088ee487854545c6077ed276bc537f3772a30c38428645a94910f589a4337aa",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_06665b3676307a0c.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:0ec7566028d0d49b2d18011128b40665a275077f1464f49f1da8075ccbd0c5fb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_06665b3676307a0c.swift",
+        "macOSHash": "sha256:0ec7566028d0d49b2d18011128b40665a275077f1464f49f1da8075ccbd0c5fb",
+        "oldHash": "sha256:0ec7566028d0d49b2d18011128b40665a275077f1464f49f1da8075ccbd0c5fb",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_06665b3676307a0c.swift",
+        "windowsHash": "sha256:0ec7566028d0d49b2d18011128b40665a275077f1464f49f1da8075ccbd0c5fb"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:d3031085ada3eec24f4221d40925c9b29d1106fe148d9b39681294f2c5c8302e",
+        "hash": "sha256:d3031085ada3eec24f4221d40925c9b29d1106fe148d9b39681294f2c5c8302e",
+        "id": "swiftui.stack-overlay.recipe/case/92d33e07cacae10d",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--92d33e07cacae10d.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 60,
+      "manifest": {
+        "currentHash": "sha256:3141da0c7876b54cd3db35b0470368be7dc0b87e1e3c51a0ebfc5636ea0f5001",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_92d33e07cacae10d.manifest.json",
+        "oldHash": "sha256:8b82db4801202a7cf557c48f444351e497b8c8bfee23dd1d3ac629b68c913da6",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_92d33e07cacae10d.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_92d33e07cacae10d.swift",
+        "macOSHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+        "oldHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_92d33e07cacae10d.swift",
+        "windowsHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:672a1783e846239b4a23265b406649d0aa9c8d3e2352020d3b1d71ecc01a163f",
+        "hash": "sha256:672a1783e846239b4a23265b406649d0aa9c8d3e2352020d3b1d71ecc01a163f",
+        "id": "swiftui.stack-overlay.recipe/case/99f5cc8e074817f1",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--99f5cc8e074817f1.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 61,
+      "manifest": {
+        "currentHash": "sha256:77640750480e56c7e7c7f7854463970b4c8f7b0b517bb260a3cfd3950ebb3cdb",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_99f5cc8e074817f1.manifest.json",
+        "oldHash": "sha256:7081cc107069a9805a742f648aca9d680103718b8a4b31decfb782cbd42143d3",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_99f5cc8e074817f1.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:e5eb5bba377e3738777099cb48d80af8d51fa2d175d8b2e82bf6eede188f9a99",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_99f5cc8e074817f1.swift",
+        "macOSHash": "sha256:e5eb5bba377e3738777099cb48d80af8d51fa2d175d8b2e82bf6eede188f9a99",
+        "oldHash": "sha256:e5eb5bba377e3738777099cb48d80af8d51fa2d175d8b2e82bf6eede188f9a99",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_99f5cc8e074817f1.swift",
+        "windowsHash": "sha256:e5eb5bba377e3738777099cb48d80af8d51fa2d175d8b2e82bf6eede188f9a99"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+        "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+        "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--aac89c30fbc61515.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 62,
+      "manifest": {
+        "currentHash": "sha256:83a1ee1c55399276cddea96069ae4f822a4baf94eb8e081b31bd625150a458b7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_aac89c30fbc61515.manifest.json",
+        "oldHash": "sha256:f73ec6b30abc08ff380b3ae985917c48559e21260028552d52fdc7c87b571765",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_aac89c30fbc61515.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_aac89c30fbc61515.swift",
+        "macOSHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+        "oldHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_aac89c30fbc61515.swift",
+        "windowsHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:7c06db5b7e20e03b25040ce6b23bbdb4b2efecb3d2778f58129fa8e590c54a58",
+        "hash": "sha256:7c06db5b7e20e03b25040ce6b23bbdb4b2efecb3d2778f58129fa8e590c54a58",
+        "id": "swiftui.stack-overlay.recipe/case/c7fa36571be4bd9b",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--c7fa36571be4bd9b.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 63,
+      "manifest": {
+        "currentHash": "sha256:8d11363dbc220a2d9d785014da1710d95716453d07d8cd47e2c4157d899ac760",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_c7fa36571be4bd9b.manifest.json",
+        "oldHash": "sha256:721c390a63ead93a7f61b470f5ed4954cdcb3bc834c310abafc4c6388bbfaeab",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_c7fa36571be4bd9b.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_c7fa36571be4bd9b.swift",
+        "macOSHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "oldHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_c7fa36571be4bd9b.swift",
+        "windowsHash": "sha256:b1160405e32664de9a10fe0ca4e414357f9fade618b008b949097a06f5c314c7"
+      }
+    },
+    {
+      "block": "swiftui.stack-overlay",
+      "case": {
+        "fileHash": "sha256:f9751f474eaf15433cc6bd80ca694f14bbcfe3a49957bbd8d4b734f96da543ec",
+        "hash": "sha256:f9751f474eaf15433cc6bd80ca694f14bbcfe3a49957bbd8d4b734f96da543ec",
+        "id": "swiftui.stack-overlay.recipe/case/fd3a43d5268b5f3d",
+        "path": "factory/pipeline/cases/swiftui.stack-overlay.recipe--case--fd3a43d5268b5f3d.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 64,
+      "manifest": {
+        "currentHash": "sha256:607ca570346d870ba4077f91f3031db00b9913e691b1c2301446109043528a23",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.stack-overlay.recipe_case_fd3a43d5268b5f3d.manifest.json",
+        "oldHash": "sha256:15cc9357e4cf93e4a73a6cda36f1f3915cc06d36145c47147f02e2fbe605ec7d",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_fd3a43d5268b5f3d.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+        "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+        "id": "swiftui.stack-overlay.recipe",
+        "path": "factory/recipes/data/swiftui.stack-overlay.json"
+      },
+      "source": {
+        "currentHash": "sha256:f0e6003e711315ee84ee4cb0bb93da4003858bade0b7a808493cb89d045e930c",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.stack-overlay.recipe_case_fd3a43d5268b5f3d.swift",
+        "macOSHash": "sha256:f0e6003e711315ee84ee4cb0bb93da4003858bade0b7a808493cb89d045e930c",
+        "oldHash": "sha256:f0e6003e711315ee84ee4cb0bb93da4003858bade0b7a808493cb89d045e930c",
+        "oldPath": "factory/pipeline/probes/swiftui.stack-overlay.recipe_case_fd3a43d5268b5f3d.swift",
+        "windowsHash": "sha256:f0e6003e711315ee84ee4cb0bb93da4003858bade0b7a808493cb89d045e930c"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:1b6531564c67d9560eeaf40c908612d766996abc771bfbead0c575a97e192e1a",
+        "hash": "sha256:1b6531564c67d9560eeaf40c908612d766996abc771bfbead0c575a97e192e1a",
+        "id": "swiftui.text.bundled-font.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 65,
+      "manifest": {
+        "currentHash": "sha256:b72072366df27cbb594fe6e3806127afd90447e4763ea52ed30011675fb65475",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:e85ebc7b12dbbb4665cfc4e55ac3db089451be6eba554c8da8a41d23df1c18c3",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.instrumentation-transparency.swift",
+        "macOSHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "oldHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.instrumentation-transparency.swift",
+        "windowsHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:f453f024ba6cfbcef975619a6234165fbfcdac3ffb72e108a3bb8ea8663d32c5",
+        "hash": "sha256:f453f024ba6cfbcef975619a6234165fbfcdac3ffb72e108a3bb8ea8663d32c5",
+        "id": "swiftui.text.bundled-font.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 66,
+      "manifest": {
+        "currentHash": "sha256:48de363a003d6a852fad48335a5125689cfed94727cc717288cce82cea696102",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:a65f5ecab63e99fddbf385c195538c26959828d88a2cfab4f5cca22a571c0057",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:718fdc88807441dd909916e8dec65646272c30f682806b03ac63ee31085d74a3",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.negative.invalid-member.swift",
+        "macOSHash": "sha256:718fdc88807441dd909916e8dec65646272c30f682806b03ac63ee31085d74a3",
+        "oldHash": "sha256:718fdc88807441dd909916e8dec65646272c30f682806b03ac63ee31085d74a3",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.negative.invalid-member.swift",
+        "windowsHash": "sha256:718fdc88807441dd909916e8dec65646272c30f682806b03ac63ee31085d74a3"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:2084ec91fec4b3f1a6c469b440bddce6b502516b890e2580b43f24e4caa747cb",
+        "hash": "sha256:2084ec91fec4b3f1a6c469b440bddce6b502516b890e2580b43f24e4caa747cb",
+        "id": "swiftui.text.bundled-font.recipe/case/2abb86e4ca4fd829",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--2abb86e4ca4fd829.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 67,
+      "manifest": {
+        "currentHash": "sha256:9e08e909c699e07a496629a5baf275df2a733c55454633cf177a35adbd324a77",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.manifest.json",
+        "oldHash": "sha256:b45d43d8b1a4f078860cff55c9e71c34e5a2c7827e5b26db98b6ad8e38e3a73e",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:d8952e6bd9e07a071f7408360091e235541484c03ca289c4cf13b0767f50982d",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.swift",
+        "macOSHash": "sha256:d8952e6bd9e07a071f7408360091e235541484c03ca289c4cf13b0767f50982d",
+        "oldHash": "sha256:d8952e6bd9e07a071f7408360091e235541484c03ca289c4cf13b0767f50982d",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_2abb86e4ca4fd829.swift",
+        "windowsHash": "sha256:d8952e6bd9e07a071f7408360091e235541484c03ca289c4cf13b0767f50982d"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:e9cdc5423e4049e090f81c28ab3b7ecd6af3f5979ee5be54f2a5f9a45eeee325",
+        "hash": "sha256:e9cdc5423e4049e090f81c28ab3b7ecd6af3f5979ee5be54f2a5f9a45eeee325",
+        "id": "swiftui.text.bundled-font.recipe/case/4001a2bf64200b03",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--4001a2bf64200b03.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 68,
+      "manifest": {
+        "currentHash": "sha256:7aed2758548befce6173a7744796b24356ea58fb344856c54d633d69ff7c9663",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_4001a2bf64200b03.manifest.json",
+        "oldHash": "sha256:b35933fa09f5b78c1999220bb486bf6e182b071746592a065f426d915ab0ecff",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_4001a2bf64200b03.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:e9d72f5d8bdcb7dfcbb95c2a82427965cd0fdc698259ba7a3caf7a89348fbd6e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_4001a2bf64200b03.swift",
+        "macOSHash": "sha256:e9d72f5d8bdcb7dfcbb95c2a82427965cd0fdc698259ba7a3caf7a89348fbd6e",
+        "oldHash": "sha256:e9d72f5d8bdcb7dfcbb95c2a82427965cd0fdc698259ba7a3caf7a89348fbd6e",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_4001a2bf64200b03.swift",
+        "windowsHash": "sha256:e9d72f5d8bdcb7dfcbb95c2a82427965cd0fdc698259ba7a3caf7a89348fbd6e"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:aca3e012d458542863fab764b9c66e3b106d9b3ccdb09e099cc461115d3efef1",
+        "hash": "sha256:aca3e012d458542863fab764b9c66e3b106d9b3ccdb09e099cc461115d3efef1",
+        "id": "swiftui.text.bundled-font.recipe/case/74c63e3bcc2e4c00",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--74c63e3bcc2e4c00.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 69,
+      "manifest": {
+        "currentHash": "sha256:22ab84bcb4541d7b0c25486fea2c9c10366c971e9fbb9a5bdf3d5344b933cf27",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_74c63e3bcc2e4c00.manifest.json",
+        "oldHash": "sha256:348edd20198b401ad0a3900149713bdb4026b42b8fee1fecd388d74b5778ef5c",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_74c63e3bcc2e4c00.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_74c63e3bcc2e4c00.swift",
+        "macOSHash": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91",
+        "oldHash": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_74c63e3bcc2e4c00.swift",
+        "windowsHash": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:95ed8c16e761dc0507b80ad4e06e6ac669ba95e2e47a34d410d700f106ad5f52",
+        "hash": "sha256:95ed8c16e761dc0507b80ad4e06e6ac669ba95e2e47a34d410d700f106ad5f52",
+        "id": "swiftui.text.bundled-font.recipe/case/9296961256b0bd97",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--9296961256b0bd97.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 70,
+      "manifest": {
+        "currentHash": "sha256:31062b2b4b7185cfb932bcf78e9361224c5f164594d47d8f5879294f6aab0bac",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_9296961256b0bd97.manifest.json",
+        "oldHash": "sha256:6d68131d38822133d47988ec3981b74774dbfbd4bf5e3b29606c3b5a57f090e2",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_9296961256b0bd97.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_9296961256b0bd97.swift",
+        "macOSHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "oldHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_9296961256b0bd97.swift",
+        "windowsHash": "sha256:6ff6c201eef6ae5193969d106959292c7f83184975e60ae10868acb3148073c9"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:1fd48ed5b3c1c56ace1981875b6e90c34ea17b7932420301df96348b4301a0a8",
+        "hash": "sha256:1fd48ed5b3c1c56ace1981875b6e90c34ea17b7932420301df96348b4301a0a8",
+        "id": "swiftui.text.bundled-font.recipe/case/a0490ad601f1de58",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--a0490ad601f1de58.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 71,
+      "manifest": {
+        "currentHash": "sha256:48dac7d423bcd88a440fde00af6dd91c8ba2333faeacb316866d5d5f9392435e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_a0490ad601f1de58.manifest.json",
+        "oldHash": "sha256:d0f4813de222df7ef897d09ad419fc90b406ab96133bbb5d6b4287fe926b2319",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_a0490ad601f1de58.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:a92a9b1e1dfc42de0b258ad3ae69599ad3cd3ed66289e69141181232fd38ab49",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_a0490ad601f1de58.swift",
+        "macOSHash": "sha256:a92a9b1e1dfc42de0b258ad3ae69599ad3cd3ed66289e69141181232fd38ab49",
+        "oldHash": "sha256:a92a9b1e1dfc42de0b258ad3ae69599ad3cd3ed66289e69141181232fd38ab49",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_a0490ad601f1de58.swift",
+        "windowsHash": "sha256:a92a9b1e1dfc42de0b258ad3ae69599ad3cd3ed66289e69141181232fd38ab49"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:db4a90baa7e0c4e642550e5323071ec606e46d78c510a49882299d0c4d82e2f0",
+        "hash": "sha256:db4a90baa7e0c4e642550e5323071ec606e46d78c510a49882299d0c4d82e2f0",
+        "id": "swiftui.text.bundled-font.recipe/case/bc4c078c73a7ae6f",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--bc4c078c73a7ae6f.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 72,
+      "manifest": {
+        "currentHash": "sha256:183a01eda31b0f56a597496a056e1e1a6973c06d303523daf6d9ea3e1f2de5c2",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_bc4c078c73a7ae6f.manifest.json",
+        "oldHash": "sha256:9911557bc38708816b92dfdc7086658b34b9503fc0aac32ed63c2dcec25dcc4c",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_bc4c078c73a7ae6f.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:126d8aaf0adfcbe3181ad7a25f1703a55c18cf135b3b1ff65343e71646c49594",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_bc4c078c73a7ae6f.swift",
+        "macOSHash": "sha256:126d8aaf0adfcbe3181ad7a25f1703a55c18cf135b3b1ff65343e71646c49594",
+        "oldHash": "sha256:126d8aaf0adfcbe3181ad7a25f1703a55c18cf135b3b1ff65343e71646c49594",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_bc4c078c73a7ae6f.swift",
+        "windowsHash": "sha256:126d8aaf0adfcbe3181ad7a25f1703a55c18cf135b3b1ff65343e71646c49594"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:85ae8f576384985d1714c8f113860fcdc9a203c872a636d21e43f83c1b0d7acd",
+        "hash": "sha256:85ae8f576384985d1714c8f113860fcdc9a203c872a636d21e43f83c1b0d7acd",
+        "id": "swiftui.text.bundled-font.recipe/case/d391d4f879f07628",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--d391d4f879f07628.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 73,
+      "manifest": {
+        "currentHash": "sha256:7e9e72bb1ae74f879aad0b65f9ceca04c5e7714df6e196f80b916a175306895e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_d391d4f879f07628.manifest.json",
+        "oldHash": "sha256:5eece4ede788bd6ff2cca7934367cda59471e21a6619f20dd345e611fc2fd839",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_d391d4f879f07628.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:6f9fde34b8bbb366346b0bdda19f4a23b878f9dac13aec1be9886963b24b32d4",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_d391d4f879f07628.swift",
+        "macOSHash": "sha256:6f9fde34b8bbb366346b0bdda19f4a23b878f9dac13aec1be9886963b24b32d4",
+        "oldHash": "sha256:6f9fde34b8bbb366346b0bdda19f4a23b878f9dac13aec1be9886963b24b32d4",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_d391d4f879f07628.swift",
+        "windowsHash": "sha256:6f9fde34b8bbb366346b0bdda19f4a23b878f9dac13aec1be9886963b24b32d4"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:4cd0c008bf5cf279b0d3b836c31a73561de8332f555d915b1444e912a2339b12",
+        "hash": "sha256:4cd0c008bf5cf279b0d3b836c31a73561de8332f555d915b1444e912a2339b12",
+        "id": "swiftui.text.bundled-font.recipe/case/f4491c2120cd6e29",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--f4491c2120cd6e29.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 74,
+      "manifest": {
+        "currentHash": "sha256:fda004257a1c9e6b597695a88f415f95751bcad626b385dda2131a8f8d241ca2",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_f4491c2120cd6e29.manifest.json",
+        "oldHash": "sha256:56d15290e37b85745e71d119a8cfb5c43d0e481c38c027728607e133b89fd994",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_f4491c2120cd6e29.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:68cbd43b364669ad9dd0b2b08c108659fa0ba2e21ae687df45db4d2ad9f4ad83",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_f4491c2120cd6e29.swift",
+        "macOSHash": "sha256:68cbd43b364669ad9dd0b2b08c108659fa0ba2e21ae687df45db4d2ad9f4ad83",
+        "oldHash": "sha256:68cbd43b364669ad9dd0b2b08c108659fa0ba2e21ae687df45db4d2ad9f4ad83",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_f4491c2120cd6e29.swift",
+        "windowsHash": "sha256:68cbd43b364669ad9dd0b2b08c108659fa0ba2e21ae687df45db4d2ad9f4ad83"
+      }
+    },
+    {
+      "block": "swiftui.text.bundled-font",
+      "case": {
+        "fileHash": "sha256:32ca29d6935f384cc884e90b8729257c8bd6b4fb1448210d98e7c2745c26292d",
+        "hash": "sha256:32ca29d6935f384cc884e90b8729257c8bd6b4fb1448210d98e7c2745c26292d",
+        "id": "swiftui.text.bundled-font.recipe/case/f858231effc03da6",
+        "path": "factory/pipeline/cases/swiftui.text.bundled-font.recipe--case--f858231effc03da6.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 75,
+      "manifest": {
+        "currentHash": "sha256:e02f716378ffce2c7124e98ca512d023aa12f67297c9c957de90a4af5708bcb5",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.text.bundled-font.recipe_case_f858231effc03da6.manifest.json",
+        "oldHash": "sha256:18c1ea5ac42366ee041089030e7d614405e6467cbd45f91f1b3c01d17fa1a1ac",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_f858231effc03da6.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+        "hash": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+        "id": "swiftui.text.bundled-font.recipe",
+        "path": "factory/recipes/data/swiftui.text.bundled-font.json"
+      },
+      "source": {
+        "currentHash": "sha256:caaaa580fbd32562293269c880eebf500aa3c3c415c97eaa12c9bd3c9e6bf926",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.text.bundled-font.recipe_case_f858231effc03da6.swift",
+        "macOSHash": "sha256:caaaa580fbd32562293269c880eebf500aa3c3c415c97eaa12c9bd3c9e6bf926",
+        "oldHash": "sha256:caaaa580fbd32562293269c880eebf500aa3c3c415c97eaa12c9bd3c9e6bf926",
+        "oldPath": "factory/pipeline/probes/swiftui.text.bundled-font.recipe_case_f858231effc03da6.swift",
+        "windowsHash": "sha256:caaaa580fbd32562293269c880eebf500aa3c3c415c97eaa12c9bd3c9e6bf926"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:fd35110b14e70549df81f478ac4512d7ed15d2b8e08478515b4fdb35f6a734b4",
+        "hash": "sha256:fd35110b14e70549df81f478ac4512d7ed15d2b8e08478515b4fdb35f6a734b4",
+        "id": "swiftui.toggle.instrumentation-transparency",
+        "path": "factory/pipeline/cases/swiftui.toggle.instrumentation-transparency.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 76,
+      "manifest": {
+        "currentHash": "sha256:ff5f9de811201f120f9b0ca02cb8bc6dcb777662c435e0577f95570a7b895536",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.instrumentation-transparency.manifest.json",
+        "oldHash": "sha256:5991d24f6d3b7343d4c24dd815a5433ec10e2fed508fc128fc3bf0fbd1f66f45",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.instrumentation-transparency.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.instrumentation-transparency.swift",
+        "macOSHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "oldHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.instrumentation-transparency.swift",
+        "windowsHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:bf631cfbe4f7df10f4db73d67932e4bdbe63af668bc479b8eeed75eb23fdec95",
+        "hash": "sha256:bf631cfbe4f7df10f4db73d67932e4bdbe63af668bc479b8eeed75eb23fdec95",
+        "id": "swiftui.toggle.negative.invalid-member",
+        "path": "factory/pipeline/cases/swiftui.toggle.negative.invalid-member.json"
+      },
+      "change": "unchanged",
+      "classification": "expected-negative",
+      "index": 77,
+      "manifest": {
+        "currentHash": "sha256:8210db3092625cd840a0d417011af6d8a425bfacd7698946836cae6abd5db4bd",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.negative.invalid-member.manifest.json",
+        "oldHash": "sha256:aa95f9a81528b1643e5a4c39c2eabfb0ff8aa97a5bb210ea7309fab1603ad034",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.negative.invalid-member.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:61b4f5f4789c5f42613099bd283fa223dd5fbca4d6df9b96920bf7749663570c",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.negative.invalid-member.swift",
+        "macOSHash": "sha256:61b4f5f4789c5f42613099bd283fa223dd5fbca4d6df9b96920bf7749663570c",
+        "oldHash": "sha256:61b4f5f4789c5f42613099bd283fa223dd5fbca4d6df9b96920bf7749663570c",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.negative.invalid-member.swift",
+        "windowsHash": "sha256:61b4f5f4789c5f42613099bd283fa223dd5fbca4d6df9b96920bf7749663570c"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:bd75ae3646c24197e5986fb34c34fa08b916bc35f92d1f01deb534e4e90cff28",
+        "hash": "sha256:bd75ae3646c24197e5986fb34c34fa08b916bc35f92d1f01deb534e4e90cff28",
+        "id": "swiftui.toggle.recipe/case/1a3865458e1b128f",
+        "path": "factory/pipeline/cases/swiftui.toggle.recipe--case--1a3865458e1b128f.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 78,
+      "manifest": {
+        "currentHash": "sha256:eba84d409c3a6282d4c4bdd6fb1b3351f3f716a3ba16658c190df1a0f616109e",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.recipe_case_1a3865458e1b128f.manifest.json",
+        "oldHash": "sha256:b40682095d79ace30c8034f9fde00b163b243b188cc30b12ce23d1d0079278a7",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_1a3865458e1b128f.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:40693da60b4b0aac925fcbca222494be778f9d574d6c00dc6c2ec7698ec3de23",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.recipe_case_1a3865458e1b128f.swift",
+        "macOSHash": "sha256:40693da60b4b0aac925fcbca222494be778f9d574d6c00dc6c2ec7698ec3de23",
+        "oldHash": "sha256:40693da60b4b0aac925fcbca222494be778f9d574d6c00dc6c2ec7698ec3de23",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_1a3865458e1b128f.swift",
+        "windowsHash": "sha256:40693da60b4b0aac925fcbca222494be778f9d574d6c00dc6c2ec7698ec3de23"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:43f407ccac6f2798535e49bd95c129d7e845e6775e4ba7fd4fc9d2afef98ba7b",
+        "hash": "sha256:43f407ccac6f2798535e49bd95c129d7e845e6775e4ba7fd4fc9d2afef98ba7b",
+        "id": "swiftui.toggle.recipe/case/309a64402165a8cf",
+        "path": "factory/pipeline/cases/swiftui.toggle.recipe--case--309a64402165a8cf.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 79,
+      "manifest": {
+        "currentHash": "sha256:376cfa6b94e7c206c7106227ae1ab71518b1d47a932ce84091936050a74faa76",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.recipe_case_309a64402165a8cf.manifest.json",
+        "oldHash": "sha256:c840e6e7de626c93c75ff8616e0d70e2b1866dcb836b22004d4398fee5fafc51",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_309a64402165a8cf.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.recipe_case_309a64402165a8cf.swift",
+        "macOSHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "oldHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_309a64402165a8cf.swift",
+        "windowsHash": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:e689b1a3eedb51e90108681a98a40f262804a1225aa1de34fd431e763c5b2134",
+        "hash": "sha256:e689b1a3eedb51e90108681a98a40f262804a1225aa1de34fd431e763c5b2134",
+        "id": "swiftui.toggle.recipe/case/84734ec1fe7eea8c",
+        "path": "factory/pipeline/cases/swiftui.toggle.recipe--case--84734ec1fe7eea8c.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 80,
+      "manifest": {
+        "currentHash": "sha256:a54ac538e0ebbb27f532d7a7d8bc7899ece96eb1c370bbb23decc5f7ab9248d3",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.recipe_case_84734ec1fe7eea8c.manifest.json",
+        "oldHash": "sha256:af9f672f0d42861caaddb9d6c431075221f0ff622021b990bd66984f5d735968",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_84734ec1fe7eea8c.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:bd4efc3028a9adba0f92cd985ac5d14f7982141edc7c12ba978539f90ea8bf4b",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.recipe_case_84734ec1fe7eea8c.swift",
+        "macOSHash": "sha256:bd4efc3028a9adba0f92cd985ac5d14f7982141edc7c12ba978539f90ea8bf4b",
+        "oldHash": "sha256:bd4efc3028a9adba0f92cd985ac5d14f7982141edc7c12ba978539f90ea8bf4b",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_84734ec1fe7eea8c.swift",
+        "windowsHash": "sha256:bd4efc3028a9adba0f92cd985ac5d14f7982141edc7c12ba978539f90ea8bf4b"
+      }
+    },
+    {
+      "block": "swiftui.toggle",
+      "case": {
+        "fileHash": "sha256:fe2d70092205b36b47fad04281ca0075305069a7f4e3d897c301f171ed8f716d",
+        "hash": "sha256:fe2d70092205b36b47fad04281ca0075305069a7f4e3d897c301f171ed8f716d",
+        "id": "swiftui.toggle.recipe/case/d94c38ac88259ff5",
+        "path": "factory/pipeline/cases/swiftui.toggle.recipe--case--d94c38ac88259ff5.json"
+      },
+      "change": "unchanged",
+      "classification": "positive-pass",
+      "index": 81,
+      "manifest": {
+        "currentHash": "sha256:aa0384be4677d98da6b2dc6dfd008478de26b2251f7719faf80be4d8f4ad4b18",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/manifests/swiftui.toggle.recipe_case_d94c38ac88259ff5.manifest.json",
+        "oldHash": "sha256:92fe1d611075a0dc2e5a1b40d1c6eb2e31d3fe56f1ed223fbaa996e34d319eff",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_d94c38ac88259ff5.manifest.json"
+      },
+      "recipe": {
+        "fileHash": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "hash": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+        "id": "swiftui.toggle.recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json"
+      },
+      "source": {
+        "currentHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+        "currentPath": "factory/pipeline/corrections/fixed81-foundation-20261011/sources/swiftui.toggle.recipe_case_d94c38ac88259ff5.swift",
+        "macOSHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+        "oldHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+        "oldPath": "factory/pipeline/probes/swiftui.toggle.recipe_case_d94c38ac88259ff5.swift",
+        "windowsHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a"
+      }
+    }
+  ],
+  "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+  "runtimeSourceTreeHash": "sha256:4e79df99ed49c638c563516163f738cd7ba7cc49ae470c2b3d888d7916ae9be7",
+  "sourceSweepAnalysis": "factory/native/windows/source-sweep-bbceb5a1-20261011/sweep-analysis.json",
+  "version": "0.1"
+}

@@ -1,0 +1,61 @@
+{
+  "block": "swiftui.custom-layout",
+  "case": {
+    "hash": "sha256:d6d8bf95112e4086783ba0b6744d77f8a5f2dc2b0cce6a3c4ab62c81fb9d8ba3",
+    "id": "swiftui.custom-layout.negative.invalid-member"
+  },
+  "caseInputs": {},
+  "channels": {
+    "adapters": {
+      "customLayout": "host-specific callback adapter required",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.custom-layout:swiftui.custom-layout.negative.invalid-member",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.custom-layout.negative.invalid-member",
+        "sourceHash": "sha256:272c393d1380c203f35ecbcbacc505e17bc85bfe56115f6132439a6c09804a54"
+      }
+    ]
+  },
+  "compileExpectation": "failure",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+    "id": "swiftui.custom-layout.recipe"
+  },
+  "scenario": "negative:must-not-compile",
+  "sourceFile": "swiftui.custom-layout.negative.invalid-member.swift",
+  "sourceHash": "sha256:67f944f82a12aa6c0ff778df81d550485ab7141143443de7525ad4452bef3bee",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.custom-layout.negative.invalid-member",
+    "resourcePath": "factory/recipes/witnesses/swiftui.custom-layout.negative.invalid-member.swift",
+    "sourceHash": "sha256:272c393d1380c203f35ecbcbacc505e17bc85bfe56115f6132439a6c09804a54"
+  },
+  "witnessType": "Witness_swiftui_custom_layout_negative_invalid_member"
+}

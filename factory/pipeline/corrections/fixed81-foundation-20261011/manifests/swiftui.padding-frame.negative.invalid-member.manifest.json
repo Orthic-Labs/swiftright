@@ -1,0 +1,61 @@
+{
+  "block": "swiftui.padding-frame",
+  "case": {
+    "hash": "sha256:ffcc2f104ded12b8e0344967c95e896500347e7183fd3ac48d210291f3ac8d79",
+    "id": "swiftui.padding-frame.negative.invalid-member"
+  },
+  "caseInputs": {},
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.padding-frame:swiftui.padding-frame.negative.invalid-member",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.padding-frame.negative.invalid-member",
+        "sourceHash": "sha256:baa5f89c9092ea6c6d90eec1f50b414eb3b885875bdd436ce2ec83a33c6ff5bd"
+      }
+    ]
+  },
+  "compileExpectation": "failure",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+    "id": "swiftui.padding-frame.recipe"
+  },
+  "scenario": "negative:must-not-compile",
+  "sourceFile": "swiftui.padding-frame.negative.invalid-member.swift",
+  "sourceHash": "sha256:573ccba07f80c9214e01afbce1ea4ddb321ab53bb590494f7e5726025edf15d8",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.padding-frame.negative.invalid-member",
+    "resourcePath": "factory/recipes/witnesses/swiftui.padding-frame.negative.invalid-member.swift",
+    "sourceHash": "sha256:baa5f89c9092ea6c6d90eec1f50b414eb3b885875bdd436ce2ec83a33c6ff5bd"
+  },
+  "witnessType": "Witness_swiftui_padding_frame_negative_invalid_member"
+}

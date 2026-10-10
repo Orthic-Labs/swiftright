@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.stack-overlay",
+  "case": {
+    "hash": "sha256:672a1783e846239b4a23265b406649d0aa9c8d3e2352020d3b1d71ecc01a163f",
+    "id": "swiftui.stack-overlay.recipe/case/99f5cc8e074817f1"
+  },
+  "caseInputs": {
+    "alignment": "center",
+    "color-scheme": "light"
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.stack-overlay:swiftui.stack-overlay.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.stack-overlay.witness",
+        "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "light"
+  },
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+    "id": "swiftui.stack-overlay.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.stack-overlay.recipe_case_99f5cc8e074817f1.swift",
+  "sourceHash": "sha256:e5eb5bba377e3738777099cb48d80af8d51fa2d175d8b2e82bf6eede188f9a99",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.stack-overlay.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.stack-overlay.witness.swift",
+    "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+  },
+  "witnessType": "Witness_stack_overlay"
+}

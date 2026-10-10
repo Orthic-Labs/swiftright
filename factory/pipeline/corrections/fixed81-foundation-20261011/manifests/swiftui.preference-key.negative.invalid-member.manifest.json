@@ -1,0 +1,61 @@
+{
+  "block": "swiftui.preference-key",
+  "case": {
+    "hash": "sha256:e003f8eda4e6b6bfa31d178593c9ce7cc9c4eb6d7cafb1a81d526f1bcfd31990",
+    "id": "swiftui.preference-key.negative.invalid-member"
+  },
+  "caseInputs": {},
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.preference-key:swiftui.preference-key.negative.invalid-member",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.preference-key.negative.invalid-member",
+        "sourceHash": "sha256:c0517b43375034a9f094e61cb71101dd77ec9424b73dfc915b20bc36960de653"
+      }
+    ]
+  },
+  "compileExpectation": "failure",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+    "id": "swiftui.preference-key.recipe"
+  },
+  "scenario": "negative:must-not-compile",
+  "sourceFile": "swiftui.preference-key.negative.invalid-member.swift",
+  "sourceHash": "sha256:0db7f7d9d6499fd98b7fa967bcc9fe8babd9f7475f2f5b08311fdc8e22ccf5b4",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.preference-key.negative.invalid-member",
+    "resourcePath": "factory/recipes/witnesses/swiftui.preference-key.negative.invalid-member.swift",
+    "sourceHash": "sha256:c0517b43375034a9f094e61cb71101dd77ec9424b73dfc915b20bc36960de653"
+  },
+  "witnessType": "Witness_swiftui_preference_key_negative_invalid_member"
+}
