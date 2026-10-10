@@ -1,0 +1,38 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-10-offline",
+    "check_id":  "W13-renderer-layout-installed",
+    "check_name":  "Installed renderer matches the pin (Authenticode digest) and loads from the package",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T19:59:31Z",
+    "ended_utc":  "2026-10-10T19:59:35Z",
+    "exit_status":  0,
+    "observations":  {
+                         "verify_exit":  "0",
+                         "pin_authenticode_sha256":  "E713BF405FEF43835576ACAC418C99E6D95BA5112E6FB628481B8B641D4F9B0E",
+                         "install_location":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                         "exe_signature":  "Valid",
+                         "packaged_dll_raw_sha256":  "930ADA87A425FD8BCA2A5371497522625889B111C956B720A7FD9E52BA08362A",
+                         "pin_sha256_unsigned":  "E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93",
+                         "verdict":  "PASS",
+                         "verify_output":  "note: Loader.swift not present here; default-name check skipped\r\nOK (Stage): swiftright_render.dll beside SliceApp.exe in C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr, Authenticode digest matches pin (ABI 0.6)",
+                         "dll_signature":  "Valid"
+                     },
+    "artifact_ids":  {
+
+                     },
+    "environment":  {
+                        "host":  "4D59F73D-EA25-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:f6c6590d08744fe2063593e5dec2d4dbcb00683823ea94a1c9097855d86de1c8"
+                }
+}

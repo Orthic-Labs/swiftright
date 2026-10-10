@@ -1,0 +1,36 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-10-offline",
+    "check_id":  "W14-deferred-update-in-use",
+    "check_name":  "Update deferred while the app runs; applies on next launch",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T20:04:17Z",
+    "ended_utc":  "2026-10-10T20:04:35Z",
+    "exit_status":  null,
+    "observations":  {
+                         "version_while_running":  "0.1.0.0",
+                         "rows_sha_after":  "sha256:a2a5eb401d6ae39d9f30e162bf33eff3a93fbf7a8f56b28794d189ac655c82f1",
+                         "verdict":  "PASS",
+                         "add_error":  "",
+                         "app_still_running":  "True",
+                         "rows_sha_before":  "sha256:a2a5eb401d6ae39d9f30e162bf33eff3a93fbf7a8f56b28794d189ac655c82f1",
+                         "version_after_relaunch":  "0.1.1.0"
+                     },
+    "artifact_ids":  {
+                         "new_msix":  "sha256:efc52869b889fefe883c4991a6f8c1878232275f5e452b29aea227645e085157"
+                     },
+    "environment":  {
+                        "host":  "4D59F73D-EA25-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:f6c6590d08744fe2063593e5dec2d4dbcb00683823ea94a1c9097855d86de1c8"
+                }
+}

@@ -1,0 +1,39 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-10-offline",
+    "check_id":  "W08-interrupted-update",
+    "check_name":  "Interrupted update (deployment client killed / operation cancelled mid-deployment): state, data, launch, recovery per interruption",
+    "implemented":  true,
+    "status":  "fail",
+    "reason":  "an interruption left a bad state: c6-CancelOperation-staging+240ms (not exactly one old version registered, data changed, the build did not launch, or the second update did not register the new version with status Ok)",
+    "started_utc":  "2026-10-10T20:00:08Z",
+    "ended_utc":  "2026-10-10T20:04:17Z",
+    "exit_status":  null,
+    "observations":  {
+                         "killclient_alive_then_completed_anyway":  "2",
+                         "genuine_interruptions":  "5",
+                         "verdict":  "FAIL",
+                         "final_registered_version":  "0.1.1.0",
+                         "rows_sha_before":  "sha256:a2a5eb401d6ae39d9f30e162bf33eff3a93fbf7a8f56b28794d189ac655c82f1",
+                         "status_not_ok_after_interrupt":  "c6-CancelOperation-staging+240ms:Modified, NeedsRemediation",
+                         "bad_cases":  "c6-CancelOperation-staging+240ms",
+                         "genuine_interruptions_ok":  "4",
+                         "cases":  "c1-KillClient-staging+0ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok || c2-KillClient-staging+150ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok || c3-CancelOperation-staging+0ms: INTERRUPTED outcome=old-registered-ok registered=0.1.0.0:Ok failed-to-reach=Staged launched=True rerun=0.1.1.0/Ok ok=True || c4-CancelOperation-staging+160ms: INTERRUPTED outcome=old-registered-ok registered=0.1.0.0:Ok failed-to-reach=Staged launched=True rerun=0.1.1.0/Ok ok=True || c5-CancelOperation-staging+200ms: INTERRUPTED outcome=old-registered-ok registered=0.1.0.0:Ok failed-to-reach=Staged launched=True rerun=0.1.1.0/Ok ok=True || c6-CancelOperation-staging+240ms: INTERRUPTED outcome=inconsistent registered=0.1.0.0:Modified, NeedsRemediation failed-to-reach=RegistrationChanged launched=False rerun=0.1.1.0/Ok ok=False || c7-CancelOperation-staging+280ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok failed-to-reach=DeQueued || c8-CancelOperation-staging+300ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok failed-to-reach=DeQueued || c9-CancelOperation-staging+320ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok failed-to-reach=DeQueued || c10-CancelOperation-staging+360ms: not interrupted outcome=completed-anyway registered=0.1.1.0:Ok || c11-CancelOperation-start+0ms: INTERRUPTED outcome=old-registered-ok registered=0.1.0.0:Ok failed-to-reach=DeQueued launched=True rerun=0.1.1.0/Ok ok=True",
+                         "cases_json":  "[{\"id\":\"c1-KillClient-staging+0ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"\",\"t_trigger_ms\":1855,\"t_interrupt_ms\":1857},{\"id\":\"c2-KillClient-staging+150ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"\",\"t_trigger_ms\":1942,\"t_interrupt_ms\":2100},{\"id\":\"c3-CancelOperation-staging+0ms\",\"interrupted\":true,\"client_alive\":true,\"outcome\":\"old-registered-ok\",\"registered_after\":\"0.1.0.0:Ok\",\"failed_to_reach_state\":\"Staged\",\"t_trigger_ms\":95,\"t_interrupt_ms\":98,\"one_registered\":true,\"version_after_interrupt\":\"0.1.0.0\",\"status_after_interrupt\":\"Ok\",\"data_intact\":true,\"launched\":true,\"launch_error\":\"\",\"rerun_error\":\"\",\"version_after_rerun\":\"0.1.1.0\",\"status_after_rerun\":\"Ok\",\"data_intact_final\":true,\"ok\":true},{\"id\":\"c4-CancelOperation-staging+160ms\",\"interrupted\":true,\"client_alive\":true,\"outcome\":\"old-registered-ok\",\"registered_after\":\"0.1.0.0:Ok\",\"failed_to_reach_state\":\"Staged\",\"t_trigger_ms\":68,\"t_interrupt_ms\":244,\"one_registered\":true,\"version_after_interrupt\":\"0.1.0.0\",\"status_after_interrupt\":\"Ok\",\"data_intact\":true,\"launched\":true,\"launch_error\":\"\",\"rerun_error\":\"\",\"version_after_rerun\":\"0.1.1.0\",\"status_after_rerun\":\"Ok\",\"data_intact_final\":true,\"ok\":true},{\"id\":\"c5-CancelOperation-staging+200ms\",\"interrupted\":true,\"client_alive\":true,\"outcome\":\"old-registered-ok\",\"registered_after\":\"0.1.0.0:Ok\",\"failed_to_reach_state\":\"Staged\",\"t_trigger_ms\":78,\"t_interrupt_ms\":284,\"one_registered\":true,\"version_after_interrupt\":\"0.1.0.0\",\"status_after_interrupt\":\"Ok\",\"data_intact\":true,\"launched\":true,\"launch_error\":\"\",\"rerun_error\":\"\",\"version_after_rerun\":\"0.1.1.0\",\"status_after_rerun\":\"Ok\",\"data_intact_final\":true,\"ok\":true},{\"id\":\"c6-CancelOperation-staging+240ms\",\"interrupted\":true,\"client_alive\":true,\"outcome\":\"inconsistent\",\"registered_after\":\"0.1.0.0:Modified, NeedsRemediation\",\"failed_to_reach_state\":\"RegistrationChanged\",\"t_trigger_ms\":86,\"t_interrupt_ms\":340,\"one_registered\":true,\"version_after_interrupt\":\"0.1.0.0\",\"status_after_interrupt\":\"Modified, NeedsRemediation\",\"data_intact\":true,\"launched\":false,\"launch_error\":\"no window for SliceApp within 40 s\",\"rerun_error\":\"\",\"version_after_rerun\":\"0.1.1.0\",\"status_after_rerun\":\"Ok\",\"data_intact_final\":true,\"ok\":false},{\"id\":\"c7-CancelOperation-staging+280ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"DeQueued\",\"t_trigger_ms\":78,\"t_interrupt_ms\":360},{\"id\":\"c8-CancelOperation-staging+300ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"DeQueued\",\"t_trigger_ms\":70,\"t_interrupt_ms\":389},{\"id\":\"c9-CancelOperation-staging+320ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"DeQueued\",\"t_trigger_ms\":72,\"t_interrupt_ms\":405},{\"id\":\"c10-CancelOperation-staging+360ms\",\"interrupted\":false,\"client_alive\":true,\"outcome\":\"completed-anyway\",\"registered_after\":\"0.1.1.0:Ok\",\"failed_to_reach_state\":\"\",\"t_trigger_ms\":70,\"t_interrupt_ms\":450},{\"id\":\"c11-CancelOperation-start+0ms\",\"interrupted\":true,\"client_alive\":true,\"outcome\":\"old-registered-ok\",\"registered_after\":\"0.1.0.0:Ok\",\"failed_to_reach_state\":\"DeQueued\",\"t_trigger_ms\":27,\"t_interrupt_ms\":39,\"one_registered\":true,\"version_after_interrupt\":\"0.1.0.0\",\"status_after_interrupt\":\"Ok\",\"data_intact\":true,\"launched\":true,\"launch_error\":\"\",\"rerun_error\":\"\",\"version_after_rerun\":\"0.1.1.0\",\"status_after_rerun\":\"Ok\",\"data_intact_final\":true,\"ok\":true}]"
+                     },
+    "artifact_ids":  {
+                         "new_msix":  "sha256:efc52869b889fefe883c4991a6f8c1878232275f5e452b29aea227645e085157"
+                     },
+    "environment":  {
+                        "host":  "4D59F73D-EA25-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:f6c6590d08744fe2063593e5dec2d4dbcb00683823ea94a1c9097855d86de1c8"
+                }
+}
