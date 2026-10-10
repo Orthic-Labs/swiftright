@@ -43,6 +43,9 @@ func value(_ key: String) -> String? {
     guard let i = CommandLine.arguments.firstIndex(of: key), i + 1 < CommandLine.arguments.count else { return nil }
     return CommandLine.arguments[i + 1]
 }
+func rectangle(_ rect: CGRect) -> [String: Double] {
+    ["x": rect.minX, "y": rect.minY, "width": rect.width, "height": rect.height]
+}
 func emit(_ object: [String: Any]) throws {
     var object = object
     if !observed.fontResource.isEmpty { object["registeredFontResource"] = observed.fontResource }
@@ -59,7 +62,10 @@ func content(instrumented: Bool) -> AnyView {
 struct CaptureHost {
     @MainActor static func main() throws {
         if CommandLine.arguments.contains("--preflight") {
-            try emit(["axTrusted": AXIsProcessTrusted(), "screenCaptureGranted": CGPreflightScreenCaptureAccess(), "permissionRequests": false, "pid": ProcessInfo.processInfo.processIdentifier])
+            let systemFont = CTFontCreateWithName(".AppleSystemUIFont" as CFString, 16, nil)
+            try emit(["axTrusted": AXIsProcessTrusted(), "screenCaptureGranted": CGPreflightScreenCaptureAccess(), "permissionRequests": false, "pid": ProcessInfo.processInfo.processIdentifier,
+                      "display": ["mainDisplayPixels": ["width": CGDisplayPixelsWide(CGMainDisplayID()), "height": CGDisplayPixelsHigh(CGMainDisplayID())], "mainDisplayBoundsPoints": rectangle(CGDisplayBounds(CGMainDisplayID())), "mainScreenBackingScaleFactor": NSScreen.main?.backingScaleFactor as Any? ?? NSNull()],
+                      "fontInventory": ["families": NSFontManager.shared.availableFontFamilies.sorted(), "systemControl": ["postScriptName": CTFontCopyPostScriptName(systemFont), "family": CTFontCopyFamilyName(systemFont), "size": CTFontGetSize(systemFont), "unitsPerEm": CTFontGetUnitsPerEm(systemFont)]]])
             return
         }
         var registeredURL: URL?
@@ -120,7 +126,9 @@ struct CaptureHost {
                         CGImageDestinationAddImage(destination, image, nil)
                         guard CGImageDestinationFinalize(destination) else { throw NSError(domain: "F5", code: 6) }
                         let bytes = image.dataProvider?.data as Data? ?? Data()
-                        try emit(["status": Set(bytes).count > 1 ? "OBSERVED" : "UNOBSERVED", "mode": "own-window-compositor", "pid": ProcessInfo.processInfo.processIdentifier, "windowID": own.windowID, "windowTitle": own.title ?? "", "permissionRequests": false, "image": ["width": image.width, "height": image.height, "scale": 1, "uniqueByteValues": Set(bytes).count]])
+                        let host = window.contentView!
+                        let hostMetrics: [String: Any] = ["scope": "actual NSHostingView root geometry; not witness internal Layout callbacks", "boundsPoints": rectangle(host.bounds), "framePoints": rectangle(host.frame), "fittingSizePoints": ["width": host.fittingSize.width, "height": host.fittingSize.height], "windowContentLayoutRectPoints": rectangle(window.contentLayoutRect), "backingScaleFactor": window.backingScaleFactor]
+                        try emit(["status": Set(bytes).count > 1 ? "OBSERVED" : "UNOBSERVED", "mode": "own-window-compositor", "pid": ProcessInfo.processInfo.processIdentifier, "windowID": own.windowID, "windowTitle": own.title ?? "", "permissionRequests": false, "witnessHostMetrics": hostMetrics, "image": ["width": image.width, "height": image.height, "scale": 1, "uniqueByteValues": Set(bytes).count]])
                     } catch {
                         try? emit(["status": "HELD", "mode": "own-window-compositor", "reason": String(describing: error), "permissionRequests": false])
                     }

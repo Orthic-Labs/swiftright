@@ -1,4 +1,10 @@
-# Current pilot
+# Factory navigation
+
+[Current additive & tuple10 preparation](ADDITIVE-CURRENT.md) records released source APIs, pending profile/host bindings & new capture order.
+
+## Historical r09 pilot
+
+Reports below preserve original r09 case/config/tuple evidence. Staged API failures & final dispatch state describe that historical batch; current additive runtime uses separate sources & evidence.
 
 - [Actual primary report](pilot-final-boundary/PILOT.md): 81 fixed cases, 10 primaries, 200 selected Mac captures, 81 blocked verdicts; 9 Windows runtime API compile failures & 0 usable native Windows replays.
 - [Primary summary](pilot-final-boundary/pilot-summary.json): exact current case/source/tuple joins, verified corrected primary20+20 replacements, 40 superseded archive refs, compile diagnostics & native launch holds.

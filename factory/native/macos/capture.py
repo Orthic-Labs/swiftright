@@ -258,6 +258,9 @@ def capture(manifest_path: Path, scratch: Path, output: Path, runs: int, recorde
                 row['compositorPaint'] = 'OBSERVED' if nonvacuous(raw) and row['offscreen'] == 'OBSERVED' else 'HELD'
                 row['compositorScope'] = 'owned window including chrome; witness render corroborated by nonvacuous offscreen capture'
                 row['compositorRawHash'] = digest(directory / 'compositor.raw.json')
+                metrics = raw.get('witnessHostMetrics', {})
+                fitting = metrics.get('fittingSizePoints', {})
+                row['rootHostGeometry'] = 'OBSERVED' if fitting.get('width', 0) > 0 and fitting.get('height', 0) > 0 else 'HELD'
                 if compositor_png.exists(): row['compositorPngHash'] = digest(compositor_png)
             else: row['compositorReason'] = f'owned capture host exit {result.returncode}'
         if fresh_client and fresh_client.get('externalAX') == 'AVAILABLE':
@@ -296,6 +299,7 @@ def capture(manifest_path: Path, scratch: Path, output: Path, runs: int, recorde
     complete = len(summary['runs']) == runs and all(any(row[channel] == 'OBSERVED' for channel in ('offscreen', 'compositorPaint', 'externalAX')) for row in summary['runs'])
     summary['status'] = 'CANDIDATE_CAPTURED' if complete else 'INCOMPLETE'
     summary['channels'] = {'offscreenPaint': 'OBSERVED' if offscreen_complete else 'HELD', 'rootLayout': 'OBSERVED' if all(row.get('instrumented', {}).get('rootLayoutCallbacks', 0) > 0 for row in summary['runs']) else 'HELD', 'textRenderer': 'OBSERVED' if all(row.get('instrumented', {}).get('textRendererRuns', 0) > 0 for row in summary['runs']) else 'NOT_APPLICABLE_OR_HELD', 'externalAX': 'OBSERVED' if all(row['externalAX'] == 'OBSERVED' for row in summary['runs']) else 'HELD', 'compositorPaint': 'OBSERVED' if all(row['compositorPaint'] == 'OBSERVED' for row in summary['runs']) else 'HELD', 'witnessInternalLayoutCallbacks': 'HELD: root adapter does not instrument witness internal Layout', 'witnessFontResolution': 'HELD: TextRenderer does not expose resolved font; CoreText control kept separate', 'animation': 'NOT_ATTEMPTED: static pilot', 'events': 'OBSERVED: render clock & host window display only'}
+    summary['channels']['rootHostGeometry'] = 'OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks' if all(row.get('rootHostGeometry') == 'OBSERVED' for row in summary['runs']) else 'HELD'
     if font_resource:
         font_observed = all(json.loads((evidence / f'run-{row["run"]:03d}' / 'instrumented.raw.json').read_text()).get('registeredFontResource', {}).get('resourceHash') == font_resource['hash'] for row in summary['runs'])
         summary['channels']['registeredFontProvider'] = 'OBSERVED: hash-bound process CoreText font descriptor identity' if font_observed else 'HELD'
