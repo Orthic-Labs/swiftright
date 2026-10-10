@@ -45,6 +45,57 @@ extension Graph {
         return true
     }
 
+    /// The node a window focuses when it is first shown, or nil when it focuses none.
+    ///
+    /// Rule (macOS oracle, SR0-O cross-compare of all 16 configurations, `probes/sr0-o/f1-cross/cross-evidence/*/mac-ev-n*.jsonl`):
+    /// AppKit makes the first key view of the window's key-view loop the first responder. A `List` is itself a key view and
+    /// holds no `FocusState` value, so a window whose first key view is a List reports no focus (F1, F2, F3 list, F4, F6, F7,
+    /// F8, F9). Any other container (VStack, ScrollView + LazyVStack, a custom Layout) leaves a focus-bound text field first
+    /// in tree order, and `@FocusState` reports that field (F3 vstack and lazy, F5: row 1). Tree order is document order,
+    /// as for Tab traversal, and disabled fields and Buttons are skipped as there. Only the 16 recorded configurations are
+    /// evidence; a field that precedes a List in tree order taking focus ahead of it is the same rule extended, not observed.
+    ///
+    /// The event comes after every `onAppear` of the first evaluation and before the first `task` body runs (Mac log order:
+    /// root-appear, row appears, focus, task-start); a host calls this once, right after it has created the graph and
+    /// committed the first record, before it yields to the main actor. `FocusState` already naming a focus-bound field is
+    /// left alone.
+    private func initialFocusNode() -> Node? {
+        var target: Node?
+        var decided = false
+        func visit(_ node: Node) {
+            guard !decided, node.alive else { return }
+            if case .stack(let spec) = node.kind, spec.name == "List" {
+                decided = true
+                return
+            }
+            if case .modifier(.focus) = node.kind, isTabStop(node) {
+                target = node
+                decided = true
+                return
+            }
+            childNodes(node).forEach(visit)
+        }
+        if let root { visit(root) }
+        return target
+    }
+
+    /// Gives the window's initial focus (see `initialFocusNode`). Returns the id of the focus-bound node that took focus, or
+    /// nil when the window focuses nothing, when a focus-bound field already holds focus, or when the graph is torn down. The new
+    /// focus is committed (one commit record carrying it), as in `moveFocus`.
+    @discardableResult
+    public func applyInitialFocus() -> String? {
+        guard let node = initialFocusNode(), case .modifier(.focus(let link)) = node.kind else { return nil }
+        if focusNodes().contains(where: { stop in
+            if case .modifier(.focus(let other)) = stop.kind { return other.isFocused() }
+            return false
+        }) {
+            return nil
+        }
+        link.focus()
+        flush()
+        return node.id.description
+    }
+
     /// Dispatches a native key to focus traversal: Tab and Shift-Tab with no other modifier.
     /// Returns true when the key was a traversal key and focus moved.
     @discardableResult

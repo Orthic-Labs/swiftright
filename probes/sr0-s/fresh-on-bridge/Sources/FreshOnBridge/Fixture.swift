@@ -27,7 +27,8 @@ struct FixtureOptions: Sendable {
     var f3Container: F3Container = .list
     var f3GapMs = 0
     var f9NoTasks = false
-    /// Test override of the runtime reduce-motion environment (`--reduce-motion-override on|off`). Nil = the OS setting.
+    /// Test or app override of the runtime reduce-motion environment (`--reduce-motion-override on|off`). Nil = the default
+    /// (animations on): the Windows "Animation effects" setting is read and logged but never decides (RESULT.md 2026-10-10).
     var reduceMotionOverride: Bool? = nil
     /// Label printed on the SELFTEST line, e.g. `F3 list-1s`.
     var label: String = "F1"
@@ -219,6 +220,11 @@ final class RowModel {
     /// Focus change from any source (AX focus, pointer). Logged the way the Mac onChange(focus) logs it.
     func setFocus(_ id: UUID?, source: String) {
         focusBinding?.wrappedValue = id
+        logFocus(id, source: source)
+    }
+
+    /// Logs a focus the runtime already holds (the initial focus: the runtime set it, the host only reports it).
+    func logFocus(_ id: UUID?, source: String) {
         log.emit("focus", node: "focus", payload: ["focused": id?.uuidString ?? "none", "source": source])
     }
 
@@ -302,7 +308,8 @@ final class RowModel {
     }
 
     /// Animation policy: the reduced-motion variant flag disables animation transactions (Mac oracle policy).
-    /// The OS setting and the override reach the runtime environment instead (snapping; see BridgeBackend).
+    /// The override and the variant also reach the runtime environment (snapping; see BridgeBackend). The OS value is logged
+    /// as `system_reduce` and does not decide.
     func applyMotionPolicy() {
         let enabled = !reducedVariant
         animationEnabled = enabled

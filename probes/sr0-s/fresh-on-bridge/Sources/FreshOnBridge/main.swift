@@ -5,6 +5,8 @@ import SwiftRightBridge
 // FreshOnBridge (SR0-S): fixtures F1-F9 on the fresh runtime through bridge ABI rev 0.4.
 // Usage: FreshOnBridge.exe --fixture F1..F9 [--f3-variant list|vstack-<1|3>s|lazy-<1|3>s] [--f9-variant notasks]
 //                          [--reduced-motion-variant] [--reduce-motion-override on|off] --self-test
+//   --reduce-motion-override on|off  forces `accessibilityReduceMotion`. Without it animations run: the Windows "Animation
+//                effects" setting is read and logged but does not decide (RESULT.md, 2026-10-10 parity pass).
 //   --self-test  scripted run. Input (AX/UIA focus, VK keys, invoke, SetValue, window close) is driven from
 //                outside by scripts/drive-fixture.ps1. Engine releases and model steps run in-process.
 //   no flag      interactive run until the window closes.

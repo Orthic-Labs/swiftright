@@ -10,8 +10,15 @@ import SwiftRightBridge
 // Text runs reserve a 32-id block per node so AX text-run ids never collide with node ids.
 //
 // SR0-S rev 2 (ABI rev 0.4): the display tick drives `Graph.tick(now:)` (interpolated frames are committed);
-// the text store routes every call to the runtime `TextInputState` of the field (marked text included);
-// the Windows reduce-motion setting (or a test override) is fed into the runtime environment.
+// the text store routes every call to the runtime `TextInputState` of the field (marked text included).
+//
+// 2026-10-10 parity pass (SR0-O cross-compare, Mac SwiftUI as oracle):
+//   - initial focus: `ready` calls `Graph.applyInitialFocus()` once, after the first commit and before the main actor is
+//     yielded (so after every appear and before any task body), and logs it as a `focus` event with source `initial`;
+//   - a UIA Invoke on a button no longer moves the focus: the AX `focus` action UIA sends in front of it is held by a
+//     `ButtonFocusGate` and dropped when the invoke follows (a real SetFocus on a button, Narrator, still lands);
+//   - reduce motion: the Windows "Animation effects" value is read and logged but is NOT fed into the runtime. The default is
+//     animations on; only `--reduce-motion-override on` and the reduced-motion variant force reduced (RESULT.md 2026-10-10).
 
 enum FreshStyle {
     static let fontFamily = "Segoe UI"
@@ -134,7 +141,16 @@ final class BridgeBackend {
     private(set) var focusedRow: UUID?
     private(set) var focusTarget: UInt64 = 0
     /// Bridge id of a button focused through AX/UIA SetFocus (Narrator item navigation). Cleared by any row focus.
+    /// It is the screen reader's focus: it moves the tree focus the renderer reports to UIA, and leaves the runtime
+    /// `FocusState` (the keyboard focus, `focusedRow`) alone, as VoiceOver's cursor does on the Mac.
     private var axButtonFocus: UInt64 = 0
+    /// Holds a button focus request until it is clear that no invoke of the same button follows (see `ButtonFocusGate`).
+    private var buttonFocusGate = ButtonFocusGate()
+    /// Button focus requests dropped because an invoke of the same node followed at once (diagnostic, read by the self-test).
+    private(set) var coalescedButtonFocus = 0
+    /// The initial focus the window gave (runtime node id, row), nil when it focused nothing.
+    private(set) var initialFocusNode: String?
+    private(set) var initialFocusRow: UUID?
 
     // Input and renderer bookkeeping (read by the self-test).
     /// Text-store replace calls (the keystroke path: VK input through the renderer).
@@ -164,7 +180,8 @@ final class BridgeBackend {
     /// Commits that reached the renderer after the host window was closed (must stay 0).
     private(set) var commitsAfterClose = 0
     private(set) var closedFlag = false
-    /// Reduce motion: the Windows setting (nil when unreadable), the effective value fed to the runtime, and its source.
+    /// Reduce motion: the Windows setting (nil when unreadable; read and logged only), the effective value fed to the
+    /// runtime (an explicit override or variant, else false), and its source (override, variant or default).
     private(set) var osReduceMotion: Bool?
     private(set) var reduceMotionEffective = false
     private(set) var reduceMotionSource = "unset"
@@ -215,6 +232,7 @@ final class BridgeBackend {
             }
             try win.requestTicks(true)
             g.flush()
+            giveInitialFocus(g)
             log.emit("lifecycle", node: "window", payload: [
                 "phase": "ready", "scale": Double(scale), "width_px": Int(metrics.width), "height_px": Int(metrics.height),
                 "reduce_motion": reduce, "reduce_source": reduceMotionSource,
@@ -225,28 +243,48 @@ final class BridgeBackend {
         }
     }
 
-    /// Chooses the effective reduce-motion value: the test override first, then the Windows setting.
+    /// Chooses the effective reduce-motion value. DECISION 2026-10-10 (Adrian: "Our animations have to work on a system even if
+    /// it has animations turned off"): the Windows "Animation effects" setting (SPI_GETCLIENTAREAANIMATION) is still read and
+    /// logged (`system_reduce`, `osReduceMotion`) but does NOT set `accessibilityReduceMotion`. The default is false (animate).
+    /// An explicit test or app override (`--reduce-motion-override on|off`) and the reduced-motion variant still decide it.
+    /// Order: override, then variant, then the default.
     private func resolveReduceMotion() {
         osReduceMotion = systemAnimationsEnabled().map { !$0 }
         if let override = options.reduceMotionOverride {
             reduceMotionEffective = override
             reduceMotionSource = "override"
-        } else if let os = osReduceMotion {
-            reduceMotionEffective = os
-            reduceMotionSource = "os"
+        } else if options.reducedVariant {
+            reduceMotionEffective = true
+            reduceMotionSource = "variant"
         } else {
             reduceMotionEffective = false
-            reduceMotionSource = "unavailable"
+            reduceMotionSource = "default"
         }
         model.systemReduceMotion = osReduceMotion
         model.effectiveReduceMotion = reduceMotionEffective
         model.reduceMotionSource = reduceMotionSource
     }
 
+    /// Gives the window's initial focus (runtime rule: `Graph.applyInitialFocus`, from the Mac oracle). Runs once from `ready`,
+    /// after the first commit and before the main actor is yielded, so the event follows every `appear` and precedes every
+    /// task start, the Mac log order. The caret goes to the end of the field, as for any other focus.
+    private func giveInitialFocus(_ g: Graph) {
+        guard let node = g.applyInitialFocus(), let row = rowUUID(in: node) else { return }
+        initialFocusNode = node
+        initialFocusRow = row
+        placeCaretAtEnd(row)
+        model.logFocus(row, source: "initial")
+        dirty = true
+        flushIfDirty()
+    }
+
     /// Display tick (bridge `onTick`, QPC nanoseconds of the presented frame). Flushes pending model edits, then
     /// advances running animations to this frame; the runtime commits the interpolated frame.
     func tick(timestampNS: UInt64) {
         tickCount += 1
+        let now = monotonicNS()
+        let held = buttonFocusGate.age(at: now) ?? 0
+        if let node = buttonFocusGate.expired(at: now) { applyButtonFocus(node, heldNS: held) }
         flushIfDirty()
         guard let graph else { return }
         inTick = true
@@ -524,15 +562,29 @@ final class BridgeBackend {
         case .axAction:
             switch ev.axAction {
             case .invoke?:
+                // UIA sends a focus request on the button right in front of an Invoke; an activation alone must not move the
+                // focus (Mac AXPress does not), so that request is dropped. Any other held request stands first.
+                if buttonFocusGate.cancelForInvoke(of: ev.node, at: monotonicNS()) {
+                    coalescedButtonFocus += 1
+                    log.emit("ax-focus-coalesced", node: "focus", payload: [
+                        "node": Int(ev.node), "reason": "focus-request-in-front-of-invoke", "source": "ax",
+                    ])
+                } else {
+                    confirmButtonFocus()
+                }
                 invoke(node: ev.node, source: "ax")
             case .focus?:
                 axFocusEvents += 1
-                if let row = rowByTextField[ev.node] { focusRow(row, source: "ax") }
-                else if buttonRuntimeID[ev.node] != nil {
-                    axButtonFocus = ev.node; dirty = true
-                    log.emit("ax-button-focus", node: "focus", payload: ["focused": "button:\(ev.node)", "source": "ax"])
+                if let row = rowByTextField[ev.node] {
+                    confirmButtonFocus()
+                    focusRow(row, source: "ax")
+                } else if buttonRuntimeID[ev.node] != nil {
+                    let now = monotonicNS()
+                    let held = buttonFocusGate.age(at: now) ?? 0
+                    if let earlier = buttonFocusGate.request(ev.node, at: now) { applyButtonFocus(earlier, heldNS: held) }
                 }
             case .setValue?:
+                confirmButtonFocus()
                 axSetValues += 1
                 if let row = rowByTextField[ev.node] {
                     model.editText(row, ev.text)
@@ -543,6 +595,7 @@ final class BridgeBackend {
             }
         case .pointer:
             if ev.action == 1 {
+                confirmButtonFocus()
                 pointerDowns += 1
                 if buttonRuntimeID[ev.node] != nil {
                     invoke(node: ev.node, source: "pointer")
@@ -552,7 +605,10 @@ final class BridgeBackend {
             }
         case .key:
             keyEvents += 1
-            if ev.action == 1 { handleKey(name: ev.text, modifiers: ev.modifiers) }
+            if ev.action == 1 {
+                confirmButtonFocus()
+                handleKey(name: ev.text, modifiers: ev.modifiers)
+            }
         case .windowMetrics:
             metricsEvents += 1
             applyMetrics(width: ev.i0, height: ev.i1, scale: ev.x)
@@ -561,6 +617,25 @@ final class BridgeBackend {
         }
         flushIfDirty()
         afterInput?()
+    }
+
+    private func monotonicNS() -> UInt64 { DispatchTime.now().uptimeNanoseconds }
+
+    /// Makes `node` the screen reader's focus (the tree focus the renderer reports), logged as `ax-button-focus`. A node that
+    /// left the tree in the meantime is ignored.
+    private func applyButtonFocus(_ node: UInt64, heldNS: UInt64) {
+        guard buttonRuntimeID[node] != nil else { return }
+        axButtonFocus = node
+        dirty = true
+        log.emit("ax-button-focus", node: "focus", payload: [
+            "focused": "button:\(node)", "source": "ax", "held_ms": Int(heldNS / 1_000_000),
+        ])
+    }
+
+    /// Another input arrived while a button focus request was held: the request stood on its own, so it lands now.
+    private func confirmButtonFocus() {
+        let held = buttonFocusGate.age(at: monotonicNS()) ?? 0
+        if let node = buttonFocusGate.confirm() { applyButtonFocus(node, heldNS: held) }
     }
 
     /// Native key-down. Tab / Shift-Tab move focus through the runtime (CONTRACT section 4); the bridge's

@@ -1186,6 +1186,7 @@ public final class Graph {
     func textInputState(for node: Node, binding: Binding<String>, multiline: Bool) -> TextInputState {
         if let state = node.textInput {
             state.binding = binding
+            state.adoptExternalText()
             return state
         }
         let state = TextInputState(binding: binding, multiline: multiline)

@@ -219,6 +219,63 @@ final class SelfTest {
 
     private func pendingCount() -> Int { engine.pendingKeys.count }
 
+    // MARK: Parity checks shared by every fixture (2026-10-10)
+
+    /// Mac oracle (SR0-O cross-compare, mac-ev-n*.jsonl of all 16 configurations): the window's first key view takes focus
+    /// at launch. A List-first window reports none (F1, F2, F3 list, F4, F6, F7, F8, F9); F3 vstack and lazy and F5 report
+    /// row 1. The event comes after every initial `appear` and before the first task start.
+    private func initialFocusCheck() -> Check {
+        let expected: UUID? = {
+            switch options.fixture {
+            case .F5: return rid(1)
+            case .F3: return options.f3Container == .list ? nil : rid(1)
+            default: return nil
+            }
+        }()
+        let initial = events(kind: "focus").filter { (payload($0)["source"] as? String) == "initial" }
+        let focused = initial.first.flatMap { payload($0)["focused"] as? String }
+        let firstFocusEvent = events(kind: "focus").first
+        let initialAppearSeqs = (1...10).compactMap { slot in events(node: rid(slot).uuidString, phase: "appear").first.map { seq($0) } }
+        let firstTask = events(kind: "lifecycle", phase: "task-start").first
+        let ordered: Bool = {
+            guard let at = initial.first.map({ seq($0) }) else { return true }
+            let afterAppears = (initialAppearSeqs.max() ?? -1) < at
+            let beforeTasks = firstTask.map { at < seq($0) } ?? true
+            return afterAppears && beforeTasks
+        }()
+        let detail = "expected=\(expected?.uuidString ?? "none") initial-events=\(initial.count) focused=\(focused ?? "none") "
+            + "first-focus-event-is-initial=\(firstFocusEvent.map { (payload($0)["source"] as? String) == "initial" } ?? false) "
+            + "after-appears-before-tasks=\(ordered) (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)"
+        if let expected {
+            return pass("initial-focus-matches-mac-oracle",
+                        initial.count == 1 && focused == expected.uuidString && ordered && backend.initialFocusRow == expected, detail)
+        }
+        return pass("initial-focus-matches-mac-oracle", initial.isEmpty && backend.initialFocusRow == nil, detail)
+    }
+
+    /// A UIA Invoke alone never moves the focus: no `ax-button-focus` for a node in the instant before an AX invoke of the same
+    /// node, and no `focus` event is logged by an invoke (Mac `AXPress` leaves focus where it was). A genuine screen-reader
+    /// focus (Narrator) is applied after the hold window, well before its activation, and passes this check.
+    private func invokeLeavesFocusCheck() -> Check {
+        let all = events()
+        var offenders: [String] = []
+        for (index, e) in all.enumerated() where (e["kind"] as? String) == "input" && (payload(e)["op"] as? String) == "invoke"
+            && (payload(e)["source"] as? String) == "ax" {
+            guard let node = payload(e)["node"] as? Int, index > 0 else { continue }
+            let previous = all[index - 1]
+            // A request held for the whole window is the screen reader's own (held_ms > 60); one applied sooner than that, right
+            // before the invoke of the same button, is the UIA preamble the gate should have dropped.
+            let held = payload(previous)["held_ms"] as? Int ?? Int.max
+            if (previous["kind"] as? String) == "ax-button-focus", (payload(previous)["focused"] as? String) == "button:\(node)",
+               held < Int(ButtonFocusGate.settleNS / 1_000_000) {
+                offenders.append("invoke seq=\(seq(e)) node=\(node) preceded by ax-button-focus held-ms=\(held) gap-ms=\(millis(previous, e))")
+            }
+        }
+        let invokes = all.filter { (payload($0)["op"] as? String) == "invoke" && (payload($0)["source"] as? String) == "ax" }.count
+        return pass("invoke-does-not-move-focus", offenders.isEmpty,
+                    "ax-invokes=\(invokes) coalesced-focus-requests=\(backend.coalescedButtonFocus) offenders=\(offenders.isEmpty ? "none" : offenders.joined(separator: "; "))")
+    }
+
     // MARK: Script
 
     private func buildScript() -> [Step] {
@@ -656,6 +713,10 @@ final class SelfTest {
                 pass("async-insert-committed", model.rows.count == 11 && model.rows.first?.text == "Engine 0", "count=\(model.rows.count)"),
                 pass("final-layout-wide", modes.last == "wide", "last=\(modes.last ?? "nil")"),
                 pass("resize-delivered-to-runtime", backend.metricsEvents >= 2, "windowMetrics events=\(backend.metricsEvents)"),
+                // Mac oracle (cross-evidence/F5/mac-trace-n1.json, steps 2 and 3): the focused row 1 field's caret is the end of
+                // "Row 1 updated 0" (location 15) after the async model update.
+                pass("focused-row1-caret-at-end-after-update", backend.caretOffset(rid(1)) == UInt32("Row 1 updated 0".utf16.count),
+                     "caret=\(backend.caretOffset(rid(1)).map(String.init) ?? "nil") focused-at-launch=\(backend.initialFocusRow == rid(1))"),
             ]
 
         case .F6:
@@ -665,9 +726,15 @@ final class SelfTest {
             let order = model.rows.count > 1 ? (model.rows[0].id, model.rows[1].id) : nil
             let effective = backend.reduceMotionEffective
             let osState = backend.osReduceMotion.map { $0 ? "reduce-on" : "reduce-off" } ?? "unavailable"
+            // DECISION 2026-10-10: the Windows "Animation effects" value is read and logged but never decides. Reduced only
+            // through `--reduce-motion-override on` or the reduced-motion variant; otherwise the animated path runs.
+            let expectReduce = options.reduceMotionOverride ?? options.reducedVariant
+            let expectSource = options.reduceMotionOverride != nil ? "override" : (options.reducedVariant ? "variant" : "default")
             checks += [
                 pass("os-reduce-motion-read", backend.osReduceMotion != nil,
                      "os=\(osState) effective=\(effective) source=\(backend.reduceMotionSource)"),
+                pass("os-setting-does-not-decide", effective == expectReduce && backend.reduceMotionSource == expectSource,
+                     "os=\(osState) effective=\(effective) expected=\(expectReduce) source=\(backend.reduceMotionSource) expected-source=\(expectSource)"),
             ]
             if options.reducedVariant {
                 checks += [
@@ -691,6 +758,12 @@ final class SelfTest {
                     pass("frames-driven-by-display-tick", effective || backend.tickCommits >= 3,
                          "tick-commits=\(backend.tickCommits) ticks=\(backend.tickCount)"),
                 ]
+                if options.reduceMotionOverride == nil {
+                    // F6:none must take the ANIMATED branch whatever the OS setting says (the Dell has animation effects off).
+                    checks.append(pass("animated-path-regardless-of-os-setting",
+                                       !effective && backend.interpolatedCommits >= 3 && backend.tickCommits >= 3,
+                                       "os=\(osState) effective-reduce=\(effective) fade-frame commits=\(backend.interpolatedCommits) tick-commits=\(backend.tickCommits) (animate branch: >=3 each)"))
+                }
             }
 
         case .F7 where options.f7Live:
@@ -785,6 +858,8 @@ final class SelfTest {
                 observe("view-bindings-cleared-by-host", "\(backend.clearedViewBindings) model-held view references dropped after teardown"),
             ]
         }
+        checks.append(initialFocusCheck())
+        checks.append(invokeLeavesFocusCheck())
         checks += bridgeChecks()
         return checks
     }

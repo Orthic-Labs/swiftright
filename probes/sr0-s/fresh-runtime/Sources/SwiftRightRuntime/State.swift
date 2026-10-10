@@ -195,7 +195,8 @@ public struct EnvironmentValues {
     }
 
     /// Animations jump to their final values and still deliver completions. Tests set it directly; a
-    /// host feeds the OS value through `Graph.setRootEnvironment`.
+    /// host feeds an explicit app or test override through `Graph.setRootEnvironment`. A Windows host does not map the OS
+    /// "Animation effects" setting here (decision 2026-10-10: animations must work with the OS setting off); macOS supplies its own.
     public var accessibilityReduceMotion: Bool {
         get { self[ReduceMotionKey.self] }
         set { self[ReduceMotionKey.self] = newValue }

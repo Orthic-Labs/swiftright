@@ -330,6 +330,7 @@ ABI rev 0.4 header) not edited. Nothing committed, branched or pushed. No GUI ru
 2. **Reduce motion** (`SystemSettings.swift`, `BridgeBackend.resolveReduceMotion`): reads `SPI_GETCLIENTAREAANIMATION` (0x1042).
    Effective value = `--reduce-motion-override on|off` if given, else the OS value (reduce = animations off). Fed into the root
    environment with `Graph.setRootEnvironment` before the first commit. Logged as `reduce_source`.
+   **Superseded 2026-10-10: the OS value no longer decides; see "2026-10-10 parity pass" at the end of this file.**
 3. **IME text store** (`BridgeBackend` text-store section): replace, replace-and-mark, unmark, selection, marked range, text and
    caret all route to the field's runtime `TextInputState` (UTF-16). The bound String holds committed text only; marked text is drawn
    (text plus an underline rect, since ABI v0 has no underline primitive). Focus change commits the previous field's composition.
@@ -457,3 +458,82 @@ Settle check: `released-effects-settled` PASS in 20/20 runs of each F3 variant.
 - F7 real IME composition is not run (manual check, as before). The F7 composition steps are programmatic through the bridge text store.
 - Another lane edited the repo's `scripts/drive-fixture.ps1` at 13:26:30 (adds an ARTIFACTS line: exe, renderer and trace hashes). That edit is not on the host, and this matrix ran on the staged copy above (`6B0C7B57…`). Sync it before any run that needs those artifact hashes.
 - No rebuild during the matrix. The bridge package in the working tree is ABI 0.6 (another lane); this exe was built from the 0.5 sources.
+
+## 2026-10-10 parity pass: initial focus, activation without focus, reduce motion (build and Mac tests only, NOT run on Windows)
+
+Scope: three Mac-vs-Windows differences from the T1 cross-compare (`probes/sr0-o/f1-cross/CROSS-ALL.md`, P3, P5, F6). The Mac
+SwiftUI recordings are the oracle. Runtime tests 108/108 (92 + 16 new), `packages/SwiftRightBridge` tests 18/18 (8 + 10 new),
+`swift build` of FreshOnBridge passes. No Dell run was made (the desktop was held by another agent); the items below marked
+"Dell" are the confirmations still owed.
+
+### 1. Initial focus (runtime `Graph.applyInitialFocus`, host `giveInitialFocus`)
+
+Rule from the Mac event logs of all 16 configurations (`cross-evidence/<config>/mac-ev-n{1,2,3}.jsonl`, identical in the three
+runs of each): the window's first key view takes focus at launch.
+
+| Container | Configurations | Mac initial focus event |
+|---|---|---|
+| `List` (also `VStack { Text, List }`, F7) | F1, F2, F3 list-0s/1s/3s, F4, F6, F6-reduced, F7, F8, F9 | none (every `focus` event in these logs is the driver's own focus step) |
+| `VStack` | F3 vstack-1s, F3 vstack-3s | row 1, `mac-ev-n1.jsonl:12` |
+| `ScrollView { LazyVStack }` | F3 lazy-1s, F3 lazy-3s | row 1, `mac-ev-n1.jsonl:12` |
+| custom `Layout` | F5 | row 1, `mac-ev-n1.jsonl:20` |
+
+Order on the Mac: `root-appear`, every row `appear`, the `focus` event, then the first `task-start` (F5 has layout `state` events
+around it). A List is itself a key view and holds no `FocusState` value; anything else leaves the first focus-bound text field
+first. Windows now applies this once from `ready`, after the first commit and before the main actor is yielded (so after every
+appear and before every task body), logs `focus` with source `initial`, and places the caret at the end like any other focus.
+Only the 16 configurations are evidence; "a field that precedes a List takes focus ahead of it" and "disabled fields and Buttons
+are skipped" are the same rule extended (unit-tested, not observed on the Mac).
+
+Companion change (F5): the Mac field's caret reads 15 (end of `Row 1 updated 0`) after the async update that follows the initial
+focus (`cross-evidence/F5/mac-trace-n1.json`, steps 2 and 3). A bound text that changes without an edit through the text state now
+moves the caret to the end (`TextInputState.adoptExternalText`); the state's own edits keep their caret; composition is untouched.
+
+Known comparison effect: the Mac AX trace at the first observation (`initial`) reports no focused element in those five configs
+although `@FocusState` already names row 1 (F5 reports it from the second observation on); Windows UIA will report row 1 at
+`initial`. That is a recorder timing difference for the T1 owner, not a product difference.
+
+### 2. Activation must not move the focus (`ButtonFocusGate` in SwiftRightBridge, host `handle`)
+
+Evidence: all 46 UIA `Invoke` calls on buttons in the recordings read (6 in `cross-evidence/F8/win-events-w{1,2,3}.txt`, lines 13-14
+and 48-49 of w1, native recorder; 40 in `out/matrix-final/F8-none-r*.txt`, .NET driver) reach the host as an AX `focus` action on the
+same node, then the `invoke`, 0.59 to 3.84 ms apart. Neither client sends it: the native recorder's `invoke` is `GetCurrentPatternAs` +
+`Invoke` (`uia-recorder/Sources/CUIA/shim.c`, `cuia_invoke`), the .NET driver's `Invoke-Named` is `GetCurrentPattern(...).Invoke()`
+(`scripts/drive-fixture.ps1:228`), and AccessKit's provider sends only `Action::Click` for `Invoke` (accesskit_windows 0.35.1
+`node.rs`: `Invoke` -> `click`; `Action::Focus` appears once, in `SetFocus`). The preamble therefore comes from the platform between
+client and provider; which layer is NOT established from source (Dell, below).
+
+Behaviour now: a button focus request is held for 60 ms (`ButtonFocusGate.settleNS`); an invoke of the same node inside the window
+cancels it (logged as `ax-focus-coalesced`, nothing else changes); a request that is not followed by an invoke is applied by the next
+display tick, or earlier by any other input, and logged as `ax-button-focus` (now with `held_ms`). The screen-reader focus stays
+separate from the keyboard focus: it moves only the tree focus the renderer reports to UIA and never the runtime `FocusState`,
+`focusedRow` or the `focus` log, as VoiceOver's cursor on the Mac. Narrator's navigation (SetFocus on a button, no invoke) still lands,
+at most one display tick plus 60 ms later; its activation after navigation finds no held request and keeps the focus.
+
+### 3. Reduce motion: the OS "Animation effects" setting does not decide (decision 2026-10-10)
+
+Adrian, 2026-10-10: "Our animations have to work on a system even if it has animations turned off." On Windows the setting
+(`SPI_GETCLIENTAREAANIMATION`) is still read and logged (`system_reduce`, `osReduceMotion`) but is NOT mapped to
+`accessibilityReduceMotion`. Default effective reduce is false (animate). An explicit app or test override remains:
+`--reduce-motion-override on|off` (source `override`) and the reduced-motion variant `--reduced-motion-variant` (reduced, source
+`variant`). Order: override, variant, default. Before this the Dell (animation effects off) always snapped in F6 (matrix F6-none:
+effective-reduce=true, fade-frame commits 0), so the animated path had never run on Windows.
+
+Sites that map or touch the OS value: `probes/sr0-s/fresh-on-bridge` `BridgeBackend.resolveReduceMotion` (changed);
+`probes/sr0-s/fresh-on-bridge` and `probes/sr1-win-backend` `SystemSettings.swift` (the helper; comments only, the SR1 copy has no
+caller); `examples/SliceApp` Windows host (no mapping, default false: conforms); `probes/sr0-b/workload` WorkloadWin
+(`accessibilityReduceMotion = false`: conforms).
+
+Self-test: F6 default asserts the animated path whatever the OS says (`animated-path-regardless-of-os-setting`: effective false, fade-frame
+commits >= 3, tick commits >= 3) and `os-setting-does-not-decide`; `os-reduce-motion-read` stays; F6 override-on asserts the snap;
+F6 reduced asserts the variant path. New for every fixture: `initial-focus-matches-mac-oracle`, `invoke-does-not-move-focus`; F5 adds
+`focused-row1-caret-at-end-after-update`.
+
+### Owed on the Dell (not run here)
+
+F6 default and F6 override-on (first animated run on Windows: fade frames, interruption order, completions, the P4 row appear/disappear
+counts may change); F5 and F3 vstack/lazy (initial focus event, UIA focus at `initial`, caret 15 in F5); F8 with the UIA driver
+(`ax-focus-coalesced` x2, no `ax-button-focus` before either invoke, focus stays on row 3) and with Narrator (`probes/sr0-b/native-interaction`
+`narrator-moved-focus-to-delete-button` still reaches the button); which layer sends the focus preamble (UIA core, an accessibility
+tool on the Dell, or the OS build 10.0.26300).
+

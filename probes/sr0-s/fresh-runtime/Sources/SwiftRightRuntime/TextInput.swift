@@ -47,9 +47,30 @@ public final class TextInputState {
     /// Caret or selection in displayed-text coordinates.
     public private(set) var selection = UTF16Range(location: 0, length: 0)
 
+    /// Committed text as this state last saw it (read at creation, refreshed after each of its own writes). A bound value that
+    /// differs on a later evaluation was set from outside (a model write, an AX `SetValue`).
+    @ObservationIgnored private var lastCommitted: String
+
     init(binding: Binding<String>, multiline: Bool = false) {
         self.binding = binding
         self.multiline = multiline
+        self.lastCommitted = binding.wrappedValue
+    }
+
+    /// Takes the binding's current value. When it changed without an edit through this state, the caret goes to the end of the
+    /// new text (macOS oracle, SR0-O F5: the focused row 1 field reads caret 15 = end of "Row 1 updated 0" after an async
+    /// model update, where the caret stood at 5 before). Composition is left alone; its location clamps to the new text.
+    func adoptExternalText() {
+        let now = binding.wrappedValue
+        guard now != lastCommitted else { return }
+        lastCommitted = now
+        if composition == nil {
+            selection = UTF16Range(location: now.utf16.count, length: 0)
+        }
+    }
+
+    private func noteOwnWrite() {
+        lastCommitted = binding.wrappedValue
     }
 
     /// The bound value: committed text only.
@@ -89,7 +110,7 @@ public final class TextInputState {
         let markStart = target.location
         let markEnd = markStart + inserted.count
         let newCommitted = string(Array(units[0..<markStart]) + Array(units[markEnd...]))
-        if newCommitted != committed { binding.wrappedValue = newCommitted }
+        if newCommitted != committed { binding.wrappedValue = newCommitted; noteOwnWrite() }
         composition = inserted.isEmpty ? nil : text
         compositionLocation = markStart
         let relative = newSelection.map { UTF16Range(location: markStart + $0.location, length: $0.length) }
@@ -104,7 +125,7 @@ public final class TextInputState {
         let shown = display
         composition = nil
         compositionLocation = 0
-        if shown != committed { binding.wrappedValue = shown }
+        if shown != committed { binding.wrappedValue = shown; noteOwnWrite() }
         return true
     }
 
@@ -118,7 +139,7 @@ public final class TextInputState {
         let newCommitted = string(units)
         composition = nil
         compositionLocation = 0
-        if newCommitted != committed { binding.wrappedValue = newCommitted }
+        if newCommitted != committed { binding.wrappedValue = newCommitted; noteOwnWrite() }
         selection = UTF16Range(location: target.location + text.utf16.count, length: 0)
         return true
     }
