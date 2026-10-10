@@ -249,9 +249,16 @@ final class SelfTest {
         if let expected {
             // D2 (Mac oracle F5, F3 vstack/lazy `initial`): launch focus selects all, selection 0..count.
             let selectsAll = backend.initialFocusSelection.map { $0.location == 0 && $0.length == backend.initialFocusTextCount } ?? false
+            // The AX text selection the host publishes (what UIA GetSelection reads) must be the same whole-text selection:
+            // anchor at character 0 of the first run, focus at the text end; (captured at the launch commit).
+            let ax = backend.initialPublishedSelection
+            let count = backend.initialFocusTextCount ?? -1
+            let axSelectsAll = ax.map { $0.startChar == 0 && $0.endChar == UInt32(max(count, 0)) && $0.startRun <= $0.endRun && count > 0 } ?? false
             return pass("initial-focus-matches-mac-oracle",
-                        initial.count == 1 && focused == expected.uuidString && ordered && backend.initialFocusRow == expected && selectsAll,
-                        detail + " selection-at-launch=\(backend.initialFocusSelection.map { "\($0.location)+\($0.length)" } ?? "nil")/\(backend.initialFocusTextCount.map(String.init) ?? "nil")")
+                        initial.count == 1 && focused == expected.uuidString && ordered && backend.initialFocusRow == expected && selectsAll
+                            && axSelectsAll,
+                        detail + " selection-at-launch=\(backend.initialFocusSelection.map { "\($0.location)+\($0.length)" } ?? "nil")/\(backend.initialFocusTextCount.map(String.init) ?? "nil")"
+                            + " ax-published=\(ax.map { "\($0.startRun):\($0.startChar)->\($0.endRun):\($0.endChar)" } ?? "nil")")
         }
         return pass("initial-focus-matches-mac-oracle", initial.isEmpty && backend.initialFocusRow == nil, detail)
     }

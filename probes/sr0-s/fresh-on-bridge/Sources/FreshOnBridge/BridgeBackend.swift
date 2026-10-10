@@ -150,6 +150,11 @@ final class BridgeBackend {
     private(set) var coalescedButtonFocus = 0
     /// The initial focus the window gave (runtime node id, row), nil when it focused nothing.
     private(set) var initialFocusNode: String?
+    /// The AX text selection last published per row (anchor/focus as run + character), for the self-test.
+    struct PublishedSelection { var startRun: UInt64; var startChar: UInt32; var endRun: UInt64; var endChar: UInt32 }
+    private(set) var publishedSelection: [UUID: PublishedSelection] = [:]
+    /// The AX selection published by the commit right after launch focus.
+    private(set) var initialPublishedSelection: PublishedSelection?
     private(set) var initialFocusRow: UUID?
     /// Selection of the initial-focus field right after launch focus (Mac oracle: the whole text, 0+count).
     private(set) var initialFocusSelection: UTF16Range?
@@ -518,10 +523,20 @@ final class BridgeBackend {
                 runs = makeAXTextRuns(text: text, measurement: m, cells: cells, origin: origin,
                                       lineHeightPx: lh, firstRunID: runBase)
                 if !runs.isEmpty {
-                    let line = caretIndex < cells.count ? Int(cells[caretIndex].line) : Int(cells.last?.line ?? 0)
-                    let inLine = cells.prefix(caretIndex).filter { Int($0.line) == line }.count
-                    let position = TextSelectionPosition(run: runBase + UInt64(min(line, runs.count - 1)), character: UInt32(inLine))
-                    selection = (anchor: position, focus: position)
+                    // Anchor at the selection start, focus at its end (UIA GetSelection: whole-text selection 0+count, not a caret).
+                    func position(_ index: Int) -> TextSelectionPosition {
+                        let i = min(index, cells.count)
+                        let line = i < cells.count ? Int(cells[i].line) : Int(cells.last?.line ?? 0)
+                        let inLine = cells.prefix(i).filter { Int($0.line) == line }.count
+                        return TextSelectionPosition(run: runBase + UInt64(min(line, runs.count - 1)), character: UInt32(inLine))
+                    }
+                    let start = min(node.selection.map { $0.location } ?? text.utf16.count, cells.count)
+                    selection = (anchor: position(start), focus: position(caretIndex))
+                    if let row {
+                        publishedSelection[row] = PublishedSelection(startRun: selection!.anchor.run, startChar: selection!.anchor.character,
+                                                                     endRun: selection!.focus.run, endChar: selection!.focus.character)
+                        if row == initialFocusRow, initialPublishedSelection == nil { initialPublishedSelection = publishedSelection[row] }
+                    }
                 }
                 if let row {
                     fieldGeometry[row] = FieldGeometry(origin: origin, cells: cells, lines: m.lines, lineHeightPx: lh)
@@ -684,8 +699,10 @@ final class BridgeBackend {
         if let previous = focusedRow, previous != row, let state = textState(for: previous) {
             _ = state.unmark()
         }
+        let alreadyFocused = focusedRow == row
         model.setFocus(row, source: source)
-        placeCaretAtEnd(row)
+        // A UIA focus echo on the already-focused field must not collapse its launch selection.
+        if !(source == "ax" && alreadyFocused) { placeCaretAtEnd(row) }
         dirty = true
     }
 
