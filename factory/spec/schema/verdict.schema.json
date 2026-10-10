@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/spec/v0.1/verdict.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "version",
+    "id",
+    "provenance",
+    "case",
+    "tuple",
+    "macCaptures",
+    "windowsCaptures",
+    "repeatability",
+    "semantic",
+    "timing",
+    "status"
+  ],
+  "properties": {
+    "kind": {
+      "const": "verdict"
+    },
+    "version": {
+      "const": "0.1"
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "provenance": {
+      "$ref": "common.schema.json#/$defs/provenance"
+    },
+    "case": {
+      "$ref": "common.schema.json#/$defs/hashRef"
+    },
+    "tuple": {
+      "$ref": "common.schema.json#/$defs/tuple"
+    },
+    "macCaptures": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "common.schema.json#/$defs/hashRef"
+      }
+    },
+    "windowsCaptures": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "common.schema.json#/$defs/hashRef"
+      }
+    },
+    "repeatability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mac",
+        "windows"
+      ],
+      "properties": {
+        "mac": {
+          "$ref": "#/$defs/repeat"
+        },
+        "windows": {
+          "$ref": "#/$defs/repeat"
+        }
+      }
+    },
+    "semantic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "normalizerConfig",
+        "results"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "blocked"
+          ]
+        },
+        "normalizerConfig": {
+          "$ref": "common.schema.json#/$defs/hashRef"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "channel",
+              "status"
+            ],
+            "properties": {
+              "channel": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "blocked"
+                ]
+              },
+              "differenceHash": {
+                "$ref": "common.schema.json#/$defs/sha256"
+              }
+            }
+          }
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "rawEvidence",
+        "boundsHash"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "blocked"
+          ]
+        },
+        "rawEvidence": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "common.schema.json#/$defs/hashRef"
+          }
+        },
+        "boundsHash": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "resultHash": {
+          "$ref": "common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "blocked",
+        "invalidated"
+      ]
+    },
+    "golden": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane",
+        "reference"
+      ],
+      "properties": {
+        "lane": {
+          "enum": [
+            "accepted",
+            "candidate",
+            "none"
+          ]
+        },
+        "reference": {
+          "$ref": "common.schema.json#/$defs/hashRef"
+        },
+        "promotionReview": {
+          "$ref": "common.schema.json#/$defs/hashRef"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "repeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runs",
+        "semanticAgreement",
+        "evidence"
+      ],
+      "properties": {
+        "runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semanticAgreement": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "common.schema.json#/$defs/hashRef"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/envelope"
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "pass"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "macCaptures": {
+            "minItems": 20
+          },
+          "windowsCaptures": {
+            "minItems": 20
+          },
+          "repeatability": {
+            "properties": {
+              "mac": {
+                "properties": {
+                  "runs": {
+                    "minimum": 20
+                  },
+                  "semanticAgreement": {
+                    "const": true
+                  },
+                  "evidence": {
+                    "minItems": 20
+                  }
+                }
+              },
+              "windows": {
+                "properties": {
+                  "runs": {
+                    "minimum": 20
+                  },
+                  "semanticAgreement": {
+                    "const": true
+                  },
+                  "evidence": {
+                    "minItems": 20
+                  }
+                }
+              }
+            }
+          },
+          "semantic": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "timing": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

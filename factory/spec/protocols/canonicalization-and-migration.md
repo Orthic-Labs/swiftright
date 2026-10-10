@@ -1,0 +1,9 @@
+# Canonicalization, hashes & migration v0.1
+
+Hash every hash-critical artifact’s canonical UTF-8 bytes with SHA-256; render as `sha256:` plus lowercase hex. Canonical JSON sorts object keys by Unicode code point, emits unescaped Unicode, uses compact separators, & emits no insignificant whitespace. Encode all integers exactly. Hash-critical schemas forbid bare JSON floats: measured finite fractions are `{"$decimal":"canonical plain decimal"}`; `NaN`, `+Infinity`, `-Infinity` are `{"$number":"NaN"|"+Infinity"|"-Infinity"}`. Decimal text has no exponent, leading `+`, leading zeros, trailing fractional zero, or negative zero; its zero lexical form is `0`. Tagged decimal zero remains tagged; it is never coerced to integer `0`.
+
+`provenance.sourceHash` hashes source input, `provenance.inputs` binds consumed artifact IDs & hashes, & every output’s own content hash is stored by its referring artifact. IDs identify logical objects only; hashes identify immutable bytes. Tuple identity includes SDK, macOS build, toolchains, runtime commit, renderer hash, host hashes, factory version, & acceptance-config hash. Any tuple-field change invalidates affected verdicts; it cannot be relabeled as same tuple.
+
+`version` is a major.minor string. Draft v0.1 readers accept only `0.1`. Unknown major versions reject before execution. Minor migrations are explicit, deterministic input-hash-to-output-hash transforms, recorded in receipt `inputs`/`outputs`; migration preserves original artifact bytes & hashes. A migration never changes accepted status, verdict, waiver, review identity, or provenance. Write a new artifact beside original; never overwrite or silently upgrade it.
+
+Validation order: parse JSON without duplicate keys; verify canonical bytes & hashes; resolve schema by `kind`/`version`; validate schema; then enforce protocol cross-references. Failure at any stage is `blocked`, never normalization or promotion.

@@ -1,0 +1,66 @@
+{
+  "captureGuard" : {
+    "detail" : "Hypervisor & VirtualMac guard accepted.",
+    "status" : "OBSERVED",
+    "values" : {
+      "hv" : "1",
+      "model" : "VirtualMac2,1"
+    }
+  },
+  "mode" : "vm-capture",
+  "observations" : {
+    "externalAX" : {
+      "detail" : "Cross-process AX client did not observe a target control.",
+      "status" : "BLOCKED",
+      "values" : {
+        "exit" : "2",
+        "output" : "{\"detail\":\"External AX client could not read target windows; provision Accessibility only in VM if policy permits.\",\"status\":\"BLOCKED\",\"values\":{\"axError\":\"-25204\"}}\n"
+      }
+    },
+    "layout" : {
+      "detail" : "Custom Layout received proposal & placement callbacks through ImageRenderer.",
+      "status" : "OBSERVED",
+      "values" : {
+        "events" : "1",
+        "firstEvent" : "proposal=280.0x72.0;child=190.0x20.0",
+        "placements" : "2"
+      }
+    },
+    "offscreenImage" : {
+      "detail" : "ImageRenderer produced a non-windowed CGImage.",
+      "status" : "OBSERVED",
+      "values" : {
+        "height" : "72",
+        "width" : "280"
+      }
+    },
+    "popover" : {
+      "detail" : "Popover presentation state; capture-image pixels are not classified.",
+      "status" : "OBSERVED",
+      "values" : {
+        "shown" : "true"
+      }
+    },
+    "screenCaptureKit" : {
+      "detail" : "ScreenCaptureKit capture failed; no capture success is claimed.",
+      "status" : "BLOCKED",
+      "values" : {
+        "error" : "Error Domain=com.apple.ScreenCaptureKit.SCStreamErrorDomain Code=-3801 \"The user declined TCCs for application, window, display capture\" UserInfo={NSLocalizedDescription=The user declined TCCs for application, window, display capture}"
+      }
+    },
+    "textRenderer" : {
+      "detail" : "TextRenderer draw callback observed through ImageRenderer.",
+      "status" : "OBSERVED",
+      "values" : {
+        "ascent" : "16.435546875",
+        "descent" : "3.5859375",
+        "leading" : "0.0",
+        "lines" : "2",
+        "runs" : "2",
+        "width" : "189.6728515625"
+      }
+    }
+  },
+  "overallStatus" : "COMPLETE_WITH_LIMITS",
+  "schemaVersion" : 1
+}

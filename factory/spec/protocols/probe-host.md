@@ -1,0 +1,11 @@
+# Probe-host protocol v0.1
+
+Host accepts immutable case hash, expected tuple & run number. It verifies tuple, loads same-source probe, applies case environment before view creation, resets to known state, records input mapping, then drives only declared logical stimuli. Window-targeted input is default. Native-only interactive input requires qualified isolated session, foreground check immediately before each action, & abort-on-focus-loss evidence. Direct state writes are forbidden except declared fixture clocks or fake engine responses.
+
+Every capture record uses one monotonic `clockId`; stimulus, transaction, sampler & presented-frame timestamps carry integer nanoseconds from that clock. `meta.clock.correlationHash` identifies calibration against platform capture clock. Preserve raw timestamps, dropped frames, & calibration evidence. Semantic projection may normalize declared relative orders only; timing projection always uses raw records.
+
+Settlement waits until every case condition holds: declared state predicates stable; required event partial orders observed; no in-flight fixture effect; & either animation terminal condition or reduced-motion result observed. Host records each predicate transition. Timeout is case-declared & emits `blocked` with partial capture. A settled frame alone is insufficient.
+
+After capture, host writes one content-addressed capture, resets app/window/process per recipe, verifies reset result, & starts next independent run. Failed reset blocks remaining runs. Mac & Windows perform at least 20 independent runs each. Semantic values & required orders must agree exactly after reviewed normalization; timing passes only against separate recipe bounds. Missing channel evidence, disagreement, or timing-bound failure blocks parity.
+
+Identity mapping records `probeTag -> stable view identity -> native identity`. Mac records geometry hook identity & AX identity; Windows records runtime node ID & AccessKit ID. Mapping gaps block assertions using that identity. Normalization maps only versioned, named AX role/action ↔ UIA control-type/pattern adaptations, named platform containers/IDs, & explicit point/DIP/physical-pixel conversions at recorded scale.

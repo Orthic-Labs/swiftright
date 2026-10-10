@@ -1,0 +1,58 @@
+{
+  "captureGuard" : {
+    "detail" : "VM capture requires kern.hv_vmm_present=1 & hw.model beginning VirtualMac.",
+    "status" : "BLOCKED",
+    "values" : {
+      "hv" : "0",
+      "model" : "Mac18,5"
+    }
+  },
+  "mode" : "structural",
+  "observations" : {
+    "externalAX" : {
+      "detail" : "Requires --vm-capture plus VM guard.",
+      "status" : "NOT_ATTEMPTED",
+      "values" : {
+
+      }
+    },
+    "layout" : {
+      "detail" : "Custom Layout received proposal & placement callbacks through ImageRenderer.",
+      "status" : "OBSERVED",
+      "values" : {
+        "events" : "1",
+        "firstEvent" : "proposal=280.0x72.0;child=190.0x20.0",
+        "placements" : "2"
+      }
+    },
+    "offscreenImage" : {
+      "detail" : "ImageRenderer produced a non-windowed CGImage.",
+      "status" : "OBSERVED",
+      "values" : {
+        "height" : "72",
+        "width" : "280"
+      }
+    },
+    "screenCaptureKit" : {
+      "detail" : "Requires --vm-capture plus VM guard.",
+      "status" : "NOT_ATTEMPTED",
+      "values" : {
+
+      }
+    },
+    "textRenderer" : {
+      "detail" : "TextRenderer draw callback observed through ImageRenderer.",
+      "status" : "OBSERVED",
+      "values" : {
+        "ascent" : "16.435546875",
+        "descent" : "3.5859375",
+        "leading" : "0.0",
+        "lines" : "2",
+        "runs" : "2",
+        "width" : "189.6728515625"
+      }
+    }
+  },
+  "overallStatus" : "COMPLETE_WITH_LIMITS",
+  "schemaVersion" : 1
+}
