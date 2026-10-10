@@ -1,0 +1,270 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T21:46:29.3727067+05:30 runs=20 hold_ms=1200 fg_poll_ms=10 retry_delay_s=10 attempts=a1, then one a2 only after foreground_lost
+ARTIFACTS Modal06.exe=e7cc66159027654ebad963835e9593292f3a834dc116634848d8c312b5e08fb9 renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+RUN 01 a1 PASS checks=44/44 exit=0 ms=12506
+  latency_ms all n=5848 p50=0.06 p99=6.57 max=39.46 | modal_open_one_off n=375 max=39.46 | modal_steady n=3065 p50=0.06 p99=0.37 max=8.89 max_run_gap=10.84 | idle n=456 p99=0.33 max=0.83
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=785 max_gap_ms=50 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:46:41.133)
+RUN 02 a1 PASS checks=44/44 exit=0 ms=12406
+  latency_ms all n=5651 p50=0.06 p99=4.47 max=27.94 | modal_open_one_off n=375 max=26.61 | modal_steady n=2869 p50=0.06 p99=0.41 max=9.94 max_run_gap=11.89 | idle n=456 p99=0.19 max=1.23
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=790 max_gap_ms=31 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:46:54.939)
+RUN 03 a1 PASS checks=44/44 exit=0 ms=11943
+  latency_ms all n=5670 p50=0.06 p99=5.44 max=37.00 | modal_open_one_off n=375 max=37.00 | modal_steady n=2888 p50=0.06 p99=0.35 max=7.87 max_run_gap=9.81 | idle n=456 p99=0.30 max=2.37
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=760 max_gap_ms=33 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:47:08.961)
+RUN 04 a1 PASS checks=44/44 exit=0 ms=12339
+  latency_ms all n=5647 p50=0.06 p99=4.20 max=27.25 | modal_open_one_off n=375 max=26.26 | modal_steady n=2866 p50=0.06 p99=0.33 max=6.38 max_run_gap=8.32 | idle n=454 p99=0.20 max=0.38
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=782 max_gap_ms=32 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:47:22.467)
+RUN 05 a1 PASS checks=44/44 exit=0 ms=12067
+  latency_ms all n=5679 p50=0.06 p99=4.53 max=31.90 | modal_open_one_off n=375 max=27.06 | modal_steady n=2896 p50=0.06 p99=0.29 max=7.61 max_run_gap=9.58 | idle n=456 p99=0.23 max=0.33
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=766 max_gap_ms=32 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:47:36.391)
+RUN 06 a1 PASS checks=44/44 exit=0 ms=11864
+  latency_ms all n=5639 p50=0.06 p99=3.93 max=28.49 | modal_open_one_off n=375 max=25.43 | modal_steady n=2856 p50=0.06 p99=0.34 max=7.95 max_run_gap=9.89 | idle n=456 p99=0.35 max=0.80
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=755 max_gap_ms=31 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:47:49.910)
+RUN 07 a1 PASS checks=44/44 exit=0 ms=11904
+  latency_ms all n=5658 p50=0.06 p99=4.11 max=30.18 | modal_open_one_off n=375 max=30.18 | modal_steady n=2875 p50=0.06 p99=0.40 max=9.05 max_run_gap=11.03 | idle n=456 p99=0.23 max=0.46
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=750 max_gap_ms=68 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:48:03.355)
+RUN 08 a1 PASS checks=44/44 exit=0 ms=11881
+  latency_ms all n=5640 p50=0.06 p99=4.40 max=29.53 | modal_open_one_off n=375 max=26.65 | modal_steady n=2858 p50=0.06 p99=0.34 max=8.40 max_run_gap=10.34 | idle n=455 p99=0.33 max=0.50
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=751 max_gap_ms=49 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:48:16.795)
+RUN 09 a1 PASS checks=44/44 exit=0 ms=11957
+  latency_ms all n=5699 p50=0.06 p99=5.63 max=28.87 | modal_open_one_off n=375 max=28.87 | modal_steady n=2917 p50=0.07 p99=0.38 max=9.51 max_run_gap=11.48 | idle n=455 p99=0.33 max=0.47
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=764 max_gap_ms=30 observations=34 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=3 FOREIGN=claude [title redacted] (change 21:48:30.310)
+  modal_trace id=1003 kind=dialog path=posted waker_none=true wakes_during=705 drain_calls_during=728 ticks_during=76 elapsed_ms=1,288.99 queued_ms=0.02
+RUN 10 a1 PASS checks=44/44 exit=0 ms=11892
+  latency_ms all n=5648 p50=0.06 p99=4.64 max=32.40 | modal_open_one_off n=375 max=29.33 | modal_steady n=2866 p50=0.06 p99=0.35 max=8.15 max_run_gap=10.07 | idle n=456 p99=0.23 max=0.54
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=759 max_gap_ms=30 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:48:43.739)
+RUN 11 a1 PASS checks=44/44 exit=0 ms=11925
+  latency_ms all n=5667 p50=0.06 p99=4.55 max=30.53 | modal_open_one_off n=375 max=30.53 | modal_steady n=2885 p50=0.06 p99=0.43 max=9.04 max_run_gap=10.88 | idle n=455 p99=0.39 max=0.51
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=759 max_gap_ms=32 observations=34 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=3 FOREIGN=claude [title redacted] (change 21:48:57.243)
+RUN 12 a1 PASS checks=44/44 exit=0 ms=11873
+  latency_ms all n=5646 p50=0.07 p99=4.94 max=32.06 | modal_open_one_off n=375 max=32.06 | modal_steady n=2865 p50=0.07 p99=0.38 max=8.95 max_run_gap=10.91 | idle n=454 p99=0.21 max=0.37
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=755 max_gap_ms=33 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:49:10.649)
+RUN 13 a1 PASS checks=44/44 exit=0 ms=11944
+  latency_ms all n=5678 p50=0.05 p99=4.39 max=27.08 | modal_open_one_off n=375 max=27.08 | modal_steady n=2895 p50=0.05 p99=0.32 max=8.31 max_run_gap=10.16 | idle n=456 p99=0.22 max=0.40
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=745 max_gap_ms=50 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:49:24.145)
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=720 drain_calls_during=767 ticks_during=79 elapsed_ms=1,313.58 queued_ms=0.06
+RUN 14 a1 PASS checks=44/44 exit=0 ms=11922
+  latency_ms all n=5653 p50=0.05 p99=4.59 max=29.85 | modal_open_one_off n=375 max=29.85 | modal_steady n=2870 p50=0.06 p99=0.42 max=10.17 max_run_gap=12.10 | idle n=456 p99=0.20 max=0.34
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=761 max_gap_ms=34 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:49:37.590)
+RUN 15 a1 PASS checks=44/44 exit=0 ms=11978
+  latency_ms all n=5681 p50=0.04 p99=4.72 max=33.10 | modal_open_one_off n=375 max=29.67 | modal_steady n=2899 p50=0.05 p99=0.36 max=8.72 max_run_gap=10.70 | idle n=455 p99=0.25 max=0.54
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=761 max_gap_ms=32 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:49:51.114)
+RUN 16 a1 PASS checks=44/44 exit=0 ms=11918
+  latency_ms all n=5654 p50=0.03 p99=5.07 max=31.19 | modal_open_one_off n=375 max=29.33 | modal_steady n=2871 p50=0.03 p99=0.42 max=8.35 max_run_gap=10.32 | idle n=456 p99=0.38 max=0.48
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=759 max_gap_ms=33 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:50:04.596)
+RUN 17 a1 PASS checks=44/44 exit=0 ms=11931
+  latency_ms all n=5655 p50=0.04 p99=5.35 max=32.35 | modal_open_one_off n=375 max=27.51 | modal_steady n=2872 p50=0.05 p99=0.48 max=9.59 max_run_gap=11.40 | idle n=456 p99=0.39 max=0.94
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=761 max_gap_ms=31 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:50:18.082)
+RUN 18 a1 PASS checks=44/44 exit=0 ms=11963
+  latency_ms all n=5668 p50=0.03 p99=6.32 max=34.24 | modal_open_one_off n=375 max=33.60 | modal_steady n=2886 p50=0.03 p99=0.35 max=9.03 max_run_gap=11.50 | idle n=456 p99=0.30 max=0.43
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=761 max_gap_ms=31 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:50:31.594)
+RUN 19 a1 PASS checks=44/44 exit=0 ms=11949
+  latency_ms all n=5660 p50=0.06 p99=6.44 max=33.47 | modal_open_one_off n=375 max=33.47 | modal_steady n=2878 p50=0.06 p99=0.42 max=8.83 max_run_gap=10.77 | idle n=455 p99=0.27 max=0.36
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=753 max_gap_ms=43 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:50:45.112)
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=696 drain_calls_during=723 ticks_during=76 elapsed_ms=1,272.02 queued_ms=0.07
+RUN 20 a1 PASS checks=44/44 exit=0 ms=11980
+  latency_ms all n=5670 p50=0.07 p99=5.16 max=30.51 | modal_open_one_off n=375 max=30.51 | modal_steady n=2889 p50=0.07 p99=0.43 max=10.56 max_run_gap=12.54 | idle n=454 p99=0.42 max=1.03
+  ax publishes=1 throttled=0 rethrottled=0 retry_lines=0
+  fgmon polls=765 max_gap_ms=33 observations=33 foreign_in_modals=S6
+  fg S1 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S2 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S3 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S4 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=2
+  fg S5 request=Modal06 shown=Modal06 dismiss=Modal06 result=Modal06 changes=0
+  fg S6 request=Modal06 shown=Modal06 dismiss=claude result=claude changes=2 FOREIGN=claude [title redacted] (change 21:50:58.645)
+
+--- run 01 checks (what is asserted) ---
+PASS S1 the real menu window appears [class='#32768' title='' appeared_after_ms=20 hwnd=28314482]
+PASS S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=2654229381760 children=5]
+PASS S1 modal dismissed by window-targeted input [method=msaa-accDoDefaultAction ]
+PASS S1 result event arrives after the dismissal [waited up to 10 s]
+PASS S2 the real menu window appears [class='#32768' title='' appeared_after_ms=2 hwnd=28380018]
+PASS S2 modal dismissed by window-targeted input [method=escape-to-menu-window ]
+PASS S2 result event arrives after the dismissal [waited up to 10 s]
+PASS S3 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=35 hwnd=28445554]
+PASS S3 modal dismissed by window-targeted input [method=TDM_CLICK_BUTTON id=101 ]
+PASS S3 result event arrives after the dismissal [waited up to 10 s]
+PASS S4 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=38 hwnd=6294098]
+PASS S4 modal dismissed by window-targeted input [method=escape-to-dialog-window ]
+PASS S4 result event arrives after the dismissal [waited up to 10 s]
+PASS S5 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=7997976]
+PASS S5 modal dismissed by window-targeted input [method=keys ]
+PASS S5 result event arrives after the dismissal [waited up to 10 s]
+PASS S6 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=28 hwnd=8063512]
+PASS S6 modal dismissed by window-targeted input [method=observe ]
+PASS S6 the window closes while its dialog is open, without a rescue [window_closed_logged=True rescued=False]
+PASS S6 no dialog window is left after the window closed [dialog_gone=True]
+PASS all 6 scenarios were requested and handled [handled=6]
+PASS host exited by itself with code 0 [exit=0 killed=]
+PASS host: startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS host: run returned ok [ok]
+PASS host: sequence ran without timeout [timed_out=false]
+PASS host: S1 menu-select: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=15 i1=4 choice=15/4 want=15/4 failed=false events=1 ticks_during=94]
+PASS host: S2 menu-escape: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=76]
+PASS host: S3 dialog-click: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=22 i1=1 choice=22/1 want=22/1 failed=false events=1 ticks_during=75]
+PASS host: S4 dialog-escape: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=76]
+PASS host: S5 menu-keys-queue-full: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=11 i1=0 choice=11/0 want=11/0 failed=false events=1 ticks_during=89]
+PASS host: S5 one pending request at a time: a second request in the same turn is SWR_E_QUEUE_FULL, the first still delivered [second=SWR_E_QUEUE_FULL first_result=true]
+PASS host: no result for an unknown id, no duplicate result [unknown=0 duplicate=0]
+PASS host: main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=658 S2=510 S3=518 S4=516 S5=616 (need >= 50 each), max pause between job runs incl. interval ends 10.84 ms (bound 100.00), producer enqueued=5848]
+PASS host: display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=94 S2=76 S3=75 S4=76 S5=89]
+PASS host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=0.37 ms n=3065]
+PASS host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=39.46 ms over 375 jobs in the first 150 ms of each modal]
+PASS host: job latency outside any modal within budget (idle p99 <= 16.7 ms) [p99=0.33 ms n=456]
+PASS host: S6 dialog open while the window closes: run returned, window_closed once, a late result (if any) was ignored [close_calls=1 late_results=1 order=result-after-close i0=0 i1=-1 failed=false]
+PASS host: requests from the post-close pump rejected: commit SWR_E_SHUTDOWN, menu/dialog/message SWR_E_STALE_HANDLE [commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE jobs_run_after_close=301]
+PASS host: no stale events, no thread violations or host panics [stale=0 thread_violations=0 host_panics=0]
+PASS host: live nodes zero after teardown [at cleanup=0 after run=0]
+PASS host: post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.60s after window_closed]
+PASS renderer logged one modal line per modal on path=posted [lines=6 (want 6) wrong_path=0 paths=posted]
+PASS renderer: the main queue was drained during every modal (drain_calls_during > 0) [id1001=wakes:856/drains:897/waker_none:False id1002=wakes:692/drains:722/waker_none:False id1003=wakes:702/drains:713/waker_none:False id1004=wakes:699/drains:713/waker_none:False id1005=wakes:812/drains:853/waker_none:False id1006=wakes:679/drains:683/waker_none:False]
+
+SUMMARY runs=20 pass=20 fail=0 checks_per_run=44
+ATTEMPTS total=20 first_attempt_pass=20/20 foreground_lost_attempts=0 retried_a2=0 retried_a2_pass=0 real_failure_attempts=0
+MODAL_PATH expected=posted lines=120 counted attempts (runs x 6 = 120) paths_seen=posted
+STALLS counted_attempts attempts=20 modals=120 stalled(drain_calls_during=0)=0 ticks_during=0:0 waker_none=true:3 stalled_with_waker_none=0 stalled_attempts=0
+DRAIN_CALLS_DURING_MODAL counted_attempts min=665 (every modal needs > 0)
+STALLS all_attempts attempts=20 modals=120 stalled(drain_calls_during=0)=0 ticks_during=0:0 waker_none=true:3 stalled_with_waker_none=0 stalled_attempts=0
+DRAIN_CALLS_DURING_MODAL all_attempts min=665 (every modal needs > 0)
+AX_PATH counted_attempts attempts=20 with_counters=20 ax_publishes=20 ax_throttled=0 ax_rethrottled=0 retry_lines=0
+AX_PATH all_attempts attempts=20 with_counters=20 ax_publishes=20 ax_throttled=0 ax_rethrottled=0 retry_lines=0
+LATENCY_ACROSS_RUNS (ms, per-run values of the counted attempts)
+  modal_open_one_off max n=20 min=25.43 median=29.50 max=39.46
+  modal_steady p99 n=20 min=0.29 median=0.38 max=0.48
+  modal_steady max n=20 min=6.38 median=8.86 max=10.56
+  all-jobs max n=20 min=27.08 median=30.86 max=39.46
+  modal elapsed (renderer) n=120 min=1,216.34 median=1,274.71 max=1,563.25
+  modal_open_one_off max, ALL attempts (50 ms bound; a foreground_lost a1 is included here) n=20 min=25.43 median=29.50 max=39.46
+ROW7 MODAL PASS (20/20 runs: 20 on a1, 0 on a2 after foreground_lost; real failures 0)
+ended=2026-10-10T21:51:01.2064834+05:30

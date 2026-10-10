@@ -1,0 +1,73 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T21:41:56.0135242+05:30 target=Pixels runs=10
+ARTIFACTS BridgePixels.exe=452110b5508533751f2e70c69d1008f484bd5c833c3f743850b7ace50dabd0f7 renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+
+RUNS: PASS=10 FAIL=0 INVALID=0 of 10 (attempts total 10)
+
+== assertions, primary capture (verdict), count of passing runs
+10/10 frame is not blank (distinct colors sampled)
+10/10 background rect painted F5F5F5 (corners, bottom edge)
+10/10 image A rounded: all 16 cell centers have the source colors (+-12)
+10/10 image A rounded: extent is 64 DIP (160 px): background just left and right of it
+10/10 image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image
+10/10 image B square: all 16 cell centers have the source colors (+-12)
+10/10 image B square: extent is 64 DIP (160 px): background just left and right of it
+10/10 image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image
+10/10 text run painted: glyph pixels inside its measured box (212 x 60 px)
+10/10 underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick
+10/10 underline color appears only in its own rows (not in the glyph box, not below)
+10/10 clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip
+10/10 clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band
+10/10 clip 3 (image): the left half of the image shows its cells, the right half is background
+10/10 translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin
+10/10 BridgePixels host reports PIXELS-HOST PASS (scene committed, no rejection)
+10/10 host-reported window scale equals the scale used for the pixel positions (2.5)
+
+== capture methods: runs in which each method gave a non-uniform frame, and all-assertions-pass per method
+printwindow  non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+screen       non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+
+== per run
+run 01 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 02 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 03 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 04 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 05 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 06 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 07 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 08 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 09 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+run 10 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0  pw_pass=True screen_pass=True
+
+== details of run 1 (every assertion, both captures)
+  PASS printwindow frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS printwindow background rect painted F5F5F5 (corners, bottom edge) [observed=#F5F5F5]
+  PASS printwindow image A rounded: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS printwindow image A rounded: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS printwindow image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=6 TR=6 BL=6 BR=6 edge_midpoints_background=0]
+  PASS printwindow image B square: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS printwindow image B square: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS printwindow image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=0 TR=0 BL=0 BR=0 edge_midpoints_background=0]
+  PASS printwindow text run painted: glyph pixels inside its measured box (212 x 60 px) [dark_px=1613 bbox=(54,316)-(260,345) box x=[50,262) y=[300,360)]
+  PASS printwindow underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick [interior=1.000 first=50 last=261 want=[50,261] rows=[360,365)]
+  PASS printwindow underline color appears only in its own rows (not in the glyph box, not below) [outside_px=0]
+  PASS printwindow clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip [inside=1.000 colored_outside_clip=0 first=50 last=299 want=[50,299]]
+  PASS printwindow clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band [inside=1.000 colored_above_or_below=0 band_rows=[575,625)]
+  PASS printwindow clip 3 (image): the left half of the image shows its cells, the right half is background [left_cells_bad=0 right_half_bg=1.000]
+  PASS printwindow translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin [inside=1.000 colored_at_origin=0 first=1000 last=1149]
+  PASS screen frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS screen background rect painted F5F5F5 (corners, bottom edge) [observed=#F5F5F5]
+  PASS screen image A rounded: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS screen image A rounded: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS screen image A rounded: corners are rounded (radius 20 px) (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=6 TR=6 BL=6 BR=6 edge_midpoints_background=0]
+  PASS screen image B square: all 16 cell centers have the source colors (+-12) [16/16]
+  PASS screen image B square: extent is 64 DIP (160 px): background just left and right of it [left=1.000 right=1.000]
+  PASS screen image B square: corners are square (first image pixel on each diagonal) and all four edge midpoints are image [diagonals TL=0 TR=0 BL=0 BR=0 edge_midpoints_background=0]
+  PASS screen text run painted: glyph pixels inside its measured box (212 x 60 px) [dark_px=1613 bbox=(54,316)-(260,345) box x=[50,262) y=[300,360)]
+  PASS screen underline sits directly under the text run, spans its measured width (212 px) and is 5 px thick [interior=1.000 first=50 last=261 want=[50,261] rows=[360,365)]
+  PASS screen underline color appears only in its own rows (not in the glyph box, not below) [outside_px=0]
+  PASS screen clip 1 (horizontal): the 300 DIP rect shows only inside the 100 DIP clip [inside=1.000 colored_outside_clip=0 first=50 last=299 want=[50,299]]
+  PASS screen clip 2 (vertical band): the 80 DIP tall rect shows only the 20 DIP band [inside=1.000 colored_above_or_below=0 band_rows=[575,625)]
+  PASS screen clip 3 (image): the left half of the image shows its cells, the right half is background [left_cells_bad=0 right_half_bg=1.000]
+  PASS screen translate: the rect drawn at (0,0) after translatePush(400,220) DIP lands at (1000,550), not at the origin [inside=1.000 colored_at_origin=0 first=1000 last=1149]
+  PASS BridgePixels host reports PIXELS-HOST PASS (scene committed, no rejection) [exit=0]
+  PASS host-reported window scale equals the scale used for the pixel positions (2.5) [host=2.5]

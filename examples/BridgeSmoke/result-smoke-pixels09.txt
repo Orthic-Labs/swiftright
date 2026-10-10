@@ -1,0 +1,61 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T21:38:53.9662543+05:30 target=Smoke runs=10
+ARTIFACTS BridgeSmoke.exe=85d5f8ba798ef17367844f28d75f3e53a37323f13a8409397c7c3fd1ad563eea renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93
+
+RUNS: PASS=10 FAIL=0 INVALID=0 of 10 (attempts total 10)
+
+== assertions, primary capture (verdict), count of passing runs
+10/10 frame is not blank (distinct colors sampled)
+10/10 background is one uniform color in the four corners and bottom edge
+10/10 label glyphs painted at (20,20) DIP
+10/10 underline interior is D97706 (>= 99% of 294 x 3 px)
+10/10 underline starts at x=50 and ends at x=349 (+-1 px)
+10/10 underline is 5 px thick: the 3 rows above and below are background
+10/10 button fill is 2563EB (left padding strip)
+10/10 button corner is rounded (corner pixel is background, top edge past the radius is fill)
+10/10 button label glyphs (white) painted inside the button
+10/10 edit box interior is white
+10/10 edit box has a 888888 border on its left edge and background outside it
+10/10 the unchanged BridgeSmoke.exe still passes its own checks in this run (exit 0, SMOKE PASS)
+10/10 host-reported window scale equals the scale used for the pixel positions (2.5)
+
+== capture methods: runs in which each method gave a non-uniform frame, and all-assertions-pass per method
+printwindow  non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+screen       non-uniform frame in 10/10 runs; every assertion passed in 10/10 runs
+
+== per run
+run 01 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 02 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 03 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 04 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 05 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 06 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 07 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 08 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 09 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+run 10 a1 PASS primary=printwindow client=1600x1200 scale=2.5 occluded=False fg=True exit=0 SMOKE PASS (39/39) pw_pass=True screen_pass=True
+
+== details of run 1 (every assertion, both captures)
+  PASS printwindow frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS printwindow background is one uniform color in the four corners and bottom edge [bg=#FFFFFF]
+  PASS printwindow label glyphs painted at (20,20) DIP [dark_px=4020 bbox=(54,66)-(586,104) expect origin (50,50)]
+  PASS printwindow underline interior is D97706 (>= 99% of 294 x 3 px) [fraction=1.000 region=(53,1101)-(347,1104)]
+  PASS printwindow underline starts at x=50 and ends at x=349 (+-1 px) [first=50 last=349]
+  PASS printwindow underline is 5 px thick: the 3 rows above and below are background [above=1.000 below=1.000 underline_colored_outside=0]
+  PASS printwindow button fill is 2563EB (left padding strip) [fraction=1.000 button=(50,380) 400x100 px]
+  PASS printwindow button corner is rounded (corner pixel is background, top edge past the radius is fill) [corner_is_bg=True top_edge_fill=1.000 radius=15]
+  PASS printwindow button label glyphs (white) painted inside the button [light_px=1127]
+  PASS printwindow edit box interior is white [fraction=1.000 edit=(50,530) 1000x90 px]
+  PASS printwindow edit box has a 888888 border on its left edge and background outside it [border_px=6 outside_bg=1.000]
+  PASS screen frame is not blank (distinct colors sampled) [distinct>=7]
+  PASS screen background is one uniform color in the four corners and bottom edge [bg=#FFFFFF]
+  PASS screen label glyphs painted at (20,20) DIP [dark_px=4020 bbox=(54,66)-(586,104) expect origin (50,50)]
+  PASS screen underline interior is D97706 (>= 99% of 294 x 3 px) [fraction=1.000 region=(53,1101)-(347,1104)]
+  PASS screen underline starts at x=50 and ends at x=349 (+-1 px) [first=50 last=349]
+  PASS screen underline is 5 px thick: the 3 rows above and below are background [above=1.000 below=1.000 underline_colored_outside=0]
+  PASS screen button fill is 2563EB (left padding strip) [fraction=1.000 button=(50,380) 400x100 px]
+  PASS screen button corner is rounded (corner pixel is background, top edge past the radius is fill) [corner_is_bg=True top_edge_fill=1.000 radius=15]
+  PASS screen button label glyphs (white) painted inside the button [light_px=1127]
+  PASS screen edit box interior is white [fraction=1.000 edit=(50,530) 1000x90 px]
+  PASS screen edit box has a 888888 border on its left edge and background outside it [border_px=6 outside_bg=1.000]
+  PASS the unchanged BridgeSmoke.exe still passes its own checks in this run (exit 0, SMOKE PASS) [exit=0 SMOKE PASS (39/39)]
+  PASS host-reported window scale equals the scale used for the pixel positions (2.5) [host=2.5]

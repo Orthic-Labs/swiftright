@@ -1,0 +1,199 @@
+host=BOGUS-DELL user=adrds started=2026-10-10T21:51:22.6078511+05:30 ended=2026-10-10T21:56:39.8263602+05:30 cold=20 warm=20 coldat=10 hold_ms=400 max_retries=2 only=[cold-dialog,cold-menu,warm-dialog,warm-menu] report_from=[]
+ARTIFACTS ColdOpen06.exe=f7742ca8efb07da73ee0512adb7ff08114e513cce4549f860ae177343f939157 renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93 (Modal06.exe is not used; ColdOpen06 is a new host linking the same renderer)
+All times in ms. M1 = main-queue blocking during open (max producer-job delay in [req, req+150 ms); the Modal06 modal_open_one_off quantity). M1gap = longest pause between job runs in [req-10, req+300 ms].
+M2win = request -> first window-visible stamp (SetWinEventHook EVENT_OBJECT_SHOW / EVENT_SYSTEM_MENUPOPUPSTART). M2uia = request -> first UIA WindowOpened/MenuOpened event (coldat runs only).
+A run is valid only if the driver dismissed the modal (result after dismissal), the host summary passed and the stamps exist; an invalid attempt is retried (<= 2 retries) and kept below.
+
+== cold-dialog : 20 valid runs
+M1 blocking max (ms)               n=20  min=  28.22 median=  32.67 p90=  39.99 max=  45.99 mean=  34.38
+M1gap run gap (ms)                 n=20  min=  30.20 median=  34.64 p90=  41.95 max=  47.96 mean=  36.33
+M2win request->visible (ms)        n=20  min=  34.24 median=  39.20 p90=  46.72 max=  52.16 mean=  40.66
+idle job delay max before open (ms) n=20  min=   0.28 median=   0.46 p90=   1.84 max=   4.91 mean=   0.94
+  runs with M1 > 50 ms: 0 / 20;  runs with M2win > 50 ms: 1 / 20
+
+== cold-menu : 20 valid runs
+M1 blocking max (ms)               n=20  min=   5.00 median=   5.55 p90=   6.03 max=   6.35 mean=   5.59
+M1gap run gap (ms)                 n=20  min=   6.94 median=   7.48 p90=   8.01 max=   8.31 mean=   7.52
+M2win request->visible (ms)        n=20  min=   5.36 median=   5.82 p90=   6.11 max=   6.26 mean=   5.80
+idle job delay max before open (ms) n=20  min=   0.23 median=   0.50 p90=   1.25 max=   1.90 mean=   0.66
+  runs with M1 > 50 ms: 0 / 20;  runs with M2win > 50 ms: 0 / 20
+
+== warm-dialog : 20 valid runs
+M1 blocking max (ms)               n=20  min=  23.14 median=  25.94 p90=  29.29 max=  31.77 mean=  26.32
+M1gap run gap (ms)                 n=20  min=  25.09 median=  27.89 p90=  31.22 max=  33.71 mean=  28.24
+M2win request->visible (ms)        n=20  min=  27.74 median=  30.77 p90=  34.17 max=  36.63 mean=  31.31
+idle job delay max before open (ms) n=20  min=   0.28 median=   0.46 p90=   0.55 max=   0.71 mean=   0.47
+  runs with M1 > 50 ms: 0 / 20;  runs with M2win > 50 ms: 0 / 20
+
+== warm-menu : 20 valid runs
+M1 blocking max (ms)               n=20  min=   1.78 median=   2.36 p90=   3.00 max=   4.39 mean=   2.46
+M1gap run gap (ms)                 n=20  min=   3.72 median=   4.24 p90=   4.87 max=   8.95 mean=   4.52
+M2win request->visible (ms)        n=20  min=   2.18 median=   2.66 p90=   2.89 max=   2.91 mean=   2.61
+idle job delay max before open (ms) n=20  min=   0.20 median=   0.42 p90=   1.10 max=   2.35 mean=   0.66
+  runs with M1 > 50 ms: 0 / 20;  runs with M2win > 50 ms: 0 / 20
+
+== per run (valid attempts)
+cold-dialog    #01a1 m1= 36.15 m1gap= 37.99 m2win=  42.31 m2show=  42.31 m2popup=        m2uia=        idle_max=0.46 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #02a1 m1= 39.99 m1gap= 41.95 m2win=  46.72 m2show=  46.72 m2popup=        m2uia=        idle_max=0.42 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #03a1 m1= 31.06 m1gap= 33.04 m2win=  38.49 m2show=  38.49 m2popup=        m2uia=        idle_max=0.33 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #04a1 m1= 34.14 m1gap= 36.07 m2win=  40.08 m2show=  40.08 m2popup=        m2uia=        idle_max=1.84 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #05a1 m1= 45.99 m1gap= 47.96 m2win=  52.16 m2show=  52.16 m2popup=        m2uia=        idle_max=0.68 fg_at_request=ColdOpen06 jobs=74
+cold-dialog    #06a1 m1= 42.16 m1gap= 44.11 m2win=  49.85 m2show=  49.85 m2popup=        m2uia=        idle_max=0.56 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #07a1 m1= 39.61 m1gap= 41.58 m2win=   46.1 m2show=   46.1 m2popup=        m2uia=        idle_max=0.56 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #08a1 m1= 32.30 m1gap= 34.29 m2win=  36.79 m2show=  36.79 m2popup=        m2uia=        idle_max=0.46 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #09a1 m1= 28.75 m1gap= 30.62 m2win=  37.03 m2show=  37.03 m2popup=        m2uia=        idle_max=0.73 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #10a1 m1= 36.79 m1gap= 38.75 m2win=  43.07 m2show=  43.07 m2popup=        m2uia=        idle_max=0.43 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #11a1 m1= 31.90 m1gap= 33.87 m2win=  36.62 m2show=  36.62 m2popup=        m2uia=        idle_max=0.28 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #12a1 m1= 29.66 m1gap= 31.64 m2win=  34.24 m2show=  34.24 m2popup=        m2uia=        idle_max=2.58 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #13a1 m1= 32.67 m1gap= 34.64 m2win=  37.75 m2show=  37.75 m2popup=        m2uia=        idle_max=4.91 fg_at_request=pulse-hub jobs=75
+cold-dialog    #14a1 m1= 34.55 m1gap= 36.51 m2win=  40.45 m2show=  40.45 m2popup=        m2uia=        idle_max=0.35 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #15a1 m1= 32.62 m1gap= 34.61 m2win=  38.22 m2show=  38.22 m2popup=        m2uia=        idle_max=0.64 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #16a1 m1= 36.46 m1gap= 38.38 m2win=  42.52 m2show=  42.52 m2popup=        m2uia=        idle_max=0.4 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #17a1 m1= 33.57 m1gap= 35.55 m2win=   39.3 m2show=   39.3 m2popup=        m2uia=        idle_max=0.3 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #18a1 m1= 30.37 m1gap= 32.31 m2win=   39.2 m2show=   39.2 m2popup=        m2uia=        idle_max=0.31 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #19a1 m1= 30.57 m1gap= 32.50 m2win=  35.96 m2show=  35.96 m2popup=        m2uia=        idle_max=1.22 fg_at_request=ColdOpen06 jobs=75
+cold-dialog    #20a1 m1= 28.22 m1gap= 30.20 m2win=  36.37 m2show=  36.37 m2popup=        m2uia=        idle_max=1.29 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #01a1 m1=  5.61 m1gap=  7.57 m2win=      6 m2show=      6 m2popup=   7.04 m2uia=        idle_max=0.56 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #02a1 m1=  6.08 m1gap=  8.06 m2win=   6.26 m2show=   6.26 m2popup=   7.53 m2uia=        idle_max=0.68 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #03a1 m1=  5.73 m1gap=  7.70 m2win=    6.1 m2show=    6.1 m2popup=   7.34 m2uia=        idle_max=1.25 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #04a1 m1=  5.35 m1gap=  7.29 m2win=   6.11 m2show=   6.11 m2popup=   7.03 m2uia=        idle_max=0.84 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #05a1 m1=  5.76 m1gap=  7.74 m2win=    6.1 m2show=    6.1 m2popup=    7.5 m2uia=        idle_max=0.5 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #06a1 m1=  5.81 m1gap=  7.67 m2win=    5.6 m2show=    5.6 m2popup=   6.84 m2uia=        idle_max=0.28 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #07a1 m1=  5.22 m1gap=  7.19 m2win=   5.42 m2show=   5.42 m2popup=   6.66 m2uia=        idle_max=0.3 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #08a1 m1=  5.51 m1gap=  7.37 m2win=   5.91 m2show=   5.91 m2popup=   7.12 m2uia=        idle_max=1.61 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #09a1 m1=  5.55 m1gap=  7.53 m2win=   5.56 m2show=   5.56 m2popup=   7.01 m2uia=        idle_max=0.33 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #10a1 m1=  5.56 m1gap=  7.48 m2win=   5.61 m2show=   5.61 m2popup=   6.85 m2uia=        idle_max=0.69 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #11a1 m1=  5.42 m1gap=  7.36 m2win=   5.82 m2show=   5.82 m2popup=   6.96 m2uia=        idle_max=0.42 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #12a1 m1=  5.00 m1gap=  6.94 m2win=   5.36 m2show=   5.36 m2popup=   6.48 m2uia=        idle_max=1.9 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #13a1 m1=  6.35 m1gap=  8.31 m2win=   5.97 m2show=   5.97 m2popup=   7.84 m2uia=        idle_max=0.25 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #14a1 m1=  5.07 m1gap=  6.99 m2win=   5.43 m2show=   5.43 m2popup=    6.5 m2uia=        idle_max=0.7 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #15a1 m1=  6.03 m1gap=  8.01 m2win=   6.12 m2show=   6.12 m2popup=   7.47 m2uia=        idle_max=0.46 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #16a1 m1=  5.20 m1gap=  7.13 m2win=   5.39 m2show=   5.39 m2popup=    6.9 m2uia=        idle_max=0.46 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #17a1 m1=  5.40 m1gap=  7.27 m2win=   5.63 m2show=   5.63 m2popup=   6.76 m2uia=        idle_max=0.69 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #18a1 m1=  5.93 m1gap=  7.88 m2win=   5.83 m2show=   5.83 m2popup=   7.54 m2uia=        idle_max=0.78 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #19a1 m1=  5.69 m1gap=  7.55 m2win=   5.88 m2show=   5.88 m2popup=    7.2 m2uia=        idle_max=0.23 fg_at_request=ColdOpen06 jobs=75
+cold-menu      #20a1 m1=  5.45 m1gap=  7.34 m2win=   5.81 m2show=   5.81 m2popup=   6.89 m2uia=        idle_max=0.29 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #01a1 m1= 25.30 m1gap= 27.28 m2win=  34.17 m2show=  34.17 m2popup=        m2uia=        idle_max=0.71 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #02a1 m1= 27.19 m1gap= 29.06 m2win=  31.95 m2show=  31.95 m2popup=        m2uia=        idle_max=0.59 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #03a1 m1= 25.94 m1gap= 27.89 m2win=  30.68 m2show=  30.68 m2popup=        m2uia=        idle_max=0.47 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #04a1 m1= 24.89 m1gap= 26.88 m2win=   29.6 m2show=   29.6 m2popup=        m2uia=        idle_max=0.47 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #05a1 m1= 31.77 m1gap= 33.71 m2win=  36.63 m2show=  36.63 m2popup=        m2uia=        idle_max=0.49 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #06a1 m1= 25.44 m1gap= 27.37 m2win=  30.13 m2show=  30.13 m2popup=        m2uia=        idle_max=0.48 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #07a1 m1= 29.29 m1gap= 31.22 m2win=  34.45 m2show=  34.45 m2popup=        m2uia=        idle_max=0.48 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #08a1 m1= 27.85 m1gap= 29.79 m2win=  32.28 m2show=  32.28 m2popup=        m2uia=        idle_max=0.38 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #09a1 m1= 24.91 m1gap= 26.89 m2win=   29.8 m2show=   29.8 m2popup=        m2uia=        idle_max=0.47 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #10a1 m1= 26.29 m1gap= 28.22 m2win=  31.66 m2show=  31.66 m2popup=        m2uia=        idle_max=0.41 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #11a1 m1= 23.34 m1gap= 25.28 m2win=  28.44 m2show=  28.44 m2popup=        m2uia=        idle_max=0.55 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #12a1 m1= 26.42 m1gap= 28.32 m2win=  31.69 m2show=  31.69 m2popup=        m2uia=        idle_max=0.28 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #13a1 m1= 29.39 m1gap= 31.25 m2win=   34.1 m2show=   34.1 m2popup=        m2uia=        idle_max=0.45 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #14a1 m1= 23.14 m1gap= 25.09 m2win=  27.74 m2show=  27.74 m2popup=        m2uia=        idle_max=0.45 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #15a1 m1= 26.26 m1gap= 28.12 m2win=  30.77 m2show=  30.77 m2popup=        m2uia=        idle_max=0.41 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #16a1 m1= 24.21 m1gap= 26.07 m2win=  29.07 m2show=  29.07 m2popup=        m2uia=        idle_max=0.46 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #17a1 m1= 27.98 m1gap= 29.89 m2win=  32.68 m2show=  32.68 m2popup=        m2uia=        idle_max=0.45 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #18a1 m1= 24.31 m1gap= 26.25 m2win=  29.49 m2show=  29.49 m2popup=        m2uia=        idle_max=0.55 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #19a1 m1= 25.63 m1gap= 27.50 m2win=  29.26 m2show=  29.26 m2popup=        m2uia=        idle_max=0.42 fg_at_request=ColdOpen06 jobs=75
+warm-dialog    #20a1 m1= 26.94 m1gap= 28.80 m2win=  31.52 m2show=  31.52 m2popup=        m2uia=        idle_max=0.43 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #01a1 m1=  1.78 m1gap=  3.72 m2win=   2.44 m2show=   2.44 m2popup=   5.25 m2uia=        idle_max=1.1 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #02a1 m1=  2.46 m1gap=  4.43 m2win=   2.89 m2show=   2.89 m2popup=    4.1 m2uia=        idle_max=0.26 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #03a1 m1=  4.39 m1gap=  8.95 m2win=   2.71 m2show=   2.71 m2popup=   4.07 m2uia=        idle_max=0.27 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #04a1 m1=  2.47 m1gap=  4.41 m2win=   2.18 m2show=   2.18 m2popup=   3.97 m2uia=        idle_max=0.35 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #05a1 m1=  1.83 m1gap=  3.76 m2win=   2.26 m2show=   2.26 m2popup=   3.38 m2uia=        idle_max=0.68 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #06a1 m1=  3.71 m1gap=  5.65 m2win=   2.91 m2show=   2.91 m2popup=   3.98 m2uia=        idle_max=0.42 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #07a1 m1=  2.62 m1gap=  4.56 m2win=    2.7 m2show=    2.7 m2popup=   4.09 m2uia=        idle_max=0.38 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #08a1 m1=  2.25 m1gap=  4.19 m2win=   2.66 m2show=   2.66 m2popup=   3.74 m2uia=        idle_max=1.02 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #09a1 m1=  1.79 m1gap=  3.72 m2win=   2.37 m2show=   2.37 m2popup=    3.4 m2uia=        idle_max=0.35 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #10a1 m1=  2.45 m1gap=  4.42 m2win=   2.88 m2show=   2.88 m2popup=      4 m2uia=        idle_max=1.9 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #11a1 m1=  2.53 m1gap=  4.52 m2win=   2.56 m2show=   2.56 m2popup=   4.16 m2uia=        idle_max=0.2 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #12a1 m1=  1.84 m1gap=  3.79 m2win=   2.44 m2show=   2.44 m2popup=   3.31 m2uia=        idle_max=0.94 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #13a1 m1=  2.13 m1gap=  4.07 m2win=   2.66 m2show=   2.66 m2popup=   3.69 m2uia=        idle_max=0.21 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #14a1 m1=  2.34 m1gap=  4.28 m2win=   2.68 m2show=   2.68 m2popup=   4.03 m2uia=        idle_max=0.65 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #15a1 m1=  2.44 m1gap=  4.42 m2win=   2.73 m2show=   2.73 m2popup=    3.9 m2uia=        idle_max=2.35 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #16a1 m1=  2.26 m1gap=  4.24 m2win=   2.38 m2show=   2.38 m2popup=   3.77 m2uia=        idle_max=0.43 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #17a1 m1=  2.36 m1gap=  4.21 m2win=   2.72 m2show=   2.72 m2popup=   3.78 m2uia=        idle_max=0.43 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #18a1 m1=  3.00 m1gap=  4.87 m2win=   2.55 m2show=   2.55 m2popup=    4.3 m2uia=        idle_max=0.49 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #19a1 m1=  2.07 m1gap=  4.01 m2win=   2.49 m2show=   2.49 m2popup=   3.47 m2uia=        idle_max=0.37 fg_at_request=ColdOpen06 jobs=75
+warm-menu      #20a1 m1=  2.44 m1gap=  4.20 m2win=    2.9 m2show=    2.9 m2popup=   3.74 m2uia=        idle_max=0.4 fg_at_request=ColdOpen06 jobs=75
+
+== invalid attempts (kept, not counted): 0 of 80 attempts
+
+== raw event stamps (first valid attempt of each run; ms after the host request; class shown)
+cold-dialog    #01: win-show@42.31ms(#32770)
+cold-dialog    #02: win-show@46.72ms(#32770)
+cold-dialog    #03: win-show@38.49ms(#32770)
+cold-dialog    #04: win-show@40.08ms(#32770)
+cold-dialog    #05: win-show@52.16ms(#32770)
+cold-dialog    #06: win-show@49.85ms(#32770)
+cold-dialog    #07: win-show@46.10ms(#32770)
+cold-dialog    #08: win-show@36.79ms(#32770)
+cold-dialog    #09: win-show@37.03ms(#32770)
+cold-dialog    #10: win-show@43.07ms(#32770)
+cold-dialog    #11: win-show@36.62ms(#32770)
+cold-dialog    #12: win-show@34.24ms(#32770)
+cold-dialog    #13: win-show@37.75ms(#32770)
+cold-dialog    #14: win-show@40.45ms(#32770)
+cold-dialog    #15: win-show@38.22ms(#32770)
+cold-dialog    #16: win-show@42.52ms(#32770)
+cold-dialog    #17: win-show@39.30ms(#32770)
+cold-dialog    #18: win-show@39.20ms(#32770)
+cold-dialog    #19: win-show@35.96ms(#32770)
+cold-dialog    #20: win-show@36.37ms(#32770)
+cold-menu      #01: win-show@6.00ms(#32768) win-menupopup@7.04ms(#32768)
+cold-menu      #02: win-show@6.26ms(#32768) win-menupopup@7.53ms(#32768)
+cold-menu      #03: win-show@6.10ms(#32768) win-menupopup@7.34ms(#32768)
+cold-menu      #04: win-show@6.11ms(#32768) win-menupopup@7.03ms(#32768)
+cold-menu      #05: win-show@6.10ms(#32768) win-menupopup@7.50ms(#32768)
+cold-menu      #06: win-show@5.60ms(#32768) win-menupopup@6.84ms(#32768)
+cold-menu      #07: win-show@5.42ms(#32768) win-menupopup@6.66ms(#32768)
+cold-menu      #08: win-show@5.91ms(#32768) win-menupopup@7.12ms(#32768)
+cold-menu      #09: win-show@5.56ms(#32768) win-menupopup@7.01ms(#32768)
+cold-menu      #10: win-show@5.61ms(#32768) win-menupopup@6.85ms(#32768)
+cold-menu      #11: win-show@5.82ms(#32768) win-menupopup@6.96ms(#32768)
+cold-menu      #12: win-show@5.36ms(#32768) win-menupopup@6.48ms(#32768)
+cold-menu      #13: win-show@5.97ms(#32768) win-menupopup@7.84ms(#32768)
+cold-menu      #14: win-show@5.43ms(#32768) win-menupopup@6.50ms(#32768)
+cold-menu      #15: win-show@6.12ms(#32768) win-menupopup@7.47ms(#32768)
+cold-menu      #16: win-show@5.39ms(#32768) win-menupopup@6.90ms(#32768)
+cold-menu      #17: win-show@5.63ms(#32768) win-menupopup@6.76ms(#32768)
+cold-menu      #18: win-show@5.83ms(#32768) win-menupopup@7.54ms(#32768)
+cold-menu      #19: win-show@5.88ms(#32768) win-menupopup@7.20ms(#32768)
+cold-menu      #20: win-show@5.81ms(#32768) win-menupopup@6.89ms(#32768)
+warm-dialog    #01: win-show@34.17ms(#32770)
+warm-dialog    #02: win-show@31.95ms(#32770)
+warm-dialog    #03: win-show@30.68ms(#32770)
+warm-dialog    #04: win-show@29.60ms(#32770)
+warm-dialog    #05: win-show@36.63ms(#32770)
+warm-dialog    #06: win-show@30.13ms(#32770)
+warm-dialog    #07: win-show@34.45ms(#32770)
+warm-dialog    #08: win-show@32.28ms(#32770)
+warm-dialog    #09: win-show@29.80ms(#32770)
+warm-dialog    #10: win-show@31.66ms(#32770)
+warm-dialog    #11: win-show@28.44ms(#32770)
+warm-dialog    #12: win-show@31.69ms(#32770)
+warm-dialog    #13: win-show@34.10ms(#32770)
+warm-dialog    #14: win-show@27.74ms(#32770)
+warm-dialog    #15: win-show@30.77ms(#32770)
+warm-dialog    #16: win-show@29.07ms(#32770)
+warm-dialog    #17: win-show@32.68ms(#32770)
+warm-dialog    #18: win-show@29.49ms(#32770)
+warm-dialog    #19: win-show@29.26ms(#32770)
+warm-dialog    #20: win-show@31.52ms(#32770)
+warm-menu      #01: win-show@2.44ms(#32768) win-menupopup@5.25ms(#32768)
+warm-menu      #02: win-show@2.89ms(#32768) win-menupopup@4.10ms(#32768)
+warm-menu      #03: win-show@2.71ms(#32768) win-menupopup@4.07ms(#32768)
+warm-menu      #04: win-show@2.18ms(#32768) win-menupopup@3.97ms(#32768)
+warm-menu      #05: win-show@2.26ms(#32768) win-menupopup@3.38ms(#32768)
+warm-menu      #06: win-show@2.91ms(#32768) win-menupopup@3.98ms(#32768)
+warm-menu      #07: win-show@2.70ms(#32768) win-menupopup@4.09ms(#32768)
+warm-menu      #08: win-show@2.66ms(#32768) win-menupopup@3.74ms(#32768)
+warm-menu      #09: win-show@2.37ms(#32768) win-menupopup@3.40ms(#32768)
+warm-menu      #10: win-show@2.88ms(#32768) win-menupopup@4.00ms(#32768)
+warm-menu      #11: win-show@2.56ms(#32768) win-menupopup@4.16ms(#32768)
+warm-menu      #12: win-show@2.44ms(#32768) win-menupopup@3.31ms(#32768)
+warm-menu      #13: win-show@2.66ms(#32768) win-menupopup@3.69ms(#32768)
+warm-menu      #14: win-show@2.68ms(#32768) win-menupopup@4.03ms(#32768)
+warm-menu      #15: win-show@2.73ms(#32768) win-menupopup@3.90ms(#32768)
+warm-menu      #16: win-show@2.38ms(#32768) win-menupopup@3.77ms(#32768)
+warm-menu      #17: win-show@2.72ms(#32768) win-menupopup@3.78ms(#32768)
+warm-menu      #18: win-show@2.55ms(#32768) win-menupopup@4.30ms(#32768)
+warm-menu      #19: win-show@2.49ms(#32768) win-menupopup@3.47ms(#32768)
+warm-menu      #20: win-show@2.90ms(#32768) win-menupopup@3.74ms(#32768)
