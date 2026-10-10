@@ -4,14 +4,16 @@
 #  3. each host exe with SWR_GM_DRYRUN=1: the pure-logic self-test and an explicit LoadLibraryW of the renderer with
 #     bootstrap validation (ABI 0.6, struct sizes, function count) and the ComCtl v6 manifest effect, but NO swr_run
 #  4. no leftover scheduled task of these drivers
-param([string]$Base = 'D:\Claude\sr0-geomodal', [string]$Bin = '')
+# -RendererSha: the expected sha256 of swiftright_render.dll when it is not the final tuple pinned in common.ps1 (modal-stall fix build).
+param([string]$Base = 'D:\Claude\sr0-geomodal', [string]$Bin = '', [string]$RendererSha = '')
 . (Join-Path $PSScriptRoot 'common.ps1')
 if (-not $Bin) { $Bin = Join-Path $Base 'bin' }
+if (-not $RendererSha) { $RendererSha = $script:PinnedRendererSha }
 $fail = 0
 function Step([string]$name, [bool]$ok, [string]$detail) { if (-not $ok) { $script:fail++ }; "{0} {1} [{2}]" -f $(if ($ok) { 'PASS' } else { 'FAIL' }), $name, $detail }
 "dryrun started=$(Get-Date -Format o) host=$env:COMPUTERNAME session=$((Get-Process -Id $PID).SessionId)"
 $rsha = Get-Sha (Join-Path $Bin 'swiftright_render.dll')
-Step 'renderer is the pinned final tuple' ($rsha -eq $script:PinnedRendererSha) $rsha
+Step "renderer is the expected build ($(if ($RendererSha -eq $script:PinnedRendererSha) { 'pinned final tuple' } else { 'modal-stall fix build' }))" ($rsha -eq $RendererSha.ToLower()) "$rsha expected=$($RendererSha.ToLower())"
 Get-Artifacts $Bin @('TextGeom06.exe', 'Modal06.exe')
 foreach ($f in Get-ChildItem (Join-Path $PSScriptRoot '*.ps1')) { $e = Test-ParseFile $f.FullName; Step "parse $($f.Name)" ($e.Count -eq 0) "errors=$($e.Count)" }
 foreach ($d in 'drive-textgeom.ps1', 'drive-modal.ps1') {

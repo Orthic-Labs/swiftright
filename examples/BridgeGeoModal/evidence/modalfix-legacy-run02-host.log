@@ -1,0 +1,47 @@
+ready: window=100000001 client=1600x1396px scale=2.5
+START pid=42032 abi=0.6 scale=2.500 open_bound_ms=50.0 budget_ms=16.7
+SCENARIO id=1001 tag=S1 name=menu-select kind=menu items=5 dismiss=menu-select:4:Quit expect=15/4
+SCENARIO id=1002 tag=S2 name=menu-escape kind=menu items=5 dismiss=menu-escape expect=0/-1
+SCENARIO id=1003 tag=S3 name=dialog-click kind=dialog items=3 dismiss=dialog-click:1 expect=22/1
+SCENARIO id=1004 tag=S4 name=dialog-escape kind=dialog items=3 dismiss=dialog-escape expect=0/-1
+SCENARIO id=1005 tag=S5 name=menu-keys-queue-full kind=menu items=2 dismiss=menu-keys:1 expect=11/0
+SCENARIO id=1006 tag=S6 name=dialog-open-at-close kind=dialog items=3 dismiss=dialog-observe expect=0/-1
+MODAL id=1001 request tag=S1 name=menu-select kind=menu rc=SWR_OK dismiss=menu-select:4:Quit title= at_ms=1478.12
+MODAL id=1001 result tag=S1 action=2 i0=15 i1=4 choice=15/4 failed=false elapsed_ms=1306.90 ticks_during=0 at_ms=2784.93
+MODAL id=1002 request tag=S2 name=menu-escape kind=menu rc=SWR_OK dismiss=menu-escape title= at_ms=3186.04
+MODAL id=1002 result tag=S2 action=2 i0=0 i1=-1 choice=none failed=false elapsed_ms=1281.32 ticks_during=77 at_ms=4467.36
+MODAL id=1003 request tag=S3 name=dialog-click kind=dialog rc=SWR_OK dismiss=dialog-click:1 title=SR0 Modal06 dialog at_ms=4867.99
+MODAL id=1003 result tag=S3 action=3 i0=22 i1=1 choice=22/1 failed=false elapsed_ms=1277.19 ticks_during=75 at_ms=6145.19
+MODAL id=1004 request tag=S4 name=dialog-escape kind=dialog rc=SWR_OK dismiss=dialog-escape title=SR0 Modal06 dialog at_ms=6545.27
+MODAL id=1004 result tag=S4 action=3 i0=0 i1=-1 choice=none failed=false elapsed_ms=1261.35 ticks_during=75 at_ms=7806.62
+MODAL id=1005 request tag=S5 name=menu-keys-queue-full kind=menu rc=SWR_OK dismiss=menu-keys:1 title= at_ms=8208.00
+MODAL id=1005 second request in the same turn rc=SWR_E_QUEUE_FULL (expect SWR_E_QUEUE_FULL)
+MODAL id=1005 result tag=S5 action=2 i0=11 i1=0 choice=11/0 failed=false elapsed_ms=1455.40 ticks_during=87 at_ms=9663.41
+MODAL id=1006 request tag=S6 name=dialog-open-at-close kind=dialog rc=SWR_OK dismiss=dialog-observe title=SR0 Modal06 dialog at_ms=10064.03
+MODAL id=1006 closing the window while the dialog is open at_ms=11264.11
+WINDOW_CLOSED at_ms=11264.33
+LATE after close: commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE
+MODAL id=1006 result AFTER window_closed action=3 i0=0 i1=-1 failed=false (ignored: no window, no commit) elapsed_ms=1233.55
+LATENCY_MS all n=5695 p50=0.07 p99=1192.81 max=1304.77 | modal_open_one_off n=375 max=1304.77 | modal_steady n=2914 p50=0.07 p99=1096.82 max=1154.81 max_run_gap=1156.74 | idle n=455 p99=0.28 max=0.32
+renderer stats: paints=649 commits=1 events=8 live_nodes=0 ticks=569
+HC PASS startup validation [abi 0.6 fn_count=16 stats_size=200]
+HC PASS run returned ok [ok]
+HC PASS sequence ran without timeout [timed_out=false]
+HC PASS S1 menu-select: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=15 i1=4 choice=15/4 want=15/4 failed=false events=1 ticks_during=0]
+HC PASS S2 menu-escape: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=77]
+HC PASS S3 dialog-click: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=22 i1=1 choice=22/1 want=22/1 failed=false events=1 ticks_during=75]
+HC PASS S4 dialog-escape: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=75]
+HC PASS S5 menu-keys-queue-full: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=11 i1=0 choice=11/0 want=11/0 failed=false events=1 ticks_during=87]
+HC PASS S5 one pending request at a time: a second request in the same turn is SWR_E_QUEUE_FULL, the first still delivered [second=SWR_E_QUEUE_FULL first_result=true]
+HC PASS no result for an unknown id, no duplicate result [unknown=0 duplicate=0]
+HC FAIL main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=0 S2=515 S3=514 S4=506 S5=603 (need >= 50 each), max pause between job runs incl. interval ends 1156.74 ms (bound 100.00), producer enqueued=5695]
+HC FAIL display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=0 S2=77 S3=75 S4=75 S5=87]
+HC FAIL job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1096.82 ms n=2914]
+HC FAIL one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=1304.77 ms over 375 jobs in the first 150 ms of each modal]
+HC PASS job latency outside any modal within budget (idle p99 <= 16.7 ms) [p99=0.28 ms n=455]
+HC PASS S6 dialog open while the window closes: run returned, window_closed once, a late result (if any) was ignored [close_calls=1 late_results=1 order=result-after-close i0=0 i1=-1 failed=false]
+HC PASS requests from the post-close pump rejected: commit SWR_E_SHUTDOWN, menu/dialog/message SWR_E_STALE_HANDLE [commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE jobs_run_after_close=301]
+HC PASS no stale events, no thread violations or host panics [stale=0 thread_violations=0 host_panics=0]
+HC PASS live nodes zero after teardown [at cleanup=0 after run=0]
+HC PASS post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.60s after window_closed]
+HOSTSUMMARY FAIL (16/20)

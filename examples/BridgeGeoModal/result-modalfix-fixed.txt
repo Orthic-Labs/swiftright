@@ -1,0 +1,187 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T08:39:15.1995846+05:30 runs=60 hold_ms=1200
+ARTIFACTS Modal06.exe=9542f91ecbc3effa2c7ded5f3417de45d2dd6f135d0a289c61eae733d883a0f7 renderer=97ca28e84a58f0d3b44b5a6eaa8d7c912e673a07774123296c958e0d7ecca26b
+RUN 01 PASS checks=44/44 exit=0 ms=12603
+  latency_ms all n=5936 p50=0.03 p99=5.81 max=34.78 | modal_open_one_off n=375 max=34.78 | modal_steady n=3153 p50=0.03 p99=0.35 max=9.31 max_run_gap=11.28 | idle n=456 p99=0.29 max=0.59
+RUN 02 PASS checks=44/44 exit=0 ms=11986
+  latency_ms all n=5673 p50=0.03 p99=6.49 max=32.00 | modal_open_one_off n=375 max=32.00 | modal_steady n=2890 p50=0.03 p99=0.33 max=11.52 max_run_gap=13.46 | idle n=456 p99=0.21 max=0.57
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=683 drain_calls_during=723 ticks_during=76 elapsed_ms=1,251.47 queued_ms=0.05
+RUN 03 PASS checks=44/44 exit=0 ms=11953
+  latency_ms all n=5656 p50=0.03 p99=7.46 max=35.82 | modal_open_one_off n=375 max=35.82 | modal_steady n=2874 p50=0.03 p99=0.36 max=7.90 max_run_gap=9.88 | idle n=456 p99=0.23 max=0.92
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=689 drain_calls_during=722 ticks_during=76 elapsed_ms=1,261.58 queued_ms=0.04
+RUN 04 PASS checks=44/44 exit=0 ms=12036
+  latency_ms all n=5676 p50=0.06 p99=4.47 max=30.46 | modal_open_one_off n=375 max=30.46 | modal_steady n=2894 p50=0.05 p99=0.40 max=9.84 max_run_gap=11.75 | idle n=455 p99=0.29 max=1.21
+RUN 05 PASS checks=44/44 exit=0 ms=11982
+  latency_ms all n=5698 p50=0.06 p99=6.35 max=34.56 | modal_open_one_off n=375 max=34.56 | modal_steady n=2915 p50=0.06 p99=0.41 max=9.61 max_run_gap=11.54 | idle n=456 p99=0.32 max=0.93
+RUN 06 PASS checks=44/44 exit=0 ms=12039
+  latency_ms all n=5698 p50=0.06 p99=4.10 max=27.26 | modal_open_one_off n=375 max=26.10 | modal_steady n=2916 p50=0.06 p99=0.38 max=8.27 max_run_gap=10.21 | idle n=454 p99=0.23 max=0.42
+RUN 07 PASS checks=44/44 exit=0 ms=11953
+  latency_ms all n=5673 p50=0.06 p99=4.56 max=28.11 | modal_open_one_off n=375 max=27.37 | modal_steady n=2890 p50=0.06 p99=0.39 max=8.11 max_run_gap=10.08 | idle n=456 p99=0.33 max=0.47
+RUN 08 PASS checks=44/44 exit=0 ms=11974
+  latency_ms all n=5695 p50=0.06 p99=5.80 max=37.28 | modal_open_one_off n=375 max=37.28 | modal_steady n=2913 p50=0.06 p99=0.38 max=7.72 max_run_gap=9.66 | idle n=456 p99=0.27 max=0.40
+RUN 09 PASS checks=44/44 exit=0 ms=11902
+  latency_ms all n=5666 p50=0.06 p99=5.73 max=30.73 | modal_open_one_off n=375 max=30.73 | modal_steady n=2885 p50=0.06 p99=0.42 max=7.75 max_run_gap=9.70 | idle n=455 p99=0.29 max=0.52
+RUN 10 PASS checks=44/44 exit=0 ms=11903
+  latency_ms all n=5659 p50=0.06 p99=5.36 max=34.96 | modal_open_one_off n=375 max=34.96 | modal_steady n=2877 p50=0.06 p99=0.39 max=8.32 max_run_gap=10.31 | idle n=455 p99=0.30 max=0.56
+RUN 11 PASS checks=44/44 exit=0 ms=11951
+  latency_ms all n=5692 p50=0.06 p99=7.38 max=36.33 | modal_open_one_off n=375 max=36.33 | modal_steady n=2909 p50=0.06 p99=0.40 max=10.65 max_run_gap=12.41 | idle n=456 p99=0.37 max=0.50
+RUN 12 PASS checks=44/44 exit=0 ms=11948
+  latency_ms all n=5683 p50=0.06 p99=5.17 max=29.62 | modal_open_one_off n=375 max=29.62 | modal_steady n=2900 p50=0.06 p99=0.39 max=8.93 max_run_gap=10.80 | idle n=456 p99=0.41 max=0.55
+RUN 13 PASS checks=44/44 exit=0 ms=11938
+  latency_ms all n=5693 p50=0.06 p99=5.19 max=29.70 | modal_open_one_off n=375 max=29.70 | modal_steady n=2910 p50=0.06 p99=0.39 max=9.19 max_run_gap=11.12 | idle n=456 p99=0.30 max=0.50
+RUN 14 PASS checks=44/44 exit=0 ms=11953
+  latency_ms all n=5699 p50=0.06 p99=4.61 max=30.60 | modal_open_one_off n=375 max=30.60 | modal_steady n=2916 p50=0.06 p99=0.45 max=8.60 max_run_gap=10.47 | idle n=456 p99=0.31 max=0.43
+RUN 15 PASS checks=44/44 exit=0 ms=12309
+  latency_ms all n=5672 p50=0.07 p99=5.87 max=29.86 | modal_open_one_off n=375 max=27.64 | modal_steady n=2890 p50=0.07 p99=0.39 max=9.57 max_run_gap=11.48 | idle n=456 p99=0.37 max=0.60
+RUN 16 PASS checks=44/44 exit=0 ms=11920
+  latency_ms all n=5679 p50=0.06 p99=4.72 max=30.70 | modal_open_one_off n=375 max=30.70 | modal_steady n=2897 p50=0.06 p99=0.37 max=10.32 max_run_gap=12.30 | idle n=456 p99=0.25 max=0.95
+RUN 17 PASS checks=44/44 exit=0 ms=11939
+  latency_ms all n=5687 p50=0.06 p99=5.90 max=28.69 | modal_open_one_off n=375 max=28.69 | modal_steady n=2904 p50=0.06 p99=0.45 max=14.41 max_run_gap=16.38 | idle n=456 p99=0.30 max=0.44
+RUN 18 PASS checks=44/44 exit=0 ms=11936
+  latency_ms all n=5684 p50=0.06 p99=5.38 max=30.39 | modal_open_one_off n=375 max=26.85 | modal_steady n=2901 p50=0.06 p99=0.38 max=8.47 max_run_gap=10.45 | idle n=456 p99=0.33 max=0.51
+RUN 19 PASS checks=44/44 exit=0 ms=11984
+  latency_ms all n=5711 p50=0.06 p99=5.89 max=33.08 | modal_open_one_off n=375 max=33.08 | modal_steady n=2929 p50=0.06 p99=0.46 max=7.89 max_run_gap=9.87 | idle n=455 p99=0.31 max=0.91
+RUN 20 PASS checks=44/44 exit=0 ms=11955
+  latency_ms all n=5696 p50=0.06 p99=4.13 max=28.33 | modal_open_one_off n=375 max=28.08 | modal_steady n=2913 p50=0.05 p99=0.38 max=7.52 max_run_gap=9.48 | idle n=456 p99=0.20 max=0.39
+RUN 21 PASS checks=44/44 exit=0 ms=11893
+  latency_ms all n=5653 p50=0.06 p99=6.20 max=32.18 | modal_open_one_off n=375 max=29.48 | modal_steady n=2871 p50=0.06 p99=0.38 max=9.19 max_run_gap=11.05 | idle n=455 p99=0.31 max=0.45
+RUN 22 PASS checks=44/44 exit=0 ms=11911
+  latency_ms all n=5674 p50=0.06 p99=4.05 max=32.30 | modal_open_one_off n=375 max=24.14 | modal_steady n=2891 p50=0.06 p99=0.42 max=8.52 max_run_gap=10.49 | idle n=456 p99=0.26 max=0.56
+RUN 23 PASS checks=44/44 exit=0 ms=11896
+  latency_ms all n=5667 p50=0.06 p99=5.74 max=34.05 | modal_open_one_off n=375 max=29.19 | modal_steady n=2885 p50=0.06 p99=0.42 max=8.68 max_run_gap=10.64 | idle n=455 p99=0.24 max=0.36
+RUN 24 PASS checks=44/44 exit=0 ms=11964
+  latency_ms all n=5695 p50=0.06 p99=6.18 max=32.17 | modal_open_one_off n=375 max=29.43 | modal_steady n=2912 p50=0.06 p99=0.53 max=9.95 max_run_gap=11.79 | idle n=455 p99=0.27 max=1.24
+RUN 25 PASS checks=44/44 exit=0 ms=11866
+  latency_ms all n=5654 p50=0.06 p99=6.02 max=34.43 | modal_open_one_off n=375 max=34.43 | modal_steady n=2871 p50=0.06 p99=0.40 max=8.12 max_run_gap=10.05 | idle n=456 p99=0.35 max=1.27
+RUN 26 PASS checks=44/44 exit=0 ms=11879
+  latency_ms all n=5665 p50=0.06 p99=5.52 max=30.46 | modal_open_one_off n=375 max=29.51 | modal_steady n=2882 p50=0.06 p99=0.45 max=8.60 max_run_gap=10.56 | idle n=456 p99=0.27 max=0.41
+RUN 27 PASS checks=44/44 exit=0 ms=12055
+  latency_ms all n=5729 p50=0.07 p99=6.37 max=37.43 | modal_open_one_off n=375 max=37.43 | modal_steady n=2946 p50=0.07 p99=0.36 max=8.70 max_run_gap=10.67 | idle n=456 p99=0.26 max=0.64
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=710 drain_calls_during=753 ticks_during=78 elapsed_ms=1,294.82 queued_ms=0.03
+RUN 28 PASS checks=44/44 exit=0 ms=12050
+  latency_ms all n=5726 p50=0.07 p99=6.21 max=31.87 | modal_open_one_off n=375 max=30.21 | modal_steady n=2943 p50=0.07 p99=0.45 max=9.54 max_run_gap=11.44 | idle n=456 p99=0.38 max=2.21
+RUN 29 PASS checks=44/44 exit=0 ms=11968
+  latency_ms all n=5716 p50=0.03 p99=4.17 max=31.79 | modal_open_one_off n=375 max=31.79 | modal_steady n=2934 p50=0.03 p99=0.38 max=7.43 max_run_gap=9.40 | idle n=455 p99=0.33 max=0.83
+RUN 30 PASS checks=44/44 exit=0 ms=11974
+  latency_ms all n=5683 p50=0.06 p99=6.01 max=29.21 | modal_open_one_off n=375 max=28.20 | modal_steady n=2901 p50=0.06 p99=0.36 max=7.66 max_run_gap=9.63 | idle n=456 p99=0.18 max=0.61
+RUN 31 PASS checks=44/44 exit=0 ms=11883
+  latency_ms all n=5653 p50=0.06 p99=4.65 max=31.21 | modal_open_one_off n=375 max=31.21 | modal_steady n=2871 p50=0.06 p99=0.39 max=7.52 max_run_gap=9.44 | idle n=456 p99=0.28 max=0.46
+RUN 32 PASS checks=44/44 exit=0 ms=11960
+  latency_ms all n=5706 p50=0.06 p99=5.67 max=31.73 | modal_open_one_off n=375 max=31.67 | modal_steady n=2923 p50=0.07 p99=0.40 max=8.88 max_run_gap=10.86 | idle n=456 p99=0.18 max=1.31
+RUN 33 PASS checks=44/44 exit=0 ms=11894
+  latency_ms all n=5674 p50=0.06 p99=4.88 max=31.91 | modal_open_one_off n=375 max=30.27 | modal_steady n=2893 p50=0.06 p99=0.35 max=7.32 max_run_gap=9.30 | idle n=455 p99=0.24 max=2.55
+RUN 34 PASS checks=44/44 exit=0 ms=11941
+  latency_ms all n=5669 p50=0.06 p99=6.19 max=35.26 | modal_open_one_off n=374 max=35.26 | modal_steady n=2887 p50=0.06 p99=0.41 max=9.62 max_run_gap=11.26 | idle n=456 p99=0.28 max=0.47
+RUN 35 PASS checks=44/44 exit=0 ms=11948
+  latency_ms all n=5701 p50=0.06 p99=4.50 max=33.68 | modal_open_one_off n=375 max=33.68 | modal_steady n=2918 p50=0.06 p99=0.35 max=7.54 max_run_gap=9.48 | idle n=456 p99=0.22 max=0.48
+RUN 36 PASS checks=44/44 exit=0 ms=11894
+  latency_ms all n=5659 p50=0.06 p99=5.90 max=32.97 | modal_open_one_off n=375 max=29.67 | modal_steady n=2876 p50=0.06 p99=0.36 max=7.63 max_run_gap=9.60 | idle n=456 p99=0.36 max=0.79
+RUN 37 PASS checks=44/44 exit=0 ms=11879
+  latency_ms all n=5669 p50=0.06 p99=4.78 max=30.78 | modal_open_one_off n=375 max=30.02 | modal_steady n=2888 p50=0.06 p99=0.37 max=11.21 max_run_gap=13.17 | idle n=454 p99=0.23 max=1.24
+RUN 38 PASS checks=44/44 exit=0 ms=11917
+  latency_ms all n=5681 p50=0.06 p99=5.66 max=32.05 | modal_open_one_off n=375 max=32.05 | modal_steady n=2900 p50=0.06 p99=0.42 max=9.69 max_run_gap=11.62 | idle n=455 p99=0.26 max=0.45
+RUN 39 PASS checks=44/44 exit=0 ms=11876
+  latency_ms all n=5636 p50=0.07 p99=5.03 max=31.63 | modal_open_one_off n=375 max=31.63 | modal_steady n=2853 p50=0.07 p99=0.40 max=8.65 max_run_gap=10.59 | idle n=456 p99=0.43 max=1.04
+RUN 40 PASS checks=44/44 exit=0 ms=11979
+  latency_ms all n=5698 p50=0.06 p99=4.17 max=29.35 | modal_open_one_off n=375 max=29.35 | modal_steady n=2916 p50=0.06 p99=0.41 max=8.30 max_run_gap=10.28 | idle n=455 p99=0.33 max=0.76
+RUN 41 PASS checks=44/44 exit=0 ms=11979
+  latency_ms all n=5697 p50=0.06 p99=5.00 max=29.57 | modal_open_one_off n=375 max=29.57 | modal_steady n=2914 p50=0.06 p99=0.39 max=9.43 max_run_gap=11.41 | idle n=456 p99=0.27 max=0.65
+RUN 42 PASS checks=44/44 exit=0 ms=11928
+  latency_ms all n=5679 p50=0.06 p99=6.33 max=35.86 | modal_open_one_off n=375 max=32.46 | modal_steady n=2896 p50=0.06 p99=0.44 max=9.67 max_run_gap=11.61 | idle n=456 p99=0.31 max=0.60
+RUN 43 PASS checks=44/44 exit=0 ms=12321
+  latency_ms all n=5731 p50=0.06 p99=6.02 max=31.33 | modal_open_one_off n=375 max=31.33 | modal_steady n=2950 p50=0.06 p99=0.38 max=8.06 max_run_gap=10.00 | idle n=454 p99=0.38 max=0.49
+RUN 44 PASS checks=44/44 exit=0 ms=11899
+  latency_ms all n=5653 p50=0.06 p99=4.88 max=30.69 | modal_open_one_off n=375 max=30.69 | modal_steady n=2872 p50=0.07 p99=0.47 max=8.59 max_run_gap=10.56 | idle n=455 p99=0.23 max=0.74
+RUN 45 PASS checks=44/44 exit=0 ms=12153
+  latency_ms all n=5675 p50=0.06 p99=6.40 max=35.10 | modal_open_one_off n=375 max=35.10 | modal_steady n=2893 p50=0.06 p99=0.44 max=9.81 max_run_gap=11.71 | idle n=455 p99=0.27 max=1.44
+  modal_trace id=1006 kind=dialog path=posted waker_none=true wakes_during=672 drain_calls_during=686 ticks_during=-1 elapsed_ms=1,232.03 queued_ms=0.09
+RUN 46 PASS checks=44/44 exit=0 ms=11988
+  latency_ms all n=5701 p50=0.06 p99=6.00 max=33.37 | modal_open_one_off n=375 max=33.37 | modal_steady n=2920 p50=0.06 p99=0.43 max=9.50 max_run_gap=11.35 | idle n=454 p99=0.47 max=1.90
+  modal_trace id=1001 kind=menu path=posted waker_none=true wakes_during=719 drain_calls_during=744 ticks_during=80 elapsed_ms=1,314.89 queued_ms=0.03
+  modal_trace id=1006 kind=dialog path=posted waker_none=true wakes_during=674 drain_calls_during=672 ticks_during=-1 elapsed_ms=1,235.47 queued_ms=0.01
+RUN 47 PASS checks=44/44 exit=0 ms=11935
+  latency_ms all n=5688 p50=0.06 p99=6.48 max=36.65 | modal_open_one_off n=375 max=36.65 | modal_steady n=2906 p50=0.06 p99=0.41 max=8.68 max_run_gap=10.55 | idle n=455 p99=0.25 max=0.47
+RUN 48 PASS checks=44/44 exit=0 ms=12075
+  latency_ms all n=5645 p50=0.06 p99=4.54 max=31.50 | modal_open_one_off n=375 max=28.66 | modal_steady n=2863 p50=0.06 p99=0.39 max=9.55 max_run_gap=11.48 | idle n=455 p99=0.36 max=0.73
+RUN 49 PASS checks=44/44 exit=0 ms=12071
+  latency_ms all n=5691 p50=0.06 p99=6.63 max=36.41 | modal_open_one_off n=375 max=29.94 | modal_steady n=2909 p50=0.06 p99=0.43 max=8.63 max_run_gap=10.48 | idle n=456 p99=0.29 max=0.59
+RUN 50 PASS checks=44/44 exit=0 ms=11957
+  latency_ms all n=5684 p50=0.06 p99=5.02 max=31.59 | modal_open_one_off n=375 max=27.61 | modal_steady n=2902 p50=0.07 p99=0.43 max=8.54 max_run_gap=10.48 | idle n=455 p99=0.19 max=0.46
+RUN 51 PASS checks=44/44 exit=0 ms=11943
+  latency_ms all n=5699 p50=0.06 p99=4.83 max=30.58 | modal_open_one_off n=375 max=30.58 | modal_steady n=2916 p50=0.06 p99=0.40 max=8.74 max_run_gap=10.68 | idle n=456 p99=0.23 max=0.61
+RUN 52 PASS checks=44/44 exit=0 ms=11917
+  latency_ms all n=5665 p50=0.06 p99=5.12 max=32.30 | modal_open_one_off n=375 max=32.30 | modal_steady n=2881 p50=0.07 p99=0.39 max=9.35 max_run_gap=11.15 | idle n=457 p99=0.36 max=0.84
+RUN 53 PASS checks=44/44 exit=0 ms=11976
+  latency_ms all n=5706 p50=0.06 p99=6.10 max=31.63 | modal_open_one_off n=375 max=29.01 | modal_steady n=2926 p50=0.06 p99=0.51 max=9.31 max_run_gap=10.91 | idle n=454 p99=0.37 max=0.96
+RUN 54 PASS checks=44/44 exit=0 ms=11972
+  latency_ms all n=5685 p50=0.06 p99=4.47 max=30.02 | modal_open_one_off n=376 max=30.02 | modal_steady n=2903 p50=0.07 p99=0.42 max=8.05 max_run_gap=10.04 | idle n=455 p99=0.45 max=1.35
+RUN 55 PASS checks=44/44 exit=0 ms=11916
+  latency_ms all n=5677 p50=0.06 p99=4.95 max=32.45 | modal_open_one_off n=375 max=32.45 | modal_steady n=2894 p50=0.07 p99=0.48 max=7.52 max_run_gap=9.50 | idle n=456 p99=0.32 max=0.95
+RUN 56 PASS checks=44/44 exit=0 ms=12002
+  latency_ms all n=5717 p50=0.06 p99=4.75 max=30.19 | modal_open_one_off n=375 max=27.30 | modal_steady n=2934 p50=0.06 p99=0.45 max=9.14 max_run_gap=11.12 | idle n=456 p99=0.34 max=0.78
+RUN 57 PASS checks=44/44 exit=0 ms=11926
+  latency_ms all n=5653 p50=0.06 p99=6.88 max=35.05 | modal_open_one_off n=375 max=31.04 | modal_steady n=2871 p50=0.06 p99=0.40 max=8.51 max_run_gap=10.36 | idle n=455 p99=0.34 max=0.47
+RUN 58 PASS checks=44/44 exit=0 ms=11979
+  latency_ms all n=5705 p50=0.06 p99=4.74 max=28.60 | modal_open_one_off n=375 max=28.23 | modal_steady n=2922 p50=0.06 p99=0.41 max=8.72 max_run_gap=10.63 | idle n=456 p99=0.23 max=1.27
+RUN 59 PASS checks=44/44 exit=0 ms=11915
+  latency_ms all n=5672 p50=0.07 p99=4.61 max=28.76 | modal_open_one_off n=375 max=28.76 | modal_steady n=2889 p50=0.07 p99=0.48 max=8.34 max_run_gap=10.31 | idle n=456 p99=0.48 max=0.93
+RUN 60 PASS checks=44/44 exit=0 ms=11974
+  latency_ms all n=5695 p50=0.06 p99=6.31 max=32.42 | modal_open_one_off n=375 max=28.48 | modal_steady n=2913 p50=0.06 p99=0.39 max=7.56 max_run_gap=9.00 | idle n=456 p99=0.35 max=0.48
+
+--- run 01 checks (what is asserted) ---
+PASS S1 the real menu window appears [class='#32768' title='' appeared_after_ms=73 hwnd=12324812]
+PASS S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=2243125389792 children=5]
+PASS S1 modal dismissed by window-targeted input [method=msaa-accDoDefaultAction ]
+PASS S1 result event arrives after the dismissal [waited up to 10 s]
+PASS S2 the real menu window appears [class='#32768' title='' appeared_after_ms=1 hwnd=12390348]
+PASS S2 modal dismissed by window-targeted input [method=escape-to-menu-window ]
+PASS S2 result event arrives after the dismissal [waited up to 10 s]
+PASS S3 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=8 hwnd=12455884]
+PASS S3 modal dismissed by window-targeted input [method=TDM_CLICK_BUTTON id=101 ]
+PASS S3 result event arrives after the dismissal [waited up to 10 s]
+PASS S4 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=0 hwnd=38211166]
+PASS S4 modal dismissed by window-targeted input [method=escape-to-dialog-window ]
+PASS S4 result event arrives after the dismissal [waited up to 10 s]
+PASS S5 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=31723570]
+PASS S5 modal dismissed by window-targeted input [method=keys ]
+PASS S5 result event arrives after the dismissal [waited up to 10 s]
+PASS S6 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=0 hwnd=31789106]
+PASS S6 modal dismissed by window-targeted input [method=observe ]
+PASS S6 the window closes while its dialog is open, without a rescue [window_closed_logged=True rescued=False]
+PASS S6 no dialog window is left after the window closed [dialog_gone=True]
+PASS all 6 scenarios were requested and handled [handled=6]
+PASS host exited by itself with code 0 [exit=0 killed=]
+PASS host: startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS host: run returned ok [ok]
+PASS host: sequence ran without timeout [timed_out=false]
+PASS host: S1 menu-select: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=15 i1=4 choice=15/4 want=15/4 failed=false events=1 ticks_during=104]
+PASS host: S2 menu-escape: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=77]
+PASS host: S3 dialog-click: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=22 i1=1 choice=22/1 want=22/1 failed=false events=1 ticks_during=75]
+PASS host: S4 dialog-escape: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=76]
+PASS host: S5 menu-keys-queue-full: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=11 i1=0 choice=11/0 want=11/0 failed=false events=1 ticks_during=89]
+PASS host: S5 one pending request at a time: a second request in the same turn is SWR_E_QUEUE_FULL, the first still delivered [second=SWR_E_QUEUE_FULL first_result=true]
+PASS host: no result for an unknown id, no duplicate result [unknown=0 duplicate=0]
+PASS host: main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=740 S2=520 S3=518 S4=516 S5=613 (need >= 50 each), max pause between job runs incl. interval ends 11.28 ms (bound 100.00), producer enqueued=5936]
+PASS host: display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=104 S2=77 S3=75 S4=76 S5=89]
+PASS host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=0.35 ms n=3153]
+PASS host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=34.78 ms over 375 jobs in the first 150 ms of each modal]
+PASS host: job latency outside any modal within budget (idle p99 <= 16.7 ms) [p99=0.29 ms n=456]
+PASS host: S6 dialog open while the window closes: run returned, window_closed once, a late result (if any) was ignored [close_calls=1 late_results=1 order=result-after-close i0=0 i1=-1 failed=false]
+PASS host: requests from the post-close pump rejected: commit SWR_E_SHUTDOWN, menu/dialog/message SWR_E_STALE_HANDLE [commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE jobs_run_after_close=301]
+PASS host: no stale events, no thread violations or host panics [stale=0 thread_violations=0 host_panics=0]
+PASS host: live nodes zero after teardown [at cleanup=0 after run=0]
+PASS host: post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.61s after window_closed]
+PASS renderer logged one modal line per modal on path=posted [lines=6 (want 6) wrong_path=0 paths=posted]
+PASS renderer: the main queue was drained during every modal (drain_calls_during > 0) [id1001=wakes:945/drains:982/waker_none:False id1002=wakes:708/drains:757/waker_none:False id1003=wakes:702/drains:705/waker_none:False id1004=wakes:700/drains:703/waker_none:False id1005=wakes:808/drains:856/waker_none:False id1006=wakes:675/drains:670/waker_none:False]
+
+SUMMARY runs=60 pass=60 fail=0 checks_per_run=44
+MODAL_PATH expected=posted lines=360 (runs x 6 = 360) paths_seen=posted
+STALLS modals=360 stalled(drain_calls_during=0)=0 ticks_during=0:0 waker_none=true:6 stalled_with_waker_none=0 stalled_runs=0
+DRAIN_CALLS_DURING_MODAL min=660 (every modal needs > 0)
+LATENCY_ACROSS_RUNS (ms, per-run values)
+  modal_open_one_off max n=60 min=24.14 median=30.52 max=37.43
+  modal_steady p99 n=60 min=0.33 median=0.40 max=0.53
+  modal_steady max n=60 min=7.32 median=8.67 max=14.41
+  all-jobs max n=60 min=27.26 median=31.76 max=37.43
+  modal elapsed (renderer) n=360 min=1,214.24 median=1,274.40 max=1,727.35
+ROW7 MODAL PASS (60/60 runs)
+ended=2026-10-10T08:52:45.2703932+05:30

@@ -2,7 +2,7 @@
 # the stage dir:  win 'powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\sr0-geomodal\...\recycle-stage.ps1'  (copy it out first)
 param([string]$Path = 'D:\Claude\sr0-geomodal')
 $ErrorActionPreference = 'Stop'
-if ($Path -ne 'D:\Claude\sr0-geomodal') { throw 'refusing: only the geomodal stage dir' }
+if ($Path -notin 'D:\Claude\sr0-geomodal', 'D:\Claude\sr0-modalfix') { throw 'refusing: only the geomodal / modalfix stage dirs' }
 if ((Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like 'SR0GM-*' })) { throw 'a SR0GM scheduled task still exists' }
 if (-not (Test-Path $Path)) { 'stage dir already gone'; exit 0 }
 Get-ChildItem -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object { try { $_.Attributes = $_.Attributes -band (-bnot [System.IO.FileAttributes]::ReadOnly) } catch { } }

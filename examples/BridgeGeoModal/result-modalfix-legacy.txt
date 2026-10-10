@@ -1,0 +1,139 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T08:32:12.5659969+05:30 runs=30 hold_ms=1200
+ARTIFACTS Modal06.exe=9542f91ecbc3effa2c7ded5f3417de45d2dd6f135d0a289c61eae733d883a0f7 renderer=97ca28e84a58f0d3b44b5a6eaa8d7c912e673a07774123296c958e0d7ecca26b
+RUN 01 PASS checks=44/44 exit=0 ms=12299
+  latency_ms all n=5808 p50=0.06 p99=6.87 max=34.28 | modal_open_one_off n=375 max=34.28 | modal_steady n=3025 p50=0.06 p99=0.37 max=10.87 max_run_gap=12.72 | idle n=456 p99=0.40 max=0.57
+RUN 02 FAIL checks=38/44 exit=1 ms=11977
+  latency_ms all n=5695 p50=0.07 p99=1192.81 max=1304.77 | modal_open_one_off n=375 max=1304.77 | modal_steady n=2914 p50=0.07 p99=1096.82 max=1154.81 max_run_gap=1156.74 | idle n=455 p99=0.28 max=0.32
+  modal_trace id=1001 kind=menu path=spawn waker_none=true wakes_during=655 drain_calls_during=0 ticks_during=0 elapsed_ms=1,305.53 queued_ms=0.03 STALL
+  FAIL host exited by itself with code 0 [exit=1 killed=]
+  FAIL host: main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=0 S2=515 S3=514 S4=506 S5=603 (need >= 50 each), max pause between job runs incl. interval ends 1156.74 ms (bound 100.00), producer enqueued=5695]
+  FAIL host: display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=0 S2=77 S3=75 S4=75 S5=87]
+  FAIL host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1096.82 ms n=2914]
+  FAIL host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=1304.77 ms over 375 jobs in the first 150 ms of each modal]
+  FAIL renderer: the main queue was drained during every modal (drain_calls_during > 0) [id1001=wakes:655/drains:0/waker_none:True id1002=wakes:701/drains:729/waker_none:False id1003=wakes:698/drains:703/waker_none:False id1004=wakes:690/drains:710/waker_none:False id1005=wakes:796/drains:833/waker_none:False id1006=wakes:675/drains:667/waker_none:False]
+RUN 03 PASS checks=44/44 exit=0 ms=12013
+  latency_ms all n=5710 p50=0.06 p99=6.15 max=36.12 | modal_open_one_off n=375 max=32.96 | modal_steady n=2928 p50=0.07 p99=0.40 max=8.84 max_run_gap=10.77 | idle n=456 p99=0.37 max=0.57
+RUN 04 FAIL checks=38/44 exit=1 ms=12014
+  latency_ms all n=5697 p50=0.06 p99=1168.34 max=1280.32 | modal_open_one_off n=375 max=1280.32 | modal_steady n=2915 p50=0.07 p99=1072.35 max=1130.34 max_run_gap=1132.23 | idle n=455 p99=0.29 max=0.42
+  modal_trace id=1001 kind=menu path=spawn waker_none=true wakes_during=641 drain_calls_during=0 ticks_during=0 elapsed_ms=1,280.85 queued_ms=0.17 STALL
+  FAIL host exited by itself with code 0 [exit=1 killed=]
+  FAIL host: main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=0 S2=503 S3=521 S4=512 S5=615 (need >= 50 each), max pause between job runs incl. interval ends 1132.23 ms (bound 100.00), producer enqueued=5697]
+  FAIL host: display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=0 S2=76 S3=76 S4=75 S5=89]
+  FAIL host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1072.35 ms n=2915]
+  FAIL host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=1280.32 ms over 375 jobs in the first 150 ms of each modal]
+  FAIL renderer: the main queue was drained during every modal (drain_calls_during > 0) [id1001=wakes:641/drains:0/waker_none:True id1002=wakes:688/drains:709/waker_none:False id1003=wakes:705/drains:720/waker_none:False id1004=wakes:696/drains:719/waker_none:False id1005=wakes:808/drains:844/waker_none:False id1006=wakes:674/drains:679/waker_none:False]
+RUN 05 PASS checks=44/44 exit=0 ms=11902
+  latency_ms all n=5655 p50=0.06 p99=4.64 max=30.62 | modal_open_one_off n=375 max=30.62 | modal_steady n=2872 p50=0.06 p99=0.40 max=8.36 max_run_gap=10.34 | idle n=456 p99=0.33 max=0.38
+RUN 06 PASS checks=44/44 exit=0 ms=11916
+  latency_ms all n=5659 p50=0.06 p99=6.53 max=35.15 | modal_open_one_off n=375 max=35.15 | modal_steady n=2876 p50=0.06 p99=0.42 max=8.58 max_run_gap=10.52 | idle n=456 p99=0.33 max=1.86
+RUN 07 PASS checks=44/44 exit=0 ms=11943
+  latency_ms all n=5674 p50=0.06 p99=5.55 max=31.52 | modal_open_one_off n=375 max=31.02 | modal_steady n=2891 p50=0.05 p99=0.45 max=10.36 max_run_gap=12.31 | idle n=456 p99=0.34 max=0.76
+RUN 08 PASS checks=44/44 exit=0 ms=11970
+  latency_ms all n=5685 p50=0.04 p99=8.82 max=36.81 | modal_open_one_off n=375 max=34.55 | modal_steady n=2902 p50=0.05 p99=0.50 max=10.91 max_run_gap=12.85 | idle n=456 p99=0.26 max=0.46
+RUN 09 PASS checks=44/44 exit=0 ms=12051
+  latency_ms all n=5716 p50=0.03 p99=6.75 max=35.21 | modal_open_one_off n=375 max=32.98 | modal_steady n=2934 p50=0.04 p99=0.36 max=8.94 max_run_gap=10.87 | idle n=455 p99=0.36 max=0.88
+RUN 10 PASS checks=44/44 exit=0 ms=11951
+  latency_ms all n=5654 p50=0.03 p99=6.64 max=34.91 | modal_open_one_off n=374 max=34.91 | modal_steady n=2872 p50=0.04 p99=0.38 max=10.82 max_run_gap=12.75 | idle n=456 p99=0.29 max=1.07
+RUN 11 PASS checks=44/44 exit=0 ms=12025
+  latency_ms all n=5707 p50=0.04 p99=6.90 max=36.87 | modal_open_one_off n=375 max=34.47 | modal_steady n=2924 p50=0.04 p99=0.39 max=8.68 max_run_gap=10.48 | idle n=456 p99=0.39 max=0.59
+RUN 12 PASS checks=44/44 exit=0 ms=11943
+  latency_ms all n=5664 p50=0.04 p99=6.65 max=31.62 | modal_open_one_off n=375 max=31.62 | modal_steady n=2881 p50=0.04 p99=0.42 max=8.96 max_run_gap=10.76 | idle n=456 p99=0.38 max=0.51
+RUN 13 PASS checks=44/44 exit=0 ms=11960
+  latency_ms all n=5667 p50=0.06 p99=5.89 max=31.71 | modal_open_one_off n=375 max=31.28 | modal_steady n=2885 p50=0.05 p99=0.33 max=8.29 max_run_gap=10.22 | idle n=455 p99=0.40 max=0.67
+RUN 14 PASS checks=44/44 exit=0 ms=11989
+  latency_ms all n=5667 p50=0.06 p99=11.04 max=43.36 | modal_open_one_off n=375 max=43.36 | modal_steady n=2885 p50=0.06 p99=0.62 max=12.55 max_run_gap=14.35 | idle n=456 p99=0.40 max=0.60
+RUN 15 PASS checks=44/44 exit=0 ms=11961
+  latency_ms all n=5669 p50=0.10 p99=8.78 max=36.11 | modal_open_one_off n=375 max=36.11 | modal_steady n=2888 p50=0.11 p99=0.56 max=12.36 max_run_gap=14.27 | idle n=455 p99=0.37 max=0.51
+RUN 16 PASS checks=44/44 exit=0 ms=12652
+  latency_ms all n=5972 p50=0.10 p99=10.66 max=41.21 | modal_open_one_off n=375 max=41.21 | modal_steady n=3191 p50=0.10 p99=0.70 max=13.77 max_run_gap=15.59 | idle n=455 p99=0.47 max=0.70
+RUN 17 PASS checks=44/44 exit=0 ms=12007
+  latency_ms all n=5691 p50=0.07 p99=9.75 max=37.86 | modal_open_one_off n=375 max=37.27 | modal_steady n=2909 p50=0.08 p99=0.54 max=9.75 max_run_gap=11.67 | idle n=456 p99=0.31 max=0.53
+RUN 18 PASS checks=44/44 exit=0 ms=11948
+  latency_ms all n=5646 p50=0.06 p99=5.99 max=35.18 | modal_open_one_off n=375 max=35.18 | modal_steady n=2864 p50=0.06 p99=0.48 max=8.22 max_run_gap=10.17 | idle n=455 p99=0.35 max=0.56
+RUN 19 PASS checks=44/44 exit=0 ms=11994
+  latency_ms all n=5690 p50=0.07 p99=9.08 max=39.49 | modal_open_one_off n=375 max=39.49 | modal_steady n=2907 p50=0.08 p99=0.56 max=11.57 max_run_gap=13.53 | idle n=456 p99=0.27 max=0.47
+RUN 20 PASS checks=44/44 exit=0 ms=11902
+  latency_ms all n=5668 p50=0.06 p99=6.29 max=34.08 | modal_open_one_off n=375 max=27.46 | modal_steady n=2887 p50=0.06 p99=0.37 max=11.62 max_run_gap=13.56 | idle n=454 p99=0.28 max=0.41
+RUN 21 PASS checks=44/44 exit=0 ms=11973
+  latency_ms all n=5699 p50=0.06 p99=5.16 max=32.31 | modal_open_one_off n=375 max=32.14 | modal_steady n=2916 p50=0.06 p99=0.42 max=9.16 max_run_gap=11.14 | idle n=456 p99=0.29 max=0.48
+RUN 22 PASS checks=44/44 exit=0 ms=12002
+  latency_ms all n=5702 p50=0.06 p99=6.27 max=33.05 | modal_open_one_off n=375 max=31.64 | modal_steady n=2919 p50=0.07 p99=0.41 max=8.60 max_run_gap=10.44 | idle n=456 p99=0.23 max=0.42
+RUN 23 FAIL checks=42/44 exit=1 ms=11994
+  latency_ms all n=5715 p50=0.07 p99=12.48 max=56.91 | modal_open_one_off n=375 max=56.91 | modal_steady n=2932 p50=0.07 p99=0.51 max=15.44 max_run_gap=17.41 | idle n=456 p99=0.52 max=0.69
+  FAIL host exited by itself with code 0 [exit=1 killed=]
+  FAIL host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=56.91 ms over 375 jobs in the first 150 ms of each modal]
+RUN 24 PASS checks=44/44 exit=0 ms=11868
+  latency_ms all n=5653 p50=0.06 p99=6.77 max=38.82 | modal_open_one_off n=375 max=32.11 | modal_steady n=2870 p50=0.07 p99=0.46 max=12.77 max_run_gap=14.67 | idle n=456 p99=0.27 max=0.42
+RUN 25 PASS checks=44/44 exit=0 ms=11961
+  latency_ms all n=5665 p50=0.06 p99=8.72 max=35.90 | modal_open_one_off n=375 max=35.90 | modal_steady n=2883 p50=0.06 p99=0.42 max=11.98 max_run_gap=13.95 | idle n=456 p99=0.40 max=2.25
+RUN 26 PASS checks=44/44 exit=0 ms=11924
+  latency_ms all n=5680 p50=0.06 p99=6.28 max=32.60 | modal_open_one_off n=375 max=30.85 | modal_steady n=2897 p50=0.06 p99=0.55 max=10.27 max_run_gap=11.44 | idle n=456 p99=0.27 max=0.44
+RUN 27 PASS checks=44/44 exit=0 ms=11920
+  latency_ms all n=5679 p50=0.06 p99=5.20 max=31.65 | modal_open_one_off n=375 max=31.65 | modal_steady n=2896 p50=0.06 p99=0.40 max=8.49 max_run_gap=10.48 | idle n=456 p99=0.35 max=0.40
+RUN 28 PASS checks=44/44 exit=0 ms=11934
+  latency_ms all n=5682 p50=0.06 p99=8.59 max=41.05 | modal_open_one_off n=375 max=41.05 | modal_steady n=2899 p50=0.06 p99=0.44 max=9.33 max_run_gap=11.19 | idle n=456 p99=0.21 max=0.40
+RUN 29 PASS checks=44/44 exit=0 ms=11984
+  latency_ms all n=5698 p50=0.06 p99=6.15 max=32.12 | modal_open_one_off n=375 max=31.81 | modal_steady n=2914 p50=0.06 p99=0.45 max=10.66 max_run_gap=12.46 | idle n=457 p99=0.28 max=0.87
+RUN 30 PASS checks=44/44 exit=0 ms=11960
+  latency_ms all n=5667 p50=0.03 p99=6.61 max=35.33 | modal_open_one_off n=375 max=32.36 | modal_steady n=2884 p50=0.03 p99=0.39 max=9.66 max_run_gap=11.61 | idle n=456 p99=0.33 max=0.49
+
+--- run 01 checks (what is asserted) ---
+PASS S1 the real menu window appears [class='#32768' title='' appeared_after_ms=21 hwnd=35719614]
+PASS S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1878996353648 children=5]
+PASS S1 modal dismissed by window-targeted input [method=msaa-accDoDefaultAction ]
+PASS S1 result event arrives after the dismissal [waited up to 10 s]
+PASS S2 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=35785150]
+PASS S2 modal dismissed by window-targeted input [method=escape-to-menu-window ]
+PASS S2 result event arrives after the dismissal [waited up to 10 s]
+PASS S3 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=52 hwnd=35850686]
+PASS S3 modal dismissed by window-targeted input [method=TDM_CLICK_BUTTON id=101 ]
+PASS S3 result event arrives after the dismissal [waited up to 10 s]
+PASS S4 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=41 hwnd=25694258]
+PASS S4 modal dismissed by window-targeted input [method=escape-to-dialog-window ]
+PASS S4 result event arrives after the dismissal [waited up to 10 s]
+PASS S5 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=7802518]
+PASS S5 modal dismissed by window-targeted input [method=keys ]
+PASS S5 result event arrives after the dismissal [waited up to 10 s]
+PASS S6 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=28 hwnd=7868054]
+PASS S6 modal dismissed by window-targeted input [method=observe ]
+PASS S6 the window closes while its dialog is open, without a rescue [window_closed_logged=True rescued=False]
+PASS S6 no dialog window is left after the window closed [dialog_gone=True]
+PASS all 6 scenarios were requested and handled [handled=6]
+PASS host exited by itself with code 0 [exit=0 killed=]
+PASS host: startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS host: run returned ok [ok]
+PASS host: sequence ran without timeout [timed_out=false]
+PASS host: S1 menu-select: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=15 i1=4 choice=15/4 want=15/4 failed=false events=1 ticks_during=89]
+PASS host: S2 menu-escape: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=77]
+PASS host: S3 dialog-click: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=22 i1=1 choice=22/1 want=22/1 failed=false events=1 ticks_during=75]
+PASS host: S4 dialog-escape: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=75]
+PASS host: S5 menu-keys-queue-full: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=11 i1=0 choice=11/0 want=11/0 failed=false events=1 ticks_during=88]
+PASS host: S5 one pending request at a time: a second request in the same turn is SWR_E_QUEUE_FULL, the first still delivered [second=SWR_E_QUEUE_FULL first_result=true]
+PASS host: no result for an unknown id, no duplicate result [unknown=0 duplicate=0]
+PASS host: main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause [jobs run in [request+150 ms, result-100 ms] per scenario S1=619 S2=523 S3=520 S4=512 S5=604 (need >= 50 each), max pause between job runs incl. interval ends 12.72 ms (bound 100.00), producer enqueued=5808]
+PASS host: display ticks keep arriving while a modal is open (ticks_during > 0 in every modal) [ticks_during S1=89 S2=77 S3=75 S4=75 S5=88]
+PASS host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=0.37 ms n=3025]
+PASS host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=34.28 ms over 375 jobs in the first 150 ms of each modal]
+PASS host: job latency outside any modal within budget (idle p99 <= 16.7 ms) [p99=0.40 ms n=456]
+PASS host: S6 dialog open while the window closes: run returned, window_closed once, a late result (if any) was ignored [close_calls=1 late_results=1 order=result-after-close i0=0 i1=-1 failed=false]
+PASS host: requests from the post-close pump rejected: commit SWR_E_SHUTDOWN, menu/dialog/message SWR_E_STALE_HANDLE [commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE jobs_run_after_close=301]
+PASS host: no stale events, no thread violations or host panics [stale=0 thread_violations=0 host_panics=0]
+PASS host: live nodes zero after teardown [at cleanup=0 after run=0]
+PASS host: post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.60s after window_closed]
+PASS renderer logged one modal line per modal on path=spawn [lines=6 (want 6) wrong_path=0 paths=spawn]
+PASS renderer: the main queue was drained during every modal (drain_calls_during > 0) [id1001=wakes:809/drains:846/waker_none:False id1002=wakes:709/drains:743/waker_none:False id1003=wakes:704/drains:719/waker_none:False id1004=wakes:697/drains:702/waker_none:False id1005=wakes:797/drains:839/waker_none:False id1006=wakes:675/drains:681/waker_none:False]
+
+SUMMARY runs=30 pass=27 fail=3 checks_per_run=44
+MODAL_PATH expected=spawn lines=180 (runs x 6 = 180) paths_seen=spawn
+STALLS modals=180 stalled(drain_calls_during=0)=2 ticks_during=0:2 waker_none=true:2 stalled_with_waker_none=2 stalled_runs=2
+  STALL id=1001 kind=menu path=spawn waker_none=true wakes_during=655 drain_calls_during=0 ticks_during=0 elapsed_ms=1,305.53
+  STALL id=1001 kind=menu path=spawn waker_none=true wakes_during=641 drain_calls_during=0 ticks_during=0 elapsed_ms=1,280.85
+DRAIN_CALLS_DURING_MODAL min=0 (every modal needs > 0)
+LATENCY_ACROSS_RUNS (ms, per-run values)
+  modal_open_one_off max n=30 min=27.46 median=34.38 max=1,304.77
+  modal_steady p99 n=30 min=0.33 median=0.43 max=1,096.82
+  modal_steady max n=30 min=8.22 median=10.32 max=1,154.81
+  all-jobs max n=30 min=30.62 median=35.27 max=1,304.77
+  modal elapsed (renderer) n=180 min=1,211.32 median=1,274.05 max=1,886.09
+ROW7 MODAL FAIL (27/30 runs)
+ended=2026-10-10T08:38:58.4612891+05:30

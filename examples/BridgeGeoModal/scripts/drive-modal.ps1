@@ -9,6 +9,10 @@
 #   dialog-escape           PostMessage WM_KEYDOWN VK_ESCAPE to the dialog window (falls back to WM_CLOSE)
 #   dialog-observe          nothing: the host closes its window while the dialog is open (rescued if it never returns)
 # No global input is ever sent.
+# Modal-stall A/B (render/swiftright-render/README.md): the renderer logs one "[swiftright-render] modal id=... path=... waker_none=...
+# wakes_during=... drain_calls_during=..." line per modal on stderr. This driver parses them (stderr.log of each run), asserts one line
+# per modal on the expected path (posted by default, spawn with -LegacySpawn = SWR_MODAL_LEGACY_SPAWN=1) and that the main queue was
+# drained during every modal (drain_calls_during > 0), and ends the result file with the stall counts and latency min/median/max.
 param(
   [string]$Base = 'D:\Claude\sr0-geomodal',
   [string]$Bin = '',
@@ -16,13 +20,15 @@ param(
   [string]$Result = '',
   [int]$Runs = 20,
   [int]$HoldMs = 1200,
+  [switch]$LegacySpawn,
   [switch]$DryRun
 )
 . (Join-Path $PSScriptRoot 'common.ps1')
 if (-not $Bin) { $Bin = Join-Path $Base 'bin' }
-if (-not $OutDir) { $OutDir = Join-Path $Base 'out\modal' }
+if (-not $OutDir) { $OutDir = Join-Path $Base $(if ($LegacySpawn) { 'out\modal-legacy' } else { 'out\modal' }) }
 if (-not $Result) { $Result = Join-Path $Base 'result-modal06final.txt' }
 
+$ExpectPath = if ($LegacySpawn) { 'spawn' } else { 'posted' }
 $WM_KEYDOWN = 0x0100; $WM_KEYUP = 0x0101; $WM_CLOSE = 0x0010; $TDM_CLICK_BUTTON = 0x0466
 $VK_RETURN = 0x0D; $VK_ESCAPE = 0x1B; $VK_DOWN = 0x28
 
@@ -60,6 +66,47 @@ function Any-Dialog([uint32]$ProcId) {
   return [IntPtr]::Zero
 }
 
+# The Modal06 S1 menu: Open, Save (checked), separator, Delete (disabled), Quit. Every count goes through @(...): in Windows PowerShell 5.1
+# a single matching object has no usable .Count (this check failed 20 of 20 in the previous run). -DryRun tests it on the items that run printed.
+function Test-MenuContent($Items) {
+  $a = @($Items)
+  $del = @($a | Where-Object { $_.Name -like 'Delete*' } | Select-Object -First 1)
+  $sav = @($a | Where-Object { $_.Name -like 'Save*' } | Select-Object -First 1)
+  if ($a.Count -ne 5 -or $del.Count -ne 1 -or $sav.Count -ne 1) { return $false }
+  return ((-not $del[0].Enabled) -and [bool]$sav[0].Checked -and (@($a | Where-Object { $_.Name -like 'Quit*' -and $_.Enabled }).Count -eq 1) -and (@($a | Where-Object { $_.Name -like 'Open*' -and $_.Enabled }).Count -eq 1))
+}
+
+# Renderer modal log lines (stderr): one per modal.
+$script:ModalLineRe = '(?m)^\[swiftright-render\] modal id=(\d+) kind=(\w+) path=(\w+) waker_none=(\w+) queued_ms=([-\d.]+) elapsed_ms=([-\d.]+) wakes_during=(\d+) drain_calls_during=(\d+) i0=(-?\d+) i1=(-?\d+)\r?$'
+function Read-ModalLines([string]$Text) {
+  $out = @()
+  foreach ($m in [regex]::Matches($Text, $script:ModalLineRe)) {
+    $out += [pscustomobject]@{ Id = [int]$m.Groups[1].Value; Kind = $m.Groups[2].Value; Path = $m.Groups[3].Value; WakerNone = ($m.Groups[4].Value -eq 'true')
+      QueuedMs = [double]$m.Groups[5].Value; ElapsedMs = [double]$m.Groups[6].Value; Wakes = [int64]$m.Groups[7].Value; Drains = [int64]$m.Groups[8].Value }
+  }
+  return $out
+}
+
+# The host's own view of one modal: "MODAL id=1003 result ... ticks_during=0".
+function Read-TicksDuring([string]$Text) {
+  $h = @{}
+  foreach ($m in [regex]::Matches($Text, '(?m)^MODAL id=(\d+) result tag=\w+ .*? ticks_during=(\d+)')) { $h[[int]$m.Groups[1].Value] = [int]$m.Groups[2].Value }
+  return $h
+}
+
+function Get-Median([double[]]$Xs) {
+  if (-not $Xs -or $Xs.Count -eq 0) { return [double]::NaN }
+  $s = @($Xs | Sort-Object); $n = $s.Count
+  if ($n % 2 -eq 1) { return $s[($n - 1) / 2] }
+  return ($s[$n / 2 - 1] + $s[$n / 2]) / 2
+}
+
+function Fmt-Stat([string]$Name, [double[]]$Xs) {
+  if (-not $Xs -or $Xs.Count -eq 0) { return "$Name n=0" }
+  $mn = ($Xs | Measure-Object -Minimum).Minimum; $mx = ($Xs | Measure-Object -Maximum).Maximum
+  return ('{0} n={1} min={2:N2} median={3:N2} max={4:N2}' -f $Name, $Xs.Count, $mn, (Get-Median $Xs), $mx)
+}
+
 function Wait-Gone([scriptblock]$Probe, [double]$Seconds) {
   $sw = [Diagnostics.Stopwatch]::StartNew()
   while ($sw.Elapsed.TotalSeconds -lt $Seconds) { if ((& $Probe) -eq [IntPtr]::Zero) { return $true }; Start-Sleep -Milliseconds 40 }
@@ -92,7 +139,7 @@ function Invoke-Scenario([string]$logPath, [uint32]$ProcId, [IntPtr]$Main, [int]
       $names = ($items | ForEach-Object { "$($_.Name)$(if (-not $_.Enabled) { '(disabled)' })$(if ($_.Checked) { '(checked)' })[role$($_.Role)]" }) -join ','
       $del = $items | Where-Object { $_.Name -like 'Delete*' } | Select-Object -First 1
       $sav = $items | Where-Object { $_.Name -like 'Save*' } | Select-Object -First 1
-      $contentOk = ($items.Count -eq 5) -and ($del -ne $null) -and (-not $del.Enabled) -and ($sav -ne $null) -and $sav.Checked -and (@($items | Where-Object { $_.Name -like 'Quit*' -and $_.Enabled }).Count -eq 1) -and (@($items | Where-Object { $_.Name -like 'Open*' -and $_.Enabled }).Count -eq 1)
+      $contentOk = Test-MenuContent $items
       Add-Check "$tag menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit)" $contentOk "items=[$names] $($ms.Debug)"
       $target = $items | Where-Object { $_.Name -like "$want*" } | Select-Object -First 1
       $done = $false
@@ -164,7 +211,9 @@ function Invoke-ModalRun([int]$n) {
   $hp = $null
   $total = [Diagnostics.Stopwatch]::StartNew()
   try {
-    $hp = Start-Host (Join-Path $Bin 'Modal06.exe') $Bin @{ SWR_GM_LOG = $logPath; SWR_GM_TIMEOUT = '80' }
+    $envVars = @{ SWR_GM_LOG = $logPath; SWR_GM_TIMEOUT = '80' }
+    if ($LegacySpawn) { $envVars['SWR_MODAL_LEGACY_SPAWN'] = '1' }
+    $hp = Start-Host (Join-Path $Bin 'Modal06.exe') $Bin $envVars
     $proc = $hp.Proc
     $main = Wait-MainWindow $proc 30
     $info.hwnd = $main.ToInt64()
@@ -192,6 +241,16 @@ function Invoke-ModalRun([int]$n) {
     Add-Check 'host exited by itself with code 0' (($proc.ExitCode -eq 0) -and (-not $info.killed)) "exit=$($proc.ExitCode) killed=$($info.killed)"
     foreach ($hm in [regex]::Matches($done, '(?m)^HC (PASS|FAIL) (.*?) \[(.*)\]\r?$')) { Add-Check ('host: ' + $hm.Groups[2].Value) ($hm.Groups[1].Value -eq 'PASS') $hm.Groups[3].Value }
     $lat = [regex]::Match($done, '(?m)^LATENCY_MS (.*?)\r?$'); if ($lat.Success) { $info.latency = $lat.Groups[1].Value }
+    # the renderer's per-modal log (stderr; the process has exited, so the pipe is complete)
+    $errText = ''
+    try { $errText = [string]$hp.Err.Result } catch { }
+    $ml = @(Read-ModalLines $errText)
+    $ticks = Read-TicksDuring $done
+    $info.modals = @($ml | ForEach-Object { [pscustomobject]@{ id = $_.Id; kind = $_.Kind; path = $_.Path; waker_none = $_.WakerNone; queued_ms = $_.QueuedMs; elapsed_ms = $_.ElapsedMs; wakes_during = $_.Wakes; drain_calls_during = $_.Drains; ticks_during = $(if ($ticks.ContainsKey($_.Id)) { $ticks[$_.Id] } else { -1 }) } })
+    $wrong = @($ml | Where-Object { $_.Path -ne $script:ExpectPath })
+    Add-Check "renderer logged one modal line per modal on path=$($script:ExpectPath)" (($ml.Count -eq 6) -and ($wrong.Count -eq 0)) ("lines=$($ml.Count) (want 6) wrong_path=$($wrong.Count) paths=" + ((@($ml | ForEach-Object { $_.Path }) | Sort-Object -Unique) -join ','))
+    $starved = @($ml | Where-Object { $_.Drains -le 0 })
+    Add-Check 'renderer: the main queue was drained during every modal (drain_calls_during > 0)' (($ml.Count -gt 0) -and ($starved.Count -eq 0)) ((@($ml | ForEach-Object { "id$($_.Id)=wakes:$($_.Wakes)/drains:$($_.Drains)/waker_none:$($_.WakerNone)" })) -join ' ')
   } catch {
     Add-Check 'run completed without exception' $false ($_.Exception.Message + ' @ ' + $_.InvocationInfo.ScriptLineNumber)
   } finally {
@@ -220,6 +279,22 @@ if ($DryRun) {
   if ((Find-Modal ([uint32]$PID) ([IntPtr]::Zero) 'dialog') -ne [IntPtr]::Zero) { $fails += 'Find-Modal(dialog) found something in the driver process' }
   $dm = [regex]::Match('MODAL id=1001 request tag=S1 name=menu-select kind=menu rc=SWR_OK dismiss=menu-select:4:Quit title= at_ms=1.00', '(?m)^MODAL id=(\d+) request tag=(\w+) name=(\S+) kind=(\w+) rc=(\S+) dismiss=(\S+) ')
   if (-not $dm.Success -or $dm.Groups[6].Value -ne 'menu-select:4:Quit') { $fails += 'request line regex' }
+  # menu content check, on the exact items the first Modal06 run printed (they were rejected by the pre-fix check)
+  $mk = { param($n, $st) [pscustomobject]@{ Index = 1; Name = $n; State = $st; Role = 12; Enabled = (($st -band 1) -eq 0); Checked = (($st -band 0x10) -ne 0) } }
+  $good = @((& $mk 'Open' 0), (& $mk 'Save' 0x10), (& $mk '' 1), (& $mk 'Delete' 1), (& $mk 'Quit' 0))
+  if (-not (Test-MenuContent $good)) { $fails += 'Test-MenuContent rejects the observed good menu' }
+  if (Test-MenuContent @($good[0..3])) { $fails += 'Test-MenuContent accepts a menu with 4 items' }
+  if (Test-MenuContent @((& $mk 'Open' 0), (& $mk 'Save' 0), (& $mk '' 1), (& $mk 'Delete' 1), (& $mk 'Quit' 0))) { $fails += 'Test-MenuContent accepts an unchecked Save' }
+  if (Test-MenuContent (& $mk 'Open' 0)) { $fails += 'Test-MenuContent accepts a single object' }
+  # renderer modal-line parser and the stall classification
+  $okLine = '[swiftright-render] modal id=1003 kind=dialog path=spawn waker_none=true queued_ms=1.25 elapsed_ms=1252.93 wakes_during=611 drain_calls_during=0 i0=22 i1=1'
+  $okLine2 = '[swiftright-render] modal id=1001 kind=menu path=posted waker_none=false queued_ms=0.40 elapsed_ms=1272.19 wakes_during=640 drain_calls_during=1500 i0=15 i1=4'
+  $pl = @(Read-ModalLines ($okLine + "`r`n" + $okLine2 + "`r`n"))
+  if ($pl.Count -ne 2) { $fails += "Read-ModalLines count $($pl.Count)" }
+  elseif (-not ($pl[0].Id -eq 1003 -and $pl[0].Path -eq 'spawn' -and $pl[0].WakerNone -and $pl[0].Drains -eq 0 -and $pl[0].Wakes -eq 611 -and $pl[1].Drains -eq 1500 -and -not $pl[1].WakerNone)) { $fails += 'Read-ModalLines fields' }
+  $tk = Read-TicksDuring "MODAL id=1003 result tag=S3 action=3 i0=22 i1=1 choice=22/1 failed=false elapsed_ms=1252.93 ticks_during=0 at_ms=6025.36`r`n"
+  if ($tk[1003] -ne 0) { $fails += 'Read-TicksDuring' }
+  if ((Get-Median @(3.0, 1.0, 2.0)) -ne 2 -or (Get-Median @(4.0, 1.0, 2.0, 3.0)) -ne 2.5) { $fails += 'Get-Median' }
   $parse = Test-ParseFile $PSCommandPath
   if ($parse.Count -ne 0) { $fails += "parse errors: $($parse.Count)" }
   foreach ($f in $fails) { Write-Output "DRYRUN FAIL $f" }
@@ -239,6 +314,11 @@ for ($n = 1; $n -le $Runs; $n++) {
   $results += $r
   Log ("RUN {0:D2} {1} checks={2}/{3} exit={4} ms={5}" -f $n, $(if ($r.Pass) { 'PASS' } else { 'FAIL' }), ($r.Total - $r.Failed.Count), $r.Total, $r.Info.exitCode, $r.Info.ms)
   if ($r.Info.latency) { Log ("  latency_ms {0}" -f $r.Info.latency) }
+  foreach ($m in @($r.Info.modals | Where-Object { $_ -ne $null })) {
+    if ($m.drain_calls_during -le 0 -or $m.ticks_during -eq 0 -or $m.waker_none) {
+      Log ("  modal_trace id={0} kind={1} path={2} waker_none={3} wakes_during={4} drain_calls_during={5} ticks_during={6} elapsed_ms={7:N2} queued_ms={8:N2}{9}" -f $m.id, $m.kind, $m.path, $m.waker_none.ToString().ToLower(), $m.wakes_during, $m.drain_calls_during, $m.ticks_during, $m.elapsed_ms, $m.queued_ms, $(if ($m.drain_calls_during -le 0) { ' STALL' } else { '' }))
+    }
+  }
   foreach ($f in $r.Failed) { $d = [string]$f.detail; if ($d.Length -gt 700) { $d = $d.Substring(0, 700) + '...' }; Log ("  FAIL {0} [{1}]" -f $f.name, $d) }
   [System.IO.File]::WriteAllText($Result, [string]::Join("`r`n", $lines) + "`r`n", (New-Object System.Text.UTF8Encoding($false)))
   Start-Sleep -Milliseconds 1500
@@ -249,6 +329,25 @@ Log "--- run 01 checks (what is asserted) ---"
 if ($results.Count -gt 0) { foreach ($c in $results[0].Checks) { $d = [string]$c.detail; if ($d.Length -gt 300) { $d = $d.Substring(0, 300) + '...' }; Log ("{0} {1} [{2}]" -f $c.status, $c.name, $d) } }
 Log ''
 Log ("SUMMARY runs={0} pass={1} fail={2} checks_per_run={3}" -f $Runs, $pass, ($Runs - $pass), $(if ($results.Count -gt 0) { $results[0].Total } else { 0 }))
+$all = @($results | ForEach-Object { $_.Info.modals } | Where-Object { $_ -ne $null })
+$stalled = @($all | Where-Object { $_.drain_calls_during -le 0 })
+$noTicks = @($all | Where-Object { $_.ticks_during -eq 0 })
+$wn = @($all | Where-Object { $_.waker_none })
+Log ("MODAL_PATH expected={0} lines={1} (runs x 6 = {2}) paths_seen={3}" -f $ExpectPath, $all.Count, ($Runs * 6), ((@($all | ForEach-Object { $_.path }) | Sort-Object -Unique) -join ','))
+Log ("STALLS modals={0} stalled(drain_calls_during=0)={1} ticks_during=0:{2} waker_none=true:{3} stalled_with_waker_none={4} stalled_runs={5}" -f $all.Count, $stalled.Count, $noTicks.Count, $wn.Count, @($stalled | Where-Object { $_.waker_none }).Count, @($results | Where-Object { @($_.Info.modals | Where-Object { $_.drain_calls_during -le 0 }).Count -gt 0 } | ForEach-Object { $_.Run }).Count)
+foreach ($m in $stalled) { Log ("  STALL id={0} kind={1} path={2} waker_none={3} wakes_during={4} drain_calls_during={5} ticks_during={6} elapsed_ms={7:N2}" -f $m.id, $m.kind, $m.path, $m.waker_none.ToString().ToLower(), $m.wakes_during, $m.drain_calls_during, $m.ticks_during, $m.elapsed_ms) }
+if ($all.Count -gt 0) {
+  $minDrain = ($all | ForEach-Object { $_.drain_calls_during } | Measure-Object -Minimum).Minimum
+  Log ("DRAIN_CALLS_DURING_MODAL min={0} (every modal needs > 0)" -f $minDrain)
+}
+# latency across runs: per run, the host's LATENCY_MS line (ms)
+$getv = { param($pat) @($results | ForEach-Object { $m = [regex]::Match([string]$_.Info.latency, $pat); if ($m.Success) { [double]$m.Groups[1].Value } }) }
+Log ('LATENCY_ACROSS_RUNS (ms, per-run values)')
+Log ('  ' + (Fmt-Stat 'modal_open_one_off max' (& $getv 'modal_open_one_off n=\d+ max=([-\d.]+)')))
+Log ('  ' + (Fmt-Stat 'modal_steady p99' (& $getv 'modal_steady n=\d+ p50=[-\d.]+ p99=([-\d.]+)')))
+Log ('  ' + (Fmt-Stat 'modal_steady max' (& $getv 'modal_steady n=\d+ p50=[-\d.]+ p99=[-\d.]+ max=([-\d.]+)')))
+Log ('  ' + (Fmt-Stat 'all-jobs max' (& $getv '^all n=\d+ p50=[-\d.]+ p99=[-\d.]+ max=([-\d.]+)')))
+Log ('  ' + (Fmt-Stat 'modal elapsed (renderer)' (@($all | ForEach-Object { [double]$_.elapsed_ms }))))
 Log "ROW7 MODAL $(if ($pass -eq $Runs) { 'PASS' } else { 'FAIL' }) ($pass/$Runs runs)"
 Log "ended=$(Get-Date -Format o)"
 [System.IO.File]::WriteAllText($Result, [string]::Join("`r`n", $lines) + "`r`n", (New-Object System.Text.UTF8Encoding($false)))

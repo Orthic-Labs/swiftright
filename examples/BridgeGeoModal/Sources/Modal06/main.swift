@@ -12,7 +12,9 @@ import WinSDK
 //     (or the dismissed marker i0 = 0, i1 = -1);
 //   * the main loop keeps pumping while the modal is open: a producer thread posts jobs to the main dispatch queue at
 //     ~500 Hz for the whole run; their latency during the modal stays within the frame budget (probe modal-loop run 8:
-//     steady p99 <= 16.7 ms; the one-off cost of opening the dialog <= 50 ms);
+//     steady p99 <= 16.7 ms; the one-off cost of opening the dialog <= 50 ms). Jobs are counted by the time they RAN (a
+//     stalled queue still accepts jobs and flushes them after the modal returns), pauses between runs include the interval's
+//     ends, and display ticks must keep arriving (ticks_during > 0);
 //   * one pending request at a time (a second request in the same turn is SWR_E_QUEUE_FULL);
 //   * late dispatch is safe: closing the window while a dialog is open (the result, if it still arrives, is ignored by
 //     the host), and menu/dialog/message/commit requests made from the post-close pump are rejected with typed errors.
@@ -27,6 +29,7 @@ let dryRun = env["SWR_GM_DRYRUN"] == "1"
 let timeoutSeconds = Double(env["SWR_GM_TIMEOUT"] ?? "") ?? 90
 let openBoundMs = Double(env["SWR_GM_OPEN_BOUND_MS"] ?? "") ?? 50      // one-off cost of opening a modal (modal-loop run 8 bound)
 let budgetMs = Double(env["SWR_GM_BUDGET_MS"] ?? "") ?? 16.7            // one frame at 60 Hz
+let gapBoundMs = Double(env["SWR_GM_GAP_BOUND_MS"] ?? "") ?? 100        // longest allowed pause between job RUNS inside a modal interval (healthy runs: ~10 ms)
 
 // MARK: log and clock
 
@@ -112,6 +115,30 @@ let timers = Timers()
 struct JobRecord { let enq: UInt64; let ran: UInt64; let late: Bool }
 
 var jobs: [JobRecord] = []                 // appended on the main (UI) thread only
+
+/// How well the main queue pumped during one modal interval [req, res] (pure; self-tested in the dry run).
+/// Jobs are counted by the time they RAN, not the time they were enqueued: a stalled queue keeps accepting jobs (all of them
+/// "enqueued during the modal") and runs them in one burst right after the modal returns, just before the result is delivered.
+/// The last 100 ms of the interval are therefore left out of the count, and the pauses between runs include the interval's own
+/// ends [req + 150 ms ... res], so a stall of the whole modal shows as one pause as long as the stall.
+func pumpStats(_ jobs: [JobRecord], req: UInt64, res: UInt64) -> (count: Int, maxGapMs: Double) {
+    let steadyStart = req + 150_000_000
+    let steadyEnd = res > 100_000_000 ? res - 100_000_000 : res
+    var ran: [UInt64] = []
+    var n = 0
+    for j in jobs {
+        if j.ran >= steadyStart && j.ran <= res { ran.append(j.ran) }
+        if j.ran >= steadyStart && j.ran <= steadyEnd { n += 1 }
+    }
+    ran.sort()
+    var prev = steadyStart
+    var gap = 0.0
+    for r in ran + [res] {
+        if r >= prev { gap = max(gap, Double(r - prev) / 1e6) }
+        prev = r
+    }
+    return (n, gap)
+}
 var jobsAfterClose = 0
 var hostClosed = false                      // main thread only
 
@@ -232,6 +259,19 @@ func selfTestPureLogic() -> Bool {
         if sc.kind == .dialog && sc.defaultIndex >= sc.items.count { fails.append("\(sc.tag) default index") }
     }
     if let s1 = scenarios.first, s1.items[s1.expectIndex].text != "Quit" { fails.append("S1 index/text mismatch") }
+    // pumping gate: a healthy modal (jobs run ~0.1 ms after they are enqueued, 500 Hz, 1.25 s) passes; the stalls of Modal06 runs 15 and 20 (jobs
+    // keep being enqueued, all run in one burst 5 ms before the result) fails by run time even though ~550 were ENQUEUED in the interval
+    let base: UInt64 = 10_000_000_000
+    let req = base, res = base + 1_250_000_000
+    var healthy: [JobRecord] = [], stalled: [JobRecord] = []
+    var t = base
+    while t < res { healthy.append(JobRecord(enq: t, ran: t + 100_000, late: false)); stalled.append(JobRecord(enq: t, ran: res - 5_000_000, late: false)); t += 2_000_000 }
+    let h = pumpStats(healthy, req: req, res: res), st = pumpStats(stalled, req: req, res: res)
+    if !(h.count >= 50 && h.maxGapMs <= gapBoundMs) { fails.append("pumpStats rejects a healthy modal count=\(h.count) gap=\(fms(h.maxGapMs))") }
+    if st.count >= 50 || st.maxGapMs <= gapBoundMs { fails.append("pumpStats accepts the stalled modal count=\(st.count) gap=\(fms(st.maxGapMs))") }
+    let enqCount = stalled.filter { $0.enq >= req + 150_000_000 && $0.enq < res }.count
+    if enqCount < 50 { fails.append("stalled model is not the old defect (enqueue-time count \(enqCount))") }
+    glog("DRYRUN pumpStats healthy count=\(h.count) gap_ms=\(fms(h.maxGapMs)) | stalled count=\(st.count) gap_ms=\(fms(st.maxGapMs)) (enqueue-time count would have been \(enqCount))")
     let t0 = nowNs(); napShort(); let t1 = nowNs()
     if t1 < t0 { fails.append("clock not monotonic") }
     for f in fails { glog("DRYRUN logic FAIL \(f)") }
@@ -489,17 +529,14 @@ final class ModalHost {
             let res = o.atNs
             intervals.append((req, res))
             let steadyStart = req + 150_000_000
-            var ran: [UInt64] = []
-            var n = 0
             for j in jobs {
                 let lat = ms(j.ran - j.enq)
                 if j.enq >= req && j.enq < steadyStart { openLat.append(lat) }
-                else if j.enq >= steadyStart && j.enq < res { steadyLat.append(lat); n += 1 }
-                if j.ran >= steadyStart && j.ran <= res { ran.append(j.ran) }
+                else if j.enq >= steadyStart && j.enq < res { steadyLat.append(lat) }
             }
-            ran.sort()
-            for (a, c) in zip(ran, ran.dropFirst()) { maxRunGapMs = max(maxRunGapMs, ms(c - a)) }
-            perScenarioSteady.append((sc.tag, n))
+            let ps = pumpStats(jobs, req: req, res: res)
+            maxRunGapMs = max(maxRunGapMs, ps.maxGapMs)
+            perScenarioSteady.append((sc.tag, ps.count))
         }
         let idleFrom = readyNs + 500_000_000
         let idleTo = (requestAt[scenarios[scenarios.count - 1].id] ?? UInt64.max) - 100_000_000
@@ -512,8 +549,11 @@ final class ModalHost {
         let idleP99 = percentile(idleLat, 0.99)
         glog("LATENCY_MS all n=\(allLat.count) p50=\(fms(percentile(allLat, 0.5))) p99=\(fms(percentile(allLat, 0.99))) max=\(fms(allLat.max() ?? -1)) | modal_open_one_off n=\(openLat.count) max=\(fms(openMax)) | modal_steady n=\(steadyLat.count) p50=\(fms(percentile(steadyLat, 0.5))) p99=\(fms(steadyP99)) max=\(fms(steadyLat.max() ?? -1)) max_run_gap=\(fms(maxRunGapMs)) | idle n=\(idleLat.count) p99=\(fms(idleP99)) max=\(fms(idleLat.max() ?? -1))")
         let minSteady = perScenarioSteady.map { $0.1 }.min() ?? 0
-        add("main loop keeps pumping while a modal is open: jobs run in every modal interval", perScenarioSteady.count == scenarios.count - 1 && minSteady >= 50,
-            "steady jobs per scenario \(perScenarioSteady.map { "\($0.0)=\($0.1)" }.joined(separator: " ")) (need >= 50 each), max gap between job runs \(fms(maxRunGapMs)) ms, producer enqueued=\(producer.enqueued)")
+        add("main loop keeps pumping while a modal is open: jobs RUN in every modal interval (counted by run time) with no long pause", perScenarioSteady.count == scenarios.count - 1 && minSteady >= 50 && maxRunGapMs <= gapBoundMs,
+            "jobs run in [request+150 ms, result-100 ms] per scenario \(perScenarioSteady.map { "\($0.0)=\($0.1)" }.joined(separator: " ")) (need >= 50 each), max pause between job runs incl. interval ends \(fms(maxRunGapMs)) ms (bound \(fms(gapBoundMs))), producer enqueued=\(producer.enqueued)")
+        let tickList = scenarios.filter { !$0.closeWhileOpen }.map { ($0.tag, ticksInModal[$0.id] ?? 0) }
+        add("display ticks keep arriving while a modal is open (ticks_during > 0 in every modal)", tickList.count == scenarios.count - 1 && tickList.allSatisfy { $0.1 > 0 },
+            "ticks_during \(tickList.map { "\($0.0)=\($0.1)" }.joined(separator: " "))")
         add("job latency during an open modal within budget (steady p99 <= \(budgetMs) ms)", steadyP99 >= 0 && steadyP99 <= budgetMs, "p99=\(fms(steadyP99)) ms n=\(steadyLat.count)")
         add("one-off cost of opening a modal within \(Int(open)) ms (modal-loop run 8 bound)", openMax >= 0 && openMax <= open, "max=\(fms(openMax)) ms over \(openLat.count) jobs in the first 150 ms of each modal")
         add("job latency outside any modal within budget (idle p99 <= \(budgetMs) ms)", idleP99 >= 0 && idleP99 <= budgetMs, "p99=\(fms(idleP99)) ms n=\(idleLat.count)")

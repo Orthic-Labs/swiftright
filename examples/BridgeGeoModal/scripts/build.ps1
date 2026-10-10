@@ -2,15 +2,17 @@
 # Layout under $Base mirrors the repo: packages\SwiftRightBridge, examples\BridgeGeoModal, payload\bin\swiftright_render.dll.
 # The renderer is NOT rebuilt: the final DLL is copied (hash-checked) from its pinned location, and the hosts link nothing
 # from it (explicit LoadLibraryW). ComCtl v6 manifest dependency: the renderer imports comctl32!TaskDialogIndirect.
+# -RendererSha: expected hash of $RendererSrc when it is not the final tuple (the modal-stall fix build is a new DLL).
 param(
   [string]$Base = 'D:\Claude\sr0-geomodal',
-  [string]$RendererSrc = 'D:\Claude\sr0b-abi06f\bin\swiftright_render.dll'
+  [string]$RendererSrc = 'D:\Claude\sr0b-abi06f\bin\swiftright_render.dll',
+  [string]$RendererSha = '7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc'
 )
 $ErrorActionPreference = 'Stop'
-$pinned = '7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc'
+$pinned = $RendererSha.ToLower()
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 $h = (Get-FileHash -Algorithm SHA256 -LiteralPath $RendererSrc).Hash.ToLower()
-if ($h -ne $pinned) { throw "renderer hash $h is not the pinned final tuple $pinned" }
+if ($h -ne $pinned) { throw "renderer hash $h is not the expected $pinned" }
 New-Item -ItemType Directory -Force "$Base\payload\bin", "$Base\bin" | Out-Null
 Copy-Item $RendererSrc "$Base\payload\bin\swiftright_render.dll" -Force
 Set-Location "$Base\examples\BridgeGeoModal"
