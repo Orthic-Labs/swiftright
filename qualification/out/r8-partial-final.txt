@@ -316,3 +316,201 @@ PLAN {
 events: /Volumes/D/claude/swiftright/qualification/out/20261010T014449.042Z-run/events.jsonl
 dry-run: plans only, not qualification evidence
 [exit 0]
+
+======================================================================
+== R8 follow-up, 10 October 2026 (HEAD 0cdc199 + uncommitted working-tree fixes: D3, D4 runner side, D5, D6, smoke timeout mode)
+======================================================================
+No Mac GUI program was launched, no Dell desktop job was started, no Dell write. Dell access: read-only win queries only (D:\Claude\sr0o-f1 is absent; D:\Claude\sr0s-bridge06f holds FreshOnBridge.exe). Sections B-D replay COMMITTED receipts through the runner's own stage functions with an injected runner (existing evidence, not a fresh run). The F1Assemble build in A ran under SR0A_BUILD_ROOT on the internal disk.
+
+---- A. unit tests (qualification/test_run.py): 115 = 74 before + 41 new; one test needs SR0A_BUILD_ROOT
+$ python3 -I -m unittest discover -s qualification -p 'test_*.py'
+Ran 115 tests in 0.359s
+OK (skipped=1)
+$ SR0A_BUILD_ROOT=<internal disk> python3 -I -m unittest discover -s qualification -p 'test_*.py'   (adds test_f1_assemble_command_reproduces_the_committed_windows_trace: F1Assemble built from committed source reproduces probes/sr0-o/f1-cross/out/win-trace-strict-w6.json exactly)
+Ran 115 tests in 1.449s
+OK
+
+---- B. win-replay: committed probes/sr0-s/fresh-on-bridge/out/matrix-final (16 configs x 20 runs) through win_stage under the final tuple
+$ python3 -I replay_ingest2.py win-replay
+REPLAY win_stage over committed probes/sr0-s/fresh-on-bridge/out/matrix-final, 16 configs x 20 runs; tuple final
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "16 configs x 20 runs", "stage": "win-replay", "ts": "2026-10-10T02:02:27.158Z"}
+{"artifact_ids": {"tuple_file": "sha256:f3bf269e910791c19916d16fc2284c9e7c13976d7b456aab10a9da304b8ebe2a", "windows_exe": "sha256:aa4353ce5ec2dea7b3c00c68cc4e160789ccdd3b14dca41494b8509b34be1d7e", "windows_renderer": "sha256:7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc", "windows_trace": "sha256:84c2f00be2372311742be85621c0a5479b4ff28c5d17b7591e24790725ba85b2"}, "event": "pass", "fixture": null, "reason": "320/320 Windows runs PASS with artifact ids (tuple-pinned)", "stage": "win-replay", "ts": "2026-10-10T02:02:27.225Z"}
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T020227.157Z-r8c-replay-win/events.jsonl
+[exit 0]
+
+---- C. smoke: committed final receipts, normal 40/40 + timeout 41/41, through smoke_stage under the final tuple
+$ python3 -I replay_ingest2.py smoke examples/BridgeSmoke/result-smoke-rev06final.txt examples/BridgeSmoke/result-smoke-timeout06final.txt
+REPLAY smoke_stage (normal + timeout) over examples/BridgeSmoke/result-smoke-rev06final.txt and examples/BridgeSmoke/result-smoke-timeout06final.txt; tuple final sha256 f3bf269e9107...
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows: normal + timeout mode", "stage": "smoke", "ts": "2026-10-10T02:02:27.262Z"}
+{"artifact_ids": {"tuple_file": "sha256:f3bf269e910791c19916d16fc2284c9e7c13976d7b456aab10a9da304b8ebe2a", "windows_exe": "sha256:21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5", "windows_renderer": "sha256:7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc", "windows_trace": "sha256:77a9a061e29da332c0f33adb2333c37b2d5cbb3f4165527cf6177836f0c5c20c"}, "event": "pass", "fixture": null, "reason": "BridgeSmoke PASS with artifact ids: normal 40/40, timeout 41/41 (tuple-pinned)", "stage": "smoke", "ts": "2026-10-10T02:02:27.262Z"}
+result: runner_stage=PASS events=/Volumes/D/claude/swiftright/qualification/out/20261010T020227.261Z-r8c-replay-smoke/events.jsonl
+[exit 0]
+
+---- D. negative control: the old rev06c receipts (renderer 777F14C4, history) passed in section 4 above and must now FAIL
+$ python3 -I replay_ingest2.py smoke examples/BridgeSmoke/result-smoke-rev06c.txt examples/BridgeSmoke/result-smoke-timeout06c.txt
+REPLAY smoke_stage (normal + timeout) over examples/BridgeSmoke/result-smoke-rev06c.txt and examples/BridgeSmoke/result-smoke-timeout06c.txt; tuple final sha256 f3bf269e9107...
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows: normal + timeout mode", "stage": "smoke", "ts": "2026-10-10T02:02:27.298Z"}
+{"artifact_ids": {"windows_exe": "sha256:517600dc635d38a4581fe34347c13a4d57557c5080246d77a73bea28dfd25b12", "windows_renderer": "sha256:777f14c4ff11822bf6e2174e127b3a4a325d83a6b322fa599c7fc4408b335441", "windows_trace": "sha256:5c5bb34da282274ec685f92e065ec9fd4959f4a281224fdfa8b75ae08f53cfde"}, "event": "fail", "fixture": null, "reason": "BridgeSmoke is not the tuple build: windows_smoke_exe 517600dc635d... differs from tuple final 21992f16954e...; windows_renderer 777f14c4ff11... differs from tuple final 7533963d124c...", "stage": "smoke", "ts": "2026-10-10T02:02:27.298Z"}
+result: runner_stage=FAIL events=/Volumes/D/claude/swiftright/qualification/out/20261010T020227.298Z-r8c-replay-smoke/events.jsonl
+[exit 1]
+
+---- E. package: R5 final2 records, real runner stage, final tuple (union of the Offline and Network profiles)
+$ python3 -I qualification/run.py run --stages package --package-receipts /Volumes/D/sr0-artifacts/win/r5-final2/receipts-offline-4 /Volumes/D/sr0-artifacts/win/r5-final2/receipts-network-2
+tuple: final (/Volumes/D/claude/swiftright/qualification/tuple-final.json)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T02:02:27.344Z"}
+{"artifact_ids": {"package_run": "sha256:329a2d84e8c6c0fde1497d0118f7052370a8065573d112e299a71b48096960d1"}, "event": "fail", "fixture": null, "reason": "receipts-offline-4: run status is 'fail': every expected check must be implemented and pass; W08-interrupted-update: must be implemented and pass (status 'fail', implemented True)", "stage": "package", "ts": "2026-10-10T02:02:27.345Z"}
+{"artifact_ids": {"artifact_new_msix": "sha256:c2897a68d1a4555da92155f4192dc53c77a5803e5932a821ab3fed465de2f432", "artifact_old_msix": "sha256:4cc9a7f0a05c05561432ddf536179ae18b6e2aeabbc0f6c245397de38edf2f4a", "artifact_signer_cer": "sha256:d063ba1aa262d2567f72ce2b502748c107452812161739597e1bddc86c8b0c11", "package_run": "sha256:e21305cd5439b7f2ddf1cb1934aeafac7dd641e8d8ba8c4ad82742117548a3f9"}, "event": "pass", "fixture": null, "reason": "receipts-network-2: windows-x64 3/3 expected checks implemented and PASS (run r5-final2-network-2)", "stage": "package", "ts": "2026-10-10T02:02:27.345Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "windows-x64 union of 2 run(s) (receipts-offline-4, receipts-network-2): W08-interrupted-update: no implemented passing record (receipts-offline-4: fail)", "stage": "package", "ts": "2026-10-10T02:02:27.345Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "no valid PASS run for platform(s): macos-arm64", "stage": "package", "ts": "2026-10-10T02:02:27.345Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T020227.344Z-run/events.jsonl
+[exit 1]
+Reading: the union holds all 15 checks W00-W14; the only check without an implemented passing record is W08 (the real FAIL, kept). The MSIX hashes equal the tuple (a mismatch would be named). macOS: no run record exists, so that platform fails on its own (qualification/R8-PARTIAL.md, "macOS package record").
+
+---- F. --no-tuple is non-qualifying: same input, unpinned; the package stage adds a skip event (exit 1 even for a stage that passes)
+$ python3 -I qualification/run.py run --stages package --no-tuple --package-receipts /Volumes/D/sr0-artifacts/win/r5-final2/receipts-offline-4 /Volumes/D/sr0-artifacts/win/r5-final2/receipts-network-2
+NON-QUALIFYING: --no-tuple, exe/renderer/package hashes are not pinned to a tuple
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T02:02:27.391Z"}
+{"artifact_ids": {"package_run": "sha256:329a2d84e8c6c0fde1497d0118f7052370a8065573d112e299a71b48096960d1"}, "event": "fail", "fixture": null, "reason": "receipts-offline-4: run status is 'fail': every expected check must be implemented and pass; W08-interrupted-update: must be implemented and pass (status 'fail', implemented True)", "stage": "package", "ts": "2026-10-10T02:02:27.392Z"}
+{"artifact_ids": {"artifact_new_msix": "sha256:c2897a68d1a4555da92155f4192dc53c77a5803e5932a821ab3fed465de2f432", "artifact_old_msix": "sha256:4cc9a7f0a05c05561432ddf536179ae18b6e2aeabbc0f6c245397de38edf2f4a", "artifact_signer_cer": "sha256:d063ba1aa262d2567f72ce2b502748c107452812161739597e1bddc86c8b0c11", "package_run": "sha256:e21305cd5439b7f2ddf1cb1934aeafac7dd641e8d8ba8c4ad82742117548a3f9"}, "event": "pass", "fixture": null, "reason": "receipts-network-2: windows-x64 3/3 expected checks implemented and PASS (run r5-final2-network-2)", "stage": "package", "ts": "2026-10-10T02:02:27.392Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "windows-x64 union of 2 run(s) (receipts-offline-4, receipts-network-2): W08-interrupted-update: no implemented passing record (receipts-offline-4: fail)", "stage": "package", "ts": "2026-10-10T02:02:27.392Z"}
+{"artifact_ids": {}, "event": "fail", "fixture": null, "reason": "no valid PASS run for platform(s): macos-arm64", "stage": "package", "ts": "2026-10-10T02:02:27.392Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "--no-tuple: artifact hashes were not compared with a tuple; run is non-qualifying", "stage": "package", "ts": "2026-10-10T02:02:27.392Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T020227.391Z-run/events.jsonl
+[exit 1]
+
+---- G. dry-run of the one-invocation full run (plans only, NOT qualification evidence). win-replay now plans the 16 configs and the F1 record job
+$ python3 -I qualification/run.py run --stages win-replay compare smoke package --dry-run
+tuple: final (/Volumes/D/claude/swiftright/qualification/tuple-final.json)
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "16 configs x 3 runs + F1 schema-v0 trace", "stage": "win-replay", "ts": "2026-10-10T02:02:27.440Z"}
+PLAN {
+  "configs": [
+    "F1:none",
+    "F2:none",
+    "F3:list-0s",
+    "F3:list-1s",
+    "F3:list-3s",
+    "F3:vstack-1s",
+    "F3:vstack-3s",
+    "F3:lazy-1s",
+    "F3:lazy-3s",
+    "F4:none",
+    "F5:none",
+    "F6:none",
+    "F6:reduced",
+    "F7:none",
+    "F8:none",
+    "F9:none"
+  ],
+  "runs_per_config": 3,
+  "command": [
+    "bash",
+    "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh",
+    "F1:none",
+    "F2:none",
+    "F3:list-0s",
+    "F3:list-1s",
+    "F3:list-3s",
+    "F3:vstack-1s",
+    "F3:vstack-3s",
+    "F3:lazy-1s",
+    "F3:lazy-3s",
+    "F4:none",
+    "F5:none",
+    "F6:none",
+    "F6:reduced",
+    "F7:none",
+    "F8:none",
+    "F9:none"
+  ],
+  "env": {
+    "OUT_DIR": "/Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/win-matrix",
+    "RUNS": "3"
+  },
+  "transport": "win bridge (ssh) starting one interactive scheduled task per run",
+  "desktop": "interactive Windows desktop session required",
+  "f1_trace": {
+    "tag": "<tag>",
+    "verify": [
+      "win",
+      "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0s-bridge06f\\probes\\sr0-s\\fresh-on-bridge\\scripts\\verify-artifacts.ps1 -Base D:\\Claude\\sr0s-bridge06f -ExpectExe <EXE SHA256 OF THE MATRIX RUNS> -ExpectDll <RENDERER SHA256 OF THE MATRIX RUNS>"
+    ],
+    "record": [
+      "win",
+      "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\schedule-f1.ps1 -Mode record -Tag <tag> -Base D:\\Claude\\sr0o-f1 -Steps D:\\Claude\\sr0o-f1\\f1-steps-win.json -Recorder D:\\Claude\\sr0o-f1\\scratch\\release\\UIARecorder.exe -Bin D:\\Claude\\sr0s-bridge06f\\scratch\\out\\Products\\Release-windows-x86_64"
+    ],
+    "pull": {
+      "rec": [
+        "win",
+        "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\cat.ps1 -P D:\\Claude\\sr0o-f1\\out\\winrec-<tag>.json"
+      ],
+      "side": [
+        "win",
+        "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\cat.ps1 -P D:\\Claude\\sr0o-f1\\out\\winside-<tag>.json"
+      ],
+      "events": [
+        "win",
+        "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0o-f1\\scripts\\cat.ps1 -P D:\\Claude\\sr0o-f1\\out\\events-<tag>.txt"
+      ]
+    },
+    "assemble": [
+      "F1Assemble",
+      "win",
+      "--rec",
+      "/Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/win-matrix/f1/winrec-<tag>.json",
+      "--side",
+      "/Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/win-matrix/f1/winside-<tag>.json",
+      "--events",
+      "/Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/win-matrix/f1/events-<tag>.txt",
+      "--stimulus",
+      "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/f1-stimulus.json",
+      "--out",
+      "/Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/win-matrix/win-trace-v0.json",
+      "--keep-lists"
+    ],
+    "transport": "win bridge (ssh): one interactive scheduled task (schedule-f1.ps1), then read-only file pulls",
+    "desktop": "interactive Windows desktop session required"
+  }
+}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: plan printed to stderr; no Windows job started", "stage": "win-replay", "ts": "2026-10-10T02:02:27.440Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": "F1", "reason": "dry-run: compare needs a built comparator and a Windows trace; plan only", "stage": "compare", "ts": "2026-10-10T02:02:27.440Z"}
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "BridgeSmoke ABI smoke on Windows: normal + timeout mode", "stage": "smoke", "ts": "2026-10-10T02:02:27.440Z"}
+PLAN [
+  {
+    "mode": "normal",
+    "command": [
+      "win",
+      "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0b-abi06c\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1 -Base D:\\Claude\\sr0b-abi06c -Tag qual-20261010T020227440Z-normal"
+    ],
+    "transport": "win bridge (ssh) starting one interactive scheduled task",
+    "desktop": "interactive Windows desktop session required",
+    "pass_markers": [
+      "AUTOMATIONID PASS",
+      "run: ok",
+      "PASS pump ended by swr_shutdown_complete"
+    ],
+    "verdict": "SMOKE PASS (N/N), N = tuple smoke_checks for this mode (normal 40, timeout 41)",
+    "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"
+  },
+  {
+    "mode": "timeout",
+    "command": [
+      "win",
+      "powershell -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\sr0b-abi06c\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1 -Base D:\\Claude\\sr0b-abi06c -Tag qual-20261010T020227440Z-timeout -SkipShutdown"
+    ],
+    "transport": "win bridge (ssh) starting one interactive scheduled task",
+    "desktop": "interactive Windows desktop session required",
+    "pass_markers": [
+      "AUTOMATIONID PASS",
+      "run: ok",
+      "PASS pump ended by the 5 s timeout"
+    ],
+    "verdict": "SMOKE PASS (N/N), N = tuple smoke_checks for this mode (normal 40, timeout 41)",
+    "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"
+  }
+]
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: BridgeSmoke plans printed to stderr; no Windows job started", "stage": "smoke", "ts": "2026-10-10T02:02:27.440Z"}
+{"artifact_ids": {}, "event": "start", "fixture": null, "reason": "package run records (sr0-a.package-receipt/v2) for windows-x64, macos-arm64", "stage": "package", "ts": "2026-10-10T02:02:27.440Z"}
+{"artifact_ids": {}, "event": "skip", "fixture": null, "reason": "dry-run: would read run directories /Volumes/D/claude/swiftright/qualification/receipts/package", "stage": "package", "ts": "2026-10-10T02:02:27.440Z"}
+events: /Volumes/D/claude/swiftright/qualification/out/20261010T020227.440Z-run/events.jsonl
+dry-run: plans only, not qualification evidence
+[exit 0]

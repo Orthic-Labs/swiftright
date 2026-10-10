@@ -23,10 +23,10 @@ Not runner stages and not covered: R6 itself (`F1MacRecord.app` re-record F1-F9,
 |---|---|---|
 | D1 | `SMOKE_BASE` was `D:\Claude\sr0b-abi0`, which does not exist on the Dell (also the `schedule-smoke.ps1` default); a real smoke stage could not start | **fixed**: base `D:\Claude\sr0b-abi06c`, plan passes `-Base` |
 | D2 | `BUILD_ROOT` and `OUT_ROOT` were fixed under `/Volumes/D`: fresh Mac binaries would build and run there (removable-volume prompts) | **fixed**: env `SR0A_BUILD_ROOT`, `SR0A_OUT_ROOT` (defaults unchanged) |
-| D3 | `compare` after `win-replay` needs `win-matrix/win-trace-v0.json`; nothing writes it, so that order can never pass | open: compare must run as its own invocation with `--win-candidate` |
-| D4 | `package` needs one run record with all 15 W checks (and 12 M checks). R5 now emits two profiles (offline 14, network 3), so no R5 record can pass even without W08. No macOS record exists: `mac-clean-run.sh` never ran (refuses uid 501, M11 manual), R3 final and R7 evidence is not in the v2 receipt form | open: merge profiles in the runner or emit one run; W08 is a separate FAIL |
-| D5 | The runner records exe and renderer hashes but never checks them against the tuple: the old `rev06c` smoke receipt (renderer `777F14C4`) passes the smoke stage (negative control in the output file) | open |
-| D6 | `docs/qualification.md` line 137 says `schedule-fixture.ps1` and `drive-smoke.ps1` do not emit the ARTIFACTS line; both do (`drive-fixture.ps1:377`, `drive-smoke.ps1:219`, 320/320 matrix-final records). `win-replay` defaults to F1, F2 x 3 only: pass `--configs` for the full set | doc stale, not edited |
+| D3 | `compare` after `win-replay` needs `win-matrix/win-trace-v0.json`; nothing writes it, so that order can never pass | **fixed in the working tree (not committed)**: `win-replay` records the F1 schema-v0 trace when `compare` is in the run (see "Follow-up"); Dell-side recorder tree absent, so not run end to end |
+| D4 | `package` needs one run record with all 15 W checks (and 12 M checks). R5 now emits two profiles (offline 14, network 3), so no R5 record can pass even without W08. No macOS record exists: `mac-clean-run.sh` never ran (refuses uid 501, M11 manual), R3 final and R7 evidence is not in the v2 receipt form | **runner side fixed**: profiles are evaluated as a union, W08 stays FAIL; macOS record still missing (section "macOS package record") |
+| D5 | The runner records exe and renderer hashes but never checks them against the tuple: the old `rev06c` smoke receipt (renderer `777F14C4`) passes the smoke stage (negative control in the output file) | **fixed**: exe, renderer and package hashes are compared with `qualification/tuple-final.json`; the rev06c negative control now FAILs |
+| D6 | `docs/qualification.md` line 137 says `schedule-fixture.ps1` and `drive-smoke.ps1` do not emit the ARTIFACTS line; both do (`drive-fixture.ps1:377`, `drive-smoke.ps1:219`, 320/320 matrix-final records). `win-replay` defaults to F1, F2 x 3 only: pass `--configs` for the full set | **fixed**: `docs/qualification.md` corrected; `win-replay` now defaults to the full 16 configs |
 
 ## Edits to `qualification/run.py` (not committed)
 
@@ -34,21 +34,56 @@ Not runner stages and not covered: R6 itself (`F1MacRecord.app` re-record F1-F9,
 
 ## Full run once R6 and a Dell desktop window exist
 
-D3 forces two invocations (`compare` cannot follow `win-replay`). Fill the paths once the evidence exists; both must exit 0.
+Superseded in part by the follow-up below: D3 is fixed in the working tree, so `compare` can follow `win-replay` in one invocation, and `--configs` defaults to the full 16. Both must exit 0. The Mac stages (`mac-oracle`, F1 re-record R6) still need a free Mac; the Dell stages need the desktop and the F1 recorder tree.
 
 ```
 cd /Volumes/D/claude/swiftright
 export SR0A_BUILD_ROOT=/private/tmp/sr0a-build SR0A_OUT_ROOT=/private/tmp/sr0a-out
 
-# A: Dell desktop free
-python3 -I qualification/run.py run --stages win-replay --win-runs 3 --confirm-windows-gui \
-  --configs F1:none F2:none F3:list-0s F3:list-1s F3:list-3s F3:vstack-1s F3:vstack-3s F3:lazy-1s F3:lazy-3s \
-            F4:none F5:none F6:none F6:reduced F7:none F8:none F9:none
-
-# B: Mac free, Dell desktop free (smoke), R6 trace and package records in place
-python3 -I qualification/run.py run --stages mac-oracle compare smoke package --runs 3 --confirm-windows-gui \
-  --win-candidate <fresh final-tuple win F1 schema-v0 trace.json> \
-  --package-receipts <win run dir, W00-W14> <mac run dir, M00-M11>
+python3 -I qualification/run.py run --stages mac-oracle win-replay compare smoke package \
+  --runs 3 --win-runs 3 --confirm-windows-gui \
+  --package-receipts <windows run dirs: offline and network> <mac run dirs: automated and manual>
 ```
 
-Both were dry-run (plans only) in section 9 of the output file.
+The tuple (`qualification/tuple-final.json`) is applied by default; `--no-tuple` makes the run non-qualifying.
+
+## Follow-up (HEAD `0cdc199`, working tree, not committed)
+
+Changes: `qualification/run.py`, `qualification/test_run.py` (74 to 115 tests; one needs `SR0A_BUILD_ROOT`), `qualification/tuple-final.json` (new), `docs/qualification.md`. Details and rules: `docs/qualification.md`, section "2026-10-10 R8 follow-up". Re-run results: `qualification/out/r8-partial-final.txt`, heading "R8 follow-up".
+
+- D3: `win-replay` runs the F1 record job (`verify-artifacts.ps1`, `schedule-f1.ps1 -Mode record`, file pulls, `F1Assemble win --keep-lists`) and writes `win-matrix/win-trace-v0.json`. The assemble half is verified: it reproduces the committed `win-trace-strict-w6.json` bit for bit from the committed W6 evidence. The Dell half is not: `D:\Claude\sr0o-f1` (scripts, `f1-steps-win.json`, `UIARecorder.exe`) no longer exists on the Dell (read-only `win` query), so the step fails fast naming it; rebuild with `probes/sr0-o/f1-cross/scripts/build-rec.ps1` before a full run. The R6 Mac re-record of `accepted/F1/trace-v0.json` is still PENDING, so a full `compare` is not final-tuple until then.
+- D4: union of profiles. Which checks may be manual: only `M11-window-visible`, recorded as described in `docs/qualification.md`.
+- D5: tuple file, default for `run`, `--no-tuple` = non-qualifying (skip events, exit 1). `new_dmg` is PENDING in the tuple (no 0.1.1 DMG on the final 0.2.144 chain exists).
+- Smoke: normal 40/40 plus timeout 41/41 (`-SkipShutdown`), both pinned.
+- D6: doc fixed; default `--configs` = all 16 (chosen deliberately: a default that passes 2 of 16 configs is a trap, and `mac-oracle` already defaults to all 16).
+
+## macOS package record
+
+No macOS run record exists, and `mac-clean-run.sh` cannot produce a passing one as written. What a passing record needs, in order:
+
+**Where.** Inside a Tart clone of `sliceapp-base` (macOS 26.6.2 arm64, `tart run --no-graphics`, no `--dir` shares, SSH `admin@$(tart ip <clone>)` with `/Volumes/D/tart-home/keys/vmkey`; Gatekeeper already set to "App Store & Known Developers" per `examples/SliceApp/RESULT-R7.md`). Never on the Mac host: the harness writes `~/Downloads`, `~/Applications`, `~/Library/Application Support/SliceApp`, mounts DMGs and starts the app. Copy the repo's `qualification/clean-machine/mac-clean-run.sh` and the two DMGs into the guest, create `~/clean-machine-allow.txt` listing `admin` there (guest-side, mode 600). Delete the clone afterwards.
+
+**Why it refuses uid 501.** `mac-clean-run.sh:36-37,85-86` refuse the main workspace user by name (`adrdsouza`) and by uid (`MAIN_UID=501`), so a run can never touch Adrian's account. The uid test is a stand-in for the name test and does not transfer: macOS gives the first account on any install uid 501, and the Tart guest's `admin` is uid 501 (`RESULT-R7.md:33`; the guest log `/Volumes/D/sr0-artifacts/mac/r7/s3-first-launch-online.log:18` shows `launchctl asuser 501` for the guest console user `admin`; I did not start the VM to run `id` again). So the script cannot run in the VM unmodified.
+
+**Minimal safe guard (proposed, NOT applied).** Keep every refusal (root, name `adrdsouza`, allow-list owned by the user, `HOME=/Users/<user>`, all writes under `$HOME`), and apply the uid-501 refusal only when the machine is not a virtual machine:
+
+```sh
+in_vm() { [ "$(sysctl -n kern.hv_vmm_present 2>/dev/null)" = 1 ] && case "$(sysctl -n hw.model 2>/dev/null)" in VirtualMac*) true ;; *) false ;; esac; }
+[ "$uid" -ne "$MAIN_UID" ] || in_vm || die "refusing to run as uid $MAIN_UID outside a VM (main workspace user)"
+```
+
+Observed on this host: `kern.hv_vmm_present: 0`, `hw.model: Mac18,5`, so the host still refuses uid 501. Guest values (`1`, `VirtualMac2,1`) are the expected Virtualization.framework values and are UNVERIFIED: run `sysctl -n kern.hv_vmm_present hw.model; id` once in a clone before adopting the guard. Risks of the change: (1) inside a VM uid 501 is no longer refused, so the only remaining protection against a mistaken run in the guest is that the guest holds nothing of Adrian's (no `--dir` shares, no host credentials, clone deleted after); (2) the marker can be forged only on purpose (`sysctl` is read-only for a non-root user); (3) a Mac that runs another VM guest on a main account would be allowed: the name check and allow-list stay as the second layer. Update `mac-clean-checklist.md` ("uid 501") with the change. Needs Adrian's or the lead's approval; do not loosen it earlier.
+
+**What it must run.** `bash mac-clean-run.sh --allowlist ~/clean-machine-allow.txt --old-dmg <0.1.0 dmg> --old-sha sha256:b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4 --old-version 0.1.0 --new-dmg <0.1.1 dmg> --new-sha sha256:<seal value> --new-version 0.1.1`, then copy `~/clean-machine-receipts/<run id>/` out and run `python3 -I qualification/run.py run --stages package --package-receipts <windows run dirs> <mac run dirs>`.
+
+**Evidence it consumes.**
+- Old DMG: `/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg`, sha256 `b976ac70…` from the seal (`examples/SliceApp/r3-final/release-manifest.json:67`, `r3-final-verify.txt:4`), version 0.1.0, commit `4496474`, `@rightkit/release` 0.2.144. Pass the seal hash on the command line; never hash the copy to get it (M01).
+- New DMG 0.1.1: **does not exist on the final chain.** `/Volumes/D/sr0-artifacts/mac/0.1.1` is the R7 build from 0.2.139 (`c75155b4…`, history). Build and seal a 0.1.1 DMG on the same commit chain and 0.2.144 (as Windows did with `clean2`), then set `members.new_dmg` in `qualification/tuple-final.json` with its source line. Until then the tuple marks it PENDING and the package stage fails any macOS record that carries `new_dmg`.
+- Guest facts the checks read: bundle id `dev.orthic.sliceapp`, data `~/Library/Application Support/SliceApp/rows.json` schema 1 (checklist open item: confirm the path against the shipped app).
+
+**Gaps in the harness that make a pass impossible today (each a separate change, none made here).**
+1. M08 is a placeholder that always fails. R7 has a working method: `examples/SliceApp/scripts/interrupt-mac-install.sh` plus `interrupt-mac-install-hook.mjs` (modes copy, swap, swap-term against the real `right-release install-app --recover`, with the host node binary copied into the guest). Implement M08 on it.
+2. M11 is a manual check. Split the run into two profiles (the runner takes the union): `--profile automated` lists M00-M10; `--profile manual` writes a run directory whose `expected_checks` is `["M11-window-visible"]`, with `observations.manual "true"`, `observations.observer`, and `artifact_ids.evidence` = sha256 of `M11-window-visible.png` taken per `mac-clean-checklist.md` step 5. `HarnessDriftTests` must then compare the union of the profiles with `PACKAGE_CHECKS["macos-arm64"]`. Do not record M11 in both profiles with different results (that is a FAIL).
+3. M03 calls `xcrun stapler validate`; the vanilla VM has no Xcode tools (`RESULT-R7.md`: "VM has no stapler"), so it fails there. Replace the stapler step by `syspolicy_check distribution` (present in the guest, DMG PASS in R7) or install the Command Line Tools in the base image; do not drop the ticket check.
+4. M05 and the other launch checks run the binary directly. Over SSH that session has no window server; R7 launched through the guest console session (`launchctl asuser`, which needs root in the guest, so a sudo wrapper outside the harness). Settle the launch method before the first run: a not-alive app is a FAIL, never a false pass.
+5. The user, VM and Gatekeeper state are Adrian-owned setup (RESULT-R7): do not change system settings from the harness.

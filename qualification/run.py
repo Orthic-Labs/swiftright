@@ -20,6 +20,12 @@ Rules (docs/architecture.md AD7 and section 11)
   * --stages runs in the order given. compare consumes the Windows trace produced by an earlier win-replay in
     the same run; a historical file needs an explicit --win-candidate and may not precede its replay.
   * Windows pass records carry windows_exe, windows_renderer and windows_trace sha256 artifact ids.
+  * Tuple pinning: every stage that records exe, renderer or package hashes compares them with qualification/
+    tuple-final.json (`--tuple FILE` picks another). `--no-tuple` runs unpinned and the run is non-qualifying (every
+    pinned stage emits a skip, so the exit is 1).
+  * win-replay also records the Windows F1 schema-v0 trace (UIARecorder + F1Assemble) when compare is in the run.
+  * smoke runs BridgeSmoke twice: normal mode and timeout mode (`-SkipShutdown`).
+  * package accepts several run directories per platform (profiles) and evaluates the union of their checks.
   * Canonical digest form sr0-a.canonical/v2: group by step, then node; per-node event order is significant.
   * win-replay drives Windows GUI jobs. It runs only with --confirm-windows-gui, or as --dry-run plan.
 """
@@ -72,6 +78,20 @@ PACKAGE_CHECKS = {
 PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
 WIN_TRACE_FILE = "win-trace-v0.json"
 SMOKE_BASE = "D:\\Claude\\sr0b-abi06c"  # Dell tree holding the final BridgeSmoke 21992F16 + renderer 7533963D
+SMOKE_MODES = ("normal", "timeout")  # timeout mode = schedule-smoke.ps1 -SkipShutdown
+SMOKE_VERDICT_RE = re.compile(r"^SMOKE PASS \((\d+)/(\d+)\)\s*$", re.M)
+# Mode-specific proof that the right mode ran (the plain pass markers are identical in both).
+SMOKE_MODE_MARKERS = {"normal": "PASS pump ended by swr_shutdown_complete", "timeout": "PASS pump ended by the 5 s timeout"}
+# F1 schema-v0 recording on the Dell (probes/sr0-o/f1-cross/scripts/schedule-f1.ps1 writes under F1_BASE/out).
+F1_BASE = "D:\\Claude\\sr0o-f1"  # holds scripts/, f1-steps-win.json and scratch/release/UIARecorder.exe
+F1_TREE = "D:\\Claude\\sr0s-bridge06f"  # final FreshOnBridge tree (verify-artifacts.ps1 lives under it)
+F1_BIN = F1_TREE + "\\scratch\\out\\Products\\Release-windows-x86_64"
+F1_PACKAGE = REPO / "probes" / "sr0-o" / "f1-cross"
+F1_STIMULUS = F1_PACKAGE / "f1-stimulus.json"
+TUPLE_FINAL = QUAL_DIR / "tuple-final.json"
+TUPLE_SCHEMA = "sr0-a.tuple/v1"
+TUPLE_MEMBERS = ("windows_renderer", "windows_fixture_exe", "windows_smoke_exe", "old_msix", "new_msix", "old_dmg", "new_dmg")
+PINNED_STAGES = ("win-replay", "smoke", "package")
 SHA_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 ARTIFACTS_LINE_RE = re.compile(r"^ARTIFACTS exe=([0-9a-f]{64}) renderer=([0-9a-f]{64}) trace=([0-9a-f]{64})\s*$", re.M)
 EVENTS = ("start", "pass", "fail", "skip")
@@ -87,7 +107,10 @@ FIXTURE_RE = re.compile(r"^(?:" + "|".join(re.escape(c) for c in CONFIGS) + r")$
 SHA_REF_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 VERDICT_RE = re.compile(r"^SELFTEST (F[1-9][^\s:]*)(?: variant=([a-z0-9-]+))?: (PASS|FAIL)(?: \((\d+)/(\d+)\))?", re.M)
 APPROVER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._@-]{0,63}$")
-DEFAULT_MATRIX_CONFIGS = ("F1:none", "F2:none")
+# win-replay default = the 16 SR0 configurations of run-matrix.sh (`--configs` narrows it, as `--fixtures` does for the Mac).
+DEFAULT_MATRIX_CONFIGS = ("F1:none", "F2:none", "F3:list-0s", "F3:list-1s", "F3:list-3s", "F3:vstack-1s", "F3:vstack-3s",
+                          "F3:lazy-1s", "F3:lazy-3s", "F4:none", "F5:none", "F6:none", "F6:reduced", "F7:none",
+                          "F8:none", "F9:none")
 DEFAULT_FIXTURES = tuple(CONFIGS)  # full manifest: all 16 SR0 configs
 
 
@@ -123,6 +146,10 @@ class BuildError(Exception):
 
 
 class ApprovalError(ValueError):
+    pass
+
+
+class TupleError(Exception):
     pass
 
 
@@ -222,6 +249,52 @@ def host_identity():
     return {"os": "macOS" if sys.platform == "darwin" else sys.platform,
             "product_version": sw_vers("-productVersion"), "build": sw_vers("-buildVersion"),
             "arch": platform.machine()}
+
+
+# ---------------------------------------------------------------- tuple pinning
+
+def load_tuple(path):
+    """Reads a tuple pin file (sr0-a.tuple/v1, qualification/tuple-final.json). Returns
+    {"name", "path", "sha256" (of the file), "pins": {member: sha256 hex or None}, "smoke_checks": {mode: count}}.
+    A member whose sha256 is null is PENDING: pin_problems refuses any record that carries it."""
+    try:
+        doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise TupleError(f"tuple file unreadable: {path}: {exc}") from exc
+    if not isinstance(doc, dict) or doc.get("schema") != TUPLE_SCHEMA:
+        raise TupleError(f"tuple file {path} is not {TUPLE_SCHEMA}")
+    members = doc.get("members")
+    if not isinstance(members, dict) or set(members) != set(TUPLE_MEMBERS):
+        raise TupleError(f"tuple members must be exactly {', '.join(TUPLE_MEMBERS)}")
+    pins = {}
+    for name, entry in members.items():
+        sha = entry.get("sha256") if isinstance(entry, dict) else "?"
+        if sha is not None and not (isinstance(sha, str) and SHA_HEX_RE.match(sha)):
+            raise TupleError(f"tuple member {name}: sha256 must be 64 lowercase hex digits or null")
+        pins[name] = sha
+    smoke = doc.get("smoke_checks")
+    counts = {mode: smoke.get(mode) for mode in SMOKE_MODES} if isinstance(smoke, dict) else {}
+    if not all(isinstance(n, int) and not isinstance(n, bool) and n > 0 for n in counts.values()) or len(counts) != len(SMOKE_MODES):
+        raise TupleError("tuple smoke_checks must give a positive integer for " + ", ".join(SMOKE_MODES))
+    return {"name": doc.get("name"), "path": str(path), "sha256": sha256_file(path), "pins": pins, "smoke_checks": counts}
+
+
+def pin_problems(pin, observed):
+    """observed: {tuple member: sha256 hex}. Problems against the tuple; none when pin is None (unpinned run)."""
+    if pin is None:
+        return []
+    problems = []
+    for member, got in observed.items():
+        want = pin["pins"].get(member)
+        if want is None:
+            problems.append(f"{member} is not pinned in tuple {pin['name']} (PENDING); observed {got[:12]}...")
+        elif got != want:
+            problems.append(f"{member} {got[:12]}... differs from tuple {pin['name']} {want[:12]}...")
+    return problems
+
+
+def tuple_ids(pin):
+    return {"tuple_file": sha_ref(pin["sha256"])} if pin else {}
 
 
 # ---------------------------------------------------------------- events
@@ -604,24 +677,32 @@ def windows_ids(exes, renderers, traces):
             "windows_trace": sha_ref(sha256_text("\n".join(sorted(set(traces)))))}
 
 
-def smoke_plan(tag):
+def smoke_plan(tag, timeout=False):
+    """One BridgeSmoke dispatch. timeout=True is timeout mode (schedule-smoke.ps1 -SkipShutdown: the app never calls
+    swr_shutdown_complete and the pump ends by its 5 s bound)."""
     script = f"{SMOKE_BASE}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
-    return {"command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {SMOKE_BASE} -Tag {tag}"],
+    mode = "timeout" if timeout else "normal"
+    flag = " -SkipShutdown" if timeout else ""
+    return {"mode": mode,
+            "command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {SMOKE_BASE} -Tag {tag}{flag}"],
             "transport": "win bridge (ssh) starting one interactive scheduled task",
             "desktop": "interactive Windows desktop session required",
-            "pass_markers": ["AUTOMATIONID PASS", "run: ok"],
+            "pass_markers": ["AUTOMATIONID PASS", "run: ok", SMOKE_MODE_MARKERS[mode]],
+            "verdict": "SMOKE PASS (N/N), N = tuple smoke_checks for this mode (normal 40, timeout 41)",
             "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"}
 
 
-def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which):
-    """Dispatches BridgeSmoke on Windows. Required: skip and missing evidence are failures outside --dry-run."""
+def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which, tuple_pin=None):
+    """Dispatches BridgeSmoke on Windows in normal mode, then timeout mode. Both must pass (marker lines, SMOKE PASS
+    n/n with the tuple's count, ARTIFACTS line) on one exe and one renderer build; with a tuple both are pinned.
+    Required: skip and missing evidence are failures outside --dry-run."""
     stage = "smoke"
     tag = "qual-" + stamp().replace(":", "").replace(".", "")
-    plan = smoke_plan(tag)
-    log.emit(stage, "start", None, reason="BridgeSmoke ABI smoke on Windows")
+    plans = [smoke_plan(f"{tag}-{mode}", timeout=mode == "timeout") for mode in SMOKE_MODES]
+    log.emit(stage, "start", None, reason="BridgeSmoke ABI smoke on Windows: " + " + ".join(SMOKE_MODES) + " mode")
     if dry_run:
-        print("PLAN " + json.dumps(plan, indent=2), file=sys.stderr)
-        log.emit(stage, "skip", None, reason="dry-run: BridgeSmoke plan printed to stderr; no Windows job started")
+        print("PLAN " + json.dumps(plans, indent=2), file=sys.stderr)
+        log.emit(stage, "skip", None, reason="dry-run: BridgeSmoke plans printed to stderr; no Windows job started")
         return True
     if not confirmed:
         log.emit(stage, "fail", None, reason="refused: Windows GUI jobs need --confirm-windows-gui (desktop is busy)")
@@ -629,35 +710,129 @@ def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=s
     if which("win") is None:
         log.emit(stage, "fail", None, reason="win bridge not on PATH")
         return False
-    result = runner(plan["command"], capture_output=True, text=True)
-    text = (result.stdout or "") + (result.stderr or "")
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "smoke.txt").write_text(text, encoding="utf-8")
-    markers_ok = all(m in text for m in plan["pass_markers"])
-    artifacts = parse_windows_artifacts(text)
-    if result.returncode != 0 or not markers_ok:
-        log.emit(stage, "fail", None, reason=f"BridgeSmoke did not PASS (rc={result.returncode}, markers_ok={markers_ok})")
+    exes, renderers, traces, summary = [], [], [], []
+    for plan in plans:
+        mode = plan["mode"]
+        result = runner(plan["command"], capture_output=True, text=True)
+        text = (result.stdout or "") + (result.stderr or "")
+        (out_dir / f"smoke-{mode}.txt").write_text(text, encoding="utf-8")
+        verdict = SMOKE_VERDICT_RE.findall(text)
+        passed, total = (int(verdict[-1][0]), int(verdict[-1][1])) if verdict else (0, 0)
+        want = tuple_pin["smoke_checks"][mode] if tuple_pin else None
+        markers_ok = all(m in text for m in plan["pass_markers"])
+        count_ok = total > 0 and passed == total and (want is None or total == want)
+        if result.returncode != 0 or not markers_ok or not count_ok:
+            log.emit(stage, "fail", None, reason=f"BridgeSmoke {mode} mode did not PASS (rc={result.returncode}, "
+                     f"markers_ok={markers_ok}, verdict={passed}/{total}" + (f", tuple expects {want}/{want}" if want else "") + ")")
+            return False
+        artifacts = parse_windows_artifacts(text)
+        if artifacts is None:
+            log.emit(stage, "fail", None, reason=f"BridgeSmoke {mode} PASS lacks an ARTIFACTS line (exe, renderer, trace sha256)")
+            return False
+        exes.append(artifacts[0]); renderers.append(artifacts[1]); traces.append(artifacts[2])
+        summary.append(f"{mode} {passed}/{total}")
+    try:
+        ids = windows_ids(exes, renderers, traces)
+    except ValueError as exc:
+        log.emit(stage, "fail", None, reason=str(exc))
         return False
-    if artifacts is None:
-        log.emit(stage, "fail", None, reason="BridgeSmoke PASS lacks an ARTIFACTS line (exe, renderer, trace sha256)")
+    problems = pin_problems(tuple_pin, {"windows_smoke_exe": exes[0], "windows_renderer": renderers[0]})
+    if problems:
+        log.emit(stage, "fail", None, ids, "BridgeSmoke is not the tuple build: " + "; ".join(problems))
         return False
-    log.emit(stage, "pass", None, windows_ids([artifacts[0]], [artifacts[1]], [artifacts[2]]),
-             "BridgeSmoke PASS with artifact ids")
+    log.emit(stage, "pass", None, {**ids, **tuple_ids(tuple_pin)},
+             "BridgeSmoke PASS with artifact ids: " + ", ".join(summary) + (" (tuple-pinned)" if tuple_pin else " (unpinned)"))
     return True
 
 
-def win_plan(configs, runs, out_dir):
-    return {"configs": list(configs), "runs_per_config": runs,
+def win_plan(configs, runs, out_dir, f1_trace=False):
+    plan = {"configs": list(configs), "runs_per_config": runs,
             "command": ["bash", str(MATRIX_SCRIPT), *configs],
             "env": {"OUT_DIR": str(out_dir / "win-matrix"), "RUNS": str(runs)},
             "transport": "win bridge (ssh) starting one interactive scheduled task per run",
             "desktop": "interactive Windows desktop session required"}
+    if f1_trace:
+        plan["f1_trace"] = f1_plan("<tag>", "<exe sha256 of the matrix runs>", "<renderer sha256 of the matrix runs>", out_dir)
+    return plan
 
 
-def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which):
+# ---- Windows F1 schema-v0 trace (compare input). The matrix self-test replay holds no UIA observations, so the trace
+# is a separate interactive job: UIARecorder (record) against FreshOnBridge --fixture F1 on the final build, then
+# F1Assemble win --keep-lists on the Mac (the form behind conformance/accepted/F1/trace-v0.json and win-trace-strict-w6).
+
+def f1_plan(tag, exe, renderer, out_dir):
+    ps = "powershell -NoProfile -ExecutionPolicy Bypass -File"
+    base_out = F1_BASE + "\\out"
+    pulls = {"rec": f"winrec-{tag}.json", "side": f"winside-{tag}.json", "events": f"events-{tag}.txt"}
+    local = out_dir / "win-matrix" / "f1"
+    return {"tag": tag,
+            "verify": ["win", f"{ps} {F1_TREE}\\probes\\sr0-s\\fresh-on-bridge\\scripts\\verify-artifacts.ps1 -Base {F1_TREE} "
+                              f"-ExpectExe {exe.upper()} -ExpectDll {renderer.upper()}"],
+            "record": ["win", f"{ps} {F1_BASE}\\scripts\\schedule-f1.ps1 -Mode record -Tag {tag} -Base {F1_BASE} "
+                              f"-Steps {F1_BASE}\\f1-steps-win.json -Recorder {F1_BASE}\\scratch\\release\\UIARecorder.exe -Bin {F1_BIN}"],
+            "pull": {key: ["win", f"{ps} {F1_BASE}\\scripts\\cat.ps1 -P {base_out}\\{name}"] for key, name in pulls.items()},
+            "assemble": ["F1Assemble", "win", "--rec", str(local / pulls["rec"]), "--side", str(local / pulls["side"]),
+                         "--events", str(local / pulls["events"]), "--stimulus", str(F1_STIMULUS),
+                         "--out", str(out_dir / "win-matrix" / WIN_TRACE_FILE), "--keep-lists"],
+            "transport": "win bridge (ssh): one interactive scheduled task (schedule-f1.ps1), then read-only file pulls",
+            "desktop": "interactive Windows desktop session required"}
+
+
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def f1_assemble(argv):
+    """Builds F1Assemble from the committed f1-cross package and runs it. Returns (rc, output)."""
+    try:
+        package, tree_sha, _ = committed_package(F1_PACKAGE.relative_to(REPO))
+        tool = swift_product(package, BUILD_ROOT / "f1-cross" / tree_sha[:12], "F1Assemble")
+    except BuildError as exc:
+        return 1, str(exc)
+    result = subprocess.run([str(tool), *argv[1:]], capture_output=True, text=True)
+    return result.returncode, (result.stdout or "") + (result.stderr or "")
+
+
+def win_f1_trace(out_dir, exe, renderer, runner=subprocess.run, assembler=f1_assemble):
+    """Records the final-build Windows F1 trace and assembles out_dir/win-matrix/win-trace-v0.json.
+    Returns (trace path or None, reason). The build must still be the matrix build (verify-artifacts.ps1)."""
+    tag = "qual-" + stamp().replace(":", "").replace(".", "")
+    plan = f1_plan(tag, exe, renderer, out_dir)
+    hint = (f"the F1 recorder tree {F1_BASE} needs scripts\\schedule-f1.ps1, f1-steps-win.json and "
+            f"scratch\\release\\UIARecorder.exe (probes/sr0-o/f1-cross/scripts/build-rec.ps1)")
+    verify = runner(plan["verify"], capture_output=True, text=True)
+    if "ARTIFACT_OK" not in (verify.stdout or ""):
+        return None, f"F1 record refused: the Dell build no longer equals the matrix build ({(verify.stdout or '').strip()[-160:]})"
+    record = runner(plan["record"], capture_output=True, text=True)
+    text = (record.stdout or "") + (record.stderr or "")
+    (out_dir / "win-matrix").mkdir(parents=True, exist_ok=True)
+    (out_dir / "win-matrix" / "f1-record.log").write_text(text, encoding="utf-8")
+    if "last_result=0" not in text or "recorder exit=0" not in text or "RECORDER TIMEOUT" in text:
+        return None, f"F1 recorder job did not finish cleanly ({text.strip()[-160:] or 'no output'}); {hint}"
+    local = out_dir / "win-matrix" / "f1"
+    local.mkdir(parents=True, exist_ok=True)
+    names = {"rec": f"winrec-{tag}.json", "side": f"winside-{tag}.json", "events": f"events-{tag}.txt"}
+    for key, command in plan["pull"].items():
+        pulled = runner(command, capture_output=True, text=True)
+        body = ANSI_RE.sub("", pulled.stdout or "")
+        if pulled.returncode != 0 or not body.strip():
+            return None, f"F1 file pull failed: {names[key]} (rc={pulled.returncode})"
+        (local / names[key]).write_text(body, encoding="utf-8")
+    rc, output = assembler(plan["assemble"])
+    trace = out_dir / "win-matrix" / WIN_TRACE_FILE
+    if rc != 0 or not trace.exists():
+        return None, f"F1Assemble failed rc={rc}: {output.strip()[-160:]}"
+    return trace, f"F1 schema-v0 trace {trace.name} from tag {tag}"
+
+
+def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which,
+              tuple_pin=None, f1_trace=False, f1_recorder=win_f1_trace):
+    """Replays the SR0 matrix on Windows. f1_trace also records the Windows F1 schema-v0 trace that compare consumes
+    (out_dir/win-matrix/win-trace-v0.json). With a tuple the exe and renderer must be the tuple's FreshOnBridge and
+    renderer."""
     stage = "win-replay"
-    plan = win_plan(configs, runs, out_dir)
-    log.emit(stage, "start", None, reason=f"{len(configs)} configs x {runs} runs")
+    plan = win_plan(configs, runs, out_dir, f1_trace)
+    log.emit(stage, "start", None, reason=f"{len(configs)} configs x {runs} runs" + (" + F1 schema-v0 trace" if f1_trace else ""))
     if dry_run:
         print("PLAN " + json.dumps(plan, indent=2), file=sys.stderr)
         log.emit(stage, "skip", None, reason="dry-run: plan printed to stderr; no Windows job started")
@@ -698,7 +873,20 @@ def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess
     except ValueError as exc:
         log.emit(stage, "fail", None, reason=str(exc))
         return False
-    log.emit(stage, "pass", None, ids, f"{len(passed)}/{expected} Windows runs PASS with artifact ids")
+    problems = pin_problems(tuple_pin, {"windows_fixture_exe": exes[0], "windows_renderer": renderers[0]})
+    if problems:
+        log.emit(stage, "fail", None, ids, "Windows build is not the tuple build: " + "; ".join(problems))
+        return False
+    note = ""
+    if f1_trace:
+        trace, note = f1_recorder(out_dir, exes[0], renderers[0], runner=runner)
+        if trace is None:
+            log.emit(stage, "fail", None, ids, note)
+            return False
+        ids["windows_f1_trace_v0"] = sha_ref(sha256_file(trace))
+        note = "; " + note
+    log.emit(stage, "pass", None, {**ids, **tuple_ids(tuple_pin)},
+             f"{len(passed)}/{expected} Windows runs PASS with artifact ids" + (" (tuple-pinned)" if tuple_pin else " (unpinned)") + note)
     return True
 
 
@@ -707,7 +895,12 @@ def win_stage(log, configs, runs, out_dir, dry_run, confirmed, runner=subprocess
 # Input: one directory per harness run, exactly as the harnesses write it: run.json (record "run") and one
 # <check_id>.json per check (record "check"). The Windows guest writes W*.json and guest-run.json; run-sandbox.ps1
 # verifies them against the host hashes and writes the authoritative run.json. Schema: clean-machine/receipt.schema.json.
-# A platform is covered only by a run whose run.json is pass and whose every declared check is implemented and pass.
+# A platform is covered by the union of its runs (profiles of one artifact, e.g. R5 Offline = W00-W11,W13,W14 and
+# Network = W00,W01,W12): every declared check must have an implemented, passing record in at least one run, a check
+# recorded in several runs must agree (status, implemented, artifact ids), the runs must carry one artifact identity,
+# and with a tuple the MSIX/DMG hashes must equal it. A run's expected_checks is an ordered subset of the declared checks.
+# A check may be satisfied by a human observation only if it is in MANUAL_CHECKS and carries observations.manual="true",
+# observations.observer and artifact_ids.evidence (sha256 of the screenshot or note).
 
 CHECK_FILE_RE = re.compile(r"^[WM][0-9]{2}-[a-z0-9-]+\.json$")
 PACKAGE_CHECK_ID_RE = re.compile(r"^[WM][0-9]{2}-[a-z0-9-]+$")
@@ -723,6 +916,7 @@ PACKAGE_RUN_KEYS = frozenset({
 PACKAGE_SUMMARY_KEYS = frozenset({"check_id", "status", "implemented"})
 PACKAGE_HARNESS_KEYS = frozenset({"name", "sha256"})
 PACKAGE_STATUSES = ("pass", "fail")
+MANUAL_CHECKS = ("M11-window-visible",)  # the only check a recorded human observation may satisfy
 
 
 def _nonempty(value):
@@ -808,6 +1002,31 @@ def validate_check_record(rec, platform, run_id, check_id):
     return problems
 
 
+def run_expected(rec):
+    """The checks one run record covers (a profile): a non-empty ordered subset of its platform's declared checks.
+    None when expected_checks is not such a subset."""
+    declared = PACKAGE_CHECKS[rec["platform"]]
+    listed = rec["expected_checks"]
+    if isinstance(listed, list) and listed and list(listed) == [c for c in declared if c in listed]:
+        return list(listed)
+    return None
+
+
+def manual_problems(rec):
+    """Rules for a check record that claims a human observation (observations.manual is "true")."""
+    obs = rec.get("observations")
+    if not isinstance(obs, dict) or obs.get("manual") not in (True, "true"):
+        return []
+    problems = []
+    if rec.get("check_id") not in MANUAL_CHECKS:
+        problems.append("a manual observation is only allowed for " + ", ".join(MANUAL_CHECKS))
+    if not _nonempty(obs.get("observer")):
+        problems.append("a manual check needs observations.observer")
+    if "evidence" not in (rec.get("artifact_ids") or {}):
+        problems.append("a manual check needs artifact_ids.evidence (sha256 of the screenshot or note)")
+    return problems
+
+
 def validate_run_record(rec):
     """Problems with a run summary. Returns (problems, platform); platform is None when no declared platform."""
     if not isinstance(rec, dict):
@@ -818,9 +1037,9 @@ def validate_run_record(rec):
     if platform not in PACKAGE_PLATFORMS:
         return [f"platform {platform!r} is not in {PACKAGE_PLATFORMS}"], None
     problems = _common_problems(rec, "run", platform)
-    expected = list(PACKAGE_CHECKS[platform])
-    if rec["expected_checks"] != expected:
-        problems.append(f"expected_checks differ from the declared checks for {platform}")
+    expected = run_expected(rec)
+    if expected is None:
+        problems.append(f"expected_checks must be a non-empty subset of the declared checks for {platform}, in declared order")
     status = rec["status"]
     if status not in PACKAGE_STATUSES:
         problems.append(f"status {status!r} is not pass|fail")
@@ -832,8 +1051,8 @@ def validate_run_record(rec):
     if not (isinstance(summary, list) and all(isinstance(c, dict) and set(c) == PACKAGE_SUMMARY_KEYS for c in summary)):
         problems.append("checks must be a list of {check_id, status, implemented}")
     else:
-        if [c["check_id"] for c in summary] != expected:
-            problems.append(f"checks must list exactly the declared checks for {platform}, in order")
+        if expected is not None and [c["check_id"] for c in summary] != expected:
+            problems.append("checks must list exactly expected_checks, in order")
         for c in summary:
             if c["status"] == "pass" and c["implemented"] is not True:
                 problems.append(f"{c['check_id']}: pass on a check that is not implemented")
@@ -846,19 +1065,22 @@ def validate_run_record(rec):
 
 
 def load_package_run(run_dir):
-    """Reads one harness run directory. Returns (run record or None, problems)."""
+    """Reads one harness run directory. Returns (run record or None, problems, records), records =
+    {check_id: (check record, good)}, good = valid, implemented and pass (and, if manual, auditable)."""
     try:
         run = json.loads((run_dir / RUN_RECORD_NAME).read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
-        return None, [f"{RUN_RECORD_NAME} unreadable: {exc}"]
+        return None, [f"{RUN_RECORD_NAME} unreadable: {exc}"], {}
     problems, platform = validate_run_record(run)
     if platform is None:
-        return None, problems
+        return None, problems, {}
     if run["status"] != "pass":
-        problems.append(f"run status is {run['status']!r}: every declared check must be implemented and pass")
+        problems.append(f"run status is {run['status']!r}: every expected check must be implemented and pass")
     summary = {c["check_id"]: c for c in run["checks"] if isinstance(c, dict) and "check_id" in c} \
         if isinstance(run["checks"], list) else {}
-    for check_id in PACKAGE_CHECKS[platform]:
+    expected = run_expected(run) or []
+    records = {}
+    for check_id in expected:
         try:
             rec = json.loads((run_dir / f"{check_id}.json").read_text(encoding="utf-8"))
         except FileNotFoundError:
@@ -867,21 +1089,31 @@ def load_package_run(run_dir):
         except (OSError, ValueError) as exc:
             problems.append(f"{check_id}: unreadable: {exc}")
             continue
-        problems += [f"{check_id}: {p}" for p in validate_check_record(rec, platform, run["run_id"], check_id)]
+        found = validate_check_record(rec, platform, run["run_id"], check_id)
+        good = not found and rec["implemented"] is True and rec["status"] == "pass"
+        if good:
+            found = manual_problems(rec)
+            good = not found
+        problems += [f"{check_id}: {p}" for p in found]
         if isinstance(rec, dict) and (rec.get("implemented") is not True or rec.get("status") != "pass"):
             problems.append(f"{check_id}: must be implemented and pass (status {rec.get('status')!r}, "
                             f"implemented {rec.get('implemented')!r})")
+        if isinstance(rec, dict):
+            records[check_id] = (rec, good)
         line = summary.get(check_id)
         if line is None:
             problems.append(f"{check_id}: missing from run summary")
         elif isinstance(rec, dict) and (line.get("status") != rec.get("status")
                                         or line.get("implemented") != rec.get("implemented")):
             problems.append(f"{check_id}: status or implemented differs from run summary")
-    undeclared = sorted(p.name for p in run_dir.iterdir()
-                        if CHECK_FILE_RE.match(p.name) and p.stem not in PACKAGE_CHECKS[platform])
+    present = sorted(p.stem for p in run_dir.iterdir() if CHECK_FILE_RE.match(p.name))
+    undeclared = [f"{n}.json" for n in present if n not in PACKAGE_CHECKS[platform]]
     if undeclared:
         problems.append("undeclared check records: " + ", ".join(undeclared))
-    return run, problems
+    outside = [f"{n}.json" for n in present if n in PACKAGE_CHECKS[platform] and expected and n not in expected]
+    if outside:
+        problems.append("check records outside expected_checks: " + ", ".join(outside))
+    return run, problems, records
 
 
 def collect_run_dirs(paths):
@@ -895,8 +1127,38 @@ def collect_run_dirs(paths):
     return found
 
 
-def package_stage(log, paths, dry_run=False):
-    """Reads harness run directories. Fails when none exist, any is invalid, or a platform has no valid PASS run."""
+def union_problems(platform, loaded, pin):
+    """loaded: [(run_dir, run, records)] of one platform. Problems with their union as one artifact's profiles."""
+    problems = []
+    first_dir, first_run, _ = loaded[0]
+    for run_dir, run, _ in loaded[1:]:
+        if run["artifact_ids"] != first_run["artifact_ids"]:
+            names = sorted(k for k in set(run["artifact_ids"]) | set(first_run["artifact_ids"])
+                           if run["artifact_ids"].get(k) != first_run["artifact_ids"].get(k))
+            problems.append(f"artifact identity differs between {first_dir.name} and {run_dir.name}: {', '.join(names)}")
+    seen = {}
+    for run_dir, _, records in loaded:
+        for check_id, (rec, good) in records.items():
+            seen.setdefault(check_id, []).append((run_dir.name, rec, good))
+    for check_id in PACKAGE_CHECKS[platform]:
+        entries = seen.get(check_id, [])
+        if len({(r.get("status"), r.get("implemented"), json.dumps(r.get("artifact_ids"), sort_keys=True))
+                for _, r, _ in entries}) > 1:
+            problems.append(f"{check_id}: different results in {', '.join(n for n, _, _ in entries)}")
+        elif not entries:
+            problems.append(f"{check_id}: no run record covers it")
+        elif not any(good for _, _, good in entries):
+            problems.append(f"{check_id}: no implemented passing record ("
+                            + ", ".join(f"{n}: {r.get('status')}" for n, r, _ in entries) + ")")
+    for _, run, _ in loaded:
+        problems += pin_problems(pin, {k: v[len("sha256:"):] for k, v in run["artifact_ids"].items()
+                                       if k in TUPLE_MEMBERS and _is_sha_ref(v)})
+    return list(dict.fromkeys(problems))
+
+
+def package_stage(log, paths, dry_run=False, tuple_pin=None):
+    """Reads harness run directories. Fails when none exist, any is invalid, or a platform's runs do not cover every
+    declared check (union rule above). With a tuple, the package hashes must equal it."""
     stage = "package"
     log.emit(stage, "start", None, reason=f"package run records ({PACKAGE_RECEIPT_SCHEMA}) for {', '.join(PACKAGE_PLATFORMS)}")
     if dry_run:
@@ -906,21 +1168,38 @@ def package_stage(log, paths, dry_run=False):
     if not run_dirs:
         log.emit(stage, "fail", None, reason=f"no package run records found (looked in {', '.join(str(p) for p in paths)})")
         return False
-    covered, ok = set(), True
+    ok, by_platform = True, {}
     for run_dir in run_dirs:
-        run, problems = load_package_run(run_dir)
+        run, problems, records = load_package_run(run_dir)
         run_path = run_dir / RUN_RECORD_NAME
         ids = {"package_run": sha_ref(sha256_file(run_path))} if run_path.is_file() else {}
+        if run is not None:
+            by_platform.setdefault(run["platform"], []).append((run_dir, run, records, ids))
         if problems:
             log.emit(stage, "fail", None, ids, f"{run_dir.name}: {'; '.join(problems)}")
             ok = False
             continue
-        covered.add(run["platform"])
         ids.update({f"artifact_{name}": value for name, value in sorted(run["artifact_ids"].items())})
-        count = len(PACKAGE_CHECKS[run["platform"]])
+        count = len(run["expected_checks"])
         log.emit(stage, "pass", None, ids,
-                 f"{run_dir.name}: {run['platform']} {count}/{count} checks implemented and PASS (run {run['run_id']})")
-    absent = [p for p in PACKAGE_PLATFORMS if p not in covered]
+                 f"{run_dir.name}: {run['platform']} {count}/{count} expected checks implemented and PASS (run {run['run_id']})")
+    absent = [p for p in PACKAGE_PLATFORMS if p not in by_platform]
+    for platform in PACKAGE_PLATFORMS:
+        loaded = by_platform.get(platform)
+        if not loaded:
+            continue
+        names = ", ".join(run_dir.name for run_dir, _, _, _ in loaded)
+        problems = union_problems(platform, [(d, r, rec) for d, r, rec, _ in loaded], tuple_pin)
+        if problems:
+            log.emit(stage, "fail", None, {}, f"{platform} union of {len(loaded)} run(s) ({names}): {'; '.join(problems)}")
+            ok = False
+            continue
+        total = len(PACKAGE_CHECKS[platform])
+        ids = {"package_union": sha_ref(sha256_text("\n".join(sorted(i["package_run"] for _, _, _, i in loaded)))),
+               **tuple_ids(tuple_pin)}
+        ids.update({f"artifact_{n}": v for n, v in sorted(loaded[0][1]["artifact_ids"].items())})
+        log.emit(stage, "pass", None, ids, f"{platform}: {total}/{total} declared checks implemented and PASS across "
+                                           f"{len(loaded)} run(s) ({names})" + (" (tuple-pinned)" if tuple_pin else " (unpinned)"))
     if absent:
         log.emit(stage, "fail", None, reason=f"no valid PASS run for platform(s): {', '.join(absent)}")
         return False
@@ -1032,9 +1311,18 @@ def cmd_run(args):
     if error:
         print(f"usage error: {error}", file=sys.stderr)
         return 2
+    tuple_pin = None
+    if not args.no_tuple:
+        try:
+            tuple_pin = load_tuple(args.tuple or TUPLE_FINAL)
+        except TupleError as exc:
+            print(f"usage error: {exc}", file=sys.stderr)
+            return 2
     out_dir = out_dir_for("run")
     log = EventLog(out_dir / "events.jsonl")
     dry = args.dry_run
+    print(f"tuple: {tuple_pin['name']} ({tuple_pin['path']})" if tuple_pin else
+          "NON-QUALIFYING: --no-tuple, exe/renderer/package hashes are not pinned to a tuple", file=sys.stderr)
     try:
         for stage in stages:
             if stage == "mac-oracle":
@@ -1043,13 +1331,18 @@ def cmd_run(args):
                 else:
                     cmd_mac_oracle_real(log, args.fixtures, args.runs, out_dir / "mac-oracle")
             elif stage == "win-replay":
-                win_stage(log, args.configs, args.win_runs, out_dir, dry, args.confirm_windows_gui)
+                win_stage(log, args.configs, args.win_runs, out_dir, dry, args.confirm_windows_gui,
+                          tuple_pin=tuple_pin, f1_trace="compare" in stages)
             elif stage == "compare":
                 run_compare(log, args, stages, out_dir, dry)
             elif stage == "smoke":
-                smoke_stage(log, out_dir, dry, args.confirm_windows_gui)
+                smoke_stage(log, out_dir, dry, args.confirm_windows_gui, tuple_pin=tuple_pin)
             elif stage == "package":
-                package_stage(log, args.package_receipts or [PACKAGE_RECEIPT_DIR], dry)
+                package_stage(log, args.package_receipts or [PACKAGE_RECEIPT_DIR], dry, tuple_pin=tuple_pin)
+        if tuple_pin is None:
+            for stage in stages:
+                if stage in PINNED_STAGES:
+                    log.emit(stage, "skip", None, reason="--no-tuple: artifact hashes were not compared with a tuple; run is non-qualifying")
         if not dry:
             for stage in stages:
                 if not log.passes.get(stage):
@@ -1107,12 +1400,19 @@ def build_parser():
     run_p.add_argument("--runs", type=int, default=3, help="Mac oracle runs per config")
     run_p.add_argument("--dry-run", action="store_true", help="print plans; start no GUI or Windows job")
     run_p.add_argument("--confirm-windows-gui", action="store_true", help="required to start Windows GUI matrix runs")
-    run_p.add_argument("--configs", nargs="+", default=list(DEFAULT_MATRIX_CONFIGS))
+    run_p.add_argument("--configs", nargs="+", default=list(DEFAULT_MATRIX_CONFIGS),
+                       help="win-replay configs FIXTURE:VARIANT (default: the 16 SR0 configs)")
     run_p.add_argument("--win-runs", type=int, default=3)
     run_p.add_argument("--win-candidate", type=Path, default=None,
                        help="historical Windows schema-v0 trace for compare when win-replay is not in this run")
     run_p.add_argument("--package-receipts", nargs="+", type=Path,
-                       help=f"receipt files or directories (default {PACKAGE_RECEIPT_DIR})")
+                       help=f"run directories or parents (default {PACKAGE_RECEIPT_DIR}); several runs of one platform "
+                            "are profiles of one artifact and are evaluated as a union")
+    pin_g = run_p.add_mutually_exclusive_group()
+    pin_g.add_argument("--tuple", type=Path, default=None,
+                       help=f"tuple pin file for exe/renderer/package hashes (default {TUPLE_FINAL})")
+    pin_g.add_argument("--no-tuple", action="store_true",
+                       help="do not pin hashes; every pinned stage then emits a skip and the run is non-qualifying (exit 1)")
 
     seed_p = sub.add_parser("seed", help="create first accepted baseline from repeat-run evidence")
     seed_p.add_argument("--fixture", required=True, type=validate_fixture)

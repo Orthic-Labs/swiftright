@@ -5,6 +5,7 @@ Run: python3 -I -m unittest discover -s qualification -v
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import tempfile
@@ -454,7 +455,7 @@ class StrictRunnerTests(unittest.TestCase):
 
     def test_run_exits_nonzero_when_a_stage_skips_or_has_no_pass(self):
         orig = q.package_stage
-        q.package_stage = lambda log, paths, dry=False: log.emit("package", "skip", reason="no")
+        q.package_stage = lambda log, paths, dry=False, tuple_pin=None: log.emit("package", "skip", reason="no")
         try:
             self.assertEqual(q.cmd_run(run_args("--stages", "package")), 1)
         finally:
@@ -529,8 +530,16 @@ class WindowsEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             q.windows_ids(["a" * 64, "d" * 64], ["b" * 64, "b" * 64], ["c" * 64] * 2)
 
-    def smoke_runner(self, text, rc=0):
-        return lambda command, capture_output=True, text_=True, **kw: argparse.Namespace(returncode=rc, stdout=text, stderr="")
+    def smoke_runner(self, normal, timeout=None, rc=0):
+        """Returns the normal text for the plain dispatch and the timeout text for the -SkipShutdown one."""
+        timeout = normal if timeout is None else timeout
+        return lambda command, capture_output=True, text_=True, **kw: argparse.Namespace(
+            returncode=rc, stdout=timeout if "-SkipShutdown" in command[1] else normal, stderr="")
+
+    def smoke_text(self, mode="normal", n=40, verdict=None):
+        marker = q.SMOKE_MODE_MARKERS[mode]
+        return (f"AUTOMATIONID PASS\nrun: ok\n{marker} [x]\n" + (verdict or f"SMOKE PASS ({n}/{n})") + "\n"
+                + self.artifacts_line())
 
     def test_smoke_dry_run_prints_plan_and_skips(self):
         self.assertTrue(q.smoke_stage(self.log, self.dir, True, False))
@@ -539,20 +548,53 @@ class WindowsEvidenceTests(unittest.TestCase):
         self.assertEqual(plan["command"][0], "win")
         self.assertIn("schedule-smoke.ps1", plan["command"][1])
         self.assertIn("-Tag t1", plan["command"][1])
+        self.assertNotIn("-SkipShutdown", plan["command"][1])
+
+    def test_smoke_timeout_plan_adds_skip_shutdown(self):
+        plan = q.smoke_plan("t1", timeout=True)
+        self.assertTrue(plan["command"][1].endswith("-Tag t1 -SkipShutdown"))
+        self.assertEqual(plan["mode"], "timeout")
+        self.assertIn(q.SMOKE_MODE_MARKERS["timeout"], plan["pass_markers"])
 
     def test_smoke_refuses_without_confirmation(self):
         self.assertFalse(q.smoke_stage(self.log, self.dir, False, False))
         self.assertEqual(self.log.failures, 1)
 
-    def test_smoke_pass_needs_markers_and_artifacts(self):
-        good = "AUTOMATIONID PASS\nrun: ok\n" + self.artifacts_line()
-        self.assertTrue(q.smoke_stage(self.log, self.dir, False, True, runner=self.smoke_runner(good), which=lambda n: "w"))
-        self.assertEqual(self.events()[-1]["artifact_ids"]["windows_exe"], "sha256:" + self.EXE)
-        for text in ("AUTOMATIONID PASS\nrun: ok\n", "AUTOMATIONID FAIL\nrun: ok\n" + self.artifacts_line()):
-            log = q.EventLog(self.dir / "x.jsonl", echo=False)
-            self.assertFalse(q.smoke_stage(log, self.dir, False, True, runner=self.smoke_runner(text), which=lambda n: "w"))
-            self.assertEqual(log.failures, 1)
-            log.close()
+    def run_smoke(self, runner, tuple_pin=None):
+        log = q.EventLog(self.dir / "x.jsonl", echo=False)
+        ok = q.smoke_stage(log, self.dir, False, True, runner=runner, which=lambda n: "w", tuple_pin=tuple_pin)
+        log.close()
+        return ok, [json.loads(l) for l in (self.dir / "x.jsonl").read_text().splitlines() if l.strip()]
+
+    def test_smoke_runs_normal_then_timeout_and_both_must_pass(self):
+        runner = self.smoke_runner(self.smoke_text("normal", 40), self.smoke_text("timeout", 41))
+        ok, events = self.run_smoke(runner)
+        self.assertTrue(ok)
+        self.assertEqual(events[-1]["artifact_ids"]["windows_exe"], "sha256:" + self.EXE)
+        self.assertIn("normal 40/40, timeout 41/41", events[-1]["reason"])
+        self.assertTrue((self.dir / "smoke-normal.txt").exists() and (self.dir / "smoke-timeout.txt").exists())
+
+    def test_smoke_fails_when_one_mode_is_missing_its_evidence(self):
+        good_n, good_t = self.smoke_text("normal", 40), self.smoke_text("timeout", 41)
+        cases = {
+            "no AUTOMATIONID": (good_n.replace("AUTOMATIONID PASS", "AUTOMATIONID FAIL"), good_t, "normal"),
+            "no ARTIFACTS": (good_n.split("ARTIFACTS")[0], good_t, "normal"),
+            "timeout mode ran the normal dispatch": (good_n, self.smoke_text("normal", 41), "timeout"),
+            "timeout verdict fails": (good_n, self.smoke_text("timeout", verdict="SMOKE FAIL (40/41)"), "timeout"),
+            "partial pass": (good_n, self.smoke_text("timeout", verdict="SMOKE PASS (40/41)"), "timeout"),
+        }
+        for name, (normal, timeout, mode) in cases.items():
+            with self.subTest(name):
+                ok, events = self.run_smoke(self.smoke_runner(normal, timeout))
+                self.assertFalse(ok)
+                self.assertIn(mode, events[-1]["reason"])
+                self.assertEqual(events[-1]["event"], "fail")
+
+    def test_smoke_refuses_mixed_builds_between_modes(self):
+        other = self.smoke_text("timeout", 41).replace(self.EXE, "d" * 64)
+        ok, events = self.run_smoke(self.smoke_runner(self.smoke_text("normal", 40), other))
+        self.assertFalse(ok)
+        self.assertIn("exe", events[-1]["reason"])
 
 
 def sha_ref_of(data):
@@ -582,16 +624,17 @@ def check_record(platform, check_id, implemented=True, status="pass", run_id=RUN
     }
 
 
-def run_record(platform, checks, run_id=RUN_ID):
+def run_record(platform, checks, run_id=RUN_ID, expected=None, artifact_ids=None):
+    """expected: the run's profile (default: every declared check of the platform)."""
     not_ok = [c["check_id"] for c in checks if c["status"] != "pass" or not c["implemented"]]
     return {
         "schema": q.PACKAGE_RECEIPT_SCHEMA, "record": "run", "product": "SliceApp", "platform": platform,
         "run_id": run_id, "status": "fail" if not_ok else "pass",
-        "expected_checks": list(q.PACKAGE_CHECKS[platform]),
+        "expected_checks": list(expected if expected is not None else q.PACKAGE_CHECKS[platform]),
         "checks": [{"check_id": c["check_id"], "status": c["status"], "implemented": c["implemented"]} for c in checks],
         "started_utc": "2026-10-09T10:00:00Z", "ended_utc": "2026-10-09T10:01:00Z",
         "reason": f"checks not passing: {', '.join(not_ok)}" if not_ok else None,
-        "artifact_ids": {"old_dmg": sha_ref_of(b"old"), "new_dmg": sha_ref_of(b"new")},
+        "artifact_ids": artifact_ids or {"old_dmg": sha_ref_of(b"old"), "new_dmg": sha_ref_of(b"new")},
         "harness": {"name": "harness", "sha256": HARNESS_SHA},
     }
 
@@ -644,7 +687,7 @@ class PackageStageTests(unittest.TestCase):
         self.write_run("windows", passing_checks("windows-x64"))
         self.write_run("mac", passing_checks("macos-arm64"))
         self.assertTrue(self.stage())
-        self.assertEqual(self.log.passes["package"], 2)
+        self.assertEqual(self.log.passes["package"], 4)  # two runs, two platform unions
         self.assertEqual(self.log.failures, 0)
 
     def test_unimplemented_checks_fail_their_platform(self):
@@ -701,7 +744,7 @@ class PackageStageTests(unittest.TestCase):
         self.write_run("windows", checks, run=run)
         self.write_run("mac", passing_checks("macos-arm64"))
         self.assertFalse(self.stage())
-        self.assertIn("expected_checks differ", " ".join(self.fail_reasons()))
+        self.assertIn("W14-deferred-update-in-use: no run record covers it", " ".join(self.fail_reasons()))
 
     def test_undeclared_check_record_fails(self):
         self.write_run("windows", passing_checks("windows-x64"))
@@ -767,6 +810,522 @@ class PackageStageTests(unittest.TestCase):
         problems, platform = q.validate_run_record({**run_record("windows-x64", checks), "platform": "linux-x64"})
         self.assertIsNone(platform)
         self.assertTrue(problems)
+
+
+    # ---- profiles: several run records of one platform are evaluated as a union (R5 Offline + Network)
+    WIN_OFFLINE = tuple(c for c in q.PACKAGE_CHECKS["windows-x64"] if c != "W12-appinstaller-update")
+    WIN_NETWORK = ("W00-environment", "W01-artifacts-bound", "W12-appinstaller-update")
+    MAC_AUTOMATED = tuple(c for c in q.PACKAGE_CHECKS["macos-arm64"] if c != "M11-window-visible")
+    MSIX = {"old_msix": sha_ref_of(b"old-msix"), "new_msix": sha_ref_of(b"new-msix")}
+
+    def profile(self, name, platform, ids, fail=(), artifact_ids=None, mutate=None, run_id=None):
+        """Writes one profile run directory covering exactly ids; checks in fail are implemented fail records."""
+        run_id = run_id or name
+        checks = [check_record(platform, cid, status="fail" if cid in fail else "pass", run_id=run_id) for cid in ids]
+        if mutate:
+            for c in checks:
+                mutate(c)
+        run = run_record(platform, checks, run_id=run_id, expected=ids, artifact_ids=artifact_ids or dict(self.MSIX))
+        self.write_run(name, checks, run=run)
+
+    def test_r5_profiles_union_passes_when_every_check_passes(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.profile("network", "windows-x64", self.WIN_NETWORK)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertTrue(self.stage())
+        self.assertEqual(self.log.failures, 0)
+        union = [e for e in self.events() if e["event"] == "pass" and "15/15 declared checks" in (e["reason"] or "")]
+        self.assertEqual(len(union), 1)
+        self.assertIn("(network, offline)", union[0]["reason"])  # run directories sort by name
+
+    def test_r5_shape_with_w08_fail_fails_only_on_w08(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE, fail=("W08-interrupted-update",))
+        self.profile("network", "windows-x64", self.WIN_NETWORK)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        unions = [e for e in self.events() if e["event"] == "fail" and "union of" in (e["reason"] or "")]
+        self.assertEqual(len(unions), 1)
+        self.assertIn("W08-interrupted-update: no implemented passing record (offline: fail)", unions[0]["reason"])
+        self.assertEqual(unions[0]["reason"].count("W0") + unions[0]["reason"].count("W1"), 1, "no other check is named")
+        self.assertEqual(self.log.passes["package"], 3, "network run, mac run and the mac union still pass")
+
+    def test_a_check_no_profile_covers_fails(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("W12-appinstaller-update: no run record covers it", " ".join(self.fail_reasons()))
+
+    def test_a_check_recorded_in_two_profiles_must_agree(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.profile("network", "windows-x64", self.WIN_NETWORK, fail=("W00-environment",))
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("W00-environment: different results in network, offline", " ".join(self.fail_reasons()))
+
+    def test_duplicate_check_with_different_artifact_ids_is_a_conflict(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.profile("network", "windows-x64", self.WIN_NETWORK,
+                     mutate=lambda c: c.update(artifact_ids={"installer": sha_ref_of(b"other")})
+                     if c["check_id"] == "W01-artifacts-bound" else None)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("W01-artifacts-bound: different results", " ".join(self.fail_reasons()))
+
+    def test_profiles_must_carry_one_artifact_identity(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.profile("network", "windows-x64", self.WIN_NETWORK,
+                     artifact_ids={**self.MSIX, "new_msix": sha_ref_of(b"a different build")})
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(self.stage())
+        self.assertIn("artifact identity differs between network and offline: new_msix", " ".join(self.fail_reasons()))
+
+    def test_expected_checks_must_be_an_ordered_subset_of_the_declared_checks(self):
+        for name, ids in {"reversed": self.WIN_NETWORK[::-1], "unknown": ("W00-environment", "W99-extra"),
+                          "duplicate": ("W00-environment", "W00-environment")}.items():
+            with self.subTest(name):
+                run = run_record("windows-x64", [], expected=ids)
+                problems, platform = q.validate_run_record(run)
+                self.assertEqual(platform, "windows-x64")
+                self.assertTrue(any("expected_checks must be a non-empty subset" in p for p in problems), problems)
+        empty = run_record("windows-x64", [], expected=())
+        self.assertTrue(q.validate_run_record(empty)[0])
+
+    def test_check_record_outside_a_profile_is_refused(self):
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE)
+        self.profile("network", "windows-x64", self.WIN_NETWORK)
+        self.write_run("mac", passing_checks("macos-arm64"))
+        (self.root / "offline" / "W12-appinstaller-update.json").write_text(
+            json.dumps(check_record("windows-x64", "W12-appinstaller-update", run_id="offline")))
+        self.assertFalse(self.stage())
+        self.assertIn("check records outside expected_checks: W12-appinstaller-update.json", " ".join(self.fail_reasons()))
+
+    # ---- manual observation (M11 only)
+    def manual_m11(self, **overrides):
+        def mark(c):
+            c["observations"] = {"manual": "true", "observer": "adrian", "note": "window visible after first launch"}
+            c["artifact_ids"] = {"evidence": sha_ref_of(b"M11-window-visible.png")}
+            c.update(overrides)
+        return mark
+
+    def test_mac_union_of_automated_profile_and_manual_m11_passes(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.profile("mac-auto", "macos-arm64", self.MAC_AUTOMATED, artifact_ids={"old_dmg": sha_ref_of(b"o")})
+        self.profile("mac-manual", "macos-arm64", ("M11-window-visible",), artifact_ids={"old_dmg": sha_ref_of(b"o")},
+                     mutate=self.manual_m11())
+        self.assertTrue(self.stage())
+        self.assertIn("macos-arm64: 12/12 declared checks", " ".join(e["reason"] or "" for e in self.events()))
+
+    def test_manual_observation_needs_observer_and_evidence_and_only_m11(self):
+        cases = {
+            "no observer": ("macos-arm64", "M11-window-visible", lambda c: c["observations"].pop("observer")),
+            "no evidence": ("macos-arm64", "M11-window-visible", lambda c: c.update(artifact_ids={})),
+            "other check": ("macos-arm64", "M05-offline-first-launch", None),
+            "windows check": ("windows-x64", "W04-launch-offline-old", None),
+        }
+        for name, (platform, cid, tweak) in cases.items():
+            with self.subTest(name):
+                rec = check_record(platform, cid)
+                self.manual_m11()(rec)
+                if tweak:
+                    tweak(rec)
+                self.assertTrue(q.manual_problems(rec), name)
+        good = check_record("macos-arm64", "M11-window-visible")
+        self.manual_m11()(good)
+        self.assertEqual(q.manual_problems(good), [])
+        self.assertEqual(q.manual_problems(check_record("macos-arm64", "M11-window-visible")), [], "automated pass is fine")
+
+    def test_manual_claim_on_a_non_manual_check_fails_the_run(self):
+        self.write_run("windows", passing_checks("windows-x64"))
+        self.profile("mac", "macos-arm64", q.PACKAGE_CHECKS["macos-arm64"],
+                     mutate=lambda c: self.manual_m11()(c) if c["check_id"] == "M05-offline-first-launch" else None)
+        self.assertFalse(self.stage())
+        self.assertIn("a manual observation is only allowed for M11-window-visible", " ".join(self.fail_reasons()))
+
+    # ---- tuple pins on package hashes
+    def pinned(self, **pins):
+        pin = q.load_tuple(q.TUPLE_FINAL)
+        pin["pins"] = {**pin["pins"], **pins}
+        return pin
+
+    def test_package_artifact_hashes_must_equal_the_tuple(self):
+        final = q.load_tuple(q.TUPLE_FINAL)["pins"]
+        ids = {"old_msix": "sha256:" + final["old_msix"], "new_msix": "sha256:" + final["new_msix"]}
+        self.profile("offline", "windows-x64", self.WIN_OFFLINE, artifact_ids=ids)
+        self.profile("network", "windows-x64", self.WIN_NETWORK, artifact_ids=ids)
+        self.write_run("mac", passing_checks("macos-arm64"), run=run_record(
+            "macos-arm64", passing_checks("macos-arm64"), artifact_ids={"old_dmg": "sha256:" + final["old_dmg"]}))
+        self.assertTrue(q.package_stage(self.log, [self.root], tuple_pin=q.load_tuple(q.TUPLE_FINAL)))
+        self.assertIn("tuple_file", [e for e in self.events() if "union" in (e["reason"] or "") or "declared checks" in (e["reason"] or "")][-1]["artifact_ids"])
+
+    def test_package_with_a_hash_that_is_not_the_tuples_fails(self):
+        self.write_run("windows", passing_checks("windows-x64"), run=run_record(
+            "windows-x64", passing_checks("windows-x64"), artifact_ids=dict(self.MSIX)))
+        self.write_run("mac", passing_checks("macos-arm64"))
+        self.assertFalse(q.package_stage(self.log, [self.root], tuple_pin=q.load_tuple(q.TUPLE_FINAL)))
+        reasons = " ".join(self.fail_reasons())
+        self.assertIn("old_msix", reasons)
+        self.assertIn("differs from tuple final", reasons)
+
+    def test_a_pending_tuple_member_fails_a_record_that_carries_it(self):
+        final = q.load_tuple(q.TUPLE_FINAL)["pins"]
+        self.assertIsNone(final["new_dmg"], "the 0.1.1 DMG on the final chain is not built yet")
+        self.write_run("windows", passing_checks("windows-x64"), run=run_record(
+            "windows-x64", passing_checks("windows-x64"),
+            artifact_ids={"old_msix": "sha256:" + final["old_msix"], "new_msix": "sha256:" + final["new_msix"]}))
+        self.write_run("mac", passing_checks("macos-arm64"), run=run_record(
+            "macos-arm64", passing_checks("macos-arm64"),
+            artifact_ids={"old_dmg": "sha256:" + final["old_dmg"], "new_dmg": sha_ref_of(b"0.1.1 dmg")}))
+        self.assertFalse(q.package_stage(self.log, [self.root], tuple_pin=q.load_tuple(q.TUPLE_FINAL)))
+        self.assertIn("new_dmg is not pinned in tuple final (PENDING)", " ".join(self.fail_reasons()))
+
+
+
+def fake_tuple(**pins):
+    """A tuple dict as load_tuple returns it (every member pending unless given)."""
+    return {"name": "t", "path": "t.json", "sha256": "e" * 64, "smoke_checks": {"normal": 40, "timeout": 41},
+            "pins": {**{m: None for m in q.TUPLE_MEMBERS}, **pins}}
+
+
+class TupleFileTests(unittest.TestCase):
+    def test_final_tuple_loads_with_every_member(self):
+        pin = q.load_tuple(q.TUPLE_FINAL)
+        self.assertEqual(set(pin["pins"]), set(q.TUPLE_MEMBERS))
+        self.assertEqual(pin["smoke_checks"], {"normal": 40, "timeout": 41})
+        self.assertTrue(pin["pins"]["windows_renderer"].startswith("7533963d"))
+        self.assertTrue(pin["pins"]["windows_fixture_exe"].startswith("aa4353ce"))
+        self.assertTrue(pin["pins"]["windows_smoke_exe"].startswith("21992f16"))
+        self.assertTrue(pin["pins"]["old_dmg"].startswith("b976ac70"))
+        self.assertIsNone(pin["pins"]["new_dmg"], "0.1.1 DMG on the final chain is PENDING")
+
+    def test_every_pinned_hash_is_on_every_cited_line(self):
+        doc = json.loads(q.TUPLE_FINAL.read_text(encoding="utf-8"))
+        checked = 0
+        for name, member in doc["members"].items():
+            self.assertEqual(bool(member["source"]), member["sha256"] is not None, name)
+            for cite in member["source"]:
+                path, _, line = cite.rpartition(":")
+                text = (q.REPO / path).read_text(encoding="utf-8", errors="replace").splitlines()[int(line) - 1]
+                self.assertIn(member["sha256"], text.lower(), f"{name} not on {cite}")
+                checked += 1
+        self.assertGreaterEqual(checked, 15)
+        for mode, cite in zip(q.SMOKE_MODES, doc["smoke_checks"]["source"]):
+            path, _, line = cite.rpartition(":")
+            n = doc["smoke_checks"][mode]
+            self.assertIn(f"SMOKE PASS ({n}/{n})", (q.REPO / path).read_text().splitlines()[int(line) - 1])
+
+    def test_matrix_script_defaults_are_the_tuple(self):
+        text = (q.MATRIX_SCRIPT).read_text(encoding="utf-8")
+        pins = q.load_tuple(q.TUPLE_FINAL)["pins"]
+        exe = re.search(r"EXPECT_EXE_SHA256:=([0-9A-F]{64})", text).group(1).lower()
+        dll = re.search(r"EXPECT_DLL_SHA256:=([0-9A-F]{64})", text).group(1).lower()
+        self.assertEqual((exe, dll), (pins["windows_fixture_exe"], pins["windows_renderer"]))
+
+    def test_pin_problems(self):
+        pin = fake_tuple(windows_renderer="a" * 64)
+        self.assertEqual(q.pin_problems(None, {"windows_renderer": "b" * 64}), [])
+        self.assertEqual(q.pin_problems(pin, {"windows_renderer": "a" * 64}), [])
+        self.assertIn("differs from tuple t", q.pin_problems(pin, {"windows_renderer": "b" * 64})[0])
+        self.assertIn("(PENDING)", q.pin_problems(pin, {"new_dmg": "c" * 64})[0])
+
+    def test_bad_tuple_files_are_refused(self):
+        good = json.loads(q.TUPLE_FINAL.read_text(encoding="utf-8"))
+        cases = {"schema": {**good, "schema": "x"},
+                 "member set": {**good, "members": {k: v for k, v in good["members"].items() if k != "old_dmg"}},
+                 "upper-case hash": {**good, "members": {**good["members"], "old_dmg": {"sha256": "AB" * 32}}},
+                 "short hash": {**good, "members": {**good["members"], "old_dmg": {"sha256": "ab"}}},
+                 "smoke count": {**good, "smoke_checks": {"normal": 40}}}
+        with tempfile.TemporaryDirectory(dir=SCRATCH) as tmp:
+            for name, doc in cases.items():
+                with self.subTest(name):
+                    path = Path(tmp) / f"{name}.json"
+                    path.write_text(json.dumps(doc))
+                    with self.assertRaises(q.TupleError):
+                        q.load_tuple(path)
+            with self.assertRaises(q.TupleError):
+                q.load_tuple(Path(tmp) / "missing.json")
+
+
+class SmokeTupleTests(unittest.TestCase):
+    """Committed smoke receipts through smoke_stage (injected runner; nothing is dispatched)."""
+    BS = q.REPO / "examples" / "BridgeSmoke"
+
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def replay(self, normal, timeout, tuple_pin):
+        texts = {False: (self.BS / normal).read_text(encoding="utf-8", errors="replace"),
+                 True: (self.BS / timeout).read_text(encoding="utf-8", errors="replace")}
+        runner = lambda command, **kw: argparse.Namespace(returncode=0, stdout=texts["-SkipShutdown" in command[1]], stderr="")
+        log = q.EventLog(self.dir / "e.jsonl", echo=False)
+        ok = q.smoke_stage(log, self.dir, False, True, runner=runner, which=lambda n: "w", tuple_pin=tuple_pin)
+        log.close()
+        return ok, [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()][-1]
+
+    def test_final_receipts_pass_under_the_final_tuple(self):
+        ok, last = self.replay("result-smoke-rev06final.txt", "result-smoke-timeout06final.txt", q.load_tuple(q.TUPLE_FINAL))
+        self.assertTrue(ok, last)
+        self.assertIn("normal 40/40, timeout 41/41", last["reason"])
+        self.assertEqual(last["artifact_ids"]["windows_exe"], "sha256:" + q.load_tuple(q.TUPLE_FINAL)["pins"]["windows_smoke_exe"])
+        self.assertIn("tuple_file", last["artifact_ids"])
+
+    def test_negative_control_old_rev06c_receipt_fails_the_tuple(self):
+        ok, last = self.replay("result-smoke-rev06c.txt", "result-smoke-timeout06c.txt", q.load_tuple(q.TUPLE_FINAL))
+        self.assertFalse(ok)
+        self.assertEqual(last["event"], "fail")
+        self.assertIn("777f14c4", last["reason"])
+        self.assertIn("differs from tuple final", last["reason"])
+
+    def test_the_same_old_receipt_passes_when_unpinned(self):
+        ok, last = self.replay("result-smoke-rev06c.txt", "result-smoke-timeout06c.txt", None)
+        self.assertTrue(ok, "only the tuple rejects the old build")
+        self.assertIn("(unpinned)", last["reason"])
+
+    def test_a_tuple_count_other_than_the_receipts_fails(self):
+        pin = q.load_tuple(q.TUPLE_FINAL)
+        pin["smoke_checks"] = {"normal": 41, "timeout": 41}
+        ok, last = self.replay("result-smoke-rev06final.txt", "result-smoke-timeout06final.txt", pin)
+        self.assertFalse(ok)
+        self.assertIn("tuple expects 41/41", last["reason"])
+
+
+class WinReplayTupleTests(unittest.TestCase):
+    EXE, RND = "a" * 64, "b" * 64
+    MATRIX = q.REPO / "probes" / "sr0-s" / "fresh-on-bridge" / "out" / "matrix-final"
+
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+        self.calls = []
+
+    def tearDown(self):
+        self.log.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def events(self):
+        return [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()]
+
+    def artifacts(self, exe=None):
+        return f"ARTIFACTS exe={exe or self.EXE} renderer={self.RND} trace={'c' * 64}\n"
+
+    def windows(self, verify="ARTIFACT_OK\n", record="state=Ready last_result=0\nrecorder exit=0\n", pull_ok=True, exe=None):
+        """Fake `win`/matrix transport for win_stage with the F1 trace step."""
+        def runner(command, env=None, capture_output=True, text=True):
+            self.calls.append(command)
+            if command[0] == "bash":
+                for cfg in command[2:]:
+                    f, _, v = cfg.partition(":")
+                    (Path(env["OUT_DIR"]) / f"{f}-{v}-r1.txt").write_text("SELFTEST PASS\n" + self.artifacts(exe), encoding="utf-8")
+                lines = [f"{c.partition(':')[0]} {c.partition(':')[2]} run1: SELFTEST F1: PASS" for c in command[2:]]
+                return argparse.Namespace(returncode=0, stdout="\n".join(lines), stderr="")
+            if "verify-artifacts.ps1" in command[1]:
+                return argparse.Namespace(returncode=0, stdout=verify, stderr="")
+            if "schedule-f1.ps1" in command[1]:
+                return argparse.Namespace(returncode=0, stdout=record, stderr="")
+            if "cat.ps1" in command[1]:
+                return argparse.Namespace(returncode=0 if pull_ok else 1, stdout="\x1b[0m{}\n" if pull_ok else "", stderr="")
+            raise AssertionError(command)
+        return runner
+
+    def assembler(self, rc=0):
+        def assemble(argv):
+            self.calls.append(argv)
+            if rc == 0:
+                Path(argv[argv.index("--out") + 1]).write_text('{"fixtureId": "F1"}', encoding="utf-8")
+            return rc, "wrote" if rc == 0 else "boom"
+        return assemble
+
+    def stage(self, runner, tuple_pin=None, f1=False, assembler=None):
+        recorder = lambda out_dir, exe, renderer, runner=None: q.win_f1_trace(
+            out_dir, exe, renderer, runner=runner, assembler=assembler or self.assembler())
+        return q.win_stage(self.log, ["F1:none"], 1, self.dir, False, True, runner=runner, which=lambda n: "w",
+                           tuple_pin=tuple_pin, f1_trace=f1, f1_recorder=recorder)
+
+    # ---- D5: tuple pins
+    def test_unpinned_replay_passes_and_says_so(self):
+        self.assertTrue(self.stage(self.windows()))
+        self.assertIn("(unpinned)", self.events()[-1]["reason"])
+
+    def test_replay_on_the_tuple_build_passes(self):
+        pin = fake_tuple(windows_fixture_exe=self.EXE, windows_renderer=self.RND)
+        self.assertTrue(self.stage(self.windows(), tuple_pin=pin))
+        self.assertIn("tuple_file", self.events()[-1]["artifact_ids"])
+
+    def test_replay_on_another_exe_or_renderer_fails(self):
+        for name, pin in {"exe": fake_tuple(windows_fixture_exe="d" * 64, windows_renderer=self.RND),
+                          "renderer": fake_tuple(windows_fixture_exe=self.EXE, windows_renderer="d" * 64),
+                          "pending": fake_tuple(windows_renderer=self.RND)}.items():
+            with self.subTest(name):
+                self.log.close()
+                self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+                self.assertFalse(self.stage(self.windows(), tuple_pin=pin))
+                self.assertIn("not the tuple build", self.events()[-1]["reason"])
+
+    def test_committed_matrix_final_passes_the_final_tuple_and_fails_a_wrong_pin(self):
+        records = sorted(self.MATRIX.glob("F*-r*.txt"))
+        records = [r for r in records if ".a" not in r.name]
+        if len(records) != 320:
+            self.skipTest("matrix-final evidence not present")
+        configs = list(q.DEFAULT_MATRIX_CONFIGS)
+
+        def runner(command, env=None, capture_output=True, text=True):
+            target = Path(env["OUT_DIR"])
+            lines = []
+            for cfg in configs:
+                f, _, v = cfg.partition(":")
+                for run in range(1, 21):
+                    rec = self.MATRIX / f"{f}-{v}-r{run}.txt"
+                    shutil.copyfile(rec, target / rec.name)
+                    selftest = [l for l in rec.read_text(errors="replace").splitlines() if l.startswith("SELFTEST ")][-1]
+                    lines.append(f"{f} {v} run{run}: {selftest}")
+            return argparse.Namespace(returncode=0, stdout="\n".join(lines), stderr="")
+        ok = q.win_stage(self.log, configs, 20, self.dir, False, True, runner=runner, which=lambda n: "w",
+                         tuple_pin=q.load_tuple(q.TUPLE_FINAL))
+        self.assertTrue(ok, self.events()[-1])
+        self.assertIn("320/320", self.events()[-1]["reason"])
+        wrong = q.load_tuple(q.TUPLE_FINAL)
+        wrong["pins"]["windows_renderer"] = "7" * 64
+        self.assertFalse(q.win_stage(self.log, configs, 20, self.dir, False, True, runner=runner, which=lambda n: "w",
+                                     tuple_pin=wrong))
+
+    # ---- D3: win-replay produces the schema-v0 trace that compare consumes
+    def test_replay_with_f1_trace_writes_the_file_compare_reads(self):
+        self.assertTrue(self.stage(self.windows(), f1=True))
+        trace = self.dir / "win-matrix" / q.WIN_TRACE_FILE
+        self.assertTrue(trace.exists())
+        last = self.events()[-1]
+        self.assertEqual(last["artifact_ids"]["windows_f1_trace_v0"], "sha256:" + q.sha256_file(trace))
+        steps = [c[1] if c[0] == "win" else "assemble" for c in self.calls if c[0] != "bash"]
+        self.assertTrue("verify-artifacts.ps1" in steps[0] and "schedule-f1.ps1" in steps[1] and steps[-1] == "assemble", steps)
+        self.assertIn(f"-ExpectExe {self.EXE.upper()}", steps[0])
+        assemble = [c for c in self.calls if c[0] == "F1Assemble"][0]
+        self.assertEqual(assemble[1], "win")
+        self.assertIn("--keep-lists", assemble)
+        self.assertEqual(Path(assemble[assemble.index("--stimulus") + 1]), q.F1_STIMULUS)
+        self.assertEqual(len(list((self.dir / "win-matrix" / "f1").glob("*"))), 3)
+
+    def test_without_f1_trace_nothing_is_recorded(self):
+        self.assertTrue(self.stage(self.windows(), f1=False))
+        self.assertFalse((self.dir / "win-matrix" / q.WIN_TRACE_FILE).exists())
+        self.assertFalse(any("schedule-f1" in c[1] for c in self.calls if c[0] == "win"))
+
+    def test_f1_trace_failures_fail_the_stage_with_a_reason(self):
+        cases = {"build changed": (self.windows(verify="ARTIFACT_MISMATCH\n"), None, "no longer equals the matrix build"),
+                 "recorder job failed": (self.windows(record="state=Ready last_result=1\nno run log\n"), None, "did not finish cleanly"),
+                 "recorder timeout": (self.windows(record="last_result=0\nrecorder exit=0\nRECORDER TIMEOUT\n"), None, "did not finish"),
+                 "pull failed": (self.windows(pull_ok=False), None, "F1 file pull failed"),
+                 "assemble failed": (self.windows(), self.assembler(rc=1), "F1Assemble failed rc=1")}
+        for name, (runner, assembler, text) in cases.items():
+            with self.subTest(name):
+                self.log.close()
+                self.log = q.EventLog(self.dir / "e.jsonl", echo=False)
+                self.assertFalse(self.stage(runner, f1=True, assembler=assembler))
+                self.assertEqual(self.events()[-1]["event"], "fail")
+                self.assertIn(text, self.events()[-1]["reason"])
+                if name == "recorder job failed":
+                    self.assertIn("UIARecorder.exe", self.events()[-1]["reason"], "names the missing recorder tree")
+
+    def test_dry_run_plan_names_the_f1_steps(self):
+        plan = q.win_plan(["F1:none"], 1, Path("/x"), f1_trace=True)
+        f1 = plan["f1_trace"]
+        self.assertIn("-Mode record", f1["record"][1])
+        self.assertIn("-Bin " + q.F1_BIN, f1["record"][1])
+        self.assertIn("verify-artifacts.ps1", f1["verify"][1])
+        self.assertEqual(f1["assemble"][:2], ["F1Assemble", "win"])
+        self.assertNotIn("f1_trace", q.win_plan(["F1:none"], 1, Path("/x")))
+
+    def test_f1_assemble_command_reproduces_the_committed_windows_trace(self):
+        """Same flags as the committed strict W6 trace: build F1Assemble from committed source and rerun it."""
+        out = q.F1_PACKAGE / "out"
+        needed = [out / n for n in ("winrec-w6.json", "winside-w6.json", "events-w6.txt", "win-trace-strict-w6.json")]
+        if not all(n.exists() for n in needed) or not shutil.which("swift"):
+            self.skipTest("w6 evidence or swift toolchain not present")
+        if not os.environ.get("SR0A_BUILD_ROOT"):
+            self.skipTest("set SR0A_BUILD_ROOT to an internal-disk path: a fresh binary run from /Volumes/D triggers TCC prompts")
+        work = Path(tempfile.mkdtemp())  # system temp (internal disk): the fresh binary reads and writes nothing on /Volumes/D
+        try:
+            for src in (*needed[:3], q.F1_STIMULUS):
+                shutil.copyfile(src, work / src.name)
+            target = work / "reproduced.json"
+            argv = ["F1Assemble", "win", "--rec", str(work / needed[0].name), "--side", str(work / needed[1].name),
+                    "--events", str(work / needed[2].name), "--stimulus", str(work / q.F1_STIMULUS.name),
+                    "--out", str(target), "--keep-lists"]
+            rc, output = q.f1_assemble(argv)
+            self.assertEqual(rc, 0, output)
+            self.assertEqual(json.loads(target.read_text()), json.loads(needed[3].read_text()))
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+
+class RunWiringTests(unittest.TestCase):
+    """cmd_run passes the tuple and the F1 request to the stages (stages are replaced by recorders)."""
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.dir = Path(tempfile.mkdtemp(dir=SCRATCH))
+        self.saved = (q.OUT_ROOT, q.win_stage, q.smoke_stage, q.package_stage)
+        q.OUT_ROOT = self.dir
+        self.seen = {}
+
+        def make(stage):
+            def fake(log, *args, **kw):
+                self.seen[stage] = kw
+                log.emit(stage, "pass", None, {k: "sha256:" + "a" * 64 for k in q.WINDOWS_PASS_IDS} if stage != "package" else {}, "ok")
+                return True
+            return fake
+        q.win_stage, q.smoke_stage, q.package_stage = make("win-replay"), make("smoke"), make("package")
+
+    def tearDown(self):
+        q.OUT_ROOT, q.win_stage, q.smoke_stage, q.package_stage = self.saved
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_default_run_uses_the_final_tuple_and_exits_zero(self):
+        self.assertEqual(q.cmd_run(run_args("--stages", "win-replay", "smoke", "package", "--confirm-windows-gui")), 0)
+        for stage in ("win-replay", "smoke", "package"):
+            self.assertEqual(self.seen[stage]["tuple_pin"]["name"], "final", stage)
+
+    def test_no_tuple_runs_unpinned_and_is_non_qualifying(self):
+        code = q.cmd_run(run_args("--stages", "win-replay", "smoke", "package", "--no-tuple", "--confirm-windows-gui"))
+        self.assertEqual(code, 1, "pinned stages emit a skip, which is a failure outside --dry-run")
+        for stage in ("win-replay", "smoke", "package"):
+            self.assertIsNone(self.seen[stage]["tuple_pin"], stage)
+        events = [json.loads(l) for f in self.dir.glob("*/events.jsonl") for l in f.read_text().splitlines() if l.strip()]
+        skips = [e for e in events if e["event"] == "skip"]
+        self.assertEqual(sorted(e["stage"] for e in skips), ["package", "smoke", "win-replay"])
+        self.assertTrue(all("non-qualifying" in e["reason"] for e in skips))
+
+    def test_tuple_and_no_tuple_are_exclusive_and_a_bad_tuple_is_a_usage_error(self):
+        with self.assertRaises(SystemExit):
+            run_args("--tuple", str(q.TUPLE_FINAL), "--no-tuple")
+        bad = self.dir / "bad.json"
+        bad.write_text("{}")
+        self.assertEqual(q.cmd_run(run_args("--stages", "package", "--tuple", str(bad))), 2)
+
+    def test_f1_trace_is_requested_only_when_compare_follows_win_replay(self):
+        q.cmd_run(run_args("--stages", "win-replay", "compare", "--dry-run"))
+        self.assertTrue(self.seen["win-replay"]["f1_trace"])
+        q.cmd_run(run_args("--stages", "win-replay", "--dry-run"))
+        self.assertFalse(self.seen["win-replay"]["f1_trace"])
+
+    def test_win_replay_defaults_to_the_sixteen_sr0_configs(self):
+        configs = run_args().configs
+        self.assertEqual(len(configs), 16)
+        text = q.MATRIX_SCRIPT.read_text(encoding="utf-8")
+        sr0 = re.search(r"^SR0=\((.*?)\)\n", text, re.S | re.M).group(1)
+        self.assertEqual(configs, re.findall(r'"([^"]+)"', sr0))
+
+
+class WindowsDriverDriftTests(unittest.TestCase):
+    def test_drivers_emit_the_artifacts_line_the_runner_parses(self):
+        for path in (q.REPO / "probes/sr0-s/fresh-on-bridge/scripts/drive-fixture.ps1",
+                     q.REPO / "examples/BridgeSmoke/scripts/drive-smoke.ps1"):
+            with self.subTest(path.name):
+                self.assertIn("ARTIFACTS exe=$", path.read_text(encoding="utf-8"))
+        line = f"ARTIFACTS exe={'a' * 64} renderer={'b' * 64} trace={'c' * 64}"
+        self.assertEqual(q.parse_windows_artifacts(line), ("a" * 64, "b" * 64, "c" * 64))
 
 
 class HarnessDriftTests(unittest.TestCase):

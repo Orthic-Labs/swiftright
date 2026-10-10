@@ -1,0 +1,73 @@
+{
+  "schema": "sr0-a.tuple/v1",
+  "name": "final",
+  "recorded": "2026-10-10",
+  "note": "Final SR0 tuple, docs/sr0-snapshot.md section 2c (HEAD 4496474). Hashes are lowercase sha256 hex copied from the cited path:line (test_run.py TupleFileTests re-reads every citation). sha256 null = member not built or not receipted yet (PENDING): a record that carries it fails the package stage. Names in members equal the artifact_ids names the stages record. Used by `run.py run` unless --no-tuple.",
+  "members": {
+    "windows_renderer": {
+      "what": "swiftright_render.dll, ABI 0.6, source through 65cd886",
+      "sha256": "7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc",
+      "source": [
+        "docs/sr0-snapshot.md:64",
+        "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:24",
+        "examples/BridgeSmoke/result-smoke-rev06final.txt:103"
+      ]
+    },
+    "windows_fixture_exe": {
+      "what": "FreshOnBridge.exe, runtime b8702bb (win-replay and the F1 trace)",
+      "sha256": "aa4353ce5ec2dea7b3c00c68cc4e160789ccdd3b14dca41494b8509b34be1d7e",
+      "source": [
+        "docs/sr0-snapshot.md:65",
+        "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:23",
+        "probes/sr0-s/fresh-on-bridge/out/matrix-final/F1-none-r1.txt:110"
+      ]
+    },
+    "windows_smoke_exe": {
+      "what": "BridgeSmoke.exe (smoke stage, normal and timeout mode)",
+      "sha256": "21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5",
+      "source": [
+        "docs/sr0-snapshot.md:66",
+        "examples/BridgeSmoke/result-smoke-rev06final.txt:103",
+        "examples/BridgeSmoke/result-smoke-timeout06final.txt:104"
+      ]
+    },
+    "old_msix": {
+      "what": "SliceApp_0.1.0.0_x64.msix (R5 final2, from 0751951)",
+      "sha256": "4cc9a7f0a05c05561432ddf536179ae18b6e2aeabbc0f6c245397de38edf2f4a",
+      "source": [
+        "docs/sr0-snapshot.md:68",
+        "examples/SliceApp/RESULT-R5.md:30"
+      ]
+    },
+    "new_msix": {
+      "what": "SliceApp_0.1.1.0_x64.msix (R5 final2)",
+      "sha256": "c2897a68d1a4555da92155f4192dc53c77a5803e5932a821ab3fed465de2f432",
+      "source": [
+        "docs/sr0-snapshot.md:69",
+        "examples/SliceApp/RESULT-R5.md:31"
+      ]
+    },
+    "old_dmg": {
+      "what": "SliceApp_0.1.0_arm64.dmg (R3 final, commit 4496474, @rightkit/release 0.2.144)",
+      "sha256": "b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4",
+      "source": [
+        "docs/sr0-snapshot.md:70",
+        "examples/SliceApp/r3-final/r3-final-verify.txt:4",
+        "examples/SliceApp/r3-final/release-manifest.json:67"
+      ]
+    },
+    "new_dmg": {
+      "what": "SliceApp 0.1.1 arm64 DMG on the same @rightkit/release 0.2.144 chain: not built yet (the R7 0.1.1 DMG c75155b4... is from 0.2.139 and is history)",
+      "sha256": null,
+      "source": []
+    }
+  },
+  "smoke_checks": {
+    "normal": 40,
+    "timeout": 41,
+    "source": [
+      "examples/BridgeSmoke/result-smoke-rev06final.txt:83",
+      "examples/BridgeSmoke/result-smoke-timeout06final.txt:84"
+    ]
+  }
+}
