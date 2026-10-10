@@ -70,3 +70,20 @@ public struct Rectangle: Shape, PrimitiveView {
     var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
     var nodeContent: (any View)? { nil }
 }
+
+
+/// Rounded rectangular path that fills its proposed bounds.
+public struct RoundedRectangle: Shape, PrimitiveView {
+    public let cornerRadius: CGFloat
+    public let style: RoundedCornerStyle
+
+    public init(cornerRadius: CGFloat, style: RoundedCornerStyle = .circular) {
+        self.cornerRadius = max(0, cornerRadius)
+        self.style = style
+    }
+
+    public var shapeGeometry: ShapeGeometry { .roundedRectangle(cornerRadius: cornerRadius, style: style) }
+    @MainActor public var body: Never { return fatalError("primitive shape has no body") }
+    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
+    var nodeContent: (any View)? { nil }
+}
