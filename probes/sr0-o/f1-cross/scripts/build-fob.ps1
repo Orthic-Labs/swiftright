@@ -1,3 +1,6 @@
+# OBSOLETE (2026-10-10): the SR0O_RELEASE_FLAG gate is now in probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/SelfTest.swift
+# (releaseSignalPresent), so the normal FreshOnBridge build honours it. Kept for the history of the w6 trace.
+throw 'build-fob.ps1 is obsolete: build FreshOnBridge normally; SelfTest.swift carries the release gate'
 # Builds a copy of FreshOnBridge whose F1 self-test waits for an external release signal (file named by SR0O_RELEASE_FLAG)
 # before releasing the fake engine's insert-above. Everything else is the unchanged staged source. The original exe is untouched.
 param([string]$Base = 'D:\Claude\sr0s-bridge', [string]$Out = 'D:\Claude\sr0o-f1',

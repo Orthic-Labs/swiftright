@@ -210,6 +210,12 @@ final class SelfTest {
     }
 
     private func pendingHas(_ key: String) -> Bool { engine.pendingKeys.contains(key) }
+    /// SR0-O cross-compare release signal: a file named by SR0O_RELEASE_FLAG, created by UIARecorder `touch` at the
+    /// `engine_insert_above` step. Unset env = release immediately (matrix behaviour). Formerly patched in by build-fob.ps1.
+    private func releaseSignalPresent() -> Bool {
+        guard let p = ProcessInfo.processInfo.environment["SR0O_RELEASE_FLAG"], !p.isEmpty else { return true }
+        return FileManager.default.fileExists(atPath: p)
+    }
 
     private func pendingCount() -> Int { engine.pendingKeys.count }
 
@@ -222,7 +228,7 @@ final class SelfTest {
             return [
                 .wait("row5 focused by AX") { self.lastFocusID() == self.rid(5) },
                 .wait("typed abc") { self.text(self.rid(5)) == "Row 5abc" },
-                .wait("insert-above pending") { self.pendingHas("insert-above") },
+                .wait("insert-above pending") { self.pendingHas("insert-above") && self.releaseSignalPresent() },
                 .act("release insert-above") {
                     self.commitMark = self.backend.commitCount
                     self.instanceBefore = self.backend.instanceNumber(kind: "EditableRowView", row: self.rid(5))
@@ -315,7 +321,7 @@ final class SelfTest {
             // Real-IME variant: no programmatic composition. The driver composes with the real IME and fires the
             // release hook mid-composition; the hook performs the engine release and logs the composition state.
             return [
-                .wait("insert-above pending") { self.pendingHas("insert-above") },
+                .wait("insert-above pending") { self.pendingHas("insert-above") && self.releaseSignalPresent() },
                 .wait("row2 focused by AX") { self.lastFocusID() == self.rid(2) },
                 .wait("typed ka") { self.text(self.rid(2)) == "Row 2ka" },
                 .act("armed: waiting for the release hook") {
@@ -328,7 +334,7 @@ final class SelfTest {
 
         case .F7:
             return [
-                .wait("insert-above pending") { self.pendingHas("insert-above") },
+                .wait("insert-above pending") { self.pendingHas("insert-above") && self.releaseSignalPresent() },
                 .wait("row2 focused by AX") { self.lastFocusID() == self.rid(2) },
                 .wait("typed ka") { self.text(self.rid(2)) == "Row 2ka" },
                 .act("compose n (marked, uncommitted)") { self.compose("n", key: "mark1") },
