@@ -1,0 +1,48 @@
+diff --git a/Sources/SwiftRightRuntime/Alignment.swift b/Sources/SwiftRightRuntime/Alignment.swift
+new file mode 100644
+index 0000000..6777f83
+--- /dev/null
++++ b/Sources/SwiftRightRuntime/Alignment.swift
+@@ -0,0 +1,20 @@
++/// Horizontal and vertical position used to align content inside a frame or stack.
++public struct Alignment: Sendable, Equatable {
++    public let horizontal: HorizontalAlignment
++    public let vertical: VerticalAlignment
++
++    public init(horizontal: HorizontalAlignment, vertical: VerticalAlignment) {
++        self.horizontal = horizontal
++        self.vertical = vertical
++    }
++
++    public static let topLeading = Alignment(horizontal: .leading, vertical: .top)
++    public static let top = Alignment(horizontal: .center, vertical: .top)
++    public static let topTrailing = Alignment(horizontal: .trailing, vertical: .top)
++    public static let leading = Alignment(horizontal: .leading, vertical: .center)
++    public static let center = Alignment(horizontal: .center, vertical: .center)
++    public static let trailing = Alignment(horizontal: .trailing, vertical: .center)
++    public static let bottomLeading = Alignment(horizontal: .leading, vertical: .bottom)
++    public static let bottom = Alignment(horizontal: .center, vertical: .bottom)
++    public static let bottomTrailing = Alignment(horizontal: .trailing, vertical: .bottom)
++}
+diff --git a/Tests/SwiftRightRuntimeTests/AlignmentTests.swift b/Tests/SwiftRightRuntimeTests/AlignmentTests.swift
+new file mode 100644
+index 0000000..697acba
+--- /dev/null
++++ b/Tests/SwiftRightRuntimeTests/AlignmentTests.swift
+@@ -0,0 +1,16 @@
++import SwiftRightRuntime
++import XCTest
++
++final class AlignmentTests: XCTestCase {
++    func testNineStandardAlignmentsMapToHorizontalAndVerticalAxes() {
++        XCTAssertEqual(Alignment.topLeading, Alignment(horizontal: .leading, vertical: .top))
++        XCTAssertEqual(Alignment.top, Alignment(horizontal: .center, vertical: .top))
++        XCTAssertEqual(Alignment.topTrailing, Alignment(horizontal: .trailing, vertical: .top))
++        XCTAssertEqual(Alignment.leading, Alignment(horizontal: .leading, vertical: .center))
++        XCTAssertEqual(Alignment.center, Alignment(horizontal: .center, vertical: .center))
++        XCTAssertEqual(Alignment.trailing, Alignment(horizontal: .trailing, vertical: .center))
++        XCTAssertEqual(Alignment.bottomLeading, Alignment(horizontal: .leading, vertical: .bottom))
++        XCTAssertEqual(Alignment.bottom, Alignment(horizontal: .center, vertical: .bottom))
++        XCTAssertEqual(Alignment.bottomTrailing, Alignment(horizontal: .trailing, vertical: .bottom))
++    }
++}
