@@ -127,6 +127,12 @@ extension View {
         }))
     }
 
+    /// Adds a value to the upward preference stream for `key`.
+    public func preference<Key: PreferenceKey>(key: Key.Type, value: Key.Value) -> some View {
+        Modified(content: self, spec: .preference(PreferenceContribution(value, for: key)))
+    }
+
+
     // MARK: SR1 modifiers
 
     /// Selection value of a row in a `List(selection:)`. Apple: https://developer.apple.com/documentation/swiftui/view/tag(_:)

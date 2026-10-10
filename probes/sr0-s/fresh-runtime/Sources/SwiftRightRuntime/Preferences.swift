@@ -51,3 +51,11 @@ struct PreferenceValues {
 
     var isEmpty: Bool { entries.isEmpty }
 }
+
+struct PreferenceContribution {
+    let apply: (inout PreferenceValues) -> Void
+
+    init<Key: PreferenceKey>(_ value: Key.Value, for key: Key.Type) {
+        apply = { values in values.reduce(value, for: key) }
+    }
+}

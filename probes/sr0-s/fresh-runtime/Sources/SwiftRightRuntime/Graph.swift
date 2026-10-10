@@ -192,6 +192,7 @@ enum ModifierSpec {
     /// node, so a List that restores a reinserted row's `@State` restores the baseline with it.
     case onChange(AnyEquatable, Bool, (Any, Any) -> Void)
     case environment((inout EnvironmentValues) -> Void)
+    case preference(PreferenceContribution)
     case opacity(Double)
     /// SR1: `.tag(_:)` value of a List row.
     case tag(AnyHashable)
@@ -216,6 +217,7 @@ enum ModifierSpec {
         case .animation: return "modifier.animation"
         case .onChange: return "modifier.onChange"
         case .environment: return "modifier.environment"
+        case .preference: return "modifier.preference"
         case .opacity: return "modifier.opacity"
         case .tag: return "modifier.tag"
         case .deletion: return "modifier.onDelete"
@@ -238,6 +240,7 @@ enum ModifierSpec {
         case .animation: return "animation"
         case .onChange: return "onChange"
         case .environment: return "environment"
+        case .preference: return "preference"
         case .opacity: return "opacity"
         case .tag: return "tag"
         case .deletion: return "onDelete"
@@ -463,6 +466,9 @@ final class Node {
     /// True while the node is listed in `Graph.animating`.
     var isAnimating = false
     var storage: [String: AnyObject] = [:]
+    /// Preferences produced by this node's subtree, reduced in child order.
+    var preferences = PreferenceValues()
+    var hasPreferenceSource = false
     var alive = true
     var appeared = false
     /// Bumped on teardown and on task restart. Owner tokens captured before stop matching.
@@ -772,6 +778,8 @@ public final class Graph {
     private(set) var layoutEpoch = 0
     /// Counts evaluation rounds of a flush; see `Node.evaluatedRound`.
     private var evaluationRound = 0
+    /// Turns on reduction only after a tree actually contains a preference source.
+    private var preferenceReductionEnabled = false
     /// Observation change callbacks received (tests check that retired registrations stay silent).
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
@@ -1204,6 +1212,32 @@ public final class Graph {
         }
     }
 
+    @discardableResult
+    private func reducePreferences(_ node: Node) -> Bool {
+        let hadSource = node.hasPreferenceSource
+        var values = PreferenceValues()
+        for child in node.childNodes { values.merge(child.preferences) }
+        let ownSource: Bool
+        if case .modifier(.preference(let contribution)) = node.kind {
+            contribution.apply(&values)
+            ownSource = true
+        } else {
+            ownSource = false
+        }
+        node.preferences = values
+        node.hasPreferenceSource = ownSource || node.childNodes.contains(where: \.hasPreferenceSource)
+        return hadSource || node.hasPreferenceSource
+    }
+
+    private func reducePreferencesUpward(from node: Node) {
+        guard preferenceReductionEnabled else { return }
+        var current: Node? = node
+        while let ancestor = current {
+            guard reducePreferences(ancestor) else { break }
+            current = ancestor.parent
+        }
+    }
+
     private func runAppear(_ node: Node) {
         guard case .modifier(let spec) = node.kind else { return }
         switch spec {
@@ -1265,6 +1299,7 @@ public final class Graph {
         node.fullDirty = false
         node.environment = node.inherited
         let kind = node.kind
+        if case .modifier(.preference) = kind { preferenceReductionEnabled = true }
         if case .modifier(.environment(let apply)) = kind {
             apply(&node.environment)
         }
@@ -1343,6 +1378,7 @@ public final class Graph {
 
         guard let produced else {
             reconcile(node, entries: [])
+            reducePreferencesUpward(from: node)
             return
         }
         let producedInfo = ViewTypes.info(for: produced)
@@ -1358,6 +1394,7 @@ public final class Graph {
             } else {
                 reconcile(node, entries: [Entry(relative: [.type(producedInfo.name)], view: produced, info: producedInfo)])
             }
+            reducePreferencesUpward(from: node)
             return
         }
         var entries: [Entry] = []
@@ -1372,6 +1409,7 @@ public final class Graph {
         // Only a node that hands back its stored content expands the same views as last time; a body re-runs and builds new ones.
         reconcile(node, entries: entries, keepExisting: refresh && refreshable && !tracksDependencies(kind, node),
                   changedRows: changedRows)
+        reducePreferencesUpward(from: node)
     }
 
     /// Drops the cached sizes of this node and its ancestors when the node's own layout-relevant content changed.
