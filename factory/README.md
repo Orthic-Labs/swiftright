@@ -7,9 +7,11 @@ capture-method experiments. SR0 remains OPEN; none of this promotes goldens, cha
 
 ## Working boundary
 
-Create factory files only while SR0 closes. Runtime, renderer, bridge, `qualification/` & `probes/sr0-*` belong to
-the Swift Mac session. Read `../docs/sr0-status.md` before any integration that consumes the frozen contract or ABI.
-Tuple 09 is intended closure input, not accepted merely because a plan names it.
+Factory work proceeds while SR0 closes. Runtime source at `probes/sr0-s/fresh-runtime` is released additively:
+new API surface, unit tests &one commit per API, preserving original behavior. Renderer/bridge ABI remain held
+until explicit closure in `../docs/sr0-status.md`; FreshOnBridge fixtures, `qualification/` &`probes/sr0-o/` retain
+Swift Mac ownership. New closure bindings use tuple10, measured from `../docs/sr0-tuple10-staging.md`.
+[Current results](pipeline/ADDITIVE-CURRENT.md) & [running holds](HELD.md) record exact evidence.
 
 Window-targeted input stays default. Dell windowed runs require `D:\Claude\desktop.lock`; ordinary windows stay
 background. Native-only IME/Narrator tests use foreground checks & abort-on-focus-loss in the held lane. Second-session
@@ -40,7 +42,7 @@ factory/.venv/bin/python factory/tools/schema_validate.py factory/spec/examples/
 
 ## Outstanding gates
 
-1. Complete capture feasibility & native timing calibration, including real rendered observations with required VM permissions.
+1. Complete host capture/channel calibration & native timing controls; VM capture follows later permission provisioning.
 2. Review draft acceptance schemas, normalization rules & tolerances; synthetic controls cannot approve them.
 3. Observe recorded SR0 closure, then bind actual frozen contract/ABI & replace illustrative hashes with measured native inputs.
 4. Run Rectangle through real hosts, qualify 20 independent runs per side, review candidate promotion & retain all raw evidence.

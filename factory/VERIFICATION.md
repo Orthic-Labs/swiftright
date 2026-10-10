@@ -34,10 +34,9 @@ Dell preflight opened no windows, sent no input & left SR0's existing lock untou
 
 ## Next executable work
 
-Provision & qualify VM capture/AX permissions, then collect compositor pixels & external control identity. Native
-presented-frame timing & per-channel mutation calibration still need measured captures. Repeat candidate captures
-20 times per case before reviewed promotion. Bind frozen contract/ABI only after recorded SR0 closure, then add
-foundations needed by Round 1. Existing runtime, renderer, bridge, qualification & SR0 probe edits remain with their owner.
+Updated 11 October: 471 historical Mac captures stay immutable. Runtime `67b841fb` passes 167 Mac tests, including original 113; all ten Windows pilot declarations now typecheck. Windows release build passes, retaining two timing assertion failures. F1 v7 resolves 2,285 SDK rows, with 264 held for reviewed access/context bridges. Actual GPUI background PrintWindow mutation is observed; host links, storage-overhead isolation & fresh tuple10 qualification follow. F12 records 26 journeys with 56 source receipts.
+
+Frozen contract/ABI integration follows explicit SR0 CLOSED tuple10. [Current preparation](pipeline/ADDITIVE-CURRENT.md), [runtime progression](runtime-additions/RESULT.md) & [held-work list](HELD.md) carry current scope. VM capture remains later; no permission-request API is used.
 
 Independent review found no remaining blockers to these draft/start claims. Schema edge cases, root-schema bypass,
 timing-tail coverage & external AX scheduling were corrected before this verification record.
