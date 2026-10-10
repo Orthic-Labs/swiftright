@@ -1,0 +1,123 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Graph.swift
+@@ -708,13 +708,27 @@
+     /// Color views only: the resolved fill value; nil for existing node kinds.
+     public let color: ResolvedColor?
+     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
+-    public let shape: ResolvedShape?
++    fileprivate let shapeStorage: ResolvedShapeStorage?
++    public var shape: ResolvedShape? { shapeStorage?.value }
+     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
+     public let menu: [ResolvedMenuItem]?
+     /// Alert and confirmation dialog nodes, while presented.
+     public let presentation: ResolvedPresentation?
+     /// Modifier nodes created by `.keyboardShortcut(_:modifiers:)`.
+     public let shortcut: ResolvedShortcut?
++}
++
++/// Indirect immutable storage keeps optional shape metadata off every legacy snapshot.
++fileprivate final class ResolvedShapeStorage: Equatable, Sendable {
++    let value: ResolvedShape
++
++    init(_ value: ResolvedShape) {
++        self.value = value
++    }
++
++    static func == (lhs: ResolvedShapeStorage, rhs: ResolvedShapeStorage) -> Bool {
++        lhs.value == rhs.value
++    }
+ }
+ 
+ /// Accessibility as the runtime resolves it. Roles: window, button, text-field, text-area, checkbox, static-text,
+@@ -1720,7 +1734,7 @@
+             image: image,
+             imageSizing: imageSizing,
+             color: color,
+-            shape: shape,
++            shapeStorage: shape.map(ResolvedShapeStorage.init),
+             menu: node.menuEntries.map(resolveMenu),
+             presentation: node.presented.map(resolvePresentation),
+             shortcut: shortcut
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SnapshotStorageTests.swift
+@@ -0,0 +1,80 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@MainActor
++final class SnapshotStorageTests: XCTestCase {
++    func testEqualShapesIgnoreIndependentStorageBoxes() {
++        let firstGraph = Graph(Rectangle())
++        let secondGraph = Graph(Rectangle())
++        firstGraph.flush()
++        secondGraph.flush()
++
++        XCTAssertEqual(firstGraph.snapshot(), secondGraph.snapshot())
++        XCTAssertEqual(firstGraph.snapshot()?.shape, secondGraph.snapshot()?.shape)
++    }
++
++    func testDifferentGeometryOrPaintMakesSnapshotsUnequal() {
++        let rectangle = Graph(Rectangle())
++        let circle = Graph(Circle())
++        let red = Graph(Rectangle().fill(Color.red))
++        let blue = Graph(Rectangle().fill(Color.blue))
++        rectangle.flush()
++        circle.flush()
++        red.flush()
++        blue.flush()
++
++        XCTAssertNotEqual(rectangle.snapshot(), circle.snapshot())
++        XCTAssertNotEqual(red.snapshot(), blue.snapshot())
++        XCTAssertNotEqual(red.snapshot()?.shape, blue.snapshot()?.shape)
++    }
++
++    func testLegacySnapshotHasNoShapeMetadata() {
++        let graph = Graph(Text("legacy"))
++        graph.flush()
++
++        XCTAssertNil(graph.snapshot()?.shape)
++    }
++
++    func testRetainedSnapshotKeepsShapeValueAfterGraphChanges() {
++        let store = SnapshotShapeStore()
++        let graph = Graph(SnapshotShapeView(store: store))
++        graph.flush()
++        let retained = graph.snapshot()
++
++        store.showCircle = true
++        graph.flush()
++
++        XCTAssertEqual(firstShape(in: retained)?.geometry, .rectangle)
++        XCTAssertEqual(firstShape(in: graph.snapshot())?.geometry, .circle)
++    }
++}
++
++@MainActor
++private func firstShape(in node: ResolvedNode?) -> ResolvedShape? {
++    guard let node else { return nil }
++    if let shape = node.shape { return shape }
++    for child in node.children {
++        if let shape = firstShape(in: child) { return shape }
++    }
++    return nil
++}
++
++@Observable
++@MainActor
++private final class SnapshotShapeStore {
++    var showCircle = false
++}
++
++private struct SnapshotShapeView: View {
++    let store: SnapshotShapeStore
++
++    var body: some View {
++        if store.showCircle {
++            Circle()
++        } else {
++            Rectangle()
++        }
++    }
++}

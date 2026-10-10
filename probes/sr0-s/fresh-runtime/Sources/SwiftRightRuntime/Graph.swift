@@ -708,13 +708,27 @@ public struct ResolvedNode: Equatable, Sendable {
     /// Color views only: the resolved fill value; nil for existing node kinds.
     public let color: ResolvedColor?
     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
-    public let shape: ResolvedShape?
+    fileprivate let shapeStorage: ResolvedShapeStorage?
+    public var shape: ResolvedShape? { shapeStorage?.value }
     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
     public let menu: [ResolvedMenuItem]?
     /// Alert and confirmation dialog nodes, while presented.
     public let presentation: ResolvedPresentation?
     /// Modifier nodes created by `.keyboardShortcut(_:modifiers:)`.
     public let shortcut: ResolvedShortcut?
+}
+
+/// Indirect immutable storage keeps optional shape metadata off every legacy snapshot.
+fileprivate final class ResolvedShapeStorage: Equatable, Sendable {
+    let value: ResolvedShape
+
+    init(_ value: ResolvedShape) {
+        self.value = value
+    }
+
+    static func == (lhs: ResolvedShapeStorage, rhs: ResolvedShapeStorage) -> Bool {
+        lhs.value == rhs.value
+    }
 }
 
 /// Accessibility as the runtime resolves it. Roles: window, button, text-field, text-area, checkbox, static-text,
@@ -1720,7 +1734,7 @@ public final class Graph {
             image: image,
             imageSizing: imageSizing,
             color: color,
-            shape: shape,
+            shapeStorage: shape.map(ResolvedShapeStorage.init),
             menu: node.menuEntries.map(resolveMenu),
             presentation: node.presented.map(resolvePresentation),
             shortcut: shortcut
