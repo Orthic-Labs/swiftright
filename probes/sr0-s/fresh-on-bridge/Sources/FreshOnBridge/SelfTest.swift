@@ -576,8 +576,18 @@ final class SelfTest {
             let commits = events(kind: "effect", node: r4.uuidString, phase: "commit")
             let commitGen = commits.first.flatMap { payload($0)["gen"] as? Int }
             let taskStarts = count(node: r4.uuidString, phase: "task-start")
+            // `appear` locals read the state at reinsertion, before the onChange run: List 1 (preserved), VStack and LazyVStack 0
+            // (fresh), the same values the Mac logs (mac-ev-n*.jsonl, appear locals [0,1] / [0,0]). The onChange run itself
+            // shows in the `local-edit` locals below.
             let appears = appearLocals(r4)
             let secondLocal = appears.count == 2 ? appears[1] : nil
+            // Mac oracle for the reinsertion onChange (probes/sr0-o/f1-cross/CROSS-ALL.md D1, cross-evidence/F3*/mac-ev-n*.jsonl):
+            // the preserved List row last saw "Row 4x" and is reinserted with "Row 4", so its onChange runs once more:
+            // local-edit locals [1, 2], final label "local 2". VStack and LazyVStack rows are fresh (no baseline): [1], the typed edit
+            // of the removed instance, and the reinserted row stays at "local 0". Before the D1 fix the runtime had no
+            // onChange baseline that travels with row state, and a List reinsertion logged [1] (final label "local 1").
+            let editLocals = events(node: r4.uuidString, phase: "local-edit").compactMap { payload($0)["local"] as? Int }
+            let oracleEditLocals = options.f3Container == .list ? [1, 2] : [1]
             let windowsState = secondLocal == 1 ? "preserved" : (secondLocal == 0 ? "fresh" : "other")
             let focusedAfter = backend.focusedRow == r4
             // Mac oracle (probes/sr0-o/fixtures/RESULT.md, F3 oracle table): List preserves, VStack and LazyVStack reset.
@@ -598,6 +608,8 @@ final class SelfTest {
                      "commits=\(commits.count) gen=\(commitGen.map(String.init) ?? "nil")"),
                 pass("reinsert-state-matches-mac-oracle", windowsState == oracleState,
                      "windows=\(windowsState) (second-local=\(secondLocal.map(String.init) ?? "nil")) mac-oracle=\(oracleState) container=\(options.f3Container.rawValue)"),
+                pass("reinsert-onchange-matches-mac-oracle", editLocals == oracleEditLocals,
+                     "local-edit locals=\(editLocals) mac-oracle=\(oracleEditLocals) container=\(options.f3Container.rawValue)"),
                 pass("reinsert-focus-matches-mac-oracle", focusedAfter == oracleFocus,
                      "windows-focused=\(focusedAfter) mac-oracle-focused=\(oracleFocus) (runtime clears focus on removal; List restores it on reinsert)"),
                 observe("reinsert-gap-ms", "\(gapMs) (configured \(options.f3GapMs))"),

@@ -3,8 +3,9 @@ import Observation
 import SwiftRightRuntime
 
 // Ports of probes/sr0-o/fixtures Screens/*.swift and Common/SharedViews.swift onto SwiftRightRuntime.
-// Runtime-supported API only. Gaps (no LazyVStack, onChange, toolbar, task(id:), animation completion,
+// Runtime-supported API only. Gaps (no LazyVStack, toolbar, task(id:), animation completion,
 // reduce-motion env, accessibilityIdentifier) are NOT faked here; the self-test marks them BLOCKED.
+// `onChange` is no longer a gap: the row's local-edit log runs from the runtime's `.onChange(of:)` (SR0-O D1).
 
 /// Common chrome: an insert button (the Mac toolbar, placed in the body because the runtime has no toolbar)
 /// and the root appear log. The content receives the screen's focus binding.
@@ -49,11 +50,11 @@ struct EditableRowView: View {
         let id = row.wrappedValue.id
         let text = row.text
         let edits = $localEdits
+        // The model-held write path (keystrokes and AX SetValue come here). It only writes the text: the edit is observed
+        // by `.onChange(of: row.text)` below, as on the Mac, so it also fires for a text that changes without an edit
+        // (a List row reinserted with other text while its preserved view last saw a different value: SR0-O D1).
         let _ = model.registerTextInput(id) { newValue in
             text.wrappedValue = newValue
-            edits.wrappedValue += 1
-            model.log.emit("state", node: id.uuidString, payload: ["op": "edit", "text": newValue])
-            model.log.emit("lifecycle", node: id.uuidString, payload: ["phase": "local-edit", "local": edits.wrappedValue])
         }
         HStack {
             TextField("Row", text: Binding(get: { text.wrappedValue }, set: { model.editText(id, $0) }))
@@ -64,9 +65,16 @@ struct EditableRowView: View {
             }
         }
         // The task modifier is innermost: teardown runs the outer onDisappear before the inner task cancel,
-        // the order the Mac oracle records (disappear, then cancel).
+        // the order the Mac oracle records (disappear, then cancel). `onChange` sits between task and onAppear so a
+        // reinserted List row logs `appear` (state preserved, local 1) before the onChange run (local 2), the Mac order
+        // (probes/sr0-o/f1-cross/cross-evidence/F3/mac-ev-n1.jsonl: appear, edit, local-edit, then task-start).
         .task {
             if rowTask { await model.runRowLoad(id) }
+        }
+        .onChange(of: row.wrappedValue.text) { _, newText in
+            edits.wrappedValue += 1
+            model.log.emit("state", node: id.uuidString, payload: ["op": "edit", "text": newText])
+            model.log.emit("lifecycle", node: id.uuidString, payload: ["phase": "local-edit", "local": edits.wrappedValue])
         }
         .onAppear {
             let controls: [String] = showDelete ? ["field", "delete"] : ["field"]

@@ -186,6 +186,10 @@ enum ModifierSpec {
     case task(TaskPriority, AnyEquatable?, @isolated(any) () async -> Void)
     case focus(FocusLink)
     case animation(AnyEquatable, Animation?)
+    /// `.onChange(of:initial:_:)`: the observed value, whether the first evaluation also runs the action, and the
+    /// type-erased action `(old, new)`. The previous value (the baseline) is kept in `Node.storage`, not on the
+    /// node, so a List that restores a reinserted row's `@State` restores the baseline with it.
+    case onChange(AnyEquatable, Bool, (Any, Any) -> Void)
     case environment((inout EnvironmentValues) -> Void)
     case opacity(Double)
     /// SR1: `.tag(_:)` value of a List row.
@@ -208,6 +212,7 @@ enum ModifierSpec {
         case .task: return "modifier.task"
         case .focus: return "modifier.focused"
         case .animation: return "modifier.animation"
+        case .onChange: return "modifier.onChange"
         case .environment: return "modifier.environment"
         case .opacity: return "modifier.opacity"
         case .tag: return "modifier.tag"
@@ -228,6 +233,7 @@ enum ModifierSpec {
         case .task: return "task"
         case .focus: return "focused"
         case .animation: return "animation"
+        case .onChange: return "onChange"
         case .environment: return "environment"
         case .opacity: return "opacity"
         case .tag: return "tag"
@@ -286,6 +292,16 @@ struct AnyEquatable {
         equals = { ($0 as? V) == value }
     }
     func matches(_ other: Any) -> Bool { equals(other) }
+}
+
+/// Key of an `.onChange` node's baseline in `Node.storage`. `@State` keys are property names, so this cannot collide.
+let onChangeKey = "<onChange>"
+
+/// The last value an `.onChange(of:)` node saw. A class so that it is a legal `Node.storage` value and travels with
+/// retained List row state.
+final class OnChangeBaseline {
+    var value: AnyEquatable
+    init(_ value: AnyEquatable) { self.value = value }
 }
 
 /// Per-List cache of `@State` storage and focus for keyed rows removed from that List (SR0-O F3
@@ -1113,6 +1129,24 @@ public final class Graph {
         node.releaseContents()
     }
 
+    /// One evaluation of an `.onChange(of:)` node. The previous value lives in `node.storage` (key `onChangeKey`), the same
+    /// store as the node's `@State`: a List row that is removed and reinserted gets its storage back (`RowStateCache`), so the
+    /// reinserted node compares the new value with the last value the preserved view saw, as macOS 27 SwiftUI does
+    /// (SR0-O F3: the preserved row saw `Row 4x`, the reinsertion brings `Row 4`, the action runs once more). A node with no
+    /// stored baseline (first appearance, or any VStack / LazyVStack row, whose storage is not kept) only records one.
+    private func runOnChange(_ node: Node, value: AnyEquatable, initial: Bool, action: (Any, Any) -> Void) {
+        if let baseline = node.storage[onChangeKey] as? OnChangeBaseline {
+            let previous = baseline.value
+            if !previous.matches(value.value) {
+                baseline.value = value
+                action(previous.value, value.value)
+            }
+        } else {
+            node.storage[onChangeKey] = OnChangeBaseline(value)
+            if initial { action(value.value, value.value) }
+        }
+    }
+
     private func runAppear(_ node: Node) {
         guard case .modifier(let spec) = node.kind else { return }
         switch spec {
@@ -1196,6 +1230,9 @@ public final class Graph {
                 TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil))
             }
             node.lastEquatable = value
+        }
+        if case .modifier(.onChange(let value, let initial, let action)) = kind {
+            runOnChange(node, value: value, initial: initial, action: action)
         }
         if case .user = kind { bindDynamicProperties(node) }
         if case .stack = kind {

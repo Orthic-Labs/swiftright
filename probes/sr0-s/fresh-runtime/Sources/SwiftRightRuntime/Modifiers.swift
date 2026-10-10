@@ -85,6 +85,32 @@ extension View {
         Modified(content: self, spec: .animation(AnyEquatable(value), animation))
     }
 
+    /// As SwiftUI `onChange(of:initial:_:)`: runs `action(oldValue, newValue)` when an evaluation of this view sees a `value`
+    /// that differs from the one the previous evaluation saw. With `initial` the first evaluation also runs it, with the same
+    /// value as both arguments. The previous value is part of the view's retained state: inside a `List`, a row that is
+    /// removed and reinserted with the same identity keeps it with its `@State`, so the action also runs once on reinsertion
+    /// when the value changed in between. A `VStack` / `LazyVStack` row starts over and only records the value.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/onchange(of:initial:_:)
+    public func onChange<V: Equatable>(
+        of value: V,
+        initial: Bool = false,
+        _ action: @escaping (_ oldValue: V, _ newValue: V) -> Void
+    ) -> some View {
+        Modified(content: self, spec: .onChange(AnyEquatable(value), initial, { old, new in
+            guard let old = old as? V, let new = new as? V else { return }
+            action(old, new)
+        }))
+    }
+
+    /// `onChange(of:initial:_:)` whose action takes no arguments (the SwiftUI overload of the same name).
+    public func onChange<V: Equatable>(
+        of value: V,
+        initial: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        Modified(content: self, spec: .onChange(AnyEquatable(value), initial, { _, _ in action() }))
+    }
+
     public func environment<V>(_ keyPath: WritableKeyPath<EnvironmentValues, V>, _ value: V) -> some View {
         Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
             environment[keyPath: keyPath] = value
