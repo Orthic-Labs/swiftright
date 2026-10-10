@@ -193,6 +193,7 @@ enum ModifierSpec {
     case onChange(AnyEquatable, Bool, (Any, Any) -> Void)
     case environment((inout EnvironmentValues) -> Void)
     case preference(PreferenceContribution)
+    case onPreferenceChange(PreferenceObserver)
     case opacity(Double)
     /// SR1: `.tag(_:)` value of a List row.
     case tag(AnyHashable)
@@ -218,6 +219,7 @@ enum ModifierSpec {
         case .onChange: return "modifier.onChange"
         case .environment: return "modifier.environment"
         case .preference: return "modifier.preference"
+        case .onPreferenceChange: return "modifier.onPreferenceChange"
         case .opacity: return "modifier.opacity"
         case .tag: return "modifier.tag"
         case .deletion: return "modifier.onDelete"
@@ -241,6 +243,7 @@ enum ModifierSpec {
         case .onChange: return "onChange"
         case .environment: return "environment"
         case .preference: return "preference"
+        case .onPreferenceChange: return "onPreferenceChange"
         case .opacity: return "opacity"
         case .tag: return "tag"
         case .deletion: return "onDelete"
@@ -780,6 +783,8 @@ public final class Graph {
     private var evaluationRound = 0
     /// Turns on reduction only after a tree actually contains a preference source.
     private var preferenceReductionEnabled = false
+    /// Live `.onPreferenceChange` nodes; legacy flushes skip observer traversal entirely.
+    private var preferenceObserverNodes: Set<NodeID> = []
     /// Observation change callbacks received (tests check that retired registrations stay silent).
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
@@ -864,23 +869,27 @@ public final class Graph {
     public func flush() {
         let flushStart = profile == nil ? 0 : GraphProfile.now()
         var rounds = 0
-        while !dirty.isEmpty, rounds < 64 {
-            rounds += 1
-            evaluationRound += 1
-            // Shallow nodes first so a dirty ancestor evaluates its dirty descendants; ties in creation order (deterministic and
-            // an integer compare, where comparing path strings would cost more than evaluating a small node).
-            let batch = dirty.values.sorted {
-                $0.depth != $1.depth ? $0.depth < $1.depth : $0.instance < $1.instance
+        while rounds < 64 {
+            while !dirty.isEmpty, rounds < 64 {
+                rounds += 1
+                evaluationRound += 1
+                // Shallow nodes first so a dirty ancestor evaluates its dirty descendants; ties in creation order (deterministic and
+                // an integer compare, where comparing path strings would cost more than evaluating a small node).
+                let batch = dirty.values.sorted {
+                    $0.depth != $1.depth ? $0.depth < $1.depth : $0.instance < $1.instance
+                }
+                dirty.removeAll()
+                for node in batch where node.alive && nodes[node.id] === node {
+                    // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
+                    // in this round is done.
+                    if node.evaluatedRound == evaluationRound { continue }
+                    // A node marked only because a ForEach data source it expands changed, and whose own view has not been
+                    // replaced, expands the same ForEach again: its unchanged rows need no evaluation (see `expand`).
+                    evaluate(node, refresh: node.dataStale && !node.fullDirty && !node.viewReplaced)
+                }
             }
-            dirty.removeAll()
-            for node in batch where node.alive && nodes[node.id] === node {
-                // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
-                // in this round is done.
-                if node.evaluatedRound == evaluationRound { continue }
-                // A node marked only because a ForEach data source it expands changed, and whose own view has not been
-                // replaced, expands the same ForEach again: its unchanged rows need no evaluation (see `expand`).
-                evaluate(node, refresh: node.dataStale && !node.fullDirty && !node.viewReplaced)
-            }
+            if !preferenceObserverNodes.isEmpty { deliverPreferenceChanges() }
+            if dirty.isEmpty { break }
         }
         if profile != nil {
             profile!.flushes += 1
@@ -1004,6 +1013,7 @@ public final class Graph {
         self.root = nil
         nodes.removeAll()
         nodesByString.removeAll()
+        preferenceObserverNodes.removeAll()
         animating.removeAll()
         dirty.removeAll()
         for queued in TransactionContext.takeQueued() { queued.settleIfDone() }
@@ -1166,6 +1176,7 @@ public final class Graph {
     /// List's row cache under its node id, so a reinsertion can restore them.
     private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
+        preferenceObserverNodes.remove(id)
         if nodesByString[node.idString] === node { nodesByString[node.idString] = nil }
         node.alive = false
         node.generation += 1
@@ -1210,6 +1221,27 @@ public final class Graph {
             node.storage[onChangeKey] = OnChangeBaseline(value)
             if initial { action(value.value, value.value) }
         }
+    }
+
+    private func deliverPreferenceChanges() {
+        guard let root else { return }
+        func visit(_ node: Node) {
+            if case .modifier(.onPreferenceChange(let observer)) = node.kind {
+                let value = observer.value(node.preferences)
+                if let baseline = node.storage[onPreferenceChangeKey] as? PreferenceObserverBaseline,
+                   baseline.key == observer.key {
+                    if !observer.equals(baseline.value, value) {
+                        baseline.value = value
+                        observer.action(value)
+                    }
+                } else {
+                    node.storage[onPreferenceChangeKey] = PreferenceObserverBaseline(key: observer.key, value: value)
+                    if !observer.equals(observer.defaultValue, value) { observer.action(value) }
+                }
+            }
+            for child in node.childNodes { visit(child) }
+        }
+        visit(root)
     }
 
     @discardableResult
@@ -1300,6 +1332,11 @@ public final class Graph {
         node.environment = node.inherited
         let kind = node.kind
         if case .modifier(.preference) = kind { preferenceReductionEnabled = true }
+        if case .modifier(.onPreferenceChange) = kind {
+            preferenceObserverNodes.insert(node.id)
+        } else {
+            preferenceObserverNodes.remove(node.id)
+        }
         if case .modifier(.environment(let apply)) = kind {
             apply(&node.environment)
         }

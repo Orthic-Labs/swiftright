@@ -132,6 +132,13 @@ extension View {
         Modified(content: self, spec: .preference(PreferenceContribution(value, for: key)))
     }
 
+    /// Runs after the graph settles when the reduced preference value changes from its prior value.
+    public func onPreferenceChange<Key: PreferenceKey>(
+        _ key: Key.Type,
+        perform action: @escaping (Key.Value) -> Void
+    ) -> some View where Key.Value: Equatable {
+        Modified(content: self, spec: .onPreferenceChange(PreferenceObserver(key, action: action)))
+    }
 
     // MARK: SR1 modifiers
 

@@ -1,5 +1,7 @@
 import Foundation
 
+let onPreferenceChangeKey = "<onPreferenceChange>"
+
 /// A value that flows from descendants toward ancestors in a view tree.
 public protocol PreferenceKey {
     associatedtype Value
@@ -57,5 +59,31 @@ struct PreferenceContribution {
 
     init<Key: PreferenceKey>(_ value: Key.Value, for key: Key.Type) {
         apply = { values in values.reduce(value, for: key) }
+    }
+}
+
+struct PreferenceObserver {
+    let key: ObjectIdentifier
+    let defaultValue: Any
+    let value: (PreferenceValues) -> Any
+    let equals: (Any, Any) -> Bool
+    let action: (Any) -> Void
+
+    init<Key: PreferenceKey>(_ key: Key.Type, action: @escaping (Key.Value) -> Void) where Key.Value: Equatable {
+        self.key = ObjectIdentifier(key)
+        defaultValue = Key.defaultValue
+        value = { $0.value(for: key) }
+        equals = { ($0 as? Key.Value) == ($1 as? Key.Value) }
+        self.action = { if let value = $0 as? Key.Value { action(value) } }
+    }
+}
+
+final class PreferenceObserverBaseline {
+    let key: ObjectIdentifier
+    var value: Any
+
+    init(key: ObjectIdentifier, value: Any) {
+        self.key = key
+        self.value = value
     }
 }
