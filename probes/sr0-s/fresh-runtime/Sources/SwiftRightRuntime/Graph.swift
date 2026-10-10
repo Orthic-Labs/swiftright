@@ -1179,7 +1179,7 @@ public final class Graph {
     /// List's row cache under its node id, so a reinsertion can restore them.
     private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
-        preferenceObserverNodes.remove(id)
+        if !preferenceObserverNodes.isEmpty { preferenceObserverNodes.remove(id) }
         if nodesByString[node.idString] === node { nodesByString[node.idString] = nil }
         node.alive = false
         node.generation += 1
@@ -1337,7 +1337,7 @@ public final class Graph {
         if case .modifier(.preference) = kind { preferenceReductionEnabled = true }
         if case .modifier(.onPreferenceChange) = kind {
             preferenceObserverNodes.insert(node.id)
-        } else {
+        } else if !preferenceObserverNodes.isEmpty {
             preferenceObserverNodes.remove(node.id)
         }
         if case .modifier(.environment(let apply)) = kind {
@@ -1655,7 +1655,7 @@ public final class Graph {
         let hasSelection = node.selection != nil
         let selectedTags = node.selection?.current() ?? []
         let childNodes: [Node]
-        if node.environment.labelsHidden, case .toggle = kind {
+        if case .toggle = kind, node.environment.labelsHidden {
             childNodes = []
         } else {
             childNodes = node.childNodes
@@ -1679,12 +1679,10 @@ public final class Graph {
         var shape: ResolvedShape?
         if case .shape(let resolvedShape) = kind { shape = resolvedShape }
         let labelsHidden: Bool?
-        if node.environment.labelsHidden {
-            switch kind {
-            case .toggle(_), .textField(_): labelsHidden = true
-            default: labelsHidden = nil
-            }
-        } else {
+        switch kind {
+        case .toggle, .textField:
+            labelsHidden = node.environment.labelsHidden ? true : nil
+        default:
             labelsHidden = nil
         }
         var shortcut: ResolvedShortcut?
