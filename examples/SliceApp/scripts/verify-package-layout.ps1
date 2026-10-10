@@ -8,7 +8,7 @@
 #      Authenticode digest does not (it equals the unsigned stage DLL's, and what signtool reports). Falls back to raw
 #      sha256 only if the pin has no authenticodeSha256. Non-PE files are never compared here.
 #   3. Every shipped closure entry the pin names (VCRUNTIME140.dll) sits beside it.
-#   4. SliceApp.exe is a GUI-subsystem executable (PE Subsystem 2), so the packaged launch opens no console window.
+#   (The GUI-subsystem check moved to @rightkit/release 0.2.145 stage: swift-package.json windows.subsystem "gui".)
 #   5. The loader's default name literal in packages\SwiftRightBridge ...\Loader.swift equals the pin's file name, so no
 #      environment variable or PATH entry is needed (checked only when the source tree is present).
 # Installed mode also (no GUI, no app launch):
@@ -37,14 +37,6 @@ $problems = New-Object System.Collections.Generic.List[string]
 Add-Type -TypeDefinition @'
 using System; using System.IO; using System.Linq; using System.Security.Cryptography;
 public static class PeDigest {
-  // IMAGE_OPTIONAL_HEADER.Subsystem (offset 68 in PE32 and PE32+): 2 = WINDOWS_GUI, 3 = WINDOWS_CUI.
-  public static int Subsystem(string path) {
-    byte[] b = File.ReadAllBytes(path);
-    if (b.Length < 0x40 || BitConverter.ToUInt16(b, 0) != 0x5a4d) throw new Exception("not a PE: " + path);
-    int pe = BitConverter.ToInt32(b, 0x3c);
-    if (BitConverter.ToUInt32(b, pe) != 0x4550) throw new Exception("not a PE: " + path);
-    return BitConverter.ToUInt16(b, pe + 24 + 68);
-  }
   // SHA-256 over the PE image excluding CheckSum, the Certificate Table directory entry and the certificate data.
   public static string Sha256(string path) {
     byte[] b = File.ReadAllBytes(path);
@@ -75,10 +67,6 @@ public static class PeDigest {
 $exe = Join-Path $Root 'SliceApp.exe'
 $dll = Join-Path $Root $pin.file
 if (-not (Test-Path -LiteralPath $exe)) { $problems.Add("SliceApp.exe not found in $Root") }
-else {
-    $subsystem = [PeDigest]::Subsystem($exe)
-    if ($subsystem -ne 2) { $problems.Add("SliceApp.exe PE subsystem is $subsystem, expected 2 (WINDOWS_GUI): a console window would open on launch") }
-}
 if (-not (Test-Path -LiteralPath $dll)) { $problems.Add("$($pin.file) is not beside SliceApp.exe in $Root") }
 else {
     if ($pin.authenticodeSha256) {

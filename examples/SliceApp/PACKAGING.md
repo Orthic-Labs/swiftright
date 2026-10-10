@@ -24,8 +24,8 @@ build Adrian names; never run `osascript`, `open`, `screencapture`, or `notifyut
 | `swift-package.json` | Schema 1 config for `right-release swift-package` (both OSes) |
 | `right-release.config.mjs` | Release contract: `projectType: "swiftpm"`, mac branded DMG (signed, notarized, stapled), Windows MSIX, App Installer |
 | `package.json` | Pins `@rightkit/release` 0.2.138 (exact) for `pnpm exec right-release` |
-| `scripts/build-windows.ps1` | Windows build (GUI subsystem: `-Xlinker /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup`, PE subsystem checked; `Windows/WindowsLog.swift` logs stdout/stderr to `%LOCALAPPDATA%\SliceApp\slice-app.log` when no handle is attached), `mt.exe` manifest check, `dumpbin` closure, payload copy |
-| `scripts/verify-package-layout.ps1` | Renderer packaging and GUI-subsystem check: Stage mode (pre-pack) and Installed mode (scrubbed-environment load); no app launch |
+| `scripts/build-windows.ps1` | Windows build (GUI subsystem: `-Xlinker /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup`; the PE subsystem is checked by `@rightkit/release` 0.2.145 stage via `swift-package.json` `windows.subsystem: "gui"`; `Windows/WindowsLog.swift` logs stdout/stderr to `%LOCALAPPDATA%\SliceApp\slice-app.log` when no handle is attached), `mt.exe` manifest check, `dumpbin` closure, payload copy |
+| `scripts/verify-package-layout.ps1` | Renderer packaging check: Stage mode (pre-pack) and Installed mode (scrubbed-environment load); no app launch |
 | `scripts/clone-build-mac.sh`, `scripts/clone-build-win.ps1` | Build from an independent clean clone at an exact commit (see "Clean-clone builds") |
 | `scripts/swift-only-proof.mjs` | Swift-only-edit proof: renderer bytes identical, no Rust compile |
 | `scripts/make-local-appinstaller.mjs`, `scripts/serve-local-feed.ps1` | Local App Installer feed for the Sandbox (F8) |
