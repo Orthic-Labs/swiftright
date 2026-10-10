@@ -1,0 +1,200 @@
+{
+  "kind": "independent-taskid-trace-observed-results",
+  "freezeIndex": "factory/native/windows/completed-taskid-message-trace-freeze-20261011.json",
+  "freezeHash": "sha256:64beb1af48c13ffbd3f524bab1f557c1832a6daca04df22e83dd96c3b1981ff3",
+  "verifiedFrozenFiles": 221,
+  "joinErrors": [],
+  "checks": [
+    "Frozen byte lengths & SHA256 pins",
+    "Complete parent versus diagnostic source coverage; sole assertion message delta; exact original byte recovery",
+    "Diagnostic tar file coverage & contents",
+    "Source plan/tree/receipt/compiler aggregate/raw output/binary/host joins",
+    "Nine serial selected test processes; owned PID/path/start; actual test count; analysis/raw failure joins"
+  ],
+  "parentCompilerBindings": [
+    {
+      "label": "baseline",
+      "sourceCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+      "parentReceiptHash": "sha256:b62714036db26bedbdf3a1c7b074ac37589b84ef2cd541f44bc7692fb16af66b",
+      "diagnosticSourceReceiptHash": "sha256:2c80c056793927e655f75264a77a9e541f033ba2900bc14cecd80bbaec79d3ee",
+      "compileReceiptHash": "sha256:b551b6da299a022dc1ae0a8cb4abb5cfd0dcfbff275ac4df26e1abdb4b625975",
+      "recordedCompiler": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "recordedCompilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "compilerArguments": "build --build-tests --package-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\baseline\\runtime\" --scratch-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\baseline\\build-r2\\scratch\" -c release -Xswiftc -enable-testing"
+    },
+    {
+      "label": "postshape",
+      "sourceCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+      "parentReceiptHash": "sha256:3c47efc29c53d31cf09dd6f8767fecf1b6ccbb66b47673befa105b477226eca9",
+      "diagnosticSourceReceiptHash": "sha256:8864e4c7cb27d61083a6d453a45fe0446e0bc96701d292b475b6e3e6226f1ad7",
+      "compileReceiptHash": "sha256:a2b5c175122ea66e86a80468a0994e840885445e93b4930a10c95d349dcfc7d6",
+      "recordedCompiler": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "recordedCompilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "compilerArguments": "build --build-tests --package-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\postshape\\runtime\" --scratch-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\postshape\\build-r2\\scratch\" -c release -Xswiftc -enable-testing"
+    },
+    {
+      "label": "fontstorage",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "parentReceiptHash": "sha256:66e98c24a2395c0c19fcdbc25da2ead7fd85982a221ea110c0d4b11640385166",
+      "diagnosticSourceReceiptHash": "sha256:c90002dcbb26d0a36c3c887dc53e1e45cb4501556b43e15866d397da76cacf83",
+      "compileReceiptHash": "sha256:da805116c963006b0a202bf7f509a98b153dcb98cc28747070f37ffa7ff4b1f7",
+      "recordedCompiler": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "recordedCompilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "compilerArguments": "build --build-tests --package-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\fontstorage\\runtime\" --scratch-path \"D:\\Claude\\factory-swiftright-taskid-trace-20261011\\fontstorage\\build-r2\\scratch\" -c release -Xswiftc -enable-testing"
+    }
+  ],
+  "rows": [
+    {
+      "round": 0,
+      "label": "baseline",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:f4be2225ded495ea741029400d8fa3d713cba3889c65eacb8b39a3488b34ba8d",
+      "directory": "round-00-baseline",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 44
+        }
+      ]
+    },
+    {
+      "round": 0,
+      "label": "postshape",
+      "exitCode": 1,
+      "eventsAtFailedAssertion": [
+        "start a"
+      ],
+      "rawStdoutHash": "sha256:74d644ce3e1d644cf097bda0a51d302352983ee2e59ba73b8402a9683ce969d6",
+      "directory": "round-00-postshape",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 31
+        }
+      ]
+    },
+    {
+      "round": 0,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:ca4076ed5a0cc01eb35f30b0098443bca8a43d08412be0265dc798f83a47fc8d",
+      "directory": "round-00-fontstorage",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 10
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "label": "postshape",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:449d2c51a5ae8dbc19ed62f10ca12dc849318be737cc1e8547ffe2138dc36389",
+      "directory": "round-01-postshape",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 12
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:f2d05c535a9be93bd61ae5dbcecdcc6c738ba87719f4184cbb9bbe51519b5fdc",
+      "directory": "round-01-fontstorage",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 14
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "label": "baseline",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:3e6476005769d2982a63e5ef904c5aa6ff63e6b0172b005bc1b6ed9383cf5c5d",
+      "directory": "round-01-baseline",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 11
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "label": "fontstorage",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:b881d604cca4cfbdb97805e76b8da33de704058dfe32e029aeeddb0e89623dac",
+      "directory": "round-02-fontstorage",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 12
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "label": "baseline",
+      "exitCode": 1,
+      "eventsAtFailedAssertion": [
+        "start a"
+      ],
+      "rawStdoutHash": "sha256:ec985f497e9e811547172645b0d62c2d295caa5c1f10b3aa4f1621d89c324e46",
+      "directory": "round-02-baseline",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 16
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "label": "postshape",
+      "exitCode": 0,
+      "eventsAtFailedAssertion": null,
+      "rawStdoutHash": "sha256:17325afb0e505fdd960e57f1340b2516b0cf9db24b79a64014c814f6db9466eb",
+      "directory": "round-02-postshape",
+      "actualTestCount": 1,
+      "processorLoadBefore": [
+        {
+          "DeviceID": "CPU0",
+          "LoadPercentage": 17
+        }
+      ]
+    }
+  ],
+  "observedPasses": {
+    "baseline": "2/3",
+    "postshape": "2/3",
+    "fontstorage": "3/3"
+  },
+  "interpretation": "Baseline diagnostic copy reproduces original runtime failure before additive layouts. Both failures show one start a event & empty results at assertion; no cancellation or commit event recorded by then. Completed or rejected commit is not observed. Existing events do not identify scheduler or weak owner cause. Separately compiled message-only diagnostic binaries do not replace original same-binary observations. Mixed host loads of 10\u201344 percent & nine capped attempts do not establish statistical equivalence.",
+  "originalFull175FailurePreserved": true,
+  "originalReportsPreserved": [
+    "source-review.json",
+    "observed-results-r1.json"
+  ],
+  "compilerEvidenceScope": "Recorded Swift executable hash, argv, owned PID/path/start, source pre/post guards, exit & product hashes join. Compiler executable bytes & compiler child argv/cwd were not archived by this helper; this review does not claim independent reproduction of compiler identity or module provenance.",
+  "furtherRunsPerformed": false
+}
