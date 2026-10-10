@@ -88,3 +88,17 @@ A rerun on the 0.6 tuple (plan R1, R6, R9, R10) is a rerun of unchanged criteria
 ## Resume decision (9 October 2026)
 
 Adrian, in this session's `/goal`: "stop fucking asking for approval and achieve the fucking plan". Recorded as the §12 resume for every row marked EXCEEDED above: the overruns are accepted, SR0 continues under plan v2 (`docs/sr0-close-plan.md`), and further repairs stay bounded by plan v2's lanes. This is the repository record of the resume. It was recorded before the R10, R9 and R5 overruns above; the repository records no later resume or waiver for them. Recommendation for R11: record one explicit Adrian decision on the R10 W5 criterion (accept as reported, or require the overlay-off run first), on W08, and on rows 4-7 above before SR0 is marked closed.
+
+## Overruns after the 9 October resume (record for U4, 10 October 2026)
+
+Recorded from the rows above (sources: the "Ledger, ABI 0.6 tuple" and "Ledger, tuples 07 and 08" sections above; `docs/sr0-findings.md` section 6.1, U4). The resume of 9 October (above) covers only the rows marked EXCEEDED at that time; it names no later repair. Nothing here was rerun to produce it. Whether Adrian accepts these overruns is open (U4): no resume or waiver is recorded for any row below.
+
+| Stage / lane | Repairs after the 9 Oct resume | Cap | Overrun as recorded above | Commits | Resume recorded |
+|---|---|---|---|---|---|
+| **S** matrix on the 0.6 tuple (R1b) | 2 (`73fd9a6`, `c31f1b5`) | 1 | EXCEEDED by 1 | `73fd9a6`, `c31f1b5` | No |
+| **N** native interaction, IME and Narrator (R9) | 3 product repairs | 1 | EXCEEDED by 2 | `0993eb2`, `15855e1`, `5e36535` | No |
+| **W** §11 workload (R10) | 4 repairs | 1 | EXCEEDED by 3 | `03050c3`, `02d8335` and the later R10 repairs (see the W row above) | No |
+| **P** packaged qualification (R2, R3, R5, R7) | 1 product repair; W08 FAIL after it | 1 | cap reached; counting is Adrian's call | `0751951` | No |
+| **B** bridge (ABI 0.6 modal and AX fixes) | 2 further repairs (tuple 07 and tuple 08) | 1 | cap exceeded again (the B row above was already EXCEEDED by 1) | `02b3cc0`, `9c261d4` | No |
+
+Consequences under the "Retry budget going forward (final tuple)" rule: any further failing attempt on tuple 08 is a stop until Adrian resumes or changes scope. Adrian's decision on these rows, and on W08 and W5 (close plan R11), is still pending (`docs/sr0-status.md`, PENDING item 4; `docs/sr0-findings.md` U3, U4).
