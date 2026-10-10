@@ -1,0 +1,32 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-09-offline",
+    "check_id":  "W03-install-old",
+    "check_name":  "Install old MSIX",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T16:35:09Z",
+    "ended_utc":  "2026-10-10T16:35:11Z",
+    "exit_status":  0,
+    "observations":  {
+                         "verdict":  "PASS",
+                         "version":  "0.1.0.0",
+                         "package_family":  "OrthicLabs.SliceApp_j3cejpx244dcr"
+                     },
+    "artifact_ids":  {
+                         "old_msix":  "sha256:e341d7f963155a984e683109b1e89c48212738c73cf7666a34e2c54a4c4a2e26"
+                     },
+    "environment":  {
+                        "host":  "4D59F73D-EA25-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:f6c6590d08744fe2063593e5dec2d4dbcb00683823ea94a1c9097855d86de1c8"
+                }
+}
