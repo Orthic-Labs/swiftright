@@ -1,15 +1,18 @@
 # SR1 plan: the parity factory and the full shell
 
-Status: plan rev 3 (10 October 2026), incorporating Adrian's accepted validation findings and execution boundaries. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
-dispositions are at the end. The plan itself is not implemented, but SR1 head-start work exists: ABI 0.6 (`4df7e67`), runtime inventory controls 62/62 (`14106d6`), Windows gallery build (`47e9066`), Mac oracle fixtures G1-G8 (`c9347a0`, sweep interrupted).
+Status: plan rev 4 (11 October 2026), incorporating accepted validation findings & SR0 owner's additive runtime release. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
+dispositions are at the end. Independent implementation proceeds under `factory/`; [current results](../factory/pipeline/ADDITIVE-CURRENT.md) & [held work](../factory/HELD.md) record measured progress. Historical head-start assets include ABI 0.6 (`4df7e67`), runtime inventory controls 62/62 (`14106d6`), Windows gallery build (`47e9066`) & Mac oracle fixtures G1-G8 (`c9347a0`, sweep interrupted).
 
 ## Entry criteria (checked mechanically, not asserted)
 Phase 0 specifications and independent capture/host spikes may start while SR0 is OPEN (Adrian, 10 October 2026).
-Until closure, create new files only under `factory/`; do not edit runtime, renderer, bridge, `qualification/`, or
-`probes/sr0-*`, which the Swift Mac session owns. Existing assets may be inspected, but work that depends on a frozen
-contract or ABI waits until `docs/sr0-status.md` says CLOSED with every SR0 row PASS and receipts bound to the frozen SR0 tuple
-(bridge ABI 0.6, renderer `E280F4A9…`; the pinned final tuple is tuple 08 in `docs/sr0-snapshot.md` section 2d and `qualification/tuple-final.json`, but desktop receipts were since re-run on tuple 09, staged in `docs/sr0-tuple09-staging.md` (FreshOnBridge `8650BBFC…`, same renderer); read the current tuple and status from `docs/sr0-status.md` and `docs/sr0-snapshot.md`, not from this line), and slice contract v1.0 and the bridge interface are
-frozen. Tuple 09 is the intended closure tuple, not an accepted baseline until that closure is recorded.
+Factory files remain independent. On 11 October, SR0 owner released `probes/sr0-s/fresh-runtime` for additive APIs:
+new surface only, unchanged existing behavior, original 113 tests green & one tested commit per API. SR0 receipts
+remain pinned to already-built `8e47b89` binaries. Renderer, bridge ABI, `swiftright.h`, FreshOnBridge fixtures,
+`qualification/` & `probes/sr0-o/` remain protected. Existing assets may be inspected. Work depending on a frozen
+contract or ABI waits until `docs/sr0-status.md` says CLOSED, every SR0 row is PASS, receipts bind frozen tuple
+& slice contract/bridge ABI are frozen.
+New closure bindings use tuple 10 from `docs/sr0-tuple10-staging.md`, after measuring actual artifacts; tuple 09
+receipts remain historical. Write append-only ABI 0.7 proposals now; implementation follows recorded 0.6 freeze.
 SR0's results are bounded slice evidence for the SR0 inventory only; SR1 must not assume anything outside it.
 
 ## What already exists (reuse, do not rebuild)
