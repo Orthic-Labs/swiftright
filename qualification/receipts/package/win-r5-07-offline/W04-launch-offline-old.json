@@ -1,0 +1,41 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-07-offline-2",
+    "check_id":  "W04-launch-offline-old",
+    "check_name":  "Launch old build offline; window via UIA",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T05:25:04Z",
+    "ended_utc":  "2026-10-10T05:25:09Z",
+    "exit_status":  null,
+    "observations":  {
+                         "pe_subsystem":  "2",
+                         "window_name":  "SliceApp",
+                         "console_window_titles":  "",
+                         "log_banner_for_pid":  "True",
+                         "log_tail":  "slice-app: log opened 2026-10-10T05:25:04Z pid=7792 exe=C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                         "renderer_module_loaded_from":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\swiftright_render.dll",
+                         "app_closed_for_log_read":  "True",
+                         "verdict":  "PASS",
+                         "log_path":  "C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\slice-app.log",
+                         "network_default_routes":  "0",
+                         "pid":  "7792",
+                         "console_windows_for_app":  "0"
+                     },
+    "artifact_ids":  {
+
+                     },
+    "environment":  {
+                        "host":  "D490308A-65A7-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42"
+                }
+}

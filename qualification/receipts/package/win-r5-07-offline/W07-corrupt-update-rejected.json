@@ -1,0 +1,46 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-07-offline-2",
+    "check_id":  "W07-corrupt-update-rejected",
+    "check_name":  "Tampered MSIX refused; installed version unchanged; valid update still applies",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T05:25:17Z",
+    "ended_utc":  "2026-10-10T05:25:35Z",
+    "exit_status":  null,
+    "observations":  {
+                         "byte_after":  "d9",
+                         "version_before":  "0.1.0.0",
+                         "error":  "Deployment failed with HRESULT: 0x80080207, The computed hash value of the block does not match the one stored in the block map.\r\n\r\nDeployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr from:  (tampered-changed-entry.msix)  failed with error 0x80080207. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagnosing app deployment issues.\n\nNOTE: For additional information, look for [ActivityId] 2b034314-57cc-0001-74b6-032bcc57dd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID 2b034314-57cc-0001-74b6-032bcc57dd01\n",
+                         "changed_entry":  "SliceApp.exe",
+                         "byte_before":  "d8",
+                         "flipped_offset":  "28449676",
+                         "refusal_is_in_use":  "False",
+                         "rejected":  "True",
+                         "info_unchanged_error":  "",
+                         "version_after_genuine_update":  "0.1.1.0",
+                         "genuine_update_error":  "",
+                         "verdict":  "PASS",
+                         "info_unchanged_entry":  "_FoundationICU.dll",
+                         "hresult":  "0x80131500",
+                         "version_after_tampered":  "0.1.0.0",
+                         "info_unchanged_rejected":  "False",
+                         "info_unchanged_version_after":  "0.1.1.0"
+                     },
+    "artifact_ids":  {
+                         "tampered_msix":  "sha256:bef8234d16e0105546cd7cc487ed14032dd4b1728bc578f8b5a00eab45506611"
+                     },
+    "environment":  {
+                        "host":  "D490308A-65A7-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42"
+                }
+}

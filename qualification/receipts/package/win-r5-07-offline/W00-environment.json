@@ -1,0 +1,35 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-07-offline-2",
+    "check_id":  "W00-environment",
+    "check_name":  "Sandbox environment, elevation, offline",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-10T05:24:54Z",
+    "ended_utc":  "2026-10-10T05:24:57Z",
+    "exit_status":  null,
+    "observations":  {
+                         "elevated":  "True",
+                         "adapters":  "",
+                         "verdict":  "PASS",
+                         "manifest_present":  "True",
+                         "profile":  "offline",
+                         "default_routes":  "0"
+                     },
+    "artifact_ids":  {
+
+                     },
+    "environment":  {
+                        "host":  "D490308A-65A7-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9550 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42"
+                }
+}

@@ -1,0 +1,14 @@
+R5-07 offline run r5-07-offline-2 (2026-10-10 10:54-11:01 Dell local): W08-interrupted-update is PERTURBED, not a clean verdict.
+
+During this run's W08 a person (Adrian) saw the Windows dialog "Can't open this app ... Advanced options ... Repair" in the Sandbox guest and
+clicked Repair (Settings > Advanced options > Repair, same version, 0.1.0.0). That was a manual action on the guest, not the harness. The harness
+records are unmodified, exactly as the guest/host harness wrote them (run.json, W*.json, guest-run.json, evidence-W08-*.json); this file is the only addition.
+
+What the records show: W08 cases c5 (staging+200ms), c9 (+320ms) and c10 (+360ms) were genuine cancels that failed to reach RegistrationChanged
+(error 0x80073CF8, event 751 "The package needs to be reinstalled"), left 0.1.0.0 as "Modified, NeedsRemediation", and the 40 s launch wait found no window;
+the second Add-AppxPackage then registered 0.1.1.0 Ok with data intact in every case. The dialog the person saw is presumably the shell's reaction to the harness's launch
+attempt on a NeedsRemediation package (inferred, not recorded). The records do not say which of c5, c9, c10 the Repair landed in (no time stamp of the click exists), and the guest
+was powered off by the harness after W11 (Stop-Computer), so the state right after the Repair could not be inspected.
+Do not read W08 here as a clean pass or a clean fail. A clean W08 rerun was not requested (known limitation; documented recovery).
+A separate run with the same artifacts and harness, r5-07-offline (launched from an elevated SSH session through the quoting slip described in
+RESULT-R5-07.md), had no NeedsRemediation case and W08 pass; it is kept in /Volumes/D/sr0-artifacts/win/r5-07/receipts-offline-1 and is NOT in this directory.

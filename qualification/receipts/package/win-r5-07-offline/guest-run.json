@@ -1,0 +1,106 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "run",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-07-offline-2",
+    "status":  "fail",
+    "expected_checks":  [
+                            "W00-environment",
+                            "W01-artifacts-bound",
+                            "W02-signer-trust",
+                            "W03-install-old",
+                            "W04-launch-offline-old",
+                            "W05-write-data",
+                            "W06-upgrade-new",
+                            "W07-corrupt-update-rejected",
+                            "W08-interrupted-update",
+                            "W09-rollback-readable",
+                            "W10-uninstall-keeps-data",
+                            "W11-legacy-data-physical-path",
+                            "W13-renderer-layout-installed",
+                            "W14-deferred-update-in-use"
+                        ],
+    "checks":  [
+                   {
+                       "status":  "pass",
+                       "check_id":  "W00-environment",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W01-artifacts-bound",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W02-signer-trust",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W03-install-old",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W13-renderer-layout-installed",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W04-launch-offline-old",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W05-write-data",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W06-upgrade-new",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W07-corrupt-update-rejected",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "fail",
+                       "check_id":  "W08-interrupted-update",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W14-deferred-update-in-use",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W09-rollback-readable",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W10-uninstall-keeps-data",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W11-legacy-data-physical-path",
+                       "implemented":  true
+                   }
+               ],
+    "started_utc":  "2026-10-10T05:24:54Z",
+    "ended_utc":  "2026-10-10T05:31:40Z",
+    "reason":  "not passing: W08-interrupted-update",
+    "artifact_ids":  {
+
+                     },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:42d095535d76eb956657fcd4b157e14be7e8bae219aa0b7b4472b0498a37aa42"
+                }
+}
