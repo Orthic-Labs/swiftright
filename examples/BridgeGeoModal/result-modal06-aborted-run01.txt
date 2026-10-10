@@ -1,0 +1,5 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T08:00:34.0766407+05:30 runs=20 hold_ms=1200
+ARTIFACTS Modal06.exe=2b3fc8ca7d6768fbe5d2f54c51e5eb07daa9a521189183212bb13150bf463374 renderer=7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc
+RUN 01 FAIL checks=40/41 exit=0 ms=13099
+  latency_ms all n=6196 p50=0.06 p99=9.00 max=39.75 | modal_open_one_off n=375 max=39.75 | modal_steady n=3414 p50=0.06 p99=0.49 max=11.00 max_run_gap=12.88 | idle n=456 p99=0.44 max=0.56
+  FAIL S1 menu content visible through UI Automation (Open, Save, Delete disabled, Quit) [items=[]]

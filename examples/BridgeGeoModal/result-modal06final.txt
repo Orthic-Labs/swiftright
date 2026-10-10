@@ -1,0 +1,165 @@
+host=BOGUS-DELL user=adrds session=1 started=2026-10-10T08:03:17.9201525+05:30 runs=20 hold_ms=1200
+ARTIFACTS Modal06.exe=2b3fc8ca7d6768fbe5d2f54c51e5eb07daa9a521189183212bb13150bf463374 renderer=7533963d124c066159322edf540bd45637cc294173fd9db2af95d4d4a3f149fc
+RUN 01 FAIL checks=40/41 exit=0 ms=12293
+  latency_ms all n=5813 p50=0.07 p99=4.83 max=32.81 | modal_open_one_off n=375 max=29.68 | modal_steady n=3031 p50=0.07 p99=0.43 max=8.25 max_run_gap=10.23 | idle n=455 p99=0.29 max=0.58
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983960639248 children=5]
+RUN 02 FAIL checks=40/41 exit=0 ms=11899
+  latency_ms all n=5666 p50=0.06 p99=5.35 max=30.58 | modal_open_one_off n=375 max=29.56 | modal_steady n=2883 p50=0.06 p99=0.42 max=9.44 max_run_gap=11.42 | idle n=456 p99=0.28 max=0.36
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983960632208 children=5]
+RUN 03 FAIL checks=40/41 exit=0 ms=11936
+  latency_ms all n=5693 p50=0.07 p99=5.20 max=31.13 | modal_open_one_off n=375 max=31.13 | modal_steady n=2910 p50=0.07 p99=0.42 max=8.35 max_run_gap=10.33 | idle n=456 p99=0.32 max=1.07
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964923440 children=5]
+RUN 04 FAIL checks=40/41 exit=0 ms=11903
+  latency_ms all n=5668 p50=0.07 p99=6.11 max=37.17 | modal_open_one_off n=375 max=37.17 | modal_steady n=2886 p50=0.07 p99=0.43 max=8.87 max_run_gap=10.85 | idle n=455 p99=0.25 max=0.48
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964923088 children=5]
+RUN 05 FAIL checks=40/41 exit=0 ms=12104
+  latency_ms all n=5680 p50=0.07 p99=5.86 max=35.13 | modal_open_one_off n=375 max=26.18 | modal_steady n=2896 p50=0.07 p99=0.38 max=7.88 max_run_gap=9.73 | idle n=455 p99=0.25 max=0.43
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964925552 children=5]
+RUN 06 FAIL checks=40/41 exit=0 ms=12050
+  latency_ms all n=5723 p50=0.07 p99=7.75 max=40.54 | modal_open_one_off n=375 max=40.54 | modal_steady n=2942 p50=0.07 p99=0.38 max=10.05 max_run_gap=11.91 | idle n=455 p99=0.43 max=1.49
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964925728 children=5]
+RUN 07 FAIL checks=40/41 exit=0 ms=11969
+  latency_ms all n=5701 p50=0.06 p99=6.11 max=33.77 | modal_open_one_off n=375 max=33.77 | modal_steady n=2919 p50=0.06 p99=0.43 max=7.62 max_run_gap=9.59 | idle n=456 p99=0.42 max=3.18
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964923968 children=5]
+RUN 08 FAIL checks=40/41 exit=0 ms=11954
+  latency_ms all n=5698 p50=0.06 p99=5.77 max=36.41 | modal_open_one_off n=375 max=29.39 | modal_steady n=2915 p50=0.07 p99=0.40 max=8.77 max_run_gap=10.71 | idle n=456 p99=0.39 max=0.62
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964923616 children=5]
+RUN 09 FAIL checks=40/41 exit=0 ms=11916
+  latency_ms all n=5680 p50=0.06 p99=5.43 max=31.88 | modal_open_one_off n=375 max=31.88 | modal_steady n=2897 p50=0.06 p99=0.42 max=8.47 max_run_gap=10.39 | idle n=456 p99=0.36 max=1.16
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964921680 children=5]
+RUN 10 FAIL checks=40/41 exit=0 ms=11898
+  latency_ms all n=5665 p50=0.06 p99=6.34 max=33.88 | modal_open_one_off n=375 max=28.38 | modal_steady n=2882 p50=0.07 p99=0.41 max=9.03 max_run_gap=10.96 | idle n=456 p99=0.35 max=0.56
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964925024 children=5]
+RUN 11 FAIL checks=40/41 exit=0 ms=12029
+  latency_ms all n=5716 p50=0.06 p99=5.47 max=30.50 | modal_open_one_off n=375 max=30.19 | modal_steady n=2932 p50=0.07 p99=0.51 max=8.81 max_run_gap=10.70 | idle n=457 p99=0.25 max=0.40
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964920272 children=5]
+RUN 12 FAIL checks=40/41 exit=0 ms=11953
+  latency_ms all n=5692 p50=0.07 p99=5.80 max=28.49 | modal_open_one_off n=375 max=28.31 | modal_steady n=2909 p50=0.07 p99=0.48 max=8.82 max_run_gap=10.74 | idle n=456 p99=0.33 max=0.51
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964926784 children=5]
+RUN 13 FAIL checks=40/41 exit=0 ms=11952
+  latency_ms all n=5693 p50=0.07 p99=6.86 max=35.03 | modal_open_one_off n=375 max=35.03 | modal_steady n=2911 p50=0.11 p99=0.46 max=8.85 max_run_gap=10.78 | idle n=455 p99=0.50 max=1.20
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964924144 children=5]
+RUN 14 FAIL checks=40/41 exit=0 ms=11930
+  latency_ms all n=5685 p50=0.06 p99=4.99 max=30.09 | modal_open_one_off n=375 max=30.09 | modal_steady n=2903 p50=0.06 p99=0.43 max=7.83 max_run_gap=9.73 | idle n=456 p99=0.33 max=0.48
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964920800 children=5]
+RUN 15 FAIL checks=37/41 exit=1 ms=11893
+  latency_ms all n=5656 p50=0.07 p99=1138.87 max=1250.85 | modal_open_one_off n=375 max=1250.85 | modal_steady n=2873 p50=0.08 p99=1044.88 max=1100.88 max_run_gap=8.39 | idle n=456 p99=0.33 max=0.67
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964924320 children=5]
+  FAIL host exited by itself with code 0 [exit=1 killed=]
+  FAIL host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1044.88 ms n=2873]
+  FAIL host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=1250.85 ms over 375 jobs in the first 150 ms of each modal]
+RUN 16 FAIL checks=40/41 exit=0 ms=11915
+  latency_ms all n=5661 p50=0.07 p99=7.82 max=35.79 | modal_open_one_off n=375 max=35.77 | modal_steady n=2879 p50=0.07 p99=0.51 max=9.65 max_run_gap=11.46 | idle n=456 p99=0.35 max=0.54
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964927136 children=5]
+RUN 17 FAIL checks=40/41 exit=0 ms=11994
+  latency_ms all n=5705 p50=0.06 p99=5.98 max=32.79 | modal_open_one_off n=375 max=29.96 | modal_steady n=2923 p50=0.07 p99=0.46 max=8.83 max_run_gap=10.69 | idle n=456 p99=0.36 max=0.56
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964927312 children=5]
+RUN 18 FAIL checks=40/41 exit=0 ms=12038
+  latency_ms all n=5688 p50=0.07 p99=6.98 max=37.12 | modal_open_one_off n=375 max=37.12 | modal_steady n=2906 p50=0.07 p99=0.43 max=8.98 max_run_gap=10.81 | idle n=456 p99=0.32 max=0.56
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964922736 children=5]
+RUN 19 FAIL checks=40/41 exit=0 ms=11999
+  latency_ms all n=5708 p50=0.07 p99=6.55 max=32.86 | modal_open_one_off n=374 max=32.86 | modal_steady n=2927 p50=0.08 p99=0.39 max=8.35 max_run_gap=10.29 | idle n=456 p99=0.28 max=0.63
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964925376 children=5]
+RUN 20 FAIL checks=37/41 exit=1 ms=12247
+  latency_ms all n=5680 p50=0.07 p99=1149.77 max=1261.74 | modal_open_one_off n=375 max=1261.74 | modal_steady n=2898 p50=0.08 p99=1055.78 max=1111.78 max_run_gap=11.00 | idle n=456 p99=0.31 max=0.81
+  FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983964920448 children=5]
+  FAIL host exited by itself with code 0 [exit=1 killed=]
+  FAIL host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1055.78 ms n=2898]
+  FAIL host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=1261.74 ms over 375 jobs in the first 150 ms of each modal]
+
+--- run 01 checks (what is asserted) ---
+PASS S1 the real menu window appears [class='#32768' title='' appeared_after_ms=21 hwnd=22089778]
+FAIL S1 menu content visible through MSAA (Open, Save checked, separator, Delete disabled, Quit) [items=[Open[role12],Save(checked)[role12],(disabled)[role21],Delete(disabled)[role12],Quit[role12]] hr=0x0 ptr=1983960639248 children=5]
+PASS S1 modal dismissed by window-targeted input [method=msaa-accDoDefaultAction ]
+PASS S1 result event arrives after the dismissal [waited up to 10 s]
+PASS S2 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=22155314]
+PASS S2 modal dismissed by window-targeted input [method=escape-to-menu-window ]
+PASS S2 result event arrives after the dismissal [waited up to 10 s]
+PASS S3 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=6 hwnd=22220850]
+PASS S3 modal dismissed by window-targeted input [method=TDM_CLICK_BUTTON id=101 ]
+PASS S3 result event arrives after the dismissal [waited up to 10 s]
+PASS S4 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=0 hwnd=13635060]
+PASS S4 modal dismissed by window-targeted input [method=escape-to-dialog-window ]
+PASS S4 result event arrives after the dismissal [waited up to 10 s]
+PASS S5 the real menu window appears [class='#32768' title='' appeared_after_ms=0 hwnd=42471168]
+PASS S5 modal dismissed by window-targeted input [method=keys ]
+PASS S5 result event arrives after the dismissal [waited up to 10 s]
+PASS S6 the real dialog window appears [class='#32770' title='SR0 Modal06 dialog' appeared_after_ms=42 hwnd=42536704]
+PASS S6 modal dismissed by window-targeted input [method=observe ]
+PASS S6 the window closes while its dialog is open, without a rescue [window_closed_logged=True rescued=False]
+PASS S6 no dialog window is left after the window closed [dialog_gone=True]
+PASS all 6 scenarios were requested and handled [handled=6]
+PASS host exited by itself with code 0 [exit=0 killed=]
+PASS host: startup validation [abi 0.6 fn_count=16 stats_size=200]
+PASS host: run returned ok [ok]
+PASS host: sequence ran without timeout [timed_out=false]
+PASS host: S1 menu-select: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=15 i1=4 choice=15/4 want=15/4 failed=false events=1 ticks_during=93]
+PASS host: S2 menu-escape: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=78]
+PASS host: S3 dialog-click: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=22 i1=1 choice=22/1 want=22/1 failed=false events=1 ticks_during=75]
+PASS host: S4 dialog-escape: async result arrives once with the expected item id and index [request=SWR_OK action=3 (want 3) i0=0 i1=-1 choice=none want=dismissed failed=false events=1 ticks_during=73]
+PASS host: S5 menu-keys-queue-full: async result arrives once with the expected item id and index [request=SWR_OK action=2 (want 2) i0=11 i1=0 choice=11/0 want=11/0 failed=false events=1 ticks_during=86]
+PASS host: S5 one pending request at a time: a second request in the same turn is SWR_E_QUEUE_FULL, the first still delivered [second=SWR_E_QUEUE_FULL first_result=true]
+PASS host: no result for an unknown id, no duplicate result [unknown=0 duplicate=0]
+PASS host: main loop keeps pumping while a modal is open: jobs run in every modal interval [steady jobs per scenario S1=696 S2=573 S3=564 S4=551 S5=647 (need >= 50 each), max gap between job runs 10.23 ms, producer enqueued=5813]
+PASS host: job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=0.43 ms n=3031]
+PASS host: one-off cost of opening a modal within 50 ms (modal-loop run 8 bound) [max=29.68 ms over 375 jobs in the first 150 ms of each modal]
+PASS host: job latency outside any modal within budget (idle p99 <= 16.7 ms) [p99=0.29 ms n=455]
+PASS host: S6 dialog open while the window closes: run returned, window_closed once, a late result (if any) was ignored [close_calls=1 late_results=1 order=result-after-close i0=0 i1=-1 failed=false]
+PASS host: requests from the post-close pump rejected: commit SWR_E_SHUTDOWN, menu/dialog/message SWR_E_STALE_HANDLE [commit=SWR_E_SHUTDOWN menu=SWR_E_STALE_HANDLE dialog=SWR_E_STALE_HANDLE message=SWR_E_STALE_HANDLE jobs_run_after_close=301]
+PASS host: no stale events, no thread violations or host panics [stale=0 thread_violations=0 host_panics=0]
+PASS host: live nodes zero after teardown [at cleanup=0 after run=0]
+PASS host: post-close pump ended by swr_shutdown_complete, not the timeout [shutdown=SWR_OK timeouts=0 run returned 0.60s after window_closed]
+
+SUMMARY runs=20 pass=0 fail=20 checks_per_run=41
+ROW7 MODAL FAIL (0/20 runs)
+ended=2026-10-10T08:07:48.4254184+05:30
+
+=== ANNOTATIONS (appended on the Mac after the run; every line ABOVE this one is verbatim driver output of the second, complete run) ===
+Mode history: a first 20-run launch was stopped after its run 01 because of harness defect 1 (below); its run 01 is kept in result-modal06-aborted-run01.txt. The second launch (this file) is the one permitted restart. Source of the numbers below: out/modal/run-NN/result.json (20 runs) aggregated on the Mac.
+
+HARNESS DEFECTS (not product defects), both on the never-run menu path:
+ 1. Run 01 of the first launch: the S1 content check asked UI Automation for MenuItem descendants of the #32768 window and got none ("items=[]"). probe-menu-uia.ps1 (one desktop probe, no input): UIA shows a classic popup menu as ONE EMPTY Pane (FromHandle, FromPoint, children, desktop-wide MenuItem search of the host pid all empty); the items are reachable through MSAA (AccessibleObjectFromWindow OBJID_CLIENT, late-bound IDispatch: a cast to Accessibility.IAccessible fails in Windows PowerShell): Open, Save (state CHECKED), separator (role 21, UNAVAILABLE), Delete (UNAVAILABLE), Quit. FIX: common.ps1 Get-MsaaItems; drive-modal.ps1 reads the content and invokes the item with MSAA accDoDefaultAction (keyboard Down/Return stays the fallback; in the first launch S1 was dismissed with the keyboard fallback and returned 15/4 correctly).
+ 2. Second launch: the rewritten content check evaluated "(Where-Object ...).Count -eq 1" on a single object; a PSCustomObject has no .Count in Windows PowerShell 5.1, so the check read false in all 20 runs ("0/20" below). The items printed in every run are correct. FIX (in the repo script, applied AFTER this run, not rerun): wrap in @(...). As-run drive-modal.ps1 sha256 b1b09500bd25d5d7670b94d0ac0638cef3af3bc4d1c2a1ed45a1e2ba2506f466; repo copy now differs by that one expression. Post-hoc check of the logged items in all 20 runs against the expectation (Open enabled, Save checked, separator, Delete disabled, Quit enabled): 20/20 match.
+ Note on the host measurement (Modal06 source unchanged since the run): the "jobs run in every modal interval" check counts jobs by ENQUEUE time inside the interval, so it passed in the two stalled runs; the latency gates and ticks_during caught the stall. A stricter gate would count jobs by RUN time in the interval.
+
+PRODUCT-SIDE FINDING (not fixed): 2 of 20 runs failed the latency gates. In run 15 the S3 dialog and in run 20 the S1 menu showed ticks_during=0 and every main-queue job enqueued while that modal was open ran only after the modal closed (latency about equal to the modal duration, 1.05-1.26 s). 98 of 100 modals pumped normally (ticks_during 73-93, steady p99 0.38-0.50 ms). Both stalled runs: renderer returned the correct result (22/1 and 15/4), exit code 1 only from the two latency HC lines. Log lines (evidence/modal-run15-host.log, evidence/modal-run20-host.log):
+   run 15: MODAL id=1003 result tag=S3 action=3 i0=22 i1=1 choice=22/1 failed=false elapsed_ms=1252.93 ticks_during=0 | LATENCY_MS ... modal_open_one_off n=375 max=1250.85 | modal_steady n=2873 p50=0.08 p99=1044.88 max=1100.88 | HC FAIL job latency during an open modal within budget (steady p99 <= 16.7 ms) [p99=1044.88 ms n=2873] | HC FAIL one-off cost of opening a modal within 50 ms [max=1250.85 ms ...]
+   run 20: MODAL id=1001 result tag=S1 action=2 i0=15 i1=4 choice=15/4 failed=false elapsed_ms=1263.82 ticks_during=0 | LATENCY_MS ... modal_open_one_off n=375 max=1261.74 | modal_steady n=2898 p50=0.08 p99=1055.78 max=1111.78 | same two HC FAIL lines (p99=1055.78 ms, max=1261.74 ms)
+The 50 ms dialog-open bound was kept (contract value, SWR_GM_OPEN_BOUND_MS default 50).
+
+PER-CHECK PASS COUNTS over the 20 runs: every check 20/20 except
+   S1 menu content visible through MSAA ........ 0/20 as run (harness defect 2; 20/20 post hoc from the logged items)
+   host: job latency during an open modal ...... 18/20 (runs 15, 20: stall above)
+   host: one-off cost of opening a modal <= 50 ms 18/20 (runs 15, 20: stall above)
+   host exited by itself with code 0 ........... 18/20 (runs 15, 20: exit 1 from the two latency lines)
+   all other 37 checks (6 scenarios found/dismissed/result, result id+index, QUEUE_FULL, pumping count, idle p99, S6 close-while-open, post-close rejections, teardown): 20/20
+
+OPEN LATENCY, per run (ms): job-latency one-off over the first 150 ms of each modal (the 50 ms-bound metric), steady p99 / steady max job latency, max gap between job runs, idle p99:
+   run-01  open_one_off=29.68  steady_p99=0.43  steady_max=8.25  max_run_gap=10.23  idle_p99=0.29
+   run-02  open_one_off=29.56  steady_p99=0.42  steady_max=9.44  max_run_gap=11.42  idle_p99=0.28
+   run-03  open_one_off=31.13  steady_p99=0.42  steady_max=8.35  max_run_gap=10.33  idle_p99=0.32
+   run-04  open_one_off=37.17  steady_p99=0.43  steady_max=8.87  max_run_gap=10.85  idle_p99=0.25
+   run-05  open_one_off=26.18  steady_p99=0.38  steady_max=7.88  max_run_gap=9.73  idle_p99=0.25
+   run-06  open_one_off=40.54  steady_p99=0.38  steady_max=10.05  max_run_gap=11.91  idle_p99=0.43
+   run-07  open_one_off=33.77  steady_p99=0.43  steady_max=7.62  max_run_gap=9.59  idle_p99=0.42
+   run-08  open_one_off=29.39  steady_p99=0.40  steady_max=8.77  max_run_gap=10.71  idle_p99=0.39
+   run-09  open_one_off=31.88  steady_p99=0.42  steady_max=8.47  max_run_gap=10.39  idle_p99=0.36
+   run-10  open_one_off=28.38  steady_p99=0.41  steady_max=9.03  max_run_gap=10.96  idle_p99=0.35
+   run-11  open_one_off=30.19  steady_p99=0.51  steady_max=8.81  max_run_gap=10.70  idle_p99=0.25
+   run-12  open_one_off=28.31  steady_p99=0.48  steady_max=8.82  max_run_gap=10.74  idle_p99=0.33
+   run-13  open_one_off=35.03  steady_p99=0.46  steady_max=8.85  max_run_gap=10.78  idle_p99=0.50
+   run-14  open_one_off=30.09  steady_p99=0.43  steady_max=7.83  max_run_gap=9.73  idle_p99=0.33
+   run-15  open_one_off=1250.85  steady_p99=1044.88  steady_max=1100.88  max_run_gap=8.39  idle_p99=0.33
+   run-16  open_one_off=35.77  steady_p99=0.51  steady_max=9.65  max_run_gap=11.46  idle_p99=0.35
+   run-17  open_one_off=29.96  steady_p99=0.46  steady_max=8.83  max_run_gap=10.69  idle_p99=0.36
+   run-18  open_one_off=37.12  steady_p99=0.43  steady_max=8.98  max_run_gap=10.81  idle_p99=0.32
+   run-19  open_one_off=32.86  steady_p99=0.39  steady_max=8.35  max_run_gap=10.29  idle_p99=0.28
+   run-20  open_one_off=1261.74  steady_p99=1055.78  steady_max=1111.78  max_run_gap=11.00  idle_p99=0.31
+   open_one_off min/median/max over 20 runs: 26.18 / 31.50 / 1261.74 ms; over the 18 runs without the stall: 26.18 / 30.66 / 40.54 ms (all <= 50)
+   modal window first seen by the driver after the request line (ms, 25 ms polling; menus S1/S2/S5, dialogs S3/S4/S6):
+     S1 min/median/max 0 / 0.0 / 46 (n=20)
+     S2 min/median/max 0 / 0.0 / 1 (n=20)
+     S3 min/median/max 0 / 30.5 / 62 (n=20)
+     S4 min/median/max 0 / 1.0 / 45 (n=20)
+     S5 min/median/max 0 / 0.0 / 39 (n=20)
+     S6 min/median/max 0 / 29.0 / 62 (n=20)
