@@ -8,6 +8,7 @@ param(
   [int]$Runs = 20,
   [int]$MaxMinutes = 40,
   [string]$ResultName = '',      # file name under $Base (default result-<mode>06final.txt)
+  [string]$OutName = '',         # run directory name under $Base\out (default out\textgeom or out\modal, which a new pass would overwrite: give each pass its own, e.g. modal08)
   [switch]$LegacySpawn           # modal mode only: SWR_MODAL_LEGACY_SPAWN=1 for the host (the old spawn start, A/B proof)
 )
 $ErrorActionPreference = 'Stop'
@@ -15,7 +16,9 @@ $task = "SR0GM-$Mode-$Tag"
 $script = "$Base\examples\BridgeGeoModal\scripts\drive-$Mode.ps1"
 $out = if ($ResultName) { "$Base\$ResultName" } elseif ($Mode -eq 'textgeom') { "$Base\result-textgeom06final.txt" } else { "$Base\result-modal06final.txt" }
 if (Get-ScheduledTask -TaskName $task -ErrorAction SilentlyContinue) { throw "task $task already exists" }
-$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Base `"$Base`" -Runs $Runs -Result `"$out`"$(if ($LegacySpawn -and $Mode -eq 'modal') { ' -LegacySpawn' } else { '' })"
+$outArg = if ($OutName) { " -OutDir `"$Base\out\$OutName`"" } else { '' }
+$legacyArg = if ($LegacySpawn -and $Mode -eq 'modal') { ' -LegacySpawn' } else { '' }
+$taskArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$script`" -Base `"$Base`" -Runs $Runs -Result `"$out`"$outArg$legacyArg"
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $taskArgs -WorkingDirectory $Base
 $principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes ($MaxMinutes + 5)) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
