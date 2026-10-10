@@ -1,6 +1,6 @@
 # SR0 findings: everything tried, what worked, what did not, and what is missing
 
-Compiled 10 October 2026 from the repository at HEAD `593e3ab` (the task named `2da92ab`; the only later commit is the R6 result, `probes/sr0-o/R6-RESULT.md`). Sources: `docs/*`, every `RESULT*.md` and `ITERATION.md` under `probes/`, `examples/` and `qualification/`, `render/README-abi-v0.md`, `render/swiftright-render/README.md`, `git log` (219 commits), `probes/sr0-s/COMPARISON.md`, the `gpui 0.2.2` crate source, and Microsoft Learn pages fetched on 10 Oct 2026. Nothing was rerun to write this. Every claim cites a path (with line where useful) or a commit. A claim with no citation is marked UNVERIFIED.
+Compiled 10 October 2026 (revised at HEAD `acef4f1` to fold in the adversarial review `docs/sr0-findings-review-astra.md`; dispositions in the last section) from the repository at HEAD `593e3ab` (the task named `2da92ab`; the only later commit is the R6 result, `probes/sr0-o/R6-RESULT.md`). Sources: `docs/*`, every `RESULT*.md` and `ITERATION.md` under `probes/`, `examples/` and `qualification/`, `render/README-abi-v0.md`, `render/swiftright-render/README.md`, `git log` (219 commits), `probes/sr0-s/COMPARISON.md`, the `gpui 0.2.2` crate source, and Microsoft Learn pages fetched on 10 Oct 2026. Nothing was rerun to write this. Every claim cites a path (with line where useful) or a commit. A claim with no citation is marked UNVERIFIED.
 
 Conventions: "tuple 08" is the final SR0 snapshot (`docs/sr0-snapshot.md` section 2d). Short hashes are sha256 prefixes of binaries or git commits (the context says which). "Dell" is the Windows host (Dell XPS 15 9530, `docs/sr0-snapshot.md:105`). "Mac" is the Mac mini, macOS 27.0.1, arm64.
 
@@ -14,7 +14,7 @@ SR0 is **OPEN**, not closed (`docs/sr0-status.md:7`). The final tuple is tuple 0
 |---|---|---|
 | SR0-D dependencies and hosts | PASS (Windows x64, Mac arm64) | `probes/sr0-d/*`; `docs/sr0-status.md:13` |
 | SR0-C slice contract | DRAFT v0.1; freeze proposal v1.0 NOT frozen | `conformance/sr0-slice/CONTRACT.md:3`; `docs/sr0-freeze-slice-contract-v1.md:7` |
-| SR0-O oracle and comparator | PASS for F1 cross-compare (0 diffs); Mac oracle 16 configs x3 equal accepted baselines; F6 100-run sample decided (see below) | `probes/sr0-o/R6-RESULT.md`; `qualification/out/r8-tuple08/compare-F1.json` |
+| SR0-O oracle and comparator | PARTIAL: F1 cross-compare 0 diffs; F2-F9 not cross-compared; Mac oracle 16 configs x3 equal accepted baselines; F6 100-run sample runner verdict FAIL (see below) | `probes/sr0-o/R6-RESULT.md`; `qualification/out/r8-tuple08/compare-F1.json` |
 | SR0-B bridge and measurement | PASS: smoke 40/40, timeout 41/41, TextGeom06 20/20, Modal06 20/20 | `examples/BridgeSmoke/result-smoke-rev08.txt:83-84`; `examples/BridgeGeoModal/result-textgeom08.txt:93`, `result-modal08.txt:268` |
 | SR0-S seed comparison | Fresh runtime selected; SwiftCrossUI fork early-disqualified (never ran on the real renderer); matrix 319/320 | `probes/sr0-s/COMPARISON.md`; `probes/sr0-s/fresh-on-bridge/out/matrix-08/RESULT.md` |
 | SR0-P packaged qualification | NOT PASS: Windows offline 13/14, W08 FAIL; network W00/W01/W12 PASS; Mac DMG 12/12 and R7 10/10 PASS | `examples/SliceApp/RESULT-R5-08.md`; `RESULT-R7.md` |
@@ -22,12 +22,12 @@ SR0 is **OPEN**, not closed (`docs/sr0-status.md:7`). The final tuple is tuple 0
 | SR0-N native interaction (R9) | IME F7 20/20, F7live 20/21, F8 18/19, Narrator 8/8 automatable; Narrator speech not machine-verifiable | `probes/sr0-b/native-interaction/out/*-tuple08.txt` |
 | SR0-W workload (R10) | NOT MET: W5 fails; leak slope 3.21-4.42 MB/min passes | `probes/sr0-b/workload/results/r10-20261010-tuple08-renderere280-windows.txt:40,79,118,285` |
 
-### R6 (Mac oracle, added 10 Oct 2026, commit `593e3ab`, `probes/sr0-o/R6-RESULT.md`)
+### R6 (Mac oracle, added 10 Oct 2026, commit `593e3ab`, `probes/sr0-o/R6-RESULT.md`): PARTIAL, not complete
 
 - mac-oracle stage: all 16 configs, 3 runs each, 3/3 self-test PASS and every canonical trace equals the accepted baseline.
 - F1 signed re-record (signed `F1MacRecord.app`, Developer ID, team 6KLGD3LLKF): 3 recordings, 0 diffs against the accepted Mac trace and 0 diffs against the tuple 08 Windows trace; the runner compare stage passes with 0 diffs. The accepted baseline was not replaced.
-- F6 100-run sample: 100/100 self-test PASS; in the burst-insert step the A/B completion order is 96 A-first, 4 B-first (runs 13, 23, 24, 25, clustered). Lead decision: the contract treats that pair as unordered. The first animation pair was A-then-B in all 100 runs. The candidate `conformance/candidates/F6/20261010T082727.113Z` is untracked and not promoted.
-- **Open gap:** there is no Windows schema-v0 trace for F2 to F9, so the Mac-to-Windows cross-compare covers F1 only (`probes/sr0-o/R6-RESULT.md`, "Not compared").
+- F6 100-run sample: 100/100 self-test PASS, but the **runner verdict is FAIL**: the last record of `probes/sr0-o/r6/f6/f6-100-events.jsonl` (line 104) reads `fail`, "runs disagree: 2 distinct canonical traces (nondeterministic); trace differs from accepted baseline; candidate written, NOT promoted". In the burst-insert step the A/B completion order is 96 A-first, 4 B-first (runs 13, 23, 24, 25, clustered). The lead decided to treat A/B completion as unordered, but that decision is **not yet implemented** in `CONTRACT.md` or the comparator, so F6 still fails on the Mac oracle about 1 run in 25 (open item T11). The candidate `conformance/candidates/F6/20261010T082727.113Z` is untracked and not promoted. An earlier draft of this document repeated R6-RESULT's statement that "the first animation pair was A-then-B in all 100 runs"; the committed F6 traces (`probes/sr0-o/r6/f6/run*.jsonl`) contain exactly one A/B animation pair, so that claim is unsupported and is removed.
+- **Open gap:** there is no Windows schema-v0 trace for F2 to F9, so the Mac-to-Windows cross-compare covers F1 only (`probes/sr0-o/R6-RESULT.md`, "Not compared"; `qualification/run.py:1374` calls `compare_stage` for F1 only, and the Windows self-tests contain no UIA observations). R6 stays open until F2-F9 (and the F3 variants and F6-reduced) are recorded on Windows in schema v0 and compared, including injected semantic faults.
 - Consequence for the docs: `docs/sr0-status.md` rows SR0-O and item 1/5 of the PENDING table, `docs/sr0-freeze-slice-contract-v1.md` section 4 blocker 2 and limitation 4, and `docs/sr0-close-plan.md` lane R6 still say PENDING and predate this result.
 
 ---
@@ -91,14 +91,20 @@ What the repository's own runs confirm:
 
 ### 2.4 The hybrid-GPU path measured in R10
 
-The Dell has an Intel Iris Xe iGPU that owns the display and an NVIDIA GeForce RTX 4070 Laptop GPU that renders. From `probes/sr0-b/workload/results/ITERATION.md`:
+The Dell has an Intel Iris Xe iGPU and an NVIDIA GeForce RTX 4070 Laptop GPU (the iGPU is described as the display owner in `ITERATION.md`; no committed output/LUID record confirms it). The text separates what committed files record from hypotheses.
 
-- The process rendered on the RTX 4070 in every committed run (`gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU`, e.g. `r10-20261010-tuple08-renderere280-windows.txt:127`).
-- "The 13 MB back buffer is copied across PCIe to the iGPU that owns the display (NVIDIA copy engine 27 % busy)" (`ITERATION.md:10-11`, `:155`).
-- `msUntilRenderComplete` is 5.5 ms at the floor, 6.1 ms median, p90 7.4, p99 11.1; a present is displayed two vblanks later only when `present phase after vblank + msUntilRenderComplete < 16.67 ms`, otherwise three (a 33 ms gap = a missed vblank) (`ITERATION.md:8-11`).
-- Every remaining missed vblank is a 3-7 ms late paint (a 3 ms key handler or a 4-6 ms host drain on the paint edge) on top of a GPU burst of 9-12 ms render-complete for about three frames every few seconds (`ITERATION.md:100-101`, `:154-155`).
-- `nvspcap64.dll` (NVIDIA capture/overlay hook) is loaded in the process; whether it contributes cannot be told without a run with the overlay off, which is PENDING (Adrian) (`ITERATION.md:155-157`).
-- The note "Rendering on the Intel iGPU would remove the copy (GPUI enumerates adapter 0, which is the NVIDIA on this machine)" (`ITERATION.md:157`) is a hypothesis; it was not tried. See section 7, gap G7, for an inconsistency about adapter order.
+**Measured (committed result files):**
+
+- The process rendered on the RTX 4070 in every committed run (`gpu_adapter=NVIDIA GeForce RTX 4070 Laptop GPU`, `r10-20261010-tuple08-renderere280-windows.txt:127`).
+- Tuple 08 records per-run `msUntilRenderComplete` and dropped (replaced) presents: run 1 p50 6.06, p95 9.14, p99 10.94, max 13.92 ms, 5 of 3600 presents dropped (`...tuple08...windows.txt:131`; runs 2 and 3 at `:136`, `:141`). Overlay injection is also recorded per run (`nvspcap64.dll` in the process before and after, `:129`). An earlier version of this document (gap G5) wrongly said these exist only as prose.
+- Every remaining missed vblank is a 3-7 ms late paint (a 3 ms key handler or a 4-6 ms host drain on the paint edge) coinciding with a GPU burst of 9-12 ms render-complete for about three frames every few seconds (`ITERATION.md:100-101`, `:154-155`; analysis prose, raw PresentMon CSVs not committed).
+- A present is displayed two vblanks later when phase after vblank + `msUntilRenderComplete` < 16.67 ms, else three (`ITERATION.md:8-11`; a stated model, not a committed trace).
+
+**Hypotheses (not established by committed evidence):**
+
+- That a ~13 MB back buffer is copied across PCIe to the iGPU each frame, that the NVIDIA copy engine is 27 % busy, and that this copy causes the late renders (`ITERATION.md:10-11`, `:155`). The committed files contain no ETW/GPU-queue or copy-engine trace, no adapter or output LUIDs, no buffer dimensions, driver versions or HAGS state. Correlation between the 9-12 ms bursts and misses is observed; causation is not shown, and shading throughput has not been excluded by measurement. PresentMon 2.6 documents that hardware-accelerated GPU scheduling (HAGS) can make some timings inaccurate (https://github.com/GameTechDev/PresentMon/blob/v2.6.0/README.md), so HAGS state must be recorded with any further trace.
+- That `nvspcap64.dll` contributes; this requires an overlay-off run, PENDING (U2).
+- "Rendering on the Intel iGPU would remove the copy" (`ITERATION.md:157`) is untried. The earlier draft's inference that Windows graphics preferences "must" explain the NVIDIA selection is deleted (see G6): it compared a synthetic self-test enumeration with a host claim, and the synthetic data establishes no host order. Which adapter the renderer selects and which adapter owns the display output must be logged before any placement policy is chosen.
 
 ---
 
@@ -111,6 +117,7 @@ Result key: worked / failed / partial. "Lesson" is the transferable point.
 | Approach | Result | Evidence | Lesson |
 |---|---|---|---|
 | Fork SwiftCrossUI core with a GPUI backend | failed (early-disqualified) | 17/22 headless, 5 blocked (observation granularity +8 body evals per unrelated change, relayout re-measure, transactions/animation, custom `Layout`, sub-point geometry); 5 overrides ~215 lines plus a reverted sixth; never connected to the renderer. `probes/sr0-s/scui-fork/RESULT.md`; `probes/sr0-s/COMPARISON.md`; commits `b771c20`, `a7b43ac` | A foreign scheduler/invalidation/layout model is a rewrite, not a repair. Source-only assessment (`probes/sr0-s/swiftcrossui-assessment/RESULT.md`) predicted the blockers B2 (async `onDisappear`), B3 (stale task commits), no `Layout`, no transactions, no accessibility. |
+| Fresh runtime on the first real-renderer matrix, rev2 | regression, fixed | matrix rev2 on the fixed runtime failed every config (`2aa1983`, `probes/sr0-s/fresh-on-bridge/out/matrix-rev2/`); repaired before the 300/300 run | A "fixed" runtime still needs the full matrix, not a sample. |
 | Fresh runtime written to SwiftUI semantics | worked | 46/46 then 62/62 then 84/84 headless on macOS and Windows (`000679e`, `14106d6`, `probes/sr0-s/fresh-runtime/RESULT-tests-final.md`); F1-F9 on the real renderer 15 configs x3, x20 = 300/300 (ABI 0.5, `65e0f29`), 320/320 (tuple 06, `5a67f23`), 319/320 (tuple 08, `820eb26`) | Writing to the contract with an oracle was cheaper than bending a runtime with different semantics. It cost 8 edit cycles on Mac (cap 6) at the start (`fresh-runtime/RESULT.md`, "Fix iterations"). |
 | Same-source compile: one screen file on both OSes | worked | `probes/sr0-c/same-source/RESULT.md`: Mac PASS, Windows PASS against declaration-only stubs; `NavigationSplitView` negative fixture fails on Windows only | A first finding ("`{ $row in }` is not portable") was a stub defect: adding `Binding.init(projectedValue:)` restored the original form ("Primary correction"). |
 | Negative compile fixtures (`onReceive`, `ObservableObject`, `Timer.publish`) | worked | `probes/sr0-c/negative-fixtures/RESULT.md` | `Timer.publish` compiles on Mac (Foundation exposes it), so the Mac oracle cannot prove that negative; Windows-only check. |
@@ -126,12 +133,15 @@ Result key: worked / failed / partial. "Lesson" is the transferable point.
 
 Per-threshold outcome on tuple 08: W1, W2 (bridge per input p95 0.45 ms against 1.0), W3 (per frame p95 0.80 ms against 2.0), W6, CAL, W5 p95 and W4 p95 pass; W5 zero missed vblanks fails with 5, 1, 1; leak slope 3.21-4.42 MB/min passes against 5.0 (`docs/sr0-status.md:25-29`; the bridge-time figures are quoted from the tuple 06 run, `docs/sr0-freeze-bridge-interface.md:138`).
 
+**W7 provenance (disclosure).** The tuple 08 orchestrator analysis was **INCOMPLETE** (`rc=2`): threshold W7 reported MISSING because `D:\Claude\sr0-r08\workload\runs\tuple08\incremental.json` did not exist (`r10-20261010-tuple08-renderere280-windows.txt:126`, `:145`; re-analysis note at `:147`, passing W7 at `:267-269`). The analyzer was then re-run on the same run data with the it-8 incremental record (`D:\Claude\sr0b-workload\incremental.json`, written 2026-10-09 21:35: 3 edits, 0 Rust invocations, identical DLL hashes). The log itself states it is "a carried-over build-graph record, not re-measured on tuple 08". The W7 pass on tuple 08 therefore rests on carried-over evidence. The validator checks booleans and counts, not tuple provenance. Either remeasure on the final tuple or justify build-graph equivalence (same workload exe `0815DF49`, renderer copied not built) in the record; open item T13.
+
 ### 3.3 Memory leak
 
 | Approach | Result | Evidence | Lesson |
 |---|---|---|---|
 | Suspect the renderer heap | failed | Rust live bytes flat at 7-13 MB; growth is in the shared process heap, committed +5.7 MB/min vs allocated +2.2 (memtest, `ITERATION.md:58-73`) | Measure allocated vs committed before blaming an allocator. |
 | Throttle AccessKit publication to 100 ms, share semantic strings/runs | partial | renderer allocations -78 %, ~1 MB/min less growth; slope barely moved (`65cd886`, `ITERATION.md:75-102`) | Real saving, wrong target. |
+| Control: AX publication disabled (`SWR_AX_OFF=1`) | partial | private slope 4.87 vs 5.99 MB/min default, Rust live bytes flat 7.0 MB, allocations 16.7 M vs 52.8 M, present mean 0.005 ms vs 1.26 ms; the slope stays near 5 MB/min even with no AccessKit publication (`ITERATION.md:62-66`). A control actually run | AX is a real cost but not the leak source; the same table shows `SWR_AX_MIN_MS=100` at 4.88. |
 | Headless soak on the workload schedule | worked | Cause: `WorkloadEngine.park` kept the continuation of every cancelled row task (never resumed): `parked` 0 to 4037 in 300 s. Fix `33987c2` (unpark on cancel, prune per-row tables, lazy `Bridge.events`). Slope 5.2-7.35 to 2.97-3.24 MB/min app-only (`ITERATION.md:123-148`) | A soak with heap accounting and per-table sizes (`counters.csv`) found in one pass what four timed runs did not. |
 
 The R threshold now judges the app-only slope (trace tables subtracted) with the raw slope reported beside it; both pass (`ITERATION.md:132-135`). Residual growth is allocator fragmentation that levels off after about 40 s (`ITERATION.md:144-148`).
@@ -144,6 +154,7 @@ The R threshold now judges the app-only slope (trace tables subtracted) with the
 | First pacing version used `DwmGetCompositionTimingInfo` | failed | fails on this host (HRESULT 0x88980090); it ran entirely on its fallback wait (`fallback_waits=4109 of 4109`, `ITERATION.md:13-14`) | Do not trust a timing API without checking its return. |
 | Edge-clock pacing (a `DwmFlush` loop posts the paint at edge + 2.5 ms) | failed | 21-30 missed vblanks per run (`it2`) | Still worse than none. |
 | Interleaved A/B: pacing off vs 1.0 ms | worked (off wins) | medians 2 vs 6.5 missed, W4 p95 45.4 vs 47.2 ms (`it3`, `ITERATION.md:75-102`); default `SWR_PAINT_PHASE_MS=0` (`render/README-abi-v0.md`, "Performance and diagnostics knobs") | Interleave A/B on the same artifact and session; sequential comparisons confounded by host load. |
+| Control: resource sampler off (`-NoResources`, run it4a) | worked (sampler excluded) | missed vblanks 2 / 13 / 1 against 1 5 1 2 8 with the sampler (r2 disturbed by user input); renderer private-bytes slope 6.5 / 5.2 / 5.6 MB/min without it (`ITERATION.md:104-108`). A control actually run | Neither the misses nor the leak come from the measurement tool. |
 | Remove the quiet-host gate; measure under normal host use | policy change | gates `825f5d2`, `5ab4a31` replaced by recorded context in `65cd886`; analyzer voids a run only for a stopped/minimised window or saturated CPU (`docs/sr0-status.md:31`) | A "quiet host" is not achievable on a shared dev machine; record disturbances instead of aborting. It also means W5 is measured under realistic interference. |
 
 Counts per run on the final renderer: tuple 08 5, 1, 1 (`r10-20261010-tuple08-renderere280-windows.txt`); tuple 07 0, 2, 6 (commit `61b8698`); undisturbed runs across it3-it5 range 1-8, median 2 (`ITERATION.md:152-153`).
@@ -165,6 +176,7 @@ The earlier standalone probe host met the same budget: batch 5, 30/30 valid runs
 |---|---|---|---|
 | IMM32 text node via GPUI's `EntityInputHandler`, hand-typed with Microsoft Japanese IME | worked | `probes/sr0-d/ime-text-node/RESULT.md` interactive table (marked text, conversion, commit, Escape, UTF-16 ranges); commits `90e90b3`, `487e4ed` | The architecture chose IMM32, not a TSF text store (`docs/architecture.md:162`). |
 | Automated input with Unicode packets | failed | `KEYEVENTF_UNICODE` bypasses IME composition; use virtual-key `SendInput` (`ime-text-node/RESULT.md`; `docs/sr0-status.md:59`) | |
+| F8 matrix regression on abi06f | regression, fixed | F8 went 0/20 because the AX button focus was logged as a `focus` event and masked the row-focus check; it is now logged as `ax-button-focus` (`c31f1b5`, `matrix-abi06f`). The other configs stayed 20/20 | A diagnostic event with a shared name can change a semantic check. |
 | Real IME checks on the bridge (F7, F7live, F8) | worked, one limitation | tuple 08: F7 20/20 (+1 not-run), F7live 20/21, F8 18/19 (`native-ime-*-tuple08.txt`); fixes: runtime IME selection relative to marked text, renderer re-places composition and candidate windows (`15855e1`, `5e36535`) | The first pass (14:44, 9 Oct) found no candidate window because the driver's window search did not match the real Microsoft IME list (an explorer `ApplicationFrameWindow`); eight check/driver repairs followed (`docs/sr0-retry-ledger.md:51`). |
 | Candidate list follows a layout move while composing | failed (limitation) | only failing check `candidate-window-follows-layout-move`: renderer re-places the windows (`ime_replace reason=layout`) but Windows 11's modern IME does not move the open list (`native-ime-f8-tuple08.txt:615`) | Likely needs a TSF text store (`ITfContextView::GetTextExt`); routed to SR1. |
 
@@ -202,7 +214,7 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 |---|---|---|---|
 | Probe: shaping, physical-pixel commit, paint/commit/AX rect agreement, DPI 240 | partial then worked | first run FAIL on 2 of 9 groups, both expectation errors (word-move count 23 stops incl. document end; degenerate rect); run 4 35/35 (`text-geometry/RESULT.md`) | Read the spec before asserting. |
 | On the bridge: TextGeom06 | worked | 20/20, 66 checks each (`result-textgeom08.txt:93`) | |
-| Underline and image painting | not asserted | no per-primitive draw counter (`docs/sr0-status.md:16`) | Accepted, not proven painted. |
+| Underline and image painting | not asserted | no per-primitive draw counter (`docs/sr0-status.md:16`) | Accepted, not proven painted. A draw counter would still not prove pixels, clipping or placement; see T4. |
 
 ### 3.11 Packaging
 
@@ -213,7 +225,7 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | Windows MSIX | Build and sign the pair on the Dell through a non-elevated one-shot task | worked | R2 `b476c85`; tuple 06 `4496474`; tuple 07 `0c00316`; tuple 08 `d4d2ca4` (`RESULT-R5-08.md`: `signtool verify /pa` OK, layout pin OK, subsystem 2, `swift-only-proof` `ok: true`) | Compare PE files by Authenticode digest: RightKit re-signs every PE with a new timestamp, so raw hashes never match the pin (`RESULT-R2.md` defect 1; fix `1ab091c`). |
 | Console window on packaged launch | Product bug: console-subsystem exe | worked after repair `0751951` | `/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup`, log to `%LOCALAPPDATA%\SliceApp\slice-app.log`; found by the Sandbox W04 check (`RESULT-R5.md`, "Product fix") | The clean-machine check caught what the dev machine hid. The log is opened exclusively by the CRT; a shared-read variant is not committed (`RESULT-R5.md`). |
 | Mac DMG | Sign, notarize, staple; Gatekeeper and first launch in a Tart VM | worked | R3 `1aee425`; final `34e818a`, `0be0ea3`; R7 10/10 online and offline (`2403117`); `syspolicy_check` flipped from "Notary Ticket Missing" to PASS after 0.2.140+ | A base VM with "App Store only" Gatekeeper invalidated the first R7 run; Adrian changed the setting (`RESULT-R7.md`). |
-| MSIX interrupted update (W08) | `IAsyncInfo.Cancel()` on `AddPackageAsync` at staging + 200-360 ms | failed (platform) | a cancel landing in the registration phase fails the rollback (`0x80073CF8`, event 751) and leaves 0.1.0.0 `Modified, NeedsRemediation`: it does not launch, data intact. 8/8 probe runs reached it, 26 % of cancels (`80a9b45`, `RESULT-R5-W08-recovery.md`) | `KillClient` (`Stop-Process`) is not an interruption: the service finishes anyway. Only `Add-AppxPackage -AppInstallerFile` on the newer feed recovers; `RegisterByFamilyName`, `Reset-AppxPackage`, relaunch do not. |
+| MSIX interrupted update (W08) | `IAsyncInfo.Cancel()` on `AddPackageAsync` at staging + 200-360 ms | failed (platform) | a cancel landing in the registration phase fails the rollback (`0x80073CF8`, event 751) and leaves 0.1.0.0 `Modified, NeedsRemediation`: it does not launch, data intact. 8/8 probe runs reached it, 26 % of cancels (`80a9b45`, `RESULT-R5-W08-recovery.md`) | `KillClient` (`Stop-Process`) is not an interruption: the service finishes anyway. The AppInstallerFile redeploy of a newer version (`Add-AppxPackage -AppInstallerFile` on the newer feed) is the only recovery measured to work; `RegisterByFamilyName`, `Reset-AppxPackage` and relaunch did not. **Not tested:** Settings Repair (tuple 07's run was perturbed by a person clicking it; tuple 08's hold-open saw no Repair, `RESULT-R5-08.md:30-34`), and the package state after the platform `RegisterByPackageFullName` that ran at the launch attempt (the snapshot was read before the launch). W08 stays FAIL. |
 | Mac install swap | Kill between the two renames | partial | SIGKILL leaves the install path absent until `install-app --recover` (`RESULT-R7.md`, "Interrupted install") | |
 
 ### 3.12 Clean machine
@@ -242,7 +254,7 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | Fixture app F1-F9 | failed then worked | "window never presented" was argument order: AppKit paired `--self-test` with the next token; `--self-test` must be last (4/4 failures before, 30/30 after) (`fixtures/RESULT.md`, "Primary diagnosis") | |
 | F3 oracle | worked, contract corrected | `List` preserves `@State` across remove and reinsert; `VStack`/`LazyVStack` reset it and lose focus (3 runs each, 0/1/3 s gaps); the draft contract's "fresh state" was wrong | Record the platform's behaviour, then specify it. |
 | F5 | worked | nondeterminism was AppKit restoring `NSWindow Frame main`; fixed by clearing the default | |
-| F6 | partial | Double animation source (`withAnimation` plus implicit `.animation(value:)`) was a fixture defect, removed (`52aa3d9`); a residual A/B completion-order swap remains: 1 of 20 earlier, 4 of 100 in R6, decided unordered | |
+| F6 | partial | Double animation source (`withAnimation` plus implicit `.animation(value:)`) was a fixture defect, removed (`52aa3d9`); a residual A/B completion-order swap remains: 1 of 20 earlier, 4 of 100 in R6; the lead decided it is unordered but the contract and comparator are not yet changed, so the runner verdict stays FAIL (section 1) | |
 | F9 | partial | AppKit keeps the closed `NSWindow` alive (`isReleasedWhenClosed=false`), so `tree-released` is OBSERVE on Mac and a Windows runtime requirement via `live_nodes` | |
 | Comparator rejects injected faults | worked | wrong row identity, stale task commit, missing action, extra container, label change (`probes/sr0-o/comparator/RESULT.md`, 16 tests) | |
 | Repeatability: 17 configs x 20 | worked | `4ff202f`, `probes/sr0-o/fixtures/REPEAT20.md` | |
@@ -253,7 +265,7 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | Approach | Result | Evidence | Lesson |
 |---|---|---|---|
 | Mac and Windows recorders feeding one comparator (F1) | worked | 317 diffs, then 52 after List AX roles (`cc605bf`), then label fix (`cc4c93a`), then 0 (`eaf40dc`); on tuple 08 0 diffs (`qualification/out/r8-tuple08/compare-F1.json`); R6 signed re-record 0 diffs | Each reduction exposed a real runtime or bridge gap, which is why Stage O's repair count grew. |
-| F2-F9 cross-compare | not done | no Windows schema-v0 trace exists (`probes/sr0-o/R6-RESULT.md`) | |
+| F2-F9 cross-compare | not done (R6 PARTIAL) | no Windows schema-v0 trace exists (`probes/sr0-o/R6-RESULT.md`) | |
 | Windows UIA recorder in Swift | worked, via a C shim | Swift's `WinSDK` has no UIAutomation module; importing `UIAutomationClient.h` through clang modules fails (`oleacc.h` missing `windef.h`); a flat header-free C shim does every COM call (`probes/sr0-o/uia-recorder/RESULT.md`) | |
 
 ### 3.16 Dependencies, hosts, bridge faults
@@ -290,11 +302,11 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | # | Limitation | Source |
 |---|---|---|
 | L1 | W5 zero missed vblanks fails on the hybrid-GPU Dell: 5, 1, 1 per 60 s (tuple 08); 1-6 across committed runs; overlay-off run not done | `r10-20261010-tuple08-renderere280-windows.txt:40,79,118`; `docs/sr0-status.md:50` |
-| L2 | MSIX update cancelled in the registration phase leaves `Modified, NeedsRemediation`; the app does not launch until the update is re-applied; data intact; recovery documented by RightKit (`@rightkit/release` README `e93ac2df`, not reproduced in this repository, UNVERIFIED) | `RESULT-R5-08.md:28-34`; `RESULT-R5-W08-recovery.md` |
+| L2 | MSIX update cancelled in the registration phase leaves `Modified, NeedsRemediation`; the app does not launch until the update is re-applied (the measured recovery is the AppInstallerFile redeploy of a newer version; Settings Repair and post-registration state untested); data intact; W08 remains FAIL and a user-accessible recovery test on final packages is open (T12); recovery documented by RightKit (`@rightkit/release` README `e93ac2df`, not reproduced in this repository, UNVERIFIED) | `RESULT-R5-08.md:28-34`; `RESULT-R5-W08-recovery.md` |
 | L3 | IME candidate list does not follow a mid-composition layout move (TSF text store likely needed) | `native-ime-f8-tuple08.txt:615`; `docs/sr0-freeze-slice-contract-v1.md:137` |
-| L4 | Narrator speech content and Narrator-start attribution are not machine-verifiable | `native-narrator-tuple08.txt:53,82` |
-| L5 | Cold first dialog open can exceed the 50 ms bound (60.9 ms once on tuple 07) | `result-modal07.txt:4`; `result-modal08.txt:262` |
-| L6 | Underline and image painting are accepted, not asserted (no per-primitive draw counter) | `docs/sr0-status.md:16` |
+| L4 | Narrator speech content and Narrator-start attribution are not machine-verifiable; a recorded listening result is required (U1) | `native-narrator-tuple08.txt:53,82` |
+| L5 | Cold first dialog open exceeded the 50 ms bound once (60.9 ms on tuple 07). Tuple 08: per-run maxima min 29.30, median 34.02, max **39.59 ms**; 35.96 ms is one run's detailed figure (`result-modal08.txt:242`, `:262`). The measured quantity is main-queue job delay during the first 150 ms of opening, not request-to-visible dialog latency; tuple 08's AX fix does not demonstrate changed cold-open behaviour. The cold-open measurement definition (endpoint, cache state) is open (T10) | `result-modal07.txt:4`; `result-modal08.txt:242,262` |
+| L6 | Underline and image painting are accepted, not asserted; rendered-output assertions are open (T4) | `docs/sr0-status.md:16` |
 | L7 | App Installer production host and TLS chain untested (guest-local self-signed feed); no hardware-GPU rendering in the Sandbox guest | `RESULT-R5.md`, `RESULT-R5-08.md` |
 | L8 | The packaged exe's log file is held exclusively by the CRT while the app runs | `RESULT-R5.md`, "Product fix" |
 | L9 | RightKit `install-app` SIGKILL between the two renames leaves the install path absent until `--recover` | `RESULT-R7.md`, "Interrupted install on 0.2.142" |
@@ -304,8 +316,8 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | L13 | Renderer knobs outside the ABI (`SWR_PAINT_PHASE_MS`, `SWR_AX_MIN_MS`, `SWR_AX_OFF`, `SWR_FRAME_LOG`, `SWR_MEM_DEEP`, `SWR_MODAL_LEGACY_SPAWN`) | `render/README-abi-v0.md`; `render/swiftright-render/README.md` |
 | L14 | The private libdispatch `_4CF` symbols are a version-pinned compatibility risk | `docs/architecture.md:178` |
 | L15 | Renderer DLL provenance: the committed-tree rebuild of `9c261d4` hashed `E280F4A9`, so bytes match the source; the DLL is unsigned in the SDK payload (RightKit signs it inside the package) | `docs/sr0-snapshot.md:89`; `RESULT-R2.md` |
-| L16 | F6 interrupted-animation completion order is unordered on SwiftUI itself (4 of 100 swapped) | `probes/sr0-o/R6-RESULT.md` |
-| L17 | Cross-platform compare covers F1 only | `probes/sr0-o/R6-RESULT.md` |
+| L16 | F6 interrupted-animation completion order is unordered on SwiftUI itself (4 of 100 swapped); not yet reflected in the contract or comparator, runner verdict FAIL | `probes/sr0-o/R6-RESULT.md` |
+| L17 | Cross-platform compare covers F1 only; R6 is PARTIAL | `probes/sr0-o/R6-RESULT.md` |
 | L18 | GPU/driver, fonts, locale, DPI, refresh are not pinned at tuple level (recorded per run only); Rust and MSVC versions not re-queried | `docs/sr0-snapshot.md:107-109` |
 
 ---
@@ -317,28 +329,32 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | # | Item | Needs | Source |
 |---|---|---|---|
 | U1 | R9 Narrator speech content | A person listening at the Dell, about 2 min | `docs/sr0-status.md:40` |
-| U2 | R10 one run with the NVIDIA overlay off; Mac windowed workload result | Adrian (no setting was touched); the Mac | `ITERATION.md:155-157`; `docs/sr0-status.md:41` |
-| U3 | Decision: accept W08 and W5 as known limitations, or repair and rerun | Adrian | `docs/sr0-status.md:42`; `docs/sr0-retry-ledger.md:76` |
+| U2 | R10 one run with the NVIDIA overlay off; Mac windowed workload result (and archived Mac samples and instrumentation-overhead measurement, which `docs/architecture.md:273` also requires) | Adrian (no setting was touched); the Mac | `ITERATION.md:155-157`; `docs/sr0-status.md:41` |
+| U3 | Decision on W5: repair it, or explicitly revise its measurable acceptance criterion in the contract, then rerun the prescribed workload on both OSes with archived samples and measured instrumentation overhead (the contract requires every timed run to pass; acceptance as a bare limitation does not satisfy it). W08 stays FAIL; see T12 | Adrian | `docs/sr0-status.md:42`; `docs/sr0-retry-ledger.md:76` |
 | U4 | Explicit record of the retry-cap overruns after the 9 Oct resume (R10, R9, R5, B repairs `02b3cc0`, `9c261d4`) | Adrian | `docs/sr0-retry-ledger.md:78,90` |
 | U5 | Windows signing certificate renewal before any new Windows build (expires 2026-10-12) | Adrian / RightKit | `RESULT-R5-08.md:12` |
 | U6 | Narrator registry and any other user-setting edits by drivers (resolved by restore logic; no open action) | | `native-narrator-tuple08.txt:85` |
 
-R6 (Mac oracle with the signed recorder) is no longer pending; see section 1.
+R6 (Mac oracle with the signed recorder) produced the F1 cross-compare and the Mac baselines, but it is PARTIAL and stays open; see section 1 and T1.
 
 ### 6.2 Technical
 
 | # | Item | Notes |
 |---|---|---|
-| T1 | Windows schema-v0 traces for F2-F9 and a cross-compare beyond F1 | `probes/sr0-o/R6-RESULT.md` |
-| T2 | Apply C1-C8 (and C3, see gap G4) to `CONTRACT.md`, bump to v1.0, freeze ABI 0.6; record F6 as unordered | R11; both freeze docs stay NOT FROZEN |
+| T1 | Windows schema-v0 traces for F2-F9 (with F3 variants and F6-reduced) and a cross-compare beyond F1, including injected semantic faults | `probes/sr0-o/R6-RESULT.md`; `qualification/run.py:1374` |
+| T2 | Apply C1-C8 (and C3, see gap G4) to `CONTRACT.md`, bump to v1.0, freeze ABI 0.6; record F6 A/B completion as unordered (see T11) | R11; both freeze docs stay NOT FROZEN |
 | T3 | TSF text store for the candidate window | SR1 |
-| T4 | A per-primitive draw counter so underline and image painting can be asserted | `docs/sr0-freeze-bridge-interface.md:140` |
+| T4 | Rendered-output assertions for underline and images (pixels, clipping, placement); a draw counter alone cannot prove these. Also a recorded Narrator listening result (U1) and explicit criterion dispositions | `docs/sr0-freeze-bridge-interface.md:140` |
 | T5 | GPU placement experiments for W5 (section 8) | not started |
 | T6 | G2, G6, G7, G8 Mac fixture repeats (SR1 lane) | `fixtures/RESULT.md`; needs a free Mac |
 | T7 | A shared-read variant of the packaged exe log | `RESULT-R5.md` candidate patch (outside the repository) |
 | T8 | RightKit services C ABI and a Tauri-free `rightkit-shell` (blocks SR2, not SR0); status not rechecked since `probes/sr0-d/owner-map/RESULT.md` | |
 | T9 | SR1 factory spikes (capture methods, comparator calibration) before any estimate | `docs/sr1-plan.md:160-176` |
-| T10 | A decision on `modal_open_one_off` as a re-scoped criterion | `docs/sr0-retry-ledger.md:27` |
+| T10 | Define the cold-dialog-open endpoint and cache state, repeat controlled cold opens, and resolve the 50 ms criterion explicitly (a decision on `modal_open_one_off` as a re-scoped criterion) | `docs/sr0-retry-ledger.md:27`; `result-modal08.txt:242,262` |
+| T11 | Implement the F6 decision: permute only the A-complete/B-complete pair; keep start-before-complete, exactly-once completion, lifecycle and final-state checks; add negative controls (for example a missing, duplicated or early completion must still fail); requalify F6 | `probes/sr0-o/r6/f6/f6-100-events.jsonl:104`; `qualification/` comparator |
+| T12 | W08: commit a reproducible recovery harness and test user-accessible recovery on the final packages (Settings Repair, the AppInstallerFile redeploy, state after platform registration), verifying package state, relaunch, version and data | `RESULT-R5-08.md:28-36`; `RESULT-R5-W08-recovery.md` |
+| T13 | W7: remeasure the incremental build record on tuple 08, or justify build-graph equivalence with the carried-over it-8 record | `r10-...tuple08...windows.txt` re-analysis note |
+| T14 | Closure gate: extend `qualification/run.py` stages (`:61`, which omit workload and native-interaction receipts) so closure evaluation includes the R9 and R10 receipts | `qualification/run.py:61` |
 
 ---
 
@@ -352,8 +368,8 @@ Each gap cites both sides. Severity is my judgement.
 | G2 | **Snapshot section 5 stale.** `docs/sr0-snapshot.md:134-149` marks text geometry (6), real modal paths (7) and headless tests (9) PENDING and R3 repo record PENDING; all are done on tuple 08 (`docs/sr0-status.md:16`, `:35`). Header says HEAD `6263841`. | `docs/sr0-snapshot.md:3`, `:144-149` | Medium |
 | G3 | **it6-it8 files: contradiction.** `docs/sr0-status.md:27` says "the it8 result file is not committed", `docs/sr0-snapshot.md:146` says they are not committed, while `docs/sr0-status.md:35` and commit `00e7b3e` say they are; the files exist in `probes/sr0-b/workload/results/`. | as cited | Low |
 | G4 | **Contract change C3 rests on a refuted finding.** `docs/sr0-freeze-slice-contract-v1.md:101` proposes changing `ForEach($items) { $item in }` because it "fails on Windows". `probes/sr0-c/same-source/RESULT.md` "Primary correction" says that was a stub defect and the original form compiles on both (`Binding.init(projectedValue:)`). The fresh runtime also supports it (`probes/sr0-s/fresh-runtime/RESULT.md`, "Deviations"). C3 as written would weaken the contract unnecessarily. | | High |
-| G5 | **Hybrid-GPU claims have no committed raw evidence.** The 13 MB back buffer, PCIe copy, 27 % copy-engine, `msUntilRenderComplete` percentiles and the `nvspcap64.dll` injection appear only as prose in `ITERATION.md`. The PresentMon CSVs and GPU counters are on the Dell (`D:\Claude\sr0b-workload\runs\`, `frame-clock/RESULT.md` "CSV stays on the host"). The committed result files record only `gpu_adapter=NVIDIA…`. | `ITERATION.md:3,10-11,155` | High |
-| G6 | **Adapter order inconsistency.** `ITERATION.md:157` says GPUI's `EnumAdapters(0)` is the NVIDIA GPU. The analyzer's synthetic fixture lists DXGI enumeration order as 0 Intel, 1 NVIDIA (`probes/sr0-b/workload/analysis/analyze_workload.py:1090-1094`, a self-test model, not a captured host). The sampler writes `resources-meta.json` with the real order, but none is committed. gpui picks the first D3D11-capable adapter from `EnumAdapters` (`directx_devices.rs:123-139`), so on this host something other than raw order (for example a per-app Windows graphics preference) must explain the NVIDIA result. UNVERIFIED; this matters for any fix in section 8. | | Medium |
+| G5 | **Hybrid-GPU copy claims have no committed raw evidence.** The 13 MB back buffer, PCIe copy and 27 % copy-engine figure appear only as prose in `ITERATION.md`; the PresentMon CSVs and GPU counters are on the Dell (`D:\Claude\sr0b-workload\runs\`, `frame-clock/RESULT.md` "CSV stays on the host"). Correction after review: `msUntilRenderComplete` percentiles, dropped presents and the `nvspcap64.dll` injection **are** recorded per run in the committed tuple 08 result (`r10-20261010-tuple08-renderere280-windows.txt:129,131`). Missing: ETW/GPU-queue and copy-engine traces, adapter/output LUIDs, buffer dimensions, driver versions, HAGS state. | `ITERATION.md:3,10-11,155` | High |
+| G6 | **Adapter order: no host evidence.** `ITERATION.md:157` says GPUI's `EnumAdapters(0)` is the NVIDIA GPU. The analyzer's synthetic fixture lists a different order (`probes/sr0-b/workload/analysis/analyze_workload.py:1090-1094`), but that is a self-test model, not a captured host, so it establishes no host order and no contradiction. The sampler writes `resources-meta.json` with the real order, but none is committed. An earlier draft inferred that a Windows graphics preference "must" explain the NVIDIA selection; that inference is deleted. Needed: log the renderer's actual adapter selection and display ownership before choosing a placement policy. | | Medium |
 | G7 | **W5 counts differ across documents.** "1-6" (`docs/sr0-status.md:29,50`), "1-8 in undisturbed runs, median 2" (`docs/sr0-freeze-slice-contract-v1.md:87`), "1-3" (`docs/sr0-close-plan.md:75`, `docs/sr0-snapshot.md:146`), tuple 07 "0/2/6" (commit `61b8698`) versus the cited ranges. The ranges mix different tuples and disturbed runs. | | Medium |
 | G8 | **`architecture.md` header is stale.** v0.5 (8 Oct) says "proposed architecture; no implementation or measured performance claimed" (`docs/architecture.md:5`) while the same file records §11 revision 1 from PresentMon data and scope revision 1, and the implementation exists. IMM32 is stated as the IME path, but the measured Windows 11 limitation needs TSF (L3). | | Medium |
 | G9 | **`docs/sr1-plan.md` entry criteria pin the wrong tuple.** It names renderer `4FB068F0…` and fixture `AFE131A1…` (`docs/sr1-plan.md:7-9`), both superseded (tuple 08: `E280F4A9…`, `7673A2D5…`). It also says "Nothing here is implemented" while SR1 head-start work exists (ABI 0.6 `4df7e67`, runtime 62/62 `14106d6`, gallery build `47e9066`, Mac fixtures `c9347a0`). | | Medium |
@@ -361,7 +377,7 @@ Each gap cites both sides. Severity is my judgement.
 | G11 | **`docs/qualification.md` header predates tuple 08.** "SR0-A is not closed ... the Windows matrix has not been run" (`:3`); test counts 115 (`:11`) vs 119 elsewhere (`:156`, `docs/sr0-status.md:19`); the D5 paragraph says `tuple-final.json` holds section 2c hashes (`:160`) while the file now names tuple 08 (`qualification/tuple-final.json:3-5`). It also says `qualification/out/` is ignored (`:14`), but `qualification/out/r8-tuple08/` and `r8-desktop-20261010/` are tracked. | | Low |
 | G12 | **`probes/sr0-s/fresh-runtime/RESULT.md` top verdict is 9/9** with "Known semantic gaps: no layout", while later sections of the same file reach 62/62 and 77/77 with a layout engine; the final 84/84 is in `RESULT-tests-final.md`. | | Low |
 | G13 | **`docs/sr0-freeze-slice-contract-v1.md` row WIN-M5 / §3** compare Windows F6 as "3/3 PASS" while the Mac F6 had 2 canonical results; now settled by R6 but the freeze text and `docs/qualification.md:130` ("decided by the R6 sample") are not updated. | | Low |
-| G14 | **Modal open maxima differ.** `docs/sr0-status.md:16` and `docs/sr0-freeze-slice-contract-v1.md:144` say tuple 08 max 29.30-39.59 ms; the commit message of `840f9ec` says "open max 35.96 ms". Possibly different statistics (per-run vs overall); not reconciled. | | Low |
+| G14 | **Modal open maxima: resolved.** `docs/sr0-status.md:16` and `docs/sr0-freeze-slice-contract-v1.md:144` say tuple 08 29.30-39.59 ms (per-run maxima: min 29.30, median 34.02, max 39.59, `result-modal08.txt:262`); the commit message of `840f9ec` says 35.96 ms, which is one run's detailed result (`result-modal08.txt:242`). The tuple 08 maximum is 39.59 ms. | | Low |
 | G15 | **Evidence lives outside the repository.** R3 DMG original evidence `/Volumes/D/sr0-artifacts/...`, MSIX packages, RightKit receipts (partly lost, section 4 item 6), Dell trees `D:\Claude\sr0-r08\...`, raw PresentMon CSVs, 20-run Mac JSONL (gitignored `out/`, `docs/qualification.md:59`), R5 harness changes described as UNCOMMITTED (`RESULT-R5.md`, "Harness changes"; later `a6d657b` changed the harness, whether all harness files are tracked is UNVERIFIED). Only copies listed in the RESULT files are committed. | | Medium |
 | G16 | **Approver attribution.** Accepted baselines for F1-F9 were approved by the primary session under a standing autonomy grant, and "Adrian did not review these traces individually" (`docs/qualification.md:59`, `:109`). AD7 says maintainers own acceptance. | | Medium |
 | G17 | **Retry-cap accounting is partly UNVERIFIED.** Modal-loop run count "not recoverable from the RESULT file" (`docs/sr0-retry-ledger.md:27`); R10 ledger row counts "at least 14" timed runs; six were taken after a run-cap message (`ITERATION.md:164`). The only repository "resume" is a quoted chat message (`docs/sr0-retry-ledger.md:90`). | | Medium |
@@ -374,7 +390,7 @@ Each gap cites both sides. Severity is my judgement.
 
 ## 8. Hardware acceleration and DirectML
 
-Question (Adrian): could DirectML be used for rendering, since he uses it for the Parakeet ASR model? Short answer: no. DirectML is a machine-learning operator library, not a rendering API. The renderer already uses the GPU. Items that would address the measured W5 problem are about presentation and GPU placement, not ML.
+Question (Adrian): could DirectML be used for rendering, since he uses it for the Parakeet ASR model? Answer: DirectML is useful for Parakeet inference; it can take part in ML upscaling and denoising within a rendering pipeline; it cannot replace D3D drawing or presentation; and it has no demonstrated benefit for W5. The renderer already uses the GPU. Items that could address the measured W5 problem are about presentation and GPU placement (section 8.4), not ML.
 
 ### 8.1 What DirectML is
 
@@ -386,30 +402,26 @@ Question (Adrian): could DirectML be used for rendering, since he uses it for th
 
 - It executes tensor operators, not triangles, glyphs or compositor surfaces. It has no swap chain, no presentation, no text shaping, no hit-testing.
 - It can interleave ML dispatches with D3D12 rendering on a D3D12 device (page, "Layer-by-layer ..."), which only matters if the app itself renders with D3D12 and wants ML work on the same frame. SwiftRight's renderer uses D3D11 (section 2.3), and nothing in the UI needs ML.
-- Using DirectML to produce pixels (for example a neural upscaler) would add an ML model and its latency to every frame to solve a problem that is not shading throughput: W5 misses come from presentation timing and a cross-GPU copy (section 2.4).
+- DirectML can participate in a rendering pipeline, for example ML upscaling or denoising (Microsoft DirectML documentation, https://learn.microsoft.com/en-us/windows/ai/directml/dml), but it does not draw or present. Using it for pixels would add a model and its latency to every frame, and nothing measured shows shading throughput limits W5: the misses coincide with late paints and GPU bursts whose cause (including a cross-GPU copy) is a hypothesis (section 2.4). No W5 benefit is demonstrated. Engine (Parakeet) and render responsibilities stay separate.
 
 ### 8.3 GPU acceleration the renderer already has
 
 - All drawing is on the GPU through Direct3D 11 and HLSL shaders, with DirectWrite for text, composed by DWM through a DirectComposition flip-model swap chain (section 2.3, `directx_renderer.rs`, `directx_devices.rs`).
-- The workload run shows the NVIDIA GPU active and the CPU paint/commit costs in single-digit milliseconds (`ITERATION.md`); render-complete p50 is 6.1 ms including the cross-GPU copy.
+- The workload run shows the NVIDIA GPU active and the CPU paint/commit costs in single-digit milliseconds (`ITERATION.md`); render-complete p50 is 6.1 ms (whether that includes a cross-GPU copy is a hypothesis, section 2.4).
 - The swap-chain path is already flip model: Microsoft's guidance says flip model gives "better performance, lower power usage" and notes the cost of moving content between GPUs on multi-GPU laptops ("the cost of presenting a full resolution swapchain increases ... bandwidth ... across different GPUs") (`https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/for-best-performance--use-dxgi-flip-model`, fetched 10 Oct 2026).
 
-### 8.4 What would be relevant to the measured bottlenecks
+### 8.4 Ordered W5 experiment plan
 
-Everything below is a hypothesis for experiments, not a finding. None was tried in SR0 (T5).
+All steps are untried (T5). Keep window and buffer dimensions, the workload, and the W4/W5 criteria fixed across steps; keep raw traces for each. The ordering follows the Astra review.
 
-| Idea | Why it is relevant | Evidence in the repository | Status |
-|---|---|---|---|
-| **Render on the iGPU that owns the display** | Removes the dGPU-to-iGPU copy of the ~13 MB back buffer each frame; `ITERATION.md:157` proposes it | The copy and its ~6 ms floor are claimed in `ITERATION.md:155` (G5: no raw data committed). gpui picks the first D3D11-capable adapter from `EnumAdapters` (`directx_devices.rs:123-139`) | Not tried; UNVERIFIED benefit |
-| **GPU preference: `EnumAdapterByGpuPreference`** | Microsoft documents that it reorders adapter enumeration; `DXGI_GPU_PREFERENCE_MINIMUM_POWER` returns iGPUs first, `HIGH_PERFORMANCE` returns xGPUs, dGPUs, then iGPUs; `UNSPECIFIED` equals `EnumAdapters1` (`https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_6/nf-dxgi1_6-idxgifactory6-enumadapterbygpupreference`, Windows 10 1803+, fetched 10 Oct 2026). gpui 0.2.2 already creates an `IDXGIFactory6` but does not call it | `directx_devices.rs:109-146` | A change inside gpui (published crate, exact-pinned) or a vendored fork; the pin rules forbid a Git/vendoring exception without a decision (`docs/architecture.md:28`) |
-| **Per-app Windows graphics preference (Settings, or the registry value behind it)** | Lets a user or installer pin the executable to the power-saving (iGPU) or high-performance GPU without code changes; likely explains which adapter `EnumAdapters(0)` returns per process (G6) | Not used or recorded anywhere in the repository | UNVERIFIED (no Microsoft page was fetched for this mechanism); no setting was touched in SR0 |
-| **DirectComposition / flip model tuning** | Already flip-sequential and DirectComposition by default; alternatives: `DXGI_SWAP_EFFECT_FLIP_DISCARD` ("reverse composition", less DWM work), a frame-latency waitable object, `ALLOW_TEARING`, independent flip (needs the buffers and window to cover the screen, so not for a normal window except via multi-plane overlay) | Microsoft flip-model page (fetched 10 Oct 2026); current settings `directx_renderer.rs:1030-1044`; PresentMon reports `Composed: Flip` (`frame-clock/RESULT.md:140`) | Not tried; gpui does not expose these swap-chain options (UNVERIFIED that no hook exists) |
-| **Sync interval 0 plus a DwmFlush-driven paint** | gpui presents with sync interval 0 and relies on its vsync thread. Present is not what blocks; the paint can still be late if the UI thread is busy | `directx_renderer.rs:205`; `vsync.rs:36`; every remaining miss is a UI-thread delay of 3-7 ms plus a GPU burst (`ITERATION.md:100-101`) | The UI-thread side (key handler 3 ms, host drain 4-6 ms) is not GPU work; reducing it is a runtime/bridge task |
-| **Smaller or cheaper back buffer** | The cross-GPU copy scales with pixels; Microsoft's own advice is to lower swap-chain resolution when the copy cost matters | Microsoft flip-model page | Not applicable to a full-size app window without a visible quality cost |
-| **NVIDIA overlay off** | `nvspcap64.dll` is loaded in the process; it may add to the render-complete floor | `ITERATION.md:155-157` | PENDING (U2) |
-| **Run the W5 workload on a single-GPU machine** | Separates the hybrid-GPU effect from renderer cost; the standalone probe already met the budget 30/30 on the same Dell | `frame-clock/RESULT.md` batch 5 | No second machine is recorded in the repository |
-
-Not relevant to W5: ML upscaling or denoising, DirectML operator graphs, or moving shading to compute.
+1. **Instrument actual GPU and output routing.** Log the renderer's chosen adapter, the adapter and output that own the display (LUIDs), buffer dimensions, driver versions and HAGS state; capture ETW/GPU-queue and copy-engine activity with a tool whose HAGS limits are known (PresentMon 2.6 documents HAGS timing inaccuracies). This replaces the unsupported adapter-order inference (G6) and turns the copy hypothesis into a measurement or refutes it.
+2. **Interleave Intel-versus-RTX runs.** Compare the renderer on the iGPU and on the RTX with A/B interleaving on the same artifact and session. gpui 0.2.2 takes the first D3D11-capable adapter from `EnumAdapters` and does not call `EnumAdapterByGpuPreference` (`directx_devices.rs:123-139`); placement therefore needs a supported mechanism (per-app Windows graphics preference, UNVERIFIED against a Microsoft page) or a gpui change, which the exact-pin rule (`docs/architecture.md:28`) makes a decision for Adrian.
+3. **Overlay on/off.** One interleaved run pair with the NVIDIA overlay off (U2).
+4. **Supported direct-dGPU display routing.** Test only routings the platform supports for the display configuration; no unsupported tricks.
+5. **Waitable swap chain, latency 1 versus 2.** Use `DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT` and `SetMaximumFrameLatency` (https://learn.microsoft.com/en-us/windows/uwp/gaming/reduce-latency-with-dxgi-1-3-swap-chains). Measure `Present` duration and queue depth, because `Present(0, 0)` does not establish non-blocking behaviour (https://learn.microsoft.com/en-us/windows/win32/api/dxgi/nf-dxgi-idxgiswapchain-present).
+6. **Swap-effect and tearing experiments, clearly separated from the above.** The current composition path uses `CreateSwapChainForComposition`, which requires `FLIP_SEQUENTIAL` under its documented contract (https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_2/nf-dxgi1_2-idxgifactory2-createswapchainforcomposition). `FLIP_DISCARD`, `ALLOW_TEARING` or independent flip are therefore backend changes (for example the `CreateSwapChainForHwnd` fallback, which gpui can already select with `GPUI_DISABLE_DIRECT_COMPOSITION`), not compatible tuning. Feature-check tearing and multi-plane overlay support, and preserve the tear-free acceptance criterion.
+7. **Shorten the UI-thread work near paint deadlines.** Every remaining miss involves a 3-7 ms late paint (key handler, host drain). Reduce measured key-handler and drain work on the paint edge; this is a runtime/bridge task, not GPU work.
+8. **Parakeet placement.** Test Parakeet on the RTX with the UI on Intel versus both on the RTX, keeping raw traces and end-to-end latency results.
 
 ### 8.5 Where ML acceleration could matter in the product
 
@@ -419,8 +431,44 @@ SwiftRight's UI renderer should stay free of ML. ML belongs in application featu
 - `docs/architecture.md:212`: Core ML, Metal and other Apple components are not made portable by the UI layer; apps choose a Windows implementation behind the service contract. On Windows the equivalent choice (DirectML via ONNX Runtime today; Windows ML as Microsoft's successor path per the page above) is a per-app engine decision.
 - Shell-level on-device models (for example dictation or command suggestions) would be engine services reached through `EngineService`, not renderer features (`docs/architecture.md:192`, `:204`).
 
-GPU sharing consideration (UNVERIFIED, no measurement in the repository): an ML engine and the renderer on the same dGPU would compete for it; on the Dell the NVIDIA GPU already does the UI rendering plus the copy engine work in section 2.4, so any ML engine feature should be measured with the workload running before shipping.
+GPU sharing consideration (UNVERIFIED, no measurement in the repository): an ML engine and the renderer on the same dGPU may compete for it; on the Dell the NVIDIA GPU already does the UI rendering, so step 8 of section 8.4 measures this before shipping.
 
 ### 8.6 Labels
 
-Verified from fetched Microsoft pages (10 Oct 2026): DirectML definition and "sustained engineering" status; flip-model guidance and cross-GPU cost; `EnumAdapterByGpuPreference` semantics. Verified from source: everything in section 2.3. Verified from repository files: section 2.4 figures as stated by `ITERATION.md`. UNVERIFIED: whether Adrian's Parakeet setup uses DirectML or Windows ML; per-app graphics preference behaviour; whether any W5 improvement results from changing adapter, swap effect or overlay; Windows ML details beyond the sentence on the DirectML page.
+Verified from fetched Microsoft pages (10 Oct 2026): DirectML definition and "sustained engineering" status; flip-model guidance and cross-GPU cost; `EnumAdapterByGpuPreference` semantics. Verified from source: everything in section 2.3. Verified from repository files: the per-run figures in section 2.4 (tuple 08 result); the copy, copy-engine and burst-cause statements are hypotheses. UNVERIFIED: whether Adrian's Parakeet setup uses DirectML or Windows ML; per-app graphics preference behaviour; whether any W5 improvement results from changing adapter, swap effect or overlay; Windows ML details beyond the sentence on the DirectML page.
+
+---
+
+## 9. Remaining work to close SR0
+
+Ordered by dependency.
+
+1. Apply the F6 decision (T11): contract and comparator permute only the A/B completion pair, with negative controls; requalify F6.
+2. Record F2-F9 (with F3 variants and F6-reduced) on Windows in schema v0 and cross-compare, including injected semantic faults (T1); then apply C1-C8, correct C3 (G4), bump `CONTRACT.md` to v1.0 and freeze ABI 0.6 (T2).
+3. Decide W5 (U3): repair it or revise its acceptance criterion explicitly. Run the section 8.4 plan as needed, then rerun the prescribed workload on Windows and Mac with archived samples and measured instrumentation overhead (U2); remeasure or justify W7 (T13).
+4. Resolve the cold-dialog criterion: define the measurement, repeat controlled cold opens (T10).
+5. W08: commit a recovery harness and test user-accessible recovery on the final packages (T12). Renew the Windows signing certificate first if any new Windows build is needed (U5, expires 2026-10-12).
+6. Add rendered-output assertions for underline and images (T4) and obtain the recorded Narrator listening result (U1).
+7. Extend the runner's closure gate to include the workload and native-interaction receipts, then run it on the final tuple (T14).
+8. Update the stale documents listed in section 7 (G1, G2, G8-G11, G13, G21) and record the retry-cap overruns (U4).
+
+---
+
+## 10. Review dispositions (Astra, acef4f1)
+
+Source: `docs/sr0-findings-review-astra.md`. Each finding was checked against the cited files before being applied. No finding was rejected; where a finding was partly wrong or needed qualification the table says so.
+
+| Finding | Disposition | Change made |
+|---|---|---|
+| 1 BLOCKER: F2-F9 parity unproved | Accepted. Verified: `run.py:1374` compares F1 only | R6 marked PARTIAL (section 1, stage table, L17, T1); kept open |
+| 2 BLOCKER: F6 runner FAIL omitted | Accepted. Verified: `f6-100-events.jsonl:104` is `fail`; committed traces hold one A/B pair, so the "first animation pair" claim is unsupported | FAIL recorded; claim removed; T11 added with Astra's constraints (permute only the completion pair, keep start-before-complete, exactly-once, lifecycle and final state, negative controls) |
+| 3 BLOCKER: W08 | Accepted with change: W08 stays FAIL. "Only" recovery is stated as the only one measured to work; the finding's demand for a harness is kept as an open item | Section 3.11 W08 row, L2, T12: AppInstallerFile redeploy is the only measured recovery; Settings Repair and post-registration state listed as untested |
+| 4 BLOCKER: W5 closure evidence | Accepted. Verified against `docs/architecture.md:273` | U2, U3 and work list: Mac workload, archived samples, overhead measurement; repair W5 or revise the criterion explicitly, then rerun |
+| 5 MAJOR: GPU correlation as cause; G5 wrong | Accepted. Verified: tuple 08 log lines 129-131 record overlay and `msUntilRenderComplete` | Section 2.4 split into measured and hypotheses; G5 corrected; HAGS caveat with PresentMon link; ETW/LUID/driver/HAGS evidence listed |
+| 6 MAJOR: adapter-order "contradiction" | Accepted. The fixture at `analyze_workload.py:1090-1094` is a synthetic self-test | G6 rewritten, inference deleted; adapter selection logging is step 1 of section 8.4 |
+| 7 MAJOR: swap-chain constraints | Accepted | Section 8.4 steps 5-6: API constraints, Microsoft links, `Present(0,0)` caveat, tearing/MPO feature check, tear-free criterion kept |
+| 8 MAJOR: cold-dialog | Accepted. Verified: 39.59 ms max at `result-modal08.txt:262`; 35.96 ms is one run at `:242` | L5, G14 corrected; T10 for measurement definition and 50 ms resolution |
+| 9 MAJOR: W7 carry-over | Accepted. Verified at log lines 126, 145, 147 | Disclosure paragraph in section 3.2; T13 |
+| 10 MAJOR: visual/accessibility gates | Accepted. Verified: `run.py:61` stages omit workload and native-interaction | T4, T14, U1, L4, L6, section 3.10; work list items 6-7 |
+| 11 MINOR: omitted controls and regressions | Accepted. Verified `ITERATION.md:62-66`, `:104-108`, commits `2aa1983`, `c31f1b5` | Four rows added (AX-off control, sampler-off control, rev2 regression, F8 0/20 regression), each marked as actually run or regression |
+| 12 MINOR: DirectML categorical | Accepted | Section 8 intro, 8.2 and 8.5 reworded: useful for Parakeet inference; can take part in ML upscaling and denoising; cannot replace D3D drawing; no demonstrated W5 benefit; sustained-engineering statement kept |
