@@ -1,0 +1,22 @@
+{
+  "exactLines": [
+    {
+      "line": 153,
+      "text": "            \"swiftcTypecheck\": {\"argv\": [\"xcrun\", \"--sdk\", \"macosx\", \"swiftc\", \"-typecheck\", \"-sdk\", str(SDK), \"-target\", TARGET, rel(PROBE)], \"exit\": 0, \"stdout\": {\"path\": rel(SWIFTC_STDOUT), \"sha256\": fsha(SWIFTC_STDOUT)}, \"stderr\": {\"path\": rel(SWIFTC_STDERR), \"sha256\": fsha(SWIFTC_STDERR)}},"
+    },
+    {
+      "line": 154,
+      "text": "            \"sourcekitIndex\": {\"argv\": [\"xcrun\", \"sourcekit-lsp\", \"debug\", \"run-sourcekitd-request\", \"--request-file\", rel(REQUEST)], \"exit\": 0, \"request\": {\"path\": rel(REQUEST), \"sha256\": fsha(REQUEST)}, \"output\": {\"path\": rel(RAW), \"sha256\": fsha(RAW)}, \"stderr\": {\"path\": rel(SK_STDERR), \"sha256\": fsha(SK_STDERR)}},"
+    },
+    {
+      "line": 155,
+      "text": "            \"demangle\": {\"argv\": [str(TOOLCHAIN / \"usr/bin/swift-demangle\"), \"<\", rel(DEMANGLE_INPUT)], \"exit\": 0, \"input\": {\"path\": rel(DEMANGLE_INPUT), \"sha256\": fsha(DEMANGLE_INPUT)}, \"stdout\": {\"path\": rel(DEMANGLE_STDOUT), \"sha256\": fsha(DEMANGLE_STDOUT)}, \"stderr\": {\"path\": rel(DEMANGLE_STDERR), \"sha256\": fsha(DEMANGLE_STDERR)}},"
+    }
+  ],
+  "finding": "Producer serializes literal exit 0 for swiftcTypecheck, sourcekitIndex & demangle; no subprocess invocation in producer. Archived outputs are usable pinned raw witnesses, but serialized process exits do not independently establish actual captured invocation success. Exact frozen production proof must bind real receipts or obtain equivalent independently captured process evidence.",
+  "kind": "independent-import-process-receipt-finding",
+  "producer": {
+    "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/capture_swift_stdlib.py",
+    "sha256": "sha256:5b9ac6641c64d88e1093f0e4e1f1da6e6b0a7173985bb6406c929ddec35f726f"
+  }
+}
