@@ -87,3 +87,13 @@ public struct RoundedRectangle: Shape, PrimitiveView {
     var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
     var nodeContent: (any View)? { nil }
 }
+
+
+/// Circular path that fits its proposed bounds.
+public struct Circle: Shape, PrimitiveView {
+    public init() {}
+    public var shapeGeometry: ShapeGeometry { .circle }
+    @MainActor public var body: Never { return fatalError("primitive shape has no body") }
+    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
+    var nodeContent: (any View)? { nil }
+}

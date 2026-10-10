@@ -18,6 +18,19 @@ final class ShapeTests: XCTestCase {
         XCTAssertEqual(node?.shape?.paint?.lineWidth, 2.5)
     }
 
+    func testCircleFillRecordsShapeIdentityAndBounds() {
+        let graph = Graph(Circle().fill(Color.green))
+        graph.rootProposal = ProposedViewSize(width: 18, height: 18)
+        graph.flush()
+
+        let node = graph.snapshot()
+        XCTAssertEqual(node?.kind, "Circle")
+        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 18, height: 18))
+        XCTAssertEqual(node?.shape?.geometry, .circle)
+        XCTAssertEqual(node?.shape?.paint?.kind, .fill)
+        XCTAssertEqual(node?.shape?.paint?.color, Color.green.resolvedColor)
+    }
+
     func testRectangleFillRecordsProposedBoundsAndResolvedPaint() {
         let graph = Graph(Rectangle().fill(Color.red))
         graph.rootProposal = ProposedViewSize(width: 40, height: 20)

@@ -1,0 +1,38 @@
+--- a/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Shapes.swift
++++ b/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/Shapes.swift
+@@ -87,3 +87,13 @@
+     var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
+     var nodeContent: (any View)? { nil }
+ }
++
++
++/// Circular path that fits its proposed bounds.
++public struct Circle: Shape, PrimitiveView {
++    public init() {}
++    public var shapeGeometry: ShapeGeometry { .circle }
++    @MainActor public var body: Never { return fatalError("primitive shape has no body") }
++    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shapeGeometry, paint: nil)) }
++    var nodeContent: (any View)? { nil }
++}
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
+@@ -18,6 +18,19 @@
+         XCTAssertEqual(node?.shape?.paint?.lineWidth, 2.5)
+     }
+ 
++    func testCircleFillRecordsShapeIdentityAndBounds() {
++        let graph = Graph(Circle().fill(Color.green))
++        graph.rootProposal = ProposedViewSize(width: 18, height: 18)
++        graph.flush()
++
++        let node = graph.snapshot()
++        XCTAssertEqual(node?.kind, "Circle")
++        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 18, height: 18))
++        XCTAssertEqual(node?.shape?.geometry, .circle)
++        XCTAssertEqual(node?.shape?.paint?.kind, .fill)
++        XCTAssertEqual(node?.shape?.paint?.color, Color.green.resolvedColor)
++    }
++
+     func testRectangleFillRecordsProposedBoundsAndResolvedPaint() {
+         let graph = Graph(Rectangle().fill(Color.red))
+         graph.rootProposal = ProposedViewSize(width: 40, height: 20)
