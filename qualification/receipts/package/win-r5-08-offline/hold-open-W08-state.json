@@ -1,0 +1,62 @@
+{
+    "schema":  "sr0-hold-open/v1",
+    "case":  "c6-CancelOperation-staging+240ms",
+    "minutes":  10,
+    "started_utc":  "2026-10-10T07:42:24Z",
+    "ended_utc":  "2026-10-10T07:53:10Z",
+    "end_reason":  "timeout",
+    "snapshots":  [
+                      {
+                          "label":  "before",
+                          "utc":  "2026-10-10T07:42:24Z",
+                          "registered_count":  1,
+                          "all_users_count":  1,
+                          "version":  "0.1.0.0",
+                          "status":  "Modified, NeedsRemediation",
+                          "rows_sha":  "sha256:73fecd17a1e1c4a9f036af5eeffc3b8596b13ec1265b823e7965798643e7db9d",
+                          "launched":  "not-attempted",
+                          "window_name":  "",
+                          "marker_shown":  "not-attempted",
+                          "log_banner_for_pid":  "not-attempted",
+                          "launch_error":  "",
+                          "events":  [
+
+                                     ]
+                      },
+                      {
+                          "label":  "end-of-hold",
+                          "utc":  "2026-10-10T07:52:26Z",
+                          "registered_count":  1,
+                          "all_users_count":  1,
+                          "version":  "0.1.0.0",
+                          "status":  "Modified, NeedsRemediation",
+                          "rows_sha":  "sha256:73fecd17a1e1c4a9f036af5eeffc3b8596b13ec1265b823e7965798643e7db9d",
+                          "launched":  "False",
+                          "window_name":  "",
+                          "marker_shown":  "not-attempted",
+                          "log_banner_for_pid":  "not-attempted",
+                          "launch_error":  "no window for SliceApp within 40 s",
+                          "events":  [
+                                         "13:22:26.930 id=603 Information: Started deployment RegisterByPackageFullName operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and Options ForceTargetApplicationShutdownOption,RepairAppRegistrationOption and 0. S",
+                                         "13:22:26.955 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\ef1ee858-2785-42a2-9f07-e917706515da_S-1-5-21-2047949552-857980807-821054962-504_32.rslc for Register Operation on Package OrthicLabs.SliceApp_0.1.0",
+                                         "13:22:26.956 id=607 Information: Deployment Register operation on package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "13:22:26.956 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\AppxManifest.xml.",
+                                         "13:22:26.961 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr.",
+                                         "13:22:26.961 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr: Trying to repair ACLs for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                                         "13:22:26.965 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr: ACLs repaired successfully for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr. Register next time ",
+                                         "13:22:26.988 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "13:22:27.062 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "13:22:27.085 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-504-MergedResources-*",
+                                         "13:22:27.085 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged files found",
+                                         "13:22:27.085 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-504-MergedResources-*",
+                                         "13:22:27.085 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged files found",
+                                         "13:22:27.110 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "13:22:27.110 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "13:22:27.113 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x10000C00, Set=0x0).",
+                                         "13:22:27.113 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x300, Set=0x0).",
+                                         "13:22:27.119 id=400 Information: Deployment Register operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr from: (AppxManifest.xml) finished successfully.",
+                                         "13:22:27.130 id=613 Information: Performance summary of Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr: Overall time: 203 ms (Active time: 203 ms) Enqueue cost: 16 ms Dequeue delay: 0 ms Bundle processing cost: 0"
+                                     ]
+                      }
+                  ]
+}

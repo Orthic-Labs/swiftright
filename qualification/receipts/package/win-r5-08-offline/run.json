@@ -1,0 +1,108 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "run",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "r5-08-offline",
+    "status":  "fail",
+    "expected_checks":  [
+                            "W00-environment",
+                            "W01-artifacts-bound",
+                            "W02-signer-trust",
+                            "W03-install-old",
+                            "W04-launch-offline-old",
+                            "W05-write-data",
+                            "W06-upgrade-new",
+                            "W07-corrupt-update-rejected",
+                            "W08-interrupted-update",
+                            "W09-rollback-readable",
+                            "W10-uninstall-keeps-data",
+                            "W11-legacy-data-physical-path",
+                            "W13-renderer-layout-installed",
+                            "W14-deferred-update-in-use"
+                        ],
+    "checks":  [
+                   {
+                       "check_id":  "W00-environment",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W01-artifacts-bound",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W02-signer-trust",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W03-install-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W04-launch-offline-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W05-write-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W06-upgrade-new",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W07-corrupt-update-rejected",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W08-interrupted-update",
+                       "status":  "fail",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W09-rollback-readable",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W10-uninstall-keeps-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W11-legacy-data-physical-path",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W13-renderer-layout-installed",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W14-deferred-update-in-use",
+                       "status":  "pass",
+                       "implemented":  true
+                   }
+               ],
+    "started_utc":  "2026-10-10T07:38:48Z",
+    "ended_utc":  "2026-10-10T07:56:04Z",
+    "reason":  "guest summary status is fail; W08-interrupted-update not passing: an interruption left a bad state: c6-CancelOperation-staging+240ms,c7-CancelOperation-staging+280ms (not exactly one old version registered, data changed, the build did not launch, or the second update did not register the new version with status Ok)",
+    "artifact_ids":  {
+                         "old_msix":  "sha256:c80c694735754f7bff892a74e2335c2d8cd7a87e8555f2e5233bd47392a7a0c4",
+                         "new_msix":  "sha256:0ff6516543d2c2dec49dd41a65ae3ef0a7eb9c7d34f9c05321534f731b6bc8e8",
+                         "signer_cer":  "sha256:d063ba1aa262d2567f72ce2b502748c107452812161739597e1bddc86c8b0c11"
+                     },
+    "harness":  {
+                    "name":  "run-sandbox.ps1",
+                    "sha256":  "sha256:435421057c016529589d6d193dc775f33c414ab3531fb125dbe08a3e28d526a8"
+                }
+}
