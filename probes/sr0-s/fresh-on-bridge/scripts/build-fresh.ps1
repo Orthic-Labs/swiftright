@@ -24,6 +24,7 @@ $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls
 # A failed build must stop here: the binary listing below would otherwise show a stale exe.
 if ($LASTEXITCODE -ne 0) { throw "swift build failed (exit $LASTEXITCODE); no binary copied" }
 $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim()
+if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE); no binary copied" }
 Copy-Item $Dll $bin -Force
 # Keep a copy of the renderer under the tree's own payload dir as well (the staged, identity-checked location).
 New-Item -ItemType Directory -Force "$Base\payload\bin" | Out-Null

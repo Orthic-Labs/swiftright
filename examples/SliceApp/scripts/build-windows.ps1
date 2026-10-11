@@ -13,7 +13,7 @@ param([string]$Base = '')
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 
-$app = Resolve-Path (Join-Path $PSScriptRoot '..')
+$app = if ($Base) { Resolve-Path (Join-Path $Base 'examples\SliceApp') } else { Resolve-Path (Join-Path $PSScriptRoot '..') }
 if (-not $Base) { $Base = Resolve-Path (Join-Path $app '..\..') }
 $manifest = Join-Path $app 'Windows\SliceApp.manifest'
 $scratch = Join-Path $app '.build\swiftpm'
@@ -29,6 +29,7 @@ Set-Location $app
 "swift build exit=$LASTEXITCODE"
 if ($LASTEXITCODE -ne 0) { throw "swift build failed (exit $LASTEXITCODE); nothing verified or copied" }
 $bin = (& swift build -c release --scratch-path $scratch --show-bin-path).Trim()
+if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE)" }
 $exe = Join-Path $bin 'SliceApp.exe'
 if (-not (Test-Path $exe)) { throw "missing $exe" }
 "exe=$exe bytes=$((Get-Item $exe).Length)"
@@ -37,7 +38,7 @@ if (-not (Test-Path $exe)) { throw "missing $exe" }
 $mt = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin' -Recurse -Filter mt.exe -ErrorAction SilentlyContinue |
     Where-Object { $_.FullName -match '\\x64\\mt\.exe$' } | Sort-Object FullName -Descending | Select-Object -First 1
 if (-not $mt) { throw 'mt.exe (x64) not found in the Windows SDK' }
-$verify = Join-Path $app '.build\verify'
+$verify = Join-Path $app ('.build\verify-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ'))
 New-Item -ItemType Directory -Force $verify | Out-Null
 $extracted = Join-Path $verify 'SliceApp.embedded.manifest.xml'
 & $mt.FullName "-inputresource:$exe;#1" "-out:$extracted"
@@ -55,7 +56,10 @@ if (-not $dumpbin) { throw 'dumpbin.exe (Hostx64\x64) not found' }
 $runtimeDir = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin'
 $system32 = Join-Path $env:SystemRoot 'System32'
 function Get-Dependents([string]$file) {
-    & $dumpbin.FullName /dependents $file | ForEach-Object { if ($_ -match '^\s+(\S+\.dll)\s*$') { $Matches[1] } }
+    $lines = @(& $dumpbin.FullName /dependents $file)
+    $dumpExit = $LASTEXITCODE
+    if ($dumpExit -ne 0) { throw "dumpbin failed for $file (exit $dumpExit)" }
+    $lines | ForEach-Object { if ($_ -match '^\s+(\S+\.dll)\s*$') { $Matches[1] } }
 }
 $queue = New-Object System.Collections.Queue
 $queue.Enqueue($exe)

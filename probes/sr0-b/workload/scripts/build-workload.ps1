@@ -8,7 +8,8 @@
 param(
   [string]$Base = 'D:\Claude\sr0b-workload',
   [string]$Dll = 'D:\Claude\sr0s-bridge06b\scratch\out\Products\Release-windows-x86_64\swiftright_render.dll',
-  [string]$ExpectDllSha256 = '7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC'
+  [string]$ExpectDllSha256 = '7533963D124C066159322EDF540BD45637CC294173FD9DB2AF95D4D4A3F149FC',
+  [string]$VerifyManifestScript = ''
 )
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -27,6 +28,7 @@ $buildS = [math]::Round($sw.Elapsed.TotalSeconds, 1)
 "swift build exit=$buildExit seconds=$buildS"
 if ($buildExit -ne 0) { throw "swift build failed (exit $buildExit); no binary copied" }
 $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim()
+if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE); no binary copied" }
 function Copy-Unless-Same([string]$from, [string]$to) {
   if (Test-Path -LiteralPath $to) { if ((Resolve-Path -LiteralPath $from).Path -eq (Resolve-Path -LiteralPath $to).Path) { return } }
   Copy-Item -LiteralPath $from -Destination $to -Force
@@ -48,9 +50,17 @@ if (Test-Path "$Base\SOURCE-HEAD.txt") { $gitHead = (Get-Content -Raw "$Base\SOU
 $build = [ordered]@{
   configuration = 'release'; exe = "$bin\WorkloadWin.exe"; exe_sha256 = $exeHash; dll_sha256 = $binDll
   dll_expected = $ExpectDllSha256.ToUpper(); build_seconds = $buildS; source_head = $gitHead
-  swift = ((& swift --version 2>&1) -join ' '); built_utc = [DateTime]::UtcNow.ToString('o')
+  swift = ''; built_utc = [DateTime]::UtcNow.ToString('o')
 }
+$swiftVersion = @(& swift --version 2>&1)
+$swiftVersionExit = $LASTEXITCODE
+if ($swiftVersionExit -ne 0) { throw "swift --version failed (exit $swiftVersionExit)" }
+$build['swift'] = ($swiftVersion -join ' ')
 $build | ConvertTo-Json | Set-Content -Encoding utf8 "$Base\build.json"
 "build.json written"
 # Manifest check (mt.exe): the renderer DLL needs ComCtl v6 (comctl32!TaskDialogIndirect).
-& "$Base\probes\sr0-b\workload\scripts\verify-manifest.ps1" -Base $Base
+$manifestScript = if ($VerifyManifestScript) { $VerifyManifestScript } else { "$Base\probes\sr0-b\workload\scripts\verify-manifest.ps1" }
+if (-not (Test-Path -LiteralPath $manifestScript -PathType Leaf)) { throw "missing manifest verifier: $manifestScript" }
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $manifestScript -Base $Base
+$manifestExit = $LASTEXITCODE
+if ($manifestExit -ne 0) { throw "manifest verifier failed (exit $manifestExit)" }

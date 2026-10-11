@@ -8,9 +8,11 @@ $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;
 Set-Location "$Base\examples\BridgeSmoke"
 $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'"
 & swift build -c release --scratch-path "$Base\scratch" "-Xlinker" "/MANIFEST:EMBED" "-Xlinker" $dep
-"swift build exit=$LASTEXITCODE"
+$buildExit = $LASTEXITCODE
+"swift build exit=$buildExit"
+if ($buildExit -ne 0) { throw "swift build failed (exit $buildExit); no binary copied" }
 $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
-if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path) }
+if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim(); if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE)" } }
 Copy-Item "$Base\payload\bin\swiftright_render.dll" $bin -Force
 "bin=$bin"
 Get-ChildItem "$bin\*" -Include *.exe, *.dll | ForEach-Object { "{0} {1}" -f $_.Name, $_.Length }

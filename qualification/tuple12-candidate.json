@@ -1,0 +1,51 @@
+{
+  "schema": "sr0-a.tuple/v1",
+  "name": "tuple12-candidate",
+  "recorded": "2026-10-11",
+  "status": "PENDING_STAGE",
+  "note": "Candidate only. Tuple12 stage root was absent after parser failure. Fill every sha256 only from fresh tuple12 receipts; run.py must reject this file while any member is null.",
+  "source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "renderer_sha256": "c62b554b4b2545b8be2429c2530e17b8c8b78df97e67172b627e8cd18a5fe68f",
+  "release": "0.2.151",
+  "members": {
+    "windows_renderer": {
+      "what": "swiftright_render.dll, ABI 0.6, tuple12 candidate renderer",
+      "sha256": null,
+      "source": []
+    },
+    "windows_fixture_exe": {
+      "what": "FreshOnBridge.exe, tuple12 candidate",
+      "sha256": null,
+      "source": []
+    },
+    "windows_smoke_exe": {
+      "what": "BridgeSmoke.exe, tuple12 candidate",
+      "sha256": null,
+      "source": []
+    },
+    "old_msix": {
+      "what": "SliceApp 0.1.0.0, tuple12 package",
+      "sha256": null,
+      "source": []
+    },
+    "new_msix": {
+      "what": "SliceApp 0.1.1.0, tuple12 package",
+      "sha256": null,
+      "source": []
+    },
+    "old_dmg": {
+      "what": "SliceApp 0.1.0 arm64 DMG, tuple12 package",
+      "sha256": null,
+      "source": []
+    },
+    "new_dmg": {
+      "what": "SliceApp 0.1.1 arm64 DMG, tuple12 package",
+      "sha256": null,
+      "source": []
+    }
+  },
+  "smoke_checks": {
+    "normal": 40,
+    "timeout": 41
+  }
+}

@@ -12,10 +12,10 @@ param(
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
 $work = "$Base\probes\sr0-b\workload"
-$shim = "$Base\shim"
+$runId = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
+$shim = "$Base\shim-runs\$runId"
 $log = "$shim\shim.log"
 New-Item -ItemType Directory -Force $shim | Out-Null
-if (Test-Path $log) { Remove-Item $log -Force }
 foreach ($n in 'cargo', 'rustc', 'rustup', 'rightkit', 'rustdoc', 'cargo-clippy') {
   "@echo off`r`necho %DATE% %TIME% $n %* >> `"$log`"`r`nexit /b 97`r`n" | Set-Content -Encoding ascii "$shim\$n.cmd"
 }
@@ -24,7 +24,9 @@ $env:RUSTC_WRAPPER = "$shim\rustc.cmd"
 $b = Get-Content -Raw "$Base\build.json" | ConvertFrom-Json
 $bin = Split-Path $b.exe
 $target = "$work\Sources\WorkloadCore\WorkloadScreen.swift"
-$backup = "$Base\WorkloadScreen.swift.orig"
+$backup = "$Base\incremental-runs\$runId\WorkloadScreen.swift.orig"
+$runOut = "$Base\incremental-runs\$runId"
+New-Item -ItemType Directory -Force $runOut | Out-Null
 Copy-Item $target $backup -Force
 $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'"
 function Hashes { $h = [ordered]@{}; foreach ($f in @("$bin\swiftright_render.dll") + $EngineArtifacts) { $h[$f] = (Get-FileHash -Algorithm SHA256 -LiteralPath $f).Hash }; $h }
@@ -33,7 +35,7 @@ $before = Hashes
 # (verify-artifacts.ps1) binds the exe hash in build.json, so the pinned exe is copied aside first and put back byte-for-byte afterwards.
 $pinExe = "$bin\WorkloadWin.exe"
 $pinHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $pinExe).Hash
-$pinCopy = "$Base\WorkloadWin.exe.pinned"
+$pinCopy = "$runOut\WorkloadWin.exe.pinned"
 Copy-Item $pinExe $pinCopy -Force
 $trials = @()
 Set-Location $work
@@ -42,7 +44,7 @@ try {
     Add-Content -Path $target -Value "`n// R10 incremental edit $i $(Get-Date -Format o)"
     $before_log = if (Test-Path $log) { (Get-Content $log).Count } else { 0 }
     $sw = [Diagnostics.Stopwatch]::StartNew()
-    & swift build -c release --product WorkloadWin --scratch-path "$Base\scratch" "-Xlinker" "/MANIFEST:EMBED" "-Xlinker" $dep *> "$Base\incremental-build-$i.txt"
+    & swift build -c release --product WorkloadWin --scratch-path "$Base\scratch" "-Xlinker" "/MANIFEST:EMBED" "-Xlinker" $dep *> "$runOut\incremental-build-$i.txt"
     $rc = $LASTEXITCODE
     $sec = [math]::Round($sw.Elapsed.TotalSeconds, 2)
     $after_log = if (Test-Path $log) { (Get-Content $log).Count } else { 0 }
@@ -70,3 +72,6 @@ $out = [ordered]@{
 }
 $out | ConvertTo-Json -Depth 5 | Set-Content -Encoding utf8 "$Base\incremental.json"
 "rust_invocations_total=$rust hashes_identical=$identical builds_ok=$($out.builds_ok) -> $Base\incremental.json"
+if (-not $out.builds_ok -or $rust -ne 0 -or -not $identical) {
+  throw "incremental qualification failed: builds_ok=$($out.builds_ok) rust_invocations=$rust hashes_identical=$identical"
+}

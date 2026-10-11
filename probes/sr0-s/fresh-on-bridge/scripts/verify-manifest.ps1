@@ -8,9 +8,11 @@ $exe = "$Base\scratch\out\Products\Release-windows-x86_64\FreshOnBridge.exe"
 $mt = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin' -Recurse -Filter mt.exe -ErrorAction SilentlyContinue |
   Where-Object { $_.FullName -match '\\x64\\mt\.exe$' } | Sort-Object FullName -Descending | Select-Object -First 1
 if (-not $mt) { throw 'mt.exe not found under Windows Kits' }
-$out = Join-Path $env:TEMP 'freshonbridge-manifest.xml'
+$out = Join-Path $env:TEMP ("freshonbridge-manifest-$([guid]::NewGuid().ToString('N')).xml")
 & $mt.FullName "-inputresource:$exe;#1" "-out:$out" | Out-Null
-"mt=$($mt.FullName) exit=$LASTEXITCODE"
+$mtExit = $LASTEXITCODE
+"mt=$($mt.FullName) exit=$mtExit output=$out"
+if ($mtExit -ne 0) { throw "mt.exe failed (exit $mtExit)" }
 "exe=$exe timestamp=$((Get-Item $exe).LastWriteTime.ToString('o'))"
 $xml = Get-Content -Raw $out
 $dep = [regex]::Match($xml, '<dependency>.*?</dependency>', 'Singleline').Value

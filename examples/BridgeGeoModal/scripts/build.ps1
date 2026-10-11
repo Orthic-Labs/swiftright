@@ -21,7 +21,7 @@ $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls
 "swift build exit=$LASTEXITCODE"
 if ($LASTEXITCODE -ne 0) { throw "swift build failed" }
 $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
-if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path) }
+if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim(); if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE)" } }
 "bin=$bin"
 foreach ($e in 'TextGeom06.exe', 'Modal06.exe', 'ColdOpen06.exe') { Copy-Item (Join-Path $bin $e) "$Base\bin\$e" -Force }
 Copy-Item "$Base\payload\bin\swiftright_render.dll" "$Base\bin\swiftright_render.dll" -Force
@@ -30,9 +30,12 @@ Get-ChildItem "$Base\bin\*" -Include *.exe, *.dll | ForEach-Object { "{0} {1} by
 $mt = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\mt.exe' -ErrorAction SilentlyContinue | Sort-Object FullName | Select-Object -Last 1
 if ($mt) {
   foreach ($e in 'TextGeom06.exe', 'Modal06.exe', 'ColdOpen06.exe') {
-    $tmp = Join-Path $env:TEMP "$e.manifest"
+    $tmp = Join-Path $env:TEMP ("$e.$([guid]::NewGuid().ToString('N')).manifest")
     & $mt.FullName "-inputresource:$Base\bin\$e;#1" "-out:$tmp" | Out-Null
-    "{0} manifest comctl32 v6 dependency: {1}" -f $e, ((Test-Path $tmp) -and ((Get-Content -Raw $tmp) -match 'Microsoft.Windows.Common-Controls'))
-    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+    $mtExit = $LASTEXITCODE
+    if ($mtExit -ne 0) { throw "mt.exe failed for $e (exit $mtExit)" }
+    $manifestOk = (Test-Path $tmp) -and ((Get-Content -Raw $tmp) -match 'Microsoft.Windows.Common-Controls')
+    "{0} manifest comctl32 v6 dependency: {1} output={2}" -f $e, $manifestOk, $tmp
+    if (-not $manifestOk) { throw "manifest lacks comctl32 v6 for $e" }
   }
-} else { 'mt.exe not found: manifest not inspected (the dry run loads the renderer, which fails with win32 error 127 without it)' }
+} else { throw 'mt.exe not found: manifest not inspected' }

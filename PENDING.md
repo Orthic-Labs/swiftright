@@ -1,25 +1,24 @@
-Last updated: 2026-10-11T11:23:42Z
+Last updated: 2026-10-11 (tuple12 takeover)
 
-
-State: STOPPED on Adrian's instruction (relayed by Right Mac, 2026-10-11). Resume point: patches 01 and 02 are applied and committed (4b1ca6d0); the tuple 12 renderer is built (sha256 C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F, RightKit request rr-1791715047439) but NOT staged or qualified; staging on the Dell was started from 0e201571 with probes/sr0-s/fresh-on-bridge/scripts/stage-tuple.ps1 into D:/Claude/swiftright/.work/sr0-r12 and stopped part-way. The last fully qualified build is tuple 11 (docs/sr0-snapshot.md section 2e). Next after resume: stage tuple 12, then item C. Held patches are in docs/held-patches/ (01 and 02 applied, 03 unapplied).
+State: STOPPED after parser failure before Dell root creation. Broker audit was READY with empty owners/inFlight. Tuple 12 renderer exists at sha256 `C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F`, source commit `0e201571e4320a3b6ccce14313fd2ad67e523904`; no tuple 12 artifact or qualification receipt exists. Transferred no-delete scripts are archived under `probes/sr0-s/fresh-on-bridge/out/tuple12-stage-takeover-r1` & are being transferred to Dell `.work\sr0-stage-tools`. Tuple 11 is last qualified baseline.
 # SwiftRight — pending (SR0 close-out lane)
 
 | # | Item | State |
 |---|---|---|
-| A | Apply held patches 01 and 02; build and test | applied (4b1ca6d0); renderer built C62B554B…; tuple 12 staging running on the Dell from 0e201571 (stage-tuple.ps1) |
-| B | W08: a cancelled MSIX update must not leave the app unopenable | open: cannot be prevented from inside the package (an unopenable package cannot repair itself); the fix belongs to the release/update tooling (RightKit); options sent to Right Mac |
-| C | Requalify on the new 0.6 build (tuple 12): matrix, smoke, pixels, text, modal, R9, R10, MSIX, cross-compare at 20 runs per side | waiting on A; MSIX needs signing: the Windows certificate expires 2026-10-12 05:16 Dell local and the standing rule says no signing: signing approved by Adrian for these packages; no deadline (the certificate is the shared Azure short-lived one, reissued at each signing) |
-| 1 | Final qualification runner pass on tuple 11 | done: all stages pass except package Windows W08 (item 4); `qualification/out/r8-tuple11/` |
-| 2 | Dell stage trees moved under D:\Claude\swiftright\.work, script paths updated | done |
-| 3 | Narrator speech content | Adrian: "I'll listen later"; fixture ready to run on his word |
-| 4 | W08 | answered: must be fixed (see B) |
-| 5 | Comparison repeat count | answered: run the contract's 20 per side, on the final 0.6 (see C) |
-| 6 | Freeze | decided: not yet; after A, B, C |
-| 7 | Retry-cap overruns | acknowledged by Adrian ("Let it run") |
-| 8 | Unproven recorder items (CROSS-ALL.md) | R8 settled (8f548ef8). R5 closed: the two start sizes are constants of the two test hosts (Mac fixture 480x560, Windows host 640x480), not SwiftUI behaviour; an optional probe F5-nosize is committed, not run. R6: proposed accepted-limitation (needs a Mac input-source change) |
-| 9 | Selection highlight not painted (caret only) | written, held for Adrian (unbuilt, untested, applies cleanly; note beside it): /Volumes/D/claude/tasks/handoffs/2026-10-11/patches/swiftright-01-selection-highlight.patch; held for Adrian |
-| 10 | Renderer ready metrics report the wrong height before the window settles (docs/sr0-findings.md §12) | confirmed by a factory run (findings §12). Held patch now covers both halves: renderer stores width, height and scale together before emitting the event (a short-circuit in paint_root left height and scale stale when only one changed) and refreshes before ready; bridge `metrics` equals the event payload. Written, unbuilt, held for Adrian |
-| 11 | IME candidate list does not follow a mid-composition layout move | written, held for Adrian (unbuilt, untested, applies cleanly; note beside it): /Volumes/D/claude/tasks/handoffs/2026-10-11/patches/swiftright-03-ime-candidate-follow.patch; held for Adrian |
-| 12 | SR1 factory | owned by the Codex factory session; renderer/ABI edits held until SR0 status says closed |
+| A | Stage tuple 12 | pending: fresh canonical `D:\Claude\swiftright\.work\sr0-r12` stage after parse preflight, with source/render/member hashes & full receipts |
+| B | W08: cancelled MSIX update leaves app unopenable | must be fixed upstream in RightKit; installed `@rightkit/release` 0.2.151 has no verified repair-helper/remediation proof |
+| C | Requalify tuple 12 | pending: matrix, smoke, pixels, text, modal, R9, R10, package & 20 Mac/20 Windows recordings per config; use tuple12 manifest candidate only after all hashes are receipted |
+| 1 | Prior qualification runner | tuple 11 automation remains historical baseline; tuple 12 runner launch/replay wrapper is prepared, no tuple 12 run |
+| 2 | Dell stage trees | prior paths corrected; tuple12 root currently absent, no deletion performed |
+| 3 | Narrator speech content | Adrian will listen later |
+| 4 | W08 | must be fixed, not accepted as limitation |
+| 5 | Comparison repeat count | accepted: 20 Mac & 20 Windows per config on final 0.6 tuple |
+| 6 | Freeze | held until W08 & tuple12 qualification close |
+| 7 | Signing | new-package signing approved using short-lived Azure certificate reissue; no fixed expiry deadline |
+| 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
+| 9 | Selection highlight not painted | SR1-owned limitation; unchanged |
+| 10 | Renderer ready metrics | tuple12 source candidate includes applied fix; stage/requalification pending |
+| 11 | IME candidate list after layout move | SR1/RightKit-owned limitation; unchanged |
+| 12 | SR1 factory | owned by Codex factory session; renderer/ABI edits remain held until SR0 closes |
 
-Conflict note: the relayed rule says dev builds only, no signing. The tuple 10 Windows packages were signed under Adrian's direct SR0 instruction before that rule reached this chat; no further signing is planned.
+Four user decisions currently govern close-out: 20-per-side comparison is accepted; W08 must be fixed upstream; freeze remains held; Narrator listening happens later.

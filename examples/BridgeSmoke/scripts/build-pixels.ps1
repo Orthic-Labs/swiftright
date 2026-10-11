@@ -16,7 +16,7 @@ $dep = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls
 "swift build exit=$LASTEXITCODE"
 if ($LASTEXITCODE -ne 0) { throw 'swift build failed' }
 $bin = "$Base\scratch\out\Products\Release-windows-x86_64"
-if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path) }
+if (-not (Test-Path $bin)) { $bin = (& swift build -c release --scratch-path "$Base\scratch" --show-bin-path).Trim(); if ($LASTEXITCODE -ne 0 -or -not $bin) { throw "swift --show-bin-path failed (exit $LASTEXITCODE)" } }
 New-Item -ItemType Directory -Force "$Base\bin" | Out-Null
 Copy-Item "$bin\BridgePixels.exe" "$Base\bin\BridgePixels.exe" -Force
 Copy-Item $RendererSrc "$Base\bin\swiftright_render.dll" -Force
