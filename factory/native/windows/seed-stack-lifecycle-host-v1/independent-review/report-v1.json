@@ -1,0 +1,41 @@
+{
+  "kind": "lifecycle-source-independent-review-v1",
+  "status": "source-clear-for-Windows-AST-controls-then-compiler-only",
+  "stageSha256": "fada5ea5455bce12333823d51760563eaf5855c26613bc90710fb4e1edb27d10",
+  "verifiedStageFiles": 35,
+  "adapterControls": [
+    {
+      "name": "actual-verify",
+      "exitCode": 0,
+      "stdoutSha256": "e124ec32f5c0099ac2253f5ca3fe3c353978fbd8e28ab22242cd446502ad1088",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedSuccess": true
+    },
+    {
+      "name": "fresh-reproduction",
+      "exitCode": 0,
+      "stdoutSha256": "acce0b26ea95635fd199443667b74f727abcf2ec95f4991e8a0e9fa9725035bb",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedSuccess": true
+    },
+    {
+      "name": "child-main-drift",
+      "exitCode": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "6a566733ae2e44920973a00574585c0120a2494180f876dc0be858b38dd9fdcd",
+      "expectedSuccess": false
+    },
+    {
+      "name": "parent-main-drift",
+      "exitCode": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "688cf28ce73a221a0f5cc190b65e5e85d144daed512836823c78029e8eca4890",
+      "expectedSuccess": false
+    }
+  ],
+  "completeRetainedHandleSuffixExact": true,
+  "witnessUnchanged": true,
+  "unchangedHostSemantics": "Only stdout lifecycle clock/PID/thread markers & scope defers added. Callback operations/Bridge.run/activation hook/quit threshold unchanged. Flushes perturb timing.",
+  "interpretation": "Markers indicate last observed flushed boundary; absent markers alone establish no cause. Callback wrappers do not add independent access or native qualification.",
+  "nativeOrCompilerExecutions": 0
+}
