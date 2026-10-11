@@ -1,0 +1,27 @@
+{
+  "kind": "repaired-stack-capture-readiness-v1",
+  "status": "source-prepared-review-required",
+  "caseID": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515",
+  "witnessHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+  "planHash": "8c89995f6eb23939a365d068b0eb3c8d407194a5cf1f720b9bdc71f01066e1e2",
+  "compileReceipt": "package/build-r1/observation.json; measured SHA required",
+  "captures": 1,
+  "buildCommand": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repair-v1\\build-host.ps1 -Package D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repair-v1\\stack-overlay\\package",
+  "captureCommand": "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repair-capture-v1\\run-repaired.ps1 -Package D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repair-v1\\stack-overlay\\package -RunRoot D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repair-capture-v1\\actual-stack-overlay-r1 -CompileReceiptHash <actual64hex> -ExeHash <actual64hex>",
+  "gates": [
+    "CPU release before build",
+    "independent source clearance",
+    "exact transferred scripts parse0",
+    "successful actual compile/source/runtime/bridge/exe receipt joins before GUI",
+    "root coordinated lock/background dispatch"
+  ],
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "closureBinding": null,
+  "parseControls": "prepared/unrun; three source AST parse only",
+  "execution": {
+    "SSH": 0,
+    "compiler": 0,
+    "GUI": 0
+  }
+}
