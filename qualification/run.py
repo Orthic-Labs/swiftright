@@ -1751,7 +1751,7 @@ def run_compare(log, args, stages, out_dir, dry, comparator=None):
 WORKLOAD_RECEIPT_DIR = REPO / "probes" / "sr0-b" / "workload" / "results"
 NATIVE_RECEIPT_DIR = REPO / "probes" / "sr0-b" / "native-interaction" / "out"
 # Defaults are the tuple 08 receipts; pass the tuple 09 files with --workload-windows/--workload-mac/--native-dir/--native-tag.
-DEFAULT_WORKLOAD_WINDOWS = WORKLOAD_RECEIPT_DIR / "r10-20261010-tuple08-renderere280-windows.txt"
+DEFAULT_WORKLOAD_WINDOWS = WORKLOAD_RECEIPT_DIR / "r10-20261011-tuple10-renderere280-windows.txt"
 DEFAULT_WORKLOAD_MAC = WORKLOAD_RECEIPT_DIR / "r10-20261010-mac.txt"
 DEFAULT_NATIVE_TAG = "tuple08"
 NATIVE_RECEIPTS = ("ime-f7", "ime-f7live", "ime-f8", "narrator")
