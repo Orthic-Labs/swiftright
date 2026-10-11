@@ -1,0 +1,19 @@
+{
+  "kind": "round1-repeatability-readiness-v1",
+  "scriptExecution": 0,
+  "controls": "prepared/unrun: namespace normal/empty & missing/extra/equal-count-wrong/duplicate/file faults; source AST parse required",
+  "count": 20,
+  "order": "single repairedstack verified first; then each case invokes separate fresh20 batch",
+  "command": "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repeatability-v1\\run-batch.ps1 -Case <stack-overlay|custom-layout> -RunRoot D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-repeatability-v1\\actual-<case>-r1 -CompileReceiptHash <actual64hex> -ExeHash <actual64hex>",
+  "gates": [
+    "independent source review",
+    "root exact transfer/parse/pure controls",
+    "root CPU release & verified single repairedstack",
+    "actual measured percase receipt/exe pins"
+  ],
+  "nativeParity": "hold",
+  "unavailable": [
+    "shape/Color UIA semantics",
+    "qualified parity"
+  ]
+}
