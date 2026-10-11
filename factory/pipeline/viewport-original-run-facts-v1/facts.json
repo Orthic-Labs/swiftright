@@ -1,0 +1,58 @@
+{
+  "kind": "original-viewport-same-run-facts",
+  "case": {
+    "hash": "sha256:d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+    "id": "swiftui.disabled.recipe/case/f113195a59446fc4"
+  },
+  "run": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/native-01",
+  "pid": 33700,
+  "hwnd": 52562814,
+  "requested": {
+    "width": 320,
+    "height": 240,
+    "unit": "DIP",
+    "basis": "source-bound bridge.run call; original run has no separate request-value log"
+  },
+  "ready": {
+    "width": 800,
+    "height": 1396,
+    "unit": "physical-px",
+    "scale": 2.5,
+    "phase": "onReady callback"
+  },
+  "client": {
+    "width": 800,
+    "height": 600,
+    "unit": "physical-px",
+    "dpi": 240,
+    "phase": "later pixel capture GetClientRect"
+  },
+  "simultaneousSample": false,
+  "causeAssigned": false,
+  "evidence": [
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/plan.json",
+      "sha256": "78be8576e2e90189b2bbeb71331fc8631d49e3d185f3fe9bd80dc46ed8d076d2"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/Sources/FactoryProbe/main.swift",
+      "sha256": "46b289648a5c7089a71e970093c8135f2e037a3bc73a872669861722e82d0e49"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/native-01/host.stdout.txt",
+      "sha256": "ce70535944b336d5bcbee6cc137e8cd8b2dc0eece2fe92b6498b791da58dcbc5"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/native-01/native.pixels.json",
+      "sha256": "f35973e82315527690e7d9dd8ebfcbf5f145412811c5bc995dfae64b9b966849"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/actual-first-r1/native-01/owned-process.json",
+      "sha256": "e60f25bb87fdb259d06b865f755237b46bef93cacd11d5a93d34bba3ae938083"
+    },
+    {
+      "path": "factory/native/windows/pixels-background.ps1",
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+    }
+  ]
+}
