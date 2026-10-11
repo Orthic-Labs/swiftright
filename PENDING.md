@@ -1,11 +1,11 @@
-Last updated: 2026-10-11T08:21:19Z
+Last updated: 2026-10-11T08:37:11Z
 
 # SwiftRight — pending (SR0 close-out lane)
 
 | # | Item | State |
 |---|---|---|
-| 1 | Final qualification runner pass on tuple 11 (win-replay, compare, smoke, package, workload, native) | running on the Dell (rerun after an interrupted first pass) |
-| 2 | Move remaining Dell stage trees (sr0-r10, sr0-r11, sr0o-f1) under D:\Claude\swiftright\.work and update script paths | waiting on item 1 |
+| 1 | Final qualification runner pass on tuple 11 | done: all stages pass except package Windows W08 (item 4); `qualification/out/r8-tuple11/` |
+| 2 | Dell stage trees moved under D:\Claude\swiftright\.work, script paths updated | done |
 | 3 | Narrator speech content | needs Adrian: listen to Narrator on the Dell for about 2 minutes while the fixture runs |
 | 4 | W08 (cancelled MSIX update leaves NeedsRemediation) | needs Adrian: accept as a known limitation with the three measured recoveries? |
 | 5 | Cross-compare used 3 runs per side; contract says 20 | needs Adrian: accept the deviation, or run the 20-run version (about 4 h on the Dell)? |

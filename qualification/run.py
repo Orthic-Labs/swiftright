@@ -92,14 +92,14 @@ PACKAGE_CHECKS = {
 }
 PACKAGE_RECEIPT_DIR = QUAL_DIR / "receipts" / "package"
 WIN_TRACE_FILE = "win-trace-v0.json"
-SMOKE_BASE = "D:\\Claude\\sr0-r10\\smoke"  # Dell tree holding BridgeSmoke 85D5F8BA + renderer E280F4A9 (tuple 10)
+SMOKE_BASE = "D:\\Claude\\swiftright\\.work\\sr0-r10\\smoke"  # Dell tree holding BridgeSmoke 85D5F8BA + renderer E280F4A9 (tuple 10)
 SMOKE_MODES = ("normal", "timeout")  # timeout mode = schedule-smoke.ps1 -SkipShutdown
 SMOKE_VERDICT_RE = re.compile(r"^SMOKE PASS \((\d+)/(\d+)\)\s*$", re.M)
 # Mode-specific proof that the right mode ran (the plain pass markers are identical in both).
 SMOKE_MODE_MARKERS = {"normal": "PASS pump ended by swr_shutdown_complete", "timeout": "PASS pump ended by the 5 s timeout"}
 # F1 schema-v0 recording on the Dell (probes/sr0-o/f1-cross/scripts/schedule-f1.ps1 writes under F1_BASE/out).
-F1_BASE = "D:\\Claude\\sr0o-f1"  # holds scripts/, f1-steps-win.json and scratch/release/UIARecorder.exe
-F1_TREE = "D:\\Claude\\sr0-r11\\src"  # tuple 10 FreshOnBridge tree (verify-artifacts.ps1 lives under it)
+F1_BASE = "D:\\Claude\\swiftright\\.work\\sr0o-f1"  # holds scripts/, f1-steps-win.json and scratch/release/UIARecorder.exe
+F1_TREE = "D:\\Claude\\swiftright\\.work\\sr0-r11\\src"  # tuple 10 FreshOnBridge tree (verify-artifacts.ps1 lives under it)
 F1_BIN = F1_TREE + "\\scratch\\out\\Products\\Release-windows-x86_64"
 F1_PACKAGE = REPO / "probes" / "sr0-o" / "f1-cross"
 F1_STIMULUS = F1_PACKAGE / "f1-stimulus.json"

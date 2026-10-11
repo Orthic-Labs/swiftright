@@ -1,6 +1,6 @@
 # One-shot INTERACTIVE scheduled task running run-f1.ps1; waits; unregisters; prints the run log.
-param([string]$Mode = 'tree', [string]$Tag = 'r1', [string]$Base = 'D:\Claude\sr0o-f1', [string]$Steps = 'D:\Claude\sr0o-f1\f1-steps-win.json',
-      [string]$Recorder = 'D:\Claude\sr0o-f1\scratch\release\UIARecorder.exe',
+param([string]$Mode = 'tree', [string]$Tag = 'r1', [string]$Base = 'D:\Claude\swiftright\.work\sr0o-f1', [string]$Steps = 'D:\Claude\swiftright\.work\sr0o-f1\f1-steps-win.json',
+      [string]$Recorder = 'D:\Claude\swiftright\.work\sr0o-f1\scratch\release\UIARecorder.exe',
       [string]$Bin = 'D:\Claude\sr0s-bridge\scratch\out\Products\Release-windows-x86_64')
 $ErrorActionPreference = 'Stop'
 $task = "SR0O-F1-$Mode-$Tag"

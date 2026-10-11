@@ -3,7 +3,7 @@
 throw 'build-fob.ps1 is obsolete: build FreshOnBridge normally; SelfTest.swift carries the release gate'
 # Builds a copy of FreshOnBridge whose F1 self-test waits for an external release signal (file named by SR0O_RELEASE_FLAG)
 # before releasing the fake engine's insert-above. Everything else is the unchanged staged source. The original exe is untouched.
-param([string]$Base = 'D:\Claude\sr0s-bridge', [string]$Out = 'D:\Claude\sr0o-f1',
+param([string]$Base = 'D:\Claude\sr0s-bridge', [string]$Out = 'D:\Claude\swiftright\.work\sr0o-f1',
       [string]$Dll = 'D:\Claude\sr0b-abi0\payload\bin\swiftright_render.dll')
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')

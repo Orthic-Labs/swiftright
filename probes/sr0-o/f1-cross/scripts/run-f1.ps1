@@ -3,11 +3,11 @@
 param(
   [string]$Mode = 'tree',
   [string]$Tag = 'r1',
-  [string]$Base = 'D:\Claude\sr0o-f1',
-  [string]$Recorder = 'D:\Claude\sr0o-f1\scratch\release\UIARecorder.exe',
-  [string]$Steps = 'D:\Claude\sr0o-f1\f1-steps-win.json',
+  [string]$Base = 'D:\Claude\swiftright\.work\sr0o-f1',
+  [string]$Recorder = 'D:\Claude\swiftright\.work\sr0o-f1\scratch\release\UIARecorder.exe',
+  [string]$Steps = 'D:\Claude\swiftright\.work\sr0o-f1\f1-steps-win.json',
   [string]$Bin = 'D:\Claude\sr0s-bridge\scratch\out\Products\Release-windows-x86_64',
-  [string]$OutDir = 'D:\Claude\sr0o-f1\out'
+  [string]$OutDir = 'D:\Claude\swiftright\.work\sr0o-f1\out'
 )
 $ErrorActionPreference = 'Continue'
 

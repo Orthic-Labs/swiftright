@@ -19,7 +19,7 @@
 # Usage: [BASE_DIR=D:\Claude\sr0s-bridge06b EXPECT_EXE_SHA256=... EXPECT_DLL_SHA256=...] [OUT_DIR=...] [RUNS=3] [DIAG=1] \
 #          sh scripts/run-matrix.sh [FIXTURE:VARIANT ...]
 # OUT_DIR overrides the evidence directory, so a new pass does not overwrite an earlier one.
-: "${BASE_DIR:=D:\\Claude\\sr0-r11\\src}"
+: "${BASE_DIR:=D:\\Claude\\swiftright\\.work\\sr0-r11\\src}"
 : "${EXPECT_EXE_SHA256:=073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E}"
 : "${EXPECT_DLL_SHA256:=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93}"
 EXPECT_EXE_SHA256=$(printf %s "$EXPECT_EXE_SHA256" | tr a-f A-F)

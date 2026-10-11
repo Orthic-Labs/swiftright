@@ -9,7 +9,7 @@
 # Steps: stage the scripts to <BASE_DIR>\probes\sr0-b\native-interaction\scripts, static check on the host (parse + compile,
 # no input), preflight hash check, then one one-shot interactive scheduled task per check (schedule-native.ps1).
 # Nothing is committed, branched or pushed by this script. The Mac GUI is never used.
-BASE_DIR="${BASE_DIR:-D:\\Claude\\sr0-r11\\src}"
+BASE_DIR="${BASE_DIR:-D:\\Claude\\swiftright\\.work\\sr0-r11\\src}"
 EXPECT_EXE_SHA256="${EXPECT_EXE_SHA256:-073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E}"
 EXPECT_DLL_SHA256="${EXPECT_DLL_SHA256:-E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93}"
 [ "${DESKTOP_LANE_FREE:-0}" = 1 ] || { echo "refused: set DESKTOP_LANE_FREE=1 once the Dell desktop lane is reserved for this run (no other GUI work, no person typing)" >&2; exit 2; }
