@@ -3,6 +3,7 @@
 Usage:
   analyze_workload.py --os windows|macos --root <run-root> [--out <dir>] [--expect-runs 3] [--expect-scale 2.5 (windows) | 2.0 (macos)]
                       [--expect-rows N] [--key-rate K]    (default: the rows= / rate_hz= the harness recorded, else 200 / 10)
+                      [--strict-vblank]   (old gate: zero missed vblanks fails W5; default since 2026-10-10: missed vblanks reported, not gated)
                       [--incremental <incremental.json>] [--light-root <run-root of --instr light runs>]
   analyze_workload.py --selftest [--selftest-keep <dir>]   (synthetic data; keep writes windows-good/, windows-resources/ and macos-good/ run sets)
 
@@ -151,6 +152,19 @@ class RunReport:
         c = Check(*a, **k)
         self.checks.append(c)
         return c
+
+
+STRICT_VBLANK = False   # --strict-vblank: the pre-2026-10-10 gate (zero missed vblanks) so earlier results can be reproduced
+
+
+def add_missed_vblanks(rr, name, missed, detail):
+    """W5 missed vblanks. Bar of 2026-10-10 (docs/sr0-findings.md section 11; architecture.md section 11 revision 2): reported with
+    the count, never gated. Under --strict-vblank the old zero-miss threshold applies. The "no worse than Mac SwiftUI" comparison on W4 p95
+    and W5 interval p95 is done by qualification/run.py's workload stage, not here."""
+    if STRICT_VBLANK:
+        rr.add('W5', name, rr.rid, missed, 0, '==', detail)
+    else:
+        rr.add('W5', name + ' [reported, not gated]', rr.rid, missed, 0, 'info', detail)
 
 
 def stats_block(values):
@@ -693,7 +707,7 @@ def analyze_windows_run(rr, rdir, harness_run, hz, pm_rows, expect_scale, raw_di
     missed = sum(1 for x in intervals if x > LIMITS['presentation_missed_factor'] * refresh)
     rr.add('W5', 'refresh period measured (ms) within 60 Hz +-0.5%', rr.rid, bool(abs(1000.0 / refresh - 60.0) <= 0.3) if refresh == refresh else None,
            True, 'bool', f'refresh_ms={refresh:.3f} hz={1000.0 / refresh if refresh == refresh else float("nan"):.3f}')
-    rr.add('W5', 'missed vblanks (interval > 1.5 x refresh)', rr.rid, missed if intervals else None, 0, '==', f'n={len(intervals)}')
+    add_missed_vblanks(rr, 'missed vblanks (interval > 1.5 x refresh)', missed if intervals else None, f'n={len(intervals)}')
     p95i = pct(intervals, 0.95)
     rr.add('W5', 'presented interval p95 (ms) <= refresh + 0.1', rr.rid, p95i, refresh + LIMITS['presentation_p95_margin_ms'], '<=',
            f'p50={pct(intervals, 0.5):.3f} p99={pct(intervals, 0.99):.3f} max={max(intervals) if intervals else float("nan"):.3f}')
@@ -876,7 +890,7 @@ def analyze_mac_run(rr, rdir, expect_scale):
     refresh = 1000.0 / hz_disp
     missed = sum(1 for x in intervals if x > LIMITS['presentation_missed_factor'] * refresh)
     rr.add('W5', 'display refresh 60 Hz (CGDisplayMode)', rr.rid, abs(hz_disp - 60.0) <= 0.5, True, 'bool', f'hz={hz_disp}')
-    rr.add('W5', 'missed vblanks (SCK display-time interval > 1.5 x refresh)', rr.rid, missed, 0, '==', f'n={len(intervals)} (SCK proxy; frames only on change)')
+    add_missed_vblanks(rr, 'missed vblanks (SCK display-time interval > 1.5 x refresh)', missed, f'n={len(intervals)} (SCK proxy; frames only on change)')
     rr.add('W5', 'presented interval p95 (ms) <= refresh + 0.1', rr.rid, pct(intervals, 0.95), refresh + LIMITS['presentation_p95_margin_ms'], '<=',
            f'p50={pct(intervals, 0.5):.3f} p99={pct(intervals, 0.99):.3f}')
     rr.summary['presented_interval_ms'] = stats_block(intervals)
@@ -1343,6 +1357,10 @@ def main(argv):
     if '--selftest' in argv:
         k = argv.index('--selftest-keep') if '--selftest-keep' in argv else -1
         return selftest(argv[k + 1] if k >= 0 else None)
+    global STRICT_VBLANK
+    if '--strict-vblank' in argv:
+        STRICT_VBLANK = True
+        argv = [a for a in argv if a != '--strict-vblank']
     opts = {}
     i = 0
     while i < len(argv):

@@ -1,21 +1,16 @@
 # SR0 slice contract v1.0: freeze proposal
 
-**PROPOSAL, not frozen. Updated 11 Oct 2026 against HEAD `61be5f94`; the freeze terms below are bound to tuple 11, the final snapshot tuple (`docs/sr0-snapshot.md` section 2e; section 2d, tuple 08, and section 2c, tuple 06, are superseded).** Compiled from repository evidence only; each claim cites a path or commit. Contract under review: `conformance/sr0-slice/CONTRACT.md`, which is still DRAFT v0.1 (C1-C8 and C10 are not in it; the text of proposed C9 and C11 is at lines 54 and 56; applying all of them and bumping to v1.0 is lane R11 and is PENDING). Freeze rule from the CONTRACT header: after freeze, changes need a documented revision and a rerun of both seeds (architecture §11); the fork seed is early-disqualified (`probes/sr0-s/COMPARISON.md`), so a rerun means the fresh runtime.
-
-**Contract on disk is stale (G21):** `conformance/sr0-slice/CONTRACT.md` is still DRAFT v0.1 and its F6 text is superseded by the proposed change C6 in section 3. Read this file together with that contract, not the contract alone.
+**v1.0-rc, NOT FROZEN. Updated 11 Oct 2026; bound to tuple 11 (`docs/sr0-snapshot.md` section 2e).** **ABI 0.6 freeze candidate = header at 862997c, renderer E280F4A9.** `conformance/sr0-slice/CONTRACT.md` is now v1.0-rc dated 2026-10-11 with C1-C11 applied (C3 in its corrected form: dropped, because its rationale was refuted, `docs/sr0-findings.md` gap G4; the `$item in` form stays in the inventory). The freeze itself is Adrian's sign-off. Freeze rule: after freeze, changes need a documented revision and a rerun of both seeds (architecture section 11); the fork seed is early-disqualified (`probes/sr0-s/COMPARISON.md`), so a rerun means the fresh runtime. Compiled from repository evidence only; each claim cites a path or commit.
 
 **Final tuple, tuple 11 (what v1.0 is proposed to freeze on; `docs/sr0-snapshot.md` section 2e):** renderer DLL `E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93` (ABI 0.6; built from `9c261d4` on top of `02b3cc0`, no ABI change; unchanged since tuple 08), runtime `8e47b89`, fixture host FreshOnBridge `073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E` (`0a745ab` plus `2cfb36ef`, clone-local `a75df9f5`), BridgeSmoke `85D5F8BA798EF17367844F28D75F3E53A37323F13A8409397C7C3FD1AD563EEA`, WorkloadWin `5270D3E54C1BD8FB625A2BE20EDFE12C31DD92686426457FDBED8FBA705124E7` (`8e47b89`), SliceApp MSIX 0.1.0.0 `39007039…` / 0.1.1.0 `efc52869…` (`examples/SliceApp/RESULT-R5-10.md:12`), DMGs `b976ac70…` / `75f3cd75…`, `@rightkit/release` 0.2.146. Tuples 06 to 10 are history except where `docs/sr0-snapshot.md` section 2e says a receipt carries (byte-identical binaries: smoke, pixels, text geometry, modal, cold-open on tuple 09; workload and MSIX on tuple 10; matrix on tuple 11). The renderer changed after the 0.6 header (`862997c`) with no ABI change: header untouched, startup validation `abi 0.6 fn_count=16 stats_size=200`.
 
-**Status: NOT FROZEN.** Bridge, matrix, text-geometry, modal, pixel, workload and Windows package receipts exist on tuple 11 or on byte-identical tuples carried to it (section 1). **What still blocks the freeze, exactly (section 4 has the lanes):**
+**Status: NOT FROZEN (v1.0-rc).** Done: all tuple 11 receipts; cross-compare 16/16 on tuple 11 (`cf37a63c`: 0 unallowed diffs, scoped allowances F2 P1, F3 List P2, F6 C11, F9 P6; 3 runs per side per config); R6 (mac-oracle); the F6 rule (C9, C11); the performance bar (C10, analyzer updated); contract text C1-C11 applied. **What still blocks the freeze, exactly (section 4 has the table):**
 
-1. Tuple 11 cross-compare of all 16 configs: running, no committed result. Tuple 10 was 11/16; the five failures (F5, F3 vstack/lazy x4) are the launch-selection difference that tuple 11's host fix targets (`probes/sr0-o/f1-cross/CROSS-ALL.md`, "Tuple 10").
-2. Tuple 11 R9 native-interaction run (IME F7, F7live, F8, Narrator): running, no committed result.
-3. Narrator speech content: a person listening at the Dell, about 2 min (Adrian).
-4. Adrian's decision to accept R5 W08 as a known limitation (three measured user recoveries exist, section 6 item 5).
-5. Adrian's record of the retry-cap overruns after the 9 October resume (`docs/sr0-retry-ledger.md`).
-6. Contract text: apply C1-C8, C3, C9, C10, C11 to `CONTRACT.md`, bump to v1.0 (C10 has no text in the file yet), and change the workload analyzer's W5 verdict to the 2026-10-10 bar.
-7. Cross-compare items still UNPROVEN: R5 (F5 initial window size), R6 (F7 IME stimulus chunking), R8 (F9 late results): prove them or accept them as limitations.
-8. A full runner run on tuple 11 with the closure gate (workload and native stages): no committed result.
+1. Adrian's sign-offs: R5 W08 as a known limitation (three measured user recoveries, section 6 item 5); the retry-cap overruns after the 9 October resume (`docs/sr0-retry-ledger.md`); the 3-run vs 20-run cross-compare deviation (recorded in `CONTRACT.md` section 3, not a pass of the 20-run rule); the freeze itself.
+2. Narrator speech content: a person listening at the Dell, about 2 min (Adrian).
+3. Unproven recorder items R5 (F5 initial window size), R6 (F7 IME stimulus chunking), R8 (F9 late results): prove them or accept them as limitations.
+4. Selection highlight is not painted (caret only; SR1): accepted as a limitation or repaired (section 6 item 11).
+5. Full runner run on tuple 11 with the closure gate (workload and native stages): in progress.
 
 Not blockers: the zero-missed-vblank criterion (dropped, section 3 C10), the overlay-off run, the F6 A/B decision (decided, C9), the MSIX certificate (expires 2026-10-12 05:16:54 Dell local; only a new Windows build needs a renewal). Sections below keep the reconciliation text for clauses not touched since; section 1 and the tables in sections 3, 4 and 5 are updated.
 
@@ -118,7 +113,7 @@ Governed by the companion proposal `docs/sr0-freeze-bridge-interface.md`. Contra
 |---|---|---|
 | C1 | **F9 tree release**: state explicitly that tree release after close is a Windows runtime requirement asserted on the bridge via `swr_stats.live_nodes == 0` after close and `swr_shutdown_complete`; on Mac it is OBSERVE only. | CONTRACT §3 F9 row already says this in prose; MAC-3 finding 4 (AppKit keeps closed `NSWindow` alive, `isReleasedWhenClosed=false`); MAC-20 F9 `tree-released` OBSERVE-only; ABI 0.5 `live_nodes` (10c4877) |
 | C2 | **F3 outcome table into the contract text**: record List = preserved, VStack/LazyVStack = fresh with focus outcomes, as the normative Mac oracle (currently only a summary sentence). | MAC-3 F3 table; MAC-20 F3 rows |
-| C3 | **Binding-projection form**: replace `ForEach($items) { $item in }` in the §2 inventory with the form actually supported and tested: `ForEach($rows, id: \.id) { row in }` with a `Binding<Row>` parameter, or record `$item in` as an unsupported Windows form. | `probes/sr0-c/same-source/RESULT.md`; `probes/sr0-o/fixtures/RESULT.md` finding 2 |
+| C3 (corrected) | **Binding-projection form. Applied as: dropped.** Original proposal below rested on a refuted finding (`docs/sr0-findings.md` gap G4): `ForEach($items) { $item in }` compiles on both targets, so the inventory keeps it and `CONTRACT.md` records it as supported. Original proposal (superseded): **Binding-projection form**: replace `ForEach($items) { $item in }` in the §2 inventory with the form actually supported and tested: `ForEach($rows, id: \.id) { row in }` with a `Binding<Row>` parameter, or record `$item in` as an unsupported Windows form. | `probes/sr0-c/same-source/RESULT.md`; `probes/sr0-o/fixtures/RESULT.md` finding 2 |
 | C4 | **§6 cache key**: state that text colour is part of the measure cache key (colour baked into shaped runs). | `render/README-abi-v0.md` "Deferred" bullet ("CONTRACT section 6's key omits it"); CONTRACT §6 line already carries a parenthetical, convert to normative |
 | C5 | **F9 Windows teardown protocol**: no teardown commit after `window_closed` (rejected with `SWR_E_SHUTDOWN`); cleanup observed in the post-close pump; assertions read evidence as of close. | WIN-M2 common failure; commit cc605bf; `render/README-abi-v0.md` rev 0.5 (b) |
 | C6 | **F6 raw-trace variance**: add a sentence that raw traces may vary within a step; canonical order-insensitive comparison is the qualification form. | MAC-3 finding F6; MAC-20 (F6 raw 4, canonical 1); CONTRACT §3 already has the within-step rule, make F6's variance explicit. Status note (G13): Windows F6 3/3 PASS in WIN-M4 (rev4b) predates the canonical v2 per-node order check, and the Mac F6 canonical count is 2 under v2 (`docs/qualification.md:130`); the A/B completion decision is `docs/sr0-findings.md` L16 and T11 |
@@ -135,18 +130,20 @@ None of C1-C8 changes a pass/fail semantic that the Mac oracle recorded; C3 chan
 
 Closed: WIN-M4 15 configs x 3 (`ee5a4db`); Windows repeat count on ABI 0.5 (matrix-20b, `65e0f29`) and on the final ABI 0.6 tuple (WIN-M10, tuple 11, 320/320 first attempt); BridgeSmoke 40/40 and 41/41, pixel assertions, text geometry and modal paths on byte-identical binaries (SMOKE-09); Mac oracle and signed re-record (R6-MAC); F6 A/B decision (proposed C9, C11); XCMP F1 compare, 0 diffs (`eaf40dc`); negative fixtures (`5afd873`); Windows TextPattern on populated nodes (`fcc999d`); UIA AutomationId 5/5; visible-response endpoint decided (CONTRACT §5); the performance bar decided (proposed C10); the workload measured against it (WORKLOAD-10); signed MSIX on the final renderer pin and the final Mac DMG (PKG-10, R3, R7).
 
-Open, in plan lane order. The freeze stays NOT FROZEN until every row below is closed or accepted by Adrian:
+Also closed since the last revision: tuple 11 cross-compare of all 16 configs, 16/16 with 0 unallowed diffs (`cf37a63c`); R6; the F6 rule (C9, C11); the performance bar (C10) including the analyzer's W5 verdict (`--strict-vblank` keeps the old gate); `CONTRACT.md` v1.0-rc with C1-C11 applied (C3 corrected).
+
+Open. The freeze stays NOT FROZEN until every row below is closed or accepted by Adrian:
 
 | # | Blocker | Lane | State |
 |---|---|---|---|
-| 1 | Tuple 11 cross-compare of all 16 configs (tuple 10: 11/16; F5 and F3 vstack/lazy x4 failed on launch selection, targeted by the tuple 11 host fix) | R6 | **OPEN, running**, no committed result (`docs/sr0-status.md` placeholder line) |
-| 2 | Cross-compare items UNPROVEN: R5 (F5 initial window size), R6 (F7 IME stimulus chunking), R8 (F9 late results) | R6 | OPEN: prove (a Mac fixture variant) or accept as limitations; P2 is settled as a Mac quirk |
-| 3 | Tuple 11 R9: real IME F7, F7live, F8 and Narrator on fixture `07351314…` (tuple 10 files are for the replaced host) | R9 | **OPEN, running**, no committed result |
-| 4 | Narrator speech content | R9 | OPEN, user-dependent: a person listening at the Dell, about 2 min |
-| 5 | R5 W08 decision | R5 | OPEN, Adrian: accept as a known limitation (three measured user recoveries, section 6 item 5) or repair and rerun. A new Windows build needs a renewed certificate first (expires 2026-10-12 05:16:54 Dell local) |
-| 6 | Retry-cap overruns after the 9 October resume | R11 | OPEN, Adrian: record accept or resume (`docs/sr0-retry-ledger.md`) |
-| 7 | Full runner run on tuple 11 with the closure gate including workload and native stages | R8 | OPEN: last full run is tuple 08 (`qualification/out/r8-tuple08/`); `tuple-final.json` already names tuple 11 |
-| 8 | Apply C1-C8, C3, C9, C10, C11 text to `CONTRACT.md`; bump to v1.0; name the snapshot tuple; change the analyzer's W5 verdict to the C10 bar | R11 | PENDING (C9 and C11 text is in the file; C1-C8 and C10 are not) |
+| 1 | R5 W08 decision | R5 | OPEN, Adrian: accept as a known limitation (three measured user recoveries, section 6 item 5) or repair and rerun. A new Windows build needs a renewed certificate first (expires 2026-10-12 05:16:54 Dell local) |
+| 2 | Retry-cap overruns after the 9 October resume | R11 | OPEN, Adrian: record accept or resume (`docs/sr0-retry-ledger.md`) |
+| 3 | 3-run vs 20-run deviation: the tuple 11 cross-compare used 3 runs per side per config; the contract's requirement stays 20 | R6 | OPEN, Adrian: accept the deviation (recorded explicitly in `CONTRACT.md` section 3) or require 20 |
+| 4 | The freeze itself | R11 | OPEN, Adrian's sign-off |
+| 5 | Narrator speech content | R9 | OPEN, user-dependent: a person listening at the Dell, about 2 min |
+| 6 | Unproven recorder items R5 (F5 initial window size), R6 (F7 IME stimulus chunking), R8 (F9 late results) | R6 | OPEN: prove (a Mac fixture variant) or accept as limitations |
+| 7 | Selection highlight not painted (caret only) | SR1 | OPEN: accept as a limitation (section 6 item 11) or repair |
+| 8 | Full runner run on tuple 11 with the closure gate including workload and native stages | R8 | OPEN, in progress; last committed full run is tuple 08 (`qualification/out/r8-tuple08/`); `tuple-final.json` names tuple 11 |
 
 Non-blocking: Windows arm64 and Intel Mac are out of scope (scope revision 1), not exclusions to be lifted by this freeze. The overlay-off run (W5) is no longer needed.
 

@@ -1,6 +1,6 @@
 # SwiftRight renderer bridge, ABI v0 (revision 0.6)
 
-Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen (freeze waits on the SR0-C contract freeze; `docs/sr0-freeze-bridge-interface.md` is NOT FROZEN). Revision 0.6 was implemented in commits `862997c` to `840f9ec`; the evidence notes in the 0.6 entry are superseded by the tuple 08 receipts.
+Consolidates the SR0-B/SR0-D probes into the planned packages. Not frozen: ABI 0.6 freeze candidate = header at `862997c`, renderer `E280F4A9`; the contract is v1.0-rc and the freeze waits on Adrian's sign-off (`docs/sr0-freeze-bridge-interface.md` is NOT FROZEN). Revision 0.6 was implemented in commits `862997c` to `840f9ec`; the evidence notes in the 0.6 entry are superseded by the tuple 08 receipts.
 
 | Path | What |
 |---|---|
