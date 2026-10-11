@@ -1,0 +1,111 @@
+{
+  "status": "CLEAR-SCRIPT-REVIEW",
+  "scope": "One staged r09 disabled-case observational replay; no renderer/ABI edits or tuple migration",
+  "reviewer": {
+    "path": "factory/native/windows/first-capture-readiness-v1/independent-review/review_scripts.py",
+    "sha256": "0885c1ba9af9cef5149263eb9c81e7c9ba4d241c637bffdeb323137a974e639e",
+    "bytes": 4953
+  },
+  "ownerStage": {
+    "path": "factory/native/windows/first-capture-readiness-v1/root-stage-manifest.json",
+    "sha256": "c5d3d6fcb519f80fd1ab3ac20b795ee9d8659feb7364a93785df94d5564fd4f7",
+    "bytes": 4940
+  },
+  "scripts": [
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/run-first.ps1",
+      "sha256": "8e66872ccc09b19caa11fd405ea71ee2234bf21833f47a1a22d64949b639166e",
+      "bytes": 5033
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/first-task.ps1",
+      "sha256": "dec6219f4fb03a717c8beb15c5f72bcf458f965545853a26f1c07be818db7475",
+      "bytes": 801
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/capture-first.ps1",
+      "sha256": "04309140da3957ae8a245ff357adb99d91f9a75e91307334b16b238d9d558c88",
+      "bytes": 12141
+    }
+  ],
+  "sourceCaseJoins": {
+    "case": {
+      "hash": "sha256:d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+      "id": "swiftui.disabled.recipe/case/f113195a59446fc4"
+    },
+    "casesInput": {
+      "path": "factory/pipeline/inputs/cases.json",
+      "sha256": "f3e880fe72402a890a9e247d70f5460fc3b78f2beaae717821cef764e77b94ec",
+      "bytes": 131846
+    },
+    "caseRawCanonicalHash": "sha256:d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+    "generatedSource": {
+      "path": "factory/pipeline/probes/swiftui.disabled.recipe_case_f113195a59446fc4.swift",
+      "sha256": "68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+      "bytes": 230
+    },
+    "manifest": {
+      "path": "factory/pipeline/probes/swiftui.disabled.recipe_case_f113195a59446fc4.manifest.json",
+      "sha256": "5e155ed85464617856bff8796c548a4bca943b0a4e1176425a6f8f3e63a4b27e",
+      "bytes": 1842
+    },
+    "sourceBindings": [
+      {
+        "path": "Package.swift",
+        "sha256": "sha256:2a2e88713712c148641e572ae716963a9cc9f7e24e362b075eb542f1458d640b"
+      },
+      {
+        "path": "Sources/FactoryProbe/Witness.swift",
+        "sha256": "sha256:68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005"
+      },
+      {
+        "path": "Sources/FactoryProbe/main.swift",
+        "sha256": "sha256:46b289648a5c7089a71e970093c8135f2e037a3bc73a872669861722e82d0e49"
+      }
+    ],
+    "compileReceipt": {
+      "path": "factory/native/windows/disabled-primary-v7-20261010/observation.json",
+      "sha256": "47bb850e472eb881641fb4d3bbd0b899ae78d58dd234f2a5e811cdfc874729a4",
+      "bytes": 888
+    },
+    "exeSha256": "4cc6bfa97c99d96cf259781397b3a42b4430c62c87c1dbef83b7be701a8fb152",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "checks": [
+    {
+      "guard": "lock CAS",
+      "evidence": "FileShare.None compare trimmed free/owner while holding exclusive stream; flush before dispose; release only exact acquired owner"
+    },
+    {
+      "guard": "controller visibility",
+      "evidence": "interactive GUID scheduled task uses System32 wscript\u2192WScript.Shell.Run style0\u2192PowerShell WindowStyle Hidden; no keyboard/mouse input or foreground API"
+    },
+    {
+      "guard": "launch identity",
+      "evidence": "exact package path/case/exe pin, historical compiled plan equality, allsource bindings, GUI subsystem2 & staged DLL before/after; thread CBT activation/focus veto installed before bridge.run in pinned main.swift"
+    },
+    {
+      "guard": "target identity",
+      "evidence": "live currentPID/path/starttime & HWND-PID equality precede bottom/noactivate placement, FromHandle & UIA traversal; UIAroot Current.ProcessId equality; same gate invoked throughout pixels"
+    },
+    {
+      "guard": "bounded cleanup",
+      "evidence": "6min free-lock wait,10min retained own scheduled task,6sec startup,5sec pixel channel,15sec child exit; own path/PID/starttime matches before taskkill; no Dell file/task deletion"
+    },
+    {
+      "guard": "readback labels",
+      "evidence": "UIA starts owned HWND only; PrintWindow flags3 & CopyFromScreen separate repeated PNGs; natural occlusion25point grid recorded; controlled qualification/provider export false; parity hold & tuple/closure absent"
+    }
+  ],
+  "rootDispatchRequirements": [
+    "Windows PowerShell parse0 for these exact script bytes",
+    "Remote exact plan/compile/source/pixelhelper/exe/DLL pin preflight",
+    "Fresh run directory & exact desktop-lock owner"
+  ],
+  "localPowerShellAvailable": false,
+  "nativeLaunches": 0,
+  "productionEdits": 0,
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "closureBinding": null
+}

@@ -1,0 +1,49 @@
+{
+  "status": "BLOCKED-PENDING-REPAIR",
+  "reviewedInputs": [
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/capture-first.ps1",
+      "sha256": "cf81b2eb9fb35544be8c8b4e4c4c07eee68facab9ac766c5f71593c9d82f7687",
+      "bytes": 12181,
+      "snapshot": "factory/native/windows/first-capture-readiness-v1/independent-review/preimages/capture-first.ps1.cf81b2eb9fb3"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/run-first.ps1",
+      "sha256": "8e66872ccc09b19caa11fd405ea71ee2234bf21833f47a1a22d64949b639166e",
+      "bytes": 5033,
+      "snapshot": "factory/native/windows/first-capture-readiness-v1/independent-review/preimages/run-first.ps1.8e66872ccc09"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/first-task.ps1",
+      "sha256": "dec6219f4fb03a717c8beb15c5f72bcf458f965545853a26f1c07be818db7475",
+      "bytes": 801,
+      "snapshot": "factory/native/windows/first-capture-readiness-v1/independent-review/preimages/first-task.ps1.dec6219f4fb0"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/readiness.json",
+      "sha256": "26d04f086fe2248c2c970a6ec541569f4e74d4a5fb0814099bbc4b5e1d3cd188",
+      "bytes": 6433,
+      "snapshot": "factory/native/windows/first-capture-readiness-v1/independent-review/preimages/readiness.json.26d04f086fe2"
+    },
+    {
+      "path": "factory/native/windows/first-capture-readiness-v1/root-stage-manifest.json",
+      "sha256": "543b63570bcd0c5b2681216630161bea3f2c17df6ecdcc93c30fc294a01d37ea",
+      "bytes": 4087,
+      "snapshot": "factory/native/windows/first-capture-readiness-v1/independent-review/preimages/root-stage-manifest.json.543b63570bcd"
+    }
+  ],
+  "findings": [
+    {
+      "id": "TARGET-OWNERSHIP",
+      "claim": "SetWindowPos & UIA precede pixel helper HWND-to-PID check; stale handle can target unrelated window",
+      "required": "owned process live/path/starttime & HWND PID gates before each target operation; UIA root PID equality"
+    },
+    {
+      "id": "TARGET-ONLY-READS",
+      "claim": "foregroundClass & foregroundTitle collect unrelated foreground window text",
+      "required": "retain foreground HWND/PID safety checks; remove unowned title/class reads"
+    }
+  ],
+  "nativeLaunches": 0,
+  "productionEdits": 0
+}
