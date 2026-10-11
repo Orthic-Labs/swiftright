@@ -1,0 +1,45 @@
+{
+  "schema": "independent-swift-archive-wrapper-review-v1",
+  "result": "clear scoped archive hydration wrapper",
+  "sourcePins": {
+    "archived_swift16.py": {
+      "sha256": "d3685592ec84c56a1fa1b15a200b4720377d6ccf1ff2e63bc0d7e5924e3a9a90",
+      "bytes": 2619
+    },
+    "test_archived_swift16.py": {
+      "sha256": "e09df36ce2412c5d704864d3a376a317d0e08d71f181465d21b19bc91a2a1bd5",
+      "bytes": 1605
+    },
+    "exact_swift16.py": {
+      "sha256": "78620db51cdc47da5c1cafcb3f546cea918b67c8a3c5dcc5131b83988e652a0e",
+      "bytes": 16251
+    },
+    "capture-inputs.json": {
+      "sha256": "c760bc8bb37e7c02aaa6123f379293488d5ab3b840282d4c75e060486d456c09",
+      "bytes": 3360
+    }
+  },
+  "reviewEvidence": {
+    "snapshot.json": {
+      "sha256": "f5ef0b19d5f08ae0b4d7b88fed6211d34bfd80f8a5fb35ac4bdd9441fb31df4d",
+      "bytes": 534
+    },
+    "independent-controls.json": {
+      "sha256": "4a3e3fe611c8c91b7d77808284098db7eaef2a8c10d9583a60c4d28120a66aba",
+      "bytes": 7010
+    },
+    "coherent-tree-control.json": {
+      "sha256": "2566b3269aefc683fb2142349e423d36f9493dee348fa59004da7d312853d277",
+      "bytes": 120
+    }
+  },
+  "observations": [
+    "Original frozen Swift16 guard remains byte-identical 78620db51cdc47da5c1cafcb3f546cea918b67c8a3c5dcc5131b83988e652a0e.",
+    "Forced archive hydration resolves exactly original 13 raw descriptors, four pinned actual executable/library byte descriptors & one pinned header lineage descriptor. Semantic paths remain original recorded paths; 18 resolver reads produce exactly 16 frozen validated correspondences.",
+    "Producer forced archive replay forbids live SDK, /usr/bin tool & scratch cache reads; baseline passes with zero such reads. Local frozen manifest/helper/parser files remain required.",
+    "All original descriptor paths, hashes & lengths derive from byte-pinned original capture-inputs.json c760bc8bb37e7c02aaa6123f379293488d5ab3b840282d4c75e060486d456c09. Actual tool/lineage hashes remain original guard constants. Tool/lineage lengths are not separate manifest fields; exact SHA-256 bytes are enforced.",
+    "Independent wrong tool bytes, source identity, request type, probe identity, unknown override, wrong source archive object, missing archived compiler & semantic-path crosswire reject. Coherently rebound canonical tree stdout receipt rejects at expanded node/result semantic binding.",
+    "No producer edits, capture processes or original evidence changes. Shared real-disk resolver integration is separately owned & still awaits its frozen review."
+  ],
+  "scope": "Archive wrapper hydration & frozen exact16 semantic validator only; no new process-origin claims or broad aliases."
+}
