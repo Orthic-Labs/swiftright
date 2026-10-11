@@ -1,0 +1,217 @@
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { cx } from "./primitives.js";
+import type { SettingsBackend, SettingsContext, SettingsSection, SettingsSnapshot } from "./types.js";
+import { useSettings } from "./useSettings.js";
+
+/** Sort by group (first appearance), then `order`, then label. Sections an app adds slot in by `order`. */
+export function orderSections(sections: readonly SettingsSection[]): SettingsSection[] {
+  const groups: string[] = [];
+  for (const s of sections) if (!groups.includes(s.group ?? "")) groups.push(s.group ?? "");
+  const first = new Map(groups.map((group, index) => [group, index]));
+  const groupOrder = new Map(groups.map((group) => [group, Math.min(...sections.filter((s) => (s.group ?? "") === group).map((s) => s.order ?? 1000))]));
+  return [...sections].sort((a, b) => groupOrder.get(a.group ?? "")! - groupOrder.get(b.group ?? "")! || first.get(a.group ?? "")! - first.get(b.group ?? "")! || (a.order ?? 1000) - (b.order ?? 1000) || a.label.localeCompare(b.label));
+}
+
+/**
+ * Combine the standard sections with app sections. An app section with the same id replaces the standard one;
+ * `hide` drops standard sections the app does not want. Duplicate ids otherwise throw so a typo never silently shadows a section.
+ */
+export function mergeSections(standard: readonly SettingsSection[], custom: readonly SettingsSection[] = [], opts: { hide?: readonly string[] } = {}): SettingsSection[] {
+  const hide = new Set(opts.hide ?? []);
+  const customIds = new Set(custom.map((s) => s.id));
+  if (customIds.size !== custom.length) throw new Error("mergeSections: duplicate ids in custom sections");
+  return [...standard.filter((s) => !hide.has(s.id) && !customIds.has(s.id)), ...custom];
+}
+
+const norm = (s: string) => s.toLowerCase();
+
+/** Sections matching a query, with the matching entry ids. Empty query matches everything. */
+export function searchSections(sections: readonly SettingsSection[], query: string): Array<{ section: SettingsSection; entryIds: string[] }> {
+  const terms = norm(query).split(/\s+/).filter(Boolean);
+  if (!terms.length) return sections.map((section) => ({ section, entryIds: [] }));
+  const out: Array<{ section: SettingsSection; entryIds: string[] }> = [];
+  for (const section of sections) {
+    const sectionHay = norm([section.label, section.group ?? "", ...(section.keywords ?? [])].join(" "));
+    const entryIds = (section.entries ?? []).filter((e) => terms.every((t) => norm([e.label, ...(e.keywords ?? [])].join(" ")).includes(t) || sectionHay.includes(t))).map((e) => e.id);
+    const sectionHit = terms.every((t) => sectionHay.includes(t));
+    if (sectionHit || entryIds.length) out.push({ section, entryIds: sectionHit && !entryIds.length ? [] : entryIds });
+  }
+  return out;
+}
+
+/** Scroll a row into view and flash it (search result, deep link). Resolves false when the row is not mounted. */
+export function revealSetting(root: ParentNode, id: string): boolean {
+  const el = root.querySelector<HTMLElement>(`[data-setting-id="${CSS.escape(id)}"]`);
+  if (!el) return false;
+  el.scrollIntoView({ block: "center" });
+  el.classList.add("is-revealed");
+  window.setTimeout(() => el.classList.remove("is-revealed"), 1600);
+  return true;
+}
+
+/**
+ * The active section's article: heading (`heading` ?? `label`) plus its body. With the heading hidden (`hideSectionHeading`
+ * on the section or the panel) there is no `<h1>` and the article is labelled by `label`.
+ */
+export function SectionFrame({ section, ctx, hideSectionHeading = false }: { section: SettingsSection; ctx: SettingsContext; hideSectionHeading?: boolean }) {
+  if ((section.hideSectionHeading ?? hideSectionHeading)) {
+    return <article className="rk-settings__section" aria-label={section.label}>{section.render(ctx)}</article>;
+  }
+  return (
+    <article className="rk-settings__section" aria-labelledby={`rk-sec-${section.id}`}>
+      <h1 id={`rk-sec-${section.id}`} className="rk-settings__h1">{section.heading ?? section.label}</h1>
+      {section.render(ctx)}
+    </article>
+  );
+}
+
+/** State passed to `renderNavItem`. */
+export interface NavItemState {
+  active: boolean;
+}
+
+export interface SettingsPanelProps {
+  backend: SettingsBackend;
+  sections: readonly SettingsSection[];
+  title?: ReactNode;
+  /** Nav heading. Takes precedence over `title`; `false` omits the heading. */
+  navHeading?: ReactNode | false;
+  /** Rendered at the bottom of the nav (e.g. a "Version 1.2.3" line). */
+  navFooter?: ReactNode;
+  /**
+   * Replace the content of each nav button (icon, label, badge). The button itself stays, so keyboard navigation, `data-section-id`,
+   * `aria-current="page"` and `data-active="true"` (active item only) keep working; draw your own active marker from `state.active`.
+   */
+  renderNavItem?: (section: SettingsSection, state: NavItemState) => ReactNode;
+  /** Omit the nav entirely (the app embeds the sections in its own nav and selects with `activeId`). Search is unavailable. */
+  hideNav?: boolean;
+  /** Controlled active section id. */
+  activeId?: string;
+  onActiveChange?: (id: string) => void;
+  defaultActiveId?: string;
+  /** Show the search box. Default true. */
+  search?: boolean;
+  /** Shown above the content while the backend loads. */
+  loading?: ReactNode;
+  /** Omit every section's `<h1>` (the nav still shows the label). A section's own `hideSectionHeading` overrides this. Default false. */
+  hideSectionHeading?: boolean;
+  /**
+   * A snapshot already known to the caller (for example `createMemorySettings(...).snapshot()`). With it, the first render
+   * shows the sections and never "Loading settings…".
+   */
+  initial?: SettingsSnapshot;
+  className?: string;
+}
+
+/**
+ * Settings frame: grouped section nav with search on the left, the active section on the right.
+ * Persistence is the backend's; sections receive a `SettingsContext` and never touch storage themselves.
+ */
+export function SettingsPanel({ backend, sections, title = "Settings", navHeading, navFooter, renderNavItem, hideNav = false, activeId, onActiveChange, defaultActiveId, search = true, loading, hideSectionHeading = false, initial, className }: SettingsPanelProps) {
+  const settings = useSettings(backend, { initial });
+  const ctx: SettingsContext = settings;
+  const ordered = useMemo(() => orderSections(sections.filter((s) => !s.visible || s.visible(ctx))), [sections, ctx]);
+  const [query, setQuery] = useState("");
+  const [inner, setInner] = useState(defaultActiveId ?? "");
+  const current = activeId ?? inner;
+  const matches = useMemo(() => searchSections(ordered, query), [ordered, query]);
+  const visibleIds = matches.map((m) => m.section.id);
+  const active = ordered.find((s) => s.id === current && (!query || visibleIds.includes(s.id))) ?? matches[0]?.section;
+  const content = useRef<HTMLDivElement>(null);
+  const pendingReveal = useRef<string | null>(null);
+
+  const select = (id: string, reveal?: string) => {
+    pendingReveal.current = reveal ?? null;
+    if (activeId === undefined) setInner(id);
+    onActiveChange?.(id);
+  };
+
+  useEffect(() => {
+    const id = pendingReveal.current;
+    if (id && content.current) {
+      pendingReveal.current = null;
+      revealSetting(content.current, id);
+    }
+  });
+
+  const onNavKey = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    const items = [...e.currentTarget.querySelectorAll<HTMLButtonElement>("button[data-section-id]")];
+    const i = items.indexOf(document.activeElement as HTMLButtonElement);
+    if (i === -1) return;
+    e.preventDefault();
+    items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length]?.focus();
+  };
+
+  const heading = navHeading === undefined ? title : navHeading;
+  let lastGroup: string | undefined;
+  return (
+    <div className={cx("rk-settings", hideNav && "rk-settings--no-nav", className)} data-testid="settings-panel">
+      {hideNav ? null : <nav className="rk-settings__nav" aria-label={typeof heading === "string" ? heading : typeof title === "string" ? title : "Settings"} onKeyDown={onNavKey}>
+        {heading === false || heading === null ? null : <h2 className="rk-settings__title">{heading}</h2>}
+        {search ? (
+          <input
+            className="rk-input rk-settings__search"
+            type="search"
+            placeholder="Search settings"
+            aria-label="Search settings"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        ) : null}
+        {matches.length === 0 ? <p className="rk-settings__none">No settings match “{query}”.</p> : null}
+        {matches.map(({ section, entryIds }) => {
+          const heading = section.group !== lastGroup && section.group ? <div className="rk-settings__group">{section.group}</div> : null;
+          lastGroup = section.group;
+          return (
+            <div key={section.id}>
+              {heading}
+              <button
+                type="button"
+                data-section-id={section.id}
+                className={cx("rk-settings__item", active?.id === section.id && "is-active")}
+                aria-current={active?.id === section.id ? "page" : undefined}
+                data-active={active?.id === section.id ? "true" : undefined}
+                onClick={() => select(section.id, entryIds[0])}
+              >
+                {renderNavItem ? renderNavItem(section, { active: active?.id === section.id }) : (
+                  <>
+                    {section.icon ? <span className="rk-settings__icon" aria-hidden="true">{section.icon}</span> : null}
+                    <span className="rk-settings__label">{section.label}</span>
+                    {section.badge ? <span className="rk-settings__badge">{section.badge}</span> : null}
+                  </>
+                )}
+              </button>
+              {query
+                ? (section.entries ?? [])
+                    .filter((e) => entryIds.includes(e.id))
+                    .map((e) => (
+                      <button key={e.id} type="button" className="rk-settings__hit" onClick={() => select(section.id, e.id)}>
+                        {e.label}
+                      </button>
+                    ))
+                : null}
+            </div>
+          );
+        })}
+        {navFooter ? <div className="rk-settings__navfooter">{navFooter}</div> : null}
+      </nav>}
+      <div className="rk-settings__body" ref={content}>
+        {settings.error ? (
+          <div className="rk-settings__error" role="alert">
+            <span>{settings.error}</span>
+            <button type="button" className="rk-btn rk-btn--sm rk-btn--ghost" onClick={settings.clearError}>
+              Dismiss
+            </button>
+          </div>
+        ) : null}
+        {!settings.loaded ? (
+          <div className="rk-settings__loading" aria-busy="true">{loading ?? "Loading settings…"}</div>
+        ) : active ? (
+          <SectionFrame key={active.id} section={active} ctx={ctx} hideSectionHeading={hideSectionHeading} />
+        ) : null}
+        <div className="rk-settings__saving" aria-live="polite">{settings.saving ? "Saving…" : ""}</div>
+      </div>
+    </div>
+  );
+}

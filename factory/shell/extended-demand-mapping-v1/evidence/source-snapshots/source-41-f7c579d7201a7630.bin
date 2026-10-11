@@ -1,0 +1,713 @@
+﻿import {
+  deleteSecureUpdateLicense,
+  getLicenseLifecycleSnapshot,
+  getOrCreateSecureDeviceId,
+  getSecureUpdateLicense,
+  inTauri,
+  openExternal,
+  refreshAndReanchorLicense,
+  setSecureUpdateLicense,
+} from "./tauriBridge";
+import {
+  createLicenseClient,
+  type StoredLicense as SdkLicense,
+  type LicenseStorage,
+} from "@rightkit/license";
+import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
+import {
+  createAutoUpdateClient,
+  fetchReleaseStatus,
+  type AutoUpdateClient,
+  type AutoUpdateStatus,
+  type CheckForUpdate,
+  type UpdateTier,
+} from "@rightkit/updates";
+import { isMac } from "../platform";
+import { logError } from "./diagnostics";
+
+export type UpdateState =
+  | "idle"
+  | "checking"
+  | "current"
+  | "available" // a signed update is downloaded-ready; install is a separate, explicit step
+  | "available-external" // a newer public release must be downloaded manually
+  | "installing"
+  | "install-failed"
+  | "failed"
+  | "license-required";
+
+export type LicenseStatus = "none" | "active" | "invalid" | "failed";
+
+export type StoredUpdateLicense = {
+  activatedAt?: string;
+  activationToken?: string;
+  confirmationDueAt?: string | null;
+  deviceId: string;
+  entitlements?: { v: number; tier: string | null; features: string[] };
+  entitlementStage?: "time_bound" | "provisional" | "final";
+  key?: string;
+  lastRefreshedAt?: string;
+  licenseId?: string;
+  licenseIssuedAt?: string | null;
+  licenseKind?: "trial" | "lifetime" | "term";
+  message?: string;
+  signedToken?: string;
+  status: LicenseStatus;
+  updatesUntil?: string | null;
+};
+
+export type LicenseLifecycleKind =
+  | "free"
+  | "active_trial"
+  | "expired_trial"
+  | "active_lifetime_provisional"
+  | "verification_required"
+  | "active_lifetime"
+  | "active_legacy"
+  | "clock_repair_required"
+  | "invalid"
+  | "storage_error";
+
+export type LicenseLifecycleSnapshot = {
+  confirmationDueAtUnix?: number;
+  entitlementId?: string;
+  expiresAtUnix?: number;
+  isPro: boolean;
+  kind: LicenseLifecycleKind;
+  message?: string;
+};
+
+type LifecycleSdkLicense = SdkLicense & {
+  confirmationDueAt?: string | null;
+  entitlements?: { v: number; tier: string | null; features: string[] };
+  entitlementStage?: "time_bound" | "provisional" | "final";
+  lastRefreshedAt?: string;
+  licenseIssuedAt?: string | null;
+  licenseKind?: "trial" | "lifetime" | "term";
+};
+
+const FALLBACK_APP_VERSION = "0.0.0-dev";
+
+export function resolvedAppVersion(): string {
+  const version = typeof __APP_VERSION__ === "string" ? __APP_VERSION__.trim() : "";
+  if (version) return version;
+
+  const message =
+    "ViewRight build is missing __APP_VERSION__; release/update version truth is unavailable.";
+  if (import.meta.env.PROD) {
+    throw new Error(message);
+  }
+  console.warn(`${message} Using ${FALLBACK_APP_VERSION} for this non-production harness.`);
+  return FALLBACK_APP_VERSION;
+}
+
+export const APP_VERSION = resolvedAppVersion();
+export const LICENSE_STORE_KEY = "vr.updateLicense.v1";
+export const DEVICE_STORE_KEY = "vr.deviceId.v1";
+// Brand host forwards /v1/* to the unified RightApps backend (rightapps-api). Must
+// equal the shared client's activate endpoint so call sites + tests stay in sync.
+export const LICENSE_ACTIVATE_URL = "https://viewright.cc/v1/licenses/activate";
+// Purchase CTA. /pricing is the real route (→ /checkout); /updates does not exist (was a 404).
+export const UPDATE_LICENSE_URL = "https://viewright.cc/pricing/";
+const RELEASE_STATUS_URL = "https://api.spoares.com/v1/apps/viewright/releases/status.json";
+const PUBLIC_INSTALLER_BASE = "https://pub-6c73208d46c245a9b4881d5e02f6b618.r2.dev";
+
+export type { UpdateTier };
+
+// Durable device id. Source of truth is the OS keyring (it survives an app-data / browser-storage
+// clear, so re-activation on the same machine stays idempotent and does not burn a seat).
+// localStorage is a synchronous cache so deviceId() can remain sync for existing call sites;
+// ensureDeviceId() runs once at startup to reconcile the keyring and the cache.
+let deviceIdCache: string | null = null;
+
+export function deviceId(): string {
+  if (deviceIdCache) return deviceIdCache;
+  try {
+    const stored = localStorage.getItem(DEVICE_STORE_KEY);
+    if (stored) {
+      deviceIdCache = stored;
+      return stored;
+    }
+    const generated =
+      crypto.randomUUID?.() ?? `device-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(DEVICE_STORE_KEY, generated);
+    deviceIdCache = generated;
+    return generated;
+  } catch {
+    return deviceIdCache ?? "device-unavailable";
+  }
+}
+
+// Native code owns first-run identity creation and serializes credential-store writes. Browser
+// builds retain a local-only identity for QA, but a Tauri credential-store error fails closed.
+export async function ensureDeviceId(): Promise<string> {
+  if (!inTauri()) return deviceId();
+  const secure = await getOrCreateSecureDeviceId();
+  if (secure?.id) {
+    deviceIdCache = secure.id;
+    try {
+      localStorage.setItem(DEVICE_STORE_KEY, secure.id);
+    } catch {
+      /* cache only */
+    }
+    return secure.id;
+  }
+  throw new Error("Native device identity is unavailable.");
+}
+
+// Kicked off once at module init: reconciles the keyring device id before any activation call.
+// A user who pastes a license key quickly must not activate against a throwaway localStorage
+// UUID — the keyring value (durable across app-data clears) is the one that should be sent.
+// This promise is intentionally module-scoped (not per-call) so every caller shares one
+// in-flight reconcile instead of racing multiple keyring round-trips.
+let deviceIdReadyPromise: Promise<string> | null = null;
+
+export function deviceIdReady(): Promise<string> {
+  if (!deviceIdReadyPromise) {
+    const pending = ensureDeviceId();
+    deviceIdReadyPromise = pending.catch((error) => {
+      deviceIdReadyPromise = null;
+      throw error;
+    });
+  }
+  return deviceIdReadyPromise;
+}
+
+// Bound the native credential-store call without accepting a renderer-created fallback. A timeout
+// fails closed so activation cannot bind a seat to an identity the native store did not establish.
+export async function deviceIdReadyOrTimeout(timeoutMs = 3000): Promise<string> {
+  return Promise.race([
+    deviceIdReady(),
+    new Promise<string>((_resolve, reject) => {
+      setTimeout(() => reject(new Error("Native device identity timed out.")), timeoutMs);
+    }),
+  ]);
+}
+
+// ── @rightkit/license — the shared Right Suite license client. Replaces the
+//    bespoke activate/deactivate/storage below; ViewRight keeps only its Tauri
+//    updater-gating. Talks to viewright.cc/v1/* -> the unified RightApps backend. ──
+const sdkStorage: LicenseStorage = {
+  async get() {
+    if (!inTauri()) return localSdkLicense();
+    const secure = await getSecureUpdateLicense<LifecycleSdkLicense>();
+    removeLocalUpdateLicense();
+    return secure;
+  },
+  async set(lic) {
+    if (inTauri()) {
+      if (lic) await setSecureUpdateLicense(lic);
+      else await deleteSecureUpdateLicense();
+      removeLocalUpdateLicense();
+      return;
+    }
+    try {
+      if (lic) localStorage.setItem(LICENSE_STORE_KEY, JSON.stringify(lic));
+      else localStorage.removeItem(LICENSE_STORE_KEY);
+    } catch {
+      /* ignore */
+    }
+  },
+};
+
+const licenseClient = createLicenseClient({
+  app: "viewright",
+  host: "viewright.cc",
+  appVersion: APP_VERSION,
+  storage: sdkStorage,
+  deviceId,
+});
+
+function localSdkLicense(): LifecycleSdkLicense | null {
+  try {
+    const raw = localStorage.getItem(LICENSE_STORE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<LifecycleSdkLicense>;
+    if (!parsed.key && !parsed.activationToken) return null;
+    return {
+      ...parsed,
+      status: parsed.status ?? "none",
+      deviceId: parsed.deviceId || deviceId(),
+    } as LifecycleSdkLicense;
+  } catch {
+    return null;
+  }
+}
+
+// Map the shared StoredLicense <-> ViewRight's surface (updatesUntil; ViewRight's
+// gate is updates-only, so tier/features are not stored).
+function toVr(lic: LifecycleSdkLicense | null): StoredUpdateLicense | null {
+  if (!lic) return null;
+  return {
+    status: lic.status,
+    deviceId: lic.deviceId,
+    activationToken: lic.activationToken,
+    licenseId: lic.licenseId,
+    key: lic.key,
+    message: lic.message,
+    signedToken: lic.signedToken,
+    activatedAt: lic.activatedAt,
+    confirmationDueAt: lic.confirmationDueAt,
+    entitlements: lic.entitlements,
+    entitlementStage: lic.entitlementStage,
+    lastRefreshedAt: lic.lastRefreshedAt,
+    licenseIssuedAt: lic.licenseIssuedAt,
+    licenseKind: lic.licenseKind,
+    updatesUntil: lic.validUntil ?? null,
+  };
+}
+
+function fromVr(lic: StoredUpdateLicense): LifecycleSdkLicense {
+  return {
+    status: lic.status,
+    deviceId: lic.deviceId,
+    activationToken: lic.activationToken,
+    licenseId: lic.licenseId,
+    key: lic.key,
+    message: lic.message,
+    signedToken: lic.signedToken,
+    activatedAt: lic.activatedAt,
+    confirmationDueAt: lic.confirmationDueAt,
+    entitlements: lic.entitlements,
+    entitlementStage: lic.entitlementStage,
+    lastRefreshedAt: lic.lastRefreshedAt,
+    licenseIssuedAt: lic.licenseIssuedAt,
+    licenseKind: lic.licenseKind,
+    validUntil: lic.updatesUntil ?? null,
+  } as LifecycleSdkLicense;
+}
+
+export function cachedUpdateLicense(): StoredUpdateLicense | null {
+  return inTauri() ? null : toVr(localSdkLicense());
+}
+
+export async function loadUpdateLicense(): Promise<StoredUpdateLicense | null> {
+  return toVr(await licenseClient.load());
+}
+
+function lifecycleStorageError(error: unknown): LicenseLifecycleSnapshot {
+  return {
+    kind: "storage_error",
+    isPro: false,
+    message: error instanceof Error ? error.message : String(error),
+  };
+}
+
+/** Native signature, expiry and anti-rollback verdict. Renderer fields never grant Pro access. */
+export async function loadUpdateLicenseLifecycle(): Promise<LicenseLifecycleSnapshot> {
+  if (!inTauri()) {
+    const local = localSdkLicense();
+    return local?.status === "active"
+      ? { kind: "active_legacy", isPro: true }
+      : { kind: "free", isPro: false };
+  }
+  try {
+    return await getLicenseLifecycleSnapshot<LicenseLifecycleSnapshot>();
+  } catch (error) {
+    return lifecycleStorageError(error);
+  }
+}
+
+/** Explicit one-time online confirmation for a provisional lifetime purchase or clock repair. */
+export async function verifyUpdateLicensePurchase(): Promise<LicenseLifecycleSnapshot> {
+  await deviceIdReadyOrTimeout();
+  await refreshAndReanchorLicense();
+  return getLicenseLifecycleSnapshot<LicenseLifecycleSnapshot>();
+}
+
+export async function saveUpdateLicense(license: StoredUpdateLicense | null) {
+  // Clearing routes through the shared client (frees the server-side seat + clears
+  // storage); a non-null save persists the mapped shape.
+  if (!license) {
+    await licenseClient.deactivate();
+    return;
+  }
+  await sdkStorage.set(fromVr(license));
+}
+
+function removeLocalUpdateLicense() {
+  try {
+    localStorage.removeItem(LICENSE_STORE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function licenseHeaders(license: StoredUpdateLicense | null): Record<string, string> | undefined {
+  // Only attach auth when license is confirmed active and we have an activation token.
+  // The raw purchase key (license.key) NEVER flows on update checks — it only goes out
+  // during the activation POST. If only a key exists (no token) we send no auth header.
+  if (!license || license.status !== "active" || !license.activationToken) return undefined;
+  return {
+    Authorization: `Bearer ${license.activationToken}`,
+    "X-ViewRight-App": "viewright",
+    "X-ViewRight-Device": license.deviceId,
+  };
+}
+
+/** Artifact authorization is deliberately separate from manifest authorization.
+ * Public patches carry no credential; paid updates carry only the signed Pro
+ * entitlement accepted by the private R2 Worker. */
+export function updateArtifactHeaders(
+  tier: UpdateTier,
+  license: StoredUpdateLicense | null,
+  lifecycle: LicenseLifecycleSnapshot,
+): Record<string, string> | undefined {
+  if (tier === "patch") return undefined;
+  if (!lifecycle.isPro || license?.status !== "active" || !license.signedToken) {
+    throw new Error("A current signed Pro entitlement is required to install this update.");
+  }
+  return { Authorization: `Bearer ${license.signedToken}` };
+}
+
+async function freshUpdateArtifactHeaders(tier: UpdateTier) {
+  if (tier === "patch") return undefined;
+  await deviceIdReadyOrTimeout();
+  let lifecycle = await getLicenseLifecycleSnapshot<LicenseLifecycleSnapshot>();
+  if (lifecycle.kind === "verification_required" || lifecycle.kind === "clock_repair_required") {
+    await refreshAndReanchorLicense();
+    lifecycle = await getLicenseLifecycleSnapshot<LicenseLifecycleSnapshot>();
+  }
+  return updateArtifactHeaders(tier, toVr(await licenseClient.load()), lifecycle);
+}
+
+// Handle to the shared orchestration client from the last foreground check. Check and install
+// remain separate explicit user actions; ViewRight owns only the UI/cache adapter around it.
+let pendingUpdateClient: AutoUpdateClient | null = null;
+let pendingUpdateTier: UpdateTier | null = null;
+let pendingExternalUpdateUrl: string | null = null;
+
+function publicInstallerUrl(): string {
+  return isMac()
+    ? `${PUBLIC_INSTALLER_BASE}/viewright/installers/mac/current/ViewRight_universal.dmg`
+    : `${PUBLIC_INSTALLER_BASE}/viewright/installers/windows/current/ViewRight_x64-setup.exe`;
+}
+
+export async function openPendingExternalUpdate(): Promise<void> {
+  if (pendingExternalUpdateUrl) await openExternal(pendingExternalUpdateUrl);
+}
+
+// ── Last-known-good update-check cache. A network hiccup shouldn't read as "failed" to a user
+//    who successfully checked five minutes ago — surface "you're on X, last checked <time>"
+//    instead, and only fall back to "failed" when there has never been a successful check. ──
+export const UPDATE_CHECK_CACHE_KEY = "vr.updateCheck.v1";
+// Re-checking within this window (e.g. clicking "Check for updates" twice) returns the cached
+// result without a network round-trip.
+const UPDATE_CHECK_DEBOUNCE_MS = 30_000;
+
+type CachedUpdateCheck = {
+  checkedAt: number;
+  state: Extract<UpdateState, "current" | "available" | "available-external">;
+  tier?: UpdateTier | null;
+  version: string;
+};
+
+function readUpdateCheckCache(): CachedUpdateCheck | null {
+  try {
+    const raw = localStorage.getItem(UPDATE_CHECK_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<CachedUpdateCheck>;
+    if (
+      typeof parsed.checkedAt !== "number" ||
+      typeof parsed.state !== "string" ||
+      typeof parsed.version !== "string"
+    ) {
+      return null;
+    }
+    return parsed as CachedUpdateCheck;
+  } catch {
+    return null;
+  }
+}
+
+function writeUpdateCheckCache(entry: CachedUpdateCheck) {
+  lastCheckedAtMs = entry.checkedAt;
+  try {
+    localStorage.setItem(UPDATE_CHECK_CACHE_KEY, JSON.stringify(entry));
+  } catch {
+    /* ignore — cache is best-effort */
+  }
+}
+
+// Exported so Settings UI can render "last checked <relative time>" alongside the cached
+// "current" state without re-deriving cache-read logic.
+export function relativeTimeFrom(ms: number): string {
+  const deltaSeconds = Math.max(0, Math.round((Date.now() - ms) / 1000));
+  if (deltaSeconds < 60) return "just now";
+  const minutes = Math.round(deltaSeconds / 60);
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+// Last-checked timestamp of the most recent successful (or cache-surfaced) update check, for the
+// Settings UI's "last checked <time>" message. Updated by checkForUpdate()'s cache reads/writes.
+let lastCheckedAtMs: number | null = null;
+
+export function lastUpdateCheckedAt(): number | null {
+  return lastCheckedAtMs;
+}
+
+// Surface a cached result as the current state — used both for the within-debounce-window
+// short-circuit and for the network-failure fallback. Restores pendingUpdate's version display
+// (not the downloadAndInstall handle itself — that only exists after a real updater `check()`).
+function applyCachedUpdateCheck(
+  cached: CachedUpdateCheck,
+  setLatestVersion: (version: string) => void,
+  setUpdateState: (state: UpdateState) => void,
+  setLatestTier?: (tier: UpdateTier | null) => void,
+) {
+  lastCheckedAtMs = cached.checkedAt;
+  setLatestVersion(cached.version);
+  setLatestTier?.(cached.tier ?? null);
+  setUpdateState(cached.state);
+}
+
+function releaseStatusUrl(): string {
+  const platform = isMac() ? "darwin" : "windows";
+  return `${RELEASE_STATUS_URL}?platform=${platform}`;
+}
+
+function fetchCurrentReleaseStatus() {
+  return fetchReleaseStatus(releaseStatusUrl(), inTauri() ? tauriFetch : fetch);
+}
+
+async function latestProUpdateVersion(): Promise<string | null> {
+  try {
+    const status = await fetchCurrentReleaseStatus();
+    return status.updateVersion && isNewerVersion(status.updateVersion, APP_VERSION)
+      ? status.updateVersion
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+export function createViewRightUpdateClient(
+  license: StoredUpdateLicense | null,
+  paidUpdateEligible: boolean,
+  check: CheckForUpdate,
+  onStatus?: (status: AutoUpdateStatus) => void,
+): AutoUpdateClient {
+  return createAutoUpdateClient({
+    check,
+    getHeaders: () => licenseHeaders(license),
+    getInstallHeaders: (tier) => freshUpdateArtifactHeaders(tier),
+    getProUpdateVersion: latestProUpdateVersion,
+    isEligible: (tier) =>
+      tier === "patch" ||
+      (tier === "update" && paidUpdateEligible && Boolean(license?.signedToken)),
+    shouldAutoInstall: () => false,
+    onStatus,
+  });
+}
+
+// Step 1: check only. The shared SDK owns tier parsing, eligibility and pending-update state;
+// ViewRight maps its statuses into the existing explicit-install UI and last-known-good cache.
+export async function checkForUpdate(
+  license: StoredUpdateLicense | null,
+  setLatestVersion: (version: string) => void,
+  setUpdateState: (state: UpdateState) => void,
+  setLatestTier?: (tier: UpdateTier | null) => void,
+): Promise<UpdateState> {
+  pendingUpdateClient = null;
+  pendingUpdateTier = null;
+  pendingExternalUpdateUrl = null;
+
+  const cached = readUpdateCheckCache();
+  // Only an up-to-date result is safe to replay. An available result also needs the native
+  // updater handle, which is process-local and cannot be reconstructed from localStorage.
+  if (cached?.state === "current" && Date.now() - cached.checkedAt < UPDATE_CHECK_DEBOUNCE_MS) {
+    applyCachedUpdateCheck(cached, setLatestVersion, setUpdateState, setLatestTier);
+    return cached.state;
+  }
+
+  setUpdateState("checking");
+  const { check } = await import("@tauri-apps/plugin-updater");
+  const lifecycle = await loadUpdateLicenseLifecycle();
+  const client = createViewRightUpdateClient(license, lifecycle.isPro, check, (status) => {
+    if (status.kind === "downloading") setUpdateState("installing");
+  });
+  pendingUpdateClient = client;
+  const status = await client.checkOnce();
+
+  if (status.kind === "available") {
+    setLatestVersion(status.version);
+    setLatestTier?.(status.tier);
+    if (status.eligible) {
+      pendingUpdateTier = status.tier;
+      setUpdateState("available");
+      writeUpdateCheckCache({
+        checkedAt: Date.now(),
+        state: "available",
+        tier: status.tier,
+        version: status.version,
+      });
+      return "available";
+    } else {
+      pendingUpdateClient = null;
+      setUpdateState("license-required");
+      return "license-required";
+    }
+  }
+
+  pendingUpdateClient = null;
+  pendingUpdateTier = null;
+  if (status.kind === "up_to_date") {
+    setLatestTier?.(null);
+    setUpdateState("current");
+    writeUpdateCheckCache({
+      checkedAt: Date.now(),
+      state: "current",
+      tier: null,
+      version: APP_VERSION,
+    });
+    return "current";
+  }
+  if (status.kind === "error" && cached?.state === "current") {
+    applyCachedUpdateCheck(cached, setLatestVersion, setUpdateState, setLatestTier);
+    return "current";
+  }
+  if (status.kind === "error" && cached?.state === "available") {
+    setUpdateState("failed");
+    return "failed";
+  }
+  if (status.kind === "error") {
+    return checkPublicReleaseFallback(setLatestVersion, setUpdateState, setLatestTier);
+  }
+  setUpdateState("failed");
+  return "failed";
+}
+
+async function checkPublicReleaseFallback(
+  setLatestVersion: (version: string) => void,
+  setUpdateState: (state: UpdateState) => void,
+  setLatestTier?: (tier: UpdateTier | null) => void,
+): Promise<UpdateState> {
+  try {
+    const status = await fetchCurrentReleaseStatus();
+    const version = status.patchVersion?.trim() ?? "";
+    if (!version || !isNewerVersion(version, APP_VERSION)) {
+      if (status.updateVersion && isNewerVersion(status.updateVersion, APP_VERSION)) {
+        setLatestVersion(status.updateVersion);
+        setLatestTier?.("update");
+        setUpdateState("license-required");
+        return "license-required";
+      } else {
+        setUpdateState("current");
+        return "current";
+      }
+    }
+
+    pendingExternalUpdateUrl = publicInstallerUrl();
+    setLatestVersion(version);
+    setLatestTier?.(null);
+    setUpdateState("available-external");
+    writeUpdateCheckCache({
+      checkedAt: Date.now(),
+      state: "available-external",
+      tier: null,
+      version,
+    });
+    return "available-external";
+  } catch {
+    setUpdateState("failed");
+    return "failed";
+  }
+}
+
+// Step 2: explicit install of the update found by checkForUpdate(), then relaunch.
+export async function installPendingUpdate(
+  _license: StoredUpdateLicense | null,
+  setUpdateState: (state: UpdateState) => void,
+  setInstallError?: (message: string) => void,
+): Promise<UpdateState> {
+  if (!pendingUpdateClient) return "idle";
+  const client = pendingUpdateClient;
+  const tier = pendingUpdateTier;
+  pendingUpdateClient = null;
+  pendingUpdateTier = null;
+  setUpdateState("installing");
+  const status = await client.installAvailable();
+  if (status.kind === "ready") {
+    const { relaunch } = await import("@tauri-apps/plugin-process");
+    await relaunch();
+    return "installing";
+  }
+  if (status.kind === "available" && !status.eligible) {
+    setUpdateState("license-required");
+    return "license-required";
+  }
+  // Any other non-ready outcome is an install failure. Surface it two ways: setInstallError feeds the
+  // UI (ephemeral), and logError lands it as renderer_error in the diagnostics export (durable,
+  // survives restart) — the latter is what makes a failure diagnosable after the fact, e.g. the macOS
+  // "update detected but install fails" case. On a patch, also stage the public installer URL so the
+  // user can recover via a manual download.
+  const message =
+    status.kind === "error"
+      ? status.message
+      : "The updater could not finish installing this release.";
+  if (status.kind === "error" && tier === "patch") pendingExternalUpdateUrl = publicInstallerUrl();
+  setInstallError?.(message);
+  logError("update:install-failed", message);
+  setUpdateState("install-failed");
+  return "install-failed";
+}
+
+export async function checkForBackgroundUpdate(): Promise<{
+  version: string;
+  tier: UpdateTier | null;
+} | null> {
+  const { check } = await import("@tauri-apps/plugin-updater");
+  // Startup checks must remain public: reading Keychain-backed license/device state here makes
+  // ordinary dev launches prompt for credentials. Paid updates stay behind Settings' explicit check.
+  const status = await createViewRightUpdateClient(null, false, check).checkOnce();
+  return status.kind === "available" && status.eligible
+    ? { version: status.version, tier: status.tier }
+    : null;
+}
+
+export async function activateUpdateLicense(key: string): Promise<StoredUpdateLicense> {
+  // Await the keyring reconcile FIRST — activating against a throwaway sync UUID (before the
+  // keyring round-trip lands) burns a device seat on a value that's about to be replaced.
+  // Bounded by deviceIdReadyOrTimeout(); a slow/unavailable secure store fails closed.
+  await deviceIdReadyOrTimeout();
+  // Exchange the key via the shared client (POSTs viewright.cc/v1/licenses/activate
+  // and persists the result); map back to ViewRight's surface. Same canonical
+  // semantics as before: status==="active" is the only success; 404 -> "not live".
+  const activated = toVr(await licenseClient.activate(key)) as StoredUpdateLicense;
+  if (inTauri() && activated.status === "active") {
+    const lifecycle = await getLicenseLifecycleSnapshot<LicenseLifecycleSnapshot>();
+    if (!lifecycle.isPro) {
+      const failed: StoredUpdateLicense = {
+        ...activated,
+        status: "invalid",
+        message:
+          lifecycle.message ?? "Activation did not include a valid signed paid-update entitlement.",
+      };
+      await sdkStorage.set(fromVr(failed));
+      return failed;
+    }
+  }
+  return activated;
+}
+
+function isNewerVersion(candidate: string, current: string): boolean {
+  const normalize = (v: string) =>
+    v
+      .replace(/^v/i, "")
+      .split(/[.-]/)
+      .map((part) => Number(part))
+      .map((part) => (Number.isFinite(part) ? part : 0));
+  const a = normalize(candidate);
+  const b = normalize(current);
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const diff = (a[i] ?? 0) - (b[i] ?? 0);
+    if (diff > 0) return true;
+    if (diff < 0) return false;
+  }
+  return false;
+}

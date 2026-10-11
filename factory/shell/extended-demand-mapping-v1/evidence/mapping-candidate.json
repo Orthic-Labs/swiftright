@@ -1,0 +1,2781 @@
+{
+  "ambiguousCandidateCount": 6,
+  "denominator": {
+    "extendedDemandRows": 107,
+    "registryMappedRows": 0,
+    "sourceInventoryOnly": 46
+  },
+  "dispositionCounts": {
+    "ambiguous-catalogue-candidates": 3,
+    "exact-catalogue-reference-only": 2,
+    "non-swiftui-source-inventory": 46,
+    "service-or-platform": 27,
+    "unmapped": 29
+  },
+  "f1CatalogueIdentityCount": 5,
+  "inputs": {
+    "catalogue": {
+      "path": "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.json",
+      "sha256": "fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2"
+    },
+    "catalogueManifest": {
+      "path": "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.manifest.json",
+      "sha256": "322543df1789a202301ac159089ec33b20487fe268db90d90d3a2948888fbbb4"
+    },
+    "demand": {
+      "path": "factory/shell/demand.json",
+      "sha256": "45c48393b06b65b1b156f01272eb5c95517876df0aae790203bdbaa2ebbaf835"
+    },
+    "inventory": {
+      "path": "factory/shell/inventory.json",
+      "sha256": "62e65c87a5fcd38610fb6a8a8c290e0eb6c889f308e444b244c0863c9e7b9eba"
+    },
+    "registry": {
+      "path": "factory/registry/evidence/block-registry.json",
+      "sha256": "1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983"
+    },
+    "registryManifest": {
+      "path": "factory/registry/manifest.json",
+      "sha256": "7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1"
+    },
+    "sourceSnapshotManifest": {
+      "path": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshot-manifest.json",
+      "sha256": "d28b8b6fe006b0980e31b65ea3b8a0b4e4655dadbe85ad1c15a92c693ce60fcb"
+    }
+  },
+  "inventoryEvidence": {
+    "error-boundary": {
+      "id": "error-boundary",
+      "line": 14,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+      "sha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+      "text": "export class ErrorBoundary extends Component<Props, State> {"
+    },
+    "image-viewer": {
+      "id": "image-viewer",
+      "line": 97,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+      "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+      "text": "export function ImageViewer(props: ImageViewerProps) {"
+    },
+    "legal-gate": {
+      "id": "legal-gate",
+      "line": 232,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+      "sha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+      "text": "export function LegalGate({"
+    },
+    "media-adapters": {
+      "id": "media-adapters",
+      "line": 47,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+      "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+      "text": "export interface MediaAdapters {"
+    },
+    "media-player": {
+      "id": "media-player",
+      "line": 209,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+      "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+      "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+    },
+    "nav": {
+      "id": "nav",
+      "line": 26,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+      "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "text": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {"
+    },
+    "nav-key": {
+      "id": "nav-key",
+      "line": 54,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+      "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "text": "export function navNeighborIndex("
+    },
+    "onboard-flow": {
+      "id": "onboard-flow",
+      "line": 74,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+      "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+    },
+    "onboard-ports": {
+      "id": "onboard-ports",
+      "line": 28,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+      "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+      "text": "export interface PermissionsBackend {"
+    },
+    "onboard-retry": {
+      "id": "onboard-retry",
+      "line": 151,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+      "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "text": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;"
+    },
+    "pdf-source": {
+      "id": "pdf-source",
+      "line": 11,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+      "sha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+      "text": "export type PdfSource ="
+    },
+    "pdf-viewer": {
+      "id": "pdf-viewer",
+      "line": 159,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+      "sha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+      "text": "export function PdfViewer({"
+    },
+    "recovery": {
+      "id": "recovery",
+      "line": 57,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+      "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+      "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+    },
+    "settings-backend": {
+      "id": "settings-backend",
+      "line": 12,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+      "sha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+      "text": "export interface SettingsBackend {"
+    },
+    "settings-panel": {
+      "id": "settings-panel",
+      "line": 97,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "2848e9ffd6e00fe93a7da6eb32a67dbfa4b25f58dd98181c235aa27f968d3e44",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+      "sha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+      "text": "export function SettingsPanel({ backend, sections, title = \"Settings\", navHeading, navFooter, renderNavItem, hideNav = false, activeId, onActiveChange, defaultActiveId, search = true, loading, className }: SettingsPanelProps) {"
+    },
+    "shell-bridge": {
+      "id": "shell-bridge",
+      "line": 16,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+      "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+      "text": "export interface AppShellBridge {"
+    },
+    "shell-provider": {
+      "id": "shell-provider",
+      "line": 101,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+      "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+      "text": "export function ShellProvider({"
+    },
+    "shortcuts": {
+      "id": "shortcuts",
+      "line": 146,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+      "sha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+      "text": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {"
+    },
+    "slice-editor": {
+      "id": "slice-editor",
+      "line": 14,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+      "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "text": "struct EditorScreen: View {"
+    },
+    "slice-model": {
+      "id": "slice-model",
+      "line": 117,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+      "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "text": "private func persist() {"
+    },
+    "theme-store": {
+      "id": "theme-store",
+      "line": 82,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+      "sha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+      "text": "export function createThemeStore(options: ThemeStoreOptions) {"
+    },
+    "updates": {
+      "id": "updates",
+      "line": 187,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+      "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "text": ": \"Check for updates\"}"
+    },
+    "vr-authority-bridge": {
+      "id": "vr-authority-bridge",
+      "line": 245,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+      "sha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+      "text": "export async function grantSiteRoot("
+    },
+    "vr-authority-dialogs": {
+      "id": "vr-authority-dialogs",
+      "line": 117,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "sha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "text": "pub async fn open_file_dialog("
+    },
+    "vr-deeplink-context": {
+      "id": "vr-deeplink-context",
+      "line": 246,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+      "sha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+      "text": "/// Route new-window requests — `target=\"_blank\"`, middle-click, and the native \"open in new window\""
+    },
+    "vr-deeplink-lifecycle": {
+      "id": "vr-deeplink-lifecycle",
+      "line": 69,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "text": "// Open an explicit URL preview as a VR web tab. Sources: the Open URL dialog/clipboard, a"
+    },
+    "vr-deeplink-plugin": {
+      "id": "vr-deeplink-plugin",
+      "line": 19,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+      "sha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+      "text": "pub fn plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {"
+    },
+    "vr-drop-route": {
+      "id": "vr-drop-route",
+      "line": 121,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+      "sha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+      "text": "/** Route one brokered native drop, preserving source order for insertion & fallback opens. */"
+    },
+    "vr-entry-main": {
+      "id": "vr-entry-main",
+      "line": 33,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/main.tsx",
+      "sha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+      "text": "if (isPrintPreviewWindow()) {"
+    },
+    "vr-entry-print": {
+      "id": "vr-entry-print",
+      "line": 7,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+      "sha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+      "text": "export function isPrintPreviewWindow(): boolean {"
+    },
+    "vr-entry-root": {
+      "id": "vr-entry-root",
+      "line": 117,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+      "sha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+      "text": "export function AppRoot() {"
+    },
+    "vr-entry-show": {
+      "id": "vr-entry-show",
+      "line": 98,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+      "sha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+      "text": "await win.show();"
+    },
+    "vr-initial-paths": {
+      "id": "vr-initial-paths",
+      "line": 70,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "sha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "text": "pub fn initial_open_paths("
+    },
+    "vr-library-session": {
+      "id": "vr-library-session",
+      "line": 217,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+      "sha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+      "text": "pub async fn save_session(tabs: Vec<(String, bool)>, app: AppHandle) -> Result<(), ViewRightError> {"
+    },
+    "vr-mac-opened": {
+      "id": "vr-mac-opened",
+      "line": 84,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "sha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "text": "pub fn on_opened_urls(app: &AppHandle, urls: Vec<tauri::Url>) {"
+    },
+    "vr-mac-reopen": {
+      "id": "vr-mac-reopen",
+      "line": 680,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "9473b0e9de21e455b2a4608249817ce013c7feb871b8a22bdde049ad9c6ed842",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "text": "tauri::RunEvent::Reopen {"
+    },
+    "vr-native-drop": {
+      "id": "vr-native-drop",
+      "line": 546,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "9473b0e9de21e455b2a4608249817ce013c7feb871b8a22bdde049ad9c6ed842",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "text": "WindowEvent::DragDrop(drag) => handle_drag_drop(window.app_handle(), window, drag),"
+    },
+    "vr-native-menu-build": {
+      "id": "vr-native-menu-build",
+      "line": 373,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "9473b0e9de21e455b2a4608249817ce013c7feb871b8a22bdde049ad9c6ed842",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "text": "// macOS: build a standard menu bar so Cmd+H (Hide), Cmd+Q (Quit), Cmd+M (Minimize),"
+    },
+    "vr-native-menu-dispatch": {
+      "id": "vr-native-menu-dispatch",
+      "line": 514,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "9473b0e9de21e455b2a4608249817ce013c7feb871b8a22bdde049ad9c6ed842",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "sha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "text": ".on_menu_event(|app, event| {"
+    },
+    "vr-route-switch": {
+      "id": "vr-route-switch",
+      "line": 242,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+      "sha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+      "text": "switch (doc.format) {"
+    },
+    "vr-runtime-launch": {
+      "id": "vr-runtime-launch",
+      "line": 157,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "text": "// Register BEFORE `initial_open_paths`: that native command atomically marks the renderer"
+    },
+    "vr-runtime-persist": {
+      "id": "vr-runtime-persist",
+      "line": 106,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "text": "// Persist the open-tab session (all tabs incl. untitled, + active) so it restores on next launch."
+    },
+    "vr-runtime-restore": {
+      "id": "vr-runtime-restore",
+      "line": 299,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "sha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "text": "if (sessionLoad) {"
+    },
+    "vr-second-instance": {
+      "id": "vr-second-instance",
+      "line": 44,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "sha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "text": "pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, _cwd: String) {"
+    },
+    "vr-settings-menu": {
+      "id": "vr-settings-menu",
+      "line": 744,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+      "sha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+      "text": "window.addEventListener(\"viewright:open-settings\", handleOpenSettings);"
+    },
+    "vr-settings-panel": {
+      "id": "vr-settings-panel",
+      "line": 35,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+      "sha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+      "text": "export function SettingsPanel({ onClose }: { onClose: () => void }) {"
+    },
+    "vr-settings-provider": {
+      "id": "vr-settings-provider",
+      "line": 352,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+      "sha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+      "text": "export function SettingsProvider({ children }: { children: React.ReactNode }) {"
+    },
+    "vr-slice-entry": {
+      "id": "vr-slice-entry",
+      "line": 16,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "2db58ced1c6ecac3efcc2b4d2f71edbf87f94520380c6185124d4347793334c9",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Entry/SliceAppEntry.swift",
+      "sha256": "2db58ced1c6ecac3efcc2b4d2f71edbf87f94520380c6185124d4347793334c9",
+      "text": "Window(\"SliceApp\", id: \"main\") {"
+    },
+    "vr-slice-model": {
+      "id": "vr-slice-model",
+      "line": 117,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+      "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "text": "private func persist() {"
+    },
+    "vr-slice-screen": {
+      "id": "vr-slice-screen",
+      "line": 23,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+      "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "text": "Button(\"Insert above\", action: { model.insertAbove(focusedID: focusBinding.wrappedValue) })"
+    },
+    "vr-update-background": {
+      "id": "vr-update-background",
+      "line": 47,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "text": "if (!autoCheckUpdates || autoUpdateCheckRan.current) return;"
+    },
+    "vr-update-check": {
+      "id": "vr-update-check",
+      "line": 509,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "sha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "text": "export async function checkForUpdate("
+    },
+    "vr-update-install": {
+      "id": "vr-update-install",
+      "line": 622,
+      "observed": {
+        "anchorMatches": true,
+        "observedSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+        "status": "current"
+      },
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "sha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "text": "export async function installPendingUpdate("
+    },
+    "vr-update-section": {
+      "id": "vr-update-section",
+      "line": 174,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+      "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "text": "<button"
+    },
+    "vr-watch-conflict": {
+      "id": "vr-watch-conflict",
+      "line": 403,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+      "sha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+      "text": "const reload = useCallback("
+    },
+    "vr-watch-lifecycle": {
+      "id": "vr-watch-lifecycle",
+      "line": 37,
+      "observed": {
+        "anchorMatches": false,
+        "observedSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+        "status": "stale"
+      },
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "sha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "text": "// Watch EVERY open file-backed tab plus each HTML session's visited sub-pages, in the one watcher."
+    }
+  },
+  "kind": "f12-extended-demand-identity-review",
+  "rows": [
+    {
+      "ambiguousCatalogueCandidates": [
+        {
+          "path": "SwiftUI.Binding.init(get:set:)",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI7BindingV3get3setACyxGxyc_yx_AA11TransactionVtctcfc"
+        },
+        {
+          "path": "SwiftUI.Binding.init(get:set:)",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI7BindingV3get3setACyxGxyc_yxctcfc"
+        }
+      ],
+      "catalogueIdentityReferences": [],
+      "demand": "Binding(get:set:)",
+      "disposition": "ambiguous-catalogue-candidates",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "reason": "Related F1 declarations exist, but demand wording does not select a unique declaration or prove behavior; no registry link is emitted.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-001"
+    },
+    {
+      "ambiguousCatalogueCandidates": [
+        {
+          "path": "SwiftUI.Button",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI6ButtonV"
+        },
+        {
+          "path": "SwiftUI.Button.init(action:label:)",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI6ButtonV6action5labelACyxGyyc_xyXEtcfc"
+        }
+      ],
+      "catalogueIdentityReferences": [],
+      "demand": "Button actions",
+      "disposition": "ambiguous-catalogue-candidates",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "reason": "Related F1 declarations exist, but demand wording does not select a unique declaration or prove behavior; no registry link is emitted.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-002"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "HTML media element and codec recovery",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "media-adapters",
+        "media-player"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "media-playback"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-003"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [
+        {
+          "path": "SwiftUI.List",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI4ListV"
+        },
+        {
+          "path": "SwiftUI.ForEach",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI7ForEachV"
+        },
+        {
+          "path": "SwiftUI.DynamicViewContent.onMove(perform:)",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI18DynamicViewContentPAAE6onMove7performQry10Foundation8IndexSetV_SitcSg_tF"
+        }
+      ],
+      "demand": "List/ForEach/onMove",
+      "disposition": "exact-catalogue-reference-only",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "reason": "Demand names these exact F1 SDK declarations; current F2 manifest has no matching selector, so registryBlockId remains null.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-004"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "PDF.js worker/render pipeline",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-005"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [
+        {
+          "path": "SwiftUI.TextField",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI9TextFieldV"
+        },
+        {
+          "path": "SwiftUI.FocusState",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI10FocusStateV"
+        }
+      ],
+      "demand": "TextField/FocusState",
+      "disposition": "exact-catalogue-reference-only",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "reason": "Demand names these exact F1 SDK declarations; current F2 manifest has no matching selector, so registryBlockId remains null.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-006"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "TextField/control variety",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "settings-backend",
+        "settings-panel"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "settings"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-007"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "animation and dismiss interactions",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "dialogs"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-008"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "async loading and external-change reconciliation",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "settings-backend",
+        "settings-panel"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "settings"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-009"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "canvas/image transform",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "image-view-edit"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-010"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "command palette modal and focus trap",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "navigation"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-011"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "crash-safe atomic write",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "onboard-flow",
+        "settings-backend",
+        "slice-editor",
+        "slice-model",
+        "theme-store"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "persistence"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-012"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "crop/text editing controls",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "image-view-edit"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-013"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "custom pointer gestures",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "image-view-edit"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-014"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "deep-link parsing/routing",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "tray-menu"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-015"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "diagnostics and logs",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "recovery"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-016"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "document scroll/acknowledgement gating",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "legal-acceptance"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-017"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "document/file adapter",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-018"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "document/session restoration",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "recovery"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-019"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "download progress/cancel/retry",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow",
+        "onboard-ports"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "onboarding"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-020"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "download/install progress",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "recovery",
+        "updates"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "updates"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-021"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "duplicate/window targeting policy",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "tray-menu"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-022"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "durable state + service sequencing",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow",
+        "onboard-ports"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "onboarding"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-023"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "error classification",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "recovery"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-024"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "external-link policy",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-025"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "find input and IME",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-026"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "focus/IME behavior",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider",
+        "shortcuts"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "shortcuts"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-027"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "fullscreen host API",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "media-adapters",
+        "media-player"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "media-playback"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-028"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "key event routing",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider",
+        "shortcuts"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "shortcuts"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-029"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "keyboard focus and navigation",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "settings-backend",
+        "settings-panel"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "settings"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-030"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "keyboard focus/roving selection",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "navigation"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-031"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "keyboard transport shortcuts",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "media-adapters",
+        "media-player"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "media-playback"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-032"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "large resource lifecycle",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "image-view-edit"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-033"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "legal modal/eligibility controls",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow",
+        "onboard-ports"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "onboarding"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-034"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "media conversion service",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "media-adapters",
+        "media-player"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "media-playback"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-035"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "modal stacking/focus restoration",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "dialogs"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-036"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "native menu/tray lifecycle",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "tray-menu"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-037"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "native open/save/print dialogs",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "image-view-edit"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-038"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "navigation transitions",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "navigation"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-039"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "ordered multi-step flow",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow",
+        "onboard-ports"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "onboarding"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-040"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "permission prompts",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow",
+        "onboard-ports"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "onboarding"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-041"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "persistence",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-042"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "platform installer and rollback",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "recovery",
+        "updates"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "updates"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-043"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "quit/close action",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "legal-acceptance"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-044"
+    },
+    {
+      "ambiguousCatalogueCandidates": [
+        {
+          "path": "SwiftUI.RadioGroupPickerStyle",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI21RadioGroupPickerStyleV"
+        },
+        {
+          "path": "SwiftUI.CheckboxToggleStyle",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI19CheckboxToggleStyleV"
+        }
+      ],
+      "catalogueIdentityReferences": [],
+      "demand": "radio/checkbox controls",
+      "disposition": "ambiguous-catalogue-candidates",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "legal-acceptance"
+      ],
+      "reason": "Related F1 declarations exist, but demand wording does not select a unique declaration or prove behavior; no registry link is emitted.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-045"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "rebinding capture/conflict UX",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider",
+        "shortcuts"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "shortcuts"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-046"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "receipt persistence/hash",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "legal-acceptance"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-047"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "restart/recovery strategy",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "recovery",
+        "updates"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "updates"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-048"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "schema migration",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "onboard-flow",
+        "settings-backend",
+        "slice-editor",
+        "slice-model",
+        "theme-store"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "persistence"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-049"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "sequence timeout",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider",
+        "shortcuts"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "shortcuts"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-050"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "settings storage/revision service",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "settings-backend",
+        "settings-panel"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "settings"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-051"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "sidebar panels",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-052"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "sidebar selection state",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-bridge",
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "navigation"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-053"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "startup/window recovery",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "recovery"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-054"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "storage adapters and cross-process consistency",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "onboard-flow",
+        "settings-backend",
+        "slice-editor",
+        "slice-model",
+        "theme-store"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "persistence"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-055"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "text entry/IME",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "shell-provider"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "dialogs"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-056"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "time/progress animation",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "media-adapters",
+        "media-player"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "media-playback"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-057"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "update service/auth",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "recovery",
+        "updates"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "updates"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-058"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "validation/errors",
+      "disposition": "unmapped",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "settings-backend",
+        "settings-panel"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "settings"
+      ],
+      "reason": "No exact catalogue identity or curated registry selector is established by this source record.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-059"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "version policy",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "legal-acceptance"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-060"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "view-state persistence",
+      "disposition": "service-or-platform",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "pdf-source",
+        "pdf-viewer"
+      ],
+      "inventoryStatus": "unmapped",
+      "journeyIds": [
+        "pdf-reading"
+      ],
+      "reason": "Demand label identifies service, platform, persistence, or host work; no exact curated F2 selector represents it.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-061"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "Tauri hidden-window reveal timing",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-entry-main",
+        "vr-entry-print",
+        "vr-entry-root",
+        "vr-entry-show"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-entry-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-062"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "legal-gate window state transitions",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-entry-main",
+        "vr-entry-print",
+        "vr-entry-root",
+        "vr-entry-show"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-entry-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-063"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "print-preview window isolation",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-entry-main",
+        "vr-entry-print",
+        "vr-entry-root",
+        "vr-entry-show"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-entry-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-064"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "native window readiness",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-entry-main",
+        "vr-entry-print",
+        "vr-entry-root",
+        "vr-entry-show"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-entry-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-065"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "format discriminator routing",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-route-switch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-format-routes"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-066"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "viewer/editor adapter coverage",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-route-switch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-format-routes"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-067"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "document save/find/view/error boundaries",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-route-switch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-format-routes"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-068"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "Tauri file and document service integration",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-route-switch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-format-routes"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-069"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "open-file event ordering",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-initial-paths",
+        "vr-mac-opened",
+        "vr-runtime-launch",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-launch-open"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-070"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "argv/Finder/second-instance path broker",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-initial-paths",
+        "vr-mac-opened",
+        "vr-runtime-launch",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-launch-open"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-071"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "initial_open_paths handoff",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-initial-paths",
+        "vr-mac-opened",
+        "vr-runtime-launch",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-launch-open"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-072"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "active tab selection",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-initial-paths",
+        "vr-mac-opened",
+        "vr-runtime-launch",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-launch-open"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-073"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "SQLite tab-session restoration",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-library-session",
+        "vr-runtime-persist",
+        "vr-runtime-restore"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-session-restore"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-074"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "untitled localStorage restoration",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-library-session",
+        "vr-runtime-persist",
+        "vr-runtime-restore"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-session-restore"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-075"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "missing-file recovery and dirty snapshot recovery",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-library-session",
+        "vr-runtime-persist",
+        "vr-runtime-restore"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-session-restore"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-076"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "cross-process session writes",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-library-session",
+        "vr-runtime-persist",
+        "vr-runtime-restore"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-session-restore"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-077"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "platform file-association controls",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-settings-menu",
+        "vr-settings-panel",
+        "vr-settings-provider"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-settings-shell"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-078"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "focus-trap/section navigation",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-settings-menu",
+        "vr-settings-panel",
+        "vr-settings-provider"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-settings-shell"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-079"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "localStorage-to-SQLite hydration",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-settings-menu",
+        "vr-settings-panel",
+        "vr-settings-provider"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-settings-shell"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-080"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "debounced native settings mirror",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-settings-menu",
+        "vr-settings-panel",
+        "vr-settings-provider"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-settings-shell"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-081"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "macOS menu construction",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-menu"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-082"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "menu event to keyboard/window bridge",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-menu"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-083"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "dirty-save quit gate",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-menu"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-084"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "single-instance focus/unminimize",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-mac-opened",
+        "vr-mac-reopen",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-single-instance-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-085"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "macOS Opened/Reopen routing",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-mac-opened",
+        "vr-mac-reopen",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-single-instance-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-086"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "prepare-setup handoff",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-mac-opened",
+        "vr-mac-reopen",
+        "vr-second-instance"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-single-instance-window"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-087"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "Tauri drag-drop path broker",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-drop-route",
+        "vr-native-drop"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-drop"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-088"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "scale-adjusted drop coordinates",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-drop-route",
+        "vr-native-drop"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-drop"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-089"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "React claim timeout",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-drop-route",
+        "vr-native-drop"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-drop"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-090"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "source-order fallback opens",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-drop-route",
+        "vr-native-drop"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-native-drop"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-091"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "target=_blank context routing",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-web-deeplink"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-092"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "explicit browser escape",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-web-deeplink"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-093"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "URL event foreground/background tab routing",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-web-deeplink"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-094"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "URL recent-history update",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-web-deeplink"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-095"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "open/save dialog path authority",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "vr-authority-bridge",
+        "vr-authority-dialogs"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-file-authority"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-096"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "recent token lifecycle",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "vr-authority-bridge",
+        "vr-authority-dialogs"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-file-authority"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-097"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "relative HTML/MDX grants",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "vr-authority-bridge",
+        "vr-authority-dialogs"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-file-authority"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-098"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "linked-document stream tokens",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "current",
+      "inventoryEvidenceIds": [
+        "vr-authority-bridge",
+        "vr-authority-dialogs"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-file-authority"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-099"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "multi-tab file watcher",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-watch-conflict",
+        "vr-watch-lifecycle"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-watch-conflict"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-100"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "HTML subpage watch set",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-watch-conflict",
+        "vr-watch-lifecycle"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-watch-conflict"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-101"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "dirty external-change conflict",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-watch-conflict",
+        "vr-watch-lifecycle"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-watch-conflict"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-102"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "clean-document auto-reload",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-watch-conflict",
+        "vr-watch-lifecycle"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-watch-conflict"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-103"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "signed updater state mapping",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-update-background",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-section"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-updates-license"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-104"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "license eligibility",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-update-background",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-section"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-updates-license"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-105"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "download/install/relaunch",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-update-background",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-section"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-updates-license"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-106"
+    },
+    {
+      "ambiguousCatalogueCandidates": [],
+      "catalogueIdentityReferences": [],
+      "demand": "failed-install retry/public-installer fallback",
+      "disposition": "non-swiftui-source-inventory",
+      "inventoryEvidenceFreshness": "stale",
+      "inventoryEvidenceIds": [
+        "vr-update-background",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-section"
+      ],
+      "inventoryStatus": "source_inventory_only",
+      "journeyIds": [
+        "vr-updates-license"
+      ],
+      "reason": "F12 explicitly marks this row source_inventory_only; preserve source references without assigning a SwiftUI registry block.",
+      "registryBlockId": null,
+      "rowKey": "f12-extended-107"
+    }
+  ],
+  "scope": "Exact SDK identity references are evidence links only; registry IDs, semanticDependencies, capabilities, progress, and native coverage are unchanged.",
+  "status": "candidate-source-identity-review",
+  "version": "1"
+}

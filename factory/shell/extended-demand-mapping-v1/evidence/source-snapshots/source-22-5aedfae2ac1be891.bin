@@ -1,0 +1,289 @@
+//! Windows/WebView2 only: graft a "View source" item onto the NATIVE context menu of the interactive
+//! HTML preview iframe (`about:srcdoc`). This puts the engine's own "Inspect element" (which correctly
+//! targets the opaque-origin iframe) and ViewRight's editable source-jump in ONE menu — no Shift
+//! modifier. Selecting it emits `viewright:context-view-source`, and the frontend reveals the element
+//! the in-iframe bridge captured on right-click. Scoped to `about:srcdoc` so it never appears on
+//! right-clicks in ViewRight's own React UI.
+
+#[cfg(target_os = "windows")]
+use webview2_com::Microsoft::Web::WebView2::Win32::{
+    ICoreWebView2ContextMenuItem, ICoreWebView2ContextMenuItemCollection,
+    ICoreWebView2Environment9, ICoreWebView2_11, ICoreWebView2_2,
+    COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND,
+    COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SUBMENU,
+};
+#[cfg(target_os = "windows")]
+use webview2_com::{ContextMenuRequestedEventHandler, CustomItemSelectedEventHandler};
+#[cfg(target_os = "windows")]
+use windows::core::{IUnknown, Interface, HSTRING, PWSTR};
+#[cfg(target_os = "windows")]
+use windows::Win32::System::Com::IStream;
+
+#[cfg(target_os = "windows")]
+pub fn install_view_source_context_item(window: &tauri::WebviewWindow, app: tauri::AppHandle) {
+    let _ = window.with_webview(move |webview| unsafe {
+        let core = match webview.controller().CoreWebView2() {
+            Ok(c) => c,
+            Err(_) => return,
+        };
+        let wv11 = match core.cast::<ICoreWebView2_11>() {
+            Ok(c) => c,
+            Err(_) => return, // ContextMenuRequested unsupported on this runtime — skip silently
+        };
+
+        let handler = ContextMenuRequestedEventHandler::create(Box::new(move |sender, args| {
+            let (Some(core2), Some(args)) = (sender, args) else {
+                return Ok(());
+            };
+            // Act on PREVIEW frames only — never VR's app shell. `about:srcdoc` = the disk interactive
+            // preview (editable → gets "View source"); http(s) = the LivePreviewPane URL preview
+            // (a served page → link menu tidied but NOT given "View source", since it isn't VR-editable).
+            let target = args.ContextMenuTarget()?;
+            let mut frame_uri = PWSTR::null();
+            target.FrameUri(&mut frame_uri)?;
+            let frame = if frame_uri.is_null() {
+                String::new()
+            } else {
+                frame_uri.to_string().unwrap_or_default()
+            };
+            let is_srcdoc = frame == "about:srcdoc";
+            let is_web_preview = frame.starts_with("http://") || frame.starts_with("https://");
+            if !is_srcdoc && !is_web_preview {
+                return Ok(());
+            }
+
+            let items = args.MenuItems()?;
+            // Tidy: drop empty submenus (e.g. the empty "More tools" submenu) from BOTH preview kinds.
+            remove_menu_items_where(&items, |existing: &ICoreWebView2ContextMenuItem| {
+                let mut kind = COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND(0);
+                if !(existing.Kind(&mut kind).is_ok()
+                    && kind == COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SUBMENU)
+                {
+                    return false;
+                }
+                let Ok(children) = existing.Children() else {
+                    return false;
+                };
+                let mut child_count: u32 = 0;
+                children.Count(&mut child_count).is_ok() && child_count == 0
+            })?;
+
+            // Is the right-click on a link? LinkUri is empty otherwise. (For srcdoc it resolves a
+            // relative href against `about:srcdoc` and is unreliable — we only use it as a yes/no link
+            // signal there and let the frontend use the bridge-captured raw href instead.)
+            let mut link_pwstr = PWSTR::null();
+            let _ = target.LinkUri(&mut link_pwstr);
+            let link_uri = if link_pwstr.is_null() {
+                String::new()
+            } else {
+                link_pwstr.to_string().unwrap_or_default()
+            };
+            let on_link = !link_uri.trim().is_empty();
+
+            // Drop the engine's link "new window"/"new tab" items — a detached WebView2 window has no
+            // place in ViewRight's tab model, and a built-in "new tab" would duplicate ours. We graft
+            // one working "Open link in new tab" below.
+            remove_menu_items_where(&items, |it: &ICoreWebView2ContextMenuItem| {
+                let mut name_pwstr = PWSTR::null();
+                if !(it.Name(&mut name_pwstr).is_ok() && !name_pwstr.is_null()) {
+                    return false;
+                }
+                let name = name_pwstr.to_string().unwrap_or_default();
+                matches!(
+                    name.as_str(),
+                    "openLinkInNewWindow" | "openLinkInNewTab" | "openLinkInNewBackgroundTab"
+                )
+            })?;
+
+            // Graft link actions when right-clicking a link. "Open link in new tab" keeps the user in
+            // ViewRight (srcdoc uses the bridge-captured raw href; http(s) URLs route directly here).
+            // "Open link in browser" is the explicit escape hatch for real external URLs.
+            if on_link {
+                let env: ICoreWebView2Environment9 =
+                    core2.cast::<ICoreWebView2_2>()?.Environment()?.cast()?;
+                let app_for_link = app.clone();
+                let link_for = link_uri.clone();
+                let from_srcdoc = is_srcdoc;
+                append_command_item(
+                    &env,
+                    &items,
+                    "Open link in ViewRight tab",
+                    move |_sender, _args| {
+                        use tauri::Emitter;
+                        if from_srcdoc {
+                            // Relative LinkUri is unreliable here → frontend opens the bridge-captured href.
+                            let _ = app_for_link.emit("viewright:context-open-link-tab", ());
+                        } else if is_http(&link_for) {
+                            let _ = app_for_link.emit("viewright:open-url", link_for.clone());
+                        }
+                        Ok(())
+                    },
+                )?;
+
+                let app_for_external = app.clone();
+                let external_link = link_uri.clone();
+                let external_from_srcdoc = is_srcdoc;
+                append_command_item(
+                    &env,
+                    &items,
+                    "Open link in browser",
+                    move |_sender, _args| {
+                        use tauri::Emitter;
+                        if external_from_srcdoc {
+                            let _ =
+                                app_for_external.emit("viewright:context-open-link-external", ());
+                        } else if is_http(&external_link) {
+                            let _ = opener::open(&external_link);
+                        }
+                        Ok(())
+                    },
+                )?;
+            }
+
+            // Graft "View source" only onto the editable disk (srcdoc) preview.
+            if is_srcdoc {
+                let env: ICoreWebView2Environment9 =
+                    core2.cast::<ICoreWebView2_2>()?.Environment()?.cast()?;
+                let app_for_item = app.clone();
+                append_command_item(&env, &items, "View source", move |_sender, _args| {
+                    use tauri::Emitter;
+                    let _ = app_for_item.emit("viewright:context-view-source", ());
+                    Ok(())
+                })?;
+            }
+            Ok(())
+        }));
+
+        let mut token: i64 = 0;
+        let _ = wv11.add_ContextMenuRequested(&handler, &mut token);
+        // `token` is intentionally not stored: the handler lives for the window's lifetime and is
+        // never unregistered. WebView2 holds a COM reference to the handler, keeping it alive.
+        let _ = token;
+    });
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn install_view_source_context_item(_window: &tauri::WebviewWindow, _app: tauri::AppHandle) {}
+
+/// Append a COMMAND item to WebView2's native context-menu list: create it under `env`, hook
+/// `on_select` through CustomItemSelected, then insert it at the end of `items`. The registration
+/// token is dropped like the ContextMenuRequested one — WebView2's COM reference keeps the handler
+/// alive for the window's lifetime.
+#[cfg(target_os = "windows")]
+unsafe fn append_command_item(
+    env: &ICoreWebView2Environment9,
+    items: &ICoreWebView2ContextMenuItemCollection,
+    label: &str,
+    on_select: impl FnMut(Option<ICoreWebView2ContextMenuItem>, Option<IUnknown>) -> windows::core::Result<()>
+        + 'static,
+) -> windows::core::Result<()> {
+    let label = HSTRING::from(label);
+    let item = env.CreateContextMenuItem(
+        &label,
+        None::<&IStream>,
+        COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND,
+    )?;
+    let mut token: i64 = 0;
+    item.add_CustomItemSelected(
+        &CustomItemSelectedEventHandler::create(Box::new(on_select)),
+        &mut token,
+    )?;
+    let mut count: u32 = 0;
+    items.Count(&mut count)?;
+    items.InsertValueAtIndex(count, &item)?;
+    Ok(())
+}
+
+/// Remove every menu item `pred` accepts. Iterates from the end so removals don't shift unscanned
+/// indices; entries that fail GetValueAtIndex are skipped and Remove failures are ignored — this is
+/// best-effort menu tidying, never a reason to drop the whole handler.
+#[cfg(target_os = "windows")]
+unsafe fn remove_menu_items_where(
+    items: &ICoreWebView2ContextMenuItemCollection,
+    pred: impl Fn(&ICoreWebView2ContextMenuItem) -> bool,
+) -> windows::core::Result<()> {
+    let mut count: u32 = 0;
+    items.Count(&mut count)?;
+    let mut i = count;
+    while i > 0 {
+        i -= 1;
+        let Ok(existing) = items.GetValueAtIndex(i) else {
+            continue;
+        };
+        if pred(&existing) {
+            let _ = items.RemoveValueAtIndex(i);
+        }
+    }
+    Ok(())
+}
+
+/// Disable WebView2's built-in browser accelerator keys (Ctrl+R / F5 reload, Ctrl+P, Ctrl+F, F7, …).
+/// ViewRight is an app, not a browser — it owns these shortcuts in JS. The engine handles these
+/// accelerators BELOW page JS, so a JS `preventDefault()` cannot stop the native reload; Ctrl+R/F5
+/// were reloading the whole app (blowing away open tabs). With this off, the keydown still reaches
+/// the page (VR's own refresh/find/print handlers fire), but the engine no longer acts on it.
+#[cfg(target_os = "windows")]
+pub fn disable_browser_accelerator_keys(window: &tauri::WebviewWindow) {
+    use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings3;
+    use windows::core::Interface;
+
+    let _ = window.with_webview(|webview| unsafe {
+        let Ok(core) = webview.controller().CoreWebView2() else {
+            return;
+        };
+        let Ok(settings) = core.Settings() else {
+            return;
+        };
+        if let Ok(s3) = settings.cast::<ICoreWebView2Settings3>() {
+            let _ = s3.SetAreBrowserAcceleratorKeysEnabled(false);
+        }
+    });
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn disable_browser_accelerator_keys(_window: &tauri::WebviewWindow) {}
+
+/// Route new-window requests — `target="_blank"`, middle-click, and the native "open in new window"
+/// menu item — to match ViewRight's link policy instead of letting WebView2 spawn a detached window:
+/// http(s) URLs become VR web tabs (`viewright:open-url`). Explicit browser escape lives in the
+/// native context menu item above. `SetHandled(true)` prevents unmanaged WebView2 windows.
+#[cfg(target_os = "windows")]
+pub fn route_new_windows_to_tabs(window: &tauri::WebviewWindow, app: tauri::AppHandle) {
+    use webview2_com::NewWindowRequestedEventHandler;
+    use windows::core::PWSTR;
+
+    let _ = window.with_webview(move |webview| unsafe {
+        let Ok(core) = webview.controller().CoreWebView2() else {
+            return;
+        };
+        let handler = NewWindowRequestedEventHandler::create(Box::new(move |_sender, args| {
+            let Some(args) = args else {
+                return Ok(());
+            };
+            let mut uri = PWSTR::null();
+            args.Uri(&mut uri)?;
+            let url = if uri.is_null() {
+                String::new()
+            } else {
+                uri.to_string().unwrap_or_default()
+            };
+            if is_http(&url) {
+                args.SetHandled(true)?; // don't let the engine open its own window
+                use tauri::Emitter;
+                let _ = app.emit("viewright:open-url", url);
+            }
+            Ok(())
+        }));
+        let mut token: i64 = 0;
+        let _ = core.add_NewWindowRequested(&handler, &mut token);
+    });
+}
+
+#[cfg(target_os = "windows")]
+fn is_http(url: &str) -> bool {
+    let u = url.trim();
+    u.starts_with("http://") || u.starts_with("https://")
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn route_new_windows_to_tabs(_window: &tauri::WebviewWindow, _app: tauri::AppHandle) {}

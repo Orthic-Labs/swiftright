@@ -1,0 +1,249 @@
+use std::collections::VecDeque;
+use std::path::PathBuf;
+use std::sync::Mutex;
+use tauri::{AppHandle, Emitter, Manager, State};
+use tauri_plugin_dialog::DialogExt;
+
+use crate::documents;
+use crate::error::{broker_error, ViewRightError};
+use crate::path_broker::PathBroker;
+
+#[derive(Default)]
+struct PendingOpenState {
+    paths: VecDeque<PathBuf>,
+    renderer_ready: bool,
+}
+#[derive(Default)]
+pub struct PendingOpenPaths(Mutex<PendingOpenState>);
+
+impl PendingOpenPaths {
+    pub fn from_env() -> Self {
+        let args = std::env::args_os().skip(1);
+        // rightkit-qa cannot pass argv to the app it launches (macOS `open` carries only
+        // RIGHTKIT_* environment), so a debug qa-native build also takes one path from this key.
+        #[cfg(all(debug_assertions, feature = "qa-native"))]
+        let args = args.chain(std::env::var_os("RIGHTKIT_VIEWRIGHT_QA_OPEN"));
+        Self::from_args(args)
+    }
+
+    fn from_args<I, S>(args: I) -> Self
+    where
+        I: IntoIterator<Item = S>,
+        S: Into<std::ffi::OsString>,
+    {
+        let paths = args
+            .into_iter()
+            .map(Into::into)
+            .filter(|arg| !arg.to_string_lossy().starts_with('-'))
+            .map(PathBuf::from)
+            .collect();
+        Self(Mutex::new(PendingOpenState {
+            paths,
+            renderer_ready: false,
+        }))
+    }
+
+    fn mark_renderer_ready_and_drain(&self) -> Result<Vec<PathBuf>, String> {
+        let mut state = self
+            .0
+            .lock()
+            .map_err(|_| "pending open path lock poisoned".to_string())?;
+        state.renderer_ready = true;
+        Ok(state.paths.drain(..).collect())
+    }
+
+    fn queue_or_take(&self, paths: Vec<PathBuf>) -> Result<Vec<PathBuf>, String> {
+        let mut state = self
+            .0
+            .lock()
+            .map_err(|_| "pending open path lock poisoned".to_string())?;
+        if state.renderer_ready {
+            Ok(paths)
+        } else {
+            state.paths.extend(paths);
+            Ok(Vec::new())
+        }
+    }
+}
+
+#[tauri::command]
+pub fn initial_open_paths(
+    pending: State<PendingOpenPaths>,
+    broker: State<PathBroker>,
+) -> Result<Vec<String>, ViewRightError> {
+    grant_pending_open_paths(&pending, &broker)
+}
+
+fn grant_pending_open_paths(
+    pending: &PendingOpenPaths,
+    broker: &PathBroker,
+) -> Result<Vec<String>, ViewRightError> {
+    let paths = pending
+        .mark_renderer_ready_and_drain()
+        .map_err(ViewRightError::Other)?;
+    Ok(grant_existing_paths(broker, paths))
+}
+
+fn grant_existing_paths(broker: &PathBroker, paths: Vec<PathBuf>) -> Vec<String> {
+    paths
+        .into_iter()
+        .filter_map(|path| broker.grant_existing_file_path(path).ok())
+        .collect()
+}
+
+/// Queue OS-opened files until the renderer's initial handoff command runs. After that command
+/// atomically marks the renderer ready, future files are brokered and emitted immediately. This
+/// prevents both macOS `RunEvent::Opened` and rapid second-instance launches from racing the
+/// renderer's asynchronous `open-file` listener registration.
+pub fn route_open_paths(app: &AppHandle, paths: Vec<PathBuf>) {
+    if paths.is_empty() {
+        return;
+    }
+    let (Some(pending), Some(broker)) = (
+        app.try_state::<PendingOpenPaths>(),
+        app.try_state::<PathBroker>(),
+    ) else {
+        return;
+    };
+    let Ok(paths) = pending.queue_or_take(paths) else {
+        return;
+    };
+    for path in grant_existing_paths(&broker, paths) {
+        let _ = app.emit("open-file", path);
+    }
+}
+
+#[tauri::command]
+pub async fn open_file_dialog(
+    app: AppHandle,
+    broker: State<'_, PathBroker>,
+) -> Result<Option<String>, ViewRightError> {
+    let selected = app
+        .dialog()
+        .file()
+        .add_filter("Documents", documents::openable_extensions())
+        .blocking_pick_file();
+    match selected {
+        Some(path) => broker
+            .grant_existing_file_path(
+                path.into_path()
+                    .map_err(|e| ViewRightError::Dialog(e.to_string()))?,
+            )
+            .map(Some)
+            .map_err(broker_error),
+        None => Ok(None),
+    }
+}
+
+#[tauri::command]
+pub async fn save_file_dialog(
+    app: AppHandle,
+    default_name: Option<String>,
+    format: Option<String>,
+    broker: State<'_, PathBroker>,
+) -> Result<Option<String>, ViewRightError> {
+    let mut dialog = app.dialog().file();
+    dialog = match format.as_deref() {
+        Some("md") | Some("mdx") => dialog.add_filter("Markdown", &["md", "mdx", "markdown"]),
+        Some("html") => dialog.add_filter("HTML", &["html", "htm"]),
+        Some("docx") => dialog.add_filter("Word", &["docx"]),
+        Some("image") => dialog.add_filter("Image", &["png", "jpg", "jpeg", "webp"]),
+        _ => dialog.add_filter("Text and code", documents::text_extensions()),
+    };
+    if let Some(name) = default_name {
+        dialog = dialog.set_file_name(name);
+    }
+    match dialog.blocking_save_file() {
+        Some(path) => broker
+            .grant_save_target_path(
+                path.into_path()
+                    .map_err(|e| ViewRightError::Dialog(e.to_string()))?,
+            )
+            .map(Some)
+            .map_err(broker_error),
+        None => Ok(None),
+    }
+}
+
+#[tauri::command]
+pub fn grant_known_file_token(
+    token: String,
+    broker: State<PathBroker>,
+) -> Result<Option<String>, ViewRightError> {
+    broker
+        .grant_known_token(&token)
+        .map(Some)
+        .map_err(broker_error)
+}
+
+/// Grant a path the user referenced from ViewRight itself, instead of exposing a generic
+/// "grant any existing path" command to the renderer.
+///
+/// `from`, when present, must already be a granted path (an open document) — the grant is then
+/// anchored to that existing authority, matching "open a link found in something you already
+/// opened". When `from` is absent, `target` is a path the user explicitly typed or pasted into a
+/// ViewRight-owned surface (the Open URL dialog, or an open-from-clipboard paste) — the same
+/// trust level as picking it from the native open-file dialog, since in both cases the human
+/// operating the OS chose the exact path, not renderer script. `target` still has to resolve to a
+/// real, existing file; it is never treated as pre-authorized.
+fn open_linked_document_impl(
+    broker: &PathBroker,
+    from: Option<String>,
+    target: String,
+) -> Result<Option<String>, ViewRightError> {
+    if let Some(from) = from {
+        let normalized_from =
+            crate::path_broker::normalize_existing_file(&from).map_err(broker_error)?;
+        if !broker
+            .is_granted_normalized(&normalized_from)
+            .map_err(broker_error)?
+        {
+            return Err(ViewRightError::BrokerDenied(
+                "source document is not authorized; open it through ViewRight first".into(),
+            ));
+        }
+    }
+    broker
+        .grant_existing_file_path(target)
+        .map(Some)
+        .map_err(broker_error)
+}
+
+#[tauri::command]
+pub fn open_linked_document(
+    broker: State<PathBroker>,
+    from: Option<String>,
+    target: String,
+) -> Result<Option<String>, ViewRightError> {
+    open_linked_document_impl(&broker, from, target)
+}
+
+/// Re-grant a path that was just written by `write_document`/`write_document_base64` (save-as,
+/// duplicate, or DOCX save-as). Refuses any path that isn't in the recent-write ring, so this
+/// cannot be used as a general-purpose file-grant command.
+fn regrant_saved_target_impl(
+    broker: &PathBroker,
+    path: String,
+) -> Result<Option<String>, ViewRightError> {
+    let normalized = crate::path_broker::normalize_existing_file(&path).map_err(broker_error)?;
+    if !broker
+        .was_recently_written(&normalized)
+        .map_err(broker_error)?
+    {
+        return Err(ViewRightError::BrokerDenied(
+            "path was not just written by ViewRight; save it through ViewRight first".into(),
+        ));
+    }
+    broker
+        .grant_normalized(normalized)
+        .map(Some)
+        .map_err(broker_error)
+}
+
+#[tauri::command]
+pub fn regrant_saved_target(
+    path: String,
+    broker: State<PathBroker>,
+) -> Result<Option<String>, ViewRightError> {
+    regrant_saved_target_impl(&broker, path)
+}

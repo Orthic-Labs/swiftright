@@ -1,0 +1,173 @@
+import { useCallback } from "react";
+import { LegalGate, type LegalGateEligibilityBasis, type LegalGateTheme } from "@rightkit/legal-ui";
+import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
+import { useSettings } from "../settings/settings";
+import {
+  LEGAL_GATE_DOCUMENTS,
+  LEGAL_MATERIAL_SHA256,
+  REQUIRED_LEGAL_ACCEPTANCE_VERSION,
+  legalAcceptanceCurrent,
+} from "../state/legal";
+import { App } from "./App";
+import { useReadyShow } from "./useReadyShow";
+import { logError } from "../state/diagnostics";
+import { isBrowserQaMode } from "../state/tauriBridge";
+
+// Locked (Adrian, 2026-07-17): the gate is its own fixed 960x560 window, independent of whatever
+// size the user last left the main 1100x750 workspace at. See memory
+// "legal-gate-fixed-960x560-own-window".
+const GATE_WIDTH = 960;
+const GATE_HEIGHT = 560;
+
+const TRUST_LINE =
+  "ViewRight works on the documents already on your disk. Nothing is uploaded to open or edit them.";
+const AGREEMENT_STATEMENT =
+  "I have read and agree to the ViewRight License, End User License Agreement, Acceptable Use Policy, and Product Schedule.";
+
+// Transcribed from .claude/rules/brands.md (Right Suite — App Identities — ViewRight) LIGHT tokens.
+// The legal gate is locked to light mode for every app regardless of the app's own theme setting.
+const VIEWRIGHT_LEGAL_GATE_THEME: LegalGateTheme = {
+  bg: "#F7F3EC",
+  surface: "#FFFDF8",
+  border: "#E2DAD1",
+  text: "#211C18",
+  muted: "#6E665F",
+  accent: "#0C6AA5",
+  accentContrast: "#FFFFFF",
+  fontDisplay: "Tanker, 'Arial Narrow', sans-serif",
+  fontBody: "Geist, 'Hanken Grotesk', sans-serif",
+};
+
+/** True inside the Tauri webview; false in vite dev / browser QA where there is no native window. */
+function inTauri(): boolean {
+  return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
+async function resizeWindow(width: number, height: number): Promise<void> {
+  if (!inTauri()) return;
+  try {
+    const win = getCurrentWindow();
+    await win.setSize(new LogicalSize(width, height));
+    await win.center();
+  } catch (error) {
+    // Never swallow this silently. Tauri rejects setSize/center unless the capability grants
+    // core:window:allow-set-size and allow-center — and a swallowed rejection is invisible: every
+    // test passes while the real app ignores the resize and renders the gate at the full workspace
+    // size. That is exactly how this shipped wrong once (2026-07-17). The reveal must still proceed,
+    // so log rather than throw. logError, NOT logEvent: an event reaches the exported diagnostics
+    // bundle as an anonymous info-level `renderer_event`, which is its own kind of silence.
+    try {
+      logError("legal-gate:resize-failed", String(error));
+    } catch {
+      console.error("legal-gate: window resize failed", error);
+    }
+  }
+}
+
+async function tryWindowAction(label: string, action: () => Promise<void>): Promise<void> {
+  try {
+    await action();
+  } catch (error) {
+    try {
+      logError(label, String(error));
+    } catch {
+      console.error(`${label}: ${String(error)}`);
+    }
+  }
+}
+
+/** Put the first-run gate into its exact, fixed-size state before revealing the hidden window. */
+async function prepareLegalGateWindow(): Promise<void> {
+  if (!inTauri()) return;
+  const win = getCurrentWindow();
+  // A prior native state (including macOS fullscreen) must not survive into the legal gate.
+  await tryWindowAction("legal-gate:fullscreen-exit-failed", () => win.setFullscreen(false));
+  await tryWindowAction("legal-gate:unmaximize-failed", () => win.unmaximize());
+  await tryWindowAction("legal-gate:resizable-failed", () => win.setResizable(false));
+  await tryWindowAction("legal-gate:maximizable-failed", () => win.setMaximizable(false));
+  await resizeWindow(GATE_WIDTH, GATE_HEIGHT);
+}
+
+/** Restore normal controls & maximize workspace before the accepted app shell mounts. */
+async function prepareWorkspaceWindow(): Promise<void> {
+  if (!inTauri()) return;
+  const win = getCurrentWindow();
+  await tryWindowAction("workspace:fullscreen-exit-failed", () => win.setFullscreen(false));
+  await tryWindowAction("workspace:resizable-failed", () => win.setResizable(true));
+  await tryWindowAction("workspace:maximizable-failed", () => win.setMaximizable(true));
+  await tryWindowAction("workspace:maximize-failed", () => win.maximize());
+}
+
+async function destroyWindow(): Promise<void> {
+  if (!inTauri()) return;
+  try {
+    await getCurrentWindow().destroy();
+  } catch {
+    // Outside Tauri there is no window to destroy.
+  }
+}
+
+/**
+ * Top-level shell: renders the shared Right Suite legal gate in place of the document workspace
+ * until the acceptance receipt in settings is current, then swaps to <App/>. Owns the one call to
+ * useReadyShow() for BOTH paths — the gate's own window (960x560, fixed) must reveal itself just
+ * like the main app window does, or a real first-run user launching the installer-hidden window
+ * sees nothing at all.
+ */
+export function AppRoot() {
+  const { settings, update } = useSettings();
+  // Browser QA runs against a fresh profile every launch, so the legal gate would otherwise block
+  // every automated run behind a manual click. QA mode is a deterministic harness, never a shipped
+  // build (isBrowserQaMode is false in production), so skip the gate there — mirrors how dev-native
+  // bypasses the license gate. Real users always see the gate until they accept.
+  // Browser QA normally bypasses the first-run gate so unattended document journeys can mount.
+  // The explicit qaLegal switch exercises the shipped gate itself with the same browser fixtures;
+  // it is only honored in QA/dev builds because isBrowserQaMode() is false in production.
+  const qaLegalGate =
+    isBrowserQaMode() &&
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("qaLegal") === "1";
+  const needsGate = (!isBrowserQaMode() || qaLegalGate) && !legalAcceptanceCurrent(settings);
+
+  // Configure native state before reveal. The gate is exact 960x560 and fixed; accepted/current
+  // workspace launches with normal controls and maximized geometry.
+  const beforeShow = useCallback(
+    () => (needsGate ? prepareLegalGateWindow() : prepareWorkspaceWindow()),
+    [needsGate],
+  );
+  useReadyShow(beforeShow);
+
+  if (!needsGate) return <App />;
+
+  const variant = settings.legalAcceptanceVersion ? "re-acceptance" : "first-run";
+
+  const handleAgree = async ({
+    eligibilityBasis,
+  }: {
+    eligibilityBasis: LegalGateEligibilityBasis;
+  }): Promise<void> => {
+    // Restore native controls & maximize BEFORE settings swaps in <App/>, so app never mounts in
+    // fixed legal-gate state even for a single frame.
+    await prepareWorkspaceWindow();
+    update({
+      legalAcceptanceVersion: REQUIRED_LEGAL_ACCEPTANCE_VERSION,
+      legalAcceptedAt: new Date().toISOString(),
+      legalEligibilityBasis: eligibilityBasis,
+      legalMaterialSha256: LEGAL_MATERIAL_SHA256,
+    });
+  };
+
+  return (
+    <LegalGate
+      theme={VIEWRIGHT_LEGAL_GATE_THEME}
+      appName="ViewRight"
+      trustLine={TRUST_LINE}
+      documents={LEGAL_GATE_DOCUMENTS}
+      agreementStatement={AGREEMENT_STATEMENT}
+      variant={variant}
+      onAgree={handleAgree}
+      onQuit={() => void destroyWindow()}
+      wordmarkFontUrl="/fonts/Tanker-400.woff2"
+    />
+  );
+}

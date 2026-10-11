@@ -1,0 +1,244 @@
+import { useRef, useState, type ReactNode } from "react";
+import { useFocusTrap } from "../app/useFocusTrap";
+import { AboutSection } from "./sections/AboutSection";
+import { DiagnosticsSection } from "./sections/DiagnosticsSection";
+import { EditorSection } from "./sections/EditorSection";
+import { FileAssociationsSection } from "./sections/FileAssociationsSection";
+import { PrivacySection } from "./sections/PrivacySection";
+import { ThemeSection } from "./sections/ThemeSection";
+import { TypographySection } from "./sections/TypographySection";
+import { isMac, isWindows } from "../platform";
+import { inTauri, isBrowserQaMode } from "../state/tauriBridge";
+
+type SectionId = "theme" | "typography" | "editor" | "privacy" | "files" | "diagnostics" | "about";
+
+const SECTION_TITLES: Record<SectionId, string> = {
+  theme: "Theme",
+  typography: "Typography",
+  editor: "Editor",
+  privacy: "Privacy",
+  diagnostics: "Diagnostics",
+  files: "File associations",
+  about: "About",
+};
+
+const SECTION_SUBTITLES: Record<SectionId, string> = {
+  about: "Version, product information, and legal links.",
+  diagnostics: "Local troubleshooting information and support tools.",
+  files: "Choose which document formats open in ViewRight by default.",
+  theme: "Choose the surfaces and accents used across ViewRight.",
+  typography: "Set interface and document reading type.",
+  editor: "Control writing and source-editing behavior.",
+  privacy: "Choose what ViewRight remembers on this device.",
+};
+
+export function SettingsPanel({ onClose }: { onClose: () => void }) {
+  const [section, setSection] = useState<SectionId>("about");
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const showFileAssociations = (isMac() || isWindows()) && (inTauri() || isBrowserQaMode());
+
+  useFocusTrap(dialogRef, true);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          onClose();
+        }
+      }}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
+        className="flex h-[76vh] max-h-[620px] w-[800px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-line bg-panel-2 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Left nav */}
+        <nav
+          data-settings-shell
+          aria-label="Settings sections"
+          className="vr-chrome flex w-52 shrink-0 flex-col border-r border-line bg-panel p-3"
+        >
+          <div
+            id="settings-title"
+            className="mb-4 px-2 font-serif text-lg font-semibold text-paper"
+          >
+            Settings
+          </div>
+          <NavGroup label="App">
+            <NavItem id="about" active={section === "about"} onClick={() => setSection("about")}>
+              About
+            </NavItem>
+            {showFileAssociations && (
+              <NavItem id="files" active={section === "files"} onClick={() => setSection("files")}>
+                File associations
+              </NavItem>
+            )}
+            <NavItem
+              id="diagnostics"
+              active={section === "diagnostics"}
+              onClick={() => setSection("diagnostics")}
+            >
+              Diagnostics
+            </NavItem>
+          </NavGroup>
+          <NavGroup label="Preferences">
+            <NavItem id="theme" active={section === "theme"} onClick={() => setSection("theme")}>
+              Theme
+            </NavItem>
+            <NavItem
+              id="typography"
+              active={section === "typography"}
+              onClick={() => setSection("typography")}
+            >
+              Typography
+            </NavItem>
+            <NavItem id="editor" active={section === "editor"} onClick={() => setSection("editor")}>
+              Editor
+            </NavItem>
+            <NavItem
+              id="privacy"
+              active={section === "privacy"}
+              onClick={() => setSection("privacy")}
+            >
+              Privacy
+            </NavItem>
+          </NavGroup>
+        </nav>
+
+        {/* Section body */}
+        <div data-settings-body className="relative min-w-0 flex-1 overflow-auto bg-ink p-5">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close settings"
+            title="Close settings"
+            className="vr-press vr-focus absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded font-sans text-sm text-muted hover:bg-panel hover:text-paper"
+          >
+            &#x2715;
+          </button>
+          {section !== "about" && (
+            <div className="mb-5 border-b border-line pb-4 pr-10">
+              <h2 className="font-serif text-xl font-semibold text-paper">
+                {SECTION_TITLES[section]}
+              </h2>
+              <p className="mt-1 text-xs text-muted-2">{SECTION_SUBTITLES[section]}</p>
+            </div>
+          )}
+          {section === "theme" && <ThemeSection />}
+          {section === "typography" && <TypographySection />}
+          {section === "editor" && <EditorSection />}
+          {section === "privacy" && <PrivacySection />}
+          {section === "files" && <FileAssociationsSection />}
+          {section === "diagnostics" && <DiagnosticsSection />}
+          {section === "about" && <AboutSection />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NavGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="mb-4 space-y-1">
+      <div className="px-2 pb-1 font-sans text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-2">
+        {label}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function NavItem({
+  id,
+  active,
+  onClick,
+  children,
+}: {
+  id: SectionId;
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      data-settings-section={id}
+      className={`vr-press vr-focus flex w-full items-center gap-2 rounded-md border px-2 py-2 text-left font-sans text-sm transition-colors ${
+        active
+          ? "border-line bg-panel-2 text-copper-hi"
+          : "border-transparent text-paper/80 hover:border-line hover:bg-panel-2 hover:text-paper"
+      }`}
+    >
+      <NavIcon id={id} />
+      {children}
+    </button>
+  );
+}
+
+function NavIcon({ id }: { id: SectionId }) {
+  const paths: Record<SectionId, ReactNode> = {
+    about: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5M12 8h.01" />
+      </>
+    ),
+    diagnostics: (
+      <>
+        <path d="M4 18V6M8 18v-5M12 18V9M16 18v-8M20 18V4" />
+      </>
+    ),
+    files: (
+      <>
+        <path d="M5 4h10l4 4v12H5z" />
+        <path d="M15 4v4h4M8 13h8M8 16h6" />
+      </>
+    ),
+    theme: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 3a9 9 0 0 1 0 18" />
+      </>
+    ),
+    typography: (
+      <>
+        <path d="M5 5h14M12 5v14M8 19h8" />
+      </>
+    ),
+    editor: (
+      <>
+        <path d="M4 20h4l11-11-4-4L4 16v4Z" />
+        <path d="m13.5 6.5 4 4" />
+      </>
+    ),
+    privacy: (
+      <>
+        <rect x="5" y="10" width="14" height="10" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      </>
+    ),
+  };
+
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {paths[id]}
+    </svg>
+  );
+}

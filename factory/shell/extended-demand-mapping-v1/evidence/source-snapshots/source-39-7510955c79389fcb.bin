@@ -1,0 +1,487 @@
+import { applyTokens } from "@rightkit/theme";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { getSettingsMirror, setSettingsMirror } from "../state/tauriBridge";
+import {
+  ACCENT_PRESETS,
+  DEFAULT_DARK,
+  DEFAULT_LIGHT,
+  shade,
+  THEMES,
+  themeById,
+  type ThemePreset,
+} from "./themes";
+import { fontStackFor } from "./fonts";
+
+export interface Settings {
+  /** A preset id, or "auto" to follow the system. */
+  themeId: string;
+  /** Legacy split-surface ids. Kept in the schema so old payloads parse; migrate() clears them —
+   *  there is one theme choice and it applies to shell and body together. */
+  shellThemeId: string | null;
+  bodyThemeId: string | null;
+  /** Finite palette choices. Null follows a legacy custom color or the selected theme preset. */
+  primaryAccentId: string | null;
+  secondaryAccentId: string | null;
+  customPrimary: string | null;
+  customSecondary: string | null;
+  /** Bundled font id or a raw system family name. */
+  fontFamily: string;
+  fontSizePx: number;
+  sourceFontSizePx: number;
+  lineHeight: number;
+  /** Prose measure for the Markdown reading column (px). Wide tables and code fences may still
+   *  break out of it; other formats keep their own surface sizing. */
+  readingWidthPx: number;
+  /** Full available width by default; a centred reading column is opt-in. */
+  readingWidthMode: "full" | "column";
+  contrast: "normal" | "high";
+  /** Soft-wrap long lines in the text editor (Notepad's Word Wrap). */
+  wordWrap: boolean;
+  /** Use the platform spellchecker on document-body editing surfaces. */
+  spellcheck: boolean;
+  /** Reformat md/mdx/html source on save (opt-in — off by default to avoid surprise diffs). */
+  formatOnSave: boolean;
+  /** Render sanitized raw HTML in Markdown previews and exports. Source stays raw. */
+  markdownSafeHtml: boolean;
+  /** Save file-backed edits after a short idle delay. Untitled drafts stay local until first Save. */
+  autoSave: boolean;
+  /** Restore file-backed tabs from the last desktop session. Untitled scratch buffers are always
+   *  locally draft-backed so Notepad-style notes survive relaunch. */
+  restoreSession: boolean;
+  /** Persist local renderer & native diagnostic logs (loads/errors) on device; this toggle controls
+   *  whether diagnostics are written at all. Read by diagnostics.ts & native log gate. */
+  diagnostics: boolean;
+  /** Check for updates automatically while the app is running. Installs still require user action. */
+  autoCheckUpdates: boolean;
+  /** Hidden migration marker: older builds briefly defaulted to the copper theme. */
+  brandDefaultMigrated: boolean;
+  /** Hidden migration marker: app chrome moved from brand/display typography to mono UI. */
+  appFontDefaultMigrated: boolean;
+  /** Hidden migration marker: app chrome moved OFF the mono UI default onto Inter (2026-08-09).
+   *  Supersedes appFontDefaultMigrated — mono-as-chrome is now an accent role, not the UI face. */
+  appFontInterMigrated: boolean;
+  /** 2026-10: fontFamily now sets the DOCUMENT font; the interface always uses the system font. */
+  docFontMigrated: boolean;
+  /** Right Suite desktop legal-gate acceptance receipt (src/app/AppRoot.tsx + src/state/legal.ts).
+   *  Empty string = never accepted. All four fields are set together by the gate's onAgree handler
+   *  and read together by legalAcceptanceCurrent() — never partially. */
+  legalAcceptanceVersion: string;
+  /** Canonical UTC instant (`new Date().toISOString()`), e.g. "2026-07-17T09:41:12.345Z". */
+  legalAcceptedAt: string;
+  legalEligibilityBasis: "individual" | "enterprise" | null;
+  legalMaterialSha256: string;
+}
+
+const DEFAULTS: Settings = {
+  // New installs follow the system: Paper in light mode, Black & Grey in dark.
+  themeId: "auto",
+  shellThemeId: null,
+  bodyThemeId: null,
+  primaryAccentId: null,
+  secondaryAccentId: null,
+  customPrimary: null,
+  customSecondary: null,
+  fontFamily: "sentient",
+  fontSizePx: 16,
+  sourceFontSizePx: 12,
+  lineHeight: 1.7,
+  readingWidthPx: 700,
+  readingWidthMode: "full",
+  contrast: "normal",
+  wordWrap: true,
+  spellcheck: true,
+  formatOnSave: false,
+  markdownSafeHtml: false,
+  autoSave: false,
+  restoreSession: true,
+  diagnostics: true,
+  autoCheckUpdates: false,
+  brandDefaultMigrated: true,
+  appFontDefaultMigrated: true,
+  appFontInterMigrated: true,
+  docFontMigrated: true,
+  legalAcceptanceVersion: "",
+  legalAcceptedAt: "",
+  legalEligibilityBasis: null,
+  legalMaterialSha256: "",
+};
+
+const STORE_KEY = "vr.settings.v1";
+
+/** Apply the same forward migrations regardless of whether `raw` came from localStorage (the sync
+ *  fast path) or the SQLite mirror (the restore-on-empty path) — both are the same JSON shape. */
+function migrate(raw: string): Settings {
+  const parsed = JSON.parse(raw) as Partial<Settings>;
+  // Only rewrites the pre-marker default: a payload carrying per-surface ids came from a
+  // split-era (post-marker) build where ink-copper was a deliberate pick, and any choice saved
+  // after the marker shipped already carries brandDefaultMigrated — neither is the old default.
+  if (
+    parsed.themeId === "ink-copper" &&
+    parsed.brandDefaultMigrated !== true &&
+    parsed.customPrimary == null &&
+    parsed.customSecondary == null &&
+    parsed.shellThemeId == null &&
+    parsed.bodyThemeId == null
+  ) {
+    parsed.themeId = "auto";
+    parsed.brandDefaultMigrated = true;
+  }
+  // Migrate old default font to the locked brand spec.
+  if (
+    parsed.brandDefaultMigrated !== true ||
+    !parsed.fontFamily ||
+    parsed.fontFamily === "source-serif"
+  ) {
+    parsed.fontFamily = "sentient";
+    parsed.brandDefaultMigrated = true;
+  }
+  // The website keeps the brand/display type. App chrome uses the mono UI font by default; document
+  // reading typography is still controlled separately through --doc-font below.
+  if (parsed.appFontDefaultMigrated !== true && parsed.fontFamily === "sentient") {
+    parsed.fontFamily = "spline-sans-mono";
+    parsed.appFontDefaultMigrated = true;
+  }
+  // 2026-08-09: chrome moves off the mono UI default onto Inter. Monospace as the UI face is what
+  // made the app read as a terminal; it is now an accent role (paths, shortcuts, badges, code) and
+  // stays user-selectable. Only carries over the OLD DEFAULT — anyone who picked a different family
+  // keeps it. Same shape as the sentient→mono migration above, so a user still sitting on the
+  // previous default is moved exactly once.
+  if (parsed.appFontInterMigrated !== true) {
+    if (!parsed.fontFamily || parsed.fontFamily === "spline-sans-mono") parsed.fontFamily = "inter";
+    parsed.appFontInterMigrated = true;
+  }
+  // 2026-10: the interface now always uses the platform system font (SF Pro / Segoe UI), and
+  // fontFamily becomes the reading font for documents. The old app-font defaults (Inter, mono)
+  // were never chosen as reading fonts, so they map back to the Sentient reading default; any
+  // other pick (e.g. Sentient, Newsreader, a system family) carries over as the document font.
+  if (parsed.docFontMigrated !== true) {
+    if (
+      !parsed.fontFamily ||
+      parsed.fontFamily === "inter" ||
+      parsed.fontFamily === "spline-sans-mono"
+    )
+      parsed.fontFamily = "sentient";
+    parsed.docFontMigrated = true;
+  }
+  // Four-theme consolidation (2026-10): the shell/body split is gone — the single surviving choice
+  // is the body theme (it owned the reading surface). Removed ids remap to the two defaults and
+  // unknown ids land on the default for the mode rather than resolving to a missing preset.
+  const bodyTheme = knownThemeId(parsed.bodyThemeId);
+  const baseTheme =
+    parsed.themeId === "auto" ? "auto" : (knownThemeId(parsed.themeId) ?? DEFAULT_LIGHT);
+  parsed.themeId = bodyTheme ?? baseTheme;
+  parsed.shellThemeId = null;
+  parsed.bodyThemeId = null;
+  const merged = { ...DEFAULTS, ...parsed };
+  // Clamp the persisted measure so a corrupt or hand-edited payload can't lay out an absurd column.
+  merged.readingWidthPx = Math.min(
+    1100,
+    Math.max(480, Number(merged.readingWidthPx) || DEFAULTS.readingWidthPx),
+  );
+  merged.readingWidthMode = merged.readingWidthMode === "column" ? "column" : "full";
+  return merged;
+}
+
+/** Sync fast path: localStorage only. Never touches the SQLite mirror — hydration from the mirror
+ *  is a separate async step run once, in SettingsProvider, only when this returns null. */
+function load(): Settings | null {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return migrate(raw);
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+/** Removed preset ids → their replacement in the four-theme set. */
+const REMOVED_THEME_IDS: Record<string, string> = {
+  "paper-ink": "viewright-paper",
+  "daylight-slate": "viewright-paper",
+  "parchment-sienna": "viewright-paper",
+  "viewright-night": "black-grey",
+  "slate-amber": "black-grey",
+};
+
+/** Resolve a persisted id to a shipped theme id, following the removed-id remaps. Null if unknown. */
+function knownThemeId(id: unknown): string | null {
+  if (typeof id !== "string") return null;
+  const mapped = REMOVED_THEME_IDS[id] ?? id;
+  return THEMES.some((t) => t.id === mapped) ? mapped : null;
+}
+
+function prefersDark(): boolean {
+  return (
+    typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches
+  );
+}
+
+export function resolveTheme(settings: Settings): ThemePreset {
+  if (settings.themeId === "auto") return themeById(prefersDark() ? DEFAULT_DARK : DEFAULT_LIGHT);
+  return themeById(settings.themeId);
+}
+
+/** One theme choice applies to shell and body together; kept as a separate export for call sites. */
+export function resolveShellTheme(settings: Settings): ThemePreset {
+  return resolveTheme(settings);
+}
+
+export function resolveAccentColors(settings: Settings): { primary: string; secondary: string } {
+  const theme = resolveTheme(settings);
+  const forMode = (id: string | null) => {
+    const preset = ACCENT_PRESETS.find((item) => item.id === id);
+    return preset ? preset[theme.mode] : null;
+  };
+  return {
+    primary: forMode(settings.primaryAccentId) ?? settings.customPrimary ?? theme.tokens.primary,
+    secondary:
+      forMode(settings.secondaryAccentId) ?? settings.customSecondary ?? theme.tokens.secondary,
+  };
+}
+
+function rgbChannels(color: string): string {
+  const hex = /^#?([0-9a-f]{6})$/i.exec(color.trim());
+  if (hex) {
+    const n = Number.parseInt(hex[1], 16);
+    return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+  }
+
+  const rgb = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[0-9.]+)?\)$/i.exec(color.trim());
+  if (rgb) return `${Number(rgb[1])} ${Number(rgb[2])} ${Number(rgb[3])}`;
+
+  return "0 0 0";
+}
+
+// T2-2: module-level cache of the last-applied CSS custom props. applySettings runs on every settings
+// change (theme flip, zoom tick, slider drag) and used to unconditionally rewrite ~50 root.style
+// properties even when most of them were unchanged (e.g. a font-size-only zoom tick still rewrote every
+// theme color var). Diffing against the last-applied value skips the no-op writes.
+let lastAppliedVars: Record<string, string> | null = null;
+
+function applySettings(settings: Settings) {
+  const theme = resolveTheme(settings);
+  const t = theme.tokens;
+  const root = document.documentElement;
+
+  const { primary, secondary } = resolveAccentColors(settings);
+  const hasPrimaryOverride = settings.primaryAccentId != null || settings.customPrimary != null;
+  const primaryHi = hasPrimaryOverride
+    ? shade(primary, theme.mode === "dark" ? 0.1 : -0.1)
+    : t.primaryHi;
+
+  const vars: Record<string, string> = {
+    "--ink": t.ink,
+    "--ink-rgb": rgbChannels(t.ink),
+    "--reader-surface": t.ink,
+    "--reader-surface-rgb": rgbChannels(t.ink),
+    "--reader-text": t.paper,
+    "--reader-text-rgb": rgbChannels(t.paper),
+    "--reader-line": t.line,
+    "--panel": t.panel,
+    "--panel-rgb": rgbChannels(t.panel),
+    "--panel-2": t.panel2,
+    "--panel-2-rgb": rgbChannels(t.panel2),
+    "--paper": t.paper,
+    "--paper-rgb": rgbChannels(t.paper),
+    "--muted": t.muted,
+    "--muted-rgb": rgbChannels(t.muted),
+    "--muted-2": t.muted2,
+    "--muted-2-rgb": rgbChannels(t.muted2),
+    "--line": t.line,
+    "--copper": primary,
+    "--copper-rgb": rgbChannels(primary),
+    "--copper-hi": primaryHi,
+    "--copper-hi-rgb": rgbChannels(primaryHi),
+    "--accent-2": secondary,
+    "--accent-2-rgb": rgbChannels(secondary),
+    "--danger": t.danger,
+    "--danger-rgb": rgbChannels(t.danger),
+    "--danger-hi": t.dangerHi,
+    "--danger-hi-rgb": rgbChannels(t.dangerHi),
+    "--chrome": t.chrome,
+    "--chrome-rgb": rgbChannels(t.chrome),
+    "--chrome-2": t.chrome2,
+    "--chrome-2-rgb": rgbChannels(t.chrome2),
+    "--chrome-paper": t.chromePaper,
+    "--chrome-paper-rgb": rgbChannels(t.chromePaper),
+    "--chrome-muted": t.chromeMuted,
+    "--chrome-muted-rgb": rgbChannels(t.chromeMuted),
+    "--chrome-muted-2": t.chromeMuted2,
+    "--chrome-muted-2-rgb": rgbChannels(t.chromeMuted2),
+    "--chrome-line": t.chromeLine,
+    "--chrome-hover": t.chromeHover,
+    "--chrome-hover-rgb": rgbChannels(t.chromeHover),
+    "--doc-font": fontStackFor(settings.fontFamily),
+    "--doc-size": `${settings.fontSizePx}px`,
+    "--source-size": `${settings.sourceFontSizePx}px`,
+    "--doc-leading": String(settings.lineHeight),
+    "--doc-measure":
+      settings.readingWidthMode === "column" ? `${settings.readingWidthPx}px` : "100cqi",
+    "--doc-fg":
+      settings.contrast === "high" ? t.paper : `color-mix(in srgb, ${t.paper} 90%, transparent)`,
+  };
+  const previous = lastAppliedVars;
+  applyTokens(
+    Object.fromEntries(Object.entries(vars).filter(([k, v]) => previous?.[k] !== v)),
+    root,
+  );
+  lastAppliedVars = vars;
+  root.setAttribute("data-theme", theme.mode);
+  // Remember the ink color so index.html can paint it before the bundle loads (no white flash).
+  try {
+    localStorage.setItem("vr.lastInk", t.ink);
+  } catch {
+    /* ignore */
+  }
+}
+
+interface Ctx {
+  settings: Settings;
+  update: (patch: Partial<Settings>) => void;
+  reset: () => void;
+}
+
+const SettingsContext = createContext<Ctx | null>(null);
+
+export function SettingsProvider({ children }: { children: React.ReactNode }) {
+  const localOnLoad = useMemo(load, []);
+  const [settings, setSettings] = useState<Settings>(() => localOnLoad ?? DEFAULTS);
+  // Only the very first save after a from-mirror hydration should skip re-writing the mirror with
+  // the value it just gave us; every subsequent save mirrors normally.
+  const hydratingRef = useRef(localOnLoad == null);
+  // A user can change settings while the SQLite mirror read is in flight. Keep that mutation ahead
+  // of any stale mirror payload that resolves later.
+  const hydrationMutationRef = useRef(0);
+  // T2-2: debounce ONLY the SQLite mirror IPC write below — a burst of settings changes (zoom ticks,
+  // a slider drag) can fire this effect many times a second; localStorage stays synchronous (cheap,
+  // local) while the cross-process mirror write is coalesced to the trailing value.
+  const mirrorWriteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Restore-on-empty: localStorage had nothing (fresh profile, or a WebView2 profile reset that
+  // wiped it) — try the SQLite mirror once. localStorage present always wins; this never overwrites
+  // an existing local value.
+  useEffect(() => {
+    if (localOnLoad != null) return;
+    let cancelled = false;
+    const mutationAtStart = hydrationMutationRef.current;
+    (async () => {
+      const mirrored = await getSettingsMirror(STORE_KEY);
+      if (cancelled || !mirrored || hydrationMutationRef.current !== mutationAtStart) {
+        hydratingRef.current = false;
+        return;
+      }
+      try {
+        const hydrated = migrate(mirrored);
+        setSettings(hydrated);
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify(hydrated));
+        } catch {
+          /* ignore */
+        }
+      } catch {
+        /* corrupt mirror value — keep defaults, do not throw */
+      } finally {
+        hydratingRef.current = false;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localOnLoad]);
+
+  useEffect(() => {
+    applySettings(settings);
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(settings));
+    } catch {
+      /* ignore */
+    }
+    // Fire-and-forget mirror write — never blocks the sync localStorage path above. Skip while the
+    // hydration effect above is still resolving so we don't echo the just-read mirror value back
+    // to itself before it's had a chance to settle. Debounced (~400ms): only the cross-process IPC
+    // write is coalesced — localStorage (the fast path other code reads on next launch) already
+    // happened synchronously above.
+    if (mirrorWriteTimerRef.current != null) clearTimeout(mirrorWriteTimerRef.current);
+    if (!hydratingRef.current) {
+      const payload = JSON.stringify(settings);
+      mirrorWriteTimerRef.current = setTimeout(() => {
+        mirrorWriteTimerRef.current = null;
+        void setSettingsMirror(STORE_KEY, payload);
+      }, 400);
+    }
+  }, [settings]);
+
+  useEffect(
+    () => () => {
+      if (mirrorWriteTimerRef.current != null) clearTimeout(mirrorWriteTimerRef.current);
+    },
+    [],
+  );
+
+  // Re-apply when the OS theme flips and we're on "auto".
+  useEffect(() => {
+    if (settings.themeId !== "auto" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => applySettings(settings);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [settings]);
+
+  const markUserMutation = useCallback(() => {
+    hydrationMutationRef.current += 1;
+    // User-owned state is authoritative now; persist it even while the old mirror read is pending.
+    hydratingRef.current = false;
+  }, []);
+
+  const update = useCallback(
+    (patch: Partial<Settings>) => {
+      markUserMutation();
+      setSettings((current) => {
+        if (!("themeId" in patch)) {
+          return { ...current, ...patch };
+        }
+        return {
+          ...current,
+          shellThemeId: null,
+          bodyThemeId: null,
+          primaryAccentId: null,
+          secondaryAccentId: null,
+          customPrimary: null,
+          customSecondary: null,
+          ...patch,
+        };
+      });
+    },
+    [markUserMutation],
+  );
+  const reset = useCallback(() => {
+    markUserMutation();
+    // Reset restores preferences only; the legal acceptance receipt is a record, not a preference,
+    // so resetting must not send the user back through the first-run agreement gate.
+    setSettings((current) => ({
+      ...DEFAULTS,
+      legalAcceptanceVersion: current.legalAcceptanceVersion,
+      legalAcceptedAt: current.legalAcceptedAt,
+      legalEligibilityBasis: current.legalEligibilityBasis,
+      legalMaterialSha256: current.legalMaterialSha256,
+    }));
+  }, [markUserMutation]);
+
+  const value = useMemo<Ctx>(() => ({ settings, update, reset }), [settings, update, reset]);
+  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
+}
+
+export function useSettings(): Ctx {
+  const ctx = useContext(SettingsContext);
+  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
+  return ctx;
+}

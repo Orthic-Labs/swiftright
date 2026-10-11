@@ -1,0 +1,35 @@
+use tauri::Url;
+
+const BROKER_HOST: &str = "open.viewright.invalid";
+
+fn allowed_target(target: &str) -> bool {
+    let lower = target.trim_start().to_ascii_lowercase();
+    lower.starts_with("http://") || lower.starts_with("https://") || lower.starts_with("mailto:")
+}
+pub fn broker_target(url: &Url) -> Option<String> {
+    if url.scheme() != "https" || url.host_str() != Some(BROKER_HOST) {
+        return None;
+    }
+    let target = url
+        .query_pairs()
+        .find_map(|(key, value)| (key == "target").then(|| value.into_owned()))?;
+    allowed_target(&target).then_some(target)
+}
+
+pub fn plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
+    tauri::plugin::Builder::new("external-navigation")
+        .on_navigation(|_webview, url| {
+            let Some(target) = broker_target(url) else {
+                return true;
+            };
+            if let Err(error) = opener::open(&target) {
+                crate::logs::record_detail(
+                    "external_navigation_failed",
+                    rightkit_logs::Level::Error,
+                    error.to_string(),
+                );
+            }
+            false
+        })
+        .build()
+}

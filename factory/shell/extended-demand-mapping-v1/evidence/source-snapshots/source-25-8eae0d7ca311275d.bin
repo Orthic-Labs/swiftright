@@ -1,0 +1,1274 @@
+﻿import { useCallback, useMemo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Sidebar } from "./Sidebar";
+import { Toolbar } from "./Toolbar";
+import { DocumentMenus, DocumentModeControls } from "./DocActionBar";
+import { DocStatsPill } from "./shell/DocStatsPill";
+import { effectiveReadEdit } from "./shell/readEdit";
+import { DocumentTools } from "./shell/DocumentTools";
+import { DocBarSlotContext } from "./shell/docBar";
+import { InfoInspector } from "./shell/InfoInspector";
+import { StartPage } from "./shell/StartPage";
+import { DocumentContextMenu, useDocumentContextMenu } from "./DocumentContextMenu";
+import { ToastViewport } from "./ToastViewport";
+import { toast } from "@rightkit/platform-ui/headless";
+import { BlockDraftViewConfirm } from "./chrome";
+import { AppDialogs } from "./AppDialogs";
+import { resolveDocumentDrafts } from "./draftResolution";
+import { DocumentRouterTable } from "./DocumentRouterTable";
+import { useAppLifecycle } from "./AppLifecycle";
+import { useGlobalShortcuts } from "./useGlobalShortcuts";
+import type { TabStripProps } from "./tabs/TabStrip";
+import { isLocalFileDoc } from "./sidebar/SidebarPathUtils";
+import { useSettings } from "../settings/settings";
+import type { DocxMenuApi } from "../documents/docx/menuApi";
+import { baseName, formatFromPath, isUntitled } from "../documents/types";
+import type { LoadedDocument, ReadEditMode, SearchProvider } from "../documents/types";
+import { normalizeLivePreviewUrl } from "../documents/web/webUrl";
+import { addRecentUrl } from "../state/recentUrls";
+import { logEvent, logError, setDiagnosticsEnabled } from "../state/diagnostics";
+import { canReplace, capabilitiesFor } from "../documents/capabilities";
+import { useLibrary } from "./useLibrary";
+import { useViewState } from "./useViewState";
+import { useDocumentTabs } from "./useDocumentTabs";
+import { useDocuments } from "./useDocuments";
+import { useSearchController } from "./useSearchController";
+import { useCommandPalette } from "./useCommandPalette";
+import { usePaneLiveness } from "./usePaneLiveness";
+import { useDocumentZoom } from "./useDocumentZoom";
+import { useHtmlSessionProps } from "./useHtmlSessionProps";
+import { scheduleAfterPaint } from "./deferredMount";
+import { syncActiveFormatSavers } from "./activeFormatSavers";
+import {
+  saveFileDialog,
+  writeDocument,
+  readClipboardContent,
+  openLinkedDocument,
+  inTauri,
+} from "../state/tauriBridge";
+import { errorMessage } from "../state/errors";
+import type { MarkdownExportApi } from "../documents/markdown/export/markdownExportTypes";
+import { formatShortcut, isMac } from "../platform";
+import { printHtmlMarkup } from "./documentPrinting";
+import { BlockDraftProvider } from "./BlockDraftContext";
+import { createBlockDraftRegistry } from "./blockDrafts";
+import { clearImageEditSnapshot } from "@rightkit/media-ui";
+import type { SourceEditorViewState } from "../documents/txt/TxtEditor";
+
+function localPathFromClipboardText(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed || /\r|\n/.test(trimmed)) return null;
+  const unquoted = trimmed.replace(/^(['"`])(.+)\1$/, "$2").trim();
+  const path = fileUrlToLocalPath(unquoted) ?? unquoted;
+  const isWindowsDrive = /^[a-z]:[\\/].+/i.test(path);
+  const isUnc = /^\\\\[^\\\/]+[\\\/][^\\\/]+[\\\/].+/.test(path);
+  const isPosixAbsolute = /^\/[^/].+/.test(path);
+  if (!isWindowsDrive && !isUnc && !isPosixAbsolute) return null;
+  return formatFromPath(path) === "unknown" ? null : path;
+}
+
+function fileUrlToLocalPath(input: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "file:") return null;
+  const decoded = decodeURIComponent(url.pathname);
+  if (/^\/[a-z]:\//i.test(decoded)) return decoded.slice(1).replace(/\//g, "\\");
+  if (url.hostname) return `\\\\${url.hostname}${decoded.replace(/\//g, "\\")}`;
+  return decoded;
+}
+
+function initialSidebarCollapsed() {
+  if (typeof window === "undefined") return false;
+  const pinned = localStorage.getItem("vr.sidebar.pinned");
+  const compact =
+    typeof window.matchMedia === "function" && window.matchMedia("(max-width: 640px)").matches;
+  return pinned === "0" || compact;
+}
+
+export function App() {
+  // Document state + lifecycle, composed from focused hooks. useDocumentTabs owns the shared tab /
+  // edit state; useViewState + useLibrary take it; useDocuments owns open/save/dirty/close + the
+  // watcher/session/launch wiring. App is just the shell: compose, derive, render.
+  const [blockDrafts] = useState(() => createBlockDraftRegistry());
+  const tabs = useDocumentTabs();
+  // App's docked-bar centre slot; formats portal their tool capsule into it (shell/docBar).
+  const [docBarSlot, setDocBarSlot] = useState<HTMLElement | null>(null);
+  const {
+    openDocs,
+    activePath,
+    editsRef,
+    subscribeEdits,
+    getEditSnapshot,
+    docxDirty,
+    pdfDirty,
+    imageDirty,
+  } = tabs;
+  const dirtyPaths = useMemo(
+    () => new Set([...docxDirty, ...pdfDirty, ...imageDirty]),
+    [docxDirty, pdfDirty, imageDirty],
+  );
+  const subscribeDirty = useCallback(
+    (path: string, listener: () => void) => {
+      const unsubscribeEdits = subscribeEdits(path, listener);
+      const unsubscribeDrafts = blockDrafts.subscribe(listener);
+      return () => {
+        unsubscribeEdits();
+        unsubscribeDrafts();
+      };
+    },
+    [blockDrafts, subscribeEdits],
+  );
+  const viewState = useViewState(activePath, openDocs, blockDrafts);
+  const {
+    views,
+    contentScrollRef,
+    requestViewChange: onChangeView,
+    confirmViewChange,
+    pendingViewChange,
+    onContentScroll,
+    onPdfViewState,
+  } = viewState;
+  const library = useLibrary(openDocs);
+  const { recents, pinnedPaths, pinnedEntries, onTogglePin, onTogglePinDir, onClearRecents } =
+    library;
+  const docs = useDocuments({ tabs, viewState, library, blockDrafts });
+  const {
+    activate,
+    open,
+    openLiveUrl,
+    openRecent,
+    onOpenDialog,
+    newDocument,
+    requestClose,
+    closeAll,
+    closeMany,
+    openImageSibling,
+    onTxtChange,
+    onSave,
+    onSaveAs,
+    onDocxSaveAs,
+    onPrint,
+    onDocxSave,
+    onDocxChange,
+    docxSaver,
+    docxSaversRef,
+    pdfSaversRef,
+    pdfSavePlansRef,
+    onImageChange,
+    onPdfDirtyChange,
+    imageSaver,
+    imageSaversRef,
+    onEditImageExternal,
+    isDirty,
+    pendingSavePaths,
+    titleFor,
+    error,
+    openingPath,
+    restoringSession,
+    setError,
+    confirmClose,
+    setConfirmClose,
+    confirmCloseAll,
+    confirmCloseAllSaveAll,
+    confirmCloseAllDontSave,
+    confirmCloseAllCancel,
+    confirmQuit,
+    setConfirmQuit,
+    conflict,
+    setConflict,
+    keepConflict,
+    confirmSave,
+    confirmDontSave,
+    applyReload,
+    quitNow,
+  } = docs;
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [distractionFree, setDistractionFree] = useState(false);
+  const [pendingFullscreenDraft, setPendingFullscreenDraft] = useState<null | {
+    drafts: ReturnType<typeof blockDrafts.snapshotModified>;
+  }>(null);
+  const [openUrlDialog, setOpenUrlDialog] = useState(false);
+  // Titlebar tab-overview card grid (⌘⇧A / the strip's cards button).
+  const [tabOverviewOpen, setTabOverviewOpen] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(initialSidebarCollapsed);
+  // Wave 3 Info inspector — one global open flag (per-document persistence is not required). The
+  // toggle lives in the right toolbar capsule (DocumentTools); Escape inside the panel routes here,
+  // and closeInspector returns focus to that toggle button.
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const closeInspector = useCallback(() => {
+    setInspectorOpen(false);
+    document.getElementById("vr-inspector-toggle")?.focus();
+  }, []);
+  const toggleInspector = useCallback(() => setInspectorOpen((o) => !o), []);
+  const dragCounter = useRef(0);
+  const { settings, update } = useSettings();
+  // diagnostics.ts caches the privacy toggle instead of re-parsing settings per event; keep it current.
+  useEffect(() => {
+    setDiagnosticsEnabled(settings.diagnostics !== false);
+  }, [settings.diagnostics]);
+  const [docxMenu, setDocxMenu] = useState<DocxMenuApi | null>(null);
+  // The active PDF pane's own print function, using the PDFDocumentProxy it already has loaded/
+  // rendering on screen — NOT a fresh fetch of the same viewright-stream:// URL, which hung
+  // indefinitely with no error (see documentPrinting.ts printPdf's fallback for the no-registration
+  // case). Mirrors the docxMenu single-active-slot pattern above.
+  const [pdfPrint, setPdfPrint] = useState<(() => Promise<boolean>) | null>(null);
+  const [markdownExport, setMarkdownExport] = useState<MarkdownExportApi | null>(null);
+  // MUST wrap in an extra arrow: React useState setters treat a bare function argument as an updater
+  // `(prev) => next`, so `setPdfPrint(fn)` would INVOKE the print function at registration time and
+  // store its Promise instead of the function. That made every later `pdfPrint()` call throw
+  // synchronously — no dialog, no toast, no timeout, which is exactly how PDF print "did nothing".
+  const registerPdfPrint = useCallback(
+    (fn: (() => Promise<boolean>) | null) => setPdfPrint(() => fn),
+    [],
+  );
+  const registerMarkdownExport = useCallback(
+    (api: MarkdownExportApi | null) => setMarkdownExport(api),
+    [],
+  );
+  // Route PDF print through the active pane's registered function when available; every other
+  // format keeps using useDocuments' onPrint unchanged.
+  const handlePrint = useCallback(
+    (doc: LoadedDocument | null) => {
+      if (doc?.format === "pdf" && pdfPrint) {
+        void pdfPrint()
+          .then((printed) => {
+            if (printed) return;
+            logError("print:failed", "pdf");
+            toast("Couldn't open print dialog", "error");
+          })
+          .catch((e) => {
+            logError("print:failed", `pdf: ${e instanceof Error ? e.message : String(e)}`);
+            toast("Couldn't open print dialog", "error");
+          });
+        return;
+      }
+      if (doc?.format === "md" && markdownExport?.documentPath === doc.path) {
+        void markdownExport
+          .createSnapshot()
+          .then(async (snapshot) => {
+            const printed = await printHtmlMarkup(snapshot.htmlFragment);
+            if (!printed) throw new Error("Print dialog did not open");
+            if (snapshot.warnings.length) {
+              toast(
+                `Printed with ${snapshot.warnings.length} warning${snapshot.warnings.length === 1 ? "" : "s"}`,
+                "info",
+              );
+            }
+          })
+          .catch((error) => {
+            logError(
+              "print:failed",
+              `md: ${error instanceof Error ? error.message : String(error)}`,
+            );
+            toast("Couldn't open print dialog", "error");
+          });
+        return;
+      }
+      if (doc?.format === "md") {
+        toast("Markdown renderer is still loading", "info");
+        return;
+      }
+      onPrint(doc);
+    },
+    [markdownExport, pdfPrint, onPrint],
+  );
+  const { menu: docContextMenu, close: closeDocContextMenu } = useDocumentContextMenu();
+  const autoUpdateCheckRan = useRef(false);
+  // Durable interactive-HTML preview scroll, keyed by the html tab's entry path. Lives here (not in
+  // HtmlDocument) so it survives the unmount on tab switch and is restored when you return. (Phase 1.)
+  const previewScrollStore = useRef<Map<string, number>>(new Map());
+  // Source selection + scroll are view state, but must survive an eligible dirty-router eviction just
+  // like the source itself. One path-keyed owner covers TXT, Markdown's source drawer, and HTML pages.
+  const sourceViewStateRef = useRef<Record<string, SourceEditorViewState>>({});
+
+  const active = openDocs.find((d) => d.path === activePath) ?? null;
+  // Tab order == openDocs order (titlebar tabs use index-keyed ids for aria-controls/labelledby).
+  const activeIndex = openDocs.findIndex((d) => d.path === activePath);
+  // Warm-MRU pane liveness: previous-active tracker, protected/MRU live sets, warm-order
+  // persistence + post-restore warm-up, and the deferred rendered/live reconciliation — extracted
+  // to usePaneLiveness. `pruneClosedPaths` drops a closed tab's rendered/live/recent markers from
+  // the shared closed-tab eviction effect below.
+  const { livePaths, renderedPaths, pruneClosedPaths } = usePaneLiveness({
+    openDocs,
+    activePath,
+    isDirty,
+    pendingSavePaths,
+    restoringSession,
+  });
+  const quitDirtyDocs = openDocs.filter((doc) => isDirty(doc));
+  const view = active ? (views[active.path] ?? "preview") : "preview";
+  const {
+    searchProvider,
+    registerSearchProvider,
+    openFind,
+    toggleFind,
+    closeFind,
+    findBarEl,
+    canOpenFind,
+    findOpen,
+    findMode,
+  } = useSearchController(activePath, active, openDocs, activate);
+  // Per-path, STABLE binding of the controller's `registerSearchProvider`. Each doc pane is rendered
+  // inside a `.map` below, so an inline `(p) => registerSearchProvider(doc.path, p)` would be a fresh
+  // function every render — and viewers (MarkdownView/MarkdownSplitPane, HTML, PDF) list their register
+  // callback in effect deps, so an unstable identity re-fires those effects every render, each minting a
+  // new provider object → setSearchProvider → re-render → infinite "Maximum update depth" loop. Caching
+  // one bound fn per path keeps the identity stable (the controller's registerSearchProvider already is).
+  const boundRegisterRef = useRef<Map<string, (provider: SearchProvider | null) => void>>(
+    new Map(),
+  );
+  const registerSearchProviderFor = useCallback(
+    (path: string) => {
+      const cache = boundRegisterRef.current;
+      let fn = cache.get(path);
+      if (!fn) {
+        fn = (provider) => registerSearchProvider(path, provider);
+        cache.set(path, fn);
+      }
+      return fn;
+    },
+    [registerSearchProvider],
+  );
+  // HTML site-session props for the router — extracted to useHtmlSessionProps. dropHtmlProps is
+  // what the shared closed-tab eviction effect below calls per closed path.
+  const { htmlPropsFor, dropHtmlProps } = useHtmlSessionProps({
+    htmlPages: tabs.htmlPages,
+    previewScrollStore,
+    ensureHtmlPage: docs.ensureHtmlPage,
+    setHtmlPageEdited: docs.setHtmlPageEdited,
+    setHtmlActive: docs.setHtmlActive,
+    saveHtmlPage: docs.saveHtmlPage,
+    discardHtmlPage: docs.discardHtmlPage,
+    htmlDirtyPages: docs.htmlDirtyPages,
+    reload: docs.reload,
+  });
+  // Auto-evict when tabs close: compare previous openDocs to current and evict removed paths.
+  const prevOpenDocsRef = useRef(openDocs);
+  useEffect(() => {
+    const prev = prevOpenDocsRef.current;
+    if (prev !== openDocs) {
+      const current = new Set(openDocs.map((d) => d.path));
+      const closedPaths: string[] = [];
+      for (const doc of prev) {
+        if (!current.has(doc.path)) {
+          boundRegisterRef.current.delete(doc.path);
+          dropHtmlProps(doc.path);
+          clearImageEditSnapshot(doc.path);
+          // A PDF pane can unmount merely because its router leaves the live-tab budget.
+          // Only removal from openDocs is terminal for its parked native reader.
+          if (doc.format === "pdf" && inTauri() && isMac()) {
+            void import("../documents/pdf/macPdfNativeBridge")
+              .then(({ nativePdfClosePath }) => nativePdfClosePath(doc.path))
+              .catch(() => undefined);
+          }
+          delete sourceViewStateRef.current[doc.path];
+          closedPaths.push(doc.path);
+        }
+      }
+      // T5-2: drop closed tabs' rendered/live/recent keep-alive markers too — owned by
+      // usePaneLiveness (see the hook for why each set must be pruned).
+      if (closedPaths.length) {
+        pruneClosedPaths(closedPaths);
+      }
+      prevOpenDocsRef.current = openDocs;
+    }
+  }, [openDocs, pruneClosedPaths, dropHtmlProps]);
+  // Title bar carries the extension (e.g. "notes.md"); sidebar tabs stay stripped (the badge shows extension).
+  // As a function so the Toolbar's LiveTitle can recompute it live while typing an untitled doc.
+  const titleBarTitleFor = useCallback(
+    (d: LoadedDocument) =>
+      d.format === "web" || isUntitled(d.path) ? titleFor(d) : baseName(d.path),
+    [titleFor],
+  );
+  const titleBarTitle = active ? titleBarTitleFor(active) : "ViewRight";
+  // Read the live editsRef (not the debounced `edits` state) so the controlled editor + command-palette
+  // text actions see the latest keystroke without App re-rendering on every keystroke.
+  const activeText = active ? (editsRef.current[active.path] ?? active.content) : "";
+  const activeEditable = active ? capabilitiesFor(active.format).canEdit : false;
+  const activeReadEdit: ReadEditMode = active ? effectiveReadEdit(active) : "read";
+  const activeTextLike = active ? canReplace(active.format) : false;
+  // Whole-document copy — shared by the command palette, the bottom-bar button, and the document
+  // context menu's "Copy contents". Null for non-text formats (pdf/image/docx binary surfaces).
+  const copyContents =
+    activeTextLike && active
+      ? () =>
+          void navigator.clipboard
+            ?.writeText(activeText)
+            .then(() => toast("Document contents copied", "success"))
+            .catch(() => toast("Couldn't copy to clipboard", "error"))
+      : null;
+  // Every open tab keeps a lightweight shell. Only active + most-recent ordinary panes stay live;
+  // writes or dirty state without an app-owned source/draft snapshot add a path until safe to evict.
+  const mountedDocs = openDocs;
+  // Post-paint marker — independent of resource reconciliation above. The marker effect's
+  // deps are [activePath] only so the cleanup-then-rerun pattern in the deferred-mount effect
+  // (which cancels its own rAFs when renderedPaths updates) does not also cancel this log.
+  // Fires for both cold & warm clicks as a "pane became active" latency marker.
+  useEffect(() => {
+    if (!activePath) return;
+    return scheduleAfterPaint(() => {
+      logEvent("pane:active:paint", `path=${activePath}`);
+    });
+  }, [activePath]);
+  // Restore an already-mounted DOCX/image tab's registered saver before paint. Clearing both
+  // refs loses warm viewers because their registration effect correctly does not remount.
+  useLayoutEffect(() => {
+    syncActiveFormatSavers(
+      activePath,
+      docxSaver,
+      imageSaver,
+      docxSaversRef.current,
+      imageSaversRef.current,
+    );
+  }, [activePath, docxSaver, docxSaversRef, imageSaver, imageSaversRef]);
+  const hasFileDrag = (types: DataTransfer["types"] | null | undefined) => {
+    if (!types) return false;
+    if (typeof types.includes === "function") return types.includes("Files");
+    const domStringList = types as { contains?: (type: string) => boolean };
+    return typeof domStringList.contains === "function" && domStringList.contains("Files");
+  };
+  const reorderTabs = useCallback(
+    (fromPath: string, toPath: string, position: "before" | "after" = "before") => {
+      tabs.setOpenDocs((prev) => {
+        const from = prev.findIndex((doc) => doc.path === fromPath);
+        const to = prev.findIndex((doc) => doc.path === toPath);
+        if (from < 0 || to < 0 || from === to) return prev;
+        const next = [...prev];
+        const [moved] = next.splice(from, 1);
+        const targetAfterRemoval = from < to ? to - 1 : to;
+        const insertAt = position === "after" ? targetAfterRemoval + 1 : targetAfterRemoval;
+        next.splice(insertAt, 0, moved);
+        return next;
+      });
+    },
+    [tabs],
+  );
+
+  // Tab-strip bulk closes: the same Save-All/Discard-All chooser Close All uses, driven by closeMany
+  // with the chosen subset. Order = openDocs order so "to the right" means spatial, not sorted.
+  const closeOthers = useCallback(
+    (path: string) => {
+      closeMany(tabs.openDocs.filter((d) => d.path !== path).map((d) => d.path));
+    },
+    [closeMany, tabs.openDocs],
+  );
+  const closeToRight = useCallback(
+    (path: string) => {
+      const at = tabs.openDocs.findIndex((d) => d.path === path);
+      if (at < 0) return;
+      closeMany(tabs.openDocs.slice(at + 1).map((d) => d.path));
+    },
+    [closeMany, tabs.openDocs],
+  );
+
+  // Explorer row click: the entry's path is already broker-granted by explorer_list_dir, so this is
+  // the same open-or-activate flow recents use (minus the token grant step).
+  const openExplorerPath = useCallback(
+    (path: string) => {
+      if (tabs.openDocs.some((d) => d.path === path)) {
+        void activate(path);
+      } else {
+        void open(path);
+      }
+    },
+    [tabs.openDocs, activate, open],
+  );
+
+  // Ctrl/Cmd+wheel document zoom + the zoom HUD/reset pill — extracted to useDocumentZoom. The hook
+  // keeps onDocumentWheel identity-stable (refs mirror active/view/settings) so DocumentRouterTable's
+  // memo isn't defeated.
+  const { zoomHud, zoomedAwayFromDefault, zoomPercentLabel, resetDocumentZoom, onDocumentWheel } =
+    useDocumentZoom({ active, view, settings, update });
+
+  // Watch EVERY open file-backed tab plus each HTML session's visited sub-pages, in the one watcher.
+  // An external edit to ANY of them (active or background) arrives via the `file-changed` event and
+  // reloads that tab when it happens — so tab activation is a pure state change (no re-stat /
+  // reload-on-switch) and a background tab is already fresh by the time you click it. Keyed on the
+  // sorted path set so it re-arms only when a tab opens/closes/navigates, not on every keystroke.
+  const watchKey = useMemo(() => {
+    const files = openDocs
+      .filter((d) => d.format !== "web" && !isUntitled(d.path))
+      .map((d) => d.path);
+    const subPages = Object.values(tabs.htmlPages).flatMap((session) => Object.keys(session));
+    return [...new Set([...files, ...subPages])].sort().join("|");
+  }, [openDocs, tabs.htmlPages]);
+
+  // Ready-show, file watcher re-arm, background update check, and the "open URL as a tab" wiring —
+  // self-contained lifecycle effects extracted to their own hook (AppLifecycle.ts).
+  useAppLifecycle({
+    watchKey,
+    autoCheckUpdates: settings.autoCheckUpdates,
+    autoUpdateCheckRan,
+    openLiveUrl,
+  });
+
+  // Open from clipboard: copied files (CF_HDROP) open like a drag-drop; nothing → a toast.
+  const openFromClipboard = useCallback(async () => {
+    const clip = await readClipboardContent();
+    switch (clip.kind) {
+      case "files":
+        for (const p of clip.paths) void open(p);
+        return;
+      case "image":
+        void open(clip.path);
+        return;
+      case "text":
+        if (normalizeLivePreviewUrl(clip.text)) {
+          addRecentUrl(clip.text.trim());
+          void openLiveUrl(clip.text);
+          return;
+        }
+        {
+          const localPath = localPathFromClipboardText(clip.text);
+          if (localPath) {
+            const granted = await openLinkedDocument(localPath).catch((e) => {
+              setError(errorMessage(e));
+              return null;
+            });
+            if (granted) void open(granted);
+            return;
+          }
+        }
+        docs.duplicateAsDraft(clip.text, "Pasted from clipboard");
+        return;
+      default:
+        toast("Nothing on the clipboard to open", "info");
+    }
+  }, [open, openLiveUrl, docs, setError]);
+
+  const paletteItems = useCommandPalette({
+    openDocs,
+    recents,
+    active,
+    activeEditable,
+    titleFor,
+    activate,
+    openRecent,
+    newDocument,
+    onOpenDialog,
+    onOpenUrl: () => setOpenUrlDialog(true),
+    onSave,
+    onSaveAs,
+    onPrint: handlePrint,
+    docxMenu,
+    onChangeView,
+    settings,
+    update,
+    openSettings: () => setSettingsOpen(true),
+    reopenClosed: docs.reopenLastClosed,
+    showHelp: () => setHelpOpen(true),
+    copyContents,
+    duplicate: activeTextLike && active ? () => docs.duplicateAsDraft(activeText) : null,
+    exportMarkdown:
+      active && (active.format === "md" || active.format === "mdx")
+        ? (target: "html" | "txt") => {
+            const stem = baseName(active.path).replace(/\.(md|mdx|markdown)$/i, "");
+            if (active.format === "md") {
+              if (markdownExport?.documentPath !== active.path) {
+                toast("Markdown renderer is still loading", "info");
+                return;
+              }
+              void markdownExport
+                .createSnapshot()
+                .then(async (snapshot) => {
+                  const path = await saveFileDialog(
+                    `${stem}.${target === "html" ? "html" : "txt"}`,
+                    target === "html" ? "html" : "txt",
+                  );
+                  if (!path) return;
+                  await writeDocument(
+                    path,
+                    target === "html" ? snapshot.htmlDocument : snapshot.plainText,
+                  );
+                  toast(
+                    snapshot.warnings.length
+                      ? `Exported ${baseName(path)} with ${snapshot.warnings.length} warning${snapshot.warnings.length === 1 ? "" : "s"}`
+                      : `Exported ${baseName(path)}`,
+                    snapshot.warnings.length ? "info" : "success",
+                  );
+                })
+                .catch((error) => toast(`Export failed: ${errorMessage(error)}`, "error"));
+              return;
+            }
+            // Lazy: exportMarkdown pulls the whole unified/remark toolchain. Only pay for it once the
+            // user actually asks to export MDX, whose sandbox renderer is separate from Markdown.
+            void import("../documents/markdown/exportMarkdown").then(
+              ({ markdownToHtml, markdownToPlainText }) => {
+                const output =
+                  target === "html"
+                    ? markdownToHtml(activeText, stem)
+                    : markdownToPlainText(activeText);
+                void saveFileDialog(
+                  `${stem}.${target === "html" ? "html" : "txt"}`,
+                  target === "html" ? "html" : "txt",
+                ).then((path) => {
+                  if (!path) return;
+                  writeDocument(path, output)
+                    .then(() => toast(`Exported ${baseName(path)}`, "success"))
+                    .catch((e) => toast(`Export failed: ${errorMessage(e)}`, "error"));
+                });
+              },
+            );
+          }
+        : null,
+    copyRendered:
+      active && (active.format === "md" || active.format === "mdx")
+        ? () => {
+            const copy = (html: string, text: string) => {
+              const clip = navigator.clipboard;
+              const ok = () => toast("Rendered Markdown copied", "success");
+              const fail = () => toast("Couldn't copy to clipboard", "error");
+              if (clip?.write && typeof ClipboardItem !== "undefined") {
+                void clip
+                  .write([
+                    new ClipboardItem({
+                      "text/html": new Blob([html], { type: "text/html" }),
+                      "text/plain": new Blob([text], { type: "text/plain" }),
+                    }),
+                  ])
+                  .then(ok)
+                  .catch(() => void clip.writeText(text).then(ok).catch(fail));
+              } else {
+                void clip?.writeText(text).then(ok).catch(fail);
+              }
+            };
+            if (active.format === "md") {
+              if (markdownExport?.documentPath !== active.path) {
+                toast("Markdown renderer is still loading", "info");
+                return;
+              }
+              void markdownExport
+                .createSnapshot()
+                .then((snapshot) => copy(snapshot.htmlFragment, snapshot.plainText))
+                .catch(() => toast("Couldn't copy to clipboard", "error"));
+              return;
+            }
+            void import("../documents/markdown/exportMarkdown").then(
+              ({ markdownToHtmlFragment, markdownToPlainText }) => {
+                copy(markdownToHtmlFragment(activeText), markdownToPlainText(activeText));
+              },
+            );
+          }
+        : null,
+  });
+
+  // Tab navigation operates on the visible open-tab order; Ctrl+9 maps to the last tab (browser-style).
+  const cycleTab = (dir: 1 | -1) => {
+    if (openDocs.length < 2) return;
+    const i = openDocs.findIndex((d) => d.path === activePath);
+    const n = openDocs.length;
+    activate(openDocs[((((i < 0 ? 0 : i) + dir) % n) + n) % n].path);
+  };
+  const jumpToTab = (index: number) => {
+    if (!openDocs.length) return;
+    const target = index === 8 ? openDocs.length - 1 : index;
+    const doc = openDocs[target];
+    if (doc) activate(doc.path);
+  };
+
+  useGlobalShortcuts({
+    active,
+    activeEditable,
+    searchProvider,
+    canOpenFind,
+    docxMenu,
+    newDocument,
+    onOpenDialog,
+    onPrint: handlePrint,
+    onSave,
+    onSaveAs,
+    requestClose,
+    togglePalette: () => setPaletteOpen((o) => !o),
+    openFind,
+    onHtmlSaveShortcut: docs.onHtmlSaveShortcut,
+    reloadActiveFromDisk: (doc: LoadedDocument) => docs.reload(doc.path),
+    openFromClipboard,
+    cycleTab,
+    jumpToTab,
+    reopenClosed: docs.reopenLastClosed,
+    resetZoom: () => update({ fontSizePx: 16, sourceFontSizePx: 12 }),
+    toggleWordWrap: () => update({ wordWrap: !settings.wordWrap }),
+    toggleSidebar: () => window.dispatchEvent(new CustomEvent("viewright:toggle-sidebar")),
+    toggleTabOverview: () => setTabOverviewOpen((o) => !o),
+    showHelp: () => setHelpOpen(true),
+    findOpen,
+    toggleDistractionFree: () => {
+      const path = active?.path;
+      if (path && blockDrafts.snapshotModified(path).length > 0) {
+        setPendingFullscreenDraft({ drafts: blockDrafts.snapshotModified(path) });
+        return;
+      }
+      // Clean draft closes silently before entering fullscreen
+      if (path) {
+        const clean = blockDrafts.snapshotAll(path);
+        for (const d of clean) blockDrafts.discard(d.identity);
+      }
+      setDistractionFree((on) => {
+        if (!on)
+          toast(
+            `Distraction-free — press ${formatShortcut("Esc")} or ${formatShortcut("Ctrl+Shift+F")} to exit`,
+            "info",
+          );
+        return !on;
+      });
+    },
+  });
+
+  // Esc leaves distraction-free reading (when nothing else owns Esc).
+  useEffect(() => {
+    if (!distractionFree) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !settingsOpen && !paletteOpen && !helpOpen && !openUrlDialog) {
+        e.preventDefault();
+        setDistractionFree(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [distractionFree, settingsOpen, paletteOpen, helpOpen, openUrlDialog]);
+
+  // Stabilized chrome props so the memoized Sidebar/Toolbar/DocStatsPill skip the per-keystroke
+  // App re-render — a keystroke goes through writeEditsLive (editsRef + a per-path notify), so App does
+  // NOT re-render at all; the stats pill self-updates via its own subscribeEdits subscription. Slots are
+  // memoized on the data they actually read.
+  const handleOpenSettings = useCallback(() => setSettingsOpen(true), []);
+  // macOS app menu: ViewRight › Settings… (⌘,) fires this from the native menu bridge.
+  useEffect(() => {
+    window.addEventListener("viewright:open-settings", handleOpenSettings);
+    return () => window.removeEventListener("viewright:open-settings", handleOpenSettings);
+  }, [handleOpenSettings]);
+  const closeActive = useCallback(() => {
+    if (active) requestClose(active.path);
+  }, [active, requestClose]);
+  const editActiveImageExternal = useCallback(() => {
+    if (active) onEditImageExternal(active);
+  }, [active, onEditImageExternal]);
+  // T2-3: stable identity (was an inline arrow at the DocumentRouterTable call site) so the now-memoized
+  // DocumentRouterTable doesn't see a fresh function every render. `open` is already useCallback-stable.
+  const onOpenPathForRouter = useCallback(
+    (p: string, opts?: { background?: boolean }) => {
+      void open(p, opts);
+    },
+    [open],
+  );
+  // Tab-strip props for the titlebar — memoized so the memoized TabStrip skips per-keystroke App
+  // re-renders the same way Sidebar/Toolbar do. openDocs order IS the tab order (single source).
+  const toggleSidebarEvent = useCallback(
+    () => window.dispatchEvent(new CustomEvent("viewright:toggle-sidebar")),
+    [],
+  );
+  const openLocalPaths = useMemo(
+    () => openDocs.filter(isLocalFileDoc).map((d) => d.path),
+    [openDocs],
+  );
+  const openPathsSet = useMemo(() => new Set(openDocs.map((d) => d.path)), [openDocs]);
+  const tabStripProps: TabStripProps = useMemo(
+    () => ({
+      docs: openDocs,
+      activePath,
+      sidebarCollapsed,
+      onToggleSidebar: toggleSidebarEvent,
+      onActivate: (path: string) => void activate(path),
+      onRequestClose: requestClose,
+      onCloseAll: closeAll,
+      onCloseOthers: closeOthers,
+      onCloseRight: closeToRight,
+      onClosePaths: closeMany,
+      onReorderTabs: reorderTabs,
+      onNewDocument: () => newDocument("txt"),
+      onTogglePin: (path: string) => void onTogglePin(path),
+      pinnedPaths,
+      openLocalPaths,
+      titleFor: titleBarTitleFor,
+      isDirty,
+      dirtyPaths,
+      subscribeDirty,
+      subscribeEdits,
+      getEditSnapshot,
+      computeTitle: titleBarTitleFor,
+      overviewOpen: tabOverviewOpen,
+      onOverviewOpenChange: setTabOverviewOpen,
+    }),
+    [
+      openDocs,
+      activePath,
+      sidebarCollapsed,
+      toggleSidebarEvent,
+      activate,
+      requestClose,
+      closeAll,
+      closeOthers,
+      closeToRight,
+      closeMany,
+      reorderTabs,
+      newDocument,
+      onTogglePin,
+      pinnedPaths,
+      openLocalPaths,
+      titleBarTitleFor,
+      isDirty,
+      dirtyPaths,
+      subscribeDirty,
+      subscribeEdits,
+      getEditSnapshot,
+      tabOverviewOpen,
+    ],
+  );
+  const menuSlot = useMemo(
+    () =>
+      active ? (
+        <DocumentMenus
+          doc={active}
+          view={view}
+          onSave={() =>
+            active.format === "html" ? docs.onHtmlSaveShortcut(active.path) : onSave(active)
+          }
+          onSaveAs={() => onSaveAs(active)}
+          onPrint={() => handlePrint(active)}
+          onClose={closeActive}
+          onEditImageExternal={editActiveImageExternal}
+          onChangeView={onChangeView}
+          docxMenu={active.format === "docx" ? docxMenu : null}
+          readOnly={activeReadEdit === "read"}
+        />
+      ) : null,
+    [
+      active,
+      view,
+      docxMenu,
+      onChangeView,
+      onSave,
+      onSaveAs,
+      handlePrint,
+      docs,
+      closeActive,
+      editActiveImageExternal,
+      activeReadEdit,
+    ],
+  );
+  const modeSlot = useMemo(
+    () =>
+      active && (active.format === "md" || active.format === "mdx" || active.format === "html") ? (
+        <DocumentModeControls
+          doc={active}
+          view={view}
+          onChangeView={onChangeView}
+          readOnly={activeReadEdit === "read"}
+        />
+      ) : null,
+    [active, view, onChangeView, activeReadEdit],
+  );
+
+  return (
+    <div
+      className="vr-app-root flex h-full w-full bg-[var(--chrome)] text-paper"
+      onDragEnter={(e) => {
+        if (hasFileDrag(e.dataTransfer?.types)) {
+          e.preventDefault();
+          dragCounter.current++;
+          setDragOver(true);
+        }
+      }}
+      onDragOver={(e) => {
+        if (hasFileDrag(e.dataTransfer?.types)) {
+          e.preventDefault();
+          if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+        }
+      }}
+      onDragLeave={(e) => {
+        if (dragOver || hasFileDrag(e.dataTransfer?.types)) {
+          e.preventDefault();
+          dragCounter.current--;
+          if (dragCounter.current <= 0) {
+            dragCounter.current = 0;
+            setDragOver(false);
+          }
+        }
+      }}
+      onDrop={() => {
+        dragCounter.current = 0;
+        setDragOver(false);
+      }}
+    >
+      {dragOver && (
+        <div className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center bg-copper/10 border-2 border-dashed border-copper/50">
+          <div className="rounded-lg bg-panel-2 px-6 py-4 shadow-2xl border border-copper/30 font-sans text-sm text-copper-hi">
+            Drop to open
+          </div>
+        </div>
+      )}
+      {/* Keyboard/screen-reader users can jump straight past the sidebar + toolbars to the document. */}
+      <a href="#vr-doc-pane" className="vr-skip-link">
+        Skip to content
+      </a>
+      {!distractionFree && (
+        <Sidebar
+          activePath={activePath}
+          openPaths={openPathsSet}
+          recents={recents}
+          pinnedPaths={pinnedPaths}
+          pinnedEntries={pinnedEntries}
+          onActivate={activate}
+          onOpenRecent={openRecent}
+          onOpenPath={openExplorerPath}
+          onTogglePin={onTogglePin}
+          onTogglePinDir={onTogglePinDir}
+          onClearRecents={onClearRecents}
+          onOpenDialog={onOpenDialog}
+          onOpenUrl={() => setOpenUrlDialog(true)}
+          onOpenClipboard={openFromClipboard}
+          onNew={newDocument}
+          onOpenSettings={handleOpenSettings}
+          onCollapsedChange={setSidebarCollapsed}
+          titlebarSlot={menuSlot}
+        />
+      )}
+      <main className="flex min-w-0 flex-1 flex-col">
+        {!distractionFree && (
+          <Toolbar
+            doc={active}
+            title={titleBarTitle}
+            compute={titleBarTitleFor}
+            subscribeEdits={subscribeEdits}
+            getEditSnapshot={getEditSnapshot}
+            sidebarCollapsed={sidebarCollapsed}
+            menuSlot={menuSlot}
+            isDirty={isDirty}
+            dirtyPaths={dirtyPaths}
+            subscribeDirty={subscribeDirty}
+            tabs={tabStripProps}
+          />
+        )}
+        {/* The Info inspector is a flex SIBLING of the content plane — the plane shrinks so the
+            panel never overlaps the floating format bar or find bar inside it. */}
+        <div className="flex min-h-0 min-w-0 flex-1">
+          {/* Search belongs below the docked bar, independent of its centre column. */}
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+            {/* The page's curved top-left corner belongs to the top of the page — the docked bar. */}
+            <svg data-vr-content-corner viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M0 24V0H24A24 24 0 0 0 0 24Z" />
+            </svg>
+            {/* One quiet toolbar row (polish pass): the active format's tools on the left —
+                portalled in via <DocBar> and wrapping to extra rows at narrow widths — the view
+                tools (mode switch, Aa, info) on the right. No nested capsules; the bottom status
+                row carries path + stats + save state. Content starts below. */}
+            {active && !distractionFree && (
+              <div
+                data-vr-doc-bar
+                className="no-print relative z-30 flex shrink-0 items-center gap-2 border-b border-[color-mix(in_srgb,var(--reader-line)_62%,transparent)] bg-[var(--reader-surface)] py-1 pl-3.5 pr-3"
+              >
+                <div ref={setDocBarSlot} className="flex min-w-0 flex-1 items-center" />
+                <div className="flex shrink-0 items-center gap-1.5">
+                  {modeSlot}
+                  {modeSlot && <span aria-hidden="true" className="mx-0.5 h-4 w-px bg-line" />}
+                  <DocumentTools
+                    doc={active}
+                    view={view}
+                    inspectorOpen={inspectorOpen}
+                    onToggleInspector={toggleInspector}
+                  />
+                </div>
+              </div>
+            )}
+            <DocBarSlotContext.Provider value={distractionFree ? null : docBarSlot}>
+              <div
+                data-vr-content-plane
+                id="vr-doc-pane"
+                role="tabpanel"
+                aria-labelledby={activeIndex >= 0 ? `vr-tab-${activeIndex}` : undefined}
+                className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-[var(--reader-surface)]"
+              >
+                {findBarEl && (
+                  <div
+                    data-vr-toolbar-find=""
+                    className="no-print vr-chrome absolute top-2 z-50 overflow-y-auto max-h-[calc(100%-1rem)]"
+                  >
+                    {findBarEl}
+                  </div>
+                )}
+                {/* While zoom is off 100% the pill STAYS and becomes the reset control. Cmd/Ctrl+0 has
+              always reset zoom, but nothing advertised it, so a mis-scrolled document looked stuck.
+              At 100% it reverts to the old transient read-out and stops taking pointer events. */}
+                {zoomedAwayFromDefault ? (
+                  <button
+                    type="button"
+                    onClick={resetDocumentZoom}
+                    aria-label="Reset zoom to 100%"
+                    className="no-print absolute right-4 top-4 z-50 rounded border border-line bg-panel-2 px-2 py-1 font-mono text-xs text-muted shadow-xl hover:text-fg"
+                  >
+                    {zoomPercentLabel} · Reset
+                  </button>
+                ) : (
+                  zoomHud && (
+                    <div className="no-print pointer-events-none absolute right-4 top-4 z-50 rounded border border-line bg-panel-2 px-2 py-1 font-mono text-xs text-muted shadow-xl">
+                      {zoomHud}
+                    </div>
+                  )
+                )}
+                {openingPath && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-center gap-2 border-b border-line bg-panel/95 px-4 py-2 font-mono text-xs text-muted shadow-sm"
+                  >
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-copper" aria-hidden />
+                    Opening {openingPath.split(/[\\/]/).pop() || "document"}…
+                  </div>
+                )}
+                {/* Restore indicator: only show once the launch effect has populated tabs (openDocs
+              non-empty) but no tab is active yet. Before that (initial mount, no saved session)
+              the StartPage is the right thing — the launch effect flips restoringSession true
+              on entry and false in `finally`. Gating on openDocs.length > 0 keeps the existing
+              "fresh launch with nothing to restore" path showing StartPage immediately, so
+              its interactions (New document, Open URL, Paste) keep working. */}
+                {!active && restoringSession && openDocs.length > 0 && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    data-testid="restoring-session"
+                    className="absolute inset-0 flex items-center justify-center bg-[var(--reader-surface)] outline-none"
+                  >
+                    <div className="flex items-center gap-3 font-sans text-sm text-muted">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-copper" aria-hidden />
+                      Restoring session…
+                    </div>
+                  </div>
+                )}
+                {!active && (!restoringSession || openDocs.length === 0) && (
+                  <div className="absolute inset-0 overflow-auto bg-[var(--reader-surface)] outline-none">
+                    <StartPage
+                      onNew={newDocument}
+                      onOpenDialog={onOpenDialog}
+                      onOpenUrl={() => setOpenUrlDialog(true)}
+                      onOpenClipboard={openFromClipboard}
+                      recents={recents}
+                      onOpenRecent={openRecent}
+                    />
+                  </div>
+                )}
+                {/* One scroll pane per MOUNTED tab. Inactive panes stay in layout with visibility:hidden —
+              React keeps their state (DOM, iframe, scroll), and WebView2 doesn't discard srcdoc
+              iframes the way it can on display:none transitions. Only the active pane owns the
+              shared scroll ref + wheel/scroll handlers. */}
+                <BlockDraftProvider registry={blockDrafts}>
+                  <DocumentRouterTable
+                    mountedDocs={mountedDocs}
+                    activePath={activePath}
+                    livePaths={livePaths}
+                    renderedPaths={renderedPaths}
+                    views={views}
+                    contentScrollRef={contentScrollRef}
+                    onContentScroll={onContentScroll}
+                    onDocumentWheel={onDocumentWheel}
+                    subscribeEdits={subscribeEdits}
+                    getEditSnapshot={getEditSnapshot}
+                    sourceViewStateRef={sourceViewStateRef}
+                    onTxtChange={onTxtChange}
+                    onSave={onSave}
+                    onDocxSaveAs={onDocxSaveAs}
+                    onDocxSave={onDocxSave}
+                    onDocxChange={onDocxChange}
+                    docxSaver={docxSaver}
+                    imageSaver={imageSaver}
+                    docxSaversRef={docxSaversRef}
+                    pdfSaversRef={pdfSaversRef}
+                    pdfSavePlansRef={pdfSavePlansRef}
+                    imageSaversRef={imageSaversRef}
+                    setDocxMenu={setDocxMenu}
+                    setPdfPrint={registerPdfPrint}
+                    setMarkdownExport={registerMarkdownExport}
+                    onImageChange={onImageChange}
+                    onPdfDirtyChange={onPdfDirtyChange}
+                    openImageSibling={openImageSibling}
+                    registerSearchProviderFor={registerSearchProviderFor}
+                    onPdfViewState={onPdfViewState}
+                    findBarEl={null}
+                    findMode={findMode}
+                    canReplaceSearch={!!searchProvider?.canReplace}
+                    onChangeView={onChangeView}
+                    toggleFind={toggleFind}
+                    closeFind={closeFind}
+                    onOpenPath={onOpenPathForRouter}
+                    trackMdxGrant={docs.trackMdxGrant}
+                    htmlPropsFor={htmlPropsFor}
+                  />
+                </BlockDraftProvider>
+              </div>
+            </DocBarSlotContext.Provider>
+            {/* Bottom status row: file path (left) + doc stats / save / autosave (right).
+                Outside the scrolling content plane, docked to the page's bottom edge. */}
+            {active && !distractionFree && (
+              <div data-vr-doc-status-bar className="no-print shrink-0 justify-between font-sans">
+                <div className="vr-doc-path min-w-0 flex-1 opacity-80">{active.path}</div>
+                <DocStatsPill
+                  doc={active}
+                  subscribeEdits={subscribeEdits}
+                  getEditSnapshot={getEditSnapshot}
+                  status={
+                    activeEditable
+                      ? {
+                          dirtyHint: dirtyPaths.has(active.path),
+                          isDirty,
+                          subscribeDirty,
+                          onSave: () =>
+                            active.format === "docx" && docxMenu
+                              ? docxMenu.save()
+                              : active.format === "html"
+                                ? docs.onHtmlSaveShortcut(active.path)
+                                : onSave(active),
+                          autoSave: settings.autoSave,
+                          onToggleAutoSave: () => update({ autoSave: !settings.autoSave }),
+                        }
+                      : undefined
+                  }
+                />
+              </div>
+            )}
+          </div>
+          {inspectorOpen && active && !distractionFree && (
+            <InfoInspector
+              doc={active}
+              onClose={closeInspector}
+              subscribeEdits={subscribeEdits}
+              getEditSnapshot={getEditSnapshot}
+            />
+          )}
+        </div>
+      </main>
+      {docContextMenu && (
+        <DocumentContextMenu
+          menu={docContextMenu}
+          onClose={closeDocContextMenu}
+          onCopyContents={copyContents}
+        />
+      )}
+      <ToastViewport />
+      <AppDialogs
+        settingsOpen={settingsOpen}
+        onCloseSettings={() => setSettingsOpen(false)}
+        paletteOpen={paletteOpen}
+        paletteItems={paletteItems}
+        onClosePalette={() => setPaletteOpen(false)}
+        helpOpen={helpOpen}
+        onCloseHelp={() => setHelpOpen(false)}
+        openUrlDialog={openUrlDialog}
+        onOpenUrlSubmit={(input) => {
+          setOpenUrlDialog(false);
+          const localPath = localPathFromClipboardText(input);
+          if (localPath) {
+            void openLinkedDocument(localPath).then((readablePath) =>
+              open(readablePath ?? localPath),
+            );
+            return;
+          }
+          addRecentUrl(input);
+          void openLiveUrl(input);
+        }}
+        onCloseOpenUrlDialog={() => setOpenUrlDialog(false)}
+        error={error}
+        onCloseError={() => setError(null)}
+        confirmClose={confirmClose}
+        openDocs={openDocs}
+        titleFor={titleFor}
+        confirmSave={confirmSave}
+        confirmDontSave={confirmDontSave}
+        onCancelConfirmClose={() => setConfirmClose(null)}
+        confirmCloseAll={confirmCloseAll}
+        onCloseAllSaveAll={() => void confirmCloseAllSaveAll()}
+        onCloseAllDontSave={() => void confirmCloseAllDontSave()}
+        onCloseAllCancel={confirmCloseAllCancel}
+        confirmQuit={confirmQuit}
+        quitDirtyNames={quitDirtyDocs.map((doc) =>
+          isUntitled(doc.path) ? titleFor(doc) : baseName(doc.path),
+        )}
+        onQuitNow={quitNow}
+        onQuitWithoutSaving={() => void docs.quitDiscardAll()}
+        onQuitSaveAll={() => void docs.quitSaveAll()}
+        onCancelConfirmQuit={() => {
+          setConfirmQuit(false);
+        }}
+        conflict={conflict}
+        onReloadConflict={(path) => {
+          applyReload(path);
+          setConflict(null);
+        }}
+        onKeepConflict={() => {
+          if (conflict) void keepConflict(conflict);
+        }}
+        htmlConfirm={docs.htmlConfirm}
+        htmlActivePage={tabs.htmlActivePage}
+        htmlDirtyPages={docs.htmlDirtyPages}
+        onHtmlSaveCurrent={docs.htmlSaveCurrent}
+        onHtmlSaveAll={docs.htmlSaveAll}
+        onHtmlDiscardAll={docs.htmlDiscardAll}
+        onHtmlConfirmCancel={docs.htmlConfirmCancel}
+        htmlConflict={docs.htmlConflict}
+        onHtmlConflictReload={docs.htmlConflictReload}
+        onHtmlConflictKeep={docs.htmlConflictKeep}
+      />
+      {pendingViewChange && (
+        <BlockDraftViewConfirm
+          onDone={() => void confirmViewChange("done")}
+          onDiscard={() => void confirmViewChange("discard")}
+          onStay={() => void confirmViewChange("stay")}
+          error={
+            pendingViewChange.drafts.find((d) => d.error)?.error ??
+            pendingViewChange.drafts.find((d) => d.reason)?.reason ??
+            null
+          }
+        />
+      )}
+      {pendingFullscreenDraft && (
+        <BlockDraftViewConfirm
+          onDone={async () => {
+            const path = active?.path;
+            if (!path) {
+              setPendingFullscreenDraft(null);
+              return;
+            }
+            const outcome = await resolveDocumentDrafts(blockDrafts, path, "view-change", "done");
+            if (outcome !== "resolved") {
+              setPendingFullscreenDraft({ drafts: blockDrafts.snapshotModified(path) });
+              return;
+            }
+            setPendingFullscreenDraft(null);
+            setDistractionFree((on) => {
+              if (!on)
+                toast(
+                  `Distraction-free — press ${formatShortcut("Esc")} or ${formatShortcut("Ctrl+Shift+F")} to exit`,
+                  "info",
+                );
+              return !on;
+            });
+          }}
+          onDiscard={async () => {
+            const path = active?.path;
+            if (path) await resolveDocumentDrafts(blockDrafts, path, "view-change", "discard");
+            setPendingFullscreenDraft(null);
+            setDistractionFree((on) => {
+              if (!on)
+                toast(
+                  `Distraction-free — press ${formatShortcut("Esc")} or ${formatShortcut("Ctrl+Shift+F")} to exit`,
+                  "info",
+                );
+              return !on;
+            });
+          }}
+          onStay={() => setPendingFullscreenDraft(null)}
+          error={
+            pendingFullscreenDraft.drafts.find((d) => d.error)?.error ??
+            pendingFullscreenDraft.drafts.find((d) => d.reason)?.reason ??
+            null
+          }
+        />
+      )}
+    </div>
+  );
+}

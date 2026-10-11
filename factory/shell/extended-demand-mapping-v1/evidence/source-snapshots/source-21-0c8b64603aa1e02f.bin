@@ -1,0 +1,264 @@
+use tauri::{AppHandle, Manager};
+
+use super::explorer::fs_io_error;
+use crate::documents;
+use crate::error::{broker_error, ViewRightError};
+use crate::path_broker::{self, PathBroker};
+use crate::persistence::{Db, FileEntry, PinEntry};
+
+fn clamp_recent_limit(limit: Option<i64>) -> i64 {
+    limit.unwrap_or(20).clamp(1, 50)
+}
+#[derive(serde::Serialize)]
+pub struct RecentEntry {
+    #[serde(flatten)]
+    entry: FileEntry,
+    // Location metadata only. Opening still requires exchanging the one-shot token.
+    display_path: String,
+}
+
+fn tokenized_entries(entries: Vec<FileEntry>, broker: &PathBroker) -> Vec<RecentEntry> {
+    entries
+        .into_iter()
+        .filter_map(|mut entry| {
+            let token = broker.register_known_stored_path(&entry.path).ok()?;
+            let display_path = entry.path.clone();
+            entry.path = token;
+            Some(RecentEntry {
+                entry,
+                display_path,
+            })
+        })
+        .collect()
+}
+
+// Every command below does a small SQLite read/write and/or broker path normalization
+// (`fs::metadata` + `canonicalize`). Individually cheap, but none of it belongs on the IPC/UI
+// thread, so each body runs inside `spawn_blocking`. `State<'_, T>` is a non-'static borrow, so the
+// closures re-resolve `Db`/`PathBroker` from the `AppHandle` (same pattern as
+// `read_clipboard_content`).
+
+#[tauri::command]
+pub async fn list_recent(
+    limit: Option<i64>,
+    app: AppHandle,
+) -> Result<Vec<RecentEntry>, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let db = app.state::<Db>();
+        let broker = app.state::<PathBroker>();
+        db.list_recent(clamp_recent_limit(limit))
+            .map(|rows| tokenized_entries(rows, &broker))
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn clear_recent(app: AppHandle) -> Result<(), ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        app.state::<Db>()
+            .clear_recent()
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn is_pinned_path(path: String, app: AppHandle) -> Result<bool, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = app
+            .state::<PathBroker>()
+            .require_existing_file(&path)
+            .map_err(broker_error)?;
+        app.state::<Db>()
+            .is_pinned(&path)
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn toggle_pin(
+    path: String,
+    display_name: String,
+    format: String,
+    app: AppHandle,
+) -> Result<bool, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let _ = format;
+        let path = app
+            .state::<PathBroker>()
+            .require_existing_file(&path)
+            .map_err(broker_error)?;
+        let format = documents::format_of(&path).to_string();
+        app.state::<Db>()
+            .toggle_pin(&path, &display_name, &format)
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+/// All pins (files AND directories) in stored pin order. File rows are returned with a
+/// live read grant — `grant_existing_file_path` yields the canonical display path, which
+/// is exactly the string `toggle_pin` stored — so the row is directly openable the way an
+/// `explorer_list_dir` row is. Directory pins hold no broker grant (grants cover file
+/// CONTENT only, and a folder has none to protect); the explorer lists them via
+/// `explorer_list_dir`, which needs none. Rows whose target vanished since pinning are
+/// skipped, the same way tokenized recents drop missing files.
+#[tauri::command]
+pub async fn list_pins(app: AppHandle) -> Result<Vec<PinEntry>, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let db = app.state::<Db>();
+        let broker = app.state::<PathBroker>();
+        let rows = db.list_pins()?;
+        let mut out = Vec::with_capacity(rows.len());
+        for entry in rows {
+            if entry.kind == "dir" {
+                if std::path::Path::new(&entry.path).is_dir() {
+                    out.push(entry);
+                }
+            } else if let Ok(granted) = broker.grant_existing_file_path(&entry.path) {
+                out.push(PinEntry {
+                    path: granted,
+                    ..entry
+                });
+            }
+        }
+        Ok(out)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+/// Pin/unpin a DIRECTORY (the explorer sidebar's pinned folders). No broker grant is
+/// involved: directories aren't grantable (`normalize_existing_file` rejects non-files),
+/// and this command writes only the pin row — it reads a stat, never file content. The
+/// path is canonicalized and must exist and be a directory. Returns the new pinned state.
+#[tauri::command]
+pub async fn toggle_pin_dir(
+    path: String,
+    display_name: String,
+    app: AppHandle,
+) -> Result<bool, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let canon = std::fs::canonicalize(&path).map_err(|e| fs_io_error(&path, e))?;
+        if !canon.is_dir() {
+            return Err(ViewRightError::FileNotFound(format!(
+                "not a folder: {path}"
+            )));
+        }
+        let path = path_broker::path_to_string(&canon);
+        app.state::<Db>()
+            .toggle_pin_dir(&path, &display_name)
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn record_recent(
+    path: String,
+    display_name: String,
+    _format: String,
+    app: AppHandle,
+) -> Result<(), ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = app
+            .state::<PathBroker>()
+            .require_existing_file(&path)
+            .map_err(broker_error)?;
+        let format = documents::format_of(&path).to_string();
+        app.state::<Db>()
+            .record_recent(&path, &display_name, &format)
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn save_view_state(
+    path: String,
+    last_view: String,
+    view_meta: Option<String>,
+    app: AppHandle,
+) -> Result<(), ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = app
+            .state::<PathBroker>()
+            .require_existing_file(&path)
+            .map_err(broker_error)?;
+        let format = documents::format_of(&path).to_string();
+        let display_name = std::path::Path::new(&path)
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or(&path)
+            .to_string();
+        app.state::<Db>()
+            .save_view_state(
+                &path,
+                &last_view,
+                view_meta.as_deref(),
+                &display_name,
+                &format,
+            )
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn save_session(tabs: Vec<(String, bool)>, app: AppHandle) -> Result<(), ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let broker = app.state::<PathBroker>();
+        // Only persist paths that the broker recognizes (have a live grant). Silently skip others.
+        let valid: Vec<(String, bool)> = tabs
+            .into_iter()
+            .filter(|(path, _)| broker.require_existing_file(path).is_ok())
+            .collect();
+        let refs: Vec<(&str, bool)> = valid.iter().map(|(p, a)| (p.as_str(), *a)).collect();
+        app.state::<Db>()
+            .save_session(&refs)
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn load_session(app: AppHandle) -> Result<Vec<(String, bool)>, ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let rows = app
+            .state::<Db>()
+            .load_session()
+            .map_err(ViewRightError::from)?;
+        // Map real paths to one-shot known tokens. Skip files that no longer exist.
+        let broker = app.state::<PathBroker>();
+        let mut result = Vec::new();
+        for (path, active) in rows {
+            if let Ok(token) = broker.register_known_stored_path(&path) {
+                result.push((token, active));
+            }
+        }
+        Ok(result)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn clear_session(app: AppHandle) -> Result<(), ViewRightError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        app.state::<Db>()
+            .clear_session()
+            .map_err(ViewRightError::from)
+    })
+    .await
+    .map_err(|e| ViewRightError::Other(e.to_string()))?
+}

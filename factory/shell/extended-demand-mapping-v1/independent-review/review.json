@@ -1,0 +1,123 @@
+{
+  "kind": "f12-extended-demand-mapping-independent-review",
+  "version": "1",
+  "scope": "Read-only review of frozen 107-row candidate; no producer, registry, SDK, SSH, GUI, or Pulse changes.",
+  "producerPins": {
+    "mappingPy": "021eb2207da7c1e3378e571a02f974566d9f0ee4b54bb723eff39dc63d4ccc8d",
+    "tests": "ba34ec3bd95534a42858af871450b682a4c814249dea223c9dc0f90a4d151e87",
+    "candidate": "0a55d077c4824f3a8d59a8cb9dd13aa689e4dab50e629680d900b2798361e466",
+    "sourceSnapshotManifest": "d28b8b6fe006b0980e31b65ea3b8a0b4e4655dadbe85ad1c15a92c693ce60fcb",
+    "stageManifest": "ee14b0cda4ac1d80fd2678ff3dbee7579272c15144015461684935a7e749e5e9"
+  },
+  "stageValidation": {
+    "entries": 54,
+    "allEntriesPresent": true,
+    "allBytesAndSha256Match": true,
+    "totalBytes": 661270,
+    "maxEntryBytes": 100479,
+    "sourceSnapshots": {"entries": 41, "totalBytes": 516253, "allBytesAndSha256Match": true},
+    "excludedGeneratedFiles": ["__pycache__/**", "*.pyc"],
+    "observedGeneratedFile": "__pycache__/mapping.cpython-314.pyc"
+  },
+  "pinnedInputValidation": {
+    "allSevenInputsPresent": true,
+    "allSevenInputHashesMatchStageManifest": true,
+    "catalogueSymbolCount": 111576,
+    "curatedRegistryBlockCount": 10
+  },
+  "denominatorValidation": {
+    "candidateRows": 107,
+    "distinctDemandLabels": 107,
+    "distinctRowKeys": 107,
+    "registryMappedRows": 0,
+    "sourceInventoryOnly": 46,
+    "inventoryStatusCounts": {"unmapped": 61, "source_inventory_only": 46},
+    "dispositionCounts": {
+      "ambiguous-catalogue-candidates": 3,
+      "exact-catalogue-reference-only": 2,
+      "non-swiftui-source-inventory": 46,
+      "service-or-platform": 27,
+      "unmapped": 29
+    },
+    "candidateMatchesStageCounts": true
+  },
+  "exactCatalogueReferences": [
+    {
+      "demand": "List/ForEach/onMove",
+      "rowKey": "f12-extended-004",
+      "references": [
+        {"path": "SwiftUI.List", "usr": "s:7SwiftUI4ListV", "catalogueMatches": 1, "catalogueStatus": "inventory", "registrySelectors": []},
+        {"path": "SwiftUI.ForEach", "usr": "s:7SwiftUI7ForEachV", "catalogueMatches": 1, "catalogueStatus": "inventory", "registrySelectors": []},
+        {"path": "SwiftUI.DynamicViewContent.onMove(perform:)", "usr": "s:7SwiftUI18DynamicViewContentPAAE6onMove7performQry10Foundation8IndexSetV_SitcSg_tF", "catalogueMatches": 1, "catalogueStatus": "inventory", "registrySelectors": []}
+      ],
+      "sourceJourney": {
+        "evidenceIds": ["slice-editor", "slice-model"],
+        "snapshotSourceHashesMatchEvidenceRecords": true,
+        "usageLinesObserved": [15, 30, 31, 34, 53, 93],
+        "freshness": "stale-row-because-slice-model-anchor-text-excludes-four-space-indent"
+      },
+      "dispositionReview": "valid exact catalogue references only; no implementation or registry claim"
+    },
+    {
+      "demand": "TextField/FocusState",
+      "rowKey": "f12-extended-006",
+      "references": [
+        {"path": "SwiftUI.TextField", "usr": "s:7SwiftUI9TextFieldV", "catalogueMatches": 1, "catalogueStatus": "inventory", "registrySelectors": []},
+        {"path": "SwiftUI.FocusState", "usr": "s:7SwiftUI10FocusStateV", "catalogueMatches": 1, "catalogueStatus": "inventory", "registrySelectors": []}
+      ],
+      "sourceJourney": {
+        "evidenceIds": ["slice-editor", "slice-model"],
+        "snapshotSourceHashesMatchEvidenceRecords": true,
+        "usageLinesObserved": [16, 19, 53, 68],
+        "freshness": "stale-row-because-slice-model-anchor-text-excludes-four-space-indent"
+      },
+      "dispositionReview": "valid exact catalogue references only; no implementation or registry claim"
+    }
+  ],
+  "ambiguousCandidates": [
+    {
+      "demand": "Binding(get:set:)",
+      "candidateCount": 2,
+      "candidateUSRs": ["s:7SwiftUI7BindingV3get3setACyxGxyc_yx_AA11TransactionVtctcfc", "s:7SwiftUI7BindingV3get3setACyxGxyc_yxctcfc"],
+      "sourceUsageLine": 53,
+      "review": "source proves Binding usage but does not select one overload; remains held"
+    },
+    {
+      "demand": "Button actions",
+      "candidateCount": 2,
+      "candidateUSRs": ["s:7SwiftUI6ButtonV", "s:7SwiftUI6ButtonV6action5labelACyxGyyc_xyXEtcfc"],
+      "sourceUsageLines": [23, 55, 56, 57],
+      "review": "source proves button actions but demand does not select type vs initializer; remains held"
+    },
+    {
+      "demand": "radio/checkbox controls",
+      "candidateCount": 2,
+      "candidateUSRs": ["s:7SwiftUI21RadioGroupPickerStyleV", "s:7SwiftUI19CheckboxToggleStyleV"],
+      "sourceUsageLines": [490, 511, 535, 536],
+      "review": "source is RightKit React/HTML input code; no unique SwiftUI declaration is established; conservative hold is correct"
+    }
+  ],
+  "sourceFreshness": {
+    "evidenceRecords": {"total": 56, "current": 28, "stale": 28},
+    "demandRows": {"allReferencedEvidenceCurrent": 34, "atLeastOneStaleReference": 73},
+    "meaning": "Current/stale is snapshot comparison against pinned F12 path, hash, line, and exact text; it is not live repository freshness.",
+    "exactRowsAffected": ["f12-extended-004", "f12-extended-006"],
+    "staleCause": "slice-model source hash matches snapshot, but recorded text is 'private func persist() {' while snapshot line is indented '    private func persist() {'"
+  },
+  "independentFaultControls": [
+    {"fault": "remove candidate row", "expected": "reject denominator/row identity", "performed": true},
+    {"fault": "set any registryBlockId", "expected": "reject registryMappedRows=0 invariant", "performed": true},
+    {"fault": "mutate exact reference USR or path", "expected": "reject catalogue path+USR exactness", "performed": true},
+    {"fault": "alter pinned demand/catalogue byte", "expected": "reject input SHA pin", "performed": true},
+    {"fault": "alter or remove source snapshot byte", "expected": "reject snapshot manifest bytes/hash/coverage", "performed": true},
+    {"fault": "duplicate demand label", "expected": "independent review detects distinct-demand count below 107", "performed": true}
+  ],
+  "findings": [
+    "Two exact reference groups resolve to unique catalogue path+USR inventory rows, with no current curated registry selector.",
+    "Three ambiguity groups retain six candidates and emit no registry identity.",
+    "Exact source snapshots show relevant SwiftUI usage for two direct groups, while one journey anchor has indentation mismatch and correctly makes row freshness stale.",
+    "Radio/checkbox source is HTML/React; candidate remains held despite related SwiftUI names, avoiding false promotion.",
+    "All 107 rows retain null registryBlockId; no F12 status, registry, capability, dependency, progress, or parity promotion occurs."
+  ],
+  "disposition": "independent review passes bounded identity-only candidate; registry promotion remains zero"
+}

@@ -1,0 +1,45 @@
+﻿import React from "react";
+import { createRoot } from "react-dom/client";
+import { AppRoot } from "./app/AppRoot";
+import { ErrorBoundary } from "./app/ErrorBoundary";
+import { isPrintPreviewWindow, mountPrintPreviewWindow } from "./app/PrintPreviewWindow";
+import { SettingsProvider } from "./settings/settings";
+import { installDiagnostics } from "./state/diagnostics";
+import { installExternalLinkGuard } from "./state/tauriBridge";
+import { installNativeContextMenuBlocker } from "./state/contextMenu";
+import { installResourceCensusDevHook } from "./app/resourceCensusDev";
+import "./styles/index.css";
+
+installDiagnostics();
+installExternalLinkGuard();
+// The "Skip to content" link is for keyboard users: macOS focuses it when the window activates, so
+// it only becomes visible once Tab has actually been pressed.
+window.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key === "Tab") document.documentElement.dataset.vrKeyboard = "1";
+  },
+  { capture: true },
+);
+installNativeContextMenuBlocker();
+installResourceCensusDevHook();
+
+// The window is shown after first paint by useReadyShow() inside AppRoot — not on a fixed timer
+// here. AppRoot renders the legal-acceptance gate in place of the document workspace until settings
+// carry a current acceptance receipt (src/state/legal.ts), then swaps to the workspace itself.
+const root = document.getElementById("root");
+if (!root) throw new Error("Missing #root");
+
+if (isPrintPreviewWindow()) {
+  mountPrintPreviewWindow(root);
+} else {
+  createRoot(root).render(
+    <React.StrictMode>
+      <SettingsProvider>
+        <ErrorBoundary label="ViewRight">
+          <AppRoot />
+        </ErrorBoundary>
+      </SettingsProvider>
+    </React.StrictMode>,
+  );
+}

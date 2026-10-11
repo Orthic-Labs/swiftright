@@ -1,0 +1,767 @@
+// Single-instance launches and macOS native open-document events share this lifecycle router.
+mod app_lifecycle;
+mod app_paths;
+mod binary_stream;
+mod commands;
+mod context_menu;
+mod documents;
+mod error;
+mod external_navigation;
+mod license_clock;
+pub mod logs;
+mod mac_pdf_view;
+mod native_license_adapter;
+mod ocr_backend;
+#[cfg(target_os = "macos")]
+mod ocr_worker;
+mod path_broker;
+mod pdf_bench;
+mod persistence;
+mod setup_recovery;
+mod site_root;
+mod startup_cache;
+mod stream_http;
+mod traffic_lights;
+mod watcher;
+
+use path_broker::PathBroker;
+use persistence::Db;
+use serde::Serialize;
+use std::path::PathBuf;
+use tauri::{DragDropEvent, Emitter, Manager, PhysicalPosition, Window, WindowEvent};
+use watcher::{ExplorerWatchState, WatcherState};
+
+/// Run the one-shot OCR worker before Tauri initializes any UI or single-instance machinery.
+/// The worker is intentionally a private CLI protocol used by the macOS command bridge.
+#[cfg(target_os = "macos")]
+pub fn run_ocr_worker_if_requested() -> bool {
+    ocr_worker::run_if_requested()
+}
+#[cfg(all(not(debug_assertions), feature = "qa-native"))]
+compile_error!("qa-native must never be enabled in release builds");
+#[cfg(all(not(debug_assertions), feature = "dev-native"))]
+compile_error!("dev-native must never be enabled in release builds");
+#[cfg(all(not(debug_assertions), feature = "bench-native"))]
+compile_error!("bench-native must never be enabled in release builds");
+
+#[cfg(all(debug_assertions, feature = "qa-native"))]
+fn rightkit_native_qa_enabled() -> bool {
+    // A rightkit-qa launch sets RIGHTKIT_CONTROL_SERVICE and drives the app through the embedded
+    // control plugin; the WebDriver endpoint is then not wanted (and not started).
+    std::env::var("RIGHTKIT_QA_NATIVE").as_deref() == Ok("1")
+        && std::env::var_os("RIGHTKIT_CONTROL_SERVICE").is_none()
+}
+
+/// Hidden rightkit-qa launch: the window may show, but the app must never take focus.
+#[cfg(all(debug_assertions, feature = "qa-native"))]
+fn rightkit_qa_hidden() -> bool {
+    std::env::var("RIGHTKIT_QA_HIDDEN").as_deref() == Ok("1")
+}
+
+/// Script for a native menu item routed into the web layer, or `None` for other ids.
+/// `vr-key:<mods>+<key>` replays that keystroke on the focused element so the existing
+/// shortcut handlers (and their focus guards) run; `vr-event:<name>` fires `viewright:<name>`.
+fn menu_bridge_script(id: &str) -> Option<String> {
+    let safe = |s: &str| !s.is_empty() && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
+    if let Some(name) = id.strip_prefix("vr-cmd:") {
+        return safe(name).then(|| {
+            format!("window.dispatchEvent(new CustomEvent('viewright:menu-command', {{ detail: '{name}' }}))")
+        });
+    }
+    if let Some(name) = id.strip_prefix("vr-event:") {
+        return safe(name).then(|| {
+            format!("window.dispatchEvent(new Event('viewright:{name}', {{ cancelable: true }}))")
+        });
+    }
+    let spec = id.strip_prefix("vr-key:")?;
+    let mut parts: Vec<&str> = spec.split('+').collect();
+    let key = parts.pop()?;
+    if key.len() != 1 || !key.chars().all(|c| c.is_ascii_alphanumeric()) {
+        return None;
+    }
+    let mut flags = String::new();
+    for modifier in parts {
+        match modifier {
+            "meta" => flags.push_str("metaKey: true, "),
+            "ctrl" => flags.push_str("ctrlKey: true, "),
+            "shift" => flags.push_str("shiftKey: true, "),
+            "alt" => flags.push_str("altKey: true, "),
+            _ => return None,
+        }
+    }
+    let key = if spec.contains("shift") {
+        key.to_ascii_uppercase()
+    } else {
+        key.to_string()
+    };
+    Some(format!(
+        "(document.activeElement ?? document.body).dispatchEvent(new KeyboardEvent('keydown', {{ key: '{key}', {flags}bubbles: true, cancelable: true }}))"
+    ))
+}
+
+/// Enables and ticks the macOS menu's document commands (`vr-cmd:` items) for the active document;
+/// every other document command is disabled. No-op where there is no app menu.
+#[tauri::command]
+fn set_native_menu_state(app: tauri::AppHandle, enabled: Vec<String>, checked: Vec<String>) {
+    use tauri::menu::MenuItemKind;
+    fn walk<R: tauri::Runtime>(
+        items: Vec<MenuItemKind<R>>,
+        enabled: &[String],
+        checked: &[String],
+    ) {
+        for item in items {
+            match item {
+                MenuItemKind::Submenu(sub) => {
+                    if let Ok(children) = sub.items() {
+                        walk(children, enabled, checked);
+                    }
+                }
+                MenuItemKind::MenuItem(entry) => {
+                    if let Some(id) = entry.id().as_ref().strip_prefix("vr-cmd:") {
+                        let _ = entry.set_enabled(enabled.iter().any(|e| e == id));
+                    }
+                }
+                MenuItemKind::Check(entry) => {
+                    if let Some(id) = entry.id().as_ref().strip_prefix("vr-cmd:") {
+                        let _ = entry.set_enabled(enabled.iter().any(|e| e == id));
+                        let _ = entry.set_checked(checked.iter().any(|c| c == id));
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    if let Some(menu) = app.menu() {
+        if let Ok(items) = menu.items() {
+            walk(items, &enabled, &checked);
+        }
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn configure_webview2_profile(app_name: &str) {
+    if std::env::var("WEBVIEW2_DEFAULT_BACKGROUND_COLOR")
+        .map(|value| value.trim().is_empty())
+        .unwrap_or(true)
+    {
+        // Read once by WebView2 while its controller is created.
+        unsafe {
+            std::env::set_var("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", "FFF7F3EC");
+        }
+    }
+
+    if std::env::var("WEBVIEW2_USER_DATA_FOLDER")
+        .map(|value| !value.trim().is_empty())
+        .unwrap_or(false)
+    {
+        return;
+    }
+
+    let base = dirs::data_local_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join(app_name);
+    let dir = base.join("webview2");
+
+    if std::fs::create_dir_all(&dir).is_ok() {
+        // SAFETY: called at the very start of `run()`, before Tauri spawns any threads.
+        // `set_var` is UB only when called concurrently with readers on other threads.
+        unsafe {
+            std::env::set_var("WEBVIEW2_USER_DATA_FOLDER", dir);
+        }
+    }
+}
+
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    // Write panics into the structured log so they survive into the next launch's
+    // diagnostics export. Release builds use `panic = "abort"`, so this hook is the
+    // only chance to record the message before the process dies.
+    std::panic::set_hook(Box::new(|info| {
+        let message = if let Some(s) = info.payload().downcast_ref::<&str>() {
+            (*s).to_string()
+        } else if let Some(s) = info.payload().downcast_ref::<String>() {
+            s.clone()
+        } else {
+            "unknown panic payload".to_string()
+        };
+        let location = info
+            .location()
+            .map(|l| format!("{}:{}", l.file(), l.line()))
+            .unwrap_or_default();
+        logs::record_detail(
+            "rust_panic",
+            rightkit_logs::Level::Error,
+            format!("{message} at {location}"),
+        );
+        eprintln!("ViewRight: PANIC: {message} at {location}");
+    }));
+
+    #[cfg(target_os = "windows")]
+    {
+        configure_webview2_profile(app_paths::app_data_namespace());
+    }
+
+    match startup_cache::ensure_http_cache_dir("app.viewright") {
+        Ok(startup_cache::CacheDirOutcome::Created) => {
+            eprintln!("ViewRight: created application cache directory");
+            logs::record("startup_cache_created", rightkit_logs::Level::Info);
+        }
+        Ok(startup_cache::CacheDirOutcome::Repaired) => {
+            eprintln!("ViewRight: repaired application cache directory");
+            logs::record("startup_cache_repaired", rightkit_logs::Level::Warn);
+        }
+        Ok(startup_cache::CacheDirOutcome::Existing) => {}
+        Err(error) => {
+            let message = format!("could not prepare application cache directory ({error})");
+            eprintln!("ViewRight: {message}");
+            logs::record_detail(
+                "startup_cache_repair_failed",
+                rightkit_logs::Level::Error,
+                &message,
+            );
+        }
+    }
+
+    let pending_open_paths = commands::PendingOpenPaths::from_env();
+    #[allow(unused_mut)]
+    let mut builder = tauri::Builder::default();
+    // Native automation builds must own their process instead of forwarding the launch.
+    #[cfg(not(any(
+        feature = "qa-native",
+        feature = "bench-native",
+        feature = "dev-native"
+    )))]
+    {
+        let app_id = crate::app_paths::app_data_namespace().to_ascii_lowercase();
+        builder = builder.plugin(
+            rightkit_shell::Shell::builder(&app_id)
+                .build()
+                .single_instance_plugin(|app, argv, cwd| {
+                    app_lifecycle::on_second_instance(app, argv.to_vec(), cwd.to_owned())
+                }),
+        );
+    }
+    builder = builder.plugin(external_navigation::plugin());
+    // rightkit-qa in-app control server: inert unless the launcher sets RIGHTKIT_CONTROL_SERVICE,
+    // and compiled out of every build without the debug-only `qa-native` feature.
+    #[cfg(all(debug_assertions, feature = "qa-native"))]
+    {
+        if let Some(plugin) =
+            rightkit_control::embedded::Control::<tauri::Wry>::new().build_if_enabled()
+        {
+            builder = builder.plugin(plugin);
+        }
+    }
+    #[cfg(all(debug_assertions, feature = "dev-native"))]
+    {
+        builder = builder.plugin(tauri_plugin_wdio_webdriver::init_with_port(4445));
+    }
+    #[cfg(all(debug_assertions, feature = "qa-native", not(feature = "dev-native")))]
+    if rightkit_native_qa_enabled() {
+        builder = builder.plugin(tauri_plugin_wdio_webdriver::init());
+    }
+
+    // Async registration: `binary_stream::serve_token_request` only blocks the calling thread for the
+    // cheap validation (token resolve, mime, stat, range parse); the actual file read runs on a
+    // dedicated thread and calls `responder.respond(...)` when it's done, so a large PDF/DOCX/image
+    // read never holds this callback's thread (see docs/PERF-AUDIT-2026-07-15.md T1-4).
+    let builder = builder.register_asynchronous_uri_scheme_protocol(
+        "viewright-stream",
+        |ctx, request, responder| {
+            let broker = ctx.app_handle().state::<PathBroker>();
+            binary_stream::serve_token_request(broker.inner(), &request, move |response| {
+                responder.respond(response);
+            });
+        },
+    );
+
+    // Site subresources for HTML previews. Same async shape and reasoning as `viewright-stream`
+    // above: validation is cheap and synchronous, the body read moves to its own thread so a large
+    // video never blocks this callback. See `site_root` for the containment and MIME rules.
+    let builder = builder.register_asynchronous_uri_scheme_protocol(
+        "viewright-site",
+        |ctx, request, responder| {
+            let broker = ctx.app_handle().state::<PathBroker>();
+            site_root::serve_site_request(broker.inner(), &request, move |response| {
+                responder.respond(response);
+            });
+        },
+    );
+
+    let database = match Db::open() {
+        Ok(db) => db,
+        Err(err) => {
+            let msg = format!("could not open the on-disk database ({err}); using an in-memory database for this session");
+            eprintln!("ViewRight: {msg}");
+            logs::record_detail("startup_db_fallback", rightkit_logs::Level::Warn, &msg);
+            match Db::open_in_memory() {
+                Ok(db) => db,
+                Err(in_memory_err) => {
+                    let msg = format!(
+                        "could not open the in-memory database ({in_memory_err}); exiting safely"
+                    );
+                    eprintln!("ViewRight: {msg}");
+                    logs::record_detail("startup_db_fatal", rightkit_logs::Level::Error, &msg);
+                    return;
+                }
+            }
+        }
+    };
+
+    let builder = builder
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build());
+    #[cfg(all(debug_assertions, feature = "qa-native"))]
+    let builder = if rightkit_native_qa_enabled() {
+        builder
+    } else {
+        builder.plugin(tauri_plugin_http::init())
+    };
+    #[cfg(not(all(debug_assertions, feature = "qa-native")))]
+    let builder = builder.plugin(tauri_plugin_http::init());
+
+    builder
+        .manage(database)
+        .manage(PathBroker::default())
+        .manage(commands::MarkdownAssetTransactions::default())
+        .manage(pending_open_paths)
+        .manage(WatcherState::default())
+        .manage(ExplorerWatchState::new())
+        .manage(traffic_lights::TrafficLightState::default())
+        .manage(commands::PdfSaveTokenStore::default())
+        .setup(|app| {
+            logs::record("app_started", rightkit_logs::Level::Info);
+            // Dev launches must be inspectable even when hot reload interrupts the renderer-owned
+            // reveal path. Production keeps its first-paint hidden-window behavior unchanged.
+            #[cfg(debug_assertions)]
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                // Hidden rightkit-qa runs must not take focus or show in the Dock.
+                #[cfg(feature = "qa-native")]
+                let take_focus = !rightkit_qa_hidden();
+                #[cfg(not(feature = "qa-native"))]
+                let take_focus = true;
+                if take_focus {
+                    let _ = window.set_focus();
+                }
+            }
+            #[cfg(all(debug_assertions, feature = "qa-native", target_os = "macos"))]
+            if rightkit_qa_hidden() {
+                app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+            }
+            #[cfg(target_os = "macos")]
+            if let Some(window) = app.get_webview_window("main") {
+                commands::disable_automatic_devtools_shortcuts(&window);
+            }
+            #[cfg(all(target_os = "macos", debug_assertions, feature = "bench-native"))]
+            pdf_bench::activate_macos_foreground();
+            #[cfg(all(debug_assertions, feature = "dev-native"))]
+            app.add_capability(
+                r#"{"identifier":"dev-native","windows":["main"],"permissions":["wdio-webdriver:default"]}"#,
+            )?;
+            #[cfg(all(debug_assertions, feature = "qa-native", not(feature = "dev-native")))]
+            if rightkit_native_qa_enabled() {
+                app.add_capability(
+                    r#"{"identifier":"qa-native","windows":["main"],"permissions":["wdio-webdriver:default"]}"#,
+                )?;
+            }
+            // macOS: build a standard menu bar so Cmd+H (Hide), Cmd+Q (Quit), Cmd+M (Minimize),
+            // and the Edit menu shortcuts (Cmd+Z undo, Cmd+C copy, etc.) work natively.
+            #[cfg(target_os = "macos")]
+            {
+                use tauri::menu::{CheckMenuItemBuilder, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
+                let handle = app.handle();
+                let app_menu = SubmenuBuilder::new(handle, "ViewRight")
+                    .item(&MenuItemBuilder::with_id("vr-event:open-settings", "Settings…")
+                        .accelerator("CmdOrCtrl+,").build(handle)?)
+                    .separator()
+                    .hide()
+                    .hide_others()
+                    .show_all()
+                    .separator()
+                    .item(&MenuItemBuilder::with_id("application-quit", "Quit ViewRight")
+                        .accelerator("CmdOrCtrl+Q").build(handle)?)
+                    .build()?;
+                // Every app command is a native menu item with its usual shortcut. `vr-key:` items
+                // replay the same keystroke the web shortcut layer already handles, so behaviour,
+                // focus guards and per-format routing stay in one place (useGlobalShortcuts).
+                let key = |id: &str, label: &str, accel: Option<&str>| {
+                    let mut item = MenuItemBuilder::with_id(format!("vr-key:{id}"), label);
+                    if let Some(accel) = accel {
+                        item = item.accelerator(accel);
+                    }
+                    item.build(handle)
+                };
+                // `vr-cmd:` items are document commands; they start disabled and the active document
+                // enables (and ticks) the ones that apply via `set_native_menu_state`.
+                let cmd = |id: &str, label: &str| {
+                    MenuItemBuilder::with_id(format!("vr-cmd:{id}"), label).enabled(false).build(handle)
+                };
+                let check = |id: &str, label: &str| {
+                    CheckMenuItemBuilder::with_id(format!("vr-cmd:{id}"), label)
+                        .enabled(false)
+                        .checked(false)
+                        .build(handle)
+                };
+                let file_menu = SubmenuBuilder::new(handle, "File")
+                    .item(&key("meta+n", "New", Some("CmdOrCtrl+N"))?)
+                    .item(&key("meta+o", "Open…", Some("CmdOrCtrl+O"))?)
+                    .item(&key("meta+shift+t", "Reopen Closed Document", Some("CmdOrCtrl+Shift+T"))?)
+                    .separator()
+                    .item(&key("meta+w", "Close", Some("CmdOrCtrl+W"))?)
+                    .item(&key("meta+s", "Save", Some("CmdOrCtrl+S"))?)
+                    .item(&key("meta+shift+s", "Save As…", Some("CmdOrCtrl+Shift+S"))?)
+                    .item(&cmd("edit-image-external", "Edit Image Externally…")?)
+                    .separator()
+                    .item(&cmd("page-setup", "Page Setup…")?)
+                    .item(&key("meta+p", "Print…", Some("CmdOrCtrl+P"))?)
+                    .build()?;
+                let find_menu = SubmenuBuilder::new(handle, "Find")
+                    .item(&key("meta+f", "Find…", Some("CmdOrCtrl+F"))?)
+                    // Cmd+H is Hide on macOS, so Replace keeps its web Ctrl+H route without a key equivalent.
+                    .item(&key("ctrl+h", "Find and Replace…", None)?)
+                    .item(&key("meta+g", "Find Next", Some("CmdOrCtrl+G"))?)
+                    .item(&key("meta+shift+g", "Find Previous", Some("CmdOrCtrl+Shift+G"))?)
+                    .build()?;
+                let edit_menu = SubmenuBuilder::new(handle, "Edit")
+                    .item(&MenuItemBuilder::with_id("editor-undo", "Undo")
+                        .accelerator("CmdOrCtrl+Z").build(handle)?)
+                    .item(&MenuItemBuilder::with_id("editor-redo", "Redo")
+                        .accelerator("CmdOrCtrl+Shift+Z").build(handle)?)
+                    .separator()
+                    .cut()
+                    .copy()
+                    .paste()
+                    .select_all()
+                    .separator()
+                    .item(&find_menu)
+                    .build()?;
+                let view_menu = SubmenuBuilder::new(handle, "View")
+                    .item(&key("meta+e", "Toggle Sidebar", Some("CmdOrCtrl+E"))?)
+                    .separator()
+                    .item(&check("view-interactive", "Interactive")?)
+                    .item(&check("view-safe", "Safe")?)
+                    .item(&check("view-raw-source", "Raw Markdown Source")?)
+                    .item(&check("view-preview", "Preview")?)
+                    .item(&check("view-source", "Source")?)
+                    .separator()
+                    .item(&check("spellcheck", "Spell Check")?)
+                    .item(&check("word-wrap", "Word Wrap")?)
+                    .separator()
+                    .item(&key("meta+0", "Actual Size", Some("CmdOrCtrl+0"))?)
+                    .separator()
+                    .item(&key("meta+shift+f", "Focus Mode", Some("CmdOrCtrl+Shift+F"))?)
+                    .item(&key("meta+shift+p", "Command Palette…", Some("CmdOrCtrl+Shift+P"))?)
+                    .build()?;
+                let format_menu = SubmenuBuilder::new(handle, "Format")
+                    .item(&cmd("bold", "Bold")?)
+                    .item(&cmd("italic", "Italic")?)
+                    .item(&cmd("underline", "Underline")?)
+                    .item(&cmd("strikethrough", "Strikethrough")?)
+                    .item(&cmd("superscript", "Superscript")?)
+                    .item(&cmd("subscript", "Subscript")?)
+                    .separator()
+                    .item(&cmd("clear-formatting", "Clear Formatting")?)
+                    .build()?;
+                let insert_menu = SubmenuBuilder::new(handle, "Insert")
+                    .item(&cmd("insert-table", "Table (3 × 3)")?)
+                    .item(&cmd("insert-image", "Image…")?)
+                    .item(&cmd("insert-link", "Link…")?)
+                    .item(&cmd("insert-page-break", "Page Break")?)
+                    .item(&cmd("insert-toc", "Table of Contents")?)
+                    .build()?;
+                // Tab navigation lives in the Window menu next to Minimize. These are
+                // `vr-event:` items (the `key()` helper only models single alphanumeric
+                // accelerators, and ⌃Tab isn't one): firing one dispatches a window-level
+                // `viewright:next-tab`/`viewright:prev-tab` event, which useGlobalShortcuts
+                // already listens for.
+                let window_menu = SubmenuBuilder::new(handle, "Window")
+                    .minimize()
+                    .separator()
+                    .item(&MenuItemBuilder::with_id("vr-event:next-tab", "Select Next Tab")
+                        .accelerator("Ctrl+Tab").build(handle)?)
+                    .item(&MenuItemBuilder::with_id("vr-event:prev-tab", "Select Previous Tab")
+                        .accelerator("Ctrl+Shift+Tab").build(handle)?)
+                    .build()?;
+                let menu = MenuBuilder::new(handle)
+                    .item(&app_menu)
+                    .item(&file_menu)
+                    .item(&edit_menu)
+                    .item(&view_menu)
+                    .item(&format_menu)
+                    .item(&insert_menu)
+                    .item(&window_menu)
+                    .build()?;
+                app.set_menu(menu)?;
+            }
+            // Graft a "View source" item onto WebView2's native context menu (Windows) for the
+            // interactive preview iframe, so native Inspect + VR's source-jump share one menu.
+            let handle = app.handle().clone();
+            for window in app.webview_windows().into_values() {
+                context_menu::install_view_source_context_item(&window, handle.clone());
+                context_menu::disable_browser_accelerator_keys(&window);
+                context_menu::route_new_windows_to_tabs(&window, handle.clone());
+            }
+            // Pre-warm the macOS font cache on a background thread.
+            commands::warm_font_cache();
+            Ok(())
+        })
+        .on_menu_event(|app, event| {
+            if event.id().as_ref() == "application-quit" {
+                // Closing uses the same Save/Discard/Cancel gate as the titlebar close button.
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.close();
+                }
+                return;
+            }
+            let id = event.id().as_ref();
+            if let Some(script) = menu_bridge_script(id) {
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.eval(&script);
+                }
+                return;
+            }
+            let command = match id {
+                "editor-undo" => "undo",
+                "editor-redo" => "redo",
+                _ => return,
+            };
+            if let Some(window) = app.get_webview_window("main") {
+                let script = format!(
+                    "(() => {{ let el = document.activeElement; try {{ while (el?.tagName === 'IFRAME' && el.contentDocument?.activeElement) el = el.contentDocument.activeElement; }} catch {{}} const modelEditor = el?.closest('.cm-editor, .ProseMirror'); if (modelEditor) el.dispatchEvent(new KeyboardEvent('keydown', {{ key: 'z', metaKey: true, shiftKey: '{command}' === 'redo', bubbles: true, cancelable: true }})); else if (el?.closest('input, textarea, [contenteditable=\"true\"]')) el.ownerDocument.execCommand('{command}'); else window.dispatchEvent(new Event('viewright:{command}', {{ cancelable: true }})); }})()"
+                );
+                let _ = window.eval(&script);
+            }
+        })
+        // Tauri v2 delivers OS file drops for a config-created WebviewWindow as a WindowEvent (NOT a
+        // WebviewEvent) — registering only on_webview_event meant drops never reached the handler.
+        // The frontend native-drop coordinator claims supported images before routing remaining paths.
+        .on_window_event(|window, event| {
+            match event {
+                WindowEvent::DragDrop(drag) => handle_drag_drop(window.app_handle(), window, drag),
+                WindowEvent::Destroyed => mac_pdf_view::cleanup_window(window.app_handle(), window.label()),
+                WindowEvent::Resized(_) => {
+                    #[cfg(target_os = "macos")]
+                    {
+                        let app = window.app_handle();
+                        if let (Some(state), Some(webview)) = (
+                            app.try_state::<traffic_lights::TrafficLightState>(),
+                            app.get_webview_window(window.label()),
+                        ) {
+                            traffic_lights::reapply(&webview, &state);
+                        }
+                    }
+                }
+                WindowEvent::Focused(true) => {
+                    // macOS clears manual traffic-light positions on resize / fullscreen-exit (which
+                    // refocuses the window), so re-assert the last-applied inset from those events.
+                    #[cfg(target_os = "macos")]
+                    {
+                        let app = window.app_handle();
+                        if let (Some(state), Some(webview)) = (
+                            app.try_state::<traffic_lights::TrafficLightState>(),
+                            app.get_webview_window(window.label()),
+                        ) {
+                            traffic_lights::reapply(&webview, &state);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        })
+        .invoke_handler(tauri::generate_handler![
+            set_native_menu_state,
+            commands::initial_open_paths,
+            commands::open_file_dialog,
+            commands::save_file_dialog,
+            commands::grant_known_file_token,
+            commands::open_linked_document,
+            commands::regrant_saved_target,
+            commands::read_document,
+            commands::write_document,
+            commands::write_document_base64,
+            commands::copy_document,
+            commands::read_relative_asset,
+            commands::read_relative_script,
+            commands::grant_relative_file,
+            commands::grant_site_root,
+            commands::revoke_site_root,
+            commands::open_external,
+            commands::save_markdown_asset,
+            commands::commit_markdown_asset,
+            commands::rollback_markdown_asset,
+            commands::index_markdown_folder,
+            commands::inspect_markdown_resources,
+            commands::read_clipboard_content,
+            commands::open_devtools,
+            commands::set_devtools_shortcut_scope,
+            commands::edit_image_external,
+            commands::reveal_in_file_explorer,
+            commands::list_system_fonts,
+            commands::markdown_association_status,
+            commands::set_markdown_default_handler,
+            commands::file_association_status,
+            commands::set_file_association_defaults,
+            commands::open_file_association_settings,
+            commands::list_recent,
+            commands::clear_recent,
+            commands::is_pinned_path,
+            commands::toggle_pin,
+            commands::list_pins,
+            commands::toggle_pin_dir,
+            commands::record_recent,
+            commands::save_view_state,
+            commands::save_session,
+            commands::load_session,
+            commands::clear_session,
+            setup_recovery::save_setup_recovery,
+            setup_recovery::load_setup_recovery,
+            setup_recovery::clear_setup_recovery,
+            commands::settings_get,
+            commands::settings_set,
+            commands::secure_update_license_get,
+            commands::secure_update_license_set,
+            commands::secure_update_license_delete,
+            commands::secure_device_id_get_or_create,
+            commands::license_lifecycle_snapshot,
+            commands::license_refresh_and_reanchor,
+            commands::watch_file,
+            commands::watch_files,
+            commands::revoke_path,
+            commands::list_sibling_images,
+            commands::explorer_locations,
+            commands::explorer_list_dir,
+            commands::explorer_watch_dir,
+            commands::explorer_unwatch_dir,
+            commands::explorer_reveal,
+            commands::file_fingerprint,
+            commands::inspect_pdf_page,
+            commands::ocr_page,
+            commands::ocr_available,
+            commands::list_pdf_fonts,
+            commands::compose_pdf_preview,
+            commands::prepare_pdf_save,
+            commands::commit_pdf_save,
+            mac_pdf_view::native_pdf_open,
+            mac_pdf_view::native_pdf_update,
+            mac_pdf_view::native_pdf_state,
+            mac_pdf_view::native_pdf_close,
+            mac_pdf_view::native_pdf_suspend,
+            mac_pdf_view::native_pdf_find,
+            mac_pdf_view::native_pdf_print,
+            commands::print_current_webview,
+            commands::open_print_preview_window,
+            commands::take_print_preview_payload,
+            pdf_bench::pdf_bench_reset,
+            pdf_bench::pdf_bench_stop,
+            pdf_bench::pdf_bench_activate_foreground,
+            pdf_bench::pdf_bench_stream_stats,
+            pdf_bench::pdf_bench_process_memory,
+            pdf_bench::pdf_bench_write_result,
+            pdf_bench::pdf_bench_clear_results,
+            traffic_lights::set_window_collapsed,
+            logs::rightkit_logs_write,
+            logs::rightkit_logs_collect,
+            logs::rightkit_logs_clear,
+        ])
+        .build(tauri::generate_context!())
+        .map(|app| {
+            app.run(|_app, _event| {
+                #[cfg(target_os = "macos")]
+                match _event {
+                    tauri::RunEvent::Opened { urls } => {
+                        app_lifecycle::on_opened_urls(_app, urls);
+                    }
+                    tauri::RunEvent::Reopen {
+                        has_visible_windows: false,
+                        ..
+                    } => {
+                        if let Some(window) = _app.get_webview_window("main") {
+                            let _ = window.unminimize();
+                            let _ = window.show();
+                            let _ = window.set_focus();
+                        }
+                    }
+                    _ => {}
+                }
+            });
+        })
+        .unwrap_or_else(|err| {
+            let msg = format!("failed to initialize application ({err}); exiting safely");
+            eprintln!("ViewRight: {msg}");
+            logs::record_detail("startup_build_fatal", rightkit_logs::Level::Error, &msg);
+        });
+}
+
+fn grant_dropped_file_paths(broker: &PathBroker, paths: &[PathBuf]) -> Vec<String> {
+    paths
+        .iter()
+        .filter_map(|path| broker.grant_existing_file_path(path).ok())
+        .collect()
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct NativeDropPosition {
+    x: f64,
+    y: f64,
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct NativeDropPayload {
+    paths: Vec<String>,
+    position: NativeDropPosition,
+}
+
+fn brokered_native_drop_payload(
+    broker: &PathBroker,
+    paths: &[PathBuf],
+    position: PhysicalPosition<f64>,
+    scale_factor: f64,
+) -> NativeDropPayload {
+    let scale_factor = if scale_factor.is_finite() && scale_factor > 0.0 {
+        scale_factor
+    } else {
+        1.0
+    };
+    NativeDropPayload {
+        paths: grant_dropped_file_paths(broker, paths),
+        position: NativeDropPosition {
+            x: position.x / scale_factor,
+            y: position.y / scale_factor,
+        },
+    }
+}
+
+// `drop-debug` (devtools) + stderr logging stay until native-drop is confirmed fixed in a shipped build.
+fn handle_drag_drop(app: &tauri::AppHandle, window: &Window, drag: &DragDropEvent) {
+    match drag {
+        DragDropEvent::Enter { paths, .. } => {
+            #[cfg(debug_assertions)]
+            eprintln!("[viewright][dragdrop] enter: {} path(s)", paths.len());
+            let _ = app.emit("drop-debug", format!("enter: {} path(s)", paths.len()));
+        }
+        DragDropEvent::Drop { paths, position } => {
+            // NOTE: full paths are NOT printed in release builds to avoid PII in logs.
+            #[cfg(debug_assertions)]
+            eprintln!(
+                "[viewright][dragdrop] DROP: {} path(s): {paths:?}",
+                paths.len()
+            );
+            #[cfg(not(debug_assertions))]
+            eprintln!("[viewright][dragdrop] DROP: {} path(s)", paths.len());
+            let _ = app.emit("drop-debug", format!("DROP: {} path(s)", paths.len()));
+            if let Some(broker) = app.try_state::<PathBroker>() {
+                let scale_factor = window.scale_factor().unwrap_or(1.0);
+                let payload = brokered_native_drop_payload(&broker, paths, *position, scale_factor);
+                let _ = app.emit("native-drop", payload);
+            }
+        }
+        DragDropEvent::Leave => {
+            #[cfg(debug_assertions)]
+            eprintln!("[viewright][dragdrop] leave");
+            let _ = app.emit("drop-debug", "leave".to_string());
+        }
+        _ => {}
+    }
+}

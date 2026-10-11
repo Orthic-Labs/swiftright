@@ -1,0 +1,399 @@
+import { useEffect, useState } from "react";
+import { openExternal, parseViewRightError } from "../../state/tauriBridge";
+import {
+  UPDATE_LICENSE_URL,
+  type UpdateTier,
+  APP_VERSION,
+  activateUpdateLicense,
+  cachedUpdateLicense,
+  checkForUpdate,
+  deviceId,
+  deviceIdReadyOrTimeout,
+  installPendingUpdate,
+  loadUpdateLicense,
+  loadUpdateLicenseLifecycle,
+  openPendingExternalUpdate,
+  saveUpdateLicense,
+  type LicenseLifecycleSnapshot,
+  type StoredUpdateLicense,
+  type UpdateState,
+  verifyUpdateLicensePurchase,
+} from "../../state/updateLicense";
+import { useSettings } from "../settings";
+import { ToggleSwitch } from "../SettingsPanelControls";
+
+export function UpdatesSection() {
+  const { settings, update } = useSettings();
+  const [license, setLicense] = useState<StoredUpdateLicense | null>(() => cachedUpdateLicense());
+  const [lifecycle, setLifecycle] = useState<LicenseLifecycleSnapshot>({
+    kind: "free",
+    isPro: false,
+  });
+  const [draftKey, setDraftKey] = useState(() => cachedUpdateLicense()?.key ?? "");
+  const [licenseBusy, setLicenseBusy] = useState(false);
+  // Gates the Activate button until the OS-keyring device-id reconcile settles (or times out) —
+  // a fast paste-and-click must not activate against a throwaway sync UUID that's about to be
+  // replaced by the durable keyring value (V-A).
+  const [deviceIdSettled, setDeviceIdSettled] = useState(false);
+  const [updateState, setUpdateState] = useState<UpdateState>("idle");
+  const [latestVersion, setLatestVersion] = useState("");
+  const [latestTier, setLatestTier] = useState<UpdateTier | null>(null);
+  const [updateError, setUpdateError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all([loadUpdateLicense(), loadUpdateLicenseLifecycle()])
+      .then(async ([next, nextLifecycle]) => {
+        if (cancelled) return;
+        let resolvedLicense = next;
+        let resolvedLifecycle = nextLifecycle;
+        const shouldRefreshSavedPurchase =
+          next?.status === "active" &&
+          next.licenseKind !== "trial" &&
+          !nextLifecycle.isPro &&
+          (nextLifecycle.kind === "free" || nextLifecycle.kind === "invalid");
+        if (shouldRefreshSavedPurchase) {
+          try {
+            resolvedLifecycle = await verifyUpdateLicensePurchase();
+            resolvedLicense = await loadUpdateLicense();
+          } catch {
+            // Keep the signed native verdict. The UI below offers an explicit retry.
+          }
+        }
+        if (cancelled) return;
+        setLicense(resolvedLicense);
+        setLifecycle(resolvedLifecycle);
+        setDraftKey((current) => current || resolvedLicense?.key || "");
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setLicense(null);
+        setLifecycle({
+          kind: "storage_error",
+          isPro: false,
+          message: parseViewRightError(error).message,
+        });
+      });
+    // 3s timeout mirrors deviceIdReadyOrTimeout()'s own bound — a keyring-unavailable browser/QA
+    // build must not brick the button forever.
+    void deviceIdReadyOrTimeout(3000)
+      .then(() => {
+        if (!cancelled) setDeviceIdSettled(true);
+      })
+      .catch(() => {
+        if (!cancelled) setDeviceIdSettled(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const activate = async () => {
+    if (!draftKey.trim()) return;
+    setLicenseBusy(true);
+    try {
+      const next = await activateUpdateLicense(draftKey);
+      if (next.status === "active") {
+        await saveUpdateLicense(next);
+      }
+      setLicense(next);
+      setLifecycle(await loadUpdateLicenseLifecycle());
+    } catch (error) {
+      const failed = {
+        deviceId: deviceId(),
+        key: draftKey.trim(),
+        message: error instanceof Error ? error.message : "Could not activate this license.",
+        status: "failed" as const,
+      };
+      setLicense(failed);
+      setLifecycle({ kind: "storage_error", isPro: false, message: failed.message });
+    } finally {
+      setLicenseBusy(false);
+    }
+  };
+
+  const clearLicense = async () => {
+    await saveUpdateLicense(null);
+    setLicense(null);
+    setLifecycle({ kind: "free", isPro: false });
+    setDraftKey("");
+  };
+
+  const verifyPurchase = async () => {
+    setLicenseBusy(true);
+    try {
+      setLifecycle(await verifyUpdateLicensePurchase());
+      setLicense(await loadUpdateLicense());
+    } catch (error) {
+      setLifecycle({
+        kind: "storage_error",
+        isPro: false,
+        message: parseViewRightError(error).message,
+      });
+    } finally {
+      setLicenseBusy(false);
+    }
+  };
+
+  const hasLicenseRecord = license?.status === "active";
+  const activeLicense = hasLicenseRecord && lifecycle.isPro;
+  const isTrial = lifecycle.kind === "active_trial";
+  const isExpiredTrial = lifecycle.kind === "expired_trial";
+  const savedPurchaseNeedsVerification =
+    hasLicenseRecord && !lifecycle.isPro && !isExpiredTrial && license?.licenseKind !== "trial";
+  const needsVerification =
+    savedPurchaseNeedsVerification ||
+    lifecycle.kind === "verification_required" ||
+    lifecycle.kind === "clock_repair_required";
+  const licenseMessage = lifecycle.message || (!hasLicenseRecord ? license?.message : undefined);
+  const confirmationDate = lifecycle.confirmationDueAtUnix
+    ? new Date(lifecycle.confirmationDueAtUnix * 1000).toLocaleDateString()
+    : null;
+
+  return (
+    <div className="mt-3 flex min-h-0 flex-col gap-3 text-sm text-muted">
+      <section
+        aria-labelledby="app-updates-title"
+        className="rounded-lg border border-line bg-panel/50"
+      >
+        <div className="flex flex-wrap items-center gap-3 px-3 py-2.5">
+          <div className="min-w-[9rem] flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <p
+                id="app-updates-title"
+                className="font-sans text-[9px] uppercase tracking-[0.18em] text-muted-2"
+              >
+                App updates
+              </p>
+              <p className="font-mono text-xs font-semibold text-paper">ViewRight {APP_VERSION}</p>
+            </div>
+            <p className="mt-0.5 text-[11px] text-muted-2">
+              {updateState === "current" ? "You’re up to date." : "Look for a newer release."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setUpdateError("");
+              void checkForUpdate(license, setLatestVersion, setUpdateState, setLatestTier);
+            }}
+            disabled={updateState === "checking" || updateState === "installing"}
+            className="vr-press vr-focus shrink-0 rounded bg-copper/20 px-2.5 py-1.5 font-sans text-[11px] text-copper-hi hover:bg-copper/30 disabled:cursor-wait disabled:opacity-60"
+          >
+            {updateState === "checking"
+              ? "Checking..."
+              : updateState === "installing"
+                ? "Installing..."
+                : "Check for updates"}
+          </button>
+          <div className="flex shrink-0 items-center gap-2 border-l border-line pl-3">
+            <span className="font-sans text-[10px] text-muted-2">Auto-check</span>
+            <ToggleSwitch
+              checked={settings.autoCheckUpdates}
+              onChange={(checked) => update({ autoCheckUpdates: checked })}
+              label="Automatic update checks"
+            />
+          </div>
+        </div>
+
+        {updateState !== "idle" && updateState !== "checking" && updateState !== "current" && (
+          <div className="flex flex-wrap items-center gap-2 border-t border-line px-3 py-2 font-sans text-[11px]">
+            {updateState === "available" && (
+              <>
+                <span className="text-copper-hi">
+                  ViewRight {latestTier === "patch" ? "patch" : "update"} {latestVersion} is ready.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUpdateError("");
+                    void installPendingUpdate(license, setUpdateState, setUpdateError);
+                  }}
+                  className="vr-press vr-focus rounded border border-line px-3 py-1.5 text-muted hover:border-copper hover:text-copper-hi"
+                >
+                  Install &amp; relaunch
+                </button>
+              </>
+            )}
+            {updateState === "available-external" && (
+              <>
+                <span className="text-copper-hi">
+                  ViewRight {latestVersion} is available as a manual download.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void openPendingExternalUpdate()}
+                  className="vr-press vr-focus rounded border border-line px-3 py-1.5 text-muted hover:border-copper hover:text-copper-hi"
+                >
+                  Download public installer
+                </button>
+              </>
+            )}
+            {updateState === "installing" && (
+              <span className="text-copper-hi">Installing {latestVersion}...</span>
+            )}
+            {updateState === "install-failed" && (
+              <div className="flex max-w-prose flex-wrap items-center gap-2 text-red-300">
+                <span>
+                  The update downloaded, but ViewRight couldn't replace the installed app.
+                </span>
+                {updateError && <span className="basis-full text-muted-2">{updateError}</span>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUpdateError("");
+                    void checkForUpdate(
+                      license,
+                      setLatestVersion,
+                      setUpdateState,
+                      setLatestTier,
+                    ).then((state) => {
+                      if (state === "available")
+                        return installPendingUpdate(license, setUpdateState, setUpdateError);
+                    });
+                  }}
+                  className="vr-press vr-focus rounded border border-line px-3 py-1.5 text-muted hover:border-copper hover:text-copper-hi"
+                >
+                  Try install again
+                </button>
+                {latestTier === "patch" && (
+                  <button
+                    type="button"
+                    onClick={() => void openPendingExternalUpdate()}
+                    className="vr-press vr-focus rounded border border-line px-3 py-1.5 text-muted hover:border-copper hover:text-copper-hi"
+                  >
+                    Download signed installer
+                  </button>
+                )}
+              </div>
+            )}
+            {updateState === "license-required" && (
+              <span className="text-red-300">An update license is required for this channel.</span>
+            )}
+            {updateState === "failed" && (
+              <span className="text-red-300">Couldn't check releases.</span>
+            )}
+          </div>
+        )}
+      </section>
+
+      <section
+        data-update-license
+        aria-labelledby="update-license-title"
+        className="rounded-lg border border-line bg-panel/50"
+      >
+        <div className="flex flex-wrap items-center gap-3 px-3 py-2.5">
+          <div className="min-w-[9rem] flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <p
+                id="update-license-title"
+                className="font-sans text-[9px] uppercase tracking-[0.18em] text-muted-2"
+              >
+                Update license
+              </p>
+              <p className="font-sans text-xs font-semibold text-paper">
+                {activeLicense ? (
+                  isTrial ? (
+                    "Trial updates active"
+                  ) : (
+                    <>
+                      <span className="sr-only">Lifetime updates active on this device</span>
+                      <span aria-hidden="true">Lifetime updates active</span>
+                    </>
+                  )
+                ) : needsVerification ? (
+                  "Update license needs verification"
+                ) : isExpiredTrial ? (
+                  "Update trial expired"
+                ) : (
+                  "Free public build"
+                )}
+              </p>
+            </div>
+            <p className="mt-0.5 text-[11px] text-muted-2">
+              {lifecycle.kind === "active_lifetime_provisional"
+                ? `Lifetime updates are active offline. Connect once${confirmationDate ? ` after ${confirmationDate}` : " when prompted"} to finalize the purchase.`
+                : needsVerification
+                  ? "Connect once to verify this purchase."
+                  : activeLicense
+                    ? license.updatesUntil
+                      ? `Updates through ${license.updatesUntil}.`
+                      : "Bound to this device."
+                    : isExpiredTrial
+                      ? "The update trial has expired."
+                      : "Activate a key for signed in-app updates."}
+            </p>
+          </div>
+          {licenseMessage && (
+            <span
+              className={
+                activeLicense
+                  ? "font-sans text-[10px] text-copper-hi"
+                  : "font-sans text-[10px] text-red-300"
+              }
+            >
+              {licenseMessage}
+            </span>
+          )}
+          {needsVerification && (
+            <button
+              type="button"
+              onClick={() => void verifyPurchase()}
+              disabled={licenseBusy}
+              className="vr-press vr-focus rounded border border-line px-2.5 py-1.5 font-sans text-[11px] text-muted hover:border-copper hover:text-copper-hi disabled:opacity-50"
+            >
+              {licenseBusy ? "Verifying..." : "Verify purchase"}
+            </button>
+          )}
+          {hasLicenseRecord ? (
+            <>
+              <span className="sr-only">Plan</span>
+              <span className="rounded bg-ink px-2 py-1 font-sans text-[10px] text-paper">
+                {needsVerification
+                  ? "Lifetime updates — verification required"
+                  : isTrial
+                    ? "Trial updates — active"
+                    : isExpiredTrial
+                      ? "Trial updates — expired"
+                      : "Lifetime updates — active"}
+              </span>
+              <button
+                type="button"
+                onClick={() => void clearLicense()}
+                className="vr-press vr-focus rounded border border-line px-2.5 py-1.5 font-sans text-[11px] text-muted hover:border-red-500/60 hover:text-paper"
+              >
+                Remove license
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                value={draftKey}
+                onChange={(e) => setDraftKey(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && void activate()}
+                aria-label="Update license key"
+                placeholder="VR-XXXX-XXXX-XXXX"
+                className="min-w-[8rem] flex-1 rounded border border-line bg-ink px-2 py-1.5 font-mono text-[11px] text-paper outline-none focus:border-copper"
+              />
+              <button
+                type="button"
+                onClick={() => void activate()}
+                disabled={!draftKey.trim() || licenseBusy || !deviceIdSettled}
+                className="vr-press vr-focus rounded border border-line px-2.5 py-1.5 font-sans text-[11px] text-muted hover:border-copper hover:text-copper-hi disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {licenseBusy ? "Activating..." : deviceIdSettled ? "Activate" : "Preparing..."}
+              </button>
+              <button
+                type="button"
+                onClick={() => void openExternal(UPDATE_LICENSE_URL)}
+                className="vr-press vr-focus shrink-0 rounded bg-copper/20 px-2.5 py-1.5 font-sans text-[11px] text-copper-hi hover:bg-copper/30"
+              >
+                Buy update license
+              </button>
+            </>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}

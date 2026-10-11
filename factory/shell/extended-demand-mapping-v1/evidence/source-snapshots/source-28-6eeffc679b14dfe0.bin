@@ -1,0 +1,62 @@
+import { Component, type ErrorInfo, type ReactNode } from "react";
+import { logError } from "../state/diagnostics";
+
+interface Props {
+  children: ReactNode;
+  label?: string;
+  resetKey?: string;
+}
+
+interface State {
+  error: Error | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  state: State = { error: null };
+
+  static getDerivedStateFromError(error: Error): State {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("ViewRight render error", { label: this.props.label, error, info });
+    const label = this.props.label ?? "ViewRight";
+    // Message only — no stack, no paths — so a crash actually reaches the local diagnostics log
+    // instead of vanishing (this boundary previously only reached `console.error`, invisible to
+    // anyone not watching devtools at the moment it happened).
+    logError("react:boundary", `${label}: ${error.name}: ${error.message}`);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.state.error && prevProps.resetKey !== this.props.resetKey) {
+      this.setState({ error: null });
+    }
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+    const label = this.props.label ?? "ViewRight";
+    return (
+      <div className="flex h-full min-h-0 items-center justify-center bg-ink p-6">
+        <div
+          role="alert"
+          className="max-w-md rounded border border-line bg-panel-2 p-5 text-sm text-muted shadow-xl"
+        >
+          <p className="mb-1 font-serif text-lg font-semibold text-paper">{label} crashed</p>
+          <p className="mb-4">
+            This view hit a rendering error. Reload this view, or close and reopen the document if
+            the file is malformed.
+          </p>
+          <button
+            type="button"
+            aria-label={`Reload ${label}`}
+            onClick={() => this.setState({ error: null })}
+            className="vr-press vr-focus rounded bg-copper/20 px-3 py-1.5 font-sans text-xs text-copper-hi hover:bg-copper/30"
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
