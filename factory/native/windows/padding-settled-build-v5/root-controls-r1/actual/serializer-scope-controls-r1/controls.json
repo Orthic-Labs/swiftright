@@ -1,0 +1,33 @@
+﻿{
+    "kind":  "production-serializer-input-scope-controls",
+    "driverSha256":  "e32659da4919e10f19405eb97e472303794ba7f2eba9619058cd2d1979f02ea1",
+    "guardSource":  "function Assert-Inputs {\n if((Get-FileHash $planPath).Hash.ToLowerInvariant() -cne \u0027fe088dc1318e6ebc319c95ee169c2c91aa7e630fd19d81729389ebedb8397b20\u0027 -or (Get-FileHash $script:serializerPayloadPath).Hash.ToLowerInvariant() -cne \u0027cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1\u0027 -or (Get-FileHash $control).Hash.ToLowerInvariant() -cne \u00277b7b79a0e90c63aa696a7347e6ab975fe6dc811bce96b12a2e3548bf3ef64454\u0027){throw \u0027Serializer source/plan drift\u0027}\n if((Get-FileHash $swiftc).Hash.ToLowerInvariant() -cne $SwiftcSha256){throw \u0027Measured actual swiftc bytes required\u0027}\n if((Get-FileHash $streamHelper).Hash.ToLowerInvariant() -cne \u00274e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d\u0027 -or (Get-FileHash $cleanupHelper).Hash.ToLowerInvariant() -cne \u0027018d89b825634a0dc238c1201d4fd97a23acbcdaf57b82333c6097e9efd92001\u0027){throw \u0027Bounded stream/cleanup helper drift\u0027}\n}",
+    "guardSha256":  "8c0eb35ab4d61e39887672e07e0cbe59956e110ccf455c38bb6e992537c43446",
+    "synthetic":  true,
+    "compilerActions":  0,
+    "nativeActions":  0,
+    "controls":  [
+                     {
+                         "synthetic":  true,
+                         "mode":  "pipe-source-shadow",
+                         "passed":  true
+                     },
+                     {
+                         "synthetic":  true,
+                         "mode":  "string-source-shadow",
+                         "passed":  true
+                     },
+                     {
+                         "synthetic":  true,
+                         "rejected":  true,
+                         "reason":  "Serializer source/plan drift",
+                         "mode":  "wrong-script-payload"
+                     },
+                     {
+                         "synthetic":  true,
+                         "rejected":  true,
+                         "reason":  "Measured actual swiftc bytes required",
+                         "mode":  "wrong-script-tool-hash"
+                     }
+                 ]
+}

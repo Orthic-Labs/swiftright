@@ -1,0 +1,118 @@
+﻿[
+    {
+        "mode":  "real-copy-close-read-hash-idempotent",
+        "sha256":  "cb98e3c3d6aab23276ae9a563169d7bc7e693f1b6247837a212a12b95d2db6d3",
+        "bytes":  17
+    },
+    {
+        "mode":  "real-copy-close-read-hash-idempotent",
+        "rejected":  true,
+        "sealed":  false
+    },
+    {
+        "mode":  "faulted",
+        "rejected":  true,
+        "sealed":  false
+    },
+    {
+        "mode":  "failed-flush-successful-dispose-reject-seal",
+        "rejected":  true,
+        "state":  {
+                      "name":  "failed-flush",
+                      "copyCompleted":  true,
+                      "destinationClosed":  true,
+                      "sealed":  false,
+                      "hashQualification":  "diagnostic-partial",
+                      "taskStatus":  "RanToCompletion",
+                      "taskIsCompleted":  true,
+                      "taskIsFaulted":  false,
+                      "taskIsCanceled":  false,
+                      "taskException":  "",
+                      "sourceIsAsync":  null,
+                      "closure":  {
+                                      "deadlineMilliseconds":  5000,
+                                      "flushDisposition":  "requested-terminal-copy",
+                                      "flushCompleted":  false,
+                                      "destinationClosed":  true,
+                                      "completedWithinDeadline":  true,
+                                      "deadlineExpired":  false,
+                                      "error":  "flush: System.ObjectDisposedException: Cannot access a closed file.\r\n   at System.IO.__Error.FileNotOpen()\r\n   at System.IO.FileStream.Flush(Boolean flushToDisk)\r\n   at FactoryDestinationCloseV5.\u003c\u003ec__DisplayClass1.\u003cStart\u003eb__0()",
+                                      "before":  {
+                                                     "name":  "failed-flush",
+                                                     "copyCompleted":  true,
+                                                     "destinationClosed":  false,
+                                                     "sealed":  false,
+                                                     "hashQualification":  "diagnostic-partial",
+                                                     "taskStatus":  "RanToCompletion",
+                                                     "taskIsCompleted":  true,
+                                                     "taskIsFaulted":  false,
+                                                     "taskIsCanceled":  false,
+                                                     "taskException":  "",
+                                                     "sourceIsAsync":  null,
+                                                     "closure":  null,
+                                                     "closureTaskStatus":  "not-started"
+                                                 }
+                                  },
+                      "closureTaskStatus":  "RanToCompletion"
+                  }
+    },
+    {
+        "mode":  "actual-close-timeout-capture-coordinator-hash-gate",
+        "timedOut":  true,
+        "hashCallbackCalls":  0,
+        "captureHash":  {
+                            "sha256":  null,
+                            "qualification":  "unqualified",
+                            "reason":  "destination-closure-unconfirmed",
+                            "error":  ""
+                        },
+        "coordinatorHash":  {
+                                "sha256":  null,
+                                "qualification":  "unqualified",
+                                "reason":  "destination-closure-unconfirmed",
+                                "error":  ""
+                            },
+        "state":  {
+                      "name":  "stdout",
+                      "copyCompleted":  true,
+                      "destinationClosed":  false,
+                      "sealed":  false,
+                      "hashQualification":  "diagnostic-partial",
+                      "taskStatus":  "RanToCompletion",
+                      "taskIsCompleted":  true,
+                      "taskIsFaulted":  false,
+                      "taskIsCanceled":  false,
+                      "taskException":  "",
+                      "sourceIsAsync":  null,
+                      "closure":  {
+                                      "deadlineMilliseconds":  1,
+                                      "flushDisposition":  "requested-terminal-copy",
+                                      "flushCompleted":  false,
+                                      "destinationClosed":  false,
+                                      "completedWithinDeadline":  false,
+                                      "deadlineExpired":  true,
+                                      "error":  "Raw destination closure deadline",
+                                      "before":  {
+                                                     "name":  "stdout",
+                                                     "copyCompleted":  true,
+                                                     "destinationClosed":  false,
+                                                     "sealed":  false,
+                                                     "hashQualification":  "diagnostic-partial",
+                                                     "taskStatus":  "RanToCompletion",
+                                                     "taskIsCompleted":  true,
+                                                     "taskIsFaulted":  false,
+                                                     "taskIsCanceled":  false,
+                                                     "taskException":  "",
+                                                     "sourceIsAsync":  null,
+                                                     "closure":  null,
+                                                     "closureTaskStatus":  "not-started"
+                                                 }
+                                  },
+                      "closureTaskStatus":  "WaitingForActivation"
+                  }
+    },
+    {
+        "mode":  "both-real-streams-sealed-all-file-hashes",
+        "hashedFiles":  7
+    }
+]

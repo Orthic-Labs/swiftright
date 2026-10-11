@@ -1,0 +1,26 @@
+--- factory/native/windows/padding-settled-build-v5/preflight.ps1
++++ factory/native/windows/padding-settled-launch-preflight-v1/preflight.ps1
+@@ -50,18 +50,18 @@
+  $serializerExe=Join-Path $serializerRoot 'serializer-control.exe';$swiftc=Join-Path (Split-Path $plan.compilerPath -Parent) 'swiftc.exe'
+  if((Get-FileHash $serializerExe).Hash.ToLowerInvariant() -cne $serializer.exeSha256 -or (Get-FileHash $swiftc).Hash.ToLowerInvariant() -cne $serializer.swiftcSha256){throw 'Serializer actual tool/exe drift'}
+  $serializerArgs='"'+(Join-Path $Package 'Sources\FactoryProbe\MetricsPayload.swift')+'" "'+(Join-Path $PSScriptRoot 'serializer-control\main.swift')+'" -o "'+$serializerExe+'"'
+- foreach($phase in @('compile','run')){
+-  $receiptPath=Join-Path $serializerRoot ($phase+'\observation.json');$expectedReceiptHash=if($phase -ceq 'compile'){$serializer.compileReceiptSha256}else{$serializer.runReceiptSha256}
++ foreach($serializerChildPhase in @('compile','run')){
++  $receiptPath=Join-Path $serializerRoot ($serializerChildPhase+'\observation.json');$expectedReceiptHash=if($serializerChildPhase -ceq 'compile'){$serializer.compileReceiptSha256}else{$serializer.runReceiptSha256}
+   if((Get-FileHash $receiptPath).Hash.ToLowerInvariant() -cne $expectedReceiptHash){throw 'Serializer child receipt drift'}
+   $child=Get-Content -Raw $receiptPath|ConvertFrom-Json
+-  $expectedTool=if($phase -ceq 'compile'){$swiftc}else{$serializerExe};$expectedToolHash=if($phase -ceq 'compile'){$serializer.swiftcSha256}else{$serializer.exeSha256};$expectedArgs=if($phase -ceq 'compile'){$serializerArgs}else{''}
+-  if($child.kind -cne 'factory-serializer-pure-child-v1' -or $child.phase -cne $phase -or $child.planSha256 -cne $planHash -or $child.toolPath -cne $expectedTool -or $child.toolSha256 -cne $expectedToolHash -or $child.argv -cne $expectedArgs -or $child.cwd -cne $serializerRoot){throw 'Serializer child actual invocation mismatch'}
++  $expectedTool=if($serializerChildPhase -ceq 'compile'){$swiftc}else{$serializerExe};$expectedToolHash=if($serializerChildPhase -ceq 'compile'){$serializer.swiftcSha256}else{$serializer.exeSha256};$expectedArgs=if($serializerChildPhase -ceq 'compile'){$serializerArgs}else{''}
++  if($child.kind -cne 'factory-serializer-pure-child-v1' -or $child.phase -cne $serializerChildPhase -or $child.planSha256 -cne $planHash -or $child.toolPath -cne $expectedTool -or $child.toolSha256 -cne $expectedToolHash -or $child.argv -cne $expectedArgs -or $child.cwd -cne $serializerRoot){throw 'Serializer child actual invocation mismatch'}
+   if(($child.pid -isnot [int] -and $child.pid -isnot [long]) -or $child.pid -le 0 -or ($child.exitCode -isnot [int] -and $child.exitCode -isnot [long]) -or $child.exitCode -ne 0 -or ($child.kernelWait -isnot [int] -and $child.kernelWait -isnot [long]) -or $child.kernelWait -ne 0 -or $child.timedOut -isnot [bool] -or $child.timedOut -or $child.ownedExited -isnot [bool] -or -not $child.ownedExited -or $child.streamDrainComplete -isnot [bool] -or -not $child.streamDrainComplete -or $child.error -or $child.cleanupError){throw 'Serializer child exit/stream proof failed'}
+   if(@($child.rawStreams).Count -ne 2 -or @($child.rawFileHashes).Count -ne 2){throw 'Serializer requires two raw streams'}
+   foreach($name in @('stdout','stderr')){
+    $states=@($child.rawStreams|Where-Object{$_.name -ceq $name});$hashes=@($child.rawFileHashes|Where-Object{$_.path -ceq ('compile.'+$name+'.bin')})
+    if($states.Count -ne 1 -or $hashes.Count -ne 1){throw 'Serializer stream membership'}
+-   $state=$states[0];$raw=Join-Path $serializerRoot ($phase+'\compile.'+$name+'.bin')
++   $state=$states[0];$raw=Join-Path $serializerRoot ($serializerChildPhase+'\compile.'+$name+'.bin')
+    if($state.sealed -isnot [bool] -or -not $state.sealed -or $state.destinationClosed -isnot [bool] -or -not $state.destinationClosed -or $state.taskStatus -cne 'RanToCompletion' -or $state.closureTaskStatus -cne 'RanToCompletion' -or $hashes[0].hash.qualification -cne 'sealed-raw' -or (Get-FileHash $raw).Hash.ToLowerInvariant() -cne $hashes[0].hash.sha256){throw 'Serializer terminal raw stream mismatch'}
+   }
+  }

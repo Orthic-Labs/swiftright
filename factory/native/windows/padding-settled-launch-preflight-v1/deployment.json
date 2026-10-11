@@ -1,0 +1,11 @@
+{
+  "kind": "launch-preflight-operational-deployment",
+  "archivedSource": "factory/native/windows/padding-settled-launch-preflight-v1/preflight.ps1",
+  "archivedSourceSha256": "b54160b5902ced62c51b6f836f27a4ed40991dd8617e89fffc268105f81f6d9f",
+  "operationalDestination": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-settled\\preflight.ps1",
+  "why": "PSScriptRoot joins package/shared/dependencies inside reviewed rolling host root; archive namespace is external source lineage only",
+  "sequence": "Root preserves v5 compiled source/receipt archive, copies exact revised helper into same rolling preflight.ps1, then verifies byte hash &invokes entire Launch phase with actual three pins",
+  "captureBinding": "external source path uses new archived namespace; operational launchPreflightPath remains rolling",
+  "compilerActions": 0,
+  "nativeActions": 0
+}

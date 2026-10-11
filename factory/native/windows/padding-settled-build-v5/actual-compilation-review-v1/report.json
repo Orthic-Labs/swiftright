@@ -1,0 +1,27 @@
+{
+  "kind": "actual-padding-compilation-local-review",
+  "acceptedObservationalCompile": true,
+  "issues": [],
+  "rawRefs": {
+    "observation.json": "sha256:90f50b3fa049d4b21a0c5ad5eca78d8c024b961aa102fbc345767c151e503365",
+    "compile.stdout.bin": "sha256:a0abdbe1d2449373950fd13ef0553ad12c553432b84a51cf4d328d6320ceeaef",
+    "compile.stderr.bin": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "FactoryProbe.exe": "sha256:9ed4e7ed376cf2ad20879e99326291dcad31634156934e69d86094b2685fb5a4",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftdoc": "sha256:0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftmodule": "sha256:472074aa79c73bc1dfe5ada5a5a12a1e100e6995bfc3d8d5dda72f8e718a6169",
+    "root-build-r1/build-process.json": "sha256:dbef5686090ca6a697feb2bdc6c439f55352051235b4af50756890c5eb6d6c32",
+    "root-build-r1/build.stdout.bin": "sha256:49ce659643784b4d6dfd9eacee2dbacaa4e82f2ce71b5272709e81884ae15e23",
+    "root-build-r1/build.stderr.bin": "sha256:aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4",
+    "root-build-r1/inspect-process.json": "sha256:e03f14871863d184fc8dc5b233057b2f391d43b2095d80eeaebdfa291c6ba9c6",
+    "root-build-r1/inspect.stdout.bin": "sha256:236f04cf9122c668f7c237659494ce040c054073aa4de6d4fe3f385d8e1cba83",
+    "root-build-r1/inspect.stderr.bin": "sha256:2ce70d6c8c9ad6726c794690c8b14a2b83673648cac88edf4ff1acc50ec46348",
+    "root-build-r1/fetch.json": "sha256:702f8219e64282ab45b1ff5419fed90e39cc77d933d0f70860c6ad1491973dae"
+  },
+  "nativeActions": 0,
+  "qualification": "hold",
+  "scope": "frozen producer +reported actual driver invocation/kernel/streams +archived exe/module bytes; no backend/native/parity attestation",
+  "decision": "CLEAR-OBSERVATIONAL-COMPILATION",
+  "transferJoins": true,
+  "sourceInputScope": "frozen producer/canonical raw input authority +reviewed before/after operational guards; driver-reported argv, not independent backend attestation",
+  "nativeLaunchAdmission": "root separately binds actual serializer control +immediate production preflight +reviewed Count1/noactivation/lock/owned-kernel capture driver"
+}

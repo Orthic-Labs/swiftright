@@ -1,0 +1,93 @@
+{
+  "kind": "independent-padding-v5-actual-controls-review",
+  "verdict": "CLEAR_HEADLESS_SERIALIZER_AND_BUILDER_PREFLIGHT",
+  "findings": [],
+  "fetchFilesVerified": 786,
+  "compile": {
+    "pid": 53976,
+    "processStartedAt": "2026-10-11T09:13:17.3806818Z",
+    "exitCode": 0,
+    "kernelWait": 0,
+    "ownedExited": true,
+    "streamDrainComplete": true
+  },
+  "run": {
+    "pid": 28080,
+    "processStartedAt": "2026-10-11T09:13:20.0293310Z",
+    "exitCode": 0,
+    "kernelWait": 0,
+    "ownedExited": true,
+    "streamDrainComplete": true
+  },
+  "serializer": {
+    "records": 5,
+    "UInt64MaxExact": true,
+    "infinityRejected": "Actual PASS reached only after production serializer rejection-domain assertion",
+    "legacyCGFloatJSONValid": false,
+    "exeSha256": "be025189ff5602ac00d977f09a6bf0abad3c3211c22511c4744b5a0152a25478",
+    "controlSha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba"
+  },
+  "scopeControls": "Two dynamic shadows accepted against script-scoped payload path; wrong payload/tool hash rejected via exact AST-extracted production guard",
+  "admission": "Preflight binds actual control, child receipt/raw/tool/exe/source/argv/plan hashes; coordinator completion marker confirms headless gates plus builder PreflightOnly, compilerStarted=false",
+  "authority": "Constructed child argv receipts; no CIM argv assertion",
+  "nativeQualification": false,
+  "reviewExecution": "Offline Python raw/hash/source replay only; zero compiler/native/remote execution",
+  "sourcePins": {
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/fetch.json": {
+      "sha256": "364eda6e7b101353b9accb3fee93884dbe89c305337321b33bd5f95daa0f1897",
+      "bytes": 153164
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/controls-process.json": {
+      "sha256": "76c446ebeac4ac56a728f01bbbfb5c40f18252ef9e1d29a897b266a6bd989b29",
+      "bytes": 295
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/controls.stdout.bin": {
+      "sha256": "97a3ac6bd98c81b14b2c7df34ada85af0f2d0112fe7264ab290ebf824e0f5746",
+      "bytes": 1963
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/controls.stderr.bin": {
+      "sha256": "2ce70d6c8c9ad6726c794690c8b14a2b83673648cac88edf4ff1acc50ec46348",
+      "bytes": 616
+    },
+    "factory/native/windows/padding-settled-build-v5/run-serializer-control.ps1": {
+      "sha256": "e32659da4919e10f19405eb97e472303794ba7f2eba9619058cd2d1979f02ea1",
+      "bytes": 9110
+    },
+    "factory/native/windows/padding-settled-build-v5/preflight.ps1": {
+      "sha256": "bb16722ed8e14b34b1ffc9949c12f10c39d885d40b0d577ad0c48a14078564ab",
+      "bytes": 12346
+    },
+    "factory/native/windows/padding-settled-build-v5/test-serializer-input-scope.ps1": {
+      "sha256": "61a22f865fd201d0807bce89af021d0fc66a72bb7ed7ff85ba7d17ef5291e29c",
+      "bytes": 3168
+    },
+    "factory/native/windows/padding-settled-build-v5/root-stage-manifest.json": {
+      "sha256": "aaa624ebd1e6ada79bd05842fc2b3bea62fb14c1eac6d3dfb5040386380357b8",
+      "bytes": 16439
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-control-actual-r2/control.json": {
+      "sha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+      "bytes": 932
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-control-actual-r2/compile/observation.json": {
+      "sha256": "11bead99de176072a5788166cd5c466b0bdee171acd18b731ee11e716650a585",
+      "bytes": 13974
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-control-actual-r2/run/observation.json": {
+      "sha256": "35ad2d5547d4ef851266d7ebcd9e0211ce8d86e27bfe88b943e5e56b18702be7",
+      "bytes": 13647
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-control-actual-r2/serializer-control.exe": {
+      "sha256": "be025189ff5602ac00d977f09a6bf0abad3c3211c22511c4744b5a0152a25478",
+      "bytes": 50176
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-control-actual-r2/run/compile.stdout.bin": {
+      "sha256": "23427a136da4becd45d1c176f6bbe1c8c8563c470fbce196bb312335d82a39bb",
+      "bytes": 1949
+    },
+    "factory/native/windows/padding-settled-build-v5/root-controls-r1/actual/serializer-scope-controls-r1/controls.json": {
+      "sha256": "7f6ad3f729c783dd46198dbb26ab9717ca182ce92b475d348a1f44bc45a1f618",
+      "bytes": 2292
+    }
+  }
+}

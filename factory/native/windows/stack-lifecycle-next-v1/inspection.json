@@ -1,0 +1,105 @@
+{
+  "kind": "stack-lifecycle-bounded-next-step",
+  "status": "read-only-evidence-inspection; no root cause claim",
+  "bindings": [
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/independent-review/actual-f7-v1/single-stack-overlay-r1-failed-r2.json",
+      "sha256": "bf839f3ac6ed80225b9445b3fdd6e2b8a712d252a8b56bc91283f347fd6904a1"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-stack-overlay-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "2441dd79b1215be130b986789c716dec6d732730eabf63df969ed0a0572a8418"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-stack-overlay-r1/replays/run-001/native-01/owned-close.json",
+      "sha256": "cefb619f5a59d11aaf5aac77660303eb49488a40e032d368385fba6c749c0acd"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-stack-overlay-r1/replays/run-001/native-01/host.stderr.txt",
+      "sha256": "50898182f8fd26c7285cd6ade262d4c7c1cfe405cd5c1ef193fe0c77636499a7"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-stack-overlay-r1/replays/run-001/native-01/host.stdout.txt",
+      "sha256": "b265ca4aedbbaf5233d7e32c669f6b510228e25144e626562ecaf34941945a81"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v2/repeat-stack-overlay-r1/replays/run-017/native-01/capture-outcome.json",
+      "sha256": "0265c5ad0a6db9e6a08267c42eb5de1cdbfc8c3d4d5d0cbd122ca6064f2783c2"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/capture-outcome.json",
+      "sha256": "4dcbb2624fb25aa39ee23a066ce5660101034eaddf08523bf376c2e37b99effa"
+    },
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-capture-v1/single-stack-lifecycle-r1/replays/run-001/dispatch.json",
+      "sha256": "bde45bf8717c9d43535e50020f1c2c57e5c1021a9c59f17ef03b11b8f07840b8"
+    },
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-host-v1/package/Sources/FactoryProbe/main.swift",
+      "sha256": "05411ce0741ce48868d3591fe1429415ca81746c2b1633f1456e5e265d309e1e"
+    }
+  ],
+  "strongestEvidence": {
+    "case": "seeded stack-overlay v5 original single",
+    "independentDecision": "CLEAR-ACTUAL-FAILED-OBSERVATION-JOINS; cause unproven",
+    "WM_CLOSEPostedUTC": "2026-10-11T06:13:14.1879268+00:00",
+    "preCleanupUTC": "2026-10-11T06:13:29.3300209+00:00",
+    "original15sDeadlineFailed": true,
+    "preCleanupKernelWait": 258,
+    "preCleanupHasExited": true,
+    "cleanupKernelWait": 0,
+    "cleanupStatus": "signaled-after-exit-observation",
+    "killAttempted": false,
+    "streams": "both sealed/closed after cleanup",
+    "renderer": "shutdown stats emitted; 489 ticks/490 commits; no renderer error reported"
+  },
+  "weakerHistoricalSupport": [
+    "Seeded-v2 stack run017 fails same child deadline plus both5s copy deadlines; cleanup only Framework already-exited, no retained kernel certificate.",
+    "Seeded-v2 custom run004 fails child deadline plus stdout5s copy deadline; same older weaker cleanup.",
+    "Those older failures suggest common lifecycle/EOF boundary; they do not establish original kernel exit timing."
+  ],
+  "existingDiagnostic": {
+    "packet": "seed-stack-lifecycle-host-v1",
+    "markers": [
+      "window-closed-enter",
+      "graph-teardown-return",
+      "measure-release-return",
+      "shutdown-complete-return",
+      "bridge-run-return",
+      "unhook-enter",
+      "unhook-return",
+      "actor-return-result",
+      "before-exit-result"
+    ],
+    "actualCapture": "seed-stack-lifecycle-capture-v1/single-stack-lifecycle-r1",
+    "actualDisposition": "hold-desktop-busy; lockAcquired=false; windowedDispatch=false; no native lifecycle observation"
+  },
+  "hypotheses": [
+    {
+      "name": "factory graph/measurement teardown or shutdownComplete delays",
+      "support": "callbacks participate in shutdown, but no per-stage marker in failed original",
+      "disconfirm": "all corresponding return markers occur before sustained kernel WAIT_TIMEOUT"
+    },
+    {
+      "name": "post-run Swift/CRT/DLL exit boundary delays process signal",
+      "support": "renderer shutdown completed while original process handle unsignaled",
+      "disconfirm": "before-exit marker never reached; earlier stage marker instead stalls"
+    },
+    {
+      "name": "inherited writer or async stream artifact",
+      "support": "older stack/custom copy deadlines; known distinct pipe/process signals",
+      "disconfirm": "actual original process kernel handle remains258 before exit deadline, so EOF-only artifact cannot alone explain v5 process failure"
+    }
+  ],
+  "minimalNext": {
+    "scope": "one fresh factory-only diagnostic stack single; retain immutable v1 failures",
+    "host": "reuse existing plain lifecycle markers; rebind loader/build inputs to admitted rolling workspace without runtime/render/bridge changes",
+    "coordinator": "reuse current indefinite silent CAS wait, hidden interactive worker, exact terminal result, whole-child retained-handle/closed-stream release proof",
+    "capture": "record monotonic/UTC close-request & loop deadline, same original process handle zero-time kernel sample +HasExited+raw copy task states at close/deadline; do not reset/extend15s child or5s stream bounds",
+    "acceptance": "one attempt, no retries; missing stage marker or sustained kernel258 selects bounded next investigation; successful single remains observational",
+    "fixAdmission": "No production fix justified from current evidence. Factory-only diagnostic visibility/coordinator migration is immediate next change."
+  },
+  "protectedEdits": false,
+  "remoteNativeExecution": false,
+  "qualification": "hold"
+}

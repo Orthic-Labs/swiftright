@@ -1,0 +1,88 @@
+{
+  "kind": "synthetic-readonly-review-controls",
+  "synthetic": true,
+  "nativeActions": 0,
+  "passed": true,
+  "controls": [
+    {
+      "name": "bool-exit",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "compiler exit0"
+      ]
+    },
+    {
+      "name": "unsignaled-kernel",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "retained compiler kernel signal0"
+      ]
+    },
+    {
+      "name": "wrong-argv",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "actual production compiler invocation"
+      ]
+    },
+    {
+      "name": "empty-streams",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "exact two compiler streams"
+      ]
+    },
+    {
+      "name": "unclosed-stream",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "terminal compiler stream destinationClosed"
+      ]
+    },
+    {
+      "name": "wrong-module-hash",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "module raw bytes"
+      ]
+    },
+    {
+      "name": "wrong-exe",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "actual exe bytes"
+      ]
+    },
+    {
+      "name": "wrong-runtime",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "compiler context runtimeSourceCommit"
+      ]
+    },
+    {
+      "name": "bad-time",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "compiler timestamp order"
+      ]
+    },
+    {
+      "name": "malformed-stream",
+      "synthetic": true,
+      "rejected": true,
+      "issues": [
+        "'NoneType' object is not subscriptable"
+      ]
+    }
+  ]
+}
