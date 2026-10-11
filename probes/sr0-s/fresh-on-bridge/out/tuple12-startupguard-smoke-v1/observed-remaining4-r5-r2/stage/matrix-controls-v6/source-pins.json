@@ -1,0 +1,38 @@
+{
+  "kind": "sr0-tuple12-startupguard-matrix-controls-v6",
+  "status": "source-ready-pending-root-parse-and-f6-reduced-native-retry",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "driver_sha256": "0b95be5be7e208e9f2d1eefe60287184278e39b6738a9c4fd8388b23f0828d1c",
+  "exe_sha256": "87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "worker": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v6/worker-v5.ps1",
+    "sha256": "b039d4dce888e3dabbb7c3109bcd64abbf2b6313fdc818b4b11398460cdbac39",
+    "change": "F6 reduced only: expected product label is F6-reduced; all strict markers, denominator 11, native/process/handle/kernel/drain assertions unchanged"
+  },
+  "coordinator": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v6/coordinator-v5.ps1",
+    "sha256": "e85c3c8f57b8e36d0df440bd60a884d28ce516824f8c127b5577345d1f982d6f",
+    "change": "admits worker-v5 provenance while retaining existing terminal, quiescence, semantic, and lock proofs"
+  },
+  "runner": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v6/run-matrix-v6.ps1",
+    "sha256": "cdff0f6771d8a380b3919a50f07a4637fc60db2af3df4395b6fa4573d1cbb437",
+    "change": "adds F6Reduced targeted 20-run mode; Full mode remains all 16 configurations x 20 runs"
+  },
+  "controls": {
+    "path": "qualification/test_tuple12_matrix_controls_v6_f6_controls.py",
+    "sha256": "625890957bc4da0e9f135a951494eb90d266302b2d905623e90a51eed7add544",
+    "status": "passed",
+    "faults": 1
+  },
+  "frozen_failure": {
+    "archive": "probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-smoke-v1/observed-full16-smoke-r6-r2",
+    "case": "F6-reduced-19aca42aef29472f95c376c4f06007dd",
+    "receipt_sha256": "5c40cb0780c96fff03ed210135cd5fb0770c229c252f8c99d90cd6c870c1979b",
+    "trace_sha256": "ca5f66418ec516e6b9b3518284daef42d0883b9556d0e5555acea71787c95024",
+    "worker_failure": "required trace field missing: SELFTEST-STAGES F6 reduced:",
+    "actual_trace": "SELFTEST-STAGES F6-reduced: plus SELFTEST F6-reduced: PASS (11/11 asserted)",
+    "driver_child": "exit 0; kernel terminal/readable true; retained handles true; exact driver/exe/renderer hashes true"
+  }
+}
