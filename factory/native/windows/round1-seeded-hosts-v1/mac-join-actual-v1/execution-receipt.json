@@ -1,0 +1,949 @@
+{
+  "kind": "seeded-hosts-exact-source-mac100-join-actual-v1",
+  "status": "REJECTED_RAW_SOURCE_MISMATCH",
+  "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+  "frozenWindowsStageHash": "f23648e19fb807c78a83c52b208147999c3defc5621962135a1feeab385c4b46",
+  "freshMacStageHash": "34fb857b04346e33269f001fb3ade20b9f56c2f8e5c44020e5b5aad09a9869af",
+  "python": {
+    "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "hash": "4f00ea2ad53d62437a6a3946b73c73614a97e8accdc5b96dc095ea1a0d9c6a56",
+    "version": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]"
+  },
+  "runs": [
+    {
+      "label": "stack-overlay",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+        "--plan",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/stack-overlay/package/plan.json",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/mac-join-actual-v1/stack-overlay.join.json"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 21083,
+      "startedAt": "2026-10-11T05:06:34.627137+00:00",
+      "finishedAt": "2026-10-11T05:06:34.691678+00:00",
+      "exitCode": 1,
+      "identityMetadataOrigin": "Original actual coordinator returned this subprocess row before assertion abort; no replay",
+      "planHash": "4cc752eee6d227bf2fcbff60e2822f8199f233a904e1a8087f5a3ddd65f19f9b",
+      "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+      "planEligibilityUnchanged": true,
+      "outputHash": null
+    },
+    {
+      "label": "custom-layout",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+        "--plan",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/plan.json",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/mac-join-actual-v1/custom-layout.join.json"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 45752,
+      "startedAt": "2026-10-11T05:08:11.267694+00:00",
+      "finishedAt": "2026-10-11T05:08:11.441261+00:00",
+      "exitCode": 1,
+      "planHash": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+      "planEligibilityUnchanged": true,
+      "outputHash": null
+    },
+    {
+      "label": "padding-frame",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+        "--plan",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/plan.json",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/mac-join-actual-v1/padding-frame.join.json"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 45799,
+      "startedAt": "2026-10-11T05:08:11.441714+00:00",
+      "finishedAt": "2026-10-11T05:08:11.541178+00:00",
+      "exitCode": 1,
+      "planHash": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+      "planEligibilityUnchanged": true,
+      "outputHash": null
+    },
+    {
+      "label": "preference-key",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+        "--plan",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/preference-key/package/plan.json",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/mac-join-actual-v1/preference-key.join.json"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 45821,
+      "startedAt": "2026-10-11T05:08:11.541374+00:00",
+      "finishedAt": "2026-10-11T05:08:11.614971+00:00",
+      "exitCode": 1,
+      "planHash": "f61fee02568923f75f95ad46ffbfcdd6aeda17a07fc3c30fcafcd1540134d7d5",
+      "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+      "planEligibilityUnchanged": true,
+      "outputHash": null
+    },
+    {
+      "label": "scroll-view",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+        "--plan",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/scroll-view/package/plan.json",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/mac-join-actual-v1/scroll-view.join.json"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 45859,
+      "startedAt": "2026-10-11T05:08:11.615273+00:00",
+      "finishedAt": "2026-10-11T05:08:11.695056+00:00",
+      "exitCode": 1,
+      "planHash": "cc751e98ed32e17b50797751b06e82e54b294592ff60ca0184db8cec32ed00b9",
+      "helperHash": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+      "planEligibilityUnchanged": true,
+      "outputHash": null
+    }
+  ],
+  "rawCaptureBindings": [
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "hash": "684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-002/capture.json",
+      "hash": "f042c40d0fcbbd6793009fbe570093755a5e004a78139fdc439d12b47d72ab61",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:b3a7d4e06e504441bb221e6de2139d4d4fe39e4b064e1812b82b5ae4fefd5e2a",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-003/capture.json",
+      "hash": "7ef7b600ad07a58ca60a8877a1435870df44d5628d0301749a5da86ee00f0f62",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:6497146ae470758de78a6d203ab0b1d6de1e136323f815ce5f790b3e6e8f7dff",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-004/capture.json",
+      "hash": "22e0fd149db034150e914d177a527a415dbaabbe4f89b3ebf4fa254e8f64ee8e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:68f7d0d8c191b45212f9e9ce3adee26ac61fa148f46c13301dbc91ca0f236c16",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-005/capture.json",
+      "hash": "397c5c497ed90fbae5834f0ea8162672c992542864f9070c81540a07be88b4f4",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0acdf2b13059f71ad27f3757520055648879745dfe386f7cd2aa48bb7d56ba09",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-006/capture.json",
+      "hash": "4fb19125cb45d0e1c35fcc4ef369930b20f31a1c6e78f63d2cab39a2c83b19ef",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:04746a3720aa2f1b9a40124324680716c339cd98383e7dbcf6d562c4c75d9363",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-007/capture.json",
+      "hash": "b8094ddf150ead0c8cc5414607db14e5da23de1e226c51656c4339fefb0dddb8",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:961bafe96d8c18cea27f7fca1be4e830f591a93ca987dbaa7a7ffb92bc92d685",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-008/capture.json",
+      "hash": "d9f645e120ab5da1f895d0062d6cb067fd2ddd8a86e803fd83ebfc867a264f08",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c965ac964beb1ac1621cbeab218a26a188cc8747cdc8bbcee5a20edcba95b734",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-009/capture.json",
+      "hash": "1d0040dab03a5c7337765196769b30eeaa1382ca853cf20fe8d6ceb928dafd66",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:88b4095ab15ef353173f4495dcde85b4b36b6f0255cd74cdc6a2ee38d7b20807",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-010/capture.json",
+      "hash": "fc1cc510e4a4ece68e0272953bef6b431f64d6c34067eb6853d3af09141c056e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a3aeeb892128379462c7d83c7d490f4ceaf0b1193debb7a732e1a375f8a0dec0",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-011/capture.json",
+      "hash": "6090cfa5fd52042ee9426388ac3ad46c9b64f20b6a6d8b2f048926f200eb2018",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0e72a3f619c64454ca92f8f416c3d53d88291d6aa7c9f1d029866cb7ae5e1d21",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-012/capture.json",
+      "hash": "84e3f81b811cc31bf151b07365514b1f63b8cbbde97a48202be98b7a602fe355",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:bdd992a59bde7f01aebcf010d2cd2b62f9dba5929a3a195e4f3aa8bf12bd400c",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-013/capture.json",
+      "hash": "6a1668ee9259ed4729cd5f6695dc90d5e812110b8a87af45d87bc6ba6171ade7",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:020f036bf42037c869e96000673bdb763c0d493b4b04cd32b45fce875ceaf0de",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-014/capture.json",
+      "hash": "9a09bd54dc0d03a5abb19fbebfba09ec1eca9ffb8b9f8514d7d132df5aa337e5",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a679246b6ed10ffed307610c361167592e150aa10bf7b1eb28637fe176a9001b",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-015/capture.json",
+      "hash": "dd548ac7d2d2da350d07cdf42d3cdad1f4eef0b5790f02382a3724784aa1f285",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a2d67eb6bfaf3f27a2485a88cda246fe1f570264167d793143a5e59e22c492bf",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-016/capture.json",
+      "hash": "2a8dc67063435d9f77436529cd008ec64c1a658ee6c5c6a29c94a1f15f052341",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:6bd56bfa6c7a80de42fcad199a9c9f79cf052fdd60a225449622214ef807b39f",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-017/capture.json",
+      "hash": "378cc29fef0f693934b3209beffc4701efa4d77a51b08f09338997983cf0612e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:775e94d887272d3d2c161704cb352f720d9c74ac215dfadde4d55188a7bf8448",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-018/capture.json",
+      "hash": "33d6e374def7537b498210805254f38f0d57818a2086ac49d05ae27aa07b032f",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:3c66b9693f5ddf445b564806ee5dbd94f00b2e744bd62dd7b507377922aa3c17",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-019/capture.json",
+      "hash": "1e7664fbccd2cde9a34a1d58aa36094dd7d6e2dc3d451d83ffc050323ab123f0",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:522823878b0ca1daae142d1679b3c015b24774aa37af2785ef01e9d928c8c235",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-020/capture.json",
+      "hash": "e97b18eb68e54f33dd2592842d5c37330ce30c237bd72f847879914e3f581eec",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:de5103a5933274958c2728ce9cc0ac4d2fc739944f8ccc56942376aed09cc3ac",
+      "planSourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "hash": "41d6ecc9af47e9a168021fa90095faa47471dedbcebfc7ccc9436b6bb29b6192",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0a8be1ff5ce88579927a0ad6fa6028e2a63441d3856e559b6bd7a24e51d4e163",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-002/capture.json",
+      "hash": "955d8b6290b9d3cc1987ff1fb603b21287f22923aad484cab1db413a84ab06f4",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:787e835d334e81bf1fdad47bb35020adb600e163fac0e6943eb43710a8bf1403",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-003/capture.json",
+      "hash": "3aed3dd9edf24941becec1a7f05586b390e751f4152340ed1095056292df8753",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:b40428fb302c2d61c06548afbde34e9854fee6edfb126b7c3c5c22e75866d65b",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-004/capture.json",
+      "hash": "f01ecde23480bef6973fc4331175a1b8e69f1ccbed3763fe698b12b5ace1bb74",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:e28c112f51a0d2078f15f6c48d1b93fc2e41dea982408304f1f8e52a2c41cdbd",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-005/capture.json",
+      "hash": "64fe8e616b522fbb7fe7d9b75406dadc62a8ada2b51109fc5572f68e22bdb8e6",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:59e81a0a475decbd4b2b7844a441fc7e08652c4c7024fb5dc509d567c90d3d51",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-006/capture.json",
+      "hash": "93627c8d84fcbddbb5d67a48b5073b5f810eaf634409df30d1a5c385f701cc6b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:cf60795e316ae653e068d335d0c8884edfd97208659a83ee85f5d17a729f1a0b",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-007/capture.json",
+      "hash": "a11743769168b45473c4d9c94f1ccfa1b31f1ceb9a7d625748d05472c72419d3",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:d1603b299d4c12caa8724ee159333060802a73cad1249113f9c31f08ce27e497",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-008/capture.json",
+      "hash": "ebe9a5f903b47bbcd8990f53d90a386752db934e33706bc21c2284f81bb07b78",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:21fa44ca84dc088025c24ee474005ab62be208f0499754c292bf87b1f4519aae",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-009/capture.json",
+      "hash": "cc1f8239d4779ab304027597b6346c2771c1f0972eeca4d0dbc992b0af783e99",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c830cb2083a4dca4c3c8f135706a36e787584963424eae5df40f3c4a6f817ab6",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-010/capture.json",
+      "hash": "236154afc3b542463e4cf9bd8359ce06ec40972abdbd27e9a17b989fee32898b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:8e91392937f9cef0d038c26824627e2db695dbf7ae96c519ecfdb87543bbd468",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-011/capture.json",
+      "hash": "1a5bc906283565fce5a79c8753ca2caf931ffc5bacf2224b0548667ac1f39369",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:efc788b368e8da3393cfa19c6517c41f0a0b738f918304e2772d566189e66843",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-012/capture.json",
+      "hash": "ab9d3d077bb56454b1a7de6ce8a8063fd31e475e2da76506fe96e3366e7ba354",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:4e3608237ba985eab4007fab992dfef94bbc39a0ebb34675d8ff59918d11c839",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-013/capture.json",
+      "hash": "348625395ff4bf6b066271bfd9c34c22c1acf93b0ab196447bfc816c0edb6890",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:5bc6d31adc43209df5c7a210f743d88947065d3b2a43b98c3e248106b3ebea49",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-014/capture.json",
+      "hash": "a7d0830cf19f4a509ad39b34f6462afa38ddcc899f30cad963d6f5c7febcdf71",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1e54ce52a4e892514799d54d95881db27d8c0466e5ee07e971d72f9657012e99",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-015/capture.json",
+      "hash": "a89381b3b7cd46e5355083a9558a1fa20b98b071883e74baa210d42defeb5a40",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:25eaea1c27002c7a50b6592a2aeb14b2e0267da59be88bc31d2a33c7bd4b7f6e",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-016/capture.json",
+      "hash": "c1148d3226954ead2b3bc9de568b7fd966f16aa1109babd570cd1bd2c8e76547",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a9143e9244f90351fd0e8f7681b6dfd32887fa26c2e6443c0549693d61045749",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-017/capture.json",
+      "hash": "034ff142c68baffaac6d8e5975fbaf7db3b477d963efd25dc258f0cb2842d557",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:7476084813f2cb30787a24b739ad0bb746a379a6801aa5eb75a1aa4a12a5987f",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-018/capture.json",
+      "hash": "3a40cd35e7fbae8840d2d9e74fe6069af7c199b23b37c5656f3dea48d7f662c7",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:753b51a54e4ed9d9320ba56b9beccb7c0f4e3a2ec0329fe1e4810054f9de235d",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-019/capture.json",
+      "hash": "388d217670865545d3618da50831a436984a485e2f00bebb7c7ef1c719863fca",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:baf737724c2a107008bf060db579c6c89dc14a1b8212c8a13a0750c122adc560",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258/run-020/capture.json",
+      "hash": "b05e6efa88ef4d352376a4dda57362ea5de007d0cd548cf063c1340f87522e6d",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:3628f4871f97c043d72a39b5958f05287dadd9eeea202896afc8858a5e4eb3d7",
+      "planSourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "hash": "a0cad1f0d22e0a0e3603e592ea0e72cc3ce39c47bc61000502ea00883e3e4143",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a5a1fce0380f7909836c08b4ea1afcc71bb6578827107868c3fac77f9337acc4",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-002/capture.json",
+      "hash": "0936e19ec5ef0cfe6530cd4c771af99ddf6a37a78242fdf13059cb6ab764f6d9",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:d59e2db658066d741efdfe3ff156893bba2350db7109896334aec6be166618d3",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-003/capture.json",
+      "hash": "5fd8ff70b0e8655f1330c1036b4b56077ac68184b0430538096c1be4ca9d6b55",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a9ee1bea5bcd08437f38c9cc581d3467dce7403ef05f42210bd85aa8dca2881b",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-004/capture.json",
+      "hash": "24e487530dbf7ea18a102345eb9462ef961789c367b44de600f92eb640183e6f",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:3a9c1b38790f0ad52958c61c7d47f61605b12ef5d78f28c68a27bd4e74130f9a",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-005/capture.json",
+      "hash": "905c7117f9fb998f54fd39b597444846d945b5a6b6d238d2e4938506e4fcb535",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:38b099a91ed54663543a516884f490bde3ee1fafa57fc9e523279a13cdf69f70",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-006/capture.json",
+      "hash": "f5eea37766c04b1b2598cfa3043cc192ef93b40f9231acf6b9508eba4f3b89f9",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:ae4949b4b2904e53c8d99a9e5a632526c717000abaade0d6e5698d0663362bde",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-007/capture.json",
+      "hash": "a33c10f301c08493673034a330802df43c21a5989a0c70fecee9ddad82822545",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1806f8c18618210da1f2506191cfc898ff7aa0d248ac768f82db7a6c67e632d4",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-008/capture.json",
+      "hash": "43f69d1e060aa4320cc829ebf9e1d715b216702796b49a3c5aea0c47814e3635",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c444a588d989c90101d01188f6f9f53c578a356738953214681cf295043920ec",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-009/capture.json",
+      "hash": "275c764fe709a63cfa9ef5822c98ba504655a6e9a1619ebae792a45574354a80",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1d59534283af2f0f0aeec3034795e0751dbe591462087c29e27e8998593741d3",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-010/capture.json",
+      "hash": "e8ac195e1afee9a10e2917465160572dce89470ff62adc9dd3e14c67379aa356",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:057cdacfdc29698ceeefee77cd4d350a58150d9081cccb935fff065864192855",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-011/capture.json",
+      "hash": "340b63595a574ccf443d829556053f7acef676f0e8c54cc6675078e9d6a5c2b9",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:3d15698cd473391770db867b32cc16025b6a8d63ba7749a9a0160245cc6ccb24",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-012/capture.json",
+      "hash": "74446117c8461f7d0b72012593780cec52e8f388e0be30ed5b8f40a7d51d7847",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:03fbd7b9cbbb6dfc6b6ef28dd5d9eb5fbd9db3486510db3a8280f1f479305c6b",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-013/capture.json",
+      "hash": "db731c58ba397be4fa37baf5100d055e426c235abaf477a7fe707bbf47a56d17",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0bb3ea1fe4d98257d4fbc91f01d7d1fefa4878ce475c9efa14af6ba7f010a5c1",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-014/capture.json",
+      "hash": "52e5679ca41b614fa2c27eaee1abffbd8df627c45f3ad588bc9c8dc31d387052",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:2af314838e854678de439f8d9a9d323e69c90222d5923572dfad8409132c91ee",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-015/capture.json",
+      "hash": "d59c5ed220c6f08184e75703600a06333b5db920b20021bd1643e3d0db049bb8",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:472530a474469ee2cf9447d4f96c3ead375cc6e5841ae08709f4f702948f5f5d",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-016/capture.json",
+      "hash": "a9eff38c73094cefd5bc4882414f1142eaf3a904c2724afca6b0f5edf8992840",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:40fde5c004eb1d0cd8f1ab1a384a8dcb944c7986a3e8b347a8d2fe52bd0b58eb",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-017/capture.json",
+      "hash": "19df4e95788fda2b7e06bd9e5d0494cd48a31bcf4c0d7c6379d55c5ee778bec9",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:bc70c3b4e3ad8f8fa916f774c0106601011f6828a266c4d2ac3c63fd4b7f7fbd",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-018/capture.json",
+      "hash": "34dd03e11d6fcd926eabfcf4241c3dbd489216636df830cf81923a77d444951e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1a5a7939c8ae702242bf25024400f7f43c12fcb0814180ef7667f3471404701b",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-019/capture.json",
+      "hash": "c3bafa24b6d9a4bbc2c2b6dd180fd6f5607ce7c315c0a672fd2def4964d71222",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:8e9d9d1901febfb81c3aca89c7d1343c4183878afe9bd7fe5c9aee74992b1442",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-020/capture.json",
+      "hash": "d80f5d7d4f9b51fb6f106ab77c92d9a65832f11884da3c4b979bc8ed5083a6e7",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:3d1a669f7cf3d47828ec708bdda8c3e9e1bdabda722c091e1fc2bfd19ec94a5c",
+      "planSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "hash": "2d41f921ac7f671b4759494bb69b5aa566afeedb2ecc537925bc2e6543a41840",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:36481fd85179605fae312f2b2b9e890605edc793ae63fd7312a39fbc5be93acb",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-002/capture.json",
+      "hash": "858be7f81c6d6cfaf59818f27133a7d1270476954adb0483d52fce6c827cfc2b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:04000667db9e0503860d9b459ecaa5cfb11cf77521f6efc4564a428f5b8c7739",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-003/capture.json",
+      "hash": "75fa8188bc1225887a73bcd1358d5f7250eab24900443526880bd2e1d0db8076",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0e7a5e3615d84e9444d72ca7e2b8da7d0b6dd6de5be7c0fcc46c2a28ae44e441",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-004/capture.json",
+      "hash": "533c75ba4719ee0ca7064202f622126c61376b1dfc803cb5f5b8444a5139b6b5",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1513edd881d2d8cda0b14bf565696caf1cb8942476458c7edd7d4f5f8e2b5046",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-005/capture.json",
+      "hash": "424bdb92f71022ada6f9810892b3112586e8dbd113444bfc5be1db590aaec36c",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:50f16b39bfaf9b1420d90cc87d1f752b62642d48a843e3a17ff62ceb72caa04c",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-006/capture.json",
+      "hash": "65588483899e941d29e8cc44ccabb3cf499f02b39357636bebd2ce72c7b96cea",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:03f51f4fceac0611d686c3b398c4fd4dbcab22c0723483fa2098681c22a9f032",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-007/capture.json",
+      "hash": "ce1f9ca86f6ebe44ddd2ad8cfc8696011d70ff11533db622bdee40d982f7fd93",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:16126711fc1afa7c85f0abbc3d63b0940267b2a3630743094429823713ff805a",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-008/capture.json",
+      "hash": "7d0b0d61e6c092bf7972b8496adc8654a6d7b66ba7fdb491c0852738f5f123d9",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:fc8a548dd00015174bc616aaf3b28f19b26ad9b2a2d8ea3e6388c1d20a334807",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-009/capture.json",
+      "hash": "2d91d4a5edc10b683eaeb85961d41d2023b9a4c3aedc3b5377d45852b5447113",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:5944f38f5629a01adaf064f9424a2eba9c4a7895877c229e477ddf1803c4100d",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-010/capture.json",
+      "hash": "b22f6d911293cc68b25680b00f8592072f9fedc2503bb445768ad2dcf9a775a7",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c9787dde6460b2a1bb5e750837f0dd59593a707a16f3e6c93bbdb2bfaf3dcbfe",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-011/capture.json",
+      "hash": "e280c37974fa10c7c8c1f312b30dd9fe31db7e2f16553d300190b638f306cf63",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c16a1ba61348bf6efe86a475c62d717b2e98febb2bd6e85ffd0e1469b608f72d",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-012/capture.json",
+      "hash": "99c4552357df6a0a8ab57960da37668ab84b1a00d2d5ec52aebdcb5100e8bdfc",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:92769bf39191b43e30d7b2cf1025b370f89789eb737d1d6753ec416482aed1e5",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-013/capture.json",
+      "hash": "416bee0fffc6880c6ffd89168751c23e373668623b256ebc4ed5fca07b68e2ef",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:06abfc8a8b7b6fb4d1e8910965fd05af937b4b12864f96e70d284a518245a46d",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-014/capture.json",
+      "hash": "641139a492d8d0e026ecc36743d57055a52bc0dc9cc0a681622c1016646056e1",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a9290519ff31ae2f90dc3027a6a7e97848152122e156a5eeffa8820253f63da8",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-015/capture.json",
+      "hash": "2001ff29b11352817d49a9a4e5268d2c3759ad4615d202f2dcca3cd356a8bdf8",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:981f0e463491eb90d10c31f8962bf97be2fbdcf29200e28291d4692fae132de7",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-016/capture.json",
+      "hash": "56ed994ac10d3ecd7b4d54a89b929bc35b18fb338acd5799248cb2801968a48b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:6180b09bb8303caedeb831da6917edf8870496140e1bebf39fbf5d7fbec30505",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-017/capture.json",
+      "hash": "2f7a29aab72490df08f297369e51e71d2f87cdea366f7172d85c2a7c9b6761c4",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c70604e48ff034ce6757c74a19aae264c22213599e7ac32f5a1c2ac147a8705d",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-018/capture.json",
+      "hash": "e25ad75c296f9b4db0f6ba348572c5bd087d311a46a6a059ceaa1cd1b79ffa55",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:13a2a66ff526a697e2737171a13adcc174546e761922929fd3c68269a88115a5",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-019/capture.json",
+      "hash": "bf45cdec2d9234c2813d2580520e981fc1032be42965916ac782f0a1dd79585b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:01937b3eb875f35479f7ea4ac0933f7a30670a5086b7f051a8cfb2c84cf7198b",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258/run-020/capture.json",
+      "hash": "a6c47c0e69acc5a6c396c209f5372e3fef190caa32076afea2787adf7fb02410",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:a813b6f6e605a88896a20b659e3a9f97bdd587137e5c7d1d69cff21e1cccbe63",
+      "planSourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "hash": "d62bf648fa7a69742cc9f1fe25d9b8281c66c86afa85995f9db0563398abb427",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:de9fd0a528543e7eef7635f64d274404b6d8bc6c949c1d97576027916d08e6b2",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-002/capture.json",
+      "hash": "eb91fbde9ad9da1433b0acedbd42aa66e1c0da24d206de1d99ad53a8f6bfcd9b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c05af6a9a52c4ea36bfccf0a110034d4b1fca27743257bb331e975540045576e",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-003/capture.json",
+      "hash": "71eb38bc81c8402b7d67c3ed1ccfb8e2f7c9a3661ad52e536d13a4c5ec2d6723",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:0a3d57c2211a88c3c97ab24afb683ef1c8787190f2d32fea58ce348be63a9c74",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-004/capture.json",
+      "hash": "5060e84ab4936d2cf94b9eccebc0408c05114c99ac1ff76be0bb54f5d1855607",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:7191d439b5a2b66128ed3ef52bd824100adef6a7c600ca3be0de34e7e6665418",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-005/capture.json",
+      "hash": "f1171a54e5e933668d664c4403fe1fcbd6ac1215d32110e679f1a0c1eeb669de",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:9a0bcd2be3e6fe927cb8228e959f133de40d8201350f37971ceef975e6460d07",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-006/capture.json",
+      "hash": "52ac14180789d9575803bef03b2e409b552ce661e1c13597990f6d390b44162c",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:f83358cde3cd8c7d69edbcc09d1a2b715171d86c034fc503f07d0f4960f79ec5",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-007/capture.json",
+      "hash": "5342ae7e6e9f74c28aab19d55167da364cc61514458b00b091768fcec4284981",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:1a5184533a4fd4be217ca8b7586e30167db3f4fc96f1305b38f1b6e1f59580e8",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-008/capture.json",
+      "hash": "f44c203ccb50ea07b288e66176a466279e611c4b10efcdc752ec8e355d92b912",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:88a96637eda5dedfc2907bc73e788975b1b304fa9b81705793ac6be0fc1ce7d7",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-009/capture.json",
+      "hash": "17ad104c7d4a2464b576f1b76728219e47ebed5cb2e78350e4193892c46ae27a",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:855ac019bc83d88a2377d72a92665acd32ec603a0b29e6984859afd5f6a49291",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-010/capture.json",
+      "hash": "0a3fd2c5b07fb93a902c38c316a9ddec7d1cd153235975b994ddd7ece2a315fa",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:25aa5794d7c5426c5d4a9922b77dcbe1813aa3ea642db4fc8d4185cf793c4a98",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-011/capture.json",
+      "hash": "9037136c12afd3ea2bb6668dadd86803fa0a9a3b9014f49320ec3d80f03903f1",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:7c5569da41237f9305f7eb64eb601a160bd542216fb26609cf4058737252d572",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-012/capture.json",
+      "hash": "117dc5a216adf30ac3d8d2bdab70d009712e0aa75c1c267e150cb51f408cb59e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:78df2e4d9cdd54c3f209642a498cc98c07a24cd458326845c1940060c3a85918",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-013/capture.json",
+      "hash": "d0f96c3825ca1609c70bd341c500f7880b1d2bed56b797651a434ed0a8bbd000",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:e2cf09399067a5b9439e2311b5c4f00b1bdc9eaaa52f2232640138d97053eea0",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-014/capture.json",
+      "hash": "5a01e4f6a1b29ba7294ee2bba514ac8d3de9606a23d23b4ba33c673dce6e89b3",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:c09a4603eff7f305b9e071eb47edbcbaf4b0097121fa91efa647143dd8a323f7",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-015/capture.json",
+      "hash": "b51871f6dcca5d83b72b472d98dbe90b10a3006ce14433a25785137de4d10eda",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:4de8fe18ba557fa2cee13fb88e1eb195ee66ae534aa266c5c5cbe330cb047720",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-016/capture.json",
+      "hash": "b0324533d00abc10054d1a98a2b31c64fa660c60ba417d27271ec62370fb079e",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:8e4d102d22b064a502d4f535a384f6bd0179bd08ef953c734ee13249b849db8b",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-017/capture.json",
+      "hash": "8ab7609549fe0f8a78f85a9670c916c49e08b1e816b116bf67788f8851aeba9b",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:f4e054091a3e9bda818e1a016c7cec3ba20344e8b349a2ae057462cff89a2a0d",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-018/capture.json",
+      "hash": "9c41717327141a656e777a6e46466499d64a7d8dd2e0fdb2789d1f9f0f40789d",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:4d22fe438b0904d73bb3a3666019cf3893652bd38bacccd6921bcd9a4205e7e2",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-019/capture.json",
+      "hash": "f22aeb5c07160e6f914b26b9411594e50dd2607881ba412f290586adcb5168f4",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:d68998953156065dc5f28f760d088c1adea6dd8a93cb587bd27022540dbfbbd5",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    },
+    {
+      "path": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258/run-020/capture.json",
+      "hash": "a274ab8892a8046e08efa99ebc8bf3d7dedba02377177e9e6e195b5880498b12",
+      "caseMatched": true,
+      "sourceMatched": false,
+      "rawSourceHash": "sha256:91d206b19bd76daedeb0c9957074c87d8c6cbb7888286946b241f45a070ac791",
+      "planSourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093"
+    }
+  ],
+  "controls": {
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/pure-controls/test_mac_join.py"
+    ],
+    "cwd": "/Volumes/D/claude/swiftright",
+    "pid": 45898,
+    "startedAt": "2026-10-11T05:08:11.695368+00:00",
+    "finishedAt": "2026-10-11T05:08:11.733228+00:00",
+    "exitCode": 0,
+    "synthetic": true,
+    "positive": 1,
+    "faults": 6,
+    "sourceHash": "641c154248c0abd672aae7c144a85eb3d40c4037173ee809a8a099cd81b24466"
+  },
+  "actualCaptureCount": 100,
+  "joinedCases": 0,
+  "frozenPlansModified": false,
+  "nativeParity": "hold",
+  "SSH": 0,
+  "compiler": 0,
+  "nativeWindows": 0
+}

@@ -1,0 +1,78 @@
+{
+  "kind": "read-only-python-proof-processes",
+  "source": {
+    "path": "factory/native/windows/round1-seeded-hosts-v1/strictmac-join-profile-v2/verify.py",
+    "sha256": "sha256:47a73157d52bac8fcb975e0499dbe55583fbaa937800766a9f3b7dc53276b9f0",
+    "bytes": 9811
+  },
+  "controlsSource": {
+    "path": "factory/native/windows/round1-seeded-hosts-v1/strictmac-join-profile-v2/test_verify.py",
+    "sha256": "sha256:274b855d2e74c4bf205393773390e7aec4d8cdc27c18de859f91febb98bc6246",
+    "bytes": 4400
+  },
+  "processes": [
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/strictmac-join-profile-v2/test_verify.py"
+      ],
+      "cwd": "/private/tmp",
+      "pid": 16034,
+      "startedAt": "2026-10-11T05:19:21.898266+00:00",
+      "endedAt": "2026-10-11T05:19:22.021089+00:00",
+      "exitCode": 0,
+      "tool": {
+        "path": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "sha256": "sha256:4f00ea2ad53d62437a6a3946b73c73614a97e8accdc5b96dc095ea1a0d9c6a56",
+        "bytes": 34640
+      },
+      "stdout": {
+        "path": "factory/native/windows/round1-seeded-hosts-v1/actual-v2/controls-r2.stdout.txt",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "factory/native/windows/round1-seeded-hosts-v1/actual-v2/controls-r2.stderr.txt",
+        "sha256": "sha256:9be9ec006e4bd98323e488c002b83c12e0a9e1de8ea2b9bb545db13c0e293693",
+        "bytes": 109
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/strictmac-join-profile-v2/verify.py",
+        "--mac-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-v1",
+        "--lineage-root",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-corrections-lineage-v2",
+        "--plans-root",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-seeded-hosts-v1/actual-v2/source-join.json"
+      ],
+      "cwd": "/private/tmp",
+      "pid": 16037,
+      "startedAt": "2026-10-11T05:19:22.021983+00:00",
+      "endedAt": "2026-10-11T05:19:22.083511+00:00",
+      "exitCode": 0,
+      "tool": {
+        "path": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "sha256": "sha256:4f00ea2ad53d62437a6a3946b73c73614a97e8accdc5b96dc095ea1a0d9c6a56",
+        "bytes": 34640
+      },
+      "stdout": {
+        "path": "factory/native/windows/round1-seeded-hosts-v1/actual-v2/actual-join.stdout.txt",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "factory/native/windows/round1-seeded-hosts-v1/actual-v2/actual-join.stderr.txt",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "compilerProcesses": 0,
+  "nativeProcesses": 0,
+  "dellActions": 0
+}

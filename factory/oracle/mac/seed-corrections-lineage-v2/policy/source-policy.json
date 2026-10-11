@@ -1,0 +1,34 @@
+{
+  "actualProcessReceipt": {
+    "argvRecorded": false,
+    "endedAtRecorded": false,
+    "note": "Existing capture summary preserves build stdout/stderr, source hashes & binary hash; original capture.py did not emit OS compiler process receipt.",
+    "pidRecorded": false,
+    "returnCodeRecorded": false,
+    "startedAtRecorded": false
+  },
+  "adapterSource": {
+    "bytes": 12723,
+    "path": "policy/CaptureHost.original.swift",
+    "sha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b"
+  },
+  "compilerPolicy": {
+    "argvTemplate": [
+      "/usr/bin/xcrun",
+      "swiftc",
+      "-parse-as-library",
+      "-O",
+      "-o",
+      "<capture-host>",
+      "<Witness.swift>",
+      "<CaptureHost.swift>"
+    ],
+    "executable": "/usr/bin/xcrun",
+    "workingDirectory": "internal scratch case directory"
+  },
+  "kind": "capture-source-policy",
+  "scriptPath": "policy/capture.py",
+  "scriptSha256": "sha256:f8ab9640bfb04a2c488a6f606828c16fa3712099957dced1d4bb46edc2401e0a",
+  "sourcePolicyHash": "source policy is descriptive; exact script preimage is archived above",
+  "version": "1"
+}

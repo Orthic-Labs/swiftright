@@ -1,0 +1,64 @@
+{
+  "cases": {
+    "swiftui.padding-frame": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "labels": [
+        "Box"
+      ],
+      "macRuns": 20,
+      "semanticMatches": 20,
+      "windowsNativeParity": "held",
+      "windowsRuns": 1
+    },
+    "swiftui.preference-key": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "labels": [
+        "0",
+        "1",
+        "2"
+      ],
+      "macRuns": 20,
+      "semanticMatches": 20,
+      "windowsNativeParity": "held",
+      "windowsRuns": 1
+    },
+    "swiftui.scroll-view": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "labels": [
+        "Row 0",
+        "Row 1",
+        "Row 2",
+        "Row 3"
+      ],
+      "macRuns": 20,
+      "semanticMatches": 20,
+      "windowsNativeParity": "held",
+      "windowsRuns": 1
+    }
+  },
+  "decision": "clear-for-bounded-observational-report",
+  "held": [
+    "native parity",
+    "pixel parity",
+    "timing parity",
+    "hit-testing",
+    "controlled occlusion",
+    "accepted golden",
+    "20-run Windows batch"
+  ],
+  "inputCount": 409,
+  "producerFiles": {
+    "adapterSha256": "64acee7502d9e6bb6b7fcb172d338a1337f1973fabe542e169b0325e585846af",
+    "generatorSha256": "1d7f43da9490325ccc19fbb57ce73e1ced24440f04338d3904550d64985df864",
+    "inputManifestSha256": "7ac004e1aa4e250e14b5b604eaffc450defa366addcc10608a828b61cb3d79d1",
+    "reportSha256": "82072d931c098daefc0db961484503d4bb88112c83976fd29150e37997628380",
+    "testSha256": "9a50f81fa4466952c84442dea0ef0cb7f92ebd24a3472928a6144f385be2ca64"
+  },
+  "reportBytes": 289306,
+  "schema": "paired-next-observation-independent-review-v1",
+  "scope": "source/case/raw AX/UIA sequence joins only; 1 Windows capture vs 20 Mac runs per case",
+  "testReceipt": "10 tests; recorded producer run passed"
+}

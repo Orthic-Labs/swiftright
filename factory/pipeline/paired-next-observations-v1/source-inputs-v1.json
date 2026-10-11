@@ -1,0 +1,2484 @@
+{
+  "caseCount": 3,
+  "cases": {
+    "swiftui.padding-frame": {
+      "caseId": "swiftui.padding-frame.recipe/case/8805e6d0729b052d",
+      "caseSha256": "58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+      "macRoot": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d",
+      "sourceSha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "windowsRoot": "factory/native/windows/round1-native-v3/single-padding-frame-r1"
+    },
+    "swiftui.preference-key": {
+      "caseId": "swiftui.preference-key.recipe/case/66b6b44aaff817d6",
+      "caseSha256": "b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+      "macRoot": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6",
+      "sourceSha256": "e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+      "windowsRoot": "factory/native/windows/round1-native-v3/single-preference-key-r1"
+    },
+    "swiftui.scroll-view": {
+      "caseId": "swiftui.scroll-view.recipe/case/6716afb4fb55269b",
+      "caseSha256": "56c2625f63e7e633c18ea0cdfca37545748f1d098622391e3c270be07895dc98",
+      "macRoot": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b",
+      "sourceSha256": "cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+      "windowsRoot": "factory/native/windows/round1-native-v4/single-scroll-r1"
+    }
+  },
+  "inputs": [
+    {
+      "bytes": 1638,
+      "channel": "case-source",
+      "path": "factory/pipeline/cases/swiftui.padding-frame.recipe--case--8805e6d0729b052d.json",
+      "sha256": "58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b"
+    },
+    {
+      "bytes": 223,
+      "channel": "probe-source",
+      "path": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_8805e6d0729b052d.swift",
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 1864,
+      "channel": "probe-manifest",
+      "path": "factory/pipeline/probes/swiftui.padding-frame.recipe_case_8805e6d0729b052d.manifest.json",
+      "sha256": "08ad578fe79d51db845b01493f22a08c0ed81b51d83c2ec4841a8c8e1fbd7915"
+    },
+    {
+      "bytes": 43727,
+      "channel": "mac-summary",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/summary.json",
+      "sha256": "85bc1f50ebfc2f0f9292342ef157c6fabaa28b774cf234b01a0dd43953ff9db4"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-001/external-ax.raw.json",
+      "sha256": "66c78949e660e9ecfd653466a5f66d863407a09c92da217c1e8395b0aec5739c"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-001/capture.json",
+      "sha256": "edfa18f4670fe80d3a1bcc435bf7555d65b469823e0110212ab75dc5045cc853"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-001/clock.json",
+      "sha256": "f216487ac6587291868ea4ff86778594875cd1c9e813fbad3d391afb3e26e864"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-001/compositor.raw.json",
+      "sha256": "086adb5580e15fe50ce7c3b5dbbe73bf2f96aea2a389aefeddc301f0c4c6c695"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-001/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-002/external-ax.raw.json",
+      "sha256": "64d0f5d61b0a5931ebffd12534c47e19ac9f699627d5fc25aff60a540effec41"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-002/capture.json",
+      "sha256": "2716733798e1f6f5e4ccd99763a1817b5bec7dce087a0be61cd8d08f7acb8ef0"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-002/clock.json",
+      "sha256": "01b9dca63e390bf27e3aeb176368d509e979e52ab2fb2e64ee0e0fac9bccf9d1"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-002/compositor.raw.json",
+      "sha256": "70ffebb6d78e55b5784f49fd8e701762dfd546a13406429ad2d9b501da58ea70"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-002/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-003/external-ax.raw.json",
+      "sha256": "e73ff898f5e2a1fe1db340551433a14104f0b3c0b2e141593bd8089b605dacee"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-003/capture.json",
+      "sha256": "9375689f12418f60d173da314f06734d8408525f99640db7f4c7acfae744ddb7"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-003/clock.json",
+      "sha256": "3dca7bd33ee2d955b3c047adec176a9b8e30f9b29b59d7648181656acee8a1ae"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-003/compositor.raw.json",
+      "sha256": "221bbddece823780a187113900e4d0cf16e5f4b241b838b3a77810ceaf3574a7"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-003/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-004/external-ax.raw.json",
+      "sha256": "f58b7e82a490b260acdc8f923b83405b9798d5d7876ae337272fb1cc2a050add"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-004/capture.json",
+      "sha256": "7a90b9eac98e31032fb45f4694647bf6da4e233c671275920e49b555f13cc697"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-004/clock.json",
+      "sha256": "465d0721763313c35cca991930ff64999d02c1a238fa13062ec9a35d45659919"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-004/compositor.raw.json",
+      "sha256": "fdb45a7d3b3e2498a9fd75540c73356479ed956ffb4cd776b87304d0b6d6bc3c"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-004/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-005/external-ax.raw.json",
+      "sha256": "877b228019011a78571e47558ffb1ca485c2be1b49a2aff0e8f40e506c2383db"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-005/capture.json",
+      "sha256": "909d223747c04fa7901e730b30f4adeddc6761138847584e45950ee37e009d6b"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-005/clock.json",
+      "sha256": "21ff187108d1db138d211faa68c347fb7074ec338431333519605b70d6541b05"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-005/compositor.raw.json",
+      "sha256": "b0e9575fa72b1d24ab339762289f2910851187db294620cd31d9db46166e31a9"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-005/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-006/external-ax.raw.json",
+      "sha256": "97875473a9c9495bb192dfc2d30e7e0f26537ae7fe8aeba5aff8688c61d56291"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-006/capture.json",
+      "sha256": "c40f19b399104ffca3f088589d91255aff34d7ef2431ba999e884b4dff3a013b"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-006/clock.json",
+      "sha256": "3ea95048a24e487dff0b523d5397b9b635b5b13d1f657c602b87fe9f10d554e3"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-006/compositor.raw.json",
+      "sha256": "9fad4650d5c434dd24990d6c81e42fe86b8ec9f2fce765d664c7336197c276c0"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-006/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-007/external-ax.raw.json",
+      "sha256": "161d9ea29f88293efc62aaf03059609dcf3cc6fa91c40414bb6f95a8cd02ed3e"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-007/capture.json",
+      "sha256": "1aa96dd80e1ab3120ee265a5a5bc3e6bdaf5fb858373bab271daf558c6f687ad"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-007/clock.json",
+      "sha256": "4ba56a1a4ea2787b4399901bcec4d1636e34c83e6ebe9fcb5f0c732aa6136788"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-007/compositor.raw.json",
+      "sha256": "498907e907542dcb81eca7ed250f27296651e8a5619cb8816e4d2b2b393c835d"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-007/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-008/external-ax.raw.json",
+      "sha256": "087567f2c40125acdd101111a87bcbd7bb0eaf4b8717275d215ff0ef4a9aeb88"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-008/capture.json",
+      "sha256": "d48c5d15e492d1271fc5cf6036915307127d154e41753d4f24d8bdd278a197bd"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-008/clock.json",
+      "sha256": "5e7be825a79170db6d056cfa700497cd27cc83bb3da45195b3e60f126d936b36"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-008/compositor.raw.json",
+      "sha256": "1f7f34f7557c503f5f23f6387dc75f5f302fdb7a56864f48354fde9d12590b20"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-008/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-009/external-ax.raw.json",
+      "sha256": "ab66fa750c2d4112bdddc6abefec0145320d82aab3d59b4e3d6160da89c38fb4"
+    },
+    {
+      "bytes": 3430,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-009/capture.json",
+      "sha256": "37e2b4a569bd14d8e12a8bd61ba5435e58563f12d76e8b78cec586a69d57f2de"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-009/clock.json",
+      "sha256": "48a0345b4d7cf64d5569ab95d33015e99ebd7b9e9d13fb8f5a00e374e4fc4f52"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-009/compositor.raw.json",
+      "sha256": "7973d10d675617723e9c7664ec936af3ff64a71440be9b0a6b887604770edc2a"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-009/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-010/external-ax.raw.json",
+      "sha256": "268912e6568659e20611a7e13cea444c2bc243511aa6f148ba0e07bb2fa0b5c2"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-010/capture.json",
+      "sha256": "f7ebf8ec060a3d5521928b96351aa75752cdfca0e8450d0e1319a9748b1f1141"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-010/clock.json",
+      "sha256": "2683f74232849c113e03f2fe75e5ddf73e401ffbf7dfc2b621f85a4a2771a1f5"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-010/compositor.raw.json",
+      "sha256": "7612d7422d1499d34127fe1b632f2a75a4b892ad54af378d846b2fe5e2ad84ce"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-010/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-011/external-ax.raw.json",
+      "sha256": "583a234df66f6a7ce9c21b0e11563f3a50d560fe533be116c32633edffe4072f"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-011/capture.json",
+      "sha256": "116b1b498e97a31648c4042a4c04ba62afb7b7f68fed5712a199b2aeb657b082"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-011/clock.json",
+      "sha256": "340560bf223ec2075998223c3897c7a5d3d8c26775978290419f737143d22ac5"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-011/compositor.raw.json",
+      "sha256": "1c049156246d7f79b8540a5a4fb62079cf5be492aa7d43df21d61b5ce86edb00"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-011/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-012/external-ax.raw.json",
+      "sha256": "cd1ab29953d21f099c121294aa0bec9f4ca75ef20faa4c898444104725be2c34"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-012/capture.json",
+      "sha256": "b50010d980c657b0f6feb8011465d8a13f4ee0f1201ae044a697e203599812fe"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-012/clock.json",
+      "sha256": "64731c07976e15bda4c8f69050792f1d1d6842aff63ac1363c7f348a9ccce1a4"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-012/compositor.raw.json",
+      "sha256": "e7a943cc96f3a1ddb6ba44459356719c4d2fa0de0224c21d174ca3d23681aeb3"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-012/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-013/external-ax.raw.json",
+      "sha256": "31888902bb60c4b2e1844c193736dd078bcf80c0445a87e8f812bea2b2078018"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-013/capture.json",
+      "sha256": "34082fdca62c35da6f890a0ca2a27cc3b64ea828f8c1ee2038cbb9d78ba351db"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-013/clock.json",
+      "sha256": "72f4a1ae54ad395f43b4fb5c62e39d0c4948da93abaac065d28b407decf33c6f"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-013/compositor.raw.json",
+      "sha256": "d56cbed1292dffa446d068400820eac673fa00bf2cf543a8b2b8fca9aeed4093"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-013/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-014/external-ax.raw.json",
+      "sha256": "2fdb102743824ff10c9c315e4ad0851020ff248a72c344c9eaf70e8c38797f16"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-014/capture.json",
+      "sha256": "6f5a0b77bd123267aee1b018154d2aaba4ccd878edda77c5915b2a52956276f7"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-014/clock.json",
+      "sha256": "eabcf6ba709c123535c6f9017b7fe36d0536aa9735188e20cad365ac941e93cd"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-014/compositor.raw.json",
+      "sha256": "47312dfeead88e8084ef10deab17f1d55e58206f36f0568c65026f2ed63109c4"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-014/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-015/external-ax.raw.json",
+      "sha256": "4a84281e75a1145faf0ee736d11531522a246a233f1a4192b58d31c3b41e2275"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-015/capture.json",
+      "sha256": "877e2ee6d94e5c74935567130e3c48e79cfefed13f32e7216b37c142362815dd"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-015/clock.json",
+      "sha256": "778c8efcde68b6c9e30e8f3d6e44cb1a4800f91e7262df64ec8c58beec703825"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-015/compositor.raw.json",
+      "sha256": "1b57712589a6bf4a2d8c3ebfc7c7c69a74155d07901fea76a973fbe2d066470e"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-015/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-016/external-ax.raw.json",
+      "sha256": "c47974204cf357996b2076585f89855b67c03fc89c95b675a6efdbfc40b4657b"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-016/capture.json",
+      "sha256": "2f035c9dba3dec7cd2c0b69af5aa3f28bec1ac70763050fbe88ad3fcd40725e5"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-016/clock.json",
+      "sha256": "710876e653a924d3ff365835b0c6afef324bc261db01fec2dc091e74a65520ff"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-016/compositor.raw.json",
+      "sha256": "96d01074fae0e525a486a5c2135003ba0c7446d48f029e2a1db2f091c1010c58"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-016/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-017/external-ax.raw.json",
+      "sha256": "b10851784d8a05ddf0d2dc165c599a8fb0116b15296f46045550c7f454aceb62"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-017/capture.json",
+      "sha256": "d2f67661877eb959d3462f7cdd3a0593c8816584494fb9b33e6cd60ffe268218"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-017/clock.json",
+      "sha256": "de899b1bd340215c0cd6eb4c121711644372446c3f623813d0dab0545d961936"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-017/compositor.raw.json",
+      "sha256": "9a4e736ca2cb5740fa9d6fe844acbab2e4a4ef4b172e966c88d360a39eef4cf7"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-017/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-018/external-ax.raw.json",
+      "sha256": "fac4f86ba052a731310d8d1954fbd3ebf74da9b3ef44e6ab02088c85a68eed43"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-018/capture.json",
+      "sha256": "0e4bc642c71f1a1759420dc9f2dd887da9553755bc9ad95e2048f2379041c4fb"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-018/clock.json",
+      "sha256": "95bef67624b8e357490dea0ef5527ab788b82729157873ecac2e74f6a0e1d88c"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-018/compositor.raw.json",
+      "sha256": "ebf77ccf12f8757bc46dddda74c85a871373988af8cd2e74d0229c25e631bb1e"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-018/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-019/external-ax.raw.json",
+      "sha256": "f3e2b80fece42b51e1cc4e7667a65e1239388b0f0dc0b63518f3884ad4fcdd96"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-019/capture.json",
+      "sha256": "b4e79e482664f754a8a5870bb14e18e1693188f62536812a71143b4f274b7ec2"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-019/clock.json",
+      "sha256": "bd68fb23ca148ee4bad83f87054b83028b092f8fd6bd37f3d8ccbe6a2bd36c99"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-019/compositor.raw.json",
+      "sha256": "5e9cbbf5def936fb6ce226f95c4125777baf4976c1ce79e0a50887b3360e90fe"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-019/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 3045,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-020/external-ax.raw.json",
+      "sha256": "cc3547b8c14ec468ee382f9b342d95bc9d751ef84183bb64e12b7a6b3b91eb21"
+    },
+    {
+      "bytes": 3431,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-020/capture.json",
+      "sha256": "52a851d7edc23f3a09242815537069ebfdfd5a676199f9c3db3eaed1bf205d00"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-020/clock.json",
+      "sha256": "8f0567e4a96af53b53c617244040b0a7d48387e13fb6eec70b0e3b2e7b88dbb5"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-020/compositor.raw.json",
+      "sha256": "0f0a2930b31086abfa9aac05028d992ed1aaf2863cc4ed9c9828c00bce977df7"
+    },
+    {
+      "bytes": 4982,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.padding-frame.recipe_case_8805e6d0729b052d/run-020/compositor.png",
+      "sha256": "6692752488f303669494d89a3e50d5de266605c606254cc9ab38461490beec02"
+    },
+    {
+      "bytes": 914,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/batch.json",
+      "sha256": "f3e8602e8dee3a11abaab4211671dc1b6eafc6a407dacac0b97406851e6f348c"
+    },
+    {
+      "bytes": 538,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Package.swift",
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+    },
+    {
+      "bytes": 362,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 223,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/Witness.swift",
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 13019,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/Sources/FactoryProbe/main.swift",
+      "sha256": "879dc7ac70d824f89020c8d296d3bd5ff902cbf635e66af88c85eddc770e0086"
+    },
+    {
+      "bytes": 532,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/config.json",
+      "sha256": "5e2da1246b57dfc3c94952820682f577e1b3ebb3f6e8a9c6a83dc26a64705133"
+    },
+    {
+      "bytes": 737,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/dispatch.json",
+      "sha256": "5d8a34767ada80464640badb092d78a20c965d84ab9839843d6aee12d96a3b84"
+    },
+    {
+      "bytes": 362,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/hidden-task.vbs",
+      "sha256": "8290d7144f07f505e45bb3b39bcca3a1283356969d1c1ff28f696b48c3f511a5"
+    },
+    {
+      "bytes": 1047,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+    },
+    {
+      "bytes": 484,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "8c91818bf7b0df1a7f2bdffcc563c2e7393b853e3fd515d39ceb39034a322201"
+    },
+    {
+      "bytes": 1341,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/host.stderr.txt",
+      "sha256": "4e0e6b83ba822ffb985ded9026136c7ccfb31b74e53415eeb63ab64052546a30"
+    },
+    {
+      "bytes": 87030,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/host.stdout.txt",
+      "sha256": "1b6a2e843d0445c05c4df7271d83b8766bb3eaf52bba3a4b086da344962c17e6"
+    },
+    {
+      "bytes": 130,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/launch-observation.json",
+      "sha256": "56d2b908de8ef33210fcbe109eb2f392a20968816d4564469957cf5d6a3e7171"
+    },
+    {
+      "bytes": 8086,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.pixels.json",
+      "sha256": "a24ea2a69f8a9d09d8a3127f3930bb3196ccaa759605e833a5d4bcde2626d3ff"
+    },
+    {
+      "bytes": 4126,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.printwindow.png",
+      "sha256": "cb3f1a30b6f861becf68a4fb06f2a1166f9eacb8e88dbd7d858f573bf51595c2"
+    },
+    {
+      "bytes": 4126,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.printwindow.repeat.png",
+      "sha256": "cb3f1a30b6f861becf68a4fb06f2a1166f9eacb8e88dbd7d858f573bf51595c2"
+    },
+    {
+      "bytes": 33790,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.screen.png",
+      "sha256": "c45bd2b1c9e9dc6f3a0a0df96441f4ea5a305a9cbd75b803a5d04a1d472fe6af"
+    },
+    {
+      "bytes": 33790,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.screen.repeat.png",
+      "sha256": "c45bd2b1c9e9dc6f3a0a0df96441f4ea5a305a9cbd75b803a5d04a1d472fe6af"
+    },
+    {
+      "bytes": 1253,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/native.uia.json",
+      "sha256": "3391329bebfce667f2d22a24f817af4b9230821d1c90b3fd17faaf487cbfbd8d"
+    },
+    {
+      "bytes": 270,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-01/owned-process.json",
+      "sha256": "3076ef80047abaedc94ec2e3b1c88f933ede2b253b54342ffecdf44bf0ef172f"
+    },
+    {
+      "bytes": 3748,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/native-observation.json",
+      "sha256": "2516ffae31d66f38734c6753e8f8ddf75ca77608f85efd3e64ca71231ee71a05"
+    },
+    {
+      "bytes": 2945,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/observation.json",
+      "sha256": "b4bd5b516f23e7ad1d05cd674098ab104e705adeededbea4a14ab5d246111cb6"
+    },
+    {
+      "bytes": 4795,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/pixels-background.ps1",
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+    },
+    {
+      "bytes": 5459,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/plan.json",
+      "sha256": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89"
+    },
+    {
+      "bytes": 11275,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 110,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/scheduled-task-receipt.json",
+      "sha256": "e3b381418975a249df18beaf9bbc5e061aea73dd3aad0cc69be8b05c905eb69a"
+    },
+    {
+      "bytes": 149,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/task-result.json",
+      "sha256": "10bb40bad2f35dc7be6a9620d4368b1b552cf9ce05af35541f64748358933a74"
+    },
+    {
+      "bytes": 158,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-padding-frame-r1/replays/run-001/task.log",
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f"
+    },
+    {
+      "bytes": 1630,
+      "channel": "case-source",
+      "path": "factory/pipeline/cases/swiftui.preference-key.recipe--case--66b6b44aaff817d6.json",
+      "sha256": "b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d"
+    },
+    {
+      "bytes": 718,
+      "channel": "probe-source",
+      "path": "factory/pipeline/corrections/swiftui.preference-key.recipe_case_66b6b44aaff817d6.swift",
+      "sha256": "e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f"
+    },
+    {
+      "bytes": 1855,
+      "channel": "probe-manifest",
+      "path": "factory/pipeline/corrections/swiftui.preference-key.recipe_case_66b6b44aaff817d6.manifest.json",
+      "sha256": "fd81aec2df0d035ecd2f2a4ea58fc50ec1d0af23f1a997c436e3a15bbb942233"
+    },
+    {
+      "bytes": 43541,
+      "channel": "mac-summary",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/summary.json",
+      "sha256": "aa4920e0fef06140c2acc807d284f1e282d55381c0037ba7d7adf97125471ef3"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-001/external-ax.raw.json",
+      "sha256": "0e5a68f3127231da1f6fe3a26a8e3708ea2a2314d1851c3f1dbf178e4bffc963"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-001/capture.json",
+      "sha256": "e8c0ea07a0f1d0121bf0996afc85ebdce34e1e3e77ab116f82118e149c7d29fb"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-001/clock.json",
+      "sha256": "bb64e57b65251f3051c81267df3e88604efeb730a964ef6eb8d2600d1966444e"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-001/compositor.raw.json",
+      "sha256": "e174a14077a13340cb1e1c0dcfd76a1f659ef660fa7ce4649d370691e290a163"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-001/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-002/external-ax.raw.json",
+      "sha256": "066f8d6b7a87de4a412c32bf91dbc3349d420169600badbe2d3e838bace2e271"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-002/capture.json",
+      "sha256": "ced16676bbf65eea9854ed72592968fadaa8aca8a7e6ea7342d1398ee760621b"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-002/clock.json",
+      "sha256": "227880ab8c2638f21dd11d1a034e6ad28432d09da4c7380ea9a06b218be7bcd7"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-002/compositor.raw.json",
+      "sha256": "03654cc167c40b510c45afb511164207643206ac1bd74f9ea4026b0d1470fedb"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-002/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-003/external-ax.raw.json",
+      "sha256": "4efdf9f8419040a2a4911e25d9bebc133756bcd5f039e2dfff5a9693155a6691"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-003/capture.json",
+      "sha256": "9ba9103c08d88911cdddaadc2f4a6bd2901f5f276d6f8f2994af644212faa9a3"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-003/clock.json",
+      "sha256": "4579f6b1675396fd5e2514b8a8fc5d575ebda67c1a9fe3d48607038e511e4b6a"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-003/compositor.raw.json",
+      "sha256": "fae4a87f76acae6fd00142fbf748f7cda1a3099ad909615d9f8fbf967037169f"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-003/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-004/external-ax.raw.json",
+      "sha256": "f4af0bbee79bde9f3a3b32e6114313b66ef8b66e85b24989e7ffc3eb9c82f5e4"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-004/capture.json",
+      "sha256": "a57cecf7829e35527da72c49b8c4d5735688a52c3f74885d0dd8d2162c677002"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-004/clock.json",
+      "sha256": "03d4ffbba9b450bc0dc6a2e5563f9a514df3f661a4639fbcdd1493f71427bf6d"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-004/compositor.raw.json",
+      "sha256": "30e9c23ecc7ab633213da5073f07b393b7a666b4fe82104a7263635e7d8a70e3"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-004/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-005/external-ax.raw.json",
+      "sha256": "9514d28e741264488db978e19b42650fd32bd5b17f370c7508e89adaa12836d3"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-005/capture.json",
+      "sha256": "242a459bf49f84e4c6be948bb0ea40163c396e1a6369e046d9c278fca79f10c5"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-005/clock.json",
+      "sha256": "8ac13f713885fe1be3090d6246fc3a4d39b658dfbd647d00342c9da20a5a31ba"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-005/compositor.raw.json",
+      "sha256": "846eafe39b1fe3a206d132ee49745268d9958c5fa8f63e3ffbb6b91ebc5b8305"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-005/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-006/external-ax.raw.json",
+      "sha256": "dc99263af1b650da1ab9863c900ec7eadca8dcd359d922e1cc99ca28bfbb7611"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-006/capture.json",
+      "sha256": "b0fbf686762a7ddec835e0a4c72431f10576776a9a0b65fbd867ffc5d1e22c30"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-006/clock.json",
+      "sha256": "30dd7cdeddb9a863dee00bdd9b59b8b626d5df940815976cc9c320ea6cd62fbe"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-006/compositor.raw.json",
+      "sha256": "4d917ea07facf7a9d2d2722c2d806b74f32870a5c3da551a58ea3e5a84da5dc9"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-006/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-007/external-ax.raw.json",
+      "sha256": "27dd3da8b4cb26dd741c239659cf1c6c8e5d19e6b37dee320f0210ebf0aa13b8"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-007/capture.json",
+      "sha256": "c3cb69f280ababb58a972e75203247762566ba4deb17a3df8021666f6ca8e2c9"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-007/clock.json",
+      "sha256": "f8d94a9d41831c0d65b819e6df5947354f8f990333b82ea556907a882d17168c"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-007/compositor.raw.json",
+      "sha256": "e464c508a6738beb118360f85b8ebe2a65ed3dbd135f46a17a0ad475fcb771f3"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-007/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-008/external-ax.raw.json",
+      "sha256": "6485b874bf9c9412df2fa85c9ef3cea5fa08a6ba347cf769433a031f4de0ae63"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-008/capture.json",
+      "sha256": "c82529a5f3c1c0a7a3c878927eed7111b5e763547cccebc5ab574114b9c0c8c8"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-008/clock.json",
+      "sha256": "3c982127f198cd762a03a4d7e3049d4ba80775d07e597eed3ae9d860ab13cb6c"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-008/compositor.raw.json",
+      "sha256": "2ae6a1d83aa1c76c1ffe58b16f5ba984cc8c35dbb760fdccbcb10fdae73445fb"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-008/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-009/external-ax.raw.json",
+      "sha256": "0051820fb77d15adb3b253af3891ba64c60a4c36ea894a66fa95d44d839a78ef"
+    },
+    {
+      "bytes": 3785,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-009/capture.json",
+      "sha256": "cc06fda0e8ff69addc5a9a79803da39943cb0d527e59ecc58afc126d1b021b06"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-009/clock.json",
+      "sha256": "57aa382af70fd8270ea5468714c0cb0635deed45b7105f1c34477ae32a4c5fd3"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-009/compositor.raw.json",
+      "sha256": "e473cc797b2aa0c71148abe47011efd4d32b1308ae9e23ef35cb07331c574e1a"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-009/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-010/external-ax.raw.json",
+      "sha256": "d7277f41d01dfff3abcf3f4b88b0b5ccbc071e4656000878047f34aa6a59dabc"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-010/capture.json",
+      "sha256": "9ffb93af92e652cc3c2c1a112dc6970e53c1f6e6e791227e10b5784e037e3c1f"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-010/clock.json",
+      "sha256": "2fa501259b098e43f9826fb5e264884c263b8a89a433f5269ebfb8d8f6612610"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-010/compositor.raw.json",
+      "sha256": "5fa841a1534a0e9ac47b0b2e85880453d25ff34cdf7d13790ca8429ae6791c39"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-010/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-011/external-ax.raw.json",
+      "sha256": "76c72e8defe677313036872e30746d1546ec13426402dec88dff1162b41e681e"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-011/capture.json",
+      "sha256": "a207611fbe44f0e97c5b09583a0b2a7a5bf96ef807edc36dc13abd5178250082"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-011/clock.json",
+      "sha256": "a81b242ade7d0c763bffd3bf8c4d96071016a199722d42721f8fc871d48643e2"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-011/compositor.raw.json",
+      "sha256": "b70fbd238f392e4d8cda199d32679b42df13e96c697b577823a2100b06152fbf"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-011/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-012/external-ax.raw.json",
+      "sha256": "8130ec8304ef2b08fec34cc8d11217d2c8a789cbe2dd84803d4822abe0bfcd30"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-012/capture.json",
+      "sha256": "20b08e4f74c1d6143dd0fc7a4812a7907be67df60e5f5493b998003e83b36d9e"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-012/clock.json",
+      "sha256": "8e595dc423adc6a73d84707d2f73e4a356ca6597bebfe99cb6bdb2d388d8fbef"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-012/compositor.raw.json",
+      "sha256": "9dd8a80c1db2a527a5ea3a83f988da89d315cc005c36ec62ce189c062c6e233f"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-012/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-013/external-ax.raw.json",
+      "sha256": "e08f23debda0096b3127a9988213c2a80620504653c4d2c85ee10f5e5ee70d0e"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-013/capture.json",
+      "sha256": "6e305b22d5f4b879aba924eb7197549688f098a2526067ea3e7ffa85a43654a9"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-013/clock.json",
+      "sha256": "373e6a7f27f9ff21e006d8ca27f735b050c079510585b02ac951dc627be81410"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-013/compositor.raw.json",
+      "sha256": "9fdcda49325b09c90e8df4b7309f62b91548e54676664004d7681773c1a02dd0"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-013/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-014/external-ax.raw.json",
+      "sha256": "59cd6f2cb7b66dea1855b6d3e888f06134556cbb78e64d83cd85f583a8966e21"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-014/capture.json",
+      "sha256": "11403e535e112ef0f81745511d388e371fb76dace1e55194d3c3921dfa5355b8"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-014/clock.json",
+      "sha256": "14f3411e17991280eb8b5eb2a8f7cc4ab4bdbbf9f6128df1d2add2cea7647826"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-014/compositor.raw.json",
+      "sha256": "d2ddce89043b7b6ccadd4028fcf3274fb5bdb58b4b0c21dd8bcea9fca74275d0"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-014/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-015/external-ax.raw.json",
+      "sha256": "186518d3262f76f12882ed23d24df078338926473b5b73a4b26ec5aa07fcce8c"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-015/capture.json",
+      "sha256": "4178a86a2ddd600bca2189a8ead993e0c92535b1bc8e00b3c16031d9bf0389ec"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-015/clock.json",
+      "sha256": "eca9c3add3b7d0130436425e883fa94214a8b5575404613d1f91637a7aaad156"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-015/compositor.raw.json",
+      "sha256": "1b14f6a1a205068f8211bd7a5e967b65dc36a30d59996fa039318a07371a5606"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-015/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-016/external-ax.raw.json",
+      "sha256": "f7e80ba389ae71e190b21e995e16270f6e5091e1e0a68d5615755950766cd30b"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-016/capture.json",
+      "sha256": "024c2e43f37125e6484e9a5fa6560de1ac496a305de4f6945d192a6b95e25424"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-016/clock.json",
+      "sha256": "28fc03bef28acc28fd7c7c3c1320362dc14d0c135d41f1309ea00572840f3b25"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-016/compositor.raw.json",
+      "sha256": "c683516fd76c5a95683a00a2fca3ea3e030e99e7242be9ebcb94e6153e3289ce"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-016/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-017/external-ax.raw.json",
+      "sha256": "c9e20942ba2ac17c129c2065182fc4d9c191b70d7b381718ffaae92de0746fd3"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-017/capture.json",
+      "sha256": "2ca526cb074cdb049693fb170bd1481040aa706c97719e44ce5df854f6bb0e82"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-017/clock.json",
+      "sha256": "af5d44e1f231543b0d001b0e1be89daf2aa64b256ed3f9eca9a8509335bb6d52"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-017/compositor.raw.json",
+      "sha256": "0d0d79ae566f354bc07d9b041d7cb1c2055cb399fa3eacfe6e639e25d14afd82"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-017/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-018/external-ax.raw.json",
+      "sha256": "93bfe4184527b86f7339392d2298fd64e7392f6299097a5f6c545c63d21f5063"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-018/capture.json",
+      "sha256": "2c5669615f0eafab95e1777c74f2cbf62d80d77ff2fc288066ece35f38d34141"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-018/clock.json",
+      "sha256": "c1bb06d41a4e14e6c957ca73453b0b96aeec86426ea3ac82034d1295b32c4aac"
+    },
+    {
+      "bytes": 315,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-018/compositor.raw.json",
+      "sha256": "876ee70f5eae8236442c2d990c392e4ab17264bfa364a284382e037ec088006a"
+    },
+    {
+      "bytes": 3724,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-018/compositor.png",
+      "sha256": "b9f115a4d7ae360190657c25e763ad16af45bdb39c6712eef12e44877cd45f44"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-019/external-ax.raw.json",
+      "sha256": "292c670c71e4efd91279634539354e5796599d1e08b9048a83fa5d50ed611621"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-019/capture.json",
+      "sha256": "adf26e5c4ef5a8151bac061b8dcf22170b79a0642e00a0db250c3c2f4c564192"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-019/clock.json",
+      "sha256": "8cc38bdcf820f16aac7b8414a398dd1a98d124274df8a07484c7a67d1b651423"
+    },
+    {
+      "bytes": 316,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-019/compositor.raw.json",
+      "sha256": "8c7962f88fa0226ae059e72e7cfbe98b9e38232dae502f8679ed1a609271dd26"
+    },
+    {
+      "bytes": 3392,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-019/compositor.png",
+      "sha256": "7cee2589222d22235491c3da9e14d8240bd50a3d27aa7aa2dc1843ed34c98a5d"
+    },
+    {
+      "bytes": 3349,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-020/external-ax.raw.json",
+      "sha256": "16f4152d3d805b1d7783eb7c39fecc2a23868dd2a379e65f57e5ebd1b41381bb"
+    },
+    {
+      "bytes": 3786,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-020/capture.json",
+      "sha256": "3dba471d3e70e52c5638898b8a6640dd474f18ed0ae293f72e97bb6178d2e3fb"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-020/clock.json",
+      "sha256": "8faff5956b92ab793166866dd7623932c0b0bc661083caa99cedee8e4d8ed119"
+    },
+    {
+      "bytes": 316,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-020/compositor.raw.json",
+      "sha256": "927d2b8d3fc970e978fe683ea676511635f34693bc4343bd0a6ed5f70d9d5157"
+    },
+    {
+      "bytes": 3392,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.preference-key.recipe_case_66b6b44aaff817d6/run-020/compositor.png",
+      "sha256": "7cee2589222d22235491c3da9e14d8240bd50a3d27aa7aa2dc1843ed34c98a5d"
+    },
+    {
+      "bytes": 915,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/batch.json",
+      "sha256": "d24fe9cbb546f12b12197cbe7a6fbd921be212a48c3649d0d7420c5c5517da9f"
+    },
+    {
+      "bytes": 538,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Package.swift",
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+    },
+    {
+      "bytes": 362,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 718,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/Witness.swift",
+      "sha256": "e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f"
+    },
+    {
+      "bytes": 13020,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/Sources/FactoryProbe/main.swift",
+      "sha256": "489848b492450fe4bb94210323a66cf4ca2ad5060e7eadbcf95d231ef2fede5b"
+    },
+    {
+      "bytes": 534,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/config.json",
+      "sha256": "a6c7ba83e4ceef8f03cc6f2648533261be35a95a70d0acdbed8c9ae38a8988a9"
+    },
+    {
+      "bytes": 737,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/dispatch.json",
+      "sha256": "8b606730b2f6fc268c183566c378baf1539872ef9a0da65b7dcc3826bf2fb11e"
+    },
+    {
+      "bytes": 363,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/hidden-task.vbs",
+      "sha256": "a8d1cf1e221ae61905ced5c2c7258d8e583e785994bad707f07832b7a2245246"
+    },
+    {
+      "bytes": 1047,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+    },
+    {
+      "bytes": 484,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "f694fd85102bd12a5449fd4e37622be704fda94ce364bd8fae42fbed7011d307"
+    },
+    {
+      "bytes": 1344,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/host.stderr.txt",
+      "sha256": "84d0570a00dba0dcfc2b454fca30215e298eadff4ce873246e8fd199d71089a3"
+    },
+    {
+      "bytes": 214072,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/host.stdout.txt",
+      "sha256": "ed3da3a4ff4412ec00348836ff878b2fcd41383e74747f7786b55c4d7424d579"
+    },
+    {
+      "bytes": 131,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/launch-observation.json",
+      "sha256": "20fc45319408e3a20da0a386404fd27ce380de92358705e481bd3c99dfa2cb4d"
+    },
+    {
+      "bytes": 8087,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.pixels.json",
+      "sha256": "6b8f00603d04b66434bd5a76e1ee96f20c04ddf3126c521923a1fbb8e92d1e8a"
+    },
+    {
+      "bytes": 4097,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.printwindow.png",
+      "sha256": "191cdd81b9ae68e66571a5f237334b53f2da980c467c1e6f09580db3a2de93d9"
+    },
+    {
+      "bytes": 4097,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.printwindow.repeat.png",
+      "sha256": "191cdd81b9ae68e66571a5f237334b53f2da980c467c1e6f09580db3a2de93d9"
+    },
+    {
+      "bytes": 36968,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.screen.png",
+      "sha256": "281ce5af84216335da98ae20a4dbe1fd74a284ce470ea43e084b792e00af26b6"
+    },
+    {
+      "bytes": 36968,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.screen.repeat.png",
+      "sha256": "281ce5af84216335da98ae20a4dbe1fd74a284ce470ea43e084b792e00af26b6"
+    },
+    {
+      "bytes": 2800,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/native.uia.json",
+      "sha256": "ceb4f0802d539b30bd7cf6b4cab03f78f598d2165f88ac3451bf3b585c44f51a"
+    },
+    {
+      "bytes": 271,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-01/owned-process.json",
+      "sha256": "69f5536ed440a4f913bebbf55d2944b801370241b7cf5b2c5ffaacd724af07e2"
+    },
+    {
+      "bytes": 3749,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/native-observation.json",
+      "sha256": "ac0ef521a6524b05ab0eb14f6784a8632900c34f2c2f980bcc0cf4c7b62cd2d5"
+    },
+    {
+      "bytes": 2950,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/observation.json",
+      "sha256": "43e6b9dd695965d07fbca8945e0aad45afe243197caa2caa9994498b65f7897f"
+    },
+    {
+      "bytes": 4795,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/pixels-background.ps1",
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+    },
+    {
+      "bytes": 5465,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/plan.json",
+      "sha256": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08"
+    },
+    {
+      "bytes": 11275,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 110,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/scheduled-task-receipt.json",
+      "sha256": "25c7f5f034b3fbacc3ab6644908ae18e5dbb0791a98bcc02c3747a8632b44370"
+    },
+    {
+      "bytes": 149,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/task-result.json",
+      "sha256": "d1519058228ed8ccdcaa51ea445fb5fe76d3af18fdfdca67f31e1cd114469cd7"
+    },
+    {
+      "bytes": 158,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v3/single-preference-key-r1/replays/run-001/task.log",
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f"
+    },
+    {
+      "bytes": 1622,
+      "channel": "case-source",
+      "path": "factory/pipeline/cases/swiftui.scroll-view.recipe--case--6716afb4fb55269b.json",
+      "sha256": "56c2625f63e7e633c18ea0cdfca37545748f1d098622391e3c270be07895dc98"
+    },
+    {
+      "bytes": 406,
+      "channel": "probe-source",
+      "path": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_6716afb4fb55269b.swift",
+      "sha256": "cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4"
+    },
+    {
+      "bytes": 1832,
+      "channel": "probe-manifest",
+      "path": "factory/pipeline/probes/swiftui.scroll-view.recipe_case_6716afb4fb55269b.manifest.json",
+      "sha256": "3b6c0bc71691f3b7fcbcc40de333b9105b7b102dc8e5a835da3100bff45dc106"
+    },
+    {
+      "bytes": 42703,
+      "channel": "mac-summary",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/summary.json",
+      "sha256": "142358238506a9f77c5618a7bbd6801dc653b89cac80acb7f90ba2c21ef7ca7a"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-001/external-ax.raw.json",
+      "sha256": "4b46c9f40ff2f9ce72103668e1682afefd1c8c1e8e303fa385ce4ec90e928574"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-001/capture.json",
+      "sha256": "11974ec625aa5b23ee5a265376cb6fa80628ee4ad64b028c13f622b573b19245"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-001/clock.json",
+      "sha256": "d15e5076e5a01a95a84f4cd639b8bdc6cd4eea42a6386b26d460b2611e86233a"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-001/compositor.raw.json",
+      "sha256": "6c29792aed6b298a82c61df655eb32058e143669c296826d2ea9075608d9c8a4"
+    },
+    {
+      "bytes": 6666,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-001/compositor.png",
+      "sha256": "e0f32a755d2d6df3f0fcca7f275365793deaa15d7df7adf367f6e4ab0d4e07b5"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-002/external-ax.raw.json",
+      "sha256": "95af730002816486e06f568fa3da89fad7cf5e4ca5453bbaf5c225eadc187845"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-002/capture.json",
+      "sha256": "0cbc2ccb82130b5992ab0828b752c2d31188ac95269ff27fb7079fdd4dfb3318"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-002/clock.json",
+      "sha256": "90169011d0e30361787c915f2a03dce393f3c1a81ee6446259dac15d37b9a01f"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-002/compositor.raw.json",
+      "sha256": "ec0e43b6f369a38acb1c335be3bbda0a24edfc4eec6895efb7e3f9462f3589ff"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-002/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-003/external-ax.raw.json",
+      "sha256": "7716925edce973922d5fce2e8ef0a5ed8786b1d95a7fa39fe0a38cbaf526e9f4"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-003/capture.json",
+      "sha256": "b2a85f94106cc3e4541db205f60c8b58bd92663501cf5aede603a5424339967e"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-003/clock.json",
+      "sha256": "5c2ec9bb7d5ccec6964acf07eb574263202043670e0ff2d63aa8cac8d171bde8"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-003/compositor.raw.json",
+      "sha256": "8b1ba8f5c9d0e3753f1fb7c423f4888c5c41d5e69c142e2310e3dd9ed96fb64c"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-003/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-004/external-ax.raw.json",
+      "sha256": "4b59e5452ec1f8849cfdf712b8ad2f71e8b6c2067dc930c6068ea55196eda035"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-004/capture.json",
+      "sha256": "c6130991a9a1ba8cdbacff711a63339f653d9994791c7af8b137575f64cb0058"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-004/clock.json",
+      "sha256": "8e8167c85c0b22c1deddeb7d5fd5a3f86899d901d18276eaac66946b66196265"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-004/compositor.raw.json",
+      "sha256": "885a0249c1ad4f3d69c5b4dc1144726d39530f8359032d8c095477e0107a2663"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-004/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-005/external-ax.raw.json",
+      "sha256": "ac0091188056bbba0b9a716baaf161e8d5628711dfb3229491ad03ee38fd24a8"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-005/capture.json",
+      "sha256": "89d37d5775e4a18ee87562b6c58fae82079c5dadfce3b094ed5efa05f3a1b3d0"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-005/clock.json",
+      "sha256": "3b8112764a14636893f0a25b6c0ca734edbb973366889880d9bbbe5c39b00e35"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-005/compositor.raw.json",
+      "sha256": "2a302f665a62f1816bb3dbb38597176d699113531d47b4e1e9c3bc8a9298e4dc"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-005/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-006/external-ax.raw.json",
+      "sha256": "ab44742c04656691a24541ff2415ca8c8e2ae5e050e719bacabb528ec43b69f4"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-006/capture.json",
+      "sha256": "1c7d110c16ff4211873c4280d499af534a95eb57f212bc41fd43c31b1f1b0e7d"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-006/clock.json",
+      "sha256": "e749dda9245448fdd92195ba8dc8796db80af697e5eafc8eb51bcd2e270b9775"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-006/compositor.raw.json",
+      "sha256": "42adb7a4965b7debe745680766d2878f7aa16a27d3141089c2dcefb34b3444de"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-006/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-007/external-ax.raw.json",
+      "sha256": "ea91e0e28f80f14c60e1a2e9ce8b059b27e5d5b6f9c39669bef1d1fd8022e4a4"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-007/capture.json",
+      "sha256": "207932c2c5f45ccc5b4b8ef93b83debb3ba12535cf9f69c03fd9656e59eb8058"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-007/clock.json",
+      "sha256": "5b7f5d79b2101026c589d5256060c2981a08f9f09cb203d51151035518fbc585"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-007/compositor.raw.json",
+      "sha256": "2c74b89e9c7d25cd79141d97c0681a3a2c94d9458dc43d3f857116730aecd0ba"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-007/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-008/external-ax.raw.json",
+      "sha256": "d6ed83efe20a1227688a463664fdbe42b6087db7315e98ed2a20dc08190500d7"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-008/capture.json",
+      "sha256": "502f427c9e4afa7be53df0e09c1fff83bdec5afe93b7ecb5779bf99c7c9d2f65"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-008/clock.json",
+      "sha256": "c3e0709f888245b6f129ae69db63e8ad3c8e7726435f8ac9055d330b82c8f378"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-008/compositor.raw.json",
+      "sha256": "0e85e4643ea22c5c93f6f527193053dc484db215f1a6c82aeb8c0664237864e8"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-008/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-009/external-ax.raw.json",
+      "sha256": "a7465738ff1f71ae502de9704f9d8d8abc06387508c5be06c049419c634cbf79"
+    },
+    {
+      "bytes": 3618,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-009/capture.json",
+      "sha256": "ac1d15ed24cb39e2309291fdd2834a64b9d1c06a67cacc0df0e7a6ae337e7ad2"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-009/clock.json",
+      "sha256": "e1e26012f21f882f068b779257ef8173e99d3d58a7bebaf34ffe26feb07a8388"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-009/compositor.raw.json",
+      "sha256": "3fcb6f02a8770063086497f0281937a2251d720a2b239a854807cfc0447135de"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-009/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-010/external-ax.raw.json",
+      "sha256": "5a87615d8f04a5a12f36a612bf6735dd45767c4f232d98b787b425b993bc664e"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-010/capture.json",
+      "sha256": "ebd2d03c2e846ff251d3f6b717ef71e828fd00b1eb06dab054fdd98317734684"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-010/clock.json",
+      "sha256": "dd5989f2c59154ea197253bbd90e1413ed58c0b1fc830d6ec39bfbde7eab442c"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-010/compositor.raw.json",
+      "sha256": "aff58771483d7f5fe5025cd62e5264e09e36794a0abc092e51b45751840eb90c"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-010/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-011/external-ax.raw.json",
+      "sha256": "2f5ee6c3d6f9eef56c7498502903cf9a50c56a45fe87f863bdd26ba098f7050d"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-011/capture.json",
+      "sha256": "d8abba1057e7e782c7c9c0496218a7fcfa2942c14a1b30a63a507b418b941cf3"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-011/clock.json",
+      "sha256": "7da33341c297e68bb880430ec41f57bbabefda7b9cace4199dadd141a31b7f23"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-011/compositor.raw.json",
+      "sha256": "827d8c0e60aca3adf905b4499c6e35ab99bf2be17f1b5170f6f2c321dca512b3"
+    },
+    {
+      "bytes": 8184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-011/compositor.png",
+      "sha256": "8aafefddeab27f3aa51478172544fd573ed7896d8c9c914ded1e714070e50d1e"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-012/external-ax.raw.json",
+      "sha256": "7ec25d683f7619dbd09baefbb6dabb4bb5f111e534c838a073e90d61b3a3f664"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-012/capture.json",
+      "sha256": "a55d40596b70c7e5eb5c05f20bd53e4a004e722df093da3c41c6b381b20a8f1d"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-012/clock.json",
+      "sha256": "f500f416431cf17d7d74bc33dd955862e6deba6d1eba6f2cf84e0d3abbfeedd4"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-012/compositor.raw.json",
+      "sha256": "773316a53af6b78c573d8e1c5e7f3ca62b09a45f1807f58694f757b5582f4cde"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-012/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-013/external-ax.raw.json",
+      "sha256": "28deb931ce76542aabecc4c0dde1e19b4664ce9976764a02016300fb279f3b30"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-013/capture.json",
+      "sha256": "bb7324ae4e2261ca16e8cd4656a5a688ce45c626643db35499661c4708fc6b3f"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-013/clock.json",
+      "sha256": "469d12883f54d3e46b9793b0311eb2e135b182f283d2aa151c717387630d0da1"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-013/compositor.raw.json",
+      "sha256": "d0ae0b8828f808386192e8614a2e63c0b4012506f7c9254acf9fcbf4940b068d"
+    },
+    {
+      "bytes": 7816,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-013/compositor.png",
+      "sha256": "c1da2eb57535ee870deabd7cb009c05eb9364cfd05ff6039f80c75b01814e752"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-014/external-ax.raw.json",
+      "sha256": "50aa46080999e6f418a21d7e318a420ac6cd5d139b8b5ebf6f8d0248b95b1662"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-014/capture.json",
+      "sha256": "32c7aca872ff4cb25da0758888380f2711406b0863d3781dcc1c536b8eb856fa"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-014/clock.json",
+      "sha256": "7f76cac47127847b88a05e490cbcada4d64680f326cbac45b996750bf8d6c884"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-014/compositor.raw.json",
+      "sha256": "c38ef0646edc6ba9dc8bd4d44296b948deb0495f48bbe6f284aca030e95b515b"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-014/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-015/external-ax.raw.json",
+      "sha256": "cb8ef0bd9a3ca03f24425e1db0242ba8d859e1c33de0fa1dc22d9637cb0707fc"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-015/capture.json",
+      "sha256": "4276ab6559a015fd7b0db9adf632a67cfe1b4d8cf3b1f73fa8bd215deb13b399"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-015/clock.json",
+      "sha256": "ba565922cd7afcc3c6aa4eca64523fb9dceab23df799629b70a26b9442c85766"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-015/compositor.raw.json",
+      "sha256": "f3c45730dc5946a4c7662801c363746696a654a078f1c7a02e784bb58c1f35e5"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-015/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-016/external-ax.raw.json",
+      "sha256": "e141b7e412dab452179248538217ca705ef32a15dd2420bc8c1efd48ff8a8bbc"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-016/capture.json",
+      "sha256": "7537142a13a365300e48d5be83d101fd7025323b2aafaff0d3de23bcc656f07b"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-016/clock.json",
+      "sha256": "d49b4f0bf3529c1512856f31254c741ab0bcad6f990c1d72775d837dfd8268f1"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-016/compositor.raw.json",
+      "sha256": "dc5991b9d89f453331a12b7ebb2627b90bbb8c332ef3dbf032c03580129b1552"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-016/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-017/external-ax.raw.json",
+      "sha256": "76fad07e6508a16de858f05dc1cc271bef16f42e258ec006833dc5c9c65e9ff4"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-017/capture.json",
+      "sha256": "925a63e29ea387df2318fb37ef0d6b14b0ca19499a737ec8f896730062df07e9"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-017/clock.json",
+      "sha256": "5a24a3596eafac15f021c9205cb647f25cbadf56297bba7556f100d18d11b300"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-017/compositor.raw.json",
+      "sha256": "07b14a75e8167366f00ead945007c840dd884587dd8d8bdc6dc2f868b754b514"
+    },
+    {
+      "bytes": 7068,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-017/compositor.png",
+      "sha256": "e2cb213fa4978756b30a654d7372cadbf0a2103855060357f912f7269738c168"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-018/external-ax.raw.json",
+      "sha256": "b3b8fc257a348cfb50d18c1548a58863fa5dbf685e81adfc5556f657237bf6c4"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-018/capture.json",
+      "sha256": "d697e4a442626056b842a10fd0f679f542f17f4cd72d595fe921aef273e4111a"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-018/clock.json",
+      "sha256": "e493c25b66d6e4ab8700859ebfee6d093eebba398ed55da61c3ac7279d0ec11c"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-018/compositor.raw.json",
+      "sha256": "7237cd0bc4beb021bfdab751c22f355a55ece28c5126c30d9feafff1ec9c4e62"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-018/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-019/external-ax.raw.json",
+      "sha256": "217214d7e499ffd891d0bd70566c52427671bd26b9dab351555b5650adfce5b4"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-019/capture.json",
+      "sha256": "5d34210ebd0798cb97b7479eeb31846623397171ca932fa7a2a17d99950ed2c9"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-019/clock.json",
+      "sha256": "63db505d6f3e43ab4ba9e9af809d52c9524a5bfad42a211ee7a7b33d888925b5"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-019/compositor.raw.json",
+      "sha256": "c5a0614d95e45752106ec65b761649533fea44e33c2ae845443041bececce71c"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-019/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 4688,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-020/external-ax.raw.json",
+      "sha256": "3dc94e79ce54931165d62609fca39c08a2e04b47b9659cebc5d5dfcfac133fa1"
+    },
+    {
+      "bytes": 3619,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-020/capture.json",
+      "sha256": "f72098aef838cccfa49b1784ebdfd9db93db4c7e47634fb7e430f58ba3eb80ae"
+    },
+    {
+      "bytes": 129,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-020/clock.json",
+      "sha256": "5fad8492b7e40553719149a3f178cbefdaef6331bf51d71c0f428ba793822de2"
+    },
+    {
+      "bytes": 314,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-020/compositor.raw.json",
+      "sha256": "ce31427424605c783562d3c8582c5541ce1c559db031157fc6801a59d8337fa7"
+    },
+    {
+      "bytes": 6184,
+      "channel": "mac-run",
+      "path": "factory/native/macos/evidence/20261010-primary-next-five/swiftui.scroll-view.recipe_case_6716afb4fb55269b/run-020/compositor.png",
+      "sha256": "e06e96ef727d221a955ba96363f46c0ead39f340cb56d2d8fde58f55c4827e39"
+    },
+    {
+      "bytes": 912,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/batch.json",
+      "sha256": "c19c42b6379370e7ae3e069a9e7207c65938e849c67490ea08688ee06950316d"
+    },
+    {
+      "bytes": 538,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Package.swift",
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+    },
+    {
+      "bytes": 362,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1199,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/FactoryScrollClip.swift",
+      "sha256": "b6d9d4eed48df1d715a370c463caf632298492e2290eff01ebe48d80bf5f4236"
+    },
+    {
+      "bytes": 1023,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 406,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/Witness.swift",
+      "sha256": "cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4"
+    },
+    {
+      "bytes": 13815,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/Sources/FactoryProbe/main.swift",
+      "sha256": "3863a7b451a6e026b2bfc9dd08fb3cdaa62f7ceb36d016bb545c5edfbcd095cb"
+    },
+    {
+      "bytes": 511,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/config.json",
+      "sha256": "b20efe8460e6e2fca9f779f6c5eaec5482b7c68d2a2ed9e1e939ca0e69e8eca7"
+    },
+    {
+      "bytes": 737,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/dispatch.json",
+      "sha256": "cfd4f63c9f73a3620d17a1903bc94297673d55b19e435ad65073a6d22bf60e02"
+    },
+    {
+      "bytes": 355,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/hidden-task.vbs",
+      "sha256": "ef499d5d7527b9bbccc7c018710cdba003a7e2343610d0308737ecd5965e2801"
+    },
+    {
+      "bytes": 1047,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+    },
+    {
+      "bytes": 484,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "eafe48c2260b7908daa15a4e2c56cb5c5a78b4b376fc2a645ed2c7cf0d5334f0"
+    },
+    {
+      "bytes": 1342,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/host.stderr.txt",
+      "sha256": "e80f4f24e9e2cf0b73705a8d4c23145b66d5aae340495854e6198e48ced85511"
+    },
+    {
+      "bytes": 605693,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/host.stdout.txt",
+      "sha256": "16ae9e68e2cade6b2fdb080eba42b567ad6a8e29304b217136d0464d173afcb6"
+    },
+    {
+      "bytes": 131,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/launch-observation.json",
+      "sha256": "43fc128c7a67c12b83112ab3cd60f2504393f599424c1100fe26ad7d37215f32"
+    },
+    {
+      "bytes": 8087,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.pixels.json",
+      "sha256": "5d4364f12ffd734d251c10853b0fc2b5adaef93d16bb497a8c1b5e8e54fdc161"
+    },
+    {
+      "bytes": 5625,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.printwindow.png",
+      "sha256": "1ae6ad7cf50f66fcd695b9fbf414f7700ae7c0b39942cd3b5cc4526b787e31b0"
+    },
+    {
+      "bytes": 5625,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.printwindow.repeat.png",
+      "sha256": "1ae6ad7cf50f66fcd695b9fbf414f7700ae7c0b39942cd3b5cc4526b787e31b0"
+    },
+    {
+      "bytes": 36737,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.screen.png",
+      "sha256": "cef148d543ddba0b9d28d81c9cac56f3fffca61aeae36da66cf1fcfbb2887e56"
+    },
+    {
+      "bytes": 36737,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.screen.repeat.png",
+      "sha256": "cef148d543ddba0b9d28d81c9cac56f3fffca61aeae36da66cf1fcfbb2887e56"
+    },
+    {
+      "bytes": 3643,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/native.uia.json",
+      "sha256": "1883a9eccbb6a86d1f738bd9b7ac196b2a0512385b886ec2eb2546d0b26a5a07"
+    },
+    {
+      "bytes": 256,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-01/owned-process.json",
+      "sha256": "c018d06e065218f72f9d2af0fc569b93043719c6c83392c9a38205fac53d7ad7"
+    },
+    {
+      "bytes": 3746,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/native-observation.json",
+      "sha256": "f8e8190ccfcb3d0ee39eee47200c1a75dfc71c863dd22e90b1a1f2b36a4e2bcf"
+    },
+    {
+      "bytes": 2890,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/observation.json",
+      "sha256": "7b4bb2e539b8b635eaf3488f438552ec3d3035a289f68b74c40dcb397028511b"
+    },
+    {
+      "bytes": 4795,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/pixels-background.ps1",
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+    },
+    {
+      "bytes": 5540,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/plan.json",
+      "sha256": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904"
+    },
+    {
+      "bytes": 11275,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 110,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/scheduled-task-receipt.json",
+      "sha256": "ea1c14c40065f8f975f6b9960512dac6cd283f6a4af4e41d924a6b121a129a6e"
+    },
+    {
+      "bytes": 149,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/task-result.json",
+      "sha256": "c5dd05f8a166e95d47c39f3c686441611e9ca4473449785b6a20f21352c85487"
+    },
+    {
+      "bytes": 158,
+      "channel": "windows-single",
+      "path": "factory/native/windows/round1-native-v4/single-scroll-r1/replays/run-001/task.log",
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f"
+    }
+  ],
+  "schema": "paired-next-observation-input-manifest-v1",
+  "status": "frozen-single-windows-observations-vs-mac-20-run-candidate"
+}

@@ -1,0 +1,710 @@
+{
+  "kind": "seed-corrections-lineage-v2-independent-review",
+  "version": 1,
+  "scope": "Offline append-only source/binary/raw lineage review; v1 & lineage-v2 producer files untouched.",
+  "seed": 14577611000270672472,
+  "stage": {
+    "entryCount": 31,
+    "stageSha256": "sha256:91e8668b30fb0c21687fecf3a75453536b62498758c308c41f69d00b1fba90a0"
+  },
+  "policy": {
+    "argvTemplate": [
+      "/usr/bin/xcrun",
+      "swiftc",
+      "-parse-as-library",
+      "-O",
+      "-o",
+      "<capture-host>",
+      "<Witness.swift>",
+      "<CaptureHost.swift>"
+    ],
+    "actualCompilerProcessReceipt": "MISSING_AND_HELD",
+    "adapterPolicyHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b"
+  },
+  "closure": {
+    "cases": 5,
+    "rawJoins": 100,
+    "rawSourceHashMatches": 100,
+    "uniqueWitnessHashes": 5,
+    "uniqueAdapterHashes": 5,
+    "uniqueBinaryHashes": 5
+  },
+  "cases": [
+    {
+      "block": "stack-overlay",
+      "caseID": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+      "witnessHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+      "adapterHash": "sha256:94ab7da30036db41281b0d270e2443cb570fb8b001330ced743b115516984deb",
+      "originalAdapterHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679",
+      "rawJoins": [
+        {
+          "run": 1,
+          "rawHash": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 2,
+          "rawHash": "sha256:b3a7d4e06e504441bb221e6de2139d4d4fe39e4b064e1812b82b5ae4fefd5e2a",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 3,
+          "rawHash": "sha256:6497146ae470758de78a6d203ab0b1d6de1e136323f815ce5f790b3e6e8f7dff",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 4,
+          "rawHash": "sha256:68f7d0d8c191b45212f9e9ce3adee26ac61fa148f46c13301dbc91ca0f236c16",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 5,
+          "rawHash": "sha256:0acdf2b13059f71ad27f3757520055648879745dfe386f7cd2aa48bb7d56ba09",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 6,
+          "rawHash": "sha256:04746a3720aa2f1b9a40124324680716c339cd98383e7dbcf6d562c4c75d9363",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 7,
+          "rawHash": "sha256:961bafe96d8c18cea27f7fca1be4e830f591a93ca987dbaa7a7ffb92bc92d685",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 8,
+          "rawHash": "sha256:c965ac964beb1ac1621cbeab218a26a188cc8747cdc8bbcee5a20edcba95b734",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 9,
+          "rawHash": "sha256:88b4095ab15ef353173f4495dcde85b4b36b6f0255cd74cdc6a2ee38d7b20807",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 10,
+          "rawHash": "sha256:a3aeeb892128379462c7d83c7d490f4ceaf0b1193debb7a732e1a375f8a0dec0",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 11,
+          "rawHash": "sha256:0e72a3f619c64454ca92f8f416c3d53d88291d6aa7c9f1d029866cb7ae5e1d21",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 12,
+          "rawHash": "sha256:bdd992a59bde7f01aebcf010d2cd2b62f9dba5929a3a195e4f3aa8bf12bd400c",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 13,
+          "rawHash": "sha256:020f036bf42037c869e96000673bdb763c0d493b4b04cd32b45fce875ceaf0de",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 14,
+          "rawHash": "sha256:a679246b6ed10ffed307610c361167592e150aa10bf7b1eb28637fe176a9001b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 15,
+          "rawHash": "sha256:a2d67eb6bfaf3f27a2485a88cda246fe1f570264167d793143a5e59e22c492bf",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 16,
+          "rawHash": "sha256:6bd56bfa6c7a80de42fcad199a9c9f79cf052fdd60a225449622214ef807b39f",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 17,
+          "rawHash": "sha256:775e94d887272d3d2c161704cb352f720d9c74ac215dfadde4d55188a7bf8448",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 18,
+          "rawHash": "sha256:3c66b9693f5ddf445b564806ee5dbd94f00b2e744bd62dd7b507377922aa3c17",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 19,
+          "rawHash": "sha256:522823878b0ca1daae142d1679b3c015b24774aa37af2785ef01e9d928c8c235",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        },
+        {
+          "run": 20,
+          "rawHash": "sha256:de5103a5933274958c2728ce9cc0ac4d2fc739944f8ccc56942376aed09cc3ac",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679"
+        }
+      ],
+      "compileProcessProof": "MISSING_AND_HELD"
+    },
+    {
+      "block": "padding-frame",
+      "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+      "witnessHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "adapterHash": "sha256:6058fea1a1eb236b9bc5414ca5be67830594a2fc01537ede72795fc65939f1ba",
+      "originalAdapterHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+      "rawJoins": [
+        {
+          "run": 1,
+          "rawHash": "sha256:a5a1fce0380f7909836c08b4ea1afcc71bb6578827107868c3fac77f9337acc4",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 2,
+          "rawHash": "sha256:d59e2db658066d741efdfe3ff156893bba2350db7109896334aec6be166618d3",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 3,
+          "rawHash": "sha256:a9ee1bea5bcd08437f38c9cc581d3467dce7403ef05f42210bd85aa8dca2881b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 4,
+          "rawHash": "sha256:3a9c1b38790f0ad52958c61c7d47f61605b12ef5d78f28c68a27bd4e74130f9a",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 5,
+          "rawHash": "sha256:38b099a91ed54663543a516884f490bde3ee1fafa57fc9e523279a13cdf69f70",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 6,
+          "rawHash": "sha256:ae4949b4b2904e53c8d99a9e5a632526c717000abaade0d6e5698d0663362bde",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 7,
+          "rawHash": "sha256:1806f8c18618210da1f2506191cfc898ff7aa0d248ac768f82db7a6c67e632d4",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 8,
+          "rawHash": "sha256:c444a588d989c90101d01188f6f9f53c578a356738953214681cf295043920ec",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 9,
+          "rawHash": "sha256:1d59534283af2f0f0aeec3034795e0751dbe591462087c29e27e8998593741d3",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 10,
+          "rawHash": "sha256:057cdacfdc29698ceeefee77cd4d350a58150d9081cccb935fff065864192855",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 11,
+          "rawHash": "sha256:3d15698cd473391770db867b32cc16025b6a8d63ba7749a9a0160245cc6ccb24",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 12,
+          "rawHash": "sha256:03fbd7b9cbbb6dfc6b6ef28dd5d9eb5fbd9db3486510db3a8280f1f479305c6b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 13,
+          "rawHash": "sha256:0bb3ea1fe4d98257d4fbc91f01d7d1fefa4878ce475c9efa14af6ba7f010a5c1",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 14,
+          "rawHash": "sha256:2af314838e854678de439f8d9a9d323e69c90222d5923572dfad8409132c91ee",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 15,
+          "rawHash": "sha256:472530a474469ee2cf9447d4f96c3ead375cc6e5841ae08709f4f702948f5f5d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 16,
+          "rawHash": "sha256:40fde5c004eb1d0cd8f1ab1a384a8dcb944c7986a3e8b347a8d2fe52bd0b58eb",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 17,
+          "rawHash": "sha256:bc70c3b4e3ad8f8fa916f774c0106601011f6828a266c4d2ac3c63fd4b7f7fbd",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 18,
+          "rawHash": "sha256:1a5a7939c8ae702242bf25024400f7f43c12fcb0814180ef7667f3471404701b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 19,
+          "rawHash": "sha256:8e9d9d1901febfb81c3aca89c7d1343c4183878afe9bd7fe5c9aee74992b1442",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        },
+        {
+          "run": 20,
+          "rawHash": "sha256:3d1a669f7cf3d47828ec708bdda8c3e9e1bdabda722c091e1fc2bfd19ec94a5c",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777"
+        }
+      ],
+      "compileProcessProof": "MISSING_AND_HELD"
+    },
+    {
+      "block": "scroll-view",
+      "caseID": "swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258",
+      "witnessHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+      "adapterHash": "sha256:1e507cc4aa123a6b26f6517ede565b4798929ffd1b6c317bbf297657cd24baea",
+      "originalAdapterHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8",
+      "rawJoins": [
+        {
+          "run": 1,
+          "rawHash": "sha256:de9fd0a528543e7eef7635f64d274404b6d8bc6c949c1d97576027916d08e6b2",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 2,
+          "rawHash": "sha256:c05af6a9a52c4ea36bfccf0a110034d4b1fca27743257bb331e975540045576e",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 3,
+          "rawHash": "sha256:0a3d57c2211a88c3c97ab24afb683ef1c8787190f2d32fea58ce348be63a9c74",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 4,
+          "rawHash": "sha256:7191d439b5a2b66128ed3ef52bd824100adef6a7c600ca3be0de34e7e6665418",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 5,
+          "rawHash": "sha256:9a0bcd2be3e6fe927cb8228e959f133de40d8201350f37971ceef975e6460d07",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 6,
+          "rawHash": "sha256:f83358cde3cd8c7d69edbcc09d1a2b715171d86c034fc503f07d0f4960f79ec5",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 7,
+          "rawHash": "sha256:1a5184533a4fd4be217ca8b7586e30167db3f4fc96f1305b38f1b6e1f59580e8",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 8,
+          "rawHash": "sha256:88a96637eda5dedfc2907bc73e788975b1b304fa9b81705793ac6be0fc1ce7d7",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 9,
+          "rawHash": "sha256:855ac019bc83d88a2377d72a92665acd32ec603a0b29e6984859afd5f6a49291",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 10,
+          "rawHash": "sha256:25aa5794d7c5426c5d4a9922b77dcbe1813aa3ea642db4fc8d4185cf793c4a98",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 11,
+          "rawHash": "sha256:7c5569da41237f9305f7eb64eb601a160bd542216fb26609cf4058737252d572",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 12,
+          "rawHash": "sha256:78df2e4d9cdd54c3f209642a498cc98c07a24cd458326845c1940060c3a85918",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 13,
+          "rawHash": "sha256:e2cf09399067a5b9439e2311b5c4f00b1bdc9eaaa52f2232640138d97053eea0",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 14,
+          "rawHash": "sha256:c09a4603eff7f305b9e071eb47edbcbaf4b0097121fa91efa647143dd8a323f7",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 15,
+          "rawHash": "sha256:4de8fe18ba557fa2cee13fb88e1eb195ee66ae534aa266c5c5cbe330cb047720",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 16,
+          "rawHash": "sha256:8e4d102d22b064a502d4f535a384f6bd0179bd08ef953c734ee13249b849db8b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 17,
+          "rawHash": "sha256:f4e054091a3e9bda818e1a016c7cec3ba20344e8b349a2ae057462cff89a2a0d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 18,
+          "rawHash": "sha256:4d22fe438b0904d73bb3a3666019cf3893652bd38bacccd6921bcd9a4205e7e2",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 19,
+          "rawHash": "sha256:d68998953156065dc5f28f760d088c1adea6dd8a93cb587bd27022540dbfbbd5",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        },
+        {
+          "run": 20,
+          "rawHash": "sha256:91d206b19bd76daedeb0c9957074c87d8c6cbb7888286946b241f45a070ac791",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8"
+        }
+      ],
+      "compileProcessProof": "MISSING_AND_HELD"
+    },
+    {
+      "block": "custom-layout",
+      "caseID": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258",
+      "witnessHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "adapterHash": "sha256:1f946f6d86694e64e66fc6974216b59bf9d1c69e7e8cd514e47212858ae9c291",
+      "originalAdapterHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e",
+      "rawJoins": [
+        {
+          "run": 1,
+          "rawHash": "sha256:0a8be1ff5ce88579927a0ad6fa6028e2a63441d3856e559b6bd7a24e51d4e163",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 2,
+          "rawHash": "sha256:787e835d334e81bf1fdad47bb35020adb600e163fac0e6943eb43710a8bf1403",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 3,
+          "rawHash": "sha256:b40428fb302c2d61c06548afbde34e9854fee6edfb126b7c3c5c22e75866d65b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 4,
+          "rawHash": "sha256:e28c112f51a0d2078f15f6c48d1b93fc2e41dea982408304f1f8e52a2c41cdbd",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 5,
+          "rawHash": "sha256:59e81a0a475decbd4b2b7844a441fc7e08652c4c7024fb5dc509d567c90d3d51",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 6,
+          "rawHash": "sha256:cf60795e316ae653e068d335d0c8884edfd97208659a83ee85f5d17a729f1a0b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 7,
+          "rawHash": "sha256:d1603b299d4c12caa8724ee159333060802a73cad1249113f9c31f08ce27e497",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 8,
+          "rawHash": "sha256:21fa44ca84dc088025c24ee474005ab62be208f0499754c292bf87b1f4519aae",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 9,
+          "rawHash": "sha256:c830cb2083a4dca4c3c8f135706a36e787584963424eae5df40f3c4a6f817ab6",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 10,
+          "rawHash": "sha256:8e91392937f9cef0d038c26824627e2db695dbf7ae96c519ecfdb87543bbd468",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 11,
+          "rawHash": "sha256:efc788b368e8da3393cfa19c6517c41f0a0b738f918304e2772d566189e66843",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 12,
+          "rawHash": "sha256:4e3608237ba985eab4007fab992dfef94bbc39a0ebb34675d8ff59918d11c839",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 13,
+          "rawHash": "sha256:5bc6d31adc43209df5c7a210f743d88947065d3b2a43b98c3e248106b3ebea49",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 14,
+          "rawHash": "sha256:1e54ce52a4e892514799d54d95881db27d8c0466e5ee07e971d72f9657012e99",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 15,
+          "rawHash": "sha256:25eaea1c27002c7a50b6592a2aeb14b2e0267da59be88bc31d2a33c7bd4b7f6e",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 16,
+          "rawHash": "sha256:a9143e9244f90351fd0e8f7681b6dfd32887fa26c2e6443c0549693d61045749",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 17,
+          "rawHash": "sha256:7476084813f2cb30787a24b739ad0bb746a379a6801aa5eb75a1aa4a12a5987f",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 18,
+          "rawHash": "sha256:753b51a54e4ed9d9320ba56b9beccb7c0f4e3a2ec0329fe1e4810054f9de235d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 19,
+          "rawHash": "sha256:baf737724c2a107008bf060db579c6c89dc14a1b8212c8a13a0750c122adc560",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        },
+        {
+          "run": 20,
+          "rawHash": "sha256:3628f4871f97c043d72a39b5958f05287dadd9eeea202896afc8858a5e4eb3d7",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e"
+        }
+      ],
+      "compileProcessProof": "MISSING_AND_HELD"
+    },
+    {
+      "block": "preference-key",
+      "caseID": "swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258",
+      "witnessHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+      "adapterHash": "sha256:385ea23b1798883e0e5d335d38841e8b2fe1f319b9dc7840e5959132f1e1846c",
+      "originalAdapterHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c",
+      "rawJoins": [
+        {
+          "run": 1,
+          "rawHash": "sha256:36481fd85179605fae312f2b2b9e890605edc793ae63fd7312a39fbc5be93acb",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 2,
+          "rawHash": "sha256:04000667db9e0503860d9b459ecaa5cfb11cf77521f6efc4564a428f5b8c7739",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 3,
+          "rawHash": "sha256:0e7a5e3615d84e9444d72ca7e2b8da7d0b6dd6de5be7c0fcc46c2a28ae44e441",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 4,
+          "rawHash": "sha256:1513edd881d2d8cda0b14bf565696caf1cb8942476458c7edd7d4f5f8e2b5046",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 5,
+          "rawHash": "sha256:50f16b39bfaf9b1420d90cc87d1f752b62642d48a843e3a17ff62ceb72caa04c",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 6,
+          "rawHash": "sha256:03f51f4fceac0611d686c3b398c4fd4dbcab22c0723483fa2098681c22a9f032",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 7,
+          "rawHash": "sha256:16126711fc1afa7c85f0abbc3d63b0940267b2a3630743094429823713ff805a",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 8,
+          "rawHash": "sha256:fc8a548dd00015174bc616aaf3b28f19b26ad9b2a2d8ea3e6388c1d20a334807",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 9,
+          "rawHash": "sha256:5944f38f5629a01adaf064f9424a2eba9c4a7895877c229e477ddf1803c4100d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 10,
+          "rawHash": "sha256:c9787dde6460b2a1bb5e750837f0dd59593a707a16f3e6c93bbdb2bfaf3dcbfe",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 11,
+          "rawHash": "sha256:c16a1ba61348bf6efe86a475c62d717b2e98febb2bd6e85ffd0e1469b608f72d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 12,
+          "rawHash": "sha256:92769bf39191b43e30d7b2cf1025b370f89789eb737d1d6753ec416482aed1e5",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 13,
+          "rawHash": "sha256:06abfc8a8b7b6fb4d1e8910965fd05af937b4b12864f96e70d284a518245a46d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 14,
+          "rawHash": "sha256:a9290519ff31ae2f90dc3027a6a7e97848152122e156a5eeffa8820253f63da8",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 15,
+          "rawHash": "sha256:981f0e463491eb90d10c31f8962bf97be2fbdcf29200e28291d4692fae132de7",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 16,
+          "rawHash": "sha256:6180b09bb8303caedeb831da6917edf8870496140e1bebf39fbf5d7fbec30505",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 17,
+          "rawHash": "sha256:c70604e48ff034ce6757c74a19aae264c22213599e7ac32f5a1c2ac147a8705d",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 18,
+          "rawHash": "sha256:13a2a66ff526a697e2737171a13adcc174546e761922929fd3c68269a88115a5",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 19,
+          "rawHash": "sha256:01937b3eb875f35479f7ea4ac0933f7a30670a5086b7f051a8cfb2c84cf7198b",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        },
+        {
+          "run": 20,
+          "rawHash": "sha256:a813b6f6e605a88896a20b659e3a9f97bdd587137e5c7d1d69cff21e1cccbe63",
+          "sourceHashMatchesRaw": true,
+          "binaryHash": "sha256:411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c"
+        }
+      ],
+      "compileProcessProof": "MISSING_AND_HELD"
+    }
+  ],
+  "faultControls": {
+    "count": 6,
+    "outcomes": {
+      "witness-byte-mutation": "rejected",
+      "adapter-byte-mutation": "rejected",
+      "binary-byte-mutation": "rejected",
+      "raw-byte-mutation": "rejected",
+      "summary-adapter-join-mutation": "rejected",
+      "process-proof-mutation": "rejected"
+    }
+  },
+  "sourceBoundCandidateObservation": "PASS",
+  "compilerOSOriginAndParityQualification": "HELD_MISSING_ACTUAL_PROCESS_RECEIPT",
+  "noAlias": {
+    "witnessBytes": true,
+    "adapterBytes": true,
+    "binaryBytes": true,
+    "rawBytes": true,
+    "sourceHashRole": true
+  },
+  "disposition": "separate Witness.swift & adapted CaptureHost.swift bytes verified for five cases; source/adapter/binary joins verified across 100 raw runs; capture provenance sourceHash equals instrumented raw bytes for all 100; actual compiler argv/PID/timestamps/return code remain explicitly held"
+}

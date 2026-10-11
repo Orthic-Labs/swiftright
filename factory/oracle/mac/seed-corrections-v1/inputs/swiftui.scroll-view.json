@@ -1,0 +1,74 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.scroll-view.recipe",
+  "provenance": {
+    "sourceHash": "sha256:90b38269652f21b3ae37cdb3cb6385fca44bbe8358a35689c95ddcf5cdcfce8a",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.scroll-view",
+  "witnesses": [
+    {
+      "id": "swiftui.scroll-view.witness",
+      "sourceHash": "sha256:90b38269652f21b3ae37cdb3cb6385fca44bbe8358a35689c95ddcf5cdcfce8a",
+      "resources": [
+        {
+          "id": "swiftui.scroll-view.witness.swift",
+          "hash": "sha256:90b38269652f21b3ae37cdb3cb6385fca44bbe8358a35689c95ddcf5cdcfce8a"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.scroll-view.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "axis": "vertical",
+        "rows": 8,
+        "viewportWidth": 120,
+        "viewportHeight": 48
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "axis",
+      "values": [
+        "vertical",
+        "horizontal"
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "content-count",
+      "values": [
+        4,
+        8
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.scroll-view.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:1f693f439a086a21365235063745ec2a3153c53b10fa95795dbe5a226b86dde4"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.scroll-view.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

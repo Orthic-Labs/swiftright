@@ -1,0 +1,1239 @@
+{
+  "acceptance": "not-promoted",
+  "adapterSourceHash": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+  "binaryHash": "sha256:928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679",
+  "block": "swiftui.stack-overlay",
+  "candidateOnly": true,
+  "case": {
+    "hash": "sha256:88ee31aaaba4b6c1729c3530b1461b19167c9e55ee27c72a0124edaea0ec2380",
+    "id": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "channels": {
+    "animation": "NOT_ATTEMPTED: static pilot",
+    "compositorPaint": "OBSERVED",
+    "events": "OBSERVED: render clock & host window display only",
+    "externalAX": "OBSERVED",
+    "offscreenPaint": "OBSERVED",
+    "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+    "rootLayout": "OBSERVED",
+    "textRenderer": "OBSERVED",
+    "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+    "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+  },
+  "compiledAdapterHash": "sha256:94ab7da30036db41281b0d270e2443cb570fb8b001330ced743b115516984deb",
+  "executionRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/scratch-v3/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+  "freshAXClient": {
+    "binaryHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+    "executable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/scratch-v3/external-ax-client/f5-ax-client",
+    "externalAX": "AVAILABLE",
+    "identityDetails": "Executable=/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/scratch-v3/external-ax-client/f5-ax-client\nIdentifier=f5-ax-client\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=805 flags=0x20002(adhoc,linker-signed) hashes=22+0 location=embedded\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nCandidateCDHashFull sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nHash choices=sha256\nCMSDigest=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=17992\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n",
+    "kind": "fresh-client",
+    "permissionRequests": false,
+    "preflight": {
+      "axTrusted": true,
+      "permissionRequests": false,
+      "pid": 64070
+    },
+    "sourceHash": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+  },
+  "independentProcessesPerRun": true,
+  "kind": "macos-host-capture-candidate",
+  "permissionCapabilities": {
+    "axTrusted": true,
+    "display": {
+      "mainDisplayBoundsPoints": {
+        "height": 1080,
+        "width": 1920,
+        "x": 0,
+        "y": 0
+      },
+      "mainDisplayPixels": {
+        "height": 1080,
+        "width": 1920
+      },
+      "mainScreenBackingScaleFactor": 1
+    },
+    "fontInventory": {
+      "families": [
+        "Academy Engraved LET",
+        "Al Bayan",
+        "Al Nile",
+        "Al Tarikh",
+        "American Typewriter",
+        "Andale Mono",
+        "Apple Braille",
+        "Apple Chancery",
+        "Apple Color Emoji",
+        "Apple SD Gothic Neo",
+        "Apple Symbols",
+        "AppleGothic",
+        "AppleMyungjo",
+        "Arial",
+        "Arial Black",
+        "Arial Hebrew",
+        "Arial Hebrew Scholar",
+        "Arial Narrow",
+        "Arial Rounded MT Bold",
+        "Arial Unicode MS",
+        "Avenir",
+        "Avenir Next",
+        "Avenir Next Condensed",
+        "Ayuthaya",
+        "Baghdad",
+        "Bangla MN",
+        "Bangla Sangam MN",
+        "Baskerville",
+        "Beirut",
+        "Big Caslon",
+        "Bodoni 72",
+        "Bodoni 72 Oldstyle",
+        "Bodoni 72 Smallcaps",
+        "Bodoni Ornaments",
+        "Bradley Hand",
+        "Brush Script MT",
+        "Chalkboard",
+        "Chalkboard SE",
+        "Chalkduster",
+        "Charter",
+        "Cochin",
+        "Comic Sans MS",
+        "Copperplate",
+        "Corsiva Hebrew",
+        "Courier New",
+        "DIN Alternate",
+        "DIN Condensed",
+        "Damascus",
+        "DecoType Naskh",
+        "Devanagari MT",
+        "Devanagari Sangam MN",
+        "Didot",
+        "Diwan Kufi",
+        "Diwan Thuluth",
+        "Euphemia UCAS",
+        "Farah",
+        "Farisi",
+        "Futura",
+        "GB18030 Bitmap",
+        "Galvji",
+        "Geeza Pro",
+        "Geneva",
+        "Georgia",
+        "Gill Sans",
+        "Grantha Sangam MN",
+        "Gujarati MT",
+        "Gujarati Sangam MN",
+        "Gurmukhi MN",
+        "Gurmukhi MT",
+        "Gurmukhi Sangam MN",
+        "Heiti SC",
+        "Heiti TC",
+        "Helvetica",
+        "Helvetica Neue",
+        "Herculanum",
+        "Hiragino Maru Gothic ProN",
+        "Hiragino Mincho ProN",
+        "Hiragino Sans",
+        "Hiragino Sans GB",
+        "Hoefler Text",
+        "ITF Devanagari",
+        "ITF Devanagari Marathi",
+        "Impact",
+        "InaiMathi",
+        "Kailasa",
+        "Kannada MN",
+        "Kannada Sangam MN",
+        "Kefa III",
+        "Khmer MN",
+        "Khmer Sangam MN",
+        "Kohinoor Bangla",
+        "Kohinoor Devanagari",
+        "Kohinoor Gujarati",
+        "Kohinoor Telugu",
+        "Kokonor",
+        "Krungthep",
+        "KufiStandardGK",
+        "Lao MN",
+        "Lao Sangam MN",
+        "Lucida Grande",
+        "Luminari",
+        "Malayalam MN",
+        "Malayalam Sangam MN",
+        "Marker Felt",
+        "Menlo",
+        "Microsoft Sans Serif",
+        "Mishafi",
+        "Mishafi Gold",
+        "Monaco",
+        "Mshtakan",
+        "Mukta Mahee",
+        "Muna",
+        "Myanmar MN",
+        "Myanmar Sangam MN",
+        "Nadeem",
+        "New Peninim MT",
+        "Noteworthy",
+        "Noto Nastaliq Urdu",
+        "Noto Sans Batak",
+        "Noto Sans Kannada",
+        "Noto Sans NKo",
+        "Noto Sans Oriya",
+        "Noto Sans Sunuwar",
+        "Noto Sans Syriac",
+        "Noto Sans Tagalog",
+        "Noto Serif Myanmar",
+        "Optima",
+        "Oriya MN",
+        "Oriya Sangam MN",
+        "PT Mono",
+        "PT Sans",
+        "PT Sans Caption",
+        "PT Sans Narrow",
+        "PT Serif",
+        "PT Serif Caption",
+        "Palatino",
+        "Papyrus",
+        "Party LET",
+        "Phosphate",
+        "PingFang HK",
+        "PingFang MO",
+        "PingFang SC",
+        "PingFang TC",
+        "Plantagenet Cherokee",
+        "Raanana",
+        "STIX Two Math",
+        "STIX Two Text",
+        "STSong",
+        "Sana",
+        "Sathu",
+        "Savoye LET",
+        "Shree Devanagari 714",
+        "SignPainter",
+        "Silom",
+        "Sinhala MN",
+        "Sinhala Sangam MN",
+        "Skia",
+        "Snell Roundhand",
+        "Songti SC",
+        "Songti TC",
+        "Sukhumvit Set",
+        "Symbol",
+        "Tahoma",
+        "Tamil MN",
+        "Tamil Sangam MN",
+        "Telugu MN",
+        "Telugu Sangam MN",
+        "Thonburi",
+        "Times New Roman",
+        "Trattatello",
+        "Trebuchet MS",
+        "Verdana",
+        "Waseem",
+        "Webdings",
+        "Wingdings",
+        "Wingdings 2",
+        "Wingdings 3",
+        "Zapf Dingbats",
+        "Zapfino"
+      ],
+      "systemControl": {
+        "family": ".AppleSystemUIFont",
+        "postScriptName": ".SFNS-Regular",
+        "size": 16,
+        "unitsPerEm": 2048
+      }
+    },
+    "permissionRequests": false,
+    "pid": 64103,
+    "screenCaptureGranted": true
+  },
+  "probeManifest": {
+    "block": "swiftui.stack-overlay",
+    "case": {
+      "hash": "sha256:88ee31aaaba4b6c1729c3530b1461b19167c9e55ee27c72a0124edaea0ec2380",
+      "id": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258"
+    },
+    "caseInputs": {
+      "alignment": "center",
+      "color-scheme": "dark"
+    },
+    "channels": {
+      "adapters": {
+        "customLayout": "not-declared",
+        "native": "native host capture required",
+        "provider": "host-specific adapter required; no renderer ABI assumed",
+        "text": "not-declared"
+      },
+      "assertionChannels": [
+        "layout"
+      ],
+      "geometry": [
+        {
+          "channel": "layout",
+          "hostHookRequired": true,
+          "probeTag": "swiftui.stack-overlay:swiftui.stack-overlay.witness",
+          "viewInstrumentationInserted": false
+        }
+      ],
+      "native": [],
+      "provider": [],
+      "transparency": {
+        "channels": [
+          "layout",
+          "paint"
+        ],
+        "enabled": false,
+        "viewIsolatedFromInstrumentation": true
+      },
+      "witnesses": [
+        {
+          "id": "swiftui.stack-overlay.witness",
+          "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+        }
+      ]
+    },
+    "compileExpectation": "success",
+    "environmentInputs": {
+      "colorScheme": "dark"
+    },
+    "executionEligible": true,
+    "kind": "generated-probe",
+    "recipe": {
+      "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+      "id": "swiftui.stack-overlay.recipe"
+    },
+    "scenario": "baseline",
+    "sourceFile": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258.swift",
+    "sourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+    "version": "0.1",
+    "witness": {
+      "id": "swiftui.stack-overlay.witness",
+      "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+    },
+    "witnessType": "Witness_stack_overlay"
+  },
+  "provenance": {
+    "createdAt": "2026-10-11T05:02:48.835205Z",
+    "producer": "factory/native/macos",
+    "sourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+  },
+  "recorder": {
+    "axTrusted": true,
+    "copiedBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "copiedExecutable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/scratch-v3/existing-recorder/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "externalAX": "HELD",
+    "genericProtocolSupported": false,
+    "identityDetails": "Executable=/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app/Contents/MacOS/F1MacRecord\nIdentifier=com.orthiclabs.swiftright.f1macrecord\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=497 flags=0x10000(runtime) hashes=8+3 location=embedded\nVersionPlatform=1\nVersionMin=983040\nVersionSDK=983040\nHash type=sha256 size=32\nCandidateCDHash sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nCandidateCDHashFull sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nHash choices=sha256\nCMSDigest=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=49152\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nSignature size=9048\nAuthority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=9 Oct 2026 at 8:17:30\u202fAM\nInfo.plist entries=9\nTeamIdentifier=6KLGD3LLKF\nRuntime Version=15.0.0\nSealed Resources version=2 rules=13 files=0\nInternal requirements count=1 size=200\nTotal signatures=1\nChosen signature=1\n",
+    "permissionRequests": false,
+    "preflightExit": 2,
+    "preflightMethod": "AXIsProcessTrusted in unchanged signed recorder, then missing-fixture launch",
+    "reason": "signed binary hard-codes F1 stimuli & lacks generic --steps/launchArgs support; current source is newer than signed binary",
+    "sourceApp": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/seed-corrections-v1-run-20261011/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+    "sourceBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "sourceBinaryProtocol": "F1-only"
+  },
+  "runs": [
+    {
+      "captureHash": "sha256:684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:bf9e918326862005c548f787fb277b09def3f76693c0f666b6d5de1f585a70af",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:82b0e402099399f97d5e02a205883501b2554efa873be9dcc630d559e5e8f184",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64107,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64106,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:0dca624716dd7c570a7c0b876798ce6b2cadb4780fcf3800f4dedfc7ccff3a1d",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 1
+    },
+    {
+      "captureHash": "sha256:f042c40d0fcbbd6793009fbe570093755a5e004a78139fdc439d12b47d72ab61",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:99867fb8392c62ea385f7d2874dba23dbf4e2c905b191fae0e0d04a16c64ecbc",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:70713579203a738b87b3dca9b658a7ce9b9f767210388f56f30a27b925b236e1",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64154,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:b3a7d4e06e504441bb221e6de2139d4d4fe39e4b064e1812b82b5ae4fefd5e2a",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64153,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:94b7e8e024630e6f92561a1cbf48808acc952c491f7ef94974809996bf0a3704",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 2
+    },
+    {
+      "captureHash": "sha256:7ef7b600ad07a58ca60a8877a1435870df44d5628d0301749a5da86ee00f0f62",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:a5874be958f3bca6571f8c07f6a82e1c75350fac5b0bc664927a3475e5a09e52",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:45412e2c9e8979b96f7aa2a15fa41f308a36a0159871f531bd6bb60f5949618c",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64191,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:6497146ae470758de78a6d203ab0b1d6de1e136323f815ce5f790b3e6e8f7dff",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64183,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:d2b8f453c5a99a49f98c65f3917ff3d0bcccf7434a27289f4039445c8e9af275",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 3
+    },
+    {
+      "captureHash": "sha256:22e0fd149db034150e914d177a527a415dbaabbe4f89b3ebf4fa254e8f64ee8e",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:2f42b530b7dd3e3c25bd34897be918eaccd2237bf268eda93f1c2ca17dcae935",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:79a8dd78bc358b9aeae94241afb89f2693f62114fb32949b4cd703baa138a613",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64224,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:68f7d0d8c191b45212f9e9ce3adee26ac61fa148f46c13301dbc91ca0f236c16",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64223,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:d048edd8ae4f303aa28521bfdfa4486994d7a9898a8f71ae49131aac2208f20d",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 4
+    },
+    {
+      "captureHash": "sha256:397c5c497ed90fbae5834f0ea8162672c992542864f9070c81540a07be88b4f4",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:da714e5f792f82ede7a1da9b395d0ad779b4de32b6c675868c95d19fd4357180",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:11b59a23a942c53e63b1ac279d521cf80594005a48098b72c6023a8a61b226e7",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64235,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:0acdf2b13059f71ad27f3757520055648879745dfe386f7cd2aa48bb7d56ba09",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64234,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:b1cbf53f432b989a7c5988e2631a18b8a04543a5738e672e40ffafa27e41ee79",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 5
+    },
+    {
+      "captureHash": "sha256:4fb19125cb45d0e1c35fcc4ef369930b20f31a1c6e78f63d2cab39a2c83b19ef",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:2f4cbbe2d92e00df9f0539c1e00da3129ba06abdc350a1c1fae986def358004a",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:93df0d11d4e05d9c88ac62cf2e340c0a5960013b715dfb73f31065867c732289",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64273,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:04746a3720aa2f1b9a40124324680716c339cd98383e7dbcf6d562c4c75d9363",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64272,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:5f8a193fa4e739f38ee9b72ea3ff2c9523d7b7bcce470093c29d2f91b073a5d9",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 6
+    },
+    {
+      "captureHash": "sha256:b8094ddf150ead0c8cc5414607db14e5da23de1e226c51656c4339fefb0dddb8",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:1ea357d17cd99051961ad3cce2574d41b4f8e67fc81c8bba0b2d0525b03aa3c0",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:cddb44193a2b8e42c3dd9738ceafae2855ab59d42e6b041710194c58f6814fab",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64291,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:961bafe96d8c18cea27f7fca1be4e830f591a93ca987dbaa7a7ffb92bc92d685",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64290,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:2b6bf45f65559c5b543cdbe18013661826e9507858d2620512711e510d041cdf",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 7
+    },
+    {
+      "captureHash": "sha256:d9f645e120ab5da1f895d0062d6cb067fd2ddd8a86e803fd83ebfc867a264f08",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:0643ef4880e3bf12836f2568d53ea708510c761a080801aa7695fdae4221264c",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:462726d871c421fe6dc92f7874bb34a16f23f44a4227aa512c7eab3735ad8afb",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64322,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:c965ac964beb1ac1621cbeab218a26a188cc8747cdc8bbcee5a20edcba95b734",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64317,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:ee9b7fcd776ddc8d2aba4802c5e319b2c57dc97ef102000e86ada18019f15fdc",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 8
+    },
+    {
+      "captureHash": "sha256:1d0040dab03a5c7337765196769b30eeaa1382ca853cf20fe8d6ceb928dafd66",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:76c618358190caa549d7c31cf52eff805c3c6ce01232ca6f9fd02401c8628178",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:999e6106286c187d544826190e604f96118554334ec898be8457e002448c218c",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64342,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:88b4095ab15ef353173f4495dcde85b4b36b6f0255cd74cdc6a2ee38d7b20807",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64337,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:61de345767305312754966e3ba51519f4e122e59784320d7c01f738887c9fa7e",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 9
+    },
+    {
+      "captureHash": "sha256:fc1cc510e4a4ece68e0272953bef6b431f64d6c34067eb6853d3af09141c056e",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:c49bb2f92d79caf2dc667106719f17a29f3e845725b594ffcaf12f93e3c67f5f",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:724064fef1d9fbb2a4acdbd499fd022095f4faa7bb0841cb2937613e9bb52b39",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64407,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:a3aeeb892128379462c7d83c7d490f4ceaf0b1193debb7a732e1a375f8a0dec0",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64403,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:d625594592550c00444922447864b9a71e9f220a825532003845482bbce660ec",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 10
+    },
+    {
+      "captureHash": "sha256:6090cfa5fd52042ee9426388ac3ad46c9b64f20b6a6d8b2f048926f200eb2018",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:475b88648f476b6612f237bd1915a834fe3bf81667f02bac169ca64bd4bb96a7",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:db2a94bdf2f33326ef2ec073d790e3910933211c4bdbc18a9d60e21a333f9b58",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64437,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:0e72a3f619c64454ca92f8f416c3d53d88291d6aa7c9f1d029866cb7ae5e1d21",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64428,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:1092dc6a3252bad06f4dd5fdd6f77de5a843db11b628b1222927fdfb08aea3b7",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 11
+    },
+    {
+      "captureHash": "sha256:84e3f81b811cc31bf151b07365514b1f63b8cbbde97a48202be98b7a602fe355",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:3c68e2af081e97a941d4aaf953ae36dff45118d552c247adf0fd59434002083b",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:4740e5b929433901a6097cc9d42e9860f627024ccdd66a8533cbe234153cfd06",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64466,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:bdd992a59bde7f01aebcf010d2cd2b62f9dba5929a3a195e4f3aa8bf12bd400c",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64465,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:c3009137a718017e7a01a51115660435749161723c032a4f8a54078321eefb14",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 12
+    },
+    {
+      "captureHash": "sha256:6a1668ee9259ed4729cd5f6695dc90d5e812110b8a87af45d87bc6ba6171ade7",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:27890bbd6ce0c18249e185d53d0a737f338a6de6c669e59cc00790543d0507f6",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:f942908c1979a90aaab7e1564bc88d1a5aa338737a49ad09cc0ae67153efacf2",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64484,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:020f036bf42037c869e96000673bdb763c0d493b4b04cd32b45fce875ceaf0de",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64482,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:01d41dffc4547fae12ebeb22d1e805863df3cd421155cb7ef96d77883de5fb6f",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 13
+    },
+    {
+      "captureHash": "sha256:9a09bd54dc0d03a5abb19fbebfba09ec1eca9ffb8b9f8514d7d132df5aa337e5",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:62f016e56fb8b2e09bf1723bff41d0c62742be20b417cc3d82765bf33ef38480",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:246fc37ee689e4c5f9c4864fd562595b963315a7b8d54357d9c36fd47b02e824",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64548,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:a679246b6ed10ffed307610c361167592e150aa10bf7b1eb28637fe176a9001b",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64547,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:1fe5910c60820dd81965f0f8bd9e0fe149e15133bbec587f4ef231cf7a54b7c5",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 14
+    },
+    {
+      "captureHash": "sha256:dd548ac7d2d2da350d07cdf42d3cdad1f4eef0b5790f02382a3724784aa1f285",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:159558bcce5bb27e61eeb80a334c3c4fda377bef417e2363648fcddf19971301",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:594e7902e9cf33c6f44d7ce814b0b31649679f4c7ae71002f96eccbff03847bb",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64590,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:a2d67eb6bfaf3f27a2485a88cda246fe1f570264167d793143a5e59e22c492bf",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64589,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:eb99f54d76e768f1fcd8d778ff5a9830b36b9d5f95707d374625e6de53f1981a",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 15
+    },
+    {
+      "captureHash": "sha256:2a8dc67063435d9f77436529cd008ec64c1a658ee6c5c6a29c94a1f15f052341",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:e5f788caa183bfddce3f79c86ef6059bd27e5d886f9b18cea012ff8c0e6d6568",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:d5f1a1345087d22f2e04e7ebd862168b7f07371a3b2b8f29513d32c4965dcb08",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64623,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:6bd56bfa6c7a80de42fcad199a9c9f79cf052fdd60a225449622214ef807b39f",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64622,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:471b004ed80052387bd0a6ee5fd4c9503e794706de3293e25252a716e46026a8",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 16
+    },
+    {
+      "captureHash": "sha256:378cc29fef0f693934b3209beffc4701efa4d77a51b08f09338997983cf0612e",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:c274111243c3d2f6c2cbe32da58f1a78f6adee66b2d09692b809ce14449504f2",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:40c601cc68af025ce66364520755ab00e8474041020cbe0136a1b6f9f93bcf14",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64711,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:775e94d887272d3d2c161704cb352f720d9c74ac215dfadde4d55188a7bf8448",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64686,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:261dd568b2a788a02b61649a88c0fbe3bf1bc61235f0bb7555feec64285448d4",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 17
+    },
+    {
+      "captureHash": "sha256:33d6e374def7537b498210805254f38f0d57818a2086ac49d05ae27aa07b032f",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:7a51946aba2f3515e67a44179d360abe9e697ea0f05cc03df3a77e4fa0457ca2",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:a2715c2f65ba33ba6b3c3d866c836a0a2494ecdbe9e214dff0812f8f0dcf4eaf",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64771,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:3c66b9693f5ddf445b564806ee5dbd94f00b2e744bd62dd7b507377922aa3c17",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64767,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:1d8c3b3ff2e1e90a26d4201db27535aa4675509f66bf18f76f66001265f187d8",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 18
+    },
+    {
+      "captureHash": "sha256:1e7664fbccd2cde9a34a1d58aa36094dd7d6e2dc3d451d83ffc050323ab123f0",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:789f612ecb5094f3cd279b91855e73f40ad7239788af362aaffd03b963d50424",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:b71c9e1bda44ac44fc6e00a4c9545207f88f34b0e3e6e2b55f21f182cf939d80",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64927,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:522823878b0ca1daae142d1679b3c015b24774aa37af2785ef01e9d928c8c235",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64924,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:a2eadcdcf54e05ec11ebe54070912320470d2f8bbecfd8edfb59c688bd6e2405",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 19
+    },
+    {
+      "captureHash": "sha256:e97b18eb68e54f33dd2592842d5c37330ce30c237bd72f847879914e3f581eec",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:da9ac31a3217547b99c1f44cfba3f2d21112cc16b924e4303e0031038c5d7c37",
+      "compositorRawHash": "sha256:2c4e690ff84c1cae9855bb3a661c8317204e96872d0ddf7b900c8d2a765eecb0",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:59d4235f7c86dc991d4ad92565b6babaf5e52847d665b48cec3d5e94c355c450",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64943,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:de5103a5933274958c2728ce9cc0ac4d2fc739944f8ccc56942376aed09cc3ac",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 192,
+          "height": 32,
+          "scale": 1,
+          "uniqueByteValues": 52,
+          "width": 48
+        },
+        "pid": 64942,
+        "pngHash": "sha256:cc9c9d3ec8243642ce33f1e351d73332fa4c33285159a70c634b9f4b42fc56dd",
+        "rawHash": "sha256:d802ee7a2323ff5ec1e2296e466987c7833865e8008bd4a94c8559d3ddb54d8f",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 20
+    }
+  ],
+  "sourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+  "status": "CANDIDATE_CAPTURED",
+  "version": "0.1"
+}

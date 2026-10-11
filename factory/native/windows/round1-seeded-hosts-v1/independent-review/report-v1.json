@@ -1,0 +1,107 @@
+{
+  "kind": "independent-source-review-round1-seeded-hosts-v1",
+  "decision": "partial-clearance; compile-prep-source-valid-but-kernel-guard-blocked",
+  "scope": "read-only source review; no compiler, native, SSH, GUI or Git execution",
+  "stage": {
+    "path": "factory/native/windows/round1-seeded-hosts-v1/root-stage-manifest.json",
+    "sha256": "f23648e19fb807c78a83c52b208147999c3defc5621962135a1feeab385c4b46",
+    "kind": "round1-seeded-hosts-stage-v1",
+    "fileCount": 179,
+    "uniquePaths": 179,
+    "packageCount": 5
+  },
+  "packages": [
+    {
+      "label": "stack-overlay",
+      "planSha256": "4cc752eee6d227bf2fcbff60e2822f8199f233a904e1a8087f5a3ddd65f19f9b",
+      "caseId": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+      "caseHash": "sha256:88ee31aaaba4b6c1729c3530b1461b19167c9e55ee27c72a0124edaea0ec2380",
+      "sourceHash": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+      "manifestHash": "sha256:b7a43fe22dd48c7326e5316712b14786442371df80cc0ff5aa957b1cd2f17c54",
+      "sourceBindingCount": 8
+    },
+    {
+      "label": "custom-layout",
+      "planSha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "caseId": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258",
+      "caseHash": "sha256:0dba13824f3398666aba1b27b54c01ff02d3e282b2c429a66f3869a05ed0cb49",
+      "sourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "manifestHash": "sha256:9ed05ff431fef2bb498bae33ebfe4f3e38f385042fce7472d5bf65fbdfae837b",
+      "sourceBindingCount": 7
+    },
+    {
+      "label": "padding-frame",
+      "planSha256": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "caseId": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+      "caseHash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+      "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "manifestHash": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629",
+      "sourceBindingCount": 8
+    },
+    {
+      "label": "preference-key",
+      "planSha256": "f61fee02568923f75f95ad46ffbfcdd6aeda17a07fc3c30fcafcd1540134d7d5",
+      "caseId": "swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258",
+      "caseHash": "sha256:d908821e18c8ad4e45eed24b446cf3d126fdbf18e17030be45bbbb7105b8459c",
+      "sourceHash": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+      "manifestHash": "sha256:131e10986075beba9723f6e65134492e1b79cb99a97cd3557a65e567e77e1779",
+      "sourceBindingCount": 8
+    },
+    {
+      "label": "scroll-view",
+      "planSha256": "cc751e98ed32e17b50797751b06e82e54b294592ff60ca0184db8cec32ed00b9",
+      "caseId": "swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258",
+      "caseHash": "sha256:adeed134241b30dfeb873e27dd789b870977457c3b210268f10f3a1be8ffdd18",
+      "sourceHash": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+      "manifestHash": "sha256:1e37b6421b20c333eee38bebc97c59adf9b5d3e7fadb436ff16477a10e2da7e5",
+      "sourceBindingCount": 9
+    }
+  ],
+  "commonPins": {
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "runtimeVerifierHash": "a134d0bf15bd925c4a35edb84d0195345505925db76812d7169e5744f8e765f6",
+    "hostInputGuardHash": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "bridgeBindingCount": 10,
+    "bridgeBindingHashes": {
+      "Package.swift": "626a3fcd2e02930b3bbb6f0e92e2a81aa7066555e91a0ebc8ec3b83a9fe260c5",
+      "Sources/CDispatchPrivate/include/CDispatchPrivate.h": "0f309890345ce16e317881eb95f5e061417ef520b89be6578e0aeeaab85d7ca6",
+      "Sources/CDispatchPrivate/shim.c": "33d2fd5bd3957e695453fea9b932d1650b7033a8929bbc512a5dc76173927a2f",
+      "Sources/CSwiftRight/module.modulemap": "9558f3a410f0ccc185662c975d371bcb3c619083dadd99eb185eff7cd2b2843b",
+      "Sources/CSwiftRight/swiftright.h": "d7e0dc20261574eda91ac74a714d6460b21e45cdf6335b4fb64a30db5876f649",
+      "Sources/SwiftRightBridge/Bridge.swift": "cce02240c0b1f4e4af771a998177f0ee880d235b4781b416d23f49a6ab9a7f56",
+      "Sources/SwiftRightBridge/ButtonFocusGate.swift": "d1f228eb1a636ae02eca594ded979a2975822049277d437235205308b2aac572",
+      "Sources/SwiftRightBridge/Loader.swift": "457d56f09d56d97b37755a0aa5aaa0b449cd00ca66840229eedaafdf3d550d0f",
+      "Sources/SwiftRightBridge/Marshal.swift": "ee8345a4f011f5a40c2bb53bcd49dc8a8a9600eb1a8d10c2c3bde770917cb375",
+      "Sources/SwiftRightBridge/Types.swift": "2f51d62f8778f16fb71b9c44a674c889ee41a7c67ee5af23acbfe2a633296dfd"
+    }
+  },
+  "macJoin": {
+    "sourceMatchedForAllFive": false,
+    "allowedNow": false,
+    "reason": "Every plan records Mac20SourceBinding false; existing captures carry different source hashes and verifier correctly refuses relabeling.",
+    "requiredBeforeJoin": "Fresh exact-source Mac20 captures per package, then verify_mac_join.py with each exact plan."
+  },
+  "strictJoinVerifier": {
+    "path": "factory/native/windows/round1-seeded-hosts-v1/verify_mac_join.py",
+    "sha256": "a876698ef058172ae54284dae4fa983b86ed4196cf6ede285435a436b7dc541a",
+    "checks": [
+      "exactly 20 rows",
+      "20 distinct capture paths",
+      "run set exactly 1..20 with type(row.run) is int",
+      "exact case equality",
+      "exact sourceHash equality"
+    ],
+    "syntheticFaults": ["missing", "duplicate-path", "wrong-source", "wrong-case", "duplicate-run", "boolean-run"]
+  },
+  "compilerOnlyAssessment": {
+    "noGuiOrNativeLaunchInDesign": true,
+    "sourceInputsAndBridgeMembershipAreStrict": true,
+    "blockedGuard": "build-hosts.ps1 uses Get-Process PID lookup plus taskkill /PID /T /F; it does not retain a kernel process handle or record stream-drain completion.",
+    "requiredRepair": "Use retained kernel handle, bounded wait, explicit stdout/stderr drain receipts, and unresolved descendant timeout refusal before any compiler run."
+  },
+  "rootNextAction": "Prepare exact-source Mac recapture separately; repair or replace compiler cleanup guard before compile-only host execution."
+}

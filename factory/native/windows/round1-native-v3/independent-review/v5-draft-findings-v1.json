@@ -1,0 +1,24 @@
+{
+  "status": "repairs-requested-before-source-clearance",
+  "findings": [
+    {
+      "file": "test-process-streams.ps1",
+      "issue": "Post-Start StartTime acquisition occurs before try/finally; early exited-child metadata failure bypasses cleanup",
+      "requested": "Initialize state before Start; put acquisition inside guaranteed cleanup envelope"
+    },
+    {
+      "file": "owned-close.ps1",
+      "issue": "OwnedGuard occurs before expensive full source verification, allowing HWND owner sample to stale before WM_CLOSE",
+      "requested": "Fresh OwnedGuard immediately before Post after source/lock/background checks; late ownership rejection control"
+    }
+  ],
+  "alreadyRepaired": "Automatic input locals renamed; guard outputs suppressed",
+  "reviewedSourceHashes": {
+    "test-process-streams.ps1": "3448656fd7f7fa87ed4b5fde40bfadabdbe5bb6f7c6f20699b61aef0047902e2",
+    "owned-close.ps1": "d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c",
+    "capture-repeat.ps1": "0103ea22116aaaeb69b4d33236cc55b19461fd743cc8defb13281999c54b6898",
+    "cleanup.ps1": "8fe6b669fcad351e2367ec4af6d143567bc8795b666ce7e780fd96ca4e4be462"
+  },
+  "producerEdits": 0,
+  "nativeRuns": 0
+}

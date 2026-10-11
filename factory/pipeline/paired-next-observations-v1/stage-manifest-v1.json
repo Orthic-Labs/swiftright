@@ -1,0 +1,66 @@
+{
+  "caseCount": 3,
+  "commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s factory/pipeline/paired-next-observations-v1 -v",
+    "PYTHONDONTWRITEBYTECODE=1 python3 factory/pipeline/paired-next-observations-v1/generate_report.py"
+  ],
+  "files": [
+    {
+      "bytes": 28390,
+      "path": "adapter.py",
+      "sha256": "64acee7502d9e6bb6b7fcb172d338a1337f1973fabe542e169b0325e585846af"
+    },
+    {
+      "bytes": 10431,
+      "path": "test_adapter.py",
+      "sha256": "9a50f81fa4466952c84442dea0ef0cb7f92ebd24a3472928a6144f385be2ca64"
+    },
+    {
+      "bytes": 1242,
+      "path": "generate_report.py",
+      "sha256": "1d7f43da9490325ccc19fbb57ce73e1ced24440f04338d3904550d64985df864"
+    },
+    {
+      "bytes": 119236,
+      "path": "source-inputs-v1.json",
+      "sha256": "7ac004e1aa4e250e14b5b604eaffc450defa366addcc10608a828b61cb3d79d1"
+    },
+    {
+      "bytes": 1521,
+      "path": "README.md",
+      "sha256": "533930894bbab8238ceffeb2ea20c66d0bd0356172d940c11b9b5b16a19c58fa"
+    },
+    {
+      "bytes": 289306,
+      "path": "evidence/report-v1.json",
+      "sha256": "82072d931c098daefc0db961484503d4bb88112c83976fd29150e37997628380"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence-tests.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1807,
+      "path": "evidence-tests.stderr.txt",
+      "sha256": "437f0f0462bfc98ac83c69853d6140d48c706ba3a8531ddb23c53c4592f6eafe"
+    },
+    {
+      "bytes": 235,
+      "path": "evidence-generate.stdout.txt",
+      "sha256": "bed171b579eab8e386f0732cbbe7cae4307ee01d40f9dd1deabc37d3ad5e6a4d"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence-generate.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "macRunsPerCase": 20,
+  "reportStatus": "source-bound-observation-only",
+  "schema": "paired-next-observation-stage-manifest-v1",
+  "sourceInputCount": 409,
+  "sourceInputManifestSha256": "7ac004e1aa4e250e14b5b604eaffc450defa366addcc10608a828b61cb3d79d1",
+  "status": "frozen-single-windows-observations-vs-mac-20-run-candidate",
+  "windowsObservationsPerCase": 1
+}
