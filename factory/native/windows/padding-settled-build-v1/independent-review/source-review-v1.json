@@ -1,0 +1,45 @@
+{
+  "kind": "independent-padding-settled-build-source-review/1",
+  "disposition": "CLEAR_FOR_HEADLESS_CONTROLS",
+  "stageReferencesVerified": 63,
+  "pins": {
+    "root-stage-manifest.json": "5756aa3041c7559b53c5d1ca7b8c7ea0cfa791adae3f2b5480699eec050f99d3",
+    "build-hosts-v2.ps1": "4bf976e9c5ee11bc86ab216782a1ec524c3b38c86f2caa956ad60b48f0651756",
+    "preflight.ps1": "400417705f80ed4edbf2362a3d2773f6a65d19a503a85de70175c95a52972117",
+    "package/plan.json": "82628daf6254cef21ec023acfd35f9a030141a9a0976a1816c91d5f0d632e5cd",
+    "package/Package.swift": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+    "stream-control-admission.ps1": "0635da5ef4d46a6de58a27b01304e4f72d871a7a507178c3cf9f3c37c6de7c6a",
+    "stream-seal.ps1": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+    "verify_source.py": "92c260ab2cb811bcc69b3cd1a5966be1c95244fc7f91cf222709b125fffcf2ec",
+    "test_source.py": "fd2b3e032778c30d82ca8d5eb235b21caa7da4999beae4e737a4c40c0f6edb82"
+  },
+  "offlineTests": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest test_source -q",
+    "tests": 9,
+    "exitCode": 0
+  },
+  "findings": [],
+  "checks": [
+    "Exact prospective padding-settled rolling package/runtime/source/witness/renderer/compiler paths and hashes",
+    "All11 source bindings match actual bytes; all7 host Swift files unchanged metrics source",
+    "All10 bridge source/header files byteequal canonical owned copy; exact header12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+    "Package uses owned runtime-stage and inputs/SwiftRightBridge dependencies; old r09 package deps absent",
+    "Builder repeats operational source/renderer/compiler checks immediately before Process.Start",
+    "Exact compileRequest release/windows GUI manifest/entry flags,cwd,target,scratch/output path; fresh build-settled-r1 only",
+    "Retained kernel0,300000ms compiler bound,5000ms stream/closure bounds; closed-only hashing & sourcechecked exact produced GUI PE/module archive",
+    "Reviewed9 inherited kernel/stream/control source files byteequal remaining-five-v4",
+    "Launch callable requires measured compile receipt/exe hashes plus exact kind/argv/context/typed successful terminal stream facts & exact archive/produced EXE bytes",
+    "Launch callable rechecks actual renderer/source bytes last; caller must invoke immediately before child start",
+    "No native launch/delete/desktop-lock acquisition commands in build packet; provider/focus/ownership source preserved"
+  ],
+  "scope": {
+    "powershellExecuted": false,
+    "remoteExecuted": false,
+    "compilerExecuted": false,
+    "nativeExecuted": false,
+    "actualHeadlessControlsRequiredBeforeBuild": true,
+    "nativeLauncherNotIncluded": true,
+    "nativeParity": "hold"
+  },
+  "nextStep": "Root runs frozen headless controls, then one guarded fresh build; future native dispatcher calls Launch preflight immediately before child creation."
+}
