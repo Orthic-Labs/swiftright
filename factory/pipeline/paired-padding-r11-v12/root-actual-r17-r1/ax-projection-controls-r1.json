@@ -1,0 +1,44 @@
+{
+  "faultControls": [
+    {
+      "field": "label",
+      "name": "changed-label",
+      "status": "observed-mismatch-preserved"
+    },
+    {
+      "field": "value",
+      "name": "changed-value",
+      "status": "observed-mismatch-preserved"
+    },
+    {
+      "field": "actions",
+      "name": "changed-action",
+      "status": "observed-mismatch-preserved"
+    },
+    {
+      "field": "role",
+      "name": "changed-role",
+      "status": "observed-mismatch-preserved"
+    },
+    {
+      "field": "bounds",
+      "name": "changed-size",
+      "status": "observed-mismatch-preserved"
+    },
+    {
+      "name": "wrong-dpi",
+      "reason": "Windows observed scale must be measured 2.5",
+      "status": "rejected"
+    },
+    {
+      "name": "unlisted-chrome",
+      "reason": "unlisted Windows chrome/node cannot be stripped",
+      "status": "rejected"
+    }
+  ],
+  "freshProofPolicyControl": "external-admission-only",
+  "lockActions": 0,
+  "nativeActions": 0,
+  "schema": "factory-native-count20-r17-ax-projection-controls-v1",
+  "status": "baseline-admitted-observable-differences-preserved"
+}

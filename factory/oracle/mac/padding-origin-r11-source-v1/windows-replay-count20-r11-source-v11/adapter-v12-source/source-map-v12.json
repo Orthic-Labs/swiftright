@@ -1,0 +1,32 @@
+{
+  "kind": "factory-native-count20-adapter-source-map-v12",
+  "status": "source-ready-r17-root-refresh",
+  "archiveRoot": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1",
+  "runID": "4895b9f9f6f24e79bac1b964d3182ec8",
+  "count": 20,
+  "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+  "issuedMetadata": "coordinator-r1/issued-metadata.json",
+  "plan": "replays/r1/plan.json",
+  "adapterPlan": "fresh-count20-adapter-plan-r17-r1.json",
+  "nativeObservation": "replays/r1/native-observation.json",
+  "requiredJoins": [
+    "issued run-order capture/image pairs -> measured-capture-identity.json",
+    "candidate tuple -> candidate binding -> plan/case/source",
+    "compile receipt -> compiler bytes/source/host/exe/renderer/runtime modules",
+    "memory receipt -> runID/parent PID/1GiB/0x200/active process count",
+    "memory-controls-v17-r1 -> wrong-flag rejection/live-child rejection/self-only acceptance/retained child terminal",
+    "coordinator -> whole-batch terminal/lock release/cleanupErrors empty",
+    "final exit certificate -> retained handle Wait=0/GetExitCodeProcess=0",
+    "terminal worker -> original outcome -> sealed stdout/stderr",
+    "24-row native files + nested worker files -> full raw closure"
+  ],
+  "frozenSources": {
+    "normalizer": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/run-adapter-v6.py",
+    "reader": "factory/pipeline/archive_reader.py",
+    "exitAdmission": "factory/gate/windows_exit_admission.py"
+  },
+  "sourceOnly": true,
+  "nativeActions": 0,
+  "lockActions": 0,
+  "hashRefresh": "root-owned after source review; no unmeasured v12 hash is claimed"
+}

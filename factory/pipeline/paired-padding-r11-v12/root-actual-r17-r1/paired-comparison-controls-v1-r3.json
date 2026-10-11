@@ -1,0 +1,84 @@
+{
+  "baselineProtectedIssues": [
+    "protected windows_exit_admission requires capture.case==plan.case; source plan retains legacy case while fresh capture uses adapter case"
+  ],
+  "baselineReaderStatus": "reader-observed-rejections",
+  "count": 20,
+  "faultControls": [
+    {
+      "name": "capture-identity",
+      "reason": "run 1 adapter proof pair mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "adapter-proof-identity",
+      "reason": "run 1 adapter proof pair mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "reader-count",
+      "reason": "trusted Windows reader observation Count20 required",
+      "status": "rejected"
+    },
+    {
+      "name": "mac-count",
+      "reason": "observed Mac20 comparator input required",
+      "status": "rejected"
+    },
+    {
+      "name": "mac-case-identity",
+      "reason": "observed Mac20 comparator input required",
+      "status": "rejected"
+    },
+    {
+      "name": "mac-tuple-identity",
+      "reason": "observed Mac20 comparator input required",
+      "status": "rejected"
+    },
+    {
+      "name": "mac-fabricated-qualification",
+      "reason": "observed Mac20 comparator input required",
+      "status": "rejected"
+    },
+    {
+      "name": "fabricated-reader-pass",
+      "reason": "reader pass cannot accompany protected case mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "missing-proof-role",
+      "reason": "run 1 Windows proof roles missing",
+      "status": "rejected"
+    },
+    {
+      "name": "source-identity",
+      "reason": "run 1 attached source identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "executable-identity",
+      "reason": "run 1 attached executable identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "renderer-identity",
+      "reason": "run 1 attached renderer identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "raw-receipt-identity",
+      "reason": "run 1 attached raw receipt identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "mac-raw-byte-binding",
+      "reason": "Mac reference byte count differs",
+      "status": "rejected"
+    }
+  ],
+  "lockActions": 0,
+  "nativeActions": 0,
+  "qualification": "source-control-only",
+  "schema": "factory-native-count20-paired-comparison-controls-v1",
+  "status": "baseline-admitted-faults-rejected"
+}

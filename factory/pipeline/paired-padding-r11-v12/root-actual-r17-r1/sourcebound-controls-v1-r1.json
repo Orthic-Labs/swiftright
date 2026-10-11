@@ -1,0 +1,35 @@
+{
+  "count": 20,
+  "faultControls": [
+    {
+      "name": "issued-pair-order",
+      "reason": "run 1 issued pair mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "fresh-case-identity",
+      "reason": "run 1 fresh case/source mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "source-hash-identity",
+      "reason": "run 1 fresh case/source mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "proof-role-closure",
+      "reason": "run 1 proof role closure missing",
+      "status": "rejected"
+    },
+    {
+      "name": "renderer-byte-identity",
+      "reason": "run 1 candidate tuple/executable/renderer mismatch",
+      "status": "rejected"
+    }
+  ],
+  "lockActions": 0,
+  "nativeActions": 0,
+  "qualification": "source-control-only",
+  "schema": "factory-native-count20-sourcebound-admission-controls-v1",
+  "status": "baseline-admitted-faults-rejected"
+}

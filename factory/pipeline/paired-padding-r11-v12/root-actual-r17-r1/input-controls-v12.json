@@ -1,0 +1,49 @@
+{
+  "baseline": {
+    "count": 20,
+    "orderedPairs": 20,
+    "schema": "factory-native-count20-r17-input-map-v12"
+  },
+  "faultControls": [
+    {
+      "name": "issued-pair-order",
+      "reason": "v12 emitted ordered pair closure incomplete",
+      "status": "rejected"
+    },
+    {
+      "name": "compiler-byte-hash",
+      "reason": "v12 compiler byte admission missing",
+      "status": "rejected"
+    },
+    {
+      "name": "full-raw-closure",
+      "reason": "v12 emitted full raw closure/terminal proof incomplete",
+      "status": "rejected"
+    },
+    {
+      "name": "held-status",
+      "reason": "v12 emitted map status must remain held",
+      "status": "rejected"
+    },
+    {
+      "name": "self-only-active-count",
+      "reason": "v12 self-only cleanup admission incomplete",
+      "status": "rejected"
+    },
+    {
+      "name": "self-only-control",
+      "reason": "v12 self-only cleanup admission incomplete",
+      "status": "rejected"
+    },
+    {
+      "name": "external-task-terminal",
+      "reason": "v12 self-only cleanup admission incomplete",
+      "status": "rejected"
+    }
+  ],
+  "lockActions": 0,
+  "nativeActions": 0,
+  "qualification": "source-control-only",
+  "schema": "factory-native-count20-r17-adapter-controls-v12",
+  "status": "baseline-admitted-faults-rejected"
+}
