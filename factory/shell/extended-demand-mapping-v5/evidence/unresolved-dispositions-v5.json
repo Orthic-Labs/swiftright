@@ -1,0 +1,846 @@
+{
+  "denominator": 107,
+  "kind": "v5-residual-dispositions",
+  "newFullDemandResolutions": 0,
+  "registryMappedRows": 0,
+  "residualCount": 32,
+  "rows": [
+    {
+      "demand": "Binding(get:set:)",
+      "rowKey": "f12-extended-001",
+      "v4Disposition": "ambiguous-catalogue-candidates",
+      "v5": {
+        "disposition": "ambiguous-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Multiple catalogue candidates remain; source controls do not select one declaration.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "Button actions",
+      "rowKey": "f12-extended-002",
+      "v4Disposition": "ambiguous-catalogue-candidates",
+      "v5": {
+        "disposition": "ambiguous-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Multiple catalogue candidates remain; source controls do not select one declaration.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "TextField/control variety",
+      "rowKey": "f12-extended-007",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "HTML input is source-bound; no exact SwiftUI declaration or control-family closure.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "search input and change handler",
+            "bytes": 18498,
+            "lines": [
+              233,
+              241
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+            "sha256": "06275f0d7dcc61aaa6f6d37a6a30f79e5ce2adde4b54aa2e85f794d46fc7aacf",
+            "snapshotPath": "evidence/source-snapshots/settings-panel-06275f0d7dcc61aa.tsx",
+            "sourceId": "settings-panel"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "animation and dismiss interactions",
+      "rowKey": "f12-extended-008",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "React exit/dismiss path is source-bound; animation and all interaction variants remain unclosed.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "exit transition, outside dismiss, focus",
+            "bytes": 8724,
+            "lines": [
+              38,
+              60
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/CommandPalette.tsx",
+            "sha256": "a192ac19bc927386703f380186e7132b03c79374512fd398901edbd489a0f74a",
+            "snapshotPath": "evidence/source-snapshots/command-palette-a192ac19bc927386.tsx",
+            "sourceId": "command-palette"
+          },
+          {
+            "anchor": "post-close delayed command",
+            "bytes": 10117,
+            "lines": [
+              87,
+              94
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/palette.tsx",
+            "sha256": "606898a7c515fd3dd9333dabb95ce37f082e50f60de7f0ab12d83b7ab657f1bd",
+            "snapshotPath": "evidence/source-snapshots/palette-606898a7c515fd3d.tsx",
+            "sourceId": "palette"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "canvas/image transform",
+      "rowKey": "f12-extended-010",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Observed canvas is PDF rendering; generic image-transform demand remains wrong-journey held.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "PDF canvas creation/render; wrong journey for generic image transform",
+            "bytes": 23406,
+            "lines": [
+              280,
+              290
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+            "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+            "snapshotPath": "evidence/source-snapshots/pdf-viewer-57ad768e42ce4200.tsx",
+            "sourceId": "pdf-viewer"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "command palette modal and focus trap",
+      "rowKey": "f12-extended-011",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "React palette modal/focus path is source-bound; no SDK/native identity follows.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "modal dismiss, focus trap, Escape close",
+            "bytes": 10117,
+            "lines": [
+              69,
+              114
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/palette.tsx",
+            "sha256": "606898a7c515fd3dd9333dabb95ce37f082e50f60de7f0ab12d83b7ab657f1bd",
+            "snapshotPath": "evidence/source-snapshots/palette-606898a7c515fd3d.tsx",
+            "sourceId": "palette"
+          },
+          {
+            "anchor": "dialog focus and key handling",
+            "bytes": 8724,
+            "lines": [
+              117,
+              160
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/CommandPalette.tsx",
+            "sha256": "a192ac19bc927386703f380186e7132b03c79374512fd398901edbd489a0f74a",
+            "snapshotPath": "evidence/source-snapshots/command-palette-a192ac19bc927386.tsx",
+            "sourceId": "command-palette"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "crop/text editing controls",
+      "rowKey": "f12-extended-013",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "unresolved-held",
+        "fullDemandResolved": false,
+        "reason": "No exact current source declaration or host adapter establishes this demand.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "custom pointer gestures",
+      "rowKey": "f12-extended-014",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "unresolved-held",
+        "fullDemandResolved": false,
+        "reason": "No exact current source declaration or host adapter establishes this demand.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "deep-link parsing/routing",
+      "rowKey": "f12-extended-015",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Tauri second-instance path routing is source-bound; deep-link grammar/host contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "second-instance argv path routing",
+            "bytes": 2518,
+            "lines": [
+              41,
+              56
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+            "sha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+            "snapshotPath": "evidence/source-snapshots/app-lifecycle-7a8959dc30d14a64.rs",
+            "sourceId": "app-lifecycle"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "diagnostics and logs",
+      "rowKey": "f12-extended-016",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Rust diagnostics gate/write path is source-bound; platform log contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "diagnostics gate and event write",
+            "bytes": 6254,
+            "lines": [
+              58,
+              94
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src-tauri/src/logs.rs",
+            "sha256": "f93ee8139ea1b4fccc766347338bd3719baa92b8cc08abf3ad99b26ad45f11bf",
+            "snapshotPath": "evidence/source-snapshots/logs-f93ee8139ea1b4fc.rs",
+            "sourceId": "logs"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "document scroll/acknowledgement gating",
+      "rowKey": "f12-extended-017",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "unresolved-held",
+        "fullDemandResolved": false,
+        "reason": "No exact current source declaration or host adapter establishes this demand.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "document/session restoration",
+      "rowKey": "f12-extended-019",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Tauri open-document restoration is source-bound; document/session persistence remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "open-document window restoration and route",
+            "bytes": 2518,
+            "lines": [
+              67,
+              84
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+            "sha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+            "snapshotPath": "evidence/source-snapshots/app-lifecycle-7a8959dc30d14a64.rs",
+            "sourceId": "app-lifecycle"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "error classification",
+      "rowKey": "f12-extended-024",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Media error-code switch is source-bound; full cross-provider error taxonomy remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "HTML media error-code classification",
+            "bytes": 27807,
+            "lines": [
+              186,
+              196
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+            "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+            "snapshotPath": "evidence/source-snapshots/media-player-8d72f466662ba97d.tsx",
+            "sourceId": "media-player"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "find input and IME",
+      "rowKey": "f12-extended-026",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "PDF find input is source-bound; IME/composition behavior is not proven by these lines.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "PDF find input and actions",
+            "bytes": 23406,
+            "lines": [
+              402,
+              405
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+            "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+            "snapshotPath": "evidence/source-snapshots/pdf-viewer-57ad768e42ce4200.tsx",
+            "sourceId": "pdf-viewer"
+          },
+          {
+            "anchor": "find focus, Escape, debounce",
+            "bytes": 12980,
+            "lines": [
+              67,
+              117
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/FindBar.tsx",
+            "sha256": "45f1eb12806d31af205d90039c3ce12c32c90ffc904b5eabcd5335c5fe74e3a8",
+            "snapshotPath": "evidence/source-snapshots/find-bar-45f1eb12806d31af.tsx",
+            "sourceId": "find-bar"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "focus/IME behavior",
+      "rowKey": "f12-extended-027",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Arrow navigation/focus is source-bound; IME behavior remains unproven.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "settings navigation arrow focus",
+            "bytes": 18498,
+            "lines": [
+              252,
+              268
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+            "sha256": "06275f0d7dcc61aaa6f6d37a6a30f79e5ce2adde4b54aa2e85f794d46fc7aacf",
+            "snapshotPath": "evidence/source-snapshots/settings-panel-06275f0d7dcc61aa.tsx",
+            "sourceId": "settings-panel"
+          },
+          {
+            "anchor": "focus reassertion",
+            "bytes": 12980,
+            "lines": [
+              67,
+              79
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/FindBar.tsx",
+            "sha256": "45f1eb12806d31af205d90039c3ce12c32c90ffc904b5eabcd5335c5fe74e3a8",
+            "snapshotPath": "evidence/source-snapshots/find-bar-45f1eb12806d31af.tsx",
+            "sourceId": "find-bar"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "key event routing",
+      "rowKey": "f12-extended-029",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Shortcut registry handles keyboard events; host/native routing remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "keyboard event routing and listener attach",
+            "bytes": 12352,
+            "lines": [
+              189,
+              230
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+            "sha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+            "snapshotPath": "evidence/source-snapshots/shortcuts-3f66af70cdcf4787.ts",
+            "sourceId": "shortcuts"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "keyboard focus and navigation",
+      "rowKey": "f12-extended-030",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Shell nav roving focus is source-bound; complete keyboard navigation contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "shell roving navigation focus",
+            "bytes": 24363,
+            "lines": [
+              282,
+              296
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/layout.tsx",
+            "sha256": "980ef6cabf7d1e39f2cc1e2dc1c3a1e36c2ae6c97cc10a0d8598fbcddf12f835",
+            "snapshotPath": "evidence/source-snapshots/layout-980ef6cabf7d1e39.tsx",
+            "sourceId": "layout"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "keyboard focus/roving selection",
+      "rowKey": "f12-extended-031",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Shell nav roving focus is source-bound; selection/virtualization contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "shell roving navigation focus",
+            "bytes": 24363,
+            "lines": [
+              282,
+              296
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/layout.tsx",
+            "sha256": "980ef6cabf7d1e39f2cc1e2dc1c3a1e36c2ae6c97cc10a0d8598fbcddf12f835",
+            "snapshotPath": "evidence/source-snapshots/layout-980ef6cabf7d1e39.tsx",
+            "sourceId": "layout"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "keyboard transport shortcuts",
+      "rowKey": "f12-extended-032",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Shortcut sequence dispatch is source-bound; transport/native shortcut semantics remain open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "shortcut sequence dispatch",
+            "bytes": 12352,
+            "lines": [
+              146,
+              225
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+            "sha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+            "snapshotPath": "evidence/source-snapshots/shortcuts-3f66af70cdcf4787.ts",
+            "sourceId": "shortcuts"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "legal modal/eligibility controls",
+      "rowKey": "f12-extended-034",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "HTML eligibility controls are source-bound; SwiftUI style/control identity remains ambiguous.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "radio and checkbox eligibility controls",
+            "bytes": 24969,
+            "lines": [
+              487,
+              543
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+            "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+            "snapshotPath": "evidence/source-snapshots/legal-gate-d80f967e8e156a63.tsx",
+            "sourceId": "legal-gate"
+          },
+          {
+            "anchor": "agreement checkbox",
+            "bytes": 24969,
+            "lines": [
+              535,
+              543
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+            "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+            "snapshotPath": "evidence/source-snapshots/legal-gate-d80f967e8e156a63.tsx",
+            "sourceId": "legal-gate"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "modal stacking/focus restoration",
+      "rowKey": "f12-extended-036",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "React modal composition is source-bound; restoration semantics remain open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "modal focus trap and dismissal",
+            "bytes": 10117,
+            "lines": [
+              69,
+              114
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/palette.tsx",
+            "sha256": "606898a7c515fd3dd9333dabb95ce37f082e50f60de7f0ab12d83b7ab657f1bd",
+            "snapshotPath": "evidence/source-snapshots/palette-606898a7c515fd3d.tsx",
+            "sourceId": "palette"
+          },
+          {
+            "anchor": "dialog composition",
+            "bytes": 5582,
+            "lines": [
+              108,
+              112
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/AppDialogs.tsx",
+            "sha256": "af6be8136f04d45e50220e159c6d7e9e4fefbf73e75c22630bdcc0eb25a2b603",
+            "snapshotPath": "evidence/source-snapshots/app-dialogs-af6be8136f04d45e.tsx",
+            "sourceId": "app-dialogs"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "navigation transitions",
+      "rowKey": "f12-extended-039",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "unresolved-held",
+        "fullDemandResolved": false,
+        "reason": "No exact current source declaration or host adapter establishes this demand.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "ordered multi-step flow",
+      "rowKey": "f12-extended-040",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "unresolved-held",
+        "fullDemandResolved": false,
+        "reason": "No exact current source declaration or host adapter establishes this demand.",
+        "registryPromotion": false,
+        "sourceBound": false,
+        "sourceEvidence": []
+      }
+    },
+    {
+      "demand": "quit/close action",
+      "rowKey": "f12-extended-044",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Close/quit callbacks are source-bound; OS quit behavior remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "close/quit confirmation callbacks",
+            "bytes": 5582,
+            "lines": [
+              113,
+              153
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/AppDialogs.tsx",
+            "sha256": "af6be8136f04d45e50220e159c6d7e9e4fefbf73e75c22630bdcc0eb25a2b603",
+            "snapshotPath": "evidence/source-snapshots/app-dialogs-af6be8136f04d45e.tsx",
+            "sourceId": "app-dialogs"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "radio/checkbox controls",
+      "rowKey": "f12-extended-045",
+      "v4Disposition": "ambiguous-catalogue-candidates",
+      "v5": {
+        "disposition": "ambiguous-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Multiple catalogue candidates remain; source controls do not select one declaration.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "radio and checkbox HTML controls; candidate selection remains ambiguous",
+            "bytes": 24969,
+            "lines": [
+              487,
+              543
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+            "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+            "snapshotPath": "evidence/source-snapshots/legal-gate-d80f967e8e156a63.tsx",
+            "sourceId": "legal-gate"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "rebinding capture/conflict UX",
+      "rowKey": "f12-extended-046",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Rebind/conflict implementation is source-bound; persisted/native conflict behavior remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "rebind conflict detection and overrides",
+            "bytes": 12352,
+            "lines": [
+              263,
+              299
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+            "sha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+            "snapshotPath": "evidence/source-snapshots/shortcuts-3f66af70cdcf4787.ts",
+            "sourceId": "shortcuts"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "sequence timeout",
+      "rowKey": "f12-extended-050",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Sequence timeout implementation is source-bound; timing contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "sequence timeout and retry",
+            "bytes": 12352,
+            "lines": [
+              142,
+              225
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+            "sha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+            "snapshotPath": "evidence/source-snapshots/shortcuts-3f66af70cdcf4787.ts",
+            "sourceId": "shortcuts"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "sidebar panels",
+      "rowKey": "f12-extended-052",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "PDF outline/pages panel is source-bound; generic sidebar demand remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "PDF outline/pages sidebar",
+            "bytes": 23406,
+            "lines": [
+              400,
+              424
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+            "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+            "snapshotPath": "evidence/source-snapshots/pdf-viewer-57ad768e42ce4200.tsx",
+            "sourceId": "pdf-viewer"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "sidebar selection state",
+      "rowKey": "f12-extended-053",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Shell nav selection/focus is source-bound; full sidebar state contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "navigation selection and roving focus",
+            "bytes": 24363,
+            "lines": [
+              282,
+              296
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/layout.tsx",
+            "sha256": "980ef6cabf7d1e39f2cc1e2dc1c3a1e36c2ae6c97cc10a0d8598fbcddf12f835",
+            "snapshotPath": "evidence/source-snapshots/layout-980ef6cabf7d1e39.tsx",
+            "sourceId": "layout"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "text entry/IME",
+      "rowKey": "f12-extended-056",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Combobox text input is source-bound; IME composition semantics remain open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "combobox text entry and keyboard selection",
+            "bytes": 10117,
+            "lines": [
+              118,
+              139
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/palette.tsx",
+            "sha256": "606898a7c515fd3dd9333dabb95ce37f082e50f60de7f0ab12d83b7ab657f1bd",
+            "snapshotPath": "evidence/source-snapshots/palette-606898a7c515fd3d.tsx",
+            "sourceId": "palette"
+          },
+          {
+            "anchor": "command palette text entry",
+            "bytes": 8724,
+            "lines": [
+              142,
+              160
+            ],
+            "originalPath": "/Volumes/D/claude/viewright/src/app/CommandPalette.tsx",
+            "sha256": "a192ac19bc927386703f380186e7132b03c79374512fd398901edbd489a0f74a",
+            "snapshotPath": "evidence/source-snapshots/command-palette-a192ac19bc927386.tsx",
+            "sourceId": "command-palette"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "time/progress animation",
+      "rowKey": "f12-extended-057",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Media range/time control is source-bound; animation/progress contract remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "media time range control",
+            "bytes": 27807,
+            "lines": [
+              728,
+              745
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+            "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+            "snapshotPath": "evidence/source-snapshots/media-player-8d72f466662ba97d.tsx",
+            "sourceId": "media-player"
+          }
+        ]
+      }
+    },
+    {
+      "demand": "validation/errors",
+      "rowKey": "f12-extended-059",
+      "v4Disposition": "unmapped",
+      "v5": {
+        "disposition": "partial-source-bound-held",
+        "fullDemandResolved": false,
+        "reason": "Error alert/fallback paths are source-bound; validation taxonomy remains open.",
+        "registryPromotion": false,
+        "sourceBound": true,
+        "sourceEvidence": [
+          {
+            "anchor": "settings error alert and dismiss",
+            "bytes": 18498,
+            "lines": [
+              309,
+              315
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+            "sha256": "06275f0d7dcc61aaa6f6d37a6a30f79e5ce2adde4b54aa2e85f794d46fc7aacf",
+            "snapshotPath": "evidence/source-snapshots/settings-panel-06275f0d7dcc61aa.tsx",
+            "sourceId": "settings-panel"
+          },
+          {
+            "anchor": "media error fallback",
+            "bytes": 27807,
+            "lines": [
+              834,
+              862
+            ],
+            "originalPath": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+            "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+            "snapshotPath": "evidence/source-snapshots/media-player-8d72f466662ba97d.tsx",
+            "sourceId": "media-player"
+          }
+        ]
+      }
+    }
+  ]
+}

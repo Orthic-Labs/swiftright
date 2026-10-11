@@ -1,0 +1,74 @@
+{
+  "ambiguousRows": 3,
+  "dispositionCounts": {
+    "ambiguous-source-bound-held": 3,
+    "partial-source-bound-held": 24,
+    "unresolved-held": 5
+  },
+  "exactAnchoredRows": 24,
+  "extendedDemandRows": 107,
+  "independentControls": [
+    {
+      "control": "stale-source-authority",
+      "rejected": true
+    },
+    {
+      "control": "denominator-authority",
+      "rejected": true
+    },
+    {
+      "control": "source-bound-overlap-authority",
+      "rejected": true
+    },
+    {
+      "control": "packet-authority-promotion",
+      "rejected": true
+    }
+  ],
+  "mappingSha256": "584d2fb652ebb8a08000ee4345c56205ed600680c837868a4fd9c3a796888ca7",
+  "newFullDemandResolutions": 0,
+  "producerControls": [
+    {
+      "control": "denominator-drift",
+      "rejected": true
+    },
+    {
+      "control": "row-cardinality-drift",
+      "rejected": true
+    },
+    {
+      "control": "non-residual-evidence",
+      "rejected": true
+    },
+    {
+      "control": "registry-promotion",
+      "rejected": true
+    },
+    {
+      "control": "ambiguous-full-resolution",
+      "rejected": true
+    },
+    {
+      "control": "unknown-source",
+      "rejected": true
+    },
+    {
+      "control": "wrong-source-line",
+      "rejected": true
+    },
+    {
+      "control": "source-hash-drift",
+      "rejected": true
+    }
+  ],
+  "promotion": "BLOCKED: source-bound observation only; no nominal/full-demand/registry resolution",
+  "registryPromotion": false,
+  "residualRows": 32,
+  "sourceBoundRows": 25,
+  "sourceEvidenceItems": 33,
+  "stageFiles": 20,
+  "stageSha256": "sha256:48f17eeb00daac1d59d59b26253c7b8554233513cb082efe5ca1e6aaa5967e88",
+  "status": "PASS",
+  "unresolvedRows": 5,
+  "v4RowsPreserved": 107
+}

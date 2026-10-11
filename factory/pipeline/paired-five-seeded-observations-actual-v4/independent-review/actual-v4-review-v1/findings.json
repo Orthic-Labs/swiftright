@@ -1,0 +1,42 @@
+{
+  "decision": "CLEAR-OBSERVATIONAL-JOINS-ONLY",
+  "scope": "Independent bounded review of v4 receipt/status corrections; detailed source/case/raw/executable/process joins rechecked by v3 verifier against unchanged raw pins.",
+  "producer": {
+    "stageManifest": "factory/pipeline/paired-five-seeded-observations-actual-v4/stage-manifest.json",
+    "stageSha256": "sha256:ca853e374c071a9c519ca1920ef43784b1c3edf034c2babef0214e024e384c29",
+    "report": "factory/pipeline/paired-five-seeded-observations-actual-v4/report.json",
+    "reportSha256": "sha256:9060c5f2ddc3ec7349e9ce2661fca3eecd23d114e16b33edfe37fdce7fbda134",
+    "faultControls": "factory/pipeline/paired-five-seeded-observations-actual-v4/fault-controls.json",
+    "faultControlsSha256": "sha256:d2b91ea5e4d3a43ffc68f83ed2f5a545b90e93ac1fdbfdd08647dbfd6711dbf3"
+  },
+  "deltaFromV3": {
+    "rawPinsByteIdentical": true,
+    "correctedF7ReviewReferences": 5,
+    "referencesResolveAndMatchContentHashesAndClearStatus": true,
+    "statusCorrections": [
+      "Mac review-report hash label distinguished from process receipt hash",
+      "Windows custom v5 foreign-lock-busy-no-launch marked diagnostic no-launch, not native failure"
+    ]
+  },
+  "observations": {
+    "macRuns": 100,
+    "windowsSingles": 5,
+    "freshSourceCaseRawCaptureExecutableAndMainAuxiliaryCompilerJoins": "pass",
+    "legacyMacRawOrCaptureHashesReused": false,
+    "windowsSourceCaseExecutableAndObservationJoins": "pass",
+    "roleMapping": "AXStaticText to ControlType.Text only",
+    "held": [
+      "custom AX labels unavailable",
+      "scroll raw labels unobserved & offscreen held",
+      "Windows native OS termination unproven; HasExited receipt only",
+      "native parity, qualified paint, qualified timing, goldens & registry promotion"
+    ]
+  },
+  "controls": {
+    "producerFaults": 10,
+    "producerFaultsRejected": 10,
+    "independentFaults": 15,
+    "independentFaultsRejected": 15
+  },
+  "validationMethod": "Verified v4 stage manifest and report hash; invoked v4 builder's read-only validate() and controls(); compared all raw-pins to v3; verified all five F7 receipt file paths, content SHA-256, decision & count; ran detailed v3 independent join verifier after adapting only report version and receipt-reference representation."
+}

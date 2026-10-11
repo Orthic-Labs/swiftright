@@ -1,0 +1,163 @@
+{
+  "brokenWindowsReviewReferences": {
+    "custom": {
+      "expectedPath": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/single-custom-layout-r1.json",
+      "reportPath": "factory/native/windows/round1-seeded-native-v2/single-custom-layout-r1/independent-review/actual-review-f7-v1/single-custom-layout-r1.json"
+    },
+    "padding": {
+      "expectedPath": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/single-padding-frame-r1.json",
+      "reportPath": "factory/native/windows/round1-seeded-native-v2/single-padding-frame-r1/independent-review/actual-review-f7-v1/single-padding-frame-r1.json"
+    },
+    "preference": {
+      "expectedPath": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/single-preference-key-r1.json",
+      "reportPath": "factory/native/windows/round1-seeded-native-v2/single-preference-key-r1/independent-review/actual-review-f7-v1/single-preference-key-r1.json"
+    },
+    "scroll": {
+      "expectedPath": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/single-scroll-view-r1.json",
+      "reportPath": "factory/native/windows/round1-seeded-native-v2/single-scroll-view-r1/independent-review/actual-review-f7-v1/single-scroll-view-r1.json"
+    },
+    "stack": {
+      "expectedPath": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/single-stack-overlay-r1.json",
+      "reportPath": "factory/native/windows/round1-seeded-native-v2/single-stack-overlay-r1/independent-review/actual-review-f7-v1/single-stack-overlay-r1.json"
+    }
+  },
+  "caseFacts": {
+    "custom": {
+      "externalAXClientProcessIds": 20,
+      "freshRawComparedToLegacy": 20,
+      "instrumentedProcessIds": 20,
+      "macRuns": 20,
+      "mainCompilerPid": 35525,
+      "offscreenStatuses": [
+        "OBSERVED"
+      ],
+      "ownerProcessIds": 20,
+      "qualification": "held",
+      "rawStatuses": [
+        "OBSERVED"
+      ],
+      "windowsRuns": 1,
+      "windowsShutdownQualification": "held-weak-hasexited-receipt",
+      "windowsUILabels": []
+    },
+    "padding": {
+      "externalAXClientProcessIds": 20,
+      "freshRawComparedToLegacy": 20,
+      "instrumentedProcessIds": 20,
+      "macRuns": 20,
+      "mainCompilerPid": 32267,
+      "offscreenStatuses": [
+        "OBSERVED"
+      ],
+      "ownerProcessIds": 20,
+      "qualification": "held",
+      "rawStatuses": [
+        "OBSERVED"
+      ],
+      "windowsRuns": 1,
+      "windowsShutdownQualification": "held-weak-hasexited-receipt",
+      "windowsUILabels": [
+        "Box"
+      ]
+    },
+    "preference": {
+      "externalAXClientProcessIds": 20,
+      "freshRawComparedToLegacy": 20,
+      "instrumentedProcessIds": 20,
+      "macRuns": 20,
+      "mainCompilerPid": 36366,
+      "offscreenStatuses": [
+        "OBSERVED"
+      ],
+      "ownerProcessIds": 20,
+      "qualification": "held",
+      "rawStatuses": [
+        "OBSERVED"
+      ],
+      "windowsRuns": 1,
+      "windowsShutdownQualification": "held-weak-hasexited-receipt",
+      "windowsUILabels": [
+        "0",
+        "1"
+      ]
+    },
+    "scroll": {
+      "externalAXClientProcessIds": 20,
+      "freshRawComparedToLegacy": 20,
+      "instrumentedProcessIds": 20,
+      "macRuns": 20,
+      "mainCompilerPid": 34068,
+      "offscreenStatuses": [
+        "HELD"
+      ],
+      "ownerProcessIds": 20,
+      "qualification": "held",
+      "rawStatuses": [
+        "UNOBSERVED"
+      ],
+      "windowsRuns": 1,
+      "windowsShutdownQualification": "held-weak-hasexited-receipt",
+      "windowsUILabels": [
+        "Row 0",
+        "Row 1",
+        "Row 2",
+        "Row 3",
+        "Row 4",
+        "Row 5",
+        "Row 6",
+        "Row 7"
+      ]
+    },
+    "stack": {
+      "externalAXClientProcessIds": 20,
+      "freshRawComparedToLegacy": 20,
+      "instrumentedProcessIds": 20,
+      "macRuns": 20,
+      "mainCompilerPid": 31772,
+      "offscreenStatuses": [
+        "OBSERVED"
+      ],
+      "ownerProcessIds": 20,
+      "qualification": "held",
+      "rawStatuses": [
+        "OBSERVED"
+      ],
+      "windowsRuns": 1,
+      "windowsShutdownQualification": "held-weak-hasexited-receipt",
+      "windowsUILabels": [
+        "+"
+      ]
+    }
+  },
+  "externalAXClientProcessIds": 100,
+  "freshMacReviewStageSha256": "419f334b675f6d19de5db82a4636bf6360c97100834f123cad95cb6b9bb8f832",
+  "independentFaultControls": {
+    "custom-ax": "rejected",
+    "denominator": "rejected",
+    "fresh-binary": "rejected",
+    "fresh-case": "rejected",
+    "fresh-source": "rejected",
+    "main-process": "rejected",
+    "old-proof": "rejected",
+    "parity": "rejected",
+    "raw-capture": "rejected",
+    "scroll-offscreen": "rejected",
+    "scroll-sequence": "rejected",
+    "timing": "rejected",
+    "windows-exe": "rejected",
+    "windows-shutdown": "rejected",
+    "windows-source": "rejected"
+  },
+  "instrumentedProcessIds": 100,
+  "legacyProofReuse": "none of 100 raw or capture hashes reused",
+  "macRuns": 100,
+  "ok": true,
+  "ownerProcessIds": 100,
+  "stage": {
+    "bytes": 1491192,
+    "files": 5,
+    "reportSha256": "590d2e0f00d6e11068f0ba99dd145dc00bc9d4c6394b3d2b47b564073eaa887c",
+    "stageSha256": "2b7ef2e7f2619085b6f6473e741c0579880618152781f144906ecea91dfb4793"
+  },
+  "windowsRuns": 5
+}

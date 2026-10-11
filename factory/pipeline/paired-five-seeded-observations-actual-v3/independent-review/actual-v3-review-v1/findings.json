@@ -1,0 +1,46 @@
+{
+  "decision": "BLOCKED-DANGLING-WINDOWS-REVIEW-RECEIPT-PATHS",
+  "scope": "Independent offline review of fresh Mac v3 observations and five Windows seeded singles; candidate-only observational report.",
+  "producer": {
+    "stageManifest": "factory/pipeline/paired-five-seeded-observations-actual-v3/stage-manifest.json",
+    "stageSha256": "sha256:2b7ef2e7f2619085b6f6473e741c0579880618152781f144906ecea91dfb4793",
+    "report": "factory/pipeline/paired-five-seeded-observations-actual-v3/report.json",
+    "reportSha256": "sha256:590d2e0f00d6e11068f0ba99dd145dc00bc9d4c6394b3d2b47b564073eaa887c",
+    "faultControls": "factory/pipeline/paired-five-seeded-observations-actual-v3/fault-controls.json",
+    "faultControlsSha256": "sha256:44248bfa145966b89678afe019bdd28623139dc43d15300db4b18d4797f23d04"
+  },
+  "observations": {
+    "macRuns": 100,
+    "windowsSingles": 5,
+    "allFreshMacSourceCaseRawCaptureExecutableAndMainAuxCompilerJoins": "pass",
+    "legacyMacCaptureProofReused": false,
+    "windowsRawSourceCaseExecutableAndSingleObservationJoins": "pass",
+    "windowsF7Receipts": {
+      "count": 5,
+      "reportReferencesResolve": false,
+      "actualFilesExistAtF7ReviewRoot": true,
+      "actualReceiptSha256": {
+        "custom": "sha256:bf079cd34b448f2eb92e16f565e54c96a01633dcc38289691077f568df5d5a83",
+        "padding": "sha256:4ab35338e55c452d8d0aca1533df1792d51ea95102c7e16167819dd3bd55fac9",
+        "preference": "sha256:c846a3303a5f4814e4acbf91783e1e3d8beb461ce5a1e07ccea3568b1276bd8c",
+        "scroll": "sha256:48f01f5c5f95401d158dc91f6badb230c22ef583986f6ac5873074499e18e877",
+        "stack": "sha256:b73f835d732c4954addd17be0de87b0e3001af2b8b201e02204aeb9f97311747"
+      },
+      "eachReceiptDecision": "CLEAR-ACTUAL-OBSERVATIONAL-JOINS",
+      "eachReceiptCount": 1
+    },
+    "holds": [
+      "custom AX text unavailable",
+      "scroll raw labels unobserved & offscreen held",
+      "Windows native exit evidence limited to HasExited; OS termination unproven",
+      "native parity, qualified paint, qualified timing, goldens & registry promotion held"
+    ]
+  },
+  "controls": {
+    "producerFaults": 8,
+    "producerFaultsRejected": 8,
+    "independentFaults": 15,
+    "independentFaultsRejected": 15
+  },
+  "blockingFinding": "Every reviewReceipts path in v3 points beneath its single-run directory; actual F7 review JSON files are at factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/. Since the serialized references are dangling, v3 packet does not receive overall clearance despite successful joins to actual raw observation files. v4 corrects and hash-binds these references."
+}
