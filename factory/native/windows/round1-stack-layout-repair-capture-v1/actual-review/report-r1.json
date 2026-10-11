@@ -1,0 +1,33 @@
+{
+  "result": "PASS raw/source/build/native joins",
+  "compileReceipt": "fde1034a6c2542557be11fa5cd5e8a86799b1f92ac64c936e6598d1e59528185",
+  "exe": "83aae7bde8ef2b7d36a4bb6667cd0da2f2dbd5d60b0b4fe3b7970b33ea941870",
+  "pid": 32492,
+  "hwnd": 47385992,
+  "case": {
+    "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+    "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515"
+  },
+  "sourceFileCount": 7,
+  "UIAChildren": 1,
+  "PrintWindow": "f892872c303c69573e2abb1ae4af1a79d38e2a290a3d4c129207707880ac6615",
+  "foreground": [
+    395622,
+    0
+  ],
+  "verdict": "CLEAR actual single source-bound observational capture; root bounded repeatability may proceed",
+  "shapeObservation": "Visually inspected PNG: blue120x80 rectangle, red30x30 circle at90,25, black+; matches runtime resolved primitive log & unchanged witness; no parity claim",
+  "failuresPreserved": [
+    "Missing runtime-source-tree metadata stopped first build before compiler; exact archived metadata supplemented, compiler ran once.",
+    "Missing dash NonInteractive entry stopped before script/native launch; corrected entry ran actual capture once.",
+    "Original pre-repair Overlay failure retained separately."
+  ],
+  "claims": [
+    "UIA exposes one + Text child; no Rectangle/Circle provider claim.",
+    "PrintWindow repeats byte-stable800x600; screen differs; no controlled occlusion qualification.",
+    "Foreground395622\u21920; no unchanged focus claim.",
+    "Initial ABI800x1396 & initial rendererclient2560x1396 remain distinct from actual ownedclient800x600.",
+    "Compile argv is constructed receipt text, not observed CIM argv."
+  ],
+  "reviewerCompilerNativeRemoteExecutions": 0
+}
