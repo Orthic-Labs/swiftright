@@ -1,0 +1,99 @@
+{
+  "transferFilesVerified": 50,
+  "results": [
+    {
+      "host": "stack-overlay",
+      "compileReceiptSha256": "284749491fa8358e2985c612be00fb93d72c8b19b433a4c2f3f675a73e24b25e",
+      "exeSha256": "1882ed63a7006d70f7745a0459b56c26ce6caa3e774bea6b3069fb31b8bf82ff",
+      "pid": 59832,
+      "hwnd": 3672470,
+      "case": {
+        "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+        "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515"
+      },
+      "dispatchStatus": "hold-harness-error",
+      "rawABI": "width=800 height=1396 scale=2.5",
+      "actualOwnedClient": [
+        800,
+        600
+      ],
+      "sourceFiles": 6,
+      "verdict": "Failed before capture: unsupported Overlay; no UIA/PW result",
+      "manifestCaseInputs": {
+        "alignment": "trailing",
+        "color-scheme": "light"
+      },
+      "manifestSha256": "f73ec6b30abc08ff380b3ae985917c48559e21260028552d52fdc7c87b571765"
+    },
+    {
+      "host": "custom-layout",
+      "compileReceiptSha256": "335314858d411c1d6b4c29ae0728e5c0ad9f4026239d044680812cb5552b412a",
+      "exeSha256": "b1a58d5827fceb3dcd225c46a5c1963862386a62b09d5cf949abd83dec7c44c6",
+      "pid": 53164,
+      "hwnd": 79433500,
+      "case": {
+        "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29"
+      },
+      "dispatchStatus": "captured-single-observational-uia-printwindow",
+      "rawABI": "width=800 height=1396 scale=2.5",
+      "actualOwnedClient": [
+        800,
+        600
+      ],
+      "sourceFiles": 6,
+      "verdict": "Single observational capture; empty UIA child inventory",
+      "foreground": [
+        395622,
+        0
+      ],
+      "printWindowSha256": "837b0dc99e1b2557e74b8253e2ebee86f12b736f21b37166abbc200c664de896",
+      "UIAChildren": 0,
+      "manifestCaseInputs": {
+        "child-count": 1,
+        "layout-direction": "leftToRight",
+        "proposal-width": 32
+      },
+      "manifestSha256": "c3d28ff284e3460b377d0fa0a991caf4600da062f79ea55e18d6b0e63cf5baca"
+    }
+  ],
+  "customPixelStatistics": {
+    "size": [
+      800,
+      600
+    ],
+    "colors": [
+      {
+        "count": 479250,
+        "RGBA": [
+          255,
+          255,
+          255,
+          255
+        ]
+      },
+      {
+        "count": 750,
+        "RGBA": [
+          255,
+          59,
+          48,
+          255
+        ]
+      }
+    ]
+  },
+  "kind": "independent-actual-round1-review",
+  "verdict": "Raw evidence joins verified; stack failure & custom observational result preserved",
+  "reviewerCompilerNativeRemoteExecutions": 0,
+  "interpretation": [
+    "Stack unsupported Overlay failure is not captured success.",
+    "Custom image visually inspected: one red rectangle on white; 800x600 PNG repetition byte-stable, screen images differ. UIA Window root has zero children.",
+    "Raw initial ABI800x1396, renderer initialclient2560x1396 & owned client800x600 retain distinct meanings; no geometry parity normalization.",
+    "Foreground395622 to0 does not establish unchanged foreground.",
+    "Compile argv is constructed receipt text, not OS-CIM observed argv.",
+    "Witness manifest metadata was not copied into native packet; local frozen byte-pinned manifest supplies case-input join.",
+    "Runtime/renderer lineage validated from source-bound plans & receipts; no fresh remote tool/DLL remeasurement in this offline review.",
+    "No AX provider export, occlusion qualification, geometry parity or frozen tuple closure established."
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "kind": "pure-synthetic-shared-fill-controls",
+  "synthetic": true,
+  "nativeCaptures": 0,
+  "source": [
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/shared/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/main.swift",
+      "sha256": "88e3a1cc379fa14ddb9bde2468241f9646180b164c88ac51cb7aa69df9d26626",
+      "bytes": 1338
+    }
+  ],
+  "compiler": {
+    "path": "/usr/bin/swiftc",
+    "sha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+    "bytes": 200560
+  },
+  "binary": {
+    "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/fill-controls",
+    "sha256": "2ce5949e30d55dd38a49bb53c01d95e11f0778a1efe826014896bca04af72813",
+    "bytes": 80384
+  },
+  "processes": [
+    {
+      "kind": "compile",
+      "argv": [
+        "/usr/bin/swiftc",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/shared/FactoryFill.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/main.swift",
+        "-o",
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/fill-controls"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1",
+      "pid": 17602,
+      "startedAt": "2026-10-11T03:36:19.405654+00:00",
+      "finishedAt": "2026-10-11T03:36:20.264711+00:00",
+      "returncode": 0,
+      "stdout": {
+        "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/compile.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/compile.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "kind": "run",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/fill-controls"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1",
+      "pid": 17613,
+      "startedAt": "2026-10-11T03:36:20.264812+00:00",
+      "finishedAt": "2026-10-11T03:36:20.564340+00:00",
+      "returncode": 0,
+      "stdout": {
+        "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/run.stdout.txt",
+        "sha256": "d2fce6e13f9dd91cb67057e2834d2366ff6f0706ec15fbdd580204314c2faf83",
+        "bytes": 60
+      },
+      "stderr": {
+        "path": "/Volumes/D/claude/swiftright/factory/native/windows/round1-stack-layout-hosts-v1/pure-controls/actual-r1/run.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "pass": true
+}

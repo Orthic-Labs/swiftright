@@ -1,0 +1,1 @@
+Two same-source observational hosts: stack-overlay &custom-layout. Actualresolvedfillgeometry/Color/containerorder uses existingr09 ABI0.6; correctedretainedText/clientviewport reused. Exact374source distinctfromstagedruntime; unsupportedprovidersreject. Pure sharedfillcontrols pass; Windowsbuild/GUI0. Root ownsCPU/lock/dispatch.

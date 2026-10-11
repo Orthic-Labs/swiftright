@@ -1,0 +1,60 @@
+{
+  "kind": "round1-two-host-native-readiness-v1",
+  "status": "source-prepared-awaiting-independent-review",
+  "hosts": [
+    {
+      "label": "stack-overlay",
+      "package": "factory\\native\\windows\\round1-stack-layout-hosts-v1\\stack-overlay\\package",
+      "caseID": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515",
+      "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+      "planSha256": "93ea8d7bc3d87a575897928393cb9884d299acde6d46054e417f7e4f4156912e",
+      "compileReceipt": "build-r1\\observation.json",
+      "requiredMeasuredArguments": [
+        "CompileReceiptHash",
+        "ExeHash"
+      ],
+      "captures": 1
+    },
+    {
+      "label": "custom-layout",
+      "package": "factory\\native\\windows\\round1-stack-layout-hosts-v1\\custom-layout\\package",
+      "caseID": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29",
+      "sourceHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+      "planSha256": "2ac073c551a52b7b3390c6e8c026bb7e2da989a1bf98f8a9bc87ca025b453124",
+      "compileReceipt": "build-r1\\observation.json",
+      "requiredMeasuredArguments": [
+        "CompileReceiptHash",
+        "ExeHash"
+      ],
+      "captures": 1
+    }
+  ],
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "stage": "D:\\Claude\\sr0-r09",
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "closureBinding": null,
+  "controls": {
+    "lock": "exact free/owner CAS; six-minute silent bounded wait; exact-owner release",
+    "launch": "hidden wscript interactive scheduled task; GUI PE2; CBT activation/focus veto; bottom/noactivate",
+    "ownership": "live PID/path/start/HWND before UIA/position/pixel; foreground PID refusal; identity-safe cleanup",
+    "pixels": "two PrintWindow client/full-content flags3 & two screen captures; actual occlusion grid",
+    "input": false,
+    "UIA": "actual owned tree only; no invented Color AX/enabled/text semantics",
+    "parse": "prepared/unrun; no local PowerShell available"
+  },
+  "productionOrder": [
+    "root builds both immutable hosts after active batch",
+    "record actual compileReceipt SHA256 & executable SHA256; review successful source/runtime/bridge joins",
+    "root runs parse-controls on transferred exact bytes",
+    "root coordinates independent-reviewed dispatch under desktop lock"
+  ],
+  "commandTemplate": "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-native-v1\\run-round1.ps1 -Package D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-hosts-v1\\<label>\\package -RunRoot D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-native-v1\\actual-<label>-r1 -CompileReceiptHash <actual64hex> -ExeHash <actual64hex>",
+  "execution": {
+    "SSH": 0,
+    "compiler": 0,
+    "GUI": 0,
+    "lockAcquisition": 0
+  }
+}
