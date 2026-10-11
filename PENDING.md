@@ -1,4 +1,4 @@
-Last updated: 2026-10-11T10:39:23Z
+Last updated: 2026-10-11T10:54:00Z
 
 
 State: plan changed by Adrian's answers (relayed by Right Mac, 2026-10-11): W08 must be fixed; apply the two small held fixes (startup window size, selection highlight) so 0.6 is frozen correct; then requalify and run the 20 comparison runs on that final 0.6; then freeze. Order of work: items A, B, C below.
@@ -6,9 +6,9 @@ State: plan changed by Adrian's answers (relayed by Right Mac, 2026-10-11): W08 
 
 | # | Item | State |
 |---|---|---|
-| A | Apply held patches 01 (selection highlight) and 02 (ready metrics, renderer + bridge); build and test | applied and pushed (4b1ca6d0); bridge tests 28 pass, hosts compile on Mac; renderer build rr-1791715047439 queued on the Windows broker; then stage tuple 12 on the Dell |
+| A | Apply held patches 01 and 02; build and test | applied (4b1ca6d0); renderer built C62B554B…; tuple 12 staging running on the Dell from 0e201571 (stage-tuple.ps1) |
 | B | W08: a cancelled MSIX update must not leave the app unopenable | open: cannot be prevented from inside the package (an unopenable package cannot repair itself); the fix belongs to the release/update tooling (RightKit); options sent to Right Mac |
-| C | Requalify on the new 0.6 build (tuple 12): matrix, smoke, pixels, text, modal, R9, R10, MSIX, cross-compare at 20 runs per side | waiting on A; MSIX needs signing: the Windows certificate expires 2026-10-12 05:16 Dell local and the standing rule says no signing: needs Adrian: sign the tuple 12 packages before the certificate expires, yes or no? |
+| C | Requalify on the new 0.6 build (tuple 12): matrix, smoke, pixels, text, modal, R9, R10, MSIX, cross-compare at 20 runs per side | waiting on A; MSIX needs signing: the Windows certificate expires 2026-10-12 05:16 Dell local and the standing rule says no signing: signing approved by Adrian for these packages; no deadline (the certificate is the shared Azure short-lived one, reissued at each signing) |
 | 1 | Final qualification runner pass on tuple 11 | done: all stages pass except package Windows W08 (item 4); `qualification/out/r8-tuple11/` |
 | 2 | Dell stage trees moved under D:\Claude\swiftright\.work, script paths updated | done |
 | 3 | Narrator speech content | Adrian: "I'll listen later"; fixture ready to run on his word |
