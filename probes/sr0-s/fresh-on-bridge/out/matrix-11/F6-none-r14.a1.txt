@@ -1,0 +1,87 @@
+ARTIFACT base=D:\Claude\sr0-r11\src exe_sha256=073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E dll_sha256=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93 expect_exe=073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E expect_dll=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93
+ARTIFACT_OK
+registered=SR0S-Fix-F6noner14a1 at=2026-10-11T06:13:35.7538139+05:30
+state=Ready last_result=0
+deleted=SR0S-Fix-F6noner14a1 exists_after=False
+ARTIFACT base=D:\Claude\sr0-r11\src exe_sha256=073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E dll_sha256=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93 expect_exe=073513142F25C454B58DD05E545875E90B157539C72977E855AD68785293D55E expect_dll=E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93 class=sr0 fixture=F6 variant=none tag=F6noner14a1
+host=BOGUS-DELL session=1 fixture=F6 variant=none args=--fixture F6 --ready-file "D:\Claude\sr0-r11\src\result-F6-F6noner14a1.txt.ready" started=2026-10-11T06:13:36.3423712+05:30
+window_hwnd=53610922 polls=2 exited_early=False
+ready_file=True waited_ms=2 exe_exited=False
+close_window=WM_CLOSE posted=True
+run_summary keymode=char delivery=targeted fg_changes=0 driver_abort=none
+exit=0 end=2026-10-11T06:13:41.1736328+05:30
+--- stdout ---
+EVT {"kind":"lifecycle","mono_ns":42610539343500,"node_id":"selftest","payload":{"fixture":"F6","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":42611000350400,"node_id":"animation","payload":{"effective_reduce":false,"enabled":true,"phase":"policy","reduce_source":"default","system_reduce":"on","variant_reduce":false},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":42611000909800,"node_id":"window","payload":{"phase":"root-appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":42611002592000,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":42611003432100,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":42611003716900,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":42611003914500,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":42611004106100,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":42611004320300,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":42611004531900,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":42611004732600,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":42611004925000,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":42611005115600,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":42611008345800,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":13}
+EVT {"kind":"lifecycle","mono_ns":42611009160900,"node_id":"selftest","payload":{"name":"motion policy recorded","phase":"stage"},"seq":14}
+EVT {"kind":"lifecycle","mono_ns":42611009257800,"node_id":"animation","payload":{"phase":"start","tag":"A"},"seq":15}
+EVT {"kind":"state","mono_ns":42611009337600,"node_id":"model","payload":{"animated":true,"id":"F0000006-0000-4000-8000-000000000200","index":0,"op":"insert","tag":"A"},"seq":16}
+EVT {"kind":"lifecycle","mono_ns":42611009411400,"node_id":"animation","payload":{"phase":"start","tag":"B"},"seq":17}
+EVT {"kind":"state","mono_ns":42611009462100,"node_id":"model","payload":{"animated":true,"id":"F0000006-0000-4000-8000-000000000201","index":0,"op":"insert","tag":"B"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":42611009532200,"node_id":"selftest","payload":{"name":"burst insert (same turn)","phase":"stage"},"seq":19}
+EVT {"kind":"lifecycle","mono_ns":42611010094100,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":42611010314000,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":42611011586800,"node_id":"animation","payload":{"phase":"complete","tag":"A"},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":42611366201500,"node_id":"animation","payload":{"phase":"complete","tag":"B"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":42612515302900,"node_id":"selftest","payload":{"name":"animation window","phase":"stage"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":42615246667200,"node_id":"window","payload":{"phase":"closed"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":42615246952800,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":42615247188100,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"local":0,"phase":"disappear"},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":42615247391900,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"local":0,"phase":"disappear"},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":42615247568100,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":29}
+EVT {"kind":"lifecycle","mono_ns":42615247749500,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":30}
+EVT {"kind":"lifecycle","mono_ns":42615247900600,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":42615248083300,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":42615248267700,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":42615248431300,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":34}
+EVT {"kind":"lifecycle","mono_ns":42615248611500,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":35}
+EVT {"kind":"lifecycle","mono_ns":42615248771500,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":36}
+EVT {"kind":"lifecycle","mono_ns":42615248926800,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":42615249098700,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":38}
+SELFTEST-STAGES F6: motion policy recorded@0.47s | burst insert (same turn)@0.47s | animation window@1.98s | awaiting-driver-close end-reason=window-closed
+ASSERT F6 script-completed: PASS stages=motion policy recorded@0.47s | burst insert (same turn)@0.47s | animation window@1.98s | awaiting-driver-close
+ASSERT F6 os-reduce-motion-read: PASS os=reduce-on effective=false source=default
+ASSERT F6 os-setting-does-not-decide: PASS os=reduce-on effective=false expected=false source=default expected-source=default
+ASSERT F6 normal-policy-enabled: PASS enabled=true
+ASSERT F6 two-animations-started: PASS starts=2
+ASSERT F6 interruption-recorded: PASS second-start seq=17 first-complete seq=22
+ASSERT F6 both-animations-complete: PASS completes=2
+ASSERT F6 final-order: PASS count=12
+ASSERT F6 env-reduce-controls-motion: PASS effective-reduce=false fade-frame commits=20 (snap: 0; animate: >=3)
+ASSERT F6 frames-driven-by-display-tick: PASS tick-commits=24 ticks=256
+ASSERT F6 animated-path-regardless-of-os-setting: PASS os=reduce-on effective-reduce=false fade-frame commits=20 tick-commits=24 (animate branch: >=3 each)
+ASSERT F6 initial-focus-matches-mac-oracle: PASS expected=none initial-events=0 focused=none first-focus-event-is-initial=false after-appears-before-tasks=true (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)
+ASSERT F6 invoke-does-not-move-focus: PASS ax-invokes=0 coalesced-focus-requests=0 offenders=none
+ASSERT F6 renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F6 commits-accepted: PASS commits=28 errors=0 dropped-after-close=0
+ASSERT F6 no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F6: PASS (16/16 asserted; blocked=0; end=window-closed)
+
+--- stderr ---
+[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+[swiftright-render] ime_subclass installed=1
+[swiftright-render] paint pacing off (SWR_PAINT_PHASE_MS=0)
+[swiftright-render] window hwnd=0x33209aa style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+[swiftright-render] modal start path: posted (WM_SWR_MODAL)
+[swiftright-render] ime_msg msg=0x0282 wparam=0x2 lparam=0x0
+[swiftright-render] ime_msg msg=0x0281 wparam=0x1 lparam=0xC000000F
+[swiftright-render] ax publication policy: off=false min_interval_ms=100
+[swiftright-render] ime_msg msg=0x0282 wparam=0x1 lparam=0x0
+[swiftright-render] ime_msg msg=0x0281 wparam=0x0 lparam=0xC000000F
+[swiftright-render] shutdown paints=258 paints_while_inactive=2 drains=285 ticks_delivered=256 events_pushed=2 reentry_refused=0 post_close_drains=1 post_close_timeouts=0
+[swiftright-render] phases commit[n=28 mean_us=118 max_us=259] tree_commit[n=28 mean_us=115 max_us=255] paint_root[n=258 mean_us=56 max_us=912] present[n=26 mean_us=23 max_us=293] host_tick[n=256 mean_us=104 max_us=2094] host_drain[n=284 mean_us=11 max_us=1811] frame[n=254 mean_us=466 max_us=976] ime_cb[n=0 mean_us=0 max_us=0] paint_start_after_edge[n=0 mean_us=0 max_us=0] pacing[phase_us=0 period_us=0 edges=0 posted=0 skipped_pending=0 expired=0 swallowed=0 passed_stale=0 no_wait_edges=0]
+[swiftright-render] memory rust_live_bytes=1509672 rust_allocs=14546 private_bytes=197005312 working_set=118132736 ax_publishes=5 ax_throttled=24 ax_rethrottled=0
+
+ARTIFACTS exe=073513142f25c454b58dd05e545875e90b157539c72977e855ad68785293d55e renderer=e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93 trace=48065806c3240252823fe6d538f438a00c333037bd9e77f42155e1c272b38e79
