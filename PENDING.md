@@ -1,7 +1,7 @@
-Last updated: 2026-10-11T10:54:00Z
+Last updated: 2026-10-11T11:23:42Z
 
 
-State: plan changed by Adrian's answers (relayed by Right Mac, 2026-10-11): W08 must be fixed; apply the two small held fixes (startup window size, selection highlight) so 0.6 is frozen correct; then requalify and run the 20 comparison runs on that final 0.6; then freeze. Order of work: items A, B, C below.
+State: STOPPED on Adrian's instruction (relayed by Right Mac, 2026-10-11). Resume point: patches 01 and 02 are applied and committed (4b1ca6d0); the tuple 12 renderer is built (sha256 C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F, RightKit request rr-1791715047439) but NOT staged or qualified; staging on the Dell was started from 0e201571 with probes/sr0-s/fresh-on-bridge/scripts/stage-tuple.ps1 into D:/Claude/swiftright/.work/sr0-r12 and stopped part-way. The last fully qualified build is tuple 11 (docs/sr0-snapshot.md section 2e). Next after resume: stage tuple 12, then item C. Held patches are in docs/held-patches/ (01 and 02 applied, 03 unapplied).
 # SwiftRight — pending (SR0 close-out lane)
 
 | # | Item | State |
