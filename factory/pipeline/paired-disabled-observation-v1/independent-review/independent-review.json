@@ -1,0 +1,72 @@
+{
+  "assertionHolds": [
+    "Windows UIA Continue enabled=true is observed; Mac raw AX has no enabled field, so equality is unavailable.",
+    "AXPress is availability only; no input/invoke or callback receipt exists, so hit-testing remains untested.",
+    "One Windows observation is not qualified 20-run parity; native/provider/occlusion and frozen tuple bindings remain held.",
+    "Mac intervals are same-process offscreen render begin/end durations, not input latency; Windows compile duration is separate.",
+    "Mac text-renderer channel is empty and paint/geometry units are not cross-provider normalized."
+  ],
+  "channels": {
+    "enabledBoolean": "unavailable-mac-field-absent",
+    "hitTesting": "untested",
+    "nativeParity": "held",
+    "occlusionQualification": false,
+    "promotion": "none",
+    "providerReadbackExport": false,
+    "qualifiedTiming": "unavailable"
+  },
+  "checks": {
+    "all78PayloadBytesAndHashes": true,
+    "caseF9ProbeSourceJoin": true,
+    "mac20CaseInputAXLayoutTextJoins": true,
+    "macRenderIntervalsNonnegativeSameClock": true,
+    "producerReportEvidenceRefsExact": true,
+    "windowsNativeSidecarCoverage": true,
+    "windowsPlanCompileNativeJoin": true,
+    "windowsUIAAndViewportRawSemantics": true
+  },
+  "kind": "paired-disabled-observation-independent-review",
+  "limits": [
+    "Review is offline and consumes frozen producer bytes only.",
+    "No qualified parity or promotion is implied."
+  ],
+  "producerPacket": {
+    "inputCount": 78,
+    "macRuns": 20,
+    "manifestSha256": "a2ad0ff7ad110b7fcea87842d4f3babaff733a5d720a447835f4aa03854b4ce7",
+    "reportSha256": "86a73d21083649c7b9b0efa1f27dbec57fc0ceab331f96d874f9668025ad9508",
+    "windowsObservations": 1
+  },
+  "rawJoins": {
+    "caseId": "swiftui.disabled.recipe/case/f113195a59446fc4",
+    "macIntervalCount": 20,
+    "macRunIds": [
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-001",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-002",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-003",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-004",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-005",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-006",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-007",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-008",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-009",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-010",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-011",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-012",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-013",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-014",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-015",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-016",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-017",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-018",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-019",
+      "swiftui.disabled.recipe/case/f113195a59446fc4.macos.run-020"
+    ],
+    "sourceSha256": "68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+    "windowsCompilePlanSha256": "fcee0329217171a63fd39206708be1721dad141dfd31a7b093d5e48f5e870fcb",
+    "windowsCompileReceiptSha256": "203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def",
+    "windowsManifestHash": "sha256:5e155ed85464617856bff8796c548a4bca943b0a4e1176425a6f8f3e63a4b27e"
+  },
+  "status": "independently-verified-observational-only",
+  "version": 1
+}
