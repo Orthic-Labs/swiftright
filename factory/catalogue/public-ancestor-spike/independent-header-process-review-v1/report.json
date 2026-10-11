@@ -1,0 +1,553 @@
+{
+  "kind": "independent-header-process-review-v1",
+  "reviewScope": "read-only existing captures/code; pure validator faults in owned directory only",
+  "capturesRerun": 0,
+  "producerEdits": 0,
+  "swiftFoundation": {
+    "genuineCompletedProcessMetadata": true,
+    "processCount": 2,
+    "timestampsRecorded": false,
+    "fullHeaderFlagRequestArgvCwdJoinsExact": true,
+    "timingClaimAllowed": false,
+    "exitMetadataFabricated": false,
+    "sourceEvidence": "capture_module assigns result=subprocess.run then process.exit=result.returncode & writes result.stdout/stderr; no fabricated exit constant",
+    "scope": "Raw header index facts only; no nominal eligibility inference",
+    "committedProducerSource": {
+      "commit": "e9bc5045e59aa49f36ddb71ff7713f76a919b7d5",
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/capture_swift_foundation.py",
+      "sha256": "sha256:e0e6a43f06cfde56b4fd5d01d28689e957baff8f19dc6c6689d3437a690471ef",
+      "bytesEqualGitCommit": true
+    }
+  },
+  "developerSpatialSymbolsV2": {
+    "genuineCompletedProcessMetadata": true,
+    "processCount": 4,
+    "rows": [
+      {
+        "module": "DeveloperToolsSupport",
+        "actualExitIsStrictIntZero": true,
+        "liveSourceHashMatches": true,
+        "fullHeaderFlagsTransformedExact": true,
+        "productionTarget": "arm64-apple-macosx27.0",
+        "targetVariantAbsent": true,
+        "rawV1EqualsV2": true,
+        "timestampsRecorded": true,
+        "receipt": {
+          "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/DeveloperToolsSupport.receipt.json",
+          "sha256": "sha256:1d7eb7c259332f9544d029751b637386afe005b0e3646a8933927e206fc5cfa5",
+          "bytes": 2978
+        }
+      },
+      {
+        "module": "Spatial",
+        "actualExitIsStrictIntZero": true,
+        "liveSourceHashMatches": true,
+        "fullHeaderFlagsTransformedExact": true,
+        "productionTarget": "arm64-apple-macosx27.0",
+        "targetVariantAbsent": true,
+        "rawV1EqualsV2": true,
+        "timestampsRecorded": true,
+        "receipt": {
+          "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/Spatial.receipt.json",
+          "sha256": "sha256:e71e7c495515cd65ac0ee87caf0ff5adf6f64dc69e20c619782112598eee4dfe",
+          "bytes": 2833
+        }
+      },
+      {
+        "module": "Symbols",
+        "actualExitIsStrictIntZero": true,
+        "liveSourceHashMatches": true,
+        "fullHeaderFlagsTransformedExact": true,
+        "productionTarget": "arm64-apple-macosx27.0",
+        "targetVariantAbsent": true,
+        "rawV1EqualsV2": true,
+        "timestampsRecorded": true,
+        "receipt": {
+          "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/Symbols.receipt.json",
+          "sha256": "sha256:3795ee4c2dc2959f3c8ca55cc54a0fdca3f54ddf90e789ec52ced2d6b509a988",
+          "bytes": 2880
+        }
+      },
+      {
+        "module": "CoreFoundation",
+        "actualExitIsStrictIntZero": true,
+        "liveSourceHashMatches": true,
+        "fullHeaderFlagsTransformedExact": true,
+        "productionTarget": "arm64-apple-macosx27.0",
+        "targetVariantAbsent": true,
+        "rawV1EqualsV2": true,
+        "timestampsRecorded": true,
+        "receipt": {
+          "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/CoreFoundation.receipt.json",
+          "sha256": "sha256:9c2eea7bf7cea31ecb97c0381757162bfbb85893da2768001904a2823c533bfb",
+          "bytes": 2873
+        }
+      }
+    ],
+    "immediateReceiptsBeforeParsing": true,
+    "archiveManifestAllEntriesMatch": true,
+    "rawV1EqualsV2": true,
+    "actualCurrentBytesJoinsClear": true,
+    "executionBoundary": "Producer CompletedProcess metadata is genuine; xcrun backend resolution/environment/PID are not independently recorded; static expected tool bytes match current files.",
+    "productionVerifierGuardsClear": false,
+    "faults": [
+      {
+        "fault": "baseline",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "booleanExit",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "floatExit",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "nonzeroExit",
+        "accepted": false,
+        "error": "exit DeveloperToolsSupport",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "booleanEpochs",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "fabricatedTimestampStrings",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongToolHash",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongSourceHash",
+        "accepted": false,
+        "error": "source DeveloperToolsSupport",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongArgv",
+        "accepted": false,
+        "error": "argv DeveloperToolsSupport",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongCwd",
+        "accepted": false,
+        "error": "cwd DeveloperToolsSupport",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongRequestHash",
+        "accepted": false,
+        "error": "request DeveloperToolsSupport",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "actualSourceBytesDrift",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongTarget",
+        "accepted": false,
+        "error": "target",
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "wrongSDK",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      },
+      {
+        "fault": "duplicateModule",
+        "accepted": true,
+        "error": null,
+        "productionVerifierInvokedInProcess": true,
+        "captureProcessesLaunched": 0
+      }
+    ],
+    "findings": [
+      "Boolean/float zero returncodes accepted by ==0 guard.",
+      "Boolean epochs &fabricated nonempty timestamp strings accepted.",
+      "Recorded tool hashes ignored by production verifier.",
+      "Actual source bytes can drift at same length with original recorded source hash &remain accepted.",
+      "Wrong SDK metadata &duplicate module entries accepted.",
+      "Existing five fault controls cover only status/target/link/missingreceipt/nonzeroexit."
+    ],
+    "scope": "Actual recorded process joins clear independently; production automatic acceptance remains held until guard faults repaired. No nominal eligibility inference."
+  },
+  "references": [
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/DeveloperToolsSupport.framework/Versions/A/Modules/DeveloperToolsSupport.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:542bc51aafe636aa86e9803cba835c3c043115cf2147fcf5a3769f343adf6968",
+      "bytes": 13497
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Modules/Foundation.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:9434abc2b4f28dfb0c3f7cad3a069447597fe5cb4bbf254927221af86e0b98d0",
+      "bytes": 1315439
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Symbols.framework/Versions/A/Modules/Symbols.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:d05fbe7c4de49af5b6977c2e8bec5084af7b3cb6964bfe8f079549039be636b1",
+      "bytes": 24603
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/CoreFoundation.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:1aef0961436c7abc0f09cdc5016126b01dd9454b42937c465b7c65e6f4edfeab",
+      "bytes": 22736
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Spatial.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:c636541b2168ab4a025707b5e9c5afc6f74d1b7947d0ff299e1964312174129a",
+      "bytes": 227159
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+      "bytes": 2472314
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396",
+      "bytes": 35897136
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "bytes": 173118384
+    },
+    {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b",
+      "bytes": 413136
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/README.md",
+      "sha256": "sha256:f6cd193cc584e2eef1c7e0fdec1b368216c557022f91e08f30afe9be6641da73",
+      "bytes": 656
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive-manifest.json",
+      "sha256": "sha256:28d80d63131b0d0de46f87f3af3e90c77c8edfc1a24668e99f05a8ffb8e050c1",
+      "bytes": 7846
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/inputs/CoreFoundation.swiftinterface",
+      "sha256": "sha256:1aef0961436c7abc0f09cdc5016126b01dd9454b42937c465b7c65e6f4edfeab",
+      "bytes": 22736
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/inputs/DeveloperToolsSupport.swiftinterface",
+      "sha256": "sha256:542bc51aafe636aa86e9803cba835c3c043115cf2147fcf5a3769f343adf6968",
+      "bytes": 13497
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/inputs/Spatial.swiftinterface",
+      "sha256": "sha256:c636541b2168ab4a025707b5e9c5afc6f74d1b7947d0ff299e1964312174129a",
+      "bytes": 227159
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/inputs/Symbols.swiftinterface",
+      "sha256": "sha256:d05fbe7c4de49af5b6977c2e8bec5084af7b3cb6964bfe8f079549039be636b1",
+      "bytes": 24603
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/CoreFoundation.index.txt",
+      "sha256": "sha256:b401cd5a70e96e9e8d2d86cec2737e23f6a0c66261c375469d1d2ce4d12e2cf6",
+      "bytes": 285130
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/CoreFoundation.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/DeveloperToolsSupport.index.txt",
+      "sha256": "sha256:5a4ebdfe171afce0cfefa84a9df6ac21d856e2718cca34c4c6248cabdf0dff7d",
+      "bytes": 161604
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/DeveloperToolsSupport.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/Spatial.index.txt",
+      "sha256": "sha256:3936a37a1e4a349dd1e0c046a1db26fc0c0cca8dbb04c41262c1158c885902e9",
+      "bytes": 3364165
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/Spatial.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/Symbols.index.txt",
+      "sha256": "sha256:34000296e9dfc17c0ed3e2033dcfc8833a028643c609681cd248ddde39e9e061",
+      "bytes": 284064
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/raw/Symbols.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/requests/CoreFoundation.yaml",
+      "sha256": "sha256:41a8e3df0bc3a4909d28dcf023b90639aaca1ad6c2b944fa6fe20de0c752afc9",
+      "bytes": 1135
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/requests/DeveloperToolsSupport.yaml",
+      "sha256": "sha256:d866701d7c144e6fc8e1d172d4b523aa359eef900b81ccf1c80f43e1ff7f0b8c",
+      "bytes": 1170
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/requests/Spatial.yaml",
+      "sha256": "sha256:bd696812236143b8d98e39e8311b86daa3b72aafe7b34d1b2cba8564e9372d75",
+      "bytes": 1008
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/requests/Symbols.yaml",
+      "sha256": "sha256:acd723121a6dc05ea1eaffb32cbda09b6cbf4d173c435e7c960b9fbcd1bfcd47",
+      "bytes": 1045
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/tests.log",
+      "sha256": "sha256:eac2644b0d5b137e7fe6a17102e570c1f97cc1f9aebffa0d325948d9485d2d28",
+      "bytes": 130
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/tools/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396",
+      "bytes": 35897136
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/tools/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b",
+      "bytes": 413136
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/tools/xcrun",
+      "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "bytes": 199024
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/archive/verification.log",
+      "sha256": "sha256:11d6fa58f95ba5630c74b862bfd3b95965f826b2a06c80fea92aac78536cdfd5",
+      "bytes": 126
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/capture_process_receipts.py",
+      "sha256": "sha256:5a227eecea2262f1673427588fdbac6d5bdb90dcd1d9602af297c12df2c1ee7a",
+      "bytes": 4828
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/process-evidence-v2.json",
+      "sha256": "sha256:f9ceb28c3a6d15605287693cf947380815265602bc47b127a57319f760b939e2",
+      "bytes": 9333
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/CoreFoundation.index.txt",
+      "sha256": "sha256:b401cd5a70e96e9e8d2d86cec2737e23f6a0c66261c375469d1d2ce4d12e2cf6",
+      "bytes": 285130
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/CoreFoundation.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/DeveloperToolsSupport.index.txt",
+      "sha256": "sha256:5a4ebdfe171afce0cfefa84a9df6ac21d856e2718cca34c4c6248cabdf0dff7d",
+      "bytes": 161604
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/DeveloperToolsSupport.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/Spatial.index.txt",
+      "sha256": "sha256:3936a37a1e4a349dd1e0c046a1db26fc0c0cca8dbb04c41262c1158c885902e9",
+      "bytes": 3364165
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/Spatial.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/Symbols.index.txt",
+      "sha256": "sha256:34000296e9dfc17c0ed3e2033dcfc8833a028643c609681cd248ddde39e9e061",
+      "bytes": 284064
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/raw/Symbols.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/CoreFoundation.receipt.json",
+      "sha256": "sha256:9c2eea7bf7cea31ecb97c0381757162bfbb85893da2768001904a2823c533bfb",
+      "bytes": 2873
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/DeveloperToolsSupport.receipt.json",
+      "sha256": "sha256:1d7eb7c259332f9544d029751b637386afe005b0e3646a8933927e206fc5cfa5",
+      "bytes": 2978
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/Spatial.receipt.json",
+      "sha256": "sha256:e71e7c495515cd65ac0ee87caf0ff5adf6f64dc69e20c619782112598eee4dfe",
+      "bytes": 2833
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/receipts/Symbols.receipt.json",
+      "sha256": "sha256:3795ee4c2dc2959f3c8ca55cc54a0fdca3f54ddf90e789ec52ced2d6b509a988",
+      "bytes": 2880
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/requests/CoreFoundation.yaml",
+      "sha256": "sha256:41a8e3df0bc3a4909d28dcf023b90639aaca1ad6c2b944fa6fe20de0c752afc9",
+      "bytes": 1135
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/requests/DeveloperToolsSupport.yaml",
+      "sha256": "sha256:d866701d7c144e6fc8e1d172d4b523aa359eef900b81ccf1c80f43e1ff7f0b8c",
+      "bytes": 1170
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/requests/Spatial.yaml",
+      "sha256": "sha256:bd696812236143b8d98e39e8311b86daa3b72aafe7b34d1b2cba8564e9372d75",
+      "bytes": 1008
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/requests/Symbols.yaml",
+      "sha256": "sha256:acd723121a6dc05ea1eaffb32cbda09b6cbf4d173c435e7c960b9fbcd1bfcd47",
+      "bytes": 1045
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/test_process_receipts.py",
+      "sha256": "sha256:7f430cfe8637b280c208aad54267b4e937d0f8ef8a0a88f2581c4326e0ddeae2",
+      "bytes": 1397
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols-process-v2/verify_process_receipts.py",
+      "sha256": "sha256:d1ab1ed6ef8e4876482a68ad1e8f4ce0bce1f8748b78fcb02f296a43c1151351",
+      "bytes": 3079
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/raw/CoreFoundation.index.txt",
+      "sha256": "sha256:b401cd5a70e96e9e8d2d86cec2737e23f6a0c66261c375469d1d2ce4d12e2cf6",
+      "bytes": 285130
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/raw/DeveloperToolsSupport.index.txt",
+      "sha256": "sha256:5a4ebdfe171afce0cfefa84a9df6ac21d856e2718cca34c4c6248cabdf0dff7d",
+      "bytes": 161604
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/raw/Spatial.index.txt",
+      "sha256": "sha256:3936a37a1e4a349dd1e0c046a1db26fc0c0cca8dbb04c41262c1158c885902e9",
+      "bytes": 3364165
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/raw/Symbols.index.txt",
+      "sha256": "sha256:34000296e9dfc17c0ed3e2033dcfc8833a028643c609681cd248ddde39e9e061",
+      "bytes": 284064
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Foundation.request.preimage.yaml",
+      "sha256": "sha256:8d4c54c46ef400f461839b79e7d4898ed3e65b9e7dbf224256a7086abc1be95e",
+      "bytes": 1860
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.request.preimage.yaml",
+      "sha256": "sha256:5b0a6e9b82f16949b6e39b3b00ff6bbf281312adaf7c9788a2ae33e627b6e4c8",
+      "bytes": 2253
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/capture_swift_foundation.py",
+      "sha256": "sha256:e0e6a43f06cfde56b4fd5d01d28689e957baff8f19dc6c6689d3437a690471ef",
+      "bytes": 10149
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/raw/Foundation.index.txt",
+      "sha256": "sha256:37ab0d1eb459177d1cee8f90a38d5016e70d0353ccc97c0cb4e8e6205721e2c9",
+      "bytes": 17368715
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/raw/Swift.index.txt",
+      "sha256": "sha256:12c4f19b2fb195ca92e748fb6e98bb961e521baba6035dc6da7bfefc7bebda63",
+      "bytes": 7974142
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/receipts/Foundation.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/receipts/Swift.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Foundation.yaml",
+      "sha256": "sha256:8d4c54c46ef400f461839b79e7d4898ed3e65b9e7dbf224256a7086abc1be95e",
+      "bytes": 1860
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Swift.yaml",
+      "sha256": "sha256:5b0a6e9b82f16949b6e39b3b00ff6bbf281312adaf7c9788a2ae33e627b6e4c8",
+      "bytes": 2253
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/swift-foundation-index-evidence.json",
+      "sha256": "sha256:7f332345a044d54ec4617fa06c7bf73513235c08f4e7aa767446924a0842f3bb",
+      "bytes": 37173
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/verify_swift_foundation.py",
+      "sha256": "sha256:067cb2f184d3237a5bf1a1202a6ca262a988d5ae01204d023312322237308529",
+      "bytes": 3218
+    },
+    {
+      "path": "/usr/bin/xcrun",
+      "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "bytes": 199024
+    }
+  ],
+  "captureProcessesLaunchedByReview": 0
+}

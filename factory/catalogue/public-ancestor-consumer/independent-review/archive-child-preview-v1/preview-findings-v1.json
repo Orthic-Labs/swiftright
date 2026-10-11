@@ -1,0 +1,43 @@
+{
+  "status": "preliminary-held-schema-repairs",
+  "scope": "consumer archive fallback/source/compiler-child schema &output preservation only; FINAL pins unset",
+  "snapshot": {
+    "consumer.py": "53a30c0727ba539d2f178db137a23ab360424000d2bea30b43c5811a2ee5c8af",
+    "test_consumer.py": "1f61c31c42f9cbccb99e47a6a38ce089ddb26251e39731d115e1e8266cfe5790",
+    "README.md": "69ad29d80daa2857623f8f0c8fdddbab12c5d88e4848ec4c85999bb451be1ecb"
+  },
+  "archiveFallback": {
+    "consumerSnapshotSha256": "53a30c0727ba539d2f178db137a23ab360424000d2bea30b43c5811a2ee5c8af",
+    "archiveManifestSha256": "sha256:6ddc54fe90bffd954f415963450cfa04d19d94070631b88619635826ce9139e3",
+    "rawGraphUsrCount": 108272,
+    "rawGraphUsrSetSha256": "sha256:aea106318b8e67c1cc24404e7a56ce9b5f0a33c76363a11810a1aec7f5fab042",
+    "productionArchiveFallbackAccepted": true,
+    "finalPinsUnset": true,
+    "candidateCreated": false
+  },
+  "initialChildFaults": [
+    {
+      "fault": "unknown_component_status",
+      "accepted": true
+    },
+    {
+      "fault": "missing_generic_evidence",
+      "accepted": true
+    },
+    {
+      "fault": "nonpublic_accessor_accounting",
+      "accepted": false,
+      "reason": "compiler child has unqualified status or access"
+    }
+  ],
+  "repairsRequested": [
+    "required exact non-typed component status &evidence",
+    "typed nonpublic accessor accounting without catalogue inclusion",
+    "raw inventory parent anchor agreement",
+    "physical10 childTree/parentTree/typedPhysicalParent schema",
+    "public accessor exact same qualified parent status/USR",
+    "typed child USR/kind == raw occurrence; category/raw family agreement"
+  ],
+  "candidateEmitted": false,
+  "productionProofLoaderAuthority": "required pinned load_artifact result; no bypass/derived proof accepted"
+}

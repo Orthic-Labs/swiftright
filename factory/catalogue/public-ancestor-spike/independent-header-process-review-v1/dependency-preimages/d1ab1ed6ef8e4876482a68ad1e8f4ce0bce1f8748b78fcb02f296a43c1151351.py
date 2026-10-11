@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse,datetime,hashlib,json
+from pathlib import Path
+HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[4]; E=HERE/'process-evidence-v2.json'; LINK=ROOT/'factory/catalogue/compiler-cursor-spike/link-evidence.json'; EXPECTED_LINK='sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec'
+EXPECTED={'DeveloperToolsSupport':('sha256:542bc51aafe636aa86e9803cba835c3c043115cf2147fcf5a3769f343adf6968','sha256:d866701d7c144e6fc8e1d172d4b523aa359eef900b81ccf1c80f43e1ff7f0b8c','sha256:5a4ebdfe171afce0cfefa84a9df6ac21d856e2718cca34c4c6248cabdf0dff7d'),'Spatial':('sha256:c636541b2168ab4a025707b5e9c5afc6f74d1b7947d0ff299e1964312174129a','sha256:bd696812236143b8d98e39e8311b86daa3b72aafe7b34d1b2cba8564e9372d75','sha256:3936a37a1e4a349dd1e0c046a1db26fc0c0cca8dbb04c41262c1158c885902e9'),'Symbols':('sha256:d05fbe7c4de49af5b6977c2e8bec5084af7b3cb6964bfe8f079549039be636b1','sha256:acd723121a6dc05ea1eaffb32cbda09b6cbf4d173c435e7c960b9fbcd1bfcd47','sha256:34000296e9dfc17c0ed3e2033dcfc8833a028643c609681cd248ddde39e9e061'),'CoreFoundation':('sha256:1aef0961436c7abc0f09cdc5016126b01dd9454b42937c465b7c65e6f4edfeab','sha256:41a8e3df0bc3a4909d28dcf023b90639aaca1ad6c2b944fa6fe20de0c752afc9','sha256:b401cd5a70e96e9e8d2d86cec2737e23f6a0c66261c375469d1d2ce4d12e2cf6')}
+def sha(b):return 'sha256:'+hashlib.sha256(b).hexdigest()
+def check(x,m):
+ if not x:raise AssertionError(m)
+def main():
+ ap=argparse.ArgumentParser(); ap.add_argument('--evidence',type=Path,default=E); d=json.loads(ap.parse_args().evidence.read_text()); check(d['status']=='raw-facts-only-no-eligibility-conclusion','status'); check(d['immutableLink']['sha256']==EXPECTED_LINK and sha(LINK.read_bytes())==EXPECTED_LINK,'link'); check(d['target']=='arm64-apple-macosx27.0','target'); check({x['module'] for x in d['modules']}==set(EXPECTED),'modules')
+ for m in d['modules']:
+  n=m['module']; receipt=json.loads((ROOT/m['receipt']).read_text()); sh,rh,oh=EXPECTED[n]; check(receipt['module']==n,'module '+n); check(receipt['source']['sha256']==sh,'source '+n); req=ROOT/receipt['request']['path']; out=ROOT/receipt['process']['stdout']['path']; err=ROOT/receipt['process']['stderr']['path']; check(receipt['request']['sha256']==rh and sha(req.read_bytes())==rh,'request '+n); check(receipt['process']['stdout']['sha256']==oh and sha(out.read_bytes())==oh,'stdout '+n); check(receipt['process']['stderr']['sha256']==sha(err.read_bytes()),'stderr '+n); p=receipt['process']; check(p['returncode']==0,'exit '+n); check(p['argv']==['xcrun','sourcekit-lsp','debug','run-sourcekitd-request','--request-file',str(req)],'argv '+n); check(p['cwd']==str(ROOT),'cwd '+n); check(p['startedAt'] and p['finishedAt'] and p['startedAtEpochNs']<p['finishedAtEpochNs'],'timestamps '+n); check(receipt['source']['bytes']==Path(receipt['source']['path']).stat().st_size,'source bytes '+n)
+ print('process-v2 verification: 4 genuine subprocess receipts, exact argv/cwd/timestamps/exit, source/request/raw/stderr hashes pass')
+if __name__=='__main__':main()

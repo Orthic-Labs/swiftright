@@ -1,0 +1,26 @@
+{
+  "status": "preliminary-consumer-source-schema-reviewed",
+  "scope": "archive fallback/source-record-child schema & output preservation only",
+  "sourcePins": {
+    "consumer.py": "52cf53430bc40108bfc4d6dbdc646d13004211a3a41d53b64203a94faf5a5e94",
+    "test_consumer.py": "58d338b61b1e545551d8ae7523e7f7368e62b125da16bdd08f59f11b2f528d75",
+    "README.md": "10f916fda5ad673a1f37885f9a2629986d028ee38f8fe6e379f47e95d50ad58d"
+  },
+  "checks": [
+    "actual pinned archive reader reproduced108272 exact graph USRs",
+    "existing corrupt original never replaced by archived bytes",
+    "unknown/missing component status/evidence rejected",
+    "typed/nonpublic accessor status &raw-parent joins",
+    "public accessor requires exact qualified parent status/USR",
+    "raw child kind/USR/category-family agreement",
+    "physical10 preserves paired trees &forbids canonical transfer",
+    "component tree fields reject null/list/string",
+    "unset FINAL pins deny build before candidate creation",
+    "candidate atomic replace &sidecar rollback preserve prior bytes"
+  ],
+  "tests": "19 independent snapshot tests plus new focused12 tree-type fault cases; producer full20 passes",
+  "finalPinsUnset": true,
+  "candidateEmitted": false,
+  "productionProofLoaderAuthority": "required pinned load_artifact result before merge",
+  "followup": "final exact proof/guard/consumer tuple &accepted artifact review remains separate"
+}
