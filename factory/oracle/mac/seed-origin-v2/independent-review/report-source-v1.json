@@ -1,0 +1,87 @@
+{
+  "kind": "seed-origin-v1-independent-source-review",
+  "version": 1,
+  "scope": "Offline source review only; no compiler, capture, GUI, SSH, or producer edits.",
+  "producerStage": {
+    "stageManifestSha256": "sha256:e09db3ec98db37c921a0022dc946ae6ceefd7481711accb2258ed5a2b5998324",
+    "manifestEntries": 31,
+    "presentEntries": 31,
+    "missingEntries": 0,
+    "hashOrSizeMismatches": 0
+  },
+  "sourcePins": {
+    "capture_origin.py": {"bytes": 29343, "sha256": "sha256:768dbdd9026bfa02badde2fb825c5ef8a523010723d3bc6e532791f3018ea9ea"},
+    "verify_receipt.py": {"bytes": 3124, "sha256": "sha256:a5bde27889dcee0d27a624c9686bd01a27285bd820c86a4143a6644abe4050e3"},
+    "receipt-schema.json": {"bytes": 917, "sha256": "sha256:f3cab8e4ec05f6a1169d0ec3078975d6af5546729f8dd90728eb15097baaff4d"},
+    "input-pins.json": {"bytes": 7845, "sha256": "sha256:5e746cca8e2ebf6279c32f6019c469b5b69a6d1370465b7b85843d3e828bd495"},
+    "test_source.py": {"bytes": 1154, "sha256": "sha256:14680a4a8a4f21da419e439e5d25eb8a3f272c72bc16e8c21fc8121284ec2d89"},
+    "AXClient.swift": {"bytes": 4086, "sha256": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"},
+    "CaptureHost.swift": {"bytes": 12723, "sha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b"},
+    "policy/capture-base.py": {"bytes": 25172, "sha256": "sha256:f8ab9640bfb04a2c488a6f606828c16fa3712099957dced1d4bb46ec2401e0a"}
+  },
+  "inputControls": {
+    "seed": 14577611000270672472,
+    "blocks": ["stack-overlay", "padding-frame", "scroll-view", "custom-layout", "preference-key"],
+    "sourceHashCount": 5,
+    "staticTestCount": 3,
+    "staticTestsExecuted": false,
+    "sourceObserved": "test_source.py checks exact five inputs, receipt tokens, and verifier fault tokens"
+  },
+  "positiveFindings": [
+    {
+      "id": "resolved-swiftc-argv0",
+      "result": "PASS",
+      "evidence": "capture_origin.py:171-183; xcrun output is resolved before command argv construction, receipt compiler.path and argv[0] therefore share resolved target"
+    },
+    {
+      "id": "process-receipt-fields",
+      "result": "PASS",
+      "evidence": "capture_origin.py:172-203 and receipt-schema.json; resolver/compiler argv, PID, UTC bounds, exit, timeout, raw stream paths/hashes, compiler/xcrun hashes, source snapshots, and binary hash are emitted"
+    },
+    {
+      "id": "source-drift-and-adapter-binding",
+      "result": "PASS",
+      "evidence": "capture_origin.py:167-170, 225-231; Witness.swift and adapted CaptureHost.swift are snapshotted before/after compile, with source drift blocking success and adapter hash retained"
+    },
+    {
+      "id": "internal-scratch",
+      "result": "PASS",
+      "evidence": "capture_origin.py:22, 35-40, 218-220; fresh work is resolved and constrained below /Users/adrdsouza/Library/Caches/SwiftRightFactory"
+    },
+    {
+      "id": "no-prompt-preflight",
+      "result": "PASS",
+      "evidence": "AXClient.swift preflight reports trust without requesting permission; CaptureHost.swift preflight uses AXIsProcessTrusted and CGPreflightScreenCaptureAccess; recorder preflight intentionally uses missing fixture"
+    },
+    {
+      "id": "symlink-font-resolution",
+      "result": "PASS",
+      "evidence": "CaptureHost.swift:72-84 resolves symlinks, constrains path to internal scratch, checks hash, process-registers font, then checks PostScript name and descriptor URL"
+    },
+    {
+      "id": "owned-process-groups",
+      "result": "PARTIAL",
+      "evidence": "capture_origin.py:42-54 and 145-159 use start_new_session and killpg(process.pid) only for owned groups; compiler timeout path lacks final SIGKILL fallback"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "compiler-timeout-owned-child-finalization",
+      "severity": "BLOCK",
+      "evidence": "capture_origin.py:185-192",
+      "finding": "compiler_build sends SIGTERM on timeout, then calls communicate(timeout=5); second timeout is uncaught and no SIGKILL/communicate drain follows",
+      "impact": "A compiler descendant retaining its pipe can escape bounded cleanup; no final compiler receipt or status is produced",
+      "requiredSourceChange": "Reuse run-style SIGTERM, bounded wait, SIGKILL, and final drain for compiler process group before any actual capture"
+    },
+    {
+      "id": "resolver-timeout-unbounded",
+      "severity": "BLOCK",
+      "evidence": "capture_origin.py:171-177",
+      "finding": "xcrun resolver uses Popen(start_new_session=True) but rp.communicate() has no timeout or owned-group cleanup",
+      "impact": "Resolver can block before compiler receipt creation, defeating bounded subprocess admission",
+      "requiredSourceChange": "Apply same owned-group timeout/final-drain policy to resolver"
+    }
+  ],
+  "executionDisposition": "BLOCKED_PENDING_TIMEOUT_FINALIZATION",
+  "nextGate": "After producer source fixes are independently repinned, root may run bounded internal-cache controls; reviewer performed no execution."
+}

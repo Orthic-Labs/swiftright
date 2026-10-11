@@ -1,0 +1,34 @@
+{
+  "kind": "append-only-kernel-exit-interpretation-correction",
+  "priorReport": {
+    "path": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/repeat-stack-overlay-r1-failed.json",
+    "sha256": "609b06f7529fce3f4b613a215597ab364124e38329f9fd59883fd2757f0756e0",
+    "bytes": 138101
+  },
+  "priorStage": {
+    "path": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/stage-repeat-stack-failure-r1.json",
+    "sha256": "7b97f875da6b8f07eda25d21bda3ebe0eb8175d39508a5f1f237225969342a9d",
+    "bytes": 138901
+  },
+  "cleanupSource": {
+    "path": "factory/native/windows/round1-seeded-native-v2/cleanup.ps1",
+    "sha256": "8fe6b669fcad351e2367ec4af6d143567bc8795b666ce7e780fd96ca4e4be462",
+    "bytes": 3659
+  },
+  "actualOutcome": {
+    "path": "factory/native/windows/round1-seeded-native-v2/repeat-stack-overlay-r1/replays/run-017/native-01/capture-outcome.json",
+    "sha256": "0265c5ad0a6db9e6a08267c42eb5de1cdbfc8c3d4d5d0cbd122ca6064f2783c2",
+    "bytes": 1500
+  },
+  "actualDispatch": {
+    "path": "factory/native/windows/round1-seeded-native-v2/repeat-stack-overlay-r1/replays/run-017/dispatch.json",
+    "sha256": "63f3d569fa5bb384336944bfe76370fc574fd1870783c97d21901ce4de5dd914",
+    "bytes": 710
+  },
+  "correction": "Prior confirmed already-exit phrasing describes producer HasExited receipt only. Kernel process signal was not measured in already-exited branch; owned OS termination & lock release safety are not certified. Both raw copy tasks timed out; preserved stream hashes identify partial diagnostic bytes, not complete output.",
+  "kernelTerminationMeasured": false,
+  "lockReleaseSafetyCertified": false,
+  "reportedLockReleased": true,
+  "currentLockState": "not measured by reviewer; root read-only inventory pending",
+  "completed20Batches": 0
+}

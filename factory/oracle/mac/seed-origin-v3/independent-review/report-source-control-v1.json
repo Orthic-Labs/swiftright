@@ -1,0 +1,94 @@
+{
+  "kind": "seed-origin-v3-independent-source-control-review",
+  "version": 1,
+  "scope": "Offline source and archived positive-control review; no producer edits, GUI capture, or new compiler run.",
+  "producerStage": {
+    "stageManifestSha256": "sha256:d791a795f11dd0f1558177e96cb74f81bc2a435f7ce371f87a3f76ce5b38e503",
+    "manifestEntries": 42,
+    "presentEntries": 42,
+    "missingEntries": 0,
+    "hashOrSizeMismatches": 0
+  },
+  "sourcePins": {
+    "collector/capture_origin.py": {"bytes": 32924, "sha256": "sha256:21c487ac4da28347c3a2c4b8411c4d867b97f3853f7a533d192f4f304a0f985c"},
+    "collector/verify_receipt.py": {"bytes": 3514, "sha256": "sha256:0e878806df9ffaec8927784e892177f9bcd1adb6ee7df08d1154eec3ca54952d"},
+    "collector/receipt-schema.json": {"bytes": 1165, "sha256": "sha256:c469cfeefabbe39004d5ca5c56db1b4b3295788aa9e759ff711dc255a1b48967"},
+    "collector-v2-pins.json": {"bytes": 610, "sha256": "sha256:91c1dc257770a085b6aa6fc97bdeebb466a5bd949c6f8cba72ff4b2f4d0c2fb9"},
+    "input-pins.json": {"bytes": 7845, "sha256": "sha256:5e746cca8e2ebf6279c32f6019c469b5b69a6d1370465b7b85843d3e828bd495"},
+    "verify_positive_control.py": {"bytes": 3850, "sha256": "sha256:b9e7163c3c0aeab0d318f299b93ae900796bd6eb97af7bea0747494b2575bced"},
+    "test_v3.py": {"bytes": 4159, "sha256": "sha256:6251b64931129e4d8cfcbf4fc46432dd104e05e0046c1428ac903565608db85a"}
+  },
+  "archivedPositiveControl": {
+    "verification": "PASS",
+    "verificationMethod": "verify_positive_control.py plus six archived v3 tests; read-only offline checks",
+    "attempts": 1,
+    "captureRun": false,
+    "seedCaptureRun": false,
+    "guiCaptureRun": false,
+    "resolver": {"pid": 72358, "pgid": 72358, "exitCode": 0},
+    "compiler": {
+      "pid": 72362,
+      "pgid": 72362,
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceDrift": false,
+      "realToolDrift": false,
+      "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "realPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "realToolHash": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "argv": ["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-o", "<internal>/work/capture-host", "<internal>/work/Witness.swift", "<internal>/work/CaptureHost.swift"]
+    },
+    "receipt": {"path": "positive-control/evidence/compiler-receipt.json", "sha256": "sha256:8a10bd47c97dc0ed0f8c49a3b6562c35f3ab8fa4875ebdc035bd6e095672af8c"},
+    "binary": {"path": "positive-control/binary/capture-host", "bytes": 35168, "sha256": "sha256:515bbc6a5cbd1d7a7bb434b870a8f1a2a44849ab6dcbc39f69d060b32d862b90"},
+    "rawStreams": "resolver/compiler stdout and stderr paths plus hashes are present; archived bytes match archive-map",
+    "sourceJoin": "Witness.swift and CaptureHost.swift pre/post hashes and bytes equal",
+    "xcrunHash": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+  },
+  "positiveFindings": [
+    {
+      "id": "logical-real-tool-separation",
+      "result": "PASS",
+      "evidence": "collector/capture_origin.py:202-239; xcrun mode keeps argv ['/usr/bin/xcrun','swiftc'], while logical swiftc path, resolved swift-frontend path, pre/post hashes, and bytes are separately recorded"
+    },
+    {
+      "id": "owned-group-bounded-drain",
+      "result": "PASS_WITH_SOURCE_RISK",
+      "evidence": "collector/capture_origin.py:170-193, 211-217, 226-239; start_new_session, TERM then KILL, bounded drains, ProcessLookupError recording, and durable failure receipt are implemented"
+    },
+    {
+      "id": "receipt-verifier-joins",
+      "result": "PASS",
+      "evidence": "collector/verify_receipt.py:14-23 and archived verifier; PID/PGID, argv mode, cwd/source paths, raw hashes, tool hashes, source pre/post, exit, timeout, and binary joins pass"
+    },
+    {
+      "id": "seed-input-controls",
+      "result": "PASS",
+      "evidence": "test_v3.py; exact five seed rows, byte-exact v2 collector pins, corrected two-file @main fixture, symlink logical path, archive verification, and source/timeout fault rejection"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "collector-repo-root-depth",
+      "severity": "BLOCK",
+      "evidence": "collector/capture_origin.py:15-24; nested collector path makes Path(__file__).resolve().parents[4] resolve to repository/factory, not repository root",
+      "impact": "RECORDER, factory/.venv fallback, canonical case, recipe, and font paths resolve under wrong prefixes; direct seed capture cannot reliably locate required repository inputs",
+      "requiredSourceChange": "Derive repository root at parents[5] or via an explicit source-root contract, then repin full collector and stage hashes"
+    },
+    {
+      "id": "archived-runner-path",
+      "severity": "BLOCK",
+      "evidence": "positive-control/run-control.py:4-9; root is positive-control directory, so root/factory/oracle/mac/seed-origin-v3/capture_origin.py is absent",
+      "impact": "Archived runner cannot reproduce recorded control from its staged location; receipt remains valid artifact evidence, but invocation lineage is not replayable",
+      "requiredSourceChange": "Stage runnable runner with explicit repository source root or archive exact invoked argv/cwd/source path before seed admission"
+    },
+    {
+      "id": "first-timeout-not-propagated",
+      "severity": "BLOCK",
+      "evidence": "collector/capture_origin.py:170-193, 232; timedOut is assigned only from cleanup.drainTimedOut",
+      "impact": "If first communicate deadline expires, SIGTERM succeeds within next drain, and compiler exits 0, receipt can report timedOut false despite deadline breach",
+      "requiredSourceChange": "Track first communicate timeout separately; success must require no initial timeout, no TERM/KILL, and complete drain"
+    }
+  ],
+  "executionDisposition": "BLOCKED_PENDING_ROOT_PATH_RUNNER_AND_TIMEOUT_FIXES",
+  "nextGate": "After source fixes are repinned, rerun one bounded internal-cache positive control, then review seed capture admission."
+}

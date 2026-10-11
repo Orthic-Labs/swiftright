@@ -1,0 +1,90 @@
+{
+  "cases": {
+    "custom": {
+      "macExternalAX": "held",
+      "macRuns": 20,
+      "semanticMatchClaimed": false,
+      "windowsRuns": 20,
+      "windowsUIAChildrenPerRun": 0
+    },
+    "padding": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "exactRawRoleLabelMatches": 20,
+      "labelSequence": [
+        "Box"
+      ],
+      "macRuns": 20,
+      "windowsExecutableCompileSourceRowsJoined": 20,
+      "windowsRuns": 20
+    },
+    "preference": {
+      "exactRawRoleLabelMatches": 20,
+      "labelSequence": [
+        "0",
+        "1",
+        "2"
+      ],
+      "macRuns": 20,
+      "usableWindowsObservations": 1,
+      "v5FirstAttemptStatus": "hold-batch-error",
+      "v5RawFiles": 25
+    },
+    "scroll": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "exactRawRoleLabelMatches": 20,
+      "labelSequence": [
+        "Row 0",
+        "Row 1",
+        "Row 2",
+        "Row 3"
+      ],
+      "macRuns": 20,
+      "windowsExecutableCompileSourceRowsJoined": 20,
+      "windowsRuns": 20
+    },
+    "stack": {
+      "distinctMacClientPids": 20,
+      "distinctMacOwnerPids": 20,
+      "exactRawRoleLabelMatches": 20,
+      "labelSequence": [
+        "+"
+      ],
+      "macRuns": 20,
+      "windowsExecutableCompileSourceRowsJoined": 20,
+      "windowsRuns": 20
+    }
+  },
+  "custom": {
+    "macExternalAX": "held",
+    "semanticMatchClaimed": false,
+    "windowsUIAChildrenPerRun": 0
+  },
+  "decision": "clear-for-bounded-observational-report",
+  "faultControls": {
+    "case": "rejected",
+    "exe": "rejected",
+    "pref-count": "rejected",
+    "qualification": "rejected",
+    "raw": "rejected",
+    "semantic": "rejected",
+    "source": "rejected"
+  },
+  "held": [
+    "timing qualification",
+    "paint qualification",
+    "focus",
+    "occlusion",
+    "parity",
+    "goldens",
+    "qualification"
+  ],
+  "rawRootCount": 11,
+  "roleMapping": {
+    "AXStaticText": "ControlType.Text"
+  },
+  "schema": "f9-paired-five-independent-review-v1",
+  "sourceTreesRehashed": 11,
+  "stageManifestSha256": "06dbd5dbd2646a53495fca2b1c930a75a8c7b743c18e9a9d7bc735c96ba84eb0"
+}

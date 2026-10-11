@@ -1,0 +1,662 @@
+{
+  "decision": "CLEAR-DIAGNOSTIC-BYTE-JOINS-ONLY",
+  "requested": 20,
+  "attempted": 4,
+  "completedObservations": 3,
+  "completed20Batches": 0,
+  "failedRun": 4,
+  "failure": "Owned renderer child deadline; stdout raw stream completion deadline preserved",
+  "kernelTerminationMeasured": false,
+  "lockReleaseSafetyCertified": false,
+  "currentLockState": "not measured by reviewer; root read-only inventory pending",
+  "case": {
+    "hash": "sha256:0dba13824f3398666aba1b27b54c01ff02d3e282b2c429a66f3869a05ed0cb49",
+    "id": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "count": 3,
+  "runs": [
+    {
+      "run": 1,
+      "pid": 16236,
+      "hwnd": 132130,
+      "clientPixels": [
+        800,
+        600
+      ],
+      "dpi": 240,
+      "UIAChildren": 0,
+      "WM_CLOSE": true,
+      "producerReportedExit": true,
+      "producerReportedLockRelease": true,
+      "kernelTerminationMeasured": false,
+      "lockReleaseSafetyCertified": false,
+      "foregroundBefore": 395622,
+      "foregroundAfter": 0,
+      "globalForegroundUnchangedProven": false,
+      "PWRepeatStable": true,
+      "screenRepeatStable": true
+    },
+    {
+      "run": 2,
+      "pid": 57944,
+      "hwnd": 197826,
+      "clientPixels": [
+        800,
+        600
+      ],
+      "dpi": 240,
+      "UIAChildren": 0,
+      "WM_CLOSE": true,
+      "producerReportedExit": true,
+      "producerReportedLockRelease": true,
+      "kernelTerminationMeasured": false,
+      "lockReleaseSafetyCertified": false,
+      "foregroundBefore": 395622,
+      "foregroundAfter": 0,
+      "globalForegroundUnchangedProven": false,
+      "PWRepeatStable": true,
+      "screenRepeatStable": true
+    },
+    {
+      "run": 3,
+      "pid": 49436,
+      "hwnd": 263204,
+      "clientPixels": [
+        800,
+        600
+      ],
+      "dpi": 240,
+      "UIAChildren": 0,
+      "WM_CLOSE": true,
+      "producerReportedExit": true,
+      "producerReportedLockRelease": true,
+      "kernelTerminationMeasured": false,
+      "lockReleaseSafetyCertified": false,
+      "foregroundBefore": 395622,
+      "foregroundAfter": 0,
+      "globalForegroundUnchangedProven": false,
+      "PWRepeatStable": true,
+      "screenRepeatStable": true
+    }
+  ],
+  "MacRawStatuses": [
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED",
+    "OBSERVED"
+  ],
+  "compilerMacOrigin": "missing OS process receipt",
+  "semanticQualification": false,
+  "nativeParity": "hold",
+  "files": {
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/batch.json": {
+      "sha256": "8d9fb37612d179846e3174e6ad371d9a95a62596b70489a36fdda9fe41461f7b",
+      "bytes": 1838
+    },
+    "factory/native/windows/round1-seeded-native-v2/contract.json": {
+      "sha256": "599a6276e4d868f22565741b6673d137275838394808fc6d4ed27050b490ed1d",
+      "bytes": 16041
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/build-actual-v2-r1/observation.json": {
+      "sha256": "1f6a0a4ae621cb3ca1effcb1cd91d31f9ef291dbc1a828aaa74eaef4af1087c9",
+      "bytes": 2954
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/plan.json": {
+      "sha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "bytes": 5373
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/build-actual-v2-r1/FactoryProbe.exe": {
+      "sha256": "d4c0d01c338e176305411a502374f0011b9e8fd71bab0eff37876404583d101c",
+      "bytes": 3667456
+    },
+    "factory/native/windows/round1-seeded-native-v2/proof/source-join.json": {
+      "sha256": "9710caa875686a56cde3c0f73f3cf64f357620439ad253bbd6afb0c8bbc53de3",
+      "bytes": 115021
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-observation.json": {
+      "sha256": "7ed90ee4c7390f97a0c81fe1f44b89fff0edfbd90d2d86e45c56cd6f1dd13e57",
+      "bytes": 3951
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/dispatch.json": {
+      "sha256": "ee6192130376050d914d0fb5093d82f88de1f761e26891958808374d28166bc5",
+      "bytes": 737
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/capture-outcome.json": {
+      "sha256": "951baa7525841f4009e8779746c01e5a2ccf5f774347850708fbd80215f1c9ca",
+      "bytes": 1338
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/owned-process.json": {
+      "sha256": "f60fe7143235fe6c4326baab48befcfaa73154496f57935bff36f0308b804627",
+      "bytes": 272
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/launch-observation.json": {
+      "sha256": "2ca481784088703349e5f7e957ebd705ab49188576d8f3da721c7aa8a69c5939",
+      "bytes": 129
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/owned-close.json": {
+      "sha256": "cc27d33bff0a050420c0cfe30a9ce70925b05cd4ce3b5c6d34c74dab01dd5231",
+      "bytes": 211
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.pixels.json": {
+      "sha256": "307be7f9955a5cd935c6124ebdd9827f02dbca9d6957e860ebb53dbca48b1862",
+      "bytes": 7965
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.uia.json": {
+      "sha256": "a2e37670533361869b5293d0cc168fb03bd8eb260514e29d052435580165332d",
+      "bytes": 505
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/plan.json": {
+      "sha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "bytes": 5373
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/observation.json": {
+      "sha256": "1f6a0a4ae621cb3ca1effcb1cd91d31f9ef291dbc1a828aaa74eaef4af1087c9",
+      "bytes": 2954
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Package.swift": {
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Package.swift": {
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/witness.manifest.json": {
+      "sha256": "9ed05ff431fef2bb498bae33ebfe4f3e38f385042fce7472d5bf65fbdfae837b",
+      "bytes": 2013
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Sources/FactoryProbe/FactoryFill.swift": {
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Sources/FactoryProbe/FactoryFill.swift": {
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Sources/FactoryProbe/FactoryViewport.swift": {
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Sources/FactoryProbe/FactoryViewport.swift": {
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Sources/FactoryProbe/Witness.swift": {
+      "sha256": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "bytes": 1233
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Sources/FactoryProbe/Witness.swift": {
+      "sha256": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "bytes": 1233
+    },
+    "factory/native/windows/round1-seeded-hosts-v1/custom-layout/package/Sources/FactoryProbe/main.swift": {
+      "sha256": "c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51",
+      "bytes": 13040
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/Sources/FactoryProbe/main.swift": {
+      "sha256": "c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51",
+      "bytes": 13040
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/host.stderr.txt": {
+      "sha256": "e75b41ac7b0660043ddc14adc8490e9068add14da76b82233fefda0ef5cb524a",
+      "bytes": 1339
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/host.stdout.txt": {
+      "sha256": "cd2749a146f80c10ee5e863298f5e1638127b33964179904d6fba86a4aa7301e",
+      "bytes": 61768
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.printwindow.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.printwindow.repeat.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.screen.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/native-01/native.screen.repeat.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-observation.json": {
+      "sha256": "6370df85c09aee833adb82db45d0cae459d1f82689f920629177ad8cc7dd59f1",
+      "bytes": 3951
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/dispatch.json": {
+      "sha256": "781dd368796f0b373bede319b02f9c6acfd6f50f3c1609b0948296fff8cd2942",
+      "bytes": 737
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/capture-outcome.json": {
+      "sha256": "d8ec2951067193de61f5b601341195f0a8dffc7d4133aadedc68a2f4dcfdbb9a",
+      "bytes": 1338
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/owned-process.json": {
+      "sha256": "cd8de1b1ab5a2845618cbe314fd08263b313f14ef2dde585c8f3a577c79c090e",
+      "bytes": 272
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/launch-observation.json": {
+      "sha256": "7b230fc67da55e6fb6790bc4ff48c8171a8b55798015746d41cb5af158c245cf",
+      "bytes": 129
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/owned-close.json": {
+      "sha256": "209252dfa07bd2822ae5d91d79d8a10f3dcd3bd275a0d82821a0f31771cf8854",
+      "bytes": 211
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.pixels.json": {
+      "sha256": "826de1bc1041ef2d12e797835a2bc3d1ae3b05cdb576e75927839de037cdc633",
+      "bytes": 7965
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.uia.json": {
+      "sha256": "a2e37670533361869b5293d0cc168fb03bd8eb260514e29d052435580165332d",
+      "bytes": 505
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/plan.json": {
+      "sha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "bytes": 5373
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/observation.json": {
+      "sha256": "1f6a0a4ae621cb3ca1effcb1cd91d31f9ef291dbc1a828aaa74eaef4af1087c9",
+      "bytes": 2954
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Package.swift": {
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Sources/FactoryProbe/FactoryFill.swift": {
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Sources/FactoryProbe/FactoryViewport.swift": {
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Sources/FactoryProbe/Witness.swift": {
+      "sha256": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "bytes": 1233
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/Sources/FactoryProbe/main.swift": {
+      "sha256": "c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51",
+      "bytes": 13040
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/host.stderr.txt": {
+      "sha256": "d339aa8c724951923726e85c3c048250a9851a5cee2c74d4d4e37c5885b24371",
+      "bytes": 1337
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/host.stdout.txt": {
+      "sha256": "d59e90d9f1ce82b97c35fb7cd197341fee3344d6d9bc77a62e56cd87545ace96",
+      "bytes": 45928
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.printwindow.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.printwindow.repeat.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.screen.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/native-01/native.screen.repeat.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-observation.json": {
+      "sha256": "2e8fec2d6e434d4210834f6e9a5395644b8435fbdd9a1b37679b3d0ba4125df2",
+      "bytes": 3951
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/dispatch.json": {
+      "sha256": "350de0a82cb42710d4f3c664987da0c9b67b76eb95d85d488f12e01cd3f03bed",
+      "bytes": 737
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/capture-outcome.json": {
+      "sha256": "7aed52c40665cda67dab583870a73dcdcedb670138a470ea2338bc4c0bb470aa",
+      "bytes": 1338
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/owned-process.json": {
+      "sha256": "f2cfd0cc5f4b0e120630825efceacea21c10835e9e0c6f93691d25bd1eaf208e",
+      "bytes": 272
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/launch-observation.json": {
+      "sha256": "3807ec02c4f9cb34cc4d67afd97003759157c007b53c86da6614ce8e3dc019e2",
+      "bytes": 129
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/owned-close.json": {
+      "sha256": "b34c933c7a0c35b477d718de333a573ca86eb5d55f1f774e5d0385197317f431",
+      "bytes": 211
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.pixels.json": {
+      "sha256": "4c2c6c3bd74537ded669844d78a7f3dcfdb32c49d29bd9b9d1f7f6de89a98d93",
+      "bytes": 7965
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.uia.json": {
+      "sha256": "a2e37670533361869b5293d0cc168fb03bd8eb260514e29d052435580165332d",
+      "bytes": 505
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/plan.json": {
+      "sha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "bytes": 5373
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/observation.json": {
+      "sha256": "1f6a0a4ae621cb3ca1effcb1cd91d31f9ef291dbc1a828aaa74eaef4af1087c9",
+      "bytes": 2954
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Package.swift": {
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Sources/FactoryProbe/FactoryFill.swift": {
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Sources/FactoryProbe/FactoryViewport.swift": {
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Sources/FactoryProbe/Witness.swift": {
+      "sha256": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "bytes": 1233
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/Sources/FactoryProbe/main.swift": {
+      "sha256": "c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51",
+      "bytes": 13040
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/host.stderr.txt": {
+      "sha256": "6b1dfc37a930e2b3a8a177fb3301eb52df694b9c56ddc30f1fdee77b6450be42",
+      "bytes": 1336
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/host.stdout.txt": {
+      "sha256": "c67793ca3a5d31b5c78149a86375e4947fb23513c978706e7cf3cbc0f8439175",
+      "bytes": 53992
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.printwindow.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.printwindow.repeat.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.screen.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/native-01/native.screen.repeat.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/dispatch.json": {
+      "sha256": "395862ea4785473d56ecea00107126a54d472ad0687858b8e9069409e6bb84b4",
+      "bytes": 710
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/capture-outcome.json": {
+      "sha256": "4dcbb2624fb25aa39ee23a066ce5660101034eaddf08523bf376c2e37b99effa",
+      "bytes": 1432
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/task-result.json": {
+      "sha256": "7f1c37dd88f30745637eea1e83b10fcf78e8a3b06fac8e858dce0ceba1e80e4e",
+      "bytes": 151
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/owned-process.json": {
+      "sha256": "a5931090cd404e7fbbd1e52a076e4f034d65d41d325c251b5482de5d4b531157",
+      "bytes": 272
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/owned-close.json": {
+      "sha256": "03f9bee9e5d63b80b434380e3b2547cfea4227c1862c0e5cf6786ea0ef387c44",
+      "bytes": 211
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/observation.json": {
+      "sha256": "1f6a0a4ae621cb3ca1effcb1cd91d31f9ef291dbc1a828aaa74eaef4af1087c9",
+      "bytes": 2954
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/plan.json": {
+      "sha256": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "bytes": 5373
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/host.stdout.txt": {
+      "sha256": "4008c0c30f1494048de26947f243570ee954395da8c24630455618e299b664a7",
+      "bytes": 73576
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/host.stderr.txt": {
+      "sha256": "bf0047e50ea282755b108dc24650ca4372bd605271dfccee9295113d3ce04744",
+      "bytes": 1337
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/runtime-source-receipt.json": {
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/config.json": {
+      "sha256": "3122c6ffd9d01f937cf3d6b0cbf61ed1a245c7122cbe5728bab92a711336e00f",
+      "bytes": 541
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/scheduled-task-receipt.json": {
+      "sha256": "693b0527aa6762442aa2e628e7b43de3616a1ad0ae2d5c7ceb9dfbe1a03d7659",
+      "bytes": 110
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/task-result.json": {
+      "sha256": "6b76b41721abc7f88357785ab5f886a6196e4f1337f3ca896e7997b1c29e6ed2",
+      "bytes": 149
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/runtime-source-tree.json": {
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/task.log": {
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f",
+      "bytes": 158
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/pixels-background.ps1": {
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+      "bytes": 4795
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/hidden-task.vbs": {
+      "sha256": "ada9e739044431aecdb63c33d6de5e03557fd7b2a814e8d032b009c5fae6c81e",
+      "bytes": 376
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-001/host-inputs.ps1": {
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/runtime-source-receipt.json": {
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/config.json": {
+      "sha256": "7becc1959e56329218334021671cdf2ac1bba26e313d6b168f3075883d983581",
+      "bytes": 541
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/scheduled-task-receipt.json": {
+      "sha256": "1b93e5cbed99fe59214eeb05af6c2192318e67b96863a00cd281eb8c62577819",
+      "bytes": 110
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/task-result.json": {
+      "sha256": "a4085ecaddeb9a4451c8ef08162e89ee1cacca5b4cf9f85c5b475cd574bd8ca7",
+      "bytes": 149
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/runtime-source-tree.json": {
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/task.log": {
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f",
+      "bytes": 158
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/pixels-background.ps1": {
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+      "bytes": 4795
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/hidden-task.vbs": {
+      "sha256": "f5289bff20dc7ba894e2118ee30d2553976cd5aa67921236321b56f2c2024489",
+      "bytes": 376
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-002/host-inputs.ps1": {
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/runtime-source-receipt.json": {
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/config.json": {
+      "sha256": "bab7ad4208a68e7255ffa0be9ef1a1bd739a80505aa3e015006fbad8e4405108",
+      "bytes": 541
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/scheduled-task-receipt.json": {
+      "sha256": "0a7f4fccce36271520563014dcdc1b18ee2a170ac7308fac60406bbc8d3011bc",
+      "bytes": 110
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/task-result.json": {
+      "sha256": "20a0f6046cc0c1928da119da4b8ef2b41566b4bf9d485bc5715af2794d78eccf",
+      "bytes": 149
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/runtime-source-tree.json": {
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/task.log": {
+      "sha256": "48ea6148e23feca2c578b6cd319887a3f91683cc9f547c3563d33d8c278f787f",
+      "bytes": 158
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/pixels-background.ps1": {
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+      "bytes": 4795
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/hidden-task.vbs": {
+      "sha256": "b434e6e4cfc48d8eada6045851f1837ebf891214d8bea71c245d6542618093c5",
+      "bytes": 376
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-003/host-inputs.ps1": {
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/runtime-source-receipt.json": {
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/config.json": {
+      "sha256": "47b1cce1350d6c94c7191e00a813b050c30bc21b7a178fd61690abd1d9c2c605",
+      "bytes": 541
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/scheduled-task-receipt.json": {
+      "sha256": "73a61482fa9271092f637adf875ecc10e036112fcda7418ecf93ae3d58134e34",
+      "bytes": 110
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/runtime-source-tree.json": {
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Package.swift": {
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/task.log": {
+      "sha256": "6a6ae6273c004fad24101be5e1169bf9ef312a97b456af569589bd39b381ba48",
+      "bytes": 80
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/pixels-background.ps1": {
+      "sha256": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+      "bytes": 4795
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/hidden-task.vbs": {
+      "sha256": "449a8d2f6431d208aa45deec6489620948f22b6f281811b4d3a2460a02c992b0",
+      "bytes": 376
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/host-inputs.ps1": {
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.printwindow.repeat.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/coordinator-cleanup.json": {
+      "sha256": "7249de75f72fba9a48bcb4782f3243334ac2bd978cb319158cb1440253ff3001",
+      "bytes": 185
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.screen.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.uia.json": {
+      "sha256": "a2e37670533361869b5293d0cc168fb03bd8eb260514e29d052435580165332d",
+      "bytes": 505
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/launch-observation.json": {
+      "sha256": "b2d973776e518433f936f038d6c5caf907d9eef2fde63cce37788d4d1651da1d",
+      "bytes": 129
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.printwindow.png": {
+      "sha256": "65c3844a8600b7c0afc9a0b268d740c1b38068aa89af83a363887921be2c5067",
+      "bytes": 3363
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.pixels.json": {
+      "sha256": "73daec6b602c0426992856a4878d613cb4da822566b3dac839260700cc297372",
+      "bytes": 7965
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/native-01/native.screen.repeat.png": {
+      "sha256": "91b2cbc3c67dd0fda5740d7e4d1ce9292086be5b1fc7e32a1be0c9791d48e3db",
+      "bytes": 42557
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Sources/FactoryProbe/FactoryFill.swift": {
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Sources/FactoryProbe/Witness.swift": {
+      "sha256": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "bytes": 1233
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Sources/FactoryProbe/FactoryViewport.swift": {
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "factory/native/windows/round1-seeded-native-v2/repeat-custom-layout-r1/replays/run-004/Sources/FactoryProbe/main.swift": {
+      "sha256": "c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51",
+      "bytes": 13040
+    }
+  },
+  "fetchReceipt": {
+    "path": "factory/native/windows/round1-seeded-native-v2/root-repeat-custom-output-scp.json",
+    "sha256": "781fc38598768177867f6aedde8973a6c1d75d370e782aef3007eec6cc52d316"
+  },
+  "causalAttribution": "not established"
+}

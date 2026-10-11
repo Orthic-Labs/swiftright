@@ -1,0 +1,116 @@
+{
+  "claims": {
+    "customExternalAX": "held",
+    "focus": "held",
+    "goldens": 0,
+    "nativeParity": "held",
+    "nativeProcessExit": "raw ownedExited field retained; no kernel termination or shutdown qualification",
+    "occlusion": "held",
+    "qualification": "not claimed",
+    "qualifiedPaint": "held",
+    "rawTimingOnly": true
+  },
+  "controls": {
+    "independent": {
+      "case": "rejected",
+      "custom": "rejected",
+      "exe": "rejected",
+      "preference-v5": "rejected",
+      "qualification": "rejected",
+      "raw-pin": "rejected",
+      "sequence": "rejected",
+      "source": "rejected"
+    },
+    "producer": {
+      "baseline": "accepted",
+      "controls": {
+        "case": "rejected",
+        "exe": "rejected",
+        "pref-count": "rejected",
+        "qualification": "rejected",
+        "raw": "rejected",
+        "semantic": "rejected",
+        "source": "rejected"
+      }
+    }
+  },
+  "decision": "clear-bounded-observational-only",
+  "independentReviewSourceSha256": "sha256:8d8799298656363ee73bd20b717919385cd08e7201bbe31b75bcf2d0bdec04cc",
+  "kind": "independent-f9-paired-five-observations-actual-v2-review",
+  "observedText": {
+    "customMacExternalAX": "HELD",
+    "customWindows": [],
+    "padding": [
+      "Box"
+    ],
+    "preference": [
+      "0",
+      "1",
+      "2"
+    ],
+    "scroll": [
+      "Row 0",
+      "Row 1",
+      "Row 2",
+      "Row 3"
+    ],
+    "stack": [
+      "+"
+    ]
+  },
+  "producerSourceSha256": "sha256:23a907feecb172103e2b2d9856e454af9e5d760d630d08c6d9b361484051ad23",
+  "rawPinsSha256": "sha256:09fd7e30c5d3bb5b25572952a454406ce0a766577123900bedcacf98b5a677c2",
+  "reportSha256": "sha256:79ec09eff6311996e16650c9584e4fffada6c5f596a0583edce157222f0f971e",
+  "reviewReceipts": {
+    "custom20": {
+      "path": "factory/native/windows/round1-native-v3/independent-review/v5-repeat-custom-review-v1.json",
+      "sha256": "sha256:0a6941c6957294a7be6ccc0b5f684a13e9767ee3751be78cf29253611e9f0d40",
+      "status": "custom20-source-bound-observations-clear"
+    },
+    "padding20": {
+      "path": "factory/native/windows/round1-native-v3/independent-review/v5-repeat-padding-review-v1.json",
+      "sha256": "sha256:3d92546f58ad0976c64aa3fdbd24a04b4a0e6ec7fe91c4ffaed2202e151a372d",
+      "status": "padding20-source-bound-observations-clear"
+    },
+    "preference20": {
+      "path": "factory/native/windows/round1-native-v6/independent-review/actual-preference20-review-v1.json",
+      "sha256": "sha256:b4459a8000677cbe4ceff7e46d87ddbe349ccfe6a63c2b0579095e62cdc73cbc",
+      "status": "v6-preference20-source-bound-observations-clear"
+    },
+    "preferenceFailure": {
+      "path": "factory/native/windows/round1-native-v3/independent-review/v5-preference-failure-review-v1.json",
+      "sha256": "sha256:f84f83bd81290c7fbf8ade01ae85508df87d3f4dc981dc940de04688cedc7543",
+      "status": "preserved-preference-failure-consistent"
+    },
+    "roleAdapter": {
+      "path": "factory/pipeline/paired-next-observations-v1/independent-review/review-findings-v1.json",
+      "sha256": "sha256:8cafbde34cf42c37c80ad79168de62b9dfbe98b995e8373bec4e65ac1b530784",
+      "status": "clear-for-bounded-observational-report"
+    },
+    "scroll20": {
+      "path": "factory/native/windows/round1-native-v3/independent-review/v5-repeat-scroll-review-v1.json",
+      "sha256": "sha256:7715c2c1f8494b340a11a9463babf21332fb1da15be9a6ce2e704b85b8a62cee",
+      "status": "scroll20-source-bound-observations-clear"
+    },
+    "stack20": {
+      "path": "factory/native/windows/round1-native-v3/independent-review/v5-repeat-stack-review-v1.json",
+      "sha256": "sha256:6750904e94c9118d38743198663d204e4905aa3b573cff6e4322321afe19b2aa",
+      "status": "20-source-bound-observations-clear"
+    }
+  },
+  "scope": {
+    "cases": 5,
+    "macRuns": 100,
+    "preferenceV5FailedAttempt": {
+      "attempted": 1,
+      "inventoryFiles": 25,
+      "retained": true,
+      "successful": 0
+    },
+    "preferenceV6UsableRuns": 20,
+    "rawRoots": 11,
+    "windowsSuccessfulRuns": 100
+  },
+  "stageManifestSha256": "sha256:57078f7227f4cab7d7e148bbf08f3e73d7a0b72dd2af9628f0822de3dce2e60c",
+  "version": 1
+}

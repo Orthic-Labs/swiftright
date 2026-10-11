@@ -1,0 +1,51 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 factory/pipeline/paired-five-observations-actual-v1/independent-review/review.py",
+  "decision": "clear-for-bounded-observational-report",
+  "faultControls": "7/7 rejected; baseline accepted",
+  "files": [
+    {
+      "bytes": 23708,
+      "path": "review.py",
+      "sha256": "3904effca79512a31cd62aff4921b82fe3aec159459fd465a5b6addf1c6e0eda"
+    },
+    {
+      "bytes": 1324,
+      "path": "README.md",
+      "sha256": "cd3dfc80dafa1a904cd0f884f6bdd1a70a879541ef4314b7d2a6ca2d38e7dbf4"
+    },
+    {
+      "bytes": 2139,
+      "path": "findings-v1.json",
+      "sha256": "d71e1f4b6977a6b81361c43463838ffb865f6e174b55687421d0263229f77e50"
+    },
+    {
+      "bytes": 236,
+      "path": "fault-controls.stdout.json",
+      "sha256": "735cfe9a9a5f3fb0f9a97b4d94005520b7659d44db1eb16de31023ec0e0bcf9c"
+    },
+    {
+      "bytes": 0,
+      "path": "fault-controls.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 174,
+      "path": "review-run.stdout.json",
+      "sha256": "75b68ac74027e0f60b7b88f851031844d3ec70f28c22588571a36282523d81d2"
+    },
+    {
+      "bytes": 0,
+      "path": "review-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "kind": "f9-paired-five-observations-actual-v1-independent-review-stage",
+  "macRunsPerCase": 20,
+  "producerStageManifestSha256": "06dbd5dbd2646a53495fca2b1c930a75a8c7b743c18e9a9d7bc735c96ba84eb0",
+  "rawPinsSha256": "298b5c723c9b9cf9453414ef4793c457488a1d0117b84382c79aa4a83fcd1d9e",
+  "rawRootCount": 11,
+  "reportSha256": "f82d8044066f0cc2d371a0c2ee7ed69bc2f8a853bd1d20ad9e12b3594ff0247c",
+  "windowsNativeV5TwentyRunCases": 4,
+  "windowsPreferenceV3Runs": 1,
+  "windowsPreferenceV5FailedRawFiles": 25
+}

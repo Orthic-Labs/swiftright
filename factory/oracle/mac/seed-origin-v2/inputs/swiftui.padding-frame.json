@@ -1,0 +1,84 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.padding-frame.recipe",
+  "provenance": {
+    "sourceHash": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.padding-frame",
+  "witnesses": [
+    {
+      "id": "swiftui.padding-frame.witness",
+      "sourceHash": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db",
+      "resources": [
+        {
+          "id": "swiftui.padding-frame.witness.swift",
+          "hash": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.padding-frame.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "text": "Box",
+        "padding": 8,
+        "width": 96,
+        "height": 40
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "padding",
+      "values": [
+        4,
+        8,
+        12
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "width",
+      "values": [
+        72,
+        96
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "alignment",
+      "values": [
+        "leading",
+        "center",
+        "trailing"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.padding-frame.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:baa5f89c9092ea6c6d90eec1f50b414eb3b885875bdd436ce2ec83a33c6ff5bd"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.padding-frame.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}
