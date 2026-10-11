@@ -1,0 +1,252 @@
+﻿[
+    {
+        "mode":  "normal",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "kernelExitSignaled":  true,
+                       "kernelWaitResult":  0,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  true,
+                       "killAttempted":  true,
+                       "status":  "killed-owned-handle-signaled",
+                       "error":  ""
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "already-exited",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "kernelExitSignaled":  true,
+                       "kernelWaitResult":  0,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  true,
+                       "killAttempted":  false,
+                       "status":  "already-signaled",
+                       "error":  ""
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "exit-race",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "kernelExitSignaled":  true,
+                       "kernelWaitResult":  0,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  true,
+                       "killAttempted":  true,
+                       "status":  "signaled-during-kill",
+                       "error":  ""
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "identity-drift",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  258,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Owned cleanup identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "timeout",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  258,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  true,
+                       "status":  "hold-cleanup",
+                       "error":  "Owned cleanup kernel exit deadline/failure: 258"
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "observed-not-signaled",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  258,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  true,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "HasExited without retained kernel exit signal: 258"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "kernel-wait-failed",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  4294967295,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Kernel exit wait failed: 4294967295"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "kernel-wait-string",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  "0",
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Non-numeric kernel wait result"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "kernel-wait-null",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  null,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Non-numeric kernel wait result"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "kernel-wait-bool",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  false,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Non-numeric kernel wait result"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "retained-path",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  null,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Retained process identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "retained-start",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  null,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Retained process identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "zero-handle",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  null,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  null,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Stable process handle unavailable"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "unproven-exit",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "kernelExitSignaled":  false,
+                       "kernelWaitResult":  null,
+                       "exitCertification":  "retained-kernel-handle",
+                       "hasExitedObserved":  true,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Exited process lacks known Start lineage"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "cleanup-timeout",
+        "originalError":  "simulated capture failure",
+        "cleanup":  {
+                        "confirmedOwnedExit":  false,
+                        "kernelExitSignaled":  false,
+                        "kernelWaitResult":  258,
+                        "exitCertification":  "retained-kernel-handle",
+                        "hasExitedObserved":  false,
+                        "killAttempted":  true,
+                        "status":  "hold-cleanup",
+                        "error":  "Owned cleanup kernel exit deadline/failure: 258"
+                    },
+        "streamErrors":  {
+
+                         }
+    },
+    {
+        "mode":  "receipt-write-failure",
+        "originalError":  "simulated capture failure",
+        "cleanup":  {
+                        "confirmedOwnedExit":  false,
+                        "kernelExitSignaled":  false,
+                        "kernelWaitResult":  258,
+                        "exitCertification":  "retained-kernel-handle",
+                        "hasExitedObserved":  false,
+                        "killAttempted":  true,
+                        "status":  "hold-cleanup",
+                        "error":  "Owned cleanup kernel exit deadline/failure: 258"
+                    },
+        "streamErrors":  "outcome receipt: simulated write failure"
+    },
+    {
+        "mode":  "cleanup-only-reject",
+        "rejected":  true
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  true,
+        "exitConfirmed":  false,
+        "released":  false
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  false,
+        "exitConfirmed":  true,
+        "released":  false
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  true,
+        "exitConfirmed":  true,
+        "released":  true
+    }
+]
