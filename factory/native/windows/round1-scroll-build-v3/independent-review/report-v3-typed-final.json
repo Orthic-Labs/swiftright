@@ -1,0 +1,39 @@
+{
+  "schema": "round1-scroll-build-v3-independent-source-review-v3-typed-final",
+  "sourceOnly": true,
+  "executionPerformedByThisAgent": false,
+  "decision": "source-clearance-for-root-windows-controls",
+  "stage": {
+    "rootStageManifestR3Sha256": "9911b0a0211226f0d4bbbf60b8aebe183fb2f0150ec763d1accb8eb0bfcc1d7f",
+    "builderSha256": "1384cf8c7b1b7fe5e4b57af41c2af9043495c254aba9c8d37f51a6b6523127da",
+    "admissionSha256": "f15b737cd96f947ccaa8fff4690c495f494bed36badc507c7ad9be40c1ac2eb5",
+    "runControlsSha256": "7158c5953c0aead725f99971f0d9a614ebca078dac5d3112fce93ad07d3921d8",
+    "priorR2StageSha256": "5bbc50752e40d77b13e906c627ff5a3e505f3176ba35b59a0eec83d9dfe61ac",
+    "preservedPreRepairSnapshots": true
+  },
+  "typedIntegerHelper": {
+    "function": "Test-ControlIntegerEqual",
+    "acceptedTypes": ["System.Int32", "System.Int64"],
+    "bounds": "0 through Int32.MaxValue",
+    "exactExpectedValue": true,
+    "rejectedTypes": ["System.Boolean", "System.Double", "System.Decimal", "System.Single", "System.String", "null", "array"],
+    "directPositiveControls": "Int32 3, Int64 3, Int32 0, Int64 0",
+    "directFaultControls": ["bool", "float", "decimal", "negative", "out-of-range", "wrong-int64", "string", "null", "array"],
+    "productionDecodedCounts": "all count/value checks route through helper"
+  },
+  "coverage": {
+    "astScripts": 9,
+    "reservedAssignmentLint": "all 9 owned .ps1 scripts",
+    "admissionFaults": 7,
+    "integerFaults": 9,
+    "singleInvocationPaths": true,
+    "actualAdmissionRunsBeforeFixtures": true,
+    "compilerOrNativeCallsInControls": false
+  },
+  "reviewNotes": [
+    "run-controls host-input path repair is isolated and deterministic",
+    "JSON Int64 compatibility is handled without accepting bool or floating/decimal values",
+    "Root must run controls under intended Windows PowerShell 5.1 before compiler clearance",
+    "Native parity, GUI, executable launch, and test runner remain held"
+  ]
+}

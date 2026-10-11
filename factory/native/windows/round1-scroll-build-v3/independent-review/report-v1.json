@@ -1,0 +1,43 @@
+{
+  "schema": "round1-scroll-build-v3-independent-source-review-v1",
+  "sourceOnly": true,
+  "executionPerformedByThisAgent": false,
+  "decision": "blocked-before-root-controls",
+  "stage": {
+    "rootStageManifestSha256": "63e44aa9b15b314ef81a0c2199b7de1d6aac2c8efe62142710b4b9be21d5973a",
+    "fileCount": 10,
+    "totalBytes": 30077,
+    "preservedV2ManifestSha256": "11d1423be2be77b90d678166971e25b56e1191f97e7937f2caa3b0c11abf19e8"
+  },
+  "pins": {
+    "planSha256": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904",
+    "builderSha256": "ddcf98723ba98a72c3caeb33d8ce148628f26bd7c0ec491b69c1fc7bd0d16fc9",
+    "admissionSha256": "14f99136faa92b8136e383819bc2e7cba52610bb9d3ed22521e39f843eb56ebf",
+    "runControlsSha256": "a17012a2ab7e611311e115116330c2188392a05d2f9064aedcf089c77ba38937",
+    "parseSha256": "4c1192efbae942015001a7bf188d95b74b83b0fee5e6e49907dea9d7900e8dc0",
+    "reservedLintSha256": "0d070324e77b57dc1bb91b65b3971df01dc0a27f06bdaa6719fa48cdf7ce869b"
+  },
+  "blocker": {
+    "path": "factory/native/windows/round1-scroll-build-v3/run-controls.ps1",
+    "line": 10,
+    "expression": "Join-Path $root 'pure-controls\\test-host-inputs.ps1','run-controls.ps1','pure-controls\\reserved-assignment-lint.ps1','pure-controls\\parse-controls.ps1'",
+    "problem": "Four child paths are supplied to one Join-Path expression, then resulting value is used as one command invocation. Intended host-input control invocation is not represented as one deterministic command and can bind extra paths as arguments or fail before outputs are generated.",
+    "impact": "run-controls cannot be admitted as reliable producer of host-input-controls.json; actual production admission and builder proof cannot start.",
+    "repair": "Invoke test-host-inputs.ps1 with its own Join-Path expression; keep run-controls/reserved-lint/parse-controls as separate existing invocations.",
+    "history": "V2 source and failure remain unchanged. No control/compiler execution by this reviewer."
+  },
+  "reviewedSafeguards": {
+    "reservedHostRename": true,
+    "actualAdmissionBeforeFaultFixtures": true,
+    "sevenAdmissionFaults": true,
+    "fullScriptHashAndReservedAssignmentLint": true,
+    "retainedKernelHandleAndRawDrain": true,
+    "freshVersionedOutput": "build-v3-r1"
+  },
+  "requiredAfterRepair": [
+    "Run controls once and archive cleanup, host-input, AST, admission, and reserved-lint receipts",
+    "Require builder admission proof and fresh full-script lint hashes before compiler",
+    "Run one compiler-only build after controls pass",
+    "Keep native parity, GUI, executable launch, and test runner held"
+  ]
+}

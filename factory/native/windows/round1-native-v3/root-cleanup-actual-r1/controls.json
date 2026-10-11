@@ -1,0 +1,138 @@
+﻿[
+    {
+        "mode":  "normal",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "killAttempted":  true,
+                       "status":  "killed-owned-handle",
+                       "error":  ""
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "already-exited",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "killAttempted":  false,
+                       "status":  "already-exited",
+                       "error":  ""
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "exit-race",
+        "result":  {
+                       "confirmedOwnedExit":  true,
+                       "killAttempted":  true,
+                       "status":  "exit-during-kill",
+                       "error":  ""
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "identity-drift",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Owned cleanup identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "timeout",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  true,
+                       "status":  "hold-cleanup",
+                       "error":  "Owned cleanup wait deadline"
+                   },
+        "killed":  true
+    },
+    {
+        "mode":  "retained-path",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Retained process identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "retained-start",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Retained process identity drift"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "zero-handle",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Stable process handle unavailable"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "unproven-exit",
+        "result":  {
+                       "confirmedOwnedExit":  false,
+                       "killAttempted":  false,
+                       "status":  "hold-cleanup",
+                       "error":  "Exited process lacks known Start lineage"
+                   },
+        "killed":  false
+    },
+    {
+        "mode":  "cleanup-timeout",
+        "originalError":  "simulated capture failure",
+        "cleanup":  {
+                        "confirmedOwnedExit":  false,
+                        "killAttempted":  true,
+                        "status":  "hold-cleanup",
+                        "error":  "Owned cleanup wait deadline"
+                    },
+        "streamErrors":  {
+
+                         }
+    },
+    {
+        "mode":  "receipt-write-failure",
+        "originalError":  "simulated capture failure",
+        "cleanup":  {
+                        "confirmedOwnedExit":  false,
+                        "killAttempted":  true,
+                        "status":  "hold-cleanup",
+                        "error":  "Owned cleanup wait deadline"
+                    },
+        "streamErrors":  "outcome receipt: simulated write failure"
+    },
+    {
+        "mode":  "cleanup-only-reject",
+        "rejected":  true
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  true,
+        "exitConfirmed":  false,
+        "released":  false
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  false,
+        "exitConfirmed":  true,
+        "released":  false
+    },
+    {
+        "mode":  "confirmed-release",
+        "acquired":  true,
+        "exitConfirmed":  true,
+        "released":  true
+    }
+]

@@ -1,0 +1,36 @@
+{
+  "schema": "round1-scroll-build-v3-independent-source-review-v2-numeric-addendum",
+  "sourceOnly": true,
+  "executionPerformedByThisAgent": false,
+  "stage": {
+    "rootStageManifestSha256": "adf425285fb6ab07d3c1c0abdaa3d6cd84cca12e1f7185faaccd7bfd9155c517",
+    "builderSha256": "ddcf98723ba98a72c3caeb33d8ce148628f26bd7c0ec491b69c1fc7bd0d16fc9",
+    "runControlsSha256": "f374fff7b7cdbfab715450d197e723380a6c617d36df546d04f38332db33aeff",
+    "admissionSha256": "14f99136faa92b8136e383819bc2e7cba52610bb9d3ed22521e39f843eb56ebf",
+    "preservedPreRepairSnapshot": "versioned-snapshots/pre-peer-repair-v1"
+  },
+  "line10Repair": {
+    "status": "source-fixed",
+    "runControlsNowInvokes": "pure-controls\\test-host-inputs.ps1",
+    "hash": "f374fff7b7cdbfab715450d197e723380a6c617d36df546d04f38332db33aeff"
+  },
+  "numericAdmission": {
+    "decision": "blocked-until-typed-check-repaired-or-runtime-receipt-proves-compatible",
+    "paths": ["control-admission.ps1:8", "control-admission.ps1:14", "control-admission.ps1:31"],
+    "currentChecks": "JSON count fields require -isnot [int] rejection",
+    "risk": "Windows PowerShell ConvertFrom-Json commonly materializes JSON integers as Int64; Windows PowerShell 5.1 and PowerShell 7 must be verified. V2 never reached these checks because reserved $host failed first.",
+    "impact": "Valid generated receipts may be rejected before admission when counts are Int64, despite values 0 or 3.",
+    "requiredFix": "Use a helper that accepts only integral Int32 or Int64 values, rejects bool, Double, Decimal, and Single, and enforces expected range/value; apply to positiveCases, nativeCalls, compilerInvocations, nativeWindows, and proof counts.",
+    "examplePolicy": "($value -is [int] -or $value -is [long]) -and $value -ge 0 -and $value -le 3; reject $value -is [bool] and all floating/decimal types",
+    "requiredControls": "Add positive Int64 receipt fixture plus rejected bool, Double/Decimal, and out-of-range fixtures; run under intended Windows PowerShell 5.1 and 7 before compiler."
+  },
+  "safeguardsReviewed": {
+    "reservedHostRename": true,
+    "actualAdmissionProof": true,
+    "sevenFaultFixtures": true,
+    "reservedAssignmentLint": true,
+    "retainedKernelHandleCleanup": true,
+    "freshVersionedOutput": "build-v3-r1"
+  },
+  "decision": "Do not clear root controls/build until numeric admission typing is proven or fixed; preserve pre-repair and v2 histories."
+}

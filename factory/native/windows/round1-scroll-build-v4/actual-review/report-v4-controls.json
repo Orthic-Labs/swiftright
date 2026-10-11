@@ -1,0 +1,42 @@
+{
+  "kind": "independent-actual-control-review-v4",
+  "decision": "actual-controls-clear-for-compiler-gate",
+  "reviewScope": "fetched receipts and control outputs; no execution by reviewer",
+  "stage": {
+    "sha256": "49663c0438195fe7633cfb69773224a5cbd77289cf08d70fc696493f5bd77479",
+    "verifiedFiles": 12,
+    "transferExitCode": 0
+  },
+  "rootControlProcess": {
+    "exitCode": 0,
+    "startedAt": "2026-10-11T04:54:28.372325+00:00",
+    "finishedAt": "2026-10-11T04:54:32.157803+00:00",
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4",
+    "scriptSha256": "0c0a2cf970cb8de6f6e0d3865263d76acbc0b3883b44b8ad5f8aa3603109d297"
+  },
+  "outputChecks": {
+    "scpManifestFilesHashMatch": true,
+    "parseRows": 9,
+    "parseErrors": 0,
+    "integerPositiveInt32": 2,
+    "integerPositiveInt64": 2,
+    "integerFaultsRejected": 9,
+    "admissionActualGeneratedOutputsPassed": true,
+    "admissionFixturePositivePassed": true,
+    "admissionFaultsRejected": 7,
+    "reservedAssignmentLintPass": true,
+    "reservedLintScripts": 10,
+    "compilerInvocations": 0,
+    "nativeCalls": 0
+  },
+  "sourceJoins": {
+    "admissionHelperSha256": "3691bca9bc9245f53f89b0368fdb607ab0a4f9f8724c1bf8a1bc417e3470962f",
+    "integerHelperSha256": "3691bca9bc9245f53f89b0368fdb607ab0a4f9f8724c1bf8a1bc417e3470962f",
+    "cleanupHelperSha256": "018d89b825634a0dc238c1201d4fd97a23acbcdaf57b82333c6097e9efd92001",
+    "hostInputHelperSha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "parseRowsMatchReviewedSourcePins": true,
+    "reservedLintHashesMatchReviewedSourcePins": true
+  },
+  "rootNextAction": "Use this successful control receipt and output hash set as compile-gate proof; compile once with existing builder and retain build receipt."
+}

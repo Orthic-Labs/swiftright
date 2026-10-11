@@ -1,0 +1,39 @@
+{
+  "kind": "independent-source-review-v4",
+  "decision": "source-clearance-for-root-controls",
+  "scope": "read-only source review; no compiler, native, SSH or GUI execution",
+  "stage": {
+    "path": "factory/native/windows/round1-scroll-build-v4/root-stage-manifest.json",
+    "sha256": "49663c0438195fe7633cfb69773224a5cbd77289cf08d70fc696493f5bd77479",
+    "fileCount": 12,
+    "totalBytes": 35733
+  },
+  "producerPins": {
+    "buildHost": "b82f4b071020877c3e307c768c56195f6ce1f6a56b61a6e4a03630a67936badf",
+    "controlAdmission": "3691bca9bc9245f53f89b0368fdb607ab0a4f9f8724c1bf8a1bc417e3470962f",
+    "runControls": "087f42699071b5d7a15d182b6806a61d88a17315ff9f79af625fff14016143e9",
+    "parseControls": "75d75e4e27952115dd6b4ff56dd5df68b8f05cbc4783a77994f3ca950c5cb9d7",
+    "readiness": "af41cdea29284fba9c1503bbe0bc804a4358399d06de8305396935e25c2c4db6"
+  },
+  "sourceChangeReviewed": {
+    "cause": "Windows PowerShell 5.1 witness showed command-wrapped ConvertFrom-Json array captured as one nested Object[]",
+    "fix": "decode into scalar variable, then explicitly enumerate decoded variable with @($decoded)",
+    "locations": [
+      "control-admission.ps1:13-14 production parse admission",
+      "run-controls.ps1:30-32 positive fixture projection",
+      "run-controls.ps1:60-62 parser fault mutation"
+    ],
+    "preserved": "v3 source and actual GetFullPath failure are referenced byte-exactly by preserved-v3-reference-list.json"
+  },
+  "reviewChecks": {
+    "expectedParseSetUsesV4Builder": true,
+    "parseRowsAreExplicitlyEnumeratedBeforePathAccess": true,
+    "positiveFixtureUsesCopiedParseRows": true,
+    "faultFixtureMutatesFirstRowAfterEnumeration": true,
+    "actualAdmissionRunsBeforeFixtureMutation": true,
+    "integerAndLintOutputsRemainRootProofOnly": true,
+    "compilerOutputRemainsBuildV3R1": true,
+    "noProductionRuntimeOrRendererEdits": true
+  },
+  "rootNextAction": "Run fresh bounded Windows PowerShell 5.1 controls, retain raw streams and receipts, then apply existing compiler admission gate only after controls pass."
+}

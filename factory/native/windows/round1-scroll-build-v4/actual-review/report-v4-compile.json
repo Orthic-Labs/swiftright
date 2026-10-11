@@ -1,0 +1,62 @@
+{
+  "kind": "independent-actual-compile-review-v4",
+  "decision": "actual-compile-receipt-clear",
+  "reviewScope": "fetched compile receipt and output review; no execution by reviewer",
+  "controlsJoin": {
+    "admissionSha256": "4cc3b70094c31787adfd9715f813a31197d340b12d956995d1727c2040594c35",
+    "integerSha256": "f8e17fbd48eb567cfe882ca2e6b62580139ead6ffaafae480a3da9754be50cc5",
+    "reservedLintSha256": "0a9dcf5ee60cb142aeb1a0da0348d0960fbe02a3bd7b4033abe3807ddbe8dd2d",
+    "builderSha256": "b82f4b071020877c3e307c768c56195f6ce1f6a56b61a6e4a03630a67936badf",
+    "admissionHelperSha256": "3691bca9bc9245f53f89b0368fdb607ab0a4f9f8724c1bf8a1bc417e3470962f"
+  },
+  "receipt": {
+    "path": "factory/native/windows/round1-scroll-build-v4/build-actual-r1/observation.json",
+    "sha256": "7b4bb2e539b8b635eaf3488f438552ec3d3035a289f68b74c40dcb397028511b",
+    "planSha256": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904",
+    "sourceHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "exitCode": 0,
+    "timedOut": false,
+    "ownedExited": true,
+    "cleanupAction": "natural-exit-no-termination",
+    "error": null,
+    "cleanupError": null,
+    "streamDrainComplete": true,
+    "nativeWindowOpened": false,
+    "nativeParity": "hold"
+  },
+  "argvAndOutput": {
+    "cwd": "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-scroll-host-v1\\package",
+    "output": "build-v3-r1",
+    "exeSha256": "8be63237c595406036e3869500e7c298781d810b1d78b6eb3ab0242218e7d752",
+    "exeBytes": 3664896,
+    "exeSubsystem": 2,
+    "compileStdoutSha256": "7d9938055a4f0b81a5823d9feaf05162edf803ba0e49261e828cb472117909e9",
+    "compileStdoutBytes": 340,
+    "compileStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compileStderrBytes": 0,
+    "scpTransfersExitZero": true,
+    "scpOutputHashesMatch": true
+  },
+  "bridgeGate": {
+    "packagePath": "D:\\Claude\\sr0-r09\\src\\packages\\SwiftRightBridge",
+    "bindingCount": 10,
+    "builderSourceChecksPlanBridgeMembershipAndHashes": true,
+    "inlineEntryCopiedToDell": false,
+    "inlineEntryDisposition": "local-only entry preserved so reserved-lint membership remains intact"
+  },
+  "rootBuildStart": {
+    "scriptSha256": "6f7506ccdb0af40ff9251a8e8f87e90dea7acb8300a786e74b99353a4c8ed887",
+    "builderHashChecked": true,
+    "admissionHashChecked": true,
+    "admissionOutputHashChecked": true,
+    "integerOutputHashChecked": true,
+    "reservedLintHashChecked": true,
+    "builderInvokedAfterChecks": true
+  },
+  "rootNextAction": "Retain compile receipt and executable as actual v4 build evidence; preserve native parity hold."
+}

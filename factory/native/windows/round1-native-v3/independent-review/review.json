@@ -1,0 +1,23 @@
+{
+  "schema": "round1-native-v3-independent-source-review-v1",
+  "status": "scoped-source-control-design-clear",
+  "producerStage": "f16c92f3b60b0c2a4157869f7fc4e9aa2d7322416e5fde7a8625d33c01a2a665",
+  "verifiedPins": 161,
+  "findings": [],
+  "reviewed": [
+    "Five exact case/package/plan routes: stack-overlay/custom-layout build-r1; padding-frame/preference-key/scroll-view build-v2-r1, mandatory measured receipt/exe hashes, actual source/runtime/bridge input guards",
+    "Successful raw stdout/stderr CopyToAsync completion, Flush(true), Dispose, sealed marker before Get-Content/Get-FileHash/all-file enumeration; finally idempotent & original error priority retained",
+    "Actual FileStream IO control design covers close/read/hash/idempotence, unfinished/faulted tasks & two streams/all-file enumeration",
+    "Cleanup/namespace/repeat-task/helper tests byte-equal previously reviewed sources; 15 cleanup + 7 namespace controls retained",
+    "Fresh namespaces & exactly count1 or20; no retries, source/namespace/receipt guards before/after attempts",
+    "Current staged PowerShell reserved Host/PID/input assignment scan clean; timestamped owner exact CAS/config/capture/release plumbing"
+  ],
+  "execution": {
+    "offlineStaticReplay": "passed",
+    "PowerShellAST": "root execution required before GUI",
+    "pureIOCleanupNamespace": "root execution required before GUI",
+    "nativeRuns": 0,
+    "producerEdits": 0
+  },
+  "scope": "Source/design clearance only; nativeParity remains held"
+}
