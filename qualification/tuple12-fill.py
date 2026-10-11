@@ -85,6 +85,10 @@ def main():
         data["members"][name]["sha256"] = value
         old = data["members"][name].get("source", [])
         data["members"][name]["source"] = list(dict.fromkeys([*old, refs[name]]))
+    top_renderer = str(data.get("renderer_sha256", "")).lower()
+    member_renderer = str(data["members"]["windows_renderer"].get("sha256", "")).lower()
+    if top_renderer and member_renderer and top_renderer != member_renderer:
+        fail(f"renderer join mismatch: renderer_sha256={top_renderer} windows_renderer={member_renderer}")
     complete = all(HEX.fullmatch(str(data["members"][n].get("sha256", ""))) and data["members"][n].get("source") for n in MEMBERS)
     data["status"] = "RECEIPTED_CANDIDATE" if complete else "PARTIAL_RECEIPTS"
     data["note"] = "Candidate only; every populated hash is bound to verified artifact bytes or sealed binary/run receipt; tuple12 qualification remains pending stage, W08 proof, matrix, native, package, and 20-per-side receipts."

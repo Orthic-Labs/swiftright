@@ -1,0 +1,30 @@
+{
+  "kind": "sr0-tuple12-driver-overlay",
+  "version": 5,
+  "status": "candidate",
+  "baseScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r4.ps1",
+    "sha256": "34d28b1f4cc6a4fccb279639ae767c069a40ae081290ef2b11aebafd52b441b4"
+  },
+  "overlayScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r5.ps1",
+    "sha256": "5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4"
+  },
+  "change": [
+    "After renderer-ready identity, refresh Process.MainWindowHandle and require same owner PID plus positive GetClientRect before metrics/UIA/input.",
+    "Fail closed with HWND zero and rendererReadyValid false when revalidation cannot prove current window identity.",
+    "Preserve retained process handle, same-HWND guards, noactivate targeted delivery, native 17/17 gates, and foreground transition accounting."
+  ],
+  "observedFailure": {
+    "archive": "probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-smoke-v1/observed-f1-20-actual-r3",
+    "windowMetrics": "pid=0 client_ok=False window_ok=False same_process=False",
+    "semantic": "no UIA root; self-test timed out waiting row5 focused by AX; child exit=1",
+    "nativeInput": "none; target identity never admitted"
+  },
+  "admission": {
+    "requiredRunSummary": "keymode=char delivery=targeted fg_changes=0 driver_abort=none",
+    "nativeSemantic": "17/17 plus logical focus, text, AX focus, and retained handle/kernel proof",
+    "sourceControls": "qualification/test_startupguard_driver_r5_controls.py",
+    "sourceControlsSha256": "d2223b6d43e62d98fc4020f7100b1afcfbbf4d6c1e4381d4009bda8e73d8422e"
+  }
+}

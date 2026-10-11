@@ -17,6 +17,8 @@ def invoke(candidate, *args):
 def fixture(work, populated=False):
     candidate = work / "candidate.json"
     data = json.loads(BASE.read_text())
+    # Controls use STATUS bytes as synthetic artifact; bind top-level renderer pin to same bytes.
+    data["renderer_sha256"] = sha(STATUS)
     if populated:
         data["members"]["windows_renderer"] = {"what": "test", "sha256": sha(STATUS), "source": ["stale-source"]}
     candidate.write_text(json.dumps(data))
@@ -50,6 +52,10 @@ def main():
         link = work / "candidate-link.json"; link.symlink_to(candidate)
         ok = invoke(link, "--source", f"windows_renderer={receipt}")
         rows.append({"name": "symlink-candidate-path", "passed": ok.returncode != 0, "exit": ok.returncode})
+        candidate, receipt = fixture(work)
+        data = json.loads(candidate.read_text()); data["renderer_sha256"] = "0" * 64; candidate.write_text(json.dumps(data))
+        ok = invoke(candidate, "--source", f"windows_renderer={receipt}")
+        rows.append({"name": "renderer-member-join", "passed": ok.returncode != 0, "exit": ok.returncode})
     finally:
         shutil.rmtree(work)
     result = {"kind": "sr0-tuple12-fill-controls-v1", "status": "passed" if all(r["passed"] for r in rows) else "failed", "scriptSha256": sha(FILL), "controls": rows}

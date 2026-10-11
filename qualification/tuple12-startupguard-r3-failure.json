@@ -1,0 +1,36 @@
+{
+  "kind": "sr0-tuple12-startupguard-failure-review-v1",
+  "status": "confirmed-failure",
+  "archive": {
+    "root": "probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-smoke-v1/observed-f1-20-actual-r3",
+    "zipSha256": "8b5a2b9a560a2d6986d456db9d2f9595889e266ca13614e8ad04fb0261768184",
+    "verifiedFiles": 6,
+    "manifestSha256": "80835bb6d8e80a31f903083c61f92fbe4b1b69735a0dd4471859d153aa41c9ce",
+    "transportReviewSha256": "5838b1e4903a9717164c89928baf613b3c762ff1b02ae41a83d5aa24edd7e203"
+  },
+  "run": {
+    "case": "F1-r1-928d92075c134d6499a20765361a97e3",
+    "receipt": "F1-r1-928d92075c134d6499a20765361a97e3/receipts/worker-bb4c2b9bceb24fe0b2286c63e15374ec.json",
+    "receiptSha256": "ea33ab394fcb4528cb831507f2dd787f8481ec40d98ae6a469819e91d3b600fe",
+    "trace": "F1-r1-928d92075c134d6499a20765361a97e3/F1-r-bb4c2b9bceb24fe0b2286c63e15374ec/driver-trace.txt",
+    "traceSha256": "b9637b4465ee8395782a1820b1dbdd6aabe7be8c8e89894873b0b8a968935753"
+  },
+  "observed": {
+    "rendererReady": "true",
+    "windowMetrics": "pid=0 client_ok=False window_ok=False same_process=False",
+    "ui": "no window: UIA root unavailable",
+    "selfTest": "timeout waiting for row5 focused by AX; 7/17 assertions",
+    "driverExit": 0,
+    "childExit": 1,
+    "nativeInputAttempted": false,
+    "lock": "released after terminal proof"
+  },
+  "diagnosis": "HWND sampled before Bridge.onReady was invalid at metrics time; semantic focus/input gates were never reached.",
+  "successor": {
+    "driver": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r5.ps1",
+    "driverSha256": "5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4",
+    "overlay": "qualification/tuple12-startupguard-focus-overlay-r5.json",
+    "overlaySha256": "72932060449ea82d9ff04b2c04dc21a5dcef1c48016cf32454ba9de401774fb6",
+    "controlsSha256": "d2223b6d43e62d98fc4020f7100b1afcfbbf4d6c1e4381d4009bda8e73d8422e"
+  }
+}

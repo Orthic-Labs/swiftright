@@ -64,6 +64,7 @@ def marker_ok(text: str, exe: str, dll: str) -> tuple[bool, list[str]]:
         "record=renderer-ready",
         "phase=first-ready",
         "source=Bridge.onReady",
+        "renderer_window_revalidate=PASS",
         "WindowMetrics phase=startup",
         "client_ok=True",
         "same_process=True",
