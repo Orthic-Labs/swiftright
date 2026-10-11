@@ -1,0 +1,24 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import os; os.write(1,b\"x\"*(2*1024*1024))"
+  ],
+  "pid": 83739,
+  "exitCode": 0,
+  "budgetFailure": "log-budget",
+  "startedAt": "2026-10-11T17:10:44.573002+00:00",
+  "finishedAt": "2026-10-11T17:10:44.643067+00:00",
+  "seconds": 0.07,
+  "peakGroupRssBytes": 540672,
+  "stdout": {
+    "bytes": 2097152,
+    "sha256": "6932fd31e5daf4739b9fa78ff777b2831b0995cc1d0b0093cac80601902013bc"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ownedGroupQuiescent": true
+}

@@ -9,3 +9,5 @@ Two included files have logical sizes of 50,000,000,000 bytes each: `factory/.ta
 Recovery: user terminated offending process; root verified PID absent & no SwiftRight Python process remaining. Both source agents paused. No rerun of broad search.
 
 Prevention: `factory/AGENTS.md` now requires explicit source scopes, scratch/VM exclusions, streaming hashes, pre-read size limits & supervision of yielded sessions. `factory/tools/hash-explicit-files.py` enforces 64 MiB per file, 256 MiB total, 256 files & 60 seconds with 1 MiB reads. Its controls verify exact streaming SHA256, large sparse-file refusal before read, explicit VM-disk refusal & symlink refusal.
+
+Resume controls: `factory/tools/supervise-job.py` streams job logs & supervises owned process groups against explicit time, sampled RSS & output budgets. Five real process controls passed: normal completion, deadline termination, RSS termination, output refusal & descendant cleanup. Every receipt records owned-group quiescence. Evidence is retained in `factory/evidence/resource-supervisor-v1/`; source lanes use 256 MiB budgets & root reconciles every yielded session before accepting completion.

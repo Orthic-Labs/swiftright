@@ -1,0 +1,43 @@
+{
+  "kind": "factory-supervisor-real-process-controls-v1",
+  "status": "passed",
+  "controls": [
+    {
+      "name": "positive",
+      "exitCode": 0,
+      "budgetFailure": null,
+      "peakGroupRssBytes": 4571136,
+      "ownedGroupQuiescent": true
+    },
+    {
+      "name": "deadline",
+      "exitCode": 124,
+      "budgetFailure": "wall-time-budget",
+      "peakGroupRssBytes": 14942208,
+      "ownedGroupQuiescent": true
+    },
+    {
+      "name": "rss",
+      "exitCode": 124,
+      "budgetFailure": "rss-budget",
+      "peakGroupRssBytes": 65257472,
+      "ownedGroupQuiescent": true
+    },
+    {
+      "name": "output",
+      "exitCode": 124,
+      "budgetFailure": "log-budget",
+      "peakGroupRssBytes": 540672,
+      "ownedGroupQuiescent": true
+    },
+    {
+      "name": "descendant",
+      "exitCode": 0,
+      "budgetFailure": null,
+      "peakGroupRssBytes": 5324800,
+      "ownedGroupQuiescent": true
+    }
+  ],
+  "nativeRuns": 0,
+  "remoteActions": 0
+}
