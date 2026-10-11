@@ -1,0 +1,73 @@
+{
+  "kind": "padding-settled-capture-prospective-v3",
+  "status": "source-config-ready; fresh Count1 and Count20 roots; build-v5 pins bound; no native dispatch",
+  "case": {
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+    "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d"
+  },
+  "sourcePackagePath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-metrics-v2\\package",
+  "sourcePlanSha256": "sha256:5c691cd1e060ae99116795e1122bf396043c290ff1faba58953b6860f24b0a5d",
+  "compiledPlanSha256": "sha256:fe088dc1318e6ebc319c95ee169c2c91aa7e630fd19d81729389ebedb8397b20",
+  "compiledHostPackagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-settled\\package",
+  "reviewedBuildPreflightSha256": "sha256:bb16722ed8e14b34b1ffc9949c12f10c39d885d40b0d577ad0c48a14078564ab",
+  "serializerControl": {
+    "relativePath": "serializer-control-actual-r2\\control.json",
+    "hashInput": "Actual lowercase SHA256 supplied by root; build preflight revalidates bytes before each launch"
+  },
+  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-capture-v3",
+  "renderer": {
+    "rollingInputPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "preflight": "Hash must be verified against rolling input before every root dispatch; source loader does not enforce hash."
+  },
+  "expectedSource": {
+    "witnessHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "dispatch": {
+    "first": {
+      "count": 1,
+      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-capture-v3\\actual-single-r1"
+    },
+    "repeat": {
+      "count": 20,
+      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-capture-v3\\actual-repeat-r1",
+      "requires": "first dispatch exact observational success, owned lock release & fresh namespace"
+    },
+    "retries": false,
+    "nativeLaunchesInPreparation": 0,
+    "metricsEventMissing": "diagnostic-only; do not synthesize event or reject observational capture solely for missing event"
+  },
+  "admittedV5Controls": [
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/run-batch.ps1",
+      "sha256": "sha256:219200ac7ba873e9129df80aba2b81da6a1544bf1a36365e65f34c5f3dc8cb6b"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/capture-repeat.ps1",
+      "sha256": "sha256:c044e31bff2dbc6c55c43911da2d88362b0529228ba8ffb801b5e3b3f4bcf78f"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/contract.json",
+      "sha256": "sha256:5285021869f6f21ee0013c434d1171a25830b6161f98b8ddcbed2fca5bc65861"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/namespace.ps1",
+      "sha256": "sha256:04f2066a2f8fb510fa47dac69c2835577bbd3c9c1fc08891f1485d231c970dd1"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/cleanup.ps1",
+      "sha256": "sha256:a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/stream-seal.ps1",
+      "sha256": "sha256:4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d"
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/owned-close.ps1",
+      "sha256": "sha256:d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c"
+    }
+  ],
+  "qualification": "hold; source-bound observational capture only"
+}

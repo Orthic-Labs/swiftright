@@ -1,0 +1,113 @@
+{
+  "baseWitnessHash": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629",
+  "changedFiles": [
+    "Sources/FactoryProbe/MetricsLogging.swift",
+    "Sources/FactoryProbe/MetricsPayload.swift",
+    "Sources/FactoryProbe/main.swift",
+    "plan.json"
+  ],
+  "fileCount": 13,
+  "invariants": [
+    "No witness, viewport, runtime receipt/tree, graph/layout, measurement, activation, HWND ownership, callback scheduling or timing edits.",
+    "JSON errors still throw; main ready/event catches still fail(error) -> bridge.requestQuit().",
+    "Metrics missing actual windowMetrics event stays held; no event synthesized.",
+    "Raw identity integer fields remain UInt/UInt32/UInt64; floating JSON fields explicitly Double."
+  ],
+  "kind": "padding-settled-metrics-source-v2",
+  "packageFiles": [
+    {
+      "bytes": 538,
+      "path": "Package.swift",
+      "sha256": "sha256:2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+    },
+    {
+      "bytes": 362,
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 2688,
+      "path": "Sources/FactoryProbe/MetricsLogging.swift",
+      "sha256": "sha256:b2cb941f2183d4abe9f1c93104be2b5debc7196c97b1d0d52306ed0c1423f916"
+    },
+    {
+      "bytes": 2349,
+      "path": "Sources/FactoryProbe/MetricsPayload.swift",
+      "sha256": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"
+    },
+    {
+      "bytes": 223,
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 15089,
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:40ce9f4fe4bf16efe6b0c6e00c042954939cd659c9fc27568c5d6d48a2163b71"
+    },
+    {
+      "bytes": 7179,
+      "path": "plan.json",
+      "sha256": "sha256:5c691cd1e060ae99116795e1122bf396043c290ff1faba58953b6860f24b0a5d"
+    },
+    {
+      "bytes": 11275,
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 1878,
+      "path": "witness.manifest.json",
+      "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+    }
+  ],
+  "predecessor": "factory/native/windows/padding-settled-metrics-v1/package",
+  "predecessorPlanSha256": "1c12ff2b23c19bcfc74a3a2fc122b02d0b8c98f8b5419b14b3e759c0d5bf30df",
+  "qualification": "hold; no native outcome claimed",
+  "serializerControl": {
+    "mainPath": "serializer-control/main.swift",
+    "mainSha256": "7b7b79a0e90c63aa696a7347e6ab975fe6dc811bce96b12a2e3548bf3ef64454",
+    "requirements": [
+      "Foundation-only console compile with exact shared MetricsPayload.swift plus serializer-control/main.swift; no WinSDK/renderer/runtime/window dependencies.",
+      "Console exit0 +SERIALIZER_CONTROL_PASS records=5 failClosed=true nativeLaunches=0 required before fresh GUI launch.",
+      "Actual snapshot payload shared function tested with raw ABI, owned-client bounds, explicit Double logical extents, raw event fixtures, UInt64.max identity exact digits, first-layout, missing-event close &error fixtures.",
+      "Invalid JSON infinity rejected; legacy CGFloat validity printed to isolate original Windows Foundation behavior."
+    ],
+    "runtimeExecuted": false,
+    "sharedSourcePath": "package/Sources/FactoryProbe/MetricsPayload.swift",
+    "sharedSourceSha256": "cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"
+  },
+  "status": "source-frozen; Windows serializer control pending root execution",
+  "unchangedFiles": [
+    "Package.swift",
+    "Sources/FactoryProbe/FactoryContainer.swift",
+    "Sources/FactoryProbe/FactoryFill.swift",
+    "Sources/FactoryProbe/FactoryTextGeometry.swift",
+    "Sources/FactoryProbe/FactoryViewport.swift",
+    "Sources/FactoryProbe/Witness.swift",
+    "runtime-source-receipt.json",
+    "runtime-source-tree.json",
+    "witness.manifest.json"
+  ],
+  "witnessSourceSha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+}

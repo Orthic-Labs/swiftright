@@ -1,0 +1,14 @@
+{
+  "kind": "serializer-dynamic-scope-source-repair-v5",
+  "rawFailure": {
+    "path": "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls.stderr.bin",
+    "hash": "sha256:90d570fe605ef534db837f075e9f81a70d153525519c674c6f92d8aa77bd1797"
+  },
+  "failure": "Resolve-Path attempted D:\\Claude\\System.IO.FileStream",
+  "sourceCause": "Invoke-SerializerChild local $source pipe stream dynamically shadows script $source path in nested Assert-Inputs after child completion",
+  "repair": "pipe local renamed $pipeSource; exact payload path explicitly script:serializerPayloadPath for guard, argv & final receipt",
+  "historicalCompileOutcome": "await actual child receipt; no GUI host compiler completed here",
+  "preparedControl": "exact AST-extracted production guard invoked with local pipe/string shadows; wrong script payload/tool hash reject exact reasons",
+  "compilerActions": 0,
+  "nativeActions": 0
+}

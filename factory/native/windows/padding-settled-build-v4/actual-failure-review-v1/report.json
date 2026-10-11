@@ -1,0 +1,106 @@
+{
+  "kind": "independent-padding-v4-actual-failure-review",
+  "verdict": "CONFIRMED_HARNESS_FAILURE_AFTER_PURE_COMPILE",
+  "finding": {
+    "cause": "PowerShell dynamic scope: Invoke-SerializerChild local $source overwritten with BaseStream; post-child Assert-Inputs Get-FileHash $source receives FileStream, fails Resolve-Path before function returns.",
+    "observedError": "Resolve-Path D:\\Claude\\System.IO.FileStream",
+    "failedStep": "post-compile source verification",
+    "serializerRunStarted": false,
+    "serializerPASS": false,
+    "GUIHostCompile": false,
+    "nativeActions": 0
+  },
+  "actualCompile": {
+    "pid": 55116,
+    "processStartedAt": "2026-10-11T09:01:10.8556883Z",
+    "startedAt": "2026-10-11T09:01:10.8263028+00:00",
+    "finishedAt": "2026-10-11T09:01:26.0468447+00:00",
+    "exitCode": 0,
+    "kernelWait": 0,
+    "ownedExited": true,
+    "rawStreams": "Two exact hash-verified sealed raw streams; completion plus destination closure confirmed",
+    "exeSha256": "8d90debf0ad5449dfe0fbb60ec69f060db716c3fb14297a631f285159aa8da54",
+    "peSubsystem": 3,
+    "argvAuthority": "Build script constructed receipt; no CIM argv assertion",
+    "output": "Empty stdout; stderr only linker library/object creation"
+  },
+  "coordinator": {
+    "startedAt": "2026-10-11T08:59:43.208219+00:00",
+    "finishedAt": "2026-10-11T09:01:27.566287+00:00",
+    "exitCode": 1,
+    "stdoutSha256": "d28e14eaaf68b5e331a46a076e8f48e2706943788f05e3638309ecf1417fb935",
+    "stderrSha256": "90d570fe605ef534db837f075e9f81a70d153525519c674c6f92d8aa77bd1797"
+  },
+  "fetch": "Seven fetch rows exit0 confirms retrieval only; not control success",
+  "sourcePins": {
+    "factory/native/windows/padding-settled-build-v4/run-serializer-control.ps1": {
+      "sha256": "847c7fc5e5bffa592cec65f9380fa83b7a84892fc5791cda748cca78692ea86b",
+      "bytes": 9010
+    },
+    "factory/native/windows/padding-settled-build-v4/root-stage-manifest.json": {
+      "sha256": "36fd65d1962312ea8aa8786235fe2c11f05514716b37e65908a914c4e8b16334",
+      "bytes": 15978
+    },
+    "factory/native/windows/padding-settled-build-v4/package/plan.json": {
+      "sha256": "fe088dc1318e6ebc319c95ee169c2c91aa7e630fd19d81729389ebedb8397b20",
+      "bytes": 7950
+    },
+    "factory/native/windows/padding-settled-build-v4/package/Sources/FactoryProbe/MetricsPayload.swift": {
+      "sha256": "cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+      "bytes": 2349
+    },
+    "factory/native/windows/padding-settled-build-v4/serializer-control/main.swift": {
+      "sha256": "7b7b79a0e90c63aa696a7347e6ab975fe6dc811bce96b12a2e3548bf3ef64454",
+      "bytes": 3378
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls.ps1": {
+      "sha256": "828fbc236abcb274c9ffe599762345a5d2173b5c88178042657333d918a159be",
+      "bytes": 1674
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls-process.json": {
+      "sha256": "f873235d0561c1e763077411c53eedfa96302eb0fac78b54fe66d963d57942f4",
+      "bytes": 295
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls-start.json": {
+      "sha256": "f667df49c6fc8f2c8d960af8fb670bbb5dd74960cf727e719b59e6263c22173f",
+      "bytes": 4801
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls.stdout.bin": {
+      "sha256": "d28e14eaaf68b5e331a46a076e8f48e2706943788f05e3638309ecf1417fb935",
+      "bytes": 748
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/controls.stderr.bin": {
+      "sha256": "90d570fe605ef534db837f075e9f81a70d153525519c674c6f92d8aa77bd1797",
+      "bytes": 1494
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/fetch.json": {
+      "sha256": "879ecd8434bd11af02901a3f56df4846988e1325442e050df659281216236148",
+      "bytes": 661
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/serializer-control.exp": {
+      "sha256": "a01971250c64b789c7e31074776afc8515d5c002adb164e4decbe5cb5de3ed5d",
+      "bytes": 814
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/serializer-control.exe": {
+      "sha256": "8d90debf0ad5449dfe0fbb60ec69f060db716c3fb14297a631f285159aa8da54",
+      "bytes": 50176
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/serializer-control.lib": {
+      "sha256": "8c92e9244c2483b200a7bb6dd2d84e3f120c150ae8693af4e0943eb4e11d0b23",
+      "bytes": 1898
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/compile/compile.stderr.bin": {
+      "sha256": "dd4343c409160a056b71bebe6bd02a53774da7b6fe12a4a5358991f0591ea2ad",
+      "bytes": 251
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/compile/observation.json": {
+      "sha256": "e0c5d93a788f91850720bdc1c4a87d17b3730673cb64f2d4a320a9364a19aede",
+      "bytes": 13974
+    },
+    "factory/native/windows/padding-settled-build-v4/root-controls-r1/actual/serializer-control-actual-r1/compile/compile.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "reviewExecution": "Offline Python only; no compiler/native/remote execution"
+}
