@@ -1,0 +1,113 @@
+{
+  "kind": "round2-extra-recipe-registry-source-join-v1",
+  "candidateManifest": {
+    "path": "factory/recipes/round2-extra-v1/dependencies/registry-candidate-manifest.json",
+    "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+  },
+  "scope": "candidate source syntax/identity only; no measured overload/typecheck or behavior qualification",
+  "rows": [
+    {
+      "block": "swiftui.popover",
+      "recipePath": "factory/recipes/round2-extra-v1/data/swiftui.popover.json",
+      "recipeHash": "sha256:9938c1d0aaafabbe093aa15369ef8943659c2c1d14f71d26524b182da1fa1e07",
+      "witnessHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+      "selectedSourceSymbols": [
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.View.popover(isPresented:attachmentAnchor:arrowEdge:content:)",
+          "selector": "usr:s:7SwiftUI4ViewPAAE7popover11isPresented16attachmentAnchor9arrowEdge7contentQrAA7BindingVySbG_AA017PopoverAttachmentH0OAA0J0OSgqd__yctAaBRd__lF",
+          "symbolEvidenceSha256": "5b5cc1304fff2157021a958c6fcef67127f00ae2cc5bf87a0e68031d5695962a"
+        }
+      ],
+      "semanticDependencies": [],
+      "registryPromotion": false,
+      "nativeQualification": false
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "recipePath": "factory/recipes/round2-extra-v1/data/swiftui.animation.spring-interruption.json",
+      "recipeHash": "sha256:6d490903df442283df81c4ca940f73e1d1add37d49fe7cf86ed26207d1f63bd3",
+      "witnessHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2",
+      "selectedSourceSymbols": [
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.Animation.spring",
+          "selector": "usr:s:7SwiftUI9AnimationV6springACvpZ",
+          "symbolEvidenceSha256": "2587593d6f3898737b462ffc9a2dc313a9f35db0b4be6412b4bf4ab682d4e571"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.withAnimation(_:_:)",
+          "selector": "usr:s:7SwiftUI13withAnimationyxAA0D0VSg_xyKXEtKlF",
+          "symbolEvidenceSha256": "155d93f2f0137a33db1aaee54f2d96e50fa6b96da17ce953fe595b380509bc5f"
+        }
+      ],
+      "semanticDependencies": [],
+      "registryPromotion": false,
+      "nativeQualification": false
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "recipePath": "factory/recipes/round2-extra-v1/data/swiftui.text-field-ime.json",
+      "recipeHash": "sha256:e2db89b99c363c7b8de88647e4cb6ac2466c6686ec970c39646bb4e605a70fc2",
+      "witnessHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+      "selectedSourceSymbols": [
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.TextField.init(text:prompt:label:)",
+          "selector": "usr:s:7SwiftUI9TextFieldV4text6prompt5labelACyxGAA7BindingVySSG_AA0C0VSgxyXEtcfc",
+          "symbolEvidenceSha256": "7b6ec6c97a9000c5e0b814e09d423dcce20ccf9baeac16fae6f574d94d8d8c6e"
+        }
+      ],
+      "semanticDependencies": [],
+      "registryPromotion": false,
+      "nativeQualification": false
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "recipePath": "factory/recipes/round2-extra-v1/data/swiftui.environment-font-color-scheme.json",
+      "recipeHash": "sha256:c98734100c67cca92b22de7ba922e091e7cf3bb9a53197dbef3bdc51e6b3d4c7",
+      "witnessHash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac",
+      "selectedSourceSymbols": [
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.View.environment(_:_:)",
+          "selector": "usr:s:7SwiftUI4ViewPAAE11environmentyQrs15WritableKeyPathCyAA17EnvironmentValuesVqd__G_qd__tlF",
+          "symbolEvidenceSha256": "efccbc5282a9d165043b61e8c5c1fb5278da158cc32899939182688699ade13d"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.EnvironmentValues.font",
+          "selector": "usr:s:7SwiftUI17EnvironmentValuesV4fontAA4FontVSgvp",
+          "symbolEvidenceSha256": "cb8beaf516357b88b196b5b11c3aab5bc4a2c447809663970f6bd69ff4f48e76"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.EnvironmentValues.colorScheme",
+          "selector": "usr:s:7SwiftUI17EnvironmentValuesV11colorSchemeAA05ColorF0Ovp",
+          "symbolEvidenceSha256": "215e2e6216d5fd8a0c6266b2a66844fac89de57d931143533e754d43a9c58dcb"
+        }
+      ],
+      "semanticDependencies": [],
+      "registryPromotion": false,
+      "nativeQualification": false
+    },
+    {
+      "block": "swiftui.context-menu",
+      "recipePath": "factory/recipes/round2-extra-v1/data/swiftui.context-menu.json",
+      "recipeHash": "sha256:f6ef826e95be689facb77c1913ffab386631e5bd5dc332091709f8f9a2cb57d3",
+      "witnessHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+      "selectedSourceSymbols": [
+        {
+          "catalogueStatus": "inventory",
+          "path": "SwiftUI.View.contextMenu(menuItems:)",
+          "selector": "usr:s:7SwiftUI4ViewPAAE11contextMenu9menuItemsQrqd__yXE_tAaBRd__lF",
+          "symbolEvidenceSha256": "b3baa8fd7fc5c72abf35b9da4f529fa0e56ca35a466832f32ea3ee9c2082bc92"
+        }
+      ],
+      "semanticDependencies": [],
+      "registryPromotion": false,
+      "nativeQualification": false
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.environment-font-color-scheme.recipe",
+  "provenance": {
+    "sourceHash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac",
+    "createdAt": "2026-10-11T00:00:00Z",
+    "producer": "factory/recipes/round2-extra-v1",
+    "review": {
+      "reviewer": "pending-source-review",
+      "at": "2026-10-11T00:00:00Z",
+      "decision": "candidate"
+    },
+    "inputs": [
+      {
+        "id": "swiftui-pilot-round2-extra-candidates-v1",
+        "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+      }
+    ]
+  },
+  "block": "swiftui.environment-font-color-scheme",
+  "witnesses": [
+    {
+      "id": "swiftui.environment-font-color-scheme.witness",
+      "sourceHash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac",
+      "resources": [
+        {
+          "id": "swiftui.environment-font-color-scheme.witness.swift",
+          "hash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.environment-font-color-scheme.assertion.layout",
+      "channel": "layout",
+      "expected": {
+        "font": "both descendants inherit requested descriptor",
+        "scheme": "both descendants receive requested color scheme"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.environment-font-color-scheme.assertion.paint",
+      "channel": "paint",
+      "expected": {
+        "font": "both descendants inherit requested descriptor",
+        "scheme": "both descendants receive requested color scheme"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.environment-font-color-scheme.assertion.events-state",
+      "channel": "events/state",
+      "expected": {
+        "font": "both descendants inherit requested descriptor",
+        "scheme": "both descendants receive requested color scheme"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [
+    {
+      "id": "font-size",
+      "values": [
+        18,
+        24
+      ],
+      "coverage": "full-product"
+    },
+    {
+      "id": "scheme",
+      "values": [
+        "light",
+        "dark"
+      ],
+      "coverage": "full-product"
+    }
+  ],
+  "statefulSequences": [],
+  "negativeCases": [
+    {
+      "id": "swiftui.environment-font-color-scheme.negative.invalid-argument",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:ffdde2cc57d5386d51df27639e90c4cd31a5557ae1608a204b606b6c10aa58d2"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.environment-font-color-scheme.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

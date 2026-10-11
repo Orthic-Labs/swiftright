@@ -1,0 +1,32 @@
+{
+  "candidateOnly": true,
+  "cases": [
+    {
+      "case": {
+        "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+        "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "independentPIDs": {
+        "compositor": 20,
+        "externalAX": 20,
+        "instrumented": 20,
+        "plain": 20
+      },
+      "runs": 20,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

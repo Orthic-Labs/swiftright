@@ -1,0 +1,165 @@
+{
+  "kind": "padding-window-diagnosis-capture-v2-actual-failure-review-v1",
+  "verdict": "HOLD_WORKER_EXIT_AND_RELEASE",
+  "scope": "read-only actual receipt audit; no native/remote/compiler/Git/lock actions",
+  "failure": {
+    "rendererPid": 36616,
+    "workerPid": 56152,
+    "rendererPrimaryError": "Owned renderer identity drift",
+    "workerPrimaryError": "Owned renderer identity drift",
+    "workerCleanup": {
+      "confirmedOwnedExit": false,
+      "kernelExitSignaled": false,
+      "kernelWaitResult": 258,
+      "exitCertification": "retained-kernel-handle",
+      "hasExitedObserved": false,
+      "killAttempted": true,
+      "status": "hold-cleanup",
+      "error": "Owned cleanup kernel exit deadline/failure: 258"
+    },
+    "coordinatorStatus": "hold-harness-error",
+    "coordinatorWholeBatchExitConfirmed": true,
+    "coordinatorLockReleased": true
+  },
+  "evidence": {
+    "rendererInitial": {
+      "utc": "2026-10-11T10:37:38.6913078+00:00",
+      "kernelBefore": 258,
+      "exitCode": 259
+    },
+    "rendererFinal": {
+      "phase": "raw-closure-final",
+      "at": "2026-10-11T10:37:56.8155675+00:00",
+      "waitMilliseconds": 0,
+      "retainedHandle": 2596,
+      "handlePid": 36616,
+      "kernelBefore": 0,
+      "kernelAfter": 0,
+      "getExitCodeSucceeded": true,
+      "exitCode": 0,
+      "errors": []
+    },
+    "workerFailureReceipt": {
+      "confirmedOwnedExit": false,
+      "kernelExitSignaled": false,
+      "kernelWaitResult": 258,
+      "exitCertification": "retained-kernel-handle",
+      "hasExitedObserved": false,
+      "killAttempted": true,
+      "status": "hold-cleanup",
+      "error": "Owned cleanup kernel exit deadline/failure: 258"
+    },
+    "receiptHashes": {
+      "actual-single-r1/native-01/capture-outcome.json": {
+        "sha256": "8000a88c9e2e7d1b433cbed85f25fd6958a51eb3dcdb8f0748a680fe372e3829",
+        "bytes": 9702
+      },
+      "actual-single-r1/native-01/final-exit-certificate.json": {
+        "sha256": "80d1f18ee35a19e540e387755faae79ee9fb5d5f2194ee800f1e9fb420f0430c",
+        "bytes": 7210
+      },
+      "actual-single-r1/native-01/final-start.json": {
+        "sha256": "e1fffc738cf3891ccd857f8e013cee250c630b0a36ed23d6803d12db661d032f",
+        "bytes": 718
+      },
+      "actual-single-r1/native-01/lifecycle-timing.json": {
+        "sha256": "07626f5649a9c7a8de743cde53ce9aab0923f3532e82744ed49e9771913dc0b5",
+        "bytes": 20014
+      },
+      "actual-single-r1/native-01/terminal-worker.json": {
+        "sha256": "78b2af21849325400048a424fc9c966786069160776378dde86b6c19ba479c9c",
+        "bytes": 1486
+      },
+      "actual-single-r1/native-01/uia-worker/worker-exit.json": {
+        "sha256": "5a1e6dea997c010ccbcb8bc13632093306c90932e34d026f1b7416110bce30e5",
+        "bytes": 7393
+      },
+      "actual-single-r1/native-01/uia-worker/worker-exit-failure.json": {
+        "sha256": "02e5e51cc6e840ee559e365fe7894490a03e8491741178f71ebe888d5cb9e14a",
+        "bytes": 2139
+      },
+      "coordinator-single-r1/coordinator.json": {
+        "sha256": "fefa8716ec55f843dc676ef08e18e2dd37579cb51d497caeb6351ca9791448b8",
+        "bytes": 1468
+      },
+      "coordinator-single-r1/task-result.json": {
+        "sha256": "daa465c3c4853c1d9c5f02887a569087451b1f96acf6d24637525f8cae41346f",
+        "bytes": 735
+      },
+      "actual-single-r1/native-01/host.stdout.txt": {
+        "sha256": "d15269e1bbc6a556f9a11059a25c86c5d05509cc990a0d608b9469ae4203b2a3",
+        "bytes": 87994
+      },
+      "actual-single-r1/native-01/host.stderr.txt": {
+        "sha256": "fd63ea504ebb04556f21ea95e4471b93c81b81375a4c557c25be72e6fbc86219",
+        "bytes": 1341
+      }
+    }
+  },
+  "findings": [
+    {
+      "severity": "release-blocker",
+      "id": "auxiliary-worker-natural-exit-unconfirmed",
+      "detail": "UIA worker receipt records status failed, renderer identity drift, kernel wait 258, killAttempted true, confirmedOwnedExit false. Final raw streams are sealed, but no natural worker exit proof exists; helper then disposes process object.",
+      "required": "Require worker terminal receipt with kernel0/no-kill/sealed raw closure before any whole-batch release claim."
+    },
+    {
+      "severity": "release-blocker",
+      "id": "coordinator-renderer-only-release",
+      "detail": "Coordinator records hold-harness-error yet sets wholeBatchExitConfirmed=true & lockReleased=true. Final fallback validates renderer final cert only; coordinator has no UIA-worker receipt gate.",
+      "required": "Keep lock held unless task result is successful & every auxiliary owned worker has natural exit proof, or bind auxiliary proof into final release reader."
+    }
+  ],
+  "checks": [
+    {
+      "name": "renderer-failure",
+      "ok": true,
+      "detail": "capture & coordinator preserve exact failure"
+    },
+    {
+      "name": "worker-failure",
+      "ok": true,
+      "detail": "Owned renderer identity drift"
+    },
+    {
+      "name": "worker-cleanup-unconfirmed",
+      "ok": true,
+      "detail": "{'confirmedOwnedExit': False, 'kernelExitSignaled': False, 'kernelWaitResult': 258, 'exitCertification': 'retained-kernel-handle', 'hasExitedObserved': False, 'killAttempted': True, 'status': 'hold-cleanup', 'error': 'Owned cleanup kernel exit deadline/failure: 258'}"
+    },
+    {
+      "name": "failure-receipt-before-drain",
+      "ok": true,
+      "detail": "durable failure receipt lacks natural worker exit/raw proof"
+    },
+    {
+      "name": "renderer-final-cert-only",
+      "ok": true,
+      "detail": "final certificate proves renderer handle/raw closure only"
+    },
+    {
+      "name": "final-certificate-byte-joins",
+      "ok": true,
+      "detail": "renderer final cert & original outcome exact hashes/lineage"
+    },
+    {
+      "name": "host-window-close-observed",
+      "ok": true,
+      "detail": "stdout includes renderer Bridge.onWindowClosed record"
+    },
+    {
+      "name": "coordinator-hold-status",
+      "ok": true,
+      "detail": "failure remains unqualified"
+    },
+    {
+      "name": "release-overclaim",
+      "ok": true,
+      "detail": "coordinator claims whole-batch exit/release despite worker failure"
+    },
+    {
+      "name": "source-release-path",
+      "ok": true,
+      "detail": "fallback releases from renderer-only final cert; no UIA-worker proof gate"
+    }
+  ]
+}

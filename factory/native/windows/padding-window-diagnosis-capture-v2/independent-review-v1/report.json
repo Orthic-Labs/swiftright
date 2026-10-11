@@ -1,0 +1,331 @@
+{
+  "kind": "padding-window-diagnosis-capture-v2-independent-review-v1",
+  "sourceStage": "4088322c03c02ed876542797688d5a849aed01c206318ce29b00d08318e5350c",
+  "verdict": "CLEAR_SOURCE_PENDING_WINDOWS_NATIVE_RECEIPTS",
+  "scope": "read-only caller/source review; no native/remote/compiler/Git execution",
+  "sourceChecks": 15,
+  "pureControls": "prepared/unrun on this host; root Windows receipts required",
+  "findings": [],
+  "checks": [
+    {
+      "name": "stage-manifest-sha",
+      "ok": true,
+      "detail": "4088322c03c02ed876542797688d5a849aed01c206318ce29b00d08318e5350c"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/README.md",
+      "ok": true,
+      "detail": "sha=24e519f5af7b1881bc04ebc262b8e303369b7bb9cca8d3287af4b3b1e53b13b9;size=2041"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/capture-plan.json",
+      "ok": true,
+      "detail": "sha=5d2095b0001d03d76c1739fa926ddff3e23e56297ebc8e454ffc5abc0fc107ee;size=2208"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/capture-repeat.ps1",
+      "ok": true,
+      "detail": "sha=9020ac42159a7036e79159604c2ec5552e5e3eae621a4055a9387afb4eb1fa34;size=31636"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/coordinator.ps1",
+      "ok": true,
+      "detail": "sha=7490b201d000bd3736975bbb1155554e5a9b358cf5972a4335ada53b963c2304;size=13503"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/invoke-worker.ps1",
+      "ok": true,
+      "detail": "sha=9c02e6b9e963c3e57141287f884d558f370482e509f5ab20d8a884988956681a;size=7308"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/read-uia.ps1",
+      "ok": true,
+      "detail": "sha=99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad;size=751"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/schema.ps1",
+      "ok": true,
+      "detail": "sha=ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61;size=5887"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/support/cleanup.ps1",
+      "ok": true,
+      "detail": "sha=a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7;size=6746"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/support/stream-seal.ps1",
+      "ok": true,
+      "detail": "sha=4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d;size=6200"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/test-pure.ps1",
+      "ok": true,
+      "detail": "sha=af0c70055d39ca1ac37f4a3726df395368f23c0a206eaf1b18ae6fa9d9cee7c2;size=6840"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/worker-contract.json",
+      "ok": true,
+      "detail": "sha=c274a88ba33ffbfa3334e5f2d8a0929d09c942c53ba71db06eddc08024463bd3;size=1323"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dependencies/uia-worker/worker.ps1",
+      "ok": true,
+      "detail": "sha=74dae20f9ba2273eb2f91f942d9d7421de5f303b2d9e0b73dad4d3e6a3274c09;size=3686"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/dispatch.ps1",
+      "ok": true,
+      "detail": "sha=d63caf4c94220b97f13db861431927c56d669788ac48a2efff338e800a32b285;size=2861"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/external-refs.json",
+      "ok": true,
+      "detail": "sha=75bbd1565453289f619e8a45f535da1ff93eb63b6e123a4ce7566d4b3afe4526;size=1155"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/integration-bindings.json",
+      "ok": true,
+      "detail": "sha=c144a0260b9fa89bc9e4d528f52568636c6704ff4fea378c75d4a0c21d526740;size=1533"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/interactive-task.ps1",
+      "ok": true,
+      "detail": "sha=270ce5b2e854b2ceca5d38a8f359982bebfc9937cb3ef52b769372210ab042a9;size=1699"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/capture-plan.json",
+      "ok": true,
+      "detail": "sha=d396f2847908c1f8327f0b772874b81b87cf7ff501298295e4809e27af38193e;size=1725"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/capture-repeat.ps1",
+      "ok": true,
+      "detail": "sha=71818bd38ff3a8ed7930965d53b8de45c5f02025d8244436a032124017b71ef4;size=29534"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/coordinator.ps1",
+      "ok": true,
+      "detail": "sha=186f0abf79b7b3250955b04e08d24b374c50ddb4153970aa7c0d36febb69ac80;size=10844"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/dispatch.ps1",
+      "ok": true,
+      "detail": "sha=d63caf4c94220b97f13db861431927c56d669788ac48a2efff338e800a32b285;size=2861"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/interactive-task.ps1",
+      "ok": true,
+      "detail": "sha=270ce5b2e854b2ceca5d38a8f359982bebfc9937cb3ef52b769372210ab042a9;size=1699"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/prepare-capture.ps1",
+      "ok": true,
+      "detail": "sha=b414f960fcc86ba249dfe5d5b278422ac5de3b061726e16e4034848fb413b2c9;size=4605"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/preimages/capture-v1/test-source-controls.ps1",
+      "ok": true,
+      "detail": "sha=5be88569f6df183a87a67a43b70d07f2e402611f1228b2efe2a2f14b2c50a29d;size=1503"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/prepare-capture.ps1",
+      "ok": true,
+      "detail": "sha=b414f960fcc86ba249dfe5d5b278422ac5de3b061726e16e4034848fb413b2c9;size=4605"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/run-controls.ps1",
+      "ok": true,
+      "detail": "sha=6a604efedbd66ba5a19a376e5d18f11b1f0cd68c1a227ea0952fe12f09e0ccd9;size=577"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/source-checks.json",
+      "ok": true,
+      "detail": "sha=148dd689209916c49111fce9b6a0f107a07d7129617590af49a68547082639f3;size=142"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/source-delta.patch",
+      "ok": true,
+      "detail": "sha=89be3ed70010aae77f044e84d651d8c8daf6de3c9385262547e5e9d17a1e8783;size=20520"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/cleanup.ps1",
+      "ok": true,
+      "detail": "sha=a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7;size=6746"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4;size=8684"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/host-inputs.ps1",
+      "ok": true,
+      "detail": "sha=93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db;size=1047"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/integration.ps1",
+      "ok": true,
+      "detail": "sha=836a1828b79cff4675b5e29cebe2bcc9d5be4e28d05dfb2229775a4ea00ab4a9;size=2019"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/lifecycle-timing.ps1",
+      "ok": true,
+      "detail": "sha=c6951ea443587b3027141f4d08ddc942b8d364a7b920bee16e3a5cc76b7c62a5;size=2397"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/owned-close.ps1",
+      "ok": true,
+      "detail": "sha=d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c;size=815"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/pixels-background.ps1",
+      "ok": true,
+      "detail": "sha=7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef;size=4795"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/stream-seal.ps1",
+      "ok": true,
+      "detail": "sha=4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d;size=6200"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/support/verify-runtime-source.ps1",
+      "ok": true,
+      "detail": "sha=9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589;size=1286"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/test-final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=f47ea3f4e2b949b3dac1892d3158cb73a959e5cf289b40f544719470505173fd;size=6620"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/test-integration.ps1",
+      "ok": true,
+      "detail": "sha=94125575c2fd5d1db19cb264b7febdf83b5bb1cf8545bea40502576bd89711df;size=7949"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/test-source-controls.ps1",
+      "ok": true,
+      "detail": "sha=53c26caccc904bc6abf6fac62864fcd76f900758e9046fd6ede05ab9c6190d4b;size=2044"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v2/verify-source.py",
+      "ok": true,
+      "detail": "sha=f270cfaa70bc1f51f282f1e91bcce874d150223e8858e7e0c7a3083c12ce1318;size=2834"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-capture-v1/root-stage-manifest.json",
+      "ok": true,
+      "detail": "sha=3d8788ac522281ecde37c425e51a5a6ee97c4e48aee2bbee72cd2292d4b14967;size=5721"
+    },
+    {
+      "name": "file:factory/native/windows/uia-snapshot-worker-v1/root-stage-manifest.json",
+      "ok": true,
+      "detail": "sha=a386a18fa3e14174e52ead92ef513503e2b2075f646c219d921bd05cd7fa0d57;size=3537"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v2/root-stage-manifest.json",
+      "ok": true,
+      "detail": "sha=55ec268f5af7658571a1515895782b68e2974dc8166b4617adc29d7d4b5c459b;size=2065"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-build-v1/root-stage-manifest.json",
+      "ok": true,
+      "detail": "sha=b8db629cecf9a48570f149c231c95fbeae09427ed64c1dfc60d50a243de7cfa6;size=18562"
+    },
+    {
+      "name": "file:factory/native/windows/padding-window-diagnosis-build-v1/root-build-r1/actual/observation.json",
+      "ok": true,
+      "detail": "sha=74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7;size=17775"
+    },
+    {
+      "name": "offline-source-checks",
+      "ok": true,
+      "detail": "{\n  \"status\": \"passed\",\n  \"offlineSourceChecks\": 15,\n  \"nativeActions\": 0,\n  \"compilerActions\": 0,\n  \"powershellControls\": \"prepared/unrun\"\n}"
+    },
+    {
+      "name": "canonical-plan-pins",
+      "ok": true,
+      "detail": "actual compile/executable pins"
+    },
+    {
+      "name": "parent-no-uia",
+      "ok": true,
+      "detail": "UIA authority remains worker-only"
+    },
+    {
+      "name": "worker-before-pixels-close",
+      "ok": true,
+      "detail": "worker natural proof precedes pixels & WM_CLOSE"
+    },
+    {
+      "name": "worker-ready-gates",
+      "ok": true,
+      "detail": "ready check before pixels, before close & terminal"
+    },
+    {
+      "name": "worker-natural-proof",
+      "ok": true,
+      "detail": "worker requires kernel0, no kill & sealed raw streams"
+    },
+    {
+      "name": "initialize-before-start",
+      "ok": true,
+      "detail": "native declarations precede renderer start"
+    },
+    {
+      "name": "original-retained-start",
+      "ok": true,
+      "detail": "original handle/start identity captured first"
+    },
+    {
+      "name": "final-after-original-receipts",
+      "ok": true,
+      "detail": "final cert follows outcome/raw closure & before terminal assertion"
+    },
+    {
+      "name": "original-deadlines-preserved",
+      "ok": true,
+      "detail": "15s owned exit & 5s raw drains remain"
+    },
+    {
+      "name": "original-validity-preserved",
+      "ok": true,
+      "detail": "host validity & qualification hold retained"
+    },
+    {
+      "name": "final-helper-v2-pin",
+      "ok": true,
+      "detail": "qualification-bound final helper"
+    },
+    {
+      "name": "final-fallback-lineage",
+      "ok": true,
+      "detail": "fallback binds owner/start/source/raw/outcome"
+    },
+    {
+      "name": "exact-owner-release",
+      "ok": true,
+      "detail": "release remains existing exact-owner CAS"
+    },
+    {
+      "name": "no-promotion",
+      "ok": true,
+      "detail": "observation cannot promote qualification"
+    },
+    {
+      "name": "pure-integration-faults",
+      "ok": true,
+      "detail": "integration faults reject before parent action"
+    },
+    {
+      "name": "source-controls-order",
+      "ok": true,
+      "detail": "source ordering/deadline controls present"
+    },
+    {
+      "name": "no-retries-count1",
+      "ok": true,
+      "detail": "Count1 fresh namespace & retries disabled"
+    }
+  ]
+}

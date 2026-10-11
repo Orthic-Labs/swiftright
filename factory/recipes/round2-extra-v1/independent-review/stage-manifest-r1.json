@@ -1,0 +1,79 @@
+{
+  "entries": [
+    {
+      "bytes": 709,
+      "path": "factory/recipes/round2-extra-v1/independent-review/README.md",
+      "role": "owned review",
+      "sha256": "8332997d83f9a906bed8fc9e4d3940c38e05e74120e38f9081fbc013699e5bfd"
+    },
+    {
+      "bytes": 8820,
+      "path": "factory/recipes/round2-extra-v1/independent-review/review_r1.py",
+      "role": "owned review",
+      "sha256": "1188e6eedc01c3d47a50161badb1aa9e7e79237bc144ed8afee74842c4664e54"
+    },
+    {
+      "bytes": 1207,
+      "path": "factory/recipes/round2-extra-v1/independent-review/report-r1.json",
+      "role": "owned review",
+      "sha256": "266ee0a3bf41dceef033d9b57a3df82bfbd460e83acbcd7be45b5dd01e94e8bc"
+    },
+    {
+      "bytes": 10598,
+      "path": "factory/recipes/round2-extra-v1/root-stage-manifest.json",
+      "role": "producer frozen root stage",
+      "sha256": "42969de7d3810b8c5d174af990bc3cf5f35f17762c53f1f17fe265d17a22a304"
+    },
+    {
+      "bytes": 5398,
+      "path": "factory/recipes/round2-extra-v1/registry-source-join.json",
+      "role": "producer frozen source join",
+      "sha256": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a"
+    },
+    {
+      "bytes": 13334,
+      "path": "factory/recipes/round2-extra-v1/validation.json",
+      "role": "producer frozen validation",
+      "sha256": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba"
+    },
+    {
+      "bytes": 3669,
+      "path": "factory/recipes/round2-extra-v1/native-requirements.json",
+      "role": "producer frozen native hold",
+      "sha256": "2610d49e05a93ded6bea7e3bd903140ddb393f5ff778a4278b25ff6fd8218270"
+    },
+    {
+      "bytes": 6292,
+      "path": "factory/recipes/round2-extra-v1/dependencies/registry-candidate-manifest.json",
+      "role": "producer frozen registry candidate",
+      "sha256": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+    },
+    {
+      "bytes": 2318,
+      "path": "factory/recipes/round2-extra-v1/dependencies/registry-stage-manifest.json",
+      "role": "producer frozen registry stage",
+      "sha256": "e200fa92e234ab9ce9ba649b2bd3300fedc8ee6ecf1d92b131d0acf6d69c8a77"
+    },
+    {
+      "bytes": 40793212,
+      "path": "factory/catalogue/evidence/catalogue.json",
+      "role": "read-only catalogue",
+      "sha256": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+    }
+  ],
+  "execution": {
+    "compilerRuns": 0,
+    "measurementTuple": null,
+    "nativeRuns": 0,
+    "promotion": false
+  },
+  "kind": "round2-extra-independent-review-stage-v1",
+  "producerPins": {
+    "candidateRegistry": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+    "rootStage": "42969de7d3810b8c5d174af990bc3cf5f35f17762c53f1f17fe265d17a22a304",
+    "sourceJoin": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+    "validation": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba"
+  },
+  "result": "independent-source-review-pass",
+  "scope": "offline source/schema/projection review only"
+}

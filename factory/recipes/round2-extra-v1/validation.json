@@ -1,0 +1,404 @@
+{
+  "kind": "round2-candidate-source-projection-controls-v1",
+  "scope": "source-only, no typecheck/native capability qualification",
+  "recipes": [
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "recipeHash": "sha256:6d490903df442283df81c4ca940f73e1d1add37d49fe7cf86ed26207d1f63bd3",
+      "witnessHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2",
+      "descriptors": [
+        {
+          "id": "swiftui.animation.spring-interruption.recipe/case/86635cc4e0b4a9e9",
+          "inputs": {
+            "distance": 80
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:a8280c4ae6b6652748ade67244e9b87675c2f832d0d98f74c1313e3ffaf51369",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.animation.spring-interruption.recipe/case/1616c9fa9aabb0d5",
+          "inputs": {
+            "distance": 100
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:bfba4893b287242f509fb5bfd61bddbe2574e78eecb5819252363550f3c82492",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.animation.spring-interruption.instrumentation-transparency",
+          "inputs": {
+            "distance": 80
+          },
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:a8280c4ae6b6652748ade67244e9b87675c2f832d0d98f74c1313e3ffaf51369",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.animation.spring-interruption.negative.invalid-argument",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:d502eb3a0ff65be61ec399b5135cbdbbfad34756e79c8bda3aede4924a697ba2",
+          "executionEligible": false,
+          "projectionOnly": true
+        }
+      ],
+      "generatorHold": "unsupported block 'swiftui.animation.spring-interruption'",
+      "measurementTuple": null,
+      "compilerRuns": 0,
+      "nativeRuns": 0
+    },
+    {
+      "block": "swiftui.context-menu",
+      "recipeHash": "sha256:f6ef826e95be689facb77c1913ffab386631e5bd5dc332091709f8f9a2cb57d3",
+      "witnessHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+      "descriptors": [
+        {
+          "id": "swiftui.context-menu.recipe/case/44136fa355b3678a",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.context-menu.instrumentation-transparency",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.context-menu.negative.invalid-argument",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:569a10128df248024552b57a307ef85d82c8e59c92d598ff17bd09178a2e08ad",
+          "executionEligible": false,
+          "projectionOnly": true
+        }
+      ],
+      "generatorHold": "unsupported block 'swiftui.context-menu'",
+      "measurementTuple": null,
+      "compilerRuns": 0,
+      "nativeRuns": 0
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "recipeHash": "sha256:c98734100c67cca92b22de7ba922e091e7cf3bb9a53197dbef3bdc51e6b3d4c7",
+      "witnessHash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac",
+      "descriptors": [
+        {
+          "id": "swiftui.environment-font-color-scheme.recipe/case/abe82f7ce79bb693",
+          "inputs": {
+            "font-size": 18,
+            "scheme": "light"
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:687a73baaaf9db20aedfea8f0b2ffd3eb1e75b86619d1aea2063c12c3c8c0d9c",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.environment-font-color-scheme.recipe/case/c9d05873d20036bd",
+          "inputs": {
+            "font-size": 18,
+            "scheme": "dark"
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:af4e481ebeca479630cdaf6fdee139ca0e4d5cc50a6910af4fcce42b1d93afa6",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.environment-font-color-scheme.recipe/case/38033b7998d95585",
+          "inputs": {
+            "font-size": 24,
+            "scheme": "light"
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:709b2d2cd717ae0379aba4f245038cf25025e43dd6ceef6c43a861d0562d07f3",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.environment-font-color-scheme.recipe/case/70c978763e1dc81c",
+          "inputs": {
+            "font-size": 24,
+            "scheme": "dark"
+          },
+          "coverage": "full-product",
+          "projectedWitnessHash": "sha256:940e64452b2e0e52ea2a74ef5eec50c088ae915ebe2d9ccf9269d32884b30f7d",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.environment-font-color-scheme.instrumentation-transparency",
+          "inputs": {
+            "font-size": 18,
+            "scheme": "light"
+          },
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:687a73baaaf9db20aedfea8f0b2ffd3eb1e75b86619d1aea2063c12c3c8c0d9c",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.environment-font-color-scheme.negative.invalid-argument",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:ffdde2cc57d5386d51df27639e90c4cd31a5557ae1608a204b606b6c10aa58d2",
+          "executionEligible": false,
+          "projectionOnly": true
+        }
+      ],
+      "generatorHold": "unsupported block 'swiftui.environment-font-color-scheme'",
+      "measurementTuple": null,
+      "compilerRuns": 0,
+      "nativeRuns": 0
+    },
+    {
+      "block": "swiftui.popover",
+      "recipeHash": "sha256:9938c1d0aaafabbe093aa15369ef8943659c2c1d14f71d26524b182da1fa1e07",
+      "witnessHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+      "descriptors": [
+        {
+          "id": "swiftui.popover.recipe/case/44136fa355b3678a",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.popover.instrumentation-transparency",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.popover.negative.invalid-argument",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:a2a6203de2a313ba2bb69a16a2c9742bca5360b2c31c8bac985c04234c9753b7",
+          "executionEligible": false,
+          "projectionOnly": true
+        }
+      ],
+      "generatorHold": "unsupported block 'swiftui.popover'",
+      "measurementTuple": null,
+      "compilerRuns": 0,
+      "nativeRuns": 0
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "recipeHash": "sha256:e2db89b99c363c7b8de88647e4cb6ac2466c6686ec970c39646bb4e605a70fc2",
+      "witnessHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+      "descriptors": [
+        {
+          "id": "swiftui.text-field-ime.recipe/case/44136fa355b3678a",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.text-field-ime.instrumentation-transparency",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+          "executionEligible": false,
+          "projectionOnly": true
+        },
+        {
+          "id": "swiftui.text-field-ime.negative.invalid-argument",
+          "inputs": {},
+          "coverage": "declared",
+          "projectedWitnessHash": "sha256:ad7da5b4ffb17005a310b3aaf828409c5e2fed0315b3a9f978b8fc125e1de224",
+          "executionEligible": false,
+          "projectionOnly": true
+        }
+      ],
+      "generatorHold": "unsupported block 'swiftui.text-field-ime'",
+      "measurementTuple": null,
+      "compilerRuns": 0,
+      "nativeRuns": 0
+    }
+  ],
+  "faultControls": [
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "fault": "source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "fault": "negative-source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "fault": "promoted-observability",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "fault": "duplicate-axis",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "fault": "undeclared-input",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "fault": "source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "fault": "negative-source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "fault": "promoted-observability",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "fault": "duplicate-axis",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "fault": "undeclared-input",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "fault": "source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "fault": "negative-source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "fault": "promoted-observability",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "fault": "duplicate-axis",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "fault": "undeclared-input",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.popover",
+      "fault": "source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.popover",
+      "fault": "negative-source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.popover",
+      "fault": "promoted-observability",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.popover",
+      "fault": "duplicate-axis",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.popover",
+      "fault": "undeclared-input",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "fault": "source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "fault": "negative-source-drift",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "fault": "promoted-observability",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "fault": "duplicate-axis",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "fault": "undeclared-input",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "fault": "usr-misbinding",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "fault": "duplicate-block",
+      "rejected": true,
+      "syntheticMutation": true
+    },
+    {
+      "fault": "stale-recipe",
+      "rejected": true,
+      "syntheticMutation": true
+    }
+  ],
+  "compilerRuns": 0,
+  "nativeRuns": 0,
+  "measurementTuple": null
+}

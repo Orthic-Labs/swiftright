@@ -1,0 +1,327 @@
+{
+  "kind": "settled-actual-channel-analysis-v1",
+  "canonicalCapture": null,
+  "issues": [
+    "incomplete-actual-channel-joins",
+    "missing-prelaunch-issued-capture-metadata",
+    "canonical-emission-held-until-prospective-source-contract-joins"
+  ],
+  "rows": [
+    {
+      "index": 1,
+      "availability": {
+        "uia": "external-observation",
+        "printWindow": "window-targeted-observation",
+        "providerPaint": false,
+        "layout": false,
+        "events": false,
+        "animation": false,
+        "text": false,
+        "occlusionQualified": false
+      },
+      "settled": true,
+      "sourceJoined": false,
+      "channels": {
+        "ax": [
+          {
+            "identity": "root",
+            "role": "Window",
+            "label": "Alchemist FactoryProbe",
+            "value": {
+              "isEnabled": true,
+              "isOffscreen": false
+            },
+            "actions": [],
+            "bounds": {
+              "x": 1312,
+              "y": 736,
+              "width": 832,
+              "height": 688
+            },
+            "source": "external",
+            "children": [
+              "Root/#0/Modified/Modified/Text"
+            ]
+          },
+          {
+            "identity": "Root/#0/Modified/Modified/Text",
+            "role": "Text",
+            "label": "Box",
+            "value": {
+              "isEnabled": true,
+              "isOffscreen": false
+            },
+            "actions": [],
+            "bounds": {
+              "x": 1483,
+              "y": 828,
+              "width": 65,
+              "height": 60
+            },
+            "source": "external",
+            "children": []
+          }
+        ],
+        "printWindow": {
+          "hash": "sha256:cb3f1a30b6f861becf68a4fb06f2a1166f9eacb8e88dbd7d858f573bf51595c2",
+          "widthPx": 800,
+          "heightPx": 600,
+          "captureScale": {
+            "$decimal": "2.5"
+          }
+        },
+        "layout": [],
+        "events": [],
+        "anim": [],
+        "text": []
+      },
+      "issues": [
+        "missing/bad ref run1:renderer"
+      ]
+    }
+  ],
+  "consumed": {
+    "batch": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/batch.json",
+      "sha256": "sha256:d717aa4661e882e3f2b134e7b8070cf8ad802485011750aa8e5acf03cf572e7a",
+      "bytes": 914
+    },
+    "run1:plan": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/plan.json",
+      "sha256": "sha256:be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "bytes": 5681
+    },
+    "run1:observation": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-observation.json",
+      "sha256": "sha256:b3741a542105e62932512c6d8fbf33770c8977ed8c441742c81affd42ebccc29",
+      "bytes": 3951
+    },
+    "run1:outcome": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "sha256:89c09383f0a8a11e7eb34525a057a023607b0327ab579cdb74d610c98e76c8b2",
+      "bytes": 15658
+    },
+    "run1:owned": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/owned-process.json",
+      "sha256": "sha256:7b450fab577cbebab763e3b36c98b2731aaea72c75c0f2bc8133a9be1fb68e8f",
+      "bytes": 272
+    },
+    "run1:close": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/owned-close.json",
+      "sha256": "sha256:5110c2b2c0cea59ff5ccd4c6d9275e4e3cdeefe8751e1bcac17488413ceb1f84",
+      "bytes": 213
+    },
+    "run1:pixels": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.pixels.json",
+      "sha256": "sha256:42a3feedc89253aac7d445184e658d757f41a04232ca58a6a6c29c4abd0872c8",
+      "bytes": 7967
+    },
+    "run1:dispatch": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/dispatch.json",
+      "sha256": "sha256:9e93ea09e7551d42b17e689731d494364f20ffbb435ac30ba162208094bcd3dc",
+      "bytes": 737
+    },
+    "run1:compile": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/build-actual-v2-r1/observation.json",
+      "sha256": "sha256:5f19a3bacc50f7b1ee97cfb68d4cefdf48eae04194e22585d3a5527a97fa412d",
+      "bytes": 2954
+    },
+    "run1:launch": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/launch-observation.json",
+      "sha256": "sha256:7a8cde01bcf56c20894abb06b671ddc1025cbb6cb25bc33f94313debde56255b",
+      "bytes": 131
+    },
+    "run1:driverContract": {
+      "path": "factory/native/windows/round1-seeded-native-v5/contract.json",
+      "sha256": "sha256:5285021869f6f21ee0013c434d1171a25830b6161f98b8ddcbed2fca5bc65861",
+      "bytes": 16041
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\capture-repeat.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/capture-repeat.ps1",
+      "sha256": "sha256:c044e31bff2dbc6c55c43911da2d88362b0529228ba8ffb801b5e3b3f4bcf78f",
+      "bytes": 27904
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\run-repeat.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/run-repeat.ps1",
+      "sha256": "sha256:38bbcd7aea903c62569225fb80dd6b454b61a0a2cc4edca5c5a4c2eae3dd22f9",
+      "bytes": 10262
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\repeat-task.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/repeat-task.ps1",
+      "sha256": "sha256:8a27439aa6017f2caac9567f95e348133c805f135217efab4f50b397bfcd1b9f",
+      "bytes": 864
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\cleanup.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/cleanup.ps1",
+      "sha256": "sha256:a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+      "bytes": 6746
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\stream-seal.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/stream-seal.ps1",
+      "sha256": "sha256:4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+      "bytes": 6200
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-stack-layout-hosts-v1\\shared\\host-inputs.ps1": {
+      "path": "factory/native/windows/round1-stack-layout-hosts-v1/shared/host-inputs.ps1",
+      "sha256": "sha256:93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\pixels-background.ps1": {
+      "path": "factory/native/windows/pixels-background.ps1",
+      "sha256": "sha256:7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+      "bytes": 4795
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\verify-runtime-source.ps1": {
+      "path": "factory/native/windows/verify-runtime-source.ps1",
+      "sha256": "sha256:a134d0bf15bd925c4a35edb84d0195345505925db76812d7169e5744f8e765f6",
+      "bytes": 1275
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\owned-close.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/owned-close.ps1",
+      "sha256": "sha256:d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c",
+      "bytes": 815
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\mac-proof.ps1": {
+      "path": "factory/native/windows/round1-seeded-native-v5/mac-proof.ps1",
+      "sha256": "sha256:e02cfbaf71df028f385baae9eec65eabc07e691c91509b17ca42b19b345835ef",
+      "bytes": 4971
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\proof\\source-join.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/proof/source-join.json",
+      "sha256": "sha256:9710caa875686a56cde3c0f73f3cf64f357620439ad253bbd6afb0c8bbc53de3",
+      "bytes": 115021
+    },
+    "run1:driver:D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-native-v5\\proof-contract.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/proof-contract.json",
+      "sha256": "sha256:2a2f4f64da212cb187ff893dcade8c774ef292d7618dc511c455473bb00ec0b1",
+      "bytes": 31437
+    },
+    "run1:raw:capture-outcome.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "sha256:89c09383f0a8a11e7eb34525a057a023607b0327ab579cdb74d610c98e76c8b2",
+      "bytes": 15658
+    },
+    "run1:raw:host.stderr.txt": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/host.stderr.txt",
+      "sha256": "sha256:6d43466ae7d79248f95d742457698c385b9e8fa0323cf077ec76ddffbc21f94b",
+      "bytes": 1432
+    },
+    "run1:raw:host.stdout.txt": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/host.stdout.txt",
+      "sha256": "sha256:6a6e663d279466f63c031257ec85ff93ce94aa4d731ef963cf54c6daaf127fab",
+      "bytes": 23825
+    },
+    "run1:raw:launch-observation.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/launch-observation.json",
+      "sha256": "sha256:7a8cde01bcf56c20894abb06b671ddc1025cbb6cb25bc33f94313debde56255b",
+      "bytes": 131
+    },
+    "run1:raw:native.pixels.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.pixels.json",
+      "sha256": "sha256:42a3feedc89253aac7d445184e658d757f41a04232ca58a6a6c29c4abd0872c8",
+      "bytes": 7967
+    },
+    "run1:raw:native.printwindow.png": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.printwindow.png",
+      "sha256": "sha256:cb3f1a30b6f861becf68a4fb06f2a1166f9eacb8e88dbd7d858f573bf51595c2",
+      "bytes": 4126
+    },
+    "run1:raw:native.printwindow.repeat.png": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.printwindow.repeat.png",
+      "sha256": "sha256:cb3f1a30b6f861becf68a4fb06f2a1166f9eacb8e88dbd7d858f573bf51595c2",
+      "bytes": 4126
+    },
+    "run1:raw:native.screen.png": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.screen.png",
+      "sha256": "sha256:a2235d3f07a1e56c21614237f90b5d4d7c433c9fbb91b2ba5aafb4c57f0204c5",
+      "bytes": 43810
+    },
+    "run1:raw:native.screen.repeat.png": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.screen.repeat.png",
+      "sha256": "sha256:a2235d3f07a1e56c21614237f90b5d4d7c433c9fbb91b2ba5aafb4c57f0204c5",
+      "bytes": 43810
+    },
+    "run1:raw:native.uia.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/native.uia.json",
+      "sha256": "sha256:3391329bebfce667f2d22a24f817af4b9230821d1c90b3fd17faaf487cbfbd8d",
+      "bytes": 1253
+    },
+    "run1:raw:owned-close.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/owned-close.json",
+      "sha256": "sha256:5110c2b2c0cea59ff5ccd4c6d9275e4e3cdeefe8751e1bcac17488413ceb1f84",
+      "bytes": 213
+    },
+    "run1:raw:owned-process.json": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/owned-process.json",
+      "sha256": "sha256:7b450fab577cbebab763e3b36c98b2731aaea72c75c0f2bc8133a9be1fb68e8f",
+      "bytes": 272
+    },
+    "run1:outcome-join": {
+      "path": "factory/native/windows/round1-seeded-native-v5/single-padding-frame-r1/replays/run-001/native-01/capture-outcome.json",
+      "sha256": "sha256:89c09383f0a8a11e7eb34525a057a023607b0327ab579cdb74d610c98e76c8b2",
+      "bytes": 15658
+    },
+    "run1:case": {
+      "path": "factory/oracle/mac/seed-origin-actual-v1/input-snapshot/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "sha256": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+      "bytes": 1518
+    },
+    "run1:recipe": {
+      "path": "factory/recipes/data/swiftui.padding-frame.json",
+      "sha256": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+      "bytes": 1898
+    },
+    "run1:manifest": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/witness.manifest.json",
+      "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629",
+      "bytes": 1878
+    },
+    "run1:source:Package.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Package.swift",
+      "sha256": "sha256:2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+      "bytes": 538
+    },
+    "run1:source:witness.manifest.json": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/witness.manifest.json",
+      "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629",
+      "bytes": 1878
+    },
+    "run1:source:Sources/FactoryProbe/FactoryFill.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    "run1:source:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    "run1:source:Sources/FactoryProbe/FactoryViewport.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    "run1:source:Sources/FactoryProbe/Witness.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "bytes": 223
+    },
+    "run1:source:Sources/FactoryProbe/main.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:879dc7ac70d824f89020c8d296d3bd5ff902cbf635e66af88c85eddc770e0086",
+      "bytes": 13019
+    },
+    "run1:source:Sources/FactoryProbe/FactoryContainer.swift": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362
+    },
+    "run1:exe": {
+      "path": "factory/native/windows/round1-seeded-hosts-v1/padding-frame/build-actual-v2-r1/FactoryProbe.exe",
+      "sha256": "sha256:6c4508372a43e49b72ff0b4a2a3d71d988c8720e7706ae0fe742d9bfda9f5f5b",
+      "bytes": 3640320
+    }
+  },
+  "qualified": false,
+  "nativeParity": "hold"
+}

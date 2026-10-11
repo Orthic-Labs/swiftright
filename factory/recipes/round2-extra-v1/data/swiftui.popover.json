@@ -1,0 +1,96 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.popover.recipe",
+  "provenance": {
+    "sourceHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+    "createdAt": "2026-10-11T00:00:00Z",
+    "producer": "factory/recipes/round2-extra-v1",
+    "review": {
+      "reviewer": "pending-source-review",
+      "at": "2026-10-11T00:00:00Z",
+      "decision": "candidate"
+    },
+    "inputs": [
+      {
+        "id": "swiftui-pilot-round2-extra-candidates-v1",
+        "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+      }
+    ]
+  },
+  "block": "swiftui.popover",
+  "witnesses": [
+    {
+      "id": "swiftui.popover.witness",
+      "sourceHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+      "resources": [
+        {
+          "id": "swiftui.popover.witness.swift",
+          "hash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "open-popover",
+      "logicalAction": "open popover",
+      "nativeOnly": true
+    },
+    {
+      "id": "dismiss-popover",
+      "logicalAction": "dismiss popover",
+      "nativeOnly": true
+    }
+  ],
+  "assertions": [
+    {
+      "id": "swiftui.popover.assertion.presentation",
+      "channel": "presentation",
+      "expected": {
+        "presentation": "owned native popover present then dismissed",
+        "anchor": "own initiating control"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.popover.assertion.events-state",
+      "channel": "events/state",
+      "expected": {
+        "presentation": "owned native popover present then dismissed",
+        "anchor": "own initiating control"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.popover.assertion.accessibility",
+      "channel": "accessibility",
+      "expected": {
+        "presentation": "owned native popover present then dismissed",
+        "anchor": "own initiating control"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [],
+  "statefulSequences": [
+    [
+      "open-popover",
+      "dismiss-popover"
+    ]
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.popover.negative.invalid-argument",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:a2a6203de2a313ba2bb69a16a2c9742bca5360b2c31c8bac985c04234c9753b7"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.popover.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

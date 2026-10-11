@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Prospective prelaunch source-owned metadata contract proposal",
+  "type":"object","additionalProperties":false,
+  "required":["kind","version","createdAt","runRoot","expectedCount","case","recipe","plan","sourceHash","compile","exe","renderer","tuple","frozenTupleBound","captures"],
+  "properties":{
+    "kind":{"const":"factory-prelaunch-capture-metadata-v1"},"version":{"const":1},
+    "createdAt":{"type":"string","format":"date-time"},"runRoot":{"type":"string","minLength":1},
+    "expectedCount":{"enum":[1,20]},"case":{"type":"object","required":["id","hash"]},
+    "recipe":{"$ref":"#/$defs/ref"},"plan":{"$ref":"#/$defs/ref"},"sourceHash":{"$ref":"#/$defs/hash"},
+    "compile":{"$ref":"#/$defs/ref"},"exe":{"$ref":"#/$defs/ref"},"renderer":{"$ref":"#/$defs/ref"},"tuple":{"$ref":"#/$defs/ref"},
+    "frozenTupleBound":{"const":false},
+    "captures":{"type":"array","minItems":1,"maxItems":20,"items":{"type":"object","additionalProperties":false,"required":["run","captureID","imageID","provenance","hostIdentity","clockIdentity"],"properties":{"run":{"type":"integer","minimum":1,"maximum":20},"captureID":{"type":"string","minLength":1},"imageID":{"type":"string","minLength":1},"provenance":{"type":"object","required":["sourceHash","createdAt","producer"]},"hostIdentity":{"type":"string","minLength":1},"clockIdentity":{"type":"string","minLength":1}}}}
+  },
+  "$defs":{"hash":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"ref":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string","minLength":1},"sha256":{"$ref":"#/$defs/hash"},"bytes":{"type":"integer","minimum":0}}}}
+}

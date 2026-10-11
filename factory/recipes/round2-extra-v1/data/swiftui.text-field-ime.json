@@ -1,0 +1,102 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.text-field-ime.recipe",
+  "provenance": {
+    "sourceHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+    "createdAt": "2026-10-11T00:00:00Z",
+    "producer": "factory/recipes/round2-extra-v1",
+    "review": {
+      "reviewer": "pending-source-review",
+      "at": "2026-10-11T00:00:00Z",
+      "decision": "candidate"
+    },
+    "inputs": [
+      {
+        "id": "swiftui-pilot-round2-extra-candidates-v1",
+        "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+      }
+    ]
+  },
+  "block": "swiftui.text-field-ime",
+  "witnesses": [
+    {
+      "id": "swiftui.text-field-ime.witness",
+      "sourceHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25",
+      "resources": [
+        {
+          "id": "swiftui.text-field-ime.witness.swift",
+          "hash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "begin-ime-composition",
+      "logicalAction": "begin ime composition",
+      "nativeOnly": true
+    },
+    {
+      "id": "update-marked-text",
+      "logicalAction": "update marked text",
+      "nativeOnly": true
+    },
+    {
+      "id": "commit-ime-composition",
+      "logicalAction": "commit ime composition",
+      "nativeOnly": true
+    }
+  ],
+  "assertions": [
+    {
+      "id": "swiftui.text-field-ime.assertion.events-state",
+      "channel": "events/state",
+      "expected": {
+        "composition": "native marked range lifecycle",
+        "committed": "captured committed string matches requested sequence"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.text-field-ime.assertion.accessibility",
+      "channel": "accessibility",
+      "expected": {
+        "composition": "native marked range lifecycle",
+        "committed": "captured committed string matches requested sequence"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.text-field-ime.assertion.ime",
+      "channel": "ime",
+      "expected": {
+        "composition": "native marked range lifecycle",
+        "committed": "captured committed string matches requested sequence"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [],
+  "statefulSequences": [
+    [
+      "begin-ime-composition",
+      "update-marked-text",
+      "commit-ime-composition"
+    ]
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.text-field-ime.negative.invalid-argument",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:ad7da5b4ffb17005a310b3aaf828409c5e2fed0315b3a9f978b8fc125e1de224"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.text-field-ime.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

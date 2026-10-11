@@ -1,0 +1,4 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$source='D:\Claude\swiftright\factory\native\windows\padding-window-diagnosis-capture-v2'
+& (Join-Path $source 'prepare-capture.ps1') -CompileReceiptPath 'D:\Claude\swiftright\.factory-work\hosts\padding-window-diagnosis\package\build-diagnosis-r1\observation.json' -ExecutablePath 'D:\Claude\swiftright\.factory-work\hosts\padding-window-diagnosis\package\build-diagnosis-r1\FactoryProbe.exe' -CompileReceiptHash '74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7' -ExeHash 'caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369' -SerializerControlSha256 '952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba' -Count 1 -OutputPath (Join-Path $source 'actual-single-r1')
+[ordered]@{status='launch-admission-passed';nativeLaunches=0}|ConvertTo-Json

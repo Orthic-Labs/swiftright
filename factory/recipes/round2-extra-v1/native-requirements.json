@@ -1,0 +1,99 @@
+{
+  "kind": "round2-extra-native-requirements-v1",
+  "scope": "candidate; source-only",
+  "measurementTuple": null,
+  "nativeCapabilityClaims": false,
+  "approvalClaims": false,
+  "goldenPromotion": false,
+  "requirements": [
+    {
+      "block": "swiftui.popover",
+      "nativeRequirements": [
+        "Native presentation lifecycle & owned secondary window identity",
+        "Targeted activation/dismissal; no focus-steal automation",
+        "Platform popover anchor/size/dismissal behavior measured separately"
+      ],
+      "channels": [
+        "presentation",
+        "events/state",
+        "accessibility"
+      ],
+      "qualified": false,
+      "negativeTypecheck": "not run; declared must-not-compile candidate only",
+      "instrumentationTransparency": "must measure instrumented/uninstrumented native layout & paint",
+      "providerSubstitution": "forbidden",
+      "projectionOnly": true
+    },
+    {
+      "block": "swiftui.animation.spring-interruption",
+      "nativeRequirements": [
+        "Monotonic native clock & real presentation geometry samples",
+        "Interruption delivered before observed first animation settlement",
+        "No final-state-only animation equivalence claim"
+      ],
+      "channels": [
+        "events/state",
+        "presentation"
+      ],
+      "qualified": false,
+      "negativeTypecheck": "not run; declared must-not-compile candidate only",
+      "instrumentationTransparency": "must measure instrumented/uninstrumented native layout & paint",
+      "providerSubstitution": "forbidden",
+      "projectionOnly": true
+    },
+    {
+      "block": "swiftui.text-field-ime",
+      "nativeRequirements": [
+        "Real native IME provider & recorded locale/composition sequence",
+        "Targeted owned editable control, explicit focus/session checks",
+        "Marked-text range, candidate/commit/cancel facts; ordinary keystrokes insufficient"
+      ],
+      "channels": [
+        "events/state",
+        "accessibility",
+        "ime"
+      ],
+      "qualified": false,
+      "negativeTypecheck": "not run; declared must-not-compile candidate only",
+      "instrumentationTransparency": "must measure instrumented/uninstrumented native layout & paint",
+      "providerSubstitution": "forbidden",
+      "projectionOnly": true
+    },
+    {
+      "block": "swiftui.environment-font-color-scheme",
+      "nativeRequirements": [
+        "Native inherited font descriptor & color-scheme injection/readback",
+        "Real font shaping/paint resources; descriptor alone is not glyph parity",
+        "Distinct light/dark actual channel evidence; no aliased capture"
+      ],
+      "channels": [
+        "layout",
+        "paint",
+        "events/state"
+      ],
+      "qualified": false,
+      "negativeTypecheck": "not run; declared must-not-compile candidate only",
+      "instrumentationTransparency": "must measure instrumented/uninstrumented native layout & paint",
+      "providerSubstitution": "forbidden",
+      "projectionOnly": true
+    },
+    {
+      "block": "swiftui.context-menu",
+      "nativeRequirements": [
+        "Real native context-menu provider & owned menu identity",
+        "Targeted secondary activation + item selection/dismissal",
+        "No fake inline menu or fabricated labels"
+      ],
+      "channels": [
+        "events/state",
+        "accessibility",
+        "presentation"
+      ],
+      "qualified": false,
+      "negativeTypecheck": "not run; declared must-not-compile candidate only",
+      "instrumentationTransparency": "must measure instrumented/uninstrumented native layout & paint",
+      "providerSubstitution": "forbidden",
+      "projectionOnly": true
+    }
+  ]
+}

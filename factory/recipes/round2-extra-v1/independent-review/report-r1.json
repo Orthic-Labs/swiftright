@@ -1,0 +1,35 @@
+{
+  "candidateRegistrySha256": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+  "checks": [
+    "stage hashes/sizes",
+    "schema validation",
+    "witness/negative byte hashes",
+    "candidate manifest membership/status",
+    "exact USR/source joins",
+    "projection and fault receipt counts",
+    "native requirement hold flags"
+  ],
+  "counts": {
+    "faultControls": 28,
+    "joinRows": 5,
+    "nativeRequirementRows": 5,
+    "negativeSwiftSources": 5,
+    "positiveSwiftSources": 5,
+    "projections": 19,
+    "recipes": 5,
+    "selectedUSRs": 8,
+    "stagedFiles": 41
+  },
+  "holds": [
+    "no compiler/typecheck execution",
+    "no native execution",
+    "no measurement tuple",
+    "F4 active whitelist rejects all five blocks",
+    "no registry promotion or semantic dependency inference"
+  ],
+  "producerJoinSha256": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+  "producerStageSha256": "42969de7d3810b8c5d174af990bc3cf5f35f17762c53f1f17fe265d17a22a304",
+  "producerValidationSha256": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba",
+  "scope": "offline source/schema/projection only",
+  "status": "independent-source-review-pass"
+}

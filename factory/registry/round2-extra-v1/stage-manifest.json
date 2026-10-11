@@ -1,0 +1,70 @@
+{
+  "activeRegistryMutation": false,
+  "checks": {
+    "baseline": "PYTHONDONTWRITEBYTECODE=1 python3 factory/registry/round2-extra-v1/verify.py",
+    "baselineResult": {
+      "blocks": 5,
+      "ok": true,
+      "symbols": 10
+    },
+    "catalogueSha256": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270",
+    "faultResult": {
+      "acceptedBaseline": true,
+      "rejectedControls": 6
+    },
+    "faults": "PYTHONDONTWRITEBYTECODE=1 python3 factory/registry/round2-extra-v1/test_round2_extra.py"
+  },
+  "entries": [
+    {
+      "bytes": 1400,
+      "path": "factory/registry/round2-extra-v1/README.md",
+      "role": "owned",
+      "sha256": "72c0bb345ca6a756d316d56d7aadbf44e9b08391850d110a890b0489983b6055"
+    },
+    {
+      "bytes": 6292,
+      "path": "factory/registry/round2-extra-v1/candidate-manifest.json",
+      "role": "owned",
+      "sha256": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+    },
+    {
+      "bytes": 5428,
+      "path": "factory/registry/round2-extra-v1/generate.py",
+      "role": "owned",
+      "sha256": "26d5bba1941b9daadd1282c8d902dc991082d936e390ceefe3772e0c4d36511e"
+    },
+    {
+      "bytes": 4109,
+      "path": "factory/registry/round2-extra-v1/verify.py",
+      "role": "owned",
+      "sha256": "133717a7269c084ef3376eb6fb509aa0574071289f0641b8fca1e3cc3cda1a73"
+    },
+    {
+      "bytes": 1286,
+      "path": "factory/registry/round2-extra-v1/test_round2_extra.py",
+      "role": "owned",
+      "sha256": "3ac509aa42899576e57238fa24d84773c666799a7293130d545dc664d2ecb9fd"
+    },
+    {
+      "bytes": 40793212,
+      "path": "factory/catalogue/evidence/catalogue.json",
+      "role": "read-only dependency",
+      "sha256": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+    },
+    {
+      "bytes": 7922,
+      "path": "factory/registry/manifest.json",
+      "role": "read-only dependency",
+      "sha256": "7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1"
+    },
+    {
+      "bytes": 6595,
+      "path": "factory/registry/evidence/block-registry.json",
+      "role": "read-only dependency",
+      "sha256": "1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983"
+    }
+  ],
+  "kind": "round2-extra-stage-manifest",
+  "status": "held-source-bound-candidate-only",
+  "version": "0.1"
+}

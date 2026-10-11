@@ -1,0 +1,96 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.animation.spring-interruption.recipe",
+  "provenance": {
+    "sourceHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2",
+    "createdAt": "2026-10-11T00:00:00Z",
+    "producer": "factory/recipes/round2-extra-v1",
+    "review": {
+      "reviewer": "pending-source-review",
+      "at": "2026-10-11T00:00:00Z",
+      "decision": "candidate"
+    },
+    "inputs": [
+      {
+        "id": "swiftui-pilot-round2-extra-candidates-v1",
+        "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+      }
+    ]
+  },
+  "block": "swiftui.animation.spring-interruption",
+  "witnesses": [
+    {
+      "id": "swiftui.animation.spring-interruption.witness",
+      "sourceHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2",
+      "resources": [
+        {
+          "id": "swiftui.animation.spring-interruption.witness.swift",
+          "hash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "start-spring",
+      "logicalAction": "start spring",
+      "nativeOnly": true
+    },
+    {
+      "id": "interrupt-spring-before-settlement",
+      "logicalAction": "interrupt spring before settlement",
+      "nativeOnly": true
+    }
+  ],
+  "assertions": [
+    {
+      "id": "swiftui.animation.spring-interruption.assertion.events-state",
+      "channel": "events/state",
+      "expected": {
+        "state": "two toggles restore initial target",
+        "trajectory": "timestamped presentation samples required; no preset golden"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.animation.spring-interruption.assertion.presentation",
+      "channel": "presentation",
+      "expected": {
+        "state": "two toggles restore initial target",
+        "trajectory": "timestamped presentation samples required; no preset golden"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [
+    {
+      "id": "distance",
+      "values": [
+        80,
+        100
+      ],
+      "coverage": "full-product"
+    }
+  ],
+  "statefulSequences": [
+    [
+      "start-spring",
+      "interrupt-spring-before-settlement"
+    ]
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.animation.spring-interruption.negative.invalid-argument",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:d502eb3a0ff65be61ec399b5135cbdbbfad34756e79c8bda3aede4924a697ba2"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.animation.spring-interruption.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

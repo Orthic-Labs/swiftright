@@ -1,0 +1,96 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.context-menu.recipe",
+  "provenance": {
+    "sourceHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+    "createdAt": "2026-10-11T00:00:00Z",
+    "producer": "factory/recipes/round2-extra-v1",
+    "review": {
+      "reviewer": "pending-source-review",
+      "at": "2026-10-11T00:00:00Z",
+      "decision": "candidate"
+    },
+    "inputs": [
+      {
+        "id": "swiftui-pilot-round2-extra-candidates-v1",
+        "hash": "sha256:e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+      }
+    ]
+  },
+  "block": "swiftui.context-menu",
+  "witnesses": [
+    {
+      "id": "swiftui.context-menu.witness",
+      "sourceHash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d",
+      "resources": [
+        {
+          "id": "swiftui.context-menu.witness.swift",
+          "hash": "sha256:cf38cf6e828026ccd99cc6225fda7d80a00e6e3c73beccbbdc1609ed12c27f7d"
+        }
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "open-context-menu",
+      "logicalAction": "open context menu",
+      "nativeOnly": true
+    },
+    {
+      "id": "choose-menu-action",
+      "logicalAction": "choose menu action",
+      "nativeOnly": true
+    }
+  ],
+  "assertions": [
+    {
+      "id": "swiftui.context-menu.assertion.events-state",
+      "channel": "events/state",
+      "expected": {
+        "state": "Choose action changes state exactly once",
+        "menu": "owned native menu lifecycle observed"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.context-menu.assertion.accessibility",
+      "channel": "accessibility",
+      "expected": {
+        "state": "Choose action changes state exactly once",
+        "menu": "owned native menu lifecycle observed"
+      },
+      "observability": "blocked"
+    },
+    {
+      "id": "swiftui.context-menu.assertion.presentation",
+      "channel": "presentation",
+      "expected": {
+        "state": "Choose action changes state exactly once",
+        "menu": "owned native menu lifecycle observed"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [],
+  "statefulSequences": [
+    [
+      "open-context-menu",
+      "choose-menu-action"
+    ]
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.context-menu.negative.invalid-argument",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:569a10128df248024552b57a307ef85d82c8e59c92d598ff17bd09178a2e08ad"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.context-menu.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

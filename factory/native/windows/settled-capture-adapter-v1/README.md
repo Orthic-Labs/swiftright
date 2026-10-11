@@ -1,0 +1,9 @@
+# Settled actual-channel adapter
+
+`adapter.inspect(inputs, read_bytes)` consumes explicit archived refs `{path,sha256,bytes?}`. Reader owns archive roots; adapter rejects unsafe relative paths, hashes every returned byte payload & rejects duplicate/nonfinite JSON. Inputs bind batch plus each run's plan/observation/outcome/owned/close/pixels/dispatch/compile/launch, raw files, sourceBindings, exe/renderer, Mac source proof & explicit UIA mode. No receipt path becomes an implicit filesystem read.
+
+`settled` reports original native kernel0/no primaryerror/no kill/two sealed streams. `sourceJoined` adds complete source/compile/exe/render/Mac witness joins. `channels` exposes measured UIA & PrintWindow values from settled actual bytes; it does not claim provider paint/layout/events/animation/text exports. `issues` explains incomplete joins. Current actual Count1 remains diagnostic, no captureID/provenance/tuple invented. Count20 requires complete20 batch & all20 rows, never partial failed repeat.
+
+Canonical output stays empty until prospective source-owned metadata/measurement/ordering joins exist. issued-metadata.schema.json & source-contract-proposal.md define exact minimal new producer inputs; root can allocate identities BEFORE future native20. Current source contracts lack issued metadata & durable isolated-worker-before-pixels ordering receipts. Scope separates original outcome eligibility from owner-release-only final kernel certificate. F10 compiler request/origin admission remains independently required.
+
+Archived legacy normalizer & Windows/Mac admission source bytes live in dependencies for reproducible comparison. Tests use existing real padding Count1, failed repeat batch & actual failed stack outcome, plus byte corruption/kernel/string/flush/deadline controls. Run `python3 test_adapter.py`; no native/remote/build/Git operations.
