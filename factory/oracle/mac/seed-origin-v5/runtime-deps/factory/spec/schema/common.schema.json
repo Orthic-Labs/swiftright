@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/spec/v0.1/common.schema.json",
+  "title": "SwiftRight factory common v0.1",
+  "$defs": {
+    "artifactVersion": { "const": "0.1" },
+    "artifactKind": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9._/-]{1,159}$" },
+    "rfc3339": { "type": "string", "format": "date-time" },
+    "decimal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$decimal"],
+      "properties": { "$decimal": { "type": "string", "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]*[1-9])?$|^-(?:(?:[1-9][0-9]*)(?:\\.[0-9]*[1-9])?|0\\.[0-9]*[1-9])$" } }
+    },
+    "specialNumber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$number"],
+      "properties": { "$number": { "enum": ["NaN", "+Infinity", "-Infinity"] } }
+    },
+    "measuredNumber": { "oneOf": [ { "type": "integer" }, { "$ref": "#/$defs/decimal" }, { "$ref": "#/$defs/specialNumber" } ] },
+    "canonicalValue": {
+      "description": "Hash-critical values use integers, tagged decimals, or tagged special numbers; a bare JSON float is forbidden by canonicalization.",
+      "oneOf": [ { "type": "null" }, { "type": "boolean" }, { "type": "string" }, { "type": "integer" }, { "$ref": "#/$defs/decimal" }, { "$ref": "#/$defs/specialNumber" }, { "type": "array", "items": { "$ref": "#/$defs/canonicalValue" } }, { "type": "object", "not": { "anyOf": [{ "required": ["$decimal"] }, { "required": ["$number"] }] }, "additionalProperties": { "$ref": "#/$defs/canonicalValue" } } ]
+    },
+    "hashRef": { "type": "object", "additionalProperties": false, "required": ["id", "hash"], "properties": { "id": { "$ref": "#/$defs/id" }, "hash": { "$ref": "#/$defs/sha256" } } },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceHash", "createdAt", "producer"],
+      "properties": {
+        "sourceHash": { "$ref": "#/$defs/sha256" }, "createdAt": { "$ref": "#/$defs/rfc3339" }, "producer": { "type": "string", "minLength": 1 },
+        "inputs": { "type": "array", "items": { "$ref": "#/$defs/hashRef" }, "uniqueItems": true },
+        "review": { "type": "object", "additionalProperties": false, "required": ["reviewer", "at", "decision"], "properties": { "reviewer": { "type": "string", "minLength": 1 }, "at": { "$ref": "#/$defs/rfc3339" }, "decision": { "enum": ["accepted", "rejected", "candidate"] } } }
+      }
+    },
+    "envelope": {
+      "type": "object", "required": ["kind", "version", "id", "provenance"],
+      "properties": { "kind": { "$ref": "#/$defs/artifactKind" }, "version": { "$ref": "#/$defs/artifactVersion" }, "id": { "$ref": "#/$defs/id" }, "provenance": { "$ref": "#/$defs/provenance" } }
+    },
+    "tuple": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sdk", "macosBuild", "toolchains", "runtimeCommit", "rendererHash", "hostHashes", "factoryVersion", "acceptanceConfigHash"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" }, "sdk": { "type": "string", "minLength": 1 }, "macosBuild": { "type": "string", "minLength": 1 },
+        "toolchains": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string", "minLength": 1 } }, "runtimeCommit": { "type": "string", "pattern": "^[0-9a-f]{7,64}$" },
+        "rendererHash": { "$ref": "#/$defs/sha256" }, "hostHashes": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/sha256" } },
+        "factoryVersion": { "type": "string", "minLength": 1 }, "acceptanceConfigHash": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "kind": "seed-origin-v4-independent-source-control-review",
+  "version": 1,
+  "scope": "Offline source and archived control review; no seed capture, GUI, Accessibility, SSH, or producer edits.",
+  "producerStage": {
+    "stageManifestSha256": "sha256:f81a3746b850bc773e3cd6aa249b170ea9d48002b3516ee0956115233d743840",
+    "manifestEntries": 51,
+    "presentEntries": 51,
+    "missingEntries": 0,
+    "hashOrSizeMismatches": 0
+  },
+  "sourcePins": {
+    "capture_origin.py": {"bytes": 33552, "sha256": "sha256:dd924122a1aa41d932db56152b10b98e160f5f3df1077bbf49bc05034214b63b"},
+    "verify_receipt.py": {"bytes": 3514, "sha256": "sha256:0e878806df9ffaec8927784e892177f9bcd1adb6ee7df08d1154eec3ca54952d"},
+    "receipt-schema.json": {"bytes": 1165, "sha256": "sha256:c469cfeefabbe39004d5ca5c56db1b4b3295788aa9e759ff711dc255a1b48967"},
+    "verify_positive_control.py": {"bytes": 3138, "sha256": "sha256:aa68f959653ec11da292045b048c65bf4c46521cdcfec1a476cd5b0dfb23edf1"},
+    "verify_timeout_control.py": {"bytes": 1845, "sha256": "sha256:8520e0e497cd4b05ce3abcf3a5899338b7cd77855f678915a8091a31b1d4f937"},
+    "test_v4.py": {"bytes": 3668, "sha256": "sha256:055b2cec931e986b41404bb7b69aa0c2f6c5578a816e40af801bcc0f217bd9de"},
+    "positive-control/run-control.py": {"bytes": 2385, "sha256": "sha256:5c390326eb257349249e89ee7e267860f35d7934a83f2b26615bfd6e91515428"},
+    "fault-controls/timeout/run-timeout-control.py": {"bytes": 3284, "sha256": "sha256:f303f296cf505751878feaa1661643c5a5541ebd39d92207361e620fd46cbb0d"}
+  },
+  "archivedControls": {
+    "positive": {
+      "verification": "PASS",
+      "attempts": 1,
+      "resolverPid": 56290,
+      "compilerPid": 56298,
+      "compilerPgid": 56298,
+      "compilerExit": 0,
+      "sourceDrift": false,
+      "toolDrift": false,
+      "timedOut": false,
+      "receipt": "sha256:61c86f270a93d580cf73eaece5c581ce14b699b01f4d406dd3ab3010f8958a92",
+      "binary": "sha256:515bbc6a5cbd1d7a7bb434b870a8f1a2a44849ab6dcbc39f69d060b32d862b90",
+      "binaryBytes": 35168,
+      "argvMode": "xcrun",
+      "logicalCompilerPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "realCompilerPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "realCompilerHash": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "rawStreams": "resolver/compiler stdout and stderr paths plus hashes are present and archive-pinned"
+    },
+    "timeout": {
+      "verification": "PASS",
+      "attempts": 1,
+      "pid": 62663,
+      "pgid": 62663,
+      "initialTimeoutRecorded": true,
+      "timedOut": true,
+      "termSent": true,
+      "killSent": false,
+      "exitCode": -15,
+      "receipt": "sha256:7ffee18ebd198aba7f3d4ac4b7675041d9e38bb513f601a8a451434a3c40e184"
+    },
+    "offlineTests": {"count": 6, "passed": 6, "status": "PASS"}
+  },
+  "positiveFindings": [
+    {
+      "id": "validated-repository-root",
+      "result": "PASS",
+      "evidence": "capture_origin.py:15-33 and both control runners; injected SWIFTRIGHT_REPO_ROOT or factory/core/artifacts.py plus factory/oracle marker is required"
+    },
+    {
+      "id": "replayable-control",
+      "result": "PASS",
+      "evidence": "positive-control/run-control.py:12-32; explicit fresh internal scratch, detected repository, exact v4 collector path, two source copies, and compiler receipt output"
+    },
+    {
+      "id": "owned-timeout",
+      "result": "PASS",
+      "evidence": "capture_origin.py:183-207; timeout fault records initial timeout, TERM, owned PID/PGID, bounded drain, and durable exit"
+    },
+    {
+      "id": "compiler-receipt-joins",
+      "result": "PASS",
+      "evidence": "positive receipt verification; logical xcrun argv, resolved swiftc target/hash, source pre/post equality, cwd, PID/PGID, UTC bounds, raw streams, tool hash, and output binary all join"
+    }
+  ],
+  "holds": [
+    {
+      "id": "positive-source-archive-join",
+      "severity": "HOLD",
+      "evidence": "positive-control/archive-map.json omits positive-control/source/Witness.swift and CaptureHost.swift, although staged source bytes manually match receipt sourceBefore/sourceAfter hashes",
+      "impact": "Receipt currently depends on internal source paths for source-byte verification; archive map does not independently bind those source files",
+      "requiredSourceChange": "Add exact source files and hashes to positive-control archive map, or add verifier join against staged source pins"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "missing-seed-capture-ax-host-sources",
+      "severity": "BLOCK",
+      "evidence": "stage-manifest has no AXClient.swift or CaptureHost.swift; capture_origin.py:139-147 reads sibling AXClient.swift, and capture_origin.py:276-280 reads sibling CaptureHost.swift",
+      "impact": "main() fresh_ax_preflight cannot load AXClient.swift, and capture() cannot adapt CaptureHost.swift; seed capture admission cannot reach compiler/AX preflight",
+      "requiredSourceChange": "Add exact AXClient.swift and CaptureHost.swift source pins beside collector, or bind validated source paths explicitly, then repin stage"
+    }
+  ],
+  "executionDisposition": "BLOCKED_PENDING_CAPTURE_SOURCE_ARCHIVE_AND_AX_PREFLIGHT_SOURCES",
+  "nextGate": "After adding and pinning capture host/client sources plus archive source joins, rerun bounded control review before any seed capture."
+}

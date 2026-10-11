@@ -1,0 +1,99 @@
+{
+  "cases": [
+    {
+      "block": "stack-overlay",
+      "nativeReportRawMatches": 20,
+      "nativeVsProofRawMismatches": 20,
+      "oracleProofLineageRawMatches": 20,
+      "runs": 20
+    },
+    {
+      "block": "custom-layout",
+      "nativeReportRawMatches": 20,
+      "nativeVsProofRawMismatches": 20,
+      "oracleProofLineageRawMatches": 20,
+      "runs": 20
+    },
+    {
+      "block": "padding-frame",
+      "nativeReportRawMatches": 20,
+      "nativeVsProofRawMismatches": 20,
+      "oracleProofLineageRawMatches": 20,
+      "runs": 20
+    },
+    {
+      "block": "preference-key",
+      "nativeReportRawMatches": 20,
+      "nativeVsProofRawMismatches": 20,
+      "oracleProofLineageRawMatches": 20,
+      "runs": 20
+    },
+    {
+      "block": "scroll-view",
+      "nativeReportRawMatches": 20,
+      "nativeVsProofRawMismatches": 20,
+      "oracleProofLineageRawMatches": 20,
+      "runs": 20
+    }
+  ],
+  "counts": {
+    "proofLineageOracleRawMatch": 100,
+    "proofOracleCaptureMatch": 100,
+    "reportNativeCaptureMatch": 100,
+    "reportNativeProofCaptureMismatch": 100,
+    "reportNativeProofRawMismatch": 100,
+    "reportNativeRawMatch": 100
+  },
+  "decision": "wrong-source-namespace-join; no raw-file drift between 51443310 and HEAD",
+  "diagnosticSourceSha256": "sha256:9ad6bcb1b99dc1e1aed66849f886dc71cb335e749b6da2fd81219791c023b939",
+  "example": {
+    "block": "stack-overlay",
+    "lineageRawSha256": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+    "nativeCapturePath": "factory/native/macos/evidence/20261010-gate-seeded/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+    "nativeCaptureSha256": "sha256:13bd35e618567ca2e2f30ebc3359773ea7675d3cef786909fd12a9a610ef3082",
+    "nativeRawSha256": "sha256:f22329aca15b951798f76923b0381d8d67c62aa8c8b028647ce245e25f03e46b",
+    "nativeReportPath": "factory/native/macos/evidence/20261010-gate-seeded/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/instrumented.raw.json",
+    "oracleCaptureSha256": "sha256:684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044",
+    "oracleEvidencePath": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/instrumented.raw.json",
+    "oracleRawSha256": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+    "proofCaptureSha256": "sha256:684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044",
+    "proofLineageCapturePath": "factory/oracle/mac/seed-corrections-v1/evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+    "proofLineageRawPath": "evidence/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258/run-001/instrumented.raw.json",
+    "proofRawSha256": "sha256:040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+    "run": 1
+  },
+  "explanation": "proof-copy/lineage rawPath values resolve under factory/oracle/mac/seed-corrections-v1, where all 100 raw+capture hashes match. F9 actual-v1 builder selects factory/native/macos/evidence/20261010-gate-seeded, a distinct same-case/source capture set; all 100 current files and summaries match each other but differ from proof/lineage. Current native files equal their 51443310 committed bytes and remain unchanged at HEAD. proof-copy was added later in 7f95f113; this is namespace selection, not post-514 file drift.",
+  "history": {
+    "lineageFile": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": "18ccbd8c2ee4939a90abfe177d36ef4939e96c5c91c286a08a36a5977e09fbe2",
+      "HEAD": "18ccbd8c2ee4939a90abfe177d36ef4939e96c5c91c286a08a36a5977e09fbe2"
+    },
+    "nativeCapture": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": "13bd35e618567ca2e2f30ebc3359773ea7675d3cef786909fd12a9a610ef3082",
+      "HEAD": "13bd35e618567ca2e2f30ebc3359773ea7675d3cef786909fd12a9a610ef3082"
+    },
+    "nativeRaw": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": "f22329aca15b951798f76923b0381d8d67c62aa8c8b028647ce245e25f03e46b",
+      "HEAD": "f22329aca15b951798f76923b0381d8d67c62aa8c8b028647ce245e25f03e46b"
+    },
+    "oracleCapture": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": "684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044",
+      "HEAD": "684ee57a1335fc8cfce293d536d6be7f36f647b5c0010830880a8647b3e5a044"
+    },
+    "oracleRaw": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": "040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f",
+      "HEAD": "040794666447c49109f1c9100230aa3276d5c56d2a35d6c80041b8997cb7771f"
+    },
+    "proofCopy": {
+      "514433100e30d808487ed3825ffb7d129bead8a7": null,
+      "7f95f113adcb9b61614afc83a75e714b9906cc4f": "338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f",
+      "HEAD": "338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f"
+    },
+    "proofCopyIntroducedBy": "7f95f113adcb9b61614afc83a75e714b9906cc4f"
+  },
+  "kind": "seeded-actual-v1-lineage-namespace-diagnosis",
+  "lineageSha256": "sha256:18ccbd8c2ee4939a90abfe177d36ef4939e96c5c91c286a08a36a5977e09fbe2",
+  "proofCopySha256": "sha256:338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f",
+  "reportSha256": "sha256:2da1da4105b91021b0aee9e7fbc82460ca3ce531cdafe93ba892c73a45ae2f8d",
+  "version": 1
+}

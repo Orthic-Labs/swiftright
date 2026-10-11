@@ -1,0 +1,114 @@
+{
+  "decision": "CLEAR-BOUNDED-OBSERVATIONAL-REPORT",
+  "denominators": {
+    "cases": 5,
+    "macRuns": 100,
+    "macRunsPerCase": 20,
+    "proofLinkedCaptures": 100,
+    "proofLinkedRawStreams": 100,
+    "windowsRuns": 5,
+    "windowsRunsPerCase": 1
+  },
+  "faultControls": {
+    "independent": {
+      "rejected": 10
+    },
+    "producer": {
+      "baseline": "accepted",
+      "rejected": 8
+    }
+  },
+  "kind": "independent-f9-seeded-observations-actual-v2-review",
+  "limitationsHeld": [
+    "compiler OS origin",
+    "native parity",
+    "qualified timing",
+    "qualified paint",
+    "goldens",
+    "registry promotion"
+  ],
+  "lineageFileSha256": "18ccbd8c2ee4939a90abfe177d36ef4939e96c5c91c286a08a36a5977e09fbe2",
+  "observations": {
+    "custom": {
+      "labels": [],
+      "macExternalAX": "20/20 HELD; no AXStaticText",
+      "macInstrumented": "20/20 OBSERVED",
+      "qualification": "held",
+      "windows": "1 single; no UIA Text children"
+    },
+    "padding": {
+      "labels": [
+        "Box"
+      ],
+      "mac": "20/20 OBSERVED",
+      "qualification": "held",
+      "windows": "1 single"
+    },
+    "preference": {
+      "labels": [
+        "0",
+        "1"
+      ],
+      "mac": "20/20 OBSERVED",
+      "qualification": "held",
+      "windows": "1 single"
+    },
+    "scroll": {
+      "crossHostSequenceMatch": false,
+      "macExternalAX": "20/20 OBSERVED separate channel",
+      "macInstrumented": "20/20 UNOBSERVED",
+      "qualification": "held",
+      "rawLabels": [
+        "Row 0",
+        "Row 1",
+        "Row 2",
+        "Row 3",
+        "Row 4",
+        "Row 5",
+        "Row 6",
+        "Row 7"
+      ],
+      "windows": "1 single"
+    },
+    "stack": {
+      "labels": [
+        "+"
+      ],
+      "mac": "20/20 OBSERVED",
+      "qualification": "held",
+      "windows": "1 single"
+    }
+  },
+  "producerFiles": [
+    {
+      "bytes": 595,
+      "path": "factory/pipeline/paired-five-seeded-observations-actual-v2/README.md",
+      "sha256": "5ce9fadc8c0c01156eaf4bb8931c629a730bb8bc7f47bfcb73664a28171578dc"
+    },
+    {
+      "bytes": 17319,
+      "path": "factory/pipeline/paired-five-seeded-observations-actual-v2/build_report.py",
+      "sha256": "453e9393bb8d26bf2ef435655e520c518487e64df9d31bfaed05e439c1b7c9a9"
+    },
+    {
+      "bytes": 416007,
+      "path": "factory/pipeline/paired-five-seeded-observations-actual-v2/raw-pins.json",
+      "sha256": "396329cd5fb2f7a1c9667b1282c69c9f076f42e1f7303a0221114fb7d98350a6"
+    },
+    {
+      "bytes": 1053502,
+      "path": "factory/pipeline/paired-five-seeded-observations-actual-v2/report.json",
+      "sha256": "707c1911d6149837829784dd98cfcd883e1c57fb211c0b5373c3773a6fbfbc0b"
+    },
+    {
+      "bytes": 748,
+      "path": "factory/pipeline/paired-five-seeded-observations-actual-v2/stage-manifest.json",
+      "sha256": "91d219406e4dfbdccb7c7aa0b804c140adef39bf3bd5812b7906308e7e7f0374"
+    }
+  ],
+  "producerStageSha256": "91d219406e4dfbdccb7c7aa0b804c140adef39bf3bd5812b7906308e7e7f0374",
+  "proofFileSha256": "338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f",
+  "proofIdentity": "sha256:9710caa875686a56cde3c0f73f3cf64f357620439ad253bbd6afb0c8bbc53de3",
+  "scopeNote": "fetchComplete 32\u201334 means Windows output-fetch file count, not Mac observation count; scroll report receipt is pending-review, 34 files corroborated by root SCP log.",
+  "v1NamespaceFailurePreserved": "factory/pipeline/paired-five-seeded-observations-actual-v1/independent-review/lineage-diagnosis-v1"
+}

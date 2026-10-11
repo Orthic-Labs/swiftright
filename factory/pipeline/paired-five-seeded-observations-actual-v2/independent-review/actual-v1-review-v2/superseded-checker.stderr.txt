@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Volumes/D/claude/swiftright/factory/pipeline/paired-five-seeded-observations-actual-v1/independent-review/review.py", line 278, in <module>
+    print(json.dumps(review(), sort_keys=True, indent=2))
+                     ~~~~~~^^
+  File "/Volumes/D/claude/swiftright/factory/pipeline/paired-five-seeded-observations-actual-v1/independent-review/review.py", line 181, in review
+    assert summary_run["instrumented"]["rawHash"] == proof_run["rawHash"] == lineage_run["rawSha256"] == inst_hash
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
