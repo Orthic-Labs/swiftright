@@ -1,0 +1,127 @@
+{
+  "kind": "seeded-native-v2-independent-actual-controls-review",
+  "reviewDate": "2026-10-11",
+  "decision": "actual-controls-clear-for-root-seed-single",
+  "scope": "Read-only review of root-fetched Windows PowerShell 5.1 control receipts; no SSH, GUI, Git, compiler, or native execution by reviewer.",
+  "sourceStage": {
+    "path": "factory/native/windows/round1-seeded-native-v2/root-stage-manifest.json",
+    "sha256": "cbdbf5e5957d7a68c6a8c0f2ecc0ec87f4ef991dc86a3569d65145febacccc93",
+    "pinnedFiles": 186
+  },
+  "independentFiveHostCompileJoin": {
+    "stagePath": "factory/native/windows/round1-seeded-build-v2/actual-review/root-stage-manifest.json",
+    "stageSha256": "c568ac509539d7108e76429c60efee409066f979636997c116ef1614486fe00e",
+    "finalReviewPath": "factory/native/windows/round1-seeded-build-v2/actual-review/final-five-review-v1.json",
+    "finalReviewSha256": "1a400a86a73a7aa3ddc42b043bb96a77c34453d46498578b8abfffbde63545d0",
+    "allFiveIndependentCompileClear": true,
+    "nativeParity": "hold"
+  },
+  "rootFetch": {
+    "outputManifest": {
+      "path": "factory/native/windows/round1-seeded-native-v2/root-control-output-scp.json",
+      "sha256": "91a2904e5cb3b686df919a939b7fa752f33d27d60253a7873fb5838c30a678c1"
+    },
+    "listedFiles": 17,
+    "missingFiles": 0,
+    "hashMismatches": 0,
+    "transferCount": 8,
+    "allTransferExitCodes": 0,
+    "transferReceipt": {
+      "path": "factory/native/windows/round1-seeded-native-v2/root-transfer.json",
+      "sha256": "06414820376f6a1102c7b44b33dced3e811e2c18351a85941e36f9d25629054b",
+      "exitCode": 0
+    }
+  },
+  "controlProcess": {
+    "processReceipt": {
+      "path": "factory/native/windows/round1-seeded-native-v2/root-controls-process.json",
+      "sha256": "358cd748c1f1c6648bfb2dae689175507fd87f1742c2ddda39c0b7f944fa2ed2"
+    },
+    "startReceipt": {
+      "path": "factory/native/windows/round1-seeded-native-v2/root-controls-start.json",
+      "sha256": "176941a3885d2ec36eccf8aa488970e01f931508445a85d06319ecb8de64f662",
+      "scriptSha256": "3de7038c589d1461d6280a953008e94e716d9bea968989e6f38e1de4336b4b65"
+    },
+    "startedAt": "2026-10-11T05:26:52.205785+00:00",
+    "finishedAt": "2026-10-11T05:26:58.260633+00:00",
+    "exitCode": 0,
+    "stdoutSha256": "edc4a4c5f45f659276ce1f4354b9c0c2f4a31aa6ff0c3609fa8b1735f464d5e3",
+    "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4",
+    "reviewerExecuted": false
+  },
+  "actualControls": {
+    "parse": {
+      "path": "root-parse-actual-r1.json",
+      "sha256": "c3e59f75331b4dcef65a4cab86a660798f9fc2138570599c0313b6b8640976b4",
+      "rows": 16,
+      "astErrors": 0
+    },
+    "namespace": {
+      "path": "root-namespace-actual-r1/controls.json",
+      "sha256": "cdca3d8434a22dd30925f4dd2409de028468076684045b58fd771865788c33f8",
+      "positiveCases": 2,
+      "faultsRejected": 5,
+      "faults": ["missing", "extra", "equal-count-wrong", "duplicate", "file"]
+    },
+    "cleanup": {
+      "path": "root-cleanup-actual-r1/controls.json",
+      "sha256": "37c6cc93bfdf60056e3b129298d0386fda254b8c18a70ae7fbc08c4ea72bffec",
+      "rows": 15,
+      "confirmedExitPositiveCases": 3,
+      "identityAndTimeoutHolds": 5,
+      "priorityFaultCases": 2,
+      "confirmedReleaseCases": 3,
+      "releaseOnlyAfterConfirmedExit": true
+    },
+    "streamSeal": {
+      "path": "root-stream-actual-r1/controls.json",
+      "sha256": "8b71d6884bfee9cd028ac2b2c1fdbec03fc2df9d400132ebe13e6d5b3da4dee8",
+      "rows": 4,
+      "realCopyReadHashIdempotent": true,
+      "unfinishedRejected": true,
+      "faultedRejected": true,
+      "bothStreamsSealedAndHashed": true
+    },
+    "ownedClose": {
+      "path": "root-close-actual-r1/controls.json",
+      "sha256": "82852ba2f60e85867b1c08547dc76b310d74f07df608e388bed3c6850eb588ca",
+      "rows": 8,
+      "normalGuardOrder": ["source", "lock", "background", "owned", "post"],
+      "faultsRejected": 7,
+      "unsafePostOnGuards": 0
+    },
+    "exitProof": {
+      "path": "root-exit-proof-actual-r1/controls.json",
+      "sha256": "df322f4620090392b71c8f289b46d2b06efe252c16c5bec94244d4fe34ae22ad",
+      "rows": 12,
+      "normalAccepted": true,
+      "faultsRejected": 11,
+      "numericConfirmedExitRejected": true
+    },
+    "macProof": {
+      "path": "root-mac-proof-actual-r1/controls.json",
+      "sha256": "453dc7a38f5a34e96447c7117106bb9efb8519c187f603e2f707cd00055efcd5",
+      "rows": 25,
+      "normalAccepted": true,
+      "faultsRejected": 24,
+      "changedProofBytesRejected": true,
+      "duplicateRunWrongSeedBoolAndStatusFaultsRejected": true,
+      "proofCopySha256": "338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f"
+    },
+    "hiddenProcessStreams": {
+      "path": "root-process-streams-actual-r1/controls.json",
+      "sha256": "68abd2efff71650568c5aff3a85765cb228313aa2a4fa6007676e108eca8ce0f",
+      "exitCode": 0,
+      "cleanupConfirmedOwnedExit": true,
+      "stdoutSha256": "f0efa39991a783ab663433d5709e9b63d1aed6d52ec088c03182f804ed860118",
+      "stderrSha256": "bdfb795f58b7a80a77a67707ca06c054497711721bdb941d07f90b2dfcaee301"
+    }
+  },
+  "reviewConclusion": {
+    "allFetchedFilesHashVerified": true,
+    "allActualControlsPassed": true,
+    "compilerAndNativeInvocationsInControlProcess": 0,
+    "rootSeedGate": "clear-for-seeded-single-after-five-host-compile-join",
+    "guiOrNativeDispatch": "not performed by reviewer; remains separately gated"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 factory/pipeline/paired-stack-custom-actual-v4/independent-review/review.py",
+  "decision": "clear-for-bounded-observational-report",
+  "faultControls": "6/6 rejected; baseline accepted",
+  "files": [
+    {
+      "bytes": 17835,
+      "path": "review.py",
+      "sha256": "b6817b5090200ee10b05b9ba7c6b3dad608fac1479989baf4d3c69cc0c97665e"
+    },
+    {
+      "bytes": 1334,
+      "path": "README.md",
+      "sha256": "68554855dadc7806b78f552ff8e1fb73686a14573a1724daedae5c15f11cb3df"
+    },
+    {
+      "bytes": 1591,
+      "path": "findings-v1.json",
+      "sha256": "470d9509f3569d723beebfc5f628834f3266e52e207b78a4ad97d5dd976b461f"
+    },
+    {
+      "bytes": 286,
+      "path": "fault-controls-replay.stdout.json",
+      "sha256": "b4a0e91181615c79be2e29561762342d1317a61294a1f1ab712c24f239a7f675"
+    },
+    {
+      "bytes": 0,
+      "path": "fault-controls-replay.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 230,
+      "path": "review-run.stdout.json",
+      "sha256": "6f777c5c0a4647ffa0ef901503cc86a44faf8269c1af8aeb201e03d9caed02c1"
+    },
+    {
+      "bytes": 0,
+      "path": "review-run.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "kind": "f9-paired-stack-custom-actual-v4-independent-review-stage",
+  "macRunsPerCase": 20,
+  "producerStageManifestSha256": "519df923250e311c7c455f2c6232f5790fab2bcc46297e67ff2c636774621634",
+  "rawPinsSha256": "7825b9349329e9d7158fe0dfa593cdf51326383c5a541430482c02e970974e84",
+  "rawRoots": 4,
+  "reportSha256": "c77d71e54e9c524e6643e9695dda0cb9734ffcd272c156483bee975683d93887",
+  "windowsRunsPerCase": 20
+}

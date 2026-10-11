@@ -1,0 +1,123 @@
+{
+  "kind": "seeded-build-v2-independent-actual-controls-review",
+  "reviewDate": "2026-10-11",
+  "decision": "actual-controls-clear-for-root-compiler",
+  "scope": "Read-only review of root-fetched Windows PowerShell 5.1 control receipts; no compiler/native/SSH/GUI execution by reviewer.",
+  "sourceStage": {
+    "path": "factory/native/windows/round1-seeded-build-v2/root-stage-manifest.json",
+    "sha256": "a9d53bdb2872ac8bccdd437104d107e4d1e37ba787735ecff41ab2d90db7f03f"
+  },
+  "sourcePins": {
+    "buildHostsV2": "0f50a0d8653d1869538b4d79bc143168adac2ee2c42b9bb0f8760cf9bcee44f4",
+    "controlAdmission": "0348814bba0e8ea89de323603bcd096f10b68528a0ac762c1df9078e624fa39e",
+    "runControls": "dc22324f148b5da18e2d599e097b039a6478074366fbbfaeed9be4099a7723cc",
+    "sourceAdmission": "a9b0690d19de702358f2ce6da61bfddfdb6cef84a56d7014763f83c5cb6a29fc",
+    "readiness": "8538b74afe6bcac938737ebfec0daa90b1643f48a41e1b654c2957f688505fdd",
+    "sharedHostInputs": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "seededHostsStage": "f23648e19fb807c78a83c52b208147999c3defc5621962135a1feeab385c4b46"
+  },
+  "frozenSeedPlans": {
+    "sourceAdmissionMatch": true,
+    "actualMetadataPresent": true,
+    "planCount": 5,
+    "planSha256": {
+      "custom-layout": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "padding-frame": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "preference-key": "f61fee02568923f75f95ad46ffbfcdd6aeda17a07fc3c30fcafcd1540134d7d5",
+      "scroll-view": "cc751e98ed32e17b50797751b06e82e54b294592ff60ca0184db8cec32ed00b9",
+      "stack-overlay": "4cc752eee6d227bf2fcbff60e2822f8199f233a904e1a8087f5a3ddd65f19f9b"
+    },
+    "sharedRuntimeMetadataSha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "controlReceipt": {
+    "rootControlOutputScp": {
+      "path": "factory/native/windows/round1-seeded-build-v2/root-control-output-scp.json",
+      "sha256": "5fe5146026ce5b69b04b3cae0febe3dc4943b2e215312678e6d559c85212f947"
+    },
+    "rootTransfer": {
+      "path": "factory/native/windows/round1-seeded-build-v2/root-transfer.json",
+      "sha256": "00377c7fd2a1ce6da296c4b1506987817130b59eb70940aef9b4600746fe9527",
+      "seededBuildOwnedRows": 12,
+      "seededBuildAllLocalRowsVerified": 12,
+      "seededBuildScpExit": 0,
+      "ownedSourcePins": 73
+    },
+    "scpFileCount": 111,
+    "scpHashMismatches": 0,
+    "transferExitCodes": {
+      "control-results": 0,
+      "control-fixtures": 0
+    },
+    "process": {
+      "path": "factory/native/windows/round1-seeded-build-v2/root-controls-process.json",
+      "sha256": "49f56e07109a10283405dac1b796a93681729aca9bcb0000235ab52c3e855866",
+      "startedAt": "2026-10-11T05:13:13.238068+00:00",
+      "finishedAt": "2026-10-11T05:13:15.106456+00:00",
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4"
+    },
+    "start": {
+      "path": "factory/native/windows/round1-seeded-build-v2/root-controls-start.json",
+      "sha256": "cecf6899f7c4def3d507a38e39074eadf5e19df66f7a28f2193cebdd9b0909e0",
+      "scriptSha256": "4e68c41975747faea7b5f150f8aaea7a835005167677847bb9e3f7d97bf29617"
+    }
+  },
+  "controls": {
+    "cleanup": {
+      "path": "control-results/cleanup-controls.json",
+      "sha256": "df15755782866de673ef882d44da9d3fad7ef30c0f74a2b559631b4d167dcadd",
+      "positiveCases": 3,
+      "faults": 3,
+      "compilerInvocations": 0,
+      "nativeCalls": 0
+    },
+    "hostInput": {
+      "path": "control-results/host-input-controls.json",
+      "sha256": "3b87f69347099a2715778d700b59c1414a1bb4c4568ea417a589d4f2cfe05700",
+      "normalPassed": true,
+      "faults": 5,
+      "compilerInvocations": 0,
+      "nativeWindows": 0
+    },
+    "parse": {
+      "path": "control-results/parse-controls.json",
+      "sha256": "ff29cf02e446c63b591be18b5feee599d2c0dae08ad4f27998bbdda6346ca33e",
+      "rows": 9,
+      "parseErrors": 0
+    },
+    "integerAdmission": {
+      "path": "control-results/integer-controls.json",
+      "sha256": "fe23e96cceb7864a57bdcc821e80ddf9d0993ef8eaf5dd6dc40722059e135b5b",
+      "positiveInt32": 2,
+      "positiveInt64": 2,
+      "faults": 9,
+      "compilerInvocations": 0,
+      "nativeCalls": 0
+    },
+    "reservedAssignmentLint": {
+      "path": "control-results/reserved-lint.json",
+      "sha256": "f99791df61f4a5cd4b38815abea4e3b5c48dfc4f08e962e27a961eb7bae887fd",
+      "pass": true,
+      "files": 10,
+      "reservedAssignments": 0,
+      "compilerInvocations": 0
+    },
+    "productionAdmission": {
+      "path": "control-results/admission-controls.json",
+      "sha256": "389a69c692eb55dfe70f6b5e935b9685dbc58bff4b4add6b1dd3196e91d30e7a",
+      "actualGeneratedOutputsPassed": true,
+      "fixturePositivePassed": true,
+      "faults": 7,
+      "compilerInvocations": 0,
+      "nativeCalls": 0
+    }
+  },
+  "reviewConclusion": {
+    "sourceAndReceiptJoins": true,
+    "allRequiredActualControlsPassed": true,
+    "compilerGate": "clear-to-root-compiler",
+    "reviewerExecutedCompiler": false,
+    "reviewerExecutedNativeCode": false
+  }
+}

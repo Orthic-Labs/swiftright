@@ -1,0 +1,80 @@
+{
+  "kind": "independent-source-review-round1-seeded-build-v2",
+  "decision": "source-clearance-for-root-controls-then-compiler-only-build",
+  "scope": "read-only source review; no compiler, controls, native, SSH or GUI execution",
+  "stage": {
+    "path": "factory/native/windows/round1-seeded-build-v2/root-stage-manifest.json",
+    "sha256": "a9d53bdb2872ac8bccdd437104d107e4d1e37ba787735ecff41ab2d90db7f03f",
+    "fileCount": 11,
+    "producerFilesOnly": true
+  },
+  "producerPins": {
+    "builderSha256": "0f50a0d8653d1869538b4d79bc143168adac2ee2c42b9bb0f8760cf9bcee44f4",
+    "admissionSha256": "0348814bba0e8ea89de323603bcd096f10b68528a0ac762c1df9078e624fa39e",
+    "runControlsSha256": "dc22324f148b5da18e2d599e097b039a6478074366fbbfaeed9be4099a7723cc",
+    "sourceAdmissionSha256": "a9b0690d19de702358f2ce6da61bfddfdb6cef84a56d7014763f83c5cb6a29fc",
+    "readinessSha256": "8538b74afe6bcac938737ebfec0daa90b1643f48a41e1b654c2957f688505fdd"
+  },
+  "sourceAdmission": {
+    "kind": "seeded-build-v2-source-admission",
+    "actualMetadataPresent": true,
+    "sourceBindingsMatch": true,
+    "planCount": 5,
+    "approvedPlanHashes": {
+      "custom-layout": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "padding-frame": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "preference-key": "f61fee02568923f75f95ad46ffbfcdd6aeda17a07fc3c30fcafcd1540134d7d5",
+      "scroll-view": "cc751e98ed32e17b50797751b06e82e54b294592ff60ca0184db8cec32ed00b9",
+      "stack-overlay": "4cc752eee6d227bf2fcbff60e2822f8199f233a904e1a8087f5a3ddd65f19f9b"
+    },
+    "localPlanSourceBindingHashesVerified": true
+  },
+  "runtimeBridgeCompilerGuards": {
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "runtimeReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "runtimeVerifierHash": "a134d0bf15bd925c4a35edb84d0195345505925db76812d7169e5744f8e765f6",
+    "hostInputGuardHash": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "rendererHash": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "bridgeBindingCount": 10,
+    "beforeAndAfterChecks": true
+  },
+  "controlReview": {
+    "ps5JsonArrayShapeFix": "direct ConvertFrom-Json assignment followed by @($decoded) in production parse admission, positive fixture projection, and parser fault mutation",
+    "integerAdmission": "Int32/Int64 exact bounded helper; bool, float, decimal, negative, overflow, wrong-int64, string, null, array faults rejected",
+    "parseAllowlist": "exact 9 v2 scripts with AST source hashes",
+    "reservedAssignmentLint": "full recursive PowerShell script set excluding generated results/fixtures",
+    "controlProofOrder": "cleanup, host-input, parse, integer, lint, production admission, fixture faults, invocation proof before compiler",
+    "compilerInvocationsInControls": 0,
+    "nativeCallsInControls": 0
+  },
+  "builderReview": {
+    "packageAllowlist": [
+      "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-hosts-v1\\stack-overlay\\package",
+      "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-hosts-v1\\custom-layout\\package",
+      "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-hosts-v1\\padding-frame\\package",
+      "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-hosts-v1\\preference-key\\package",
+      "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-seeded-hosts-v1\\scroll-view\\package"
+    ],
+    "exactPlanAllowlist": true,
+    "output": "build-v2-r1",
+    "retainedKernelHandle": true,
+    "pidLookupOrTaskkill": false,
+    "naturalExitNoTermination": true,
+    "rawStdoutStderrFiles": true,
+    "streamDrainReceipt": true,
+    "timeoutRefusesNextBuild": true,
+    "noExecutableLaunch": true,
+    "peSubsystem2Check": true,
+    "inputsCheckedBeforeAndAfter": true
+  },
+  "readiness": {
+    "controlsPreparedUnrun": true,
+    "compilerInvocations": 0,
+    "SSH": 0,
+    "GUI": 0,
+    "MacParityOrNativeQualification": "not claimed"
+  },
+  "rootNextAction": "Run one fresh bounded Windows PowerShell 5.1 controls invocation; if it passes, compile approved packages serially with retained-handle builder and preserve receipts."
+}

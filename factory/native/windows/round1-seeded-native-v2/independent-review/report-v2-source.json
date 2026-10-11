@@ -1,0 +1,145 @@
+{
+  "kind": "seeded-native-v2-independent-source-review",
+  "reviewDate": "2026-10-11",
+  "decision": "source-clear-for-root-actual-controls",
+  "scope": "Read-only source review; no SSH, GUI, Git, compiler, native, or control execution by reviewer.",
+  "stage": {
+    "path": "factory/native/windows/round1-seeded-native-v2/root-stage-manifest.json",
+    "sha256": "cbdbf5e5957d7a68c6a8c0f2ecc0ec87f4ef991dc86a3569d65145febacccc93",
+    "pinnedFiles": 186,
+    "missingFiles": 0,
+    "hashMismatches": 0,
+    "roleCounts": {
+      "immutable-dependency": 139,
+      "owned-source": 41,
+      "preserved-preimage": 6
+    }
+  },
+  "proofSources": {
+    "sourceJoin": {
+      "path": "factory/native/windows/round1-seeded-native-v2/proof/source-join.json",
+      "sha256": "9710caa875686a56cde3c0f73f3cf64f357620439ad253bbd6afb0c8bbc53de3"
+    },
+    "proofContract": {
+      "path": "factory/native/windows/round1-seeded-native-v2/proof-contract.json",
+      "sha256": "2a2f4f64da212cb187ff893dcade8c774ef292d7618dc511c455473bb00ec0b1"
+    },
+    "macProofHelper": "e02cfbaf71df028f385baae9eec65eabc07e691c91509b17ca42b19b345835ef",
+    "proofKind": "seed-mac100-two-source-level-join-v2",
+    "sourceReplayEligible": true,
+    "exactCases": 5,
+    "runsPerCase": 20,
+    "rawStatusCounts": {
+      "OBSERVED": 80,
+      "UNOBSERVED": 20
+    },
+    "scrollViewUnobservedHeld": true,
+    "windowsCompileValidated": false,
+    "compilerProcessOrigin": "MISSING; qualified origin held",
+    "nativeParity": "hold",
+    "frozenPlansModified": false
+  },
+  "seedCases": {
+    "stack-overlay": {
+      "planHash": "4cc752eee6d227bf2fcbff60e2822f8199f233a904e1a8087f5a3ddd65f19f9b",
+      "witnessHash": "fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+      "adaptedHostHash": "94ab7da30036db41281b0d270e2443cb570fb8b001330ced743b115516984deb",
+      "binaryHash": "928d6078fb79416b43e4d44eb6c04c076129c3532f0474aeeb2272e0b27b4679",
+      "rawStatuses": "20 OBSERVED"
+    },
+    "custom-layout": {
+      "planHash": "ab6cda2ffa89f13ae5ccb8d281a4deff91a28601597e809b7379e29b129279ee",
+      "witnessHash": "00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "adaptedHostHash": "1f946f6d86694e64e66fc6974216b59bf9d1c69e7e8cd514e47212858ae9c291",
+      "binaryHash": "729293930b6a0876ca11f86f13218bd01bc2ce3f511dbf7593612403da0e0b7e",
+      "rawStatuses": "20 OBSERVED"
+    },
+    "padding-frame": {
+      "planHash": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+      "witnessHash": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "adaptedHostHash": "6058fea1a1eb236b9bc5414ca5be67830594a2fc01537ede72795fc65939f1ba",
+      "binaryHash": "13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+      "rawStatuses": "20 OBSERVED"
+    },
+    "preference-key": {
+      "planHash": "f61fee02568923f75f95ad46ffbfcdd6aeda17a07fc3c30fcafcd1540134d7d5",
+      "witnessHash": "ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+      "adaptedHostHash": "385ea23b1798883e0e5d335d38841e8b2fe1f319b9dc7840e5959132f1e1846c",
+      "binaryHash": "411ea1658d0364c9459ed009026d755dee965da18a776957b16c824ab3a86f5c",
+      "rawStatuses": "20 OBSERVED"
+    },
+    "scroll-view": {
+      "planHash": "cc751e98ed32e17b50797751b06e82e54b294592ff60ca0184db8cec32ed00b9",
+      "witnessHash": "27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+      "adaptedHostHash": "1e507cc4aa123a6b26f6517ede565b4798929ffd1b6c317bbf297657cd24baea",
+      "binaryHash": "4d21064fa36e7293cb56620a8de66684628cfd3257dbeceddeed9e9fc652d2d8",
+      "rawStatuses": "20 UNOBSERVED"
+    }
+  },
+  "actualWindowsGate": {
+    "requiredBeforeLock": true,
+    "freshFiveHostReceiptAndExecutablePins": true,
+    "receiptRoute": "build-v2-r1/observation.json",
+    "windowsCompileValidated": false,
+    "nativeExecutions": 0,
+    "rootNextStep": "Run bounded pure controls, then obtain fresh five-host Windows receipt/executable pins before any GUI/native dispatch."
+  },
+  "retainedSafetyProtocols": {
+    "ownedClose": {
+      "path": "owned-close.ps1",
+      "sha256": "d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c",
+      "guardsBeforePost": ["source", "lock", "background", "owned"]
+    },
+    "streamSeal": {
+      "path": "stream-seal.ps1",
+      "sha256": "1ea23fcde17a985952d034170bb8ff56213de6eba76943c876ee7636ecc82199",
+      "requiresTaskCompletionAndFlush": true,
+      "idempotent": true
+    },
+    "cleanup": {
+      "path": "cleanup.ps1",
+      "sha256": "8fe6b669fcad351e2367ec4af6d143567bc8795b666ce7e780fd96ca4e4be462",
+      "releaseRequiresConfirmedOwnedExit": true
+    },
+    "namespace": {
+      "path": "namespace.ps1",
+      "sha256": "04f2066a2f8fb510fa47dac69c2835577bbd3c9c1fc08891f1485d231c970dd1",
+      "freshNamespaceAndExactRows": true
+    }
+  },
+  "controlCoverage": {
+    "parser": {
+      "path": "parse-controls.ps1",
+      "sha256": "b9d1b082921071f8f74a804f84c4f773c52a89d1b502c06a1650464f56a1a77b",
+      "scriptCount": 16,
+      "astErrorsExpected": 0
+    },
+    "proofFaults": {
+      "path": "test-mac-proof.ps1",
+      "sha256": "ba46e39c52b030e512eaab5fb0f45c6af3b5e8e4a4d1bfac4d5f3f7cc0099ea2",
+      "normalPlusFaultModes": 25,
+      "changedProofBytes": true,
+      "wrongSourceAndDuplicateRun": true,
+      "wrongSeedCasePlanWitnessHostBinary": true,
+      "boolAndScopeFaults": true,
+      "rawCaptureStatusFaults": true
+    },
+    "exitReceiptFaults": {
+      "path": "test-capture-exit-proof.ps1",
+      "sha256": "69bca19cacb63b12943eb86dd67c48df707df5f9b1557ee0133defa8c285f19e",
+      "checks": ["pid", "path", "start", "owner", "compile receipt", "exe", "stdout", "stderr", "unconfirmed exit", "numeric confirmed exit", "expected path"]
+    },
+    "duplicateAndWrongSeedControls": {
+      "namespaceTestSha256": "71e151caf55eab5b8c8ec9111b4d661ec33d2a1bec89ccbf416a79adac9b3dab",
+      "cleanupTestSha256": "41b4951494571ebce1aa5fbac416b1219004b3b19a5528421c9128f4084be388",
+      "ownedCloseTestSha256": "5da0535028f07070ec626b3a93566fccaa2b82aefccf2516d38c3a027af9a22d",
+      "streamSealTestSha256": "281d2e2c4a635a58ea78d13826416e86de71f6b378730bd80a042998a4cf67e9"
+    }
+  },
+  "reviewConclusion": {
+    "all186SourcePinsJoin": true,
+    "proofSourceAndContractJoin": true,
+    "sourceControlsCoverRequestedFaults": true,
+    "clearance": "Root may run actual pure PS5 controls; compiler/native/GUI remain gated by fresh five-host receipt/executable lineage & held proof statuses."
+  }
+}

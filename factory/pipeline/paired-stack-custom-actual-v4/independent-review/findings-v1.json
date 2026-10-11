@@ -1,0 +1,60 @@
+{
+  "caseCount": 2,
+  "cases": {
+    "custom": {
+      "crossProviderRoleLabelMatchClaimed": false,
+      "macExternalAX": "HELD",
+      "macRuns": 20,
+      "macStackAXTextLabels": [],
+      "windowsExecutableSourceRowsBound": 20,
+      "windowsRows": 20,
+      "windowsStackUIATextLabels": [],
+      "windowsUIAChildren": [
+        0
+      ]
+    },
+    "stack": {
+      "crossProviderRoleLabelMatchClaimed": false,
+      "macExternalAX": "OBSERVED",
+      "macRuns": 20,
+      "macStackAXTextLabels": [
+        "+"
+      ],
+      "windowsExecutableSourceRowsBound": 20,
+      "windowsRows": 20,
+      "windowsStackUIATextLabels": [
+        "+"
+      ],
+      "windowsUIAChildren": [
+        1
+      ]
+    }
+  },
+  "decision": "clear-for-bounded-observational-report",
+  "faultControls": {
+    "batch-count-mismatch": "rejected",
+    "case-hash-mismatch": "rejected",
+    "forged-qualification": "rejected",
+    "raw-inventory-mismatch": "rejected",
+    "semantic-mutation": "rejected",
+    "source-hash-mismatch": "rejected"
+  },
+  "held": [
+    "custom Mac external AX",
+    "timing",
+    "pixel geometry parity",
+    "color",
+    "occlusion",
+    "focus",
+    "native diff",
+    "parity",
+    "goldens",
+    "qualification"
+  ],
+  "macRunsPerCase": 20,
+  "rawRootCount": 4,
+  "schema": "f9-paired-stack-custom-independent-review-v1",
+  "semanticBoundary": "raw UIA counts only; stack AX/UIA both show + but no cross-provider role/label/enabled mapping is claimed",
+  "stageManifestSha256": "519df923250e311c7c455f2c6232f5790fab2bcc46297e67ff2c636774621634",
+  "windowsRunsPerCase": 20
+}
