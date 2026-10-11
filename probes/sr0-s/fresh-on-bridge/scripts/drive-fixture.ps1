@@ -10,7 +10,9 @@ param(
   [string]$Variant = '',
   [string]$Out = 'D:\Claude\sr0s-bridge\result-fixture.txt',
   # Targeted message set: all (WM_KEYDOWN, WM_CHAR, WM_KEYUP as a physical key), char (WM_CHAR only), keydown (no WM_CHAR)
-  [string]$KeyMode = 'char'
+  [string]$KeyMode = 'char',
+  # Opt-in SR0 candidate startup guard. Default keeps historical driver behavior.
+  [switch]$NoActivate
 )
 $ErrorActionPreference = 'Continue'
 $Bin = "$Base\scratch\out\Products\Release-windows-x86_64"
@@ -27,11 +29,13 @@ namespace SW {
     [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
     [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
+    [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+    [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr h, int cmd);
+    [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint flags);
     [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
     [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int hgt, bool repaint);
     [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr h, uint msg, IntPtr w, IntPtr l);
-    [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, IntPtr pid);
     [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a, uint b, bool attach);
     [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
     [DllImport("user32.dll")] public static extern uint MapVirtualKeyW(uint code, uint map);
@@ -53,9 +57,14 @@ switch ($Fixture) {
   'F9' { if ($Variant -eq 'notasks') { $exeArgs += ' --f9-variant notasks' } }
 }
 # The exe writes "$Out.ready" when its script reaches the close step (after any settle). Close only after that.
-$readyFile = "$Out.ready"
-if (Test-Path $readyFile) { Remove-Item -LiteralPath $readyFile -Force }
+$runNamespace = [guid]::NewGuid().ToString('N')
+$readyFile = "$Out.ready.$runNamespace"
 $exeArgs += " --ready-file `"$readyFile`""
+$rendererReadyFile = $null
+if ($NoActivate) {
+  $rendererReadyFile = "$Out.renderer-ready.$runNamespace"
+  $exeArgs += " --sr0-noactivate --renderer-ready-file `"$rendererReadyFile`""
+}
 # Delivery (default targeted): WM_KEYDOWN / WM_CHAR / WM_KEYUP are POSTED to the probe window only. No keystroke can
 # reach another application, whatever has focus. Global keybd_event (-Delivery global) is used by no matrix config;
 # it is gated: foreground is locked and re-checked before and after each key-down, and any mismatch aborts the run.
@@ -67,20 +76,79 @@ $psi.FileName = Join-Path $Bin 'FreshOnBridge.exe'
 $psi.Arguments = $exeArgs
 $psi.WorkingDirectory = $Bin
 $psi.UseShellExecute = $false
+$psi.CreateNoWindow = $true
+$psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 $psi.RedirectStandardOutput = $true
 $psi.RedirectStandardError = $true
 $psi.EnvironmentVariables['Path'] = "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$Bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
 $proc = [System.Diagnostics.Process]::Start($psi)
+$originalProcessId = $proc.Id
+$originalProcessHandle = $proc.Handle
 $stdout = $proc.StandardOutput.ReadToEndAsync()
 $stderr = $proc.StandardError.ReadToEndAsync()
+$rendererReadyValid = $true
 
 $hwnd = [IntPtr]::Zero
 for ($i = 0; $i -lt 160 -and $hwnd -eq [IntPtr]::Zero -and -not $proc.HasExited; $i++) {
   Start-Sleep -Milliseconds 250; $proc.Refresh(); $hwnd = $proc.MainWindowHandle
 }
 Log "window_hwnd=$($hwnd.ToInt64()) polls=$i exited_early=$($proc.HasExited)"
+if ($NoActivate) {
+  $rendererReadyWait = [Diagnostics.Stopwatch]::StartNew()
+  while (-not (Test-Path -LiteralPath $rendererReadyFile) -and -not $proc.HasExited -and $rendererReadyWait.ElapsedMilliseconds -lt 45000) {
+    Start-Sleep -Milliseconds 100
+  }
+  try {
+    if (-not (Test-Path -LiteralPath $rendererReadyFile)) { throw "renderer-ready file missing" }
+    $readyRaw = [IO.File]::ReadAllText($rendererReadyFile)
+    $readyRecord = $readyRaw | ConvertFrom-Json
+    $rendererReadyValid = ($readyRecord.record -eq 'renderer-ready' -and $readyRecord.phase -eq 'first-ready' -and
+      $readyRecord.source -eq 'Bridge.onReady' -and [int]$readyRecord.pid -eq $originalProcessId -and
+      [uint32]$readyRecord.width_px -gt 0 -and [uint32]$readyRecord.height_px -gt 0 -and [double]$readyRecord.scale -gt 0)
+    Log "renderer_ready_event=$rendererReadyValid waited_ms=$($rendererReadyWait.ElapsedMilliseconds) record=$($readyRecord.record) phase=$($readyRecord.phase) source=$($readyRecord.source) pid=$($readyRecord.pid) owner_pid=$originalProcessId bridge_window=$($readyRecord.bridge_window)"
+    if (-not $rendererReadyValid) { throw 'renderer-ready record identity/phase mismatch' }
+  } catch {
+    $rendererReadyValid = $false
+    Log "renderer_ready_event=FAIL waited_ms=$($rendererReadyWait.ElapsedMilliseconds) error=$($_.Exception.Message)"
+  }
+} else {
+  Log 'renderer_ready_event=UNAVAILABLE source=FreshOnBridge-stdout-no-startup-marker'
+}
+if ($hwnd -ne [IntPtr]::Zero) {
+  [void][SW.N]::ShowWindowAsync($hwnd, 4)
+  [void][SW.N]::SetWindowPos($hwnd, [IntPtr]1, 0, 0, 0, 0, 0x253)
+  $windowPid = [uint32]0; [void][SW.N]::GetWindowThreadProcessId($hwnd, [ref]$windowPid)
+  $wr = New-Object SW.RECT; $cr = New-Object SW.RECT
+  $wrOk = [SW.N]::GetWindowRect($hwnd, [ref]$wr); $crOk = [SW.N]::GetClientRect($hwnd, [ref]$cr)
+  $dpi = [SW.N]::GetDpiForWindow($hwnd)
+  Log "WindowMetrics phase=startup utc=$([DateTime]::UtcNow.ToString('o')) hwnd=$($hwnd.ToInt64()) pid=$windowPid owner_pid=$originalProcessId client_ok=$crOk client=$($cr.Right-$cr.Left)x$($cr.Bottom-$cr.Top) window_ok=$wrOk window=$($wr.Right-$wr.Left)x$($wr.Bottom-$wr.Top) dpi=$dpi same_process=$($windowPid -eq $originalProcessId)"
+}
 Start-Sleep -Milliseconds 1500
 $root = if ($hwnd -ne [IntPtr]::Zero) { [System.Windows.Automation.AutomationElement]::FromHandle($hwnd) } else { $null }
+
+$script:targetInvalid = -not $rendererReadyValid
+function Assert-Target([string]$phase) {
+  if ($script:targetInvalid) { return $false }
+  try {
+    $proc.Refresh()
+    $currentHandle = $proc.Handle
+    $currentHwnd = $proc.MainWindowHandle
+    $windowPid = [uint32]0
+    [void][SW.N]::GetWindowThreadProcessId($hwnd, [ref]$windowPid)
+    $ok = (-not $proc.HasExited) -and ($currentHwnd -eq $hwnd) -and ($windowPid -eq $originalProcessId) -and ($currentHandle -eq $originalProcessHandle)
+    if (-not $ok) {
+      $script:targetInvalid = $true
+      Log "target_guard=FAIL phase=$phase hwnd=$($hwnd.ToInt64()) current_hwnd=$($currentHwnd.ToInt64()) pid=$windowPid owner_pid=$originalProcessId same_handle=$($currentHandle -eq $originalProcessHandle) exited=$($proc.HasExited)"
+      return $false
+    }
+    Log "target_guard=PASS phase=$phase hwnd=$($hwnd.ToInt64()) pid=$windowPid same_handle=true"
+    return $true
+  } catch {
+    $script:targetInvalid = $true
+    Log "target_guard=FAIL phase=$phase error=$($_.Exception.Message)"
+    return $false
+  }
+}
 
 function Find-Named([string]$name, $type, [int]$timeoutMs = 0) {
   if ($root -eq $null) { return $null }
@@ -170,11 +238,12 @@ function Sample-Fg([string]$where) {
   return $fg
 }
 function Ensure-Foreground {
+  if (-not (Assert-Target 'before-foreground')) { return $false }
   for ($k = 0; $k -lt 20; $k++) {
     if ([SW.N]::GetForegroundWindow() -eq $hwnd) { return $true }
     $fg = [SW.N]::GetForegroundWindow()
-    $pidOut = [IntPtr]::Zero
-    $fgThread = [SW.N]::GetWindowThreadProcessId($fg, $pidOut)
+    $pidOut = [uint32]0
+    $fgThread = [SW.N]::GetWindowThreadProcessId($fg, [ref]$pidOut)
     $me = [SW.N]::GetCurrentThreadId()
     [void][SW.N]::AttachThreadInput($me, $fgThread, $true)
     [void][SW.N]::SetForegroundWindow($hwnd)
@@ -186,6 +255,7 @@ function Ensure-Foreground {
   return $ok
 }
 function Type-Key([byte]$vk, [int]$ch = 0) {
+  if (-not (Assert-Target "before-key-$vk")) { return }
   if ($delivery -eq 'global') { Type-Key-Global $vk; return }
   # Targeted: the three messages a physical key produces, posted to the probe HWND. Char = lower-case letter or the
   # unshifted OEM character (the fixtures type only these). Foreground is not required for delivery.
@@ -214,6 +284,7 @@ function Type-Key-Global([byte]$vk) {
   Log "key vk=$vk mode=global fg_ok=true"
 }
 function Focus-Edit([string]$name) {
+  if (-not (Assert-Target "before-focus-$name")) { return }
   $el = Edit $name 15000
   if ($el -eq $null) { Log "focus[$name]=NOT_FOUND"; return }
   for ($k = 0; $k -lt 4; $k++) {
@@ -226,10 +297,12 @@ function Focus-Edit([string]$name) {
 }
 function Focused-Name { try { $f = [System.Windows.Automation.AutomationElement]::FocusedElement; $n = Edit-Slot $f; if ($n) { $n } else { $f.Current.Name } } catch { "ERR" } }
 function Invoke-Named($el, [string]$label) {
+  if (-not (Assert-Target "before-invoke-$label")) { return }
   if ($el -eq $null) { Log "invoke[$label]=NOT_FOUND"; return }
   try { $el.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); Log "invoke[$label]=ok" } catch { Log "invoke[$label]=ERR $($_.Exception.Message)" }
 }
 function Set-Value([string]$name, [string]$value) {
+  if (-not (Assert-Target "before-set-$name")) { return }
   $el = Edit $name
   if ($el -eq $null) { Log "set_value[$name]=NOT_FOUND"; return }
   try { $el.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($value); Log "set_value[$name]=$value ok" } catch { Log "set_value[$name]=ERR $($_.Exception.Message)" }
@@ -241,6 +314,7 @@ function Edit-Names {
   return @($all | ForEach-Object { $n = Edit-Slot $_; if ($n) { $n } else { $_.Current.Name } })
 }
 function Delete-Near([string]$editName) {
+  if (-not (Assert-Target "before-delete-$editName")) { return $null }
   # The Delete button on the same row as the named edit: nearest by vertical centre.
   $row = Edit $editName 15000
   if ($row -eq $null) { return $null }
@@ -270,6 +344,7 @@ function Delete-Near([string]$editName) {
   return $best
 }
 function Set-ClientDip([int]$w, [int]$h) {
+  if (-not (Assert-Target "before-resize-${w}x${h}")) { return }
   $dpi = [SW.N]::GetDpiForWindow($hwnd)
   $scale = $dpi / 96.0
   $wr = New-Object SW.RECT; $cr = New-Object SW.RECT
@@ -282,6 +357,7 @@ function Set-ClientDip([int]$w, [int]$h) {
 }
 function Close-Window {
   if ($hwnd -eq [IntPtr]::Zero) { return }
+  if (-not (Assert-Target 'before-close')) { Log 'close_window=SKIPPED target_guard_failed'; return }
   $ok = [SW.N]::PostMessage($hwnd, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
   Log "close_window=WM_CLOSE posted=$ok"
 }
@@ -355,7 +431,14 @@ if ($root -ne $null) {
   }
   $waitReady = [Diagnostics.Stopwatch]::StartNew()
   while (-not (Test-Path $readyFile) -and -not $proc.HasExited -and $waitReady.ElapsedMilliseconds -lt 45000) { Start-Sleep -Milliseconds 100 }
-  Log "ready_file=$(Test-Path $readyFile) waited_ms=$($waitReady.ElapsedMilliseconds) exe_exited=$($proc.HasExited)"
+  Log "driver_close_ready_file=$(Test-Path $readyFile) waited_ms=$($waitReady.ElapsedMilliseconds) exe_exited=$($proc.HasExited)"
+  $driverCloseReadyUtc = [DateTime]::UtcNow.ToString('o')
+  $proc.Refresh()
+  $readyPid = [uint32]0; [void][SW.N]::GetWindowThreadProcessId($hwnd, [ref]$readyPid)
+  $rwr = New-Object SW.RECT; $rcr = New-Object SW.RECT
+  $rwrOk = [SW.N]::GetWindowRect($hwnd, [ref]$rwr); $rcrOk = [SW.N]::GetClientRect($hwnd, [ref]$rcr)
+  $currentProcessHandle = $proc.Handle
+  Log "driver_close_ready_utc=$driverCloseReadyUtc WindowMetrics phase=driver-close-ready hwnd=$($hwnd.ToInt64()) pid=$readyPid owner_pid=$originalProcessId client_ok=$rcrOk client=$($rcr.Right-$rcr.Left)x$($rcr.Bottom-$rcr.Top) window_ok=$rwrOk window=$($rwr.Right-$rwr.Left)x$($rwr.Bottom-$rwr.Top) dpi=$([SW.N]::GetDpiForWindow($hwnd)) same_hwnd=$($hwnd -eq $proc.MainWindowHandle) same_process=$($readyPid -eq $originalProcessId) retained_handle=$(-not $proc.HasExited) same_handle=$($currentProcessHandle -eq $originalProcessHandle)"
   Close-Window
 } else {
   Log 'no window: UIA root unavailable'

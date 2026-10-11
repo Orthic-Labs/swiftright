@@ -35,6 +35,10 @@ struct FixtureOptions: Sendable {
     /// `--ready-file <path>`: the exe writes this file when its script reaches the close step (awaiting the driver's
     /// WM_CLOSE). drive-fixture.ps1 waits for it before closing, so the window never closes mid-settle.
     var readyFile: String? = nil
+    /// `--renderer-ready-file <path>`: opt-in first `Bridge.onReady` telemetry. The file is created once and never replaced.
+    var rendererReadyFile: String? = nil
+    /// `--sr0-noactivate`: install a same-thread CBT activation veto before window creation.
+    var noActivate = false
     /// `--release-event <name>`: Windows named event the in-process release hook waits on (see Hooks.swift).
     var releaseEvent: String? = nil
     /// `--release-file <path>`: trigger file for the release hook, polled on the display tick, deleted when seen.

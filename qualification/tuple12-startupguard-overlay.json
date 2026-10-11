@@ -1,0 +1,50 @@
+{
+  "kind": "sr0-tuple12-source-bound-startupguard-overlay-v1",
+  "status": "source-only-ready",
+  "baseSourceCommit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "historicalArtifactsImmutable": true,
+  "sourceClosure": "pinned-base-commit-plus-listed-overlay-files",
+  "files": [
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/Fixture.swift",
+      "sha256": "b47a57ab3708153eb9a94d576d6594171753d014114416b04c4fae2624a8935a",
+      "bytes": 17107,
+      "status": "modified",
+      "base_sha256": "2abd7b801dba96cd227cf245b6392a37ea604cc91cdfdeac4285e532a1cfe440",
+      "base_bytes": 16819
+    },
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/main.swift",
+      "sha256": "8c15a6b1723357cdbff280c348ec5d4f9565fdee9e390f674a3f4e0eff43188f",
+      "bytes": 6893,
+      "status": "modified",
+      "base_sha256": "be33a37e07c6eaf19f2e23aea114c1298361f494c58fe7d7fb09a76954ba75f8",
+      "base_bytes": 5764
+    },
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/StartupGuard.swift",
+      "sha256": "fdd0f3c53c365738c7acccc7fcad26bbc358ce12d760ac28a226e19174327104",
+      "bytes": 2293,
+      "status": "added",
+      "base_sha256": null,
+      "base_bytes": null
+    },
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/scripts/drive-fixture.ps1",
+      "sha256": "1683b96e2b0e9ac06cf93777d2274d5f4ece9c40092d90799de95b98e77436e9",
+      "bytes": 25828,
+      "status": "modified",
+      "base_sha256": "8860ce0ab9e1b002e497644057a101241a6d8827189403240b1357c9462d5347",
+      "base_bytes": 20405
+    }
+  ],
+  "runtimeChanges": [
+    "same-thread WH_CBT HCBT_ACTIVATE/HCBT_SETFOCUS veto through full bridge.run",
+    "exclusive renderer-ready JSON via Data.WritingOptions.withoutOverwriting",
+    "driver opt-in -NoActivate marker validation"
+  ],
+  "qualification": "hold-until-Windows-compiler-typecheck-and-root-run",
+  "remoteActions": 0,
+  "nativeActions": 0,
+  "gitActions": 0
+}

@@ -5,6 +5,7 @@ import SwiftRightBridge
 // FreshOnBridge (SR0-S): fixtures F1-F9 on the fresh runtime through bridge ABI rev 0.4.
 // Usage: FreshOnBridge.exe --fixture F1..F9 [--f3-variant list|vstack-<1|3>s|lazy-<1|3>s] [--f9-variant notasks]
 //                          [--reduced-motion-variant] [--reduce-motion-override on|off] --self-test
+//                          [--sr0-noactivate --renderer-ready-file <path>]
 //   --reduce-motion-override on|off  forces `accessibilityReduceMotion`. Without it animations run: the Windows "Animation
 //                effects" setting is read and logged but does not decide (RESULT.md, 2026-10-10 parity pass).
 //   --self-test  scripted run. Input (AX/UIA focus, VK keys, invoke, SetValue, window close) is driven from
@@ -59,6 +60,14 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
         case "--ready-file":
             index += 1
             options.readyFile = index < arguments.count ? arguments[index] : nil
+        case "--renderer-ready-file":
+            index += 1
+            guard index < arguments.count, !arguments[index].isEmpty else {
+                return (options, "missing --renderer-ready-file path")
+            }
+            options.rendererReadyFile = arguments[index]
+        case "--sr0-noactivate":
+            options.noActivate = true
         case "--reduce-motion-override":
             index += 1
             let value = index < arguments.count ? arguments[index] : ""
@@ -73,6 +82,9 @@ func parseOptions(_ arguments: [String]) -> (FixtureOptions, String?) {
         index += 1
     }
     options.label = label
+    if options.noActivate, options.rendererReadyFile == nil {
+        return (options, "--sr0-noactivate requires --renderer-ready-file")
+    }
     return (options, nil)
 }
 
@@ -102,7 +114,25 @@ func runFreshOnBridge(options: FixtureOptions) -> Int32 {
     backend.afterClose = { test.windowClosed() }
 
     hooks.start()
-    bridge.onReady = { win in MainActor.assumeIsolated { backend.ready(win) } }
+    let startupGuard: SR0ActivationGuard
+    do {
+        startupGuard = try SR0ActivationGuard(enabled: options.noActivate)
+    } catch {
+        print("SR0_STARTUP_ERROR noactivate_guard=FAILED error=\(error)")
+        fflush(stdout)
+        return 78
+    }
+    defer { startupGuard.stop() }
+    if options.noActivate {
+        print("SR0_NOACTIVATE guard=installed source=thread-cbt-hcbt-activate")
+        fflush(stdout)
+    }
+    bridge.onReady = { win in MainActor.assumeIsolated {
+        if let path = options.rendererReadyFile {
+            emitRendererReadyTelemetry(win, path: path)
+        }
+        backend.ready(win)
+    } }
     bridge.onEvent = { ev in MainActor.assumeIsolated { backend.handle(ev) } }
     bridge.onTick = { _, timestamp in MainActor.assumeIsolated { backend.tick(timestampNS: timestamp); hooks.poll(); test.tick() } }
     bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed() } }
