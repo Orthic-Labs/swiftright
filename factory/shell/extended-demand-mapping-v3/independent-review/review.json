@@ -1,0 +1,64 @@
+{
+  "kind": "f12-extended-demand-mapping-v3-independent-review",
+  "version": 1,
+  "scope": "Offline independent review; v3 producer, v1/v2 evidence, registry, source, catalogue, SSH, GUI, Pulse, & binary execution untouched.",
+  "stage": {
+    "fileCount": 10,
+    "totalBytes": 246635
+  },
+  "inputSourceCataloguePins": {
+    "fileCount": 51,
+    "mappingSha256": "575dc34e589b225dfe2769d03fef6ebf1fd3c1f49173f0f7d1fbbcbc1c4135cf",
+    "rawPinsSha256": "193d8978362b9a29544820c2c7d4bb89d9fd147a83aa9fecac5ede5a8caccba9",
+    "keyPins": {
+      "factory/shell/demand.json": "45c48393b06b65b1b156f01272eb5c95517876df0aae790203bdbaa2ebbaf835",
+      "factory/shell/inventory.json": "62e65c87a5fcd38610fb6a8a8c290e0eb6c889f308e444b244c0863c9e7b9eba",
+      "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.json": "fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2",
+      "factory/shell/extended-demand-mapping-v1/evidence/mapping-candidate.json": "0a55d077c4824f3a8d59a8cb9dd13aa689e4dab50e629680d900b2798361e466",
+      "factory/shell/extended-demand-mapping-v2/evidence/current-source-candidate.json": "1da1d7279810dad5cefacd2093892343fa31e4c056fbf9b92632d9cfca7499ee",
+      "factory/shell/extended-demand-mapping-v1/evidence/source-snapshot-manifest.json": "d28b8b6fe006b0980e31b65ea3b8a0b4e4655dadbe85ad1c15a92c693ce60fcb",
+      "factory/shell/extended-demand-mapping-v2/evidence/source-snapshot-manifest.json": "6131cca4b304c93cd2933fa7d28c0d708e7608d0b4c31fd8659e18368dd3b1b8"
+    }
+  },
+  "denominator": {
+    "extendedDemandRows": 107,
+    "registryMappedRows": 0,
+    "mappingRows": 107
+  },
+  "exactHeldUsrRows": {
+    "rowKeys": [
+      "f12-extended-004",
+      "f12-extended-006"
+    ],
+    "exactUsrCount": 5,
+    "heldCandidateSha256": "1da1d7279810dad5cefacd2093892343fa31e4c056fbf9b92632d9cfca7499ee"
+  },
+  "registryLinks": 0,
+  "controls": {
+    "count": 6,
+    "outcomes": {
+      "row-omission": "rejected",
+      "duplicate-row-key": "rejected",
+      "invented-registry-link": "rejected",
+      "held-usr-mutation": "rejected",
+      "source-snapshot-mutation": "rejected",
+      "input-pin-mutation": "rejected"
+    }
+  },
+  "historicV1V2Immutability": {
+    "manifests": [
+      {
+        "path": "factory/shell/extended-demand-mapping-v1/root-completed-stage-manifest.json",
+        "manifestSha256": "91f8e206b9b0329265d69652e4af25fbe93aaad21ecc5d35ca72ac19e15d8e84",
+        "fileCount": 58
+      },
+      {
+        "path": "factory/shell/extended-demand-mapping-v2/root-completed-stage.json",
+        "manifestSha256": "7af9de7a50b7a151d1c692f8eca4c9a466f6f87d092760f61eae83070a54aa67",
+        "fileCount": 18
+      }
+    ],
+    "allPinnedFilesMatch": true
+  },
+  "disposition": "independent review passes 107-row source-evidence mapping; exactly two held current-source rows match v2; zero registry links; six controls reject; v1/v2 pinned files unchanged"
+}

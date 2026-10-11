@@ -1,0 +1,1 @@
+Scroll baseline can use genuine per-leaf ABI clipping & runtime-resolved offsets. UIA scroll/wheel & native automatic toggle paint are separate missing contracts. No provider substitution or parity promotion.
