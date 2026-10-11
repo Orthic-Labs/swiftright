@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://swiftright.dev/factory/spec/v0.1/waiver.schema.json",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/envelope" }], "type": "object", "additionalProperties": false,
+  "required": ["kind", "version", "id", "provenance", "scope", "reason", "maintainer", "approvedAt", "expiresAt", "evidence"], "properties": {
+    "kind": { "const": "waiver" }, "version": { "const": "0.1" }, "id": { "$ref": "common.schema.json#/$defs/id" }, "provenance": { "$ref": "common.schema.json#/$defs/provenance" }, "scope": { "type": "object", "additionalProperties": false, "required": ["artifact", "requirement"], "properties": { "artifact": { "$ref": "common.schema.json#/$defs/hashRef" }, "requirement": { "type": "string", "minLength": 1 } } }, "reason": { "type": "string", "minLength": 1 }, "maintainer": { "type": "string", "minLength": 1 }, "approvedAt": { "$ref": "common.schema.json#/$defs/rfc3339" }, "expiresAt": { "$ref": "common.schema.json#/$defs/rfc3339" }, "evidence": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/hashRef" } }, "supersedes": { "$ref": "common.schema.json#/$defs/hashRef" } }
+}

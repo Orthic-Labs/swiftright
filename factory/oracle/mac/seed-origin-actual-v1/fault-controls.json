@@ -1,0 +1,46 @@
+{
+  "controls": [
+    {
+      "guard": "v6 capture validates sourceHash before build",
+      "name": "frozen-input-source-hash",
+      "status": "PASS"
+    },
+    {
+      "guard": "v6 capture validates case & recipe canonical hashes before runs",
+      "name": "canonical-case-recipe-hash",
+      "status": "PASS"
+    },
+    {
+      "guard": "every compiler receipt compares sourceBefore/sourceAfter",
+      "name": "source-prepost-drift",
+      "status": "PASS"
+    },
+    {
+      "guard": "every compiler receipt compares realToolBefore/realToolAfter",
+      "name": "compiler-tool-prepost",
+      "status": "PASS"
+    },
+    {
+      "guard": "compiler receipts record pid==pgid; capture hosts record owned process PIDs",
+      "name": "owned-pid-pgid",
+      "status": "RECORDED"
+    },
+    {
+      "guard": "v6 capture rejects existing case output evidence",
+      "name": "output-existing",
+      "status": "PASS"
+    },
+    {
+      "guard": "lineage requires five cases*20 runs=100",
+      "name": "run-denominator",
+      "status": "PASS"
+    },
+    {
+      "guard": "test_actual.py rejects missing run, PID/PGID, source, tool, & AX binary mutations on temporary copies",
+      "name": "mutation-replay",
+      "status": "PASS"
+    }
+  ],
+  "kind": "seed-origin-actual-v1-fault-controls",
+  "policy": "controls are recorded for review; mutations run only against temporary copies"
+}

@@ -1,0 +1,220 @@
+{
+  "kind": "seed-origin-v5-full-admission-review",
+  "version": 1,
+  "scope": "Read-only static admission review; no seed, GUI, Accessibility, or external capture ran.",
+  "decision": "HOLD_FRESH_AX_COMPILER_RECEIPT",
+  "stage": {
+    "root": "factory/oracle/mac/seed-origin-v5",
+    "manifestSha256": "sha256:a7dc3b2ba69042530f73ec4b892d29e517737de44a56f736f16a6bcab58d765a",
+    "entries": 80,
+    "bytes": 282793,
+    "entryHashesAndSizes": "PASS",
+    "unmanifestedPostFreezeReview": true
+  },
+  "checks": {
+    "dependencyClosure": {
+      "status": "PASS",
+      "dependencyFiles": 22,
+      "schemaFiles": 12,
+      "siblingSources": [
+        "AXClient.swift",
+        "CaptureHost.swift"
+      ],
+      "command": "python3 factory/oracle/mac/seed-origin-v5/verify_dependency_closure.py factory/oracle/mac/seed-origin-v5"
+    },
+    "positiveCompilerControl": {
+      "status": "PASS",
+      "receiptSha256": "sha256:b58897d90fa4aca158c8d428f4ff6971737633aac2e4d88510077c49e6dfb53d",
+      "resolverPid": 25684,
+      "compilerPid": 25705,
+      "compilerExit": 0,
+      "binarySha256": "sha256:515bbc6a5cbd1d7a7bb434b870a8f1a2a44849ab6dcbc39f69d060b32d862b90",
+      "sourceBindings": 2,
+      "sourceDrift": false,
+      "timedOut": false,
+      "command": "python3 factory/oracle/mac/seed-origin-v5/verify_positive_control.py factory/oracle/mac/seed-origin-v5"
+    },
+    "timeoutControl": {
+      "status": "PASS",
+      "receiptSha256": "sha256:0a0c3156f93747b07ac7039613a3165642201db4b0624f42551b3c9a1dc67837",
+      "attempts": 1,
+      "initialTimeout": true,
+      "termSent": true,
+      "killSent": false,
+      "exitCode": -15,
+      "command": "python3 factory/oracle/mac/seed-origin-v5/verify_timeout_control.py factory/oracle/mac/seed-origin-v5"
+    },
+    "offlineTests": {
+      "status": "PASS",
+      "passed": 7,
+      "total": 7,
+      "command": "python3 factory/oracle/mac/seed-origin-v5/test_v5.py"
+    },
+    "freshAXCompilerReceipt": {
+      "status": "MISSING",
+      "severity": "BLOCK",
+      "evidence": "capture_origin.py:fresh_ax_preflight invokes /usr/bin/xcrun swiftc through logged(), which persists stdout/stderr only; no resolver/compiler PID+PGID, source pre/post, logical/real tool hash, timeout cleanup, or compiler receipt is emitted for AXClient.swift.",
+      "impact": "Strict actual-compiler receipt admission cannot cover fresh AX helper binary; helper is built on every collector start before channel disposition.",
+      "required": "Fresh AX helper build needs same OS compiler receipt schema plus AXClient.swift source/output binary joins, or collector must avoid helper build when external AX channel is explicitly HELD."
+    },
+    "pythonEnvironment": {
+      "status": "PASS",
+      "interpreter": "factory/.venv/bin/python",
+      "requirementsFile": "factory/requirements.txt",
+      "requirementsSha256": "sha256:a5baacd3885ecbb5063f94201762900e04ee01f970819b28b392c5bcbae87972",
+      "jsonschema": "installed",
+      "referencing": "installed"
+    }
+  },
+  "seedInputs": [
+    {
+      "caseId": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258",
+      "manifest": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "case": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "caseSha256": "sha256:0dba13824f3398666aba1b27b54c01ff02d3e282b2c429a66f3869a05ed0cb49",
+      "recipe": "factory/recipes/data/swiftui.custom-layout.json",
+      "recipeCanonicalHash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+      "generatedSource": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sourceSha256": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+      "witnessSource": "factory/recipes/witnesses/swiftui.custom-layout.witness.swift",
+      "witnessSha256": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+      "fontResource": null
+    },
+    {
+      "caseId": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+      "manifest": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "case": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "caseSha256": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+      "recipe": "factory/recipes/data/swiftui.padding-frame.json",
+      "recipeCanonicalHash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+      "generatedSource": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sourceSha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "witnessSource": "factory/recipes/witnesses/swiftui.padding-frame.witness.swift",
+      "witnessSha256": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db",
+      "fontResource": null
+    },
+    {
+      "caseId": "swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258",
+      "manifest": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "case": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "caseSha256": "sha256:d908821e18c8ad4e45eed24b446cf3d126fdbf18e17030be45bbbb7105b8459c",
+      "recipe": "factory/recipes/data/swiftui.preference-key.json",
+      "recipeCanonicalHash": "sha256:bbf4ff43873e95cef482128ffd5188d02d2b9a8a6494088a7cc67c66c5f92f00",
+      "generatedSource": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sourceSha256": "sha256:ec6837aefba5cd1b0d550675cb2577030ebc96b61ee5f5ee75a9bd852ca92463",
+      "witnessSource": "factory/recipes/witnesses/swiftui.preference-key.witness.swift",
+      "witnessSha256": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83",
+      "fontResource": null
+    },
+    {
+      "caseId": "swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258",
+      "manifest": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "case": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "caseSha256": "sha256:adeed134241b30dfeb873e27dd789b870977457c3b210268f10f3a1be8ffdd18",
+      "recipe": "factory/recipes/data/swiftui.scroll-view.json",
+      "recipeCanonicalHash": "sha256:f4548f1617a5ce913adcff487169d6a3e696318ddcd149a34f205e9db6ba2353",
+      "generatedSource": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sourceSha256": "sha256:27ae712cafa50fd6fd14efe8594a170d26143587dfddc9bbda882dc00c7a4093",
+      "witnessSource": "factory/recipes/witnesses/swiftui.scroll-view.witness.swift",
+      "witnessSha256": "sha256:90b38269652f21b3ae37cdb3cb6385fca44bbe8358a35689c95ddcf5cdcfce8a",
+      "fontResource": null
+    },
+    {
+      "caseId": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+      "manifest": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "case": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "caseSha256": "sha256:88ee31aaaba4b6c1729c3530b1461b19167c9e55ee27c72a0124edaea0ec2380",
+      "recipe": "factory/recipes/data/swiftui.stack-overlay.json",
+      "recipeCanonicalHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+      "generatedSource": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sourceSha256": "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+      "witnessSource": "factory/recipes/witnesses/swiftui.stack-overlay.witness.swift",
+      "witnessSha256": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+      "fontResource": null
+    }
+  ],
+  "sourceRoot": {
+    "resolvedRoot": "/Volumes/D/claude/swiftright",
+    "marker": "factory/core/artifacts.py",
+    "oracleMarker": "factory/oracle",
+    "override": "SWIFTRIGHT_REPO_ROOT=/Volumes/D/claude/swiftright"
+  },
+  "captureCommand": {
+    "runsPerCase": 20,
+    "scratchRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/seed-origin-v5-capture-20261011",
+    "outputRoot": "/Volumes/D/claude/swiftright/factory/native/macos/evidence/seed-origin-v5-capture-20261011",
+    "binariesAndOwnedProcessesRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory",
+    "caseRoot": "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs",
+    "argv": [
+      "env",
+      "SWIFTRIGHT_REPO_ROOT=/Volumes/D/claude/swiftright",
+      "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/capture_origin.py",
+      "--manifest",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs/swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs/swiftui.preference-key.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs/swiftui.scroll-view.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs/swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--case-root",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v5/inputs",
+      "--scratch",
+      "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/seed-origin-v5-capture-20261011",
+      "--output",
+      "/Volumes/D/claude/swiftright/factory/native/macos/evidence/seed-origin-v5-capture-20261011",
+      "--runs",
+      "20"
+    ]
+  },
+  "noPromptGuards": {
+    "AXClient.swift": {
+      "sourceSha256": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404",
+      "preflight": "AXIsProcessTrusted()",
+      "permissionRequests": false,
+      "deniedResult": "HELD",
+      "requestApiAbsent": true
+    },
+    "CaptureHost.swift": {
+      "sourceSha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "preflight": [
+        "AXIsProcessTrusted()",
+        "CGPreflightScreenCaptureAccess()"
+      ],
+      "permissionRequests": false,
+      "deniedResult": "HELD",
+      "requestApiAbsent": true
+    },
+    "collector": {
+      "recorderPreflight": "signed recorder trust check plus intentionally missing fixture",
+      "freshAXPreflight": "internal xcrun-built AXClient --preflight",
+      "ownedProcessGroups": true,
+      "boundedDrain": true,
+      "termThenKill": true
+    }
+  },
+  "channelDisposition": {
+    "candidateOnly": true,
+    "acceptance": "not-promoted",
+    "unavailable": [
+      "witnessInternalLayoutCallbacks",
+      "witnessFontResolution",
+      "animation when static source has no animation",
+      "externalAX when trust or generic recorder support is unavailable",
+      "compositorPaint when screen capture preflight is denied"
+    ],
+    "noQualificationClaim": true
+  },
+  "postCaptureReceiptJoins": [
+    "Per case compiler receipt validates resolver/compiler PID+PGID, UTC bounds, exit, timeout cleanup, raw stdout/stderr hashes, logical xcrun/direct argv, real compiler path+hash, xcrun hash, sourceBefore/sourceAfter exact Witness.swift+CaptureHost.swift bytes, cwd, output binary path+hash.",
+    "Manifest sourceHash equals copied Witness.swift receipt sourceBefore/sourceAfter hash; adapterSourceHash equals sibling CaptureHost.swift; compiledAdapterHash equals adapted work copy.",
+    "Summary compilerReceipt compiler.outputBinary.sha256 equals summary binaryHash; compiler receipt hash is durable in case evidence.",
+    "Each of 20 runs has independent plain/instrumented PIDs, raw JSON hashes, PNG hashes, nonvacuous image status, and capture.json provenance joining instrumented raw hash with binary hash.",
+    "External AX raw owner path+hash equals running host binary; compositor raw+PNG hashes and process ownership join same case run; unavailable channels remain HELD.",
+    "Fresh AX helper compiler receipt must join AXClient.swift source bytes, resolver/compiler OS process receipts, output binary hash, and external AX client hash before externalAX OBSERVED is admitted.",
+    "Run factory/native/macos/check_evidence.py for raw/image/PID joins, then apply compiler/source/adapter/binary joins above before any promotion."
+  ]
+}

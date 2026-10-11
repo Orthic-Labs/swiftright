@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://swiftright.dev/factory/spec/v0.1/capability-obligations.schema.json",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/envelope" }], "type": "object", "additionalProperties": false,
+  "required": ["kind", "version", "id", "provenance", "capabilities"], "properties": {
+    "kind": { "const": "capability-obligations" }, "version": { "const": "0.1" }, "id": { "$ref": "common.schema.json#/$defs/id" }, "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "capabilities": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["id", "channels", "compile"], "properties": { "id": { "$ref": "common.schema.json#/$defs/id" }, "channels": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["layout", "paint", "hit-testing", "accessibility-provider", "accessibility-external", "focus", "text", "events-state", "animation", "presentation"] } }, "compile": { "type": "object", "additionalProperties": false, "required": ["positive", "negative"], "properties": { "positive": { "type": "boolean" }, "negative": { "type": "boolean" } } }, "metricBounds": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["channel", "path", "bound"], "properties": { "channel": { "type": "string" }, "path": { "type": "string" }, "bound": { "$ref": "common.schema.json#/$defs/measuredNumber" } } } } } } }
+  }
+}

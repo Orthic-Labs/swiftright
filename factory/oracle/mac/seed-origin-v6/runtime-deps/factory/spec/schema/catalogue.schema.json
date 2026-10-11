@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://swiftright.dev/factory/spec/v0.1/catalogue.schema.json",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/envelope" }],
+  "type": "object", "additionalProperties": false, "required": ["kind", "version", "id", "provenance", "symbolGraph", "symbols"],
+  "properties": {
+    "kind": { "const": "catalogue" }, "version": { "const": "0.1" }, "id": { "$ref": "common.schema.json#/$defs/id" }, "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "symbolGraph": { "type": "object", "additionalProperties": false, "required": ["sdk", "compiler", "target", "flagsHash", "interfaceAuditHash"], "properties": { "sdk": { "type": "string" }, "compiler": { "type": "string" }, "target": { "type": "string" }, "flagsHash": { "$ref": "common.schema.json#/$defs/sha256" }, "interfaceAuditHash": { "$ref": "common.schema.json#/$defs/sha256" } } },
+    "symbols": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["usr", "precise", "path", "status"], "properties": { "usr": { "type": "string", "minLength": 1 }, "precise": { "type": "string", "minLength": 1 }, "path": { "type": "string", "minLength": 1 }, "status": { "enum": ["inventory", "adapted", "unsupported", "hidden"] }, "hiddenReason": { "type": "string" } }, "allOf": [{ "if": { "properties": { "status": { "const": "hidden" } } }, "then": { "required": ["hiddenReason"] } }] } }
+  }
+}
