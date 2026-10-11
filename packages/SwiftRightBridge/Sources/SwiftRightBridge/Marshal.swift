@@ -249,3 +249,35 @@ public func caretRect(cells: [CharCell], lines: [LineInfo], index: Int,
     let top = line < lines.count ? lines[line].top : Float(line) * lineHeightPx
     return Rect(x: origin.x + x, y: origin.y + top, w: width, h: lineHeightPx)
 }
+
+/// Window-px highlight rectangles for the UTF-16 selection `start..<end` (cell indices), one per
+/// visual line that has selected cells. A selected line-break cell extends its line's rectangle by
+/// `lineBreakWidth` (the conventional "newline is selected" nub). Collapsed or out-of-range
+/// selections yield no rectangles. Pure geometry: no renderer or window needed.
+public func selectionRects(cells: [CharCell], lines: [LineInfo], start: Int, end: Int,
+                           origin: (x: Float, y: Float), lineHeightPx: Float,
+                           lineBreakWidth: Float) -> [Rect] {
+    let lo = max(0, min(start, end)), hi = min(cells.count, max(start, end))
+    guard lo < hi else { return [] }
+    var out: [Rect] = []
+    var curLine = -1
+    var x0: Float = 0, x1: Float = 0
+    func flush() {
+        guard curLine >= 0, x1 > x0 else { return }
+        let top = curLine < lines.count ? lines[curLine].top : Float(curLine) * lineHeightPx
+        out.append(Rect(x: origin.x + x0, y: origin.y + top, w: x1 - x0, h: lineHeightPx))
+    }
+    for i in lo..<hi {
+        let c = cells[i]
+        let line = Int(c.line)
+        let right = c.lineBreak ? c.x0 + lineBreakWidth : c.x1
+        if line != curLine {
+            flush()
+            curLine = line; x0 = c.x0; x1 = right
+        } else {
+            x0 = min(x0, c.x0); x1 = max(x1, right)
+        }
+    }
+    flush()
+    return out
+}

@@ -29,6 +29,8 @@ enum SliceStyle {
     static let fieldFill: UInt32 = 0xFFFFFFFF
     static let fieldBorder: UInt32 = 0x888888FF
     static let caretColor: UInt32 = 0x111111FF
+    /// Selection highlight (system-like light blue, drawn behind the dark text), RGBA.
+    static let selectionColor: UInt32 = 0x99C9EFFF
     /// The runtime sizes a TextField and a Button to their content only (no padding modifier for these), so the
     /// backend draws the box with these insets.
     static let fieldInsetX: Float = 6
@@ -365,6 +367,13 @@ final class BridgeBackend {
             let cells = measurement.flatMap { try? bridge.cells(of: $0.run) } ?? []
             let lines = measurement?.lines ?? []
             if let m = measurement {
+                // Selection highlight, behind the text: one rect per visual line (focused field, non-empty selection).
+                if let row, row == focusedRow, let sel = node.selection, sel.length > 0 {
+                    for r in selectionRects(cells: cells, lines: lines, start: sel.location, end: sel.location + sel.length,
+                                            origin: origin, lineHeightPx: lh, lineBreakWidth: max(1, 4 * s)) {
+                        prims.append(.rect(r, color: SliceStyle.selectionColor))
+                    }
+                }
                 prims.append(.text(m.run, x: origin.x, y: origin.y))
             }
             // Caret or selection end, in displayed text (the runtime's TextInputState).

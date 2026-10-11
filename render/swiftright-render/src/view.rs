@@ -727,19 +727,7 @@ fn paint_root(
         (f32::from(vs.width) * scale).round() as u32,
         (f32::from(vs.height) * scale).round() as u32,
     );
-    let bits = scale.to_bits();
-    if WIN_W.swap(w, SeqCst) != w || WIN_H.swap(h, SeqCst) != h || WIN_SCALE_BITS.swap(bits, SeqCst) != bits {
-        let win = LIVE_WINDOW.load(SeqCst);
-        if win != 0 {
-            let mut e = Event::new(EV_WINDOW_METRICS, 0);
-            e.window = win;
-            e.snapshot = SNAPSHOT.load(SeqCst);
-            e.i0 = w as i32;
-            e.i1 = h as i32;
-            e.x = scale;
-            push_event(e);
-        }
-    }
+    publish_window_metrics(w, h, scale);
     WIN_ACTIVE.store(window.is_window_active(), SeqCst);
 
     // Released images leave the sprite atlas before this frame draws (a still-committed one
@@ -1265,6 +1253,63 @@ fn present(cx: &mut AsyncApp, handle: WindowHandle<RootView>) {
     }
 }
 
+/// Client rect `[left, top, right, bottom]` -> (width, height) in physical px, clamped at 0.
+fn client_size_px(rc: [i32; 4]) -> (u32, u32) {
+    ((rc[2] - rc[0]).max(0) as u32, (rc[3] - rc[1]).max(0) as u32)
+}
+
+/// The one place the cached window metrics (WIN_W/WIN_H/WIN_SCALE_BITS, read by `swr_window_get_metrics`) change.
+/// Stores all three, then, if any differed, pushes EV_WINDOW_METRICS carrying exactly the stored values. The getter and
+/// the event therefore cannot disagree: the cache is updated before the event is queued, and the event payload is the
+/// cache. All three swaps always run (no `||` short-circuit: a changed width must not leave height or scale stale).
+/// Returns true when the metrics changed (an event was pushed if a window is live).
+fn publish_window_metrics(w: u32, h: u32, scale: f32) -> bool {
+    let bits = scale.to_bits();
+    let cw = WIN_W.swap(w, SeqCst) != w;
+    let ch = WIN_H.swap(h, SeqCst) != h;
+    let cs = WIN_SCALE_BITS.swap(bits, SeqCst) != bits;
+    let changed = cw | ch | cs;
+    if changed {
+        let win = LIVE_WINDOW.load(SeqCst);
+        if win != 0 {
+            let mut e = Event::new(EV_WINDOW_METRICS, 0);
+            e.window = win;
+            e.snapshot = SNAPSHOT.load(SeqCst);
+            e.i0 = w as i32;
+            e.i1 = h as i32;
+            e.x = scale;
+            push_event(e);
+        }
+    }
+    changed
+}
+
+/// Reads the live window's client rect and per-window DPI from Win32 (the authority: the GPUI viewport is 0x0 at scale 1
+/// while hidden). Returns (width px, height px, scale); `None` when there is no window yet.
+fn read_client_metrics() -> Option<(u32, u32, f32)> {
+    let hwnd = MAIN_HWND.load(SeqCst) as *mut c_void;
+    if hwnd.is_null() {
+        return None;
+    }
+    let mut rc = [0i32; 4];
+    unsafe { GetClientRect(hwnd, &mut rc) };
+    let (w, h) = client_size_px(rc);
+    let dpi = unsafe { GetDpiForWindow(hwnd) };
+    let s = if dpi == 0 { f32::from_bits(WIN_SCALE_BITS.load(SeqCst)) } else { dpi as f32 / 96.0 };
+    Some((w, h, s))
+}
+
+/// Called just before the ready callback: metrics read by the host inside it are the settled client size. If they differ
+/// from the early sample, the metrics event is queued now, ahead of any paint, so it precedes or accompanies ready.
+fn settle_client_metrics(req_w_dip: u32, req_h_dip: u32) {
+    let Some((w, h, s)) = read_client_metrics() else { return };
+    let changed = publish_window_metrics(w, h, s);
+    eprintln!(
+        "[swiftright-render] ready metrics requested={}x{}dip ready-client={}x{}px scale={} changed_since_initial={}",
+        req_w_dip, req_h_dip, w, h, s, changed
+    );
+}
+
 fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
     let bounds = Bounds::centered(None, size(px(width as f32), px(height as f32)), cx);
     let handle: WindowHandle<RootView> = match cx.open_window(
@@ -1312,8 +1357,19 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
         unsafe { GetClientRect(hwnd, &mut rc) };
         let dpi = unsafe { GetDpiForWindow(hwnd) };
         let s = if dpi == 0 { window.scale_factor() } else { dpi as f32 / 96.0 };
-        WIN_W.store((rc[2] - rc[0]).max(0) as u32, SeqCst);
-        WIN_H.store((rc[3] - rc[1]).max(0) as u32, SeqCst);
+        let (cw, ch) = client_size_px(rc);
+        WIN_W.store(cw, SeqCst);
+        WIN_H.store(ch, SeqCst);
+        eprintln!(
+            "[swiftright-render] requested={}x{}dip expected={}x{}px initial-client={}x{}px scale={}",
+            width,
+            height,
+            (width as f32 * s).round() as u32,
+            (height as f32 * s).round() as u32,
+            cw,
+            ch,
+            s
+        );
         WIN_SCALE_BITS.store(s.to_bits(), SeqCst);
         let style = unsafe { GetWindowLongPtrW(hwnd, -16) };
         let exstyle = unsafe { GetWindowLongPtrW(hwnd, -20) };
@@ -1355,6 +1411,11 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
     cx.spawn(async move |cx: &mut AsyncApp| {
         let _keep_subscription_alive = closed_sub;
         if let Some(f) = host.loop_ready {
+            // The hidden window's first client rect is sampled before the initial size settles (SR0 findings 12:
+            // 800x1396 reported vs 800x600 actual at scale 2.5). Re-read the real client rect and DPI now, so
+            // swr_window_get_metrics inside loop_ready returns the settled physical size; push the metrics event if
+            // it differs from the early sample (the paint path will not re-fire it for an equal value).
+            settle_client_metrics(width, height);
             let ctx = host.ctx_ptr();
             call_host(|| f(ctx, win_handle));
         }
@@ -1611,6 +1672,23 @@ pub fn run(title: String, width: u32, height: u32, host: Host, wake: usize) -> S
         E_PLATFORM
     } else {
         SWR_OK
+    }
+}
+
+#[cfg(test)]
+mod client_size_tests {
+    use super::client_size_px;
+
+    #[test]
+    fn client_size_is_right_minus_left_and_bottom_minus_top() {
+        assert_eq!(client_size_px([0, 0, 800, 600]), (800, 600));
+        assert_eq!(client_size_px([10, 20, 810, 620]), (800, 600));
+    }
+
+    #[test]
+    fn inverted_or_empty_rect_clamps_to_zero() {
+        assert_eq!(client_size_px([0, 0, 0, 0]), (0, 0));
+        assert_eq!(client_size_px([5, 5, 1, 1]), (0, 0));
     }
 }
 

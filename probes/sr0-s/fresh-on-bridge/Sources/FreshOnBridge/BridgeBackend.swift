@@ -30,6 +30,8 @@ enum FreshStyle {
     static let fieldFill: UInt32 = 0xFFFFFFFF
     static let fieldBorder: UInt32 = 0x888888FF
     static let caretColor: UInt32 = 0x111111FF
+    /// Selection highlight (system-like light blue, drawn behind the dark text), RGBA.
+    static let selectionColor: UInt32 = 0x99C9EFFF
     /// Visual padding around runtime frames. The runtime sizes a TextField to its text only and has no
     /// padding modifier for buttons (v0 runtime gap), so the backend draws the box with these insets.
     static let fieldInsetX: Float = 6
@@ -498,6 +500,13 @@ final class BridgeBackend {
             let runBase = runBlock(node.id)
             if !text.isEmpty, let m = measure(text, color: faded(FreshStyle.textColor, alpha), maxWidth: 0, into: &releasable) {
                 let cells = (try? bridge.cells(of: m.run)) ?? []
+                // Selection highlight, behind the text: one rect per visual line (focused field, non-empty selection).
+                if let row, row == focusedRow, let sel = node.selection, sel.length > 0 {
+                    for r in selectionRects(cells: cells, lines: m.lines, start: sel.location, end: sel.location + sel.length,
+                                            origin: origin, lineHeightPx: lh, lineBreakWidth: max(1, 4 * s)) {
+                        prims.append(.rect(r, color: faded(FreshStyle.selectionColor, alpha)))
+                    }
+                }
                 prims.append(.text(m.run, x: origin.x, y: origin.y))
                 // Caret or selection end, in displayed text (the runtime's TextInputState).
                 let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count

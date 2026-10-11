@@ -259,6 +259,9 @@ public final class Bridge {
                 continue
             }
             let ev = decodeEvent(raw)
+            // The window-metrics payload is authoritative: latch it before the host sees the event, so BridgeWindow.metrics()
+            // already equals it inside `onEvent`.
+            if ev.kind == .windowMetrics { window?.metricsLatch.apply(ev) }
             eventsDelivered += 1
             onEvent?(ev)
             eventContinuation?.yield(ev)
@@ -378,6 +381,8 @@ public final class Bridge {
 public final class BridgeWindow {
     public let handle: UInt64
     unowned let bridge: Bridge
+    /// Last delivered window-metrics event (authoritative over the renderer getter). Per window, so a new window starts empty.
+    var metricsLatch = MetricsLatch()
 
     init(bridge: Bridge, handle: UInt64) {
         self.bridge = bridge
@@ -398,11 +403,14 @@ public final class BridgeWindow {
         if rc != 0 { throw BridgeError.status(rc, "swr_commit v\(t.version)") }
     }
 
+    /// Window metrics in physical px. Before any `.windowMetrics` event this is the renderer's value at ready (the settled
+    /// client size). Once the bridge has delivered a `.windowMetrics` event, the event's size and scale are authoritative
+    /// and this returns exactly them (`active` still comes from the renderer). Never lays out from a stale getter value.
     public func metrics() throws -> (width: UInt32, height: UInt32, scale: Float, active: Bool) {
         var m = swr_window_metrics()
         let rc = bridge.api.window_get_metrics?(handle, &m) ?? -3
         if rc != 0 { throw BridgeError.status(rc, "swr_window_get_metrics") }
-        return (m.width_px, m.height_px, m.scale, m.active != 0)
+        return metricsLatch.resolve(getter: (m.width_px, m.height_px, m.scale, m.active != 0))
     }
 
     /// Display ticks while on (delivered to `Bridge.onTick`).
