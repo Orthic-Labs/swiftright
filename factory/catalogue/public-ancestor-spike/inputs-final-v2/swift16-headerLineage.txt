@@ -1,0 +1,933 @@
+{
+  "kind": "f1-external-owner-header-index-swift-foundation",
+  "version": 1,
+  "status": "raw-facts-only-no-eligibility-conclusion",
+  "immutableLink": {
+    "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+    "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+  },
+  "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+  "target": "arm64-apple-macosx27.0",
+  "toolchain": {
+    "swiftc": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    },
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    }
+  },
+  "modules": [
+    {
+      "module": "Swift",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669"
+      },
+      "headerFlags": {
+        "rawRows": {
+          "swiftModuleFlags": "// swift-module-flags: -target arm64e-apple-macosx27.0 -target-variant arm64e-apple-ios27.0-macabi -enable-objc-interop -enable-library-evolution -module-link-name swiftCore -parse-stdlib -language-mode 5 -O -library-level api -enforce-exclusivity=unchecked -target-min-inlining-version min -enable-experimental-concise-pound-file -disable-objc-attr-requires-foundation-module -enable-experimental-feature SuppressedAssociatedTypesWithDefaults -enable-experimental-feature NonescapableTypes -enable-experimental-feature LifetimeDependence -enable-experimental-feature InoutLifetimeDependence -enable-experimental-feature LifetimeDependenceMutableAccessors -enable-experimental-feature MemberImportVisibility -enable-experimental-feature TypedThrows -enable-experimental-feature Macros -enable-experimental-feature FreestandingMacros -enable-experimental-feature BitwiseCopyable -enable-experimental-feature Extern -enable-experimental-feature AllowUnsafeAttribute -enable-experimental-feature ValueGenerics -enable-experimental-feature Lifetimes -enable-experimental-feature Reparenting -enable-experimental-feature AddressableParameters -enable-experimental-feature AddressableTypes -enable-experimental-feature BorrowAndMutateAccessors -enable-experimental-feature BorrowInout -user-module-version 6.4.0.31.5 -module-name Swift",
+          "swiftModuleFlagsIgnorable": "// swift-module-flags-ignorable: -enable-lexical-lifetimes=false -strict-memory-safety -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4"
+        },
+        "parsed": {
+          "swiftModuleFlags": [
+            "-target",
+            "arm64e-apple-macosx27.0",
+            "-target-variant",
+            "arm64e-apple-ios27.0-macabi",
+            "-enable-objc-interop",
+            "-enable-library-evolution",
+            "-module-link-name",
+            "swiftCore",
+            "-parse-stdlib",
+            "-language-mode",
+            "5",
+            "-O",
+            "-library-level",
+            "api",
+            "-enforce-exclusivity=unchecked",
+            "-target-min-inlining-version",
+            "min",
+            "-enable-experimental-concise-pound-file",
+            "-disable-objc-attr-requires-foundation-module",
+            "-enable-experimental-feature",
+            "SuppressedAssociatedTypesWithDefaults",
+            "-enable-experimental-feature",
+            "NonescapableTypes",
+            "-enable-experimental-feature",
+            "LifetimeDependence",
+            "-enable-experimental-feature",
+            "InoutLifetimeDependence",
+            "-enable-experimental-feature",
+            "LifetimeDependenceMutableAccessors",
+            "-enable-experimental-feature",
+            "MemberImportVisibility",
+            "-enable-experimental-feature",
+            "TypedThrows",
+            "-enable-experimental-feature",
+            "Macros",
+            "-enable-experimental-feature",
+            "FreestandingMacros",
+            "-enable-experimental-feature",
+            "BitwiseCopyable",
+            "-enable-experimental-feature",
+            "Extern",
+            "-enable-experimental-feature",
+            "AllowUnsafeAttribute",
+            "-enable-experimental-feature",
+            "ValueGenerics",
+            "-enable-experimental-feature",
+            "Lifetimes",
+            "-enable-experimental-feature",
+            "Reparenting",
+            "-enable-experimental-feature",
+            "AddressableParameters",
+            "-enable-experimental-feature",
+            "AddressableTypes",
+            "-enable-experimental-feature",
+            "BorrowAndMutateAccessors",
+            "-enable-experimental-feature",
+            "BorrowInout",
+            "-user-module-version",
+            "6.4.0.31.5",
+            "-module-name",
+            "Swift"
+          ],
+          "swiftModuleFlagsIgnorable": [
+            "-enable-lexical-lifetimes=false",
+            "-strict-memory-safety",
+            "-formal-cxx-interoperability-mode=off",
+            "-interface-compiler-version",
+            "6.4"
+          ]
+        },
+        "removedTargetFlags": [
+          {
+            "flag": "-target",
+            "value": "arm64e-apple-macosx27.0"
+          },
+          {
+            "flag": "-target-variant",
+            "value": "arm64e-apple-ios27.0-macabi"
+          }
+        ],
+        "forwardedFrontendFlags": [
+          {
+            "flag": "-enable-objc-interop",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-enable-objc-interop"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-parse-stdlib",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-parse-stdlib"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-enforce-exclusivity=unchecked",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-enforce-exclusivity=unchecked"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-target-min-inlining-version",
+            "value": "min",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-target-min-inlining-version",
+              "-Xfrontend",
+              "min"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-disable-objc-attr-requires-foundation-module",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-disable-objc-attr-requires-foundation-module"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-enable-lexical-lifetimes=false",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-enable-lexical-lifetimes=false"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-strict-memory-safety",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-strict-memory-safety"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-formal-cxx-interoperability-mode=off",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-formal-cxx-interoperability-mode=off"
+            ],
+            "reason": "frontend-only-header-option"
+          }
+        ],
+        "compilerArgs": [
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "-Xfrontend",
+          "-enable-objc-interop",
+          "-enable-library-evolution",
+          "-module-link-name",
+          "swiftCore",
+          "-Xfrontend",
+          "-parse-stdlib",
+          "-language-mode",
+          "5",
+          "-O",
+          "-library-level",
+          "api",
+          "-Xfrontend",
+          "-enforce-exclusivity=unchecked",
+          "-Xfrontend",
+          "-target-min-inlining-version",
+          "-Xfrontend",
+          "min",
+          "-enable-experimental-concise-pound-file",
+          "-Xfrontend",
+          "-disable-objc-attr-requires-foundation-module",
+          "-enable-experimental-feature",
+          "SuppressedAssociatedTypesWithDefaults",
+          "-enable-experimental-feature",
+          "NonescapableTypes",
+          "-enable-experimental-feature",
+          "LifetimeDependence",
+          "-enable-experimental-feature",
+          "InoutLifetimeDependence",
+          "-enable-experimental-feature",
+          "LifetimeDependenceMutableAccessors",
+          "-enable-experimental-feature",
+          "MemberImportVisibility",
+          "-enable-experimental-feature",
+          "TypedThrows",
+          "-enable-experimental-feature",
+          "Macros",
+          "-enable-experimental-feature",
+          "FreestandingMacros",
+          "-enable-experimental-feature",
+          "BitwiseCopyable",
+          "-enable-experimental-feature",
+          "Extern",
+          "-enable-experimental-feature",
+          "AllowUnsafeAttribute",
+          "-enable-experimental-feature",
+          "ValueGenerics",
+          "-enable-experimental-feature",
+          "Lifetimes",
+          "-enable-experimental-feature",
+          "Reparenting",
+          "-enable-experimental-feature",
+          "AddressableParameters",
+          "-enable-experimental-feature",
+          "AddressableTypes",
+          "-enable-experimental-feature",
+          "BorrowAndMutateAccessors",
+          "-enable-experimental-feature",
+          "BorrowInout",
+          "-user-module-version",
+          "6.4.0.31.5",
+          "-module-name",
+          "Swift",
+          "-Xfrontend",
+          "-enable-lexical-lifetimes=false",
+          "-Xfrontend",
+          "-strict-memory-safety",
+          "-Xfrontend",
+          "-formal-cxx-interoperability-mode=off",
+          "-interface-compiler-version",
+          "6.4",
+          "-sdk",
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+          "-target",
+          "arm64-apple-macosx27.0"
+        ],
+        "productionTarget": "arm64-apple-macosx27.0",
+        "sdkAppended": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk"
+      },
+      "request": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Swift.yaml",
+        "preimagePath": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.request.preimage.yaml",
+        "sha256": "sha256:5b0a6e9b82f16949b6e39b3b00ff6bbf281312adaf7c9788a2ae33e627b6e4c8",
+        "preimageSha256": "sha256:5b0a6e9b82f16949b6e39b3b00ff6bbf281312adaf7c9788a2ae33e627b6e4c8",
+        "bytes": 2253
+      },
+      "process": {
+        "argv": [
+          "xcrun",
+          "sourcekit-lsp",
+          "debug",
+          "run-sourcekitd-request",
+          "--request-file",
+          "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Swift.yaml"
+        ],
+        "cwd": "/Volumes/D/claude/swiftright",
+        "exit": 0,
+        "stdout": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/raw/Swift.index.txt",
+          "sha256": "sha256:12c4f19b2fb195ca92e748fb6e98bb961e521baba6035dc6da7bfefc7bebda63",
+          "bytes": 7974142
+        },
+        "stderr": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/receipts/Swift.stderr",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "attemptStdoutPath": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.response.stdout"
+      },
+      "summary": {
+        "recordDenominator": 13629,
+        "publicEffectiveAccessFieldCount": 8984,
+        "publicAttributeFieldCount": 8545,
+        "physicalPositionNameKindUsrPairs": {
+          "denominator": 13629,
+          "unique": 13629,
+          "duplicatePairCount": 0
+        },
+        "nominalUsrPrefixCounts": {
+          "Swift": 0,
+          "Foundation": 0,
+          "other": 641
+        },
+        "varUsrPrefixCounts": {
+          "Swift": 0,
+          "Foundation": 0,
+          "other": 2102
+        },
+        "declarationKinds": [
+          "source.lang.swift.decl.associatedtype",
+          "source.lang.swift.decl.class",
+          "source.lang.swift.decl.enum",
+          "source.lang.swift.decl.enumelement",
+          "source.lang.swift.decl.function.accessor.getter",
+          "source.lang.swift.decl.function.accessor.setter",
+          "source.lang.swift.decl.function.constructor",
+          "source.lang.swift.decl.function.destructor",
+          "source.lang.swift.decl.function.free",
+          "source.lang.swift.decl.function.method.class",
+          "source.lang.swift.decl.function.method.instance",
+          "source.lang.swift.decl.function.method.static",
+          "source.lang.swift.decl.function.operator.infix",
+          "source.lang.swift.decl.function.operator.postfix",
+          "source.lang.swift.decl.function.operator.prefix",
+          "source.lang.swift.decl.function.subscript",
+          "source.lang.swift.decl.generic_type_param",
+          "source.lang.swift.decl.macro",
+          "source.lang.swift.decl.protocol",
+          "source.lang.swift.decl.struct",
+          "source.lang.swift.decl.typealias",
+          "source.lang.swift.decl.var.class",
+          "source.lang.swift.decl.var.global",
+          "source.lang.swift.decl.var.instance",
+          "source.lang.swift.decl.var.static"
+        ]
+      },
+      "failedPreimage": {
+        "stdout": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.initial-failed.stdout",
+        "stderr": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.initial-failed.stderr",
+        "request": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Swift.initial-failed.request.yaml",
+        "exit": 1,
+        "diagnostic": "Setting up inputs failed under raw header flags"
+      },
+      "targetRecords": [
+        {
+          "name": "Optional",
+          "expectedKind": "enum",
+          "kind": "enum",
+          "usr": "s:4main8OptionalO",
+          "line": 16948,
+          "column": 21,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            83780,
+            83856
+          ],
+          "rawBlockSha256": "sha256:ae94c3c7853caebb134009075b6ff8508a059a93f5d63c98a352407113598789",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Never",
+          "expectedKind": "enum",
+          "kind": "enum",
+          "usr": "s:4main5NeverO",
+          "line": 17607,
+          "column": 21,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            86062,
+            86076
+          ],
+          "rawBlockSha256": "sha256:a430fd484ea1efa3eea87d313a659fd4e78e23b88b416d9e8c21834281b3e6ff",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Float",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main5FloatV",
+          "line": 39669,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            173250,
+            173403
+          ],
+          "rawBlockSha256": "sha256:c45b71ec5afb326a47a92eeaf08fecead6938df981725606e6604948262696f1",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Double",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main6DoubleV",
+          "line": 40283,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            175266,
+            175419
+          ],
+          "rawBlockSha256": "sha256:459fc286fcc6655f448aa021353190d89354d6bd5a0eceb42f0d3792cd2d1451",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Int",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main3IntV",
+          "line": 45246,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            199415,
+            201771
+          ],
+          "rawBlockSha256": "sha256:a8f9e5a27c7288a144819fd8c5ffd6ba6281585f81fca0a918b3e3b9870a046d",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Int8",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main4Int8V",
+          "line": 41368,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            179699,
+            181878
+          ],
+          "rawBlockSha256": "sha256:290f816f9fd993d56c7356d3b2fdbbd0f7ba07f5628ebb45f55e7399f0e8b41e",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Int16",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main5Int16V",
+          "line": 42329,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            184537,
+            186732
+          ],
+          "rawBlockSha256": "sha256:46fbf787c60549e617e1d3cb3c471b2886c1d2f2c8543ad33391781728467d45",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Int32",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main5Int32V",
+          "line": 43290,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            189391,
+            191581
+          ],
+          "rawBlockSha256": "sha256:533c68f1bda523480f6efced65a3f30714a0d18e7cb65d40f14ce13498cd7b71",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "Int64",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main5Int64V",
+          "line": 44259,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            194312,
+            196588
+          ],
+          "rawBlockSha256": "sha256:87d97d2a63b1c12dd64cbbc4f08da9a80c6fe0564c5043a48ef4507cf230580b",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "UInt",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main4UIntV",
+          "line": 44762,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            196923,
+            199119
+          ],
+          "rawBlockSha256": "sha256:ff4c845a156887f373142254e6907203ba496c5a2657419ff1fa6b5f0375875d",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "UInt8",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main5UInt8V",
+          "line": 40905,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            177384,
+            179403
+          ],
+          "rawBlockSha256": "sha256:eda108d8020103106828117189aefece1e9581f95ede316df47a4e5f58a2980b",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "UInt16",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main6UInt16V",
+          "line": 41864,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            182213,
+            184241
+          ],
+          "rawBlockSha256": "sha256:cafdbc07d3dc1f2c03da7029f8d6f8944cb4c9a5f83376a16c18aecbc52511d6",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "UInt32",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main6UInt32V",
+          "line": 42825,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            187067,
+            189095
+          ],
+          "rawBlockSha256": "sha256:74236944c71a2317225066384403bba4b396b6cf366365014fe94980f4bfa13e",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "UInt64",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:4main6UInt64V",
+          "line": 43787,
+          "column": 23,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            191916,
+            194016
+          ],
+          "rawBlockSha256": "sha256:9049dcecac90940b0b977903cbbbe3b0e20a43d8df02ed62eec36da2b448e872",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "RangeReplaceableCollection",
+          "expectedKind": "protocol",
+          "kind": "protocol",
+          "usr": "s:4main26RangeReplaceableCollectionP",
+          "line": 18661,
+          "column": 17,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            92100,
+            92418
+          ],
+          "rawBlockSha256": "sha256:673a87a22b63353a9c3c50fadf8b099d563b31e9d7705f59091c16dbb3670886",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "MutableCollection",
+          "expectedKind": "protocol",
+          "kind": "protocol",
+          "usr": "s:4main17MutableCollectionP",
+          "line": 15531,
+          "column": 17,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            79261,
+            79509
+          ],
+          "rawBlockSha256": "sha256:c897906f5780c25ae04f2d1aa24a5f406fde872af4de5b38fc4bdcd871c27974",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        }
+      ]
+    },
+    {
+      "module": "Foundation",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Modules/Foundation.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:9434abc2b4f28dfb0c3f7cad3a069447597fe5cb4bbf254927221af86e0b98d0"
+      },
+      "headerFlags": {
+        "rawRows": {
+          "swiftModuleFlags": "// swift-module-flags: -target arm64e-apple-macos27.0 -target-variant arm64e-apple-ios27.0-macabi -enable-objc-interop -target-arch-variant arm64e.x1 -autolink-force-load -enable-library-evolution -module-link-name swiftFoundation -language-mode 5 -enforce-exclusivity=unchecked -O -library-level api -enable-experimental-feature AllowUnsafeAttribute -enable-experimental-feature Extern -enable-experimental-feature AddressableParameters -enable-experimental-feature Lifetimes -enable-experimental-feature LifetimeDependence -enable-experimental-feature Lifetimes -enable-experimental-feature AddressableTypes -enable-experimental-feature BuiltinModule -enable-experimental-feature InoutLifetimeDependence -enable-experimental-feature LifetimeDependenceMutableAccessors -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature MemberImportVisibility -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 5027.0.69 -module-name Foundation -package-name \"\\\"FoundationPreview\\\"\"",
+          "swiftModuleFlagsIgnorable": "// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4"
+        },
+        "parsed": {
+          "swiftModuleFlags": [
+            "-target",
+            "arm64e-apple-macos27.0",
+            "-target-variant",
+            "arm64e-apple-ios27.0-macabi",
+            "-enable-objc-interop",
+            "-target-arch-variant",
+            "arm64e.x1",
+            "-autolink-force-load",
+            "-enable-library-evolution",
+            "-module-link-name",
+            "swiftFoundation",
+            "-language-mode",
+            "5",
+            "-enforce-exclusivity=unchecked",
+            "-O",
+            "-library-level",
+            "api",
+            "-enable-experimental-feature",
+            "AllowUnsafeAttribute",
+            "-enable-experimental-feature",
+            "Extern",
+            "-enable-experimental-feature",
+            "AddressableParameters",
+            "-enable-experimental-feature",
+            "Lifetimes",
+            "-enable-experimental-feature",
+            "LifetimeDependence",
+            "-enable-experimental-feature",
+            "Lifetimes",
+            "-enable-experimental-feature",
+            "AddressableTypes",
+            "-enable-experimental-feature",
+            "BuiltinModule",
+            "-enable-experimental-feature",
+            "InoutLifetimeDependence",
+            "-enable-experimental-feature",
+            "LifetimeDependenceMutableAccessors",
+            "-enable-upcoming-feature",
+            "InferSendableFromCaptures",
+            "-enable-upcoming-feature",
+            "MemberImportVisibility",
+            "-enable-experimental-feature",
+            "DebugDescriptionMacro",
+            "-enable-bare-slash-regex",
+            "-user-module-version",
+            "5027.0.69",
+            "-module-name",
+            "Foundation",
+            "-package-name",
+            "\"FoundationPreview\""
+          ],
+          "swiftModuleFlagsIgnorable": [
+            "-formal-cxx-interoperability-mode=off",
+            "-interface-compiler-version",
+            "6.4"
+          ]
+        },
+        "removedTargetFlags": [
+          {
+            "flag": "-target",
+            "value": "arm64e-apple-macos27.0"
+          },
+          {
+            "flag": "-target-variant",
+            "value": "arm64e-apple-ios27.0-macabi"
+          },
+          {
+            "flag": "-target-arch-variant",
+            "value": "arm64e.x1"
+          }
+        ],
+        "forwardedFrontendFlags": [
+          {
+            "flag": "-enable-objc-interop",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-enable-objc-interop"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-enforce-exclusivity=unchecked",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-enforce-exclusivity=unchecked"
+            ],
+            "reason": "frontend-only-header-option"
+          },
+          {
+            "flag": "-formal-cxx-interoperability-mode=off",
+            "forwardedAs": [
+              "-Xfrontend",
+              "-formal-cxx-interoperability-mode=off"
+            ],
+            "reason": "frontend-only-header-option"
+          }
+        ],
+        "compilerArgs": [
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Modules/Foundation.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "-Xfrontend",
+          "-enable-objc-interop",
+          "-autolink-force-load",
+          "-enable-library-evolution",
+          "-module-link-name",
+          "swiftFoundation",
+          "-language-mode",
+          "5",
+          "-Xfrontend",
+          "-enforce-exclusivity=unchecked",
+          "-O",
+          "-library-level",
+          "api",
+          "-enable-experimental-feature",
+          "AllowUnsafeAttribute",
+          "-enable-experimental-feature",
+          "Extern",
+          "-enable-experimental-feature",
+          "AddressableParameters",
+          "-enable-experimental-feature",
+          "Lifetimes",
+          "-enable-experimental-feature",
+          "LifetimeDependence",
+          "-enable-experimental-feature",
+          "Lifetimes",
+          "-enable-experimental-feature",
+          "AddressableTypes",
+          "-enable-experimental-feature",
+          "BuiltinModule",
+          "-enable-experimental-feature",
+          "InoutLifetimeDependence",
+          "-enable-experimental-feature",
+          "LifetimeDependenceMutableAccessors",
+          "-enable-upcoming-feature",
+          "InferSendableFromCaptures",
+          "-enable-upcoming-feature",
+          "MemberImportVisibility",
+          "-enable-experimental-feature",
+          "DebugDescriptionMacro",
+          "-enable-bare-slash-regex",
+          "-user-module-version",
+          "5027.0.69",
+          "-module-name",
+          "Foundation",
+          "-package-name",
+          "\"FoundationPreview\"",
+          "-Xfrontend",
+          "-formal-cxx-interoperability-mode=off",
+          "-interface-compiler-version",
+          "6.4",
+          "-sdk",
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+          "-target",
+          "arm64-apple-macosx27.0"
+        ],
+        "productionTarget": "arm64-apple-macosx27.0",
+        "sdkAppended": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk"
+      },
+      "request": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Foundation.yaml",
+        "preimagePath": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Foundation.request.preimage.yaml",
+        "sha256": "sha256:8d4c54c46ef400f461839b79e7d4898ed3e65b9e7dbf224256a7086abc1be95e",
+        "preimageSha256": "sha256:8d4c54c46ef400f461839b79e7d4898ed3e65b9e7dbf224256a7086abc1be95e",
+        "bytes": 1860
+      },
+      "process": {
+        "argv": [
+          "xcrun",
+          "sourcekit-lsp",
+          "debug",
+          "run-sourcekitd-request",
+          "--request-file",
+          "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/requests/Foundation.yaml"
+        ],
+        "cwd": "/Volumes/D/claude/swiftright",
+        "exit": 0,
+        "stdout": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/raw/Foundation.index.txt",
+          "sha256": "sha256:37ab0d1eb459177d1cee8f90a38d5016e70d0353ccc97c0cb4e8e6205721e2c9",
+          "bytes": 17368715
+        },
+        "stderr": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/receipts/Foundation.stderr",
+          "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "attemptStdoutPath": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/attempts/Foundation.response.stdout"
+      },
+      "summary": {
+        "recordDenominator": 11927,
+        "publicEffectiveAccessFieldCount": 8766,
+        "publicAttributeFieldCount": 9593,
+        "physicalPositionNameKindUsrPairs": {
+          "denominator": 11927,
+          "unique": 11927,
+          "duplicatePairCount": 0
+        },
+        "nominalUsrPrefixCounts": {
+          "Swift": 0,
+          "Foundation": 719,
+          "other": 1447
+        },
+        "varUsrPrefixCounts": {
+          "Swift": 0,
+          "Foundation": 2489,
+          "other": 329
+        },
+        "declarationKinds": [
+          "source.lang.swift.decl.associatedtype",
+          "source.lang.swift.decl.class",
+          "source.lang.swift.decl.enum",
+          "source.lang.swift.decl.enumelement",
+          "source.lang.swift.decl.extension.class",
+          "source.lang.swift.decl.extension.enum",
+          "source.lang.swift.decl.extension.protocol",
+          "source.lang.swift.decl.extension.struct",
+          "source.lang.swift.decl.function.accessor.getter",
+          "source.lang.swift.decl.function.accessor.setter",
+          "source.lang.swift.decl.function.constructor",
+          "source.lang.swift.decl.function.destructor",
+          "source.lang.swift.decl.function.free",
+          "source.lang.swift.decl.function.method.class",
+          "source.lang.swift.decl.function.method.instance",
+          "source.lang.swift.decl.function.method.static",
+          "source.lang.swift.decl.function.operator.infix",
+          "source.lang.swift.decl.function.subscript",
+          "source.lang.swift.decl.generic_type_param",
+          "source.lang.swift.decl.macro",
+          "source.lang.swift.decl.protocol",
+          "source.lang.swift.decl.struct",
+          "source.lang.swift.decl.typealias",
+          "source.lang.swift.decl.var.global",
+          "source.lang.swift.decl.var.instance",
+          "source.lang.swift.decl.var.static"
+        ]
+      },
+      "failedPreimage": null,
+      "targetRecords": [
+        {
+          "name": "AttributedString",
+          "expectedKind": "struct",
+          "kind": "struct",
+          "usr": "s:10Foundation16AttributedStringV",
+          "line": 74,
+          "column": 36,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            1729,
+            1780
+          ],
+          "rawBlockSha256": "sha256:a92b18c26e526df185ed29491a55faed12b825e3da9b075608a471ecd9596c21",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "AttributeScopes",
+          "expectedKind": "enum",
+          "kind": "enum",
+          "usr": "s:10Foundation15AttributeScopesO",
+          "line": 1048,
+          "column": 21,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            32747,
+            32773
+          ],
+          "rawBlockSha256": "sha256:e7617ab18f79446967837d4470ea5d17eebb0fcb6f5f143dfd59401401ac58f0",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "FormatStyle",
+          "expectedKind": "protocol",
+          "kind": "protocol",
+          "usr": "s:10Foundation11FormatStyleP",
+          "line": 8471,
+          "column": 17,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            143799,
+            143948
+          ],
+          "rawBlockSha256": "sha256:ac75e80682452c27a633ce6d38442e7e9e2808d704e411c6b8ea06aba04a6dbd",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        },
+        {
+          "name": "AttributeDynamicLookup",
+          "expectedKind": "enum",
+          "kind": "enum",
+          "usr": "s:10Foundation22AttributeDynamicLookupO",
+          "line": 810,
+          "column": 42,
+          "effectiveAccess": "public",
+          "enclosingNominalPath": [],
+          "rawBlockLineSpan": [
+            27509,
+            27569
+          ],
+          "rawBlockSha256": "sha256:f88dfb3a1750424cb00f26fe9b739e89e50f5aa5993a3c524ae167a1b4e90fc1",
+          "rawRecordStatus": "exact-physical-source-position-name-kind-usr"
+        }
+      ]
+    }
+  ],
+  "toolVersions": {
+    "path": "factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/swift-foundation/tool-versions.json",
+    "sha256": "sha256:f9bcceac918dbab6e6fad70e81b452b3fdb895bbb7ef93a3bf0fc652f41c6ba4"
+  }
+}
