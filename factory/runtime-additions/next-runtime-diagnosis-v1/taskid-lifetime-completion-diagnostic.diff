@@ -1,0 +1,33 @@
+--- a/factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift
++++ b/factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift
+@@
+ final class KeyLog {
+     var events: [String] = []
+     var results: [String] = []
++
++    // Diagnostic-only terminal observation. This must not replace original assertions.
++    func waitForTerminalCommit(timeout: Duration = .milliseconds(500)) async -> Bool {
++        let clock = ContinuousClock()
++        let deadline = clock.now.advanced(by: timeout)
++        while !events.contains(where: { $0.hasPrefix("commit=") }) {
++            if clock.now >= deadline { return false }
++            await Task.yield()
++            try? await Task.sleep(for: .milliseconds(1))
++        }
++        return true
++    }
+ }
+@@
+         model.other += 1
+         graph.flush()
+-        try await settle()
++        // Keep Graph alive across suspension: its NodeHandle is weak, so last-use release is a
++        // separate hypothesis from scheduler delay. Await a task terminal event instead of
++        // inferring completion from elapsed wall time. Original assertions remain unchanged.
++        let retainedGraph = graph
++        _ = await log.waitForTerminalCommit()
++        _ = retainedGraph.snapshot()
++        try await settle()
+         XCTAssertEqual(log.events.filter { $0 == "start a" }.count, 1, "no restart for an unchanged id")
+         XCTAssertEqual(log.results, ["a"])
+     }

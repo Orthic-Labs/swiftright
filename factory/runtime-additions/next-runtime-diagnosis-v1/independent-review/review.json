@@ -1,0 +1,158 @@
+{
+  "kind": "next-runtime-diagnosis-v1-independent-review",
+  "reviewScope": "read-only provenance review of three Mac variants plus retracted Pulse records",
+  "reviewMethod": {
+    "reruns": 0,
+    "ssh": false,
+    "pulseSends": 0,
+    "gui": false,
+    "compilerInvocations": 0,
+    "runtimeEdits": 0,
+    "primaryTestEdits": 0,
+    "reviewedAt": "2026-10-11"
+  },
+  "packetRoot": "factory/runtime-additions/next-runtime-diagnosis-v1",
+  "reviewedInputs": [
+    {"path": "mac-process-receipt.json", "bytes": 5399, "sha256": "b2adf8adb350c7efb022a034a68bddbc6236f2f9ccc98647e2288d6464b55ae4"},
+    {"path": "taskid-three-variant-receipt.json", "bytes": 2127, "sha256": "8a0c1a20d2e96ceec13bbdaf84540c71beb99b094e0b809e3456f28e339f925e"},
+    {"path": "scratch-source-manifest.json", "bytes": 1143, "sha256": "6f0012b931f7562e1cbf243b0cbeb3ce992c812e8cf08ca9f97c2f178c4af9cc"},
+    {"path": "stage-manifest.json", "bytes": 29683, "sha256": "1d2d7d0001672fac083777e126074dbb0150715db0097aba04b5ef5814c57861"},
+    {"path": "SHA256SUMS.json", "bytes": 1470, "sha256": "07dc858bc27b8295e2d15e2617e0719ee803b59dba40ea8bb9358230bcc8cc30"},
+    {"path": "receipt.json", "bytes": 1772, "sha256": "7dabb1d8ad486a2f528aa7882f875767bc92f418f056e84584f9eb6befbe50e7"},
+    {"path": "pulse-message-receipts.json", "bytes": 3958, "sha256": "319fb821d32e3b3c36b1d519f1eac9c977e9b756bdabb9486917608550fa704e"},
+    {"path": "pulse-receipt-correction-20261011.json", "bytes": 2785, "sha256": "c3f21501b7d4e5f8881a6e01f796b107cf4041c79913a42fd5f5557d5da59355"},
+    {"path": "root-message-inspection.stdout.txt", "bytes": 280, "sha256": "5eeed7f92004b49f21fd2937fe56de81be29ab3febf27d55b92075a1bd66eec1"},
+    {"path": "root-message-inspection.stderr.txt", "bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+  ],
+  "manifestValidation": {
+    "stageManifest": {
+      "declaredEntries": 151,
+      "allEntriesPresent": true,
+      "allBytesAndSha256Match": true,
+      "maxEntryBytes": 77657,
+      "readmeOwnedSourceLogCountClaim": 150,
+      "countFinding": "stage manifest contains 151 entries; README says 150 owned source/log files"
+    },
+    "sha256Sums": {
+      "declaredEntries": 9,
+      "allDeclaredEntriesMatchCurrentFiles": true
+    },
+    "receipt": {
+      "allDeclaredEntriesMatchCurrentFiles": false,
+      "mismatch": {
+        "path": "SHA256SUMS.json",
+        "receiptBytes": 1308,
+        "actualBytes": 1470,
+        "receiptSha256": "68827585a6d1dec54e07c35e62241b14278fd2ee1b095179772d1c11bb599aed",
+        "actualSha256": "07dc858bc27b8295e2d15e2617e0719ee803b59dba40ea8bb9358230bcc8cc30"
+      }
+    },
+    "outOfFrozenManifest": [
+      "pulse-receipt-correction-20261011.json",
+      "root-message-inspection.stdout.txt",
+      "root-message-inspection.stderr.txt"
+    ]
+  },
+  "variantJoins": [
+    {
+      "variant": "original",
+      "sourceFile": {
+        "path": "scratch/original/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+        "claimedSha256": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+        "actualSha256": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+        "status": "verified-artifact-join"
+      },
+      "sourceTree": {"claimedSha256": "2fbf5f6b521db8b64d70772ea6ae9c896b79a84f322ca739e972c6c4f61dd250", "manifestMatch": true, "status": "manifest-pinned-but-tree-reconstruction-not-independent"},
+      "argv": {"status": "receipt-claimed", "packagePathExists": true, "scratchPathExists": true, "cwdExists": true},
+      "tool": {"path": "/usr/bin/swift", "pathExists": true, "currentSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "executable": {"pathExists": true, "currentSha256": "cd3db3da4c2f109a3259b1969e3770b49697f4ac4da80b6d787b64e265ded069", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "log": {"path": "scratch/original/test.log", "sha256": "ed65c76d6a56bc50d69266acc67fb7043455177c2ac365955d294a4affc46eee", "receiptMatch": true, "testStartAndEndMatchLog": true, "stderrSeparate": false},
+      "timestamp": {"testStartAndEnd": "log-backed", "buildStart": "derived-from-testStart-minus-buildDuration", "independentClockReceipt": false},
+      "observed": {"log": "selected test passed; no diagnostic commit/terminal line", "receiptField": "copied aggregate statement naming retained and terminal", "status": "receipt-observation-inconsistent-with-variant-log"}
+    },
+    {
+      "variant": "retained",
+      "sourceFile": {
+        "path": "scratch/retained/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+        "claimedSha256": "b4702b31f0dbe50876883f3799ec0d7beaff9efd7e236fbf653799247887757",
+        "actualSha256": "b4702b31f0dbe50876883f3799ec0d7beaff9fefd7e236fbf653799247887757",
+        "status": "hash-join-fails-one-character-difference"
+      },
+      "sourceTree": {"claimedSha256": "ae4fd3b03d04f934531138c0a825dd8dc5c70dbd368778e0ae6add309f237487", "manifestMatch": true, "status": "manifest-pinned-but-file-reference-conflict"},
+      "argv": {"status": "receipt-claimed", "packagePathExists": true, "scratchPathExists": true, "cwdExists": true},
+      "tool": {"path": "/usr/bin/swift", "pathExists": true, "currentSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "executable": {"pathExists": true, "currentSha256": "c6be3abe11c778e9d94bb5fa5d82364b6918ebf131a02c6e5522abfe0512842b", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "log": {"path": "scratch/retained/test.log", "sha256": "7f11e32b14f8013fc5edc9d67b03bec2ab02709f0703a8510c1f00dd9f25a239", "receiptMatch": true, "testStartAndEndMatchLog": true, "stderrSeparate": false},
+      "timestamp": {"testStartAndEnd": "log-backed", "buildStart": "derived-from-testStart-minus-buildDuration", "independentClockReceipt": false},
+      "observed": {"log": "selected test passed; DIAG variant=retained events=[start a, commit=true a] results=[a]", "receiptField": "copied aggregate statement naming original, retained, terminal", "status": "log-backed-result; receipt-observation-overbroad"}
+    },
+    {
+      "variant": "terminal",
+      "sourceFile": {
+        "path": "scratch/terminal/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+        "claimedSha256": "243bb7609fe7693eb55f6a595129165723dd6a5cb35cebfe0fabdc55a404f0c4",
+        "actualSha256": "243bb7609fe7693eb55f6a595129165723dd6a5cb35cebfe0fabdc55a404f0c4",
+        "status": "verified-artifact-join"
+      },
+      "sourceTree": {"claimedSha256": "9d74d11502153731a96e5fcf333cbb04596528e9d86eb3d183359840952225b8", "manifestMatch": true, "status": "manifest-pinned-but-tree-reconstruction-not-independent"},
+      "argv": {"status": "receipt-claimed", "packagePathExists": true, "scratchPathExists": true, "cwdExists": true},
+      "tool": {"path": "/usr/bin/swift", "pathExists": true, "currentSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "executable": {"pathExists": true, "currentSha256": "094f2fb3479f619538e6b36aed26d4d72c8630118de917c8c001ffd8f5c7ad6e", "claimedSha256MatchesCurrent": true, "status": "current-artifact-match; historical-exec-unproven"},
+      "log": {"path": "scratch/terminal/test.log", "sha256": "feb3cedf8c1ae643a42120755dd6ef3164a34a2512ffb12a848098eab37b5cb4", "receiptMatch": true, "testStartAndEndMatchLog": true, "stderrSeparate": false},
+      "timestamp": {"testStartAndEnd": "log-backed", "buildStart": "derived-from-testStart-minus-buildDuration", "independentClockReceipt": false},
+      "observed": {"log": "selected test passed; DIAG variant=terminal terminal=true events=[start a, commit=true a] results=[a]", "receiptField": "copied aggregate statement naming original, retained, terminal", "status": "log-backed-result; receipt-observation-overbroad"}
+    }
+  ],
+  "pulseReview": {
+    "authoritativeInputs": [
+      "pulse-receipt-correction-20261011.json",
+      "root-message-inspection.stdout.txt",
+      "root-message-inspection.stderr.txt"
+    ],
+    "sevenCliIdentifiers": [
+      "b489aaaf-398b-47f8-a610-9a94f6346421",
+      "1e7e7cd5-fc4c-4e46-88c8-77c6626e0800",
+      "ec1bfe03-eafb-44d0-865b-10204a12f997",
+      "ce01323e-50e5-4a60-a92d-fa6f0301897f",
+      "0bfc02b4-3743-4be6-9a31-fe55e1dd35c5",
+      "004f29ab-b1c0-4aad-9644-19e24811cc74",
+      "5ac89a29-3267-448d-bcca-b697361e3f8a"
+    ],
+    "status": "retracted",
+    "facts": [
+      "Correction found no durable record containing any seven CLI identifiers.",
+      "Correction found no local Dell run directory or remote stdout/process receipt.",
+      "Root inspection found no matching inbox messages, no active Swift processes, no diagnostic root, no source variants, and free lock.",
+      "pulse-message-receipts.json is historical CLI output only; it does not establish transport or remote execution."
+    ],
+    "remoteExecution": "not proved"
+  },
+  "classification": {
+    "verifiedArtifactFacts": [
+      "Current scratch source/log paths exist.",
+      "Stage manifest has 151 exact current file entries.",
+      "Original and terminal source-file hashes join exactly; retained source reference has one-character mismatch.",
+      "All three log hashes join exactly.",
+      "Current /usr/bin/swift and three cached test binaries hash to receipt values.",
+      "Test start/end timestamps occur in each corresponding log."
+    ],
+    "claimedOnly": [
+      "Historical argv/cwd/process execution linkage.",
+      "Build-start timestamps, derived from reported duration.",
+      "Historical binary/tool identity at execution time beyond current path/hash match.",
+      "Source-tree hash reconstruction from source manifest count/hash alone."
+    ],
+    "retracted": [
+      "Seven Pulse send/receipt claims.",
+      "Any Windows or Dell run completion."
+    ],
+    "unresolved": [
+      "No independent OS process audit, PID/parent-process record, or separately captured stderr.",
+      "Retained source hash typo prevents exact source-to-receipt join.",
+      "Frozen receipt references obsolete SHA256SUMS size/hash.",
+      "README count conflicts with stage entry count.",
+      "Correction and root-inspection authority files are outside frozen stage/SHA receipt manifests."
+    ]
+  },
+  "disposition": "historical diagnostic evidence only; no green production claim, runtime-fix claim, Windows result, or remote-execution result issued"
+}

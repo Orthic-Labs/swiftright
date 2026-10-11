@@ -1,0 +1,30 @@
+{
+  "kind": "pulse-receipt-correction",
+  "status": "unsupported_receipt_claims_retracted",
+  "scope": "Only local durable Pulse records were read; no sends/replies performed during correction.",
+  "durableRecordsRead": [
+    "/Users/adrdsouza/Library/Application Support/Pulse/bridge/journal.jsonl",
+    "/Users/adrdsouza/Library/Application Support/Pulse/bridge/activity.json",
+    "/Users/adrdsouza/Library/Application Support/Pulse/bridge/reply-routes/*.json",
+    "/Users/adrdsouza/Library/Application Support/Pulse/bridge/inbox/*.jsonl"
+  ],
+  "findings": [
+    "No durable record contains any of seven CLI-returned receipt strings.",
+    "journal.jsonl contains hashed route records with different message IDs; it does not preserve message bodies, recipients, or a mapping to seven CLI strings.",
+    "activity.json contains aggregate sent/received counters and lastOutcome only; it does not preserve message bodies or per-send IDs.",
+    "reply-routes and inbox records contain no matching seven CLI strings.",
+    "No local Dell run directory or remote stdout/process receipt was observed.",
+    "Seven strings previously reported as receipts are therefore only CLI tool output identifiers, not validated durable transport receipts. Receipt claims are retracted."
+  ],
+  "cliOutputsObservedInConversationOnly": [
+    {"destination":"Coder on Dell","cliIdentifier":"b489aaaf-398b-47f8-a610-9a94f6346421","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"},
+    {"destination":"pulse win on Dell","cliIdentifier":"1e7e7cd5-fc4c-4e46-88c8-77c6626e0800","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"},
+    {"destination":"pulse win on Dell","cliIdentifier":"ec1bfe03-eafb-44d0-865b-10204a12f997","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.); local shell also reported zsh: no such file or directory: variant"},
+    {"destination":"pulse win on Dell","cliIdentifier":"ce01323e-50e5-4a60-a92d-fa6f0301897f","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"},
+    {"destination":"Coder on Dell","cliIdentifier":"0bfc02b4-3743-4be6-9a31-fe55e1dd35c5","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"},
+    {"destination":"pulse win on Dell","cliIdentifier":"004f29ab-b1c0-4aad-9644-19e24811cc74","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"},
+    {"destination":"Coder on Dell","cliIdentifier":"5ac89a29-3267-448d-bcca-b697361e3f8a","output":"sent (Sent; the chat gave no verdict (silence is normal), so it is unconfirmed.)"}
+  ],
+  "remoteWorkClaim": "No remote work completion is claimed.",
+  "newExecution": false
+}

@@ -1,0 +1,211 @@
+{
+  "kind": "next-runtime-diagnosis-v1",
+  "scope": "read-only Windows TaskID and performance diagnosis; no runtime/test/Git edits",
+  "sourcePins": {
+    "graph": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "sha256": "338ae326b6f34839dee5c76e243c2522f79e8a02c5e38924bd3aae3e3e91da3d"
+    },
+    "taskIDTests": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "sha256": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc"
+    },
+    "runtimeTests": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/RuntimeTests.swift",
+      "sha256": "26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e"
+    },
+    "performanceTests": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "sha256": "497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8"
+    }
+  },
+  "evidencePins": {
+    "taskIDSourceReview": {
+      "path": "factory/runtime-additions/task-id-investigation/source-review.json",
+      "sha256": "371f81317f583265775f7228830e5d0e09787541b5e0ce53e114cded3e856357"
+    },
+    "taskIDObserved": {
+      "path": "factory/runtime-additions/task-id-investigation/observed-results-r1.json",
+      "sha256": "7522a570279f1b446840990bd8b51a7ce9664df0c4e2fbc434f8d781420a200d"
+    },
+    "taskIDTrace": {
+      "path": "factory/runtime-additions/task-id-investigation/trace-results/independent-observed-results.json",
+      "sha256": "bef30b4c23835530adb2fca7fc477b4f566c8fb831767e5b3bf9ee7aef8b8c89"
+    },
+    "taskIDProposal": {
+      "path": "factory/runtime-additions/task-id-investigation/trace-proposal/proposal.json",
+      "sha256": "25d12312a1b42d7a29b328b98a13aceff3b5b06e19cc7c4acf3dbe44d8c57030"
+    },
+    "taskIDAnalysis": {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-analysis.json",
+      "sha256": "8399a9202a0041da6ae784880deee612e3ffa42908155f62d36bc2c1d712e3f3"
+    },
+    "contractAudit": {
+      "path": "factory/runtime-additions/windows-contract-audit-v1/report.json",
+      "sha256": "d87cc73c447ec4fea5e7f346cb35b618f9ea41e9ce34264c8fa80c293e65a70e"
+    },
+    "timingPending": {
+      "path": "factory/native/windows/timing-comparison-pending-20261011.json",
+      "sha256": "97ede5b30737fd467d9cc9c6b43b488f09ef8f45f6cd1d5fad839b5c2fea311f"
+    },
+    "timingCorrigendum": {
+      "path": "factory/native/windows/postshape-timing-interpretation-corrigendum-20261011.json",
+      "sha256": "16bd6509798b531f14f3cde02ac3190ad26a93beed8e1ad2d57a7ccec93aa657"
+    },
+    "finalWindowsStdout": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/test.stdout.txt",
+      "sha256": "95637fe3a656c28a957ffed55e337743160e8e2ecb020d00610d564f422559e9"
+    },
+    "debugWindowsStdout": {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/out/swift-test-final-windows.txt",
+      "sha256": "5f43addc538e2081d9aed1cc63600f788c70ff52cb001c2a4dac81c755d3aebc"
+    },
+    "taskIDThreeVariantReceipt": {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/taskid-three-variant-receipt.json",
+      "sha256": "8a0c1a20d2e96ceec13bbdaf84540c71beb99b094e0b809e3456f28e339f925e"
+    },
+    "taskIDMacProcessReceipt": {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/mac-process-receipt.json",
+      "sha256": "b2adf8adb350c7efb022a034a68bddbc6236f2f9ccc98647e2288d6464b55ae4"
+    },
+    "stageManifest": {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/stage-manifest.json",
+      "sha256": "see top-level receipt.json/SHA256SUMS.json"
+    }
+  },
+  "existingExperimentPins": {
+    "fontstorageCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "postshapeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+    "originalCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+    "original113Status": "HELD Windows original113 green not established"
+  },
+  "taskID": {
+    "proven": [
+      "Same-id failure reaches start a but records no commit/cancel event before assertion.",
+      "The assertion waits through three yields plus 120 ms; task body sleeps 40 ms, but this is a wall-clock wait rather than completion barrier.",
+      "TaskIDTests and RuntimeTests bytes plus startTask/runAppear/TaskOwnerToken/NodeHandle blocks are identical across baseline, postshape, and fontstorage.",
+      "Baseline also failed in independent trace; fontstorage passed later rounds. Additive Font.Metadata storage is therefore not a proven cause."
+    ],
+    "unproven": [
+      "Windows scheduler delayed task past assertion.",
+      "Graph lifetime ended after last pre-await use, allowing weak NodeHandle to lose Node before commit.",
+      "TaskOwnerToken commit rejected because node was torn down or generation changed."
+    ],
+    "runtimeFixDisposition": "No runtime fix is justified by captured evidence. A behavior change would alter task lifetime/commit semantics without observed commit=false or cancellation.",
+    "testChangeDisposition": "A diagnostic test change is required to distinguish scheduling from lifetime: await terminal commit event with timeout while retaining Graph through await; preserve original assertions separately.",
+    "runnableDiagnostic": {
+      "platform": "macOS arm64",
+      "variants": [
+        "original exact TaskID source",
+        "retained Graph through await",
+        "retained Graph plus terminal commit observation"
+      ],
+      "result": "All three focused release tests passed. Retained variant logged commit=true a and results=[a]; terminal variant logged terminal=true, commit=true a, results=[a].",
+      "interpretation": "Harness validates diagnostic source and preserves original assertions, but Mac pass cannot resolve Windows-only scheduling/lifetime behavior.",
+      "receipt": "factory/runtime-additions/next-runtime-diagnosis-v1/taskid-three-variant-receipt.json"
+    }
+  },
+  "performance": {
+    "proven": [
+      "Release wall guards fail only typing and scroll in latest full175 receipt: 2.9427 ms > 2 ms and 4.173 ms > 4 ms; row edit is 8.2319 ms < 15 ms.",
+      "Debug Windows run passes broad guards with medians 16.3093, 23.8218, and 19.4792 ms.",
+      "Work counters pass: typing bounds evaluations and measurements; row edit measures only changed text; scroll evaluates and measures nothing."
+    ],
+    "unproven": [
+      "No phase-specific regression is pinned; current wall test prints medians only.",
+      "No matched original8e47 versus final optimized pair establishes additive-change delta; timing comparison remains pending and corrigendum rejects qualification from nonwarm pairs.",
+      "No causal Font.Metadata allocation/layout effect is shown."
+    ],
+    "runtimeFixDisposition": "No performance runtime fix is justified. Existing hot path always lays out, diffs, resolves, and emits per flush; counters show intended bounded work.",
+    "nextDisconfirmableHypothesis": "If optimized overages are algorithmic, matched original/final runs with GraphProfile phase counters will show a repeatable phase delta. If medians vary while phase counters stay matched, thresholds/host timing are the issue."
+  },
+  "sourceCitations": [
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "lines": "23-31",
+      "fact": "KeyedWork logs start, sleeps 40 ms, calls guarded commit, then logs commit result."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "lines": "80-91",
+      "fact": "same-id test flushes twice, calls settle, then asserts results."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/RuntimeTests.swift",
+      "lines": "248-252",
+      "fact": "settle is three Task.yield calls plus 120 ms sleep."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "395-400",
+      "fact": "NodeHandle stores weak Node."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "475-484",
+      "fact": "Node alive/generation/task state is mutable; generation guards stale work."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "646-664",
+      "fact": "TaskOwnerToken commit rejects when handle is nil or node is dead/generation differs."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "1177-1193",
+      "fact": "teardown marks node dead, increments generation, and cancels task."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "1289-1300",
+      "fact": "startTask cancels prior task, increments generation, and installs TaskLocal token."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "1353-1359",
+      "fact": "same task id does not restart; changed id restarts."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "lines": "1572-1601",
+      "fact": "commit always advances layout, collects changes, resolves, and emits."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "lines": "172-200",
+      "fact": "profile is enabled after initial flush; wall medians use 25 timed runs after 5 warmups."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "lines": "203-239",
+      "fact": "work-counter tests bound evaluations/measurement and assert zero scroll work."
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "lines": "274-295",
+      "fact": "optimized wall limits are typing 2, scroll 4, row edit 15 ms."
+    },
+    {
+      "path": "factory/runtime-additions/task-id-investigation/trace-results/independent-observed-results.json",
+      "fact": "independent trace rows contain failed event list [start a] only; baseline and postshape fail intermittently while fontstorage passes later rounds."
+    },
+    {
+      "path": "factory/runtime-additions/windows-contract-audit-v1/report.json",
+      "fact": "Windows original113 remains HELD; latest full175 is 173/175 with TaskID and optimized wall failures."
+    },
+    {
+      "path": "factory/native/windows/timing-comparison-pending-20261011.json",
+      "fact": "matched timing comparison is pending; no controlled causal delta."
+    },
+    {
+      "path": "factory/native/windows/postshape-timing-interpretation-corrigendum-20261011.json",
+      "fact": "nonwarm paired timing does not establish qualification."
+    }
+  ],
+  "nextAction": [
+    "Run one focused Windows copy of retained and terminal variants with same source/binary receipt family; retain original assertions. Read event outcome: commit=true isolates observation timing/lifetime, commit=false identifies owner rejection, timeout identifies scheduling/starvation.",
+    "If terminal event is commit=true with retained Graph, original failure is scheduling/lifetime of test observation; if commit=false, inspect generation/teardown path; if timeout, inspect scheduler/starvation.",
+    "For performance, use one matched optimized original8e47/final pair only if phase-profile capture is available; compare evaluate/layout/diff/resolve/sink counters against wall medians."
+  ],
+  "execution": "Three copied-source focused release tests ran on macOS arm64 only; each actual swift argv/cwd/tool/binary/log pin is in mac-process-receipt.json. No new Windows benchmark/test/compiler process was run."
+}

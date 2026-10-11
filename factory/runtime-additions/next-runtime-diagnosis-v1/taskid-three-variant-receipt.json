@@ -1,0 +1,47 @@
+{
+  "kind": "taskid-three-variant-headless-mac-receipt",
+  "platform": "macOS arm64",
+  "commandTemplate": "swift test --package-path <variant> --scratch-path /Users/adrdsouza/Library/Caches/SwiftRightFactory/next-runtime-diagnosis-v1/<variant> -c release --filter TaskIDTests.testSameIdDoesNotRestartTask",
+  "variants": [
+    {
+      "name": "original",
+      "packageSource": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch/original",
+      "taskIDSourceSha256": "6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "testLogSha256": "ed65c76d6a56bc50d69266acc67fb7043455177c2ac365955d294a4affc46eee",
+      "testLogBytes": 1449,
+      "exitCode": 0,
+      "observedTerminal": "not printed; test passed"
+    },
+    {
+      "name": "retained",
+      "packageSource": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch/retained",
+      "taskIDSourceSha256": "b4702b31f0dbe50876883f3799ec0d7beaff9fefd7e236fbf653799247887757",
+      "testLogSha256": "7f11e32b14f8013fc5edc9d67b03bec2ab02709f0703a8510c1f00dd9f25a239",
+      "testLogBytes": 1473,
+      "exitCode": 0,
+      "observedTerminal": "commit=true a; results=[\"a\"]"
+    },
+    {
+      "name": "terminal",
+      "packageSource": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch/terminal",
+      "taskIDSourceSha256": "243bb7609fe7693eb55f6a595129165723dd6a5cb35cebfe0fabdc55a404f0c4",
+      "testLogSha256": "feb3cedf8c1ae643a42120755dd6ef3164a34a2512ffb12a848098eab37b5cb4",
+      "testLogBytes": 1535,
+      "exitCode": 0,
+      "observedTerminal": "terminal=true; commit=true a; results=[\"a\"]"
+    }
+  ],
+  "scope": {
+    "newWindowsRuns": 0,
+    "newRuntimeEdits": 0,
+    "newPrimaryTestEdits": 0
+  },
+  "processReceipt": {
+    "path": "factory/runtime-additions/next-runtime-diagnosis-v1/mac-process-receipt.json",
+    "sha256": "b2adf8adb350c7efb022a034a68bddbc6236f2f9ccc98647e2288d6464b55ae4"
+  },
+  "sourceManifest": {
+    "path": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch-source-manifest.json",
+    "sha256": "6f0012b931f7562e1cbf243b0cbeb3ce992c812e8cf08ca9f97c2f178c4af9cc"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "kind": "historical-runtime-diagnostic-root-disposition-v1",
+  "classification": "archived-claims-and-artifact-facts-only",
+  "review": {
+    "path": "factory/runtime-additions/next-runtime-diagnosis-v1/independent-review/review.json",
+    "sha256": "01dfe859d8e2ebdabfe9ca9ad90669885f4e992defe10d9714b52fed8cf17aa5"
+  },
+  "productionResult": "none",
+  "WindowsExecutionProved": false,
+  "runtimeFixProved": false,
+  "macExecutionLineage": "receipt-claimed; artifact/log joins do not prove OS execution lineage",
+  "preservedFindings": [
+    "Retained source reference is missing one hash character; exact join fails",
+    "receipt.json refers to obsolete SHA256SUMS.json bytes",
+    "Stage manifest lists151 entries versus README150",
+    "Seven Pulse send claims retracted; no durable records or verified Dell execution",
+    "Derived build-start timestamps remain claimed"
+  ],
+  "followup": "Separate root-authorized direct-SSH Windows experiment verifies its own exact sources/processes; this packet is not its execution receipt",
+  "nativeParity": "hold"
+}
