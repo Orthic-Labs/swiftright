@@ -1,0 +1,9 @@
+{
+  "kind": "swift-compiler-process-receipt",
+  "required": ["resolver", "sourceBefore", "sourceAfter", "sourceDrift", "compiler", "status"],
+  "compilerRequired": ["path", "sha256", "bytes", "argv", "cwd", "pid", "startedAtUtc", "endedAtUtc", "exitCode", "timedOut", "stdoutPath", "stderrPath", "stdoutHash", "stderrHash", "xcrunPath", "xcrunHash", "outputBinary"],
+  "resolverRequired": ["argv", "pid", "startedAtUtc", "endedAtUtc", "exitCode", "stdoutPath", "stderrPath", "stdoutHash", "stderrHash"],
+  "sourceRule": "sourceBefore and sourceAfter must contain exact Witness.swift and CaptureHost.swift path/hash/bytes, with equal hashes and bytes",
+  "processRule": "compiler argv[0] equals compiler.path; cwd is source directory; PID/timestamps/exit/stdout/stderr are captured from same Popen process",
+  "binaryRule": "status SUCCESS requires outputBinary path/hash/bytes matching actual emitted capture-host"
+}

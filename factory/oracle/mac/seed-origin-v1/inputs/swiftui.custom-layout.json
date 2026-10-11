@@ -1,0 +1,91 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.custom-layout.recipe",
+  "provenance": {
+    "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.custom-layout",
+  "witnesses": [
+    {
+      "id": "swiftui.custom-layout.witness",
+      "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+      "resources": [
+        {
+          "id": "swiftui.custom-layout.witness.swift",
+          "hash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.custom-layout.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "childCount": 2,
+        "spacing": 4,
+        "proposalWidth": 48,
+        "assert": "records-measure-and-place"
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "proposal-width",
+      "values": [
+        32,
+        48
+      ],
+      "coverage": "full-product"
+    },
+    {
+      "id": "child-count",
+      "values": [
+        1,
+        2
+      ],
+      "coverage": "full-product"
+    },
+    {
+      "id": "layout-direction",
+      "values": [
+        "leftToRight",
+        "rightToLeft"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.custom-layout.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:272c393d1380c203f35ecbcbacc505e17bc85bfe56115f6132439a6c09804a54"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.custom-layout.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  },
+  "statefulSequences": [
+    [
+      "measure",
+      "place",
+      "change-environment",
+      "measure",
+      "place"
+    ]
+  ]
+}

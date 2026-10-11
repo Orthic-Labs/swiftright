@@ -1,0 +1,77 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.preference-key.recipe",
+  "provenance": {
+    "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.preference-key",
+  "witnesses": [
+    {
+      "id": "swiftui.preference-key.witness",
+      "sourceHash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83",
+      "resources": [
+        {
+          "id": "swiftui.preference-key.witness.swift",
+          "hash": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.preference-key.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "values": [
+          20,
+          30
+        ],
+        "reduction": "sum",
+        "expected": 50
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "child-count",
+      "values": [
+        1,
+        2,
+        3
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "reduction",
+      "values": [
+        "sum",
+        "max"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.preference-key.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:c0517b43375034a9f094e61cb71101dd77ec9424b73dfc915b20bc36960de653"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.preference-key.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}
