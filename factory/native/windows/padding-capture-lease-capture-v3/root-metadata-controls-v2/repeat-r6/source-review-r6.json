@@ -1,0 +1,74 @@
+{
+  "compilerActions": 0,
+  "diffLineCountsAgainstRepeatR5": {
+    "capture-repeat-r6.ps1": 11,
+    "dispatch-repeat-r6.ps1": 20,
+    "integration-prefixed-ids-r1.ps1": 0,
+    "interactive-task-repeat-r6.ps1": 11,
+    "resume-issued-coordinator-repeat-r6.ps1": 20
+  },
+  "faultControls": [
+    "wrong-overlay-root",
+    "wrong-overlay-hash",
+    "missing-coordinator-namespace",
+    "missing-copied-issued-hash",
+    "missing-coordinator-issued-assert",
+    "coordinator-issued-metadata-hash-join-when-field-present"
+  ],
+  "firstProof": {
+    "behavior": "copied bytes must equal original; Assert-LeaseIssuedMetadata uses original coordinator path",
+    "copiedIssuedPath": "<captureRoot>\\actual-single-r1\\issued-metadata.json",
+    "originalIssuedPath": "<captureRoot>\\coordinator-single-r1\\issued-metadata.json"
+  },
+  "kind": "factory-repeat-r6-source-review-v1",
+  "lockActions": 0,
+  "nativeWindowActions": 0,
+  "overlayRoot": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6",
+  "positive": "repeat-r6-overlay+coordinator-copy-hash",
+  "preservedPrior": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r5",
+  "profileRef": {
+    "bytes": 4769,
+    "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v5-source/source-profile-v5.json",
+    "sha256": "sha256:cf6a8823db90a6a9b5dc9b27171d9ada540aadd79e6a31eaf888ca52b7732366"
+  },
+  "qualification": "native archive absent; no parity claim",
+  "remoteActions": 0,
+  "sourcePins": [
+    {
+      "bytes": 38387,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/capture-repeat-r6.ps1",
+      "sha256": "sha256:40a25512484e9262e4bfe9df1b2bc08aaed9c400c5c1326285c58bf62912ef59"
+    },
+    {
+      "bytes": 4659,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/dispatch-repeat-r6.ps1",
+      "sha256": "sha256:4e7e09c40d90230560bf6e9a5cb1e61a4fb8d28399f56191c8046d2b16de3af6"
+    },
+    {
+      "bytes": 12280,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/integration-prefixed-ids-r1.ps1",
+      "sha256": "sha256:d4a20512937c6a7cb1e5751e02566276290897cb56203a99b40cfcccf486e904"
+    },
+    {
+      "bytes": 2483,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/interactive-task-repeat-r6.ps1",
+      "sha256": "sha256:cc90c05815ce3a8c2ca7939696ac4d0a19ffde0937c5a51c6c751f2b755b0f61"
+    },
+    {
+      "bytes": 17273,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/resume-issued-coordinator-repeat-r6.ps1",
+      "sha256": "sha256:28feb91a1b966bd041bc095ee3be4670d2cee650fb4cb1cc09f543315b397d38"
+    },
+    {
+      "bytes": 12258,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/support/first-proof-repeat-r6.ps1",
+      "sha256": "sha256:ee2a252cf8cdc46aa8706e56fdd29979e6ee25812f9ccc3c0a9de1e135509fff"
+    }
+  ],
+  "status": "source-admitted-pending-native",
+  "controlSource": {
+    "bytes": 2917,
+    "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/test-repeat-r6-source.py",
+    "sha256": "sha256:9f8efcadb1b9865edffec5b5ab452270ccbe71255b4debd249e60bd8065be836"
+  }
+}

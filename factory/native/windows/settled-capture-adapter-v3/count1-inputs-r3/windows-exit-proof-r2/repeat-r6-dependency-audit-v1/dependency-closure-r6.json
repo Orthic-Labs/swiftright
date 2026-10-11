@@ -1,0 +1,36 @@
+{
+  "kind": "factory-repeat-r6-first-proof-dependency-closure-v1",
+  "status": "source-control-only",
+  "observedBlocker": "Assert-UiaSnapshotWorkerProof was undefined when first-proof ran before capture worker import",
+  "firstProofImportOrder": [
+    "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r6/integration-prefixed-ids-r1.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/cleanup.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/stream-seal.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/final-exit-certificate.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/support/final-exit-certificate.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/all-owned-release.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/first-proof-repeat-r6.ps1"
+  ],
+  "firstProofSymbols": {
+    "integration-prefixed-ids-r1.ps1": [
+      "Assert-FactoryIntegrationSources",
+      "Assert-FactorySnapshotReady",
+      "Assert-LeaseIssuedMetadata",
+      "Test-FactoryParentOrdering"
+    ],
+    "cleanup.ps1": ["Test-FactoryKernelExitCertificate"],
+    "stream-seal.ps1": ["Test-FactoryRawDestinationClosed", "Get-FactoryRawHash"],
+    "final-exit-certificate.ps1": ["Test-FactoryFinalStart", "Test-FactoryFinalReleaseProof"],
+    "uia-worker/support/final-exit-certificate.ps1": ["Test-FactoryAllUiaWorkerReleaseProofs", "Test-FactoryUiaFinalStart"],
+    "uia-worker/schema.ps1": ["Assert-UiaSnapshotWorkerProof"],
+    "all-owned-release.ps1": ["Assert-FactoryAllOwnedRelease"]
+  },
+  "runtimeAfterFirstProof": [
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/invoke-worker.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1"
+  ],
+  "nativeActions": 0,
+  "lockActions": 0,
+  "remoteActions": 0
+}
