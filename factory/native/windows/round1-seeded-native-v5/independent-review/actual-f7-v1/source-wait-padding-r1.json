@@ -1,0 +1,51 @@
+{
+  "decision": "CLEAR-SOURCE-DELTA",
+  "wrapper": {
+    "path": "factory/native/windows/round1-seeded-native-v5/root-wait-single-padding-r1.ps1",
+    "sha256": "6d17c9826484684fee5815385d7060963e0d8c8cfb386cb43d57a19017d4bcb8",
+    "bytes": 18006
+  },
+  "originalEntry": {
+    "path": "factory/native/windows/round1-seeded-native-v5/root-single-padding-frame-r1.ps1",
+    "sha256": "80bd1b9bb160927f55318384d7b68ee20f9159f87db0f254b3d96cbd8cbaf28c",
+    "bytes": 17834
+  },
+  "prefixBytes": 172,
+  "remainderByteEqual": true,
+  "wait": "one persistent silent read-only polling loop; exact case-sensitive trimmed free; 3second intervals; exceptions remain silent",
+  "waitDeadline": "none in prefix; user-requested persistent until-free wait",
+  "lockMutationInPrefix": false,
+  "racePolicy": "advisory free observation only; unchanged driver acquires its own exclusive-open compare/change lock & ownership-safe release",
+  "entryCount": 1,
+  "retry": false,
+  "nativeLaunchByReviewer": false,
+  "reviewerRemoteActions": 0,
+  "consumedSourcePins": [
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/root-wait-single-padding-r1.ps1",
+      "sha256": "6d17c9826484684fee5815385d7060963e0d8c8cfb386cb43d57a19017d4bcb8",
+      "bytes": 18006
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/root-single-padding-frame-r1.ps1",
+      "sha256": "80bd1b9bb160927f55318384d7b68ee20f9159f87db0f254b3d96cbd8cbaf28c",
+      "bytes": 17834
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/run-repeat.ps1",
+      "sha256": "38bbcd7aea903c62569225fb80dd6b454b61a0a2cc4edca5c5a4c2eae3dd22f9",
+      "bytes": 10262
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/run-batch.ps1",
+      "sha256": "219200ac7ba873e9129df80aba2b81da6a1544bf1a36365e65f34c5f3dc8cb6b",
+      "bytes": 5390
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/cleanup.ps1",
+      "sha256": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+      "bytes": 6746
+    }
+  ],
+  "scope": "source review only; root performs parse/dispatch"
+}

@@ -1,0 +1,80 @@
+﻿[
+    {
+        "mode":  "normal",
+        "rejected":  false,
+        "postCalls":  1,
+        "events":  [
+                       "source",
+                       "lock",
+                       "background",
+                       "owned",
+                       "post"
+                   ]
+    },
+    {
+        "mode":  "bad-hwnd",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+
+                   ]
+    },
+    {
+        "mode":  "bad-pid",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+
+                   ]
+    },
+    {
+        "mode":  "owned-drift",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+                       "source",
+                       "lock",
+                       "background",
+                       "owned"
+                   ]
+    },
+    {
+        "mode":  "source-drift",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+                       "source"
+                   ]
+    },
+    {
+        "mode":  "lock-lost",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+                       "source",
+                       "lock"
+                   ]
+    },
+    {
+        "mode":  "foreground",
+        "rejected":  true,
+        "postCalls":  0,
+        "events":  [
+                       "source",
+                       "lock",
+                       "background"
+                   ]
+    },
+    {
+        "mode":  "failed-post",
+        "rejected":  true,
+        "postCalls":  1,
+        "events":  [
+                       "source",
+                       "lock",
+                       "background",
+                       "owned",
+                       "post"
+                   ]
+    }
+]
