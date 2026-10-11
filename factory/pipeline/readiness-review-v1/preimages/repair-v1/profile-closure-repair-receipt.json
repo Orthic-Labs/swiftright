@@ -1,0 +1,39 @@
+{
+  "kind": "f10-recipe-profile-closure-repair-receipt",
+  "version": 1,
+  "status": "repair-verified",
+  "mode": "pending-candidate-only",
+  "preimages": {
+    "factory/gate/core.py": "sha256:efae50ee497b9f33b8242a4be4243dd988ae8f6cde962dde6d613162bb958c06",
+    "factory/gate/test_gate.py": "sha256:00601a2025b10df3a928551c68b64a40f9b5b49e2663eb665f26420a4c063ec8"
+  },
+  "current": {
+    "factory/gate/core.py": "sha256:4ad351223478682c0e210cbd628ca4e20ae3371c19a5e37478c54652e12e4c14",
+    "factory/gate/test_gate.py": "sha256:3c6a1db6aaf617c731ecb1b5f4b32450ea8f3bb3ee200850908cc9aacd71aa02",
+    "factory/pipeline/tuple10-candidate/acceptance-candidate.json": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+    "factory/pipeline/inputs/acceptance-candidate.json": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874"
+  },
+  "change": "evaluate_gate now requires exact recipeRefs/profile membership, unique IDs/pairs, trusted recipe hash resolution & complete seeded projection expansion for every protected profile.",
+  "controls": {
+    "omittedProfile": "pass",
+    "extraProfile": "pass",
+    "duplicateProfile": "pass",
+    "projectionMutation": "pass",
+    "actualPendingTuple10Candidate": {
+      "review": "pending-maintainer-review",
+      "recipeRefs": 10,
+      "protectedProfiles": 10,
+      "issues": []
+    }
+  },
+  "test": {
+    "command": "factory/.venv/bin/python -m unittest factory.gate.test_gate",
+    "exitCode": 0,
+    "testsRun": 17
+  },
+  "scope": {
+    "closureSchemaVersionFinding": "F10-CLOSURE-SCHEMA-002 remains recommendation only",
+    "candidatePromotion": false,
+    "nativeEvidence": false
+  }
+}

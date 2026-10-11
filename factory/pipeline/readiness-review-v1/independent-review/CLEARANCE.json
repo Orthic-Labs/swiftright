@@ -1,0 +1,39 @@
+{
+  "status": "CLEAR",
+  "scope": "F10 recipe/profile closure only",
+  "review": {
+    "path": "factory/pipeline/readiness-review-v1/independent-review/profile-closure-review.json",
+    "sha256": "sha256:012ba09df138fdf8d9b7298b83b888beab25ad7753817a76475038157738c0e2",
+    "bytes": 17135
+  },
+  "productionCore": {
+    "path": "factory/gate/core.py",
+    "sha256": "sha256:2aca85a79f3f7394a715a4a97b0c9b755f24378c0882672f0662406ee50fb896",
+    "bytes": 30267
+  },
+  "productionTests": {
+    "path": "factory/gate/test_gate.py",
+    "sha256": "sha256:41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+    "bytes": 12867
+  },
+  "ownerStage": {
+    "path": "factory/pipeline/readiness-review-v1/stage-manifest.json",
+    "sha256": "sha256:0665bbae6381472ad57ad27df986d04010740e37aa7f284d0375b9b7270ff84d",
+    "bytes": 3340
+  },
+  "candidate": {
+    "path": "factory/pipeline/tuple10-candidate/acceptance-candidate.json",
+    "sha256": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+    "bytes": 14955
+  },
+  "candidateReview": "pending-maintainer-review",
+  "controlsPassed": 21,
+  "unitTestsPassed": 19,
+  "completeTrustedProfiles": 10,
+  "completeExpandedCases": 81,
+  "candidateBytesPreserved": true,
+  "closureSchema002": "protocol evolution recommendation only",
+  "nativeEvidenceEmitted": false,
+  "gatepassEmitted": false,
+  "reviewAccepted": false
+}

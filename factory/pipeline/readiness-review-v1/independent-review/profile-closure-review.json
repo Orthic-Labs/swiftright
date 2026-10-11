@@ -1,0 +1,499 @@
+{
+  "status": "CLEAR",
+  "scope": "F10 profile closure only; pending candidate remains pending; no native evidence or gatepass emitted",
+  "reviewer": {
+    "path": "factory/pipeline/readiness-review-v1/independent-review/review_profile_closure.py",
+    "sha256": "sha256:7c87ca3478d53aeaa2a57c220f6d6b3c983542a53dc1d861540c11ff0d0f8931",
+    "bytes": 5712
+  },
+  "ownerStage": {
+    "path": "factory/pipeline/readiness-review-v1/stage-manifest.json",
+    "sha256": "sha256:0665bbae6381472ad57ad27df986d04010740e37aa7f284d0375b9b7270ff84d",
+    "bytes": 3340
+  },
+  "core": {
+    "path": "factory/gate/core.py",
+    "sha256": "sha256:2aca85a79f3f7394a715a4a97b0c9b755f24378c0882672f0662406ee50fb896",
+    "bytes": 30267
+  },
+  "tests": {
+    "path": "factory/gate/test_gate.py",
+    "sha256": "sha256:41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+    "bytes": 12867
+  },
+  "candidate": {
+    "path": "factory/pipeline/tuple10-candidate/acceptance-candidate.json",
+    "sha256": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+    "bytes": 14955
+  },
+  "projectionExpansionTuple": {
+    "path": "factory/pipeline/inputs/observed-tuple.json",
+    "sha256": "sha256:812853f9192822e46058f17abebd4a677154e6603ddcd0828062cee2f61dea37",
+    "bytes": 880
+  },
+  "candidateReview": "pending-maintainer-review",
+  "recipeRefs": 10,
+  "profiles": 10,
+  "completeExpansionCounts": {
+    "swiftui.custom-layout.recipe": 10,
+    "swiftui.disabled.recipe": 6,
+    "swiftui.image.recipe": 8,
+    "swiftui.padding-frame.recipe": 11,
+    "swiftui.preference-key.recipe": 8,
+    "swiftui.scroll-view.recipe": 6,
+    "swiftui.shapes.fill-stroke.recipe": 7,
+    "swiftui.stack-overlay.recipe": 8,
+    "swiftui.text.bundled-font.recipe": 11,
+    "swiftui.toggle.recipe": 6
+  },
+  "controls": [
+    {
+      "name": "ten-refs-one-profile",
+      "requiredReason": "membership differ",
+      "issues": [
+        "acceptance recipeRefs & protected baseline profile membership differ"
+      ],
+      "passed": true
+    },
+    {
+      "name": "missing-ref",
+      "requiredReason": "membership differ",
+      "issues": [
+        "acceptance recipeRefs & protected baseline profile membership differ"
+      ],
+      "passed": true
+    },
+    {
+      "name": "extra-ref",
+      "requiredReason": "membership differ",
+      "issues": [
+        "acceptance recipeRefs & protected baseline profile membership differ"
+      ],
+      "passed": true
+    },
+    {
+      "name": "duplicate-ref",
+      "requiredReason": "duplicate recipe profiles",
+      "issues": [
+        "acceptance recipeRefs contain duplicate recipe profiles",
+        "acceptance recipeRefs contain duplicate recipe IDs"
+      ],
+      "passed": true
+    },
+    {
+      "name": "duplicate-profile",
+      "requiredReason": "duplicate recipe profiles",
+      "issues": [
+        "protected baseline contains duplicate recipe profiles",
+        "protected baseline contains duplicate recipe IDs"
+      ],
+      "passed": true
+    },
+    {
+      "name": "unselected-profile-omission",
+      "requiredReason": "complete trusted expansion",
+      "issues": [
+        "protected baseline projections differ from complete trusted expansion for swiftui.toggle.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "unselected-projection-hash",
+      "requiredReason": "complete trusted expansion",
+      "issues": [
+        "protected baseline projections differ from complete trusted expansion for swiftui.toggle.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "unselected-duplicate-case",
+      "requiredReason": "complete trusted expansion",
+      "issues": [
+        "protected baseline projections differ from complete trusted expansion for swiftui.toggle.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-seed-bool",
+      "requiredReason": "seed must be an integer",
+      "issues": [
+        "protected baseline seed must be an integer for swiftui.toggle.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "coherent-wrong-trusted-hash",
+      "requiredReason": "recipe hash differs",
+      "issues": [
+        "protected baseline recipe hash differs for swiftui.toggle.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "coherent-unknown-id",
+      "requiredReason": "unknown trusted recipe",
+      "issues": [
+        "protected baseline references unknown trusted recipe unknown.recipe"
+      ],
+      "passed": true
+    },
+    {
+      "name": "config-hash-null",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "acceptance recipeRefs contain invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-hash-null",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "protected baseline profile contains invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "config-hash-bool",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "acceptance recipeRefs contain invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-hash-bool",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "protected baseline profile contains invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "config-hash-int",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "acceptance recipeRefs contain invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-hash-int",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "protected baseline profile contains invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "config-hash-list",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "acceptance recipeRefs contain invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-hash-list",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "protected baseline profile contains invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "config-hash-dict",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "acceptance recipeRefs contain invalid recipe reference"
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-hash-dict",
+      "requiredReason": "invalid recipe reference",
+      "issues": [
+        "protected baseline profile contains invalid recipe reference"
+      ],
+      "passed": true
+    }
+  ],
+  "testProcess": {
+    "argv": [
+      "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+      "-m",
+      "unittest",
+      "factory.gate.test_gate"
+    ],
+    "returncode": 0,
+    "stdout": {
+      "path": "factory/pipeline/readiness-review-v1/independent-review/gate-tests.stdout",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "stderr": {
+      "path": "factory/pipeline/readiness-review-v1/independent-review/gate-tests.stderr",
+      "sha256": "sha256:bdf3e8c91d2dd5d009542e473505e290f2d3cd62f3cc5d291708c36677cc298e",
+      "bytes": 119
+    }
+  },
+  "dependencies": [
+    {
+      "path": "factory/recipes/__init__.py",
+      "sha256": "sha256:2cc73810791d2cc76bdd90b8bcd0477fc55b8a40e3c1bdfbb6a36e4050728a54",
+      "bytes": 332
+    },
+    {
+      "path": "factory/recipes/__main__.py",
+      "sha256": "sha256:d2436faea12c22139d61b309b4f71c20e4eec0ef4cffa5740e94c5e485e416a5",
+      "bytes": 2744
+    },
+    {
+      "path": "factory/recipes/cases.py",
+      "sha256": "sha256:f0ebd489888d6d978892b89ab1104856aa7c249b427f616a483704eb59d844e1",
+      "bytes": 9851
+    },
+    {
+      "path": "factory/recipes/data/swiftui.custom-layout.json",
+      "sha256": "sha256:a2f4391c670bb45974708f8042a1be612f748eb523a93a7a3e16de1acdc93c04",
+      "bytes": 2071
+    },
+    {
+      "path": "factory/recipes/data/swiftui.disabled.json",
+      "sha256": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+      "bytes": 1702
+    },
+    {
+      "path": "factory/recipes/data/swiftui.image.json",
+      "sha256": "sha256:a4bc4bdac06f223daaf330d91b1962dc70e01ada89109c8bc58c6fe3da32ee79",
+      "bytes": 1700
+    },
+    {
+      "path": "factory/recipes/data/swiftui.padding-frame.json",
+      "sha256": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37",
+      "bytes": 1898
+    },
+    {
+      "path": "factory/recipes/data/swiftui.preference-key.json",
+      "sha256": "sha256:64880e0b9ed3eb90ed32b44d474d71a45ab41d276ee742efb49d44553977f5b5",
+      "bytes": 1790
+    },
+    {
+      "path": "factory/recipes/data/swiftui.scroll-view.json",
+      "sha256": "sha256:3f14d283eb49c938641936295377b7dcda70d0b2c3621114f39824fe96f07df7",
+      "bytes": 1764
+    },
+    {
+      "path": "factory/recipes/data/swiftui.shapes.fill-stroke.json",
+      "sha256": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+      "bytes": 2031
+    },
+    {
+      "path": "factory/recipes/data/swiftui.stack-overlay.json",
+      "sha256": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+      "bytes": 1797
+    },
+    {
+      "path": "factory/recipes/data/swiftui.text.bundled-font.json",
+      "sha256": "sha256:d16f4a074713432c5b58d71a3a5791629d20a51932e6a3d545f051a48f839c90",
+      "bytes": 2216
+    },
+    {
+      "path": "factory/recipes/data/swiftui.toggle.json",
+      "sha256": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+      "bytes": 1897
+    },
+    {
+      "path": "factory/recipes/recipes.py",
+      "sha256": "sha256:c24e479974963516abed2f65080893f651148481202edb9aa3a4f9b361d74bf9",
+      "bytes": 1737
+    },
+    {
+      "path": "factory/recipes/tests/test_expansion.py",
+      "sha256": "sha256:874b5ee098a6586cde212b75760e1104ce5cad3e45108cc70b5da8f3f405c966",
+      "bytes": 6392
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.custom-layout.negative.invalid-member.swift",
+      "sha256": "sha256:272c393d1380c203f35ecbcbacc505e17bc85bfe56115f6132439a6c09804a54",
+      "bytes": 150
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.custom-layout.witness.swift",
+      "sha256": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+      "bytes": 1182
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.disabled.negative.disabled-action.swift",
+      "sha256": "sha256:c70568f284de73c863bc5f656853b060619988b059c64b59da921b0aa20e444d",
+      "bytes": 266
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.disabled.witness.swift",
+      "sha256": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+      "bytes": 177
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.image.negative.invalid-member.swift",
+      "sha256": "sha256:b4384756181fdab645b0a813b6c139a8c9a883c6086b4b8d793b1ce208e9117c",
+      "bytes": 142
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.image.witness.swift",
+      "sha256": "sha256:1f7e2fba7fb10cb5a00f6a0f4553e98d23bc58e324fc0a7bd3a3e4f52f0e361f",
+      "bytes": 305
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.padding-frame.negative.invalid-member.swift",
+      "sha256": "sha256:baa5f89c9092ea6c6d90eec1f50b414eb3b885875bdd436ce2ec83a33c6ff5bd",
+      "bytes": 150
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.padding-frame.witness.swift",
+      "sha256": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db",
+      "bytes": 174
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.preference-key.negative.invalid-member.swift",
+      "sha256": "sha256:c0517b43375034a9f094e61cb71101dd77ec9424b73dfc915b20bc36960de653",
+      "bytes": 151
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.preference-key.witness.swift",
+      "sha256": "sha256:43c8db47f42c980f9b0117588db757808b71d9a0811d4366cb2d98fb53bc9f83",
+      "bytes": 652
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.scroll-view.negative.invalid-member.swift",
+      "sha256": "sha256:1f693f439a086a21365235063745ec2a3153c53b10fa95795dbe5a226b86dde4",
+      "bytes": 148
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.scroll-view.witness.swift",
+      "sha256": "sha256:90b38269652f21b3ae37cdb3cb6385fca44bbe8358a35689c95ddcf5cdcfce8a",
+      "bytes": 349
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.shapes.fill-stroke.negative.invalid-member.swift",
+      "sha256": "sha256:0e94a9dc43a419e8be26428539895719858ba9295b19f383567757302e95ffe3",
+      "bytes": 155
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.shapes.fill-stroke.witness.swift",
+      "sha256": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+      "bytes": 191
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.stack-overlay.negative.invalid-member.swift",
+      "sha256": "sha256:993a7c1fa3354ef3169330573c01bb102d220937e500f03c1ef31ba259ede153",
+      "bytes": 150
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.stack-overlay.witness.swift",
+      "sha256": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+      "bytes": 369
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.text.bundled-font.negative.invalid-member.swift",
+      "sha256": "sha256:ef279c643d80960ed6e7b4444c7b2493c9bf1ebda1e65ecdbc8ed7bc81aef12f",
+      "bytes": 154
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.text.bundled-font.witness.swift",
+      "sha256": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70",
+      "bytes": 270
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.toggle.negative.invalid-member.swift",
+      "sha256": "sha256:35d951c666eaeaa0e7dd69fd20de45424e91717345853c46f1131750b553bfe8",
+      "bytes": 143
+    },
+    {
+      "path": "factory/recipes/witnesses/swiftui.toggle.witness.swift",
+      "sha256": "sha256:9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c",
+      "bytes": 189
+    },
+    {
+      "path": "factory/spec/schema/block-registry.schema.json",
+      "sha256": "sha256:a2bfc9ce81c210a7f0ad08b4c3569c54e36cd2354f32140756621b671d98a75c",
+      "bytes": 3151
+    },
+    {
+      "path": "factory/spec/schema/capability-obligations.schema.json",
+      "sha256": "sha256:fdbd5b81897bc7dcbf66b75cb1582c3073fe0787077dfa251e55be55e313a9b9",
+      "bytes": 1497
+    },
+    {
+      "path": "factory/spec/schema/capture.schema.json",
+      "sha256": "sha256:ed5bd1604a4e5cf6c913035c94ad2daaac9ccd152421f01a449959a80d59eee2",
+      "bytes": 5495
+    },
+    {
+      "path": "factory/spec/schema/case.schema.json",
+      "sha256": "sha256:a83c56b8d30a6311be0e66c57421d64f39d03c56436e463b5345be736c92106f",
+      "bytes": 1418
+    },
+    {
+      "path": "factory/spec/schema/catalogue.schema.json",
+      "sha256": "sha256:afe47e75eba9ef89c6a2b4f3cd9b29c1d07038e54a82c3cc7bed0f558043b499",
+      "bytes": 1481
+    },
+    {
+      "path": "factory/spec/schema/common.schema.json",
+      "sha256": "sha256:d319f074f346ab0bbf15a91ff0d860aff80eeaa78ceb9486154f74faea60e6a6",
+      "bytes": 3784
+    },
+    {
+      "path": "factory/spec/schema/receipt.schema.json",
+      "sha256": "sha256:566d0af0f2d4d8671f848eb5667d0d4abfcb2227877e815abd5d07134083dca6",
+      "bytes": 2025
+    },
+    {
+      "path": "factory/spec/schema/recipe.schema.json",
+      "sha256": "sha256:f40e83f7b2f07ed251a74cd79b858764fe9e1ac634d4a3d6dc47bed97e58df51",
+      "bytes": 2857
+    },
+    {
+      "path": "factory/spec/schema/ticket.schema.json",
+      "sha256": "sha256:4d8f4430f7506530ff4f4ecd09ab8c1747145118d47096ad864514a81363b986",
+      "bytes": 1606
+    },
+    {
+      "path": "factory/spec/schema/verdict.schema.json",
+      "sha256": "sha256:87d2441f61689126835a1dd3634923598c71754fe9693b0fd515dfc52b9eeba5",
+      "bytes": 5836
+    },
+    {
+      "path": "factory/spec/schema/waiver.schema.json",
+      "sha256": "sha256:5f8778e07e657b9f3348b5fb9f42e92d063556bb377a2d64b95146b7f3ff59df",
+      "bytes": 1202
+    },
+    {
+      "path": "factory/core/__init__.py",
+      "sha256": "sha256:990ea4b72244daf1096c456cc17e5247c52c2be8493859caedd50dc1acc76bd7",
+      "bytes": 69
+    },
+    {
+      "path": "factory/core/artifacts.py",
+      "sha256": "sha256:09adfc326184bf40628160138aa58ba3a23285937739f8b0cb3849378bc134b5",
+      "bytes": 2146
+    },
+    {
+      "path": "factory/tools/__init__.py",
+      "sha256": "sha256:fef7e1e1d528fd0edad1a29d57036c54e27cb4ff533d7fd4addb23a59edc9ff1",
+      "bytes": 34
+    },
+    {
+      "path": "factory/tools/canonical_json.py",
+      "sha256": "sha256:af8e5f4e1c0ba38e701120d70417f4beec769c6f9a82694ebb63c92283050267",
+      "bytes": 5277
+    },
+    {
+      "path": "factory/tools/schema_validate.py",
+      "sha256": "sha256:5e24c0afd026f7189b32cb948c529ff6244dc1dac41aede071aff3b5f3d53246",
+      "bytes": 5709
+    }
+  ],
+  "candidateBytesPreserved": true,
+  "preimagesByteEqualHEAD": true
+}

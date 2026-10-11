@@ -1,0 +1,87 @@
+{
+  "kind": "f10-readiness-review-v1-stage-manifest",
+  "version": 2,
+  "selfExcluded": "stage-manifest.json",
+  "entryCount": 10,
+  "totalBytes": 89227,
+  "entries": [
+    {
+      "path": "factory/pipeline/readiness-review-v1/findings.json",
+      "sha256": "sha256:763a1681565f27ea66a90d635f9723b3766fe7dee4192958b28b74fd24c32853",
+      "bytes": 2967
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/independent-review/initial-malformed-hash-finding.json",
+      "sha256": "sha256:e8652c0305ccd48dfa0e6a1473b43bf486b18a132e22950361a617c2fa0007a4",
+      "bytes": 342
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/core.py",
+      "sha256": "sha256:efae50ee497b9f33b8242a4be4243dd988ae8f6cde962dde6d613162bb958c06",
+      "bytes": 26376
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/repair-v1/core.py",
+      "sha256": "sha256:4ad351223478682c0e210cbd628ca4e20ae3371c19a5e37478c54652e12e4c14",
+      "bytes": 30220
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/repair-v1/profile-closure-repair-receipt.json",
+      "sha256": "sha256:fc23052384216740d508cc37b6e2f9a79f8cd16ce3ab8fee09930fe4df77adc1",
+      "bytes": 1684
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/repair-v1/stage-manifest.json",
+      "sha256": "sha256:51f89c05ef9451625ad8fa777fadbee2878a7817bf830a0ac71cfd2419d5cb6a",
+      "bytes": 1956
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/repair-v1/test_gate.py",
+      "sha256": "sha256:3c6a1db6aaf617c731ecb1b5f4b32450ea8f3bb3ee200850908cc9aacd71aa02",
+      "bytes": 11797
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/preimages/test_gate.py",
+      "sha256": "sha256:00601a2025b10df3a928551c68b64a40f9b5b49e2663eb665f26420a4c063ec8",
+      "bytes": 10177
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/profile-closure-repair-receipt-v2.json",
+      "sha256": "sha256:7a28d8a819c2151697608e431d5a31066dffd75f0f2bac7fd42aa2d5882de9e2",
+      "bytes": 2024
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/profile-closure-repair-receipt.json",
+      "sha256": "sha256:fc23052384216740d508cc37b6e2f9a79f8cd16ce3ab8fee09930fe4df77adc1",
+      "bytes": 1684
+    }
+  ],
+  "trackedDependencies": [
+    {
+      "path": "factory/gate/core.py",
+      "sha256": "sha256:2aca85a79f3f7394a715a4a97b0c9b755f24378c0882672f0662406ee50fb896",
+      "bytes": 30267
+    },
+    {
+      "path": "factory/gate/test_gate.py",
+      "sha256": "sha256:41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+      "bytes": 12867
+    },
+    {
+      "path": "factory/pipeline/tuple10-candidate/acceptance-candidate.json",
+      "sha256": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+      "bytes": 14955
+    },
+    {
+      "path": "factory/pipeline/inputs/acceptance-candidate.json",
+      "sha256": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+      "bytes": 1317
+    }
+  ],
+  "controls": {
+    "targetedTest": "factory.gate.test_gate exit 0; 19 tests",
+    "pendingCandidateProfileClosure": "10 recipeRefs & 10 profiles; issues=[]",
+    "typedRefControls": "null/bool/int/array hashes rejected",
+    "schema002": "recommendation only; no implementation"
+  }
+}

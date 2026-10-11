@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import unittest
+import copy
 import json
 from pathlib import Path
 from jsonschema import Draft202012Validator
 from referencing import Resource
 from referencing.jsonschema import DRAFT202012
 
-from factory.gate.core import _case_set_hash, baseline_case_refs, evaluate_gate, expand_gate_seeded_cases
+from factory.gate.core import (
+    _case_set_hash,
+    _check_recipe_profile_closure,
+    baseline_case_refs,
+    evaluate_gate,
+    expand_gate_seeded_cases,
+)
 from factory.recipes.cases import expand_cases
 from factory.recipes.recipes import load_recipes
 from factory.tools.canonical_json import sha256
@@ -105,6 +112,7 @@ class GateAdversarialTests(unittest.TestCase):
         config = {
             "kind": "acceptance-candidate", "version": "0.1", "mode": "qualified",
             "review": "accepted", "normalizers": [],
+            "recipeRefs": [{"id": recipe["id"], "hash": sha256(recipe)}],
             "baseline": {"version": "1", "recipes": [{
                 "recipe": {"id": recipe["id"], "hash": sha256(recipe)},
                 "seed": seed, "cases": baseline_case_refs(draft),
@@ -165,6 +173,53 @@ class GateAdversarialTests(unittest.TestCase):
             tuple_value=tuple_value, acceptance_config=config, normalizer_rules=[], seed=47,
         )
         self.assertIn("acceptance configuration lacks accepted review", result["report"]["issues"])
+
+    def test_recipe_profile_omission_is_rejected(self):
+        recipe, _, tuple_value, config = self.protected_fixture()
+        config["recipeRefs"] = []
+        issues = []
+        _check_recipe_profile_closure(config, tuple_value, issues)
+        self.assertTrue(any("recipeRefs" in issue for issue in issues))
+
+    def test_recipe_profile_extra_is_rejected(self):
+        recipe, _, tuple_value, config = self.protected_fixture()
+        config["recipeRefs"].append({"id": "extra.recipe", "hash": "sha256:" + "1" * 64})
+        issues = []
+        _check_recipe_profile_closure(config, tuple_value, issues)
+        self.assertTrue(any("membership differ" in issue for issue in issues))
+
+    def test_recipe_profile_duplicate_is_rejected(self):
+        recipe, _, tuple_value, config = self.protected_fixture()
+        config["recipeRefs"].append(dict(config["recipeRefs"][0]))
+        config["baseline"]["recipes"].append(dict(config["baseline"]["recipes"][0]))
+        issues = []
+        _check_recipe_profile_closure(config, tuple_value, issues)
+        self.assertTrue(any("duplicate" in issue for issue in issues))
+
+    def test_recipe_profile_projection_mutation_is_rejected(self):
+        recipe, _, tuple_value, config = self.protected_fixture()
+        config["baseline"]["recipes"][0]["cases"] = []
+        issues = []
+        _check_recipe_profile_closure(config, tuple_value, issues)
+        self.assertTrue(any("complete trusted expansion" in issue for issue in issues))
+
+    def test_recipe_profile_nonstring_hash_is_rejected(self):
+        recipe, _, tuple_value, config = self.protected_fixture()
+        for bad_hash in (None, True, 7, []):
+            mutated = copy.deepcopy(config)
+            mutated["recipeRefs"][0]["hash"] = bad_hash
+            issues = []
+            _check_recipe_profile_closure(mutated, tuple_value, issues)
+            self.assertTrue(any("invalid recipe reference" in issue for issue in issues))
+
+    def test_actual_pending_candidate_omitted_profile_is_rejected(self):
+        config = json.loads((Path(__file__).parents[1] / "pipeline/tuple10-candidate/acceptance-candidate.json").read_text())
+        tuple_value = json.loads((Path(__file__).parents[1] / "pipeline/inputs/observed-tuple.json").read_text())
+        mutated = copy.deepcopy(config)
+        mutated["baseline"]["recipes"] = mutated["baseline"]["recipes"][:-1]
+        issues = []
+        _check_recipe_profile_closure(mutated, tuple_value, issues)
+        self.assertTrue(any("membership differ" in issue for issue in issues))
 
     def test_gate_seeded_case_is_additional_to_pinned_baseline(self):
         recipe, cases, tuple_value, config = self.protected_fixture()

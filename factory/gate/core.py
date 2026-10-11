@@ -135,6 +135,83 @@ def _check_protected_baseline(
         issues.append("caller expected cases differ from complete trusted recipe expansion")
 
 
+def _check_recipe_profile_closure(
+    acceptance_config: dict[str, Any], tuple_value: dict[str, Any], issues: list[str],
+) -> None:
+    """Require config recipe refs & protected profiles to form one closed set.
+
+    Every protected profile is expanded from its trusted checked-in recipe using
+    its pinned seed. This prevents an omitted/extra/duplicate profile from
+    narrowing or redefining acceptance denominator while one recipe is evaluated.
+    """
+    recipe_refs = acceptance_config.get("recipeRefs")
+    baseline = acceptance_config.get("baseline")
+    profiles = baseline.get("recipes") if isinstance(baseline, dict) else None
+    if not isinstance(recipe_refs, list) or not isinstance(profiles, list):
+        issues.append("acceptance recipeRefs & protected baseline profiles are required")
+        return
+
+    def valid_ref(value: Any) -> bool:
+        return (
+            isinstance(value, dict) and set(value) == {"id", "hash"}
+            and isinstance(value["id"], str)
+            and isinstance(value["hash"], str)
+            and re.fullmatch(r"sha256:[0-9a-f]{64}", value["hash"]) is not None
+        )
+
+    if any(not valid_ref(ref) for ref in recipe_refs):
+        issues.append("acceptance recipeRefs contain invalid recipe reference")
+        return
+    profile_refs: list[dict[str, str]] = []
+    for profile in profiles:
+        ref = profile.get("recipe") if isinstance(profile, dict) else None
+        if not valid_ref(ref):
+            issues.append("protected baseline profile contains invalid recipe reference")
+            return
+        profile_refs.append(ref)
+    ref_key = lambda ref: (ref["id"], ref["hash"])
+    config_keys = [ref_key(ref) for ref in recipe_refs]
+    profile_keys = [ref_key(ref) for ref in profile_refs]
+    if len(set(config_keys)) != len(config_keys):
+        issues.append("acceptance recipeRefs contain duplicate recipe profiles")
+    if len(set(profile_keys)) != len(profile_keys):
+        issues.append("protected baseline contains duplicate recipe profiles")
+    if set(config_keys) != set(profile_keys):
+        issues.append("acceptance recipeRefs & protected baseline profile membership differ")
+    if len(set(ref["id"] for ref in recipe_refs)) != len(recipe_refs):
+        issues.append("acceptance recipeRefs contain duplicate recipe IDs")
+    if len(set(ref["id"] for ref in profile_refs)) != len(profile_refs):
+        issues.append("protected baseline contains duplicate recipe IDs")
+
+    try:
+        from factory.recipes.recipes import load_recipes
+        trusted = {recipe["id"]: recipe for recipe in load_recipes()}
+    except Exception as exc:
+        issues.append(f"trusted recipe catalogue load failed: {exc}")
+        return
+    for profile in profiles:
+        ref = profile["recipe"]
+        recipe = trusted.get(ref["id"])
+        if recipe is None:
+            issues.append(f"protected baseline references unknown trusted recipe {ref['id']}")
+            continue
+        if _ref_hash(recipe) != ref["hash"]:
+            issues.append(f"protected baseline recipe hash differs for {ref['id']}")
+            continue
+        seed = profile.get("seed")
+        if not isinstance(seed, int) or isinstance(seed, bool):
+            issues.append(f"protected baseline seed must be an integer for {ref['id']}")
+            continue
+        refs = profile.get("cases")
+        try:
+            expanded_refs = baseline_case_refs(expand_cases(recipe, tuple_value, seed=seed)["cases"])
+        except Exception as exc:
+            issues.append(f"trusted baseline recipe expansion failed for {ref['id']}: {exc}")
+            continue
+        if refs != expanded_refs:
+            issues.append(f"protected baseline projections differ from complete trusted expansion for {ref['id']}")
+
+
 def _semantic_projection(capture: dict[str, Any]) -> dict[str, Any]:
     """Keep semantic channels; exclude timestamps and presentation timing."""
     return {
@@ -336,6 +413,8 @@ def evaluate_gate(
     protected_rules = acceptance_config.get("normalizers", []) if isinstance(acceptance_config, dict) else []
     if normalizer_rules != protected_rules:
         issues.append("normalizer rules differ from protected acceptance configuration")
+    if isinstance(acceptance_config, dict):
+        _check_recipe_profile_closure(acceptance_config, tuple_value, issues)
     cases = list(cases or [])
     expected_cases = list(expected_cases) if expected_cases is not None else None
     _check_case_manifest(cases, expected_cases, issues)

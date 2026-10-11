@@ -1,0 +1,71 @@
+{
+  "kind": "tuple10-readiness-review-findings",
+  "version": 1,
+  "status": "findings-open",
+  "mode": "read-only-static-plus-bounded-unit-check",
+  "inputs": [
+    {
+      "path": "factory/pipeline/tuple10-candidate/acceptance-candidate.json",
+      "sha256": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+      "bytes": 14955
+    },
+    {
+      "path": "factory/pipeline/inputs/observed-tuple.json",
+      "sha256": "sha256:812853f9192822e46058f17abebd4a677154e6603ddcd0828062cee2f61dea37",
+      "bytes": 880
+    },
+    {
+      "path": "factory/pipeline/inputs/cases.json",
+      "sha256": "sha256:f3e880fe72402a890a9e247d70f5460fc3b78f2beaae717821cef764e77b94ec",
+      "bytes": 131846
+    },
+    {
+      "path": "factory/pipeline/tuple10.py",
+      "sha256": "sha256:63baabd5dc3c3ffd75fca0c639ca13ae54d406c7a84cd7430c72edbdb63b7b2e",
+      "bytes": 18961
+    },
+    {
+      "path": "factory/gate/core.py",
+      "sha256": "sha256:efae50ee497b9f33b8242a4be4243dd988ae8f6cde962dde6d613162bb958c06",
+      "bytes": 26376
+    }
+  ],
+  "findings": [
+    {
+      "id": "F10-PROFILE-CLOSURE-001",
+      "severity": "high",
+      "location": "factory/gate/core.py:82-135",
+      "claim": "_check_protected_baseline validates only currently supplied recipe profile. It never requires acceptance_config.recipeRefs to equal baseline recipe profiles, nor requires baseline profiles to cover every recipe in recipeRefs.",
+      "boundedControl": {
+        "recipeId": "swiftui.custom-layout.recipe",
+        "recipeRefsCount": 10,
+        "mutatedBaselineProfileCount": 1,
+        "issuesReturned": [],
+        "result": "empty issues proves reduced one-profile baseline passes selected-recipe projection check while ten recipeRefs remain"
+      },
+      "requiredFix": "Require exact set equality between recipeRefs & baseline recipes, then require every trusted recipe expansion/profile before tuple10 denominator acceptance."
+    },
+    {
+      "id": "F10-CLOSURE-SCHEMA-002",
+      "severity": "medium",
+      "location": "factory/pipeline/tuple10.py:128-143",
+      "claim": "closure_check accepts closure & measurements artifacts without validating kind/version, provenance, or receipt schema. It checks selected fields only, so closure identity is weaker than raw status/staging bindings.",
+      "boundedControl": {
+        "closureRequiredFieldsObserved": [
+          "tuple",
+          "decision",
+          "statusHash",
+          "closedAt"
+        ],
+        "kindVersionChecked": false,
+        "measurementKindVersionChecked": false
+      },
+      "requiredFix": "Validate closure & measurement artifact schemas/kind/version plus exact producer/provenance before postclosure binding."
+    }
+  ],
+  "noSuiteRerun": true,
+  "sourceHashes": {
+    "tuple10Py": "sha256:63baabd5dc3c3ffd75fca0c639ca13ae54d406c7a84cd7430c72edbdb63b7b2e",
+    "gateCorePy": "sha256:efae50ee497b9f33b8242a4be4243dd988ae8f6cde962dde6d613162bb958c06"
+  }
+}

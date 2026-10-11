@@ -1,0 +1,48 @@
+{
+  "kind": "f10-recipe-profile-closure-repair-receipt",
+  "version": 2,
+  "status": "repair-verified",
+  "mode": "pending-candidate-only",
+  "preimageLineage": {
+    "previousReceipt": "sha256:fc23052384216740d508cc37b6e2f9a79f8cd16ce3ab8fee09930fe4df77adc1",
+    "previousStage": "sha256:51f89c05ef9451625ad8fa777fadbee2878a7817bf830a0ac71cfd2419d5cb6a",
+    "previousCore": "sha256:4ad351223478682c0e210cbd628ca4e20ae3371c19a5e37478c54652e12e4c14",
+    "previousTest": "sha256:3c6a1db6aaf617c731ecb1b5f4b32450ea8f3bb3ee200850908cc9aacd71aa02"
+  },
+  "current": {
+    "factory/gate/core.py": "sha256:2aca85a79f3f7394a715a4a97b0c9b755f24378c0882672f0662406ee50fb896",
+    "factory/gate/test_gate.py": "sha256:41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+    "factory/pipeline/tuple10-candidate/acceptance-candidate.json": "sha256:64534cd7da9f384006aeb862c02419ef4b79ca814f46593e196b0ae83af49479",
+    "factory/pipeline/inputs/acceptance-candidate.json": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874"
+  },
+  "change": "Typed recipe reference hashes are rejected before regex matching. Exact pending tuple10 candidate mutation removing one of 10 baseline profiles is rejected through recipeRefs/profile membership closure.",
+  "controls": {
+    "omittedProfileActualPendingCandidate": "pass",
+    "extraProfile": "pass",
+    "duplicateProfile": "pass",
+    "projectionMutation": "pass",
+    "nonStringHashValues": [
+      "null",
+      "true",
+      "integer",
+      "array"
+    ],
+    "status": "pass",
+    "actualPendingTuple10Candidate": {
+      "review": "pending-maintainer-review",
+      "recipeRefs": 10,
+      "protectedProfiles": 10,
+      "issues": []
+    }
+  },
+  "test": {
+    "command": "factory/.venv/bin/python -m unittest factory.gate.test_gate",
+    "exitCode": 0,
+    "testsRun": 19
+  },
+  "scope": {
+    "closureSchemaVersionFinding": "F10-CLOSURE-SCHEMA-002 remains recommendation only",
+    "candidatePromotion": false,
+    "nativeEvidence": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "kind": "tuple10-closure-schema-review-disposition",
+  "version": 1,
+  "finding": "F10-CLOSURE-SCHEMA-002",
+  "status": "protocol-evolution-recommendation",
+  "securityDefectEstablished": false,
+  "rationale": "TUPLE10.md explicitly specifies closure fields tuple/decision/statusHash/closedAt; neither closure nor final measurements currently declares required kind/version. Field-level validation binds exact status/staging/contract/ABI/host bytes and postclosure times. Missing undeclared envelope labels alone establishes no bypass of these bindings. A versioned envelope needs coordinated specification and producer/consumer evolution, not an isolated new rejection rule.",
+  "currentScope": "No closure, native authorization, baseline acceptance or tuple migration is emitted by this review.",
+  "refs": [
+    {
+      "path": "factory/pipeline/TUPLE10.md",
+      "sha256": "447de2dc3fc071b116f437de4c7f5340bfce425bf91b7beb39212d1b0ba9e113"
+    },
+    {
+      "path": "factory/pipeline/tuple10.py",
+      "sha256": "63baabd5dc3c3ffd75fca0c639ca13ae54d406c7a84cd7430c72edbdb63b7b2e"
+    },
+    {
+      "path": "factory/native/macos/measure_host.py",
+      "sha256": "4e9123102a833a9f8c45668127977640d01950facd7e83a274d9e7ed325ae5a7"
+    },
+    {
+      "path": "factory/native/windows/bind_closure.py",
+      "sha256": "d93ce546831dd24d241dcc06985babe7eb18c9ddba6bcc185d1ca48e347a7e4d"
+    },
+    {
+      "path": "factory/native/windows/host_measurement.py",
+      "sha256": "d68b382c35cf32698a552bf28ab7075cbbf81f91aaa92842401fa204038a6fc7"
+    },
+    {
+      "path": "factory/pipeline/readiness-review-v1/findings.json",
+      "sha256": "763a1681565f27ea66a90d635f9723b3766fe7dee4192958b28b74fd24c32853"
+    }
+  ]
+}
