@@ -1,0 +1,100 @@
+{
+  "archiveScope": "Corrected v2 tar copies are built offline from frozen v1 tar bytes and add only Versions/Current -> A. Original v1 tar files remain unchanged. OS frameworks in dyld shared cache remain represented by load-command names/versions; archive does not bundle system runtime.",
+  "dynamicLinkageCorrections": [
+    {
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.otool-L.txt",
+      "captureBytes": 2579,
+      "captureSha256": "d1c961c1c21a13fea6b6045179c3a61e8130d5d92647db64bf58f0f321d755f2",
+      "capturedStderrBytes": 0,
+      "capturedStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "capturedStdoutBytes": 2563,
+      "capturedStdoutSha256": "c0fdb3583f5000b5d58a77b4a05c7c58a44193c09c2b5745dd22daebe097f74f",
+      "evidenceManifestStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceManifestStdoutSha256": "c0fdb3583f5000b5d58a77b4a05c7c58a44193c09c2b5745dd22daebe097f74f",
+      "note": "Stored .otool-L.txt is stdout plus literal separator plus stderr; capture SHA therefore differs from stdout SHA.",
+      "stderrHashMatches": true,
+      "stdoutHashMatches": true,
+      "variant": "current"
+    },
+    {
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.otool-L.txt",
+      "captureBytes": 2581,
+      "captureSha256": "2be75fa1094f3d415a1666f2c7432c4dff1742eee9b856d7c5a6b4ec172eae52",
+      "capturedStderrBytes": 0,
+      "capturedStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "capturedStdoutBytes": 2565,
+      "capturedStdoutSha256": "09f3c2606b7b0756c08e54885ddcaf7628b3998fc7fbd42b370a4950ebf31285",
+      "evidenceManifestStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceManifestStdoutSha256": "09f3c2606b7b0756c08e54885ddcaf7628b3998fc7fbd42b370a4950ebf31285",
+      "note": "Stored .otool-L.txt is stdout plus literal separator plus stderr; capture SHA therefore differs from stdout SHA.",
+      "stderrHashMatches": true,
+      "stdoutHashMatches": true,
+      "variant": "candidate"
+    }
+  ],
+  "frameworkArchiveCorrections": [
+    {
+      "addedAlias": {
+        "path": "XCTest.framework/Versions/Current",
+        "target": "A",
+        "type": "symlink"
+      },
+      "correctedArchive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/corrections-v2/XCTest-framework-v2.tar.gz",
+      "correctedArchiveBytes": 114336,
+      "correctedArchiveSha256": "9f2f5abce5be420ff33d331408bdcfdd6c55ab2520b7ba37239bcde8729d52d7",
+      "frameworkLeaf": "XCTest.framework/Versions/A/XCTest",
+      "frameworkLeafSha256": "375aba929ee156e9132d185b6e499db75915b46fa620504b3afa707365810f3d",
+      "sourceArchive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/XCTest-framework.tar.gz",
+      "sourceArchiveBytes": 114308,
+      "sourceArchiveSha256": "76153f9fd6f834498ae53ea01bef8900ce0964204bcb8a4122cff9cac86ffa9b"
+    },
+    {
+      "addedAlias": {
+        "path": "Testing.framework/Versions/Current",
+        "target": "A",
+        "type": "symlink"
+      },
+      "correctedArchive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/corrections-v2/Testing-framework-v2.tar.gz",
+      "correctedArchiveBytes": 3557070,
+      "correctedArchiveSha256": "e57d9ac911e8c8d4f49f204aeab1dedf138c4db71c5fdbbc9d9e73c52feb4d42",
+      "frameworkLeaf": "Testing.framework/Versions/A/Testing",
+      "frameworkLeafSha256": "543144e6e026325d890d0ddfe0f90f42636ccc4eb330df0108fb86d6759267d5",
+      "sourceArchive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/Testing-framework.tar.gz",
+      "sourceArchiveBytes": 3557028,
+      "sourceArchiveSha256": "1b7591ff4ebc03f3f159319b0f417d922309d64f485b4e1cba73d09e8f395c35"
+    }
+  ],
+  "interpretationCorrection": "otool -L records static load commands and compatibility/current versions. It does not establish which images were loaded at runtime. Stored output hashes are command stdout hashes; frozen text captures append separator and empty stderr. No raw output or original receipt changed.",
+  "originalEvidenceManifestPath": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/evidence-manifest.json",
+  "originalStageManifestPath": "factory/runtime-additions/copy-cost-macos-candidate-v1/STAGE-MANIFEST.json",
+  "schema": "copy-cost-macos-candidate-correction-v2",
+  "testMethodAccounting": {
+    "candidate": {
+      "assertions": [
+        {
+          "metric": "typing commit",
+          "observedMilliseconds": 6.347458,
+          "strictUpperBoundMilliseconds": 2.0
+        },
+        {
+          "metric": "scroll-only commit",
+          "observedMilliseconds": 10.77425,
+          "strictUpperBoundMilliseconds": 4.0
+        }
+      ],
+      "executedMethods": 175,
+      "failedAssertions": 2,
+      "failedMethod": "PerformanceTests.testSingleRowEditCommitTime",
+      "failedMethods": 1,
+      "passedMethods": 174
+    },
+    "current": {
+      "executedMethods": 175,
+      "failedAssertions": 0,
+      "failedMethods": 0,
+      "passedMethods": 175
+    },
+    "historicalSummaryCorrection": "Earlier 173-pass shorthand incorrectly counted two failed assertions as two failed methods.",
+    "sourcePlanBoundMethodsPerVariant": 175
+  }
+}

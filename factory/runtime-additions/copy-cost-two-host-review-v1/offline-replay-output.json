@@ -1,0 +1,84 @@
+{
+  "macMethods": {
+    "current": {
+      "methodsExecuted": 175,
+      "methodsPassed": 175,
+      "methodsFailed": 0,
+      "failedMethods": [],
+      "failedAssertions": 0,
+      "assertions": [],
+      "medianMilliseconds": {
+        "typing": 1.408041,
+        "scrollOnly": 2.9175,
+        "rowEdit": 6.821542
+      }
+    },
+    "candidate": {
+      "methodsExecuted": 175,
+      "methodsPassed": 174,
+      "methodsFailed": 1,
+      "failedMethods": [
+        "-[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime]"
+      ],
+      "failedAssertions": 2,
+      "assertions": [
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/packages/candidate/Tests/SwiftRightRuntimeTests/PerformanceTests.swift:292: error: -[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime] : XCTAssertLessThan failed: (\"6.347458\") is not less than (\"2.0\") - typing commit",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/packages/candidate/Tests/SwiftRightRuntimeTests/PerformanceTests.swift:293: error: -[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime] : XCTAssertLessThan failed: (\"10.77425\") is not less than (\"4.0\") - scroll-only commit"
+      ],
+      "medianMilliseconds": {
+        "typing": 6.347458,
+        "scrollOnly": 10.77425,
+        "rowEdit": 6.98075
+      }
+    }
+  },
+  "windowsMethods": {
+    "current": {
+      "methodsExecuted": 175,
+      "methodsPassed": 175,
+      "methodsFailed": 0,
+      "failedMethods": [],
+      "failedAssertions": 0,
+      "assertions": [],
+      "medianMilliseconds": {
+        "typing": 1.9871,
+        "scrollOnly": 3.3146,
+        "rowEdit": 3.1923
+      }
+    },
+    "candidate": {
+      "methodsExecuted": 175,
+      "methodsPassed": 174,
+      "methodsFailed": 1,
+      "failedMethods": [
+        "PerformanceTests.testSingleRowEditCommitTime"
+      ],
+      "failedAssertions": 2,
+      "assertions": [
+        "D:\\Claude\\factory-swiftright-copycost-run-46e039abb746\\candidate\\runtime\\Tests\\SwiftRightRuntimeTests\\PerformanceTests.swift:292: error: PerformanceTests.testSingleRowEditCommitTime : XCTAssertLessThan failed: (\"6.4876\") is not less than (\"2.0\") - typing commit",
+        "D:\\Claude\\factory-swiftright-copycost-run-46e039abb746\\candidate\\runtime\\Tests\\SwiftRightRuntimeTests\\PerformanceTests.swift:293: error: PerformanceTests.testSingleRowEditCommitTime : XCTAssertLessThan failed: (\"11.5197\") is not less than (\"4.0\") - scroll-only commit"
+      ],
+      "medianMilliseconds": {
+        "typing": 6.4876,
+        "scrollOnly": 11.5197,
+        "rowEdit": 9.2915
+      }
+    }
+  },
+  "macStageFiles": 21,
+  "windowsStageFiles": 198,
+  "linkMismatches": [
+    {
+      "variant": "current",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.otool-L.txt",
+      "declaredStdoutSha256": "c0fdb3583f5000b5d58a77b4a05c7c58a44193c09c2b5745dd22daebe097f74f",
+      "actualCaptureSha256": "d1c961c1c21a13fea6b6045179c3a61e8130d5d92647db64bf58f0f321d755f2"
+    },
+    {
+      "variant": "candidate",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.otool-L.txt",
+      "declaredStdoutSha256": "09f3c2606b7b0756c08e54885ddcaf7628b3998fc7fbd42b370a4950ebf31285",
+      "actualCaptureSha256": "2be75fa1094f3d415a1666f2c7432c4dff1742eee9b856d7c5a6b4ec172eae52"
+    }
+  ]
+}

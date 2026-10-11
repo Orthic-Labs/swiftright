@@ -1,0 +1,9 @@
+# Mac copy-cost candidate observation v1
+
+Ran frozen current then candidate source trees once each with full `swift test -c release`; each tree contains exact 52-file packet binding, including all 175 source test methods. Both packages, SwiftPM scratch paths, and temporary directories resolved under `/Users/adrdsouza/Library/Caches/SwiftRightFactory` on device `16777232`; D is device `16777248`. Guard ran before first compiler process.
+
+Current: exit 0, 175 tests passed. Candidate: exit 1, 175 tests executed; two assertions failed in `PerformanceTests.testSingleRowEditCommitTime`: typing commit `6.347458 ms` against strict `<2.0 ms`, scroll-only commit `10.77425 ms` against strict `<4.0 ms`. Row-edit median was `6.98075 ms`. Current reported medians were `1.408041`, `2.9175`, and `6.821542 ms` for typing, scroll-only, and row-edit. These are run observations only; no causal performance, Windows parity, or native qualification claim follows.
+
+Pinned source plan: `../copy-cost-windows-candidate-v1/packet/source-plan.json`, SHA-256 `46e039abb7463e479b424abcfd5bd4ee2aedbb88a31957fe65365435c9c37e09`. Copied source-plan bytes and per-file internal-copy hashes are in `evidence/`. Test stdout/stderr are raw byte files. Run receipt includes exact argv, cwd, PID, UTC times, timeout, source post-hashes, toolchain versions/binary hashes, and internal-device checks. `evidence/binaries/` contains deterministic compressed copies of Swift entrypoints, compiler frontend, XCTest executables, and macOS Xcode test libraries. `evidence/xcode-linked-library-binaries.json` hashes Xcode test libraries; `otool -L` captures exact test executable load commands, including OS frameworks supplied by macOS.
+
+The one-shot runner refuses reuse of its fresh cache root; no retry or follow-up test run was performed. Reproduction would require a new explicitly authorized run root and would constitute another run.

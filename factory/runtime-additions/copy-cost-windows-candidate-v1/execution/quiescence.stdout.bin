@@ -1,0 +1,533 @@
+{
+    "schema":  "copycost-pre-execution-quiescence-v1",
+    "quiescent":  true,
+    "policy":  "five2s samples; no compiler processes; cargo descendant CPU delta \u003c=0.25s",
+    "cargoPid":  45640,
+    "rows":  [
+                 {
+                     "utc":  "2026-10-11T04:00:56.4493340Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  null
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  null
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  null
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  34
+                                           }
+                                       ],
+                     "busy":  true,
+                     "consecutiveQuietSamples":  0
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:00.1509101Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  10
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  1
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:03.7750844Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  8
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  2
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:07.3879884Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  19
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  3
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:11.0729612Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  41
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  4
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:14.7324584Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+                                          {
+                                              "ProcessId":  11372,
+                                              "ParentProcessId":  45300,
+                                              "Name":  "rustc.exe",
+                                              "CreationDate":  "\/Date(1791691274423)\/",
+                                              "ExecutablePath":  null,
+                                              "CommandLine":  null
+                                          }
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  24
+                                           }
+                                       ],
+                     "busy":  true,
+                     "consecutiveQuietSamples":  0
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:18.2696809Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  14
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  1
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:21.7670735Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  37
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  2
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:25.2857340Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  40
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  3
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:28.7859759Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  26
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  4
+                 },
+                 {
+                     "utc":  "2026-10-11T04:01:32.2907061Z",
+                     "cargoRootPid":  45640,
+                     "cargoTree":  [
+                                       {
+                                           "pid":  45640,
+                                           "parentPid":  18304,
+                                           "name":  "cargo.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+                                           "commandLine":  "\"C:\\Users\\adrds\\.rustup\\toolchains\\1.98.0-x86_64-pc-windows-msvc\\bin\\cargo.exe\" test -p rightkit-shell --lib --test authority --test legacy_names --test single_instance --test single_instance_destroy --test site_scheme --test transport --no-fail-fast --target x86_64-pc-windows-msvc --target-dir D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t",
+                                           "cpuSeconds":  1.84375,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  58240,
+                                           "parentPid":  45640,
+                                           "name":  "conhost.exe",
+                                           "creationDate":  "10/11/2026 08:47:46",
+                                           "executablePath":  "C:\\WINDOWS\\system32\\conhost.exe",
+                                           "commandLine":  "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4",
+                                           "cpuSeconds":  0.078125,
+                                           "cpuDeltaSeconds":  0
+                                       },
+                                       {
+                                           "pid":  24060,
+                                           "parentPid":  45640,
+                                           "name":  "transport-73c1ae3a4e8035a6.exe",
+                                           "creationDate":  "10/11/2026 08:53:27",
+                                           "executablePath":  "D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe",
+                                           "commandLine":  "\"D:\\.rightkit-managed\\rightkit-build-control\\ws\\b74e0c3a1a54\\g\\001\\t\\x86_64-pc-windows-msvc\\debug\\deps\\transport-73c1ae3a4e8035a6.exe\"",
+                                           "cpuSeconds":  0.015625,
+                                           "cpuDeltaSeconds":  0
+                                       }
+                                   ],
+                     "allCompilers":  [
+
+                                      ],
+                     "processorLoad":  [
+                                           {
+                                               "DeviceID":  "CPU0",
+                                               "LoadPercentage":  10
+                                           }
+                                       ],
+                     "busy":  false,
+                     "consecutiveQuietSamples":  5
+                 }
+             ],
+    "finishedAt":  "2026-10-11T04:01:33.4017450Z"
+}

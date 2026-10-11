@@ -1,0 +1,136 @@
+--- current/Graph.swift
++++ candidate/Graph.swift
+@@ -694,9 +694,9 @@
+     public let marked: UTF16Range?
+     public let children: [ResolvedNode]
+     /// True for a labeled control whose label was hidden by `.labelsHidden()`; nil for other nodes.
+-    public let labelsHidden: Bool?
++    public var labelsHidden: Bool? { additiveStorage?.labelsHidden }
+     /// Explicit Toggle style type metadata; nil when no `.toggleStyle` modifier applies.
+-    public let toggleStyle: String?
++    public var toggleStyle: String? { additiveStorage?.toggleStyle }
+     /// Role, label, value, enablement and selection for the accessibility backend.
+     public let accessibility: ResolvedAccessibility
+     /// Font and foreground colour in effect at this node (inherited through the environment).
+@@ -704,30 +704,41 @@
+     /// Image nodes only: the reference the backend loads.
+     public let image: ImageReference?
+     /// Image nodes only: resizing metadata for the backend.
+-    public let imageSizing: ResolvedImageSizing?
++    public var imageSizing: ResolvedImageSizing? { additiveStorage?.imageSizing }
+     /// Color views only: the resolved fill value; nil for existing node kinds.
+-    public let color: ResolvedColor?
++    public var color: ResolvedColor? { additiveStorage?.color }
+     /// Shape nodes only: geometry and resolved paint, independent of any native renderer.
+-    fileprivate let shapeStorage: ResolvedShapeStorage?
+-    public var shape: ResolvedShape? { shapeStorage?.value }
++    public var shape: ResolvedShape? { additiveStorage?.shape }
+     /// Menu and context-menu nodes only: the items, with disabled state and submenus.
+     public let menu: [ResolvedMenuItem]?
+     /// Alert and confirmation dialog nodes, while presented.
+     public let presentation: ResolvedPresentation?
+     /// Modifier nodes created by `.keyboardShortcut(_:modifiers:)`.
+     public let shortcut: ResolvedShortcut?
+-}
+-
+-/// Indirect immutable storage keeps optional shape metadata off every legacy snapshot.
+-fileprivate final class ResolvedShapeStorage: Equatable, Sendable {
+-    let value: ResolvedShape
+-
+-    init(_ value: ResolvedShape) {
+-        self.value = value
+-    }
+-
+-    static func == (lhs: ResolvedShapeStorage, rhs: ResolvedShapeStorage) -> Bool {
+-        lhs.value == rhs.value
++    /// Additive metadata is allocated only for nodes that use one of these newer APIs, keeping
++    /// legacy resolved snapshots small while preserving their public fields and values.
++    fileprivate let additiveStorage: ResolvedNodeAdditions?
++}
++
++/// Indirect immutable storage keeps additive metadata off every legacy snapshot.
++fileprivate final class ResolvedNodeAdditions: Equatable, Sendable {
++    let labelsHidden: Bool?
++    let toggleStyle: String?
++    let imageSizing: ResolvedImageSizing?
++    let color: ResolvedColor?
++    let shape: ResolvedShape?
++
++    init(labelsHidden: Bool?, toggleStyle: String?, imageSizing: ResolvedImageSizing?, color: ResolvedColor?, shape: ResolvedShape?) {
++        self.labelsHidden = labelsHidden
++        self.toggleStyle = toggleStyle
++        self.imageSizing = imageSizing
++        self.color = color
++        self.shape = shape
++    }
++
++    static func == (lhs: ResolvedNodeAdditions, rhs: ResolvedNodeAdditions) -> Bool {
++        lhs.labelsHidden == rhs.labelsHidden && lhs.toggleStyle == rhs.toggleStyle &&
++        lhs.imageSizing == rhs.imageSizing && lhs.color == rhs.color && lhs.shape == rhs.shape
+     }
+ }
+ 
+@@ -744,8 +755,32 @@
+ }
+ 
+ public struct ResolvedStyle: Equatable, Sendable {
+-    public let font: Font?
+-    public let foreground: ResolvedColor?
++    private let storage: ResolvedStyleStorage?
++
++    public var font: Font? { storage?.font }
++    public var foreground: ResolvedColor? { storage?.foreground }
++
++    init(font: Font?, foreground: ResolvedColor?) {
++        guard font != nil || foreground != nil else {
++            storage = nil
++            return
++        }
++        storage = ResolvedStyleStorage(font: font, foreground: foreground)
++    }
++}
++
++fileprivate final class ResolvedStyleStorage: Equatable, Sendable {
++    let font: Font?
++    let foreground: ResolvedColor?
++
++    init(font: Font?, foreground: ResolvedColor?) {
++        self.font = font
++        self.foreground = foreground
++    }
++
++    static func == (lhs: ResolvedStyleStorage, rhs: ResolvedStyleStorage) -> Bool {
++        lhs.font == rhs.font && lhs.foreground == rhs.foreground
++    }
+ }
+ 
+ public struct CommitRecord: Equatable, Sendable {
+@@ -1727,17 +1762,22 @@
+             selection: selection,
+             marked: marked,
+             children: children,
+-            labelsHidden: labelsHidden,
+-            toggleStyle: toggleStyle,
+             accessibility: accessibility(of: node, children: children, selected: selected),
+             style: node.style,
+             image: image,
+-            imageSizing: imageSizing,
+-            color: color,
+-            shapeStorage: shape.map(ResolvedShapeStorage.init),
+             menu: node.menuEntries.map(resolveMenu),
+             presentation: node.presented.map(resolvePresentation),
+-            shortcut: shortcut
++            shortcut: shortcut,
++            additiveStorage: {
++                guard labelsHidden != nil || toggleStyle != nil || imageSizing != nil || color != nil || shape != nil else { return nil }
++                return ResolvedNodeAdditions(
++                    labelsHidden: labelsHidden,
++                    toggleStyle: toggleStyle,
++                    imageSizing: imageSizing,
++                    color: color,
++                    shape: shape
++                )
++            }()
+         )
+     }
+ 

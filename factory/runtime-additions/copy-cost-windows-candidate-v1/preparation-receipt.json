@@ -1,0 +1,54 @@
+{
+  "schema": "copy-cost-windows-candidate-preparation-v1",
+  "status": "prepared-source-review-cpu-release-held",
+  "sourcePlanSha256": "46e039abb7463e479b424abcfd5bd4ee2aedbb88a31957fe65365435c9c37e09",
+  "runnerSha256": "9a238c078079e411f6ea8c9807809994a58e2eac10acf726d9c29f5b760da2f3",
+  "sourceTestMethodsEach": 175,
+  "packageFilesEach": 52,
+  "sourceDifference": "Sources/SwiftRightRuntime/Graph.swift",
+  "candidateGraphSha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93",
+  "testBytesIdentical": true,
+  "TaskIDBodyMilliseconds": 40,
+  "TaskIDSettleMilliseconds": 120,
+  "performanceBoundsMilliseconds": [
+    2,
+    4,
+    15
+  ],
+  "proposedCommands": [
+    [
+      "swift",
+      "test",
+      "--package-path",
+      "<fresh-current-runtime>",
+      "--scratch-path",
+      "<fresh-current-scratch>",
+      "-c",
+      "release"
+    ],
+    [
+      "swift",
+      "test",
+      "--package-path",
+      "<fresh-candidate-runtime>",
+      "--scratch-path",
+      "<fresh-candidate-scratch>",
+      "-c",
+      "release"
+    ]
+  ],
+  "WindowsInvocations": 0,
+  "compilerInvocations": 0,
+  "GUIInvocations": 0,
+  "PulseInvocations": 0,
+  "productionEdits": 0,
+  "toolBytesCopied": 0,
+  "sourceReview": {
+    "path": "factory/runtime-additions/additive-copy-cost-v1/independent-review/report-r4.json",
+    "sha256": "0a5a525f5ca1dc96fce2e70c33a271e70cbe2992a29703a1cbd10ab886e840a0"
+  },
+  "toolArchive": {
+    "path": "factory/runtime-additions/taskid-windows-direct-scp-v1/native-artifact-archive.json",
+    "sha256": "c07346b2c799d2fbede446216bb8e55cbecbc09a84cbd8d832287f8af19d82ad"
+  }
+}

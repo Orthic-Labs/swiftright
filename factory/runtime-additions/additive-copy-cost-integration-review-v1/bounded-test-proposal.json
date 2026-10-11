@@ -1,0 +1,35 @@
+{
+  "schema": "additive-copy-cost-bounded-test-proposal-v1",
+  "sourceProbe": "factory/runtime-additions/additive-copy-cost-v1/actual-r3-controls.swift",
+  "variants": [
+    {
+      "name": "current",
+      "sourceRoot": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime",
+      "graphSha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+    },
+    {
+      "name": "candidate",
+      "sourceRoot": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime",
+      "graphSha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+    }
+  ],
+  "requiredAssertions": [
+    "independent style snapshots with same custom Font & foreground compare equal",
+    "independent style snapshots with changed custom Font or foreground compare unequal",
+    "unstyled default style has nil font & foreground",
+    "independent additive snapshots compare equal",
+    "changed shape paint makes additive snapshots unequal",
+    "copying snapshot then mutating copied child array leaves original unchanged",
+    "default Image has nil imageSizing",
+    "resizable/scaled Image has imageSizing",
+    "SwitchToggleStyle metadata survives copy",
+    "automatic versus switch metadata compares unequal",
+    "labelsHidden remains true for both controls",
+    "custom font family & shape/color payloads survive copy"
+  ],
+  "threadingGate": "Compile strict Swift 6 Sendable; detached read/equality of retained ResolvedNode copies returns same values.",
+  "suiteGate": "Run unchanged existing 175-test suite on Mac & Windows; candidate must match current test results.",
+  "performanceGate": "No new claim from this control. Existing r1 25-flush profile=nil evidence remains unchanged; any later performance run must be separately pinned.",
+  "allowedChanges": ["new scratch probe", "new candidate-only payload assertions after both-host pass"],
+  "forbiddenChanges": ["original test weakening", "workload changes", "renderer edits", "ABI edits", "runtime integration before review"]
+}

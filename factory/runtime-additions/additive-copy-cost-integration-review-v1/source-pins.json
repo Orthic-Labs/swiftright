@@ -1,0 +1,43 @@
+{
+  "schema": "additive-copy-cost-integration-source-pins-v1",
+  "status": "source-only-review",
+  "protectedCurrent": {
+    "runtimeSourceRoot": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime",
+    "treeManifestSha256": "da00328fac1c555484d49b8545e427cc8e4cba78479d162801420c4678ccf01c",
+    "Package.swift": {
+      "bytes": 557,
+      "sha256": "106ab62beed1bb79feced15db2b6ace24c82e57e1548147d0a4e9b8f03bf43db"
+    },
+    "Graph.swift": {
+      "bytes": 78747,
+      "sha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+    },
+    "Controls.swift": {
+      "bytes": 14201,
+      "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+    }
+  },
+  "scratchCandidate": {
+    "runtimeSourceRoot": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime",
+    "treeManifestSha256": "97a391030eb6a5bb1a4f76cb4879874420de149db0f0dbc3584afa88b0bddff7",
+    "Graph.swift": {
+      "bytes": 80576,
+      "sha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+    },
+    "Controls.swift": {
+      "bytes": 14201,
+      "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+    }
+  },
+  "reviewProbe": "factory/runtime-additions/additive-copy-cost-v1/actual-r3-controls.swift",
+  "otherProtectedArtifacts": [
+    "factory/native/windows/api-baseline-8e47b89-20261011/runtime",
+    "factory/native/windows/module-origin-37429120-20261011/runtime"
+  ],
+  "execution": {
+    "performedByThisAgent": false,
+    "owner": "root",
+    "requiredHosts": ["Mac internal cache", "Windows internal cache"],
+    "pairOrder": ["current", "candidate"]
+  }
+}

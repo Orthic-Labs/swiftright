@@ -1,0 +1,68 @@
+{
+  "schema": "copy-cost-macos-correction-independent-review-v2",
+  "status": "verified-offline-correction",
+  "correctionStageSha256": "f626a39838b34eb3bdf2a0dc185394de7d1b5332e07327e40165897271332504",
+  "correctionSha256": "9ef90a3ae7ae554bf2455b55fc49f29c8f2b9f72c33dbb110d2ce374a3695413",
+  "original21FileStageUnchanged": true,
+  "linkageFraming": {
+    "separatorHex": "0a2d2d2d20737464657272202d2d2d0a",
+    "separatorBytes": 16,
+    "bothStdoutAndStderrHashesReconstructedExactly": true
+  },
+  "frameworkArchives": [
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/corrections-v2/XCTest-framework-v2.tar.gz",
+      "sha256": "9f2f5abce5be420ff33d331408bdcfdd6c55ab2520b7ba37239bcde8729d52d7",
+      "onlyAddedMember": {
+        "path": "XCTest.framework/Versions/Current",
+        "target": "A",
+        "type": "symlink"
+      },
+      "leafSha256": "375aba929ee156e9132d185b6e499db75915b46fa620504b3afa707365810f3d",
+      "regularFileBytesPreserved": true,
+      "topLevelAliasResolvesToVerifiedLeaf": true
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/corrections-v2/Testing-framework-v2.tar.gz",
+      "sha256": "e57d9ac911e8c8d4f49f204aeab1dedf138c4db71c5fdbbc9d9e73c52feb4d42",
+      "onlyAddedMember": {
+        "path": "Testing.framework/Versions/Current",
+        "target": "A",
+        "type": "symlink"
+      },
+      "leafSha256": "543144e6e026325d890d0ddfe0f90f42636ccc4eb330df0108fb86d6759267d5",
+      "regularFileBytesPreserved": true,
+      "topLevelAliasResolvesToVerifiedLeaf": true
+    }
+  ],
+  "methodAccounting": {
+    "candidate": {
+      "assertions": [
+        {
+          "metric": "typing commit",
+          "observedMilliseconds": 6.347458,
+          "strictUpperBoundMilliseconds": 2.0
+        },
+        {
+          "metric": "scroll-only commit",
+          "observedMilliseconds": 10.77425,
+          "strictUpperBoundMilliseconds": 4.0
+        }
+      ],
+      "executedMethods": 175,
+      "failedAssertions": 2,
+      "failedMethod": "PerformanceTests.testSingleRowEditCommitTime",
+      "failedMethods": 1,
+      "passedMethods": 174
+    },
+    "current": {
+      "executedMethods": 175,
+      "failedAssertions": 0,
+      "failedMethods": 0,
+      "passedMethods": 175
+    },
+    "historicalSummaryCorrection": "Earlier 173-pass shorthand incorrectly counted two failed assertions as two failed methods.",
+    "sourcePlanBoundMethodsPerVariant": 175
+  },
+  "scope": "V2 resolves framed-output hash interpretation & missing framework directory alias. Static load commands remain static linkage evidence; no runtime loaded-image identities, new execution, causal attribution, production promotion or native qualification."
+}

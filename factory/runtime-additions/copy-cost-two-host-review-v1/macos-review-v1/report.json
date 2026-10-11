@@ -1,0 +1,99 @@
+{
+  "schema": "copy-cost-macos-independent-review-v1",
+  "stageSha256": "4bebd68a329b55c3c66ef043739bad8ae56970b48b332f8f007b662ad3e89699",
+  "stageFilesVerified": 21,
+  "sourceBindingsPerVariant": 52,
+  "soleSourceDifference": [
+    "Sources/SwiftRightRuntime/Graph.swift"
+  ],
+  "sourceTestMethods": 175,
+  "internalDiskSourceCopiesVerified": true,
+  "archives": [
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swift-frontend.gz",
+      "rawBytes": 173118384,
+      "rawSha256": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swift-entrypoint.gz",
+      "rawBytes": 200560,
+      "rawSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swiftc-entrypoint.gz",
+      "rawBytes": 200560,
+      "rawSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/current-xctest.gz",
+      "rawBytes": 3975560,
+      "rawSha256": "a81fb8eeef855a6bdf1a22ee870d7338eb809e8e8eb15240e862f0a0ea3ca838"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/candidate-xctest.gz",
+      "rawBytes": 3979688,
+      "rawSha256": "f2172e346d73797f38a1a265b45693e0280dd4a37dd28b140df846db871e1a17"
+    }
+  ],
+  "linkedLibraryRegularFilesVerified": 90,
+  "dynamicLinkageCaptureHashDisagreements": [
+    {
+      "variant": "current",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.otool-L.txt",
+      "declaredStdoutSha256": "c0fdb3583f5000b5d58a77b4a05c7c58a44193c09c2b5745dd22daebe097f74f",
+      "actualCaptureSha256": "d1c961c1c21a13fea6b6045179c3a61e8130d5d92647db64bf58f0f321d755f2"
+    },
+    {
+      "variant": "candidate",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.otool-L.txt",
+      "declaredStdoutSha256": "09f3c2606b7b0756c08e54885ddcaf7628b3998fc7fbd42b370a4950ebf31285",
+      "actualCaptureSha256": "2be75fa1094f3d415a1666f2c7432c4dff1742eee9b856d7c5a6b4ec172eae52"
+    }
+  ],
+  "libraryArchiveAliasGaps": [
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/XCTest-framework.tar.gz",
+      "relativePath": "XCTest.framework/XCTest",
+      "reason": "Descriptor path is symlink with absent Versions/Current target in tar; not reconstructable as named."
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/Testing-framework.tar.gz",
+      "relativePath": "Testing.framework/Testing",
+      "reason": "Descriptor path is symlink with absent Versions/Current target in tar; not reconstructable as named."
+    }
+  ],
+  "results": {
+    "current": {
+      "methodsExecuted": 175,
+      "methodsPassed": 175,
+      "methodsFailed": 0,
+      "failedMethods": [],
+      "failedAssertions": 0,
+      "assertions": [],
+      "medianMilliseconds": {
+        "typing": 1.408041,
+        "scrollOnly": 2.9175,
+        "rowEdit": 6.821542
+      }
+    },
+    "candidate": {
+      "methodsExecuted": 175,
+      "methodsPassed": 174,
+      "methodsFailed": 1,
+      "failedMethods": [
+        "-[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime]"
+      ],
+      "failedAssertions": 2,
+      "assertions": [
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/packages/candidate/Tests/SwiftRightRuntimeTests/PerformanceTests.swift:292: error: -[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime] : XCTAssertLessThan failed: (\"6.347458\") is not less than (\"2.0\") - typing commit",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/packages/candidate/Tests/SwiftRightRuntimeTests/PerformanceTests.swift:293: error: -[SwiftRightRuntimeTests.PerformanceTests testSingleRowEditCommitTime] : XCTAssertLessThan failed: (\"10.77425\") is not less than (\"4.0\") - scroll-only commit"
+      ],
+      "medianMilliseconds": {
+        "typing": 6.347458,
+        "scrollOnly": 10.77425,
+        "rowEdit": 6.98075
+      }
+    }
+  },
+  "scope": "Single serial release pair; static otool dependencies & archived libraries do not prove runtime loaded-image paths. Mac XCTest runner child PID/path not captured independently of Swift driver. No causal regression or production promotion."
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "additive-copy-cost-safe-narrower-candidate-plan-v1",
+  "status": "proposal-only-no-execution",
+  "reason": "Current candidate full175 typing/scroll assertions failed on Mac & Windows; concurrent Dell Rust builds block causal attribution.",
+  "preserveExactly": [
+    "ResolvedStyle direct stored font and foreground fields",
+    "Font.metadataStorage implementation in current Controls.swift",
+    "ResolvedShapeStorage private class and shape equality path",
+    "all existing public let/get-only property behavior outside additive payload"
+  ],
+  "lazyBoxOnly": {
+    "type": "ResolvedNodeAdditions",
+    "fields": ["labelsHidden", "toggleStyle", "imageSizing", "color"],
+    "allocation": "only when one field is non-nil",
+    "equality": "compare all four payload fields by value",
+    "sendability": "final immutable Sendable class"
+  },
+  "resolvedNodeLayout": {
+    "retain": ["shapeStorage", "menu", "presentation", "shortcut"],
+    "replaceOnly": ["labelsHidden", "toggleStyle", "imageSizing", "color"],
+    "publicAccess": "read-only computed accessors backed by optional additive storage"
+  },
+  "requiredGates": [
+    "unchanged existing 175-test suite passes on Mac",
+    "unchanged existing 175-test suite passes on Windows",
+    "r3 controls match current for independent equal/unequal style and addition values",
+    "detached Sendable reads and equality match",
+    "matched legacy and additive performance evidence is independently reviewed"
+  ],
+  "notAuthorized": ["production source edits", "test weakening", "workload changes", "renderer or ABI edits"]
+}

@@ -1,0 +1,110 @@
+{
+  "kind": "independent-copy-cost-windows-preparation-review",
+  "verdict": "VERIFIED-BOUNDED-PREPARATION-READY-FOR-SEPARATE-CPU-RELEASE",
+  "scope": "packet/source/runner preparation only; no Windows, SSH, compiler, GUI, Pulse, or production execution",
+  "pins": {
+    "stageManifest": "74586acc7446f39208c3668189dd3c23bb7db3a3b65dd4ca0657a70fe551eb5f",
+    "packetManifest": "a249c85f2e1704797acf27635480bf0bce6331a6a87ce842652da5e029d20c55",
+    "sourcePlan": "46e039abb7463e479b424abcfd5bd4ee2aedbb88a31957fe65365435c9c37e09",
+    "runner": "9a238c078079e411f6ea8c9807809994a58e2eac10acf726d9c29f5b760da2f3",
+    "candidateGraph": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+  },
+  "packet": {
+    "sourceFiles": 104,
+    "packageFilesEach": 52,
+    "testMethodsEach": 175,
+    "packetBad": [],
+    "stageBad": [],
+    "maxStageBytes": 80576
+  },
+  "variants": {
+    "current": {
+      "files": 52,
+      "bytes": 432003,
+      "bindingsSha256": "686b030cffef1f5f023edbb01d519ce25d4467c45fafb02002a148d76e736bf1"
+    },
+    "candidate": {
+      "files": 52,
+      "bytes": 433832,
+      "bindingsSha256": "b79733048089a3b3ad1d6d6dfe722f4ed2321eb36c210212c66497331894c987"
+    }
+  },
+  "sourceDiff": [
+    "Sources/SwiftRightRuntime/Graph.swift"
+  ],
+  "pinsPreserved": {
+    "taskIDBodyMilliseconds": 40,
+    "settleMilliseconds": 120,
+    "performanceBoundsMilliseconds": [
+      2,
+      4,
+      15
+    ],
+    "testBytesIdentical": true,
+    "order": [
+      "current",
+      "candidate"
+    ],
+    "fullSuite": true,
+    "retries": 0
+  },
+  "runnerGates": {
+    "freshDRoots": true,
+    "serialized": true,
+    "rawStreams": true,
+    "boundedTimeoutSeconds": 900,
+    "sourceBeforeAfter": true,
+    "compilerBeforeAfter": true,
+    "exeDllInventory": true,
+    "noDeletes": true,
+    "executionTokenRequired": true
+  },
+  "controls": {
+    "wrong-source-difference": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "not-full-suite": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "retry-enabled": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-order": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-candidate-graph": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "stale-input-root": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-runner": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-tool": {
+      "rawInputChanged": true,
+      "rejected": true
+    }
+  },
+  "execution": {
+    "status": "not-executed",
+    "WindowsInvocations": 0,
+    "compilerInvocations": 0,
+    "GUIInvocations": 0,
+    "PulseInvocations": 0,
+    "productionEdits": 0,
+    "toolBytesCopied": 0
+  },
+  "limits": [
+    "Preparation does not produce runtime outcomes",
+    "candidate equivalence remains separate source-review evidence",
+    "CPU release & paired execution remain outside this review"
+  ]
+}

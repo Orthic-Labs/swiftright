@@ -1,0 +1,165 @@
+{
+  "archives": [
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swift-frontend.gz",
+      "archiveBytes": 60649242,
+      "archiveSha256": "12b0a63c191a550f905570b7b5e846ae33983b4c6f9362abb08ff52b3c5f8666",
+      "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "sourceBytes": 173118384,
+      "sourceSha256": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swift-entrypoint.gz",
+      "archiveBytes": 17216,
+      "archiveSha256": "154eb61414c1b0bf1794b5e39bc851c033ab40acfb67d7362f3edbf846b1aa69",
+      "source": "/usr/bin/swift",
+      "sourceBytes": 200560,
+      "sourceSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/swiftc-entrypoint.gz",
+      "archiveBytes": 17216,
+      "archiveSha256": "154eb61414c1b0bf1794b5e39bc851c033ab40acfb67d7362f3edbf846b1aa69",
+      "source": "/usr/bin/swiftc",
+      "sourceBytes": 200560,
+      "sourceSha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/current-xctest.gz",
+      "archiveBytes": 1066324,
+      "archiveSha256": "e11bdf132b49132cf552ea74127dd951cdb78bbeeb4905e765bf01ecbc5f9561",
+      "source": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/scratch/current/out/Products/Release/SwiftRightRuntimeTests.xctest/Contents/MacOS/SwiftRightRuntimeTests",
+      "sourceBytes": 3975560,
+      "sourceSha256": "a81fb8eeef855a6bdf1a22ee870d7338eb809e8e8eb15240e862f0a0ea3ca838"
+    },
+    {
+      "archive": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/binaries/candidate-xctest.gz",
+      "archiveBytes": 1066655,
+      "archiveSha256": "883380a7d539c829569d2c54ff8cd6f0ff901ad2016798c05916745ec5f99cee",
+      "source": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/scratch/candidate/out/Products/Release/SwiftRightRuntimeTests.xctest/Contents/MacOS/SwiftRightRuntimeTests",
+      "sourceBytes": 3979688,
+      "sourceSha256": "f2172e346d73797f38a1a265b45693e0280dd4a37dd28b140df846db871e1a17"
+    }
+  ],
+  "conclusion": "One serialized full Mac release pair ran against internal-device packages; candidate failed two existing performance assertions. No performance causality, Windows parity, or native qualification inferred.",
+  "dynamicLinkage": [
+    {
+      "binary": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/scratch/current/out/Products/Release/SwiftRightRuntimeTests.xctest/Contents/MacOS/SwiftRightRuntimeTests",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.otool-L.txt",
+      "exitCode": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSha256": "c0fdb3583f5000b5d58a77b4a05c7c58a44193c09c2b5745dd22daebe097f74f",
+      "variant": "current"
+    },
+    {
+      "binary": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/copy-cost-macos-candidate-v1/scratch/candidate/out/Products/Release/SwiftRightRuntimeTests.xctest/Contents/MacOS/SwiftRightRuntimeTests",
+      "capture": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.otool-L.txt",
+      "exitCode": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSha256": "09f3c2606b7b0756c08e54885ddcaf7628b3998fc7fbd42b370a4950ebf31285",
+      "variant": "candidate"
+    }
+  ],
+  "linkedLibrariesEvidence": {
+    "bytes": 22137,
+    "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/xcode-linked-library-binaries.json",
+    "sha256": "175cf3f19c5763dd9b3bade9de3398970e778afae88baa45fe454714811ae6b3"
+  },
+  "results": {
+    "candidate": {
+      "failingAssertions": [
+        {
+          "metric": "typing commit",
+          "observedMilliseconds": 6.347458,
+          "strictUpperBoundMilliseconds": 2.0,
+          "test": "PerformanceTests.testSingleRowEditCommitTime"
+        },
+        {
+          "metric": "scroll-only commit",
+          "observedMilliseconds": 10.77425,
+          "strictUpperBoundMilliseconds": 4.0,
+          "test": "PerformanceTests.testSingleRowEditCommitTime"
+        }
+      ],
+      "failures": 2,
+      "passed": false,
+      "passingMetric": {
+        "metric": "row edit",
+        "observedMilliseconds": 6.98075
+      },
+      "tests": 175
+    },
+    "current": {
+      "failures": 0,
+      "passed": true,
+      "tests": 175
+    }
+  },
+  "runEvidence": [
+    {
+      "bytes": 2581,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.otool-L.txt",
+      "sha256": "2be75fa1094f3d415a1666f2c7432c4dff1742eee9b856d7c5a6b4ec172eae52"
+    },
+    {
+      "bytes": 707,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.stderr.bin",
+      "sha256": "a1e52c05172f4e89aaf39659937112135941949e9ee664896c3e5a5e3aef8ff5"
+    },
+    {
+      "bytes": 49062,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/candidate.stdout.bin",
+      "sha256": "38e401a1dcd8c934bdf5e8b67d5df0186fda17f6fbca1596903870cf774d8990"
+    },
+    {
+      "bytes": 20633,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/copied-source-bindings.json",
+      "sha256": "1e2992ac68826ebe79507566c225f309e6f51016cf5d852257cef63b6576a36b"
+    },
+    {
+      "bytes": 2579,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.otool-L.txt",
+      "sha256": "d1c961c1c21a13fea6b6045179c3a61e8130d5d92647db64bf58f0f321d755f2"
+    },
+    {
+      "bytes": 612,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.stderr.bin",
+      "sha256": "6c4aa8154400073654ad94c365d7082fa2b213fecad4917385ed50fa11d68ad8"
+    },
+    {
+      "bytes": 48347,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/current.stdout.bin",
+      "sha256": "1d9edeb9a2e5928cf21168c38d1f0e0f3f82f4f97f95e5c5fe4e3c821abc562c"
+    },
+    {
+      "bytes": 56423,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/run-receipt.json",
+      "sha256": "75d9ea1ad39834321b1d8a39751e6c83a700b64f1d9c3a36f652d45515fba82e"
+    },
+    {
+      "bytes": 12586,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/run_pair.py",
+      "sha256": "304a13e88396998abcfba3f7bd43ea1f3ca974fc8f2eb6cd9a6c825e40a6e5bd"
+    },
+    {
+      "bytes": 26461,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/source-plan.json",
+      "sha256": "46e039abb7463e479b424abcfd5bd4ee2aedbb88a31957fe65365435c9c37e09"
+    },
+    {
+      "bytes": 22137,
+      "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/xcode-linked-library-binaries.json",
+      "sha256": "175cf3f19c5763dd9b3bade9de3398970e778afae88baa45fe454714811ae6b3"
+    }
+  ],
+  "runReceipt": {
+    "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/run-receipt.json",
+    "sha256": "75d9ea1ad39834321b1d8a39751e6c83a700b64f1d9c3a36f652d45515fba82e"
+  },
+  "runner": {
+    "path": "factory/runtime-additions/copy-cost-macos-candidate-v1/evidence/run_pair.py",
+    "sha256": "304a13e88396998abcfba3f7bd43ea1f3ca974fc8f2eb6cd9a6c825e40a6e5bd"
+  },
+  "schema": "copy-cost-macos-candidate-evidence-v1",
+  "sourcePlanSha256": "46e039abb7463e479b424abcfd5bd4ee2aedbb88a31957fe65365435c9c37e09"
+}
