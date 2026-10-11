@@ -1,0 +1,109 @@
+{
+  "status": "CLEAR",
+  "scope": "exact supplied F1 candidate schema & frozen v1 65 USR selectors across10 blocks",
+  "reviewer": {
+    "path": "factory/registry/public-source-binding-v2/independent-review/review_guard_v3.py",
+    "sha256": "sha256:9dc7d97cd6cf3dc593174ed1304084d7d40d232ecd9351eae42239cbc77c466a",
+    "bytes": 6563
+  },
+  "guard": {
+    "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v3/compare_final_candidate.py",
+    "sha256": "sha256:ffcccfcdfb2307efd859421316267d7b9bf479a55037f0d74fc9860fe82a6e76",
+    "bytes": 10166
+  },
+  "candidate": {
+    "path": "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.json",
+    "sha256": "sha256:fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2",
+    "bytes": 41693461
+  },
+  "candidateSymbols": 111576,
+  "originalV1EntriesVerified": 16,
+  "membershipRows": 65,
+  "blocks": 10,
+  "ownerFaultsVerified": 6,
+  "independentFaults": [
+    {
+      "name": "consumed-manifest-usr-v1.json",
+      "reason": "consumed frozen manifest bytes mismatch",
+      "passed": true
+    },
+    {
+      "name": "consumed-expected-registry-membership.json",
+      "reason": "consumed frozen expected membership bytes mismatch",
+      "passed": true
+    },
+    {
+      "name": "resolver-dependency-bytes",
+      "passed": true
+    },
+    {
+      "name": "reserved-pending-output",
+      "passed": true
+    },
+    {
+      "name": "invalid-selected-status-INVALID_SCHEMA_STATUS",
+      "passed": true
+    },
+    {
+      "name": "invalid-selected-status-None",
+      "passed": true
+    }
+  ],
+  "independentReplay": {
+    "path": "factory/registry/public-source-binding-v2/independent-review/independent-final-comparison.json",
+    "sha256": "sha256:b136c2216200633d437abbc11749464102272bfd90691bb6499eed0b41113972",
+    "bytes": 3868
+  },
+  "ownerComparison": {
+    "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v3/final-candidate-comparison-fd453b63-v3.json",
+    "sha256": "sha256:46239f82370588adf6f355af29ce3c274bd4ada96d4a162e29c04a45b88a7535",
+    "bytes": 3868
+  },
+  "ownerProcess": {
+    "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v3/final-process-v3.json",
+    "sha256": "sha256:a1f0d1643a282c448eab80c991716e45dce1ba6ba6b32409bf1b575bb6e2379e",
+    "bytes": 1790
+  },
+  "stagesVerified": [
+    {
+      "path": "factory/registry/public-source-binding-v2/versioned-snapshots/baseline-control-v1/stage-manifest.json",
+      "sha256": "sha256:9773a8ad506086f2cfa19ddc3d1ef7e08c1178ff89759dee604fc86bc2b8d737",
+      "bytes": 3476
+    },
+    {
+      "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v1/stage-manifest.json",
+      "sha256": "sha256:1cd3ae87b815b36977a0b5e8289559dd77dd1f2b6cd25a963c3fbe6a3d1762a1",
+      "bytes": 7896
+    },
+    {
+      "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/stage-manifest.json",
+      "sha256": "sha256:65564c3ab21d11255222dcb0b2709b2645d1f65f8eb1a935d89e0a4adc9d322c",
+      "bytes": 9076
+    },
+    {
+      "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v3/stage-manifest.json",
+      "sha256": "sha256:4af957db344c136a850c7bff03706df0f3ebdc6c006f038a9af042ec480e1706",
+      "bytes": 12333
+    }
+  ],
+  "historicalStageMismatches": [
+    {
+      "stage": {
+        "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/stage-manifest.json",
+        "sha256": "sha256:65564c3ab21d11255222dcb0b2709b2645d1f65f8eb1a935d89e0a4adc9d322c",
+        "bytes": 9076
+      },
+      "entry": {
+        "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/fault-controls.json",
+        "sha256": "sha256:c824bbfd6366ab6c210db63a83a4762c67e788e6d1df2198b22665f51f4e91e9",
+        "bytes": 5769
+      },
+      "current": {
+        "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/fault-controls.json",
+        "sha256": "sha256:b246cfdeec1594491bbafea7144306cd813f6969ff8c39592de850b12e9daeae",
+        "bytes": 5769
+      }
+    }
+  ],
+  "productionEdits": 0
+}

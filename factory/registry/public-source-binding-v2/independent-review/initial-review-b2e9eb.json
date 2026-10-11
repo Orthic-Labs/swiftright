@@ -1,0 +1,102 @@
+{
+  "comparatorSha256": "b2e9eb066a9dd7ba92133fc4c427a552484adcaff7fbd5eb60f117fdc34635bc",
+  "findings": [
+    {
+      "evidence": "Path(a.output).resolve() then write_text has no v1/protected output check.",
+      "name": "reserved-pending-output"
+    },
+    {
+      "evidence": "Imports live factory.registry.registry; validate_registry loads live factory/spec/schema/*.schema.json. v2 tracked dependencies instead pin archived registry/schema.",
+      "name": "actual-dependency-closure"
+    },
+    {
+      "evidence": "Reads raw for JSON parse then sha(candidate) reads path again; receipt can hash different bytes than membership input.",
+      "name": "candidate-raw-identity"
+    }
+  ],
+  "kind": "independent-f2-v2-initial-review",
+  "productionEdits": 0,
+  "v1ArchiveManifestSha256": "e5527b9a7ab0e3a8ec75a5f8acf934735c984da3da2a7b30473fb33d782776fd",
+  "v1ExactEntries": [
+    {
+      "bytes": 819,
+      "path": "README.md",
+      "sha256": "sha256:17ed61c95709518d431fd5fb04b4d68888da730ddba11017f0f6da4d08200baa"
+    },
+    {
+      "bytes": 3151,
+      "path": "archive/inputs/block-registry.schema.json",
+      "sha256": "sha256:a2bfc9ce81c210a7f0ad08b4c3569c54e36cd2354f32140756621b671d98a75c"
+    },
+    {
+      "bytes": 40793212,
+      "path": "archive/inputs/catalogue.json",
+      "sha256": "sha256:740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+    },
+    {
+      "bytes": 7922,
+      "path": "archive/inputs/manifest.json",
+      "sha256": "sha256:7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1"
+    },
+    {
+      "bytes": 123,
+      "path": "archive/tests.log",
+      "sha256": "sha256:7d8209430c334ddbe21ed8739e812ce6c7c6db61faa34e3ffadd8a54d2beb67a"
+    },
+    {
+      "bytes": 11843,
+      "path": "archive/tools/registry.py",
+      "sha256": "sha256:247095ac42999371eae5505fff1a2aedbb5fe9d3381b22f127dc69c10e104650"
+    },
+    {
+      "bytes": 168,
+      "path": "archive/verification.log",
+      "sha256": "sha256:09976875a0b35249e4da9cf95e62790b0b89b11b02a46c7590d6e60dbfb8bb09"
+    },
+    {
+      "bytes": 1855,
+      "path": "compare_final_candidate.py",
+      "sha256": "sha256:1341c26812071acab029ca90ed1759b62b117fe4e2f4ce05b6f0b94e13a81d47"
+    },
+    {
+      "bytes": 10915,
+      "path": "expected-registry-membership.json",
+      "sha256": "sha256:f1d482a89d7d09d741cb3dc0d49fc6532cb06a758a28c27efd09836f17728af3"
+    },
+    {
+      "bytes": 420,
+      "path": "final-candidate-resolution.json",
+      "sha256": "sha256:8694790683464349c7f05111698dce6126b44114a778d929a55972dd8054715d"
+    },
+    {
+      "bytes": 7922,
+      "path": "manifest-usr-v1.json",
+      "sha256": "sha256:7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1"
+    },
+    {
+      "bytes": 4738,
+      "path": "prepare_public_binding.py",
+      "sha256": "sha256:af4a0ee3e546155cb1282262f9870cb216e0dd8146e1dd032e487d18c76b2bba"
+    },
+    {
+      "bytes": 8088,
+      "path": "registry-resolution.json",
+      "sha256": "sha256:d2287efa22421402f20cecc0cb4fc7de762374fe619fb25061dc7cecb063e948"
+    },
+    {
+      "bytes": 41054,
+      "path": "resolution-provenance.json",
+      "sha256": "sha256:3ca1b55226e62dab08644f7bfddb1c458a8cee0476feb4c31e5daec0a029fb89"
+    },
+    {
+      "bytes": 1279,
+      "path": "test_public_binding.py",
+      "sha256": "sha256:2347ac0ed35c288f42b3c2c0a7c309cb94db19d0a0ffbacf7b98055193762aa2"
+    },
+    {
+      "bytes": 2046,
+      "path": "verify_public_binding.py",
+      "sha256": "sha256:eb359162b6e6c67c2c8042e6ebe3ce81d2fd46e63a0754d1f0f3810cb1eb8ad2"
+    }
+  ]
+}

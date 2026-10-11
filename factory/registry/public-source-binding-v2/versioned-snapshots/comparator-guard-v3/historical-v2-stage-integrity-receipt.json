@@ -1,0 +1,20 @@
+{
+  "kind": "f2-public-source-binding-historical-stage-integrity-receipt",
+  "version": 1,
+  "status": "historical-stage-entry-mismatch",
+  "historicalStageManifest": {
+    "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/stage-manifest.json",
+    "sha256": "sha256:65564c3ab21d11255222dcb0b2709b2645d1f65f8eb1a935d89e0a4adc9d322c",
+    "preserved": true
+  },
+  "entry": {
+    "path": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/fault-controls.json",
+    "historicalExpectedSha256": "sha256:c824bbfd6366ab6c210db63a83a4762c67e788e6d1df2198b22665f51f4e91e9",
+    "historicalExpectedBytes": 5769,
+    "observedCurrentSha256": "sha256:b246cfdeec1594491bbafea7144306cd813f6969ff8c39592de850b12e9daeae",
+    "observedCurrentBytes": 5769,
+    "historicalPreimageAvailable": false
+  },
+  "interpretation": "Original v2 stage manifest & current v2 fault-controls bytes are preserved as separate historical artifacts. Missing historical preimage prevents retroactive repair; v3 binds current files directly & records this mismatch explicitly.",
+  "createdAt": "2026-10-11T01:30:00Z"
+}

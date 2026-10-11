@@ -1,0 +1,109 @@
+{
+  "kind": "f2-public-source-binding-comparator-fault-controls",
+  "version": 1,
+  "status": "controls-pass",
+  "comparatorPath": "factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+  "comparatorSha256": "sha256:5605a749d29dcf20af266765e710665cec428e9a6089fbef45dd7f0ba2f1907c",
+  "candidatePath": "factory/registry/public-source-binding-v1/archive/inputs/catalogue.json",
+  "candidateSha256": "sha256:740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270",
+  "pendingReceiptPath": "factory/registry/public-source-binding-v1/final-candidate-resolution.json",
+  "pendingReceiptSha256": "sha256:8694790683464349c7f05111698dce6126b44114a778d929a55972dd8054715d",
+  "controls": [
+    {
+      "name": "wrong-catalogue-kind",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/wrong-kind.json",
+        "--output",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/wrong-kind.out.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:cc9cd9cdd9090e19da61bed1a8af0345cbb122d030561170d9fcbb2c2c3209d2",
+      "expectedFailure": "candidate must be a v0.1 catalogue",
+      "outputExists": false,
+      "passed": true
+    },
+    {
+      "name": "invalid-selected-status",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/invalid-status.json",
+        "--output",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/invalid-status.out.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:8fd28e774ec2b52bbba1799660a7e17d4021344fd95f031a6ca75bc5796d004b",
+      "expectedFailure": "candidate catalogue schema errors",
+      "outputExists": false,
+      "passed": true
+    },
+    {
+      "name": "wrong-selected-usr",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/wrong-usr.json",
+        "--output",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/wrong-usr.out.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:0b7b20657a8fa73ac3c879982ce0d2bbdd41e29711d6fd8b21ed8e1944a9317a",
+      "expectedFailure": "has no exact match",
+      "outputExists": false,
+      "passed": true
+    },
+    {
+      "name": "duplicate-catalogue-usr",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/duplicate-usr.json",
+        "--output",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/duplicate-usr.out.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:dd134481de24a1d67e576aea05b323b2fd5d050381fcc24529825f617739a8e3",
+      "expectedFailure": "repeats USR",
+      "outputExists": false,
+      "passed": true
+    },
+    {
+      "name": "existing-output",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v1/archive/inputs/catalogue.json",
+        "--output",
+        "/Volumes/D/.build-home/adrdsouza/tmp/f2-comparator-controls-vfotdb_h/existing.out.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:72e9f91cc064692fc6f9fc81a0a30d87d7e9787b1309e2c414be83c313dc5cc4",
+      "expectedFailure": "output must not already exist",
+      "outputExists": true,
+      "passed": true
+    },
+    {
+      "name": "reserved-pending-output",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v2/versioned-snapshots/comparator-guard-v2/compare_final_candidate.py",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v1/archive/inputs/catalogue.json",
+        "--output",
+        "/Volumes/D/claude/swiftright/factory/registry/public-source-binding-v1/final-candidate-resolution.json"
+      ],
+      "returncode": 1,
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "sha256:93dc0b6673257d972aa3ae86efda2a1330dee4807711c3d5a02e6f95400f75a2",
+      "expectedFailure": "output must not already exist",
+      "outputExists": true,
+      "passed": true
+    }
+  ]
+}
