@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "scp",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "-r",
+    "win:D:/Claude/swiftright/.factory-work/hosts/stack-lifecycle/package/build-lifecycle-r1/observation.json",
+    "win:D:/Claude/swiftright/.factory-work/hosts/stack-lifecycle/package/build-lifecycle-r1/compile.stdout.bin",
+    "win:D:/Claude/swiftright/.factory-work/hosts/stack-lifecycle/package/build-lifecycle-r1/compile.stderr.bin",
+    "win:D:/Claude/swiftright/.factory-work/hosts/stack-lifecycle/package/build-lifecycle-r1/FactoryProbe.exe",
+    "win:D:/Claude/swiftright/.factory-work/hosts/stack-lifecycle/package/build-lifecycle-r1/runtime-module-archive",
+    "factory/native/windows/stack-lifecycle-next-build-v1/root-build-r1/actual"
+  ],
+  "exitCode": 255,
+  "stderr": "Connection timed out during banner exchange\r\nConnection to 192.168.1.3 port 22 timed out\r\nscp: Connection closed\r\n",
+  "files": {
+    "observation.json": {
+      "sha256": "99a0332b765518e97a8200ef25612fa5c31671037eccdf5504a1fcec091dcae8",
+      "bytes": 17694
+    }
+  }
+}

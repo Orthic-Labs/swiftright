@@ -1,0 +1,29 @@
+{
+  "kind": "actual-stack-lifecycle-compilation-local-review",
+  "acceptedObservationalCompile": true,
+  "issues": [],
+  "rawRefs": {
+    "observation.json": "sha256:99a0332b765518e97a8200ef25612fa5c31671037eccdf5504a1fcec091dcae8",
+    "compile.stdout.bin": "sha256:9d59e2adadac4fee7db8d192b006d5cf534df931621cfa52b1215c49c2c0c515",
+    "compile.stderr.bin": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "FactoryProbe.exe": "sha256:abf82f6f133f1d4dd9a48b3075f9af5fe4632db2b9fdc9763114661196bf6c2c",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftdoc": "sha256:0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftmodule": "sha256:3309a6d2df06e9301172b96382f065875d581e41a479dea26ee8de918ffc982f",
+    "root-build-r1/build-process.json": "sha256:fb99316ca27be98983b72c05fc1ce7f3916a30aa2873f9d840e5bab77e9b1408",
+    "root-build-r1/build.stdout.bin": "sha256:398d2a72cd92bb37362f35bc4d692032154fe55b7580873848fa313be3249bc6",
+    "root-build-r1/build.stderr.bin": "sha256:aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4",
+    "root-build-r1/inspect-process.json": "sha256:67f0769ddd0fb00501085a6bbc88b1599df30c823de85d8eeeeaa8b62b86c167",
+    "root-build-r1/inspect.stdout.bin": "sha256:acff8c0a102aa9fe94a42ee8eb5d3baa70d9cfd9bdeb522286bf21a8e5459540",
+    "root-build-r1/inspect.stderr.bin": "sha256:2ce70d6c8c9ad6726c794690c8b14a2b83673648cac88edf4ff1acc50ec46348",
+    "root-build-r1/fetch.json": "sha256:658dde27f3b9638221de6a788a46be8f014f12eed3ebd3db8488f981ae5338ef",
+    "root-build-r1/fetch-r2.json": "sha256:a1ec83963764e7988a70ece1d436b3ba6188b641bfc3ca9a21d75e45cd1d187c"
+  },
+  "nativeActions": 0,
+  "qualification": "hold",
+  "scope": "frozen producer +reported actual driver invocation/kernel/streams +archived exe/module bytes; no backend/native/parity attestation",
+  "decision": "CLEAR-OBSERVATIONAL-COMPILATION",
+  "transferJoins": true,
+  "transferHistory": "first SCP exit255/banner-timeout after receipt only; second SCP exit0 retrieves remaining5 files; all6 exactly join remote inventory",
+  "sourceInputScope": "frozen producer/canonical raw input authority +reviewed before/after operational guards; driver-reported argv, not independent backend attestation",
+  "nativeLaunchAdmission": "root separately binds immediate production preflight +reviewed Count1/noactivation/lock/owned-kernel capture driver"
+}

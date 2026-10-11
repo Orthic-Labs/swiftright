@@ -1,0 +1,119 @@
+{
+  "actions": {
+    "compiler": 0,
+    "native": 0,
+    "remote": 0
+  },
+  "changedPackageFiles": [
+    "Package.swift",
+    "Sources/FactoryProbe/main.swift",
+    "plan.json"
+  ],
+  "files": [
+    {
+      "bytes": 539,
+      "path": "package/Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "bytes": 362,
+      "path": "package/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "path": "package/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "path": "package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "path": "package/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 421,
+      "path": "package/Sources/FactoryProbe/Witness.swift",
+      "sha256": "fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35"
+    },
+    {
+      "bytes": 14017,
+      "path": "package/Sources/FactoryProbe/main.swift",
+      "sha256": "1463629c6136d2dd1bf47b2ff21bfefcc3273f8d606608e3c10c5267062348a1"
+    },
+    {
+      "bytes": 7500,
+      "path": "package/plan.json",
+      "sha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1"
+    },
+    {
+      "bytes": 11275,
+      "path": "package/runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "path": "package/runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 1898,
+      "path": "package/witness.manifest.json",
+      "sha256": "b7a43fe22dd48c7326e5316712b14786442371df80cc0ff5aa957b1cd2f17c54"
+    },
+    {
+      "bytes": 3476,
+      "path": "canonical-inputs-manifest.json",
+      "sha256": "208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa"
+    },
+    {
+      "bytes": 1047,
+      "path": "shared/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+    },
+    {
+      "bytes": 1286,
+      "path": "shared/verify-runtime-source.ps1",
+      "sha256": "9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589"
+    }
+  ],
+  "historicalExecutableReuse": {
+    "allowed": false,
+    "oldCompileReceiptPath": "factory/native/windows/seed-stack-lifecycle-host-v1/build-actual-lifecycle-v1-r1/observation.json",
+    "oldCompileReceiptSha256": "e041c9a5aa53a6f0453ee074252fc59eb2e4f28e2cf50db1673eed5d8b01c890",
+    "reason": "old executable consumes r09 bridge/renderer &historical package/scratch authority; new canonical bridge/loader source tuple requires new compile"
+  },
+  "kind": "stack-lifecycle-next-canonical-source-v1",
+  "operational": {
+    "builderOwner": "f7_windows; derives existing bounded retained-kernel/stream controls; no new framework",
+    "builderPacket": "factory/native/windows/stack-lifecycle-next-build-v1",
+    "childDeadlineSeconds": 15,
+    "compileRequest": {
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "configuration": "release",
+      "kind": "swiftpm-windows-gui-release/1",
+      "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package",
+      "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package\\build-lifecycle-r1\\scratch",
+      "target": "windows-x86_64"
+    },
+    "nativeAttemptCount": 1,
+    "noRetries": true,
+    "outputRoot": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package\\build-lifecycle-r1",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package",
+    "streamDeadlineSeconds": 5
+  },
+  "planSha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1",
+  "preserved": [
+    "Witness, adapter, viewport, fill, text geometry bytes exact predecessor",
+    "Runtime37429120 source/receipt/tree unchanged; fresh host build recompiles from canonical workspace runtime",
+    "All lifecycle marker call sites unchanged; loader path is sole main.swift delta",
+    "Graph/layout/measurement, hook/foreground/ownership,10s hostquit threshold unchanged",
+    "No runtime/render/bridge edits; bridge bound to owned tuple11 source copies0a745ab/header862997c; frozen qualification hold"
+  ],
+  "qualification": "hold; diagnostic localization only",
+  "status": "frozen-source; fresh compiler/capture admission pending"
+}
