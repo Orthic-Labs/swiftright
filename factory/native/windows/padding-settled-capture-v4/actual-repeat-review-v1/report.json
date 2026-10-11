@@ -1,0 +1,2260 @@
+{
+  "verdict": "CONFIRMED_FAILED_PARTIAL_BATCH_WITH_PRIOR_HOST_ERRORS",
+  "finding": "capture computes validHost=false on host error but still appends record & continues; runs03/16 errors retained in raw stdout yet primaryError empty. No promotion based on existence of capture assets.",
+  "fetchPinsVerified": 237,
+  "requestedRuns": 20,
+  "startedRuns": 18,
+  "priorRawCaptures": 17,
+  "priorHostErrorFreeRawCaptures": 15,
+  "priorHostErrorRuns": [
+    3,
+    16
+  ],
+  "failedRun": 18,
+  "notStarted": [
+    19,
+    20
+  ],
+  "aggregateSuccessReceiptAbsent": true,
+  "coordinator": {
+    "kind": "padding-settled-interactive-coordinator",
+    "status": "hold-harness-error",
+    "count": 20,
+    "owner": "padding-settled-ebea5028a2044f29b50951731f8770bd 2026-10-11T09:27:41.0351996+00:00",
+    "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-capture-v4\\actual-repeat-r1",
+    "controlRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-settled-capture-v4\\coordinator-repeat-r1",
+    "compileReceiptHash": "90f50b3fa049d4b21a0c5ad5eca78d8c024b961aa102fbc345767c151e503365",
+    "exeHash": "9ed4e7ed376cf2ad20879e99326291dcad31634156934e69d86094b2685fb5a4",
+    "serializerControlSha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+    "lockAcquired": true,
+    "lockReleased": true,
+    "wholeBatchExitConfirmed": true,
+    "taskName": "PaddingSettled-bafd5f54df3c47079476549095bf3b5e",
+    "taskRegistered": true,
+    "taskStarted": true,
+    "terminalResultConfirmed": true,
+    "error": "Interactive capture failed: Owned renderer child deadline",
+    "errorId": "Interactive capture failed: Owned renderer child deadline",
+    "interactiveError": "Owned renderer child deadline",
+    "interactiveErrorId": "Owned renderer child deadline",
+    "cleanupErrors": [],
+    "qualification": "hold",
+    "nativeParity": "hold",
+    "frozenTupleBound": false
+  },
+  "run18": {
+    "start": "2026-10-11T09:28:59.1645532Z",
+    "WM_CLOSE": "2026-10-11T09:29:09.6936180+00:00",
+    "preCleanup": {
+      "at": "2026-10-11T09:29:24.7514883+00:00",
+      "kernelWaitResult": 258,
+      "hasExitedObserved": true,
+      "rawStreams": [
+        {
+          "name": "stdout",
+          "copyCompleted": false,
+          "destinationClosed": false,
+          "sealed": false,
+          "hashQualification": "diagnostic-partial",
+          "taskStatus": "WaitingForActivation",
+          "taskIsCompleted": false,
+          "taskIsFaulted": false,
+          "taskIsCanceled": false,
+          "taskException": "",
+          "sourceIsAsync": false,
+          "closure": null,
+          "closureTaskStatus": "not-started"
+        },
+        {
+          "name": "stderr",
+          "copyCompleted": false,
+          "destinationClosed": false,
+          "sealed": false,
+          "hashQualification": "diagnostic-partial",
+          "taskStatus": "WaitingForActivation",
+          "taskIsCompleted": false,
+          "taskIsFaulted": false,
+          "taskIsCanceled": false,
+          "taskException": "",
+          "sourceIsAsync": false,
+          "closure": null,
+          "closureTaskStatus": "not-started"
+        }
+      ]
+    },
+    "cleanup": {
+      "confirmedOwnedExit": true,
+      "kernelExitSignaled": true,
+      "kernelWaitResult": 0,
+      "exitCertification": "retained-kernel-handle",
+      "hasExitedObserved": true,
+      "killAttempted": false,
+      "status": "signaled-after-exit-observation",
+      "error": ""
+    },
+    "finalStreams": [
+      {
+        "name": "stdout",
+        "copyCompleted": true,
+        "destinationClosed": true,
+        "sealed": true,
+        "hashQualification": "sealed-raw",
+        "taskStatus": "RanToCompletion",
+        "taskIsCompleted": true,
+        "taskIsFaulted": false,
+        "taskIsCanceled": false,
+        "taskException": "",
+        "sourceIsAsync": false,
+        "closure": {
+          "deadlineMilliseconds": 5000,
+          "flushDisposition": "requested-terminal-copy",
+          "flushCompleted": true,
+          "destinationClosed": true,
+          "completedWithinDeadline": true,
+          "deadlineExpired": false,
+          "error": "",
+          "before": {
+            "name": "stdout",
+            "copyCompleted": true,
+            "destinationClosed": false,
+            "sealed": false,
+            "hashQualification": "diagnostic-partial",
+            "taskStatus": "RanToCompletion",
+            "taskIsCompleted": true,
+            "taskIsFaulted": false,
+            "taskIsCanceled": false,
+            "taskException": "",
+            "sourceIsAsync": false,
+            "closure": null,
+            "closureTaskStatus": "not-started"
+          }
+        },
+        "closureTaskStatus": "RanToCompletion"
+      },
+      {
+        "name": "stderr",
+        "copyCompleted": true,
+        "destinationClosed": true,
+        "sealed": true,
+        "hashQualification": "sealed-raw",
+        "taskStatus": "RanToCompletion",
+        "taskIsCompleted": true,
+        "taskIsFaulted": false,
+        "taskIsCanceled": false,
+        "taskException": "",
+        "sourceIsAsync": false,
+        "closure": {
+          "deadlineMilliseconds": 5000,
+          "flushDisposition": "requested-terminal-copy",
+          "flushCompleted": true,
+          "destinationClosed": true,
+          "completedWithinDeadline": true,
+          "deadlineExpired": false,
+          "error": "",
+          "before": {
+            "name": "stderr",
+            "copyCompleted": true,
+            "destinationClosed": false,
+            "sealed": false,
+            "hashQualification": "diagnostic-partial",
+            "taskStatus": "RanToCompletion",
+            "taskIsCompleted": true,
+            "taskIsFaulted": false,
+            "taskIsCanceled": false,
+            "taskException": "",
+            "sourceIsAsync": false,
+            "closure": null,
+            "closureTaskStatus": "not-started"
+          }
+        },
+        "closureTaskStatus": "RanToCompletion"
+      }
+    ],
+    "interpretation": "15-second post-close WaitForExit deadline retained as primary failure. At precleanup Framework HasExited=true while retained kernel wait258; cleanup waited up to5s, obtained kernel0 without killing. Final two streams sealed/closed. No exact exit timestamp or underlying delay cause observed."
+  },
+  "priorRuns": "17 raw UIA Box captures; runs03/16 contain FactoryOwnedRendererHWNDAmbiguous errors (not clean host observations). 15 have error-free raw host predicates. Each contains +four800x600PNG each, per-run stable method repeats, source/compile/exe/serializer/owner joins &retained kernel exit verified. Batch aborted before aggregate records persisted; no20-success claim.",
+  "firstProof": {
+    "kind": "padding-settled-first-proof-controls-v3",
+    "baseline": "accepted",
+    "serializerControlSha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+    "faults": [
+      "pixel sample raw bytes",
+      "owned process row binding",
+      "coherent rehashed pixel repeat",
+      "host stdout predicate",
+      "compile receipt bytes"
+    ],
+    "nativeLaunches": 0,
+    "retries": 0,
+    "pass": true
+  },
+  "runs": [
+    {
+      "hostErrors": [],
+      "run": 1,
+      "pid": 42784,
+      "hwnd": 983892,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:00.7020542+00:00",
+      "outcomeSha256": "50d7cd9920000ed8d788b26efdd2bbce94b0590c8f5fcf3ab64651bc5bfcfb09",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 983892,
+          "monotonicNS": 74071904454700,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 42784,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 32384,
+          "utc": "2026-10-11T09:27:57.761Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 983892,
+          "monotonicNS": 74071911447600,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 42784,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 32384,
+          "utc": "2026-10-11T09:27:57.768Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 983892,
+          "monotonicNS": 74071911946900,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 42784,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 32384,
+          "utc": "2026-10-11T09:27:57.768Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 983892,
+          "monotonicNS": 74074848758500,
+          "phase": "window-closed",
+          "pid": 42784,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 32384,
+          "utc": "2026-10-11T09:28:00.705Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 2,
+      "pid": 58100,
+      "hwnd": 5636940,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:04.1438498+00:00",
+      "outcomeSha256": "ec71f54e5a7097c71aa8b6d38e75509bcd54da7899e52c7247d4b9d00b38d880",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5636940,
+          "monotonicNS": 74076423960800,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 58100,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 43196,
+          "utc": "2026-10-11T09:28:02.280Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5636940,
+          "monotonicNS": 74076430557900,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 58100,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 43196,
+          "utc": "2026-10-11T09:28:02.287Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5636940,
+          "monotonicNS": 74076430914400,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 58100,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 43196,
+          "utc": "2026-10-11T09:28:02.287Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5636940,
+          "monotonicNS": 74078296160700,
+          "phase": "window-closed",
+          "pid": 58100,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 43196,
+          "utc": "2026-10-11T09:28:04.153Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [
+        "FACTORY_RENDER_ERROR Error Domain=FactoryOwnedRendererHWNDAmbiguous Code=1 \"(null)\""
+      ],
+      "run": 3,
+      "pid": 54140,
+      "hwnd": 5702476,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:07.4066327+00:00",
+      "outcomeSha256": "144582bab2f7b5b3133f8670b704e1474a575da8b32921f6e32346a335c94388",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5702476,
+          "monotonicNS": 74079685481700,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 54140,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 33016,
+          "utc": "2026-10-11T09:28:05.542Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5702476,
+          "monotonicNS": 74079692666300,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 54140,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 33016,
+          "utc": "2026-10-11T09:28:05.549Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5702476,
+          "monotonicNS": 74079693282000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 54140,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 33016,
+          "utc": "2026-10-11T09:28:05.550Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5702476,
+          "monotonicNS": 74081558673800,
+          "phase": "window-closed",
+          "pid": 54140,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 33016,
+          "utc": "2026-10-11T09:28:07.415Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 4,
+      "pid": 48052,
+      "hwnd": 5768012,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:10.6987729+00:00",
+      "outcomeSha256": "105f02b5f74098678288bb94399c05751063e3458b36200ad06ecceb55cd8d31",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5768012,
+          "monotonicNS": 74083103700500,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 48052,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 22716,
+          "utc": "2026-10-11T09:28:08.960Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5768012,
+          "monotonicNS": 74083111133400,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 48052,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 22716,
+          "utc": "2026-10-11T09:28:08.968Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5768012,
+          "monotonicNS": 74083111651200,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 48052,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 22716,
+          "utc": "2026-10-11T09:28:08.968Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5768012,
+          "monotonicNS": 74084849148400,
+          "phase": "window-closed",
+          "pid": 48052,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 22716,
+          "utc": "2026-10-11T09:28:10.706Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 5,
+      "pid": 56140,
+      "hwnd": 5967890,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:13.8620809+00:00",
+      "outcomeSha256": "277bfafee25bac66cacafa03caaa36e03ca72fb84cddc5f837dcbedfd3b3fbcf",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5967890,
+          "monotonicNS": 74086106700700,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 56140,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 43356,
+          "utc": "2026-10-11T09:28:11.963Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5967890,
+          "monotonicNS": 74086113257400,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 56140,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 43356,
+          "utc": "2026-10-11T09:28:11.970Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5967890,
+          "monotonicNS": 74086113734200,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 56140,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 43356,
+          "utc": "2026-10-11T09:28:11.970Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5967890,
+          "monotonicNS": 74088010996800,
+          "phase": "window-closed",
+          "pid": 56140,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 43356,
+          "utc": "2026-10-11T09:28:13.868Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 6,
+      "pid": 24268,
+      "hwnd": 6033426,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:16.9454068+00:00",
+      "outcomeSha256": "93acac6433497ef7291230db020fa58b0e636a1716425f08e340a7e658fec6f5",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6033426,
+          "monotonicNS": 74089217367000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 24268,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 9484,
+          "utc": "2026-10-11T09:28:15.074Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6033426,
+          "monotonicNS": 74089224972200,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 24268,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 9484,
+          "utc": "2026-10-11T09:28:15.081Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6033426,
+          "monotonicNS": 74089225487000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 24268,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 9484,
+          "utc": "2026-10-11T09:28:15.082Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6033426,
+          "monotonicNS": 74091096200100,
+          "phase": "window-closed",
+          "pid": 24268,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 9484,
+          "utc": "2026-10-11T09:28:16.953Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 7,
+      "pid": 54740,
+      "hwnd": 6098962,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:20.4487180+00:00",
+      "outcomeSha256": "6ee68bea1be5adbdd5326e275c35b432c90ac1cfa50ee3cef5aa437a43f0fc8a",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6098962,
+          "monotonicNS": 74092740727100,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 54740,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 53972,
+          "utc": "2026-10-11T09:28:18.597Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6098962,
+          "monotonicNS": 74092749437200,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 54740,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 53972,
+          "utc": "2026-10-11T09:28:18.606Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6098962,
+          "monotonicNS": 74092750236900,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 54740,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 53972,
+          "utc": "2026-10-11T09:28:18.607Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6098962,
+          "monotonicNS": 74094599095800,
+          "phase": "window-closed",
+          "pid": 54740,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 53972,
+          "utc": "2026-10-11T09:28:20.456Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 8,
+      "pid": 52152,
+      "hwnd": 1442644,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:23.7335471+00:00",
+      "outcomeSha256": "193117c62a4614f4eb8ffbe1bbd451f906df889a7343d7fdf3f26d93f89030ed",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 1442644,
+          "monotonicNS": 74095989702900,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 52152,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 35160,
+          "utc": "2026-10-11T09:28:21.846Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 1442644,
+          "monotonicNS": 74095996348300,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 52152,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 35160,
+          "utc": "2026-10-11T09:28:21.853Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 1442644,
+          "monotonicNS": 74095996875800,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 52152,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 35160,
+          "utc": "2026-10-11T09:28:21.853Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 1442644,
+          "monotonicNS": 74097883896500,
+          "phase": "window-closed",
+          "pid": 52152,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 35160,
+          "utc": "2026-10-11T09:28:23.740Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 9,
+      "pid": 52056,
+      "hwnd": 1508180,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:26.9327778+00:00",
+      "outcomeSha256": "82b9331729caf25261c3eb968d48b4c0e113fdcc61516d6a50de69cb9e591b92",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 1508180,
+          "monotonicNS": 74099150643300,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 52056,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 9056,
+          "utc": "2026-10-11T09:28:25.007Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 1508180,
+          "monotonicNS": 74099157591500,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 52056,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 9056,
+          "utc": "2026-10-11T09:28:25.014Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 1508180,
+          "monotonicNS": 74099158005200,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 52056,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 9056,
+          "utc": "2026-10-11T09:28:25.015Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 1508180,
+          "monotonicNS": 74101083589600,
+          "phase": "window-closed",
+          "pid": 52056,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 9056,
+          "utc": "2026-10-11T09:28:26.940Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 10,
+      "pid": 56144,
+      "hwnd": 6161228,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:30.2585514+00:00",
+      "outcomeSha256": "5e7f12b30c5ac096dd2ca7c144cb8a0dd345dbbf268a72c1213fd8d28e344deb",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6161228,
+          "monotonicNS": 74102407402700,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 56144,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 49504,
+          "utc": "2026-10-11T09:28:28.264Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6161228,
+          "monotonicNS": 74102415057900,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 56144,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 49504,
+          "utc": "2026-10-11T09:28:28.272Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6161228,
+          "monotonicNS": 74102415923600,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 56144,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 49504,
+          "utc": "2026-10-11T09:28:28.272Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6161228,
+          "monotonicNS": 74104410957300,
+          "phase": "window-closed",
+          "pid": 56144,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 49504,
+          "utc": "2026-10-11T09:28:30.267Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 11,
+      "pid": 23112,
+      "hwnd": 6226764,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:34.1117733+00:00",
+      "outcomeSha256": "8b467ac12b7dcb562fbcb510670ef4293abe46df70073ba59de037ac117550fc",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6226764,
+          "monotonicNS": 74106054180600,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 23112,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 30628,
+          "utc": "2026-10-11T09:28:31.911Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6226764,
+          "monotonicNS": 74106062561400,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 23112,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 30628,
+          "utc": "2026-10-11T09:28:31.919Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6226764,
+          "monotonicNS": 74106063294000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 23112,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 30628,
+          "utc": "2026-10-11T09:28:31.920Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6226764,
+          "monotonicNS": 74108262773300,
+          "phase": "window-closed",
+          "pid": 23112,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 30628,
+          "utc": "2026-10-11T09:28:34.119Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 12,
+      "pid": 32188,
+      "hwnd": 6292300,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:37.2941159+00:00",
+      "outcomeSha256": "fc34b9133d79b61125d69acb18c86e2013f9ae7ed092ea282c8315d1db1feebe",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6292300,
+          "monotonicNS": 74109643488600,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 32188,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 49844,
+          "utc": "2026-10-11T09:28:35.500Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6292300,
+          "monotonicNS": 74109653022700,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 32188,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 49844,
+          "utc": "2026-10-11T09:28:35.510Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6292300,
+          "monotonicNS": 74109653477600,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 32188,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 49844,
+          "utc": "2026-10-11T09:28:35.510Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6292300,
+          "monotonicNS": 74111446853700,
+          "phase": "window-closed",
+          "pid": 32188,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 49844,
+          "utc": "2026-10-11T09:28:37.303Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 13,
+      "pid": 49132,
+      "hwnd": 6357836,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:40.4949467+00:00",
+      "outcomeSha256": "24c2cdd1250b017b707e296d5eb3b6c6dd59930a02827fb672d7f82d25ac51f7",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6357836,
+          "monotonicNS": 74112790501800,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 49132,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 43888,
+          "utc": "2026-10-11T09:28:38.647Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6357836,
+          "monotonicNS": 74112796589900,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 49132,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 43888,
+          "utc": "2026-10-11T09:28:38.653Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6357836,
+          "monotonicNS": 74112797099300,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 49132,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 43888,
+          "utc": "2026-10-11T09:28:38.654Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6357836,
+          "monotonicNS": 74114647552200,
+          "phase": "window-closed",
+          "pid": 49132,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 43888,
+          "utc": "2026-10-11T09:28:40.504Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 14,
+      "pid": 54592,
+      "hwnd": 6423372,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:43.8612798+00:00",
+      "outcomeSha256": "5e5e0cb4e2d976e24ef039caab2d40533d88690a2c10f1d36649f121e0b9f0e3",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6423372,
+          "monotonicNS": 74116103980000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 54592,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 54988,
+          "utc": "2026-10-11T09:28:41.961Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6423372,
+          "monotonicNS": 74116114292900,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 54592,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 54988,
+          "utc": "2026-10-11T09:28:41.971Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6423372,
+          "monotonicNS": 74116114777900,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 54592,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 54988,
+          "utc": "2026-10-11T09:28:41.971Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6423372,
+          "monotonicNS": 74118013755000,
+          "phase": "window-closed",
+          "pid": 54592,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 54988,
+          "utc": "2026-10-11T09:28:43.870Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 15,
+      "pid": 41784,
+      "hwnd": 5246568,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:49.8658747+00:00",
+      "outcomeSha256": "a7cb1443ddf600ebed8e5447f940a9dd58fb0b5fc23f8c0a89d19bf111c4ceab",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5246568,
+          "monotonicNS": 74121827715000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 41784,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 43200,
+          "utc": "2026-10-11T09:28:47.684Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5246568,
+          "monotonicNS": 74121836470400,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 41784,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 43200,
+          "utc": "2026-10-11T09:28:47.693Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5246568,
+          "monotonicNS": 74121837853100,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 41784,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 43200,
+          "utc": "2026-10-11T09:28:47.694Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5246568,
+          "monotonicNS": 74124018705100,
+          "phase": "window-closed",
+          "pid": 41784,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 43200,
+          "utc": "2026-10-11T09:28:49.875Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [
+        "FACTORY_RENDER_ERROR Error Domain=FactoryOwnedRendererHWNDAmbiguous Code=1 \"(null)\""
+      ],
+      "run": 16,
+      "pid": 59536,
+      "hwnd": 5312104,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:53.2972242+00:00",
+      "outcomeSha256": "ab679c1173eca11863660b8324eddeadaedefc8615ac25d25d74ceba8d590802",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5312104,
+          "monotonicNS": 74125570518300,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 59536,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 55868,
+          "utc": "2026-10-11T09:28:51.427Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5312104,
+          "monotonicNS": 74125578335600,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 59536,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 55868,
+          "utc": "2026-10-11T09:28:51.435Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5312104,
+          "monotonicNS": 74125578724500,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 59536,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 55868,
+          "utc": "2026-10-11T09:28:51.435Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5312104,
+          "monotonicNS": 74127449399400,
+          "phase": "window-closed",
+          "pid": 59536,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 55868,
+          "utc": "2026-10-11T09:28:53.306Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 17,
+      "pid": 4560,
+      "hwnd": 5377640,
+      "primaryError": "",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "already-signaled",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:28:56.8653853+00:00",
+      "outcomeSha256": "d1d691b25a11d44c4f41e03546e9a398753d2dd1ee32bc68471e146164048286",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 5377640,
+          "monotonicNS": 74129240196000,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 4560,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 54288,
+          "utc": "2026-10-11T09:28:55.097Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5377640,
+          "monotonicNS": 74129248272500,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 4560,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 54288,
+          "utc": "2026-10-11T09:28:55.105Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 5377640,
+          "monotonicNS": 74129248880700,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 4560,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 54288,
+          "utc": "2026-10-11T09:28:55.105Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 5377640,
+          "monotonicNS": 74131016794000,
+          "phase": "window-closed",
+          "pid": 4560,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 54288,
+          "utc": "2026-10-11T09:28:56.873Z"
+        }
+      ]
+    },
+    {
+      "hostErrors": [],
+      "run": 18,
+      "pid": 31540,
+      "hwnd": 6361106,
+      "primaryError": "Owned renderer child deadline",
+      "cleanup": {
+        "confirmedOwnedExit": true,
+        "kernelExitSignaled": true,
+        "kernelWaitResult": 0,
+        "exitCertification": "retained-kernel-handle",
+        "hasExitedObserved": true,
+        "killAttempted": false,
+        "status": "signaled-after-exit-observation",
+        "error": ""
+      },
+      "closePostedAt": "2026-10-11T09:29:09.6936180+00:00",
+      "outcomeSha256": "8bf715d05abcd043327632616e141578a8400df25fda7312e65971de00472119",
+      "metrics": [
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "hwnd": 6361106,
+          "monotonicNS": 74134847963200,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "onReady",
+          "pid": 31540,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onReady",
+          "thread": 50228,
+          "utc": "2026-10-11T09:29:00.704Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6361106,
+          "monotonicNS": 74134860826700,
+          "ordering": "onReady-before-first-layout",
+          "phase": "first-commit-complete",
+          "pid": 31540,
+          "record": "first-layout",
+          "scale": 2.5,
+          "source": "BridgeWindow.commit",
+          "thread": 50228,
+          "utc": "2026-10-11T09:29:00.717Z",
+          "version": 1,
+          "windowMetricsEventSeen": false
+        },
+        {
+          "bridge": {
+            "active": false,
+            "heightPx": 1396,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "event": {
+            "action": 0,
+            "arg": 0,
+            "i0": 800,
+            "i1": 600,
+            "kindRaw": 7,
+            "modifiers": 0,
+            "node": 0,
+            "seq": 1,
+            "snapshot": 0,
+            "text": "",
+            "typed": "",
+            "window": 4294967297,
+            "x": 2.5,
+            "y": 0
+          },
+          "eventKind": "windowMetrics",
+          "hwnd": 6361106,
+          "monotonicNS": 74134861740500,
+          "ownedClient": {
+            "dpi": 240,
+            "heightPx": 600,
+            "logicalHeight": 240,
+            "logicalWidth": 320,
+            "scale": 2.5,
+            "widthPx": 800
+          },
+          "phase": "first-window-metrics-event",
+          "pid": 31540,
+          "record": "metrics-snapshot",
+          "source": "Bridge.onEvent",
+          "thread": 50228,
+          "utc": "2026-10-11T09:29:00.718Z"
+        },
+        {
+          "dpi": 240,
+          "hwnd": 6361106,
+          "monotonicNS": 74143847873600,
+          "phase": "window-closed",
+          "pid": 31540,
+          "record": "window-metrics-status",
+          "scale": 2.5,
+          "source": "Bridge.onWindowClosed",
+          "status": "observed-actual-windowMetrics-event",
+          "thread": 50228,
+          "utc": "2026-10-11T09:29:09.704Z"
+        }
+      ]
+    }
+  ],
+  "scope": "Raw source-bound observations; no parity, provider, controlled occlusion or timing qualification",
+  "reviewExecution": "Offline Python/hash/source only; no native/remote/compiler actions",
+  "inputPins": {
+    "factory/native/windows/padding-settled-capture-v4/fetch-actual-repeat-r1.json": "d795541292c5a9205fdd121095afc1b695b660dc157e0605fc7e62d8adf53df0",
+    "factory/native/windows/padding-settled-capture-v4/fetch-coordinator-repeat-r1.json": "121c37ff878fef42234773a92fff3f66400ec3628ddaef0a5976f81f32941f9d",
+    "factory/native/windows/padding-settled-capture-v4/coordinator-repeat-r1/coordinator.json": "f43b961a93e671098739298806c38ca21b8298e6f4eacad31b04508388c730a5",
+    "factory/native/windows/padding-settled-capture-v4/capture-repeat.ps1": "40dbc9003e3167e3637401beebed058814a1d5bd6a96f0ab95fc035d9c85a927",
+    "factory/native/windows/padding-settled-capture-v4/support/cleanup.ps1": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+    "factory/native/windows/padding-settled-capture-v4/root-first-proof-r1/proof.stdout.bin": "ac9cc2a3b981f8467e608eccb45b9bfc0113bbaf0846040db3a5699d7334b114",
+    "factory/native/windows/padding-settled-capture-v4/root-first-proof-r1/proof-process.json": "0b8e9357553a516ceb2732a881602f40297bbd27cedd8617131b1f0db8058a3a"
+  }
+}

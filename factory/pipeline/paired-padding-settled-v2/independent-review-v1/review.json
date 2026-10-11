@@ -1,0 +1,50 @@
+{
+  "checks": {
+    "heldClaims": "pass",
+    "peerReviewCounts": "pass",
+    "producerReplayByteExact": "pass",
+    "rawHashJoins": "pass",
+    "sourceCaseRecipeWitness": "pass",
+    "v1Preserved": "pass"
+  },
+  "counts": {
+    "macRawAttempts": 20,
+    "windowsDeadline": [
+      18
+    ],
+    "windowsEligible": 15,
+    "windowsExpected": 20,
+    "windowsInvalidHost": [
+      3,
+      16
+    ],
+    "windowsNotStarted": [
+      19,
+      20
+    ],
+    "windowsRawAttempts": 18
+  },
+  "findings": [
+    "Raw admission counts pass: Mac20; Windows18 attempted, 15 eligible, runs3/16 invalid-host, run18 deadline; 19/20 not started.",
+    "No invented parity or timing comparison: native/pixel/provider parity held, semantic qualification not claimed, cross-platform timing unavailable.",
+    "Integration hold: report.py uses ad hoc direct Path.read_bytes/json.loads and custom output; it does not use F8 comparator, F9 report builder, workflow gate/evidence, or ArchiveByteReader origin-reader callback.",
+    "Production reader must consume explicit archive-bound references before F10 admission; current report cannot authorize gate qualification."
+  ],
+  "integration": {
+    "f8ComparatorUsed": false,
+    "f9ReportBuilderUsed": false,
+    "mode": "ad-hoc-direct-file-reader",
+    "productionArchiveByteReaderUsed": false,
+    "required": "wire explicit ArchiveByteReader/origin_reader through workflow & canonical F8/F9 joins before admission",
+    "status": "hold",
+    "workflowUsed": false
+  },
+  "schema": "paired-padding-settled-independent-review-v1",
+  "stage": {
+    "v1FailedReportSha256": "sha256:1610c1b9ca1b9c2487f4b501ed0a4580e75359085780fc66ea078a6e2da54ec7",
+    "v2CodeSha256": "sha256:ac1131ef60adc29b3d3792f2ce3ec853f9f6cb870f524349099a0722d76f691f",
+    "v2ConfigSha256": "sha256:801941da071123876b19c4907cb5a105334deff4b2f6461c1f2910cdf1d665ea",
+    "v2ReportSha256": "sha256:6aa22b923df24ef8d596169a80624c56a58af45899ecb619d360654982cbc4e4"
+  },
+  "status": "PASS_WITH_INTEGRATION_HOLD"
+}

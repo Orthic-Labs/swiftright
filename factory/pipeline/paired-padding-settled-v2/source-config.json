@@ -1,0 +1,64 @@
+{
+  "schema": "paired-padding-settled-input-v1",
+  "status": "partial-windows-15-eligible-2-invalid-host-1-deadline",
+  "block": "swiftui.padding-frame",
+  "case": {
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+    "sha256": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+    "inputs": {"alignment": "trailing", "padding": 8, "width": 96}
+  },
+  "recipe": {
+    "id": "swiftui.padding-frame.recipe",
+    "sha256": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6"
+  },
+  "source": {
+    "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "path": "factory/pipeline/gate-pilot/seed-probes/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift"
+  },
+  "witness": {
+    "id": "swiftui.padding-frame.witness",
+    "sha256": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db",
+    "type": "Witness_padding_frame"
+  },
+  "mac": {
+    "root": "factory/native/macos/evidence/20261010-gate-seeded/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+    "summarySha256": "sha256:d0ab5b05614a82035a31c385675778f2d49c1e67f3f9d56c54819bdfbf057309",
+    "runs": 20,
+    "binarySha256": "sha256:f085d5ebcf0e44d375d441a04db07d7e3bbb263af924f6ac1770b8e53cbb0608",
+    "adapterSourceSha256": "sha256:a4070d2c1cb11f6a1de90cec025b225ec0af03ba27ef1fa20ab5bff396b1f59c",
+    "compiledAdapterSha256": "sha256:68b302e99aca3edaa24362c1a3666725f5445d134919c4a79b220efc0c6c6856",
+    "hostHash": "sha256:9e50043f329abbc61cf7196eb425e868117c51c3a236ab03c6ea7e12887ba470",
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+    "toolchain": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1), arm64-apple-macosx27.0.0",
+    "dimensions": {
+      "offscreen": {"widthPx": 96, "heightPx": 40, "scale": 1},
+      "compositor": {"widthPx": 96, "heightPx": 72, "scale": 1},
+      "layout": {"width": 96, "height": 40},
+      "witnessAX": {"width": 23, "height": 16}
+    }
+  },
+  "peerReview": {
+    "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-review-v1/report.json",
+    "sha256": "sha256:679fb36be1b7ffdd34dfd8ef4cdca10441685a3a1279f2939aa88196f36c494c"
+  },
+  "windows": {
+    "root": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1",
+    "runs": 20,
+    "target": "windows-x86_64",
+    "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "dimensions": {"printWindow": {"widthPx": 800, "heightPx": 600, "dpi": 240}, "uiaClientExpected": {"widthPx": 800, "heightPx": 600}}
+  },
+  "qualification": {
+    "semantic": "observed-role-and-label-sequence-only",
+    "timing": "raw-clocks-retained; cross-platform timing comparison unavailable",
+    "nativeParity": "held",
+    "pixelParity": "held",
+    "providerReadback": "held",
+    "goldens": 0,
+    "promotion": "held"
+  }
+}
