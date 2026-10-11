@@ -1,4 +1,4 @@
-Last updated: 2026-10-11T08:48:07Z
+Last updated: 2026-10-11T08:50:06Z
 
 # SwiftRight — pending (SR0 close-out lane)
 
@@ -11,7 +11,7 @@ Last updated: 2026-10-11T08:48:07Z
 | 5 | Cross-compare used 3 runs per side; contract says 20 | needs Adrian: accept the deviation, or run the 20-run version (about 4 h on the Dell)? |
 | 6 | Freeze: CONTRACT.md v1.0-rc to v1.0, ABI 0.6 frozen | needs Adrian: sign off the freeze? |
 | 7 | Retry-cap overruns after 9 October | needs Adrian: acknowledge (recorded in docs/sr0-retry-ledger.md) |
-| 8 | Unproven recorder items R5, R6, R8 (CROSS-ALL.md) | in progress: specifying the settling probe for each (read-only analysis), runs follow |
+| 8 | Unproven recorder items (CROSS-ALL.md) | analysed. R6 (Mac never composes in F7): cannot be settled without switching the Mac input source, a system setting; Windows IME behaviour is covered natively by R9: proposed disposition accepted-limitation. R5 (F5 initial window size) and R8 (F9 late results after close) each need a new Mac fixture variant and a paired Windows run: next work item, built and run by this chat |
 | 9 | Selection highlight not painted (caret only) | open, SR1 |
 | 10 | Renderer ready metrics report the wrong height before the window settles (docs/sr0-findings.md §12) | open, SR1 (ABI 0.7 proposal has it) |
 | 11 | IME candidate list does not follow a mid-composition layout move | known limitation, SR1 (TSF) |
