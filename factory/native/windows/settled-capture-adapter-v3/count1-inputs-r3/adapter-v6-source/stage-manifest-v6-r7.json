@@ -1,0 +1,73 @@
+{
+  "kind": "factory-adapter-v6-repeat-r7-stage-manifest-v1",
+  "version": 1,
+  "files": [
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/README.md",
+      "role": "source-contract",
+      "bytes": 1598,
+      "sha256": "sha256:73ffb38bb86822b5c182ab2e5d6aad89f7a285c5cfb07d742416385f311b60f6"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/adapter-v6.py",
+      "role": "adapter-wrapper",
+      "bytes": 1509,
+      "sha256": "sha256:8a0684fd4221b4389f575ccac342d3d259b7ee3b4358177a70e315ec9cf4ff32"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/produce-input-map-v6.py",
+      "role": "input-map-producer",
+      "bytes": 8046,
+      "sha256": "sha256:83e72baac6080c143c1817278313265b721d6d8b43b588bda97ca4a9b3e8fa3e"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/produce-inputs-v6.py",
+      "role": "producer-cli",
+      "bytes": 4866,
+      "sha256": "sha256:e853386ea44a31d6a710cee33bfeb5dde9c8ce06c93ff0fc3f00ad07788e0e3b"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/run-adapter-v6.py",
+      "role": "normalizer-cli",
+      "bytes": 6428,
+      "sha256": "sha256:b14919ba381e8123d91f4c91a8469f36e0aa83b33ad92b70a7b58d195e4e44d6"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/test-adapter-v6-source.py",
+      "role": "pure-control",
+      "bytes": 3062,
+      "sha256": "sha256:f3328060b9668a4cc0ed0a9682c3e535b6ef300b39986b8e52b104225b1674ec"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v5-source/repeat-r7-source-profile-v1/stage-manifest.json",
+      "role": "r7-profile-stage",
+      "bytes": 1153,
+      "sha256": "sha256:401a5282d603aa5c02e0f51a6030ff19d816d0af28bf9e6664b5a71b6c2a06e2"
+    },
+    {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/windows-exit-proof-r2/repeat-r7-dependency-audit-v1/stage-manifest.json",
+      "role": "r7-dependency-stage",
+      "bytes": 1166,
+      "sha256": "sha256:0e1b6c604cae819bc50253d34d1cef262bf26686fc59b9ce0bf285bcc1bcb056"
+    },
+    {
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/stage-manifest-r7.json",
+      "role": "r7-overlay-stage",
+      "bytes": 3023,
+      "sha256": "sha256:9f6b2821b205d3463063faf66ed5c550acd37a5292ec80b47552d50e61907fae"
+    }
+  ],
+  "frozenSources": [
+    "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v5-source/adapter-v5.py",
+    "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v5-source/run-adapter-v5.py",
+    "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v5-source/produce-inputs-v5.py"
+  ],
+  "controls": {
+    "compilerActions": 0,
+    "nativeActions": 0,
+    "lockActions": 0,
+    "remoteActions": 0,
+    "hashesInvented": false,
+    "qualification": "hold-until-native-archive-and-proof-r2"
+  }
+}

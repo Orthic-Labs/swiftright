@@ -2,7 +2,7 @@
 
 Updated 11 October 2026. Candidate implementation continues independently of these holds. No row grants parity or promotes a golden.
 
-Current takeover: root manages two source owners, SR0 & SR1. Factory padding r8 records actual UIA/PrintWindow bytes, sealed streams & numeric kernel exits; production archive reader admits its 13-role proof with no issues. Fresh twenty-run Windows qualification remains pending. SR0 F1×20-r1/r2/r3 failed batches stay immutable; r5 driver checks a refreshed owned HWND/client before input. Full Mac matrix needs process-level no-prompt signer proof; W08 upstream repair & Narrator listening remain explicit holds. Every historical result below retains its original scope.
+Current takeover: root manages two source owners, SR0 & SR1. Factory padding r8 records actual UIA/PrintWindow bytes, sealed streams & numeric kernel exits; production archive reader admits its 13-role proof with no issues. Fresh padding Count20-r7 now has 20/20 production archive-reader proofs; paired comparison correctly blocks historical Mac r09 against Windows r11 case/tuple binding. Fresh matched-case captures are next. SR0 F1×20-r1/r2/r3 failed batches stay immutable; r5 driver checks a refreshed owned HWND/client before input. Full Mac matrix needs process-level no-prompt signer proof; W08 upstream repair & Narrator listening remain explicit holds. Every historical result below retains its original scope.
 
 | Item | Why held | Release condition |
 |---|---|---|

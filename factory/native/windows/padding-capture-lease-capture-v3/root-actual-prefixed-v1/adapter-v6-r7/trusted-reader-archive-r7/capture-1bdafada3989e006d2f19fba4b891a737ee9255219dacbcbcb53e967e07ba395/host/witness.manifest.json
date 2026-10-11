@@ -1,0 +1,64 @@
+{
+  "block": "swiftui.padding-frame",
+  "case": {
+    "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "caseInputs": {
+    "alignment": "trailing",
+    "padding": 8,
+    "width": 96
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "not-declared",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.padding-frame:swiftui.padding-frame.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.padding-frame.witness",
+        "sourceHash": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+    "id": "swiftui.padding-frame.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+  "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.padding-frame.witness",
+    "sourceHash": "sha256:860fa789eed486958eb0a52c01453d0e29c1c9d4e89ea927c140fa683cf9b2db"
+  },
+  "witnessType": "Witness_padding_frame"
+}

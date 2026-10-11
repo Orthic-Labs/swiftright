@@ -1,0 +1,64 @@
+{
+  "kind": "factory-repeat-r7-first-proof-dependency-closure-v1",
+  "status": "source-control-only",
+  "observedBlocker": "repeat-r6 scheduled child did not inherit Assert-UiaSnapshotWorkerProof import",
+  "repair": "first-proof-repeat-r7 self-loads exact schema before first-proof definitions are invoked",
+  "schemaRef": {
+    "path": "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1",
+    "sha256": "sha256:ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61",
+    "bytes": 5887
+  },
+  "firstProofImportOrder": [
+    "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/integration-prefixed-ids-r1.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/cleanup.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/stream-seal.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/final-exit-certificate.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/support/final-exit-certificate.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/first-proof-repeat-r7.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/support/all-owned-release.ps1"
+  ],
+  "firstProofSymbols": {
+    "integration-prefixed-ids-r1.ps1": [
+      "Assert-FactoryIntegrationSources",
+      "Assert-FactorySnapshotReady",
+      "Assert-LeaseIssuedMetadata",
+      "Test-FactoryParentOrdering"
+    ],
+    "cleanup.ps1": [
+      "Test-FactoryKernelExitCertificate"
+    ],
+    "stream-seal.ps1": [
+      "Test-FactoryRawDestinationClosed",
+      "Get-FactoryRawHash"
+    ],
+    "final-exit-certificate.ps1": [
+      "Test-FactoryFinalStart",
+      "Test-FactoryFinalReleaseProof"
+    ],
+    "uia-worker/support/final-exit-certificate.ps1": [
+      "Test-FactoryAllUiaWorkerReleaseProofs",
+      "Test-FactoryUiaFinalStart"
+    ],
+    "uia-worker/schema.ps1": [
+      "Assert-UiaSnapshotWorkerProof"
+    ],
+    "all-owned-release.ps1": [
+      "Assert-FactoryAllOwnedRelease"
+    ]
+  },
+  "runtimeAfterFirstProof": [
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/invoke-worker.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1"
+  ],
+  "scheduledScopes": [
+    "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/dispatch-repeat-r7.ps1",
+    "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/resume-issued-coordinator-repeat-r7.ps1"
+  ],
+  "controls": {
+    "nativeActions": 0,
+    "lockActions": 0,
+    "remoteActions": 0,
+    "compilerActions": 0
+  }
+}

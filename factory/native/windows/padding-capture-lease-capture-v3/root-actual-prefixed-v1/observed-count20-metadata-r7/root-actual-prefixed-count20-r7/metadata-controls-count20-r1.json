@@ -1,0 +1,117 @@
+﻿{
+    "kind":  "factory-issued-metadata-full-guard-controls-v1",
+    "status":  "passed-source-only",
+    "frozenIntegrationPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-metadata-controls-v1\\execute-r4\\..\\..\\support\\integration.ps1",
+    "issuedMetadataPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\issued-metadata.json",
+    "issuedMetadataSha256":  "6f1f8ced038361a464c893551fed7c0770027bfa4e5ed08275694e2a1c491f1c",
+    "count":  20,
+    "baseline":  {
+                     "name":  "admitted-baseline-actual",
+                     "accepted":  true,
+                     "rejected":  false,
+                     "nativeWindowActions":  0
+                 },
+    "faultControls":  [
+                          {
+                              "name":  "admitted-baseline-relocated-resealed",
+                              "accepted":  true,
+                              "rejected":  false,
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-expected-count",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-host-argument",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-source-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata source/template boundary mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-serializer-prefix",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-runtime-modules",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued actual runtime module metadata mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-case",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:case",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-runtime",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:runtime",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-renderer",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:renderer",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-frozen",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:tuple-ref",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-canonical-input-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Candidate binding raw/source joins missing",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "mac-context-path",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Mac context source ref missing: macContext_capture_index",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          }
+                      ],
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0,
+    "qualification":  "hold"
+}
