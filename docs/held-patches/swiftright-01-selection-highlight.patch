@@ -1,0 +1,146 @@
+--- /dev/null
++++ b/packages/SwiftRightBridge/Tests/SwiftRightBridgeTests/SelectionRectsTests.swift	2026-10-11 14:48:26
+@@ -0,0 +1,54 @@
++import XCTest
++@testable import SwiftRightBridge
++
++/// Pure-geometry tests for selectionRects (no renderer, no window): these run headlessly on macOS.
++final class SelectionRectsTests: XCTestCase {
++    private let origin: (x: Float, y: Float) = (x: 10, y: 20)
++    private let lh: Float = 24
++
++    /// "ab\ncd": cells a,b,'\n' on line 0 (8 px each, break zero width), c,d on line 1.
++    private let cells: [CharCell] = [
++        CharCell(utf8Offset: 0, utf8Len: 1, line: 0, wordStart: true, lineBreak: false, x0: 0, x1: 8),
++        CharCell(utf8Offset: 1, utf8Len: 1, line: 0, wordStart: false, lineBreak: false, x0: 8, x1: 16),
++        CharCell(utf8Offset: 2, utf8Len: 1, line: 0, wordStart: false, lineBreak: true, x0: 16, x1: 16),
++        CharCell(utf8Offset: 3, utf8Len: 1, line: 1, wordStart: true, lineBreak: false, x0: 0, x1: 8),
++        CharCell(utf8Offset: 4, utf8Len: 1, line: 1, wordStart: false, lineBreak: false, x0: 8, x1: 16),
++    ]
++    private let lines = [
++        LineInfo(utf8Start: 0, utf8Len: 3, width: 16, top: 0, baseline: 16),
++        LineInfo(utf8Start: 3, utf8Len: 2, width: 16, top: 24, baseline: 40),
++    ]
++
++    private func rects(_ s: Int, _ e: Int) -> [Rect] {
++        selectionRects(cells: cells, lines: lines, start: s, end: e, origin: origin, lineHeightPx: lh, lineBreakWidth: 4)
++    }
++
++    func testCollapsedSelectionHasNoRects() {
++        XCTAssertEqual(rects(2, 2), [])
++    }
++
++    func testSingleLineRange() {
++        XCTAssertEqual(rects(0, 2), [Rect(x: 10, y: 20, w: 16, h: 24)])
++        XCTAssertEqual(rects(1, 2), [Rect(x: 18, y: 20, w: 8, h: 24)])
++    }
++
++    func testSelectedLineBreakAddsNub() {
++        XCTAssertEqual(rects(1, 3), [Rect(x: 18, y: 20, w: 12, h: 24)])
++    }
++
++    func testMultiLineRangeGivesOneRectPerLine() {
++        XCTAssertEqual(rects(1, 5), [Rect(x: 18, y: 20, w: 12, h: 24), Rect(x: 10, y: 44, w: 16, h: 24)])
++        XCTAssertEqual(rects(0, 4), [Rect(x: 10, y: 20, w: 20, h: 24), Rect(x: 10, y: 44, w: 8, h: 24)])
++    }
++
++    func testReversedAndOutOfRangeBoundsAreClamped() {
++        XCTAssertEqual(rects(2, 0), rects(0, 2))
++        XCTAssertEqual(rects(3, 99), [Rect(x: 10, y: 44, w: 16, h: 24)])
++        XCTAssertEqual(rects(9, 12), [])
++    }
++
++    func testEmptyCellsYieldNothing() {
++        XCTAssertEqual(selectionRects(cells: [], lines: [], start: 0, end: 5, origin: origin,
++                                      lineHeightPx: lh, lineBreakWidth: 4), [])
++    }
++}
+--- a/packages/SwiftRightBridge/Sources/SwiftRightBridge/Marshal.swift	2026-10-11 14:48:15
++++ b/packages/SwiftRightBridge/Sources/SwiftRightBridge/Marshal.swift	2026-10-11 14:48:15
+@@ -248,4 +248,36 @@
+     }
+     let top = line < lines.count ? lines[line].top : Float(line) * lineHeightPx
+     return Rect(x: origin.x + x, y: origin.y + top, w: width, h: lineHeightPx)
++}
++
++/// Window-px highlight rectangles for the UTF-16 selection `start..<end` (cell indices), one per
++/// visual line that has selected cells. A selected line-break cell extends its line's rectangle by
++/// `lineBreakWidth` (the conventional "newline is selected" nub). Collapsed or out-of-range
++/// selections yield no rectangles. Pure geometry: no renderer or window needed.
++public func selectionRects(cells: [CharCell], lines: [LineInfo], start: Int, end: Int,
++                           origin: (x: Float, y: Float), lineHeightPx: Float,
++                           lineBreakWidth: Float) -> [Rect] {
++    let lo = max(0, min(start, end)), hi = min(cells.count, max(start, end))
++    guard lo < hi else { return [] }
++    var out: [Rect] = []
++    var curLine = -1
++    var x0: Float = 0, x1: Float = 0
++    func flush() {
++        guard curLine >= 0, x1 > x0 else { return }
++        let top = curLine < lines.count ? lines[curLine].top : Float(curLine) * lineHeightPx
++        out.append(Rect(x: origin.x + x0, y: origin.y + top, w: x1 - x0, h: lineHeightPx))
++    }
++    for i in lo..<hi {
++        let c = cells[i]
++        let line = Int(c.line)
++        let right = c.lineBreak ? c.x0 + lineBreakWidth : c.x1
++        if line != curLine {
++            flush()
++            curLine = line; x0 = c.x0; x1 = right
++        } else {
++            x0 = min(x0, c.x0); x1 = max(x1, right)
++        }
++    }
++    flush()
++    return out
+ }
+--- a/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift	2026-10-11 14:48:15
++++ b/probes/sr0-s/fresh-on-bridge/Sources/FreshOnBridge/BridgeBackend.swift	2026-10-11 14:48:15
+@@ -30,6 +30,8 @@
+     static let fieldFill: UInt32 = 0xFFFFFFFF
+     static let fieldBorder: UInt32 = 0x888888FF
+     static let caretColor: UInt32 = 0x111111FF
++    /// Selection highlight (system-like light blue, drawn behind the dark text), RGBA.
++    static let selectionColor: UInt32 = 0x99C9EFFF
+     /// Visual padding around runtime frames. The runtime sizes a TextField to its text only and has no
+     /// padding modifier for buttons (v0 runtime gap), so the backend draws the box with these insets.
+     static let fieldInsetX: Float = 6
+@@ -498,6 +500,13 @@
+             let runBase = runBlock(node.id)
+             if !text.isEmpty, let m = measure(text, color: faded(FreshStyle.textColor, alpha), maxWidth: 0, into: &releasable) {
+                 let cells = (try? bridge.cells(of: m.run)) ?? []
++                // Selection highlight, behind the text: one rect per visual line (focused field, non-empty selection).
++                if let row, row == focusedRow, let sel = node.selection, sel.length > 0 {
++                    for r in selectionRects(cells: cells, lines: m.lines, start: sel.location, end: sel.location + sel.length,
++                                            origin: origin, lineHeightPx: lh, lineBreakWidth: max(1, 4 * s)) {
++                        prims.append(.rect(r, color: faded(FreshStyle.selectionColor, alpha)))
++                    }
++                }
+                 prims.append(.text(m.run, x: origin.x, y: origin.y))
+                 // Caret or selection end, in displayed text (the runtime's TextInputState).
+                 let caretEnd = node.selection.map { $0.location + $0.length } ?? text.utf16.count
+--- a/examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift	2026-10-11 14:48:15
++++ b/examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift	2026-10-11 14:48:15
+@@ -29,6 +29,8 @@
+     static let fieldFill: UInt32 = 0xFFFFFFFF
+     static let fieldBorder: UInt32 = 0x888888FF
+     static let caretColor: UInt32 = 0x111111FF
++    /// Selection highlight (system-like light blue, drawn behind the dark text), RGBA.
++    static let selectionColor: UInt32 = 0x99C9EFFF
+     /// The runtime sizes a TextField and a Button to their content only (no padding modifier for these), so the
+     /// backend draws the box with these insets.
+     static let fieldInsetX: Float = 6
+@@ -365,6 +367,13 @@
+             let cells = measurement.flatMap { try? bridge.cells(of: $0.run) } ?? []
+             let lines = measurement?.lines ?? []
+             if let m = measurement {
++                // Selection highlight, behind the text: one rect per visual line (focused field, non-empty selection).
++                if let row, row == focusedRow, let sel = node.selection, sel.length > 0 {
++                    for r in selectionRects(cells: cells, lines: lines, start: sel.location, end: sel.location + sel.length,
++                                            origin: origin, lineHeightPx: lh, lineBreakWidth: max(1, 4 * s)) {
++                        prims.append(.rect(r, color: SliceStyle.selectionColor))
++                    }
++                }
+                 prims.append(.text(m.run, x: origin.x, y: origin.y))
+             }
+             // Caret or selection end, in displayed text (the runtime's TextInputState).

@@ -1,0 +1,76 @@
+--- a/render/swiftright-render/src/view.rs	2026-10-11 14:48:37
++++ b/render/swiftright-render/src/view.rs	2026-10-11 14:49:08
+@@ -1001,9 +1001,20 @@
+ const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
+ const WM_IME_ENDCOMPOSITION: u32 = 0x010E;
+ const WM_IME_COMPOSITION: u32 = 0x010F;
++const WM_IME_REQUEST: u32 = 0x0288;
++const IMR_QUERYCHARPOSITION: usize = 0x0006;
++/// IMECHARPOSITION (imm.h): dwCharPos is an in/out-of-band input (offset in UTF-16 units from the composition start);
++/// pt = screen px top-left of that character, cLineHeight, rcDocument = screen px document area.
++#[repr(C)]
++struct ImeCharPosition { size: u32, char_pos: u32, pt: [i32; 2], line_height: u32, rc_document: [i32; 4] }
+ static IME_MSG_LOGS: AtomicU32 = AtomicU32::new(0);
+ 
+-fn ime_caret_rect(_hwnd: *mut c_void) -> Option<Rect> {
++fn ime_caret_rect(hwnd: *mut c_void) -> Option<Rect> {
++    ime_caret_rect_at(hwnd, 0)
++}
++
++/// Caret rect (client physical px) of the character offset (UTF-16 units) after the composition start (or selection start).
++fn ime_caret_rect_at(_hwnd: *mut c_void, off: u32) -> Option<Rect> {
+     with_ime(|h, win, node| {
+         let mut sel = Utf16Selection::default();
+         let mut mr = Utf16Range::default();
+@@ -1015,7 +1026,7 @@
+         };
+         let f = h.ime_caret_bounds?;
+         let mut out = Rect::default();
+-        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start, end: range.start }, &mut out) != SWR_OK {
++        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start + off, end: range.start + off }, &mut out) != SWR_OK {
+             return None;
+         }
+         Some(out)
+@@ -1132,6 +1143,11 @@
+         let cand = CandidateForm { index: 0, style: 0x0080, pt: [x, y + h], rc: [x, y, x + w, y + h] }; // CFS_EXCLUDE
+         ImmSetCompositionWindow(himc, &cf);
+         ImmSetCandidateWindow(himc, &cand);
++        for index in 1..4u32 {
++            // The candidate form is per list index (0-3); an IME that opened a list on another index reads that one.
++            let c = CandidateForm { index, ..CandidateForm { index: 0, style: cand.style, pt: cand.pt, rc: cand.rc } };
++            ImmSetCandidateWindow(himc, &c);
++        }
+         ImmReleaseContext(hwnd, himc);
+     }
+ }
+@@ -1155,6 +1171,30 @@
+     if msg == WM_SWR_MODAL {
+         on_modal_message();
+         return 0;
++    }
++    // TSF-based IMEs on an IMM32 window query the live caret with WM_IME_REQUEST / IMR_QUERYCHARPOSITION.
++    // Answer from current geometry (ime_caret_bounds is evaluated now, so it reflects a layout move).
++    if msg == WM_IME_REQUEST && w == IMR_QUERYCHARPOSITION && l != 0 {
++        let p = l as *mut ImeCharPosition;
++        let ok = unsafe { (*p).size as usize >= std::mem::size_of::<ImeCharPosition>() };
++        if ok {
++            let off = unsafe { (*p).char_pos };
++            if let Some(r) = ime_caret_rect_at(hwnd, off) {
++                let mut o = [0i32, 0];
++                let mut rc = [0i32; 4];
++                unsafe {
++                    ClientToScreen(hwnd, &mut o);
++                    GetClientRect(hwnd, &mut rc);
++                    (*p).pt = [o[0] + r.x as i32, o[1] + r.y as i32];
++                    (*p).line_height = (r.h as i32).max(1) as u32;
++                    (*p).rc_document = [o[0] + rc[0], o[1] + rc[1], o[0] + rc[2], o[1] + rc[3]];
++                }
++                if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
++                    eprintln!("[swiftright-render] ime_query_charpos off={off} pt={},{} h={}", unsafe { (*p).pt[0] }, unsafe { (*p).pt[1] }, unsafe { (*p).line_height });
++                }
++                return 1;
++            }
++        }
+     }
+     let out = DefSubclassProc(hwnd, msg, w, l);
+     match msg {
