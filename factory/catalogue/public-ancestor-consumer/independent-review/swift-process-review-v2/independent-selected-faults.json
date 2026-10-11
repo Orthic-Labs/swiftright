@@ -1,0 +1,27 @@
+[
+  {
+    "fault": "known-other-import-usr",
+    "result": "rejected",
+    "reason": "import exact canonical identity"
+  },
+  {
+    "fault": "coherent-wrong-module-tree-report",
+    "result": "rejected",
+    "reason": "tree exact namespace/name"
+  },
+  {
+    "fault": "known-tool-wrong-process-argv",
+    "result": "rejected",
+    "reason": "actual index argv/cwd"
+  },
+  {
+    "fault": "duplicate-request-compilerargs",
+    "result": "rejected",
+    "reason": "request field closure/cardinality"
+  },
+  {
+    "fault": "other-physical-source-usr",
+    "result": "rejected",
+    "reason": "physical raw exact identity/access/owner"
+  }
+]

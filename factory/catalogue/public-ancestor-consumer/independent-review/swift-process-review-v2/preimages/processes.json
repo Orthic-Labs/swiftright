@@ -1,0 +1,73 @@
+{
+  "demangle": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "--expand"
+    ],
+    "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swift-stdlib-process-v2",
+    "endedUnixNs": 1791676894804998000,
+    "returncode": 0,
+    "startedUnixNs": 1791676894801479000,
+    "stderr": {
+      "bytes": 0,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/receipts/demangle.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdinSha256": "sha256:f3a85ecbd80763009f02c2d5f3c1c82aba703e5c316381d15bbf8acd57cced32",
+    "stdout": {
+      "bytes": 4342,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/raw/trees.txt",
+      "sha256": "sha256:be08f3bc2b835c9a40babb3561d9842c20e4a59ed36ecea53aacdb7695a4d7f7"
+    }
+  },
+  "index": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "debug",
+      "run-sourcekitd-request",
+      "--request-file",
+      "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swift-stdlib-process-v2/owners.yaml"
+    ],
+    "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swift-stdlib-process-v2",
+    "endedUnixNs": 1791676894800530000,
+    "returncode": 0,
+    "startedUnixNs": 1791676894724642000,
+    "stderr": {
+      "bytes": 0,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/receipts/index.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdinSha256": null,
+    "stdout": {
+      "bytes": 16640,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/raw/owners.index.txt",
+      "sha256": "sha256:0680e4d3897a1ca6cd8dab2dbd94a29f60b5a35a178cbfb8b183b42b0e3b1048"
+    }
+  },
+  "typecheck": {
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-typecheck",
+      "-sdk",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+      "-target",
+      "arm64-apple-macosx27.0",
+      "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swift-stdlib-process-v2/owners.swift"
+    ],
+    "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/swift-stdlib-process-v2",
+    "endedUnixNs": 1791676894724346000,
+    "returncode": 0,
+    "startedUnixNs": 1791676894515820000,
+    "stderr": {
+      "bytes": 0,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/receipts/typecheck.stderr",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdinSha256": null,
+    "stdout": {
+      "bytes": 0,
+      "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-process-v2/receipts/typecheck.stdout",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
