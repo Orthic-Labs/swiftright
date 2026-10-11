@@ -1,0 +1,83 @@
+{
+  "analyzerGap": "analyze_lifecycle.py:13-16 checks only stdout destinationClosed & hash; stderr closure/sealed state/bytes are never read or recomputed; timing/outcome stderr hash equality alone is forgeable.",
+  "buildStageSha256": "53cb09f053872cfa35a5469ef220aaa5238a06c3fbd3ab80c4c72a2531e623ef",
+  "checks": [
+    {
+      "count": 24,
+      "name": "root-24-pins",
+      "ok": true,
+      "stageSha256": "4cb0602f6ed2a50ee7717895ce1dc03d48e80e82909996f395fa1b1da93f7eb4"
+    },
+    {
+      "case": "swiftui.stack-overlay.recipe.gate-seeded.ca4e13f820f5d258",
+      "name": "case-plan-lineage",
+      "ok": true,
+      "planSha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1"
+    },
+    {
+      "count": 12,
+      "name": "marker-source-12",
+      "ok": true,
+      "sourceSha256": "1463629c6136d2dd1bf47b2ff21bfefcc3273f8d606608e3c10c5267062348a1"
+    },
+    {
+      "helpers": [
+        "cleanup.ps1",
+        "host-inputs.ps1",
+        "owned-close.ps1",
+        "pixels-background.ps1",
+        "stream-seal.ps1",
+        "verify-runtime-source.ps1"
+      ],
+      "name": "v4-helper-byte-parity",
+      "ok": true
+    },
+    {
+      "name": "runner-preflight-controls",
+      "ok": true,
+      "required": [
+        "runner-count1",
+        "runner-window-deadline",
+        "runner-raw-drain",
+        "runner-stderr-drain",
+        "runner-original-cleanup",
+        "runner-host-failclosed",
+        "preflight-receipt",
+        "preflight-argv",
+        "preflight-exe",
+        "coordinator-fresh",
+        "same-handle"
+      ]
+    },
+    {
+      "name": "marker-observation-only",
+      "ok": true
+    },
+    {
+      "name": "analyzer-stderr-closure-hash",
+      "ok": false,
+      "probe": {
+        "accepted": true,
+        "claimedStderrSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "stderrDestinationClosed": false,
+        "stderrFileSha256": "090930ff082205f33d89098f4403448976d1a18ec045237e2b70d0764965b567"
+      }
+    }
+  ],
+  "compilerRuns": 0,
+  "decision": "HOLD_ANALYZER_RAW_CLOSURE_JOIN",
+  "failures": [
+    "analyzer accepts unclosed/mismatched stderr raw stream"
+  ],
+  "kind": "stack-lifecycle-next-capture-independent-review",
+  "mainSha256": "1463629c6136d2dd1bf47b2ff21bfefcc3273f8d606608e3c10c5267062348a1",
+  "markerCallsites": 12,
+  "nativeRuns": 0,
+  "planSha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1",
+  "qualification": "hold",
+  "remoteActions": 0,
+  "reviewScope": "offline source/control/analyzer audit; no compiler/native/remote action",
+  "rootStageEntries": 24,
+  "rootStageSha256": "4cb0602f6ed2a50ee7717895ce1dc03d48e80e82909996f395fa1b1da93f7eb4",
+  "version": "1"
+}

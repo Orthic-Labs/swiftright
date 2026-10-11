@@ -1,0 +1,96 @@
+{
+  "actualCompileReceiptSha256": "99a0332b765518e97a8200ef25612fa5c31671037eccdf5504a1fcec091dcae8",
+  "buildPlanSha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1",
+  "checks": [
+    {
+      "entries": 73,
+      "name": "repair-stage-refs",
+      "ok": true,
+      "stageSha256": "af8476f02095cfe768e72b6c298e33a0f1089924c02280b7c0cdc600bdfc3948"
+    },
+    {
+      "entries": 24,
+      "name": "frozen-capture-unchanged",
+      "ok": true,
+      "stageSha256": "4cb0602f6ed2a50ee7717895ce1dc03d48e80e82909996f395fa1b1da93f7eb4"
+    },
+    {
+      "name": "nine-offline-controls",
+      "ok": true,
+      "results": [
+        {
+          "accepted": false,
+          "case": "0c57156524e84fc4a1d0a230b5aba194",
+          "error": "timing/outcome hash join mismatch"
+        },
+        {
+          "accepted": false,
+          "case": "18196f92d7de479291aeeadb229c1cac",
+          "error": "source identity mismatch"
+        },
+        {
+          "accepted": false,
+          "case": "52bf8099bd7b4239b1f97a8d56cef475",
+          "error": "stderr raw sealed unconfirmed"
+        },
+        {
+          "accepted": false,
+          "case": "7699275e51a04d72ac1568915b2b39ff",
+          "error": "stderr raw terminal state invalid"
+        },
+        {
+          "accepted": true,
+          "case": "78e36bcc9f944e2a8af38763c06a92d1"
+        },
+        {
+          "accepted": false,
+          "case": "a13a29033cf4417b9a4c077f95f1dfc8",
+          "error": "stderr raw closure destinationClosed unconfirmed"
+        },
+        {
+          "accepted": false,
+          "case": "b2c5a549b29a475fab963d254000d764",
+          "error": "original owned process mismatch"
+        },
+        {
+          "accepted": false,
+          "case": "f457cda4f92144e9a8f49ceb60624d20",
+          "error": "stderr hash mismatch"
+        },
+        {
+          "accepted": false,
+          "case": "f6dcd7138802408ea320e57aee924b34",
+          "error": "stderr raw destinationClosed unconfirmed"
+        }
+      ]
+    },
+    {
+      "missing": [],
+      "name": "strict-raw-lineage-source-checks",
+      "ok": true
+    },
+    {
+      "compileReceiptSha256": "99a0332b\u2026dcae8",
+      "name": "actual-source-compile-pins",
+      "ok": true,
+      "planSha256": "9e385e4e\u2026acef1"
+    },
+    {
+      "name": "offline-only",
+      "ok": true
+    }
+  ],
+  "compilerRuns": 0,
+  "decision": "CLEAR_ANALYZER_REPAIR",
+  "failures": [],
+  "frozenCaptureStageSha256": "4cb0602f6ed2a50ee7717895ce1dc03d48e80e82909996f395fa1b1da93f7eb4",
+  "kind": "stack-lifecycle-analyzer-repair-independent-review",
+  "nativeRuns": 0,
+  "qualification": "diagnostic-only",
+  "rawCaptureAdmission": "CLEAR_INDEPENDENT_OF_ANALYZER: frozen Count1 runner source guards, actual Windows AST/source controls & actual Launch preflight are separate from analyzer; root owns final runtime receipt/lock/raw proof.",
+  "remoteActions": 0,
+  "repairEntries": 73,
+  "repairStageSha256": "af8476f02095cfe768e72b6c298e33a0f1089924c02280b7c0cdc600bdfc3948",
+  "reviewScope": "offline analyzer/source/fixture audit; no compiler/native/remote action",
+  "version": "1"
+}

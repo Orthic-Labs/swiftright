@@ -1,0 +1,44 @@
+{
+  "argv": [
+    "scp",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "-r",
+    "win:D:/Claude/swiftright/.factory-work/hosts/padding-window-diagnosis/package/build-diagnosis-r1/observation.json",
+    "win:D:/Claude/swiftright/.factory-work/hosts/padding-window-diagnosis/package/build-diagnosis-r1/compile.stdout.bin",
+    "win:D:/Claude/swiftright/.factory-work/hosts/padding-window-diagnosis/package/build-diagnosis-r1/compile.stderr.bin",
+    "win:D:/Claude/swiftright/.factory-work/hosts/padding-window-diagnosis/package/build-diagnosis-r1/FactoryProbe.exe",
+    "win:D:/Claude/swiftright/.factory-work/hosts/padding-window-diagnosis/package/build-diagnosis-r1/runtime-module-archive",
+    "factory/native/windows/padding-window-diagnosis-build-v1/root-build-r1/actual"
+  ],
+  "exitCode": 0,
+  "stderr": "",
+  "files": {
+    "compile.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "observation.json": {
+      "sha256": "74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7",
+      "bytes": 17775
+    },
+    "FactoryProbe.exe": {
+      "sha256": "caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369",
+      "bytes": 3710976
+    },
+    "compile.stdout.bin": {
+      "sha256": "28d2146a2a22d55185bf198a4ddb0e1680872851acdc90506331b4ad79695b83",
+      "bytes": 336
+    },
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftdoc": {
+      "sha256": "0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae",
+      "bytes": 68260
+    },
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftmodule": {
+      "sha256": "66be3519acfe4143baaca4f1b3595e119850f3cb655e6b538cc4ba9ef0dcdeab",
+      "bytes": 882248
+    }
+  }
+}

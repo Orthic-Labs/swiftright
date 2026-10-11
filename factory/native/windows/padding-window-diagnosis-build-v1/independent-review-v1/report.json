@@ -1,0 +1,29 @@
+{
+  "verdict": "CLEAR_BUILD_SOURCE_SCOPE",
+  "findings": [],
+  "stageSha256": "b8db629cecf9a48570f149c231c95fbeae09427ed64c1dfc60d50a243de7cfa6",
+  "stageRowsVerified": 78,
+  "sourceTests": {
+    "independentCommand": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -B -m unittest test_source.py",
+    "tests": 13,
+    "exitCode": 0,
+    "output": "13 tests in0.053s OK",
+    "compilerOrNativeActions": 0
+  },
+  "checks": [
+    "Owner9fefa plan bytes archived unchanged; successor aa6dc plan solely changes fresh scratch output path.",
+    "Actual952c serializer10archivefiles byteequal fresh v5r2, retains originalfe088 plan/argv/cwd, exact cde9 current shared payload required; no relabeling to diagnosis plan.",
+    "Launch outer Phase preserved; serializer loop variable serializerChildPhase eliminates phase collision.",
+    "Canonical runtime/module/bridge/header/DLL/source membership guards remain; builder process cleanup/raw/deadline tail byteequal v5.",
+    "13actual source tests exercise raw snapshot omissions/changes for receipt/exe/control/payload/witness/extra/bridge/context/runtime/renderer/request/promotion."
+  ],
+  "execution": "Source-only Python unittest/hash replay; no compiler/native/remote actions",
+  "sourcePins": {
+    "factory/native/windows/padding-window-diagnosis-build-v1/root-stage-manifest.json": "b8db629cecf9a48570f149c231c95fbeae09427ed64c1dfc60d50a243de7cfa6",
+    "factory/native/windows/padding-window-diagnosis-build-v1/preflight.ps1": "d486c0756d7e719732c22b6476ebd441411dd34ca9310baebbb70e3701b92ee0",
+    "factory/native/windows/padding-window-diagnosis-build-v1/build-hosts-v2.ps1": "b9771ac8e8bec20169aa7d1609e669dbb08330ad7fd0b709c374ea03769e7384",
+    "factory/native/windows/padding-window-diagnosis-build-v1/package/plan.json": "aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
+    "factory/native/windows/padding-window-diagnosis-build-v1/test_source.py": "32492c7b8915ed99e11f43bb246028e148f64f7ec5ba187250b22e53fba6bc60",
+    "factory/native/windows/padding-window-diagnosis-build-v1/verify_source.py": "aeeb3fcdcc9e220aaf3c6d1537425d56af4206288fc03aa27b1f651ca04e0bf2"
+  }
+}

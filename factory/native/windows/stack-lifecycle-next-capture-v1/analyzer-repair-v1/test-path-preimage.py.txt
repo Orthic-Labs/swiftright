@@ -1,0 +1,34 @@
+import copy,hashlib,json,pathlib,shutil,unittest,uuid
+from analyze_lifecycle import analyze
+HERE=pathlib.Path(__file__).resolve().parent
+REPO=HERE.parents[5]
+class RawAnalyzerControls(unittest.TestCase):
+ def setUp(self):
+  self.directory=HERE/'synthetic-controls'/uuid.uuid4().hex;self.root=self.directory/'native-01';self.root.mkdir(parents=True)
+  build=REPO/'factory/native/windows/stack-lifecycle-next-build-v1'
+  shutil.copyfile(build/'package/plan.json',self.directory/'plan.json');shutil.copyfile(build/'root-build-r1/actual/observation.json',self.directory/'observation.json')
+  self.plan=json.loads((self.directory/'plan.json').read_text());self.compile=json.loads((self.directory/'observation.json').read_text(encoding='utf-8-sig'))
+  self.owned={'pid':4242,'path':self.compile['exePath'],'startedAt':'2026-10-11T12:00:00Z'}
+  self.dump('owned-process.json',self.owned)
+  stdout=b'FACTORY_LIFECYCLE event=actor-enter utcEpochSeconds=1234.5 tickMS=100 pid=4242 thread=5\n';stderr=b'synthetic diagnostic stderr\n'
+  (self.root/'host.stdout.txt').write_bytes(stdout);(self.root/'host.stderr.txt').write_bytes(stderr)
+  def state(name):return {'name':name,'copyCompleted':True,'destinationClosed':True,'sealed':True,'taskIsCompleted':True,'taskIsFaulted':False,'taskIsCanceled':False,'sourceIsAsync':False,'taskException':'','taskStatus':'RanToCompletion','closureTaskStatus':'RanToCompletion','hashQualification':'sealed-raw','closure':{'flushCompleted':True,'destinationClosed':True,'completedWithinDeadline':True,'deadlineExpired':False,'error':''}}
+  self.outcome={'ownedIdentity':self.owned,'sourceHash':self.plan['sourceHash'],'compileReceiptHash':hashlib.sha256((self.directory/'observation.json').read_bytes()).hexdigest(),'exeHash':self.compile['exeSha256'],'stdoutSha256':hashlib.sha256(stdout).hexdigest(),'stderrSha256':hashlib.sha256(stderr).hexdigest(),'rawHashesQualification':'sealed-raw','rawStreams':[state('stdout'),state('stderr')],'cleanup':{'synthetic':True},'primaryError':''}
+  self.timing={k:copy.deepcopy(self.outcome[k]) for k in ['ownedIdentity','compileReceiptHash','exeHash','stdoutSha256','stderrSha256','rawHashesQualification']}
+  self.timing['observations']=[{'retainedHandle':55,'handlePid':4242,'queryStartTicks':1,'hasExitedStartTicks':2,'hasExitedEndTicks':3,'queryEndTicks':4,'frequency':1000,'phase':'synthetic','kernelBefore':258,'kernelAfter':0,'getExitCodeSucceeded':True,'exitCode':0,'errors':[]}]
+  self.persist();self.assertEqual(analyze(self.root)['markerCount'],1)
+ def dump(self,n,d):(self.root/n).write_text(json.dumps(d))
+ def persist(self):self.dump('capture-outcome.json',self.outcome);self.dump('lifecycle-timing.json',self.timing)
+ def rejected(self,reason):
+  self.persist()
+  with self.assertRaisesRegex(ValueError,reason):analyze(self.root)
+ def test_baseline(self):self.assertEqual(analyze(self.root)['qualification'],'diagnostic-only')
+ def test_stderr_bytes(self):(self.root/'host.stderr.txt').write_bytes(b'changed');self.rejected('stderr hash mismatch')
+ def test_stderr_open(self):self.outcome['rawStreams'][1]['destinationClosed']=False;self.rejected('stderr raw destinationClosed unconfirmed')
+ def test_stderr_unsealed(self):self.outcome['rawStreams'][1]['sealed']=False;self.rejected('stderr raw sealed unconfirmed')
+ def test_timing_outcome_disagreement(self):self.timing['stderrSha256']='0'*64;self.rejected('timing/outcome hash join mismatch')
+ def test_stderr_nested_closure(self):self.outcome['rawStreams'][1]['closure']['destinationClosed']=False;self.rejected('stderr raw closure destinationClosed unconfirmed')
+ def test_string_boolean(self):self.outcome['rawStreams'][1]['sourceIsAsync']='false';self.rejected('stderr raw terminal state invalid')
+ def test_owned_identity(self):self.outcome['ownedIdentity']=dict(self.owned,pid=42);self.timing['ownedIdentity']=self.outcome['ownedIdentity'];self.rejected('original owned process mismatch')
+ def test_source_identity(self):self.outcome['sourceHash']='sha256:'+'0'*64;self.rejected('source identity mismatch')
+if __name__=='__main__':unittest.main()

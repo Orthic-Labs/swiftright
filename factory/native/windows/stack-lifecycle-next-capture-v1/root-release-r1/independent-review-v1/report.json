@@ -1,0 +1,33 @@
+{
+  "kind": "one-off-exact-owner-release-source-review",
+  "decision": "CLEAR-EXACT-PINNED-OWNER-RELEASE-SCRIPT",
+  "sourceSha256": "8354fdf0a605d0071cbd76d720e14be8e69e327c7c5a60c5b4ad34a7737455f3",
+  "rawPinnedCount": 6,
+  "ownedIdentity": {
+    "pid": 57184,
+    "path": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package\\build-lifecycle-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+    "startedAt": "2026-10-11T09:58:19.9497884Z"
+  },
+  "sameRetainedHandleSamples": 106,
+  "finalOriginalHandle": 1832,
+  "finalHandlePID": 57184,
+  "finalKernelBefore": 0,
+  "finalKernelAfter": 0,
+  "finalExitCode": 0,
+  "twoStreams": "exact stdout/stderr closed/sealed terminal tasks +raw hashes verified",
+  "releaseGuards": [
+    "six exact pinned rawfiles",
+    "original compile/exe/path/start/PID joins",
+    "same original retainedhandle all106samples +final doublekernel0/exit0",
+    "live CIM exactPID absence, query errors stop",
+    "own scheduledtask notRunning, lookup errors stop",
+    "exclusive existing lock file; exact pinned originalowner compare before free write"
+  ],
+  "sideEffects": "only authorized exact-own desktop.lock write; no delete/kill/task unregister/newwindow/retry",
+  "preservedPrimaryError": "Owned renderer child deadline",
+  "priorCoordinatorCleanup": "unconfirmed/stale258 retained; this narrow final kernel observation permits separate owner release, not successful capture",
+  "scope": "one-off actual six fixed raw pins, not general untrusted receipt admission; live CIM/task/lock checks performed by root on dispatch",
+  "reviewerRemoteActions": 0,
+  "reviewerNativeActions": 0,
+  "qualification": "failed-diagnostic-only"
+}

@@ -1,0 +1,61 @@
+{
+  "integration": "factory.gate.core.evaluate_gate via trusted ArchiveByteReader",
+  "receipt": {
+    "finishedAt": "2026-10-11T09:51:00Z",
+    "id": "gate.f10.0000000000000000.receipt",
+    "inputs": [],
+    "kind": "receipt",
+    "operation": "gate",
+    "outputs": [
+      {
+        "hash": "sha256:024302cc86b1c0926348fb7b4f903b7354f5fe1e9cc64c92a01d8698611d6cd5",
+        "id": "gate.f10.0000000000000000"
+      }
+    ],
+    "provenance": {
+      "createdAt": "2026-10-11T09:51:00Z",
+      "producer": "factory.gate/0.1",
+      "sourceHash": "sha256:024302cc86b1c0926348fb7b4f903b7354f5fe1e9cc64c92a01d8698611d6cd5"
+    },
+    "seed": 0,
+    "startedAt": "2026-10-11T09:51:00Z",
+    "status": "blocked",
+    "tuple": {},
+    "version": "0.1"
+  },
+  "report": {
+    "captureIds": [],
+    "caseSetHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "cases": [],
+    "faultControlsPassed": true,
+    "id": "gate.f10.0000000000000000",
+    "issues": [
+      "SR0 closure is required before frozen tuple parity",
+      "gate-seeded case generator produced no cases",
+      "protected acceptance configuration unavailable",
+      "separate bounded timing comparison evidence unavailable or failed",
+      "trusted merged-commit rebuild evidence unavailable; native parity held",
+      "tuple acceptance configuration binding missing"
+    ],
+    "kind": "gate-report",
+    "parityGranted": false,
+    "promotion": {
+      "promoted": false,
+      "requested": false
+    },
+    "recipe": {
+      "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+      "id": "swiftui.padding-frame.recipe"
+    },
+    "reportHash": "sha256:024302cc86b1c0926348fb7b4f903b7354f5fe1e9cc64c92a01d8698611d6cd5",
+    "seed": 0,
+    "semanticRepeatability": {},
+    "status": "blocked",
+    "timing": {
+      "status": "blocked"
+    },
+    "tuple": {},
+    "version": "0.1"
+  },
+  "status": "blocked"
+}

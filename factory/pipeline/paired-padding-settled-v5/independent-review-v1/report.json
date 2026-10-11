@@ -1,0 +1,122 @@
+{
+  "controls": {
+    "collectorOriginalBaseline": "20 byte-equivalent parsed envelopes",
+    "collectorRereadIDFault": {
+      "changed": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-001.independent-reread-fault",
+      "count": 20,
+      "original": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-001",
+      "rejected": false,
+      "status": "collected"
+    },
+    "duplicateCaptureID": {
+      "error": "capture IDs must be present and unique",
+      "status": "blocked"
+    },
+    "readerValidJSONBaseline": "pass",
+    "readerValidJSONDrift": "Mac reference bytes differ from pinned hash"
+  },
+  "counts": {
+    "originVerified": 0,
+    "parityQualified": 0,
+    "readerVerified20": true,
+    "schemaCollected20": true
+  },
+  "execution": "Offline venv Python actual readers/collector/comparator & temporary/in-memory faults only; no compiler/native/remote execution",
+  "findings": [
+    {
+      "id": "workflow-rereads-outside-reader",
+      "proof": "workflow_collect ignores reader, loads capture.json through production load_artifact; schema-valid changed unique ID in in-memory reread accepted as collected20 after original reader verification. workflow_gate directly loads plan/cases/tuple/config/recipes/manifests & collection from disk. Thus source claim Only bytes returned by ArchiveByteReader enter parsing is false. No disk/raw mutation occurred.",
+      "required": "Describe production collector/gate disk reads honestly & bind consumed bytes to fixed expected pins, or supply verified bytes through these paths. Do not equate readerVerified20 with reader-bound workflow inputs.",
+      "severity": "scope-hold"
+    },
+    {
+      "id": "fault-controls-partially-literal",
+      "proof": "missing-origin-exact-code & windows-adjunct-not-capture are literal held assignments, not exercised guards. Producer tampered-reader appends invalid JSON; duplicate control accepts blocked-dependency as rejection. Independent actual reader validJSON drift & real comparator duplicate reason exercised here.",
+      "severity": "coverage-hold"
+    }
+  ],
+  "importProvenance": {
+    "factory.comparison.comparator": {
+      "path": "factory/comparison/comparator.py",
+      "sha256": "fb3b47e12cfcba8f060f9de36efa34d31f6d67a1a616045933e8bcbc48dcf35b"
+    },
+    "factory.core.artifacts": {
+      "path": "factory/core/artifacts.py",
+      "sha256": "09adfc326184bf40628160138aa58ba3a23285937739f8b0cb3849378bc134b5"
+    },
+    "factory.gate.core": {
+      "path": "factory/gate/core.py",
+      "sha256": "bcf1eedc5b1ff8e843e134d3ed9e3bd301eec9616f700bbf1b7f25ddcb4d2a04"
+    },
+    "factory.pipeline.archive_reader": {
+      "path": "factory/pipeline/archive_reader.py",
+      "sha256": "8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e"
+    },
+    "factory.pipeline.workflow": {
+      "path": "factory/pipeline/workflow.py",
+      "sha256": "4c82362093618840b11b6ad0f1e13cab07e2fa821cad75fb1e6b515cc2184362"
+    },
+    "factory.reports.report": {
+      "path": "factory/reports/report.py",
+      "sha256": "f5b81c85aeaad6380ddd27eee897b400275943b905dce26dd133a3932ad6730d"
+    },
+    "factory.tools.schema_validate": {
+      "path": "factory/tools/schema_validate.py",
+      "sha256": "5e24c0afd026f7189b32cb948c529ff6244dc1dac41aede071aff3b5f3d53246"
+    }
+  },
+  "originIssues": [
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-001: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-002: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-003: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-004: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-005: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-006: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-007: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-008: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-009: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-010: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-011: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-012: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-013: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-014: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-015: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-016: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-017: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-018: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-019: native origin: mac-origin:missing-origin",
+    "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.macos.run-020: native origin: mac-origin:missing-origin"
+  ],
+  "rootStagePin": "57fd81b506e721c71e7c0ce8d17242cdb594e064af229c2043135279e84d84dd",
+  "sourcePin": "b66b8dd1d28b05889907096c24c0de978b25a0eab756aa96982ad3fa1ac07d52",
+  "verdict": "CLEAR_RECORDED_PARTIAL_OBSERVATION_HOLD_EXCLUSIVE_READER_CLAIM",
+  "verified": {
+    "producerFiles": 26,
+    "productionDependencies": 6,
+    "replayFiles": 29
+  },
+  "verifiedScope": [
+    "Actual original Mac20 envelopes & IDs match root gate captures exactly; schema collect20 & compare_case actual production execution available in venv",
+    "Historic Mac origin missing: originVerified0, parityQualified0, all recorded F10 reports blocked",
+    "F8 adapter executes pinned returned bytes in temporary module; mac_captures does not call adapter functions & no separate adapter semantic comparison asserted",
+    "Windows solely pinned peer facts, no typed Windows envelope admitted",
+    "F9/F10 real production dependencies pinned by root manifest & imported from repository; F10 recorded all-case replay remains blocked",
+    "Raw inputs unchanged"
+  ],
+  "windowsAdjunct": {
+    "deadline": [
+      18
+    ],
+    "eligible": 15,
+    "invalidHost": [
+      3,
+      16
+    ],
+    "notStarted": [
+      19,
+      20
+    ],
+    "requested": 20,
+    "started": 18
+  }
+}

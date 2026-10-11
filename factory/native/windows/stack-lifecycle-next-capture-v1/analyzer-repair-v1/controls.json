@@ -1,0 +1,23 @@
+{
+  "kind": "analyzer-repair-offline-controls",
+  "tests": 9,
+  "passed": true,
+  "syntheticCaptureReceipts": true,
+  "actualSourcePlanSha256": "9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1",
+  "actualCompileReceiptSha256": "99a0332b765518e97a8200ef25612fa5c31671037eccdf5504a1fcec091dcae8",
+  "controls": [
+    "accepted baseline",
+    "stderr changed bytes",
+    "stderr destination open",
+    "stderr unsealed",
+    "timing outcome stderr hash disagreement",
+    "stderr nested closure open",
+    "sourceIsAsync string boolean",
+    "coherent owned timing/outcome differs original owned bytes",
+    "source identity wrong"
+  ],
+  "originalCaptureStageUnchanged": true,
+  "nativeActions": 0,
+  "remoteActions": 0,
+  "compilerActions": 0
+}

@@ -1,0 +1,50 @@
+{
+  "verdict": "HOLD_CONCRETE_PROVENANCE_AND_INTEGRATION_DEFECTS",
+  "findings": [
+    {
+      "id": "windows-unchecked-bytes",
+      "proof": "Actual production windows_rows accepted18 in-memory substituted UIA files, 15eligible labels FORGED_NO_IMMUTABLE_HASH with exact same counts; peer pin remained valid. Raw labels never checked against immutable peer input hashes. No disk evidence modified.",
+      "required": "Read each Windows rawfile through pinned byte reader/verified extraction anchored to immutable peer hashes before interpretation; preserve held origin separately."
+    },
+    {
+      "id": "f8-reopened-source",
+      "proof": "Verified ArchiveByteReader F8 raw discarded; exec_module reopens F8_PATH independently.",
+      "required": "Execute exact verified bytes or bind second consumed read; pin imported dependencies."
+    },
+    {
+      "id": "synthetic-f9-f10",
+      "proof": "F9 fabricates case/capture envelopes with hardcoded Box layout; F10 runs empty cases/captures/tuple then forcibly overrides status=blocked. Actual observed18/partial data never reaches gate acceptance path.",
+      "required": "Use truthful typed observational report inputs; distinguish render-only blocked dashboard from production acceptance exercise, route actual typed captures/proofs to gates without forged completion."
+    },
+    {
+      "id": "vacuous-dangerous-controls",
+      "proof": "promotion-mutation is literal held-by-claims; peer fault broadly treats any Exception as rejection; mac mutation writes immutable summary then restores bytes.",
+      "required": "Independent bounded fixture or reader-injection faults with exact rejection reasons; no original evidence mutation."
+    }
+  ],
+  "baselineCounts": {
+    "requested": 20,
+    "started": 18,
+    "eligible": 15,
+    "invalidHost": 2,
+    "deadline": 1,
+    "notStarted": [
+      19,
+      20
+    ],
+    "archiveReader": "held-no-windowsExitProof"
+  },
+  "faultResult": {
+    "changedUIAFiles": 18,
+    "eligibleForgedLabels": 15,
+    "productionRejected": false
+  },
+  "claimsRetained": "20Mac/18started/15eligible/2invalid/1deadline/2unstarted, raw timing &geometry/pixel/native parity held; failure concerns provenance &integration claims, no parity promotion observed",
+  "reviewExecution": "Offline Python read mock only; no raw/source producer writes, compiler/native/remote execution",
+  "pins": {
+    "factory/pipeline/paired-padding-settled-v3/report.py": "87851b0583d68d347fc2496eacf3d133b0abd3e169ba14c93fa39048818fd7ed",
+    "factory/pipeline/paired-padding-settled-v3/report.json": "24c0956ba636933af47fef439e07736aa7f65c21e582f8fad6f84da91a6b4f0f",
+    "factory/pipeline/paired-padding-settled-v3/fault-controls.json": "ab98830557e45a390e72b8568acf7736dc9665b70e7228cd6b8ad18d9d6801ff",
+    "factory/pipeline/paired-padding-settled-v3/stage-manifest.json": "b478a65f73e1c8977d26c4021e8a8dd0dcd1939a01e3c9a81c36e6476185c360"
+  }
+}

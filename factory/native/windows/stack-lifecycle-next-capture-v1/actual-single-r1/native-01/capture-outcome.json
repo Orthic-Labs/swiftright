@@ -1,0 +1,143 @@
+﻿{
+    "ownedIdentity":  {
+                          "pid":  57184,
+                          "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-lifecycle\\package\\build-lifecycle-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+                          "startedAt":  "2026-10-11T09:58:19.9497884Z"
+                      },
+    "lockOwner":  "stack-lifecycle-56139c623126439d83b9d03cfed65ce1 2026-10-11T09:57:38.0922755+00:00",
+    "compileReceiptHash":  "99a0332b765518e97a8200ef25612fa5c31671037eccdf5504a1fcec091dcae8",
+    "exeHash":  "abf82f6f133f1d4dd9a48b3075f9af5fe4632db2b9fdc9763114661196bf6c2c",
+    "sourceHash":  "sha256:fe91bed344011c7464a18c1ae5ee757a113f6eda6f7f4e0c4cb0258a258d8c35",
+    "primaryError":  "Owned renderer child deadline",
+    "preCleanupExitObservation":  {
+                                      "at":  "2026-10-11T09:58:43.8977388+00:00",
+                                      "kernelWaitResult":  258,
+                                      "hasExitedObserved":  true,
+                                      "rawStreams":  [
+                                                         {
+                                                             "name":  "stdout",
+                                                             "copyCompleted":  false,
+                                                             "destinationClosed":  false,
+                                                             "sealed":  false,
+                                                             "hashQualification":  "diagnostic-partial",
+                                                             "taskStatus":  "WaitingForActivation",
+                                                             "taskIsCompleted":  false,
+                                                             "taskIsFaulted":  false,
+                                                             "taskIsCanceled":  false,
+                                                             "taskException":  "",
+                                                             "sourceIsAsync":  false,
+                                                             "closure":  null,
+                                                             "closureTaskStatus":  "not-started"
+                                                         },
+                                                         {
+                                                             "name":  "stderr",
+                                                             "copyCompleted":  false,
+                                                             "destinationClosed":  false,
+                                                             "sealed":  false,
+                                                             "hashQualification":  "diagnostic-partial",
+                                                             "taskStatus":  "WaitingForActivation",
+                                                             "taskIsCompleted":  false,
+                                                             "taskIsFaulted":  false,
+                                                             "taskIsCanceled":  false,
+                                                             "taskException":  "",
+                                                             "sourceIsAsync":  false,
+                                                             "closure":  null,
+                                                             "closureTaskStatus":  "not-started"
+                                                         }
+                                                     ]
+                                  },
+    "cleanup":  {
+                    "confirmedOwnedExit":  false,
+                    "kernelExitSignaled":  false,
+                    "kernelWaitResult":  258,
+                    "exitCertification":  "retained-kernel-handle",
+                    "hasExitedObserved":  true,
+                    "killAttempted":  false,
+                    "status":  "hold-cleanup",
+                    "error":  "HasExited without retained kernel exit signal: 258"
+                },
+    "streamErrors":  [
+
+                     ],
+    "rawStreams":  [
+                       {
+                           "name":  "stdout",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stdout",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion"
+                       },
+                       {
+                           "name":  "stderr",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stderr",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion"
+                       }
+                   ],
+    "rawHashesQualification":  "sealed-raw",
+    "stdoutSha256":  "fbaa9dfb0405075b0fc8848caea51018f4e131fe2011e7627a41c85320f8cc81",
+    "stderrSha256":  "87767e96167eee2141e40a6617aeb7da7e07b991d4bc90b1d8f1daca46c8bddd"
+}

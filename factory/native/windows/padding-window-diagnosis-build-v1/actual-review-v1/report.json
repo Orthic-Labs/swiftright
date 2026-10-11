@@ -1,0 +1,116 @@
+{
+  "actualExeSha256": "caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369",
+  "actualReceiptPlanSha256": "aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
+  "actualReceiptSha256": "74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7",
+  "buildStageSha256": "b8db629cecf9a48570f149c231c95fbeae09427ed64c1dfc60d50a243de7cfa6",
+  "checks": [
+    {
+      "entries": 78,
+      "name": "78-source-stage-refs",
+      "ok": true,
+      "stageSha256": "b8db629cecf9a48570f149c231c95fbeae09427ed64c1dfc60d50a243de7cfa6"
+    },
+    {
+      "files": {
+        "FactoryProbe.exe": {
+          "bytes": 3710976,
+          "sha256": "caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369"
+        },
+        "compile.stderr.bin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "compile.stdout.bin": {
+          "bytes": 336,
+          "sha256": "28d2146a2a22d55185bf198a4ddb0e1680872851acdc90506331b4ad79695b83"
+        },
+        "observation.json": {
+          "bytes": 17775,
+          "sha256": "74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7"
+        },
+        "runtime-module-archive/x86_64-unknown-windows-msvc.swiftdoc": {
+          "bytes": 68260,
+          "sha256": "0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae"
+        },
+        "runtime-module-archive/x86_64-unknown-windows-msvc.swiftmodule": {
+          "bytes": 882248,
+          "sha256": "66be3519acfe4143baaca4f1b3595e119850f3cb655e6b538cc4ba9ef0dcdeab"
+        }
+      },
+      "name": "actual-six-fetch-joins",
+      "ok": true
+    },
+    {
+      "name": "receipt-raw-joins",
+      "ok": true,
+      "rawFileHashes": 2,
+      "rawStreams": 2
+    },
+    {
+      "argvExact": true,
+      "name": "compile-request-receipt",
+      "ok": true,
+      "termination": {
+        "exitCode": 0,
+        "kernelWait": 0,
+        "ownedExited": true,
+        "streamDrainComplete": true,
+        "timedOut": false
+      }
+    },
+    {
+      "machine": 34404,
+      "name": "actual-gui-pe",
+      "ok": true,
+      "sha256": "caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369",
+      "subsystem": 2
+    },
+    {
+      "modules": [
+        {
+          "bytes": 68260,
+          "ok": true,
+          "path": "x86_64-unknown-windows-msvc.swiftdoc",
+          "sha256": "0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae"
+        },
+        {
+          "bytes": 882248,
+          "ok": true,
+          "path": "x86_64-unknown-windows-msvc.swiftmodule",
+          "sha256": "66be3519acfe4143baaca4f1b3595e119850f3cb655e6b538cc4ba9ef0dcdeab"
+        }
+      ],
+      "name": "runtime-module-archives",
+      "ok": true
+    },
+    {
+      "controlSha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+      "exeSha256": "be025189ff5602ac00d977f09a6bf0abad3c3211c22511c4744b5a0152a25478",
+      "files": 10,
+      "name": "serializer-actual-archive",
+      "ok": true
+    },
+    {
+      "exitCode": 0,
+      "name": "source-fault-controls",
+      "ok": true,
+      "tests": 13,
+      "verifySourceSha256": "aeeb3fcdcc9e220aaf3c6d1537425d56af4206288fc03aa27b1f651ca04e0bf2"
+    }
+  ],
+  "compilerRuns": 0,
+  "decision": "CLEAR_ACTUAL_COMPILE_ONLY",
+  "failures": [],
+  "kind": "padding-window-diagnosis-actual-compile-independent-review",
+  "nativeRuns": 0,
+  "planSha256": "aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
+  "qualification": "compile-only; nativeParity=hold; frozenTupleBound=false",
+  "remoteActions": 0,
+  "reviewScope": "offline six-file receipt/PE/source/runtime/archive audit; no compiler/native/remote action",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "serializerControlSha256": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+  "sixActualFiles": 6,
+  "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+  "version": "1"
+}

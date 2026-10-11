@@ -1,0 +1,112 @@
+{
+  "receipt": {
+    "finishedAt": "2026-10-11T09:54:45Z",
+    "id": "gate.f10.ca4e13f820f5d258.receipt",
+    "inputs": [
+      {
+        "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+        "id": "case.input.0"
+      }
+    ],
+    "kind": "receipt",
+    "operation": "gate",
+    "outputs": [
+      {
+        "hash": "sha256:3b89ba32be3e60229c16fd372013016853c33a5609aa81f5c546debc281c461a",
+        "id": "gate.f10.ca4e13f820f5d258"
+      }
+    ],
+    "provenance": {
+      "createdAt": "2026-10-11T09:54:45Z",
+      "producer": "factory.gate/0.1",
+      "sourceHash": "sha256:3b89ba32be3e60229c16fd372013016853c33a5609aa81f5c546debc281c461a"
+    },
+    "seed": 14577611000270672472,
+    "startedAt": "2026-10-11T09:54:45Z",
+    "status": "blocked",
+    "tuple": {
+      "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+      "factoryVersion": "0.1-working-observation",
+      "hostHashes": {
+        "macos": "sha256:9e50043f329abbc61cf7196eb425e868117c51c3a236ab03c6ea7e12887ba470",
+        "windows": "sha256:9812b7c0a9cb8275ba1c9530a2b091f611c4da408b5a70c93bd6244d8316e4f6"
+      },
+      "id": "sr1-observed-r09-20261010",
+      "macosBuild": "26A434",
+      "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "runtimeCommit": "be9a922028079fb8a51c6bb47299dfb6e9965d06",
+      "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+      "toolchains": {
+        "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+        "winSwift": "Swift version 6.4 (swift-6.4-RELEASE)\r\nTarget: x86_64-unknown-windows-msvc\r\nBuild config: +assertions"
+      }
+    },
+    "version": "0.1"
+  },
+  "report": {
+    "captureIds": [],
+    "caseSetHash": "sha256:81ca38138db03c8117f7e94289a257eca7c40f2f685eeb22a5d0369fe283bede",
+    "cases": [
+      {
+        "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+        "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+      }
+    ],
+    "faultControlsPassed": true,
+    "id": "gate.f10.ca4e13f820f5d258",
+    "issues": [
+      "<unknown>: native origin: mac-origin:missing-origin",
+      "SR0 closure is required before frozen tuple parity",
+      "acceptance configuration lacks accepted review",
+      "acceptance recipeRefs & protected baseline profiles are required",
+      "capture IDs must be present and unique",
+      "gate-seeded case generator produced no cases",
+      "protected baseline profile version 1 with recipe projections is required",
+      "separate bounded timing comparison evidence unavailable or failed",
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258: cross-platform semantic comparator evidence unavailable or failed",
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258: macos has 0 runs; 20 required",
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258: macos semantic captures are not exactly repeatable",
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258: windows has 0 runs; 20 required",
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258: windows semantic captures are not exactly repeatable",
+      "trusted merged-commit rebuild evidence unavailable; native parity held"
+    ],
+    "kind": "gate-report",
+    "parityGranted": false,
+    "promotion": {
+      "promoted": false,
+      "requested": false
+    },
+    "recipe": {
+      "hash": "sha256:fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+      "id": "swiftui.padding-frame.recipe"
+    },
+    "reportHash": "sha256:3b89ba32be3e60229c16fd372013016853c33a5609aa81f5c546debc281c461a",
+    "seed": 14577611000270672472,
+    "semanticRepeatability": {
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258:macos": false,
+      "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258:windows": false
+    },
+    "status": "blocked",
+    "timing": {
+      "status": "blocked"
+    },
+    "tuple": {
+      "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+      "factoryVersion": "0.1-working-observation",
+      "hostHashes": {
+        "macos": "sha256:9e50043f329abbc61cf7196eb425e868117c51c3a236ab03c6ea7e12887ba470",
+        "windows": "sha256:9812b7c0a9cb8275ba1c9530a2b091f611c4da408b5a70c93bd6244d8316e4f6"
+      },
+      "id": "sr1-observed-r09-20261010",
+      "macosBuild": "26A434",
+      "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "runtimeCommit": "be9a922028079fb8a51c6bb47299dfb6e9965d06",
+      "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+      "toolchains": {
+        "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+        "winSwift": "Swift version 6.4 (swift-6.4-RELEASE)\r\nTarget: x86_64-unknown-windows-msvc\r\nBuild config: +assertions"
+      }
+    },
+    "version": "0.1"
+  }
+}
