@@ -1,0 +1,46 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F2"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch-and-snapshot",
+      "ops": [],
+      "settleMs": 500
+    },
+    {
+      "id": "focus_row3",
+      "logicalAction": "focus row 3 field",
+      "ops": [
+        {
+          "id": "row/F0000002-0000-4000-8000-000000000003/field",
+          "op": "focus"
+        }
+      ],
+      "settleMs": 400
+    },
+    {
+      "id": "type_dash_x_then_move",
+      "logicalAction": "type -x; model moves row 3 to offset 8",
+      "ops": [
+        {
+          "expectId": "row/F0000002-0000-4000-8000-000000000003/field",
+          "expectValue": "Row 3-x",
+          "op": "type",
+          "text": "-x"
+        },
+        {
+          "json": {
+            "from": 2,
+            "step": "move",
+            "to": 8
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 1500
+    }
+  ]
+}

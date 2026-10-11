@@ -1,0 +1,34 @@
+{
+  "kind": "root-managed-renderer-actual-review-v1",
+  "status": "PASS_ACTUAL_REBUILT_RENDERER",
+  "requestID": "rr-1791721085329-353f80ea918740ef",
+  "brokerID": "4f6ad8cd-0eaa-49af-a7bd-4ea220014e96",
+  "sourceCommit": "4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2",
+  "nonLockSourceFilesVerified": 11,
+  "inputClosure": {
+    "status": "inputs-mutated",
+    "changed": [
+      "Cargo.lock"
+    ],
+    "added": [],
+    "removed": [],
+    "extrasChanged": [],
+    "preDigest": "e1d7816a00be43805cb17d050f06f15b578ec22750c92596bc6581dbb047a0f0",
+    "postDigest": "7ae3c084d434bad0c3f58274619b18a0b119550c57a55cf26e4f2f09de6f47be"
+  },
+  "files": [
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3/swiftright_render.dll",
+      "bytes": 11887616,
+      "sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"
+    },
+    {
+      "path": "probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3/Cargo.lock",
+      "bytes": 181537,
+      "sha256": "0e28d8bbbb13208c1951341741ec28a66b9c9e74a351708070207d973c478c9c"
+    }
+  ],
+  "postLockMatchesPreservedPreviousFailedBuild": true,
+  "historicalHashNotClaimed": true,
+  "qualification": "hold-fresh-hosts-and-20-runs"
+}

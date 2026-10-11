@@ -1,0 +1,19 @@
+{
+  "description": "F5 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F5",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; resize client to the common start size 720x560 DIP (wide); snapshot"
+    },
+    {
+      "id": "resize_narrow_release",
+      "logicalAction": "resize client to 360x560 DIP; engine releases update-1 and insert-1"
+    },
+    {
+      "id": "resize_wide_again",
+      "logicalAction": "resize client to 720x560 DIP"
+    }
+  ]
+}

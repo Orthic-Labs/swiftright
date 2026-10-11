@@ -1,0 +1,47 @@
+{
+  "kind": "sr0-signed-recorder-existing-ax-preflight-v1",
+  "observedAt": "2026-10-11T11:50:14.906934+00:00",
+  "argv": [
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "--fixture",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/AXPreflightMustNotExist-3f1497e7",
+    "--events",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/events.jsonl",
+    "--out",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/raw.json",
+    "--steps",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/no-fixture-ax-preflight.json"
+  ],
+  "recorderSha256": "39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+  "recorderPath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+  "exitCode": 2,
+  "existingAccessibilityTrusted": true,
+  "checkMechanism": "Existing signed recorder calls AXIsProcessTrusted without options; nonexistent target prevents fixture launch",
+  "fixtureTargetExists": false,
+  "nativeFixtureLaunches": 0,
+  "permissionPromptCalls": 0,
+  "checks": [
+    {
+      "label": "copy-signed-recorder",
+      "argv": [
+        "/usr/bin/ditto",
+        "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/F1MacRecord.app"
+      ],
+      "exitCode": 0
+    },
+    {
+      "label": "codesign-strict",
+      "argv": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr0/tuple12-capture/F1MacRecord.app"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "1c96037c3365c590d166a4ba3adfcfc18501e48811b59ff49660388743317532"
+}

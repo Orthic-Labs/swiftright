@@ -1,0 +1,28 @@
+{
+  "kind": "sr0-renderer-recovery-terminal-review-v1",
+  "requestId": "rr-1791719770390-1d0ab5c6ecd54883",
+  "status": "FAILED",
+  "exitCode": 101,
+  "compilerStartedAt": "2026-10-11T11:58:12.358Z",
+  "terminalAt": "2026-10-11T12:00:53.577Z",
+  "processReaped": {
+    "status": "REAPED",
+    "reaped": true,
+    "escalated": false
+  },
+  "cause": "Windows allocation/paging-file exhaustion (os error 1455), not renderer source compile defect",
+  "artifactAdmitted": false,
+  "inputClosure": {
+    "status": "inputs-mutated",
+    "changed": [
+      "Cargo.lock"
+    ],
+    "added": [],
+    "removed": [],
+    "extrasChanged": [],
+    "preDigest": "e1d7816a00be43805cb17d050f06f15b578ec22750c92596bc6581dbb047a0f0",
+    "postDigest": "7ae3c084d434bad0c3f58274619b18a0b119550c57a55cf26e4f2f09de6f47be"
+  },
+  "sourceCommit": "4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2",
+  "next": "Inspect host memory & managed inventory once, retry admitted same source with one Cargo job; never modify host paging settings or RightKit infrastructure"
+}

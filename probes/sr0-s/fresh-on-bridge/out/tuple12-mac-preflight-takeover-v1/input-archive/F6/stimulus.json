@@ -1,0 +1,25 @@
+{
+  "declaredOrder": [
+    {
+      "after": "animation-complete:animation/A",
+      "before": "animation-start:animation/A"
+    },
+    {
+      "after": "animation-complete:animation/B",
+      "before": "animation-start:animation/B"
+    }
+  ],
+  "description": "F6 cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F6",
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model bursts two animated inserts; snapshot after the animation window"
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F6"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model bursts two animated inserts; snapshot after the animation window",
+      "ops": [
+        {
+          "contains": "\"policy\"",
+          "op": "waitEvent"
+        },
+        {
+          "json": {
+            "step": "burst-insert"
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 2500
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot",
+      "ops": [],
+      "settleMs": 500
+    }
+  ]
+}

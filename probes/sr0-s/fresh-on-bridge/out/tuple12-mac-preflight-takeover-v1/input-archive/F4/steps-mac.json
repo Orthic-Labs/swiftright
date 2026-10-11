@@ -1,0 +1,52 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F4"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model removes row 2, engine releases loads; snapshot",
+      "ops": [
+        {
+          "contains": "load-F0000004-0000-4000-8000-000000000001-g0",
+          "op": "waitEvent"
+        },
+        {
+          "contains": "load-F0000004-0000-4000-8000-000000000002-g0",
+          "op": "waitEvent"
+        },
+        {
+          "json": {
+            "row": 2,
+            "step": "remove-row"
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "key": "load-F0000004-0000-4000-8000-000000000002-g0",
+            "step": "release",
+            "value": 42
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "key": "load-F0000004-0000-4000-8000-000000000001-g0",
+            "step": "release",
+            "value": 7
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 1500
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot",
+      "ops": [],
+      "settleMs": 500
+    }
+  ]
+}
