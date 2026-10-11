@@ -1,0 +1,79 @@
+{
+  "schema": "independent-strict-clang-v3-review-v1",
+  "result": "clear scoped exact captured physical-to-compiled correspondences",
+  "frozenTuple": {
+    "exact_clang.py": {
+      "sha256": "d7e2c57dba42a12edaefe3abb3e3cb84ed1748dbcc1c3a62aa4b38f7a4691951",
+      "bytes": 17621
+    },
+    "ast_reader.py": {
+      "sha256": "3657d0cc295f31d2540fc79e7589a3857caf8eb5e8bfa616c404af19961f0df9",
+      "bytes": 3505
+    },
+    "nominal_bridge.py": {
+      "sha256": "25abe42b1b2c693d2b4dfac21096c90c6a9504d58cf98c273d21777244a0af49",
+      "bytes": 6774
+    },
+    "raw_faults.py": {
+      "sha256": "95b1da2f8c683453bf3787fdb4b888b734e7bbe1b46799a227286ca67b6a736d",
+      "bytes": 813
+    },
+    "test_exact_clang.py": {
+      "sha256": "9e3ab541a923583a99333cbfe028baa79b2bd84ba12378e3cdb4333acf3494ad",
+      "bytes": 9372
+    },
+    "build_inputs.py": {
+      "sha256": "a10dfb835c237829c794636ddabb416c19a2eb20b0c4cc7f5b8da4cbf0cf0c76",
+      "bytes": 3328
+    },
+    "build_proof.py": {
+      "sha256": "c6a0fbb48cfe202b004d0e3df9c4bdccdeec70bb0be6a1bebe5f4f7a193a88ba",
+      "bytes": 3824
+    },
+    "capture-inputs.json": {
+      "sha256": "463a3a05f3f27d4ac330115a8af344b6f61d9767ad7c06af0d7c3a8e8014ad13",
+      "bytes": 36543
+    },
+    "controls.json": {
+      "sha256": "c11092bd5c373087d111be20a7a1857543d00cc8e1f79c0f70990aa5aaf3b6d5",
+      "bytes": 38374
+    },
+    "strict-clang-owner-proof.json": {
+      "sha256": "dd67e39c164b618d40f1f7770d7f8bf6bb63562c843c0c70428092261e2bbba2",
+      "bytes": 8044498
+    },
+    "README.md": {
+      "sha256": "5ca2534f2ddf361bd421f2331dbb3124f0090805cbb4c9ae9b2c8929cacd346b",
+      "bytes": 2350
+    }
+  },
+  "observations": [
+    "Eleven SHA256SUMS entries matched before review; preserved preimages copied only within reviewer ownership. Whole build_proof --check completed exit 0 with exact strict-clang-owner-proof.json byte equality.",
+    "Seventy exact raw/input descriptors hydrate through pinned disk archives with semantic paths preserved; independent constructor replay uses 70 resolver calls / 60 unique semantic paths, blocks all external Path.read_bytes calls & returns 12 requested owners plus NSControl support. Whole proof also replays 16 Swift rows: 88 reads / 74 unique paths / zero live external reads.",
+    "Seven V3 actual Popen/wait receipts & four inferred-nominal V2 Popen/wait receipts record return code 0, exact argv/cwd/timestamps/tool identities/stream hashes/lengths. Five genuine full Clang streams use explicit arm64-apple-macosx27.0 target with MacOSX27.0 SDK; lossless raw stdout hashes/lengths are independently rebuilt by guard. SourceKit request source/SDK/target cardinality is exact.",
+    "Complete raw AST reader reconstructs printer physical-file state while excluding includedFrom. Full top-level definitions, ObjC interface/end boundaries, physical header/token/line/column, macro spelling/expansion, exact typedef/redeclaration links, Spatial union/SwiftName, complete declaration body preimages & source attributes/conditions are preserved. Filtered producer nodes are not authority. Reader EOF defect identified earlier now rejects missing/truncated root headers.",
+    "Exact module namespace/direct export/umbrella-header edges bind AppKit, Foundation, CoreFoundation & Spatial. Geometry definitions derive from actual CoreFoundation CFCGTypes.h lines 51/59/77. Recorded physical aliases are bounded actual framework Versions/header spellings pinned in input manifest.",
+    "Thirteen ordinary import records preserve CUSRs/name/kind/source-position/reference inventory. Actual inferred-variable SourceKit USRs, Swift AST metatype/source position & complete expanded nominal trees separately bind each compiled __C owner. ControlSize is compiled NSControlSize Structure; NSUnderlineStyle is Structure; Spatial Size3D maps exactly to SPSize3D TypeAlias. No broad module alias is asserted.",
+    "Recorded 212 controls use changed genuine raw bytes & reject semantic gates; zero final-immutable-pin-only rejections. Independent nine faults reject known different CUSR, missing/duplicate requested reference, wrong known target, absent export, coherently rebound full AST function ancestry, coherently rebound nominal namespace, small missing-header EOF & physical source shift. Original accepted owner rows remain identical after faults.",
+    "Genuine capture sources record real subprocess return values. ToolIdentity hashes bind archived selected tool bytes; xcrun commands provide recorded compiler invocation provenance rather than OS-level backend executable attestation. Earlier V2 missing-target/bypass findings remain historical."
+  ],
+  "scope": "Exactly 12 requested physical/import/compiled owner correspondences plus NSControl support. Separate production guard owns effective ancestors, graph/coverage/catalogue admission.",
+  "evidence": {
+    "snapshot.json": {
+      "sha256": "d81274b383e980f422bad3be9a50b087fa5eb203f6087764a127204ea36717ec",
+      "bytes": 1426
+    },
+    "replay.py": {
+      "sha256": "8e1302bc9062831c2da9cba5ca9e34d9004f859557f9759d9c14ef25f88d43d9",
+      "bytes": 5148
+    },
+    "independent-replay.json": {
+      "sha256": "b86cf4d1f0f0914a23593a7ad1738571b636773eb508112e76cbf3c0076888a9",
+      "bytes": 7967489
+    },
+    "dependency-stage-set.json": {
+      "sha256": "8f8d6067a43c49b70c4d1c68012a4c16dc170a7d9b57f76fe0825024fa2a83c3",
+      "bytes": 24032
+    }
+  }
+}
