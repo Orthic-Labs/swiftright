@@ -1,0 +1,407 @@
+--- capture-v2/capture-plan.json
++++ lease-capture/capture-plan.json
+@@ -1,16 +1,16 @@
+ {
+-  "kind": "padding-window-diagnosis-capture-source-v1",
++  "kind": "padding-capture-lease-capture-source-plan-v1",
+   "case": {
+     "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+     "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+   },
+-  "sourcePackagePath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-window-diagnosis-build-v1\\package",
+-  "sourcePlanSha256": "sha256:aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
+-  "compiledPlanSha256": "sha256:aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
++  "sourcePackagePath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-build-v1\\package",
++  "sourcePlanSha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
++  "compiledPlanSha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
+   "compiledHostPackagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+   "launchPreflightPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\preflight.ps1",
+-  "launchPreflightSha256": "sha256:d486c0756d7e719732c22b6476ebd441411dd34ca9310baebbb70e3701b92ee0",
+-  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-window-diagnosis-capture-v2",
++  "launchPreflightSha256": "sha256:37ed4ec43f7b3e27db423d1b5564155ec58b0d5c61b021fa602a5919ebd15c6b",
++  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2",
+   "renderer": {
+     "rollingInputPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+     "sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+@@ -22,16 +22,25 @@
+   "dispatch": {
+     "first": {
+       "count": 1,
+-      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-window-diagnosis-capture-v2\\actual-single-r1"
++      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-single-r1"
+     },
+-    "retries": false
++    "retries": false,
++    "repeat": {
++      "count": 20,
++      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-repeat-r1",
++      "firstProofRequired": true
++    }
+   },
+-  "qualification": "failed-or-successful-observation-only",
+-  "admittedCompileReceiptSha256": "74bf90f689d00124abbcfbe56a97b1160fe3117277c7e332490b48be713ca8d7",
+-  "admittedExeSha256": "caa9b760f2fc4574b0ca9846610f5b177b50e5180986c930415a442b3d83a369",
++  "qualification": "sourceBoundCandidate-observation-only; no historical frozen tuple claim",
+   "integration": {
+-    "workerContractSha256": "c274a88ba33ffbfa3334e5f2d8a0929d09c942c53ba71db06eddc08024463bd3",
++    "workerContractSha256": "7487595d84e251066aa8f532593f6f84e4a101153fc3854987054eb00ca5fa49",
++    "workerInvokerSha256": "155a29c64e1093b9570560fccf530b19b20d1602d64d5fbcc74c25dd7ee32d32",
+     "finalExitHelperSha256": "94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4",
+-    "workerInvokerSha256": "9c02e6b9e963c3e57141287f884d558f370482e509f5ab20d8a884988956681a"
+-  }
++    "combinedReleaseHelperSha256": "64205826d6b8371bf5ba9f3cbcc5a1cb4d8a7e55bcd7a8f29e5fee92db15c128"
++  },
++  "prospectiveActualPins": "Root measured future build-capture-lease-r1 receipt/exe required; no predecessor pins",
++  "hostArguments": [
++    "--factory-capture-lease-seconds=40"
++  ],
++  "metadataIssuerSha256": "59a832f9cc7505ea6514bbfa8b4464b8ad60da4dad304d23a9c2835995436b0b"
+ }
+--- capture-v2/capture-repeat.ps1
++++ lease-capture/capture-repeat.ps1
+@@ -1,6 +1,6 @@
+ # Run only from interactive session under coordinator-owned desktop.lock.
+ # Uses targeted UIA reads. No global input, foreground/focus or lock mutation.
+-param([Parameter(Mandatory=$true)][string]$Package,[Parameter(Mandatory=$true)][string]$LockOwner,[Parameter(Mandatory=$true)][string]$RunRoot,[Parameter(Mandatory=$true)][string]$CompileReceiptHash,[Parameter(Mandatory=$true)][string]$ExeHash,[Parameter(Mandatory=$true)][string]$SerializerControlSha256,[ValidateSet(1)][int]$Count=1)
++param([Parameter(Mandatory=$true)][string]$Package,[Parameter(Mandatory=$true)][string]$LockOwner,[Parameter(Mandatory=$true)][string]$RunRoot,[Parameter(Mandatory=$true)][string]$CompileReceiptHash,[Parameter(Mandatory=$true)][string]$ExeHash,[Parameter(Mandatory=$true)][string]$SerializerControlSha256,[ValidateSet(1,20)][int]$Count=1,[Parameter(Mandatory=$true)][string]$IssuedMetadataPath,[Parameter(Mandatory=$true)][string]$IssuedMetadataHash)
+ $ErrorActionPreference='Stop'
+ $cleanupHelper=Join-Path $PSScriptRoot 'support\cleanup.ps1'
+ if((Get-FileHash $cleanupHelper).Hash.ToLowerInvariant() -ne 'a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7'){throw 'Cleanup helper drift'}
+@@ -16,26 +16,31 @@
+ $timingHelper=Join-Path $PSScriptRoot 'support\lifecycle-timing.ps1'
+ if((Get-FileHash $timingHelper).Hash.ToLowerInvariant() -cne 'c6951ea443587b3027141f4d08ddc942b8d364a7b920bee16e3a5cc76b7c62a5'){throw 'Lifecycle timing helper drift'}
+ . $timingHelper
+-if((Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'c144a0260b9fa89bc9e4d528f52568636c6704ff4fea378c75d4a0c21d526740'){throw 'Integration binding manifest drift'}
++if((Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'ce8b4cad822b254d68bc7a620dede23969e8fbcf7d2c48443732318cacfe0fee'){throw 'Integration binding manifest drift'}
+ . (Join-Path $PSScriptRoot 'support\integration.ps1')
+ Assert-FactoryIntegrationSources $PSScriptRoot
+ . (Join-Path $PSScriptRoot 'dependencies\uia-worker\invoke-worker.ps1')
+ . (Join-Path $PSScriptRoot 'dependencies\uia-worker\schema.ps1')
+ . (Join-Path $PSScriptRoot 'support\final-exit-certificate.ps1')
+ Initialize-FactoryFinalExitNative
++. (Join-Path $PSScriptRoot 'support\all-owned-release.ps1')
++. (Join-Path $PSScriptRoot 'dependencies\uia-worker\support\final-exit-certificate.ps1')
++. (Join-Path $PSScriptRoot 'support\first-proof.ps1')
+ $outputPath=[IO.Path]::GetFullPath($RunRoot)
+-if(-not $outputPath.StartsWith('D:\Claude\swiftright\factory\native\windows\padding-window-diagnosis-capture-v2\',[StringComparison]::OrdinalIgnoreCase)){throw 'Output outside first capture lane'}
++if(-not $outputPath.StartsWith('D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v2\',[StringComparison]::OrdinalIgnoreCase)){throw 'Output outside first capture lane'}
+ $pixelHelper=Join-Path $PSScriptRoot 'support\pixels-background.ps1'
+ if((Get-FileHash -LiteralPath $pixelHelper).Hash.ToLowerInvariant() -ne '7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef'){throw 'Pixel helper drift'}
+ . $pixelHelper
+ $packagePath=[IO.Path]::GetFullPath($Package)
+ if(-not $packagePath.StartsWith('D:\Claude\swiftright\.factory-work\hosts\',[StringComparison]::OrdinalIgnoreCase)){throw 'Package outside compiled host workspace'}
+ $plan=Get-Content -Raw (Join-Path $packagePath 'plan.json')|ConvertFrom-Json
+-$approved=@{caseID='swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258';sourceHash='sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b';planHash='aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc';receiptRelative='build-diagnosis-r1\observation.json'}
++$approved=@{caseID='swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258';sourceHash='sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b';planHash='ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10';receiptRelative='build-capture-lease-r1\observation.json'}
+ $receiptRelative=$approved.receiptRelative
+ $capturePlan=Get-Content -Raw (Join-Path $PSScriptRoot 'capture-plan.json')|ConvertFrom-Json
+-if($CompileReceiptHash -cne $capturePlan.admittedCompileReceiptSha256 -or $ExeHash -cne $capturePlan.admittedExeSha256){throw 'Exact canonical diagnosis compile/exe required'}
++$expectedOutput=if($Count -eq 1){$capturePlan.dispatch.first.runRoot}else{$capturePlan.dispatch.repeat.runRoot}
++if($outputPath -cne $expectedOutput){throw 'Exact fresh single/repeat capture lane required'}
+ if($packagePath -cne $capturePlan.compiledHostPackagePath){throw 'Exact padding-window-diagnosis host package required'}
++if($Count -eq 20){Assert-PaddingFirstCaptureProof -CaptureRoot $PSScriptRoot -CompiledReceiptPath (Join-Path $packagePath $receiptRelative) -CompileReceiptHash $CompileReceiptHash -ExeHash $ExeHash -SerializerControlSha256 $SerializerControlSha256 -ExpectedRunRoot $capturePlan.dispatch.first.runRoot}
+ if($plan.case.id -cne $approved.caseID -or $plan.sourceHash -cne $approved.sourceHash){throw 'Exact padding window diagnosis source identity required'}
+ $buildPreflight=$capturePlan.launchPreflightPath
+ if(-not (Test-Path -LiteralPath $buildPreflight -PathType Leaf)){throw 'Reviewed build preflight missing'}
+@@ -71,7 +76,9 @@
+ function Check-Lock {if((Get-Content -Raw 'D:\Claude\desktop.lock').Trim() -ne $LockOwner){throw 'Desktop lock ownership lost'}}
+ Check-Lock
+ 
++$issuedMetadata=Assert-LeaseIssuedMetadata $IssuedMetadataPath $IssuedMetadataHash $outputPath $Count $CompileReceiptHash $ExeHash $SerializerControlSha256
+ New-Item -ItemType Directory -Path $outputPath|Out-Null
++Copy-Item -LiteralPath $IssuedMetadataPath -Destination (Join-Path $outputPath 'issued-metadata.json')
+ foreach($binding in $plan.sourceBindings){
+  $inputPath=[IO.Path]::GetFullPath((Join-Path $packagePath $binding.path))
+  if(-not $inputPath.StartsWith($packagePath+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Source binding escapes package'}
+@@ -121,23 +128,32 @@
+  New-Item -ItemType Directory -Path $dir|Out-Null
+  $foregroundBefore=[FactoryDesktop]::GetForegroundWindow()
+  $startInfo=[Diagnostics.ProcessStartInfo]::new($exe)
++ $startInfo.Arguments='--factory-capture-lease-seconds=40'
+  $startInfo.UseShellExecute=$false;$startInfo.CreateNoWindow=$true
+  $startInfo.RedirectStandardOutput=$true;$startInfo.RedirectStandardError=$true
+  if((Get-FileHash -LiteralPath $buildPreflight).Hash.ToLowerInvariant() -ne $capturePlan.launchPreflightSha256.Replace('sha256:','')){throw 'Reviewed build preflight drift before child launch'}
+  & $buildPreflight -Phase Launch -CompileReceiptSha256 $CompileReceiptHash -ExeSha256 $ExeHash -SerializerControlSha256 $SerializerControlSha256  | Out-Null
++ $workerRoot=Join-Path $dir 'uia-worker'
++ $workerAttempted=$false
++ $inventory=[ordered]@{kind='factory-owned-uia-slot-inventory-v1';lockOwner=$LockOwner;rendererDirectory=$dir;roots=@($workerRoot);attempted=$false}
++ Write-FactoryDiagnosticJson (Join-Path $dir 'owned-worker-inventory.json') $inventory
+  $launchRequest=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');ticks=[Diagnostics.Stopwatch]::GetTimestamp();frequency=[Diagnostics.Stopwatch]::Frequency}
+- $p=[Diagnostics.Process]::Start($startInfo)
+- $launchReturn=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');ticks=[Diagnostics.Stopwatch]::GetTimestamp()}
++ $p=$null;$launchReturn=$null
+  $timingSamples=[Collections.Generic.List[object]]::new();$retainedTimingHandle=[IntPtr]::Zero
+  $ownedStartedAt='';$stdoutFile=$null;$stderrFile=$null;$stdoutTask=$null;$stderrTask=$null
+  $finalStart=$null;$workerResult=$null;$finalReleaseError='';$primaryError=$null;$cleanupResult=$null;$streamErrors=@();$preCleanupExitObservation=$null
+  $rawStreams=@(@{name='stdout';task=$null;file=$null;source=$null;copyCompleted=$false;destinationClosed=$false;sealed=$false},@{name='stderr';task=$null;file=$null;source=$null;copyCompleted=$false;destinationClosed=$false;sealed=$false})
+  try {
++ $p=[Diagnostics.Process]::Start($startInfo)
+  $retainedTimingHandle=$p.Handle
++ $launchReturn=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');ticks=[Diagnostics.Stopwatch]::GetTimestamp()}
+  $timingSamples.Add((Get-FactoryLifecycleTimingSample 'launch-return' $p $retainedTimingHandle $rawStreams))
+  $ownedStartedAt=$p.StartTime.ToUniversalTime().ToString('o')
+  $finalStart=[ordered]@{pid=$p.Id;retainedHandle=$retainedTimingHandle.ToInt64();path=$exe;startedAt=$ownedStartedAt;lockOwner=$LockOwner;workerId=$dir;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash}
+  Write-FactoryDiagnosticJson (Join-Path $dir 'final-start.json') $finalStart
++ $allocated=@($issuedMetadata.captures|Where-Object{$_.run -eq $i})
++ if($allocated.Count -ne 1){throw 'Unique allocated capture identity required'}
++ Write-FactoryDiagnosticJson (Join-Path $dir 'measured-capture-identity.json') ([ordered]@{kind='factory-measured-capture-identity-v1';issuedMetadataHash=$IssuedMetadataHash;run=$i;captureID=$allocated[0].captureID;imageID=$allocated[0].imageID;plannedHostIdentity=$allocated[0].plannedHostIdentity;plannedClockIdentity=$allocated[0].plannedClockIdentity;ownedIdentity=$finalStart;measuredHostIdentity=[ordered]@{id=$allocated[0].plannedHostIdentity;hash=('sha256:'+$ExeHash);pid=$p.Id;path=$exe;startedAt=$ownedStartedAt};measuredClockIdentity=[ordered]@{clockId=$allocated[0].plannedClockIdentity;clockKind='process-local-stopwatch';frequency=[Diagnostics.Stopwatch]::Frequency;processID=$PID;ticks=$launchReturn.ticks;utc=$launchReturn.utc;crossProcessQualified=$false};clock=[ordered]@{kind='process-local-stopwatch';frequency=[Diagnostics.Stopwatch]::Frequency;processID=$PID;utc=$launchReturn.utc;ticks=$launchReturn.ticks;crossProcessQualified=$false}})
+  $stdoutFile=[IO.File]::Open((Join-Path $dir 'host.stdout.txt'),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read);$rawStreams[0].file=$stdoutFile
+  $stderrFile=[IO.File]::Open((Join-Path $dir 'host.stderr.txt'),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read);$rawStreams[1].file=$stderrFile
+  $rawStreams[0].source=$p.StandardOutput.BaseStream
+@@ -161,14 +177,25 @@
+   $target=[pscustomobject]@{pid=$p.Id;hwnd=$hwnd.ToInt64();path=$exe;startedAt=$ownedStartedAt;lockOwner=$LockOwner}
+   $workerGuard={Check-Lock;Assert-OwnedWindow $target.pid $target.path $target.startedAt ([IntPtr]::new([long]$target.hwnd));Assert-Background $target.pid $dir $foregroundBefore}
+   Assert-FactoryIntegrationSources $PSScriptRoot
+-  $workerResult=Invoke-FactoryUiaSnapshotWorker $target (Join-Path $dir 'uia-worker') $workerGuard
++  $workerAttempted=$true;$inventory.attempted=$true
++  Write-FactoryDiagnosticJson (Join-Path $dir 'owned-worker-inventory.json') $inventory
++  $workerResult=Invoke-FactoryUiaSnapshotWorker $target $workerRoot $workerGuard
+   Assert-FactorySnapshotReady $workerResult $target
+   Copy-Item -LiteralPath $workerResult.snapshotPath -Destination (Join-Path $dir 'native.uia.json')
++  $ordering=[ordered]@{kind='factory-isolated-uia-parent-ordering-v1';issuedMetadataHash=$IssuedMetadataHash;rendererIdentity=$finalStart;parentProcessID=$PID;clockDomain='parent-process-local-stopwatch';frequency=[Diagnostics.Stopwatch]::Frequency;workerReceiptRef=$workerResult.workerReceiptPath;workerReceiptHash=$workerResult.workerReceiptSha256;workerFinalCertificateRef=$workerResult.finalCertificatePath;workerFinalCertificateHash=(Get-FileHash -LiteralPath $workerResult.finalCertificatePath).Hash.ToLowerInvariant();snapshotHash=$workerResult.snapshotSha256;workerVerifiedTicks=[Diagnostics.Stopwatch]::GetTimestamp();pixelsStartTicks=$null;pixelsEndTicks=$null;ownedCloseStartTicks=$null;ownedCloseEndTicks=$null;pixelReceiptRef=$null;pixelReceiptHash=$null;pixelSamples=@();ownedCloseReceiptRef=$null;ownedCloseReceiptHash=$null;crossProcessClockQualified=$false}
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
+   $fgAtCapture=([FactoryDesktop]::GetForegroundWindow() -eq $hwnd)
+   if($fgAtCapture){throw 'Background-only guard: owned window foreground at capture'}
+   $guard={Assert-OwnedWindow $p.Id $exe $ownedStartedAt $hwnd;Assert-Background $p.Id $dir $foregroundBefore;Check-Lock;if($p.HasExited){throw 'Owned renderer exited before pixels'}}
+   Assert-FactorySnapshotReady $workerResult $target
++  $ordering.pixelsStartTicks=[Diagnostics.Stopwatch]::GetTimestamp()
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
+   $pixels=Capture-FactoryPixels $hwnd $p.Id $dir $guard
++  $ordering.pixelsEndTicks=[Diagnostics.Stopwatch]::GetTimestamp()
++  $ordering.pixelReceiptRef=Join-Path $dir 'native.pixels.json'
++  $ordering.pixelReceiptHash=(Get-FileHash -LiteralPath $ordering.pixelReceiptRef).Hash.ToLowerInvariant()
++  $ordering.pixelSamples=@((Get-Content -Raw -LiteralPath $ordering.pixelReceiptRef|ConvertFrom-Json).samples)
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
+   Assert-Background $p.Id $dir $foregroundBefore
+   $closeSourceGuard={
+    if((Get-FileHash $closeHelper).Hash.ToLowerInvariant() -ne 'd0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c'){throw 'Owned close helper drift'}
+@@ -192,10 +219,16 @@
+   [uint32]$closePID=0
+   [FactoryDesktop]::GetWindowThreadProcessId($hwnd,[ref]$closePID)|Out-Null
+   Assert-FactorySnapshotReady $workerResult $target
++  $ordering.ownedCloseStartTicks=[Diagnostics.Stopwatch]::GetTimestamp()
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
+   $timingSamples.Add((Get-FactoryLifecycleTimingSample 'owned-close-request' $p $retainedTimingHandle $rawStreams))
+   $close=Request-FactoryOwnedClose $hwnd $p.Id $closePID {Assert-OwnedWindow $p.Id $exe $ownedStartedAt $hwnd} $closeSourceGuard {Check-Lock} {Assert-Background $p.Id $dir $foregroundBefore} {param($target,$message,$w,$l) [FactoryDesktop]::PostMessage($target,$message,$w,$l)}
+   $close|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $dir 'owned-close.json')
+   $exitDeadline=[DateTime]::UtcNow.AddSeconds(15)
++  $ordering.ownedCloseEndTicks=[Diagnostics.Stopwatch]::GetTimestamp()
++  $ordering.ownedCloseReceiptRef=Join-Path $dir 'owned-close.json'
++  $ordering.ownedCloseReceiptHash=(Get-FileHash -LiteralPath $ordering.ownedCloseReceiptRef).Hash.ToLowerInvariant()
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
+   $timingSamples.Add((Get-FactoryLifecycleTimingSample 'owned-close-return' $p $retainedTimingHandle $rawStreams))
+   while(-not $p.WaitForExit(100)){
+    Assert-Background $p.Id $dir $foregroundBefore;Check-Lock
+@@ -232,6 +265,7 @@
+   $rawQualification=if($stdoutHashState.qualification -eq 'unqualified' -or $stderrHashState.qualification -eq 'unqualified'){'unqualified'}elseif($stdoutHashState.qualification -eq 'diagnostic-partial' -or $stderrHashState.qualification -eq 'diagnostic-partial'){'diagnostic-partial'}else{'sealed-raw'}
+   try{$timingSamples.Add((Get-FactoryLifecycleTimingSample 'raw-closure-final' $p $retainedTimingHandle $rawStreams));[ordered]@{kind='padding-window-retained-handle-timing-v1';launchRequest=$launchRequest;launchReturn=$launchReturn;ownedIdentity=[ordered]@{pid=$p.Id;path=$exe;startedAt=$ownedStartedAt};compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;stdoutSha256=$stdoutHashState.sha256;stderrSha256=$stderrHashState.sha256;rawHashesQualification=$rawQualification;nativeExitDeadlineSeconds=15;rawDrainMilliseconds=5000;observations=$timingSamples.ToArray();authority='observational only; cleanup certificate remains original helper'}|ConvertTo-Json -Depth 16|Set-Content -Encoding UTF8 (Join-Path $dir 'lifecycle-timing.json')}catch{$streamErrors+=('Lifecycle timing receipt: '+[string]$_)}
+   try{[ordered]@{ownedIdentity=[ordered]@{pid=$p.Id;path=$exe;startedAt=$ownedStartedAt};lockOwner=$LockOwner;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;sourceHash=$plan.sourceHash;primaryError=if($null -ne $primaryError){[string]$primaryError}else{''};preCleanupExitObservation=$preCleanupExitObservation;cleanup=$cleanupResult;streamErrors=$streamErrors;rawStreams=$rawStates;rawHashesQualification=$rawQualification;stdoutSha256=$stdoutHashState.sha256;stderrSha256=$stderrHashState.sha256}|ConvertTo-Json -Depth 8|Set-Content -Encoding UTF8 (Join-Path $dir 'capture-outcome.json')}catch{$streamErrors+=('outcome receipt: '+[string]$_)}
++  if(-not $workerAttempted){try{Write-FactoryDiagnosticJson (Join-Path $dir 'uia-no-start.json') ([ordered]@{kind='factory-uia-slot-no-start-v1';root=$workerRoot;lockOwner=$LockOwner;rendererDirectory=$dir;attempted=$false;noInvocationConfirmed=$true})}catch{}}
+   # Separate release-only snapshot; never changes original outcome/cleanup/errors.
+   try{
+    Assert-FactoryIntegrationSources $PSScriptRoot
+--- capture-v2/coordinator.ps1
++++ lease-capture/coordinator.ps1
+@@ -3,18 +3,17 @@
+  [Parameter(Mandatory=$true)][string]$CompileReceiptHash,
+  [Parameter(Mandatory=$true)][string]$ExeHash,
+  [Parameter(Mandatory=$true)][string]$SerializerControlSha256,
+- [ValidateSet(1)][int]$Count=1
++ [ValidateSet(1,20)][int]$Count=1
+ )
+ $ErrorActionPreference='Stop'
+ if($CompileReceiptHash -cnotmatch '^[0-9a-f]{64}$' -or $ExeHash -cnotmatch '^[0-9a-f]{64}$' -or $SerializerControlSha256 -cnotmatch '^[0-9a-f]{64}$'){throw 'Measured lowercase SHA256 compile/executable/serializer control pins required'}
+ $here=[IO.Path]::GetFullPath($PSScriptRoot)
+-$expectedHere='D:\Claude\swiftright\factory\native\windows\padding-window-diagnosis-capture-v2'
++$expectedHere='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v2'
+ if($here -cne $expectedHere){throw 'Exact capture coordinator lane required'}
+ $plan=Get-Content -Raw (Join-Path $here 'capture-plan.json')|ConvertFrom-Json
+-if($CompileReceiptHash -cne $plan.admittedCompileReceiptSha256 -or $ExeHash -cne $plan.admittedExeSha256){throw 'Exact canonical diagnosis compile/exe required'}
+-$runRoot=$plan.dispatch.first.runRoot
+-$controlRoot=Join-Path $here 'coordinator-single-r1'
+-if($runRoot -cne (Join-Path $here 'actual-single-r1')){throw 'Exact prospective output namespace required'}
++$runRoot=if($Count -eq 1){$plan.dispatch.first.runRoot}else{$plan.dispatch.repeat.runRoot}
++$controlRoot=Join-Path $here $(if($Count -eq 1){'coordinator-single-r1'}else{'coordinator-repeat-r1'})
++if($runRoot -cne (Join-Path $here $(if($Count -eq 1){'actual-single-r1'}else{'actual-repeat-r1'}))){throw 'Exact prospective output namespace required'}
+ if(Test-Path -LiteralPath $runRoot){throw 'Fresh capture output required'}
+ if(Test-Path -LiteralPath $controlRoot){throw 'Fresh coordinator output required; retries disabled'}
+ $cleanupHelper=Join-Path $here 'support\cleanup.ps1';$sealHelper=Join-Path $here 'support\stream-seal.ps1'
+@@ -23,13 +22,15 @@
+  if((Get-FileHash -LiteralPath $sealHelper).Hash.ToLowerInvariant() -cne '4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d'){throw 'Stream helper drift'}
+ }
+ Assert-ControlHelpers
+-if((Get-FileHash -LiteralPath (Join-Path $here 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'c144a0260b9fa89bc9e4d528f52568636c6704ff4fea378c75d4a0c21d526740'){throw 'Integration binding manifest drift'}
++if((Get-FileHash -LiteralPath (Join-Path $here 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'ce8b4cad822b254d68bc7a620dede23969e8fbcf7d2c48443732318cacfe0fee'){throw 'Integration binding manifest drift'}
+ . (Join-Path $here 'support\integration.ps1')
+ Assert-FactoryIntegrationSources $here
+ . (Join-Path $here 'support\final-exit-certificate.ps1')
+ . $cleanupHelper
+ . $sealHelper
+-$receiptPath=Join-Path $plan.compiledHostPackagePath 'build-diagnosis-r1\observation.json'
++. (Join-Path $here 'dependencies\uia-worker\support\final-exit-certificate.ps1')
++. (Join-Path $here 'support\all-owned-release.ps1')
++$receiptPath=Join-Path $plan.compiledHostPackagePath 'build-capture-lease-r1\observation.json'
+ if((Get-FileHash -LiteralPath $receiptPath).Hash.ToLowerInvariant() -cne $CompileReceiptHash){throw 'Compile receipt drift'}
+ $compiled=Get-Content -Raw $receiptPath|ConvertFrom-Json
+ $exe=[IO.Path]::GetFullPath($compiled.exePath)
+@@ -38,6 +39,8 @@
+ if(-not (Test-Path -LiteralPath $buildPreflightPath -PathType Leaf)){throw 'Reviewed build preflight missing'}
+ if((Get-FileHash -LiteralPath $buildPreflightPath).Hash.ToLowerInvariant() -ne $plan.launchPreflightSha256.Replace('sha256:','')){throw 'Reviewed build preflight drift'}
+ & $buildPreflightPath -Phase Launch -CompileReceiptSha256 $CompileReceiptHash -ExeSha256 $ExeHash -SerializerControlSha256 $SerializerControlSha256 | Out-Null
++. (Join-Path $here 'support\first-proof.ps1')
++if($Count -eq 20){Assert-PaddingFirstCaptureProof -CaptureRoot $here -CompiledReceiptPath $receiptPath -CompileReceiptHash $CompileReceiptHash -ExeHash $ExeHash -SerializerControlSha256 $SerializerControlSha256 -ExpectedRunRoot $plan.dispatch.first.runRoot}
+ New-Item -ItemType Directory -Path $controlRoot|Out-Null
+ $lock='D:\Claude\desktop.lock'
+ $owner='padding-window-diagnosis-'+[Guid]::NewGuid().ToString('N')+' '+[DateTimeOffset]::UtcNow.ToString('o')
+@@ -61,8 +64,11 @@
+   $acquired=Change-Lock 'free' $owner
+   if(-not $acquired){Start-Sleep -Seconds 3}
+  }until($acquired)
++ $issuedPath=Join-Path $controlRoot 'issued-metadata.json'
++ & (Join-Path $here 'issue-before-launch.ps1') -Count $Count -RunRoot $runRoot -OutputPath $issuedPath -CompileReceiptSha256 $CompileReceiptHash -ExeSha256 $ExeHash -SerializerControlSha256 $SerializerControlSha256 | Out-Null
++ $issuedHash=(Get-FileHash -LiteralPath $issuedPath).Hash.ToLowerInvariant()
+  $config=Join-Path $controlRoot 'config.json'
+- [ordered]@{owner=$owner;count=$Count;runRoot=$runRoot;controlRoot=$controlRoot;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256}|ConvertTo-Json|Set-Content -Encoding UTF8 $config
++ [ordered]@{owner=$owner;count=$Count;runRoot=$runRoot;controlRoot=$controlRoot;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;issuedMetadataPath=$issuedPath;issuedMetadataHash=$issuedHash}|ConvertTo-Json|Set-Content -Encoding UTF8 $config
+  $arguments='-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "'+(Join-Path $here 'interactive-task.ps1')+'" -Config "'+$config+'"'
+  $vbs=Join-Path $controlRoot 'hidden-task.vbs'
+  $vbsText='Set sh = CreateObject("WScript.Shell")'+[Environment]::NewLine+'rc = sh.Run("powershell.exe '+$arguments.Replace('"','""')+'", 0, True)'+[Environment]::NewLine+'WScript.Quit rc'
+@@ -79,7 +85,7 @@
+  do{
+   if(Test-Path -LiteralPath $taskResultPath){
+    $taskResult=Get-Content -Raw $taskResultPath|ConvertFrom-Json
+-   if($taskResult.owner -cne $owner -or $taskResult.count -ne $Count -or $taskResult.runRoot -cne $runRoot -or $taskResult.compileReceiptHash -cne $CompileReceiptHash -or $taskResult.exeHash -cne $ExeHash -or $taskResult.serializerControlSha256 -cne $SerializerControlSha256 -or $taskResult.status -cnotin @('completed-source-bound-observation','hold-harness-error')){throw 'Interactive result lineage mismatch'}
++   if($taskResult.owner -cne $owner -or $taskResult.count -ne $Count -or $taskResult.runRoot -cne $runRoot -or $taskResult.compileReceiptHash -cne $CompileReceiptHash -or $taskResult.exeHash -cne $ExeHash -or $taskResult.issuedMetadataHash -cne $issuedHash -or $taskResult.serializerControlSha256 -cne $SerializerControlSha256 -or $taskResult.status -cnotin @('completed-source-bound-observation','hold-harness-error')){throw 'Interactive result lineage mismatch'}
+    $terminalResultConfirmed=$true
+    $status=$taskResult.status
+    if($status -cne 'completed-source-bound-observation'){throw ('Interactive capture failed: '+$taskResult.error)}
+@@ -110,38 +116,13 @@
+   if((Get-FileHash -LiteralPath $receiptPath).Hash.ToLowerInvariant() -cne $CompileReceiptHash -or (Get-FileHash -LiteralPath $exe).Hash.ToLowerInvariant() -cne $ExeHash){throw 'Cleanup compile/executable lineage drift'}
+   $dirs=@();if(Test-Path -LiteralPath $runRoot){$dirs=@(Get-ChildItem -LiteralPath $runRoot -Directory|Where-Object{$_.Name -like 'native-*'})}
+   if($dirs.Count -gt $Count -or ($status -ceq 'completed-source-bound-observation' -and $dirs.Count -ne $Count)){throw 'Whole batch child cardinality mismatch'}
++  if(@($taskResult.workerInventories).Count -ne $dirs.Count){throw 'Terminal task exhaustive inventory cardinality mismatch'}
+   foreach($dir in $dirs){
+    if($dir.Name -cnotmatch '^native-(0[1-9]|1[0-9]|20)$' -or [int]$dir.Name.Substring(7) -gt $Count){throw 'Unexpected batch child directory'}
+-   $ownedPath=Join-Path $dir.FullName 'owned-process.json';$outcomePath=Join-Path $dir.FullName 'capture-outcome.json'
+-   if(-not(Test-Path -LiteralPath $ownedPath -PathType Leaf) -or -not(Test-Path -LiteralPath $outcomePath -PathType Leaf)){throw 'Child directory lacks original retained-handle exit proof'}
+-   $owned=Get-Content -Raw $ownedPath|ConvertFrom-Json;$outcome=Get-Content -Raw $outcomePath|ConvertFrom-Json
+-   $stdout=@($outcome.rawStreams|Where-Object{$_.name -ceq 'stdout'});$stderr=@($outcome.rawStreams|Where-Object{$_.name -ceq 'stderr'})
+-   if(@($outcome.rawStreams).Count -ne 2 -or $stdout.Count -ne 1 -or $stderr.Count -ne 1){throw 'Exact child raw stream closure states required'}
+-   $stdoutHash=Get-FactoryRawHash (Join-Path $dir.FullName 'host.stdout.txt') $stdout[0]
+-   $stderrHash=Get-FactoryRawHash (Join-Path $dir.FullName 'host.stderr.txt') $stderr[0]
+-   if($stdoutHash.qualification -eq 'unqualified' -or $stderrHash.qualification -eq 'unqualified'){throw 'Child raw destination hashes unqualified'}
+-   $originalProof=Test-FactoryCaptureExitProof $outcome $owned $owner $CompileReceiptHash $ExeHash $stdoutHash.sha256 $stderrHash.sha256 $exe
+-   if(-not $originalProof){
+-    Assert-FactoryIntegrationSources $here
+-    $startPath=Join-Path $dir.FullName 'final-start.json';$workerPath=Join-Path $dir.FullName 'terminal-worker.json';$certPath=Join-Path $dir.FullName 'final-exit-certificate.json'
+-    $expected=Get-Content -Raw -LiteralPath $startPath|ConvertFrom-Json
+-    if(-not(Test-FactoryFinalStart $expected) -or $expected.pid -ne $owned.pid -or $expected.path -cne $exe -or $expected.startedAt -cne $owned.startedAt -or $expected.lockOwner -cne $owner -or $expected.workerId -cne $dir.FullName -or $expected.compileReceiptHash -cne $CompileReceiptHash -or $expected.exeHash -cne $ExeHash){throw 'Final start original lineage mismatch'}
+-    $expected|Add-Member workerReceiptRef $workerPath
+-    $expected|Add-Member workerReceiptHash ((Get-FileHash -LiteralPath $workerPath).Hash.ToLowerInvariant())
+-    $expected|Add-Member compileReceiptRef $receiptPath
+-    $expected|Add-Member exeRef $exe
+-    $certificate=Get-Content -Raw -LiteralPath $certPath|ConvertFrom-Json
+-    foreach($raw in @($certificate.rawStreams)){
+-     $requiredPath=Join-Path $dir.FullName ('host.'+$raw.name+'.txt')
+-     $requiredHash=if($raw.name -ceq 'stdout'){$stdoutHash.sha256}elseif($raw.name -ceq 'stderr'){$stderrHash.sha256}else{throw 'Unknown final stream'}
+-     if($raw.path -cne $requiredPath -or $raw.sha256 -cne $requiredHash){throw 'Final raw stream/outcome byte join mismatch'}
+-    }
+-    $terminal=Get-Content -Raw -LiteralPath $workerPath|ConvertFrom-Json
+-    if($terminal.finalCertificateRef -cne $certPath -or $terminal.originalOutcomeRef -cne $outcomePath -or $terminal.originalOutcomeHash -cne (Get-FileHash -LiteralPath $outcomePath).Hash.ToLowerInvariant()){throw 'Final certificate/outcome exact reference mismatch'}
+-    $allowedRefs=@($workerPath,$certPath,$receiptPath,$exe,(Join-Path $dir.FullName 'host.stdout.txt'),(Join-Path $dir.FullName 'host.stderr.txt'))
+-    $reader={param($ref) if($allowedRefs -cnotcontains $ref){throw 'Final proof read outside exact closure'};return ,([IO.File]::ReadAllBytes($ref))}
+-    if(-not(Test-FactoryFinalReleaseProof $certificate $expected $reader)){throw 'Final original-handle release proof absent'}
+-   }
++   $bound=@($taskResult.workerInventories|Where-Object{$_.directory -ceq $dir.FullName})
++   $inventoryPath=Join-Path $dir.FullName 'owned-worker-inventory.json'
++   if($bound.Count -ne 1 -or $bound[0].path -cne $inventoryPath -or $bound[0].sha256 -cne (Get-FileHash -LiteralPath $inventoryPath).Hash.ToLowerInvariant()){throw 'Terminal task worker inventory raw binding mismatch'}
++   Assert-FactoryAllOwnedRelease $dir.FullName $owner $receiptPath $CompileReceiptHash $exe $ExeHash $compiled.sourceHash
+ 
+   }
+   $releaseAllowed=$true
+--- capture-v2/dispatch.ps1
++++ lease-capture/dispatch.ps1
+@@ -4,8 +4,9 @@
+   [Parameter(Mandatory=$true)][string]$CompileReceiptHash,
+   [Parameter(Mandatory=$true)][string]$ExeHash,
+   [Parameter(Mandatory=$true)][string]$SerializerControlSha256,
+-  [ValidateSet(1)][int]$Count=1,
++  [ValidateSet(1,20)][int]$Count=1,
+   [string]$RunRoot,
++  [Parameter(Mandatory=$true)][string]$IssuedMetadataPath,[Parameter(Mandatory=$true)][string]$IssuedMetadataHash,
+   [string]$FirstRunRoot
+ )
+ $ErrorActionPreference='Stop'
+@@ -13,8 +14,15 @@
+ $plan=Get-Content -Raw (Join-Path $here 'capture-plan.json')|ConvertFrom-Json
+ . (Join-Path $here 'support\cleanup.ps1')
+ . (Join-Path $here 'support\stream-seal.ps1')
++if((Get-FileHash -LiteralPath (Join-Path $here 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'ce8b4cad822b254d68bc7a620dede23969e8fbcf7d2c48443732318cacfe0fee'){throw 'Integration binding manifest drift'}
++. (Join-Path $here 'support\integration.ps1')
++Assert-FactoryIntegrationSources $here
++. (Join-Path $here 'support\final-exit-certificate.ps1')
++. (Join-Path $here 'dependencies\uia-worker\support\final-exit-certificate.ps1')
++. (Join-Path $here 'support\all-owned-release.ps1')
++. (Join-Path $here 'support\first-proof.ps1')
+ if($CompileReceiptHash -notmatch '^[0-9a-f]{64}$' -or $ExeHash -notmatch '^[0-9a-f]{64}$' -or $SerializerControlSha256 -notmatch '^[0-9a-f]{64}$'){throw 'Measured compile receipt/exe/serializer control pins required'}
+-$expectedRunRoot=$plan.dispatch.first.runRoot
++$expectedRunRoot=if($Count -eq 1){$plan.dispatch.first.runRoot}else{$plan.dispatch.repeat.runRoot}
+ if([string]::IsNullOrWhiteSpace($RunRoot)){$RunRoot=$expectedRunRoot}
+ if([IO.Path]::GetFullPath($RunRoot) -cne $expectedRunRoot){throw 'Exact fresh capture namespace required'}
+ if(Test-Path -LiteralPath $RunRoot){throw 'Capture namespace already exists; retries are disabled'}
+@@ -23,9 +31,10 @@
+ if((Get-FileHash -LiteralPath $buildPreflightPath).Hash.ToLowerInvariant() -ne $plan.launchPreflightSha256.Replace('sha256:','')){throw 'Reviewed build preflight drift'}
+ & $buildPreflightPath -Phase Launch -CompileReceiptSha256 $CompileReceiptHash -ExeSha256 $ExeHash -SerializerControlSha256 $SerializerControlSha256 | Out-Null
+ 
++if($Count -eq 20){Assert-PaddingFirstCaptureProof -CaptureRoot $here -CompiledReceiptPath (Join-Path $plan.compiledHostPackagePath 'build-capture-lease-r1\observation.json') -CompileReceiptHash $CompileReceiptHash -ExeHash $ExeHash -SerializerControlSha256 $SerializerControlSha256 -ExpectedRunRoot $plan.dispatch.first.runRoot}
+ $dispatch=[ordered]@{kind='padding-window-diagnosis-capture-dispatch';status='dispatching';count=$Count;runRoot=$RunRoot;firstRunRoot=$FirstRunRoot;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;nativeLaunchesBeforeDispatch=0;retries=$false;metricsEventMissing='diagnostic-only; no synthetic event'}
+ $dispatch|ConvertTo-Json -Depth 8|Set-Content -Encoding UTF8 (Join-Path $here ('dispatch-{0}.json' -f $Count))
+-& (Join-Path $here 'capture-repeat.ps1') -Package $plan.compiledHostPackagePath -LockOwner $LockOwner -RunRoot $RunRoot -CompileReceiptHash $CompileReceiptHash -ExeHash $ExeHash -SerializerControlSha256 $SerializerControlSha256 -Count $Count
++& (Join-Path $here 'capture-repeat.ps1') -Package $plan.compiledHostPackagePath -LockOwner $LockOwner -RunRoot $RunRoot -CompileReceiptHash $CompileReceiptHash -ExeHash $ExeHash -SerializerControlSha256 $SerializerControlSha256 -Count $Count -IssuedMetadataPath $IssuedMetadataPath -IssuedMetadataHash $IssuedMetadataHash
+ if(-not (Test-Path -LiteralPath (Join-Path $RunRoot 'native-observation.json') -PathType Leaf)){throw 'Capture produced no observation receipt'}
+ $dispatch.status='completed-source-bound-observation';$dispatch.nativeLaunchesAfterDispatch=$Count
+ $dispatch.observationSha256=(Get-FileHash -LiteralPath (Join-Path $RunRoot 'native-observation.json')).Hash.ToLowerInvariant()
+--- capture-v2/interactive-task.ps1
++++ lease-capture/interactive-task.ps1
+@@ -4,14 +4,16 @@
+ $configPath=[IO.Path]::GetFullPath($Config)
+ if(-not $configPath.StartsWith($here+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Config outside coordinator lane'}
+ $c=Get-Content -Raw $configPath|ConvertFrom-Json
+-$controlRoot=Join-Path $here $(if($c.count -eq 1){'coordinator-single-r1'}else{throw 'Exact count required'})
++$controlRoot=Join-Path $here $(if($c.count -eq 1){'coordinator-single-r1'}elseif($c.count -eq 20){'coordinator-repeat-r1'}else{throw 'Exact count required'})
+ if($configPath -cne (Join-Path $controlRoot 'config.json') -or $c.controlRoot -cne $controlRoot){throw 'Exact coordinator config required'}
+ $status='hold-harness-error';$primaryError=$null
+ try{
+  if([Diagnostics.Process]::GetCurrentProcess().SessionId -eq 0){throw 'Interactive desktop session required'}
+  if((Get-Content -Raw 'D:\Claude\desktop.lock').Trim() -cne $c.owner){throw 'Coordinator lock ownership lost'}
+- & (Join-Path $here 'dispatch.ps1') -LockOwner $c.owner -CompileReceiptHash $c.compileReceiptHash -ExeHash $c.exeHash -SerializerControlSha256 $c.serializerControlSha256 -Count $c.count -RunRoot $c.runRoot *> (Join-Path $controlRoot 'task.log')
++ & (Join-Path $here 'dispatch.ps1') -LockOwner $c.owner -CompileReceiptHash $c.compileReceiptHash -ExeHash $c.exeHash -SerializerControlSha256 $c.serializerControlSha256 -Count $c.count -RunRoot $c.runRoot -IssuedMetadataPath $c.issuedMetadataPath -IssuedMetadataHash $c.issuedMetadataHash *> (Join-Path $controlRoot 'task.log')
+  $status='completed-source-bound-observation'
+ }catch{$primaryError=$_}
+-[ordered]@{status=$status;owner=$c.owner;count=$c.count;runRoot=$c.runRoot;compileReceiptHash=$c.compileReceiptHash;exeHash=$c.exeHash;serializerControlSha256=$c.serializerControlSha256;error=if($null -ne $primaryError){[string]$primaryError}else{''};errorId=if($null -ne $primaryError){$primaryError.FullyQualifiedErrorId}else{''};finishedAt=[DateTimeOffset]::UtcNow.ToString('o')}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $controlRoot 'task-result.json')
++$nativeDirs=@();if(Test-Path -LiteralPath $c.runRoot){$nativeDirs=@(Get-ChildItem -LiteralPath $c.runRoot -Directory|Where-Object{$_.Name -like 'native-*'})}
++$inventories=@($nativeDirs|ForEach-Object{$path=Join-Path $_.FullName 'owned-worker-inventory.json';[ordered]@{directory=$_.FullName;path=$path;sha256=if(Test-Path -LiteralPath $path){(Get-FileHash -LiteralPath $path).Hash.ToLowerInvariant()}else{$null}}})
++[ordered]@{issuedMetadataHash=$c.issuedMetadataHash;workerInventories=$inventories;status=$status;owner=$c.owner;count=$c.count;runRoot=$c.runRoot;compileReceiptHash=$c.compileReceiptHash;exeHash=$c.exeHash;serializerControlSha256=$c.serializerControlSha256;error=if($null -ne $primaryError){[string]$primaryError}else{''};errorId=if($null -ne $primaryError){$primaryError.FullyQualifiedErrorId}else{''};finishedAt=[DateTimeOffset]::UtcNow.ToString('o')}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $controlRoot 'task-result.json')
+ if($null -ne $primaryError){throw $primaryError}
+--- capture-v2/prepare-capture.ps1
++++ lease-capture/prepare-capture.ps1
+@@ -5,7 +5,7 @@
+   [Parameter(Mandatory=$true)][string]$CompileReceiptHash,
+   [Parameter(Mandatory=$true)][string]$ExeHash,
+   [Parameter(Mandatory=$true)][string]$SerializerControlSha256,
+-  [ValidateSet(1)][int]$Count = 1,
++  [ValidateSet(1,20)][int]$Count = 1,
+   [Parameter(Mandatory=$true)][string]$OutputPath
+ )
+ $ErrorActionPreference='Stop'
+@@ -14,8 +14,8 @@
+ foreach($h in @($CompileReceiptHash,$ExeHash,$SerializerControlSha256)) { if($h -notmatch '^[0-9a-f]{64}$'){throw 'Actual compile/executable/serializer control hashes required'} }
+ if(-not (Test-Path -LiteralPath $CompileReceiptPath -PathType Leaf)){throw 'Compile receipt missing'}
+ if(-not (Test-Path -LiteralPath $ExecutablePath -PathType Leaf)){throw 'Compiled host missing'}
+-if([IO.Path]::GetFullPath($CompileReceiptPath) -cne [IO.Path]::GetFullPath((Join-Path $plan.compiledHostPackagePath 'build-diagnosis-r1\observation.json'))){throw 'Exact compiled receipt path required'}
+-if([IO.Path]::GetFullPath($ExecutablePath) -cne [IO.Path]::GetFullPath((Join-Path $plan.compiledHostPackagePath 'build-diagnosis-r1\FactoryProbe.exe'))){throw 'Exact compiled executable path required'}
++if([IO.Path]::GetFullPath($CompileReceiptPath) -cne [IO.Path]::GetFullPath((Join-Path $plan.compiledHostPackagePath 'build-capture-lease-r1\observation.json'))){throw 'Exact compiled receipt path required'}
++if([IO.Path]::GetFullPath($ExecutablePath) -cne [IO.Path]::GetFullPath((Join-Path $plan.compiledHostPackagePath 'build-capture-lease-r1\FactoryProbe.exe'))){throw 'Exact compiled executable path required'}
+ if((Get-FileHash -LiteralPath $CompileReceiptPath).Hash.ToLowerInvariant() -ne $CompileReceiptHash){throw 'Compile receipt hash drift'}
+ if((Get-FileHash -LiteralPath $ExecutablePath).Hash.ToLowerInvariant() -ne $ExeHash){throw 'Executable hash drift'}
+ if(-not $plan.sourcePlanSha256 -or -not $plan.renderer.sha256){throw 'Capture plan pins missing'}

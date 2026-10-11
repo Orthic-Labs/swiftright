@@ -1,0 +1,19 @@
+{
+  "kind": "factory-v2-pin-revision-report-v1",
+  "status": "frozen-pin-invalidated",
+  "frozenV2": {
+    "stageSha256": "sha256:35dc3429462cb96cc762863a42ac7d70cfc9eb8a7b8cc93cc1be35d4288d3a03",
+    "adapterSha256": "sha256:2ad76e1b534074e2df63201b595924938bca1470e84098487e47fc53e7b05a0f"
+  },
+  "restoration": {
+    "exactClosureAvailable": false,
+    "availablePreimages": [
+      "factory/native/windows/padding-capture-lease-capture-v3/preimages/capture-v2",
+      "factory/native/windows/padding-window-diagnosis-capture-v2"
+    ],
+    "preimagesDoNotClaimFrozenV2": true
+  },
+  "reason": "Posthoc source edits were made in v2 before frozen closure recovery. v3 is prospective and cannot inherit frozen qualification.",
+  "nativeActions": 0,
+  "qualified": false
+}
