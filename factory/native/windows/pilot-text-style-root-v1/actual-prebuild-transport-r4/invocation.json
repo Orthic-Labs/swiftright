@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-control-suite-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootControlSuiteJobV1.cs",
+    "-HelperSha256",
+    "3ea2ea6d0134278fb704ef4ef8caf3fecc3b8e9463e1872b715baed70c6d0c76",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\entry-compile-style-r4.ps1",
+    "-ScriptSha256",
+    "8b8102a460d2b7369d101858d53063f0749143a8a84b5cb5e0aaefee2d279b09",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\transport-compile-style-r4.json",
+    "-DeadlineSeconds",
+    "690"
+  ],
+  "scriptSha256": "8b8102a460d2b7369d101858d53063f0749143a8a84b5cb5e0aaefee2d279b09",
+  "budgetBytes": 1073741824
+}
