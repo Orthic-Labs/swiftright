@@ -12,6 +12,14 @@ F7 capture implementation reuse: Smoke09 PrintWindow `PW_RENDERFULLCONTENT` plus
 
 ## Compatibility & negotiation
 
+### Initial settled client metrics
+
+ABI 0.7 must either report settled client size through `ready`, or guarantee a window-metrics event carrying settled size before first layout. This is a proposed post-closure guarantee; no ABI 0.6 layout, callback signature or current protected implementation is changed here.
+
+Original factory run requested 320×240 DIPs, logged ready 800×1396 physical pixels at scale2.5, then measured an 800×600 physical client at DPI240. These are same-run samples from different phases, not a synchronized proof of cause. [Exact source/raw joins](../pipeline/viewport-original-run-facts-v1/facts.json) preserve this distinction; SR0 owner records likely early ready sampling in `docs/sr0-findings.md` §12 as an SR1 item.
+
+Next observational padding run should log requested DIPs, ready metrics & owned `GetClientRect` in ready callback, then raw first actual window-metrics event & another client measurement in that callback. Include PID/HWND/thread, monotonic/UTC clocks, event sequence, DPI/scale & first-layout ordering. A tick/poll read cannot stand in for an actual metrics event. Missing event or unsettled size remains explicit; host continues laying out from measured client/scale while preserving ready values. One such run supplies bounded diagnostic evidence, not broader parity or repeatability qualification.
+
 Keep major0; minor becomes7 only after closure/freeze. Preserve every ABI0.6 field, offset, enum, callback, ownership rule & function signature. Append five size words to `swr_bootstrap_info`, six pointers to `swr_api`; keep all other existing structs unchanged. Do not repurpose reserved slots. `swr_frame` is a new opaque `uint64_t` generation handle.
 
 Retain **exact major/minor** validation. Current0.6 Swift loader rejects0.7 before table access;0.7 loader rejects0.6. Append-only layout does not promise cross-minor binary compatibility. `swr_bootstrap_query` remains caller-bounded & allocation/thread/callback-free: return `struct_size=108`, `api_table_size=184`, `fn_count=22`, `abi_minor=7`; never write beyond caller_size. Existing88-byte callers can read minor then refuse safely.0.7 loader requires full108-byte bootstrap, pointer_width64, supported arch & all size values before resolving/getting API.
