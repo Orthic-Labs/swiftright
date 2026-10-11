@@ -1,0 +1,5 @@
+# Mac compiler-tool archive v1
+
+This candidate archive binds exact tool identities recorded by `seed-origin-actual-v1` compiler receipts. Receipts record xcrun hash/path but omit xcrun byte count; 199024 bytes is measured only after installed bytes matched receipt hash `bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9`. Swift frontend receipt records 173118384 bytes with SHA-256 `84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7`; gzip output is below 100 MB.
+
+`archive_tool_bytes.py` is offline: replay reads only `tools/`, reconstructs gzip bytes in memory, checks compressed & raw size/hash, extracts mode-0644 files into ignored `scratch/internal/cache-v3`, writes exact reader config `{version:1,macRoots:["."],windowsArchives:{},macPathMap:{...}}`, & emits separate verification receipt. It rejects tampering, truncation & path traversal, never reads current compiler tools or executes native binaries, & refuses divergent output overwrites. Archive completion supplies candidate `ArchiveByteReader` mappings; it does not retroactively qualify historical captures.

@@ -1,0 +1,98 @@
+{
+  "runtime": [
+    {
+      "mode": "gate",
+      "configured": true,
+      "exitCode": 3,
+      "originIssues": []
+    },
+    {
+      "mode": "gate",
+      "configured": false,
+      "exitCode": 3,
+      "originIssues": [
+        "native origin archive reader unavailable; qualification held"
+      ]
+    },
+    {
+      "mode": "gate-evidence",
+      "configured": true,
+      "exitCode": 3,
+      "originIssues": []
+    },
+    {
+      "mode": "gate-evidence",
+      "configured": false,
+      "exitCode": 3,
+      "originIssues": [
+        "native origin archive reader unavailable; qualification held"
+      ]
+    }
+  ],
+  "configFaults": [
+    {
+      "mode": "bool-version",
+      "rejected": true
+    },
+    {
+      "mode": "float-version",
+      "rejected": true
+    },
+    {
+      "mode": "null-roots",
+      "rejected": true
+    },
+    {
+      "mode": "numeric-root",
+      "rejected": true
+    },
+    {
+      "mode": "duplicate-root",
+      "rejected": true
+    },
+    {
+      "mode": "alias-root-duplicate",
+      "rejected": true
+    },
+    {
+      "mode": "file-root",
+      "rejected": true
+    },
+    {
+      "mode": "absolute-root",
+      "rejected": true
+    },
+    {
+      "mode": "windows-list",
+      "rejected": true
+    },
+    {
+      "mode": "numeric-windows-location",
+      "rejected": true
+    },
+    {
+      "mode": "uppercase-windows-key",
+      "rejected": true
+    },
+    {
+      "mode": "logical-dotdot",
+      "rejected": true
+    },
+    {
+      "mode": "logical-nonnormal",
+      "rejected": true
+    },
+    {
+      "mode": "map-directory",
+      "rejected": true
+    },
+    {
+      "mode": "extra-field",
+      "rejected": true
+    },
+    {
+      "mode": "nested-duplicate-json-key",
+      "rejected": true
+    }
+  ]
+}

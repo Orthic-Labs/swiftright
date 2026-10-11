@@ -1,0 +1,73 @@
+{
+  "kind": "independent-archive-byte-reader-review-v1",
+  "verdict": "CLEAR_SCOPED_WITH_TWO_NON_BYPASS_FINDINGS",
+  "scope": "ArchiveByteReader actual API confinement, nested Mac archive dependencies, Windows capture-bound raw refs; no producer/native/GUI/Git changes",
+  "sources": {
+    "factory/pipeline/archive_reader.py": "sha256:480345afa42747491a8914b6b6d100792f5a656de700ab44a90353effef6fe56",
+    "factory/pipeline/test_archive_reader.py": "sha256:267e8df3f220befbcb0e94986dab4247a2156a6a4fb6a28a7bb141fffdb0210a",
+    "factory/pipeline/reader_config.py": "sha256:010c7887e9371608f442cbfce07d2128b3c832028630f4dab6ff63a9d5077b59",
+    "factory/pipeline/archive-reader-usage.md": "sha256:0345c748af5232be254a9554e5701f3a8d1c6d34bfc72b7535b89043c5a4419c"
+  },
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest factory.pipeline.test_archive_reader -v",
+      "result": "PASS",
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest factory.pipeline.test_reader_config -v",
+      "result": "ENVIRONMENT_BLOCKED",
+      "detail": "Import requires unavailable jsonschema dependency through factory.pipeline.__main__"
+    },
+    {
+      "command": "offline ArchiveByteReader mac read of historical capture.json",
+      "result": "PASS",
+      "capturePath": "factory/native/macos/evidence/20261010-gate-seeded/swiftui.image.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+      "bytes": 3413,
+      "sha256": "sha256:4904b11ef20cbcf483d0b2d0d068a797212fa09671dec9c7e4c35b8c5511fee0",
+      "macOriginPresent": false
+    },
+    {
+      "command": "malformed Windows proof path containing NUL",
+      "result": "FAILS_CLOSED_WITH_WRONG_EXCEPTION",
+      "observed": "ValueError: open: embedded null character in path",
+      "expectedPublicError": "ArchiveReadError"
+    }
+  ],
+  "securityChecks": {
+    "macAbsoluteOutsideRoot": "BLOCKED",
+    "macNestedSymlinkEscape": "BLOCKED",
+    "macHashTamper": "BLOCKED",
+    "windowsChangedCaptureWithoutMatchingRoot": "BLOCKED",
+    "windowsUnknownReference": "BLOCKED",
+    "windowsNestedHostRuntimeBindings": "HASH_BOUND",
+    "windowsObservationRawBindings": "HASH_BOUND",
+    "windowsTamperedBytes": "BLOCKED",
+    "windowsSymlinkEscape": "BLOCKED",
+    "crossCaptureOrHashForgedAuthorization": "NOT_FOUND"
+  },
+  "findings": [
+    {
+      "id": "fixture-only-reader-tests",
+      "severity": "coverage",
+      "evidence": "test_archive_reader.py module docstring says invented guard fixtures only; historical real Mac capture lacks meta.conditions.macOrigin",
+      "action": "Add pinned real Mac-origin archive integration case covering external xcrun mapping, Witness.swift, CaptureHost.swift, compiler receipt, binary & optional AX refs"
+    },
+    {
+      "id": "nul-path-exception",
+      "severity": "robustness",
+      "evidence": "_safe_relative permits NUL; _read_beneath then os.open raises ValueError instead of ArchiveReadError",
+      "action": "Reject NUL in _safe_relative or translate ValueError at read boundary",
+      "authorizationImpact": "none; gate catches ValueError & remains blocked"
+    }
+  ],
+  "archiveConventions": {
+    "mac": "Absolute logical refs must be beneath resolved macRoots or exact macPathMap target; every opened component uses O_NOFOLLOW",
+    "windows": "One archive root per bare canonical capture hash; proof names tool/compiler.bin, host/*, runtime/* & per-run raw paths; nested refs are admitted only from hash-verified proof JSON",
+    "execution": "Reader performs byte reads only; no compiler, GUI, Accessibility or permission request"
+  },
+  "producerEdits": false,
+  "nativeExecutions": 0,
+  "remoteExecutions": 0
+}

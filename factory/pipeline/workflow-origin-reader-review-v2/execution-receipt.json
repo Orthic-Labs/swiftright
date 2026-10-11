@@ -1,0 +1,62 @@
+{
+  "sourcesPre": {
+    "factory/pipeline/__main__.py": "eeedb1bd6a23aa8e009cdfeea31ed18199de2dca11bb03ea1186cd4e187c79b2",
+    "factory/pipeline/reader_config.py": "010c7887e9371608f442cbfce07d2128b3c832028630f4dab6ff63a9d5077b59",
+    "factory/pipeline/test_reader_config.py": "9345b38b226c1a5dbc289645f11615c46b9ce1535f3d0609ca08fa1de4874f63",
+    "factory/pipeline/archive-reader-usage.md": "0345c748af5232be254a9554e5701f3a8d1c6d34bfc72b7535b89043c5a4419c",
+    "factory/pipeline/workflow.py": "4c82362093618840b11b6ad0f1e13cab07e2fa821cad75fb1e6b515cc2184362",
+    "factory/pipeline/archive_reader.py": "480345afa42747491a8914b6b6d100792f5a656de700ab44a90353effef6fe56",
+    "factory/pipeline/workflow-origin-reader-review-v2/independent_controls.py": "d026c4ad3c478f3e0678e0aba016a95357ebe34b253c73cfe21072b9fbae94aa"
+  },
+  "sourcesPost": {
+    "factory/pipeline/__main__.py": "eeedb1bd6a23aa8e009cdfeea31ed18199de2dca11bb03ea1186cd4e187c79b2",
+    "factory/pipeline/reader_config.py": "010c7887e9371608f442cbfce07d2128b3c832028630f4dab6ff63a9d5077b59",
+    "factory/pipeline/test_reader_config.py": "9345b38b226c1a5dbc289645f11615c46b9ce1535f3d0609ca08fa1de4874f63",
+    "factory/pipeline/archive-reader-usage.md": "0345c748af5232be254a9554e5701f3a8d1c6d34bfc72b7535b89043c5a4419c",
+    "factory/pipeline/workflow.py": "4c82362093618840b11b6ad0f1e13cab07e2fa821cad75fb1e6b515cc2184362",
+    "factory/pipeline/archive_reader.py": "480345afa42747491a8914b6b6d100792f5a656de700ab44a90353effef6fe56",
+    "factory/pipeline/workflow-origin-reader-review-v2/independent_controls.py": "d026c4ad3c478f3e0678e0aba016a95357ebe34b253c73cfe21072b9fbae94aa"
+  },
+  "sourceBytesUnchanged": true,
+  "pythonPath": "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+  "pythonRealPath": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "pythonSha256": "4f00ea2ad53d62437a6a3946b73c73614a97e8accdc5b96dc095ea1a0d9c6a56",
+  "processes": [
+    {
+      "label": "focused-tests",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "-m",
+        "unittest",
+        "factory.pipeline.test_reader_config",
+        "-v"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 52660,
+      "startedAt": "2026-10-11T08:11:51.318915+00:00",
+      "finishedAt": "2026-10-11T08:11:51.648355+00:00",
+      "elapsedSeconds": 0.32929254201008007,
+      "exitCode": 0,
+      "timedOut": false,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "d9efb686f32c4c42b07d3ea603f428c8a29f4e347b042d4d567993ce255a88bb"
+    },
+    {
+      "label": "independent-controls",
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "-c",
+        "import runpy; runpy.run_path('factory/pipeline/workflow-origin-reader-review-v2/independent_controls.py',run_name='__main__')"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "pid": 52667,
+      "startedAt": "2026-10-11T08:11:51.648421+00:00",
+      "finishedAt": "2026-10-11T08:11:51.902311+00:00",
+      "elapsedSeconds": 0.2539225419750437,
+      "exitCode": 0,
+      "timedOut": false,
+      "stdoutSha256": "d68e46650291c6f0c55ecc41e6849d380d7d82681115e5d65e4bf1dd0b31ef34",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

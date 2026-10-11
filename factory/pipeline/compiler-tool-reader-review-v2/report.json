@@ -1,0 +1,52 @@
+{
+  "verdict": "EXACT_MODE_DEFECT",
+  "sourceSha256": "f1baeca2f918f9e097a13536adce52fd8efe9e45a6d0dc5d021a4d68049566a6",
+  "fixed": [
+    "Generated config loads &swiftc/frontend aliases read exact pinned173MB",
+    "0755 exact reuse rejects"
+  ],
+  "remainingFinding": {
+    "mode": {
+      "action": "REUSED_EXACT",
+      "actualMode": "0o4644"
+    },
+    "reason": "0777 mask ignores special mode bits;0644 receipt requires full mode identity"
+  },
+  "passed": {
+    "rawArchiveHashes": [
+      {
+        "name": "xcrun",
+        "bytes": 199024,
+        "sha256": "bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+        "mode": "0o644"
+      },
+      {
+        "name": "swift-frontend",
+        "bytes": 173118384,
+        "sha256": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+        "mode": "0o644"
+      }
+    ],
+    "actualAliasReads": [
+      {
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "bytes": 173118384,
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      },
+      {
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+        "bytes": 173118384,
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      }
+    ],
+    "divergentCollision": {
+      "rejected": true,
+      "preserved": true
+    },
+    "booleanConfigVersionRejected": true
+  },
+  "currentToolReads": 0,
+  "toolExecutions": 0,
+  "scratchRemoved": true,
+  "producerEdits": false
+}

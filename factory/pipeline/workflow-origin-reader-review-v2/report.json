@@ -1,0 +1,27 @@
+{
+  "verdict": "CLEAR",
+  "scope": "CLI explicit reader config &callback wiring only; ArchiveByteReader proper reviewed separately",
+  "sources": {
+    "factory/pipeline/__main__.py": "eeedb1bd6a23aa8e009cdfeea31ed18199de2dca11bb03ea1186cd4e187c79b2",
+    "factory/pipeline/reader_config.py": "010c7887e9371608f442cbfce07d2128b3c832028630f4dab6ff63a9d5077b59",
+    "factory/pipeline/test_reader_config.py": "9345b38b226c1a5dbc289645f11615c46b9ce1535f3d0609ca08fa1de4874f63",
+    "factory/pipeline/archive-reader-usage.md": "0345c748af5232be254a9554e5701f3a8d1c6d34bfc72b7535b89043c5a4419c",
+    "factory/pipeline/workflow.py": "4c82362093618840b11b6ad0f1e13cab07e2fa821cad75fb1e6b515cc2184362",
+    "factory/pipeline/archive_reader.py": "480345afa42747491a8914b6b6d100792f5a656de700ab44a90353effef6fe56",
+    "factory/pipeline/workflow-origin-reader-review-v2/independent_controls.py": "d026c4ad3c478f3e0678e0aba016a95357ebe34b253c73cfe21072b9fbae94aa"
+  },
+  "focusedTestsPassed": 6,
+  "runtimeControlsPassed": 4,
+  "configFaultControlsPassed": 16,
+  "findings": [],
+  "observations": [
+    "Real CLI main calls real workflow gate/gate_evidence; only evaluator boundary mocked to execute actual origin guard",
+    "Configured actual ArchiveByteReader resolves synthetic archived Windows raw inputs &actual guard accepts them",
+    "Config omission supplies None &actual guard retains qualification hold",
+    "Exact shape/version/types, nested duplicate JSON keys, duplicate resolved roots, invalid mappings &logical path normalization reject",
+    "Physical roots resolve explicit config-relative paths; admission scope is listed resolved directories, not config directory containment",
+    "CLI exit remains3 for blocked workflows; no parity/reader verdict coupling introduced"
+  ],
+  "producerEdits": false,
+  "nativeExecutions": 0
+}

@@ -1,0 +1,52 @@
+{
+  "kind": "mac-compiler-tool-archive-v1",
+  "version": "1",
+  "candidateOnly": true,
+  "source": {
+    "root": "factory/oracle/mac/seed-origin-actual-v1",
+    "receiptSha256": [
+      "sha256:587475c7ca4aa9c6d88821e2b806307d4dbd514c2a5950bf56fa5e6b2e92aad",
+      "sha256:c1112f45db869766bd852f1874882ef3c273b50ba4ed48fde622411357f8d2bd",
+      "sha256:935bea558f96e03b14d971d5ae19fcc7e0c1c3d062c003c9e22e143d1a4cffbb",
+      "sha256:471b6a6b781227544a6d0a2d59c55a53a595a42913c6df7d3044b3af24088587",
+      "sha256:a13fb7a2701323d89ca498cb677a1940e5b6f6d0b8edaf12dd6e13a686fb1b5d",
+      "sha256:62a8d1cfd36ea9a35148ae912c43ce3a6e25df1ebb4434ea0d93b460a98a0c66"
+    ],
+    "receiptToolHashes": {
+      "/usr/bin/xcrun": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    }
+  },
+  "entries": [
+    {
+      "logicalPath": "/usr/bin/xcrun",
+      "realPath": "/usr/bin/xcrun",
+      "archivePath": "tools/xcrun",
+      "compression": "none",
+      "bytes": 199024,
+      "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "archiveBytes": 199024,
+      "archiveSha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+    },
+    {
+      "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "realPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "archivePath": "tools/swift-frontend.gz",
+      "compression": "gzip",
+      "bytes": 173118384,
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "archiveBytes": 60527695,
+      "archiveSha256": "sha256:c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e",
+      "archiveBytesLimit": 100000000
+    }
+  ],
+  "replay": {
+    "readerConfig": "scratch/internal/cache-v3/reader_config.json",
+    "readerConfigSha256": "sha256:0f5c969a5facf4672ed4453dca85567ba9bf9f25dc5aeddfd8d4ed7ec216e03b",
+    "verificationReceipt": "scratch/internal/cache-v3/verification-receipt.json",
+    "verificationReceiptSha256": "sha256:b667c19461fea9e250a47db04bac2b9ad072a7147bd8c5b03ca34dad8564bbaa",
+    "currentToolReads": 0,
+    "nativeExecutions": 0,
+    "faultControls": ["tampered-xcrun", "truncated-swift-frontend", "path-traversal"]
+  }
+}

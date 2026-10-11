@@ -4,6 +4,7 @@ import json
 import sys
 from .workflow import HERE, ROOT, prepare, collect, report, gate, queue, gate_evidence, font_addendum
 from factory.core.artifacts import load_artifact, write_artifact
+from .reader_config import load_origin_reader_config
 
 
 def main(argv=None):
@@ -34,6 +35,7 @@ def main(argv=None):
             p.add_argument('--native-holds')
         if name in ('gate', 'gate-evidence'):
             p.add_argument('--manifests', default=str(HERE / 'manifests'))
+            p.add_argument('--origin-reader-config', help='explicit archive roots for origin verification; omission keeps native origin held')
         if name == 'gate':
             p.add_argument('--test-seed', type=int, help='tests only; production chooses runtime seed')
         if name == 'gate-evidence':
@@ -47,6 +49,7 @@ def main(argv=None):
             p.add_argument('--binding', default=str(ROOT / 'factory/resources/fonts/pilot/binding.json'))
     args = parser.parse_args(argv)
     try:
+        origin_reader = load_origin_reader_config(args.origin_reader_config) if getattr(args, 'origin_reader_config', None) else None
         if args.command == 'prepare':
             result = prepare(args.output, args.tuple, args.config, args.seed, args.snapshot_created_at)
         elif args.command == 'collect':
@@ -57,9 +60,12 @@ def main(argv=None):
         elif args.command == 'report':
             result = report(args.output, args.cases, args.evidence_root, args.primaries, args.config, args.registry, args.demand, args.compile_summary, args.corrections, args.native_holds, args.exclude_capture_dir)
         elif args.command == 'gate':
-            result = gate(args.output, args.cases, args.evidence_root, args.tuple, args.config, args.manifests, args.test_seed)
+            result = gate(args.output, args.cases, args.evidence_root, args.tuple, args.config,
+                          args.manifests, args.test_seed, origin_reader=origin_reader)
         elif args.command == 'gate-evidence':
-            result = gate_evidence(args.output, args.plan, args.cases, args.evidence_root, args.tuple, args.config, args.manifests, args.exclude_capture_dir)
+            result = gate_evidence(args.output, args.plan, args.cases, args.evidence_root,
+                args.tuple, args.config, args.manifests, args.exclude_capture_dir,
+                origin_reader=origin_reader)
         elif args.command == 'font-addendum':
             result = font_addendum(args.output, args.evidence_root, args.cases_dir, args.resource, args.private_collection, args.typecheck, args.binding)
         else:

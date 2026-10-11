@@ -1,0 +1,81 @@
+{
+  "kind": "independent-archive-byte-reader-actual-mac-origin-replay-v2",
+  "decision": "BLOCKED_MISSING_ARCHIVED_TOOL_BYTES",
+  "scope": "Read-only derived Mac-origin guard replay through production ArchiveByteReader; no mutation of historical captures",
+  "archiveStage": {
+    "root": "factory/oracle/mac/seed-origin-actual-v2",
+    "archiveMapSha256": "sha256:e33bdf9f96b5b989d946d8be152cf7a560f7adb793bff6f2bc08dae547d9e7df",
+    "stageManifestSha256": "sha256:6a41b76a6bd6129e2f4b212d9b9997c73d31800968a99077ee5b5d4c04c84515",
+    "archiveMapRows": 2134,
+    "cases": 5,
+    "runs": 100,
+    "candidateOnly": true
+  },
+  "reader": {
+    "sourceSha256": "sha256:8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e",
+    "config": "factory/pipeline/archive-reader-review-v2/config.example.json",
+    "macRoots": ["../../oracle/mac/seed-origin-actual-v2"],
+    "macPathMapEntries": 17,
+    "mappedBytesRead": "PASS",
+    "toolBytesRead": "NONE"
+  },
+  "derivedCandidate": {
+    "construction": "summary.json + archive/inputs/<case>.json + archive source/binary + compiler-receipt.json + ax-compiler-receipt.json; original capture.json never edited",
+    "source": "factory/oracle/mac/seed-origin-actual-v2/independent-review/review_actual_v2.py shape, reader replaced by ArchiveByteReader",
+    "originalRun001CaptureHashes": {
+      "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258": "sha256:02fc3895da68076f9b7b98316a65e04400f66ed9fd6035cdeb55c8e38599537d",
+      "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258": "sha256:17eec59d93a95982cb79874b37b4ff4019e9a10d46195db2e99caa45cf59e328",
+      "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258": "sha256:83cbb544473619584e419a586713fee24502d5e411f394c7e8ab3940bf388c43",
+      "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258": "sha256:ce804132def6f1fa6d46ec7fce1e7b3a77610486b556b7dd70d4811c623850f5",
+      "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258": "sha256:c2598e4bab74a861d597048bc16609981768dc5abe2aef5137f31717244b8671"
+    }
+  },
+  "replay": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python <derived-v2-replay using config.example.json>",
+    "rows": 5,
+    "eachRowIssues": [
+      "mac-origin:read-failed: compiler real tool: Mac reference is outside admitted roots",
+      "mac-origin:read-failed: xcrun: Mac reference is outside admitted roots"
+    ],
+    "otherMainAndAXRefs": "read through ArchiveByteReader after 17 exact maps"
+  },
+  "missingDependencies": [
+    {
+      "logicalPath": "/usr/bin/xcrun",
+      "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "requiredBy": "main & AX compiler receipts",
+      "archiveMapEntries": 0,
+      "action": "Archive exact xcrun bytes; map logical path; do not read current system tool"
+    },
+    {
+      "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "requiredBy": "main & AX compiler receipts realToolBefore/After",
+      "archiveMapEntries": 0,
+      "action": "Archive exact swift-frontend bytes; map logical path; do not read current SDK/tool"
+    }
+  ],
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -m unittest factory.pipeline.test_archive_reader -v",
+      "result": "PASS",
+      "passed": 5
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -m unittest factory.pipeline.test_reader_config -v",
+      "result": "PASS",
+      "passed": 6
+    },
+    {
+      "command": "load_origin_reader_config(config.example.json)",
+      "result": "PASS",
+      "macPathMapEntries": 17
+    }
+  ],
+  "qualification": {
+    "nativeOrCompilerRuns": 0,
+    "permissionRequests": 0,
+    "parityOrPromotionClaim": false,
+    "captureMutation": false
+  }
+}

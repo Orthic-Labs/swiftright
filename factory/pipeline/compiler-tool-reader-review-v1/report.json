@@ -1,0 +1,47 @@
+{
+  "verdict": "DEFECTS",
+  "reviewedSourceSha256": "bde14377711b50ccc69d865b871ba1f555d62d0a8de8bfb9d220893b73ce99aa",
+  "sourceSnapshot": "factory/pipeline/compiler-tool-reader-review-v1/archive_tool_bytes-reviewed.py",
+  "defects": [
+    {
+      "id": "missing-swiftc-config-target",
+      "evidence": {
+        "accepted": false,
+        "error": "macPathMap value target is missing or unresolved",
+        "missingPath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/compiler-tool-reader-review-v1/offline-myjifq8k/swiftc",
+        "swiftcExists": false
+      },
+      "impact": "Fresh reusable helper output cannot load through production config loader",
+      "location": "reader_config logical swiftc mapping vs main extracted file names"
+    },
+    {
+      "id": "false-reused-output-mode",
+      "evidence": {
+        "action": "REUSED_EXACT",
+        "mode": "0o755",
+        "claimedReceiptMode": "0644"
+      },
+      "impact": "Exact reused executable file retains0755 despite receipt0644",
+      "location": "write_exact exact reuse returns before chmod"
+    }
+  ],
+  "passed": [
+    "Pinned compressed/archive identity &reconstructed raw hashes/sizes",
+    "Fresh extraction mode0644",
+    "Corrupt xcrun/truncated gzip/path traversal controls reject",
+    "Divergent output refuses overwrite &preserves bytes",
+    "Strict loader rejects boolean config version",
+    "Audit blocked current logical/real compiler paths; zero current tool reads",
+    "Internal scratch device differs from repository; extracted173MB removed after verification"
+  ],
+  "scratchRemoved": true,
+  "nativeExecutions": 0,
+  "compilerExecutions": 0,
+  "producerEdits": false,
+  "archiveInputs": {
+    "factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json": "6be1ba1f21b69d10da3b338aae5e45676216dbdfdf1a19edca0dc8abc4bda4b3",
+    "factory/oracle/mac/compiler-tool-archive-v1/tools/xcrun": "bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+    "factory/oracle/mac/compiler-tool-archive-v1/tools/swift-frontend.gz": "c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e"
+  },
+  "ownBootstrapLineage": "Initial independent snapshot default archive_root pointed own directory; corrected only own module binding, preserved failed wrapper receipts"
+}

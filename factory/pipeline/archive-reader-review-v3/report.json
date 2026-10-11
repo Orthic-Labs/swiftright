@@ -1,0 +1,82 @@
+{
+  "kind": "independent-archive-byte-reader-actual-mac-origin-replay-v3",
+  "decision": "CLEAR_SCOPED_ARCHIVE_REPLAY",
+  "scope": "Offline compiler-tool archive verification plus five derived Mac-origin candidates through production ArchiveByteReader; original captures untouched",
+  "toolArchive": {
+    "root": "factory/oracle/mac/compiler-tool-archive-v1",
+    "manifestSha256": "sha256:762add4f73a7e2ff5aab41049cb41d4a640ad1c8c86e3ddf7b95a6335deba4b5",
+    "verificationReceiptSha256": "sha256:1e8e34da65d4a1c0594b186bd33bf731765aef2e7110a6b80f20d138242d7a48",
+    "offlineVerifier": "PASS",
+    "currentToolReadsDuringReplay": 0,
+    "nativeExecutions": 0,
+    "entries": [
+      {
+        "logicalPath": "/usr/bin/xcrun",
+        "archivePath": "tools/xcrun",
+        "bytes": 199024,
+        "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+      },
+      {
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+        "archivePath": "tools/swift-frontend.gz",
+        "expandedBytes": 173118384,
+        "expandedSha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+        "compressedBytes": 60527695,
+        "compressedSha256": "sha256:c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e"
+      }
+    ],
+    "faultControls": {
+      "tampered-xcrun": "REJECTED",
+      "truncated-swift-frontend": "REJECTED",
+      "path-traversal": "REJECTED"
+    }
+  },
+  "archiveStage": {
+    "root": "factory/oracle/mac/seed-origin-actual-v2",
+    "archiveMapSha256": "sha256:e33bdf9f96b5b989d946d8be152cf7a560f7adb793bff6f2bc08dae547d9e7df",
+    "stageManifestSha256": "sha256:6a41b76a6bd6129e2f4b212d9b9997c73d31800968a99077ee5b5d4c04c84515",
+    "cases": 5,
+    "runs": 100,
+    "candidateOnly": true
+  },
+  "reader": {
+    "sourceSha256": "sha256:8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e",
+    "config": "factory/pipeline/archive-reader-review-v3/config.example.json",
+    "macRoots": 2,
+    "macPathMapEntries": 19,
+    "mappedReaderCalls": 130,
+    "uniqueLogicalPaths": 76
+  },
+  "guardReplay": {
+    "loader": "factory.pipeline.reader_config.load_origin_reader_config",
+    "guard": "factory.gate.mac_origin_admission.mac_origin_admission_issues",
+    "cases": 5,
+    "zeroIssueCases": 5,
+    "status": "PASS",
+    "diagnosticConstruction": "summary.json + archive case/source/binary + compiler receipts + AX refs; original capture.json files were never edited",
+    "originalRun001CaptureHashes": {
+      "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258": "sha256:02fc3895da68076f9b7b98316a65e04400f66ed9fd6035cdeb55c8e38599537d",
+      "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258": "sha256:17eec59d93a95982cb79874b37b4ff4019e9a10d46195db2e99caa45cf59e328",
+      "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258": "sha256:83cbb544473619584e419a586713fee24502d5e411f394c7e8ab3940bf388c43",
+      "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258": "sha256:ce804132def6f1fa6d46ec7fce1e7b3a77610486b556b7dd70d4811c623850f5",
+      "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258": "sha256:c2598e4bab74a861d597048bc16609981768dc5abe2aef5137f31717244b8671"
+    }
+  },
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -m unittest factory.pipeline.test_archive_reader factory.pipeline.test_reader_config -q",
+      "result": "PASS",
+      "passed": 11
+    },
+    {
+      "command": "factory/.venv/bin/python factory/oracle/mac/compiler-tool-archive-v1/archive_tool_bytes.py --output <ignored scratch receipt>",
+      "result": "PASS",
+      "currentToolReads": 0
+    }
+  ],
+  "qualification": {
+    "nativeOrCompilerRuns": 0,
+    "permissionRequests": 0,
+    "parityOrPromotionClaim": false
+  }
+}

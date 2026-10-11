@@ -1,0 +1,87 @@
+{
+  "verdict": "CLEAR",
+  "scope": "Reusable offline extractor &generated config only",
+  "sourceSha256": "d9853b3c78c647da7b6c5834e48d7b57460c6aa262b3697ddee27f462d5a0f5f",
+  "configSha256": "0f5c969a5facf4672ed4453dca85567ba9bf9f25dc5aeddfd8d4ed7ec216e03b",
+  "observations": [
+    "Fixed compressed hash/size &reconstructed raw hash/size gates verified through actual main extraction",
+    "Production config loader accepts exact integer version &both swiftc/frontend aliases return pinned173118384bytes",
+    "Fresh mode0644 &exact0644 reuse pass;0755 &04644 reuse reject without changing existing mode",
+    "Differing bytes reject &stay unchanged; boolean config version rejects",
+    "Real tampered xcrun/truncated gzip/path traversal faults reject",
+    "Audit prohibits current tool paths; replay current-tool reads0",
+    "No tool/compiler/native execution; internal scratch device differs from repository &all extracted scratch removed"
+  ],
+  "actualControls": {
+    "extracted": [
+      {
+        "name": "xcrun",
+        "bytes": 199024,
+        "sha256": "bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+        "mode": "0o644"
+      },
+      {
+        "name": "swift-frontend",
+        "bytes": 173118384,
+        "sha256": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+        "mode": "0o644"
+      }
+    ],
+    "generatedConfigLoader": {
+      "accepted": true,
+      "versionExactInteger": true
+    },
+    "actualAliasReads": [
+      {
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "bytes": 173118384,
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      },
+      {
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+        "bytes": 173118384,
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      }
+    ],
+    "exactReuse0644": "REUSED_EXACT",
+    "reuse0755": {
+      "rejected": true,
+      "modePreserved": "0o755"
+    },
+    "specialModeProbe": {
+      "action": "REJECTED",
+      "actualMode": "0o4644"
+    },
+    "divergentCollision": {
+      "rejected": true,
+      "preserved": true
+    },
+    "booleanConfigVersionRejected": true,
+    "currentToolReads": 0,
+    "toolExecutions": 0,
+    "scratchRemoved": true,
+    "process": {
+      "pid": 51240,
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "-c",
+        "import runpy; runpy.run_path('factory/pipeline/compiler-tool-reader-review-v3/independent_controls.py',run_name='__main__')"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T08:35:40.218199+00:00",
+      "finishedAt": "2026-10-11T08:35:45.470073+00:00",
+      "elapsedSeconds": 5.250938333978411,
+      "pythonPath": "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+      "pythonSha256": "4f00ea2ad53d62437a6a3946b73c73614a97e8accdc5b96dc095ea1a0d9c6a56"
+    }
+  },
+  "dependencies": {
+    "factory/pipeline/reader_config.py": "010c7887e9371608f442cbfce07d2128b3c832028630f4dab6ff63a9d5077b59",
+    "factory/pipeline/archive_reader.py": "8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e",
+    "factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json": "66cb21fad8d62d556e1954aeb9da232f5c05709f172242f050a227068629a8b7"
+  },
+  "holds": [
+    "Compiler OS invocation provenance &native parity are not established by tool byte extraction"
+  ],
+  "producerEdits": false
+}
