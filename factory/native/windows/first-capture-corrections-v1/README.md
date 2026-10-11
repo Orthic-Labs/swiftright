@@ -1,0 +1,1 @@
+Prepared compiler-only host correction: unchanged disabled witness, owned client viewport, retained actual layout shaping runs. No build or GUI performed. Root coordinates CPU, review, parse, build &later observational dispatch. New runtime37429120 +readonlyr09 ABI0.6 stay distinct; parity held.

@@ -1,0 +1,131 @@
+{
+  "kind": "independent-corrected-host-compile-review",
+  "verdict": "CLEAR bounded observational launch prerequisites",
+  "actualInputs": [
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/FactoryProbe.exe",
+      "bytes": 3605504,
+      "sha256": "62379065c9576702cca26a09f021b2d66ecabf607b3ed93fdd6bfaf5d8cc23f7"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/compile.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/compile.stdout.txt",
+      "bytes": 393,
+      "sha256": "eadc05df43634d6e35c1a24ff32ef43c0ced1aa26f7ce8343b1e5afe5e7ebe52"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/observation.json",
+      "bytes": 2806,
+      "sha256": "203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/owned-process.json",
+      "bytes": 887,
+      "sha256": "4968a91061ae3715fa0db8e35b7a59250843a437bc3db7aa7c9c508700fd7d2b"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build-process.json",
+      "bytes": 456,
+      "sha256": "41c6281a3dca2fa55572287b971e56f8522a5d5279d8347615478f24d81f1411"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build-start.json",
+      "bytes": 424,
+      "sha256": "b1e16ea7ca39cd329ff9164fdc35621997505926cdf3b97f192cf57896d68e96"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build-dispatch.ps1",
+      "bytes": 475,
+      "sha256": "79dc01fc6ae6f91aa5aca874b5f0e9bc00237853e0fec783a95b0c3a86deb8a6"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-build-output-scp.json",
+      "bytes": 1475,
+      "sha256": "ba6f0f0fd3be4feafac35f1dcb2933aabc6e53915e1ca4cb2a71ef36e3c9046a"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-preflight-r2.stdout.txt",
+      "bytes": 20363,
+      "sha256": "4ca69368aef7b71abe99600ad6a30c564de62abb94438ba37b5f767e0ee0e8f5"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/root-stage-manifest.json",
+      "bytes": 18817,
+      "sha256": "c61efc9e16d10d29e17426d89f37cf70458e2e54254ea8746f04b55af8cbff98"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-host.ps1",
+      "bytes": 5828,
+      "sha256": "b5e8f802793ec1d691295d3f6cfd1f0bf4860af0d55cef126ffc2012805536d3"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/capture-corrected.ps1",
+      "bytes": 16311,
+      "sha256": "f0a2f949a1eda0300cd14fb3b2dc2439c284494d69727c6c25e4ca20813336d2"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/plan.json",
+      "bytes": 4618,
+      "sha256": "fcee0329217171a63fd39206708be1721dad141dfd31a7b093d5e48f5e870fcb"
+    }
+  ],
+  "priorDeltaReview": {
+    "path": "factory/native/windows/first-capture-corrections-v1/independent-review/source-review-r2.json",
+    "bytes": 27650,
+    "sha256": "6e74151d29e9ab30e005b7cb357f69feb5b6dacdd4631631e6d2f5e81553db3c"
+  },
+  "sourceClosureRecheck": {
+    "packetPins": 80,
+    "remotePreflightInputPins": 65,
+    "bridgeMembers": 10,
+    "reviewedHostSourcesUnchanged": true
+  },
+  "compile": {
+    "receiptSha256": "203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def",
+    "exeSha256": "62379065c9576702cca26a09f021b2d66ecabf607b3ed93fdd6bfaf5d8cc23f7",
+    "exeBytes": 3605504,
+    "machine": "x86_64",
+    "optionalHeader": "PE32+",
+    "subsystem": 2,
+    "pid": 49408,
+    "exitCode": 0,
+    "timedOut": false,
+    "ownedExited": true,
+    "stdoutBuildComplete": true,
+    "stderrBytes": 0,
+    "argvEvidence": "Build script ProcessStartInfo-constructed arguments recorded in owned-process/observation; no OS-CIM observed argv claim",
+    "source": "unchanged disabled Witness68eed\u2026",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b"
+  },
+  "checks": [
+    "Actual five transferred file hashes join root SCP receipt & all four compile receipt file rows.",
+    "PID/path/start/argv/cwd joins pass; chronology57seconds within300second compiler bound; exact fresh scratch output path & PE header corroborate receipt.",
+    "Actual plan/source/runtime/compiler/renderer tuple matches reviewed inputs; reviewed build performs pre/post full host/runtime/bridge hash guards & strict membership.",
+    "Root dispatch script hash, raw stdout/stderr & exit0 joins pass; actual remote preflight parse0/input hashes verified.",
+    "Reviewed observational capture must receive exact receipt203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def & exe62379065c9576702cca26a09f021b2d66ecabf607b3ed93fdd6bfaf5d8cc23f7; source/helper/lock/ownership/GUI subsystem gates retained."
+  ],
+  "independentControls": {
+    "path": "factory/native/windows/first-capture-corrections-v1/independent-review/review-r3/controls.json",
+    "bytes": 416,
+    "sha256": "837d961a9fa2739f075b6be06d86a20ec09d4c119ea4789baaa39136e2ab204a"
+  },
+  "reviewerCompilerExecution": 0,
+  "reviewerNativeExecution": 0,
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "closureBinding": null
+}

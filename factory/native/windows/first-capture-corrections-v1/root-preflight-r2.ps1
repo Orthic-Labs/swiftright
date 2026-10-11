@@ -1,0 +1,14 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$root='D:\Claude\swiftright';$base=Join-Path $root 'factory\native\windows\first-capture-corrections-v1'
+$m=Join-Path $base 'root-stage-manifest.json';if((Get-FileHash $m).Hash.ToLowerInvariant() -ne 'c61efc9e16d10d29e17426d89f37cf70458e2e54254ea8746f04b55af8cbff98'){throw 'Stage manifest drift'}
+$manifest=Get-Content -Raw $m|ConvertFrom-Json;$pins=@();foreach($row in $manifest.files){$path=Join-Path $root $row.path;$h=(Get-FileHash $path).Hash.ToLowerInvariant();if($h -ne $row.sha256 -or (Get-Item $path).Length -ne $row.bytes){throw ('Source pin drift '+$row.path)};$pins+=@{path=$row.path;sha256=$h}}
+$scripts=@();foreach($name in @('build-host.ps1','capture-corrected.ps1','corrected-task.ps1','run-corrected.ps1')){$path=Join-Path $base $name;$tokens=$null;$errors=$null;$ast=[Management.Automation.Language.Parser]::ParseFile($path,[ref]$tokens,[ref]$errors);if($errors.Count){throw ($errors|Out-String)};$scripts+=@{path=$path;sha256=(Get-FileHash $path).Hash.ToLowerInvariant();parseErrors=0}}
+$package=Join-Path $base 'package';$plan=Get-Content -Raw (Join-Path $package 'plan.json')|ConvertFrom-Json
+$verifier=Join-Path $root 'factory\native\windows\verify-runtime-source.ps1';if((Get-FileHash $verifier).Hash.ToLowerInvariant() -ne $plan.runtimeVerifierHash){throw 'Runtime verifier drift'};. $verifier;Assert-FactoryRuntimeSource $plan $package
+$bridge=@(Get-Item (Join-Path $plan.bridgePackagePath 'Package.swift'))+@(Get-ChildItem (Join-Path $plan.bridgePackagePath 'Sources') -Recurse -File)
+$seen=@($bridge|ForEach-Object{$_.FullName.Substring($plan.bridgePackagePath.Length+1).Replace('\','/')});$expected=@($plan.bridgeBindings|ForEach-Object{$_.path.Replace('\','/')})
+if($seen.Count -ne $expected.Count -or @(Compare-Object ($seen|Sort-Object) ($expected|Sort-Object)).Count){throw 'Bridge member drift'}
+foreach($row in $plan.bridgeBindings){$path=Join-Path $plan.bridgePackagePath $row.path;if((Get-FileHash $path).Hash.ToLowerInvariant() -ne $row.sha256){throw ('Bridge pin drift '+$row.path)}}
+if((Get-FileHash $plan.compilerPath).Hash.ToLowerInvariant() -ne $plan.compilerHash){throw 'Compiler drift'}
+if((Get-FileHash 'D:\Claude\sr0-r09\renderer\swiftright_render.dll').Hash.ToLowerInvariant() -ne $plan.rendererSha256){throw 'Renderer drift'}
+[ordered]@{kind='root-correction-remote-parse-and-input-preflight-r2';at=[DateTimeOffset]::UtcNow.ToString('o');scripts=$scripts;inputs=$pins;bridgeMemberCount=$seen.Count;runtimeSourceCommit=$plan.runtimeSourceCommit;planSha256=(Get-FileHash (Join-Path $package 'plan.json')).Hash.ToLowerInvariant();rendererSha256=$plan.rendererSha256;compilerHash=$plan.compilerHash;compilerInvocations=0;nativeLaunches=0}|ConvertTo-Json -Depth 8
