@@ -30,7 +30,7 @@ FIXTURE_NUMBER = {f"F{n}": n for n in range(1, 10)}
 F3_VARIANTS = ["list-1s", "list-3s", "vstack-1s", "vstack-3s", "lazy-1s", "lazy-3s"]
 CONFIGS = ["F1", "F2", "F3", *[f"F3-{v}" for v in F3_VARIANTS], "F4", "F5", "F6", "F6-reduced", "F7", "F8", "F9"]
 # probe id -> (base config, extra steps appended to the base plan)
-PROBES = {"F3-list-1s-typeafter": "F3-list-1s"}
+PROBES = {"F3-list-1s-typeafter": "F3-list-1s", "F9-keepalive": "F9"}
 
 
 def rid(n, slot):
@@ -80,6 +80,15 @@ def plan_for(config):
     if config in PROBES:
         plan = plan_for(PROBES[config])
         plan["config"] = config
+        if config == "F9-keepalive":
+            # R8: the Mac process stays alive after the close and receives the same late releases the Windows script sends.
+            # The release rides in the close_window step so both platforms attribute the late results to the same step.
+            plan["macLaunchArgs"] = plan["macLaunchArgs"] + ["--variant", "keepalive"]     # Windows keeps its F9 args
+            for s in plan["steps"]:
+                if s["id"] == "close_window":
+                    s["logical"] = "close the window; the runtime tears down tasks and rejects late results"
+                    s["mac"] = [stdin(step="close-window"), stdin(step="release-all")]
+            return plan
         plan["steps"] = plan["steps"] + probe_steps(config)
         return plan
     base = config.split("-")[0]
@@ -237,7 +246,7 @@ def adaptations(config, step_ids):
             entry["nodeId"] = node
         out.append(entry)
 
-    root = config[:-len("-typeafter")] if config in PROBES else config      # a probe carries its base config's allowances
+    root = config[:-len("-typeafter")] if config.endswith("-typeafter") else config      # a probe carries its base config's allowances
     if root == "F2":
         why = ("F2 Mac oracle quirk: while the moved row holds the active field editor, macOS 27 SwiftUI List reports a stale AX "
                "tree (row 3 listed twice at its new slot, row 2 missing) until focus leaves it (probed: persists after resize, heals "
@@ -296,7 +305,7 @@ def main():
         stim = {"fixtureId": config, "description": f"{config} cross-platform logical script (gen-cross.py)",
                 "modelRows": "all",
                 "steps": [{"id": s["id"], "logicalAction": s["logical"]} for s in p["steps"]]}
-        if p["fixture"] == "F9":
+        if config == "F9":      # F9-keepalive compares effects in every step (no ignore)
             stim["ignoreEffectsInSteps"] = ["close_window"]
             stim["ignoreEffectsReason"] = ("Windows' in-process script releases the pending engine calls after the close (late results rejected); "
                                            "the Mac interactive process exits when its last window closes, so it can never receive that release. "

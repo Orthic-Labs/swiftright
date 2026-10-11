@@ -7,7 +7,10 @@ import SwiftUI
 @MainActor
 final class FixtureAppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        !CommandLine.arguments.contains("--self-test")
+        // `--variant keepalive` (R8 probe): stay alive after the last window closes so late engine releases are observed.
+        let args = CommandLine.arguments
+        let keepAlive = zip(args, args.dropFirst()).contains { $0 == "--variant" && $1 == "keepalive" }
+        return !args.contains("--self-test") && !keepAlive
     }
 }
 

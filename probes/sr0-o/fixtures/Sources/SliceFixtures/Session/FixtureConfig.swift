@@ -25,6 +25,8 @@ public struct FixtureConfig: Sendable {
     public let f3GapMs: Int
     /// Variant name as passed on the command line, e.g. `list-1s`; nil when no variant was requested.
     public let f3VariantName: String?
+    /// `--variant keepalive`: the interactive process stays alive after its last window closes (R8 probe). Default false.
+    public let keepAliveAfterClose: Bool
 
     /// Parses `--fixture F1..F9`, `--events <path>`, `--reduced-motion-variant`,
     /// `--f3-variant <list|vstack|lazy>-<1|3>s`, and `--self-test`.
@@ -37,6 +39,7 @@ public struct FixtureConfig: Sendable {
         var container = F3Container.list
         var gap = 0
         var variantName: String?
+        var keepAlive = false
         var index = 1
         while index < arguments.count {
             switch arguments[index] {
@@ -52,6 +55,14 @@ public struct FixtureConfig: Sendable {
                 if index < arguments.count { events = arguments[index] }
             case "--reduced-motion-variant":
                 reduced = true
+            case "--variant":
+                index += 1
+                if index < arguments.count, arguments[index] == "keepalive" {
+                    keepAlive = true
+                } else {
+                    FileHandle.standardError.write(Data("invalid --variant\n".utf8))
+                    exit(2)
+                }
             case "--f3-variant":
                 index += 1
                 if index < arguments.count, let parsed = parseF3Variant(arguments[index]) {
@@ -69,7 +80,8 @@ public struct FixtureConfig: Sendable {
         }
         return FixtureConfig(
             fixture: fixture, selfTest: selfTest, eventsPath: events, reducedMotion: reduced,
-            f3Container: container, f3GapMs: gap, f3VariantName: variantName
+            f3Container: container, f3GapMs: gap, f3VariantName: variantName,
+            keepAliveAfterClose: keepAlive
         )
     }
 
