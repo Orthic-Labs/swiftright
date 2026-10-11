@@ -1,4 +1,5 @@
 import Foundation
+import SwiftRightBridge
 
 enum SR0StartupGuardError: Error, CustomStringConvertible {
     case activationHookInstallFailed
