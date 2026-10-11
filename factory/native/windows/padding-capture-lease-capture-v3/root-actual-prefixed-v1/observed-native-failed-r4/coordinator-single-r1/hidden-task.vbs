@@ -1,0 +1,3 @@
+Set sh = CreateObject("WScript.Shell")
+rc = sh.Run("powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3\root-metadata-controls-v1\execute-r4\interactive-task-r4.ps1"" -Config ""D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3\coordinator-single-r1\config.json""", 0, True)
+WScript.Quit rc

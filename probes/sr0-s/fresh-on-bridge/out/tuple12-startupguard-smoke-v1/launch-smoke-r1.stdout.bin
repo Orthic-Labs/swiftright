@@ -1,0 +1,31 @@
+{
+    "kind":  "root-sr0-smoke-source-parse-admission-v1",
+    "files":  [
+                  {
+                      "path":  "worker.ps1",
+                      "bytes":  11050,
+                      "sha256":  "e0ae2397352cfee0090303e9cf3231bab26e110aa6b0125eed779806f8e383ae"
+                  },
+                  {
+                      "path":  "coordinator.ps1",
+                      "bytes":  8295,
+                      "sha256":  "8b5be32797507a5b54745b8e0b9da52d3d5942529f2756c0236149dcf83bbbfe"
+                  }
+              ],
+    "driverSha256":  "1683b96e2b0e9ac06cf93777d2274d5f4ece9c40092d90799de95b98e77436e9",
+    "nativeActions":  0
+}
+{
+    "kind":  "sr0-tuple12-startupguard-f1-terminal-v1",
+    "status":  "failed",
+    "lockOwner":  "SR0-T12-F1-98c8c43c1f4247d6aab779b5a3fd5330 2026-10-11T13:08:27.9300398+00:00",
+    "lockReleased":  true,
+    "taskName":  "SR0-T12-F1-98c8c43c1f4247d6aab779b5a3fd5330",
+    "receipt":  "D:\\Claude\\swiftright\\probes\\sr0-s\\fresh-on-bridge\\out\\tuple12-startupguard-smoke-v1\\receipts\\worker-98c8c43c1f4247d6aab779b5a3fd5330.json",
+    "runRoot":  "D:\\Claude\\swiftright\\probes\\sr0-s\\fresh-on-bridge\\out\\tuple12-startupguard-smoke-v1\\F1-r1-98c8c43c1f4247d6aab779b5a3fd5330",
+    "taskState":  3,
+    "terminalProof":  true,
+    "taskQuiescent":  true,
+    "failure":  "F1 semantic proof failed; lock release is safe task=Ready result=0",
+    "releaseError":  null
+}

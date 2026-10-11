@@ -1,0 +1,65 @@
+﻿{
+    "kind":  "factory-producer-candidate-fault-controls-v1",
+    "status":  "passed",
+    "controls":  [
+                     {
+                         "name":  "admitted-baseline",
+                         "passed":  true,
+                         "nativeWindowActions":  1,
+                         "expected":  "admitted"
+                     },
+                     {
+                         "name":  "wrong-tuple-kind",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:tuple-kind",
+                         "reason":  "candidate-guard:tuple-kind"
+                     },
+                     {
+                         "name":  "wrong-case",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:case",
+                         "reason":  "candidate-guard:case"
+                     },
+                     {
+                         "name":  "wrong-runtime",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:runtime",
+                         "reason":  "candidate-guard:runtime"
+                     },
+                     {
+                         "name":  "wrong-renderer",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:renderer",
+                         "reason":  "candidate-guard:renderer"
+                     },
+                     {
+                         "name":  "wrong-metadata",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:metadata",
+                         "reason":  "candidate-guard:metadata"
+                     },
+                     {
+                         "name":  "wrong-phase",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "candidate-guard:phase",
+                         "reason":  "candidate-guard:phase"
+                     },
+                     {
+                         "name":  "phase-baseline",
+                         "passed":  true,
+                         "nativeWindowActions":  0,
+                         "expected":  "close-pending"
+                     }
+                 ],
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0
+}

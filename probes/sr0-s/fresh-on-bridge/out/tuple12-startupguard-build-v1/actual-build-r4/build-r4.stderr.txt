@@ -1,0 +1,19 @@
+D:\Claude\swiftright\.work\sr0-r12-typecheck\src\probes\sr0-s\fresh-on-bridge\Sources\FreshOnBridge\Hooks.swift:52:60: [1;33mwarning: [1;39mreference to captured var 'self' in concurrently-executing code; this is an error in the Swift 6 language mode[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures\SendableClosureCaptures]8;;\]
+[0;36m50 |[0;0m                         if WaitForSingleObject(box.handle, 250) == WAIT_OBJECT_0 {
+[0;36m51 |[0;0m                             DispatchQueue.main.async {
+[0;36m52 |[0;0m                                 MainActor.assumeIsolated { self?.fire(source: "event") }
+   [0;36m|[0;0m                                                            `- [1;33mwarning: [1;39mreference to captured var 'self' in concurrently-executing code; this is an error in the Swift 6 language mode[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures\SendableClosureCaptures]8;;\]
+[0;36m53 |[0;0m                             }
+[0;36m54 |[0;0m                         }
+
+D:\Claude\swiftright\.work\sr0-r12-typecheck\src\probes\sr0-s\fresh-on-bridge\Sources\FreshOnBridge\SelfTest.swift:499:29: [1;33mwarning: [1;39mresult of call to 'createFile(atPath:contents:attributes:)' is unused[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m497 |[0;0m         guard let path = options.readyFile else { return }
+[0;36m498 |[0;0m         let body = "ready \(String(format: "%.2f", Date().timeIntervalSince(started)))s\n"
+[0;36m499 |[0;0m         FileManager.default.createFile(atPath: path, contents: Data(body.utf8))
+    [0;36m|[0;0m                             `- [1;33mwarning: [1;39mresult of call to 'createFile(atPath:contents:attributes:)' is unused[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m500 |[0;0m     }
+[0;36m501 |[0;0m 
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[#SendableClosureCaptures]: <https://docs.swift.org/compiler/documentation/diagnostics/sendable-closure-captures>
+

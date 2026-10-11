@@ -1,0 +1,107 @@
+{
+    "kind":  "root-count1-input-admission-v1",
+    "status":  "PASS",
+    "files":  [
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/execute-r3/coordinator-r3.ps1",
+                      "bytes":  16628,
+                      "sha256":  "c8a58f258f6a9961bc670027bbcc5e74fcb61920096b3bf8c43d611f286f4485"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/execute-r3/interactive-task-r3.ps1",
+                      "bytes":  2439,
+                      "sha256":  "fd5bfa4d4c3803a4f54dbc597992618b6fad044d94cc7a126f52f7d9de3a7098"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/execute-r3/dispatch-r3.ps1",
+                      "bytes":  4370,
+                      "sha256":  "69f4956fd746c1c2ca6864d38476f1350bd49ce41aad53efbdeeb3535fbc5c4f"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/execute-r3/capture-repeat-r3.ps1",
+                      "bytes":  37802,
+                      "sha256":  "915d3e007e1cf6c89d059380a5956133701abc181ad021ec99c6c80d7fdcb7dc"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/execute-r3/test-execution-source-guards-r3.ps1",
+                      "bytes":  2230,
+                      "sha256":  "971f89391e11b1aa09e5b0550cc0011653e9fb5af04769972019396b6b35c210"
+                  }
+              ],
+    "nativeLaunches":  0,
+    "lockActions":  0
+}
+{
+    "kind":  "root-actual-windows-execution-overlay-manifest-controls-v1",
+    "status":  "PASS",
+    "controls":  [
+                     {
+                         "script":  "coordinator-r3.ps1",
+                         "sourceSha256":  "c8a58f258f6a9961bc670027bbcc5e74fcb61920096b3bf8c43d611f286f4485",
+                         "control":  "baseline",
+                         "accepted":  true,
+                         "error":  ""
+                     },
+                     {
+                         "script":  "coordinator-r3.ps1",
+                         "sourceSha256":  "c8a58f258f6a9961bc670027bbcc5e74fcb61920096b3bf8c43d611f286f4485",
+                         "control":  "wrong-sha256",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     },
+                     {
+                         "script":  "coordinator-r3.ps1",
+                         "sourceSha256":  "c8a58f258f6a9961bc670027bbcc5e74fcb61920096b3bf8c43d611f286f4485",
+                         "control":  "wrong-bytes",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     },
+                     {
+                         "script":  "dispatch-r3.ps1",
+                         "sourceSha256":  "69f4956fd746c1c2ca6864d38476f1350bd49ce41aad53efbdeeb3535fbc5c4f",
+                         "control":  "baseline",
+                         "accepted":  true,
+                         "error":  ""
+                     },
+                     {
+                         "script":  "dispatch-r3.ps1",
+                         "sourceSha256":  "69f4956fd746c1c2ca6864d38476f1350bd49ce41aad53efbdeeb3535fbc5c4f",
+                         "control":  "wrong-sha256",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     },
+                     {
+                         "script":  "dispatch-r3.ps1",
+                         "sourceSha256":  "69f4956fd746c1c2ca6864d38476f1350bd49ce41aad53efbdeeb3535fbc5c4f",
+                         "control":  "wrong-bytes",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     },
+                     {
+                         "script":  "capture-repeat-r3.ps1",
+                         "sourceSha256":  "915d3e007e1cf6c89d059380a5956133701abc181ad021ec99c6c80d7fdcb7dc",
+                         "control":  "baseline",
+                         "accepted":  true,
+                         "error":  ""
+                     },
+                     {
+                         "script":  "capture-repeat-r3.ps1",
+                         "sourceSha256":  "915d3e007e1cf6c89d059380a5956133701abc181ad021ec99c6c80d7fdcb7dc",
+                         "control":  "wrong-sha256",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     },
+                     {
+                         "script":  "capture-repeat-r3.ps1",
+                         "sourceSha256":  "915d3e007e1cf6c89d059380a5956133701abc181ad021ec99c6c80d7fdcb7dc",
+                         "control":  "wrong-bytes",
+                         "accepted":  false,
+                         "error":  "Integration binding manifest drift"
+                     }
+                 ],
+    "exactGuardAstExecuted":  true,
+    "root":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3",
+    "nativeLaunches":  0,
+    "compilerActions":  0,
+    "lockActions":  0
+}

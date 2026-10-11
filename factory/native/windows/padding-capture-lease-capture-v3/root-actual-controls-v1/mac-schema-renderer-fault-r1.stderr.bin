@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Volumes/D/claude/swiftright/factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/verify-common-schema.py", line 13, in <module>
+    Draft202012Validator(wrapper,resolver=resolver).validate(doc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/Volumes/D/claude/swiftright/factory/.venv/lib/python3.14/site-packages/jsonschema/validators.py", line 451, in validate
+    raise error
+jsonschema.exceptions.ValidationError: 'invalid-renderer-hash' does not match '^sha256:[0-9a-f]{64}$'
+
+Failed validating 'pattern' in schema['properties']['tuple']['properties']['rendererHash']:
+    {'type': 'string', 'pattern': '^sha256:[0-9a-f]{64}$'}
+
+On instance['tuple']['rendererHash']:
+    'invalid-renderer-hash'

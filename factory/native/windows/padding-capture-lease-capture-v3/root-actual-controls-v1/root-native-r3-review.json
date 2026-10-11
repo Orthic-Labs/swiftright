@@ -1,0 +1,42 @@
+{
+  "kind": "root-observed-native-count1-review-v1",
+  "status": "PASS_NATIVE_CAPTURE_HOLD_TYPED_ID_SCHEMA",
+  "files": 67,
+  "bytes": 366757,
+  "coordinatorSha256": "7afff50656e2cce55c5a9bd4a2cecf100d8c428e83ad2f46410cfdd8267b7342",
+  "rendererExit": 0,
+  "uiaWorkerExit": 0,
+  "lockReleased": true,
+  "qualification": "observation-only",
+  "typedSchemaIssues": [
+    "canonical-capture-schema:'61aa7e379b1049cba06d3f26aaa1ca1c' does not match '^[a-z][a-z0-9._/-]{1,159}$'; '61aa7e379b1049cba06d3f26aaa1ca1c' does not match '^[a-z][a-z0-9._/-]{1,159}$'"
+  ],
+  "viewport": {
+    "requestedDIP": [
+      320,
+      240
+    ],
+    "scale": 2.5,
+    "requestedPx": [
+      800,
+      600
+    ],
+    "onReadyBridgePx": [
+      800,
+      1396
+    ],
+    "onReadyClientPx": [
+      800,
+      600
+    ],
+    "firstWindowMetricsPx": [
+      800,
+      600
+    ],
+    "bridgeAfterWindowMetricsPx": [
+      800,
+      1396
+    ]
+  },
+  "next": "Fix canonical prelaunch IDs, preserve old evidence, recapture in fresh namespace."
+}

@@ -1,0 +1,152 @@
+{
+    "kind":  "root-count1-input-admission-v1",
+    "status":  "PASS",
+    "files":  [
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/resume-issued-coordinator-r2.ps1",
+                      "bytes":  16545,
+                      "sha256":  "f00ce48b5219a70c8214792a1aeecefcab26d2c201620a178c32b01ce857e2d0"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/transport-r2/transport-path-controls.ps1",
+                      "bytes":  1199,
+                      "sha256":  "f36d0eca2bd8dba2d4c27a62f05eede8b2ea3658287086e3168ac0307dc92595"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/transport-r2/test-transport-path-controls.ps1",
+                      "bytes":  2637,
+                      "sha256":  "a982d627271e96fd28081c462e094d520e1f37cbb499fac2be526a8c63c99860"
+                  },
+                  {
+                      "path":  "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v1/transport-r2/enumerate-and-stage-input-refs.ps1",
+                      "bytes":  5348,
+                      "sha256":  "87a4038dcdb4ba15225b3042a290d55b0c5e67bbd2e88b0282034947efc1c3e4"
+                  }
+              ],
+    "nativeLaunches":  0,
+    "lockActions":  0
+}
+{
+    "kind":  "factory-dynamic-transport-path-controls-v1",
+    "status":  "passed-source-only",
+    "cases":  [
+                  {
+                      "name":  "relative-positive",
+                      "accepted":  true,
+                      "expected":  true,
+                      "error":  "",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "drive-relative",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: C:relative.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "drive-rooted",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: C:\\rooted.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "unc",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: \\\\server\\share\\file.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "rooted-slash",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: /rooted.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "backslash",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: factory\\native\\example.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "colon",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: factory/native:C.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "duplicate-separator",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: factory//native/example.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "dot-segment",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: factory/./example.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "traversal",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "Adapter ref must be normalized repo-relative archive path: factory/native/../example.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "manifest-contained-positive",
+                      "accepted":  true,
+                      "expected":  true,
+                      "error":  "",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "manifest-escape-sibling",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "manifest-escape-sibling escaped fresh transport root: D:\\transport-r1-other\\manifest.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "destination-escape-parent",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "destination-escape-parent escaped fresh transport root: D:\\transport-r1\\archive\\..\\outside.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  },
+                  {
+                      "name":  "destination-escape-drive",
+                      "accepted":  false,
+                      "expected":  false,
+                      "error":  "destination-escape-drive escaped fresh transport root: C:\\outside.json",
+                      "nativeWindowActions":  0,
+                      "lockActions":  0
+                  }
+              ],
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0,
+    "qualification":  "hold"
+}
