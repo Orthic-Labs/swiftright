@@ -1,0 +1,54 @@
+{
+  "schema": "taskid-direct-scp-verified-capture-v1",
+  "status": "actual-three-focused-observations",
+  "sourcePlanSha256": "66ad3b9db201e956bde92f85a34b5c61585fc8036e285909ce5ba38325481c3c",
+  "runnerSha256": "82088f96f7f3ce80ba7bef91653693e39bcd0d0cbc0a38a6b35a0426ee6b8418",
+  "receiptSha256": "7ba2f71e210da0d33311f5be363dd07e703135acc89c230fba054a13b4bf6fca",
+  "variants": [
+    {
+      "name": "original",
+      "exitCode": 1,
+      "startedAt": "2026-10-11T03:34:03.2640128Z",
+      "endedAt": "2026-10-11T03:35:46.9304586Z",
+      "testInvocations": 1,
+      "sourceFiles": 45,
+      "sourceDrift": false,
+      "runnerSha256": "b14326005d645b2b440ddd4ed7fd852c70d74aded8a58cb49adde652c100642b",
+      "stdoutSha256": "0b7d81c837af335317ad99e20f3cf22d92ae2eafc5640474dd1f38b4aab7154e",
+      "stderrSha256": "45a8c94126bfffa32838551f22034af6f0518c825df4a0dc2bec3429b1fb3bdd",
+      "diagnosticMarker": "original-assertions-only"
+    },
+    {
+      "name": "retained",
+      "exitCode": 0,
+      "startedAt": "2026-10-11T03:35:49.3689560Z",
+      "endedAt": "2026-10-11T03:37:29.7569641Z",
+      "testInvocations": 1,
+      "sourceFiles": 45,
+      "sourceDrift": false,
+      "runnerSha256": "61b7910a74702fa0731779e9bea78d08cae5c8ef9bb1b57764658531a896a41a",
+      "stdoutSha256": "9fdedf6eba769405da2134cd436c67948bb50bdfe44299439a4e9f1c3c41a2a5",
+      "stderrSha256": "8540210e8e5d9ba73211569eead91e4287fa21cf49f0a8cce1a5442b3cfab257",
+      "diagnosticMarker": "retained-graph-observed"
+    },
+    {
+      "name": "terminal",
+      "exitCode": 0,
+      "startedAt": "2026-10-11T03:37:31.9784735Z",
+      "endedAt": "2026-10-11T03:39:21.2057801Z",
+      "testInvocations": 1,
+      "sourceFiles": 45,
+      "sourceDrift": false,
+      "runnerSha256": "ce6df4295803d306472aee78afd6f14ef0f73bd0b323f0480c1f03005d5180e9",
+      "stdoutSha256": "3bf7007cf5a217eae4945460249a931ed0fefed49237d9204ab804c3437fe36d",
+      "stderrSha256": "6c42e31f9dd61a1b78f2bdec28e064d168564cb2c5a20ed448025f1af4b9c610",
+      "diagnosticMarker": "terminal-commit-observed"
+    }
+  ],
+  "bodyMilliseconds": 40,
+  "settleMilliseconds": 120,
+  "terminalVariant": "diagnostic-only",
+  "causalCertification": false,
+  "retries": 0,
+  "protectedSourceEdits": 0
+}

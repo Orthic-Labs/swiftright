@@ -1,0 +1,180 @@
+{
+  "kind": "independent-offline-review",
+  "verdict": "VERIFIED-BOUNDED-THREE-VARIANT-DIRECT-SCP-EVIDENCE",
+  "scope": "one original, one retained, one terminal; no rerun, SSH, compiler, GUI, Pulse or source edits",
+  "pins": {
+    "packetManifestV2": "48b82bd9a311f3e7289ff113feb117469143f11fdb7f0c971c3c3c61d936362e",
+    "packetManifestV1": "8acd3be8cd79bca0a2d6a5d3ddbc532ce124e88ba3e414179c83aff76e2f33a5",
+    "packetFiles": 137,
+    "sourceFiles": 135,
+    "sourcePlan": "66ad3b9db201e956bde92f85a34b5c61585fc8036e285909ce5ba38325481c3c",
+    "runner": "82088f96f7f3ce80ba7bef91653693e39bcd0d0cbc0a38a6b35a0426ee6b8418",
+    "swiftHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "swiftcHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "receipt": "7ba2f71e210da0d33311f5be363dd07e703135acc89c230fba054a13b4bf6fca",
+    "preflight": "446439a6af6ebf377ca54331ceac67c8e3b5e734393733232b1b2dc6938184c9"
+  },
+  "source": {
+    "variants": {
+      "original": {
+        "treeSha256": "2fbf5f6b521db8b64d70772ea6ae9c896b79a84f322ca739e972c6c4f61dd250",
+        "fileCount": 45,
+        "sourceBindingsSha256": "365b3b8a53b908aa281eb03dc44fd987dc44626e1444fa4a5c005a57c721c7ad"
+      },
+      "retained": {
+        "treeSha256": "ae4fd3b03d04f934531138c0a825dd8dc5c70dbd368778e0ae6add309f237487",
+        "fileCount": 45,
+        "sourceBindingsSha256": "a497ddcf7ea2174b18ef6a605ce21f46eaa73538acbd391f3d8043afa2cdeb2b"
+      },
+      "terminal": {
+        "treeSha256": "9d74d11502153731a96e5fcf333cbb04596528e9d86eb3d183359840952225b8",
+        "fileCount": 45,
+        "sourceBindingsSha256": "7fd7e773579fd5acfdd196ca098cb6a449495e36882e599506119bc44b60ac8f"
+      }
+    },
+    "changedFilesOriginalRetained": [
+      "Tests/SwiftRightRuntimeTests/TaskIDTests.swift"
+    ],
+    "changedFilesRetainedTerminal": [
+      "Tests/SwiftRightRuntimeTests/TaskIDTests.swift"
+    ],
+    "runtimeEdits": 0,
+    "assertionsPreserved": true,
+    "bodyMilliseconds": 40,
+    "settleMilliseconds": 120
+  },
+  "outcomes": {
+    "original": {
+      "exitCode": 1,
+      "timedOut": false,
+      "pid": 52456,
+      "durationMs": 103666,
+      "stdoutBytes": 906,
+      "stderrBytes": 2002,
+      "stdoutSha256": "0b7d81c837af335317ad99e20f3cf22d92ae2eafc5640474dd1f38b4aab7154e",
+      "stderrSha256": "45a8c94126bfffa32838551f22034af6f0518c825df4a0dc2bec3429b1fb3bdd",
+      "runnerSha256": "b14326005d645b2b440ddd4ed7fd852c70d74aded8a58cb49adde652c100642b"
+    },
+    "retained": {
+      "exitCode": 0,
+      "timedOut": false,
+      "pid": 43276,
+      "durationMs": 100388,
+      "stdoutBytes": 648,
+      "stderrBytes": 2002,
+      "stdoutSha256": "9fdedf6eba769405da2134cd436c67948bb50bdfe44299439a4e9f1c3c41a2a5",
+      "stderrSha256": "8540210e8e5d9ba73211569eead91e4287fa21cf49f0a8cce1a5442b3cfab257",
+      "runnerSha256": "61b7910a74702fa0731779e9bea78d08cae5c8ef9bb1b57764658531a896a41a"
+    },
+    "terminal": {
+      "exitCode": 0,
+      "timedOut": false,
+      "pid": 1876,
+      "durationMs": 109227,
+      "stdoutBytes": 652,
+      "stderrBytes": 2003,
+      "stdoutSha256": "3bf7007cf5a217eae4945460249a931ed0fefed49237d9204ab804c3437fe36d",
+      "stderrSha256": "6c42e31f9dd61a1b78f2bdec28e064d168564cb2c5a20ed448025f1af4b9c610",
+      "runnerSha256": "ce6df4295803d306472aee78afd6f14ef0f73bd0b323f0480c1f03005d5180e9"
+    }
+  },
+  "diagnostics": {
+    "original": "exit1, empty results, XCTAssertEqual failure at TaskIDTests.swift:91",
+    "retained": "exit0, commit=true a, results=[a]",
+    "terminal": "exit0, terminal=true, commit=true a, results=[a]"
+  },
+  "runner": {
+    "oldPreimageSha256": "20da809119afb9de5675777ed1e41acda30ad908c4d9e556f403e08d0060150d",
+    "pathDiscoveryPreimageSha256": "7c6a7dca5cf17a11588e8f9e55f6e6d8741c3bc0c33ff87560b938ecb15a6065",
+    "finalSha256": "82088f96f7f3ce80ba7bef91653693e39bcd0d0cbc0a38a6b35a0426ee6b8418",
+    "preflight": {
+      "parserErrors": 0,
+      "newItemPathSupported": true,
+      "compilerExecutions": 0,
+      "testExecutions": 0
+    },
+    "plumbing": {
+      "schema": "taskid-runner-plumbing-repair-v1",
+      "oldSha256": "20da809119afb9de5675777ed1e41acda30ad908c4d9e556f403e08d0060150d",
+      "newSha256": "7c6a7dca5cf17a11588e8f9e55f6e6d8741c3bc0c33ff87560b938ecb15a6065",
+      "changes": [
+        "New-Item -Path supported directory parameter",
+        "reserved automatic $input renamed ownedInputRoot",
+        "native stdout/stderr copied as bytes"
+      ],
+      "workloadChanges": 0,
+      "bodyMilliseconds": 40,
+      "settleMilliseconds": 120,
+      "finalRunnerSha256": "82088f96f7f3ce80ba7bef91653693e39bcd0d0cbc0a38a6b35a0426ee6b8418",
+      "additionalChanges": [
+        "fixed actual installed swift/swiftc absolute paths",
+        "runtime/XCTest/Testing native library PATH"
+      ],
+      "actualRemoteNewItemLiteralPathSupported": false,
+      "remoteParserErrors": 0,
+      "remotePreflightSha256": "446439a6af6ebf377ca54331ceac67c8e3b5e734393733232b1b2dc6938184c9",
+      "compilerInvocations": 0,
+      "testInvocations": 0
+    }
+  },
+  "captureLimits": {
+    "selectedFilter": "SwiftRightRuntimeTests.TaskIDTests/testSameIdDoesNotRestartTask",
+    "fullSuite": false,
+    "nativeWindowOpened": false,
+    "desktopReservationRequired": false,
+    "runtimeEdits": 0,
+    "eachVariantExactlyOnce": true,
+    "noBroadGreen175Claim": true
+  },
+  "pathBinding": {
+    "actualInputRoot": "D:\\Claude\\factory-swiftright-taskid-three-input-direct-scp-v2-20261011-1207",
+    "actualRunRoot": "D:\\Claude\\factory-swiftright-taskid-three-run-direct-scp-v2-20261011-1207",
+    "sourcePlanInputRoot": "D:\\Claude\\factory-swiftright-taskid-three-input-20261011",
+    "sourcePlanRunRoot": "D:\\Claude\\factory-swiftright-taskid-three-run-20261011",
+    "literalRootsEqual": false,
+    "patternAccepted": true
+  },
+  "lineage": {
+    "sourceManifest": {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch-source-manifest.json",
+      "sha256": "6f0012b931f7562e1cbf243b0cbeb3ce992c812e8cf08ca9f97c2f178c4af9cc"
+    },
+    "v1ManifestMismatches": [
+      "run-three-variants.ps1"
+    ],
+    "v2ManifestMissing": [],
+    "v2ManifestBad": []
+  },
+  "mutationControls": {
+    "wrong-source-count": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-body-sleep": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-runner-hash": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "retained-failure": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "missing-terminal-marker": {
+      "rawInputChanged": true,
+      "rejected": true
+    },
+    "wrong-retained-result": {
+      "rawInputChanged": true,
+      "rejected": true
+    }
+  },
+  "holds": [
+    "Original selected test genuinely exits 1 with empty results; retained/terminal selected tests exit 0 with raw diagnostic markers.",
+    "Run is one selected test per variant, not full suite; no native window or desktop reservation; no broad 175-case claim.",
+    "Source-plan generic remote roots differ literally from fresh versioned actual roots; accepted only by runner regex/fresh-root contract.",
+    "packet-manifest-v1 is historical and has stale run-three-variants.ps1 pin; packet-manifest-v2 is actual exact manifest."
+  ]
+}

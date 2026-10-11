@@ -1,0 +1,23 @@
+{
+  "schema": "taskid-runner-plumbing-repair-v1",
+  "oldSha256": "20da809119afb9de5675777ed1e41acda30ad908c4d9e556f403e08d0060150d",
+  "newSha256": "7c6a7dca5cf17a11588e8f9e55f6e6d8741c3bc0c33ff87560b938ecb15a6065",
+  "changes": [
+    "New-Item -Path supported directory parameter",
+    "reserved automatic $input renamed ownedInputRoot",
+    "native stdout/stderr copied as bytes"
+  ],
+  "workloadChanges": 0,
+  "bodyMilliseconds": 40,
+  "settleMilliseconds": 120,
+  "finalRunnerSha256": "82088f96f7f3ce80ba7bef91653693e39bcd0d0cbc0a38a6b35a0426ee6b8418",
+  "additionalChanges": [
+    "fixed actual installed swift/swiftc absolute paths",
+    "runtime/XCTest/Testing native library PATH"
+  ],
+  "actualRemoteNewItemLiteralPathSupported": false,
+  "remoteParserErrors": 0,
+  "remotePreflightSha256": "446439a6af6ebf377ca54331ceac67c8e3b5e734393733232b1b2dc6938184c9",
+  "compilerInvocations": 0,
+  "testInvocations": 0
+}
