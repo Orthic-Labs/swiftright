@@ -1,58 +1,56 @@
 {
   "schema": "sr0-a.tuple/v1",
   "name": "final",
-  "recorded": "2026-10-10",
-  "note": "Final SR0 tuple, docs/sr0-snapshot.md section 2d, tuple 08 (HEAD d4d2ca4; section 2c is superseded). Hashes are lowercase sha256 hex copied from the cited path:line (test_run.py TupleFileTests re-reads every citation). sha256 null = member not built or not receipted yet (PENDING): a record that carries it fails the package stage. Names in members equal the artifact_ids names the stages record. Used by `run.py run` unless --no-tuple.",
+  "recorded": "2026-10-11",
+  "note": "Final SR0 tuple, tuple 11 (docs/sr0-tuple11-staging.md; FreshOnBridge 07351314, renderer E280F4A9 and BridgeSmoke 85D5F8BA unchanged from tuple 10, MSIX from RESULT-R5-10.md, DMGs unchanged). Hashes are lowercase sha256 hex copied from the cited path:line (test_run.py TupleFileTests re-reads every citation). sha256 null = member not built or not receipted yet (PENDING): a record that carries it fails the package stage. Names in members equal the artifact_ids names the stages record. Used by `run.py run` unless --no-tuple.",
   "members": {
     "windows_renderer": {
-      "what": "swiftright_render.dll, ABI 0.6, built from 9c261d4 on top of 02b3cc0 (tuple 08)",
+      "what": "swiftright_render.dll, ABI 0.6, built from 9c261d4 on top of 02b3cc0 (unchanged since tuple 08)",
       "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
       "source": [
-        "docs/sr0-snapshot.md:89",
-        "examples/SliceApp/Windows/renderer-pin.json:5",
+        "docs/sr0-tuple11-staging.md:20",
         "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:24",
-        "examples/BridgeSmoke/result-smoke-rev08.txt:104"
+        "probes/sr0-s/fresh-on-bridge/out/matrix-11/F1-none-r1.txt:1",
+        "examples/BridgeSmoke/result-smoke-rev09.txt:104"
       ]
     },
     "windows_fixture_exe": {
-      "what": "FreshOnBridge.exe, runtime b8702bb, built from c0fc401 (F1 release gate in source; win-replay and the F1 trace)",
-      "sha256": "7673a2d5139172d890d3882d332c3c72321f2372d343319a1065cfeeedfdb960",
+      "what": "FreshOnBridge.exe, tuple 11: runtime 8e47b89 plus the host AX selection-publish fix (clone-local a75df9f5 on 0a745ab)",
+      "sha256": "073513142f25c454b58dd05e545875e90b157539c72977e855ad68785293d55e",
       "source": [
-        "docs/sr0-snapshot.md:90",
+        "docs/sr0-tuple11-staging.md:8",
         "probes/sr0-s/fresh-on-bridge/scripts/run-matrix.sh:23",
-        "probes/sr0-s/fresh-on-bridge/out/matrix-08/F1-none-r1.txt:111"
+        "probes/sr0-s/fresh-on-bridge/out/matrix-11/F1-none-r1.txt:1"
       ]
     },
     "windows_smoke_exe": {
-      "what": "BridgeSmoke.exe (smoke stage, normal and timeout mode; unchanged)",
-      "sha256": "21992f16954e92449f467bd137c3dee9f0812377e9122179a10e4f3b981df1a5",
+      "what": "BridgeSmoke.exe (smoke stage, normal and timeout mode; unchanged since tuple 10)",
+      "sha256": "85d5f8ba798ef17367844f28d75f3e53a37323f13a8409397c7c3fd1ad563eea",
       "source": [
-        "docs/sr0-snapshot.md:91",
-        "examples/BridgeSmoke/result-smoke-rev08.txt:104",
-        "examples/BridgeSmoke/result-smoke-timeout08.txt:105"
+        "docs/sr0-tuple11-staging.md:23",
+        "examples/BridgeSmoke/result-smoke-rev09.txt:104",
+        "examples/BridgeSmoke/result-smoke-timeout09.txt:105"
       ]
     },
     "old_msix": {
-      "what": "SliceApp_0.1.0.0_x64.msix (R5-08, from a6d657b, @rightkit/release 0.2.146)",
-      "sha256": "c80c694735754f7bff892a74e2335c2d8cd7a87e8555f2e5233bd47392a7a0c4",
+      "what": "SliceApp_0.1.0.0_x64.msix (R5-10, from 0a745ab)",
+      "sha256": "39007039eeec260959263cb130d317031f0e3b581f4037d661f37a0d3f2ccb01",
       "source": [
-        "docs/sr0-snapshot.md:93",
-        "examples/SliceApp/RESULT-R5-08.md:12"
+        "examples/SliceApp/RESULT-R5-10.md:12"
       ]
     },
     "new_msix": {
-      "what": "SliceApp_0.1.1.0_x64.msix (R5-08, clone-local 5e6338b6)",
-      "sha256": "0ff6516543d2c2dec49dd41a65ae3ef0a7eb9c7d34f9c05321534f731b6bc8e8",
+      "what": "SliceApp_0.1.1.0_x64.msix (R5-10, clone-local c60b1377)",
+      "sha256": "efc52869b889fefe883c4991a6f8c1878232275f5e452b29aea227645e085157",
       "source": [
-        "docs/sr0-snapshot.md:94",
-        "examples/SliceApp/RESULT-R5-08.md:12"
+        "examples/SliceApp/RESULT-R5-10.md:12"
       ]
     },
     "old_dmg": {
       "what": "SliceApp_0.1.0_arm64.dmg (R3 final, commit 4496474, @rightkit/release 0.2.144)",
       "sha256": "b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4",
       "source": [
-        "docs/sr0-snapshot.md:70",
+        "docs/sr0-snapshot.md:72",
         "examples/SliceApp/r3-final/r3-final-verify.txt:4",
         "examples/SliceApp/r3-final/release-manifest.json:67"
       ]
@@ -71,8 +69,8 @@
     "normal": 40,
     "timeout": 41,
     "source": [
-      "examples/BridgeSmoke/result-smoke-rev08.txt:83",
-      "examples/BridgeSmoke/result-smoke-timeout08.txt:84"
+      "examples/BridgeSmoke/result-smoke-rev09.txt:83",
+      "examples/BridgeSmoke/result-smoke-timeout09.txt:84"
     ]
   }
 }

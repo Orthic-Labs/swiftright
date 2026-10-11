@@ -1,71 +1,71 @@
-EVT {"kind":"lifecycle","mono_ns":25462684792300,"node_id":"selftest","payload":{"fixture":"F8","phase":"start"},"seq":0}
-EVT {"kind":"lifecycle","mono_ns":25463149882600,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
-EVT {"kind":"lifecycle","mono_ns":25463151341000,"node_id":"F0000008-0000-4000-8000-000000000001","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":2}
-EVT {"kind":"lifecycle","mono_ns":25463152090800,"node_id":"F0000008-0000-4000-8000-000000000002","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":3}
-EVT {"kind":"lifecycle","mono_ns":25463152321700,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":4}
-EVT {"kind":"lifecycle","mono_ns":25463152539900,"node_id":"F0000008-0000-4000-8000-000000000004","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":5}
-EVT {"kind":"lifecycle","mono_ns":25463152850000,"node_id":"F0000008-0000-4000-8000-000000000005","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":6}
-EVT {"kind":"lifecycle","mono_ns":25463153144800,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":7}
-EVT {"kind":"lifecycle","mono_ns":25463153456400,"node_id":"F0000008-0000-4000-8000-000000000007","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":8}
-EVT {"kind":"lifecycle","mono_ns":25463153794900,"node_id":"F0000008-0000-4000-8000-000000000008","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":9}
-EVT {"kind":"lifecycle","mono_ns":25463154122500,"node_id":"F0000008-0000-4000-8000-000000000009","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":10}
-EVT {"kind":"lifecycle","mono_ns":25463154414100,"node_id":"F0000008-0000-4000-8000-000000000010","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":11}
-EVT {"kind":"lifecycle","mono_ns":25463158461600,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
-EVT {"kind":"ax-focus-coalesced","mono_ns":25465816717800,"node_id":"focus","payload":{"node":7,"reason":"focus-request-in-front-of-invoke","source":"ax"},"seq":13}
-EVT {"kind":"input","mono_ns":25465816841100,"node_id":"toolbar\/insert","payload":{"node":7,"op":"invoke","source":"ax"},"seq":14}
-EVT {"kind":"input","mono_ns":25465816929400,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":1},"seq":15}
-EVT {"kind":"lifecycle","mono_ns":25465818359300,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-1","phase":"task-start"},"seq":16}
-EVT {"kind":"effect","mono_ns":25465818465600,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-1","phase":"engine-request"},"seq":17}
-EVT {"kind":"lifecycle","mono_ns":25465819557700,"node_id":"selftest","payload":{"name":"toolbar insert pending","phase":"stage"},"seq":18}
-EVT {"kind":"effect","mono_ns":25465819649000,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-1","phase":"engine-release","value":0},"seq":19}
-EVT {"kind":"lifecycle","mono_ns":25465819782600,"node_id":"selftest","payload":{"name":"release toolbar insert","phase":"stage"},"seq":20}
-EVT {"kind":"effect","mono_ns":25465820242900,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":21}
-EVT {"kind":"effect","mono_ns":25465820321600,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":22}
-EVT {"kind":"state","mono_ns":25465820408100,"node_id":"model","payload":{"animated":false,"id":"F0000008-0000-4000-8000-000000000101","index":0,"op":"insert","tag":"toolbar-1"},"seq":23}
-EVT {"kind":"lifecycle","mono_ns":25465820842000,"node_id":"F0000008-0000-4000-8000-000000000101","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":24}
-EVT {"kind":"lifecycle","mono_ns":25465837115100,"node_id":"selftest","payload":{"name":"toolbar row committed","phase":"stage"},"seq":25}
-EVT {"kind":"input","mono_ns":25465837262400,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":2},"seq":26}
-EVT {"kind":"lifecycle","mono_ns":25465837318400,"node_id":"selftest","payload":{"name":"restart: press 2","phase":"stage"},"seq":27}
-EVT {"kind":"lifecycle","mono_ns":25465838811700,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-2","phase":"task-start"},"seq":28}
-EVT {"kind":"effect","mono_ns":25465838902900,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-2","phase":"engine-request"},"seq":29}
-EVT {"kind":"lifecycle","mono_ns":25465852780500,"node_id":"selftest","payload":{"name":"insert-toolbar-2 pending","phase":"stage"},"seq":30}
-EVT {"kind":"input","mono_ns":25465852916400,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":3},"seq":31}
-EVT {"kind":"lifecycle","mono_ns":25465852963500,"node_id":"selftest","payload":{"name":"restart: press 3 (replaces run 2)","phase":"stage"},"seq":32}
-EVT {"kind":"lifecycle","mono_ns":25465853037700,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","key":"insert-toolbar-2","phase":"task-cancel"},"seq":33}
-EVT {"kind":"lifecycle","mono_ns":25465854568000,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-3","phase":"task-start"},"seq":34}
-EVT {"kind":"effect","mono_ns":25465854657200,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-3","phase":"engine-request"},"seq":35}
-EVT {"kind":"lifecycle","mono_ns":25465869491500,"node_id":"selftest","payload":{"name":"insert-toolbar-3 pending","phase":"stage"},"seq":36}
-EVT {"kind":"effect","mono_ns":25465869599700,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-2","phase":"engine-release","value":0},"seq":37}
-EVT {"kind":"lifecycle","mono_ns":25465869659000,"node_id":"selftest","payload":{"name":"release cancelled run 2","phase":"stage"},"seq":38}
-EVT {"kind":"effect","mono_ns":25465869718700,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"rejected","reason":"task-cancelled"},"seq":39}
-EVT {"kind":"effect","mono_ns":25465869769000,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":40}
-EVT {"kind":"lifecycle","mono_ns":25465886148600,"node_id":"selftest","payload":{"name":"stale result rejected","phase":"stage"},"seq":41}
-EVT {"kind":"focus","mono_ns":25469497101200,"node_id":"focus","payload":{"focused":"F0000008-0000-4000-8000-000000000003","source":"ax"},"seq":42}
-EVT {"kind":"state","mono_ns":25469498390600,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"op":"edit","text":"AX value"},"seq":43}
-EVT {"kind":"lifecycle","mono_ns":25469498474000,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"local":1,"phase":"local-edit"},"seq":44}
-EVT {"kind":"lifecycle","mono_ns":25469499637400,"node_id":"selftest","payload":{"name":"AX value applied","phase":"stage"},"seq":45}
-EVT {"kind":"lifecycle","mono_ns":25469499749400,"node_id":"selftest","payload":{"name":"row3 focused by AX","phase":"stage"},"seq":46}
-EVT {"kind":"focus","mono_ns":25470749369000,"node_id":"focus","payload":{"focused":"F0000008-0000-4000-8000-000000000003","source":"ax"},"seq":47}
-EVT {"kind":"ax-focus-coalesced","mono_ns":25471893716400,"node_id":"focus","payload":{"node":267,"reason":"focus-request-in-front-of-invoke","source":"ax"},"seq":48}
-EVT {"kind":"input","mono_ns":25471893824900,"node_id":"toolbar\/insert","payload":{"node":267,"op":"invoke","source":"ax"},"seq":49}
-EVT {"kind":"state","mono_ns":25471893912100,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"index":6,"op":"remove","owner_gen":1},"seq":50}
-EVT {"kind":"lifecycle","mono_ns":25471894070300,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":51}
-EVT {"kind":"lifecycle","mono_ns":25471894801800,"node_id":"selftest","payload":{"name":"row6 deleted by AX","phase":"stage"},"seq":52}
-EVT {"kind":"lifecycle","mono_ns":25474848291500,"node_id":"window","payload":{"phase":"closed"},"seq":53}
-EVT {"kind":"lifecycle","mono_ns":25474848461000,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":54}
-EVT {"kind":"lifecycle","mono_ns":25474848608300,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","key":"insert-toolbar-3","phase":"task-cancel"},"seq":55}
-EVT {"kind":"lifecycle","mono_ns":25474848778600,"node_id":"F0000008-0000-4000-8000-000000000101","payload":{"local":0,"phase":"disappear"},"seq":56}
-EVT {"kind":"lifecycle","mono_ns":25474848956100,"node_id":"F0000008-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":57}
-EVT {"kind":"lifecycle","mono_ns":25474849127800,"node_id":"F0000008-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":58}
-EVT {"kind":"lifecycle","mono_ns":25474849298900,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"local":1,"phase":"disappear"},"seq":59}
-EVT {"kind":"lifecycle","mono_ns":25474849504700,"node_id":"F0000008-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":60}
-EVT {"kind":"lifecycle","mono_ns":25474849654000,"node_id":"F0000008-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":61}
-EVT {"kind":"lifecycle","mono_ns":25474849790400,"node_id":"F0000008-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":62}
-EVT {"kind":"lifecycle","mono_ns":25474849937700,"node_id":"F0000008-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":63}
-EVT {"kind":"lifecycle","mono_ns":25474850081600,"node_id":"F0000008-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":64}
-EVT {"kind":"lifecycle","mono_ns":25474850227000,"node_id":"F0000008-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":65}
-SELFTEST-STAGES F8: toolbar insert pending@3.13s | release toolbar insert@3.14s | toolbar row committed@3.15s | restart: press 2@3.15s | insert-toolbar-2 pending@3.17s | restart: press 3 (replaces run 2)@3.17s | insert-toolbar-3 pending@3.18s | release cancelled run 2@3.18s | stale result rejected@3.20s | AX value applied@6.81s | row3 focused by AX@6.81s | row6 deleted by AX@9.21s | awaiting-driver-close end-reason=window-closed
-ASSERT F8 script-completed: PASS stages=toolbar insert pending@3.13s | release toolbar insert@3.14s | toolbar row committed@3.15s | restart: press 2@3.15s | insert-toolbar-2 pending@3.17s | restart: press 3 (replaces run 2)@3.17s | insert-toolbar-3 pending@3.18s | release cancelled run 2@3.18s | stale result rejected@3.20s | AX value applied@6.81s | row3 focused by AX@6.81s | row6 deleted by AX@9.21s | awaiting-driver-close
+EVT {"kind":"lifecycle","mono_ns":46922853373400,"node_id":"selftest","payload":{"fixture":"F8","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":46923847901600,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":46923850023500,"node_id":"F0000008-0000-4000-8000-000000000001","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":46923850955900,"node_id":"F0000008-0000-4000-8000-000000000002","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":46923851249400,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":46923851510500,"node_id":"F0000008-0000-4000-8000-000000000004","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":46923851781200,"node_id":"F0000008-0000-4000-8000-000000000005","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":46923852047500,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":46923852311100,"node_id":"F0000008-0000-4000-8000-000000000007","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":46923852581700,"node_id":"F0000008-0000-4000-8000-000000000008","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":46923852895400,"node_id":"F0000008-0000-4000-8000-000000000009","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":46923853182100,"node_id":"F0000008-0000-4000-8000-000000000010","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":46923857468200,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"ax-focus-coalesced","mono_ns":46926064295200,"node_id":"focus","payload":{"node":7,"reason":"focus-request-in-front-of-invoke","source":"ax"},"seq":13}
+EVT {"kind":"input","mono_ns":46926064570500,"node_id":"toolbar\/insert","payload":{"node":7,"op":"invoke","source":"ax"},"seq":14}
+EVT {"kind":"input","mono_ns":46926064785100,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":1},"seq":15}
+EVT {"kind":"lifecycle","mono_ns":46926068170900,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-1","phase":"task-start"},"seq":16}
+EVT {"kind":"effect","mono_ns":46926068403700,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-1","phase":"engine-request"},"seq":17}
+EVT {"kind":"lifecycle","mono_ns":46926072095900,"node_id":"selftest","payload":{"name":"toolbar insert pending","phase":"stage"},"seq":18}
+EVT {"kind":"effect","mono_ns":46926072331900,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-1","phase":"engine-release","value":0},"seq":19}
+EVT {"kind":"lifecycle","mono_ns":46926072532800,"node_id":"selftest","payload":{"name":"release toolbar insert","phase":"stage"},"seq":20}
+EVT {"kind":"effect","mono_ns":46926073257700,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":21}
+EVT {"kind":"effect","mono_ns":46926073440200,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":22}
+EVT {"kind":"state","mono_ns":46926073630200,"node_id":"model","payload":{"animated":false,"id":"F0000008-0000-4000-8000-000000000101","index":0,"op":"insert","tag":"toolbar-1"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":46926074228600,"node_id":"F0000008-0000-4000-8000-000000000101","payload":{"controls":["field","delete"],"local":0,"phase":"appear"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":46926090108100,"node_id":"selftest","payload":{"name":"toolbar row committed","phase":"stage"},"seq":25}
+EVT {"kind":"input","mono_ns":46926090286700,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":2},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":46926090397400,"node_id":"selftest","payload":{"name":"restart: press 2","phase":"stage"},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":46926092647100,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-2","phase":"task-start"},"seq":28}
+EVT {"kind":"effect","mono_ns":46926092791500,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-2","phase":"engine-request"},"seq":29}
+EVT {"kind":"lifecycle","mono_ns":46926105342600,"node_id":"selftest","payload":{"name":"insert-toolbar-2 pending","phase":"stage"},"seq":30}
+EVT {"kind":"input","mono_ns":46926105762600,"node_id":"toolbar\/insert","payload":{"op":"invoke","seq":3},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":46926105891300,"node_id":"selftest","payload":{"name":"restart: press 3 (replaces run 2)","phase":"stage"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":46926106039700,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","key":"insert-toolbar-2","phase":"task-cancel"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":46926108732300,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"key":"insert-toolbar-3","phase":"task-start"},"seq":34}
+EVT {"kind":"effect","mono_ns":46926108919900,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-3","phase":"engine-request"},"seq":35}
+EVT {"kind":"lifecycle","mono_ns":46926121693600,"node_id":"selftest","payload":{"name":"insert-toolbar-3 pending","phase":"stage"},"seq":36}
+EVT {"kind":"effect","mono_ns":46926122538000,"node_id":"toolbar\/insert","payload":{"key":"insert-toolbar-2","phase":"engine-release","value":0},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":46926122741200,"node_id":"selftest","payload":{"name":"release cancelled run 2","phase":"stage"},"seq":38}
+EVT {"kind":"effect","mono_ns":46926122878500,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"rejected","reason":"task-cancelled"},"seq":39}
+EVT {"kind":"effect","mono_ns":46926123009000,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":40}
+EVT {"kind":"lifecycle","mono_ns":46926138590200,"node_id":"selftest","payload":{"name":"stale result rejected","phase":"stage"},"seq":41}
+EVT {"kind":"focus","mono_ns":46928983040600,"node_id":"focus","payload":{"focused":"F0000008-0000-4000-8000-000000000003","source":"ax"},"seq":42}
+EVT {"kind":"state","mono_ns":46928984232000,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"op":"edit","text":"AX value"},"seq":43}
+EVT {"kind":"lifecycle","mono_ns":46928984311100,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"local":1,"phase":"local-edit"},"seq":44}
+EVT {"kind":"lifecycle","mono_ns":46928985345100,"node_id":"selftest","payload":{"name":"AX value applied","phase":"stage"},"seq":45}
+EVT {"kind":"lifecycle","mono_ns":46928985441200,"node_id":"selftest","payload":{"name":"row3 focused by AX","phase":"stage"},"seq":46}
+EVT {"kind":"focus","mono_ns":46929815308200,"node_id":"focus","payload":{"focused":"F0000008-0000-4000-8000-000000000003","source":"ax"},"seq":47}
+EVT {"kind":"ax-focus-coalesced","mono_ns":46931038747000,"node_id":"focus","payload":{"node":267,"reason":"focus-request-in-front-of-invoke","source":"ax"},"seq":48}
+EVT {"kind":"input","mono_ns":46931038979400,"node_id":"toolbar\/insert","payload":{"node":267,"op":"invoke","source":"ax"},"seq":49}
+EVT {"kind":"state","mono_ns":46931039166800,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"index":6,"op":"remove","owner_gen":1},"seq":50}
+EVT {"kind":"lifecycle","mono_ns":46931039522900,"node_id":"F0000008-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":51}
+EVT {"kind":"lifecycle","mono_ns":46931041385300,"node_id":"selftest","payload":{"name":"row6 deleted by AX","phase":"stage"},"seq":52}
+EVT {"kind":"lifecycle","mono_ns":46932226934900,"node_id":"window","payload":{"phase":"closed"},"seq":53}
+EVT {"kind":"lifecycle","mono_ns":46932227200600,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":54}
+EVT {"kind":"lifecycle","mono_ns":46932227819800,"node_id":"toolbar\/insert","payload":{"effect":"insert-above","key":"insert-toolbar-3","phase":"task-cancel"},"seq":55}
+EVT {"kind":"lifecycle","mono_ns":46932228115900,"node_id":"F0000008-0000-4000-8000-000000000101","payload":{"local":0,"phase":"disappear"},"seq":56}
+EVT {"kind":"lifecycle","mono_ns":46932228389900,"node_id":"F0000008-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":57}
+EVT {"kind":"lifecycle","mono_ns":46932228672600,"node_id":"F0000008-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":58}
+EVT {"kind":"lifecycle","mono_ns":46932228937400,"node_id":"F0000008-0000-4000-8000-000000000003","payload":{"local":1,"phase":"disappear"},"seq":59}
+EVT {"kind":"lifecycle","mono_ns":46932229248000,"node_id":"F0000008-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":60}
+EVT {"kind":"lifecycle","mono_ns":46932229600900,"node_id":"F0000008-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":61}
+EVT {"kind":"lifecycle","mono_ns":46932230004600,"node_id":"F0000008-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":62}
+EVT {"kind":"lifecycle","mono_ns":46932230267100,"node_id":"F0000008-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":63}
+EVT {"kind":"lifecycle","mono_ns":46932230500100,"node_id":"F0000008-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":64}
+EVT {"kind":"lifecycle","mono_ns":46932230735800,"node_id":"F0000008-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":65}
+SELFTEST-STAGES F8: toolbar insert pending@3.22s | release toolbar insert@3.22s | toolbar row committed@3.24s | restart: press 2@3.24s | insert-toolbar-2 pending@3.25s | restart: press 3 (replaces run 2)@3.25s | insert-toolbar-3 pending@3.27s | release cancelled run 2@3.27s | stale result rejected@3.29s | AX value applied@6.13s | row3 focused by AX@6.13s | row6 deleted by AX@8.19s | awaiting-driver-close end-reason=window-closed
+ASSERT F8 script-completed: PASS stages=toolbar insert pending@3.22s | release toolbar insert@3.22s | toolbar row committed@3.24s | restart: press 2@3.24s | insert-toolbar-2 pending@3.25s | restart: press 3 (replaces run 2)@3.25s | insert-toolbar-3 pending@3.27s | release cancelled run 2@3.27s | stale result rejected@3.29s | AX value applied@6.13s | row3 focused by AX@6.13s | row6 deleted by AX@8.19s | awaiting-driver-close
 ASSERT F8 toolbar-activation-commits: PASS commit=1
 ASSERT F8 toolbar-task-restarts-per-request: PASS task-starts=3 (presses 1,2,3) cancels=1 stale-rejected=1
 ASSERT F8 inserted-row-exposes-controls: PASS controls=field,delete

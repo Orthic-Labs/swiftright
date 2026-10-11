@@ -1021,8 +1021,8 @@ class TupleFileTests(unittest.TestCase):
         self.assertEqual(set(pin["pins"]), set(q.TUPLE_MEMBERS))
         self.assertEqual(pin["smoke_checks"], {"normal": 40, "timeout": 41})
         self.assertTrue(pin["pins"]["windows_renderer"].startswith("e280f4a9"))
-        self.assertTrue(pin["pins"]["windows_fixture_exe"].startswith("7673a2d5"))
-        self.assertTrue(pin["pins"]["windows_smoke_exe"].startswith("21992f16"))
+        self.assertTrue(pin["pins"]["windows_fixture_exe"].startswith("07351314"))
+        self.assertTrue(pin["pins"]["windows_smoke_exe"].startswith("85d5f8ba"))
         self.assertTrue(pin["pins"]["old_dmg"].startswith("b976ac70"))
         self.assertTrue(pin["pins"]["new_dmg"].startswith("75f3cd75"))
         self.assertNotEqual(pin["pins"]["new_dmg"], pin["pins"]["old_dmg"])
@@ -1096,7 +1096,7 @@ class SmokeTupleTests(unittest.TestCase):
         return ok, [json.loads(l) for l in (self.dir / "e.jsonl").read_text().splitlines() if l.strip()][-1]
 
     def test_final_receipts_pass_under_the_final_tuple(self):
-        ok, last = self.replay("result-smoke-rev08.txt", "result-smoke-timeout08.txt", q.load_tuple(q.TUPLE_FINAL))
+        ok, last = self.replay("result-smoke-rev09.txt", "result-smoke-timeout09.txt", q.load_tuple(q.TUPLE_FINAL))
         self.assertTrue(ok, last)
         self.assertIn("normal 40/40, timeout 41/41", last["reason"])
         self.assertEqual(last["artifact_ids"]["windows_exe"], "sha256:" + q.load_tuple(q.TUPLE_FINAL)["pins"]["windows_smoke_exe"])
@@ -1124,7 +1124,7 @@ class SmokeTupleTests(unittest.TestCase):
 
 class WinReplayTupleTests(unittest.TestCase):
     EXE, RND = "a" * 64, "b" * 64
-    MATRIX = q.REPO / "probes" / "sr0-s" / "fresh-on-bridge" / "out" / "matrix-08"
+    MATRIX = q.REPO / "probes" / "sr0-s" / "fresh-on-bridge" / "out" / "matrix-11"
 
     def setUp(self):
         SCRATCH.mkdir(parents=True, exist_ok=True)
@@ -1199,7 +1199,7 @@ class WinReplayTupleTests(unittest.TestCase):
         records = sorted(self.MATRIX.glob("F*-r*.txt"))
         records = [r for r in records if ".a" not in r.name]
         if len(records) != 320:
-            self.skipTest("matrix-08 evidence not present")
+            self.skipTest("the final matrix evidence is not complete (320 records)")
         configs = list(q.DEFAULT_MATRIX_CONFIGS)
 
         def runner(command, env=None, capture_output=True, text=True):
@@ -1209,7 +1209,7 @@ class WinReplayTupleTests(unittest.TestCase):
                 f, _, v = cfg.partition(":")
                 for run in range(1, 21):
                     rec = self.MATRIX / f"{f}-{v}-r{run}.txt"
-                    if (f, v, run) == ("F3", "list-0s", 16):
+                    if (f, v, run) == ("F3", "list-0s", 16) and (self.MATRIX / "rerun-F3-list-0s").exists():
                         # matrix-08 run 16 failed on external typed input (RESULT.md); the committed
                         # rerun (rerun-F3-list-0s, 3/3 PASS) stands in so the replay sees 320 passes
                         shutil.copyfile(self.MATRIX / "rerun-F3-list-0s" / "F3-list-0s-r1.txt", target / rec.name)
@@ -1744,12 +1744,12 @@ class CrossPlanTests(unittest.TestCase):
 
 
 class CommittedRecordingsVerdictTests(unittest.TestCase):
-    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the tuple 10 Windows
-    recordings (11 Oct 2026, FreshOnBridge F136046B, after the product fixes) against the Mac recordings.
+    """The REAL comparator over the committed recordings (no GUI, no Windows): the honest verdict of the tuple 11 Windows
+    recordings (11 Oct 2026, FreshOnBridge 07351314, after the product fixes) against the Mac recordings.
     The comparator is built from the working tree (the runner itself builds from HEAD), under SR0A_BUILD_ROOT.
-    When Windows is re-recorded, update TUPLE10_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
-    TUPLE10_DIFFS = {"F1": 0, "F2": 0, "F3": 0, "F3-list-1s": 0, "F3-list-3s": 0, "F3-vstack-1s": 1, "F3-vstack-3s": 1,
-                     "F3-lazy-1s": 1, "F3-lazy-3s": 1, "F4": 0, "F5": 1, "F6": 0, "F6-reduced": 0, "F7": 0, "F8": 0, "F9": 0}
+    When Windows is re-recorded, update TUPLE11_DIFFS to the new honest result (a green row is a config with 0 diffs)."""
+    TUPLE11_DIFFS = {"F1": 0, "F2": 0, "F3": 0, "F3-list-1s": 0, "F3-list-3s": 0, "F3-vstack-1s": 0, "F3-vstack-3s": 0,
+                     "F3-lazy-1s": 0, "F3-lazy-3s": 0, "F4": 0, "F5": 0, "F6": 0, "F6-reduced": 0, "F7": 0, "F8": 0, "F9": 0}
 
     @classmethod
     def setUpClass(cls):
@@ -1779,20 +1779,16 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
         return json.loads((self.dir / f"compare-{config}.json").read_text(encoding="utf-8"))
 
     def test_per_config_diff_counts_of_the_recordings(self):
-        got = {c: len(self.report(c)["diffs"]) for c in self.TUPLE10_DIFFS}
-        self.assertEqual(got, self.TUPLE10_DIFFS)
+        got = {c: len(self.report(c)["diffs"]) for c in self.TUPLE11_DIFFS}
+        self.assertEqual(got, self.TUPLE11_DIFFS)
 
-    def test_remaining_diff_is_the_launch_selection(self):
-        """Mac AppKit selects the whole text at launch (0+5); the tuple 10 runtime selects all (self-test selection-at-launch 0+5/5)
-        but UIA still reads the caret at the end (5+0) at the `initial` snapshot."""
-        for config in ("F5", "F3-vstack-1s", "F3-vstack-3s", "F3-lazy-1s", "F3-lazy-3s"):
-            diffs = [(d["step"], d["path"], d["expected"], d["actual"]) for d in self.report(config)["diffs"]]
-            self.assertEqual(diffs, [("initial", "selection", "location=0 length=5", "location=5 length=0")], config)
-        self.assertEqual(self.report("F6")["diffs"], [], "the four row-rebuild counts are allowance C11")
-        self.assertEqual(self.report("F6-reduced")["diffs"], [])
+    def test_all_sixteen_configs_have_no_unallowed_diff(self):
+        """Launch selection matches (Mac 0+5, Windows 0+5 after the host AX selection-publish fix)."""
+        for config in self.TUPLE11_DIFFS:
+            self.assertEqual(self.report(config)["diffs"], [], config)
 
     def test_remaining_allowances_forgave_only_their_own_diffs(self):
-        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.TUPLE10_DIFFS}
+        applied = {c: sorted({a["allowance"] for a in self.report(c)["allowed"]} - {"N1"}) for c in self.TUPLE11_DIFFS}
         self.assertEqual({c: v for c, v in applied.items() if v},
                          {"F2": ["P1"], "F3": ["P2"], "F3-list-1s": ["P2"], "F3-list-3s": ["P2"], "F6": ["C11"], "F9": ["P6"]})
         self.assertEqual(len([a for a in self.report("F2")["allowed"] if a["allowance"] == "P1"]), 6)
@@ -1810,7 +1806,7 @@ class CommittedRecordingsVerdictTests(unittest.TestCase):
 
     def test_only_the_expected_configs_fail(self):
         failed = {e["fixture"] for e in self.events if e["event"] == "fail"}
-        self.assertEqual(failed, {c for c, n in self.TUPLE10_DIFFS.items() if n})
+        self.assertEqual(failed, {c for c, n in self.TUPLE11_DIFFS.items() if n})
 
 
 class ReassemblyTests(unittest.TestCase):
@@ -2032,6 +2028,15 @@ class ClosureGateTests(unittest.TestCase):
         self.assertEqual(q.native_problems(d, "t", pins)[0], [])
         d, pins = self.native_dir(**{"native-ime-f8": known.replace("layout-move", "something-else")})
         self.assertTrue(any("outside the known limitation" in p for p in q.native_problems(d, "t", pins)[0]))
+
+    def test_native_override_takes_a_rerun_receipt_from_another_tag(self):
+        d, pins = self.native_dir(**{"native-ime-f7": "  1.0s CHECK a FAIL :: x\n  2.0s NATIVE_SUMMARY ime-F7 pass=3 fail=1 fail_not_automatable=0 not_run=0\n"})
+        self.assertTrue(q.native_problems(d, "t", pins)[0])
+        (d / "native-ime-f7-t2.txt").write_text("  2.0s NATIVE_SUMMARY ime-F7 pass=4 fail=0 fail_not_automatable=0 not_run=0\n")
+        self.assertTrue(any("preflight-t2.txt missing" in p for p in q.native_problems(d, "t", pins, {"ime-f7": "t2"})[0]))
+        shutil.copyfile(d / "preflight-t.txt", d / "preflight-t2.txt")
+        shutil.copyfile(d / "static-check-t.txt", d / "static-check-t2.txt")
+        self.assertEqual(q.native_problems(d, "t", pins, {"ime-f7": "t2"})[0], [])
 
     def test_native_missing_unbound_or_pending_receipts(self):
         d, pins = self.native_dir(**{"native-narrator": None})

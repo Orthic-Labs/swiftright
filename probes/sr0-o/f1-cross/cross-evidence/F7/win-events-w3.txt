@@ -1,58 +1,58 @@
-EVT {"kind":"lifecycle","mono_ns":25410452647200,"node_id":"selftest","payload":{"fixture":"F7","phase":"start"},"seq":0}
-EVT {"kind":"lifecycle","mono_ns":25410900923800,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
-EVT {"kind":"lifecycle","mono_ns":25410902467400,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
-EVT {"kind":"lifecycle","mono_ns":25410903113900,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
-EVT {"kind":"lifecycle","mono_ns":25410903326500,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
-EVT {"kind":"lifecycle","mono_ns":25410903514700,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
-EVT {"kind":"lifecycle","mono_ns":25410903694800,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
-EVT {"kind":"lifecycle","mono_ns":25410903881000,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
-EVT {"kind":"lifecycle","mono_ns":25410904058500,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
-EVT {"kind":"lifecycle","mono_ns":25410904247400,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
-EVT {"kind":"lifecycle","mono_ns":25410904434500,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
-EVT {"kind":"lifecycle","mono_ns":25410904620700,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
-EVT {"kind":"lifecycle","mono_ns":25410907998100,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
-EVT {"kind":"lifecycle","mono_ns":25410908206100,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
-EVT {"kind":"effect","mono_ns":25410908277300,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
-EVT {"kind":"focus","mono_ns":25413582273500,"node_id":"focus","payload":{"focused":"F0000007-0000-4000-8000-000000000002","source":"ax"},"seq":15}
-EVT {"kind":"input","mono_ns":25414178291200,"node_id":"row 2","payload":{"inserted":"k","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":16}
-EVT {"kind":"state","mono_ns":25414178585300,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2k"},"seq":17}
-EVT {"kind":"lifecycle","mono_ns":25414178646300,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":1,"phase":"local-edit"},"seq":18}
-EVT {"kind":"input","mono_ns":25414399498400,"node_id":"row 2","payload":{"inserted":"a","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":19}
-EVT {"kind":"state","mono_ns":25414399769900,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2ka"},"seq":20}
-EVT {"kind":"lifecycle","mono_ns":25414399822500,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":2,"phase":"local-edit"},"seq":21}
-EVT {"kind":"lifecycle","mono_ns":25415092720100,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":22}
-EVT {"kind":"lifecycle","mono_ns":25415092847600,"node_id":"selftest","payload":{"name":"row2 focused by AX","phase":"stage"},"seq":23}
-EVT {"kind":"lifecycle","mono_ns":25415092892000,"node_id":"selftest","payload":{"name":"typed ka","phase":"stage"},"seq":24}
-EVT {"kind":"lifecycle","mono_ns":25415093705200,"node_id":"selftest","payload":{"name":"compose n (marked, uncommitted)","phase":"stage"},"seq":25}
-EVT {"kind":"lifecycle","mono_ns":25415093775300,"node_id":"selftest","payload":{"name":"composition visible in runtime","phase":"stage"},"seq":26}
-EVT {"kind":"effect","mono_ns":25415093813000,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":27}
-EVT {"kind":"lifecycle","mono_ns":25415093915900,"node_id":"selftest","payload":{"name":"release insert-above (composition open)","phase":"stage"},"seq":28}
-EVT {"kind":"effect","mono_ns":25415094533400,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":29}
-EVT {"kind":"effect","mono_ns":25415094613800,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":30}
-EVT {"kind":"state","mono_ns":25415094688500,"node_id":"model","payload":{"animated":false,"id":"F0000007-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":31}
-EVT {"kind":"lifecycle","mono_ns":25415094921200,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":32}
-EVT {"kind":"lifecycle","mono_ns":25415109597500,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":33}
-EVT {"kind":"lifecycle","mono_ns":25415109725400,"node_id":"selftest","payload":{"name":"record composition across insert","phase":"stage"},"seq":34}
-EVT {"kind":"lifecycle","mono_ns":25415110465200,"node_id":"selftest","payload":{"name":"compose na (replaces marked n)","phase":"stage"},"seq":35}
-EVT {"kind":"state","mono_ns":25415110728400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2kana"},"seq":36}
-EVT {"kind":"lifecycle","mono_ns":25415110789500,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"local-edit"},"seq":37}
-EVT {"kind":"lifecycle","mono_ns":25415111409000,"node_id":"selftest","payload":{"name":"unmark (commit composition)","phase":"stage"},"seq":38}
-EVT {"kind":"lifecycle","mono_ns":25415111470300,"node_id":"selftest","payload":{"name":"composition committed to model","phase":"stage"},"seq":39}
-EVT {"kind":"lifecycle","mono_ns":25417463064000,"node_id":"window","payload":{"phase":"closed"},"seq":40}
-EVT {"kind":"lifecycle","mono_ns":25417463385800,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":41}
-EVT {"kind":"lifecycle","mono_ns":25417464117600,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":42}
-EVT {"kind":"lifecycle","mono_ns":25417464424000,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":43}
-EVT {"kind":"lifecycle","mono_ns":25417464661900,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"disappear"},"seq":44}
-EVT {"kind":"lifecycle","mono_ns":25417464986600,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":45}
-EVT {"kind":"lifecycle","mono_ns":25417465166900,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":46}
-EVT {"kind":"lifecycle","mono_ns":25417465422300,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":47}
-EVT {"kind":"lifecycle","mono_ns":25417465658700,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":48}
-EVT {"kind":"lifecycle","mono_ns":25417465943100,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":49}
-EVT {"kind":"lifecycle","mono_ns":25417466112500,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":50}
-EVT {"kind":"lifecycle","mono_ns":25417466273700,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":51}
-EVT {"kind":"lifecycle","mono_ns":25417466434700,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":52}
-SELFTEST-STAGES F7: insert-above pending@4.64s | row2 focused by AX@4.64s | typed ka@4.64s | compose n (marked, uncommitted)@4.64s | composition visible in runtime@4.64s | release insert-above (composition open)@4.64s | insert committed@4.66s | record composition across insert@4.66s | compose na (replaces marked n)@4.66s | unmark (commit composition)@4.66s | composition committed to model@4.66s | awaiting-driver-close end-reason=window-closed
-ASSERT F7 script-completed: PASS stages=insert-above pending@4.64s | row2 focused by AX@4.64s | typed ka@4.64s | compose n (marked, uncommitted)@4.64s | composition visible in runtime@4.64s | release insert-above (composition open)@4.64s | insert committed@4.66s | record composition across insert@4.66s | compose na (replaces marked n)@4.66s | unmark (commit composition)@4.66s | composition committed to model@4.66s | awaiting-driver-close
+EVT {"kind":"lifecycle","mono_ns":46859193573300,"node_id":"selftest","payload":{"fixture":"F7","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":46860091043700,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":46860093270900,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":46860094404400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":46860094744300,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":46860095109800,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":46860095367400,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":46860095599600,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":46860095842300,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":46860096085800,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":46860096342100,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":46860096578100,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":46860101476600,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":46860102225500,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
+EVT {"kind":"effect","mono_ns":46860102322400,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
+EVT {"kind":"focus","mono_ns":46862604084900,"node_id":"focus","payload":{"focused":"F0000007-0000-4000-8000-000000000002","source":"ax"},"seq":15}
+EVT {"kind":"input","mono_ns":46863236572000,"node_id":"row 2","payload":{"inserted":"k","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":16}
+EVT {"kind":"state","mono_ns":46863237051000,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2k"},"seq":17}
+EVT {"kind":"lifecycle","mono_ns":46863237151400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":1,"phase":"local-edit"},"seq":18}
+EVT {"kind":"input","mono_ns":46863458373400,"node_id":"row 2","payload":{"inserted":"a","op":"text-store-replace","row":"F0000007-0000-4000-8000-000000000002"},"seq":19}
+EVT {"kind":"state","mono_ns":46863458704100,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2ka"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":46863458774700,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":2,"phase":"local-edit"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":46864214324900,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":46864214594100,"node_id":"selftest","payload":{"name":"row2 focused by AX","phase":"stage"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":46864214730100,"node_id":"selftest","payload":{"name":"typed ka","phase":"stage"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":46864216521600,"node_id":"selftest","payload":{"name":"compose n (marked, uncommitted)","phase":"stage"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":46864216730600,"node_id":"selftest","payload":{"name":"composition visible in runtime","phase":"stage"},"seq":26}
+EVT {"kind":"effect","mono_ns":46864216845200,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":46864217109900,"node_id":"selftest","payload":{"name":"release insert-above (composition open)","phase":"stage"},"seq":28}
+EVT {"kind":"effect","mono_ns":46864217944300,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":29}
+EVT {"kind":"effect","mono_ns":46864218178300,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":30}
+EVT {"kind":"state","mono_ns":46864218449500,"node_id":"model","payload":{"animated":false,"id":"F0000007-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":46864219175500,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":46864231484300,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":46864231704800,"node_id":"selftest","payload":{"name":"record composition across insert","phase":"stage"},"seq":34}
+EVT {"kind":"lifecycle","mono_ns":46864233472300,"node_id":"selftest","payload":{"name":"compose na (replaces marked n)","phase":"stage"},"seq":35}
+EVT {"kind":"state","mono_ns":46864234092000,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"op":"edit","text":"Row 2kana"},"seq":36}
+EVT {"kind":"lifecycle","mono_ns":46864234258100,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"local-edit"},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":46864236080300,"node_id":"selftest","payload":{"name":"unmark (commit composition)","phase":"stage"},"seq":38}
+EVT {"kind":"lifecycle","mono_ns":46864236306000,"node_id":"selftest","payload":{"name":"composition committed to model","phase":"stage"},"seq":39}
+EVT {"kind":"lifecycle","mono_ns":46866226717700,"node_id":"window","payload":{"phase":"closed"},"seq":40}
+EVT {"kind":"lifecycle","mono_ns":46866227996900,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":41}
+EVT {"kind":"lifecycle","mono_ns":46866228657200,"node_id":"F0000007-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":42}
+EVT {"kind":"lifecycle","mono_ns":46866229192900,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":43}
+EVT {"kind":"lifecycle","mono_ns":46866229795000,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":3,"phase":"disappear"},"seq":44}
+EVT {"kind":"lifecycle","mono_ns":46866230331100,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":45}
+EVT {"kind":"lifecycle","mono_ns":46866230850600,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":46}
+EVT {"kind":"lifecycle","mono_ns":46866231487900,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":47}
+EVT {"kind":"lifecycle","mono_ns":46866232266300,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":48}
+EVT {"kind":"lifecycle","mono_ns":46866232653200,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":49}
+EVT {"kind":"lifecycle","mono_ns":46866233014700,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":50}
+EVT {"kind":"lifecycle","mono_ns":46866233491000,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":51}
+EVT {"kind":"lifecycle","mono_ns":46866233829200,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":52}
+SELFTEST-STAGES F7: insert-above pending@5.02s | row2 focused by AX@5.02s | typed ka@5.02s | compose n (marked, uncommitted)@5.02s | composition visible in runtime@5.02s | release insert-above (composition open)@5.02s | insert committed@5.04s | record composition across insert@5.04s | compose na (replaces marked n)@5.04s | unmark (commit composition)@5.04s | composition committed to model@5.04s | awaiting-driver-close end-reason=window-closed
+ASSERT F7 script-completed: PASS stages=insert-above pending@5.02s | row2 focused by AX@5.02s | typed ka@5.02s | compose n (marked, uncommitted)@5.02s | composition visible in runtime@5.02s | release insert-above (composition open)@5.02s | insert committed@5.04s | record composition across insert@5.04s | compose na (replaces marked n)@5.04s | unmark (commit composition)@5.04s | composition committed to model@5.04s | awaiting-driver-close
 ASSERT F7 committed-text-on-original-identity: PASS text=Row 2kana
 ASSERT F7 identity-index-shift: PASS index=2
 ASSERT F7 focus-stays-on-identity: PASS focus=F0000007-0000-4000-8000-000000000002

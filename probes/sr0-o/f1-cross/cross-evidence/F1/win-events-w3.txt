@@ -1,58 +1,58 @@
-EVT {"kind":"lifecycle","mono_ns":24797934878500,"node_id":"selftest","payload":{"fixture":"F1","phase":"start"},"seq":0}
-EVT {"kind":"lifecycle","mono_ns":24798382874800,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
-EVT {"kind":"lifecycle","mono_ns":24798384340100,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
-EVT {"kind":"lifecycle","mono_ns":24798385016200,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
-EVT {"kind":"lifecycle","mono_ns":24798385223400,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
-EVT {"kind":"lifecycle","mono_ns":24798385409200,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
-EVT {"kind":"lifecycle","mono_ns":24798385597600,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
-EVT {"kind":"lifecycle","mono_ns":24798385793400,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
-EVT {"kind":"lifecycle","mono_ns":24798385974800,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
-EVT {"kind":"lifecycle","mono_ns":24798386146100,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
-EVT {"kind":"lifecycle","mono_ns":24798386324000,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
-EVT {"kind":"lifecycle","mono_ns":24798386492100,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
-EVT {"kind":"lifecycle","mono_ns":24798389529800,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
-EVT {"kind":"lifecycle","mono_ns":24798389730500,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
-EVT {"kind":"effect","mono_ns":24798389794600,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
-EVT {"kind":"focus","mono_ns":24801065093000,"node_id":"focus","payload":{"focused":"F0000001-0000-4000-8000-000000000005","source":"ax"},"seq":15}
-EVT {"kind":"lifecycle","mono_ns":24801065822700,"node_id":"selftest","payload":{"name":"row5 focused by AX","phase":"stage"},"seq":16}
-EVT {"kind":"input","mono_ns":24801650923800,"node_id":"row 5","payload":{"inserted":"a","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":17}
-EVT {"kind":"state","mono_ns":24801651209200,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5a"},"seq":18}
-EVT {"kind":"lifecycle","mono_ns":24801651262500,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":1,"phase":"local-edit"},"seq":19}
-EVT {"kind":"input","mono_ns":24801873021500,"node_id":"row 5","payload":{"inserted":"b","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":20}
-EVT {"kind":"state","mono_ns":24801873308100,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5ab"},"seq":21}
-EVT {"kind":"lifecycle","mono_ns":24801873369600,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":2,"phase":"local-edit"},"seq":22}
-EVT {"kind":"input","mono_ns":24802101598100,"node_id":"row 5","payload":{"inserted":"c","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":23}
-EVT {"kind":"state","mono_ns":24802101899000,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abc"},"seq":24}
-EVT {"kind":"lifecycle","mono_ns":24802101949700,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":3,"phase":"local-edit"},"seq":25}
-EVT {"kind":"lifecycle","mono_ns":24802102843600,"node_id":"selftest","payload":{"name":"typed abc","phase":"stage"},"seq":26}
-EVT {"kind":"lifecycle","mono_ns":24802689938500,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":27}
-EVT {"kind":"effect","mono_ns":24802690211800,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":28}
-EVT {"kind":"lifecycle","mono_ns":24802690345300,"node_id":"selftest","payload":{"name":"release insert-above","phase":"stage"},"seq":29}
-EVT {"kind":"effect","mono_ns":24802691008200,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":30}
-EVT {"kind":"effect","mono_ns":24802691126700,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":31}
-EVT {"kind":"state","mono_ns":24802691220200,"node_id":"model","payload":{"animated":false,"id":"F0000001-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":32}
-EVT {"kind":"lifecycle","mono_ns":24802691455500,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":33}
-EVT {"kind":"lifecycle","mono_ns":24802706756200,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":34}
-EVT {"kind":"input","mono_ns":24803256651900,"node_id":"row 5","payload":{"inserted":"d","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":35}
-EVT {"kind":"state","mono_ns":24803257015100,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abcd"},"seq":36}
-EVT {"kind":"lifecycle","mono_ns":24803257074500,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"local-edit"},"seq":37}
-EVT {"kind":"lifecycle","mono_ns":24803258017800,"node_id":"selftest","payload":{"name":"typed d","phase":"stage"},"seq":38}
-EVT {"kind":"lifecycle","mono_ns":24803258193500,"node_id":"selftest","payload":{"name":"record row5 instance","phase":"stage"},"seq":39}
-EVT {"kind":"lifecycle","mono_ns":24804793101800,"node_id":"window","payload":{"phase":"closed"},"seq":40}
-EVT {"kind":"lifecycle","mono_ns":24804793278900,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":41}
-EVT {"kind":"lifecycle","mono_ns":24804793488300,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":42}
-EVT {"kind":"lifecycle","mono_ns":24804793668200,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":43}
-EVT {"kind":"lifecycle","mono_ns":24804793843000,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":44}
-EVT {"kind":"lifecycle","mono_ns":24804793999400,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":45}
-EVT {"kind":"lifecycle","mono_ns":24804794156400,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":46}
-EVT {"kind":"lifecycle","mono_ns":24804794303100,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"disappear"},"seq":47}
-EVT {"kind":"lifecycle","mono_ns":24804794530500,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":48}
-EVT {"kind":"lifecycle","mono_ns":24804794809100,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":49}
-EVT {"kind":"lifecycle","mono_ns":24804794952700,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":50}
-EVT {"kind":"lifecycle","mono_ns":24804795085200,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":51}
-EVT {"kind":"lifecycle","mono_ns":24804795212500,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":52}
-SELFTEST-STAGES F1: row5 focused by AX@3.13s | typed abc@4.17s | insert-above pending@4.76s | release insert-above@4.76s | insert committed@4.77s | typed d@5.32s | record row5 instance@5.32s | awaiting-driver-close end-reason=window-closed
-ASSERT F1 script-completed: PASS stages=row5 focused by AX@3.13s | typed abc@4.17s | insert-above pending@4.76s | release insert-above@4.76s | insert committed@4.77s | typed d@5.32s | record row5 instance@5.32s | awaiting-driver-close
+EVT {"kind":"lifecycle","mono_ns":44994629155000,"node_id":"selftest","payload":{"fixture":"F1","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":44995156680800,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":44995158486300,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":44995159527300,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":44995159846600,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":44995160094400,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":44995160389100,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":44995160726600,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":44995161043100,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":44995161292700,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":44995161518800,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":44995161750900,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":44995165440600,"node_id":"window","payload":{"height_px":1396,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":44995165690600,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
+EVT {"kind":"effect","mono_ns":44995165768200,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
+EVT {"kind":"focus","mono_ns":44997748602200,"node_id":"focus","payload":{"focused":"F0000001-0000-4000-8000-000000000005","source":"ax"},"seq":15}
+EVT {"kind":"lifecycle","mono_ns":44997749546800,"node_id":"selftest","payload":{"name":"row5 focused by AX","phase":"stage"},"seq":16}
+EVT {"kind":"input","mono_ns":44998347575100,"node_id":"row 5","payload":{"inserted":"a","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":17}
+EVT {"kind":"state","mono_ns":44998347898800,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5a"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":44998347981800,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":1,"phase":"local-edit"},"seq":19}
+EVT {"kind":"input","mono_ns":44998581864500,"node_id":"row 5","payload":{"inserted":"b","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":20}
+EVT {"kind":"state","mono_ns":44998582127500,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5ab"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":44998582181400,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":2,"phase":"local-edit"},"seq":22}
+EVT {"kind":"input","mono_ns":44998814825000,"node_id":"row 5","payload":{"inserted":"c","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":23}
+EVT {"kind":"state","mono_ns":44998815127900,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abc"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":44998815193900,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":3,"phase":"local-edit"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":44998816000300,"node_id":"selftest","payload":{"name":"typed abc","phase":"stage"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":44999405906200,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":27}
+EVT {"kind":"effect","mono_ns":44999406182200,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-release","value":0},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":44999406334500,"node_id":"selftest","payload":{"name":"release insert-above","phase":"stage"},"seq":29}
+EVT {"kind":"effect","mono_ns":44999406706900,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"commit"},"seq":30}
+EVT {"kind":"effect","mono_ns":44999406813300,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"phase":"cleanup"},"seq":31}
+EVT {"kind":"state","mono_ns":44999406919600,"node_id":"model","payload":{"animated":false,"id":"F0000001-0000-4000-8000-000000000099","index":0,"op":"insert","tag":"insert-above"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":44999407193200,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":44999418135700,"node_id":"selftest","payload":{"name":"insert committed","phase":"stage"},"seq":34}
+EVT {"kind":"input","mono_ns":45000098826800,"node_id":"row 5","payload":{"inserted":"d","op":"text-store-replace","row":"F0000001-0000-4000-8000-000000000005"},"seq":35}
+EVT {"kind":"state","mono_ns":45000099342400,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"op":"edit","text":"Row 5abcd"},"seq":36}
+EVT {"kind":"lifecycle","mono_ns":45000099490800,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"local-edit"},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":45000101256000,"node_id":"selftest","payload":{"name":"typed d","phase":"stage"},"seq":38}
+EVT {"kind":"lifecycle","mono_ns":45000101678300,"node_id":"selftest","payload":{"name":"record row5 instance","phase":"stage"},"seq":39}
+EVT {"kind":"lifecycle","mono_ns":45000977954900,"node_id":"window","payload":{"phase":"closed"},"seq":40}
+EVT {"kind":"lifecycle","mono_ns":45000978224600,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":41}
+EVT {"kind":"lifecycle","mono_ns":45000978558600,"node_id":"F0000001-0000-4000-8000-000000000099","payload":{"local":0,"phase":"disappear"},"seq":42}
+EVT {"kind":"lifecycle","mono_ns":45000978830100,"node_id":"F0000001-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":43}
+EVT {"kind":"lifecycle","mono_ns":45000979115700,"node_id":"F0000001-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":44}
+EVT {"kind":"lifecycle","mono_ns":45000979441000,"node_id":"F0000001-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":45}
+EVT {"kind":"lifecycle","mono_ns":45000979688900,"node_id":"F0000001-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":46}
+EVT {"kind":"lifecycle","mono_ns":45000980028400,"node_id":"F0000001-0000-4000-8000-000000000005","payload":{"local":4,"phase":"disappear"},"seq":47}
+EVT {"kind":"lifecycle","mono_ns":45000980466000,"node_id":"F0000001-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":48}
+EVT {"kind":"lifecycle","mono_ns":45000980784300,"node_id":"F0000001-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":49}
+EVT {"kind":"lifecycle","mono_ns":45000981037000,"node_id":"F0000001-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":50}
+EVT {"kind":"lifecycle","mono_ns":45000981330600,"node_id":"F0000001-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":51}
+EVT {"kind":"lifecycle","mono_ns":45000982098100,"node_id":"F0000001-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":52}
+SELFTEST-STAGES F1: row5 focused by AX@3.12s | typed abc@4.19s | insert-above pending@4.78s | release insert-above@4.78s | insert committed@4.79s | typed d@5.47s | record row5 instance@5.47s | awaiting-driver-close end-reason=window-closed
+ASSERT F1 script-completed: PASS stages=row5 focused by AX@3.12s | typed abc@4.19s | insert-above pending@4.78s | release insert-above@4.78s | insert committed@4.79s | typed d@5.47s | record row5 instance@5.47s | awaiting-driver-close
 ASSERT F1 insert-committed-at-top: PASS top=Engine 0
 ASSERT F1 row5-text: PASS text=Row 5abcd
 ASSERT F1 row5-identity-index-shift: PASS index=5

@@ -1677,7 +1677,8 @@ def cmd_run(args):
                 if dry:
                     log.emit(stage, "skip", None, reason="dry-run: native evaluates receipts in " + str(args.native_dir))
                 else:
-                    native_stage(log, args.native_dir, args.native_tag, tuple_pin=tuple_pin)
+                    native_stage(log, args.native_dir, args.native_tag, tuple_pin=tuple_pin,
+                                 overrides=dict(o.split("=", 1) for o in args.native_override))
             elif stage == "smoke":
                 smoke_stage(log, out_dir, dry, args.confirm_windows_gui, tuple_pin=tuple_pin)
             elif stage == "package":
@@ -1851,33 +1852,37 @@ def workload_stage(log, windows_receipt, mac_receipt, tuple_pin=None):
     return True
 
 
-def native_problems(directory, tag, pins=None):
-    """(problems, notes) for the R9 receipts <directory>/{preflight,static-check,native-<name>}-<tag>.txt."""
+def native_problems(directory, tag, pins=None, overrides=None):
+    """(problems, notes) for the R9 receipts <directory>/{preflight,static-check,native-<name>}-<tag>.txt.
+    overrides {name: tag}: a receipt (for example a rerun, ime-f7 -> tuple10b) taken from another tag; the preflight and static
+    check of every tag in use must exist and pass."""
     problems, notes = [], []
     d = Path(directory)
+    overrides = overrides or {}
 
-    def text(name):
-        path = d / f"{name}-{tag}.txt"
+    def text(name, t=None):
+        path = d / f"{name}-{t or tag}.txt"
         return path.read_text(encoding="utf-8", errors="replace") if path.exists() else None
 
-    pre = text("preflight")
-    if pre is None:
-        problems.append(f"preflight-{tag}.txt missing")
-    else:
-        found = {k: v.lower() for k, v in ARTIFACT_HASH_RE.findall(pre)}
-        if "ARTIFACT_OK" not in pre:
-            problems.append("preflight did not print ARTIFACT_OK")
-        for kind, member in (("exe", "windows_fixture_exe"), ("dll", "windows_renderer")):
-            want = (pins or {}).get(member)
-            if pins and want and found.get(kind) != want:
-                problems.append(f"preflight {kind} {found.get(kind, 'absent')[:12]} is not the tuple {member} {want[:12]}")
-    static = text("static-check")
-    if static is None or "CHECK_OK" not in static:
-        problems.append(f"static-check-{tag}.txt missing or without CHECK_OK")
+    for t in [tag, *sorted(set(overrides.values()) - {tag})]:
+        pre = text("preflight", t)
+        if pre is None:
+            problems.append(f"preflight-{t}.txt missing")
+        else:
+            found = {k: v.lower() for k, v in ARTIFACT_HASH_RE.findall(pre)}
+            if "ARTIFACT_OK" not in pre:
+                problems.append(f"preflight-{t} did not print ARTIFACT_OK")
+            for kind, member in (("exe", "windows_fixture_exe"), ("dll", "windows_renderer")):
+                want = (pins or {}).get(member)
+                if pins and want and found.get(kind) != want:
+                    problems.append(f"preflight-{t} {kind} {found.get(kind, 'absent')[:12]} is not the tuple {member} {want[:12]}")
+        static = text("static-check", t)
+        if static is None or "CHECK_OK" not in static:
+            problems.append(f"static-check-{t}.txt missing or without CHECK_OK")
     for name in NATIVE_RECEIPTS:
-        body = text(f"native-{name}")
+        body = text(f"native-{name}", overrides.get(name))
         if body is None:
-            problems.append(f"native-{name}-{tag}.txt missing")
+            problems.append(f"native-{name}-{overrides.get(name, tag)}.txt missing")
             continue
         summary = NATIVE_SUMMARY_RE.findall(body)
         if not summary:
@@ -1895,16 +1900,17 @@ def native_problems(directory, tag, pins=None):
     return problems, notes
 
 
-def native_stage(log, directory, tag, tuple_pin=None):
+def native_stage(log, directory, tag, tuple_pin=None, overrides=None):
     stage = "native"
     log.emit(stage, "start", None, reason=f"native-interaction receipts {tag} in {directory}")
     ids = {}
     d = Path(directory)
+    overrides = overrides or {}
     for name in ("preflight", "static-check", *[f"native-{n}" for n in NATIVE_RECEIPTS]):
-        path = d / f"{name}-{tag}.txt"
+        path = d / f"{name}-{overrides.get(name, tag)}.txt"
         if path.exists():
             ids[name.replace("-", "_") + "_receipt"] = sha_ref(sha256_file(path))
-    problems, notes = native_problems(d, tag, tuple_pin["pins"] if tuple_pin else None)
+    problems, notes = native_problems(d, tag, tuple_pin["pins"] if tuple_pin else None, overrides)
     if problems:
         log.emit(stage, "fail", None, ids, f"{len(problems)} problem(s): {' | '.join(problems)[:600]}")
         return False
@@ -1953,6 +1959,8 @@ def build_parser():
     run_p.add_argument("--workload-mac", type=Path, default=DEFAULT_WORKLOAD_MAC, help="Mac R10 receipt: the section 11 reference")
     run_p.add_argument("--native-dir", type=Path, default=NATIVE_RECEIPT_DIR, help="directory of the R9 native-interaction receipts")
     run_p.add_argument("--native-tag", default=DEFAULT_NATIVE_TAG, help="receipt suffix, native-ime-f7-<tag>.txt")
+    run_p.add_argument("--native-override", nargs="*", default=[], metavar="NAME=TAG",
+                       help="take one receipt from another tag (a rerun), for example ime-f7=tuple10b")
     pin_g = run_p.add_mutually_exclusive_group()
     pin_g.add_argument("--tuple", type=Path, default=None,
                        help=f"tuple pin file for exe/renderer/package hashes (default {TUPLE_FINAL})")

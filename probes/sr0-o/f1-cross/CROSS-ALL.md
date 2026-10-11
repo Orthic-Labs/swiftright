@@ -4,6 +4,29 @@
 
 10 Oct 2026, repo HEAD cfca6d6 plus the uncommitted T1 changes. Mac: macOS 27.0.1 (26A434) arm64, Swift 6.4. Windows: Dell, tuple 08 FreshOnBridge `7673A2D5139172D8...` with renderer `E280F4A9FD9ECA0A...` (all 48 Windows runs record both hashes in `cross-evidence/<config>/win-run-w*.log`), UIARecorder `D255A25579C37751...` built on the Dell from `uia-recorder/`.
 
+## Tuple 11 (11 Oct 2026): 16 of 16
+
+Windows: FreshOnBridge `073513142F25C454...` at `D:\Claude\sr0-r11\src` (runtime 8e47b89 plus the host AX selection-publish fix), renderer `E280F4A9FD9ECA0A...`, UIARecorder `D255A25579C37751...` (unchanged). All 48 runs (16 configs x3) record exe `07351314...` (`cross-evidence/<config>/win-run-w*.log`; the batch aborts on any other exe). Lock `D:\Claude\desktop.lock` taken as `cross11` at 06:52 IST and freed at 07:26 after matrix11; window-targeted input only; nothing deleted on the Dell. (My own wait loop did not notice the batch had finished: `pgrep -f win-cross.sh` matched the waiting shell itself. The pulls were complete at 07:26; the assemble and compare ran at 11:40.) Mac recordings unchanged. Reports and event log: `cross-evidence/runner-compare-tuple11/`.
+
+| Config | Diffs | Allowed (besides N1) | Verdict |
+|---|---|---|---|
+| F1, F3-vstack-1s/3s, F3-lazy-1s/3s, F4, F5, F6-reduced, F7, F8 | 0 | 0 | PASS |
+| F2 | 0 | P1 x6 | PASS |
+| F3, F3-list-1s, F3-list-3s | 0 | P2 x2 | PASS |
+| F6 | 0 | C11 x4 | PASS |
+| F9 | 0 | P6 x1 | PASS |
+
+16 of 16 pass, 0 diffs; launch selection now matches (Mac 0+5, Windows 0+5). The three Windows runs of each config agree; 69 negative controls, all rejected (event log: 85 passes, 0 failures). Remaining allowances, all scoped to one step: N1 (native input routes), P1 (F2 stale Mac AX tree, oracle-quirk), P2 (F3 List remove/reinsert, oracle-quirk, evidenced by the typeafter probe), C11 (proposed contract C11, F6 four counts), P6 (F9 `treeReleased`). Still UNPROVEN: R5, R6, R8.
+
+### Offline runner stages on the final tuple (`qualification/tuple-final.json` re-pinned to tuple 11)
+
+| Stage | Result |
+|---|---|
+| compare (all 16, with 69 controls) | PASS 16/16 |
+| workload (`r10-20261011-tuple10-renderere280-windows.txt`) | PASS: W4 p95 48.73 ms vs Mac 75.94, W5 interval p95 16.74 vs 17.91; missed vblanks 1/1/1 reported, not gated. Bound to renderer E280F4A9 |
+| native (`*-tuple10`, `ime-f7` from `tuple10b`) | receipts clean (F7 20/20, F7live 20/21 and F8 18/19 with the known `candidate-window-follows-layout-move`, Narrator 8/8 with speech pending a person) but the gate FAILS the binding: the preflights record FreshOnBridge `F136046B` (tuple 10), the pin is `07351314`. The native receipts have to be re-run on tuple 11 (or the pin accepted as host-only change by the lead) |
+| package | Mac 12/12 PASS, Windows network profile PASS; Windows offline profile FAIL on `W08-interrupted-update` (known open item T12) |
+
 ## Tuple 10 (11 Oct 2026): Mac vs Windows after D2 and the D3 decision
 
 Windows: FreshOnBridge `F136046BEFE7EE99...` at `D:\Claude\sr0-r10\src` (runtime 8e47b89), renderer `E280F4A9FD9ECA0A...`, UIARecorder `D255A25579C37751...` (both unchanged); all 48 runs (16 configs x3) record exe `f136046b...` in `cross-evidence/<config>/win-run-w*.log` and `win-cross.sh` aborts on any other exe (`-Bin` passed explicitly, so the Dell copy of the script's own default does not matter). Lock `D:\Claude\desktop.lock` taken as `cross10` after matrix10 and r5-10, freed at 01:28 IST; window-targeted input only; nothing deleted on the Dell. Mac recordings unchanged (stimulus unchanged). Reports and event log: `cross-evidence/runner-compare-tuple10/`.
