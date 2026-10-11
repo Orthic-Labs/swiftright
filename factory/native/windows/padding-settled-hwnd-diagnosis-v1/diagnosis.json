@@ -1,0 +1,80 @@
+{
+  "kind": "padding-settled-owned-hwnd-failure-diagnosis",
+  "status": "host-serialization-failure-and-early-window-close-confirmed",
+  "sourceOnly": true,
+  "bindings": [
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/native-01/host.stdout.txt",
+      "sha256": "26f3bfa636bedb002c92909b5450e431eb0a50ebeadaba2dfb0ac458e7922396"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/native-01/host.stderr.txt",
+      "sha256": "d32042a56ddf581b0225974817569ad83b2f3979e8406b4fc1f03372b90c66f5"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/native-01/owned-process.json",
+      "sha256": "992c16f8e1506f63b84cc1e6eefa10b518f32fabef8007f338b6666c84c46ae2"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/native-01/launch-observation.json",
+      "sha256": "7bb2908377d47d67a4cd0a2423129140383df3bce035738c50700b693598dcb3"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/native-01/capture-outcome.json",
+      "sha256": "00e9c35821e7df18c0a0d334c391a9197e8f99d413143d8125d2330c0cee7311"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/Sources/FactoryProbe/main.swift",
+      "sha256": "5064698a36b959977acc8a96a5af2a1a0fb1133f8dc3df3b5604aa33395a8d16"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/Sources/FactoryProbe/MetricsLogging.swift",
+      "sha256": "2fd9a91c178813a88c08123eb31e1a7f41c33add9c78241b43c8c88073f4746a"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/actual-single-r1/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v1/capture-repeat.ps1",
+      "sha256": "72d079dd966d8263cf06d17ada70969717cf600ce1565191780e9e7a41533a7c"
+    }
+  ],
+  "identity": {
+    "pid": 50692,
+    "startedAt": "2026-10-11T08:43:21.3178298Z",
+    "capturedMainWindowHandle": 4657170,
+    "rendererLoggedHWNDHex": "0x471012",
+    "sameHandle": true,
+    "foregroundPreserved": true
+  },
+  "facts": [
+    "Host stdout reports FactoryMetricsLogSerialization twice; no FACTORY_RENDERER_READY or FACTORY_COMMIT emitted.",
+    "Successful window-closed receipt at 2026-10-11T08:43:22.114Z has hwnd=0, firstLayoutLogged=false, pid=50692.",
+    "Renderer stderr confirms shutdown with ticks_delivered=0, events_pushed=1, commit count=0.",
+    "Process started at 2026-10-11T08:43:21.3178298Z; pre-cleanup observation at 2026-10-11T08:43:22.1414936+00:00 reports HasExited=true.",
+    "Original retained process handle subsequently signaled, cleanup killAttempted=false; both streams sealed with no streamErrors."
+  ],
+  "sourceChain": [
+    "ready() calls metricsLog.snapshot() before assigning ownedHWND or constructing/flushing graph.",
+    "snapshot() resolves owned HWND/client metrics then calls emit(); emit() throws FactoryMetricsLogSerialization on invalid JSON object, JSON data failure, or UTF8 conversion failure.",
+    "ready() catch calls fail(error); fail appends error then bridge.requestQuit().",
+    "Window metrics event also calls snapshot()/emit(); its catch also calls fail(error), explaining a second error without successful ready.",
+    "Guard validates process identity first, then HWND nonzero/API return/outPID. A renderer window closed during startup can pass process guard yet disappear before HWND API check."
+  ],
+  "conclusion": "Startup metrics serialization failure caused early host shutdown; HWND guard correctly rejected unavailable identity during that lifecycle. Matching launched HWND and renderer HWND gives no evidence of wrong-window selection. Keep every original ownership check.",
+  "unresolvedExactBranches": [
+    "Guard records no GetWindowThreadProcessId return/outPID or guard timestamp; exact zero-return versus PID-mismatch branch cannot be distinguished.",
+    "emit() combines three serialization checks into one error; exact invalid scalar is not recorded."
+  ],
+  "boundedNextEvidence": [
+    "In fresh source packet, separate API call from comparison and record input HWND, return thread ID, outPID, expected PID, IsWindow, retained process state, UTC; retain original refusal conditions.",
+    "In fresh host source packet, make JSON values explicit supported scalars (Double for logicalWidth/logicalHeight) or add a source-only keyed serialization preflight; do not weaken HWND identity guard."
+  ],
+  "scalarHypothesis": {
+    "candidate": "ownedClient.logicalWidth/logicalHeight are CGFloat; terminal receipt serializes numeric UInt/Float values successfully while failing snapshot introduces nested CGFloat fields.",
+    "status": "plausible source-bound hypothesis; not yet scalar-isolated",
+    "noRuntimeProbePerformed": true
+  },
+  "qualification": "hold; failed v1 preserved; no native capture success claimed"
+}

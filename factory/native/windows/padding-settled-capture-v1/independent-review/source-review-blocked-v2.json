@@ -1,0 +1,46 @@
+{
+  "kind": "independent-padding-capture-firstproof-source-review/2",
+  "disposition": "BLOCKED_COUNT1_AND_REPEAT_RAW_ADMISSION",
+  "announcedStage": "142ada3fd0110be1b237097315126fbfe5403cf863d46df84fca4bad31c78c66",
+  "reviewedPreimagePins": {
+    "stage-manifest.json": "142ada3fd0110be1b237097315126fbfe5403cf863d46df84fca4bad31c78c66",
+    "capture-repeat.ps1": "6f986d9da25821a492bd4131991c9e40084ad25cd139768af683036c99dd106b",
+    "dispatch.ps1": "8c9a3bf82e9164cadd313ed60943f2e47076dfb5826d03d863e5f01039caaaac",
+    "support/first-proof.ps1": "f48d3894d84866305f88bab5f9d9986ea840dc7c3e8e4173595f50e915b303bc",
+    "coordinator.ps1": "f57136d3291914ea53dfa238e80146027fe22ce866564422831c085a9a11d685",
+    "interactive-task.ps1": "3c0ae10dc6b516f936862da5a3c488d6df4c56e00b50c7e6b4960fe87cfdfb24"
+  },
+  "findings": [
+    {
+      "file": "capture-repeat.ps1:65",
+      "issue": "Assert-PaddingFirstCaptureProof runs unconditionally; Count1 requires its own nonexistent previous receipt",
+      "fix": "Invoke only Count20 before anychild."
+    },
+    {
+      "file": "capture-repeat.ps1:216",
+      "issue": "Combined rawHashesQualification treats any qualified diagnosticpartial hash as sealedraw",
+      "fix": "Preserve perhash qualification, reject successful unsealed state."
+    },
+    {
+      "file": "support/first-proof.ps1",
+      "issue": "HostValid not rederived from rawstdout; compiledreceipt bytes not hashed; row.files UIA/pixels/samplepng rawjoins absent",
+      "fix": "Recompute originalhost stdout predicates, actual compile receipt hash, actual observation filehashes/pixel facts; meaningful pure raw faults."
+    }
+  ],
+  "fixedPriorFindings": [
+    "Rolling package gate exact",
+    "Fresh output creation",
+    "Immediate hashchecked build preflight",
+    "Closed destination rawhash authority",
+    "Prior released coordinator owner separated from new owner",
+    "Both dispatcher/directCount20 sharedhelper",
+    "PS5 observation decoded variable before cardinality"
+  ],
+  "execution": {
+    "powershell": false,
+    "native": false,
+    "remote": false,
+    "compiler": false
+  },
+  "nextStep": "Producer freezes narrow corrections; Count1 source admission may be reviewed separately from Count20 gates."
+}

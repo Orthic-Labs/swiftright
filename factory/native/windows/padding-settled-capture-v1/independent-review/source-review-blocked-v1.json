@@ -1,0 +1,82 @@
+{
+  "kind": "independent-padding-settled-capture-source-review/1",
+  "disposition": "BLOCKED",
+  "reviewedPreimagePins": {
+    "capture-repeat.ps1": "85045088da87a95691d8af05c66862bc937a465c46409fc73f6706f91549a52e",
+    "dispatch.ps1": "64830c7848293932d0618d85c7fbc9bf1011f5eaf19529ed3673187fb6f04d45",
+    "prepare-capture.ps1": "e6dd1ebdcaa3be9dc16dc65634045d1d7ea31acfdd247f29c5d7d8dcae06bac3",
+    "capture-plan.json": "94678ce415f8a6a893c6173d2877ca57b6f1f84a248edc972941b246ea43c78a",
+    "stage-manifest.json": "924ca930a3be3e450d59d4e217fcee294357e11deb05ca649eb000931ad0f58b",
+    "support/cleanup.ps1": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+    "support/stream-seal.ps1": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d"
+  },
+  "findings": [
+    {
+      "file": "capture-repeat.ps1",
+      "lines": [
+        22,
+        23
+      ],
+      "issue": "Legacy factory/native/windows package prefix rejects exact .factory-work compiledHostPackagePath",
+      "fix": "Use exact frozen rolling package identity."
+    },
+    {
+      "file": "capture-repeat.ps1",
+      "lines": [
+        107,
+        111
+      ],
+      "issue": "Fresh RunRoot is not created before Copy-Item into its children",
+      "fix": "Check exact fresh namespace, create root, then archive copied dependencies."
+    },
+    {
+      "file": "capture-repeat.ps1",
+      "lines": [
+        30,
+        32,
+        122
+      ],
+      "issue": "Actual capture invokes build preflight without validating reviewedBuildPreflightSha256; prepare-only hash check is bypassable",
+      "fix": "Verify frozen preflight bytes before every invocation; pin successor buildv2 once reviewed."
+    },
+    {
+      "file": "capture-repeat.ps1",
+      "lines": [
+        206
+      ],
+      "issue": "Finally unconditionally hashes stdout/stderr despite closure timeout/unconfirmed destination; diagnostic label does not establish hash stability",
+      "fix": "Use shared closed-destination Get-FactoryRawHash; null hash for unclosed streams; preserve primary error."
+    },
+    {
+      "file": "dispatch.ps1",
+      "lines": [
+        18,
+        26
+      ],
+      "issue": "Count20 trusts hostValid/confirmedOwnedExit labels rather than actual raw numeric kernel0/closed terminal streams/primaryError/ownedIdentity/source/exe/UIA/pixel/close/lock joins",
+      "fix": "Use actual strong single raw receipt admission with typed flags and all source/identity/raw joins."
+    },
+    {
+      "file": "capture-repeat.ps1",
+      "lines": [
+        3,
+        113
+      ],
+      "issue": "Direct Count20 entry bypasses dispatcher first-single gate",
+      "fix": "Enforce same shared gate in actual repeat entry before any launch."
+    }
+  ],
+  "preservedChecks": [
+    "15s owned child deadline and5s drain unchanged",
+    "Retained kernel cleanup/stream seal/WM_CLOSE/pixel helper hashes match reviewedv5",
+    "Own lock equality/background/owned HWND/UIA reads remain targeted",
+    "Immediate preflight call exists before every child but requires hash authority"
+  ],
+  "execution": {
+    "powershell": false,
+    "native": false,
+    "compiler": false,
+    "remote": false
+  },
+  "nextStep": "Producer freezes repaired successor source bound to admitted buildv2; reviewer rereads before actual controls/single."
+}
