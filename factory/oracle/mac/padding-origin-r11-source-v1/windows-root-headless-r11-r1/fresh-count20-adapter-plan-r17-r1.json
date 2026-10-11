@@ -1,0 +1,129 @@
+{
+  "captureIdentity": {
+    "capturePattern": "^capture/[0-9a-f]{32}$",
+    "expectedCount": 20,
+    "imagePattern": "^image/[0-9a-f]{32}$",
+    "issuedCaptureIDs": [
+      "capture/0ef013a6d9af4a498aec51b788c6212d",
+      "capture/1dc8e6540e68467581db50086fffa91e",
+      "capture/21087056ec2244e6a9ce87740d89830d",
+      "capture/237173fa56614d49b871b2d6cd2854bf",
+      "capture/5d4068c1edb542a4b4f813024ca46da0",
+      "capture/5f8fcc8e8a5e42c38ca571a4bed4d423",
+      "capture/8159216b8277471aa72e756a9b4f65e4",
+      "capture/8167bd11e9a04f84a226b26136f994aa",
+      "capture/8443168f1d92400988ed06de43085e52",
+      "capture/964f4c3e1899488c842aee94b10225e1",
+      "capture/99099c7d9ee04a238a66028320e78250",
+      "capture/be05ce30e93c46e296e77cfa70e24c2a",
+      "capture/c9ac1a72c3944055b4b290e4ffeee583",
+      "capture/cc6a268a1a234725a8b402f00e5fffa5",
+      "capture/d20a8d651f8c42938abf9f198e852321",
+      "capture/d3c9b09d098e4ef28f45161986a3debb",
+      "capture/e598bf9b6ea5435caa255b05275da841",
+      "capture/ec1b2645d3d645cf8788e0397b7dcba1",
+      "capture/f11de096bf8b4c1384ca010b5fea5435",
+      "capture/fc9502362f1e423786a53a922adcc9b8"
+    ],
+    "issuedImageIDs": [
+      "image/05520a0247de49278d8f88c794d63b54",
+      "image/0fbeb1e9688b4213bcd191004e9f8851",
+      "image/216475a7232b4e02aa24e97f0db32c6d",
+      "image/22ddf37af04342c6917d1908284d9961",
+      "image/511c986303eb4abaa270cace49d356fa",
+      "image/56a5abbb0d254abb9da16bf658f244a1",
+      "image/5ab96bcb160d4b118a68f16a2a9d08e4",
+      "image/75400341e86a47929c2cbaad3c27f92f",
+      "image/787be5fec6224d7c84ef478a2ebfb0a7",
+      "image/a7cc23e9ee47406d856f9814885d78ae",
+      "image/aafe5827304c498fabc5a4e6e20b3a65",
+      "image/af1120482ff94a169aa6957f8881a6a3",
+      "image/b64b4738e22a47b19ee43fc11cd51752",
+      "image/cc6fea01bd7240189c7e8638c0ef7289",
+      "image/cebec9d6c220417f841446a4774cd2ce",
+      "image/d05afc8d323940cb82bfda408875646f",
+      "image/d185688343604df78f7a49ca38ed657b",
+      "image/db639f28ec3348db9c16e0fd948de79b",
+      "image/ddfd292b1e584f9198e46278e7d7dcf0",
+      "image/ff142807bb3d44248bf53dda7bff4c2b"
+    ],
+    "issuedRunID": "4895b9f9f6f24e79bac1b964d3182ec8",
+    "measuredClockIdentity": "required after Windows launch",
+    "measuredHostIdentity": "required after Windows launch",
+    "measurementStatus": "pending-actual-launch-joins",
+    "producer": "factory-prelaunch-capture-metadata-v2",
+    "runs": "1..20 unique"
+  },
+  "count": 20,
+  "guards": {
+    "compilerActions": 0,
+    "goldenFreeze": "hold",
+    "lockActions": 0,
+    "nativeWindowActions": 0,
+    "parity": "hold",
+    "relabelHistoricalRecords": false
+  },
+  "issuedLineage": {
+    "issuedMetadataSha256": "sha256:876611d051d5f9af06e87d52c148da7df5fd37381caebf4e2c2caea4935e4adf",
+    "runID": "4895b9f9f6f24e79bac1b964d3182ec8"
+  },
+  "issuedMetadataRef": {
+    "bytes": 29385,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1/coordinator-r1/issued-metadata.json",
+    "sha256": "sha256:876611d051d5f9af06e87d52c148da7df5fd37381caebf4e2c2caea4935e4adf"
+  },
+  "kind": "factory-fresh-r11-count20-adapter-plan-r17",
+  "mac": {
+    "archiveRoot": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1",
+    "comparator": {
+      "bytes": 15765,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/mac-only-production-comparator-r1.json",
+      "sha256": "sha256:b6c25c7a61dbe2e9062d3a887c75dfe83711724daad954903db0ddc5465e114e"
+    },
+    "comparatorStatus": "blocked-until-windows-20",
+    "rawManifest": {
+      "bytes": 202035,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/raw-archive-manifest.json",
+      "sha256": "sha256:f9088161d15ab3369e3084c8410569244aa392c044e465b7eba85c689f26d1bc"
+    },
+    "review": {
+      "bytes": 1158,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/root-review-r1.json",
+      "sha256": "sha256:8fc50078ad13a79ebab332dfb9ea955b66f75222e73e9713b006fbf79ab315ee2"
+    }
+  },
+  "pipeline": {
+    "pendingRule": "allow-pending may create map only; strict pipeline rejects absent Windows refs & invents no hashes",
+    "source": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source",
+    "sourceHashes": {
+      "produceInputMap": "sha256:8da6af4d61b07eb6793ec17ceaee993e2e25e0d58578c974e3375506d76d94ec",
+      "produceInputs": "sha256:e853386ea44a31d6a710cee33bfeb5dde9c8ce06c93ff0fc3f00ad07788e0e3b",
+      "runAdapter": "sha256:c9cc0824541912584234a10ad774b2c3f70856be79d1df2beebcd6cc06f1cf3d"
+    },
+    "steps": [
+      "produce-input-map-v6",
+      "produce-inputs-v6",
+      "proof-r2",
+      "run-adapter-v6",
+      "trusted-reader",
+      "paired-production-comparison"
+    ]
+  },
+  "qualification": "hold-until-r17-task-memory-proof-and-trusted-reader",
+  "status": "issued-source-bound-native-pending",
+  "tuple": {
+    "caseHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9",
+    "id": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "macHostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "windowsHostHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a"
+  },
+  "version": "r17",
+  "windows": {
+    "archiveRoot": null,
+    "manifest": null,
+    "required": "actual 20-run whole archive with coordinator, metadata, 20 capture IDs/images, all raw streams, 13 proof roles, runtime tree/modules, compiler/source/exe/renderer joins",
+    "status": "pending-root-fetch"
+  }
+}

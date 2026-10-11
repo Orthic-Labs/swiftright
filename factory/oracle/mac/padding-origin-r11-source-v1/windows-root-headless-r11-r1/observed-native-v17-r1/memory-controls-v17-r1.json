@@ -1,0 +1,45 @@
+﻿{
+    "schema":  "factory-interactive-job-memory-controls-v2",
+    "status":  "passed-source-only",
+    "controls":  [
+                     {
+                         "name":  "wrong-memory-limit-flags",
+                         "accepted":  false,
+                         "expectedRejected":  true,
+                         "error":  "Exception calling \"ValidateFlagsForControl\" with \"1\" argument(s): \"Only JOB_OBJECT_LIMIT_JOB_MEMORY is admitted\""
+                     },
+                     {
+                         "name":  "positive-1GiB-memory-job",
+                         "accepted":  true,
+                         "expectedRejected":  false,
+                         "error":  ""
+                     },
+                     {
+                         "name":  "live-child-guard-rejects",
+                         "accepted":  false,
+                         "expectedRejected":  true,
+                         "error":  "Exception calling \"RequireOnlyCurrent\" with \"1\" argument(s): \"Live child process remains in memory job\""
+                     },
+                     {
+                         "name":  "self-only-after-child-terminal",
+                         "accepted":  true,
+                         "expectedRejected":  false,
+                         "error":  ""
+                     }
+                 ],
+    "childProof":  {
+                       "pid":  39316,
+                       "originalHandleRetained":  true,
+                       "terminal":  true,
+                       "exitCode":  -1,
+                       "deadlineMilliseconds":  2500,
+                       "noWindow":  true
+                   },
+    "jobMemoryLimitBytes":  1073741824,
+    "jobMemoryLimitFlag":  512,
+    "killOnJobClose":  false,
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0
+}
