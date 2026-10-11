@@ -1,5 +1,7 @@
-Last updated: 2026-10-11T09:29:41Z
+Last updated: 2026-10-11T09:42:19Z
 
+
+State: no item is workable without Adrian. SR0 automated work is complete on tuple 11; items 3-7 need his answers; items 9-11 are written as held patches; item 12 belongs to the factory session.
 # SwiftRight — pending (SR0 close-out lane)
 
 | # | Item | State |
