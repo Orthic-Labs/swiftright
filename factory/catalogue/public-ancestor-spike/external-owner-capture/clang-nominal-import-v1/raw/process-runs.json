@@ -1,0 +1,137 @@
+{
+  "schema": "clang-nominal-import-v1-runs",
+  "runs": [
+    {
+      "name": "swift-typecheck",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "swiftc",
+        "-typecheck",
+        "-sdk",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-target",
+        "arm64-apple-macosx27.0",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/probes/owners.swift"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:19:18.704410+00:00",
+      "endedAt": "2026-10-11T00:19:18.820639+00:00",
+      "returncode": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "toolIdentitySha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/receipts/typecheck.stdout",
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 0,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/receipts/typecheck.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/probes/owners.swift",
+          "sha256": "sha256:a0bd3a71fc66d6c1f36aaf84feac8fb13187a5d77cbb870537c7e76baa2596a4",
+          "bytes": 610
+        }
+      ]
+    },
+    {
+      "name": "swift-ast-dump",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "swiftc",
+        "-typecheck",
+        "-dump-ast",
+        "-sdk",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-target",
+        "arm64-apple-macosx27.0",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/probes/owners.swift"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:19:18.887434+00:00",
+      "endedAt": "2026-10-11T00:19:19.017149+00:00",
+      "returncode": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "toolIdentitySha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/raw/owners.ast.txt",
+      "stdoutSha256": "sha256:b9999f265a03d6024435125067b68520cffcda976f2f6e007786719ea65cafde",
+      "stdoutBytes": 35360,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/receipts/ast.stderr",
+      "stderrSha256": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderrBytes": 1,
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/probes/owners.swift",
+          "sha256": "sha256:a0bd3a71fc66d6c1f36aaf84feac8fb13187a5d77cbb870537c7e76baa2596a4",
+          "bytes": 610
+        }
+      ]
+    },
+    {
+      "name": "sourcekit-index",
+      "argv": [
+        "xcrun",
+        "sourcekit-lsp",
+        "debug",
+        "run-sourcekitd-request",
+        "--request-file",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/requests/owners.yaml"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:19:19.085578+00:00",
+      "endedAt": "2026-10-11T00:19:19.196453+00:00",
+      "returncode": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "toolIdentitySha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396",
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/raw/owners.index.txt",
+      "stdoutSha256": "sha256:3fcd05124c8fe04ead66cfffcb6d1b2dafc6ada5f1ea30387c4be4074e163a02",
+      "stdoutBytes": 93936,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/receipts/sourcekit.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/requests/owners.yaml",
+          "sha256": "sha256:54770fae4d7ed9ccf13fccc3f1c41e17583d3286f70be1a0c7cc5e1535dfb4ce",
+          "bytes": 519
+        }
+      ]
+    },
+    {
+      "name": "swift-demangle-expand",
+      "argv": [
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+        "--expand"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:19:19.211051+00:00",
+      "endedAt": "2026-10-11T00:19:19.213822+00:00",
+      "returncode": 0,
+      "tool": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "toolIdentitySha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/raw/demangle-expand.txt",
+      "stdoutSha256": "sha256:262a3165a0a77c1ab7866d2df4c29cb443db276ea264490a9fe4da6171cb9b87",
+      "stdoutBytes": 4569,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/receipts/demangle.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "stdin": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/raw/demangle-input.txt",
+      "stdinSha256": "sha256:61f6b9604df0fa5dbb55b8ae25f358aca223ec93b122730666101ce4cd9dd6c9",
+      "stdinBytes": 504,
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-nominal-import-v1/probes/owners.swift",
+          "sha256": "sha256:a0bd3a71fc66d6c1f36aaf84feac8fb13187a5d77cbb870537c7e76baa2596a4",
+          "bytes": 610
+        }
+      ]
+    }
+  ]
+}
