@@ -1,0 +1,63 @@
+{
+  "batches": {
+    "macOSAXEnabled": {
+      "enabledTrue": 20,
+      "inputInvoked": false,
+      "permissionRequests": false,
+      "runs": 20,
+      "uniqueClientPids": 20,
+      "uniqueOwnerPids": 20
+    },
+    "macOSPaint": {
+      "enabledField": "not captured",
+      "runs": 20,
+      "source": "historical paint batch"
+    },
+    "windowsUIA": {
+      "distinctPrintWindowHashes": 1,
+      "enabledTrue": 20,
+      "runs": 20,
+      "uniqueOwnerPids": 20
+    }
+  },
+  "checks": {
+    "F9SourceCaseProbeJoin": true,
+    "all1131PayloadBytesAndHashes": true,
+    "channelScopeAndThreeBatchManifest": true,
+    "macOSAX20RawBoolOwnerClientJoins": true,
+    "oldMacPaintAXEnabledSeparation": true,
+    "producerMutationTestsReceipt": true,
+    "qualificationHoldsAndNoPromotion": true,
+    "strictRoleLabelBoolMapping": true,
+    "windows20UIARawAndPrintWindowJoins": true
+  },
+  "independentReviewRefs": {
+    "macOSAX": "factory/native/macos/disabled-enabled-observation-v1/independent-review/independent-review.json",
+    "windows": "factory/native/windows/disabled-repeatability-batch-v1/actual-review/report.json"
+  },
+  "kind": "paired-disabled-observation-v2-independent-review",
+  "producerPins": {
+    "inputCount": 1131,
+    "manifestSha256": "53e223357633c74d790e8c4af704882ab10d5d8d1727aa6bbc413e1c41d513cb",
+    "producerMutationTests": 8,
+    "reportSha256": "23b182324ac49ecbf9d7126db4c946a768a26cdcb11a7f6ea1c718ae11ced73f",
+    "stageFiles": 10,
+    "stageManifestSha256": "0a3fbb9feb57ff5e6e6002347b746b4f9fd9e1b8adb54bece74316b97e355ed0"
+  },
+  "qualification": {
+    "acceptedGoldenCount": 0,
+    "controlledOcclusion": "held-unqualified",
+    "frozenTuple": "held-unbound",
+    "hitTesting": "held-not-attempted",
+    "nativeParity": "held",
+    "promotion": "none",
+    "qualifiedTiming": "held"
+  },
+  "semanticComparison": {
+    "macOS": "AXButton/Continue/AXEnabled.value/bool true",
+    "pairing": "independent batches; no run-to-run pairing",
+    "windows": "ControlType.Button/Continue/IsEnabled/bool true"
+  },
+  "status": "independently-verified-observational-enabled-match-parity-held",
+  "version": 1
+}

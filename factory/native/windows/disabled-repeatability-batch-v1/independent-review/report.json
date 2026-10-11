@@ -1,0 +1,93 @@
+{
+  "kind": "independent-disabled-repeatability-script-review",
+  "verdict": "CLEAR bounded20 observational launch script",
+  "reviewedInputs": [
+    {
+      "path": "factory/native/windows/disabled-repeatability-batch-v1/run-batch.ps1",
+      "bytes": 2534,
+      "sha256": "f7085f0b813773f7bc8a5d69b2d987c1d059d0281cda13f0dda052960aa15848"
+    },
+    {
+      "path": "factory/native/windows/disabled-repeatability-batch-v1/plan.json",
+      "bytes": 1173,
+      "sha256": "8498260b615a549457d3a8e22db9b32da40fe2568c34d5620c55d69d02d2fa27"
+    },
+    {
+      "path": "factory/native/windows/disabled-repeatability-batch-v1/README.md",
+      "bytes": 433,
+      "sha256": "a21c7c24c9b8f08ed8b654e3ce893918a2085114b747d2c84d95c07b95536589"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/plan.json",
+      "bytes": 4618,
+      "sha256": "fcee0329217171a63fd39206708be1721dad141dfd31a7b093d5e48f5e870fcb"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/run-corrected.ps1",
+      "bytes": 5339,
+      "sha256": "c56120df4f8acf445cbdcbf90bed8e769725c2eeac489e757cdbb52ac3b90502"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/capture-corrected.ps1",
+      "bytes": 16311,
+      "sha256": "f0a2f949a1eda0300cd14fb3b2dc2439c284494d69727c6c25e4ca20813336d2"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/corrected-task.ps1",
+      "bytes": 867,
+      "sha256": "47633706f358b20af97aabb89c06c2d773105b29927f3deaf1d6d41a3bbf0f27"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/Package.swift",
+      "bytes": 538,
+      "sha256": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "bytes": 1023,
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "bytes": 3051,
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/Sources/FactoryProbe/Witness.swift",
+      "bytes": 230,
+      "sha256": "68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/package/Sources/FactoryProbe/main.swift",
+      "bytes": 11241,
+      "sha256": "c6e5403ab4ecc34f6171153e411c5e7c04c0a54594e5fb001fb526af44328eec"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/observation.json",
+      "bytes": 2806,
+      "sha256": "203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def"
+    },
+    {
+      "path": "factory/native/windows/first-capture-corrections-v1/build-actual-r1/FactoryProbe.exe",
+      "bytes": 3605504,
+      "sha256": "62379065c9576702cca26a09f021b2d66ecabf607b3ed93fdd6bfaf5d8cc23f7"
+    }
+  ],
+  "controls": {
+    "twentyUniqueNames": "pass",
+    "extraSource": "reject",
+    "missingSource": "reject",
+    "changedEqualCountSource": "reject",
+    "noRetries": "source guard present; existing any20 path aborts before iteration1",
+    "failureAbort": "dispatch status or release failure throws before next iteration"
+  },
+  "qualification": "exact20 fresh sequential no-retry observations; abort first failure; reviewed lockCAS/hiddencontroller/activation/ownedPID-HWND/cleanup/rawUIA-PrintWindow-screen guards inherited. Does not grant parity, closure, hit-test/provider/performance qualification.",
+  "historicalCompileQualification": "Actual corrected compile receipt source joins previously reviewed; new per-replay fullhostmembership verifies current5files, no retroactive precompile-membership claim.",
+  "reviewerCompilerExecution": 0,
+  "reviewerNativeExecution": 0,
+  "nativeParity": "hold",
+  "qualifiedBatch": false,
+  "closureBinding": null
+}

@@ -1,0 +1,75 @@
+{
+  "kind": "independent-disabled-repeatability-actual-review",
+  "verdict": "VERIFIED-BOUNDED-20-RAW-OBSERVATIONS",
+  "scope": "20 fresh sequential process observations; no rerun, SSH, compiler, GUI, Pulse, or source edits",
+  "pins": {
+    "plan": "8498260b615a549457d3a8e22db9b32da40fe2568c34d5620c55d69d02d2fa27",
+    "analysis": "1631121c740f485c4c12f182ff1f87e1df22bc82b26c5a4ec0da481e9d51054b",
+    "runBatch": "f7085f0b813773f7bc8a5d69b2d987c1d059d0281cda13f0dda052960aa15848",
+    "caseHash": "d6a88082e0818e46e4e1ea5e6d45af6edbce63c86fc6b847704c38ad3db9aa99",
+    "sourceHash": "68eed62f6ef06ecec579a0e36cdc44a612a559a8329fe6dbd91a700c5d90c005",
+    "exeHash": "62379065c9576702cca26a09f021b2d66ecabf607b3ed93fdd6bfaf5d8cc23f7",
+    "compileReceiptHash": "203a64759059f526f549767e753e54670aa63e116a2977928790d9ea44d09def"
+  },
+  "checks": {
+    "runs": 20,
+    "uniquePids": 20,
+    "uniqueHwnds": 20,
+    "sourceFilesPerRun": 5,
+    "sourceBindingsExact": true,
+    "rawProcessClockAscending": true,
+    "pixelRepeatsExact": true,
+    "semanticProjectionExact": true,
+    "locksReleased": true,
+    "runLogsEmpty": true
+  },
+  "semantic": {
+    "name": "Continue",
+    "role": "ControlType.Button",
+    "enabled": true,
+    "nativeSizePixels": [
+      160,
+      60
+    ]
+  },
+  "pixelHashes": {
+    "printWindow": "a4ea3bc95132fe80fe33b025e0be6eb8c7bbd0f77de42b875b64cb70bce4df33",
+    "screenDistinct": [
+      "0b0ed84c204814ae3240fc33033a64f55281ca15b791b257cf4eb9877be6454a",
+      "ac2b38e9462e3e55c2676c02d4484cea1fda04c9ef84cd3adb0f21039a4691b7",
+      "b14aa51db8a72005a5daeee15dc28076d6fdfb6588d5ef659f7347f648335c0e"
+    ]
+  },
+  "foreground": {
+    "initial": 395622,
+    "afterValues": [
+      0,
+      395622
+    ]
+  },
+  "qualification": {
+    "qualifiedWindowsBatches": 0,
+    "qualifiedTiming": "unavailable",
+    "hitTesting": "not-attempted",
+    "nativeParity": "hold",
+    "closureBinding": null,
+    "nativeParityReason": "occlusion and native/provider qualification remain outside raw repeatability"
+  },
+  "mutationControls": {
+    "semantic-enabled": true,
+    "semantic-role": true,
+    "semantic-name": true,
+    "wrong-case": true,
+    "wrong-pid": true,
+    "wrong-pixel-repeat": true,
+    "wrong-source": true,
+    "extra-run": true,
+    "missing-run": true
+  },
+  "limits": [
+    "20 focused observations only",
+    "all locks released",
+    "foreground changes 395622 to 0 in several rows",
+    "no hit-testing stimulus, timing qualification, provider readback, controlled occlusion, or native parity"
+  ]
+}
