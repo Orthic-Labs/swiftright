@@ -2,33 +2,34 @@
 
 Compiled 10 October 2026 (revised at HEAD `acef4f1` to fold in the adversarial review `docs/sr0-findings-review-astra.md`; dispositions in the last section) from the repository at HEAD `593e3ab` (the task named `2da92ab`; the only later commit is the R6 result, `probes/sr0-o/R6-RESULT.md`). Sources: `docs/*`, every `RESULT*.md` and `ITERATION.md` under `probes/`, `examples/` and `qualification/`, `render/README-abi-v0.md`, `render/swiftright-render/README.md`, `git log` (219 commits), `probes/sr0-s/COMPARISON.md`, the `gpui 0.2.2` crate source, and Microsoft Learn pages fetched on 10 Oct 2026. Nothing was rerun to write this. Every claim cites a path (with line where useful) or a commit. A claim with no citation is marked UNVERIFIED.
 
-Conventions: "tuple 08" is the final SR0 snapshot (`docs/sr0-snapshot.md` section 2d). Short hashes are sha256 prefixes of binaries or git commits (the context says which). "Dell" is the Windows host (Dell XPS 15 9530, `docs/sr0-snapshot.md:105`). "Mac" is the Mac mini, macOS 27.0.1, arm64.
+Update 11 October 2026 (HEAD `61be5f94`): sections 1, 5, 6 and 9 and the decision in section 11 are brought to tuple 11 (`docs/sr0-snapshot.md` section 2e); the other sections keep their 10 October (tuple 08) text and are history where they name tuple 08 numbers. Conventions: "tuple 11" is the final SR0 snapshot (`docs/sr0-snapshot.md` section 2e); "tuple 08" is the previous final snapshot, kept as history (section 2d). Short hashes are sha256 prefixes of binaries or git commits (the context says which). "Dell" is the Windows host (Dell XPS 15 9530, `docs/sr0-snapshot.md:105`). "Mac" is the Mac mini, macOS 27.0.1, arm64.
 
 ---
 
 ## 1. Outcome
 
-SR0 is **OPEN**, not closed (`docs/sr0-status.md:7`). The final tuple is tuple 08: renderer DLL `E280F4A9…` (ABI 0.6, built from `9c261d4` on `02b3cc0`), runtime `b8702bb`, FreshOnBridge `7673A2D5…`, BridgeSmoke `21992F16…`, WorkloadWin `0815DF49…`, SliceApp MSIX 0.1.0.0 `c80c6947…` / 0.1.1.0 `0ff65165…`, DMGs `b976ac70…` / `75f3cd75…`, `@rightkit/release` 0.2.146 (`docs/sr0-status.md:9`, `qualification/tuple-final.json`). The Windows 20-run matrix, smoke, text geometry, modal paths, real-IME checks, runner, Mac oracle re-record and the Mac package record pass on it. Two criteria fail and are recorded as known limitations pending a decision by Adrian: W5 "zero missed vblanks" (5, 1, 1 per 60 s run) and the MSIX interrupted-update check W08.
+SR0 is **OPEN**, not closed (`docs/sr0-status.md:7`). The final tuple is tuple 11: renderer DLL `E280F4A9…` (ABI 0.6, built from `9c261d4` on `02b3cc0`, unchanged since tuple 08), runtime `8e47b89`, FreshOnBridge `07351314…` (`0a745ab` plus the AX selection-publish fix `2cfb36ef`), BridgeSmoke `85D5F8BA…`, WorkloadWin `5270D3E5…`, SliceApp MSIX 0.1.0.0 `39007039…` / 0.1.1.0 `efc52869…`, DMGs `b976ac70…` / `75f3cd75…`, `@rightkit/release` 0.2.146 (`docs/sr0-snapshot.md` section 2e, `qualification/tuple-final.json`). Receipts were taken on three tuples and carry only because the binaries are byte-identical: matrix on tuple 11; smoke, pixels, text geometry, modal and cold-open on tuple 09; workload, MSIX and (superseded) R9 and cross-compare on tuple 10. On them: the Windows 20-run matrix (320/320 first attempt on tuple 11), smoke, rendered-output pixel assertions, text geometry, modal paths, the workload against the 2026-10-10 bar, the Mac oracle and the Mac package record pass. Not closed: the tuple 11 cross-compare and R9 runs (running), Narrator speech (a person), the W08 acceptance decision, the retry-overrun record, the contract text and a runner run on tuple 11.
 
-| Stage | Status on tuple 08 | Key evidence |
+Why there are 11 tuples: tuples 06 to 08 fixed bridge defects (modal lost-wake, AX trailing publish, F1 release gate); tuples 09 to 11 fixed Mac-vs-Windows parity differences found by the 16-config cross-compare (onChange after List reinsertion, initial focus, Invoke focus, OS animation setting, motion start on first tick, launch selection, AX selection publish): `docs/sr0-retry-ledger.md`, "Ledger, tuples 09 to 11". The renderer did not change after tuple 08.
+
+| Stage | Status on tuple 11 | Key evidence |
 |---|---|---|
 | SR0-D dependencies and hosts | PASS (Windows x64, Mac arm64) | `probes/sr0-d/*`; `docs/sr0-status.md:13` |
-| SR0-C slice contract | DRAFT v0.1; freeze proposal v1.0 NOT frozen | `conformance/sr0-slice/CONTRACT.md:3`; `docs/sr0-freeze-slice-contract-v1.md:7` |
-| SR0-O oracle and comparator | PARTIAL: F1 cross-compare 0 diffs; F2-F9 not cross-compared; Mac oracle 16 configs x3 equal accepted baselines; F6 100-run sample runner verdict FAIL (see below) | `probes/sr0-o/R6-RESULT.md`; `qualification/out/r8-tuple08/compare-F1.json` |
-| SR0-B bridge and measurement | PASS: smoke 40/40, timeout 41/41, TextGeom06 20/20, Modal06 20/20 | `examples/BridgeSmoke/result-smoke-rev08.txt:83-84`; `examples/BridgeGeoModal/result-textgeom08.txt:93`, `result-modal08.txt:268` |
-| SR0-S seed comparison | Fresh runtime selected; SwiftCrossUI fork early-disqualified (never ran on the real renderer); matrix 319/320 | `probes/sr0-s/COMPARISON.md`; `probes/sr0-s/fresh-on-bridge/out/matrix-08/RESULT.md` |
-| SR0-P packaged qualification | NOT PASS: Windows offline 13/14, W08 FAIL; network W00/W01/W12 PASS; Mac DMG 12/12 and R7 10/10 PASS | `examples/SliceApp/RESULT-R5-08.md`; `RESULT-R7.md` |
-| SR0-A automation | Runner run on tuple 08: win-replay 48/48, compare 0 diffs, smoke 40/40 and 41/41, package macOS 12/12, Windows FAIL on W08 only; 119 unit tests | `docs/sr0-status.md:19`; commit `2da92ab` |
-| SR0-N native interaction (R9) | IME F7 20/20, F7live 20/21, F8 18/19, Narrator 8/8 automatable; Narrator speech not machine-verifiable | `probes/sr0-b/native-interaction/out/*-tuple08.txt` |
-| SR0-W workload (R10) | NOT MET: W5 fails; leak slope 3.21-4.42 MB/min passes | `probes/sr0-b/workload/results/r10-20261010-tuple08-renderere280-windows.txt:40,79,118,285` |
+| SR0-C slice contract | DRAFT v0.1; freeze proposal v1.0 NOT frozen; proposed C9 and C11 text is in the file, C10 and C1-C8 are not | `conformance/sr0-slice/CONTRACT.md:3,54,56`; `docs/sr0-freeze-slice-contract-v1.md` |
+| SR0-O oracle and comparator | Mac oracle PASS (R6). Cross-compare of all 16 configs: tuple 10 11/16, the 5 failures are launch selection; **tuple 11 compare running, no committed result**; R5, R6, R8 unproven; P2 settled as a Mac quirk | `probes/sr0-o/R6-RESULT.md`; `probes/sr0-o/f1-cross/CROSS-ALL.md`; `7a755ad1` |
+| SR0-B bridge and measurement | PASS (carried from tuple 09): smoke 40/40, timeout 41/41, pixels 10/10, TextGeom06 20/20, Modal06 20/20 | `examples/BridgeSmoke/result-smoke-rev09.txt:83`, `result-smoke-timeout09.txt:84`, `result-smoke-pixels09.txt:4`; `examples/BridgeGeoModal/result-textgeom09.txt:93`, `result-modal09.txt:269` |
+| SR0-S seed comparison | Fresh runtime selected; SwiftCrossUI fork early-disqualified (never ran on the real renderer); matrix 320/320 on tuple 11 | `probes/sr0-s/COMPARISON.md`; `probes/sr0-s/fresh-on-bridge/out/matrix-11/RESULT.md:7` |
+| SR0-P packaged qualification | NOT PASS: Windows offline 13/14, W08 FAIL; network W00/W01/W12 PASS; three user recoveries measured; Mac DMG 12/12 and R7 10/10 PASS | `examples/SliceApp/RESULT-R5-10.md`; `RESULT-R5-W08-recovery-08.md`; `RESULT-R7.md` |
+| SR0-A automation | Runner closure gate extended (workload, native, all 16 configs); last full run on tuple 08; none on tuple 11 | `docs/qualification.md` (2026-10-11 section); `qualification/out/r8-tuple08/` |
+| SR0-N native interaction (R9) | Tuple 10 (superseded host): F7 17/20 then 20/20, F7live 20/21, F8 18/19, Narrator 8/8 automatable; **tuple 11 run running**; Narrator speech not machine-verifiable | `probes/sr0-b/native-interaction/out/*-tuple10*.txt` |
+| SR0-W workload (R10) | MET under the 2026-10-10 bar (section 11): W4 p95 46.37-48.83 ms and interval p95 16.73-16.74 ms against Mac SwiftUI 71.6-78.9 ms and 17.82-17.94 ms; missed vblanks 1, 1, 1 reported; leak slope 1.72 / 3.90 / 4.20 MB/min | `probes/sr0-b/workload/results/r10-20261011-tuple10-renderere280-windows.txt:37,40,44,76,79,83,115,118,122`; `MAC-WORKLOAD.md` |
 
-### R6 (Mac oracle, added 10 Oct 2026, commit `593e3ab`, `probes/sr0-o/R6-RESULT.md`): PARTIAL, not complete
+### R6 (Mac oracle, `593e3ab`, `probes/sr0-o/R6-RESULT.md`) and what followed
 
-- mac-oracle stage: all 16 configs, 3 runs each, 3/3 self-test PASS and every canonical trace equals the accepted baseline.
-- F1 signed re-record (signed `F1MacRecord.app`, Developer ID, team 6KLGD3LLKF): 3 recordings, 0 diffs against the accepted Mac trace and 0 diffs against the tuple 08 Windows trace; the runner compare stage passes with 0 diffs. The accepted baseline was not replaced.
-- F6 100-run sample: 100/100 self-test PASS, but the **runner verdict is FAIL**: the last record of `probes/sr0-o/r6/f6/f6-100-events.jsonl` (line 104) reads `fail`, "runs disagree: 2 distinct canonical traces (nondeterministic); trace differs from accepted baseline; candidate written, NOT promoted". In the burst-insert step the A/B completion order is 96 A-first, 4 B-first (runs 13, 23, 24, 25, clustered). The lead decided to treat A/B completion as unordered, but that decision is **not yet implemented** in `CONTRACT.md` or the comparator, so F6 still fails on the Mac oracle about 1 run in 25 (open item T11). The candidate `conformance/candidates/F6/20261010T082727.113Z` is untracked and not promoted. An earlier draft of this document repeated R6-RESULT's statement that "the first animation pair was A-then-B in all 100 runs"; the committed F6 traces (`probes/sr0-o/r6/f6/run*.jsonl`) contain exactly one A/B animation pair, so that claim is unsupported and is removed.
-- **Open gap:** there is no Windows schema-v0 trace for F2 to F9, so the Mac-to-Windows cross-compare covers F1 only (`probes/sr0-o/R6-RESULT.md`, "Not compared"; `qualification/run.py:1374` calls `compare_stage` for F1 only, and the Windows self-tests contain no UIA observations). R6 stays open until F2-F9 (and the F3 variants and F6-reduced) are recorded on Windows in schema v0 and compared, including injected semantic faults.
-- Consequence for the docs: `docs/sr0-status.md` rows SR0-O and item 1/5 of the PENDING table, `docs/sr0-freeze-slice-contract-v1.md` section 4 blocker 2 and limitation 4, and `docs/sr0-close-plan.md` lane R6 still say PENDING and predate this result.
+- mac-oracle stage: all 16 configs, 3 runs each, 3/3 self-test PASS and every canonical trace equals the accepted baseline. F1 signed re-record (Developer ID, team 6KLGD3LLKF): 3 recordings, 0 diffs against the accepted Mac trace and against the tuple 08 Windows trace.
+- F6 100-run sample: 100/100 self-test PASS; 96 A-first, 4 B-first (runs 13, 23, 24, 25, clustered); the runner verdict was FAIL on the 2 canonical results (`probes/sr0-o/r6/f6/f6-100-events.jsonl:104`). **Since decided and implemented:** the canonicalizer permutes only the A/B completion pair (proposed C9, `653b2534`, `probes/sr0-o/F6-UNORDERED.md`); the 4 B-first runs and both candidates equal the accepted digest; negative controls still fail; accepted digests unchanged; the runner mirrors it. The candidate `conformance/candidates/F6/20261010T082727.113Z` is untracked and not promoted.
+- The Windows schema-v0 traces for F2 to F9 now exist: all 16 configs were recorded 3 x on each side and compared (`CROSS-ALL.md`). Tuple 08 (first pass 13/16, then review `a6bccd0b`: allowances scoped, 65 injected faults rejected), tuple 09 11/16 (D2 launch selection on 5 configs, D3 F6 row rebuild), tuple 10 11/16 (F6 passes under proposed C11 with 4 more fault controls, 69 rejected; the 5 launch-selection configs still fail: the runtime selected all but UIA read the caret at the end), tuple 11: the host now publishes the AX selection with anchor = start (`2cfb36ef`), compare running.
+- Unproven and listed so nobody reads a PASS as proof: R5 (F5 initial window size), R6 (F7 IME stimulus chunking), R8 (F9 late results); P2 is settled as a Mac oracle quirk by the `F3-list-1s-typeafter` probe.
 
 ---
 
@@ -301,12 +302,12 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 
 | # | Limitation | Source |
 |---|---|---|
-| L1 | W5 zero missed vblanks fails on the hybrid-GPU Dell: 5, 1, 1 per 60 s (tuple 08); 1-6 across committed runs; overlay-off run not done | `r10-20261010-tuple08-renderere280-windows.txt:40,79,118`; `docs/sr0-status.md:50` |
-| L2 | MSIX update cancelled in the registration phase leaves `Modified, NeedsRemediation`; the app does not launch until the update is re-applied (the measured recovery is the AppInstallerFile redeploy of a newer version; Settings Repair and post-registration state untested); data intact; W08 remains FAIL and a user-accessible recovery test on final packages is open (T12); recovery documented by RightKit (`@rightkit/release` README `e93ac2df`, not reproduced in this repository, UNVERIFIED) | `RESULT-R5-08.md:28-34`; `RESULT-R5-W08-recovery.md` |
-| L3 | IME candidate list does not follow a mid-composition layout move (TSF text store likely needed) | `native-ime-f8-tuple08.txt:615`; `docs/sr0-freeze-slice-contract-v1.md:137` |
-| L4 | Narrator speech content and Narrator-start attribution are not machine-verifiable; a recorded listening result is required (U1) | `native-narrator-tuple08.txt:53,82` |
-| L5 | Cold first dialog open exceeded the 50 ms bound once (60.9 ms on tuple 07). Tuple 08: per-run maxima min 29.30, median 34.02, max **39.59 ms**; 35.96 ms is one run's detailed figure (`result-modal08.txt:242`, `:262`). The measured quantity is main-queue job delay during the first 150 ms of opening, not request-to-visible dialog latency; tuple 08's AX fix does not demonstrate changed cold-open behaviour. The cold-open measurement definition (endpoint, cache state) is open (T10) | `result-modal07.txt:4`; `result-modal08.txt:242,262` |
-| L6 | Underline and image painting are accepted, not asserted; rendered-output assertions are open (T4) | `docs/sr0-status.md:16` |
+| L1 | Missed vblanks are reported, not gated (Adrian, 2026-10-10, section 11): 1, 1, 1 per 60 s on tuple 10 (tuple 09 1, 0, 1; tuple 08 5, 1, 1; 1-6 across committed runs) on the hybrid-GPU Dell with the NVIDIA overlay loaded. The old zero-miss criterion is dropped, so the overlay-off run is no longer a gate | `r10-20261011-tuple10-renderere280-windows.txt:40,79,118`; `r10-20261010-tuple09-renderere280-windows.txt:40,79,118`; `docs/sr0-status.md` (R10 workload) |
+| L2 | MSIX update cancelled in the registration phase leaves `Modified, NeedsRemediation`; the app does not launch until recovered; data intact. **Three user recoveries were measured on the final packages (n = 1 each): Settings > Advanced options > Repair, same-version `Add-AppxPackage -Path`, same-version `Add-AppxPackage -AppInstallerFile`; `Reset-AppxPackage` and the platform's own `RegisterByPackageFullName` (triggered by a launch attempt) do not.** Repair needs its install source; the product neither repairs nor tells the user; W08 remains FAIL (tuple 10: 5 genuine interruptions, c6 bad); acceptance decision pending | `RESULT-R5-10.md`; `RESULT-R5-08.md:28-34`; `RESULT-R5-W08-recovery-08.md` |
+| L3 | IME candidate list does not follow a mid-composition layout move (TSF text store likely needed); unchanged on tuples 08 to 10 | `native-ime-f8-tuple10.txt:606`, `native-ime-f7live-tuple10.txt:616`; `docs/sr0-freeze-slice-contract-v1.md` section 6 |
+| L4 | Narrator speech content and Narrator-start attribution are not machine-verifiable; a recorded listening result is required (U1, about 2 min, Adrian) | `native-narrator-tuple10.txt:94` |
+| L5 | Cold first dialog open. Defined and measured on tuple 09: M1 main-queue blocking (the `modal_open_one_off` quantity) cold median 32.67, max 45.99 ms, 0 of 20 above 50 ms; **M2 request-to-visible median 39.20, max 52.16 ms, 1 of 20 above 50 ms**; earlier 60.9 ms once on tuple 07. The criterion is stated on M1 | `result-coldopen09.txt:7-12`; `result-modal07.txt:4`; `result-modal09.txt:263` |
+| L6 | Underline and image painting: now asserted by pixels (10/10 on two capture methods, negative controls fail). Remaining: no per-primitive draw counter | `result-smoke-pixels09.txt:4`, `result-bridgepixels09.txt:4` |
 | L7 | App Installer production host and TLS chain untested (guest-local self-signed feed); no hardware-GPU rendering in the Sandbox guest | `RESULT-R5.md`, `RESULT-R5-08.md` |
 | L8 | The packaged exe's log file is held exclusively by the CRT while the app runs | `RESULT-R5.md`, "Product fix" |
 | L9 | RightKit `install-app` SIGKILL between the two renames leaves the install path absent until `--recover` | `RESULT-R7.md`, "Interrupted install on 0.2.142" |
@@ -316,45 +317,56 @@ Note: the F7 self-test verdict line reads `FAIL (16/18)` in the tuple 08 file be
 | L13 | Renderer knobs outside the ABI (`SWR_PAINT_PHASE_MS`, `SWR_AX_MIN_MS`, `SWR_AX_OFF`, `SWR_FRAME_LOG`, `SWR_MEM_DEEP`, `SWR_MODAL_LEGACY_SPAWN`) | `render/README-abi-v0.md`; `render/swiftright-render/README.md` |
 | L14 | The private libdispatch `_4CF` symbols are a version-pinned compatibility risk | `docs/architecture.md:178` |
 | L15 | Renderer DLL provenance: the committed-tree rebuild of `9c261d4` hashed `E280F4A9`, so bytes match the source; the DLL is unsigned in the SDK payload (RightKit signs it inside the package) | `docs/sr0-snapshot.md:89`; `RESULT-R2.md` |
-| L16 | F6 interrupted-animation completion order is unordered on SwiftUI itself (4 of 100 swapped); not yet reflected in the contract or comparator, runner verdict FAIL | `probes/sr0-o/R6-RESULT.md` |
-| L17 | Cross-platform compare covers F1 only; R6 is PARTIAL | `probes/sr0-o/R6-RESULT.md` |
+| L16 | F6 interrupted-animation completion order is unordered on SwiftUI itself (4 of 100 swapped); decided and implemented in the canonicalizer and runner as proposed C9; contract text in `CONTRACT.md:54`. List-row appear/disappear counts on animated insert are unspecified (proposed C11, `CONTRACT.md:56`) | `probes/sr0-o/R6-RESULT.md`; `probes/sr0-o/F6-UNORDERED.md`; `CROSS-ALL.md` |
+| L17 | Cross-platform compare covers all 16 configs (tuple 10: 11/16); the tuple 11 compare is running; R5, R6, R8 unproven | `probes/sr0-o/f1-cross/CROSS-ALL.md` |
 | L18 | GPU/driver, fonts, locale, DPI, refresh are not pinned at tuple level (recorded per run only); Rust and MSVC versions not re-queried | `docs/sr0-snapshot.md:107-109` |
+| L19 | **Selection highlight is not painted** (caret only). The runtime selects all at launch and the host publishes the AX selection (UIA reads 0+5 on F5 in the host's own test), but the selection is not drawn. SliceApp's own host keeps a collapsed selection for SR0. SR1 | `0e4927aa` and `2cfb36ef` commit messages |
+| L20 | **Cold dialog open M2 request-to-visible occasionally above 50 ms** (52.16 ms, 1 of 20 on tuple 09), while M1 blocking stays under 50 ms | `result-coldopen09.txt:12` |
+| L21 | **IME F7 had one flaky run on tuple 10:** 17/20 on the first run (Escape and model-state checks after extra IME commit and Escape presses, `abort=none`), 20/20 on the rerun; tuple 09 20/20 | `native-ime-f7-tuple10.txt:1400`, `native-ime-f7-tuple10b.txt:1403` |
+| L22 | **Leak slope close to the limit in 2 of 3 tuple 10 runs:** 1.72, 3.90, 4.20 MB/min against 5.0 (app only, trace buffers excluded; raw 2.32 / 4.50 / 4.81) | `r10-20261011-tuple10-renderere280-windows.txt:37,76,115` |
+| L23 | **Mac SwiftUI baseline has caveats:** busy host, 1600x900 at scale 1.0, ScreenCaptureKit display-time proxy (it sees 60 fps while the app's display link ran at about 30), no Mac leak implementation in the analyzer, W6 not applicable. The performance bar compares against it | `MAC-WORKLOAD.md`, "Section 11 Mac items still unmet" |
 
 ---
 
 ## 6. Open items
 
+State at 11 October 2026 (tuple 11). Items marked DONE keep their original number so the earlier references still resolve.
+
 ### 6.1 User-dependent (nothing here has a committed result)
 
 | # | Item | Needs | Source |
 |---|---|---|---|
-| U1 | R9 Narrator speech content | A person listening at the Dell, about 2 min | `docs/sr0-status.md:40` |
-| U2 | R10 one run with the NVIDIA overlay off; Mac windowed workload result (and archived Mac samples and instrumentation-overhead measurement, which `docs/architecture.md:273` also requires) | Adrian (no setting was touched); the Mac | `ITERATION.md:155-157`; `docs/sr0-status.md:41` |
-| U3 | Decision on W5: repair it, or explicitly revise its measurable acceptance criterion in the contract, then rerun the prescribed workload on both OSes with archived samples and measured instrumentation overhead (the contract requires every timed run to pass; acceptance as a bare limitation does not satisfy it). W08 stays FAIL; see T12 | Adrian | `docs/sr0-status.md:42`; `docs/sr0-retry-ledger.md:76` |
-| U4 | Explicit record of the retry-cap overruns after the 9 Oct resume (R10, R9, R5, B repairs `02b3cc0`, `9c261d4`) | Adrian | `docs/sr0-retry-ledger.md:78,90` |
-| U5 | Windows signing certificate renewal before any new Windows build (expires 2026-10-12) | Adrian / RightKit | `RESULT-R5-08.md:12` |
-| U6 | Narrator registry and any other user-setting edits by drivers (resolved by restore logic; no open action) | | `native-narrator-tuple08.txt:85` |
+| U1 | R9 Narrator speech content | A person listening at the Dell, about 2 min (Adrian) | `docs/sr0-status.md` (PENDING item 2) |
+| U2 | DONE / dropped. Mac windowed workload result: committed (`MAC-WORKLOAD.md`, `3ef265bd`; instrumentation overhead A/B within noise: p95 +1.4 ms visible, -0.67 ms interval, 14-15 ns per timestamp pair). The NVIDIA overlay-off run is no longer needed because W5 is not gated | `MAC-WORKLOAD.md`; section 11 |
+| U3 | DONE. W5 decided by Adrian (2026-10-10): zero-missed-vblank dropped, bar is no worse than Mac SwiftUI at p95, missed vblanks reported (section 11; `docs/architecture.md` §11 revision 2). Open remainder: write C10 into `CONTRACT.md` and change the analyzer's W5 verdict; the Mac figure carries the caveats of L23. W08 stays FAIL (T12) | Adrian (decided); R11 text |
+| U4 | Explicit record of the retry-cap overruns after the 9 Oct resume (R10, R9, R5, B repairs `02b3cc0`, `9c261d4`, and the S/O parity repairs of tuples 09 to 11) | Adrian | `docs/sr0-retry-ledger.md` |
+| U5 | Windows signing certificate renewal before any new Windows build (expires 2026-10-12 05:16:54 Dell local) | Adrian / RightKit | `RESULT-R5-10.md:3` |
+| U6 | Narrator registry and any other user-setting edits by drivers (resolved by restore logic; no open action) | | `native-narrator-tuple10.txt` (`registry_restore_pass=1`) |
+| U7 | Accept R5 W08 as a known limitation, with the three measured recoveries (L2), or repair and rerun | Adrian | `docs/sr0-status.md` (PENDING item 3) |
 
-R6 (Mac oracle with the signed recorder) produced the F1 cross-compare and the Mac baselines, but it is PARTIAL and stays open; see section 1 and T1.
+R6 (Mac oracle with the signed recorder) is done; the cross-compare it fed is T1.
 
 ### 6.2 Technical
 
-| # | Item | Notes |
+| # | Item | State |
 |---|---|---|
-| T1 | Windows schema-v0 traces for F2-F9 (with F3 variants and F6-reduced) and a cross-compare beyond F1, including injected semantic faults | `probes/sr0-o/R6-RESULT.md`; `qualification/run.py:1374` |
-| T2 | Apply C1-C8 (and C3, see gap G4) to `CONTRACT.md`, bump to v1.0, freeze ABI 0.6; record F6 A/B completion as unordered (see T11) | R11; both freeze docs stay NOT FROZEN |
+| T1 | Windows schema-v0 traces for F2-F9 and a cross-compare beyond F1, including injected semantic faults | Windows traces and cross-compare exist for all 16 configs with 69 rejected fault controls (tuple 10 11/16). **Tuple 11 compare running.** R5, R6, R8 unproven |
+| T2 | Apply C1-C8 (and C3, see gap G4) to `CONTRACT.md`, bump to v1.0, freeze ABI 0.6; add C9 (text present), C10 (absent), C11 (text present) | R11; both freeze docs stay NOT FROZEN, bound to tuple 11 |
 | T3 | TSF text store for the candidate window | SR1 |
-| T4 | Rendered-output assertions for underline and images (pixels, clipping, placement); a draw counter alone cannot prove these. Also a recorded Narrator listening result (U1) and explicit criterion dispositions | `docs/sr0-freeze-bridge-interface.md:140` |
-| T5 | GPU placement experiments for W5 (section 8) | not started |
+| T4 | DONE. Rendered-output assertions for underline and images: pixel assertions 10/10 on two capture methods, negative controls fail (`result-smoke-pixels09.txt:4`, `result-bridgepixels09.txt:4`). Still open: a recorded Narrator listening result (U1) and explicit criterion dispositions | |
+| T5 | GPU placement experiments for W5 (section 8): steps 1 to 4 run on tuple 08 (`W5-EXPERIMENTS.md`: Intel vs RTX interleaved 4 / 5 / 3 vs 2 / 1 / 3 missed; no MUX; overlay-off not run); the waitable swap chain proposal is not run. No longer gating | |
 | T6 | G2, G6, G7, G8 Mac fixture repeats (SR1 lane) | `fixtures/RESULT.md`; needs a free Mac |
 | T7 | A shared-read variant of the packaged exe log | `RESULT-R5.md` candidate patch (outside the repository) |
 | T8 | RightKit services C ABI and a Tauri-free `rightkit-shell` (blocks SR2, not SR0); status not rechecked since `probes/sr0-d/owner-map/RESULT.md` | |
-| T9 | SR1 factory spikes (capture methods, comparator calibration) before any estimate | `docs/sr1-plan.md:160-176` |
-| T10 | Define the cold-dialog-open endpoint and cache state, repeat controlled cold opens, and resolve the 50 ms criterion explicitly (a decision on `modal_open_one_off` as a re-scoped criterion) | `docs/sr0-retry-ledger.md:27`; `result-modal08.txt:242,262` |
-| T11 | Implement the F6 decision: permute only the A-complete/B-complete pair; keep start-before-complete, exactly-once completion, lifecycle and final-state checks; add negative controls (for example a missing, duplicated or early completion must still fail); requalify F6 | `probes/sr0-o/r6/f6/f6-100-events.jsonl:104`; `qualification/` comparator |
-| T12 | W08: commit a reproducible recovery harness and test user-accessible recovery on the final packages (Settings Repair, the AppInstallerFile redeploy, state after platform registration), verifying package state, relaunch, version and data | `RESULT-R5-08.md:28-36`; `RESULT-R5-W08-recovery.md` |
-| T13 | W7: remeasure the incremental build record on tuple 08, or justify build-graph equivalence with the carried-over it-8 record | `r10-...tuple08...windows.txt` re-analysis note |
-| T14 | Closure gate: extend `qualification/run.py` stages (`:61`, which omit workload and native-interaction receipts) so closure evaluation includes the R9 and R10 receipts | `qualification/run.py:61` |
+| T9 | SR1 factory spikes (capture methods, comparator calibration) before any estimate | `docs/sr1-plan.md` |
+| T10 | DONE. Cold-dialog-open endpoint defined (M1 main-queue blocking, M2 request-to-visible) and 20 cold opens measured on tuple 09 (`result-coldopen09.txt:7-12`); the criterion is stated on M1. M2 once above 50 ms is L20 | `3587dcc1` |
+| T11 | DONE. F6: canonicalizer permutes only the A/B pair with negative controls; the runner mirrors it; requalify F6 on the Mac oracle after the next R6 run | `653b2534`, `F6-UNORDERED.md` |
+| T12 | DONE. W08 recovery measured on the final packages (Settings Repair, `Add-AppxPackage -Path`, `-AppInstallerFile` recover; `Reset-AppxPackage` and platform registration do not); harness committed in `qualification/clean-machine/windows`. Open: n = 1 per method, a real Windows install and a non-admin user are untested | `RESULT-R5-W08-recovery-08.md` |
+| T13 | DONE. W7 measured on the tuple's own build: 0 Rust invocations over 3 edits (`r10-...tuple10...windows.txt:126-128`) | |
+| T14 | DONE in code (`32536d98`): closure gate adds workload and native stages and requires all 16 compare configs. Open: a full runner run on tuple 11 | `docs/qualification.md` (2026-10-11) |
+| T15 | Tuple 11 R9 (IME F7, F7live, F8, Narrator) on the new fixture host | running |
+| T16 | Prove or accept cross-compare items R5, R6, R8 | open |
+| T17 | Selection highlight painting (L19) | SR1 |
 
 ---
 
@@ -441,16 +453,16 @@ Verified from fetched Microsoft pages (10 Oct 2026): DirectML definition and "su
 
 ## 9. Remaining work to close SR0
 
-Ordered by dependency.
+Ordered by dependency. State at 11 October 2026 (tuple 11); each item says what is now done.
 
-1. Apply the F6 decision (T11): contract and comparator permute only the A/B completion pair, with negative controls; requalify F6.
-2. Record F2-F9 (with F3 variants and F6-reduced) on Windows in schema v0 and cross-compare, including injected semantic faults (T1); then apply C1-C8, correct C3 (G4), bump `CONTRACT.md` to v1.0 and freeze ABI 0.6 (T2).
-3. Decide W5 (U3): repair it or revise its acceptance criterion explicitly. Run the section 8.4 plan as needed, then rerun the prescribed workload on Windows and Mac with archived samples and measured instrumentation overhead (U2); remeasure or justify W7 (T13).
-4. Resolve the cold-dialog criterion: define the measurement, repeat controlled cold opens (T10).
-5. W08: commit a recovery harness and test user-accessible recovery on the final packages (T12). Renew the Windows signing certificate first if any new Windows build is needed (U5, expires 2026-10-12).
-6. Add rendered-output assertions for underline and images (T4) and obtain the recorded Narrator listening result (U1).
-7. Extend the runner's closure gate to include the workload and native-interaction receipts, then run it on the final tuple (T14).
-8. Update the stale documents listed in section 7 (G1, G2, G8-G11, G13, G21) and record the retry-cap overruns (U4).
+1. DONE: apply the F6 decision (T11) in the canonicalizer and runner with negative controls (`653b2534`). Open: requalify F6 on the Mac oracle at the next R6 run; contract text C9 is in `CONTRACT.md:54`.
+2. Partly done: Windows schema-v0 traces for F2-F9 recorded and cross-compared with injected faults (T1; tuple 10 11/16). Open: the tuple 11 compare (running); R5, R6, R8 (T16); then apply C1-C8, C3 (G4), C9, C10, C11 to `CONTRACT.md`, bump to v1.0 and freeze ABI 0.6 (T2).
+3. DONE: W5 decided (U3, section 11); Mac windowed workload run with overhead A/B (U2); W7 remeasured (T13). Open: write C10 into `CONTRACT.md` and update the analyzer's W5 verdict; a quiet-host Mac rerun with an in-process frame record is optional hardening.
+4. DONE: cold-dialog criterion defined and measured (T10). Open: L20 (M2 above 50 ms once) is recorded, not repaired.
+5. Partly done: W08 recovery measured on the final packages (T12). Open: Adrian's acceptance decision (U7); a certificate renewal first if any new Windows build is needed (U5, expires 2026-10-12 05:16:54).
+6. Partly done: rendered-output assertions for underline and images (T4). Open: the recorded Narrator listening result (U1).
+7. Partly done: runner closure gate includes workload and native (T14). Open: run it on tuple 11.
+8. Open: tuple 11 R9 (T15); the stale documents of section 7 that this update did not touch (G7, G9, G10, G12, G15 to G17, G20); the retry-cap overrun record (U4).
 
 ---
 
@@ -476,3 +488,5 @@ Source: `docs/sr0-findings-review-astra.md`. Each finding was checked against th
 ## 11. Decision: performance bar (Adrian, 2026-10-10)
 
 The zero-missed-vblank criterion (W5) is dropped: "We don't need that zero-missed screen refresh … Change the bar." The §11 performance bar for SR0 is: no worse than Mac SwiftUI on the same workload for input-to-visible latency and frame-interval p95, with missed vblanks reported, not gated. Evidence: Windows tuple 08 W4 p95 43–49 ms, W5 interval p95 about 16.76 ms, 1–6 missed vblanks per 60 s (`probes/sr0-b/workload/results/r10-20261010-tuple08-renderere280-windows.txt`, `W5-EXPERIMENTS.md`); Mac SwiftUI W4 p95 72–79 ms, interval p95 17.9 ms, 0 missed (`MAC-WORKLOAD.md`, with its caveats). To apply: `docs/architecture.md` §11, `conformance/sr0-slice/CONTRACT.md` (proposed change C10), the workload analyzer's W5 verdict.
+
+**Applied 11 October 2026:** `docs/architecture.md` §11 revision 2 (dated 2026-10-10) carries this decision in the limits table and the revision note; `docs/sr0-status.md`, `docs/sr0-close-plan.md`, both freeze documents and `docs/qualification.md` cite it. `CONTRACT.md` (proposed C10) and the analyzer's W5 verdict are not yet changed.
