@@ -1,0 +1,82 @@
+{
+  "kind": "factory-rectangle-f10-production-reader-plan-v1",
+  "version": 1,
+  "status": "source-ready-windows-export-required",
+  "candidateOnly": true,
+  "case": {
+    "id": "swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.025c6e76f4061037",
+    "hash": "sha256:f5eda384bd1723649f5f8b849a2439341736fe4e028da16ec8b821f5c55d2031"
+  },
+  "tuple": {
+    "id": "sr1-rectangle-r11-source-paired20-20261011",
+    "hash": "sha256:025c6e76f4061037eb8bd85115966bc734dffbd960dfdee0a5c485720d849e06",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "hostHashes": {
+      "macos": "sha256:e9931fb93ca88b62f227b27831db0c304d0c4beb299abb2725e72e7e84b2da5d",
+      "windows": "sha256:62aa7d5b9a5b9001d697822d26b2d102d8934de1de4a02103f810e756f71af66"
+    }
+  },
+  "canonicalInputs": {
+    "tupleRef": {
+      "path": "factory/native/windows/pilot-rectangle-root-v1/generated-r1/tuple.json",
+      "bytes": 984,
+      "sha256": "sha256:025c6e76f4061037eb8bd85115966bc734dffbd960dfdee0a5c485720d849e06"
+    },
+    "caseRef": {
+      "path": "factory/native/windows/pilot-rectangle-root-v1/generated-r1/cases/swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.025c6e76f4061037.json",
+      "bytes": 1839,
+      "sha256": "sha256:f5eda384bd1723649f5f8b849a2439341736fe4e028da16ec8b821f5c55d2031"
+    },
+    "recipeRef": {
+      "path": "factory/pipeline/pilot-next-source-v1/recipe.json",
+      "bytes": 2031,
+      "sha256": "sha256:a8442886bb78ecf2b642e77eac11121a3d529c8f92eda719c19aef9b055ac627",
+      "canonicalHash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57"
+    },
+    "sourceRef": {
+      "path": "factory/pipeline/pilot-next-source-v1/witness.swift",
+      "bytes": 262,
+      "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+    }
+  },
+  "mac": {
+    "rawArchiveRoot": "factory/oracle/mac/rectangle-origin-r11-root-v1/observed-mac20-r1",
+    "rawSummary": {
+      "path": "factory/oracle/mac/rectangle-origin-r11-root-v1/observed-mac20-r1/swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.025c6e76f4061037/summary.json",
+      "bytes": 55337,
+      "sha256": "sha256:5a6d8ccbb6859525542a3d2dcd88b85b01775703d0e8abea4d9791ecb6792035"
+    },
+    "derivedNormalization": {
+      "path": "factory/oracle/mac/rectangle-origin-r11-root-v1/derived-normalized-r3/derived-summary.json",
+      "bytes": 5508,
+      "sha256": "sha256:89ac13cc88778ee2fb60d8e42bc0a102dd267a4f48d4c93213e6ee0d09806c78"
+    },
+    "count": 20,
+    "caseHashRequired": "sha256:f5eda384bd1723649f5f8b849a2439341736fe4e028da16ec8b821f5c55d2031"
+  },
+  "windows": {
+    "status": "pending-root-export",
+    "archiveRoot": null,
+    "archiveManifest": null,
+    "requiredCount": 20,
+    "requiredCaseHash": "sha256:f5eda384bd1723649f5f8b849a2439341736fe4e028da16ec8b821f5c55d2031",
+    "requiredTupleID": "sr1-rectangle-r11-source-paired20-20261011",
+    "requiredHostHash": "sha256:62aa7d5b9a5b9001d697822d26b2d102d8934de1de4a02103f810e756f71af66",
+    "requiredProofRoles": ["outcome", "observation", "owned", "close", "plan", "compile", "witness", "exe", "renderer", "runtimeReceipt", "runtimeTree", "stdout", "stderr"]
+  },
+  "reader": {
+    "implementation": "factory.pipeline.archive_reader.ArchiveByteReader",
+    "macRoots": ["mac.rawArchiveRoot"],
+    "windowsArchives": "root-supplied explicit archive map only",
+    "maxBytesPerRead": 67108864,
+    "goldenOrParityPromotion": false
+  },
+  "protectedInputs": {
+    "historicalPaddingPlan": "factory/pipeline/paired-padding-r11-v12/sourcebound-admission-v1.py",
+    "historicalPaddingPlanUsed": false,
+    "caseRebind": false,
+    "normalizerMutation": false
+  },
+  "effects": {"nativeActions": 0, "compilerActions": 0, "remoteActions": 0, "lockActions": 0}
+}

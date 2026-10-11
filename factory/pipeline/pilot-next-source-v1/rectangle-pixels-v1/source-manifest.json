@@ -1,0 +1,99 @@
+{
+  "kind": "factory-rectangle-pixel-comparator-source-manifest-v1",
+  "version": 1,
+  "candidate": "swiftui.shapes.rectangle-fill.pixel-pair-diagnostic",
+  "rows": [
+    {
+      "role": "reader",
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/compare_rectangle_pixels.py",
+      "bytes": 16789,
+      "sha256": "sha256:16a3ff7770aae5c2f45082f77d3f3596860c53766a54cdb40d863b6c99217e56"
+    },
+    {
+      "role": "controls",
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/test_rectangle_pixels_controls.py",
+      "bytes": 5302,
+      "sha256": "sha256:3cc5d09fdd9a8c9833b2955051ef1053877d3553370990940dc75814f4bb01ad"
+    },
+    {
+      "role": "README",
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/README.md",
+      "bytes": 3045,
+      "sha256": "sha256:7731634ceea8c593413933c9d7c387ea645fc8816fe52837dffc389792c9b571"
+    }
+  ],
+  "inputContract": {
+    "macCount": 20,
+    "windowsCount": 20,
+    "shapeDip": {
+      "width": 40,
+      "height": 20
+    },
+    "fillSemantic": "system.red",
+    "platformContracts": {
+      "mac": {
+        "imagePx": [40, 52],
+        "viewportPx": {"width": 40, "height": 52},
+        "viewportDip": {"width": 40, "height": 52},
+        "framePx": {"x": 0, "y": 32, "width": 40, "height": 20},
+        "placement": "content-origin",
+        "clip": {"bottomRoundedCorners": true}
+      },
+      "windows": {
+        "imagePx": [800, 600],
+        "viewportPx": {"width": 800, "height": 600},
+        "viewportDip": {"width": 320, "height": 240},
+        "framePx": {"x": 0, "y": 0, "width": 800, "height": 600},
+        "placement": "client-top-leading",
+        "clip": {"bottomRoundedCorners": false}
+      }
+    },
+    "requiredSourceFields": [
+      "sourceHash",
+      "tupleID",
+      "tupleHash",
+      "caseID",
+      "caseHash",
+      "recipeID",
+      "recipeHash",
+      "tupleRef",
+      "caseRef",
+      "recipeRef",
+      "sourceRef",
+      "runtimeCommit",
+      "rendererHash"
+    ],
+    "requiredRowFields": [
+      "run",
+      "image",
+      "sourceHash",
+      "tupleID",
+      "tupleHash",
+      "caseID",
+      "caseHash",
+      "recipeID",
+      "recipeHash",
+      "runtimeCommit",
+      "rendererHash",
+      "observedScale",
+      "dominantRGBA",
+      "viewportPx",
+      "viewportDip",
+      "framePx",
+      "placement",
+      "clip",
+      "rawEvidence"
+    ],
+    "rawEvidence": [
+      "macCompositorPNG",
+      "windowsPrintWindowPNG",
+      "compositor.raw.json",
+      "native.pixels.json",
+      "rawRefs"
+    ],
+    "axProviderQualification": "held"
+  },
+  "sourceOnly": true,
+  "nativeActions": 0,
+  "qualification": "diagnostic-only-until-independent-reader-review"
+}

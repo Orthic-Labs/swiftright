@@ -1,0 +1,7 @@
+# Rectangle F10 adapter input assessment
+
+`prepare_f10_adapter_input.py` consumes only explicit export rows. It checks exact 760-row export count, caller-supplied Rectangle tuple/case identity (`--expected-tuple`/`--expected-case`), all 20 per-run proof rows, & compiler/executable/renderer byte bindings. Future exports must provide `externalByteBindings` objects with separate path/bytes/SHA refs; each ref is joined to an exact manifest row before readiness. Legacy suffix discovery remains diagnostic only. It records missing roles without copying files, discovering archive paths, aliasing historical padding, or granting parity.
+
+Measured export is `factory/native/windows/pilot-rectangle-root-v1/actual-count20-r3/export-manifest.json` (329102 bytes, `sha256:5669dc4b825ba451aaf0df91a1791440a62e2591d111c84b2cc2340f3f3d87b5`). Its `originalParentKernelExitCertificate` is `false`; export rows expose no compiler, executable, or renderer byte binding, so adapter remains held with `nativeParityGranted:false`.
+
+Current export remains held when `originalParentKernelExitCertificate` is false or compiler/executable/renderer rows are absent. Root may run bounded materialization only after parent certificate & all role bytes are present, then stage proof roles into reader-compatible logical paths using streaming bounded copies. `factory.pipeline.archive_reader.ArchiveByteReader` remains unchanged; `nativeParityGranted` stays false.
