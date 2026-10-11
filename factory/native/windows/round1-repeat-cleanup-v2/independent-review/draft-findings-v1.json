@@ -1,0 +1,66 @@
+{
+  "schema": "cleanup-v2-independent-draft-review-v1",
+  "status": "blocked-before-freeze",
+  "nativeRuns": 0,
+  "producerEdits": 0,
+  "sourceSnapshot": [
+    {
+      "path": "cleanup.ps1",
+      "sha256": "1a4fa90b145280de78ba00b9da143848f55a23cbfc1581632dad59f259805596",
+      "bytes": 2025
+    },
+    {
+      "path": "capture-repeat.ps1",
+      "sha256": "1a74259c6deb84e41e27338c2abf1cd45d57eb31d295c2791f38e7956821014e",
+      "bytes": 19685
+    },
+    {
+      "path": "run-repeat.ps1",
+      "sha256": "c232788fc8b4626b24ab63c851420aa03d4362ce86305016e0cf6b97adeb3bf3",
+      "bytes": 6014
+    },
+    {
+      "path": "run-batch.ps1",
+      "sha256": "8321157e79786dd6b4ea7ff8be6954d071b568f04d45986d8ae713fff3d81b7f",
+      "bytes": 4902
+    },
+    {
+      "path": "repeat-task.ps1",
+      "sha256": "8a27439aa6017f2caac9567f95e348133c805f135217efab4f50b397bfcd1b9f",
+      "bytes": 864
+    },
+    {
+      "path": "contract.json",
+      "sha256": "ef2dccca90dfe9ee789b9eae7b32a27690e275563c446f313cb3cf62c3629589",
+      "bytes": 4351
+    },
+    {
+      "path": "namespace.ps1",
+      "sha256": "04f2066a2f8fb510fa47dac69c2835577bbd3c9c1fc08891f1485d231c970dd1",
+      "bytes": 556
+    },
+    {
+      "path": "parse-controls.ps1",
+      "sha256": "122bd05b709a885c16dd770546132940a7d91ce3e05c8d1a035f2699b80c0e66",
+      "bytes": 734
+    },
+    {
+      "path": "test-namespace.ps1",
+      "sha256": "71e151caf55eab5b8c8ec9111b4d661ec33d2a1bec89ccbf416a79adac9b3dab",
+      "bytes": 1335
+    }
+  ],
+  "findings": [
+    {
+      "file": "capture-repeat.ps1",
+      "defect": "Process.Start precedes try/finally. Stream files, CopyToAsync, owned-process receipt can throw before guaranteed cleanup.",
+      "required": "Cover all postlaunch setup with cleanup; nullable streams preserve setup error."
+    },
+    {
+      "file": "cleanup.ps1",
+      "defect": "Coordinator Get-Process path does not explicitly retain/open original stable process handle before fresh identity lookup/Kill.",
+      "required": "Acquire stable Handle before identity check; validate retained Path/StartTime against expected identity before Kill."
+    }
+  ],
+  "checksPending": "Frozen test-cleanup.ps1 unavailable; no local PowerShell binary. Root performs actual AST/pure PowerShell replay later."
+}

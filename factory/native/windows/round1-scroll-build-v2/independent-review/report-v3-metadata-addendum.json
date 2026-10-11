@@ -1,0 +1,43 @@
+{
+  "schema": "round1-scroll-build-independent-source-review-v3-metadata-addendum",
+  "sourceOnly": true,
+  "supersedesDecisionForMetadataBlocker": true,
+  "decision": "source-clearance-for-root-controls-then-single-build",
+  "executionPerformedByThisAgent": false,
+  "newMetadata": {
+    "path": "factory/native/windows/round1-scroll-host-v1/package/runtime-source-tree.json",
+    "bytes": 2825,
+    "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "entries": 21,
+    "matchesPlanRuntimeSourceTreeHash": true,
+    "planHash": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904"
+  },
+  "metadataSupplement": {
+    "path": "factory/native/windows/round1-scroll-host-v1/root-metadata-supplement.json",
+    "sha256": "7b6a3b1e44fe46a98f08e0941865e2fe67e9d5d4d66897cb118e64ef9ccd86a8",
+    "sourcePlanChanges": false,
+    "originalStageImmutable": true
+  },
+  "builderPins": {
+    "rootStageManifestSha256": "11d1423be2be77b90d678166971e25b56e1191f97e7937f2caa3b0c11abf19e8",
+    "builderSha256": "6fbbbf38d3acc4bf4b1f104f053550bd5eb8c657e5803084030ceca8b6b63983",
+    "sharedHostHelperSha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "inheritedCleanupManifestSha256": "194dd278a3771d6e8daa416aeaac252bca93f982bc069511aca43bb1c1397b97"
+  },
+  "admissionReview": {
+    "runtimeMetadataGuardRunsBeforeControlAdmission": true,
+    "cleanupControlOutcomeRequired": true,
+    "hostInputControlOutcomeRequired": true,
+    "currentAstHashOutcomeRequired": true,
+    "missingStaleFailedControlRejects": true,
+    "freshOutput": "build-v2-r1"
+  },
+  "requiredRootSequence": [
+    "Run pure-controls/test-cleanup.ps1 to fresh control-results/cleanup-controls.json",
+    "Run pure-controls/test-host-inputs.ps1 to fresh host fixtures, copy controls.json to host-input-controls.json",
+    "Run pure-controls/parse-controls.ps1 to fresh parse-controls.json",
+    "Archive actual control receipts",
+    "Run one compiler-only build after all exact guards pass"
+  ],
+  "holds": ["No native parity", "No GUI or executable launch", "No test runner", "No execution by reviewer"]
+}

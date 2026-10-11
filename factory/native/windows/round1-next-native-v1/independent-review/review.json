@@ -1,0 +1,118 @@
+{
+  "schema": "next-native-independent-source-review-v1",
+  "status": "clear-source-and-control-design",
+  "producerStageSha256": "e77587a79f334e048d368be6e1cce73ad6c7001ca7311ddb84b14b701701cb3c",
+  "verifiedStagePins": 89,
+  "plans": [
+    {
+      "label": "padding-frame",
+      "planHash": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89",
+      "case": {
+        "hash": "sha256:58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+        "id": "swiftui.padding-frame.recipe/case/8805e6d0729b052d"
+      },
+      "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "sourceBindingCount": 8
+    },
+    {
+      "label": "preference-key",
+      "planHash": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08",
+      "case": {
+        "hash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "id": "swiftui.preference-key.recipe/case/66b6b44aaff817d6"
+      },
+      "sourceHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+      "sourceBindingCount": 8
+    },
+    {
+      "label": "scroll-view",
+      "planHash": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904",
+      "case": {
+        "hash": "sha256:56c2625f63e7e633c18ea0cdfca37545748f1d098622391e3c270be07895dc98",
+        "id": "swiftui.scroll-view.recipe/case/6716afb4fb55269b"
+      },
+      "sourceHash": "sha256:cd6615468e11e0137c6e1c9ada25c0cdf2f5a0f4c33668ec63161674b743a2c4",
+      "sourceBindingCount": 9
+    }
+  ],
+  "reviewedSourcePins": [
+    {
+      "path": "cleanup.ps1",
+      "sha256": "f6cac07e5eaf809d1c8ebf39f26bcf87bf916b54e9653e0509d871a2e2c0c8da",
+      "bytes": 2627
+    },
+    {
+      "path": "capture-repeat.ps1",
+      "sha256": "37efb1e42eee0cf2a926c13c2ab523b9e32da4e29e1ac4dc936393eb8a7343ec",
+      "bytes": 19855
+    },
+    {
+      "path": "run-repeat.ps1",
+      "sha256": "16d62b6f6818d028e61e7a9ace44ec2272963e08fac7b94e6631d092596f0703",
+      "bytes": 6781
+    },
+    {
+      "path": "run-batch.ps1",
+      "sha256": "56d65a3fc3959475c55d699610ae7e5631e6f1fc5c385cb2ae67ea7d34433466",
+      "bytes": 4984
+    },
+    {
+      "path": "repeat-task.ps1",
+      "sha256": "8a27439aa6017f2caac9567f95e348133c805f135217efab4f50b397bfcd1b9f",
+      "bytes": 864
+    },
+    {
+      "path": "contract.json",
+      "sha256": "d35ac90d0418aeb622ed48db50d9e8cdf14e18b2b970ae7968824102f83a09a4",
+      "bytes": 6334
+    },
+    {
+      "path": "namespace.ps1",
+      "sha256": "04f2066a2f8fb510fa47dac69c2835577bbd3c9c1fc08891f1485d231c970dd1",
+      "bytes": 556
+    },
+    {
+      "path": "test-cleanup.ps1",
+      "sha256": "41b4951494571ebce1aa5fbac416b1219004b3b19a5528421c9128f4084be388",
+      "bytes": 4055
+    },
+    {
+      "path": "test-namespace.ps1",
+      "sha256": "71e151caf55eab5b8c8ec9111b4d661ec33d2a1bec89ccbf416a79adac9b3dab",
+      "bytes": 1335
+    },
+    {
+      "path": "parse-controls.ps1",
+      "sha256": "122bd05b709a885c16dd770546132940a7d91ce3e05c8d1a035f2699b80c0e66",
+      "bytes": 734
+    },
+    {
+      "path": "readiness.json",
+      "sha256": "ed896391465eb72981bb8080a5ad51f1cca7b58aa2a4f4487bf2139fb9864397",
+      "bytes": 573
+    },
+    {
+      "path": "root-stage-manifest.json",
+      "sha256": "e77587a79f334e048d368be6e1cce73ad6c7001ca7311ddb84b14b701701cb3c",
+      "bytes": 22509
+    }
+  ],
+  "scope": [
+    "Exactly three physical package plans allowed, exact source/case/plan hashes present in capture guard;25 actual source binding bytes verified (8+8+9).",
+    "Mandatory measured compile receipt &exe hashes join actual build-v2-r1 receipt file, physical executable, exact plan/runtime/source/renderer identity; no old build-r1 fallback.",
+    "Count validated to1or20, fresh namespace checks before/after every dispatch, first failed dispatch aborts without retry.",
+    "Cleanup, namespace, both pure test files &repeat-task are byte-identical to independently reviewed cleanupv2;15/7 control designs inherited exactly.",
+    "Stable retained-handle Kill, primary-error helper, raw CopyToAsync &held-lock release policy copied unchanged."
+  ],
+  "execution": {
+    "pythonStaticReplay": "pass",
+    "PowerShell": 0,
+    "native": 0,
+    "SSH": 0,
+    "compiler": 0,
+    "producerEdits": 0
+  },
+  "actualCompilationScope": "No actual output/compile success asserted by this source review. Dispatcher requires externally measured genuine receipt/exe pins; root owns compile-origin &actual AST/control executions.",
+  "nativeParity": "hold",
+  "completed": "Exact frozen source/input closure & inherited control design cleared."
+}

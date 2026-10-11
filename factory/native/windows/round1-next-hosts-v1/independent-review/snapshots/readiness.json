@@ -1,0 +1,50 @@
+{
+  "kind": "round1-next-hosts-readiness-v1",
+  "feasible": [
+    {
+      "label": "padding-frame",
+      "case": {
+        "hash": "sha256:58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+        "id": "swiftui.padding-frame.recipe/case/8805e6d0729b052d"
+      },
+      "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "planHash": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89",
+      "package": "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\padding-frame\\package"
+    },
+    {
+      "label": "preference-key",
+      "case": {
+        "hash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "id": "swiftui.preference-key.recipe/case/66b6b44aaff817d6"
+      },
+      "sourceHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+      "planHash": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08",
+      "package": "D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\preference-key\\package"
+    }
+  ],
+  "held": {
+    "toggle": "No genuine automatic native toggle paint lowerer; semantics alone cannot substitute widget",
+    "scroll-view": "Requires clipping/content-offset/scroll-provider lowering; not implemented by current host; no fake overflow/scroll",
+    "shapes": "Primary roundedRectangle corner provider excluded",
+    "image": "SF/provider silhouette unavailable",
+    "text": "Bundled/custom font integration unavailable"
+  },
+  "commands": [
+    "powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\build-hosts.ps1 -Package D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\padding-frame\\package",
+    "powershell.exe -NoProfile -ExecutionPolicy Bypass -File D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\build-hosts.ps1 -Package D:\\Claude\\swiftright\\factory\\native\\windows\\round1-next-hosts-v1\\preference-key\\package"
+  ],
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "closureBinding": null,
+  "controls": "Prepared/unrun exact shared production host-input function fixtures: normal, missing, extra, equal-count-wrong, omitted binding, rawhash drift. ASTparse prepared; no compiler/run.",
+  "execution": {
+    "SSH": 0,
+    "compiler": 0,
+    "GUI": 0
+  },
+  "sourceOnlyVerified": [
+    "each exact witness raw SHA joins manifest",
+    "each main differs from base only Graph witness type",
+    "all Package+Sources membership & raw sourceBindings recomputed"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "kind": "root-internal-shared-scroll-helper-controls",
+  "sourcePins": [
+    {
+      "path": "factory/native/windows/round1-scroll-host-v1/pure-controls/FactoryScrollClip.swift",
+      "sha256": "b6d9d4eed48df1d715a370c463caf632298492e2290eff01ebe48d80bf5f4236"
+    },
+    {
+      "path": "factory/native/windows/round1-scroll-host-v1/pure-controls/main.swift",
+      "sha256": "a658fea0b23654552ded13525c7df3d5b2647f8bb19e906ce6580b427219f3d4"
+    }
+  ],
+  "compiler": {
+    "argvPath": "/usr/bin/swiftc",
+    "sha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+  },
+  "runs": [
+    {
+      "label": "version",
+      "argv": [
+        "/usr/bin/swiftc",
+        "--version"
+      ],
+      "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3",
+      "scratchDevice": 16777232,
+      "repoDevice": 16777248,
+      "startedAt": "2026-10-11T04:38:03.093985+00:00",
+      "finishedAt": "2026-10-11T04:38:03.391078+00:00",
+      "exitCode": 0,
+      "stdoutSha256": "04630ab8fa201f57c63c59730e638135e32584a97e16e004a417eb8ed283dc83",
+      "stderrSha256": "bbc8b176d3c74d4c5a7fd00b40280f98168e116d5272273bfe8e71407625540e"
+    },
+    {
+      "label": "compile",
+      "argv": [
+        "/usr/bin/swiftc",
+        "-O",
+        "-module-cache-path",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3/module-cache",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3/FactoryScrollClip.swift",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3/main.swift",
+        "-o",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3/scroll-controls"
+      ],
+      "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3",
+      "scratchDevice": 16777232,
+      "repoDevice": 16777248,
+      "startedAt": "2026-10-11T04:38:03.391171+00:00",
+      "finishedAt": "2026-10-11T04:38:05.363368+00:00",
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "execute",
+      "argv": [
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3/scroll-controls"
+      ],
+      "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/scroll-pure-controls-r3",
+      "scratchDevice": 16777232,
+      "repoDevice": 16777248,
+      "startedAt": "2026-10-11T04:38:05.363427+00:00",
+      "finishedAt": "2026-10-11T04:38:05.635666+00:00",
+      "exitCode": 0,
+      "stdoutSha256": "42f702623c05178e5132796ab9039a43b19b5a97c1e57859a7b994f192f386bd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "executableSha256": "e097ce1dfb7c34f134df34d32220a4cbfb0d3302535bb9a3e7144dfa84bc668b",
+  "executionFromVolumesD": false,
+  "nativeCapture": false,
+  "modelOffsetControlExecuted": false
+}

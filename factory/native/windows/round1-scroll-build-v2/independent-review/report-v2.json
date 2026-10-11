@@ -1,0 +1,41 @@
+{
+  "schema": "round1-scroll-build-independent-source-review-v2",
+  "sourceOnly": true,
+  "decision": "blocked-before-root-controls-or-build",
+  "executionPerformedByThisAgent": false,
+  "builderRootStageManifestSha256": "11d1423be2be77b90d678166971e25b56e1191f97e7937f2caa3b0c11abf19e8",
+  "builderRef": "6fbbbf38d3acc4bf4b1f104f053550bd5eb8c657e5803084030ceca8b6b63983",
+  "scrollPlanSha256": "87e220ea813bfc3a11fca006b1388865c1137f3d3cebd2f760baac96908ba904",
+  "sharedHostHelperSha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+  "inheritedCleanupBuilderManifestSha256": "194dd278a3771d6e8daa416aeaac252bca93f982bc069511aca43bb1c1397b97",
+  "pinnedRuntime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "blocker": {
+    "package": "factory/native/windows/round1-scroll-host-v1/package",
+    "missingFile": "runtime-source-tree.json",
+    "verifier": "factory/native/windows/verify-runtime-source.ps1",
+    "builderCall": "build-host-v2.ps1 Assert-Inputs -> Assert-FactoryRuntimeSource before control admission or compiler",
+    "impact": "source guard throws on Get-FileHash missing path; no compiler entry",
+    "repair": "Add exact runtime-source-tree.json generated from pinned runtime tree, update package/stage manifest & plan tree hash, then re-review source pins"
+  },
+  "strictGatesReviewed": {
+    "controlAdmissionBeforeChildStart": true,
+    "cleanupOutcomeKindsAndFaults": true,
+    "hostInputPositiveAndFiveFaults": true,
+    "astRowsAndCurrentHashes": true,
+    "retainedKernelHandleInherited": true,
+    "rawStreamDrainAndReceiptInherited": true,
+    "naturalExitNeverTerminates": true,
+    "timeoutUnresolvedDescendantRefusesNextBuild": true
+  },
+  "requiredAfterRepair": [
+    "Root runs pure cleanup, host-input, and AST controls with fresh outputs",
+    "Builder admits only exact successful control receipts tied to current helper hashes",
+    "One compiler-only build uses fresh build-v2-r1 output",
+    "Native parity, GUI, executable launch, and test runner remain held"
+  ]
+}

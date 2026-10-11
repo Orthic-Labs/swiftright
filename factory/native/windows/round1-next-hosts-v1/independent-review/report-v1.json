@@ -1,0 +1,46 @@
+{
+  "schema": "round1-next-hosts-independent-source-review-v1",
+  "sourceOnly": true,
+  "producerStageSha256": "10238cb53c484335c57a9466fdd93a547ef2f8ffa62833f3b1be05a33417527c",
+  "stageFilesVerified": 41,
+  "witnesses": [
+    {
+      "case": "padding-frame",
+      "caseIdentity": {
+        "hash": "sha256:58a7c081166141df0b496c4b9ccd0043731d03048993f27842b171387d5c4d5b",
+        "id": "swiftui.padding-frame.recipe/case/8805e6d0729b052d"
+      },
+      "planSha256": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89",
+      "witnessSha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+      "memberCoverage": 7,
+      "sameMainExceptWitnessType": true,
+      "fourLowerersUnchanged": true,
+      "nativeParity": "hold"
+    },
+    {
+      "case": "preference-key",
+      "caseIdentity": {
+        "hash": "sha256:b2292465cf5f9857b92345a973fc413611365606aec12c9dc435f14ed62bc96d",
+        "id": "swiftui.preference-key.recipe/case/66b6b44aaff817d6"
+      },
+      "planSha256": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08",
+      "witnessSha256": "e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+      "memberCoverage": 7,
+      "sameMainExceptWitnessType": true,
+      "fourLowerersUnchanged": true,
+      "nativeParity": "hold"
+    }
+  ],
+  "preparedPureControls": "Production host-input membership guard used by positive fixture & missing/extra/equal-count-wrong/omitted-binding/hash-drift faults; no execution or AST parse receipt claimed.",
+  "buildExecutionStatus": "held-cleanup-repair",
+  "blockers": [
+    {
+      "path": "build-hosts.ps1",
+      "detail": "finally queries Get-Process then Path/StartTime outside guarded catch & invokes taskkill by numeric PID even after natural exit. Exit races can lose observation receipt; identity-check-to-taskkill gap admits PID reuse. Absent driver on timeout leaves descendants unverified."
+    }
+  ],
+  "requestedVersionedRepair": "Do not alter frozen v1. New helper skips kill on natural exit; durably records raw process/output evidence before guarded cleanup; bounded owned descendant inventory records unresolved cleanup explicitly. Preserve exact pinned witness plans & compile-only scope.",
+  "nativeExecution": 0,
+  "compilerExecution": 0,
+  "productionEdits": 0
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "round1-next-build-actual-independent-review-v1",
+  "sourceOnlyReview": true,
+  "executionPerformedByThisAgent": false,
+  "decision": "actual-compile-evidence-accepted-source-and-receipt-gates",
+  "historicalPreflightPreserved": {
+    "rootBuildProcess": {"path": "root-build-process.json", "exitCode": 1, "compilerInvocations": 0, "stderrSha256": "8cb01fdfb4bb4371f188b2bf0548ebc69fb7c75d437030ecf1c6d9e66577144a"},
+    "rootControlsR2": {"path": "root-controls-r2-process.json", "exitCode": 255, "compilerInvocations": 0, "stderrSha256": "c157c19bf9eb4410c37a5f1d684819850855af23da2b5b6f7e8451aec9cfa42b"},
+    "rootPathTranslation": {"path": "root-controls-r3-process.json", "exitCode": 1, "compilerInvocations": 0, "stderrSha256": "8fb4a1d9653af5107761a7a64ec0cc1413ca0948431b52e9e463b98915c46566"},
+    "preflightDisposition": "root-preflight-disposition.json records missing runtime-source-tree metadata, controls request failure 255, premature dispatch, metadata stop before compiler, and unchanged source plan"
+  },
+  "actualControls": {
+    "processReceipt": {"path": "root-controls-r4-process.json", "exitCode": 0, "startedAt": "2026-10-11T04:33:02.114418+00:00", "finishedAt": "2026-10-11T04:33:03.441376+00:00", "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4"},
+    "cleanupReceipt": {"path": "root-controls-actual-r1.json", "sha256": "df15755782866de673ef882d44da9d3fad7ef30c0f74a2b559631b4d167dcadd", "compilerInvocations": 0, "nativeCalls": 0, "positiveCases": 3, "faultsRejected": 3},
+    "parseReceipt": {"path": "root-parse-actual-r1.json", "sha256": "a84f9b154ec30bcc9f36e639905e895fe0889313af7f467068456749822463f6", "rows": 3, "parserErrors": 0},
+    "builderBindings": {"path": "root-build-file-r2.ps1", "sha256": "a7fcbd5c3cd84eac265fba7e9644aca766a10c4ca212173a130384c96bd349b5", "controlReceiptHashesBound": true}
+  },
+  "actualBuild": {
+    "processReceipt": {"path": "root-build-r2-process.json", "exitCode": 0, "startedAt": "2026-10-11T04:33:40.895219+00:00", "finishedAt": "2026-10-11T04:35:07.287112+00:00", "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4"},
+    "variants": [
+      {
+        "case": "padding-frame",
+        "observation": "factory/native/windows/round1-next-hosts-v1/padding-frame/build-actual-v2-r1/observation.json",
+        "observationSha256": "b4bd5b516f23e7ad1d05cd674098ab104e705adeededbea4a14ab5d246111cb6",
+        "planSha256": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89",
+        "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+        "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+        "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+        "pid": 5824,
+        "processStartedAt": "2026-10-11T04:33:40.6405865Z",
+        "finishedAt": "2026-10-11T04:34:22.5511922+00:00",
+        "exitCode": 0,
+        "ownedExited": true,
+        "cleanupAction": "natural-exit-no-termination",
+        "streamDrainComplete": true,
+        "exe": {"path": "build-actual-v2-r1/FactoryProbe.exe", "sha256": "6ba84c2e99d46bab646d4fd588e3351816118a7c9e53322a75c03371be2fa49c", "bytes": 3640320, "subsystem": 2},
+        "stdout": {"sha256": "f0afa9e4c7addd76072e55e2a8737345ac42b4fe06407760fa73efdba7e0a485", "bytes": 336},
+        "stderr": {"sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "bytes": 0}
+      },
+      {
+        "case": "preference-key",
+        "observation": "factory/native/windows/round1-next-hosts-v1/preference-key/build-actual-v2-r1/observation.json",
+        "observationSha256": "43e6b9dd695965d07fbca8945e0aad45afe243197caa2caa9994498b65f7897f",
+        "planSha256": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08",
+        "sourceHash": "sha256:e104e949a6e0f8c6e9e41a6d2d7815a112a40e19d5919b82d2074fd7f5bf9c1f",
+        "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+        "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+        "pid": 29048,
+        "processStartedAt": "2026-10-11T04:34:22.9942894Z",
+        "finishedAt": "2026-10-11T04:35:05.5196249+00:00",
+        "exitCode": 0,
+        "ownedExited": true,
+        "cleanupAction": "natural-exit-no-termination",
+        "streamDrainComplete": true,
+        "exe": {"path": "build-actual-v2-r1/FactoryProbe.exe", "sha256": "665846f7c9be47a7d6050e85cd762c660a305e642a58259371b9a2e3de97f6b1", "bytes": 3652096, "subsystem": 2},
+        "stdout": {"sha256": "1a1104573297424da5ef525b4c359d0bde8bab3033f57b24db24dc47d94ec79c", "bytes": 336},
+        "stderr": {"sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "bytes": 0}
+      }
+    ]
+  },
+  "ownedProcessEvidence": {
+    "receiptFields": ["pid", "processStartedAt", "ownedExited", "cleanupAction", "exitCode", "streamDrainComplete"],
+    "lineageClaim": "retained-handle builder receipt only",
+    "osCimClaims": false,
+    "processStartInfoLineageClaims": false,
+    "descendantOwnership": "not-observed on natural exit; no process-tree closure claim"
+  },
+  "transfer": {
+    "packet": "factory/native/windows/round1-next-hosts-v1/root-build-output-scp-r2.json",
+    "filesAcquiredOnce": 8,
+    "filesPerCase": 4,
+    "missingRequestedFile": "owned-process.json",
+    "missingReason": "retained-handle builder emits lineage fields in observation.json",
+    "compilerRetry": false,
+    "remoteDeletion": false,
+    "allAcquiredHashesMatch": true
+  },
+  "nativeAndParity": {"nativeWindowOpened": false, "nativeParity": "hold", "testRunnerExecuted": false}
+}

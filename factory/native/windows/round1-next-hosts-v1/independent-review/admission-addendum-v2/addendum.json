@@ -1,0 +1,20 @@
+{
+  "schema": "next-host-source-admission-addendum-v2",
+  "priorReviewScope": "Witness/compiler input source-only joins; no actual remote metadata-presence or control execution verified.",
+  "discoveredGap": "V1 package omitted runtime-source-tree.json consumed by Assert-FactoryRuntimeSource; actual preflight failed before compiler. Root reports control dispatch failure & build-before-control-result sequencing; no passed control claim.",
+  "requiredAdmission": [
+    "Exact plan raw SHA & witness.manifest.json/sourceHash",
+    "runtime-source-receipt.json raw SHA matches plan",
+    "runtime-source-tree.json present, raw SHA matches plan.runtimeSourceTreeHash; complete unique Package.swift+Sources binding list matches actual dependency bytes/membership",
+    "Host Package.swift+Sources unique complete binding coverage & raw hashes",
+    "Bridge Package.swift+Sources complete membership & raw hashes",
+    "Actual renderer/compiler/verifier raw SHA pins",
+    "Successful pure cleanup decision receipt bound to actual production helper SHA, strict positive/fault counts & expected faults",
+    "Successful host-input membership control receipt bound to actual shared helper SHA",
+    "Actual AST parse receipt covers exact builder/production helpers/control sources with current raw SHAs & zero errors",
+    "Compiler entry reads & rejects missing/stale/failed control receipts BEFORE starting child"
+  ],
+  "historicalArtifactsPreserved": true,
+  "compilerRunDuringReview": 0,
+  "GUI": 0
+}

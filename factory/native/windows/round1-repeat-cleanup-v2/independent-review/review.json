@@ -1,0 +1,87 @@
+{
+  "schema": "cleanup-v2-final-independent-source-review-v1",
+  "status": "clear-source-and-pure-control-design",
+  "producerStageSha256": "c5989121c675797018d99ea2f4fe2e1f904937fabfc9fa7dbfe7999f4c46826d",
+  "producerPinsVerified": 73,
+  "exactReviewedSources": [
+    {
+      "path": "cleanup.ps1",
+      "sha256": "f6cac07e5eaf809d1c8ebf39f26bcf87bf916b54e9653e0509d871a2e2c0c8da",
+      "bytes": 2627
+    },
+    {
+      "path": "capture-repeat.ps1",
+      "sha256": "b7dbd492d10ea070a9bdbf7b5369a184ae9227d50eb49edf08441936f333eeae",
+      "bytes": 19562
+    },
+    {
+      "path": "run-repeat.ps1",
+      "sha256": "027fa26ae985705c6a5ca6c6f889feb8b593a3a8650a3a3426afc47f8e628b48",
+      "bytes": 6724
+    },
+    {
+      "path": "run-batch.ps1",
+      "sha256": "bb1d59f2eed98fc6fdd22086ce95ac80b47ac27a5ded18b55ce4a5557258549f",
+      "bytes": 4902
+    },
+    {
+      "path": "repeat-task.ps1",
+      "sha256": "8a27439aa6017f2caac9567f95e348133c805f135217efab4f50b397bfcd1b9f",
+      "bytes": 864
+    },
+    {
+      "path": "contract.json",
+      "sha256": "5baf51a70dda614eb2de790fa410d634af493dddece516f62dc133885e6f4d6e",
+      "bytes": 4351
+    },
+    {
+      "path": "namespace.ps1",
+      "sha256": "04f2066a2f8fb510fa47dac69c2835577bbd3c9c1fc08891f1485d231c970dd1",
+      "bytes": 556
+    },
+    {
+      "path": "parse-controls.ps1",
+      "sha256": "122bd05b709a885c16dd770546132940a7d91ce3e05c8d1a035f2699b80c0e66",
+      "bytes": 734
+    },
+    {
+      "path": "test-cleanup.ps1",
+      "sha256": "41b4951494571ebce1aa5fbac416b1219004b3b19a5528421c9128f4084be388",
+      "bytes": 4055
+    },
+    {
+      "path": "test-namespace.ps1",
+      "sha256": "71e151caf55eab5b8c8ec9111b4d661ec33d2a1bec89ccbf416a79adac9b3dab",
+      "bytes": 1335
+    },
+    {
+      "path": "root-stage-manifest.json",
+      "sha256": "c5989121c675797018d99ea2f4fe2e1f904937fabfc9fa7dbfe7999f4c46826d",
+      "bytes": 19203
+    },
+    {
+      "path": "diagnosis.json",
+      "sha256": "c53dd9e481d487e8d2bda87b9c276a29a34f059fa89a98f98ad65ebe98f779cb",
+      "bytes": 1747
+    }
+  ],
+  "resolvedFindings": [
+    "All post-Start setup finally-covered; nullable stream failures cannot bypass cleanup.",
+    "Stable Process.Handle acquired before retained Path/StartTime plus fresh identity gates; same object Kill/Wait confirms exit.",
+    "Actual production priority helper called after capture finally; tests pass original ErrorRecord through production helper for timeout/receipt errors.",
+    "Actual release helper holds desktop lock on unconfirmed owned exit; coordinator targeted absent-process proof & unknown identity/lookup holds are explicit."
+  ],
+  "rawStreamSemantics": "CopyToAsync from StandardOutput/StandardError.BaseStream to CreateNew FileStreams preserves actual emitted bytes; both streams independently waited/flushed/disposed, errors retained separately. Native byte receipts not yet captured.",
+  "batchGuards": "Fresh output namespace; exactly20 requested; first failure abort; no retries; source/contract/plan/runtime/bridge/renderer/exe dependencies checked before/after each actual future replay.",
+  "pureControls": "15 production helper controls &7 production namespace controls are prepared. Reviewer inspected calls/expected rejection conditions; local PowerShell unavailable, zero actual PS executions claimed.",
+  "nextExecution": "Root executes actual PowerShell AST +pure controls before any new native run.",
+  "reviewExecution": {
+    "pythonStaticReplay": "pass",
+    "powerShell": 0,
+    "SSH": 0,
+    "native": 0,
+    "compiler": 0,
+    "producerEdits": 0
+  },
+  "replayScript": "review_static.py"
+}

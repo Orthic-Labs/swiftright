@@ -1,0 +1,67 @@
+{
+  "schema": "round1-next-build-independent-source-review-v2",
+  "sourceOnly": true,
+  "decision": "clearance-for-root-pure-controls-then-single-build",
+  "executionPerformedByThisAgent": false,
+  "frozenBuilderManifestSha256": "194dd278a3771d6e8daa416aeaac252bca93f982bc069511aca43bb1c1397b97",
+  "builderScope": "compiler-only; no executable launch, GUI, desktop lock, native capture, test runner, or stage writes",
+  "pinnedPlans": [
+    {
+      "case": "padding-frame",
+      "package": "factory/native/windows/round1-next-hosts-v1/padding-frame/package",
+      "planSha256": "6f1288f8b5860434e88a68212018310880a6cbff6a1736499543bdd302539e89",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "sourceMemberBindings": 8,
+      "bridgeMemberBindings": 10,
+      "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "case": "preference-key",
+      "package": "factory/native/windows/round1-next-hosts-v1/preference-key/package",
+      "planSha256": "b8347013716e2d13b1ac13bfd09191d9ca1f89d6deae20d7423c23997ae88e08",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "sourceMemberBindings": 8,
+      "bridgeMemberBindings": 10,
+      "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    }
+  ],
+  "builderGuards": {
+    "exactPackageAllowlist": true,
+    "planHashAllowlist": true,
+    "runtimeCommitAndTreeGuard": true,
+    "runtimeReceiptGuard": true,
+    "factorySourceMemberHashGuard": true,
+    "bridgeMembershipAndMemberHashGuard": true,
+    "compilerHashGuard": true,
+    "freshVersionedOutput": "build-v2-r1"
+  },
+  "cleanupReview": {
+    "retainedKernelProcessHandle": true,
+    "waitAndTerminateUseSameHandle": true,
+    "pidBasedTaskkill": false,
+    "getProcessLookup": false,
+    "naturalExitNeverTerminates": true,
+    "deadline": "300000ms",
+    "ownedTimeoutAction": "TerminateProcess(retainedHandle,124), bounded 5000ms wait",
+    "rawStdoutStderrBaseStreamCopies": true,
+    "streamDrainBound": "5000ms each",
+    "receiptWrites": ["before launch", "after PID/start time", "before cleanup action", "after cleanup", "after stream drain/files"],
+    "timeoutDescendantOwnership": "unresolved-root-only-termination",
+    "timeoutNextBuild": "refused by final gate; preserve receipt"
+  },
+  "pureControls": {
+    "astParser": "factory/native/windows/round1-next-build-v2/pure-controls/parse-controls.ps1",
+    "cleanupDecision": "factory/native/windows/round1-next-build-v2/pure-controls/test-cleanup.ps1",
+    "requiredBeforeBuild": true,
+    "executedByThisAgent": false
+  },
+  "remainingHolds": [
+    "Root must run AST and pure cleanup controls before either compiler invocation.",
+    "Any timeout, failed wait, failed drain, unresolved owned exit, or cleanup error blocks next build.",
+    "Native parity and executable launch remain held."
+  ]
+}
