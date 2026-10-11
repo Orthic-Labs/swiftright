@@ -1,0 +1,63 @@
+{
+  "kind": "paired-stack-custom-observation-independent-review-v1",
+  "status": "independently-verified-candidate-observation-held",
+  "producerStage": {
+    "sha256": "47cc44505c72e5feaa96250c83cbb37bc60d42e0d2e7f79707741b308146fe62",
+    "expectedSha256": "47cc44505c72e5feaa96250c83cbb37bc60d42e0d2e7f79707741b308146fe62",
+    "fileCount": 4,
+    "allRowsMatch": true,
+    "rows": [
+      {
+        "path": "README.md",
+        "exists": true,
+        "bytes": 987,
+        "sha256": "a0e0ae0fd5bc4975518de2b516b13728c61f69f8ea0ec8488d2ec9b9f667dd49"
+      },
+      {
+        "path": "build_report.py",
+        "exists": true,
+        "bytes": 11879,
+        "sha256": "66694841cbe18162568a3b4914718cc938eeacbb75e8e38a01fe3b064d2e4c47"
+      },
+      {
+        "path": "raw-pins.json",
+        "exists": true,
+        "bytes": 169134,
+        "sha256": "acf6ba8e5d243c0f17eec41dd60a0c97b8fc843aafec5edb68dee771845ba353"
+      },
+      {
+        "path": "report.json",
+        "exists": true,
+        "bytes": 17820,
+        "sha256": "e1ac65bcd95050d89113342bd5b8da453aafa8b18880ffeb240cc100c166271e"
+      }
+    ]
+  },
+  "rawJoins": {
+    "baseline": "accepted",
+    "rawWindows": 2,
+    "rawMacArchives": 2,
+    "rawFileCount": 881
+  },
+  "observations": {
+    "stack": "probe-failure; renderer failed before UIA/PW capture; status is not DIFF",
+    "custom": "observed-partial; one PrintWindow plus stable repeat, one screen plus stable repeat, root UIA children=0"
+  },
+  "holds": [
+    "semantic layout unavailable",
+    "shape unavailable",
+    "provider unavailable",
+    "timing unavailable",
+    "zero goldens",
+    "parity unavailable",
+    "qualification held"
+  ],
+  "faultControls": {
+    "mismatched-source": "rejected",
+    "mismatched-case": "rejected",
+    "missing-raw": "rejected",
+    "forged-status": "rejected"
+  },
+  "candidateOnly": true,
+  "nativeDiff": false
+}

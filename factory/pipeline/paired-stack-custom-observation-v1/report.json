@@ -1,0 +1,436 @@
+{
+  "candidateOnly": true,
+  "controls": {
+    "required": [
+      "mismatched-source-rejected",
+      "mismatched-case-rejected",
+      "missing-raw-rejected",
+      "forged-status-rejected"
+    ],
+    "runner": "build_report.py --fault-controls"
+  },
+  "goldens": 0,
+  "inputs": {
+    "macArchives": [
+      {
+        "acceptance": "not-promoted",
+        "archiveInventoryRoot": "factory/native/macos/evidence/20261010-primary-five-r3/swiftui.stack-overlay.recipe_case_aac89c30fbc61515",
+        "candidateOnly": true,
+        "caseHash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+        "channels": {
+          "animation": "NOT_ATTEMPTED: static pilot",
+          "compositorPaint": "OBSERVED",
+          "events": "OBSERVED: render clock & host window display only",
+          "externalAX": "OBSERVED",
+          "offscreenPaint": "OBSERVED",
+          "rootLayout": "OBSERVED",
+          "textRenderer": "OBSERVED",
+          "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+          "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+        },
+        "runs": 20,
+        "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+        "summaryPath": "factory/native/macos/evidence/20261010-primary-five-r3/swiftui.stack-overlay.recipe_case_aac89c30fbc61515/summary.json",
+        "summarySha256": "sha256:b807b72dddfa419386e0324857b366323fd661e8c6646542f60bfb47a51a5100"
+      },
+      {
+        "acceptance": "not-promoted",
+        "archiveInventoryRoot": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29",
+        "candidateOnly": true,
+        "caseHash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "channels": {
+          "animation": "NOT_ATTEMPTED: static pilot",
+          "compositorPaint": "OBSERVED",
+          "events": "OBSERVED: render clock & host window display only",
+          "externalAX": "HELD",
+          "offscreenPaint": "OBSERVED",
+          "rootLayout": "OBSERVED",
+          "textRenderer": "NOT_APPLICABLE_OR_HELD",
+          "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+          "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+        },
+        "runs": 20,
+        "sourceHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+        "summaryPath": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29/summary.json",
+        "summarySha256": "sha256:131be2bcdcdb141586386181dcbf6bc7845a4122c4d5c8bfb1c05d1bcdbe2bb5"
+      }
+    ],
+    "windowsAttempts": [
+      {
+        "bytes": 51128,
+        "fileCount": 21,
+        "files": [
+          {
+            "bytes": 538,
+            "path": "Package.swift",
+            "sha256": "sha256:2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+          },
+          {
+            "bytes": 1646,
+            "path": "Sources/FactoryProbe/FactoryFill.swift",
+            "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+          },
+          {
+            "bytes": 1023,
+            "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+            "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+          },
+          {
+            "bytes": 3051,
+            "path": "Sources/FactoryProbe/FactoryViewport.swift",
+            "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+          },
+          {
+            "bytes": 424,
+            "path": "Sources/FactoryProbe/Witness.swift",
+            "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+          },
+          {
+            "bytes": 13040,
+            "path": "Sources/FactoryProbe/main.swift",
+            "sha256": "sha256:289f41e1bbbdbdd4d6fdd19e7fdbfcca0c71272fb4e6101089c7931db315cb4b"
+          },
+          {
+            "bytes": 501,
+            "path": "config.json",
+            "sha256": "sha256:897bd1912ec80346f8ee9633525c45353e03a91dab1e690e82d3bf132ee14edb"
+          },
+          {
+            "bytes": 571,
+            "path": "dispatch.json",
+            "sha256": "sha256:46dc56669fa1e6f02632a6ca1c97079f3628a38f83821281ca4eae7753b6aa61"
+          },
+          {
+            "bytes": 372,
+            "path": "hidden-task.vbs",
+            "sha256": "sha256:bcf59c7680144e5ca5ee94fad40e7fd2e29be0b4084d5a8e0d8d5f8f7e61f76b"
+          },
+          {
+            "bytes": 1047,
+            "path": "host-inputs.ps1",
+            "sha256": "sha256:93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+          },
+          {
+            "bytes": 1225,
+            "path": "native-01/host.stderr.txt",
+            "sha256": "sha256:f062fa97e1e925acf36378bf307aa11b2db9c14023a511fa02a94f36995e10f0"
+          },
+          {
+            "bytes": 459,
+            "path": "native-01/host.stdout.txt",
+            "sha256": "sha256:4267c536c0cad634df6a673826f73984300899ce8f67d5a463b49c315a0cd24b"
+          },
+          {
+            "bytes": 275,
+            "path": "native-01/owned-process.json",
+            "sha256": "sha256:4cd682caa973405c2719d59ea163da38bf86d93d3c2fcd7228b9e8fa6576bfc5"
+          },
+          {
+            "bytes": 2866,
+            "path": "observation.json",
+            "sha256": "sha256:284749491fa8358e2985c612be00fb93d72c8b19b433a4c2f3f675a73e24b25e"
+          },
+          {
+            "bytes": 4795,
+            "path": "pixels-background.ps1",
+            "sha256": "sha256:7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+          },
+          {
+            "bytes": 4933,
+            "path": "plan.json",
+            "sha256": "sha256:93ea8d7bc3d87a575897928393cb9884d299acde6d46054e417f7e4f4156912e"
+          },
+          {
+            "bytes": 11275,
+            "path": "runtime-source-receipt.json",
+            "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+          },
+          {
+            "bytes": 2825,
+            "path": "runtime-source-tree.json",
+            "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+          },
+          {
+            "bytes": 110,
+            "path": "scheduled-task-receipt.json",
+            "sha256": "sha256:aa86dcf7d67b19d27d2e62b233b0d9522d3db9fad7833a5b1acab448a43e1a7e"
+          },
+          {
+            "bytes": 152,
+            "path": "task-result.json",
+            "sha256": "sha256:167e6c5564c7ae86369e86742f5512f5b7504f747cbaace5b72bb8a4da098bd8"
+          },
+          {
+            "bytes": 0,
+            "path": "task.log",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "inventorySha256": "sha256:b9b590b11430325c2dfc0117b639d2b86449a1af6882b73b1f6393f56e5da4b1",
+        "root": "factory/native/windows/round1-stack-layout-native-v1/actual-stack-overlay-r1"
+      },
+      {
+        "bytes": 233733,
+        "fileCount": 29,
+        "files": [
+          {
+            "bytes": 538,
+            "path": "Package.swift",
+            "sha256": "sha256:2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a"
+          },
+          {
+            "bytes": 1646,
+            "path": "Sources/FactoryProbe/FactoryFill.swift",
+            "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+          },
+          {
+            "bytes": 1023,
+            "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+            "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+          },
+          {
+            "bytes": 3051,
+            "path": "Sources/FactoryProbe/FactoryViewport.swift",
+            "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+          },
+          {
+            "bytes": 1233,
+            "path": "Sources/FactoryProbe/Witness.swift",
+            "sha256": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b"
+          },
+          {
+            "bytes": 13040,
+            "path": "Sources/FactoryProbe/main.swift",
+            "sha256": "sha256:c3e2835b18265f50718d17cd7dde2e006e9ee137976dc738fd44e186003edd51"
+          },
+          {
+            "bytes": 501,
+            "path": "config.json",
+            "sha256": "sha256:239a9cb976d8c62718bdac7a3418f80148fbf84426923f7d5c2e58a75e43cdad"
+          },
+          {
+            "bytes": 598,
+            "path": "dispatch.json",
+            "sha256": "sha256:4c25a646854885afb01637835131f65335488593b1268aa3cdf20258cb82ae1b"
+          },
+          {
+            "bytes": 372,
+            "path": "hidden-task.vbs",
+            "sha256": "sha256:70d27169e448f885ac19abf6f9816a95301a411bd5dc3160a4f20bb3e7b8b18b"
+          },
+          {
+            "bytes": 1047,
+            "path": "host-inputs.ps1",
+            "sha256": "sha256:93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+          },
+          {
+            "bytes": 1529,
+            "path": "native-01/host.stderr.txt",
+            "sha256": "sha256:26f7577b69c1c3dec0e2bde2622b22da5abba392b11d0ecf014f2a735212f997"
+          },
+          {
+            "bytes": 98310,
+            "path": "native-01/host.stdout.txt",
+            "sha256": "sha256:785ab52fb7b875b1d4ddfcae5294f27be855025d86288b3f13ea6ee51442b00a"
+          },
+          {
+            "bytes": 131,
+            "path": "native-01/launch-observation.json",
+            "sha256": "sha256:d783d5f9d26b7969a0237742713badcdde04390bd35b763d4857f20fde87d2a3"
+          },
+          {
+            "bytes": 8087,
+            "path": "native-01/native.pixels.json",
+            "sha256": "sha256:4dae428c9aa2a68557cd90c2af296adb6f18e141f725306aadc04d0c4c38b52e"
+          },
+          {
+            "bytes": 3293,
+            "path": "native-01/native.printwindow.png",
+            "sha256": "sha256:837b0dc99e1b2557e74b8253e2ebee86f12b736f21b37166abbc200c664de896"
+          },
+          {
+            "bytes": 3293,
+            "path": "native-01/native.printwindow.repeat.png",
+            "sha256": "sha256:837b0dc99e1b2557e74b8253e2ebee86f12b736f21b37166abbc200c664de896"
+          },
+          {
+            "bytes": 32395,
+            "path": "native-01/native.screen.png",
+            "sha256": "sha256:39ec4bc83fa4f4ab85b6245e425dd8e46feab64b8c765b795b68201a7b500fe2"
+          },
+          {
+            "bytes": 32395,
+            "path": "native-01/native.screen.repeat.png",
+            "sha256": "sha256:39ec4bc83fa4f4ab85b6245e425dd8e46feab64b8c765b795b68201a7b500fe2"
+          },
+          {
+            "bytes": 505,
+            "path": "native-01/native.uia.json",
+            "sha256": "sha256:a2e37670533361869b5293d0cc168fb03bd8eb260514e29d052435580165332d"
+          },
+          {
+            "bytes": 275,
+            "path": "native-01/owned-process.json",
+            "sha256": "sha256:93d8f6ed44cc3e507ab6e82f1db474b81ee2e5e326971fbc735a9650bd8ddb44"
+          },
+          {
+            "bytes": 3548,
+            "path": "native-observation.json",
+            "sha256": "sha256:cf01982ea4097f64d7e192da68f840a93b7e2695c2816b5e38a1d5789a7a006d"
+          },
+          {
+            "bytes": 2866,
+            "path": "observation.json",
+            "sha256": "sha256:335314858d411c1d6b4c29ae0728e5c0ad9f4026239d044680812cb5552b412a"
+          },
+          {
+            "bytes": 4795,
+            "path": "pixels-background.ps1",
+            "sha256": "sha256:7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef"
+          },
+          {
+            "bytes": 4903,
+            "path": "plan.json",
+            "sha256": "sha256:2ac073c551a52b7b3390c6e8c026bb7e2da989a1bf98f8a9bc87ca025b453124"
+          },
+          {
+            "bytes": 11275,
+            "path": "runtime-source-receipt.json",
+            "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+          },
+          {
+            "bytes": 2825,
+            "path": "runtime-source-tree.json",
+            "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+          },
+          {
+            "bytes": 110,
+            "path": "scheduled-task-receipt.json",
+            "sha256": "sha256:e5e2d0f0c5359217e60c25c465c5941ea73fed81e559a317ff90dae197242b16"
+          },
+          {
+            "bytes": 149,
+            "path": "task-result.json",
+            "sha256": "sha256:62e713995c8897febbfdd461e8f620fc3ca9727bf6bfd8683edea969ae18eac5"
+          },
+          {
+            "bytes": 0,
+            "path": "task.log",
+            "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "inventorySha256": "sha256:fa95d9ba37bbb56b0dca13521c02bbd2df800fa50a2e9408d3e122da139104ed",
+        "root": "factory/native/windows/round1-stack-layout-native-v1/actual-custom-layout-r1"
+      }
+    ]
+  },
+  "kind": "f9-paired-stack-custom-observation-v1",
+  "observations": [
+    {
+      "archiveJoin": {
+        "runs": 20,
+        "status": "exact-case-source-join",
+        "summary": "factory/native/macos/evidence/20261010-primary-five-r3/swiftui.stack-overlay.recipe_case_aac89c30fbc61515/summary.json"
+      },
+      "case": {
+        "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0",
+        "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515"
+      },
+      "channels": {
+        "layout": "unavailable",
+        "printWindow": "unavailable",
+        "screen": "unavailable",
+        "shape": "unavailable",
+        "uia": "unavailable"
+      },
+      "comparison": "no native DIFF: Windows probe failed before capture; Mac candidate channels are separate",
+      "failureClass": "unsupportedOverlay",
+      "host": "windows",
+      "id": "windows-stack-overlay-r1",
+      "nativeUnits": {
+        "layout": "unavailable",
+        "reason": "renderer failed before native capture",
+        "shape": "unavailable"
+      },
+      "rawDispatchStatus": "hold-harness-error",
+      "rawInputRoots": [
+        "factory/native/windows/round1-stack-layout-native-v1/actual-stack-overlay-r1",
+        "factory/native/macos/evidence/20261010-primary-five-r3/swiftui.stack-overlay.recipe_case_aac89c30fbc61515"
+      ],
+      "rawTaskResult": {
+        "error": "Renderer exited before capture",
+        "finishedAt": "2026-10-11T03:52:12.5580833+00:00",
+        "status": "hold-harness-error"
+      },
+      "recipe": "swiftui.stack-overlay.recipe",
+      "rendererError": "FACTORY_RENDER_ERROR ... Overlay",
+      "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+      "status": "probe-failure"
+    },
+    {
+      "archiveJoin": {
+        "runs": 20,
+        "status": "exact-case-source-join",
+        "summary": "factory/native/macos/evidence/20261010-corrected-primary/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29/summary.json"
+      },
+      "capture": {
+        "dpi": 240,
+        "height": 600,
+        "hwnd": 79433500,
+        "method": "UIA+PrintWindow(PW_CLIENTONLY|PW_RENDERFULLCONTENT)+CopyFromScreen",
+        "methodsEqual": false,
+        "pid": 53164,
+        "printWindowPngSha256": "sha256:837b0dc99e1b2557e74b8253e2ebee86f12b736f21b37166abbc200c664de896",
+        "printWindowRepeatStable": true,
+        "repeatPngSha256": "sha256:837b0dc99e1b2557e74b8253e2ebee86f12b736f21b37166abbc200c664de896",
+        "screenPngSha256": "sha256:39ec4bc83fa4f4ab85b6245e425dd8e46feab64b8c765b795b68201a7b500fe2",
+        "screenRepeatSha256": "sha256:39ec4bc83fa4f4ab85b6245e425dd8e46feab64b8c765b795b68201a7b500fe2",
+        "screenRepeatStable": true,
+        "width": 800
+      },
+      "case": {
+        "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+        "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29"
+      },
+      "channels": {
+        "enabled": "raw-root-only-not-semantic",
+        "label": "unavailable",
+        "layout": "unavailable",
+        "printWindow": "observed-once-plus-repeat",
+        "role": "unavailable",
+        "screen": "observed-once-plus-repeat",
+        "shape": "unavailable",
+        "uia": "root-only-empty-children"
+      },
+      "comparison": "no native DIFF: Mac custom archive has separate candidate channels & no shared qualified semantics",
+      "host": "windows",
+      "id": "windows-custom-layout-r1",
+      "nativeUnits": {
+        "layout": "unavailable",
+        "reason": "native packet has pixels/viewport only; no provider geometry",
+        "shape": "unavailable"
+      },
+      "rawDispatchStatus": "captured-single-observational-uia-printwindow",
+      "rawInputRoots": [
+        "factory/native/windows/round1-stack-layout-native-v1/actual-custom-layout-r1",
+        "factory/native/macos/evidence/20261010-corrected-primary/swiftui.custom-layout.recipe_case_b30ed0b185e8cb29"
+      ],
+      "rawTaskResult": {
+        "error": "",
+        "finishedAt": "2026-10-11T03:52:26.2609391+00:00",
+        "status": "captured-single-observational-uia-printwindow"
+      },
+      "recipe": "swiftui.custom-layout.recipe",
+      "sourceHash": "sha256:77cced764631365ef220482cd31b522730fce73f05b5e1e03dd43a31f23e9a5b",
+      "status": "observed-partial",
+      "uia": {
+        "children": 0,
+        "rootControlType": "ControlType.Window",
+        "semanticFields": "unavailable"
+      }
+    }
+  ],
+  "parity": "unavailable",
+  "qualification": "held",
+  "version": 1
+}
