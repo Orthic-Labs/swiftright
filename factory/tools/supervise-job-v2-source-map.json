@@ -1,0 +1,45 @@
+{
+  "kind": "factory-supervise-job-source-map-v2",
+  "status": "source-ready-controls-pending-root-execution",
+  "sources": {
+    "supervisor": {
+      "path": "factory/tools/supervise-job-v2.py",
+      "sha256": "sha256:013fdd716f94b90db3a66a28049ca73474ede750e947a6173efd0b767646dd72",
+      "bytes": 12403
+    },
+    "controls": {
+      "path": "factory/tools/test-supervise-job-v2-controls.py",
+      "sha256": "sha256:837c9424fa2b6d883145c55d42d90c6823324e5e6ff2603c5637f43ebcf4f2c8",
+      "bytes": 6033
+    }
+  },
+  "frozenPredecessor": {
+    "path": "factory/tools/supervise-job.py",
+    "sha256": "sha256:c30f2fe5dcf3b1ae3402766fc9ef5c960784cb3f6635f001f6ad09cb65a035b7",
+    "bytes": 5134,
+    "mutated": false
+  },
+  "controls": {
+    "cases": [
+      "baseline receipt & known quiescence",
+      "live inventory retry",
+      "live inventory timeout with owned descendant cleanup",
+      "post-exit inventory timeout fails closed with unknown quiescence",
+      "known residual descendant cleanup after leader exit",
+      "log budget",
+      "wall-time budget",
+      "RSS budget"
+    ],
+    "nativeActions": 0,
+    "remoteActions": 0,
+    "sourceOnly": true,
+    "execution": "root must run controls under bounded supervisor"
+  },
+  "invariants": [
+    "inventory failure always leaves receipt",
+    "signals target only original leader PGID after leader ownership proof",
+    "unknown inventory cannot certify quiescence",
+    "stdout/stderr hashes are streamed in 1 MiB chunks",
+    "no broad process scan or kill"
+  ]
+}

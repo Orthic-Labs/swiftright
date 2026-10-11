@@ -1,0 +1,46 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import time; payload=bytearray(16*1024*1024); payload[0]=1; time.sleep(5)"
+  ],
+  "pid": 62593,
+  "exitCode": -15,
+  "budgetFailure": "rss-budget",
+  "startedAt": "2026-10-11T19:13:25.680974+00:00",
+  "finishedAt": "2026-10-11T19:13:25.994186+00:00",
+  "seconds": 0.313,
+  "peakGroupRssBytes": 31637504,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 3,
+    "errors": []
+  },
+  "finalInventory": {
+    "known": true,
+    "count": 0,
+    "rssBytes": 0,
+    "error": "",
+    "attempts": 1
+  },
+  "quiescenceKnown": true,
+  "ownedGroupQuiescent": true,
+  "termination": [
+    {
+      "signal": "SIGTERM",
+      "sent": true,
+      "leaderAlive": true
+    }
+  ],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

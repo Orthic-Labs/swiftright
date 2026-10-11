@@ -1,0 +1,43 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import time; time.sleep(0.8)"
+  ],
+  "pid": 62495,
+  "exitCode": 0,
+  "budgetFailure": "inventory-unavailable",
+  "startedAt": "2026-10-11T19:13:22.095300+00:00",
+  "finishedAt": "2026-10-11T19:13:23.185794+00:00",
+  "seconds": 1.09,
+  "peakGroupRssBytes": 14893056,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 9,
+    "errors": [
+      "attempt-1:TimeoutError:injected post-exit inventory timeout;attempt-2:TimeoutError:injected post-exit inventory timeout;attempt-3:TimeoutError:injected post-exit inventory timeout",
+      "attempt-1:TimeoutError:injected post-exit inventory timeout;attempt-2:TimeoutError:injected post-exit inventory timeout;attempt-3:TimeoutError:injected post-exit inventory timeout"
+    ]
+  },
+  "finalInventory": {
+    "known": false,
+    "count": null,
+    "rssBytes": null,
+    "error": "attempt-1:TimeoutError:injected post-exit inventory timeout;attempt-2:TimeoutError:injected post-exit inventory timeout;attempt-3:TimeoutError:injected post-exit inventory timeout",
+    "attempts": 3
+  },
+  "quiescenceKnown": false,
+  "ownedGroupQuiescent": false,
+  "termination": [],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

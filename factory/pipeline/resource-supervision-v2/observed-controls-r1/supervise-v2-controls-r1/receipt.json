@@ -1,0 +1,41 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "python3",
+    "factory/tools/test-supervise-job-v2-controls.py",
+    "--control-root",
+    ".factory-work/resume-supervision-v1/supervise-v2-real-controls-r1"
+  ],
+  "pid": 62449,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-11T19:13:19.688753+00:00",
+  "finishedAt": "2026-10-11T19:13:26.200010+00:00",
+  "seconds": 6.511,
+  "peakGroupRssBytes": 46333952,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 24,
+    "errors": []
+  },
+  "finalInventory": {
+    "known": true,
+    "count": 0,
+    "rssBytes": 0,
+    "error": "",
+    "attempts": 1
+  },
+  "quiescenceKnown": true,
+  "ownedGroupQuiescent": true,
+  "termination": [],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 923,
+    "sha256": "ffd9f5cf8b4972426a0b787732263da569096d7f557ba5c99db76a4eff69b7c9"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
