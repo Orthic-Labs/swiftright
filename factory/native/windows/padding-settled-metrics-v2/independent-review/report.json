@@ -1,0 +1,35 @@
+{
+  "kind": "independent-padding-metrics-v2-source-review",
+  "disposition": "CLEAR_SOURCE_ONLY",
+  "findings": [],
+  "checks": {
+    "manifestRows": 13,
+    "planBindings": 10,
+    "unchangedPredecessorFiles": 9,
+    "mainDelta": "Three JSON scale casts only; every other main byte preserved",
+    "floatingJSON": "All production floating JSON scalars explicitly Double; raw integer identity fields preserved",
+    "ordering": "Real onReady ABI snapshot before graph flush; first-event seen flag after successful snapshot; first-layout flag after commit plus successful serialization",
+    "errors": "Serializer throws validity/encoding/UTF8 errors; encoding retains underlying error. Ready/event/commit route errors to requestQuit; close errors retained in final nonzero host status",
+    "headless": "Shared production snapshot/serializer called for five fixtures, UInt64.max precision assertion & invalid-infinity domain assertion; legacy CGFloat validity printed",
+    "executions": "Python source/hash replay only; zero compiler/native/remote executions"
+  },
+  "sourcePins": {
+    "factory/native/windows/padding-settled-metrics-v2/source-manifest.json": "8b9dbf4e7b7a0c506eda61c428cc790acda0d92dea05217af0aaa6737ac12c8f",
+    "factory/native/windows/padding-settled-metrics-v2/serializer-control/main.swift": "7b7b79a0e90c63aa696a7347e6ab975fe6dc811bce96b12a2e3548bf3ef64454",
+    "factory/native/windows/padding-settled-metrics-v2/README.md": "6e5d64966245e849e8731f0db3a1858c9c17443d69937a3bf67e399e8ee6cae6",
+    "factory/native/windows/padding-settled-metrics-v2/package/Package.swift": "2c6efb7cb7d819d10defaf8fd49db7c5b049bbb204e4de93884ff420f86dcd0a",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/FactoryContainer.swift": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/FactoryFill.swift": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/FactoryTextGeometry.swift": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/FactoryViewport.swift": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/MetricsLogging.swift": "b2cb941f2183d4abe9f1c93104be2b5debc7196c97b1d0d52306ed0c1423f916",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/MetricsPayload.swift": "cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/Witness.swift": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "factory/native/windows/padding-settled-metrics-v2/package/Sources/FactoryProbe/main.swift": "40ce9f4fe4bf16efe6b0c6e00c042954939cd659c9fc27568c5d6d48a2163b71",
+    "factory/native/windows/padding-settled-metrics-v2/package/plan.json": "5c691cd1e060ae99116795e1122bf396043c290ff1faba58953b6860f24b0a5d",
+    "factory/native/windows/padding-settled-metrics-v2/package/runtime-source-receipt.json": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "factory/native/windows/padding-settled-metrics-v2/package/runtime-source-tree.json": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "factory/native/windows/padding-settled-metrics-v2/package/witness.manifest.json": "0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+  },
+  "qualification": "Source repair eligible for actual Windows headless control; no native outcome emitted"
+}
