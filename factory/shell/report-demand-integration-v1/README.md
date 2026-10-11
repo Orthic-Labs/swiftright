@@ -1,0 +1,9 @@
+# F12 shell demand to F9 report
+
+This adapter carries F12 journey labels into the F9 report through an explicit, source-pinned crosswalk. Ten F12 pilot labels map to curated F2 block IDs: shape → swiftui.shapes.fill-stroke; image → swiftui.image; stack-overlay → swiftui.stack-overlay; text → swiftui.text.bundled-font; custom-layout → swiftui.custom-layout; scroll → swiftui.scroll-view; toggle → swiftui.toggle; disabled → swiftui.disabled; padding-frame → swiftui.padding-frame; preference → swiftui.preference-key. It maps no capabilities, semantic dependencies, progress, or acceptance.
+
+The production adapter accepts exact raw JSON bytes for demand, curated manifest, registry, and crosswalk, parses and hashes those same bytes, and rejects stale crosswalk pins, unknown or duplicate mappings, incomplete journey coverage, and promoted or dropped extended demands. Existing normalized F9 demand input passes through unchanged. Reports retain all 26 journeys and all 107 extended demands as unmapped (61 `unmapped`, 46 `source_inventory_only`).
+
+The offline demonstration at `evidence/current-blocked-report-v4/` used existing native evidence only. It reports 81 cases, 10 primaries, 200 captures, and 81 blocked verdicts; all 10 registry blocks remain blocked. No native collection or queue activation occurred. Its command and stdout/stderr/exit code are archived in `evidence/report-v4.*.txt`; report output includes journey associations and every unmapped demand row.
+
+Run targeted tests with `factory/.venv/bin/python -m unittest factory.shell.test_report_demand -v`. Test output is archived in `evidence/unit-tests-v2.*.txt`. Pre-change source snapshots and input bytes are preserved in `evidence/preimages/`; earlier report attempts are retained and superseded by v4. `stage-manifest.json` lists frozen source, crosswalk, preimage, test, log, and output file hashes and sizes.

@@ -229,15 +229,32 @@ def validate_primary_source(case, lineage, captures, mac_archives, superseded):
 def report(output, cases_path, roots, primary_path, config_path, registry_path, demand_path, compile_path=None, corrections_dir=None, native_holds_path=None, exclude_capture_dirs=None):
     from factory.comparison import compare_case
     from factory.reports.report import build_report
+    from factory.shell.report_demand import build_report_demand, load_source_json
     cases = load_artifact(cases_path)
     collected = collect(cases, roots, exclude_capture_dirs)
     config = load_artifact(config_path)
+    registry, registry_bytes, _ = load_source_json(registry_path)
+    demand, demand_bytes, _ = load_source_json(demand_path)
+    report_demand = demand
+    if isinstance(demand, dict) and "pilot_blocks" in demand and "journey_demands" in demand:
+        crosswalk_path = ROOT / 'factory/shell/report-demand-integration-v1/crosswalk.json'
+        manifest_path = ROOT / 'factory/registry/manifest.json'
+        _, manifest_bytes, _ = load_source_json(manifest_path)
+        _, crosswalk_bytes, _ = load_source_json(crosswalk_path)
+        report_demand = build_report_demand(
+            demand_bytes,
+            manifest_bytes,
+            registry_bytes,
+            crosswalk_bytes,
+        )
     out = fresh_output(output)
     verdicts = [compare_case(case, [c for c in collected['captures'] if c['case']['id'] == case['id']], acceptance_config=config) for case in cases]
     write_artifact(out / 'captures.json', collected['captures'])
     write_artifact(out / 'verdicts.json', verdicts)
     write_artifact(out / 'collection.json', {k: v for k, v in collected.items() if k != 'captures'})
-    paths = build_report(load_artifact(registry_path), cases, collected['captures'], verdicts, out / 'report', load_artifact(demand_path))
+    if report_demand is not demand:
+        write_artifact(out / 'report-demand.json', report_demand)
+    paths = build_report(registry, cases, collected['captures'], verdicts, out / 'report', report_demand)
     compile_value = load_artifact(compile_path) if compile_path else {}
     compile_by_block = {v['block']: v for v in compile_value.get('records', [])}
     native_holds = load_artifact(native_holds_path) if native_holds_path else {}

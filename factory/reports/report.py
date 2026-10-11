@@ -344,6 +344,15 @@ def build_report(registry, cases, captures, verdicts, output_dir, demand=None, *
     receipt_rows = _collection(gate_receipts, "receipts", "gate receipts") if gate_receipts is not None else []
     if demand is not None and not isinstance(demand, dict):
         raise TypeError("demand must be an object")
+    unmapped_demands = (demand or {}).get("unmappedDemands", [])
+    if not isinstance(unmapped_demands, list) or any(not isinstance(row, dict) for row in unmapped_demands):
+        raise TypeError("demand.unmappedDemands must be a list of objects")
+    for row in unmapped_demands:
+        status = row.get("status")
+        if (not isinstance(row.get("demand"), str) or not row["demand"]
+                or row.get("registry_block_id") is not None
+                or not isinstance(status, str) or status not in {"unmapped", "source_inventory_only"}):
+            raise ValueError("unmapped demand rows must retain text, null registry_block_id, and an unmapped status")
     if any(not isinstance(block, dict) for block in registry["blocks"]):
         raise TypeError("registry blocks must be objects")
     verdicts_by_case = {}
@@ -419,6 +428,15 @@ def build_report(registry, cases, captures, verdicts, output_dir, demand=None, *
             lines.append(f"| {_md(jid)} | {sum(b in known for b in journey_blocks)} | {sum(known.get(b) == 'pass' for b in journey_blocks)} | {sum(known.get(b) != 'pass' for b in journey_blocks)} |")
     else:
         lines.append("| No demand map supplied | 0 | 0 | 0 |")
+    if unmapped_demands:
+        status_counts = Counter(row["status"] for row in unmapped_demands)
+        lines.extend(["", f"## Unmapped extended demands ({len(unmapped_demands)})", "",
+                      f"Statuses: {status_counts['unmapped']} unmapped; {status_counts['source_inventory_only']} source-inventory-only. Registry mapping remains null.", "",
+                      "| Demand | Status | Registry block |", "|---|---|---|"])
+        for row in unmapped_demands:
+            lines.append(f"| {_md(row['demand'])} | {_md(row['status'])} | unmapped |")
+    elif demand is not None and "unmappedDemands" in demand:
+        lines.extend(["", "## Unmapped extended demands", "", "None."])
     lines.extend(["", "No publishing is performed. HTML escapes all supplied artifact text; filenames use sanitized block IDs.", ""])
     index_md = out / "index.md"
     index_html = out / "index.html"

@@ -1,0 +1,1136 @@
+{
+  "schema_version": 1,
+  "pilot_blocks": {
+    "round_1": [
+      "shape",
+      "image",
+      "stack-overlay",
+      "text",
+      "custom-layout"
+    ],
+    "round_2": [
+      "scroll",
+      "toggle",
+      "disabled",
+      "padding-frame",
+      "preference"
+    ],
+    "shared_pilot_block_ids": [
+      "shape",
+      "image",
+      "stack-overlay",
+      "text",
+      "custom-layout",
+      "scroll",
+      "toggle",
+      "disabled",
+      "padding-frame",
+      "preference"
+    ]
+  },
+  "journey_demands": [
+    {
+      "journey_id": "poisoned",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "sidebar selection state",
+        "keyboard focus/roving selection",
+        "command palette modal and focus trap",
+        "navigation transitions"
+      ],
+      "service_dependencies": [
+        "App-owned destination state; optional command registry and native bridge for menu/deep-link actions."
+      ]
+    },
+    {
+      "journey_id": "settings",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "TextField/control variety",
+        "keyboard focus and navigation",
+        "validation/errors",
+        "async loading and external-change reconciliation",
+        "settings storage/revision service"
+      ],
+      "service_dependencies": [
+        "SettingsBackend load/patch/subscribe; Tauri-backed rightkit-settings adapter in production; section-specific adapters."
+      ]
+    },
+    {
+      "journey_id": "onboarding",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "ordered multi-step flow",
+        "permission prompts",
+        "download progress/cancel/retry",
+        "legal modal/eligibility controls",
+        "durable state + service sequencing"
+      ],
+      "service_dependencies": [
+        "SettingsBackend; PermissionsBackend; ModelsBackend; optional LicenseBackend; optional app-owned LegalReceiptPort; callbacks."
+      ]
+    },
+    {
+      "journey_id": "media-playback",
+      "pilot_blocks": [
+        "image",
+        "stack-overlay",
+        "text",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "HTML media element and codec recovery",
+        "keyboard transport shortcuts",
+        "fullscreen host API",
+        "time/progress animation",
+        "media conversion service"
+      ],
+      "service_dependencies": [
+        "MediaAdapters resolveSrc/preparePlayback/cancelPlayback/setFullscreen; app owns playback preparation implementation and notification/log hooks."
+      ]
+    },
+    {
+      "journey_id": "image-view-edit",
+      "pilot_blocks": [
+        "image",
+        "stack-overlay",
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "canvas/image transform",
+        "custom pointer gestures",
+        "crop/text editing controls",
+        "native open/save/print dialogs",
+        "large resource lifecycle"
+      ],
+      "service_dependencies": [
+        "MediaAdapters listImageSiblings/listSystemFonts/saveImage/printImage/acquireResource; app owns dialogs/filesystem writes."
+      ]
+    },
+    {
+      "journey_id": "pdf-reading",
+      "pilot_blocks": [
+        "image",
+        "scroll",
+        "text",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "PDF.js worker/render pipeline",
+        "document/file adapter",
+        "find input and IME",
+        "sidebar panels",
+        "view-state persistence",
+        "external-link policy"
+      ],
+      "service_dependencies": [
+        "PdfSource supplied by host; optional openExternal adapter; host may persist PdfViewState."
+      ]
+    },
+    {
+      "journey_id": "legal-acceptance",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "document scroll/acknowledgement gating",
+        "radio/checkbox controls",
+        "receipt persistence/hash",
+        "version policy",
+        "quit/close action"
+      ],
+      "service_dependencies": [
+        "App-owned acceptance receipt is truth when injected; onboarding SettingsBackend stores progress; external URL opener optional."
+      ]
+    },
+    {
+      "journey_id": "shortcuts",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "key event routing",
+        "focus/IME behavior",
+        "sequence timeout",
+        "rebinding capture/conflict UX"
+      ],
+      "service_dependencies": [
+        "ShortcutRegistry; platform resolver; persistence adapter for overrides supplied by app/settings integration."
+      ]
+    },
+    {
+      "journey_id": "tray-menu",
+      "pilot_blocks": [
+        "text"
+      ],
+      "extended_demands": [
+        "native menu/tray lifecycle",
+        "deep-link parsing/routing",
+        "duplicate/window targeting policy"
+      ],
+      "service_dependencies": [
+        "Optional AppShellBridge.onMenuAction; host Tauri menu/tray/deep-link adapters."
+      ]
+    },
+    {
+      "journey_id": "dialogs",
+      "pilot_blocks": [
+        "text",
+        "stack-overlay",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "modal stacking/focus restoration",
+        "text entry/IME",
+        "animation and dismiss interactions"
+      ],
+      "service_dependencies": [
+        "ShellProvider dialog and command state; app supplies command callback."
+      ]
+    },
+    {
+      "journey_id": "persistence",
+      "pilot_blocks": [
+        "toggle",
+        "text",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "storage adapters and cross-process consistency",
+        "schema migration",
+        "crash-safe atomic write"
+      ],
+      "service_dependencies": [
+        "ThemeStorage/localStorage default; SettingsBackend/rightkit-settings; app-owned LegalReceiptPort; SliceApp RowStore (source evidence only)."
+      ]
+    },
+    {
+      "journey_id": "updates",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "download/install progress",
+        "update service/auth",
+        "restart/recovery strategy",
+        "platform installer and rollback"
+      ],
+      "service_dependencies": [
+        "ViewRight update/license service and OS package replacement; dirty-document recovery guard."
+      ]
+    },
+    {
+      "journey_id": "recovery",
+      "pilot_blocks": [
+        "text",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "error classification",
+        "startup/window recovery",
+        "document/session restoration",
+        "diagnostics and logs"
+      ],
+      "service_dependencies": [
+        "React error boundary; settings loader; app document saver/update recovery services."
+      ]
+    },
+    {
+      "journey_id": "slice-editor",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "TextField/FocusState",
+        "List/ForEach/onMove",
+        "Button actions",
+        "Binding(get:set:)",
+        "persistence"
+      ],
+      "service_dependencies": [
+        "SliceApp EditorModel and RowStore persistence."
+      ]
+    },
+    {
+      "journey_id": "vr-entry-window",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "Tauri hidden-window reveal timing",
+        "legal-gate window state transitions",
+        "print-preview window isolation",
+        "native window readiness"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri window lifecycle; renderer readiness, legal-gate state and print-preview wiring remain source-only."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-format-routes",
+      "pilot_blocks": [
+        "image",
+        "scroll",
+        "text",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "format discriminator routing",
+        "viewer/editor adapter coverage",
+        "document save/find/view/error boundaries",
+        "Tauri file and document service integration"
+      ],
+      "service_dependencies": [
+        "ViewRight DocumentRouter plus viewer/editor adapters; document render, save and error services remain unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-launch-open",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "open-file event ordering",
+        "argv/Finder/second-instance path broker",
+        "initial_open_paths handoff",
+        "active tab selection"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri path broker, open-file/native-drop listeners and startup handoff; OS integration remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-session-restore",
+      "pilot_blocks": [
+        "text",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "SQLite tab-session restoration",
+        "untitled localStorage restoration",
+        "missing-file recovery and dirty snapshot recovery",
+        "cross-process session writes"
+      ],
+      "service_dependencies": [
+        "ViewRight localStorage/SQLite session persistence and setup recovery; durable cross-process behavior remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-settings-shell",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "toggle",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "platform file-association controls",
+        "focus-trap/section navigation",
+        "localStorage-to-SQLite hydration",
+        "debounced native settings mirror"
+      ],
+      "service_dependencies": [
+        "ViewRight settings provider, SQLite mirror and native settings event; backend durability remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-native-menu",
+      "pilot_blocks": [],
+      "extended_demands": [
+        "macOS menu construction",
+        "menu event to keyboard/window bridge",
+        "dirty-save quit gate"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri native menu and React event bridge; native menu acceptance remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-single-instance-window",
+      "pilot_blocks": [],
+      "extended_demands": [
+        "single-instance focus/unminimize",
+        "macOS Opened/Reopen routing",
+        "prepare-setup handoff"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri single-instance and macOS lifecycle handlers; OS registration remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-native-drop",
+      "pilot_blocks": [
+        "text",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "Tauri drag-drop path broker",
+        "scale-adjusted drop coordinates",
+        "React claim timeout",
+        "source-order fallback opens"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri DragDrop bridge and React drop coordinator; native drag/drop acceptance remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-web-deeplink",
+      "pilot_blocks": [
+        "text",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "target=_blank context routing",
+        "explicit browser escape",
+        "URL event foreground/background tab routing",
+        "URL recent-history update"
+      ],
+      "service_dependencies": [
+        "ViewRight context-menu/external-navigation plugin and React URL event bridge; OS URL registration remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-file-authority",
+      "pilot_blocks": [
+        "text",
+        "stack-overlay",
+        "padding-frame",
+        "disabled"
+      ],
+      "extended_demands": [
+        "open/save dialog path authority",
+        "recent token lifecycle",
+        "relative HTML/MDX grants",
+        "linked-document stream tokens"
+      ],
+      "service_dependencies": [
+        "ViewRight Tauri dialogs, path broker and stream-token bridge; file authority integration remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-watch-conflict",
+      "pilot_blocks": [
+        "text",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "multi-tab file watcher",
+        "HTML subpage watch set",
+        "dirty external-change conflict",
+        "clean-document auto-reload"
+      ],
+      "service_dependencies": [
+        "ViewRight file watcher, file-changed bridge and dirty-document conflict flow; filesystem event reliability remains unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    },
+    {
+      "journey_id": "vr-updates-license",
+      "pilot_blocks": [
+        "text",
+        "scroll",
+        "disabled",
+        "padding-frame"
+      ],
+      "extended_demands": [
+        "signed updater state mapping",
+        "license eligibility",
+        "download/install/relaunch",
+        "failed-install retry/public-installer fallback"
+      ],
+      "service_dependencies": [
+        "ViewRight updater/license state and public-installer fallback; signing, replacement, restart and rollback remain unverified."
+      ],
+      "status": "source_inventory_only",
+      "source_root": "/Volumes/D/claude/viewright"
+    }
+  ],
+  "unmapped_demands": [
+    {
+      "demand": "Binding(get:set:)",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "Button actions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "HTML media element and codec recovery",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "List/ForEach/onMove",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "PDF.js worker/render pipeline",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "TextField/FocusState",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "TextField/control variety",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "animation and dismiss interactions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "async loading and external-change reconciliation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "canvas/image transform",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "command palette modal and focus trap",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "crash-safe atomic write",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "crop/text editing controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "custom pointer gestures",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "deep-link parsing/routing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "diagnostics and logs",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document scroll/acknowledgement gating",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document/file adapter",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "document/session restoration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "download progress/cancel/retry",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "download/install progress",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "duplicate/window targeting policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "durable state + service sequencing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "error classification",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "external-link policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "find input and IME",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "focus/IME behavior",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "fullscreen host API",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "key event routing",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard focus and navigation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard focus/roving selection",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "keyboard transport shortcuts",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "large resource lifecycle",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "legal modal/eligibility controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "media conversion service",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "modal stacking/focus restoration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "native menu/tray lifecycle",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "native open/save/print dialogs",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "navigation transitions",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "ordered multi-step flow",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "permission prompts",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "persistence",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "platform installer and rollback",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "quit/close action",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "radio/checkbox controls",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "rebinding capture/conflict UX",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "receipt persistence/hash",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "restart/recovery strategy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "schema migration",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sequence timeout",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "settings storage/revision service",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sidebar panels",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "sidebar selection state",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "startup/window recovery",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "storage adapters and cross-process consistency",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "text entry/IME",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "time/progress animation",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "update service/auth",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "validation/errors",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "version policy",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "view-state persistence",
+      "registry_block_id": null,
+      "status": "unmapped"
+    },
+    {
+      "demand": "Tauri hidden-window reveal timing",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-entry-window"
+    },
+    {
+      "demand": "legal-gate window state transitions",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-entry-window"
+    },
+    {
+      "demand": "print-preview window isolation",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-entry-window"
+    },
+    {
+      "demand": "native window readiness",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-entry-window"
+    },
+    {
+      "demand": "format discriminator routing",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-format-routes"
+    },
+    {
+      "demand": "viewer/editor adapter coverage",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-format-routes"
+    },
+    {
+      "demand": "document save/find/view/error boundaries",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-format-routes"
+    },
+    {
+      "demand": "Tauri file and document service integration",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-format-routes"
+    },
+    {
+      "demand": "open-file event ordering",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-launch-open"
+    },
+    {
+      "demand": "argv/Finder/second-instance path broker",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-launch-open"
+    },
+    {
+      "demand": "initial_open_paths handoff",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-launch-open"
+    },
+    {
+      "demand": "active tab selection",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-launch-open"
+    },
+    {
+      "demand": "SQLite tab-session restoration",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-session-restore"
+    },
+    {
+      "demand": "untitled localStorage restoration",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-session-restore"
+    },
+    {
+      "demand": "missing-file recovery and dirty snapshot recovery",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-session-restore"
+    },
+    {
+      "demand": "cross-process session writes",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-session-restore"
+    },
+    {
+      "demand": "platform file-association controls",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-settings-shell"
+    },
+    {
+      "demand": "focus-trap/section navigation",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-settings-shell"
+    },
+    {
+      "demand": "localStorage-to-SQLite hydration",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-settings-shell"
+    },
+    {
+      "demand": "debounced native settings mirror",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-settings-shell"
+    },
+    {
+      "demand": "macOS menu construction",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-menu"
+    },
+    {
+      "demand": "menu event to keyboard/window bridge",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-menu"
+    },
+    {
+      "demand": "dirty-save quit gate",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-menu"
+    },
+    {
+      "demand": "single-instance focus/unminimize",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-single-instance-window"
+    },
+    {
+      "demand": "macOS Opened/Reopen routing",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-single-instance-window"
+    },
+    {
+      "demand": "prepare-setup handoff",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-single-instance-window"
+    },
+    {
+      "demand": "Tauri drag-drop path broker",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-drop"
+    },
+    {
+      "demand": "scale-adjusted drop coordinates",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-drop"
+    },
+    {
+      "demand": "React claim timeout",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-drop"
+    },
+    {
+      "demand": "source-order fallback opens",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-native-drop"
+    },
+    {
+      "demand": "target=_blank context routing",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-web-deeplink"
+    },
+    {
+      "demand": "explicit browser escape",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-web-deeplink"
+    },
+    {
+      "demand": "URL event foreground/background tab routing",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-web-deeplink"
+    },
+    {
+      "demand": "URL recent-history update",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-web-deeplink"
+    },
+    {
+      "demand": "open/save dialog path authority",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-file-authority"
+    },
+    {
+      "demand": "recent token lifecycle",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-file-authority"
+    },
+    {
+      "demand": "relative HTML/MDX grants",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-file-authority"
+    },
+    {
+      "demand": "linked-document stream tokens",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-file-authority"
+    },
+    {
+      "demand": "multi-tab file watcher",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-watch-conflict"
+    },
+    {
+      "demand": "HTML subpage watch set",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-watch-conflict"
+    },
+    {
+      "demand": "dirty external-change conflict",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-watch-conflict"
+    },
+    {
+      "demand": "clean-document auto-reload",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-watch-conflict"
+    },
+    {
+      "demand": "signed updater state mapping",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-updates-license"
+    },
+    {
+      "demand": "license eligibility",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-updates-license"
+    },
+    {
+      "demand": "download/install/relaunch",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-updates-license"
+    },
+    {
+      "demand": "failed-install retry/public-installer fallback",
+      "registry_block_id": null,
+      "status": "source_inventory_only",
+      "journey_id": "vr-updates-license"
+    }
+  ],
+  "gate_note": "Demand map is for planning only. No registry block IDs are inferred for unsupported/unlisted constructs. Service integration, engine integration, reliability and performance remain SR2\u2013SR4 gates; compiling/capturing screens does not establish journey acceptance.",
+  "source_status": "source_inventory_only",
+  "source_roots": [
+    "/Volumes/D/claude/rightkit",
+    "/Volumes/D/claude/viewright",
+    "/Volumes/D/claude/swiftright"
+  ],
+  "scope_note": "Pilot blocks remain mapped only where existing registry primitives are named. ViewRight native/runtime services and new source demands remain unmapped; no acceptance claim.",
+  "journey_classes": {
+    "package_contract": [
+      "navigation",
+      "settings",
+      "onboarding",
+      "media-playback",
+      "image-view-edit",
+      "pdf-reading",
+      "legal-acceptance",
+      "shortcuts",
+      "tray-menu",
+      "dialogs"
+    ],
+    "mixed_source": [
+      "persistence"
+    ],
+    "consumer_source": [
+      "updates",
+      "recovery",
+      "slice-editor",
+      "vr-entry-window",
+      "vr-format-routes",
+      "vr-launch-open",
+      "vr-session-restore",
+      "vr-settings-shell",
+      "vr-native-menu",
+      "vr-single-instance-window",
+      "vr-native-drop",
+      "vr-web-deeplink",
+      "vr-file-authority",
+      "vr-watch-conflict",
+      "vr-updates-license"
+    ]
+  }
+}

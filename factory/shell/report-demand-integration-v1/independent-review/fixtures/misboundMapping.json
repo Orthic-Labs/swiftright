@@ -1,0 +1,57 @@
+{
+  "kind": "f12-f9-pilot-block-crosswalk",
+  "version": "1",
+  "sourceRefs": {
+    "demand": {
+      "path": "factory/shell/demand.json",
+      "sha256": "45c48393b06b65b1b156f01272eb5c95517876df0aae790203bdbaa2ebbaf835"
+    },
+    "registryManifest": {
+      "path": "factory/registry/manifest.json",
+      "sha256": "7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1"
+    }
+  },
+  "mappingBasis": "Explicit crosswalk between F12 pilot labels and F2 curated block IDs. It does not infer symbol capabilities, semantic dependencies, progress, or acceptance.",
+  "mappings": [
+    {
+      "pilotBlockId": "shape",
+      "registryBlockId": "swiftui.image"
+    },
+    {
+      "pilotBlockId": "image",
+      "registryBlockId": "swiftui.image"
+    },
+    {
+      "pilotBlockId": "stack-overlay",
+      "registryBlockId": "swiftui.stack-overlay"
+    },
+    {
+      "pilotBlockId": "text",
+      "registryBlockId": "swiftui.text.bundled-font"
+    },
+    {
+      "pilotBlockId": "custom-layout",
+      "registryBlockId": "swiftui.custom-layout"
+    },
+    {
+      "pilotBlockId": "scroll",
+      "registryBlockId": "swiftui.scroll-view"
+    },
+    {
+      "pilotBlockId": "toggle",
+      "registryBlockId": "swiftui.toggle"
+    },
+    {
+      "pilotBlockId": "disabled",
+      "registryBlockId": "swiftui.disabled"
+    },
+    {
+      "pilotBlockId": "padding-frame",
+      "registryBlockId": "swiftui.padding-frame"
+    },
+    {
+      "pilotBlockId": "preference",
+      "registryBlockId": "swiftui.preference-key"
+    }
+  ]
+}
