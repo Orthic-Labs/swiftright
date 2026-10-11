@@ -140,6 +140,7 @@ def collect(root: Path, expected: dict[str, str], required_runs: int) -> dict[st
         match = CASE.fullmatch(item.name)
         if match:
             cases.append((int(match.group(1)), item))
+    cases.sort(key=lambda pair: pair[0])
     failures: list[dict[str, Any]] = []
     receipts: list[dict[str, Any]] = []
     seen_runs: set[int] = set()
@@ -196,6 +197,8 @@ def collect(root: Path, expected: dict[str, str], required_runs: int) -> dict[st
         "requiredRuns": required_runs,
         "observedRuns": len(cases),
         "passedRuns": len(receipts),
+        # Pair-v2 consumes canonical per-run rows; retain receipts alias for older readers.
+        "runs": receipts,
         "receipts": receipts,
         "failures": failures,
     }

@@ -1,0 +1,4 @@
+Option Explicit
+Dim shell
+Set shell = CreateObject("WScript.Shell")
+shell.Run "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\.work\sr0-matrix-controls-v1\worker-v3.ps1"" -Base ""D:\Claude\swiftright\.work\sr0-r12-typecheck\src"" -Driver ""D:\Claude\swiftright\.work\sr0-matrix-controls-v1\drive-fixture-noactivate-focus-r5.ps1"" -ExpectExe ""87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374"" -ExpectDll ""7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"" -RunRoot ""D:\Claude\swiftright\probes\sr0-s\fresh-on-bridge\out\tuple12-startupguard-matrix-v1\F1-20-r4\F1-r20-dda10f97e6b546778e1e4e0770d4e52d\F1-r-9ac8dfe9bfdc4d069f4560f7d2c2920c"" -Receipt ""D:\Claude\swiftright\probes\sr0-s\fresh-on-bridge\out\tuple12-startupguard-matrix-v1\F1-20-r4\F1-r20-dda10f97e6b546778e1e4e0770d4e52d\receipts\worker-9ac8dfe9bfdc4d069f4560f7d2c2920c.json"" -Fixture F1 -Variant """" -KeyMode char", 0, True
