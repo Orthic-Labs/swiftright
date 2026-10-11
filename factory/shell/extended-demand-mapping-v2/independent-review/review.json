@@ -1,0 +1,92 @@
+{
+  "kind": "f12-extended-demand-mapping-v2-independent-review",
+  "version": "1",
+  "scope": "Read-only review of byte-exact current-source bindings; no v1, producer, registry, SDK, SSH, GUI, or Pulse changes.",
+  "producerPins": {
+    "mappingV2Py": "2d798e3bd458aa27c07d0d8a97727063a437a8a07191907a4faa5fe735160f07",
+    "tests": "22c789a14bfd1a8cd23f242724e87f8fe58b0545e900c7e007bbe995314fa018",
+    "candidate": "1da1d7279810dad5cefacd2093892343fa31e4c056fbf9b92632d9cfca7499ee",
+    "stageManifest": "d016261be8b391804adb4b20e527291f029160350ee4b33d9153d56ca8a23792",
+    "sourceSnapshotManifest": "6131cca4b304c93cd2933fa7d28c0d708e7608d0b4c31fd8659e18368dd3b1b8",
+    "v1Candidate": "0a55d077c4824f3a8d59a8cb9dd13aa689e4dab50e629680d900b2798361e466",
+    "f1Catalogue": "fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2"
+  },
+  "stageValidation": {
+    "entries": 14,
+    "allEntriesPresent": true,
+    "allBytesAndSha256Match": true,
+    "totalBytes": 29932,
+    "sourceSnapshots": {"entries": 2, "allBytesAndSha256Match": true},
+    "inputs": {"v1Candidate": true, "f1Catalogue": true, "sourceSnapshotManifest": true},
+    "pathNote": "stage input path evidence/source-snapshot-manifest.json is packet-relative; resolving from repository root fails, resolving from v2 packet root matches exact pin",
+    "excludedGeneratedFiles": ["__pycache__/**", "*.pyc"]
+  },
+  "denominatorValidation": {
+    "extendedDemandRows": 107,
+    "sourceBoundDirectReferenceRows": 2,
+    "registryMappedRows": 0,
+    "boundRowKeys": ["f12-extended-004", "f12-extended-006"],
+    "v1InputIsImmutablePinnedBytes": true,
+    "allOtherV1RowsUnchanged": "preserved through v1 candidate hash; v2 output intentionally contains only two bound rows"
+  },
+  "rawSourceLineValidation": {
+    "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+    "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+    "sourceBytes": 2169,
+    "lineOccurrenceCounts": {
+      "16 @FocusState": 1,
+      "30 List": 1,
+      "31 ForEach": 1,
+      "34 onMove": 1,
+      "53 TextField": 1
+    },
+    "rawBytesChecked": true,
+    "whitespaceNormalized": false,
+    "sourceBindings": [
+      {"label": "List/ForEach/onMove", "lines": [30, 31, 34], "exactLineBytesPinned": true},
+      {"label": "TextField/FocusState", "lines": [53, 16], "exactLineBytesPinned": true}
+    ],
+    "historicalAnchorDrift": {
+      "evidenceId": "slice-model",
+      "line": 117,
+      "recordedText": "private func persist() {",
+      "capturedText": "    private func persist() {",
+      "recordedSha256MatchesCapturedBytes": true,
+      "exactAnchorMatches": false,
+      "normalizationApplied": false
+    }
+  },
+  "catalogueIdentityValidation": {
+    "references": [
+      {"path": "SwiftUI.List", "usr": "s:7SwiftUI4ListV", "uniqueCatalogueInventoryMatch": true, "registrySelectors": [], "declarationKind": "nominal type"},
+      {"path": "SwiftUI.ForEach", "usr": "s:7SwiftUI7ForEachV", "uniqueCatalogueInventoryMatch": true, "registrySelectors": [], "declarationKind": "nominal type"},
+      {"path": "SwiftUI.DynamicViewContent.onMove(perform:)", "usr": "s:7SwiftUI18DynamicViewContentPAAE6onMove7performQry10Foundation8IndexSetV_SitcSg_tF", "uniqueCatalogueInventoryMatch": true, "registrySelectors": [], "declarationKind": "protocol extension method"},
+      {"path": "SwiftUI.TextField", "usr": "s:7SwiftUI9TextFieldV", "uniqueCatalogueInventoryMatch": true, "registrySelectors": [], "declarationKind": "nominal type"},
+      {"path": "SwiftUI.FocusState", "usr": "s:7SwiftUI10FocusStateV", "uniqueCatalogueInventoryMatch": true, "registrySelectors": [], "declarationKind": "nominal type"}
+    ],
+    "overloadSemantics": {
+      "resolvedInitializerUSRsCaptured": false,
+      "catalogueOverloadCounts": {"SwiftUI.List.init": 46, "SwiftUI.ForEach.init": 19, "SwiftUI.TextField.init": 45, "SwiftUI.FocusState.init": 2},
+      "meaning": "Five exact USRs bind source lines to declaration families; List, ForEach, TextField, and FocusState lines do not prove one initializer overload. onMove USR is exact method identity.",
+      "promotionImpact": "No registry IDs emitted, so overload uncertainty cannot promote a block."
+    }
+  },
+  "faultControls": [
+    {"fault": "replace List line with Group", "expected": "snapshot hash/bytes reject", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "remove one leading space from List line", "expected": "snapshot pin rejects; no whitespace normalization", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "duplicate exact usage line", "expected": "line occurrence count != 1 rejects", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "mutate base candidate, catalogue, or snapshot-manifest bytes", "expected": "immutable SHA pin rejects", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "remove snapshot", "expected": "snapshot-set equality rejects", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "replace current usage USR/path", "expected": "expected reference-set equality rejects", "producerControlPresent": true, "independentRawCheck": true},
+    {"fault": "use initializer overload USR in place of nominal USR", "expected": "reference-set equality rejects", "producerControlPresent": "code path checked; no explicit test mutation", "independentRawCheck": true}
+  ],
+  "reviewFindings": [
+    "Five path+USR pairs each resolve uniquely to inventory-status catalogue rows; no pair has curated registry selector.",
+    "All five source lines are raw byte-exact, unique, and line-number pinned; source snapshot hashes match manifest.",
+    "Historical slice-model indentation mismatch remains explicit, hash-preserving, and unnormalized.",
+    "Exact USRs for List, ForEach, TextField, and FocusState are nominal types; source call lines do not establish exact initializer overloads. onMove carries exact method USR.",
+    "Producer tests cover source mutation, whitespace mutation, duplicate/missing snapshots, immutable input pins, overload ambiguity preservation, and no registry promotion.",
+    "Candidate file is stage-hash pinned but producer tests rebuild candidate rather than load candidate file for post-write validation; stage hash remains required freeze control."
+  ],
+  "disposition": "independent review passes bounded current-source identity binding; no registry or overload promotion"
+}

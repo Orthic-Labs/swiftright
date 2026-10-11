@@ -1,0 +1,158 @@
+{
+  "baseCandidateSha256": "0a55d077c4824f3a8d59a8cb9dd13aa689e4dab50e629680d900b2798361e466",
+  "catalogueSha256": "fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2",
+  "denominator": {
+    "extendedDemandRows": 107,
+    "registryMappedRows": 0,
+    "sourceBoundDirectReferenceRows": 2
+  },
+  "kind": "f12-extended-demand-current-source-bindings",
+  "preservation": {
+    "allOtherV1RowsUnchanged": true,
+    "v1CandidateIsImmutableInput": true
+  },
+  "rows": [
+    {
+      "currentUsageReferences": [
+        {
+          "catalogueStatus": "inventory",
+          "exactLine": "            List {",
+          "line": 30,
+          "path": "SwiftUI.List",
+          "sourceBytes": 2169,
+          "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "usage": "List container",
+          "usr": "s:7SwiftUI4ListV"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "exactLine": "                ForEach($model.rows, id: \\.id) { row in",
+          "line": 31,
+          "path": "SwiftUI.ForEach",
+          "sourceBytes": 2169,
+          "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "usage": "ForEach row iteration",
+          "usr": "s:7SwiftUI7ForEachV"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "exactLine": "                .onMove { offsets, destination in",
+          "line": 34,
+          "path": "SwiftUI.DynamicViewContent.onMove(perform:)",
+          "sourceBytes": 2169,
+          "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "usage": "onMove trailing-closure call",
+          "usr": "s:7SwiftUI18DynamicViewContentPAAE6onMove7performQry10Foundation8IndexSetV_SitcSg_tF"
+        }
+      ],
+      "demand": "List/ForEach/onMove",
+      "historicalAnchorDrift": {
+        "capturedExactText": "    private func persist() {",
+        "evidenceId": "slice-model",
+        "exactAnchorMatches": false,
+        "line": 117,
+        "normalizationApplied": false,
+        "recordedSha256MatchesCapturedBytes": true,
+        "recordedText": "private func persist() {"
+      },
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "registryBlockIds": [],
+      "rowKey": "f12-extended-004",
+      "sourceEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "status": "current-source-usage-confirmed",
+      "v1EvidenceFreshness": "stale",
+      "v1ReferencesPreserved": [
+        {
+          "path": "SwiftUI.List",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI4ListV"
+        },
+        {
+          "path": "SwiftUI.ForEach",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI7ForEachV"
+        },
+        {
+          "path": "SwiftUI.DynamicViewContent.onMove(perform:)",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI18DynamicViewContentPAAE6onMove7performQry10Foundation8IndexSetV_SitcSg_tF"
+        }
+      ]
+    },
+    {
+      "currentUsageReferences": [
+        {
+          "catalogueStatus": "inventory",
+          "exactLine": "            TextField(\"Row\", text: Binding(get: { text.wrappedValue }, set: { model.editText(id, $0) }))",
+          "line": 53,
+          "path": "SwiftUI.TextField",
+          "sourceBytes": 2169,
+          "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "usage": "TextField initializer call",
+          "usr": "s:7SwiftUI9TextFieldV"
+        },
+        {
+          "catalogueStatus": "inventory",
+          "exactLine": "    @FocusState private var focus: UUID?",
+          "line": 16,
+          "path": "SwiftUI.FocusState",
+          "sourceBytes": 2169,
+          "sourcePath": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sourceSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "usage": "FocusState property wrapper",
+          "usr": "s:7SwiftUI10FocusStateV"
+        }
+      ],
+      "demand": "TextField/FocusState",
+      "historicalAnchorDrift": {
+        "capturedExactText": "    private func persist() {",
+        "evidenceId": "slice-model",
+        "exactAnchorMatches": false,
+        "line": 117,
+        "normalizationApplied": false,
+        "recordedSha256MatchesCapturedBytes": true,
+        "recordedText": "private func persist() {"
+      },
+      "journeyIds": [
+        "slice-editor"
+      ],
+      "registryBlockIds": [],
+      "rowKey": "f12-extended-006",
+      "sourceEvidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "status": "current-source-usage-confirmed",
+      "v1EvidenceFreshness": "stale",
+      "v1ReferencesPreserved": [
+        {
+          "path": "SwiftUI.TextField",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI9TextFieldV"
+        },
+        {
+          "path": "SwiftUI.FocusState",
+          "registryBlockIds": [],
+          "status": "inventory",
+          "usr": "s:7SwiftUI10FocusStateV"
+        }
+      ]
+    }
+  ],
+  "sourceSnapshotManifestSha256": "6131cca4b304c93cd2933fa7d28c0d708e7608d0b4c31fd8659e18368dd3b1b8",
+  "status": "source-bound-candidate-no-registry-promotion",
+  "version": 2
+}
