@@ -1,0 +1,158 @@
+{
+  "kind": "independent-timing-consumer-review",
+  "verdict": "VERIFIED-SYNTHETIC-OBSERVATIONAL-ONLY",
+  "scope": "offline packet/proof/replay review; no native/compiler/GUI/SSH/Pulse run",
+  "stageSha256": "248c293ea18be824ab27e421736eb7940637f9aeb6900bee4334f2ee4a8de786",
+  "stageFiles": [
+    {
+      "path": "README.md",
+      "sha256": "344f45ec2b4834af8ac98251c5974bc418c1a16fc8e607163e546c73a6ff55ce",
+      "bytes": 2675
+    },
+    {
+      "path": "artifacts/0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864.json",
+      "sha256": "0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+      "bytes": 2949
+    },
+    {
+      "path": "artifacts/3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49.json",
+      "sha256": "3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+      "bytes": 500
+    },
+    {
+      "path": "artifacts/741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975.json",
+      "sha256": "741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975",
+      "bytes": 1960
+    },
+    {
+      "path": "artifacts/bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394.json",
+      "sha256": "bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+      "bytes": 166
+    },
+    {
+      "path": "artifacts/c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e.json",
+      "sha256": "c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+      "bytes": 247
+    },
+    {
+      "path": "artifacts/d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9.json",
+      "sha256": "d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+      "bytes": 510
+    },
+    {
+      "path": "build_packet.py",
+      "sha256": "9b4e2ecbc08a63c31e43d1f637e99213096f1808f064c9c2c1f8b028ab857d4a",
+      "bytes": 2186
+    },
+    {
+      "path": "consumer.py",
+      "sha256": "4f1a2774f7864e1664aa2a2f4184df507795708e54fcc882358019f59306ee7f",
+      "bytes": 10769
+    },
+    {
+      "path": "proof.json",
+      "sha256": "03c9bd82a2b26757ad87f1283fd39046f6052f3bbe12f020128b0b58a9642306",
+      "bytes": 122773
+    },
+    {
+      "path": "report_join.py",
+      "sha256": "3633b05682ea870e7eb55a948971add7a4482e0819075ccaea9bf77c2f351918",
+      "bytes": 2259
+    },
+    {
+      "path": "retention.py",
+      "sha256": "b59518104497b1b255d24e6083e9d1bb41e9524dd9cf87a612060c15e4c07147",
+      "bytes": 1322
+    },
+    {
+      "path": "test_consumer.py",
+      "sha256": "304e32d03805038bfad97f3dc26ece2c74c7cecb50346ab9cde207d20a7bee24",
+      "bytes": 8696
+    },
+    {
+      "path": "SHA256SUMS",
+      "sha256": "f2044113eb858a6efdcbfc230db35edc2ba18063caecd3ce763a363990852127",
+      "bytes": 1432
+    }
+  ],
+  "pins": {
+    "proof": "03c9bd82a2b26757ad87f1283fd39046f6052f3bbe12f020128b0b58a9642306",
+    "sha256sums": "f2044113eb858a6efdcbfc230db35edc2ba18063caecd3ce763a363990852127",
+    "sourcePins": {
+      "consumer.py": {
+        "sha256": "sha256:4f1a2774f7864e1664aa2a2f4184df507795708e54fcc882358019f59306ee7f",
+        "bytes": 10769
+      },
+      "report_join.py": {
+        "sha256": "sha256:3633b05682ea870e7eb55a948971add7a4482e0819075ccaea9bf77c2f351918",
+        "bytes": 2259
+      },
+      "test_consumer.py": {
+        "sha256": "sha256:304e32d03805038bfad97f3dc26ece2c74c7cecb50346ab9cde207d20a7bee24",
+        "bytes": 8696
+      },
+      "build_packet.py": {
+        "sha256": "sha256:9b4e2ecbc08a63c31e43d1f637e99213096f1808f064c9c2c1f8b028ab857d4a",
+        "bytes": 2186
+      },
+      "retention.py": {
+        "sha256": "sha256:b59518104497b1b255d24e6083e9d1bb41e9524dd9cf87a612060c15e4c07147",
+        "bytes": 1322
+      }
+    },
+    "protectedPins": {
+      "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+      "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+      "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+      "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+      "capture:run1": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+    }
+  },
+  "replay": {
+    "unitTests": "8 passed",
+    "packetCheck": "Exact raw packet replay passed:22 raw +6 report-join faults",
+    "stageRows": 14,
+    "stageBad": []
+  },
+  "baseline": {
+    "status": "pass",
+    "nativeParity": false,
+    "case": {
+      "id": "synthetic.interruption.case",
+      "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+    },
+    "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+    "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+    "rawCaptureCount": 1
+  },
+  "faultEvidence": {
+    "rawControls": 22,
+    "reportJoinControls": 6,
+    "independentControls": {
+      "raw-case-byte": true,
+      "forged-status": true,
+      "derived-byte": true,
+      "gate-capture-byte": true,
+      "gate-tuple": true,
+      "retained-byte": true
+    }
+  },
+  "gate": {
+    "status": "blocked",
+    "observationalStatus": "pass",
+    "nativeParity": false,
+    "qualification": "held",
+    "reason": "synthetic/observational consumer cannot establish qualified native timing parity"
+  },
+  "remainingIntegrationWork": [
+    "Provide independently qualified native timing channel evidence with monotonic per-channel clocks, frame/provider identity, & controlled capture conditions.",
+    "Bind future adapter inputs to exact case/acceptance/context/bounds/capture raw bytes & tuple hashes.",
+    "Keep gate blocked until qualified native evidence is joined; then add separate adapter contract without promoting this synthetic packet."
+  ],
+  "retention": {
+    "rawInputsExact": true,
+    "derivedDetailsExact": true,
+    "tamperRejected": true
+  },
+  "nativeParity": false
+}

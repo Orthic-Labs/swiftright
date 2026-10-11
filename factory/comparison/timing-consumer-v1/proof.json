@@ -1,0 +1,776 @@
+{
+  "schema": "timing-consumer-synthetic-proof-v1",
+  "evidenceClass": "synthetic/unit-evidence",
+  "nativeParity": false,
+  "sourcePins": {
+    "consumer.py": {
+      "sha256": "sha256:4f1a2774f7864e1664aa2a2f4184df507795708e54fcc882358019f59306ee7f",
+      "bytes": 10769
+    },
+    "report_join.py": {
+      "sha256": "sha256:3633b05682ea870e7eb55a948971add7a4482e0819075ccaea9bf77c2f351918",
+      "bytes": 2259
+    },
+    "test_consumer.py": {
+      "sha256": "sha256:304e32d03805038bfad97f3dc26ece2c74c7cecb50346ab9cde207d20a7bee24",
+      "bytes": 8696
+    },
+    "build_packet.py": {
+      "sha256": "sha256:9b4e2ecbc08a63c31e43d1f637e99213096f1808f064c9c2c1f8b028ab857d4a",
+      "bytes": 2186
+    },
+    "retention.py": {
+      "sha256": "sha256:b59518104497b1b255d24e6083e9d1bb41e9524dd9cf87a612060c15e4c07147",
+      "bytes": 1322
+    }
+  },
+  "protectedExpectedPins": {
+    "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+    "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+    "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+    "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+    "capture:run1": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+  },
+  "baselineRawInputsUTF8": {
+    "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+    "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+    "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+    "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+    "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+  },
+  "baselineVerdict": {
+    "status": "pass",
+    "nativeParity": false,
+    "case": {
+      "id": "synthetic.interruption.case",
+      "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+    },
+    "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+    "rawEvidence": [
+      {
+        "id": "test.run1",
+        "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+      }
+    ],
+    "captureHashes": [
+      "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+    ],
+    "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+    "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+    "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+    "evidence": [
+      {
+        "id": "timing-derived-details",
+        "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+      }
+    ]
+  },
+  "derivedArtifactUTF8": "{\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"evidenceClass\":\"synthetic/unit-evidence\",\"nativeParity\":false,\"runs\":[{\"capture\":{\"hash\":\"sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975\",\"id\":\"test.run1\"},\"derived\":[{\"animationId\":\"motion\",\"checks\":{\"durationBounded\":true,\"interruptionVelocityBounded\":true,\"presentedFrameStallBounded\":true},\"durationNs\":100,\"incomingVelocityMilliPerSecond\":\"40000000000\",\"largestPresentationGapNs\":20,\"outgoingVelocityMilliPerSecond\":\"40000000000\",\"presentedFrameStallNs\":0}],\"rawTiming\":{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"},\"reason\":\"bounded observational timing only\",\"status\":\"pass\"}],\"schema\":\"timing-derived-details-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+  "verifiedReportJoin": {
+    "schema": "verified-timing-report-join-v1",
+    "observationalStatus": "pass",
+    "nativeParity": false,
+    "qualificationStatus": "held",
+    "qualificationReason": "This consumer establishes timestamp reconstruction only; qualified native gate evidence is separate.",
+    "timing": {
+      "status": "pass",
+      "nativeParity": false,
+      "case": {
+        "id": "synthetic.interruption.case",
+        "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+      },
+      "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+      "rawEvidence": [
+        {
+          "id": "test.run1",
+          "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        }
+      ],
+      "captureHashes": [
+        "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+      ],
+      "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+      "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+      "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+      "evidence": [
+        {
+          "id": "timing-derived-details",
+          "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+        }
+      ]
+    },
+    "derivedArtifact": {
+      "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+      "bytes": 2949
+    }
+  },
+  "rawFaults": [
+    {
+      "name": "duration",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "fail",
+      "reason": "fail",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:7aec8991a4f28fb8a7a11fb4700aef389b74fdd1095d4e6fad45aa83646a54ba"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":120,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "terminal-truncation",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "fail",
+      "reason": "fail",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:9a6c9a49b29f32325fbd30ab127c65694fd887db174729281a28a80e47358387"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "leading-truncation",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "fail",
+      "reason": "fail",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:20a2d3221622da9d3d9de4e70bccd01910da1a05490e8c20f30fd913ed004da4"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "transaction-after-interruption",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "event chronology",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:0a7579f28753f96d752cacecb8d3246cef8e8cd4a90e15c694fd16c201cbd73c"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":60,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "sample-before-transaction",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "sample/frame outside event window",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:91d0a42f58d8907b612acd39bbd5acb427fbd31cf0cc2620ef039e6d3b15048a"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":10,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "frame-outside-window",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "sample/frame outside event window",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:cf6c90fbe9058a59ebcc26c7e3505e139ff5007aaf6f3b0995460657998d03e6"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":101,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "interruption-local-velocity",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "fail",
+      "reason": "fail",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:e70532f22b530861df13b3a6374166e9cf213d888f1c746aa99ea8a2c5aa74b4"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":10},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "missing-interruption-sample",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "missing exact interruption sample",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:61b130d7c7f713e054876471576ac6990b5bd7026d8abcf70192eebbfa3420b1"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":51,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "missing-incoming-bracket",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "missing incoming/outgoing interruption brackets",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:a6ce7fb6c70fc4aaddf92ff22342fa71a70f157da6e8f2942fa344cd6351503a"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "mixed-clock",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "timestamp clock mismatch",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:124e6ef870324d285288df0682f4bacc5e824c66a8380b4cecddec74e1053290"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"other.clock\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "unknown-unit",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "unknown timestamp unit",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:f6df15b2fc17c3d004724af9349c0482df6340453339b2b1a860eef260acdfca"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"us\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "missing-channel-clock",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "held",
+      "reason": "held",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:4d48d40c06d101c760306e95ed070750819fbc2682e132a17f27b755811360b6"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "unknown-domain",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "held",
+      "reason": "held",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:0c9e45dd1054efb2a1769e9058ad6ea10d4a3aa465c19f0085a1c7e862a33530",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:9972b9fcd9abf000170592ebfb1ce515d44c6b97df2c5cc442901d08220677bf"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"wall\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:0c9e45dd1054efb2a1769e9058ad6ea10d4a3aa465c19f0085a1c7e862a33530\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "wrong-bound-case",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "protected context case/tuple mismatch",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:dac98af418ebe89d20403a14e8c60334a5fc8b8c6189c3720e8f576d2823e51f",
+        "capture:run1": "sha256:0e32dbb4bdc8f865ac7a43f646423d9d842da4f54e9aea5279067952df478311"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"other.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:dac98af418ebe89d20403a14e8c60334a5fc8b8c6189c3720e8f576d2823e51f\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "wrong-capture-tuple",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "capture case/tuple mismatch",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:ba69fe9157f81c693c6643cf8f1dfb7ba237a6c0d8e0e79cdb9a2a863799c57a"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"}"
+      }
+    },
+    {
+      "name": "duplicate-animation",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "animation identity/cardinality mismatch",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:02ff202146940e3fc5a1a0f243a4fba0f1cec01e82208de79d3c94cb5ee54422"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]},{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "missing-animation",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "held",
+      "reason": "held",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:27f8f8ab25698571cd6e6182b6f26174e65a2a78eeb7d8a7f6dc32d75f092982"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "nonmonotonic-frame",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "nonmonotonic sample/frame timestamps",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:ab3e9d2970b8247091b54ed902e545995a96ab56c407a622e25031be18b9fbca"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "dropped-frame-gap",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "fail",
+      "reason": "fail",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:600c7eeed622f13d54a4bc764a645df8bdcca9efb10b21b698fedb6a17d7baf3"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"dropped\":true,\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"dropped\":true,\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"dropped\":true,\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"dropped\":true,\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "protected-bound-values",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "protected bounds differ from acceptance",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:db6f7e60198e9a4f47ed466acdc0a292daee7b0c01c1f6d7676d2cb89922ae77",
+        "capture:run1": "sha256:5dda35cfc101abd990f3a423924d0f18f506e4e743967ae7cf298d3175e4d452"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":1000,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:db6f7e60198e9a4f47ed466acdc0a292daee7b0c01c1f6d7676d2cb89922ae77\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    },
+    {
+      "name": "rawbyte-hash",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "raw hash mismatch: capture:run1",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:143ecf17dee1ad2d0880f97841450e8593826f89ea1c5d5ab4c658e522890c2e"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"} "
+      }
+    },
+    {
+      "name": "duplicate-event-field",
+      "acceptedBaseline": true,
+      "changedRawBytes": true,
+      "status": "rejected",
+      "reason": "duplicate JSON key",
+      "mutatedRawPins": {
+        "acceptance": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "case": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "context": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "bounds": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "capture:run1": "sha256:79d8585019bba8164a0deb2c260e3019b6363db1205c0c9a661e698097c637cf"
+      },
+      "actualMutatedRawInputsUTF8": {
+        "acceptance": "{\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-acceptance-v1\",\"timingBounds\":{\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0}}}",
+        "case": "{\"id\":\"synthetic.interruption.case\",\"tuple\":{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"id\":\"synthetic.tuple\"}}",
+        "context": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"animationIds\":[\"motion\"],\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"clock\":{\"clockId\":\"test.monotonic\",\"domain\":\"monotonic\",\"unit\":\"ns\"},\"evidenceClass\":\"synthetic/unit-evidence\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-context-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "bounds": "{\"acceptanceConfigHash\":\"sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"durationNs\":{\"max\":105,\"min\":95},\"frameIntervalNs\":20,\"interruptionVelocityMilliPerSecond\":{\"max\":60000000000,\"min\":0},\"presentedFrameStallNs\":{\"max\":10,\"min\":0},\"schema\":\"timing-bounds-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}",
+        "capture:run1": "{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"}"
+      }
+    }
+  ],
+  "reportJoinFaults": [
+    {
+      "name": "resultHash",
+      "acceptedBaseline": true,
+      "actualClaim": {
+        "status": "pass",
+        "nativeParity": false,
+        "case": {
+          "id": "synthetic.interruption.case",
+          "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+        },
+        "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+        "rawEvidence": [
+          {
+            "id": "test.run1",
+            "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+          }
+        ],
+        "captureHashes": [
+          "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        ],
+        "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "resultHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": [
+          {
+            "id": "timing-derived-details",
+            "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+          }
+        ]
+      },
+      "reason": "claimed timing verdict mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "status",
+      "acceptedBaseline": true,
+      "actualClaim": {
+        "status": "held",
+        "nativeParity": false,
+        "case": {
+          "id": "synthetic.interruption.case",
+          "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+        },
+        "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+        "rawEvidence": [
+          {
+            "id": "test.run1",
+            "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+          }
+        ],
+        "captureHashes": [
+          "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        ],
+        "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+        "evidence": [
+          {
+            "id": "timing-derived-details",
+            "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+          }
+        ]
+      },
+      "reason": "claimed timing verdict mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "rawEvidence",
+      "acceptedBaseline": true,
+      "actualClaim": {
+        "status": "pass",
+        "nativeParity": false,
+        "case": {
+          "id": "synthetic.interruption.case",
+          "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+        },
+        "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+        "rawEvidence": [],
+        "captureHashes": [
+          "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        ],
+        "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+        "evidence": [
+          {
+            "id": "timing-derived-details",
+            "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+          }
+        ]
+      },
+      "reason": "claimed timing verdict mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "boundsHash",
+      "acceptedBaseline": true,
+      "actualClaim": {
+        "status": "pass",
+        "nativeParity": false,
+        "case": {
+          "id": "synthetic.interruption.case",
+          "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+        },
+        "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+        "rawEvidence": [
+          {
+            "id": "test.run1",
+            "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+          }
+        ],
+        "captureHashes": [
+          "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        ],
+        "boundsHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "contextHash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+        "evidence": [
+          {
+            "id": "timing-derived-details",
+            "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+          }
+        ]
+      },
+      "reason": "claimed timing verdict mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "contextHash",
+      "acceptedBaseline": true,
+      "actualClaim": {
+        "status": "pass",
+        "nativeParity": false,
+        "case": {
+          "id": "synthetic.interruption.case",
+          "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394"
+        },
+        "tupleHash": "sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736",
+        "rawEvidence": [
+          {
+            "id": "test.run1",
+            "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+          }
+        ],
+        "captureHashes": [
+          "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975"
+        ],
+        "boundsHash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "contextHash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "resultHash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+        "evidence": [
+          {
+            "id": "timing-derived-details",
+            "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864"
+          }
+        ]
+      },
+      "reason": "claimed timing verdict mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "derived-bytes",
+      "acceptedBaseline": true,
+      "actualDerivedBytesUTF8": "{\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"evidenceClass\":\"synthetic/unit-evidence\",\"nativeParity\":false,\"runs\":[{\"capture\":{\"hash\":\"sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975\",\"id\":\"test.run1\"},\"derived\":[{\"animationId\":\"motion\",\"checks\":{\"durationBounded\":true,\"interruptionVelocityBounded\":true,\"presentedFrameStallBounded\":true},\"durationNs\":100,\"incomingVelocityMilliPerSecond\":\"40000000000\",\"largestPresentationGapNs\":20,\"outgoingVelocityMilliPerSecond\":\"40000000000\",\"presentedFrameStallNs\":0}],\"rawTiming\":{\"animations\":[{\"id\":\"motion\",\"presentedFrames\":[{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":0,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":20,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":40,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":60,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":80,\"unit\":\"ns\"},{\"clockId\":\"test.monotonic\",\"imageHash\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"timeNs\":100,\"unit\":\"ns\"}],\"samples\":[{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":25,\"unit\":\"ns\",\"value\":0},{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\",\"value\":1},{\"clockId\":\"test.monotonic\",\"timeNs\":75,\"unit\":\"ns\",\"value\":2},{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\",\"value\":20}]}],\"boundsHash\":\"sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49\",\"case\":{\"hash\":\"sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394\",\"id\":\"synthetic.interruption.case\"},\"contextHash\":\"sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9\",\"events\":{\"completion\":{\"clockId\":\"test.monotonic\",\"timeNs\":100,\"unit\":\"ns\"},\"interruption\":{\"clockId\":\"test.monotonic\",\"timeNs\":50,\"unit\":\"ns\"},\"stimulus\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"},\"transaction\":{\"clockId\":\"test.monotonic\",\"timeNs\":0,\"unit\":\"ns\"}},\"id\":\"test.run1\",\"scenario\":\"dynamic-interruption\",\"schema\":\"timing-observations-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"},\"reason\":\"bounded observational timing only\",\"status\":\"pass\"}],\"schema\":\"timing-derived-details-v1\",\"tupleHash\":\"sha256:dd4b20ac5ed674629ef6935337d72316de5f0ec5e0769ff456a6314bc82b0736\"} ",
+      "reason": "derived artifact hash mismatch",
+      "status": "rejected"
+    }
+  ],
+  "retainedArtifacts": {
+    "schema": "timing-retention-manifest-v1",
+    "nativeParity": false,
+    "rawInputs": {
+      "acceptance": {
+        "hash": "sha256:c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e",
+        "path": "c34d3b317b4fb088325d0fdf4dd6d24da8b4ad38d76db6140d10095ba88b2f6e.json",
+        "bytes": 247
+      },
+      "case": {
+        "hash": "sha256:bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394",
+        "path": "bcc628844c8eda06adbcf0ecfa577f639aaeea5485041bfa1ab983a6f78dc394.json",
+        "bytes": 166
+      },
+      "context": {
+        "hash": "sha256:d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9",
+        "path": "d66418512c02f89ba7a50168cb95e2a26387cd109059f0622715e207cc8c00b9.json",
+        "bytes": 510
+      },
+      "bounds": {
+        "hash": "sha256:3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49",
+        "path": "3e0731560b9c13ff21850766af2ec340a5eaaea8770b81c216ef50db0adbbc49.json",
+        "bytes": 500
+      },
+      "capture:run1": {
+        "hash": "sha256:741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975",
+        "path": "741e0d0e25e58625eb3e9eef5db56ae18609d50dc886e59e9ab22cf747ff7975.json",
+        "bytes": 1960
+      }
+    },
+    "derivedDetails": {
+      "hash": "sha256:0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864",
+      "path": "0334c82f361b13ae18da2833db8d9e43021ca1c149920ad58635025e40770864.json",
+      "bytes": 2949
+    }
+  }
+}
