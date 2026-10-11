@@ -1,0 +1,26 @@
+{
+  "controls": {
+    "actual-verifier-positive": "PASS",
+    "chunk-pin": {
+      "rejection": "chunk hash/size differs",
+      "status": "PASS"
+    },
+    "descriptor-pin": {
+      "rejection": "descriptor hash differs",
+      "status": "PASS"
+    },
+    "internal-output-policy": {
+      "rejection": "rehydration requires fresh internal output",
+      "status": "PASS"
+    },
+    "member-traversal": {
+      "rejection": "unsafe archive path",
+      "status": "PASS"
+    },
+    "raw-part": {
+      "rejection": "raw part hash differs",
+      "status": "PASS"
+    }
+  },
+  "scope": "offline byte fixtures, no native/compiler execution"
+}

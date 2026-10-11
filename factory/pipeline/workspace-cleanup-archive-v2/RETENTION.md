@@ -1,0 +1,1 @@
+Exact byte archive retained locally beneath this evidence packet; compressed chunks & large manifest are ignored by this checkout. Git records descriptor, hashes, verifier, controls & retirement receipts. 64 internal Mac scratch roots retired after full archive verification, exact live-file hash comparison & two fresh process/open-file checks. No Dell file deleted.
