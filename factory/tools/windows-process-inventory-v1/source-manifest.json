@@ -1,0 +1,14 @@
+{
+  "kind": "factory-windows-process-inventory-source-manifest-v1",
+  "version": 1,
+  "candidate": "factory.windows-process-inventory.v1",
+  "status": "SOURCE_ONLY",
+  "files": {
+    "helper": {"path": "factory/tools/windows-process-inventory-v1/windows_process_inventory.py", "bytes": 18411, "sha256": "sha256:d75d17424cf3a6af380a388f798240a3a57e7c311f0edd0685c98fbe9e9120e6"},
+    "readme": {"path": "factory/tools/windows-process-inventory-v1/README.md", "bytes": 1779, "sha256": "sha256:8aba4bfa669ac0a271ac657a01eaa7ab9b87f795b35a6597c28cefba18983d59"}
+  },
+  "bounds": {"processes": 2048, "commandLineBytes": 65536, "outputBytes": 2097152, "deadlineSeconds": 20, "cancelWaitSeconds": 10, "selfJobMemoryBytes": 134217728},
+  "inventory": {"snapshot": "Toolhelp32Process", "candidateExeName": "powershell.exe", "openAccess": ["PROCESS_QUERY_LIMITED_INFORMATION", "PROCESS_VM_READ"], "memory": "GetProcessMemoryInfo", "startIdentity": "GetProcessTimes UTC FILETIME", "commandLine": "NtQueryInformationProcess class 60 + validated local returned buffer"},
+  "cancel": {"requiredKind": "factory-owned-cancellation-v1", "identity": ["pid", "exeName", "imagePath", "startTimeFileTime", "commandLineSha256", "allowedEncodedCommandSha256", "issuedAtUtc", "expiresAtUtc"], "pidOnlyKill": false, "nameOnlyKill": false, "killOnJobClose": false},
+  "effects": {"inventoryNativeActions": 0, "cancelNativeActions": 1, "compilerActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}
