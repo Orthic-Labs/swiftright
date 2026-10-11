@@ -1,0 +1,72 @@
+﻿[
+    {
+        "mode":  "before6-no-window",
+        "actual":  {
+                       "elapsedSeconds":  5.9,
+                       "originalSixSecondBreach":  false,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "waiting"
+                   }
+    },
+    {
+        "mode":  "exact6-ready",
+        "actual":  {
+                       "elapsedSeconds":  6,
+                       "originalSixSecondBreach":  false,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "ready"
+                   }
+    },
+    {
+        "mode":  "late-ready-retains-breach",
+        "actual":  {
+                       "elapsedSeconds":  6.1,
+                       "originalSixSecondBreach":  true,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "ready"
+                   }
+    },
+    {
+        "mode":  "exact30-no-window",
+        "actual":  {
+                       "elapsedSeconds":  30,
+                       "originalSixSecondBreach":  true,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "waiting"
+                   }
+    },
+    {
+        "mode":  "over30-window-not-success",
+        "actual":  {
+                       "elapsedSeconds":  30.1,
+                       "originalSixSecondBreach":  true,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "deadline"
+                   }
+    },
+    {
+        "mode":  "exit-priority",
+        "actual":  {
+                       "elapsedSeconds":  30.1,
+                       "originalSixSecondBreach":  true,
+                       "diagnosticLimitSeconds":  30,
+                       "state":  "exited"
+                   }
+    },
+    {
+        "mode":  "invalid-duration",
+        "rejected":  true
+    },
+    {
+        "mode":  "invalid-duration",
+        "rejected":  true
+    },
+    {
+        "mode":  "invalid-duration",
+        "rejected":  true
+    },
+    {
+        "mode":  "numeric-exited",
+        "rejected":  true
+    }
+]

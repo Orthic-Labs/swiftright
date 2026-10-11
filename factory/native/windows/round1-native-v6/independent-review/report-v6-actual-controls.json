@@ -1,0 +1,111 @@
+{
+  "kind": "native-v6-independent-actual-controls-review",
+  "reviewDate": "2026-10-11",
+  "decision": "actual-controls-clear-for-root-prefdiagnostic",
+  "scope": "Read-only review of root-fetched Windows PowerShell 5.1 control receipts; no SSH, GUI, Git, compiler, or native execution by reviewer.",
+  "sourceJoin": {
+    "finalSourceStage": {
+      "path": "factory/native/windows/round1-native-v6/root-stage-manifest.json",
+      "sha256": "2647f8b51edfb4f44d78ca2540726f615a79d7004c98ae44d9441dbe389caa68"
+    },
+    "sourceReview": {
+      "path": "factory/native/windows/round1-native-v6/independent-review/source-review-v2.json",
+      "sha256": "dbe07f506b060acc876baa3019d147bf4834e0fd2386d83190ca77014b3a7d2f"
+    },
+    "verifiedPins": 254,
+    "producerEdits": 0,
+    "sourceReviewActualRuns": 0
+  },
+  "rootFetch": {
+    "manifest": {
+      "path": "factory/native/windows/round1-native-v6/root-control-output-scp.json",
+      "sha256": "22054263f2202e8e2eb62e8e5500da1d97097249daa825ffc7b76af4ae703403"
+    },
+    "listedFiles": 16,
+    "transfers": 8,
+    "transferExitCodes": [0, 0, 0, 0, 0, 0, 0, 0],
+    "missingFiles": 0,
+    "hashMismatches": 0,
+    "transferReceiptSha256": "b72ca304262b75227d88c74d668593a54579a7468e8dadc3d966bb6e432017d8"
+  },
+  "controlProcess": {
+    "processReceiptSha256": "f67e2dc5186a6da2026250faa5c3d3c57e48a1840e13d3884bebf53af2b9be1d",
+    "startReceiptSha256": "8aa8dcd04847dc3ed97934dc4526045f0634fc418a523d1df00b99d7eaf85353",
+    "scriptSha256": "20db926f2ee8e8f0811a8a828ed14afdf4f609092e1d674ba16cecd5103bc508",
+    "startedAt": "2026-10-11T05:30:34.955596+00:00",
+    "finishedAt": "2026-10-11T05:30:37.170668+00:00",
+    "exitCode": 0,
+    "stdoutSha256": "edc4a4c5f45f659276ce1f4354b9c0c2f4a31aa6ff0c3609fa8b1735f464d5e3",
+    "stderrSha256": "aa4c6b5187e8a52a4b02316c91eb0c7a4cfdce4cdea9b9d7ecfe2faa1d97cce4",
+    "reviewerExecuted": false
+  },
+  "actualControls": {
+    "parse": {
+      "path": "root-parse-actual-r1.json",
+      "sha256": "311c8b30098289308dcc9b97b67f396a7c8a147b4d1e29d4dea04cba473f0203",
+      "rows": 16,
+      "astErrors": 0
+    },
+    "namespace": {
+      "path": "root-namespace-actual-r1/controls.json",
+      "sha256": "cdca3d8434a22dd30925f4dd2409de028468076684045b58fd771865788c33f8",
+      "positiveCases": 2,
+      "faultsRejected": 5
+    },
+    "cleanup": {
+      "path": "root-cleanup-actual-r1/controls.json",
+      "sha256": "37c6cc93bfdf60056e3b129298d0386fda254b8c18a70ae7fbc08c4ea72bffec",
+      "rows": 15,
+      "confirmedExitPositiveCases": 3,
+      "identityTimeoutPriorityAndReleaseControls": true
+    },
+    "streamSeal": {
+      "path": "root-stream-actual-r1/controls.json",
+      "sha256": "8b71d6884bfee9cd028ac2b2c1fdbec03fc2df9d400132ebe13e6d5b3da4dee8",
+      "realCopyReadHashIdempotent": true,
+      "unfinishedRejected": true,
+      "faultedRejected": true,
+      "bothStreamsSealedAndHashed": true
+    },
+    "ownedClose": {
+      "path": "root-close-actual-r1/controls.json",
+      "sha256": "82852ba2f60e85867b1c08547dc76b310d74f07df608e388bed3c6850eb588ca",
+      "normalGuardOrder": ["source", "lock", "background", "owned", "post"],
+      "faultsRejected": 7,
+      "unsafePostOnGuards": 0
+    },
+    "exitProof": {
+      "path": "root-exit-proof-actual-r1/controls.json",
+      "sha256": "df322f4620090392b71c8f289b46d2b06efe252c16c5bec94244d4fe34ae22ad",
+      "normalAccepted": true,
+      "faultsRejected": 11,
+      "numericConfirmedExitRejected": true
+    },
+    "hiddenProcessStreams": {
+      "path": "root-process-streams-actual-r1/controls.json",
+      "sha256": "687e26d1b420e2f0f1ed2a95d2bada171ce423fe13fc20f5a696d4d70eb00b5b",
+      "exitCode": 0,
+      "cleanupConfirmedOwnedExit": true,
+      "stdoutSha256": "f0efa39991a783ab663433d5709e9b63d1aed6d52ec088c03182f804ed860118",
+      "stderrSha256": "bdfb795f58b7a80a77a67707ca06c054497711721bdb941d07f90b2dfcaee301"
+    },
+    "startupState": {
+      "path": "root-startup-actual-r1/controls.json",
+      "sha256": "600d4e713f39174fee3bcf2b0f8d703fc656c3d58e482325c8466fa55b423924",
+      "rows": 10,
+      "semanticThresholdControls": 6,
+      "invalidDurationAndTypedExitFaults": 4,
+      "originalSixSecondBreachExplicit": true,
+      "diagnosticLimitSeconds": 30,
+      "exitPriority": true
+    }
+  },
+  "reviewConclusion": {
+    "allFetchedFilesHashVerified": true,
+    "allActualControlsPassed": true,
+    "controlProcessExitCode": 0,
+    "compilerAndNativeInvocationsInControlProcess": 0,
+    "rootGate": "clear-for-prefdiagnostic",
+    "GUIOrNativeDispatch": "not performed by reviewer"
+  }
+}
