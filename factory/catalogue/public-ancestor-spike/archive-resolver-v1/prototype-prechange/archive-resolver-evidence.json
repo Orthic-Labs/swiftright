@@ -1,0 +1,50 @@
+{
+  "kind": "f1-public-ancestor-archive-resolver-v1",
+  "version": 1,
+  "status": "strict-resolver-source-only-no-execution",
+  "manifest": {
+    "path": "factory/catalogue/raw-symbolgraph-archive-v1/archive-manifest.json",
+    "sha256": "sha256:6ddc54fe90bffd954f415963450cfa04d19d94070631b88619635826ce9139e3",
+    "providedCallerPin": "6ddc54fe90bffd954f415963450cfa04d19d94070631b88619635826ce9139"
+  },
+  "immutableLink": {
+    "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+    "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+    "providedPin": "836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+  },
+  "captureSourcePins": {
+    "README.md": "7e7a6e06dc9018413c2c79259c1f897b320c37ed94221927faa27aae73ce0765",
+    "archive.py": "2f6a07cd7c025449dfd9838a0b14fd71c10de94ed7f1254d5312e4c8243b8c06",
+    "test_archive.py": "4344d60802197d44381700f53610e90cefe42fe2a3063213d2a96a3f5fa20b33"
+  },
+  "resolverSource": {
+    "path": "factory/catalogue/public-ancestor-spike/archive-resolver-v1/archive_resolver.py",
+    "sha256": "sha256:61a6251fd043e23e65feb23eeb99ff75549d084540ab8ac9822c5a3e6f16ce43"
+  },
+  "controlsSource": {
+    "path": "factory/catalogue/public-ancestor-spike/archive-resolver-v1/test_archive_resolver.py",
+    "sha256": "sha256:377ed0a94c02c49c2ab0c51d799e487810928000f9b49e1b416682c5d1078592"
+  },
+  "api": [
+    "ArchiveResolver.verify",
+    "ArchiveResolver.read_bytes",
+    "ArchiveResolver.resolve_path",
+    "pinned_resolver"
+  ],
+  "guarantees": [
+    "exact semantic originalPath to originalSha256 mapping",
+    "strict integer fields reject bool",
+    "duplicate mappings reject",
+    "repository containment and symlink rejection",
+    "plain/gzip/chunk archive bytes",
+    "force_archive does not consult live original paths or caches",
+    "corrupt archive bytes reject",
+    "original argv/request paths unchanged"
+  ],
+  "execution": {
+    "compiler": false,
+    "sourceKit": false,
+    "gui": false,
+    "permissionApis": false
+  }
+}

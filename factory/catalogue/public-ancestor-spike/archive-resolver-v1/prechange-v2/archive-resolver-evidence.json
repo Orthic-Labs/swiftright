@@ -1,0 +1,77 @@
+{
+  "api": [
+    "ArchiveResolver.verify",
+    "ArchiveResolver.read_bytes",
+    "ArchiveResolver.resolve_path",
+    "pinned_resolver"
+  ],
+  "archiveInputs": {
+    "archivePaths": "repository-relative",
+    "directoryPrerequisiteCount": 1,
+    "entryCount": 30,
+    "path": "factory/catalogue/public-ancestor-spike/archive-inputs-v1/archive-input-mapping.json",
+    "semanticPaths": "exact absolute strings",
+    "sha256": "sha256:57d10fa4184cd2585917ca721f94ac9270421ecfd4e2fcd187e0043bf5f49b75"
+  },
+  "controlsSource": {
+    "bytes": 6352,
+    "path": "factory/catalogue/public-ancestor-spike/archive-resolver-v1/test_archive_resolver.py",
+    "sha256": "sha256:62d736309b0a7578891c15cdcdb889cc0603106894af2100f1d9b401a8a8bca2"
+  },
+  "execution": {
+    "cacheWrites": false,
+    "compiler": false,
+    "gui": false,
+    "permissionApis": false,
+    "sourceKit": false
+  },
+  "guarantees": [
+    "exact absolute semanticPath to originalSha256/bytes mapping",
+    "strict integer fields reject bool",
+    "duplicate mappings reject",
+    "repository containment and symlink rejection",
+    "plain/gzip archive bytes",
+    "force_archive does not consult live original paths or caches",
+    "corrupt archive bytes reject",
+    "original argv/request paths unchanged"
+  ],
+  "kind": "f1-public-ancestor-archive-resolver-v1",
+  "prototypePrechange": {
+    "files": [
+      {
+        "bytes": 14903,
+        "path": "archive_resolver.py",
+        "sha256": "61a6251fd043e23e65feb23eeb99ff75549d084540ab8ac9822c5a3e6f16ce43"
+      },
+      {
+        "bytes": 6561,
+        "path": "test_archive_resolver.py",
+        "sha256": "377ed0a94c02c49c2ab0c51d799e487810928000f9b49e1b416682c5d1078592"
+      },
+      {
+        "bytes": 1383,
+        "path": "README.md",
+        "sha256": "b7f18def36dfa3d9a94000055bca3963b711b9a1cac90128e73065485bf79da0"
+      },
+      {
+        "bytes": 2049,
+        "path": "archive-resolver-evidence.json",
+        "sha256": "17f6e9318e2e0fbbc9c2601deb1ca8af72cf5a35e1004c3306a2daf4a041201b"
+      },
+      {
+        "bytes": 350,
+        "path": "SHA256SUMS",
+        "sha256": "8775596aa652df41056c714c18ea97e87773531e2b4f7015a04e97c4cf4266ad"
+      }
+    ],
+    "path": "factory/catalogue/public-ancestor-spike/archive-resolver-v1/prototype-prechange/snapshot-manifest.json",
+    "sha256": "sha256:d1824abd3af4e7e8d262180d0fae0e431c5695920bc603f17bf390afa761c33c"
+  },
+  "resolverSource": {
+    "bytes": 12103,
+    "path": "factory/catalogue/public-ancestor-spike/archive-resolver-v1/archive_resolver.py",
+    "sha256": "sha256:097bf803be864b413a09c3233f63d92680701d0c79cfc54c46a765ae0c0aa68a"
+  },
+  "status": "strict-resolver-source-only-no-execution",
+  "version": 2
+}

@@ -1,0 +1,53 @@
+{
+  "faultCount": 12,
+  "faults": [
+    {
+      "fault": "observed_hash",
+      "reason": "entry 0 observedLive hash differs"
+    },
+    {
+      "fault": "archive_bool_size",
+      "reason": "entry 0 archive bytes must be strict integer"
+    },
+    {
+      "fault": "negative_size",
+      "reason": "entry 0 bytes below minimum"
+    },
+    {
+      "fault": "path_traversal",
+      "reason": "entry 0 archive path escapes repository"
+    },
+    {
+      "fault": "path_empty_part",
+      "reason": "entry 0 archive path escapes repository"
+    },
+    {
+      "fault": "semantic_alias",
+      "reason": "entry 0 semanticPath contains path alias"
+    },
+    {
+      "fault": "alias_other",
+      "reason": "entry 0 alias differs from semantic path"
+    },
+    {
+      "fault": "gzip_bool_size",
+      "reason": "entry 0 decompressed bytes must be strict integer"
+    },
+    {
+      "fault": "wrong_expected_hash",
+      "reason": "expected hash differs from archive"
+    },
+    {
+      "fault": "resolve_truthy_flag",
+      "reason": "force_archive must be bool"
+    },
+    {
+      "fault": "fixture_truthy_flag",
+      "reason": "allow_fixture must be bool"
+    },
+    {
+      "fault": "unapproved_pin",
+      "reason": "manifest path or hash is not approved"
+    }
+  ]
+}
