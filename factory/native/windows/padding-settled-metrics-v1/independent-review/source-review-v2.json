@@ -1,0 +1,47 @@
+{
+  "kind": "independent-padding-metrics-source-review/1",
+  "disposition": "CLEAR_SOURCE_SCOPE",
+  "sourcePins": {
+    "factory/native/windows/padding-settled-metrics-v1/source-manifest.json": "94ff6ede4b1faba02ef76e84832c22703d8edcd4a11a6bdf71bc9d9474eb4d9a",
+    "factory/native/windows/padding-settled-metrics-v1/README.md": "782efba19bbe030738ec4bafddb06266dd484bf0b75136eff94a1c82ae1fc2f7",
+    "factory/native/windows/padding-settled-metrics-v1/package/plan.json": "1c12ff2b23c19bcfc74a3a2fc122b02d0b8c98f8b5419b14b3e759c0d5bf30df",
+    "factory/native/windows/padding-settled-metrics-v1/package/Sources/FactoryProbe/main.swift": "5064698a36b959977acc8a96a5af2a1a0fb1133f8dc3df3b5604aa33395a8d16",
+    "factory/native/windows/padding-settled-metrics-v1/package/Sources/FactoryProbe/MetricsLogging.swift": "2fd9a91c178813a88c08123eb31e1a7f41c33add9c78241b43c8c88073f4746a",
+    "factory/native/windows/round1-seeded-hosts-v1/padding-frame/package/plan.json": "be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+    "factory/native/windows/canonical-inputs-v1/SwiftRightBridge/Sources/SwiftRightBridge/Types.swift": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+    "factory/native/windows/canonical-inputs-v1/SwiftRightBridge/Sources/SwiftRightBridge/Bridge.swift": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+  },
+  "packageManifestFilesVerified": 12,
+  "planSourceBindingsVerified": 9,
+  "unchangedBaseFiles": [
+    "Sources/FactoryProbe/Witness.swift",
+    "Sources/FactoryProbe/FactoryViewport.swift",
+    "Sources/FactoryProbe/FactoryFill.swift",
+    "Sources/FactoryProbe/FactoryTextGeometry.swift",
+    "Sources/FactoryProbe/FactoryContainer.swift",
+    "Package.swift",
+    "witness.manifest.json",
+    "runtime-source-receipt.json",
+    "runtime-source-tree.json"
+  ],
+  "findings": [],
+  "checks": [
+    "First actual .windowMetrics callback only; no tick/poll synthesis; every raw BridgeEvent field retained",
+    "Same callback actual Bridge.metrics tuple plus unique samePID/thread/title owned HWND GetClientRect/GetDpiForWindow; expectedHWND on event",
+    "Successful serialization required before event seen flag; serialization failure terminates diagnostic host error path",
+    "First-layout marker after successful BridgeWindow.commit and successful serialization; original ABI metrics text preserved",
+    "Canonical copied Types.swift/Bridge.swift raw fields, kind,metrics tuple,callback and commit/requestTicks APIs compatible on source inspection",
+    "Witness/Win32 viewport/activation veto/tick/layout/measurement/runtime receipt files preserved",
+    "All source bindings refreshed including MetricsLogging.swift; base plan and witness separately correctly bound",
+    "Rolling renderer path explicitly external preflight requirement; no package-load byte qualification claimed"
+  ],
+  "scope": {
+    "rendererPreLoadHashAuthority": "Separate padding-settled-build-v1 build/launch preflight must bind actual e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93 bytes",
+    "legacyPackageAndPlanDependencies": "Historical source lineage; prospective canonical build binding handled separately",
+    "compilerOrNativeExecuted": false,
+    "sourceParserRepeated": false,
+    "nativeQualification": false,
+    "loggingOverhead": "Diagnostic logging changes observational timing envelope; no timing claim"
+  },
+  "nextStep": "Use exact reviewed source tuple in fresh canonical build/launch plan with renderer-byte preflight."
+}
