@@ -1,0 +1,46 @@
+{
+  "kind": "independent-public-ancestor-consumer-initial-review",
+  "consumerSHA256": "680203f9a3c0f4dd6c7a7e863a4dad765d7229acf88c4891e177de95f93912ea",
+  "testsSHA256": "5af612504113b4a74c8d6704508fc602c41bda317fb26bb7554b220ab62a4acc",
+  "candidateReviewed": false,
+  "base": {
+    "symbolCount": 108272,
+    "actualRawCatalogueSHA256": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270",
+    "sourceHash": "sha256:48a54bd1cb7afdb3b878f95c2fcc6f07b45f629862a3f97911079b36b17259bf"
+  },
+  "confirmedDesign": [
+    "Pinned raw base & canonical base identity; original symbols copied as equal prefix; original symbolGraph equal",
+    "Strict v0.1 output schema validation before atomic temporary write & readback validation",
+    "USR uniqueness, projected complete sourceDeclarations equality, compiler path equality, raw graph membership & exact addition accounting",
+    "Only graph-absent additions; statuses inventory or proof-hidden reason; stable USR sort",
+    "Production entrypoint fails closed while final pins remain unset; guard byte hash checked before loading & load_artifact acceptance precedes merge/write"
+  ],
+  "concreteGaps": [
+    {
+      "anchor": "consumer.py:149",
+      "fault": "Replace one excluded source row key with unique string malformed-unique-key. All counts unchanged.",
+      "observed": "merge accepts & returns 108273 symbols",
+      "repair": "Validate four-element key shape with exact source module/interface, positive integer line & nonempty name; reject boolean line or missing key."
+    },
+    {
+      "anchor": "consumer.py:136",
+      "fault": "Change one excluded source row status to unrecognized-status; decrement old byStatus & add new status count.",
+      "observed": "merge accepts & returns 108273 symbols",
+      "repair": "Validate every source status against final guard census status vocabulary before total accounting."
+    },
+    {
+      "anchor": "consumer.py:145",
+      "fault": "Change one source row lineageV12 true to string true.",
+      "observed": "merge accepts & returns 108273 symbols",
+      "repair": "Require exact bool type before lineage accounting."
+    }
+  ],
+  "scopeOfGaps": "These are independently reproduced merge-boundary acceptance gaps. Production frozen proof loader may reject upstream; no final proof/candidate was available or bypassed.",
+  "missingControls": [
+    "Production build_final_candidate guards: unset pins, changed base/link/proof/guard, malformed loader result & rejected proof must leave candidate untouched",
+    "Atomic writer schema rejection/readback or replacement failure must preserve existing destination & remove temporary file",
+    "Exact original prefix & symbolGraph preservation on final actual proof; final candidate counts/status/path accounting & graph absence against pinned actual graphs"
+  ],
+  "performed": "Read-only source review, one focused existing path/mixed-status test passed, three pure in-memory fault reproductions; no candidate write or production source edits.",
+  "next": "Re-review repaired frozen consumer/tests then final actual proof/candidate freeze when root supplies exact pins."
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "consumer-test-result-receipt",
+  "version": 1,
+  "command": "PYTHONPATH=. factory/.venv/bin/python factory/catalogue/public-ancestor-consumer/test_consumer.py",
+  "exitCode": 0,
+  "testsRun": 25,
+  "durationSeconds": 308.885,
+  "stdoutFinalChunk": "........\n----------------------------------------------------------------------\nRan 25 tests in 308.885s\nOK\n",
+  "source": {
+    "path": "factory/catalogue/public-ancestor-consumer/consumer.py",
+    "sha256": "8bd1b2898ecf3774b8145145d285601f7f75f1c7d405793af47d847cf4ba9630"
+  },
+  "test": {
+    "path": "factory/catalogue/public-ancestor-consumer/test_consumer.py",
+    "sha256": "791e8bc461f8c9b4cc47bf4bf2fff5a0ccde38e8122fdd34711684cc8e213077"
+  },
+  "candidate": {
+    "path": "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.json",
+    "sha256": "fd453b6345f83b49931c7194c2e1127538e2de4ceb0de4c25f715ac6d85ac4f2"
+  },
+  "sidecar": {
+    "path": "factory/catalogue/public-ancestor-consumer/catalogue-public-source-v1.manifest.json",
+    "sha256": "322543df1789a202301ac159089ec33b20487fe268db90d90d3a2948888fbbb4"
+  }
+}

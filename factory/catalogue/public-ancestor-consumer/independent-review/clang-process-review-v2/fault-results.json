@@ -1,0 +1,35 @@
+[
+  {
+    "fault": "baseline",
+    "result": "accepted"
+  },
+  {
+    "fault": "coherent-wrong-source-module-import-definition-process-export-bundle",
+    "result": "accepted"
+  },
+  {
+    "fault": "wrong-usr",
+    "result": "rejected",
+    "reason": "identity AppKit.NSWindow"
+  },
+  {
+    "fault": "wrong-kind",
+    "result": "rejected",
+    "reason": "identity AppKit.NSWindow"
+  },
+  {
+    "fault": "wrong-process-exit",
+    "result": "rejected",
+    "reason": "return code swift-typecheck"
+  },
+  {
+    "fault": "missing-target",
+    "result": "rejected",
+    "reason": "target cardinality"
+  },
+  {
+    "fault": "extra-target",
+    "result": "rejected",
+    "reason": "target cardinality"
+  }
+]

@@ -1,0 +1,380 @@
+{
+  "scope": "preliminary consumer parent API exclusion source review only; full pinned proof/candidate next",
+  "sourceSha256": "66c6d03275a2da2898de6862c6d494703116c0e04094f186e4770cc21966a30b",
+  "testsSha256": "47758ea781e86290f26df1b0c11241066720198c377088823225f7e59246c943",
+  "actualProofInputSha256": "916d29c92104198969b550c21e298d0b54888045ed349af7a8b73c6431be6087",
+  "rows": [
+    {
+      "module": "SwiftUI",
+      "line": 433,
+      "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvg",
+      "rawAccess": null,
+      "typedAccess": "public",
+      "conditions": [
+        {
+          "branchLine": 416,
+          "ifLine": 416,
+          "kind": "if"
+        }
+      ],
+      "effectivePublic": false
+    },
+    {
+      "module": "SwiftUI",
+      "line": 3478,
+      "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvg",
+      "rawAccess": null,
+      "typedAccess": "public",
+      "conditions": [
+        {
+          "branchLine": 3468,
+          "ifLine": 3468,
+          "kind": "if"
+        }
+      ],
+      "effectivePublic": false
+    },
+    {
+      "module": "SwiftUI",
+      "line": 9759,
+      "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvg",
+      "rawAccess": null,
+      "typedAccess": "public",
+      "conditions": [],
+      "effectivePublic": false
+    },
+    {
+      "module": "SwiftUI",
+      "line": 9879,
+      "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvg",
+      "rawAccess": null,
+      "typedAccess": "public",
+      "conditions": [
+        {
+          "branchLine": 9873,
+          "ifLine": 9873,
+          "kind": "if"
+        }
+      ],
+      "effectivePublic": false
+    },
+    {
+      "module": "SwiftUI",
+      "line": 11686,
+      "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvg",
+      "rawAccess": null,
+      "typedAccess": "public",
+      "conditions": [
+        {
+          "branchLine": 11675,
+          "ifLine": 11675,
+          "kind": "if"
+        }
+      ],
+      "effectivePublic": false
+    }
+  ],
+  "faults": [
+    {
+      "line": 433,
+      "fault": "ast_access",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 433,
+      "fault": "ast_kind",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 433,
+      "fault": "ast_family",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 433,
+      "fault": "ast_line",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 433,
+      "fault": "ast_property",
+      "reason": "typed accessor AST property name differs from exact source/raw parent"
+    },
+    {
+      "line": 433,
+      "fault": "bool_cardinality",
+      "reason": "public child parent cardinality/conditional binding changed"
+    },
+    {
+      "line": 433,
+      "fault": "duplicate_witness",
+      "reason": "nonpublic owner witness is duplicated"
+    },
+    {
+      "line": 433,
+      "fault": "foreign_conditions",
+      "reason": "nonpublic owner lacks unique matching excluded source nominal row"
+    },
+    {
+      "line": 433,
+      "fault": "nominal_leaf_extra",
+      "reason": "owner witness module leaf has noncanonical expanded shape"
+    },
+    {
+      "line": 433,
+      "fault": "nominal_wrong_name",
+      "reason": "nonpublic owner demangle tree identity differs from exact source owner path"
+    },
+    {
+      "line": 433,
+      "fault": "duplicate_AST_property_parent",
+      "reason": "typed accessor AST lacks exact source property/subscript owner"
+    },
+    {
+      "line": 433,
+      "fault": "contradictory_explicit_raw_access",
+      "reason": "contradictory raw accessor access"
+    },
+    {
+      "line": 3478,
+      "fault": "ast_access",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 3478,
+      "fault": "ast_kind",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 3478,
+      "fault": "ast_family",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 3478,
+      "fault": "ast_line",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 3478,
+      "fault": "ast_property",
+      "reason": "typed accessor AST property name differs from exact source/raw parent"
+    },
+    {
+      "line": 3478,
+      "fault": "bool_cardinality",
+      "reason": "public child parent cardinality/conditional binding changed"
+    },
+    {
+      "line": 3478,
+      "fault": "duplicate_witness",
+      "reason": "nonpublic owner witness is duplicated"
+    },
+    {
+      "line": 3478,
+      "fault": "foreign_conditions",
+      "reason": "nonpublic owner lacks unique matching excluded source nominal row"
+    },
+    {
+      "line": 3478,
+      "fault": "nominal_leaf_extra",
+      "reason": "owner witness module leaf has noncanonical expanded shape"
+    },
+    {
+      "line": 3478,
+      "fault": "nominal_wrong_name",
+      "reason": "nonpublic owner demangle tree identity differs from exact source owner path"
+    },
+    {
+      "line": 3478,
+      "fault": "duplicate_AST_property_parent",
+      "reason": "typed accessor AST lacks exact source property/subscript owner"
+    },
+    {
+      "line": 3478,
+      "fault": "contradictory_explicit_raw_access",
+      "reason": "contradictory raw accessor access"
+    },
+    {
+      "line": 9759,
+      "fault": "ast_access",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9759,
+      "fault": "ast_kind",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9759,
+      "fault": "ast_family",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9759,
+      "fault": "ast_line",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9759,
+      "fault": "ast_property",
+      "reason": "typed accessor AST property name differs from exact source/raw parent"
+    },
+    {
+      "line": 9759,
+      "fault": "bool_cardinality",
+      "reason": "public child parent cardinality/conditional binding changed"
+    },
+    {
+      "line": 9759,
+      "fault": "duplicate_witness",
+      "reason": "nonpublic owner witness is duplicated"
+    },
+    {
+      "line": 9759,
+      "fault": "foreign_conditions",
+      "reason": "nonpublic owner lacks unique matching excluded source nominal row"
+    },
+    {
+      "line": 9759,
+      "fault": "nominal_leaf_extra",
+      "reason": "owner witness module leaf has noncanonical expanded shape"
+    },
+    {
+      "line": 9759,
+      "fault": "nominal_wrong_name",
+      "reason": "nonpublic owner demangle tree identity differs from exact source owner path"
+    },
+    {
+      "line": 9759,
+      "fault": "duplicate_AST_property_parent",
+      "reason": "typed accessor AST lacks exact source property/subscript owner"
+    },
+    {
+      "line": 9759,
+      "fault": "contradictory_explicit_raw_access",
+      "reason": "contradictory raw accessor access"
+    },
+    {
+      "line": 9879,
+      "fault": "ast_access",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9879,
+      "fault": "ast_kind",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9879,
+      "fault": "ast_family",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9879,
+      "fault": "ast_line",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 9879,
+      "fault": "ast_property",
+      "reason": "typed accessor AST property name differs from exact source/raw parent"
+    },
+    {
+      "line": 9879,
+      "fault": "bool_cardinality",
+      "reason": "public child parent cardinality/conditional binding changed"
+    },
+    {
+      "line": 9879,
+      "fault": "duplicate_witness",
+      "reason": "nonpublic owner witness is duplicated"
+    },
+    {
+      "line": 9879,
+      "fault": "foreign_conditions",
+      "reason": "nonpublic owner lacks unique matching excluded source nominal row"
+    },
+    {
+      "line": 9879,
+      "fault": "nominal_leaf_extra",
+      "reason": "owner witness module leaf has noncanonical expanded shape"
+    },
+    {
+      "line": 9879,
+      "fault": "nominal_wrong_name",
+      "reason": "nonpublic owner demangle tree identity differs from exact source owner path"
+    },
+    {
+      "line": 9879,
+      "fault": "duplicate_AST_property_parent",
+      "reason": "typed accessor AST lacks exact source property/subscript owner"
+    },
+    {
+      "line": 9879,
+      "fault": "contradictory_explicit_raw_access",
+      "reason": "contradictory raw accessor access"
+    },
+    {
+      "line": 11686,
+      "fault": "ast_access",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 11686,
+      "fault": "ast_kind",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 11686,
+      "fault": "ast_family",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 11686,
+      "fault": "ast_line",
+      "reason": "typed accessor AST access/kind/family/line differs from raw compiler record"
+    },
+    {
+      "line": 11686,
+      "fault": "ast_property",
+      "reason": "typed accessor AST property name differs from exact source/raw parent"
+    },
+    {
+      "line": 11686,
+      "fault": "bool_cardinality",
+      "reason": "public child parent cardinality/conditional binding changed"
+    },
+    {
+      "line": 11686,
+      "fault": "duplicate_witness",
+      "reason": "nonpublic owner witness is duplicated"
+    },
+    {
+      "line": 11686,
+      "fault": "foreign_conditions",
+      "reason": "nonpublic owner lacks unique matching excluded source nominal row"
+    },
+    {
+      "line": 11686,
+      "fault": "nominal_leaf_extra",
+      "reason": "owner witness module leaf has noncanonical expanded shape"
+    },
+    {
+      "line": 11686,
+      "fault": "nominal_wrong_name",
+      "reason": "nonpublic owner demangle tree identity differs from exact source owner path"
+    },
+    {
+      "line": 11686,
+      "fault": "duplicate_AST_property_parent",
+      "reason": "typed accessor AST lacks exact source property/subscript owner"
+    },
+    {
+      "line": 11686,
+      "fault": "contradictory_explicit_raw_access",
+      "reason": "contradictory raw accessor access"
+    }
+  ],
+  "candidateEmitted": false
+}

@@ -1,0 +1,76 @@
+{
+  "kind": "independent-swift16-v1-process-review",
+  "evidenceSHA256": "bfa745e6748214e685c763284c7f2cd74ce685ea76f2ae093c81c77f0e73ee21",
+  "captureSourceSHA256": "ad3700b9b007293cf035a4f047578b1f456e9ca299668ea4e1d4eb5db37ac3fc",
+  "verifierSHA256": "54628edf2421a6acd14df3e434d4c9b964c4145b24e60be66267c9a560bd2ff9",
+  "qualification": "Not cleared as genuine swiftc/SourceKit process-returncode evidence. Demangle subprocess returncode is recorded; scoped raw import/header identities remain reviewable facts.",
+  "concreteReceiptDefect": {
+    "sourceAnchor": "capture_swift_stdlib_process.py:existing_capture & main",
+    "observed": "swiftcTypecheck & sourcekitIndex call existing_capture without exit argument; default exit_code=0 plus output mtime generates claimed exits. No subprocess returncode or start/end for those two runs in bfa745e6 artifact.",
+    "repairOwnership": "compilerbridge_review owns new v2 fresh subprocess capture; preserve v1 unchanged."
+  },
+  "verifierFaults": [
+    {
+      "fault": "baseline",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-module",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-name",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-kind",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-usr",
+      "result": "rejected",
+      "reason": "identity changed: Optional"
+    },
+    {
+      "fault": "wrong-full-tree",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-source-fact",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "wrong-request",
+      "result": "rejected",
+      "reason": "request/preimage mismatch"
+    },
+    {
+      "fault": "wrong-process-argv",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "duplicate-replaces-missing-target",
+      "result": "accepted",
+      "reason": null
+    },
+    {
+      "fault": "missing-target",
+      "result": "rejected",
+      "reason": "evidence target count changed"
+    }
+  ],
+  "rawCounts": {
+    "reportedRawReferenceEntities": 34,
+    "reportedTargets": 16,
+    "reportedDemangleTrees": 32
+  },
+  "scope": "Fault fixtures use existing frozen actual files with only candidate JSON mutation. No tool process launched. Missing/extra target set, full tree/raw imported records/process argv/source facts are insufficiently guarded in v1 verifier. Production module guard owner independently reconstructs these joins & awaits v2 genuine subprocess receipts.",
+  "actions": "Read-only v1 source/evidence inspection plus own fixture JSONs/report only; no old evidence/source edits or captures."
+}

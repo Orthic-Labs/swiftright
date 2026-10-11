@@ -1,0 +1,35 @@
+{
+  "schema": "independent-parent-api-exclusion-review-v1",
+  "result": "not cleared: nominal-tree identity & strict cardinality gaps",
+  "sourcePins": {
+    "consumer.py": "5009856ba0ca9a9b40342c78161b914df56f443f27d562eb7e6f7433090ea435",
+    "test_consumer.py": "9618070e7955763697095e702d793e29818a28da20ef7c81166818e456483514"
+  },
+  "observations": [
+    "excluded-nonpublic-parent-api invokes bounded witness validator then continues before public_child_groups insertion. Baseline excluded accessor is not promoted or grouped; remaining ordinary addition preserves original prefix.",
+    "Source/raw/typed owner witnesses correlate module/interface/source line/name/kind/access to unique source & raw compiler records plus child typed owner chain. Existing mutation tests meaningfully reject absent witnesses, wrong raw USR, typed access mismatch & mismatched child subtree.",
+    "Demangle witness validation only checks arbitrary supplied witness.nominalTree occurs as exact subtree of arbitrary supplied child.tree; no nominal tree shape/kind/module/name/full lexical path gate correlates it to sourceScope/rawNominal/typedNominal. Coherent wrong-nominal replacement passes with source/raw/typed PrivateBox unchanged.",
+    "child.parentRawCardinality equality accepts boolean True against integer anchor cardinality 1. Existing raw anchor strict integer gate does not validate this child field.",
+    "Both accepted faults leave excluded child unpromoted; no production adapter acceptance or output candidate was exercised."
+  ],
+  "findings": [
+    {
+      "priority": 2,
+      "file": "consumer.py",
+      "line": 285,
+      "problem": "Coherent unrelated nominal subtree satisfies containment despite unchanged lexical/raw/typed owner identity.",
+      "requestedGate": "Require exact expanded nominal shape/kind/module/full owner path correlation; bind raw nominal USR to pinned expanded owner-USR evidence where available. Add coherent paired wrong child/witness nominal control."
+    },
+    {
+      "priority": 3,
+      "file": "consumer.py",
+      "line": 222,
+      "problem": "Boolean child cardinality passes integer equality.",
+      "requestedGate": "Require type(parentRawCardinality) is int before exact cardinality comparison; add true/float/string negative controls."
+    }
+  ],
+  "evidence": {
+    "reproduction.json": "39741cc9e39fcf6721aae828ae3abde2afda19e0e4245e589fccc33dcaa6d2ad",
+    "existing-test-replay.json": "145739e1a0c2086f522e4d5702f0d783f2d4d958e12a0fb2b8b2abc861a7ab42"
+  }
+}

@@ -1,0 +1,28 @@
+# Public ancestor catalogue consumer
+
+This folder will hold a versioned strict-v0.1 catalogue derived from the
+immutable base catalogue plus independently replayed public-ancestor proof.
+The base catalogue and symbol-graph metadata remain unchanged; additions are
+limited to exact compiler USRs absent from the original graph closure.
+
+`consumer.py` implements the fail-closed merge boundary. It checks the pinned
+base identity/hash, complete source-start accounting, exact graph membership,
+single canonical compiler path per USR, proof classifications, proof-provided
+hidden reasons, and strict catalogue schema. Production entrypoint still needs
+final guard/evidence hashes before it can hydrate proof and atomically write the
+candidate. No merged candidate is written while proof inputs/status remain
+mutable or Oracle review is pending.
+
+The separate census `v1` is historical & cannot be regenerated because its
+original parser bytes are unavailable. Any next raw census must use a copied,
+versioned parser file whose SHA-256 is frozen before capture starts, retain full
+source/index/request/tool bytes, & leave v1 untouched. The final proof guard
+must independently rebuild source-start denominator & classifications from
+those pins; this consumer will only use proof rows returned by its production
+loader.
+
+Run focused checks with:
+
+```sh
+PYTHONPATH=. factory/.venv/bin/python factory/catalogue/public-ancestor-consumer/test_consumer.py
+```

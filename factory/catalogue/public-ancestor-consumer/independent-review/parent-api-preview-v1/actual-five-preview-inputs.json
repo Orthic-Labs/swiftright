@@ -1,0 +1,1695 @@
+{
+  "scope": "preliminary actual5 parent API branch only; artifact not final-cleared",
+  "inputPath": "factory/catalogue/public-ancestor-spike/public-ancestor-evidence-v2.json",
+  "inputSha256": "916d29c92104198969b550c21e298d0b54888045ed349af7a8b73c6431be6087",
+  "sourceSha256": "507bf20dcf05b0d3372e39a260ea30e684e78d5f32700a5d87d1f9292c1923b4",
+  "rows": [
+    {
+      "outcome": {
+        "accepted": false,
+        "reason": "public child raw access/parent cardinality/conditional binding changed"
+      },
+      "record": {
+        "category": "source-property-accessor",
+        "childEvidence": {
+          "conditions": [
+            {
+              "branchLine": 416,
+              "ifLine": 416,
+              "kind": "if"
+            }
+          ],
+          "effectivePublic": false,
+          "graphPresent": false,
+          "kind": "source.lang.swift.decl.function.accessor.getter",
+          "nonpublicOwnerEvidence": [
+            {
+              "nominalTree": {
+                "children": [
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Module",
+                    "text": "SwiftUI"
+                  },
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Identifier",
+                    "text": "LimitedAvailabilityTableColumnContent"
+                  }
+                ],
+                "index": null,
+                "kind": "Structure",
+                "text": null
+              },
+              "rawNominal": {
+                "column": 37,
+                "effective_access": "source.decl.effective_access.internal",
+                "kind": "source.lang.swift.decl.struct",
+                "line": 421,
+                "name": "LimitedAvailabilityTableColumnContent",
+                "sourcekitContext": [],
+                "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV"
+              },
+              "sourceScope": {
+                "attributes": [
+                  {
+                    "line": 417,
+                    "text": "@available(iOS 17.5, macOS 14.5, *)"
+                  },
+                  {
+                    "line": 418,
+                    "text": "@available(tvOS, unavailable)"
+                  },
+                  {
+                    "line": 419,
+                    "text": "@available(watchOS, unavailable)"
+                  },
+                  {
+                    "line": 420,
+                    "text": "@usableFromInline"
+                  }
+                ],
+                "bodyDepth": 1,
+                "conditions": [
+                  {
+                    "branchLine": 416,
+                    "ifLine": 416,
+                    "kind": "if"
+                  }
+                ],
+                "endLine": 435,
+                "explicitAccess": "internal",
+                "insideFunction": false,
+                "keywordOffset": 29,
+                "kind": "struct",
+                "line": 421,
+                "module": "SwiftUI",
+                "name": "LimitedAvailabilityTableColumnContent",
+                "path": [
+                  "LimitedAvailabilityTableColumnContent"
+                ],
+                "scopeLines": [],
+                "text": "@frozen nonisolated internal struct LimitedAvailabilityTableColumnContent<TableRowValue, TableColumnSortComparator> : SwiftUI.TableColumnContent, ~Swift.Sendable where TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator {"
+              },
+              "typedNominalAST": {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 435,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 421,
+                "name": "LimitedAvailabilityTableColumnContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:421:30 - line:435:1] \"LimitedAvailabilityTableColumnContent\" \"<TableRowValue, TableColumnSortComparator>\" where_requirements=\"TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator\" interface_type=\"LimitedAvailabilityTableColumnContent<TableRowValue, TableColumnSortComparator>.Type\" access=internal non_resilient inherits=\"TableColumnContent, ~Sendable\" where_requirements=\"TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            }
+          ],
+          "ownSourceAttributes": [],
+          "parentRawCardinality": 1,
+          "parentSourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            432,
+            "tableColumnBody"
+          ],
+          "parentSourceStatus": "excluded-nonpublic-source",
+          "parentUsr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvp",
+          "projectedDuplicateProof": null,
+          "reason": "public typed component is capped by exact source/raw/typed nonpublic enclosing nominal",
+          "status": "excluded-nonpublic-parent-api",
+          "tree": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Module",
+                            "text": "SwiftUI"
+                          },
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Identifier",
+                            "text": "LimitedAvailabilityTableColumnContent"
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Structure",
+                        "text": null
+                      },
+                      {
+                        "children": [],
+                        "index": null,
+                        "kind": "Identifier",
+                        "text": "tableColumnBody"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Module",
+                                "text": "Swift"
+                              },
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Identifier",
+                                "text": "Never"
+                              }
+                            ],
+                            "index": null,
+                            "kind": "Enum",
+                            "text": null
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Type",
+                        "text": null
+                      }
+                    ],
+                    "index": null,
+                    "kind": "Variable",
+                    "text": null
+                  }
+                ],
+                "index": null,
+                "kind": "Getter",
+                "text": null
+              }
+            ],
+            "index": null,
+            "kind": "Global",
+            "text": null
+          },
+          "typedAST": {
+            "access": "public",
+            "column": 5,
+            "endColumn": 5,
+            "endLine": 433,
+            "family": "get",
+            "indent": 6,
+            "kind": "accessor_decl",
+            "line": 433,
+            "name": null,
+            "owners": [
+              {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 435,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 421,
+                "name": "LimitedAvailabilityTableColumnContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:421:30 - line:435:1] \"LimitedAvailabilityTableColumnContent\" \"<TableRowValue, TableColumnSortComparator>\" where_requirements=\"TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator\" interface_type=\"LimitedAvailabilityTableColumnContent<TableRowValue, TableColumnSortComparator>.Type\" access=internal non_resilient inherits=\"TableColumnContent, ~Sendable\" where_requirements=\"TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              },
+              {
+                "access": "public",
+                "column": 26,
+                "endColumn": 26,
+                "endLine": 432,
+                "indent": 4,
+                "kind": "var_decl",
+                "line": 432,
+                "name": "tableColumnBody",
+                "raw": "    (var_decl decl_context=0x755937c480 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:432:26 - line:432:26] \"tableColumnBody\" interface_type=\"Never\" access=public readImpl=getter immutable nonisolated",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            ],
+            "propertyName": "tableColumnBody",
+            "raw": "      (accessor_decl decl_context=0x755937c480 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:433:5 - line:433:5] <anonymous @ 0x755937dc68> interface_type=\"<TableRowValue, TableColumnSortComparator where TableRowValue : Identifiable, TableColumnSortComparator : SortComparator> (LimitedAvailabilityTableColumnContent<TableRowValue, TableColumnSortComparator>) -> () -> Never\" access=public captures=(<generic>  type=\u03c4_0_0, type=\u03c4_0_1) get for=\"tableColumnBody\"",
+            "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+          },
+          "typedAccess": "public",
+          "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvg"
+        },
+        "containerEvidence": null,
+        "effectiveAccess": null,
+        "isImplicit": false,
+        "kind": "source.lang.swift.decl.function.accessor.getter",
+        "line": 433,
+        "module": "SwiftUI",
+        "name": "getter:tableColumnBody",
+        "parentAnchor": {
+          "kind": "source.lang.swift.decl.var.instance",
+          "rawCardinality": 1,
+          "sourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            432,
+            "tableColumnBody"
+          ],
+          "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvp"
+        },
+        "rawContext": [
+          {
+            "column": 37,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 421,
+            "name": "LimitedAvailabilityTableColumnContent",
+            "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV"
+          },
+          {
+            "column": 26,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 432,
+            "name": "tableColumnBody",
+            "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvp"
+          }
+        ],
+        "rawEntityIndex": 130,
+        "usr": "s:7SwiftUI37LimitedAvailabilityTableColumnContentV05tableF4Bodys5NeverOvg"
+      },
+      "parent": {
+        "attributes": [],
+        "conditions": [
+          {
+            "branchLine": 416,
+            "ifLine": 416,
+            "kind": "if"
+          }
+        ],
+        "explicitAccess": "public",
+        "key": [
+          "SwiftUI",
+          "arm64e-apple-macos.swiftinterface",
+          432,
+          "tableColumnBody"
+        ],
+        "kind": "var",
+        "lineageV12": true,
+        "reason": "enclosing nominal ancestor nonpublic/unspecified",
+        "scopeLines": [
+          421
+        ],
+        "signature": "nonisolated public var tableColumnBody: Swift.Never {",
+        "status": "excluded-nonpublic-source"
+      },
+      "sourceOwners": [
+        {
+          "attributes": [
+            {
+              "line": 417,
+              "text": "@available(iOS 17.5, macOS 14.5, *)"
+            },
+            {
+              "line": 418,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 419,
+              "text": "@available(watchOS, unavailable)"
+            },
+            {
+              "line": 420,
+              "text": "@usableFromInline"
+            },
+            {
+              "line": 421,
+              "text": "@frozen"
+            }
+          ],
+          "conditions": [
+            {
+              "branchLine": 416,
+              "ifLine": 416,
+              "kind": "if"
+            }
+          ],
+          "explicitAccess": "internal",
+          "key": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            421,
+            "LimitedAvailabilityTableColumnContent"
+          ],
+          "kind": "struct",
+          "lineageV12": false,
+          "reason": "explicit actual source declaration access internal",
+          "scopeLines": [],
+          "signature": "@frozen nonisolated internal struct LimitedAvailabilityTableColumnContent<TableRowValue, TableColumnSortComparator> : SwiftUI.TableColumnContent, ~Swift.Sendable where TableRowValue : Swift.Identifiable, TableColumnSortComparator : Foundation.SortComparator {",
+          "status": "excluded-nonpublic-source"
+        }
+      ]
+    },
+    {
+      "outcome": {
+        "accepted": false,
+        "reason": "public child raw access/parent cardinality/conditional binding changed"
+      },
+      "record": {
+        "category": "source-property-accessor",
+        "childEvidence": {
+          "conditions": [
+            {
+              "branchLine": 3468,
+              "ifLine": 3468,
+              "kind": "if"
+            }
+          ],
+          "effectivePublic": false,
+          "graphPresent": false,
+          "kind": "source.lang.swift.decl.function.accessor.getter",
+          "nonpublicOwnerEvidence": [
+            {
+              "nominalTree": {
+                "children": [
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Module",
+                    "text": "SwiftUI"
+                  },
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Identifier",
+                    "text": "LimitedAvailabilityCommandContent"
+                  }
+                ],
+                "index": null,
+                "kind": "Structure",
+                "text": null
+              },
+              "rawNominal": {
+                "column": 37,
+                "effective_access": "source.decl.effective_access.internal",
+                "kind": "source.lang.swift.decl.struct",
+                "line": 3473,
+                "name": "LimitedAvailabilityCommandContent",
+                "sourcekitContext": [],
+                "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV"
+              },
+              "sourceScope": {
+                "attributes": [
+                  {
+                    "line": 3469,
+                    "text": "@available(iOS 17.5, macOS 14.5, *)"
+                  },
+                  {
+                    "line": 3470,
+                    "text": "@available(tvOS, unavailable)"
+                  },
+                  {
+                    "line": 3471,
+                    "text": "@available(watchOS, unavailable)"
+                  },
+                  {
+                    "line": 3472,
+                    "text": "@usableFromInline"
+                  }
+                ],
+                "bodyDepth": 1,
+                "conditions": [
+                  {
+                    "branchLine": 3468,
+                    "ifLine": 3468,
+                    "kind": "if"
+                  }
+                ],
+                "endLine": 3486,
+                "explicitAccess": "internal",
+                "insideFunction": false,
+                "keywordOffset": 29,
+                "kind": "struct",
+                "line": 3473,
+                "module": "SwiftUI",
+                "name": "LimitedAvailabilityCommandContent",
+                "path": [
+                  "LimitedAvailabilityCommandContent"
+                ],
+                "scopeLines": [],
+                "text": "@frozen nonisolated internal struct LimitedAvailabilityCommandContent : SwiftUI.Commands, ~Swift.Sendable {"
+              },
+              "typedNominalAST": {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 3486,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 3473,
+                "name": "LimitedAvailabilityCommandContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:3473:30 - line:3486:1] \"LimitedAvailabilityCommandContent\" interface_type=\"LimitedAvailabilityCommandContent.Type\" access=internal non_resilient inherits=\"Commands, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            }
+          ],
+          "ownSourceAttributes": [],
+          "parentRawCardinality": 1,
+          "parentSourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            3477,
+            "body"
+          ],
+          "parentSourceStatus": "excluded-nonpublic-source",
+          "parentUsr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvp",
+          "projectedDuplicateProof": null,
+          "reason": "public typed component is capped by exact source/raw/typed nonpublic enclosing nominal",
+          "status": "excluded-nonpublic-parent-api",
+          "tree": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Module",
+                            "text": "SwiftUI"
+                          },
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Identifier",
+                            "text": "LimitedAvailabilityCommandContent"
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Structure",
+                        "text": null
+                      },
+                      {
+                        "children": [],
+                        "index": null,
+                        "kind": "Identifier",
+                        "text": "body"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Module",
+                                "text": "Swift"
+                              },
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Identifier",
+                                "text": "Never"
+                              }
+                            ],
+                            "index": null,
+                            "kind": "Enum",
+                            "text": null
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Type",
+                        "text": null
+                      }
+                    ],
+                    "index": null,
+                    "kind": "Variable",
+                    "text": null
+                  }
+                ],
+                "index": null,
+                "kind": "Getter",
+                "text": null
+              }
+            ],
+            "index": null,
+            "kind": "Global",
+            "text": null
+          },
+          "typedAST": {
+            "access": "public",
+            "column": 5,
+            "endColumn": 5,
+            "endLine": 3478,
+            "family": "get",
+            "indent": 6,
+            "kind": "accessor_decl",
+            "line": 3478,
+            "name": null,
+            "owners": [
+              {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 3486,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 3473,
+                "name": "LimitedAvailabilityCommandContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:3473:30 - line:3486:1] \"LimitedAvailabilityCommandContent\" interface_type=\"LimitedAvailabilityCommandContent.Type\" access=internal non_resilient inherits=\"Commands, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              },
+              {
+                "access": "public",
+                "column": 26,
+                "endColumn": 26,
+                "endLine": 3477,
+                "indent": 4,
+                "kind": "var_decl",
+                "line": 3477,
+                "name": "body",
+                "raw": "    (var_decl decl_context=0x7559911898 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:3477:26 - line:3477:26] \"body\" interface_type=\"Never\" access=public readImpl=getter immutable nonisolated",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            ],
+            "propertyName": "body",
+            "raw": "      (accessor_decl decl_context=0x7559911898 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:3478:5 - line:3478:5] <anonymous @ 0x7559912248> interface_type=\"(LimitedAvailabilityCommandContent) -> () -> Never\" access=public get for=\"body\"",
+            "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+          },
+          "typedAccess": "public",
+          "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvg"
+        },
+        "containerEvidence": null,
+        "effectiveAccess": null,
+        "isImplicit": false,
+        "kind": "source.lang.swift.decl.function.accessor.getter",
+        "line": 3478,
+        "module": "SwiftUI",
+        "name": "getter:body",
+        "parentAnchor": {
+          "kind": "source.lang.swift.decl.var.instance",
+          "rawCardinality": 1,
+          "sourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            3477,
+            "body"
+          ],
+          "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvp"
+        },
+        "rawContext": [
+          {
+            "column": 37,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 3473,
+            "name": "LimitedAvailabilityCommandContent",
+            "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV"
+          },
+          {
+            "column": 26,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 3477,
+            "name": "body",
+            "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvp"
+          }
+        ],
+        "rawEntityIndex": 1102,
+        "usr": "s:7SwiftUI33LimitedAvailabilityCommandContentV4bodys5NeverOvg"
+      },
+      "parent": {
+        "attributes": [],
+        "conditions": [
+          {
+            "branchLine": 3468,
+            "ifLine": 3468,
+            "kind": "if"
+          }
+        ],
+        "explicitAccess": "public",
+        "key": [
+          "SwiftUI",
+          "arm64e-apple-macos.swiftinterface",
+          3477,
+          "body"
+        ],
+        "kind": "var",
+        "lineageV12": true,
+        "reason": "enclosing nominal ancestor nonpublic/unspecified",
+        "scopeLines": [
+          3473
+        ],
+        "signature": "nonisolated public var body: Swift.Never {",
+        "status": "excluded-nonpublic-source"
+      },
+      "sourceOwners": [
+        {
+          "attributes": [
+            {
+              "line": 3469,
+              "text": "@available(iOS 17.5, macOS 14.5, *)"
+            },
+            {
+              "line": 3470,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 3471,
+              "text": "@available(watchOS, unavailable)"
+            },
+            {
+              "line": 3472,
+              "text": "@usableFromInline"
+            },
+            {
+              "line": 3473,
+              "text": "@frozen"
+            }
+          ],
+          "conditions": [
+            {
+              "branchLine": 3468,
+              "ifLine": 3468,
+              "kind": "if"
+            }
+          ],
+          "explicitAccess": "internal",
+          "key": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            3473,
+            "LimitedAvailabilityCommandContent"
+          ],
+          "kind": "struct",
+          "lineageV12": false,
+          "reason": "explicit actual source declaration access internal",
+          "scopeLines": [],
+          "signature": "@frozen nonisolated internal struct LimitedAvailabilityCommandContent : SwiftUI.Commands, ~Swift.Sendable {",
+          "status": "excluded-nonpublic-source"
+        }
+      ]
+    },
+    {
+      "outcome": {
+        "accepted": false,
+        "reason": "public child raw access/parent cardinality/conditional binding changed"
+      },
+      "record": {
+        "category": "source-property-accessor",
+        "childEvidence": {
+          "conditions": [],
+          "effectivePublic": false,
+          "graphPresent": false,
+          "kind": "source.lang.swift.decl.function.accessor.getter",
+          "nonpublicOwnerEvidence": [
+            {
+              "nominalTree": {
+                "children": [
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Module",
+                    "text": "SwiftUI"
+                  },
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Identifier",
+                    "text": "LimitedAvailabilitySceneAccessoryContent"
+                  }
+                ],
+                "index": null,
+                "kind": "Structure",
+                "text": null
+              },
+              "rawNominal": {
+                "column": 37,
+                "effective_access": "source.decl.effective_access.internal",
+                "kind": "source.lang.swift.decl.struct",
+                "line": 9756,
+                "name": "LimitedAvailabilitySceneAccessoryContent",
+                "sourcekitContext": [],
+                "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV"
+              },
+              "sourceScope": {
+                "attributes": [
+                  {
+                    "line": 9749,
+                    "text": "@available(iOS 27.0, *)"
+                  },
+                  {
+                    "line": 9750,
+                    "text": "@available(macCatalyst, unavailable)"
+                  },
+                  {
+                    "line": 9751,
+                    "text": "@available(macOS, unavailable)"
+                  },
+                  {
+                    "line": 9752,
+                    "text": "@available(tvOS, unavailable)"
+                  },
+                  {
+                    "line": 9753,
+                    "text": "@available(watchOS, unavailable)"
+                  },
+                  {
+                    "line": 9754,
+                    "text": "@available(visionOS, unavailable)"
+                  },
+                  {
+                    "line": 9755,
+                    "text": "@usableFromInline"
+                  }
+                ],
+                "bodyDepth": 1,
+                "conditions": [],
+                "endLine": 9764,
+                "explicitAccess": "internal",
+                "insideFunction": false,
+                "keywordOffset": 29,
+                "kind": "struct",
+                "line": 9756,
+                "module": "SwiftUI",
+                "name": "LimitedAvailabilitySceneAccessoryContent",
+                "path": [
+                  "LimitedAvailabilitySceneAccessoryContent"
+                ],
+                "scopeLines": [],
+                "text": "@frozen nonisolated internal struct LimitedAvailabilitySceneAccessoryContent : SwiftUI.SceneAccessoryContent {"
+              },
+              "typedNominalAST": {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 9764,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 9756,
+                "name": "LimitedAvailabilitySceneAccessoryContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9756:30 - line:9764:1] \"LimitedAvailabilitySceneAccessoryContent\" interface_type=\"LimitedAvailabilitySceneAccessoryContent.Type\" access=internal non_resilient inherits=\"SceneAccessoryContent\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            }
+          ],
+          "ownSourceAttributes": [],
+          "parentRawCardinality": 1,
+          "parentSourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9758,
+            "body"
+          ],
+          "parentSourceStatus": "excluded-nonpublic-source",
+          "parentUsr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvp",
+          "projectedDuplicateProof": null,
+          "reason": "public typed component is capped by exact source/raw/typed nonpublic enclosing nominal",
+          "status": "excluded-nonpublic-parent-api",
+          "tree": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Module",
+                            "text": "SwiftUI"
+                          },
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Identifier",
+                            "text": "LimitedAvailabilitySceneAccessoryContent"
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Structure",
+                        "text": null
+                      },
+                      {
+                        "children": [],
+                        "index": null,
+                        "kind": "Identifier",
+                        "text": "body"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Module",
+                                "text": "Swift"
+                              },
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Identifier",
+                                "text": "Never"
+                              }
+                            ],
+                            "index": null,
+                            "kind": "Enum",
+                            "text": null
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Type",
+                        "text": null
+                      }
+                    ],
+                    "index": null,
+                    "kind": "Variable",
+                    "text": null
+                  }
+                ],
+                "index": null,
+                "kind": "Getter",
+                "text": null
+              }
+            ],
+            "index": null,
+            "kind": "Global",
+            "text": null
+          },
+          "typedAST": {
+            "access": "public",
+            "column": 5,
+            "endColumn": 5,
+            "endLine": 9759,
+            "family": "get",
+            "indent": 6,
+            "kind": "accessor_decl",
+            "line": 9759,
+            "name": null,
+            "owners": [
+              {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 9764,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 9756,
+                "name": "LimitedAvailabilitySceneAccessoryContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9756:30 - line:9764:1] \"LimitedAvailabilitySceneAccessoryContent\" interface_type=\"LimitedAvailabilitySceneAccessoryContent.Type\" access=internal non_resilient inherits=\"SceneAccessoryContent\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              },
+              {
+                "access": "public",
+                "column": 26,
+                "endColumn": 26,
+                "endLine": 9758,
+                "indent": 4,
+                "kind": "var_decl",
+                "line": 9758,
+                "name": "body",
+                "raw": "    (var_decl decl_context=0x7559a019d0 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9758:26 - line:9758:26] \"body\" interface_type=\"Never\" access=public readImpl=getter immutable nonisolated",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            ],
+            "propertyName": "body",
+            "raw": "      (accessor_decl decl_context=0x7559a019d0 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9759:5 - line:9759:5] <anonymous @ 0x7559a01de0> interface_type=\"(LimitedAvailabilitySceneAccessoryContent) -> () -> Never\" access=public get for=\"body\"",
+            "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+          },
+          "typedAccess": "public",
+          "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvg"
+        },
+        "containerEvidence": null,
+        "effectiveAccess": null,
+        "isImplicit": false,
+        "kind": "source.lang.swift.decl.function.accessor.getter",
+        "line": 9759,
+        "module": "SwiftUI",
+        "name": "getter:body",
+        "parentAnchor": {
+          "kind": "source.lang.swift.decl.var.instance",
+          "rawCardinality": 1,
+          "sourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9758,
+            "body"
+          ],
+          "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvp"
+        },
+        "rawContext": [
+          {
+            "column": 37,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 9756,
+            "name": "LimitedAvailabilitySceneAccessoryContent",
+            "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV"
+          },
+          {
+            "column": 26,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9758,
+            "name": "body",
+            "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvp"
+          }
+        ],
+        "rawEntityIndex": 2937,
+        "usr": "s:7SwiftUI40LimitedAvailabilitySceneAccessoryContentV4bodys5NeverOvg"
+      },
+      "parent": {
+        "attributes": [],
+        "conditions": [],
+        "explicitAccess": "public",
+        "key": [
+          "SwiftUI",
+          "arm64e-apple-macos.swiftinterface",
+          9758,
+          "body"
+        ],
+        "kind": "var",
+        "lineageV12": true,
+        "reason": "enclosing nominal ancestor nonpublic/unspecified",
+        "scopeLines": [
+          9756
+        ],
+        "signature": "nonisolated public var body: Swift.Never {",
+        "status": "excluded-nonpublic-source"
+      },
+      "sourceOwners": [
+        {
+          "attributes": [
+            {
+              "line": 9749,
+              "text": "@available(iOS 27.0, *)"
+            },
+            {
+              "line": 9750,
+              "text": "@available(macCatalyst, unavailable)"
+            },
+            {
+              "line": 9751,
+              "text": "@available(macOS, unavailable)"
+            },
+            {
+              "line": 9752,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 9753,
+              "text": "@available(watchOS, unavailable)"
+            },
+            {
+              "line": 9754,
+              "text": "@available(visionOS, unavailable)"
+            },
+            {
+              "line": 9755,
+              "text": "@usableFromInline"
+            },
+            {
+              "line": 9756,
+              "text": "@frozen"
+            }
+          ],
+          "conditions": [],
+          "explicitAccess": "internal",
+          "key": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9756,
+            "LimitedAvailabilitySceneAccessoryContent"
+          ],
+          "kind": "struct",
+          "lineageV12": false,
+          "reason": "explicit actual source declaration access internal",
+          "scopeLines": [],
+          "signature": "@frozen nonisolated internal struct LimitedAvailabilitySceneAccessoryContent : SwiftUI.SceneAccessoryContent {",
+          "status": "excluded-nonpublic-source"
+        }
+      ]
+    },
+    {
+      "outcome": {
+        "accepted": false,
+        "reason": "public child raw access/parent cardinality/conditional binding changed"
+      },
+      "record": {
+        "category": "source-property-accessor",
+        "childEvidence": {
+          "conditions": [
+            {
+              "branchLine": 9873,
+              "ifLine": 9873,
+              "kind": "if"
+            }
+          ],
+          "effectivePublic": false,
+          "graphPresent": false,
+          "kind": "source.lang.swift.decl.function.accessor.getter",
+          "nonpublicOwnerEvidence": [
+            {
+              "nominalTree": {
+                "children": [
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Module",
+                    "text": "SwiftUI"
+                  },
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Identifier",
+                    "text": "LimitedAvailabilityToolbarContent"
+                  }
+                ],
+                "index": null,
+                "kind": "Structure",
+                "text": null
+              },
+              "rawNominal": {
+                "column": 37,
+                "effective_access": "source.decl.effective_access.internal",
+                "kind": "source.lang.swift.decl.struct",
+                "line": 9876,
+                "name": "LimitedAvailabilityToolbarContent",
+                "sourcekitContext": [],
+                "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV"
+              },
+              "sourceScope": {
+                "attributes": [
+                  {
+                    "line": 9874,
+                    "text": "@available(iOS 17.5, macOS 14.5, tvOS 17.5, watchOS 10.5, *)"
+                  },
+                  {
+                    "line": 9875,
+                    "text": "@usableFromInline"
+                  }
+                ],
+                "bodyDepth": 1,
+                "conditions": [
+                  {
+                    "branchLine": 9873,
+                    "ifLine": 9873,
+                    "kind": "if"
+                  }
+                ],
+                "endLine": 9885,
+                "explicitAccess": "internal",
+                "insideFunction": false,
+                "keywordOffset": 29,
+                "kind": "struct",
+                "line": 9876,
+                "module": "SwiftUI",
+                "name": "LimitedAvailabilityToolbarContent",
+                "path": [
+                  "LimitedAvailabilityToolbarContent"
+                ],
+                "scopeLines": [],
+                "text": "@frozen nonisolated internal struct LimitedAvailabilityToolbarContent : SwiftUI.ToolbarContent, SwiftUI.CustomizableToolbarContent, ~Swift.Sendable {"
+              },
+              "typedNominalAST": {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 9885,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 9876,
+                "name": "LimitedAvailabilityToolbarContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9876:30 - line:9885:1] \"LimitedAvailabilityToolbarContent\" interface_type=\"LimitedAvailabilityToolbarContent.Type\" access=internal non_resilient inherits=\"ToolbarContent, CustomizableToolbarContent, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            }
+          ],
+          "ownSourceAttributes": [],
+          "parentRawCardinality": 1,
+          "parentSourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9878,
+            "body"
+          ],
+          "parentSourceStatus": "excluded-nonpublic-source",
+          "parentUsr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvp",
+          "projectedDuplicateProof": null,
+          "reason": "public typed component is capped by exact source/raw/typed nonpublic enclosing nominal",
+          "status": "excluded-nonpublic-parent-api",
+          "tree": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Module",
+                            "text": "SwiftUI"
+                          },
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Identifier",
+                            "text": "LimitedAvailabilityToolbarContent"
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Structure",
+                        "text": null
+                      },
+                      {
+                        "children": [],
+                        "index": null,
+                        "kind": "Identifier",
+                        "text": "body"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Module",
+                                "text": "Swift"
+                              },
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "Identifier",
+                                "text": "Never"
+                              }
+                            ],
+                            "index": null,
+                            "kind": "Enum",
+                            "text": null
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Type",
+                        "text": null
+                      }
+                    ],
+                    "index": null,
+                    "kind": "Variable",
+                    "text": null
+                  }
+                ],
+                "index": null,
+                "kind": "Getter",
+                "text": null
+              }
+            ],
+            "index": null,
+            "kind": "Global",
+            "text": null
+          },
+          "typedAST": {
+            "access": "public",
+            "column": 5,
+            "endColumn": 5,
+            "endLine": 9879,
+            "family": "get",
+            "indent": 6,
+            "kind": "accessor_decl",
+            "line": 9879,
+            "name": null,
+            "owners": [
+              {
+                "access": "internal",
+                "column": 30,
+                "endColumn": 1,
+                "endLine": 9885,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 9876,
+                "name": "LimitedAvailabilityToolbarContent",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9876:30 - line:9885:1] \"LimitedAvailabilityToolbarContent\" interface_type=\"LimitedAvailabilityToolbarContent.Type\" access=internal non_resilient inherits=\"ToolbarContent, CustomizableToolbarContent, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              },
+              {
+                "access": "public",
+                "column": 26,
+                "endColumn": 26,
+                "endLine": 9878,
+                "indent": 4,
+                "kind": "var_decl",
+                "line": 9878,
+                "name": "body",
+                "raw": "    (var_decl decl_context=0x7559a09fe0 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9878:26 - line:9878:26] \"body\" interface_type=\"Never\" access=public readImpl=getter immutable nonisolated",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            ],
+            "propertyName": "body",
+            "raw": "      (accessor_decl decl_context=0x7559a09fe0 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:9879:5 - line:9879:5] <anonymous @ 0x7559a0a4f8> interface_type=\"(LimitedAvailabilityToolbarContent) -> () -> Never\" access=public get for=\"body\"",
+            "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+          },
+          "typedAccess": "public",
+          "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvg"
+        },
+        "containerEvidence": null,
+        "effectiveAccess": null,
+        "isImplicit": false,
+        "kind": "source.lang.swift.decl.function.accessor.getter",
+        "line": 9879,
+        "module": "SwiftUI",
+        "name": "getter:body",
+        "parentAnchor": {
+          "kind": "source.lang.swift.decl.var.instance",
+          "rawCardinality": 1,
+          "sourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9878,
+            "body"
+          ],
+          "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvp"
+        },
+        "rawContext": [
+          {
+            "column": 37,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 9876,
+            "name": "LimitedAvailabilityToolbarContent",
+            "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV"
+          },
+          {
+            "column": 26,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 9878,
+            "name": "body",
+            "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvp"
+          }
+        ],
+        "rawEntityIndex": 2973,
+        "usr": "s:7SwiftUI33LimitedAvailabilityToolbarContentV4bodys5NeverOvg"
+      },
+      "parent": {
+        "attributes": [],
+        "conditions": [
+          {
+            "branchLine": 9873,
+            "ifLine": 9873,
+            "kind": "if"
+          }
+        ],
+        "explicitAccess": "public",
+        "key": [
+          "SwiftUI",
+          "arm64e-apple-macos.swiftinterface",
+          9878,
+          "body"
+        ],
+        "kind": "var",
+        "lineageV12": true,
+        "reason": "enclosing nominal ancestor nonpublic/unspecified",
+        "scopeLines": [
+          9876
+        ],
+        "signature": "nonisolated public var body: Swift.Never {",
+        "status": "excluded-nonpublic-source"
+      },
+      "sourceOwners": [
+        {
+          "attributes": [
+            {
+              "line": 9874,
+              "text": "@available(iOS 17.5, macOS 14.5, tvOS 17.5, watchOS 10.5, *)"
+            },
+            {
+              "line": 9875,
+              "text": "@usableFromInline"
+            },
+            {
+              "line": 9876,
+              "text": "@frozen"
+            }
+          ],
+          "conditions": [
+            {
+              "branchLine": 9873,
+              "ifLine": 9873,
+              "kind": "if"
+            }
+          ],
+          "explicitAccess": "internal",
+          "key": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            9876,
+            "LimitedAvailabilityToolbarContent"
+          ],
+          "kind": "struct",
+          "lineageV12": false,
+          "reason": "explicit actual source declaration access internal",
+          "scopeLines": [],
+          "signature": "@frozen nonisolated internal struct LimitedAvailabilityToolbarContent : SwiftUI.ToolbarContent, SwiftUI.CustomizableToolbarContent, ~Swift.Sendable {",
+          "status": "excluded-nonpublic-source"
+        }
+      ]
+    },
+    {
+      "outcome": {
+        "accepted": false,
+        "reason": "public child raw access/parent cardinality/conditional binding changed"
+      },
+      "record": {
+        "category": "source-property-accessor",
+        "childEvidence": {
+          "conditions": [
+            {
+              "branchLine": 11675,
+              "ifLine": 11675,
+              "kind": "if"
+            }
+          ],
+          "effectivePublic": false,
+          "graphPresent": false,
+          "kind": "source.lang.swift.decl.function.accessor.getter",
+          "nonpublicOwnerEvidence": [
+            {
+              "nominalTree": {
+                "children": [
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Module",
+                    "text": "SwiftUI"
+                  },
+                  {
+                    "children": [],
+                    "index": null,
+                    "kind": "Identifier",
+                    "text": "LimitedAvailabilityWidget"
+                  }
+                ],
+                "index": null,
+                "kind": "Structure",
+                "text": null
+              },
+              "rawNominal": {
+                "column": 65,
+                "effective_access": "source.decl.effective_access.internal",
+                "kind": "source.lang.swift.decl.struct",
+                "line": 11679,
+                "name": "LimitedAvailabilityWidget",
+                "sourcekitContext": [],
+                "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV"
+              },
+              "sourceScope": {
+                "attributes": [
+                  {
+                    "line": 11676,
+                    "text": "@available(iOS 16.1, macOS 13.0, watchOS 9.1, *)"
+                  },
+                  {
+                    "line": 11677,
+                    "text": "@available(tvOS, unavailable)"
+                  },
+                  {
+                    "line": 11678,
+                    "text": "@usableFromInline"
+                  }
+                ],
+                "bodyDepth": 1,
+                "conditions": [
+                  {
+                    "branchLine": 11675,
+                    "ifLine": 11675,
+                    "kind": "if"
+                  }
+                ],
+                "endLine": 11692,
+                "explicitAccess": "internal",
+                "insideFunction": false,
+                "keywordOffset": 57,
+                "kind": "struct",
+                "line": 11679,
+                "module": "SwiftUI",
+                "name": "LimitedAvailabilityWidget",
+                "path": [
+                  "LimitedAvailabilityWidget"
+                ],
+                "scopeLines": [],
+                "text": "@frozen @_Concurrency.MainActor @preconcurrency internal struct LimitedAvailabilityWidget : SwiftUI.Widget, SwiftUI._LimitedAvailabilityWidgetMarker, ~Swift.Sendable {"
+              },
+              "typedNominalAST": {
+                "access": "internal",
+                "column": 58,
+                "endColumn": 1,
+                "endLine": 11692,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 11679,
+                "name": "LimitedAvailabilityWidget",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:11679:58 - line:11692:1] \"LimitedAvailabilityWidget\" interface_type=\"LimitedAvailabilityWidget.Type\" access=internal non_resilient inherits=\"Widget, _LimitedAvailabilityWidgetMarker, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            }
+          ],
+          "ownSourceAttributes": [],
+          "parentRawCardinality": 1,
+          "parentSourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            11685,
+            "body"
+          ],
+          "parentSourceStatus": "excluded-nonpublic-source",
+          "parentUsr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvp",
+          "projectedDuplicateProof": null,
+          "reason": "public typed component is capped by exact source/raw/typed nonpublic enclosing nominal",
+          "status": "excluded-nonpublic-parent-api",
+          "tree": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Module",
+                            "text": "SwiftUI"
+                          },
+                          {
+                            "children": [],
+                            "index": null,
+                            "kind": "Identifier",
+                            "text": "LimitedAvailabilityWidget"
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Structure",
+                        "text": null
+                      },
+                      {
+                        "children": [],
+                        "index": null,
+                        "kind": "Identifier",
+                        "text": "body"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "index": null,
+                                "kind": "OpaqueReturnTypeParent",
+                                "text": "7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvp"
+                              }
+                            ],
+                            "index": null,
+                            "kind": "OpaqueReturnType",
+                            "text": null
+                          }
+                        ],
+                        "index": null,
+                        "kind": "Type",
+                        "text": null
+                      }
+                    ],
+                    "index": null,
+                    "kind": "Variable",
+                    "text": null
+                  }
+                ],
+                "index": null,
+                "kind": "Getter",
+                "text": null
+              }
+            ],
+            "index": null,
+            "kind": "Global",
+            "text": null
+          },
+          "typedAST": {
+            "access": "public",
+            "column": 5,
+            "endColumn": 5,
+            "endLine": 11686,
+            "family": "get",
+            "indent": 6,
+            "kind": "accessor_decl",
+            "line": 11686,
+            "name": null,
+            "owners": [
+              {
+                "access": "internal",
+                "column": 58,
+                "endColumn": 1,
+                "endLine": 11692,
+                "indent": 2,
+                "kind": "struct_decl",
+                "line": 11679,
+                "name": "LimitedAvailabilityWidget",
+                "raw": "  (struct_decl decl_context=0x755931c008 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:11679:58 - line:11692:1] \"LimitedAvailabilityWidget\" interface_type=\"LimitedAvailabilityWidget.Type\" access=internal non_resilient inherits=\"Widget, _LimitedAvailabilityWidgetMarker, ~Sendable\"",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              },
+              {
+                "access": "public",
+                "column": 54,
+                "endColumn": 54,
+                "endLine": 11685,
+                "indent": 4,
+                "kind": "var_decl",
+                "line": 11685,
+                "name": "body",
+                "raw": "    (var_decl decl_context=0x755a9feb60 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:11685:54 - line:11685:54] \"body\" interface_type=\"some WidgetConfiguration\" access=public readImpl=getter immutable",
+                "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+              }
+            ],
+            "propertyName": "body",
+            "raw": "      (accessor_decl decl_context=0x755a9feb60 range=[/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface:11686:5 - line:11686:5] <anonymous @ 0x755a9ffa78> interface_type=\"(LimitedAvailabilityWidget) -> () -> some WidgetConfiguration\" access=public get for=\"body\"",
+            "source": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface"
+          },
+          "typedAccess": "public",
+          "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvg"
+        },
+        "containerEvidence": null,
+        "effectiveAccess": null,
+        "isImplicit": false,
+        "kind": "source.lang.swift.decl.function.accessor.getter",
+        "line": 11686,
+        "module": "SwiftUI",
+        "name": "getter:body",
+        "parentAnchor": {
+          "kind": "source.lang.swift.decl.var.instance",
+          "rawCardinality": 1,
+          "sourceKey": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            11685,
+            "body"
+          ],
+          "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvp"
+        },
+        "rawContext": [
+          {
+            "column": 65,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 11679,
+            "name": "LimitedAvailabilityWidget",
+            "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV"
+          },
+          {
+            "column": 54,
+            "kind": "source.lang.swift.decl.var.instance",
+            "line": 11685,
+            "name": "body",
+            "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvp"
+          }
+        ],
+        "rawEntityIndex": 3567,
+        "usr": "s:7SwiftUI25LimitedAvailabilityWidgetV4bodyQrvg"
+      },
+      "parent": {
+        "attributes": [
+          {
+            "line": 11685,
+            "text": "@_Concurrency.MainActor"
+          },
+          {
+            "line": 11685,
+            "text": "@preconcurrency"
+          }
+        ],
+        "conditions": [
+          {
+            "branchLine": 11675,
+            "ifLine": 11675,
+            "kind": "if"
+          }
+        ],
+        "explicitAccess": "public",
+        "key": [
+          "SwiftUI",
+          "arm64e-apple-macos.swiftinterface",
+          11685,
+          "body"
+        ],
+        "kind": "var",
+        "lineageV12": true,
+        "reason": "enclosing nominal ancestor nonpublic/unspecified",
+        "scopeLines": [
+          11679
+        ],
+        "signature": "@_Concurrency.MainActor @preconcurrency public var body: some SwiftUI.WidgetConfiguration {",
+        "status": "excluded-nonpublic-source"
+      },
+      "sourceOwners": [
+        {
+          "attributes": [
+            {
+              "line": 11676,
+              "text": "@available(iOS 16.1, macOS 13.0, watchOS 9.1, *)"
+            },
+            {
+              "line": 11677,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 11678,
+              "text": "@usableFromInline"
+            },
+            {
+              "line": 11679,
+              "text": "@frozen"
+            },
+            {
+              "line": 11679,
+              "text": "@_Concurrency.MainActor"
+            },
+            {
+              "line": 11679,
+              "text": "@preconcurrency"
+            }
+          ],
+          "conditions": [
+            {
+              "branchLine": 11675,
+              "ifLine": 11675,
+              "kind": "if"
+            }
+          ],
+          "explicitAccess": "internal",
+          "key": [
+            "SwiftUI",
+            "arm64e-apple-macos.swiftinterface",
+            11679,
+            "LimitedAvailabilityWidget"
+          ],
+          "kind": "struct",
+          "lineageV12": false,
+          "reason": "explicit actual source declaration access internal",
+          "scopeLines": [],
+          "signature": "@frozen @_Concurrency.MainActor @preconcurrency internal struct LimitedAvailabilityWidget : SwiftUI.Widget, SwiftUI._LimitedAvailabilityWidgetMarker, ~Swift.Sendable {",
+          "status": "excluded-nonpublic-source"
+        }
+      ]
+    }
+  ]
+}

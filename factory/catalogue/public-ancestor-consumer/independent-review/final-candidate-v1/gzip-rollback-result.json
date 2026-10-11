@@ -1,0 +1,23 @@
+{
+  "actualProductionGzipFaults": [
+    {
+      "fault": "wrong_stored",
+      "productionLoaderReason": "cleared proof artifact byte pin mismatch"
+    },
+    {
+      "fault": "wrong_raw_hash",
+      "productionLoaderReason": "compressed proof reconstructed raw whole hash/size mismatch"
+    },
+    {
+      "fault": "wrong_raw_size",
+      "productionLoaderReason": "compressed proof reconstructed raw whole hash/size mismatch"
+    },
+    {
+      "fault": "bool_raw_size",
+      "productionLoaderReason": "compressed proof requires exact raw whole hash/size pins"
+    }
+  ],
+  "actualCandidatePairRollback": true,
+  "noTemporaryResidue": true,
+  "producerOutputsTouched": false
+}

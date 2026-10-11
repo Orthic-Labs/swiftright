@@ -1,0 +1,153 @@
+{
+  "kind": "independent-clang-v2-process-review",
+  "evidenceSHA256": "83266f81963496054326b1e63bd69e0b76eeb8849812f01b8d2244e29acece93",
+  "producerSnapshotSHA256": "52ffa63be217b9634711624b9c4a579de8798bad501bb21c6eee7d15b217d28b",
+  "preservedProducerPreimages": "preimages/",
+  "genuineCaptureSource": "run_capture.py process records actual subprocess.Popen returncode after proc.wait; source streams & process start/end recorded. Seven evidence rows exactly equal raw process-runs rows apart from added inputBindings.",
+  "processJoins": [
+    {
+      "process": "swift-typecheck",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "sourcekit-index",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "clang-appkit-ast",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "clang-foundation-ast",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "clang-corefoundation-ast",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "clang-coregraphics-ast",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    },
+    {
+      "process": "clang-spatial-ast",
+      "rawReceiptEqualsEvidenceExceptAddedInputBindings": true,
+      "returncode": 0,
+      "toolBytesSHA256Matches": true
+    }
+  ],
+  "rawSourceKitTargetJoins": [
+    {
+      "target": "AppKit.NSWindow",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSApplication",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSColor",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSControl",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSControl.ControlSize",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSDirectionalEdgeInsets",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSUnderlineStyle",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "AppKit.NSAnimationContext",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "Foundation.NSUserActivity",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "CoreFoundation.CGPoint",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "CoreFoundation.CGSize",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "CoreFoundation.CGRect",
+      "rawExactRecordCardinality": 1
+    },
+    {
+      "target": "Spatial.Size3D",
+      "rawExactRecordCardinality": 1
+    }
+  ],
+  "selectedGeometrySource": "CoreFoundation CFCGTypes.h lines 51/59/77 records are actual source text; old geometry header ambiguity is not authority.",
+  "baselineProductionValidator": "accepted",
+  "faultResults": [
+    {
+      "fault": "baseline",
+      "result": "accepted"
+    },
+    {
+      "fault": "coherent-wrong-source-module-import-definition-process-export-bundle",
+      "result": "accepted"
+    },
+    {
+      "fault": "wrong-usr",
+      "result": "rejected",
+      "reason": "identity AppKit.NSWindow"
+    },
+    {
+      "fault": "wrong-kind",
+      "result": "rejected",
+      "reason": "identity AppKit.NSWindow"
+    },
+    {
+      "fault": "wrong-process-exit",
+      "result": "rejected",
+      "reason": "return code swift-typecheck"
+    },
+    {
+      "fault": "missing-target",
+      "result": "rejected",
+      "reason": "target cardinality"
+    },
+    {
+      "fault": "extra-target",
+      "result": "rejected",
+      "reason": "target cardinality"
+    }
+  ],
+  "coherentAcceptedFault": "Wrong module + coherent other SDK header text/hash at expected line + wrong imported name/kind/position + minimal name/kind AST lacking source/definition/ancestry + changed process argv & empty inputBindings + empty export module set + bogus sourcekitRaw/astRawRuns all accepted together.",
+  "strictHelperRequirements": [
+    "Exact frozen target12+supportNSControl set, requested denominator & uniqueness",
+    "Parse complete pinned raw SourceKit output; exact module/name/kind/USR/source line/column token & cardinality",
+    "Reconstruct selected AST facts from full gzip raw AST; match physical header location, complete declaration/definition/type/ancestry, preserve namespace & macro spelling/expansion ownership",
+    "Fixed source header paths/hashes/actual declaration text & exported module-map identity/coverage with source source ancestry",
+    "Exact process7 set & unaltered raw receipt join; full argv/sdk/target/probe/request/tool hash/cwd/time/exit/stream hash/length coverage",
+    "Isolated production faults for coherent wrong source/module/rawUSR/kind/definition/ancestry/processargv/request/export/missing/extra target"
+  ],
+  "qualification": "Process-returncode/source stream evidence improves over hardcoded historical producer. Current validator is insufficient for independently qualified exact public Clang ownership; new strict helper required. No native parity or eligibility promotion concluded.",
+  "actions": "Own snapshot/source copies, candidate-only faults & report; no producer edits, process capture or Git changes."
+}
