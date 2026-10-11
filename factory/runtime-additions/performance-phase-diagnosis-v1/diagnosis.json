@@ -1,0 +1,379 @@
+{
+  "schema": "performance-phase-diagnosis-result-v1",
+  "actualTimedPairs": 1,
+  "timedProcessCount": 2,
+  "buildBeforeTiming": true,
+  "originalLimitsUnchanged": true,
+  "results": [
+    {
+      "workload": "typing",
+      "limitMS": 2,
+      "passes": [
+        false,
+        false
+      ],
+      "phaseMediansMS": {
+        "wallNS": {
+          "original": 2.61,
+          "current": 3.3888,
+          "delta": 0.7788
+        },
+        "evaluateNS": {
+          "original": 0.0349,
+          "current": 0.0372,
+          "delta": 0.0023
+        },
+        "layoutNS": {
+          "original": 1.0579,
+          "current": 1.333,
+          "delta": 0.2751
+        },
+        "diffNS": {
+          "original": 0.108,
+          "current": 0.1176,
+          "delta": 0.0096
+        },
+        "transactionNS": {
+          "original": 0.0006,
+          "current": 0.0006,
+          "delta": 0.0
+        },
+        "resolveNS": {
+          "original": 1.1294,
+          "current": 1.5971,
+          "delta": 0.4677
+        },
+        "sinkNS": {
+          "original": 0.2033,
+          "current": 0.0003,
+          "delta": -0.203
+        }
+      },
+      "medianWallMinusSummedPhasesMS": {
+        "original": 0.0216,
+        "current": 0.332
+      },
+      "matchedMeasuredCounters": {
+        "evaluations": [
+          3
+        ],
+        "measurements": [
+          2
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    },
+    {
+      "workload": "scroll",
+      "limitMS": 4,
+      "passes": [
+        false,
+        false
+      ],
+      "phaseMediansMS": {
+        "wallNS": {
+          "original": 4.3814,
+          "current": 5.894,
+          "delta": 1.5126
+        },
+        "evaluateNS": {
+          "original": 0.0002,
+          "current": 0.0002,
+          "delta": 0.0
+        },
+        "layoutNS": {
+          "original": 1.0816,
+          "current": 1.3945,
+          "delta": 0.3129
+        },
+        "diffNS": {
+          "original": 0.2886,
+          "current": 0.3366,
+          "delta": 0.048
+        },
+        "transactionNS": {
+          "original": 0.0646,
+          "current": 0.0615,
+          "delta": -0.0031
+        },
+        "resolveNS": {
+          "original": 1.1611,
+          "current": 1.6312,
+          "delta": 0.4701
+        },
+        "sinkNS": {
+          "original": 0.196,
+          "current": 0.0003,
+          "delta": -0.1957
+        }
+      },
+      "medianWallMinusSummedPhasesMS": {
+        "original": 1.4611,
+        "current": 2.4101
+      },
+      "matchedMeasuredCounters": {
+        "evaluations": [
+          0
+        ],
+        "measurements": [
+          0
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    },
+    {
+      "workload": "rowEdit",
+      "limitMS": 15,
+      "passes": [
+        true,
+        true
+      ],
+      "phaseMediansMS": {
+        "wallNS": {
+          "original": 3.7305,
+          "current": 4.0845,
+          "delta": 0.354
+        },
+        "evaluateNS": {
+          "original": 1.0062,
+          "current": 0.9926,
+          "delta": -0.0136
+        },
+        "layoutNS": {
+          "original": 1.262,
+          "current": 1.3158,
+          "delta": 0.0538
+        },
+        "diffNS": {
+          "original": 0.1205,
+          "current": 0.1047,
+          "delta": -0.0158
+        },
+        "transactionNS": {
+          "original": 0.0007,
+          "current": 0.0007,
+          "delta": 0.0
+        },
+        "resolveNS": {
+          "original": 1.1565,
+          "current": 1.4287,
+          "delta": 0.2722
+        },
+        "sinkNS": {
+          "original": 0.2051,
+          "current": 0.0002,
+          "delta": -0.2049
+        }
+      },
+      "medianWallMinusSummedPhasesMS": {
+        "original": 0.0157,
+        "current": 0.288
+      },
+      "matchedMeasuredCounters": {
+        "evaluations": [
+          11
+        ],
+        "measurements": [
+          1
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    }
+  ],
+  "processSequence": [
+    {
+      "name": "compiler-version",
+      "pid": 58236,
+      "startedAt": "2026-10-11T03:06:05.9519432Z",
+      "endedAt": "2026-10-11T03:06:06.2775561Z",
+      "returncode": 0,
+      "timedOut": false,
+      "executable": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "executableHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "argv": [
+        "--version"
+      ],
+      "cwd": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011"
+    },
+    {
+      "name": "original-build",
+      "pid": 47800,
+      "startedAt": "2026-10-11T03:06:07.9217047Z",
+      "endedAt": "2026-10-11T03:07:25.6208711Z",
+      "returncode": 0,
+      "timedOut": false,
+      "executable": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "executableHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "argv": [
+        "build",
+        "--package-path",
+        "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\original\\runtime",
+        "--scratch-path",
+        "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\original\\scratch",
+        "-c",
+        "release",
+        "--build-tests",
+        "-Xswiftc",
+        "-enable-testing"
+      ],
+      "cwd": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\original\\runtime"
+    },
+    {
+      "name": "current-build",
+      "pid": 39128,
+      "startedAt": "2026-10-11T03:07:27.7396719Z",
+      "endedAt": "2026-10-11T03:08:59.8361435Z",
+      "returncode": 0,
+      "timedOut": false,
+      "executable": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "executableHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "argv": [
+        "build",
+        "--package-path",
+        "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\current\\runtime",
+        "--scratch-path",
+        "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\current\\scratch",
+        "-c",
+        "release",
+        "--build-tests",
+        "-Xswiftc",
+        "-enable-testing"
+      ],
+      "cwd": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\current\\runtime"
+    },
+    {
+      "name": "original-test",
+      "pid": 40344,
+      "startedAt": "2026-10-11T03:09:01.1909261Z",
+      "endedAt": "2026-10-11T03:09:01.7307418Z",
+      "returncode": 1,
+      "timedOut": false,
+      "executable": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\original\\scratch\\out\\Products\\Release-windows-x86_64\\SwiftRightRuntimeTests-test-runner.exe",
+      "executableHash": "4d315a17aeb7f7c29be41de721a23643267307914dfddf984022bb5cf489c0d7",
+      "argv": [
+        "SwiftRightRuntimeTests.PerformancePhaseDiagnosisTests/testMatchedOriginalWorkload"
+      ],
+      "cwd": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\original\\scratch\\out\\Products\\Release-windows-x86_64"
+    },
+    {
+      "name": "current-test",
+      "pid": 59408,
+      "startedAt": "2026-10-11T03:09:02.9384402Z",
+      "endedAt": "2026-10-11T03:09:03.5260215Z",
+      "returncode": 1,
+      "timedOut": false,
+      "executable": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\current\\scratch\\out\\Products\\Release-windows-x86_64\\SwiftRightRuntimeTests-test-runner.exe",
+      "executableHash": "294644687ec7ac5afef0e2a8ef8d3bffdaab359eb1642cb8e265a47be111c7e6",
+      "argv": [
+        "SwiftRightRuntimeTests.PerformancePhaseDiagnosisTests/testMatchedOriginalWorkload"
+      ],
+      "cwd": "D:\\Claude\\factory-swiftright-perfphase-pair-v2-20261011\\current\\scratch\\out\\Products\\Release-windows-x86_64"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/config.json",
+      "sha256": "a0e487f0fb118fe8b6be21cb67af374456338e05a4c38f8e82716b669c7ad7ee",
+      "bytes": 18103
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/PerformancePhaseDiagnosisTests.swift",
+      "sha256": "f3ab611f0b56c4199b3d4ada177b3c18511a99da19f308b4f331aab07d27d39c",
+      "bytes": 3235
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/run-pair.ps1",
+      "sha256": "8fb4b26f7500e1e1ff8ab90acc4138f629ab9601d3721b41bb62845b7e0276e1",
+      "bytes": 7481
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/dispatch.py",
+      "sha256": "b8efe36eaf47bc0ad6b36b3f1e393739fea18e14be4cdad0dd4855d19aac97b3",
+      "bytes": 2403
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/fetch.py",
+      "sha256": "3af07a3065145e9cffcf1bb2262cc79cf84d1e3f007600a10c202b60c4041636",
+      "bytes": 2170
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/archive_binaries.py",
+      "sha256": "8448157d0069ed466b512a8ef2d90516fcd784047299131d5cdebbaa5e4903bf",
+      "bytes": 1861
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/captured-corrected/receipt.json",
+      "sha256": "a25ba0a19773d04a49b3e85e3ad6c00960005b3be6a1d1c034543c2daa34e21a",
+      "bytes": 126388
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/captured-corrected-input-manifest.json",
+      "sha256": "bcfeafbb50211faed3770f24b6389c1beca46f604d58869c60020b1a8c2bff68",
+      "bytes": 3113
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/binary-archive-manifest.json",
+      "sha256": "4688f96c111d42e688b283f1bbce136483863a24d3a1deb65ac869bcafb6a1f7",
+      "bytes": 2203
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/captured/receipt.json",
+      "sha256": "da99f313fa3b2fa2415806f03ce27898bcf59bdaab6805e559a3bcfecd21a0ff",
+      "bytes": 35398
+    },
+    {
+      "path": "factory/runtime-additions/performance-phase-diagnosis-v1/captured-input-manifest.json",
+      "sha256": "b2610f2b098ba1f89bad28710f83ddc3fa16ef4ab0c76bfa3447475a8b7adea9",
+      "bytes": 1365
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/module-provenance-run-r4/compiler-input/swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bytes": 45056
+    }
+  ],
+  "captureSemantics": "Actual Process StreamReader text decoded then WriteAllText. Archived captured-file bytes exact; original native stdout/stderr byte fidelity not asserted. Numeric PHASE_DIAG parsed directly.",
+  "interpretation": [
+    "Matched measured evaluation/measurement/flush/commit/live counters; observed current layout & emit resolution phase increases.",
+    "Scroll ids(ofKind:) performs another snapshot resolution outside resolveNS; wall-minus-phase residual includes unprofiled work.",
+    "resolvedNodes has no source increment; zero does not mean zero resolution work.",
+    "sinkNS represents optional nil sink/bookkeeping/lifetime envelope, not renderer cost.",
+    "Per-phase medians cannot be summed to explain wall median exactly.",
+    "Profile reset & enable-testing release compilation are diagnostic envelopes. Fixed original\u2192current order & environment confound causal inference; this pair does not establish specific feature regression."
+  ],
+  "nextHypothesis": "If current additive resolved-node fields increase snapshot materialization/copy cost, isolated new-field-only variants should change emit resolution & scroll extra snapshot cost while matching work counters. No runtime change or further timing authorized by this packet.",
+  "completed": "One matched diagnostic pair completed; failed compile preserved before timing; exact consumed EXE/DLL archived; original runtime/tests/limits preserved."
+}

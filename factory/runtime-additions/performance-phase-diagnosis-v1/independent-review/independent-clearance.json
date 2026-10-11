@@ -1,0 +1,137 @@
+{
+  "status": "CLEAR-observational-evidence",
+  "producerPins": {
+    "analyze.py": "d53e623167d142323f09577daac7da104d56e16de9d97bceb7f109a0e5395bbe",
+    "diagnosis.json": "6a0f270470efb5acc30da5f0ea27bffe68672a45a5c57a5782c121a65b7b3533",
+    "README.md": "f52890170c3bb019e780a76d35dd1353d7b0a472900a81b494b36957d3c7f369",
+    "binary-archive-manifest.json": "4688f96c111d42e688b283f1bbce136483863a24d3a1deb65ac869bcafb6a1f7",
+    "root-stage-manifest.json": "2bb61520091d5182f261017004be171c48388cbc1bc98496de794f37b597e1a4",
+    "SHA256SUMS": "1588b8ef8c4a378d82df8c3d420e11581623db53907163cc59ea21a9443662f3"
+  },
+  "stageFilesVerified": 63,
+  "sourceJoins": [
+    {
+      "label": "original",
+      "commit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+      "sourceFiles": 31,
+      "sourceTreeHash": "sha256:aeee01b6c6a827035c0e8d258ed82a0cb0f1f6e47dcd057175033c0f6a26555a",
+      "headlessReceiptSha256": "ee4a7d722c0f8469b6d8cfc6bf7826cb007d5029583026efe1c83b9a5bc800a1"
+    },
+    {
+      "label": "current",
+      "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "sourceFiles": 52,
+      "sourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "headlessReceiptSha256": "aafce45aca4f3028099a45a3b03afccec3c376b4afd3104c9b2964c3ee1cb897"
+    }
+  ],
+  "processRuns": 5,
+  "strictUTC100nsProcessOrdering": true,
+  "cimPIDPathArgvJoins": {
+    "buildAndTimingProcesses": 4,
+    "compilerVersion": "completed before first CIM sample; own Process record &exact compiler bytes retained"
+  },
+  "cimTimestampScope": "original locale/unzoned second precision retained; no exact UTC conversion inferred",
+  "actualCompilerByteJoin": true,
+  "actualRunnerDLLArchivesVerified": 4,
+  "phaseSamplesPerRuntime": 90,
+  "totalSamples": 180,
+  "retainedSamplesPerRuntime": 75,
+  "initialFailedCompilePreserved": true,
+  "nativeSamplingReruns": 0,
+  "results": [
+    {
+      "workload": "typing",
+      "originalMS": 2.61,
+      "currentMS": 3.3888,
+      "matchedCounters": {
+        "evaluations": [
+          3
+        ],
+        "measurements": [
+          2
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    },
+    {
+      "workload": "scroll",
+      "originalMS": 4.3814,
+      "currentMS": 5.894,
+      "matchedCounters": {
+        "evaluations": [
+          0
+        ],
+        "measurements": [
+          0
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    },
+    {
+      "workload": "rowEdit",
+      "originalMS": 3.7305,
+      "currentMS": 4.0845,
+      "matchedCounters": {
+        "evaluations": [
+          11
+        ],
+        "measurements": [
+          1
+        ],
+        "flushes": [
+          1
+        ],
+        "commits": [
+          1
+        ],
+        "liveNodes": [
+          2011
+        ],
+        "resolvedNodes": [
+          0
+        ]
+      }
+    }
+  ],
+  "interpretation": [
+    "Original workload mutation indices0..29, rowcount200, root960x640, scale2.5 &limits2/4/15 unchanged.",
+    "Resetting profile &reading measurement counts precede wall timer; dictionary collection follows wall timer; JSONserialization follows allloops.",
+    "Both diagnostic builds add runtime-enable-testing; thresholds still fail typing/scroll on both. This envelope cannot establish original uninstrumented binary timings.",
+    "Phase timers cover emit resolution only. ids(ofKind:) performs extra scroll snapshot outside resolveNS.",
+    "resolvedNodes0 is uninstrumented; sinkNS is nil-sink/bookkeeping/lifetime envelope, not renderer cost.",
+    "Matched observed evaluation/measurement counts &increased current layout/emit-resolution timings support phase concentration; fixed sequentialorder/environment &timer/lifetime placement prevent causal feature-regression attribution."
+  ],
+  "instrumentationWorkloadSourceBindings": {
+    "originalPerformanceTestsSha256": "497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+    "currentPerformanceTestsSha256": "497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+    "diagnosticSha256": "f3ab611f0b56c4199b3d4ada177b3c18511a99da19f308b4f331aab07d27d39c"
+  },
+  "producerOfflineAnalyzerCheck": {
+    "sourceSha256": "d53e623167d142323f09577daac7da104d56e16de9d97bceb7f109a0e5395bbe",
+    "exitCode": 0,
+    "stdout": "Offline exact evidence replay passed"
+  }
+}
