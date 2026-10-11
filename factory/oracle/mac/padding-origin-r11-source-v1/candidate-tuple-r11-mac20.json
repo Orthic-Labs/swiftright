@@ -1,0 +1,39 @@
+{
+  "schema": "factory-source-bound-r11-mac20-template-v2",
+  "status": "source-ready-host-preflight-required",
+  "candidateIDTemplate": "sr1-source-bound-r11-mac20-host-<actual-mac-host-hash-prefix>-20261011",
+  "frozenTupleBound": false,
+  "caseTemplate": {
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11",
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.json",
+    "hash": "sha256:2e0552e1cff68a3fee3dc26a7db2d6662655858d7bf8e5a3bbe3820be36ceed2"
+  },
+  "tupleTemplate": {
+    "id": "sr1-source-bound-r11-mac20-host-<actual-mac-host-hash-prefix>-20261011",
+    "macosHostHash": "bound-from-internal-host-build-receipt",
+    "windowsHostHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "acceptanceConfigHash": "sha256:c12eaec44a65627e6f546925664482736bfede7665ab593024c5fcd401998245"
+  },
+  "historicalContext": {
+    "macosHostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "macosHostHashUse": "template-context-only; verify fresh internal build bytes before capture",
+    "windowsObservation": "observed-native20-r7 remains immutable and cannot be relabeled"
+  },
+  "sourceInputs": {
+    "case": "factory/oracle/mac/padding-origin-r11-source-v1/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.json",
+    "manifest": "factory/oracle/mac/padding-origin-r11-source-v1/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.manifest.json",
+    "hostPreflight": "factory/oracle/mac/padding-origin-r11-source-v1/prepare-r11-host.py",
+    "materializer": "factory/oracle/mac/padding-origin-r11-source-v1/materialize-r11-case.py",
+    "capture": "factory/oracle/mac/padding-origin-r11-source-v1/capture_origin_r11.py",
+    "windowsReplayPlan": "factory/oracle/mac/padding-origin-r11-source-v1/WINDOWS-REPLAY-PLAN.md"
+  },
+  "effects": {
+    "compilerActions": 0,
+    "lockActions": 0,
+    "nativeWindowActions": 0,
+    "remoteActions": 0,
+    "sourceMutations": true
+  }
+}
