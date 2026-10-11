@@ -1,0 +1,24 @@
+{
+  "verdict": "CLEAR",
+  "scope": "Workflow callback passthrough only",
+  "sources": {
+    "factory/pipeline/workflow.py": "4c82362093618840b11b6ad0f1e13cab07e2fa821cad75fb1e6b515cc2184362",
+    "factory/pipeline/test_workflow_origin_reader.py": "a8d1a9b4b18350aeed40cb828a35f0d443aa3196c2e2bdcd7249cba4a90bf9ae",
+    "factory/gate/core.py": "bcf1eedc5b1ff8e843e134d3ed9e3bd301eec9616f700bbf1b7f25ddcb4d2a04",
+    "factory/gate/windows_exit_admission.py": "20078311fc6dcfb8c43a3ab10582cf8d0490a003e3a8d5eb779cf91ac329ca59",
+    "factory/gate/test_windows_exit_admission.py": "b66819ba918467b3d40a695860a635a7b6d8d28665aca91fbe7ec4aa1d628a19",
+    "factory/pipeline/workflow-origin-reader-review-v1/independent_controls.py": "6e95aa80bf9c0d08fb3b3d70ec98b2f6493ece8e06cd785d4d05e59f6f1b6d3c"
+  },
+  "focusedTestsPassed": 4,
+  "independentControlsPassed": 6,
+  "findings": [],
+  "observations": [
+    "gate &gate_evidence forward exact supplied callback object to evaluate_gate",
+    "default omission retains None &actual origin guard fails closed",
+    "real Windows archive admission guard rejects corrupt reader bytes",
+    "evaluate_gate mocked only as workflow boundary; _origin_issues &Windows guard execute actual production code",
+    "workflow output remains blocked/parityGranted false; no report qualification coupling introduced"
+  ],
+  "producerEdits": false,
+  "nativeExecutions": 0
+}

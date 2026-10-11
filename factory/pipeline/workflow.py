@@ -326,7 +326,7 @@ def report(output, cases_path, roots, primary_path, config_path, registry_path, 
     return summary
 
 
-def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test_seed=None):
+def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test_seed=None, origin_reader=None):
     from factory.gate.core import evaluate_gate, expand_gate_seeded_cases
     out = fresh_output(output)
     cases, tuple_value, config = load_artifact(cases_path), load_artifact(tuple_path), load_artifact(config_path)
@@ -354,7 +354,7 @@ def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test
                 'windowsReplay': 'held: requires desktop-coordinated native runner', 'executionStatus': 'pipeline-held'})
         result = evaluate_gate(recipe=recipe, cases=selected, captures=[c for c in collected['captures'] if c['case']['id'] in {x['id'] for x in selected}], tuple_value=tuple_value,
                                acceptance_config=config, normalizer_rules=config.get('normalizers', []), expected_cases=selected, seed=seed,
-                               random_case_factory=lambda _, frozen=seeded: frozen)
+                               random_case_factory=lambda _, frozen=seeded: frozen, origin_reader=origin_reader)
         reports.append(result)
         plan.append({'block': recipe['block'], 'seed': seed, 'cases': [artifact_ref(c) for c in seeded], 'commands': commands})
     value = {'seed': seed, 'seedOrigin': 'explicit-tests-only' if test_seed is not None else 'runtime-secrets.randbits', 'status': 'blocked',
@@ -381,7 +381,7 @@ def queue(output, registry_path):
     return summary
 
 
-def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path, manifests_dir, exclude_capture_dirs=None):
+def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path, manifests_dir, exclude_capture_dirs=None, origin_reader=None):
     """Reevaluate one recorded seed batch with its own archived captures."""
     from factory.gate.core import evaluate_gate, expand_gate_seeded_cases
     plan = load_artifact(plan_path)
@@ -415,7 +415,8 @@ def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path,
         reports.append(evaluate_gate(recipe=recipe, cases=selected,
             captures=[c for c in collected['captures'] if c['case']['id'] in ids],
             tuple_value=tuple_value, acceptance_config=config, normalizer_rules=config.get('normalizers', []),
-            expected_cases=selected, seed=seed, random_case_factory=lambda _, frozen=seeded: frozen))
+            expected_cases=selected, seed=seed, random_case_factory=lambda _, frozen=seeded: frozen,
+            origin_reader=origin_reader))
     value = {'status': 'blocked', 'seed': seed, 'seedOrigin': 'previously-recorded-runtime-plan',
              'plan': {'path': str(Path(plan_path).resolve()), 'hash': file_hash(plan_path)},
              'caseDenominator': len(cases), 'seedCaseDenominator': len(seed_cases),
