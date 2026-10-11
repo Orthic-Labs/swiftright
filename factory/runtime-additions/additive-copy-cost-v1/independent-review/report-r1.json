@@ -1,0 +1,669 @@
+{
+  "kind": "independent-additive-copy-cost-review",
+  "verdict": "HOLD execution provenance & semantic control evidence",
+  "receipt": {
+    "path": "factory/runtime-additions/additive-copy-cost-v1/receipt.json",
+    "bytes": 2584,
+    "sha256": "97d5338346145f0e2dd1f67cc1da8b05e001ff2322558241247d9b75e96120fa"
+  },
+  "packetPins": [
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/AdditiveAPIProbe.swift",
+      "bytes": 1407,
+      "sha256": "7c77d559a4fdb186822f953aa3661010be3a17b6efdc62f4b52688763cfe3783"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/CopyCostProbe.swift",
+      "bytes": 1825,
+      "sha256": "d2004389e107e89087adc24c1249d76b92ae573b95c55bf576a1905d6e041b68"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/LayoutProbe.swift",
+      "bytes": 715,
+      "sha256": "e5449f75315ef7135a028e8821a62c0bbf298685f1c11e9bf5438e4e9ec9fec2"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/Package.swift",
+      "bytes": 444,
+      "sha256": "c767342652421c65978e0980a44113723af75e45a8c8b4a37dfeb3b45828f121"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/README.md",
+      "bytes": 3199,
+      "sha256": "3127f4bc11c2db12831ac6c19abcd2f394c60d6d5336f3b3b48728ce9fcf09e5"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/SHA256SUMS",
+      "bytes": 2361,
+      "sha256": "907c2811181e1798f5e7386bb6c87570d7fbefc6506f5d52a0612583ccee21ba"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/MetadataCopyProbe.swift",
+      "bytes": 2568,
+      "sha256": "9a803511c1da3642209e4421267bc5f461c1fac82fca2041dc2de7abe792ed26"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-api-probe",
+      "bytes": 1252192,
+      "sha256": "1f1a42e1f64ec903ee03ed9eee3f62822c1466fcd8afc7973cd6db6633c8d5db"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-copy-cost-probe",
+      "bytes": 1254264,
+      "sha256": "0cc0808c3c093beb42b645b9b408f0afa754db341d3c760db54ee39fcb4843b6"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-layout-probe",
+      "bytes": 1246200,
+      "sha256": "1a4f7689113d9a7c8d19479d96a1101fa2cb5dc65dc9b856acf248e288ec3f4c"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-api-probe",
+      "bytes": 1249184,
+      "sha256": "c47fa39e377e63233e3235077c262b9aa9f989f310e0bd521d392a09f7c6e5c3"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-copy-cost-probe",
+      "bytes": 1267912,
+      "sha256": "96b00a483b976b0395e9cfe0bc0843320b10fc081505f64f3fbe6b60ac14ef83"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-layout-probe",
+      "bytes": 1243336,
+      "sha256": "43eaeae358b1587c176b3e318081b9352f7ff92106c8a902d278973de550b930"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/original-copy-cost-probe",
+      "bytes": 1053960,
+      "sha256": "578ad2f60d3568e5191ee74e545b52dcf7943b54fe1056b8c9246dd04087575b"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/original-layout-probe",
+      "bytes": 1045800,
+      "sha256": "d3987a90b33f1d73a0ef426334db5b36d00a108e4db761aaab517ba637e045f7"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-api-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-api-run.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-api-run.stdout.txt",
+      "bytes": 224,
+      "sha256": "0877b5278498a82865acc2ef04719dcb5069213b24667ba7039d3aa34faa628a"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-layout-build.stderr.txt",
+      "bytes": 452,
+      "sha256": "7b46fbf03eb1784daefb695e8a5c9531c8d76c444093a81624333bb958ff438b"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-layout-run.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-layout-run.stdout.txt",
+      "bytes": 170,
+      "sha256": "9d3f5b60b387d3def4a1ee8b2c94082f1c473669f9e2235e9af7c838950eafe9"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-run.stderr.txt",
+      "bytes": 29,
+      "sha256": "de4cce5c917830d2894394d53e853c320cb73d1c01b6be30b89cae2fd81c1c80"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "4d1bec0a3b1a7ba221f4c66abcfc12757a29c631d8735ac72cd2c6893254e427"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-api-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-api-run.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-api-run.stdout.txt",
+      "bytes": 224,
+      "sha256": "0877b5278498a82865acc2ef04719dcb5069213b24667ba7039d3aa34faa628a"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-layout-build.stderr.txt",
+      "bytes": 452,
+      "sha256": "7b46fbf03eb1784daefb695e8a5c9531c8d76c444093a81624333bb958ff438b"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-layout-run.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-layout-run.stdout.txt",
+      "bytes": 172,
+      "sha256": "040172251e06fad126e528f8bcb88821a9daeae3111c6b0ec09b6d2b7b3d4fc4"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-run.stderr.txt",
+      "bytes": 29,
+      "sha256": "322ffec335205d1b867ccd1e51d6019a49b161012c4372e5373e1f07f1793986"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "f4627685d46af176ea0b7efbbd216c87786287241b524fd5f6b4e1fba7582083"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-build.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-layout-build.stderr.txt",
+      "bytes": 452,
+      "sha256": "7b46fbf03eb1784daefb695e8a5c9531c8d76c444093a81624333bb958ff438b"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-layout-run.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-layout-run.stdout.txt",
+      "bytes": 172,
+      "sha256": "85915561e3bccdc2c59cf5f89012615a6a9ace2f1ade0b1579f1abbfe8da2aa0"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-run.stderr.txt",
+      "bytes": 29,
+      "sha256": "c7456afd03ee8198af947ef059a66a21e7f1c58009cf12e53fb1a0f7a0e54787"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "0d33f00de55ee0331019791146073f8f2d59b0683b9279b9e1f7c77c83f427a6"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/receipt.json",
+      "bytes": 2584,
+      "sha256": "97d5338346145f0e2dd1f67cc1da8b05e001ff2322558241247d9b75e96120fa"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Alignment.swift",
+      "bytes": 1134,
+      "sha256": "71480d5c85c8b92f726498ce27f7346e1aee4673411ad8f9916c75f31b65e774"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Animation.swift",
+      "bytes": 10575,
+      "sha256": "de9f66cca9523e1d3654cf47df1e68eaed495122474abc18123cdde3b01f4a03"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Axis.swift",
+      "bytes": 726,
+      "sha256": "772e1c49a72769d010590cf722465daf7f6ca87e40f9b3afad3fe0fdbe66c8c2"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Controls.swift",
+      "bytes": 14201,
+      "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/FocusTraversal.swift",
+      "bytes": 7443,
+      "sha256": "a058aeba69e9b57b491576ef39c5e6e729609464b12fecbb407cde981a5d0dbb"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Geometry.swift",
+      "bytes": 8890,
+      "sha256": "acc003c678fd38f9a89a3af299e1450be19561e0935731f9961afbbedf585b6e"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 80576,
+      "sha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Keyboard.swift",
+      "bytes": 6622,
+      "sha256": "ae2bf8a03fee2c4d009d1fb3be0ca2a3d3c755eaf559c0cd50e784880a6d423e"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Layout.swift",
+      "bytes": 5581,
+      "sha256": "229baee2f56f649ab93de9800119a86da4e5d03cd41a2227c60309e1131cb990"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/LayoutEngine.swift",
+      "bytes": 25080,
+      "sha256": "1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Modifiers.swift",
+      "bytes": 10472,
+      "sha256": "79761cf492aa5908c4807aa4d388ce4c92a272e0ea139b357e990df360e5c4b0"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Preferences.swift",
+      "bytes": 2949,
+      "sha256": "704700444daf7bfa72a27355b0f6c94efdc18aae375ba4e0a7a461aa988570ca"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Presentation.swift",
+      "bytes": 13054,
+      "sha256": "0e4a38f08ee9467fb1eef2097adac6271d6b42ac34ae5b3bb431d21897b9955e"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Selection.swift",
+      "bytes": 9850,
+      "sha256": "bb64ca5268d3ad0b1349f1bdc76181f95e1a78f1d30229c8cc7a6e54edd977d5"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Shapes.swift",
+      "bytes": 3541,
+      "sha256": "3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/State.swift",
+      "bytes": 9767,
+      "sha256": "d61ebeb4257941832f9ef50c2d0e7b98ba1e66cf07f35eccb160c0feb78626f6"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/TextInput.swift",
+      "bytes": 9407,
+      "sha256": "b378d3a82d776631f534c8f4d1be15136cea7e3c32887248a9f2ef10c3c026b2"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/TextMeasurement.swift",
+      "bytes": 4003,
+      "sha256": "31c4bb8966422cc9405b25e41e63f9521d18b78d7150a26b8a15eb40370b787c"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/ToggleStyles.swift",
+      "bytes": 679,
+      "sha256": "c7a5f8f3aea623258949f28a7f6d80345d8603626f80e8e44a28d58be1edd1e4"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Views.swift",
+      "bytes": 25408,
+      "sha256": "42aa71c6c8b90c7c8bc0ee49cd3af4b097641c16d4ff34b455815638422c87e3"
+    }
+  ],
+  "verifiedSHA256SUMS": [
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-api-probe",
+      "bytes": 1252192,
+      "sha256": "1f1a42e1f64ec903ee03ed9eee3f62822c1466fcd8afc7973cd6db6633c8d5db"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-copy-cost-probe",
+      "bytes": 1254264,
+      "sha256": "0cc0808c3c093beb42b645b9b408f0afa754db341d3c760db54ee39fcb4843b6"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-layout-probe",
+      "bytes": 1246200,
+      "sha256": "1a4f7689113d9a7c8d19479d96a1101fa2cb5dc65dc9b856acf248e288ec3f4c"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-api-probe",
+      "bytes": 1249184,
+      "sha256": "c47fa39e377e63233e3235077c262b9aa9f989f310e0bd521d392a09f7c6e5c3"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-copy-cost-probe",
+      "bytes": 1267912,
+      "sha256": "96b00a483b976b0395e9cfe0bc0843320b10fc081505f64f3fbe6b60ac14ef83"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/current-layout-probe",
+      "bytes": 1243336,
+      "sha256": "43eaeae358b1587c176b3e318081b9352f7ff92106c8a902d278973de550b930"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/original-copy-cost-probe",
+      "bytes": 1053960,
+      "sha256": "578ad2f60d3568e5191ee74e545b52dcf7943b54fe1056b8c9246dd04087575b"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/binaries/original-layout-probe",
+      "bytes": 1045800,
+      "sha256": "d3987a90b33f1d73a0ef426334db5b36d00a108e4db761aaab517ba637e045f7"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-api-run.stdout.txt",
+      "bytes": 224,
+      "sha256": "0877b5278498a82865acc2ef04719dcb5069213b24667ba7039d3aa34faa628a"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-layout-run.stdout.txt",
+      "bytes": 170,
+      "sha256": "9d3f5b60b387d3def4a1ee8b2c94082f1c473669f9e2235e9af7c838950eafe9"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/candidate-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "4d1bec0a3b1a7ba221f4c66abcfc12757a29c631d8735ac72cd2c6893254e427"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-api-run.stdout.txt",
+      "bytes": 224,
+      "sha256": "0877b5278498a82865acc2ef04719dcb5069213b24667ba7039d3aa34faa628a"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-layout-run.stdout.txt",
+      "bytes": 172,
+      "sha256": "040172251e06fad126e528f8bcb88821a9daeae3111c6b0ec09b6d2b7b3d4fc4"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/current-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "f4627685d46af176ea0b7efbbd216c87786287241b524fd5f6b4e1fba7582083"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-layout-run.stdout.txt",
+      "bytes": 172,
+      "sha256": "85915561e3bccdc2c59cf5f89012615a6a9ace2f1ade0b1579f1abbfe8da2aa0"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/logs/original-run.stdout.txt",
+      "bytes": 345,
+      "sha256": "0d33f00de55ee0331019791146073f8f2d59b0683b9279b9e1f7c77c83f427a6"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/../../native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 69386,
+      "sha256": "fb5deb378cb9f13c2b829b6494c4511675bce7c01ed26c7e80c523ca208a7af7"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/../../native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 78747,
+      "sha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/../../native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift",
+      "bytes": 14201,
+      "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 80576,
+      "sha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/CopyCostProbe.swift",
+      "bytes": 1825,
+      "sha256": "d2004389e107e89087adc24c1249d76b92ae573b95c55bf576a1905d6e041b68"
+    },
+    {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/AdditiveAPIProbe.swift",
+      "bytes": 1407,
+      "sha256": "7c77d559a4fdb186822f953aa3661010be3a17b6efdc62f4b52688763cfe3783"
+    }
+  ],
+  "currentRuntimeSourcePins": [
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Alignment.swift",
+      "bytes": 1134,
+      "sha256": "71480d5c85c8b92f726498ce27f7346e1aee4673411ad8f9916c75f31b65e774"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Animation.swift",
+      "bytes": 10575,
+      "sha256": "de9f66cca9523e1d3654cf47df1e68eaed495122474abc18123cdde3b01f4a03"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Axis.swift",
+      "bytes": 726,
+      "sha256": "772e1c49a72769d010590cf722465daf7f6ca87e40f9b3afad3fe0fdbe66c8c2"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift",
+      "bytes": 14201,
+      "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/FocusTraversal.swift",
+      "bytes": 7443,
+      "sha256": "a058aeba69e9b57b491576ef39c5e6e729609464b12fecbb407cde981a5d0dbb"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Geometry.swift",
+      "bytes": 8890,
+      "sha256": "acc003c678fd38f9a89a3af299e1450be19561e0935731f9961afbbedf585b6e"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 78747,
+      "sha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Keyboard.swift",
+      "bytes": 6622,
+      "sha256": "ae2bf8a03fee2c4d009d1fb3be0ca2a3d3c755eaf559c0cd50e784880a6d423e"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Layout.swift",
+      "bytes": 5581,
+      "sha256": "229baee2f56f649ab93de9800119a86da4e5d03cd41a2227c60309e1131cb990"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/LayoutEngine.swift",
+      "bytes": 25080,
+      "sha256": "1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Modifiers.swift",
+      "bytes": 10472,
+      "sha256": "79761cf492aa5908c4807aa4d388ce4c92a272e0ea139b357e990df360e5c4b0"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Preferences.swift",
+      "bytes": 2949,
+      "sha256": "704700444daf7bfa72a27355b0f6c94efdc18aae375ba4e0a7a461aa988570ca"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Presentation.swift",
+      "bytes": 13054,
+      "sha256": "0e4a38f08ee9467fb1eef2097adac6271d6b42ac34ae5b3bb431d21897b9955e"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Selection.swift",
+      "bytes": 9850,
+      "sha256": "bb64ca5268d3ad0b1349f1bdc76181f95e1a78f1d30229c8cc7a6e54edd977d5"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Shapes.swift",
+      "bytes": 3541,
+      "sha256": "3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/State.swift",
+      "bytes": 9767,
+      "sha256": "d61ebeb4257941832f9ef50c2d0e7b98ba1e66cf07f35eccb160c0feb78626f6"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/TextInput.swift",
+      "bytes": 9407,
+      "sha256": "b378d3a82d776631f534c8f4d1be15136cea7e3c32887248a9f2ef10c3c026b2"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/TextMeasurement.swift",
+      "bytes": 4003,
+      "sha256": "31c4bb8966422cc9405b25e41e63f9521d18b78d7150a26b8a15eb40370b787c"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/ToggleStyles.swift",
+      "bytes": 679,
+      "sha256": "c7a5f8f3aea623258949f28a7f6d80345d8603626f80e8e44a28d58be1edd1e4"
+    },
+    {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Views.swift",
+      "bytes": 25408,
+      "sha256": "42aa71c6c8b90c7c8bc0ee49cd3af4b097641c16d4ff34b455815638422c87e3"
+    }
+  ],
+  "originalRuntimeSourcePins": [
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Animation.swift",
+      "bytes": 10575,
+      "sha256": "de9f66cca9523e1d3654cf47df1e68eaed495122474abc18123cdde3b01f4a03"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift",
+      "bytes": 9059,
+      "sha256": "76da92cdbb3d0d912ebb1f87a141ed08d962e4d3a40075f2d2b00450fcff36f5"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/FocusTraversal.swift",
+      "bytes": 7443,
+      "sha256": "a058aeba69e9b57b491576ef39c5e6e729609464b12fecbb407cde981a5d0dbb"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Geometry.swift",
+      "bytes": 4982,
+      "sha256": "8d8b540234d217428382d51a610bcc13fdd174b6e3841b83a88be411f91b5ad4"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+      "bytes": 69386,
+      "sha256": "fb5deb378cb9f13c2b829b6494c4511675bce7c01ed26c7e80c523ca208a7af7"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Keyboard.swift",
+      "bytes": 6622,
+      "sha256": "ae2bf8a03fee2c4d009d1fb3be0ca2a3d3c755eaf559c0cd50e784880a6d423e"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Layout.swift",
+      "bytes": 3444,
+      "sha256": "c8880f98035a8274e0e15a40d0462e1909bc41af773df06e553d75f7ffd0a9e8"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/LayoutEngine.swift",
+      "bytes": 13634,
+      "sha256": "336e6b27edbf9a7949ab0124899d7eb08d3396123ac57479b6d036e95b938c34"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Modifiers.swift",
+      "bytes": 7676,
+      "sha256": "ab61fbda4583e03d197489033ee6f1a661273a29637894063ff29a66c44d2e1a"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Presentation.swift",
+      "bytes": 13054,
+      "sha256": "0e4a38f08ee9467fb1eef2097adac6271d6b42ac34ae5b3bb431d21897b9955e"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Selection.swift",
+      "bytes": 9850,
+      "sha256": "bb64ca5268d3ad0b1349f1bdc76181f95e1a78f1d30229c8cc7a6e54edd977d5"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/State.swift",
+      "bytes": 8187,
+      "sha256": "f304cd1c5c6a88df27efc3d3910ee944e975e290b031bb79305ef4a13477a382"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/TextInput.swift",
+      "bytes": 9407,
+      "sha256": "b378d3a82d776631f534c8f4d1be15136cea7e3c32887248a9f2ef10c3c026b2"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/TextMeasurement.swift",
+      "bytes": 3492,
+      "sha256": "22c5fbb1216ce3fe9280b0d236299a5cdc123e2828cd01d6aa389c95a9bc0c2d"
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/Views.swift",
+      "bytes": 23600,
+      "sha256": "039dea366bad3784d30da8035a5c8ed61c8339d6b3ed2814f4380b23e45834c1"
+    }
+  ],
+  "changedCandidateFiles": [
+    "Graph.swift"
+  ],
+  "sourceFindings": [
+    "ResolvedNode public stored let getters become readonly computed getters; ResolvedStyle font/foreground readonly getters & internal init signature retained. No externally writable property removed.",
+    "Reference storage final classes contain immutable let fields & structural Equatable. Copies share immutable values; public array/String/Font value semantics remain. No source mutation-alias defect found.",
+    "Nil storage canonicalized for all-nil style/additions; allocations occur only for metadata-bearing snapshots. Shape & toggleStyle route inspected, but actual API probe does not exercise either.",
+    "No production runtime file changed by candidate packet; candidate20-source inventory equals current inventory with Graph.swift-only byte delta."
+  ],
+  "measurements": {
+    "original": {
+      "samples": 25,
+      "medianFlushMS": 0.804375,
+      "p95FlushMS": 1.648875,
+      "profile": "nil",
+      "liveNodes": 1202
+    },
+    "current": {
+      "samples": 25,
+      "medianFlushMS": 0.852417,
+      "p95FlushMS": 1.116583,
+      "profile": "nil",
+      "liveNodes": 1202
+    },
+    "candidate": {
+      "samples": 25,
+      "medianFlushMS": 0.834333,
+      "p95FlushMS": 0.916917,
+      "profile": "nil",
+      "liveNodes": 1202
+    }
+  },
+  "measurementLimits": [
+    "Each sample calls graph.flush on unchanged graph, no state/input/layout mutation. Results describe repeated flush path only.",
+    "profile=nil for all3 logs; layout-measurer calls/recompute/node-copy/allocation counts are not recorded.",
+    "One sequential Mac run; no causal or Windows performance conclusion supported. README labels timing diagnostic."
+  ],
+  "matchingPrintedAPISurface": [
+    "nodeCount9",
+    "fontMetadataProbe",
+    "foregroundred",
+    "colorblue",
+    "imageSizingpresent",
+    "labelsHiddentrue"
+  ],
+  "concreteGaps": [
+    {
+      "id": "execution-provenance",
+      "evidence": "receipt commands include wildcard/<runtime>/<probe> templates; no actual expanded argv, PID/start/end/exit, tool byte hash or per-build full source closure. Binary hashes exist but do not independently join executions/source versions.",
+      "needed": "Actual immutable source/tool/binary & process/raw-output receipts for new bounded controls."
+    },
+    {
+      "id": "semantic-controls",
+      "evidence": "API probe prints6 observations; no retained snapshot/copy independence, equality/inequality/default nil, shape/toggleStyle or readonly public keypath compilation controls.",
+      "needed": "Run actual current/candidate semantic controls & preserve exact sources/processes/outputs."
+    },
+    {
+      "id": "incomplete-receipt-manifest",
+      "evidence": "SHA256SUMS lists22 items, omits build/run stderr, receipt/Package/LayoutProbe & most runtime source bytes. Reviewer captured current bytes but cannot retroactively prove execution preimages.",
+      "needed": "Complete producer manifest & actual per-execution source inputs."
+    }
+  ],
+  "boundedWindowsDecision": "Source design suitable for a scratch experiment concept; packet cannot receive provenance/parity clearance until missing controls/receipts supplied. No production adoption justified.",
+  "reviewerCompilerExecution": 0,
+  "reviewerNativeExecution": 0,
+  "reviewerRuntimeEdits": 0,
+  "historicalExecutionQualification": "R1 printed layout/API/timing outputs verified only as recorded bytes; actual expanded execution argv/cwd/source/tool binding absent. D-volume command examples cannot establish internal-scratch execution. Fresh binaries must be built & run in internal Mac scratch."
+}

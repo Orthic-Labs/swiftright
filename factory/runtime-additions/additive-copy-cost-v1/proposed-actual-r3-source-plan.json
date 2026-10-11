@@ -1,0 +1,54 @@
+{
+  "schema": "additive-copy-cost-proposed-actual-r3-source-plan-v1",
+  "status": "source-only-frozen",
+  "executionPolicy": "root-only-internal-cache",
+  "executionPerformedByThisAgent": false,
+  "probe": {
+    "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r3-controls.swift",
+    "hashRequiredBeforeCompile": true,
+    "coverage": [
+      "independently constructed equal ResolvedStyle values",
+      "independently constructed unequal ResolvedStyle values",
+      "default nil style",
+      "independently constructed equal ResolvedNode addition storage through whole-node equality",
+      "unequal addition storage through changed shape paint",
+      "mutable copied children retaining original snapshot",
+      "default image sizing nil",
+      "resized image sizing present",
+      "equal SwitchToggleStyle metadata",
+      "unequal toggle style metadata",
+      "labelsHidden on both toggle variants",
+      "custom font family, foreground color, & shape color"
+    ]
+  },
+  "sourcePins": {
+    "currentRoot": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime",
+    "currentTreeManifestSha256": "da00328fac1c555484d49b8545e427cc8e4cba78479d162801420c4678ccf01c",
+    "currentGraphSha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f",
+    "currentControlsSha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1",
+    "candidateRoot": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime",
+    "candidateTreeManifestSha256": "97a391030eb6a5bb1a4f76cb4879874420de149db0f0dbc3584afa88b0bddff7",
+    "candidateGraphSha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93",
+    "candidateControlsSha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+  },
+  "compilePlan": {
+    "tool": "root selects internal-cache swiftc & records path, version, executable hash",
+    "optimization": "-O",
+    "moduleName": "SwiftRightRuntime",
+    "argvShape": ["swiftc", "-O", "-module-name", "SwiftRightRuntime", "<all sorted pinned source .swift files>", "factory/runtime-additions/additive-copy-cost-v1/actual-r3-controls.swift", "-o", "<fresh internal-cache executable>"],
+    "cwd": "<root records exact internal-cache cwd>"
+  },
+  "runPlan": {
+    "pair": "one current process & one candidate process",
+    "order": ["current", "candidate"],
+    "capture": ["argv", "cwd", "pid", "UTC start/end", "returncode", "executable hash", "source tree manifests", "raw stdout", "raw stderr"],
+    "comparison": "require both exit 0 & compare all key=value lines exactly",
+    "performanceClaims": "none; this controls-only pair does not alter r1 performance claims"
+  },
+  "reviewBoundary": {
+    "runtimeSourcesModified": false,
+    "r1AndR2HistoryModified": false,
+    "independentReviewOwnedBy": "reviewer",
+    "productionIntegration": "not authorized by this source plan"
+  }
+}

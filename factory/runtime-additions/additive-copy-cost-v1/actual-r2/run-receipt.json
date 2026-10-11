@@ -1,0 +1,473 @@
+{
+  "binaries": {
+    "candidate": {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/candidate-metadata-copy-probe",
+      "sha256": "6d73e3825c75b582cfd7c7d24e37d1fefb44182b7c4c35d1ec00671abc484fcf"
+    },
+    "current": {
+      "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/current-metadata-copy-probe",
+      "sha256": "5a6b7d4e9a6ce303a5eefa1ae4d6e37b81d01b8817d87eddbf5abd2ae514946e"
+    }
+  },
+  "createdAt": "2026-10-11T03:36:50.381851Z",
+  "cwd": "/Volumes/D/claude/swiftright",
+  "diagnostic": {
+    "candidate": {
+      "returncode": 0,
+      "values": {
+        "color": "Optional(SwiftRightRuntime.ResolvedColor.semantic(\"system.blue\"))",
+        "copiedSnapshotEqual": "true",
+        "customFontFamily": "ProbeFamily",
+        "customForeground": "Optional(SwiftRightRuntime.ResolvedColor.semantic(\"system.red\"))",
+        "defaultFontMetadataNil": "true",
+        "mutableCopiedMetadataDetached": "true",
+        "plainImageSizingNil": "true",
+        "resizedImageSizingPresent": "true",
+        "shape": "Optional(SwiftRightRuntime.ResolvedShape(geometry: SwiftRightRuntime.ShapeGeometry.circle, paint: Optional(SwiftRightRuntime.ShapePaint(kind: SwiftRightRuntime.ShapePaint.Kind.fill, color: SwiftRightRuntime.ResolvedColor.semantic(\"system.green\"), lineWidth: nil))))",
+        "snapshotPresent": "true",
+        "toggleLabelsHidden": "Optional(true)",
+        "toggleStyle": "SwitchToggleStyle"
+      }
+    },
+    "current": {
+      "returncode": 0,
+      "values": {
+        "color": "Optional(SwiftRightRuntime.ResolvedColor.semantic(\"system.blue\"))",
+        "copiedSnapshotEqual": "true",
+        "customFontFamily": "ProbeFamily",
+        "customForeground": "Optional(SwiftRightRuntime.ResolvedColor.semantic(\"system.red\"))",
+        "defaultFontMetadataNil": "true",
+        "mutableCopiedMetadataDetached": "true",
+        "plainImageSizingNil": "true",
+        "resizedImageSizingPresent": "true",
+        "shape": "Optional(SwiftRightRuntime.ResolvedShape(geometry: SwiftRightRuntime.ShapeGeometry.circle, paint: Optional(SwiftRightRuntime.ShapePaint(kind: SwiftRightRuntime.ShapePaint.Kind.fill, color: SwiftRightRuntime.ResolvedColor.semantic(\"system.green\"), lineWidth: nil))))",
+        "snapshotPresent": "true",
+        "toggleLabelsHidden": "Optional(true)",
+        "toggleStyle": "SwitchToggleStyle"
+      }
+    },
+    "stdoutKeyValueParity": true
+  },
+  "host": {
+    "machine": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]"
+  },
+  "probeSource": {
+    "bytes": 2487,
+    "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/MetadataCopyProbe.swift",
+    "sha256": "065c2882f8c5535f63dfb94abb7844c3e0ce6d0189437b216ea8ff27b0ce4621"
+  },
+  "processes": [
+    {
+      "argv": [
+        "/usr/bin/swiftc",
+        "--version"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "endedAt": "2026-10-11T03:36:27.406657Z",
+      "endedUnixNS": 1791689787406702000,
+      "executable": "/usr/bin/swiftc",
+      "executableHashAtStart": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+      "label": "swiftc-version",
+      "pid": 18109,
+      "returncode": 0,
+      "startedAt": "2026-10-11T03:36:27.304071Z",
+      "startedUnixNS": 1791689787304168000,
+      "stderr": {
+        "bytes": 30,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/swiftc-version.stderr",
+        "sha256": "bbc8b176d3c74d4c5a7fd00b40280f98168e116d5272273bfe8e71407625540e"
+      },
+      "stdout": {
+        "bytes": 98,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/swiftc-version.stdout",
+        "sha256": "04630ab8fa201f57c63c59730e638135e32584a97e16e004a417eb8ed283dc83"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/swiftc",
+        "-O",
+        "-module-name",
+        "SwiftRightRuntime",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Alignment.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Animation.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Axis.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/FocusTraversal.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Geometry.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Keyboard.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Layout.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/LayoutEngine.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Modifiers.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Preferences.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Presentation.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Selection.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Shapes.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/State.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/TextInput.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/TextMeasurement.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/ToggleStyles.swift",
+        "/Volumes/D/claude/swiftright/factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Views.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/MetadataCopyProbe.swift",
+        "-o",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/current-metadata-copy-probe"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "endedAt": "2026-10-11T03:36:37.962858Z",
+      "endedUnixNS": 1791689797962932000,
+      "executable": "/usr/bin/swiftc",
+      "executableHashAtStart": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+      "label": "current-compile",
+      "pid": 18112,
+      "returncode": 0,
+      "startedAt": "2026-10-11T03:36:27.649365Z",
+      "startedUnixNS": 1791689787649372000,
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/current-compile.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/current-compile.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/current-metadata-copy-probe"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "endedAt": "2026-10-11T03:36:39.109992Z",
+      "endedUnixNS": 1791689799110055000,
+      "executable": "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/current-metadata-copy-probe",
+      "executableHashAtStart": "5a6b7d4e9a6ce303a5eefa1ae4d6e37b81d01b8817d87eddbf5abd2ae514946e",
+      "label": "current-run",
+      "outputExecutable": {
+        "bytes": 1268008,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/current-metadata-copy-probe",
+        "sha256": "5a6b7d4e9a6ce303a5eefa1ae4d6e37b81d01b8817d87eddbf5abd2ae514946e"
+      },
+      "pid": 18862,
+      "returncode": 0,
+      "startedAt": "2026-10-11T03:36:37.963447Z",
+      "startedUnixNS": 1791689797963452000,
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/current-run.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 684,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/current-run.stdout",
+        "sha256": "2cbab994f2f5c522316f62ae5ab58352033ead762585bcd787504ebb294b13ad"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/swiftc",
+        "-O",
+        "-module-name",
+        "SwiftRightRuntime",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Alignment.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Animation.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Axis.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Controls.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/FocusTraversal.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Geometry.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Graph.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Keyboard.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Layout.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/LayoutEngine.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Modifiers.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Preferences.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Presentation.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Selection.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Shapes.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/State.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/TextInput.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/TextMeasurement.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/ToggleStyles.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/Views.swift",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/MetadataCopyProbe.swift",
+        "-o",
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/candidate-metadata-copy-probe"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "endedAt": "2026-10-11T03:36:50.052152Z",
+      "endedUnixNS": 1791689810052192000,
+      "executable": "/usr/bin/swiftc",
+      "executableHashAtStart": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+      "label": "candidate-compile",
+      "pid": 18873,
+      "returncode": 0,
+      "startedAt": "2026-10-11T03:36:39.112039Z",
+      "startedUnixNS": 1791689799112050000,
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/candidate-compile.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/candidate-compile.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/candidate-metadata-copy-probe"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "endedAt": "2026-10-11T03:36:50.380847Z",
+      "endedUnixNS": 1791689810380879000,
+      "executable": "/Volumes/D/claude/swiftright/factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/candidate-metadata-copy-probe",
+      "executableHashAtStart": "6d73e3825c75b582cfd7c7d24e37d1fefb44182b7c4c35d1ec00671abc484fcf",
+      "label": "candidate-run",
+      "outputExecutable": {
+        "bytes": 1254496,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/binaries/candidate-metadata-copy-probe",
+        "sha256": "6d73e3825c75b582cfd7c7d24e37d1fefb44182b7c4c35d1ec00671abc484fcf"
+      },
+      "pid": 19538,
+      "returncode": 0,
+      "startedAt": "2026-10-11T03:36:50.052473Z",
+      "startedUnixNS": 1791689810052477000,
+      "stderr": {
+        "bytes": 0,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/candidate-run.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 684,
+        "path": "factory/runtime-additions/additive-copy-cost-v1/actual-r2/raw/candidate-run.stdout",
+        "sha256": "2cbab994f2f5c522316f62ae5ab58352033ead762585bcd787504ebb294b13ad"
+      }
+    }
+  ],
+  "schema": "additive-copy-cost-actual-r2-receipt-v1",
+  "sourceTrees": {
+    "candidate": {
+      "files": [
+        {
+          "bytes": 1134,
+          "path": "Alignment.swift",
+          "sha256": "71480d5c85c8b92f726498ce27f7346e1aee4673411ad8f9916c75f31b65e774"
+        },
+        {
+          "bytes": 10575,
+          "path": "Animation.swift",
+          "sha256": "de9f66cca9523e1d3654cf47df1e68eaed495122474abc18123cdde3b01f4a03"
+        },
+        {
+          "bytes": 726,
+          "path": "Axis.swift",
+          "sha256": "772e1c49a72769d010590cf722465daf7f6ca87e40f9b3afad3fe0fdbe66c8c2"
+        },
+        {
+          "bytes": 14201,
+          "path": "Controls.swift",
+          "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+        },
+        {
+          "bytes": 7443,
+          "path": "FocusTraversal.swift",
+          "sha256": "a058aeba69e9b57b491576ef39c5e6e729609464b12fecbb407cde981a5d0dbb"
+        },
+        {
+          "bytes": 8890,
+          "path": "Geometry.swift",
+          "sha256": "acc003c678fd38f9a89a3af299e1450be19561e0935731f9961afbbedf585b6e"
+        },
+        {
+          "bytes": 80576,
+          "path": "Graph.swift",
+          "sha256": "775526e1f667f656adb5c7946e880a7079e9462d5d9815edc9a8a2d4dc4bba93"
+        },
+        {
+          "bytes": 6622,
+          "path": "Keyboard.swift",
+          "sha256": "ae2bf8a03fee2c4d009d1fb3be0ca2a3d3c755eaf559c0cd50e784880a6d423e"
+        },
+        {
+          "bytes": 5581,
+          "path": "Layout.swift",
+          "sha256": "229baee2f56f649ab93de9800119a86da4e5d03cd41a2227c60309e1131cb990"
+        },
+        {
+          "bytes": 25080,
+          "path": "LayoutEngine.swift",
+          "sha256": "1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98"
+        },
+        {
+          "bytes": 10472,
+          "path": "Modifiers.swift",
+          "sha256": "79761cf492aa5908c4807aa4d388ce4c92a272e0ea139b357e990df360e5c4b0"
+        },
+        {
+          "bytes": 2949,
+          "path": "Preferences.swift",
+          "sha256": "704700444daf7bfa72a27355b0f6c94efdc18aae375ba4e0a7a461aa988570ca"
+        },
+        {
+          "bytes": 13054,
+          "path": "Presentation.swift",
+          "sha256": "0e4a38f08ee9467fb1eef2097adac6271d6b42ac34ae5b3bb431d21897b9955e"
+        },
+        {
+          "bytes": 9850,
+          "path": "Selection.swift",
+          "sha256": "bb64ca5268d3ad0b1349f1bdc76181f95e1a78f1d30229c8cc7a6e54edd977d5"
+        },
+        {
+          "bytes": 3541,
+          "path": "Shapes.swift",
+          "sha256": "3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+        },
+        {
+          "bytes": 9767,
+          "path": "State.swift",
+          "sha256": "d61ebeb4257941832f9ef50c2d0e7b98ba1e66cf07f35eccb160c0feb78626f6"
+        },
+        {
+          "bytes": 9407,
+          "path": "TextInput.swift",
+          "sha256": "b378d3a82d776631f534c8f4d1be15136cea7e3c32887248a9f2ef10c3c026b2"
+        },
+        {
+          "bytes": 4003,
+          "path": "TextMeasurement.swift",
+          "sha256": "31c4bb8966422cc9405b25e41e63f9521d18b78d7150a26b8a15eb40370b787c"
+        },
+        {
+          "bytes": 679,
+          "path": "ToggleStyles.swift",
+          "sha256": "c7a5f8f3aea623258949f28a7f6d80345d8603626f80e8e44a28d58be1edd1e4"
+        },
+        {
+          "bytes": 25408,
+          "path": "Views.swift",
+          "sha256": "42aa71c6c8b90c7c8bc0ee49cd3af4b097641c16d4ff34b455815638422c87e3"
+        }
+      ],
+      "manifestSha256": "97a391030eb6a5bb1a4f76cb4879874420de149db0f0dbc3584afa88b0bddff7",
+      "root": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime"
+    },
+    "current": {
+      "files": [
+        {
+          "bytes": 1134,
+          "path": "Alignment.swift",
+          "sha256": "71480d5c85c8b92f726498ce27f7346e1aee4673411ad8f9916c75f31b65e774"
+        },
+        {
+          "bytes": 10575,
+          "path": "Animation.swift",
+          "sha256": "de9f66cca9523e1d3654cf47df1e68eaed495122474abc18123cdde3b01f4a03"
+        },
+        {
+          "bytes": 726,
+          "path": "Axis.swift",
+          "sha256": "772e1c49a72769d010590cf722465daf7f6ca87e40f9b3afad3fe0fdbe66c8c2"
+        },
+        {
+          "bytes": 14201,
+          "path": "Controls.swift",
+          "sha256": "646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1"
+        },
+        {
+          "bytes": 7443,
+          "path": "FocusTraversal.swift",
+          "sha256": "a058aeba69e9b57b491576ef39c5e6e729609464b12fecbb407cde981a5d0dbb"
+        },
+        {
+          "bytes": 8890,
+          "path": "Geometry.swift",
+          "sha256": "acc003c678fd38f9a89a3af299e1450be19561e0935731f9961afbbedf585b6e"
+        },
+        {
+          "bytes": 78747,
+          "path": "Graph.swift",
+          "sha256": "c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+        },
+        {
+          "bytes": 6622,
+          "path": "Keyboard.swift",
+          "sha256": "ae2bf8a03fee2c4d009d1fb3be0ca2a3d3c755eaf559c0cd50e784880a6d423e"
+        },
+        {
+          "bytes": 5581,
+          "path": "Layout.swift",
+          "sha256": "229baee2f56f649ab93de9800119a86da4e5d03cd41a2227c60309e1131cb990"
+        },
+        {
+          "bytes": 25080,
+          "path": "LayoutEngine.swift",
+          "sha256": "1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98"
+        },
+        {
+          "bytes": 10472,
+          "path": "Modifiers.swift",
+          "sha256": "79761cf492aa5908c4807aa4d388ce4c92a272e0ea139b357e990df360e5c4b0"
+        },
+        {
+          "bytes": 2949,
+          "path": "Preferences.swift",
+          "sha256": "704700444daf7bfa72a27355b0f6c94efdc18aae375ba4e0a7a461aa988570ca"
+        },
+        {
+          "bytes": 13054,
+          "path": "Presentation.swift",
+          "sha256": "0e4a38f08ee9467fb1eef2097adac6271d6b42ac34ae5b3bb431d21897b9955e"
+        },
+        {
+          "bytes": 9850,
+          "path": "Selection.swift",
+          "sha256": "bb64ca5268d3ad0b1349f1bdc76181f95e1a78f1d30229c8cc7a6e54edd977d5"
+        },
+        {
+          "bytes": 3541,
+          "path": "Shapes.swift",
+          "sha256": "3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+        },
+        {
+          "bytes": 9767,
+          "path": "State.swift",
+          "sha256": "d61ebeb4257941832f9ef50c2d0e7b98ba1e66cf07f35eccb160c0feb78626f6"
+        },
+        {
+          "bytes": 9407,
+          "path": "TextInput.swift",
+          "sha256": "b378d3a82d776631f534c8f4d1be15136cea7e3c32887248a9f2ef10c3c026b2"
+        },
+        {
+          "bytes": 4003,
+          "path": "TextMeasurement.swift",
+          "sha256": "31c4bb8966422cc9405b25e41e63f9521d18b78d7150a26b8a15eb40370b787c"
+        },
+        {
+          "bytes": 679,
+          "path": "ToggleStyles.swift",
+          "sha256": "c7a5f8f3aea623258949f28a7f6d80345d8603626f80e8e44a28d58be1edd1e4"
+        },
+        {
+          "bytes": 25408,
+          "path": "Views.swift",
+          "sha256": "42aa71c6c8b90c7c8bc0ee49cd3af4b097641c16d4ff34b455815638422c87e3"
+        }
+      ],
+      "manifestSha256": "da00328fac1c555484d49b8545e427cc8e4cba78479d162801420c4678ccf01c",
+      "root": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime"
+    }
+  },
+  "tool": {
+    "moduleName": "SwiftRightRuntime",
+    "optimization": "-O",
+    "path": "/usr/bin/swiftc",
+    "sha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+    "versionProcess": "swiftc-version"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "additive-copy-cost-receipt-v1",
+  "recordedAt": "2026-10-11T03:29:10.554566Z",
+  "cwd": "/Volumes/D/claude/swiftright",
+  "tool": {
+    "path": "/usr/bin/swiftc",
+    "version": "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+    "target": "arm64-apple-macosx27.0.0",
+    "optimization": "-O",
+    "moduleName": "SwiftRightRuntime"
+  },
+  "host": {
+    "uname": "Darwin Adrians-Mac-Mini.local 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:06:15 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T8152 arm64",
+    "executable": "/usr/bin/swiftc"
+  },
+  "sourcePins": {
+    "originalRuntime": "factory/native/windows/api-baseline-8e47b89-20261011/runtime",
+    "currentRuntime": "factory/native/windows/module-origin-37429120-20261011/runtime",
+    "candidateRuntime": "factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources"
+  },
+  "commands": [
+    "swiftc -O -module-name SwiftRightRuntime factory/native/windows/api-baseline-8e47b89-20261011/runtime/Sources/SwiftRightRuntime/*.swift factory/runtime-additions/additive-copy-cost-v1/CopyCostProbe.swift -o factory/runtime-additions/additive-copy-cost-v1/binaries/original-copy-cost-probe",
+    "swiftc -O -module-name SwiftRightRuntime factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/*.swift factory/runtime-additions/additive-copy-cost-v1/CopyCostProbe.swift -o factory/runtime-additions/additive-copy-cost-v1/binaries/current-copy-cost-probe",
+    "swiftc -O -module-name SwiftRightRuntime factory/runtime-additions/additive-copy-cost-v1/runtime-candidate-sources/SwiftRightRuntime/*.swift factory/runtime-additions/additive-copy-cost-v1/CopyCostProbe.swift -o factory/runtime-additions/additive-copy-cost-v1/binaries/candidate-copy-cost-probe",
+    "/usr/bin/time -p <probe>",
+    "swiftc -O -module-name SwiftRightRuntime <runtime>/Sources/SwiftRightRuntime/*.swift factory/runtime-additions/additive-copy-cost-v1/AdditiveAPIProbe.swift -o <api-probe>",
+    "<api-probe>"
+  ],
+  "verification": {
+    "memoryLayout": "logs/original-layout-run.stdout.txt, logs/current-layout-run.stdout.txt, logs/candidate-layout-run.stdout.txt",
+    "existingApiWorkload": "logs/original-run.stdout.txt, logs/current-run.stdout.txt, logs/candidate-run.stdout.txt",
+    "additiveApiParity": "logs/current-api-run.stdout.txt, logs/candidate-api-run.stdout.txt",
+    "buildErrors": "All build stderr logs are empty except expected module-self-import warnings for LayoutProbe.",
+    "productionSourcesModified": false
+  }
+}
