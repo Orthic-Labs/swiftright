@@ -1,0 +1,78 @@
+{
+  "kind": "sr0-tuple12-workload-incremental-v9-source-pins",
+  "status": "source-ready-pending-root-parser-headless-controls",
+  "base_source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "compiled_manifest_sha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_dll_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "adapter": {
+    "path": "qualification/tuple12-takeover/workload-incremental-v9/build-incremental-tuple12.ps1",
+    "sha256": "edfa6be1a03e773c24460b2c815deb1ab0bfc17c85f6dd9cb2a4a033725da079"
+  },
+  "controls": {
+    "path": "qualification/tuple12-takeover/workload-incremental-v9/test-controls-v9.py",
+    "sha256": "0c0fb0d7b891c2e63577c1ef3e530cd847fc356db581b539ee576c99fb71803c",
+    "status": "prepared-not-run"
+  },
+  "shared_helper": {
+    "path": "qualification/tuple12-takeover/workload-incremental-v6/shared/Sr0OwnedJobProcess.cs",
+    "sha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+    "provenance": "exact v6 helper, unchanged"
+  },
+  "manifest_diagnostic": {
+    "path": "qualification/tuple12-takeover/workload-incremental-v9/diagnose-manifest.ps1",
+    "status": "source-ready-pending-root-parser-headless-controls",
+    "probes": [
+      "package dump-package",
+      "package show-dependencies --format json"
+    ],
+    "compiler_bin": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin",
+    "runtime_bin": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Runtimes\\6.4.0\\usr\\bin",
+    "job_memory_bytes": 1073741824,
+    "stream_cap_bytes": 8388608,
+    "deadline_seconds": 120,
+    "source_mutation": false,
+    "artifact_mutation": false,
+    "helper_provenance": "exact v6 shared owned-process helper",
+    "sha256": "abc9d85dcb1ddf330a5e6735a9c5c3fa091eec7cf2ae6f9df083dbe52f45e449"
+  },
+  "requirements": {
+    "edits": 3,
+    "job_memory_bytes": 1073741824,
+    "stream_cap_bytes": 8388608,
+    "deadline_seconds": 900,
+    "launch_order": [
+      "CreateProcess(CREATE_SUSPENDED)",
+      "start stdout/stderr readers",
+      "AssignProcessToJobObject",
+      "ResumeThread"
+    ],
+    "failure_receipt": "per-edit failure JSON written after bounded cleanup & before rethrow",
+    "failure_receipt_fields": [
+      "kernel_wait",
+      "kernel_exit_code",
+      "kernel_exit_read",
+      "streams_drained",
+      "active_query_readable",
+      "active_processes",
+      "cleanup_quiescent",
+      "restoration_allowed"
+    ],
+    "compiler_bin": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin",
+    "runtime_bin": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Runtimes\\6.4.0\\usr\\bin",
+    "runtime_dll_proof": "swiftCore.dll path, bounded size, & SHA-256 recorded in final receipt",
+    "path_prefix_order": [
+      "run shim",
+      "compiler bin",
+      "Swift Runtimes 6.4.0 usr bin",
+      "inherited PATH"
+    ],
+    "artifact_restoration_only": true,
+    "held_mutation_on_unproven_quiescence": true
+  },
+  "execution": {
+    "native": false,
+    "compiler": false,
+    "controls_run": false
+  }
+}
