@@ -1,0 +1,65 @@
+{
+  "block": "swiftui.custom-layout",
+  "case": {
+    "hash": "sha256:0dba13824f3398666aba1b27b54c01ff02d3e282b2c429a66f3869a05ed0cb49",
+    "id": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "caseInputs": {
+    "child-count": 2,
+    "layout-direction": "leftToRight",
+    "proposal-width": 48
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "host-specific callback adapter required",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.custom-layout:swiftui.custom-layout.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.custom-layout.witness",
+        "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+    "id": "swiftui.custom-layout.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.custom-layout.recipe.gate-seeded.ca4e13f820f5d258.swift",
+  "sourceHash": "sha256:00989672411aae376c52781205b826c3e4ae5d6acc52e501a0032996dadcc98d",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.custom-layout.witness",
+    "resourcePath": "factory/recipes/witnesses/swiftui.custom-layout.witness.swift",
+    "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+  },
+  "witnessType": "Witness_custom_layout"
+}

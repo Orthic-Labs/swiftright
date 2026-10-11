@@ -1,0 +1,74 @@
+{
+  "boundaries": {
+    "compilerOSOrigin": "missing",
+    "customExternalAX": "report held for 20 although raw external AX files have OBSERVED status",
+    "focusOcclusionTimingGoldens": "held/raw-only/zero",
+    "nativeShutdown": "not established; exitCode and ownedExited fields are captured values only",
+    "parity": "held",
+    "qualifiedPaint": "held",
+    "scrollInstrumented": "UNOBSERVED for 20; separate external AX channel OBSERVED; exact sequence claim false"
+  },
+  "claims": {
+    "compilerOSOrigin": "missing",
+    "goldens": 0,
+    "nativeParity": "held",
+    "qualifiedPaint": "held",
+    "qualifiedParity": "held",
+    "scroll": "instrumented UNOBSERVED; external AX OBSERVED, no cross-channel exact match claim"
+  },
+  "currentExternalAXAndCaptureJoins": 200,
+  "currentRawMatchesSummary": 100,
+  "decision": "held-proof-raw-join-mismatch",
+  "disposition": "Hold current joined observation report from proof-linked acceptance: captured Mac files match current summary and inventory, while proof-copy + lineage point to different instrumented.raw.json and capture.json bytes for all 100 runs. Proof and lineage agree with each other, but not with current captures. No producer files changed.",
+  "instrumentedStatusCounts": {
+    "OBSERVED": 80,
+    "UNOBSERVED": 20
+  },
+  "kind": "independent-f9-paired-five-seeded-observations-actual-v1-review",
+  "lineageMatchesProof": 100,
+  "macRuns": 100,
+  "nativeTermination": "not established; ownedExited/exitCode are captured fields only",
+  "observedText": {
+    "custom": "held/no AX labels",
+    "padding": [
+      "Box"
+    ],
+    "preference": [
+      "0",
+      "1"
+    ],
+    "scroll": [
+      "Row 0",
+      "Row 1",
+      "Row 2",
+      "Row 3",
+      "Row 4",
+      "Row 5",
+      "Row 6",
+      "Row 7"
+    ],
+    "stack": [
+      "+"
+    ]
+  },
+  "proofCaptureMismatches": 100,
+  "proofRawMismatches": 100,
+  "rawExternalAXStatusCounts": {
+    "OBSERVED": 100
+  },
+  "reportExternalAXStatusCounts": {
+    "HELD": 20,
+    "OBSERVED": 80
+  },
+  "sourcePins": {
+    "lineageReviewSha256": "sha256:17f06fb6c6985adc8ce6ed442af649aa7a999c70f8b79b12d705a11801d10d0c",
+    "lineageSha256": "sha256:18ccbd8c2ee4939a90abfe177d36ef4939e96c5c91c286a08a36a5977e09fbe2",
+    "proofCopySha256": "sha256:338beb9af290f19b5657c1c5cef3f5b83d5f9da29545b0b939f4c023a51e538f",
+    "rawPinsSha256": "sha256:8063420da670792bcb3fcd671b727c3536539ca2327778c0e5b45382a27a0db0",
+    "reportSha256": "sha256:2da1da4105b91021b0aee9e7fbc82460ca3ce531cdafe93ba892c73a45ae2f8d",
+    "stageManifestSha256": "sha256:bd2d00dd1e2261cb5e3ace6b66a9016e8fe24ed1023621aa9214514688a99141"
+  },
+  "stageManifestSha256": "sha256:bd2d00dd1e2261cb5e3ace6b66a9016e8fe24ed1023621aa9214514688a99141",
+  "version": 1,
+  "windowsSingles": 5
+}
