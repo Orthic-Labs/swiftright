@@ -1,0 +1,1428 @@
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/AlignmentTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/AlignmentTests.swift
+new file mode 100644
+index 00000000..697acba6
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/AlignmentTests.swift
+@@ -0,0 +1,16 @@
++import SwiftRightRuntime
++import XCTest
++
++final class AlignmentTests: XCTestCase {
++    func testNineStandardAlignmentsMapToHorizontalAndVerticalAxes() {
++        XCTAssertEqual(Alignment.topLeading, Alignment(horizontal: .leading, vertical: .top))
++        XCTAssertEqual(Alignment.top, Alignment(horizontal: .center, vertical: .top))
++        XCTAssertEqual(Alignment.topTrailing, Alignment(horizontal: .trailing, vertical: .top))
++        XCTAssertEqual(Alignment.leading, Alignment(horizontal: .leading, vertical: .center))
++        XCTAssertEqual(Alignment.center, Alignment(horizontal: .center, vertical: .center))
++        XCTAssertEqual(Alignment.trailing, Alignment(horizontal: .trailing, vertical: .center))
++        XCTAssertEqual(Alignment.bottomLeading, Alignment(horizontal: .leading, vertical: .bottom))
++        XCTAssertEqual(Alignment.bottom, Alignment(horizontal: .center, vertical: .bottom))
++        XCTAssertEqual(Alignment.bottomTrailing, Alignment(horizontal: .trailing, vertical: .bottom))
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ColorViewTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ColorViewTests.swift
+new file mode 100644
+index 00000000..bfdf732d
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ColorViewTests.swift
+@@ -0,0 +1,20 @@
++import SwiftRightRuntime
++import XCTest
++
++struct ColorViewProbe: View {
++    var body: some View { Color.red.frame(width: 50, height: 20) }
++}
++
++@MainActor
++final class ColorViewTests: XCTestCase {
++    func testColorIsFlexibleViewWithResolvedColor() throws {
++        let graph = Graph(ColorViewProbe())
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot()).children[0]
++        let color = try XCTUnwrap(frame.children.first)
++        XCTAssertEqual(frame.frame.size, LayoutSize(width: 50, height: 20))
++        XCTAssertEqual(color.kind, "Color")
++        XCTAssertEqual(color.frame, LayoutRect(x: 0, y: 0, width: 50, height: 20))
++        XCTAssertEqual(color.color, .semantic("system.red"))
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift
+new file mode 100644
+index 00000000..f73358d2
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/DisplayScaleTests.swift
+@@ -0,0 +1,42 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++private struct DisplayScaleProbe: View {
++    @Environment(\.displayScale) private var displayScale
++
++    var body: some View {
++        Text("scale-\(Int(displayScale))")
++    }
++}
++
++@MainActor
++final class DisplayScaleTests: XCTestCase {
++    func testDisplayScaleDefaultsToUnitScaleAndAcceptsNativeScalar() {
++        var values = EnvironmentValues()
++        XCTAssertEqual(values.displayScale, CGFloat(1))
++
++        values.displayScale = 2.0
++        XCTAssertEqual(values.displayScale, CGFloat(2))
++    }
++
++    func testDisplayScaleEnvironmentModifierPropagatesToDescendant() {
++        let graph = Graph(VStack {
++            DisplayScaleProbe()
++            DisplayScaleProbe().environment(\.displayScale, 3)
++        })
++        graph.flush()
++
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-1", "scale-3"])
++    }
++
++    func testDisplayScaleRootOverrideReevaluatesEnvironmentReader() {
++        let graph = Graph(DisplayScaleProbe())
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-1"])
++
++        graph.setRootEnvironment { $0.displayScale = 2 }
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["scale-2"])
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
+new file mode 100644
+index 00000000..9370b23c
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FontAdditionTests.swift
+@@ -0,0 +1,171 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++final class MutableFontModel {
++    var design: Font.Design = .serif
++}
++
++struct MutableDesignFontProbe: View {
++    let model: MutableFontModel
++    var body: some View { Text("descriptor").font(.system(size: 16, design: model.design)) }
++}
++
++@Observable
++@MainActor
++final class MutableLineLimitModel {
++    var limit = 1
++}
++
++struct MutableLineLimitProbe: View {
++    let model: MutableLineLimitModel
++    var body: some View { Text("three lines").lineLimit(model.limit) }
++}
++
++@MainActor
++final class DescriptorTextMeasurer: TextMeasurer {
++    var requests: [TextMeasureRequest] = []
++
++    func measure(_ request: TextMeasureRequest) -> TextMeasurement {
++        requests.append(request)
++        let lineHeight: CGFloat = request.fontMetadata?.design == .rounded ? 13 : 10
++        let lines = min(3, request.lineLimit ?? 1)
++        let height = CGFloat(lines) * lineHeight
++        return TextMeasurement(size: LayoutSize(width: 80, height: height), baseline: lineHeight * 0.75, lineCount: lines)
++    }
++}
++
++@MainActor
++final class FontAdditionTests: XCTestCase {
++    func testIndependentlyConstructedMetadataFontsCompareAndHashByValue() {
++        let first = Font.system(size: 17, weight: .medium, design: .serif)
++        let second = Font.system(size: 17, weight: .medium, design: .serif)
++
++        XCTAssertEqual(first, second)
++        XCTAssertEqual(Set([first, second]).count, 1)
++    }
++
++    func testMetadataFontEqualityIncludesMetadataValue() {
++        let serif = Font.system(size: 17, design: .serif)
++        let rounded = Font.system(size: 17, design: .rounded)
++
++        XCTAssertNotEqual(serif, rounded)
++        XCTAssertEqual(Set([serif, rounded]).count, 2)
++    }
++
++    func testLegacyFontAndExplicitMetadataFontWithSameIDRemainDistinct() {
++        let legacy = Font.system(size: 17)
++        let explicit = Font.system(size: 17, design: .default)
++
++        XCTAssertEqual(legacy.id, explicit.id)
++        XCTAssertNil(legacy.metadata)
++        XCTAssertNotNil(explicit.metadata)
++        XCTAssertNotEqual(legacy, explicit)
++    }
++
++    func testRetainedSnapshotKeepsFontMetadataAfterDesignChanges() {
++        let model = MutableFontModel()
++        let graph = Graph(MutableDesignFontProbe(model: model))
++        graph.flush()
++        let retained = graph.snapshot()
++
++        model.design = .rounded
++        graph.flush()
++
++        XCTAssertEqual(firstFont(in: retained)?.metadata?.design, .serif)
++        XCTAssertEqual(firstFont(in: graph.snapshot())?.metadata?.design, .rounded)
++    }
++
++    func testSystemDesignIsPassedAsMetadataWithoutChangingLegacyID() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("design").font(.system(size: 17, weight: .medium, design: .serif)), measurer: measurer)
++        graph.flush()
++
++        let font = Font.system(size: 17, weight: .medium, design: .serif)
++        let request = measurer.requests.first
++        XCTAssertEqual(font.id, Font.system(size: 17, weight: .medium).id)
++        XCTAssertEqual(request?.fontID, font.id)
++        XCTAssertEqual(request?.fontMetadata?.pointSize, 17)
++        XCTAssertEqual(request?.fontMetadata?.weight, .medium)
++        XCTAssertEqual(request?.fontMetadata?.design, .serif)
++        XCTAssertNil(request?.fontMetadata?.familyName)
++    }
++
++    func testSameTextNodeInvalidatesWhenDesignChangesWithoutChangingID() {
++        let model = MutableFontModel()
++        let measurer = DescriptorTextMeasurer()
++        let graph = Graph(MutableDesignFontProbe(model: model), measurer: measurer)
++        graph.flush()
++        let textID = graph.ids(ofKind: "Text").first
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 10)
++
++        model.design = .rounded
++        graph.flush()
++        XCTAssertEqual(graph.ids(ofKind: "Text").first, textID)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 13)
++        XCTAssertEqual(measurer.requests.map { $0.fontMetadata?.design }, [.serif, .rounded])
++    }
++
++    func testCustomFamilyMetadataSurvivesWeightModifier() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("custom").font(.custom("Example Display", size: 19).weight(.bold)), measurer: measurer)
++        graph.flush()
++
++        let metadata = measurer.requests.first?.fontMetadata
++        XCTAssertEqual(metadata?.familyName, "Example Display")
++        XCTAssertEqual(metadata?.pointSize, 19)
++        XCTAssertEqual(metadata?.weight, .bold)
++        XCTAssertTrue(metadata?.isCustom == true)
++        XCTAssertNil(metadata?.design)
++    }
++
++    func testSameTextNodeInvalidatesWhenLineLimitChanges() {
++        let model = MutableLineLimitModel()
++        let measurer = DescriptorTextMeasurer()
++        let graph = Graph(MutableLineLimitProbe(model: model), measurer: measurer)
++        graph.flush()
++        let textID = graph.ids(ofKind: "Text").first
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 10)
++
++        model.limit = 2
++        graph.flush()
++        XCTAssertEqual(graph.ids(ofKind: "Text").first, textID)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 20)
++        XCTAssertEqual(measurer.requests.map(\.lineLimit), [1, 2])
++    }
++
++    func testLineLimitReachesMeasurerAndCapsTextHeight() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("aa bb cc dd ee").lineLimit(2), measurer: measurer)
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++
++        XCTAssertEqual(measurer.requests.first?.lineLimit, 2)
++        XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 32)
++    }
++
++    func testLegacySystemFontLeavesMetadataUnset() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)
++        graph.flush()
++        graph.flush()
++
++        XCTAssertEqual(measurer.requests.first?.fontID, "system(17.0,medium)")
++        XCTAssertEqual(measurer.requests.count, 1)
++        XCTAssertNil(measurer.requests.first?.fontMetadata)
++        XCTAssertNil(Font.system(size: 17, weight: .medium).metadata)
++    }
++}
++
++@MainActor
++private func firstFont(in node: ResolvedNode?) -> Font? {
++    guard let node else { return nil }
++    if let font = node.style.font { return font }
++    for child in node.children {
++        if let font = firstFont(in: child) { return font }
++    }
++    return nil
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift
+new file mode 100644
+index 00000000..df326968
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/FrameMaximumTests.swift
+@@ -0,0 +1,254 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++struct ScrollFrameMaximumWitness: View {
++    var body: some View {
++        ScrollView(.horizontal) {
++            VStack(alignment: .leading, spacing: 4) {
++                ForEach(0..<4, id: \.self) { index in
++                    Text("Row \(index)").frame(maxWidth: .infinity, alignment: .leading)
++                }
++            }
++        }
++        .frame(width: 120, height: 48)
++    }
++}
++
++@Observable
++@MainActor
++final class FlexibleFrameModel {
++    var maxWidth: CGFloat = 20
++}
++
++@MainActor
++final class FrameMaximumTests: XCTestCase {
++    private func nodes(_ graph: Graph, matching predicate: (ResolvedNode) -> Bool) -> [ResolvedNode] {
++        var found: [ResolvedNode] = []
++        collect(graph.snapshot(), into: &found, where: predicate)
++        return found
++    }
++
++    func testLegacyFixedAndDefaultFrameCallsRemainAvailable() {
++        struct LegacyCalls: View {
++            var body: some View {
++                Text("legacy").frame().frame(alignment: .leading).frame(width: 42, height: 27)
++            }
++        }
++        let graph = Graph(LegacyCalls())
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 42)
++        XCTAssertEqual(graph.snapshot()?.frame.height, 27)
++    }
++
++    func testFiniteMaximumClampsFiniteParentProposal() {
++        struct MaxWidthFill: View {
++            var body: some View { Color.red.frame(maxWidth: 60) }
++        }
++        let bounded = Graph(MaxWidthFill())
++        bounded.rootProposal = ProposedViewSize(width: 120, height: 30)
++        bounded.flush()
++        XCTAssertEqual(bounded.snapshot()?.frame.width, 60)
++
++        let offered = Graph(MaxWidthFill())
++        offered.rootProposal = ProposedViewSize(width: 40, height: 30)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.width, 40)
++    }
++
++    func testMinimumAndMaximumClampChildProposalAndReportedFrame() {
++        struct BoundedFill: View {
++            var body: some View { Color.red.frame(minWidth: 80, maxWidth: 100) }
++        }
++        let graph = Graph(BoundedFill())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 80)
++        XCTAssertEqual(nodes(graph) { $0.kind == "Color" }.first?.frame.width, 80)
++    }
++
++    func testChangedMaximumInvalidatesSameIdentityContentMeasurement() throws {
++        struct UpdatingFrame: View {
++            @Bindable var model: FlexibleFrameModel
++            var body: some View {
++                Text(String(repeating: "word ", count: 20)).frame(maxWidth: model.maxWidth)
++            }
++        }
++        let model = FlexibleFrameModel()
++        let graph = Graph(UpdatingFrame(model: model))
++        graph.rootProposal = ProposedViewSize(width: 120, height: nil)
++        graph.flush()
++        let nodeID = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first?.id)
++        let instance = try XCTUnwrap(graph.nodeInstance(nodeID))
++        let narrowHeight = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first?.frame.height)
++
++        model.maxWidth = 80
++        graph.flush()
++
++        let updated = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(graph.nodeInstance(nodeID), instance)
++        XCTAssertEqual(updated.frame.width, 80)
++        XCTAssertLessThan(updated.frame.height, narrowHeight)
++    }
++
++    func testInfiniteMaximumAcceptsFiniteProposalAndUnspecifiedWidthStaysIntrinsic() throws {
++        struct FlexibleText: View {
++            var body: some View { Text("intrinsic width").frame(maxWidth: .infinity, alignment: .leading) }
++        }
++        let offered = Graph(FlexibleText())
++        offered.rootProposal = ProposedViewSize(width: 120, height: 30)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.width, 120)
++
++        let intrinsic = Graph(FlexibleText())
++        intrinsic.flush()
++        let width = try XCTUnwrap(intrinsic.snapshot()?.frame.width)
++        XCTAssertGreaterThan(width, 0)
++        XCTAssertTrue(width.isFinite)
++        XCTAssertEqual(width, nodes(intrinsic) { $0.kind == "Text" }.first?.frame.width)
++    }
++
++    func testFlexibleFrameAlignmentPositionsChildInsideExpandedFrame() throws {
++        struct TrailingText: View {
++            var body: some View { Text("x").frame(maxWidth: .infinity, alignment: .trailing) }
++        }
++        let graph = Graph(TrailingText())
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot())
++        let text = try XCTUnwrap(nodes(graph) { $0.kind == "Text" }.first)
++        XCTAssertEqual(frame.frame.width, 40)
++        XCTAssertEqual(text.frame.minX, frame.frame.width - text.frame.width, accuracy: 0.001)
++    }
++
++    func testMaximumHeightClampsAndExpandsByHeightProposal() {
++        struct MaxHeightFill: View {
++            var body: some View { Color.red.frame(maxHeight: 24) }
++        }
++        let bounded = Graph(MaxHeightFill())
++        bounded.rootProposal = ProposedViewSize(width: 30, height: 60)
++        bounded.flush()
++        XCTAssertEqual(bounded.snapshot()?.frame.height, 24)
++
++        let offered = Graph(MaxHeightFill())
++        offered.rootProposal = ProposedViewSize(width: 30, height: 18)
++        offered.flush()
++        XCTAssertEqual(offered.snapshot()?.frame.height, 18)
++
++        struct InfiniteMaxHeight: View {
++            var body: some View { Color.red.frame(maxHeight: .infinity) }
++        }
++        let flexible = Graph(InfiniteMaxHeight())
++        flexible.rootProposal = ProposedViewSize(width: 30, height: 48)
++        flexible.flush()
++        XCTAssertEqual(flexible.snapshot()?.frame.height, 48)
++    }
++
++    func testFiniteMaximumConstrainsWrappedSpacerInStack() throws {
++        struct BoundedSpacer: View {
++            var body: some View { HStack(spacing: 0) { Spacer(minLength: 0).frame(maxWidth: 20) } }
++        }
++        let graph = Graph(BoundedSpacer())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 20)
++        XCTAssertLessThanOrEqual(frame.frame.width, 20)
++    }
++
++    func testMinimumBoundSurvivesStackShareSmallerThanMinimum() throws {
++        struct MinimumSpacer: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Text("x")
++                    Spacer(minLength: 0).frame(minWidth: 80, maxWidth: .infinity)
++                }
++            }
++        }
++        let graph = Graph(MinimumSpacer())
++        graph.rootProposal = ProposedViewSize(width: 30, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 80)
++    }
++
++    func testBoundedAndBareSpacersKeepIndependentStackFlexibility() throws {
++        struct FlexibleSpacerRow: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Spacer(minLength: 0).frame(maxWidth: 20)
++                    Spacer(minLength: 0)
++                }
++            }
++        }
++        let graph = Graph(FlexibleSpacerRow())
++        graph.rootProposal = ProposedViewSize(width: 120, height: 24)
++        graph.flush()
++        let flexibleFrame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        let spacerWidths = nodes(graph) { $0.kind == "Spacer" }.map(\.frame.width)
++        XCTAssertEqual(flexibleFrame.frame.width, 20)
++        XCTAssertEqual(spacerWidths.count, 2)
++        let bareSpacerWidth = try XCTUnwrap(spacerWidths.max())
++        XCTAssertGreaterThan(bareSpacerWidth, flexibleFrame.frame.width)
++        XCTAssertTrue(flexibleFrame.frame.width.isFinite)
++        XCTAssertTrue(bareSpacerWidth.isFinite)
++    }
++
++    func testCrossAxisFlexibleBoundPreservesSpacerMainAxisFlexibility() throws {
++        struct CrossBoundSpacer: View {
++            var body: some View {
++                HStack(spacing: 0) { Spacer(minLength: 0).frame(maxHeight: 10) }
++            }
++        }
++        let graph = Graph(CrossBoundSpacer())
++        graph.rootProposal = ProposedViewSize(width: 90, height: 24)
++        graph.flush()
++        let frame = try XCTUnwrap(nodes(graph) { $0.kind == "modifier.frame" }.first)
++        XCTAssertEqual(frame.frame.width, 90)
++        XCTAssertEqual(frame.frame.height, 10)
++    }
++
++    func testBareSpacerStillTakesRemainingStackShare() throws {
++        struct BareSpacerRow: View {
++            var body: some View {
++                HStack(spacing: 0) {
++                    Text("A")
++                    Spacer(minLength: 0)
++                    Text("B")
++                }
++            }
++        }
++        let graph = Graph(BareSpacerRow())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 24)
++        graph.flush()
++        let spacer = try XCTUnwrap(nodes(graph) { $0.kind == "Spacer" }.first)
++        XCTAssertGreaterThan(spacer.frame.width, 0)
++        XCTAssertTrue(spacer.frame.width.isFinite)
++    }
++
++    func testMalformedFlexibleBoundsNormalizeToFiniteGeometry() throws {
++        struct MalformedBounds: View {
++            var body: some View {
++                Color.red.frame(minWidth: 30, maxWidth: 10)
++                    .frame(minHeight: .nan, maxHeight: -.infinity)
++            }
++        }
++        let graph = Graph(MalformedBounds())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 40)
++        graph.flush()
++        let frame = try XCTUnwrap(graph.snapshot()?.frame)
++        XCTAssertEqual(frame.width, 30)
++        XCTAssertTrue(frame.width.isFinite && frame.height.isFinite)
++    }
++
++    func testHorizontalScrollPilotWitnessHasFiniteFrames() {
++        let graph = Graph(ScrollFrameMaximumWitness())
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.frame.width, 120)
++        XCTAssertEqual(graph.snapshot()?.frame.height, 48)
++        let rows = nodes(graph) { $0.kind == "Text" && $0.text?.hasPrefix("Row ") == true }
++        XCTAssertEqual(rows.count, 4)
++        XCTAssertTrue(rows.allSatisfy { $0.frame.width.isFinite && $0.frame.height.isFinite })
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LabelsHiddenTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LabelsHiddenTests.swift
+new file mode 100644
+index 00000000..fb7768e0
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LabelsHiddenTests.swift
+@@ -0,0 +1,87 @@
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++private final class LabelsModel {
++    var enabled = false
++}
++
++private struct HiddenToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled).labelsHidden()
++    }
++}
++
++private struct VisibleToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled)
++    }
++}
++
++private struct RootEnvironmentToggleScreen: View {
++    @Bindable var model: LabelsModel
++
++    var body: some View {
++        Toggle("Wi-Fi", isOn: $model.enabled)
++    }
++}
++
++@MainActor
++final class LabelsHiddenTests: XCTestCase {
++    func testHiddenToggleCarriesOptionalVisibilityAndKeepsAccessibilityTitle() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(HiddenToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++
++        let toggle = graph.snapshot()?.children.first?.children.first
++        XCTAssertEqual(toggle?.labelsHidden, true)
++        XCTAssertEqual(toggle?.accessibility.label, "Wi-Fi")
++        XCTAssertEqual(toggle?.children, [])
++        XCTAssertEqual(toggle?.frame.size, .zero)
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 0)
++    }
++
++    func testLegacyToggleKeepsOptionalVisibilityNil() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(VisibleToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++
++        let toggle = graph.snapshot()?.children.first
++        XCTAssertNil(toggle?.labelsHidden)
++        XCTAssertEqual(toggle?.children.first?.text, "Wi-Fi")
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 1)
++    }
++
++    func testRootEnvironmentVisibilityChangeInvalidatesToggleAndAncestorSizes() {
++        let measurer = FixedAdvanceTextMeasurer()
++        let graph = Graph(RootEnvironmentToggleScreen(model: LabelsModel()), measurer: measurer)
++        graph.flush()
++        let initial = graph.snapshot()?.children.first
++        XCTAssertEqual(initial?.frame.width, 40)
++        XCTAssertEqual(initial?.frame.height, 16)
++
++        graph.setRootEnvironment { $0.labelsHidden = true }
++        graph.flush()
++        let hidden = graph.snapshot()?.children.first
++        XCTAssertEqual(hidden?.labelsHidden, true)
++        XCTAssertEqual(hidden?.children, [])
++        XCTAssertEqual(hidden?.frame.size, .zero)
++        XCTAssertEqual(hidden?.instance, initial?.instance)
++
++        graph.setRootEnvironment { $0.labelsHidden = false }
++        graph.flush()
++        let visible = graph.snapshot()?.children.first
++        XCTAssertNil(visible?.labelsHidden)
++        XCTAssertEqual(visible?.children.first?.text, "Wi-Fi")
++        XCTAssertEqual(visible?.frame.width, 40)
++        XCTAssertEqual(visible?.frame.height, 16)
++        XCTAssertEqual(visible?.instance, initial?.instance)
++        XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 1, "cached text metrics remain reusable across visibility changes")
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift
+new file mode 100644
+index 00000000..47ed8a17
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutDirectionTests.swift
+@@ -0,0 +1,25 @@
++import SwiftRightRuntime
++import XCTest
++
++private struct LayoutDirectionProbe: View {
++    @Environment(\.layoutDirection) private var direction
++
++    var body: some View {
++        Text(direction == .leftToRight ? "ltr" : "rtl")
++    }
++}
++
++@MainActor
++final class LayoutDirectionTests: XCTestCase {
++    func testLayoutDirectionRoundTripAndEnvironmentReader() {
++        var values = EnvironmentValues()
++        XCTAssertEqual(values.layoutDirection, .leftToRight)
++
++        values.layoutDirection = .rightToLeft
++        XCTAssertEqual(values.layoutDirection, .rightToLeft)
++
++        let graph = Graph(LayoutDirectionProbe().environment(\.layoutDirection, .rightToLeft))
++        graph.flush()
++        XCTAssertEqual(allTexts(graph, kind: "Text"), ["rtl"])
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift
+index 8ca85b0a..1a4474e4 100644
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift
+@@ -5,0 +6,9 @@ import XCTest
++// Compile-only source-compatibility probe: native geometry overloads must not make
++// common inferred portable calls ambiguous.
++@MainActor
++func legacyGeometryCallSites<L: Layout>(_ subview: Subview, layout: L, subviews: Subviews, cache: inout L.Cache) {
++    let _: ProposedViewSize = ProposedViewSize(.zero)
++    subview.place(at: .zero, proposal: .zero)
++    layout.placeSubviews(in: .zero, proposal: .zero, subviews: subviews, cache: &cache)
++}
++
+@@ -51,0 +61,34 @@ struct PadProbe: View {
++struct FixedFrameProbe: View {
++    var body: some View { Text("x").frame(width: 100, height: 40, alignment: .bottomTrailing) }
++}
++
++struct FramedSpacerProbe: View {
++    var body: some View {
++        HStack {
++            Text("A")
++            Spacer().frame(width: 20)
++            Text("B")
++        }
++    }
++}
++
++struct CrossAxisFramedHStackSpacerProbe: View {
++    var body: some View {
++        HStack {
++            Text("A")
++            Spacer().frame(height: 10)
++            Text("B")
++        }
++    }
++}
++
++struct CrossAxisFramedVStackSpacerProbe: View {
++    var body: some View {
++        VStack {
++            Text("A")
++            Spacer().frame(width: 10)
++            Text("B")
++        }
++    }
++}
++
+@@ -84,0 +128,26 @@ struct AdaptiveProbe: View {
++struct CGSizeLayoutProbe: Layout {
++    typealias Cache = Int
++
++    func makeCache(subviews: Subviews) -> Int { 0 }
++
++    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Int) -> CGSize {
++        cache += 1
++        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
++        let _: [LayoutSize] = sizes
++        return CGSize(width: sizes.reduce(0) { $0 + $1.width } + 20, height: sizes.map(\.height).max()! + 10)
++    }
++
++    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Int) {
++        let childSize: CGSize = subviews[0].sizeThatFits(.unspecified)
++        subviews[0].place(
++            at: CGPoint(x: bounds.midX + CGFloat(cache), y: bounds.midY),
++            anchor: .center,
++            proposal: ProposedViewSize(childSize)
++        )
++    }
++}
++
++struct CGSizeLayoutContainer: View {
++    var body: some View { CGSizeLayoutProbe().callAsFunction { Text("x") } }
++}
++
+@@ -114,0 +184,35 @@ final class LayoutTests: XCTestCase {
++    func testFrameSetsDimensionsAndAlignsChild() throws {
++        let graph = Graph(FixedFrameProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let frame = try node(graph.snapshot(), 0)
++        XCTAssertEqual(frame.kind, "modifier.frame")
++        XCTAssertEqual(frame.frame, LayoutRect(x: 0, y: 0, width: 100, height: 40))
++        XCTAssertEqual(frame.children[0].frame, LayoutRect(x: 92, y: 24, width: 8, height: 16))
++    }
++
++    func testFixedFrameStopsSpacerFromTakingRemainingStackSpace() throws {
++        let graph = Graph(FramedSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
++        graph.flush()
++        let stack = try node(graph.snapshot(), 0)
++        XCTAssertEqual(stack.children.map(\.frame.width), [8, 20, 8])
++    }
++
++    func testCrossAxisFramePreservesHStackSpacerFlexibilityAndHeight() throws {
++        let graph = Graph(CrossAxisFramedHStackSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: 300, height: nil)
++        graph.flush()
++        let spacerFrame = try node(graph.snapshot(), 0, 1)
++        XCTAssertGreaterThan(spacerFrame.frame.width, 100)
++        XCTAssertEqual(spacerFrame.frame.height, 10)
++    }
++
++    func testCrossAxisFramePreservesVStackSpacerFlexibilityAndWidth() throws {
++        let graph = Graph(CrossAxisFramedVStackSpacerProbe())
++        graph.rootProposal = ProposedViewSize(width: nil, height: 300)
++        graph.flush()
++        let spacerFrame = try node(graph.snapshot(), 0, 1)
++        XCTAssertGreaterThan(spacerFrame.frame.height, 100)
++        XCTAssertEqual(spacerFrame.frame.width, 10)
++    }
++
+@@ -182,0 +287,9 @@ final class LayoutTests: XCTestCase {
++    func testSwiftUIGeometryLayoutWitnessesBridgeToPortableEngine() throws {
++        let graph = Graph(CGSizeLayoutContainer(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let layout = try node(graph.snapshot(), 0)
++        XCTAssertEqual(layout.frame, LayoutRect(x: 0, y: 0, width: 28, height: 26))
++        XCTAssertEqual(layout.children[0].frame.minY, 5)
++        XCTAssertGreaterThan(layout.children[0].frame.minX, 10, "native placement receives mutated native cache")
++    }
++
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceGraphTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceGraphTests.swift
+new file mode 100644
+index 00000000..d1e6571d
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceGraphTests.swift
+@@ -0,0 +1,99 @@
++import Observation
++import SwiftRightRuntime
++import XCTest
++@testable import SwiftRightRuntime
++
++private enum SumKey: PreferenceKey {
++    static let defaultValue = 0
++    static func reduce(value: inout Int, nextValue: () -> Int) { value += nextValue() }
++}
++
++private enum OrderedKey: PreferenceKey {
++    static let defaultValue: [String] = []
++    static func reduce(value: inout [String], nextValue: () -> [String]) {
++        value.append(contentsOf: nextValue())
++    }
++}
++
++@Observable
++@MainActor
++private final class PreferenceModel {
++    var first = 1
++    var second = 2
++}
++
++@MainActor
++private final class PreferenceLog {
++    var values: [Int] = []
++}
++
++private struct PreferenceScreen: View {
++    @Bindable var model: PreferenceModel
++    let log: PreferenceLog
++
++    var body: some View {
++        VStack {
++            Text("first").preference(key: SumKey.self, value: model.first)
++            Text("second").preference(key: SumKey.self, value: model.second)
++        }
++        .onPreferenceChange(SumKey.self) { log.values.append($0) }
++    }
++}
++
++private struct PreferenceLeaf: View {
++    @Bindable var model: PreferenceModel
++
++    var body: some View {
++        Text("leaf").preference(key: SumKey.self, value: model.first)
++    }
++}
++
++private struct NestedPreferenceScreen: View {
++    let model: PreferenceModel
++    let log: PreferenceLog
++
++    var body: some View {
++        PreferenceLeaf(model: model)
++            .onPreferenceChange(SumKey.self) { log.values.append($0) }
++    }
++}
++
++@MainActor
++final class PreferenceGraphTests: XCTestCase {
++    func testPreferenceReductionFollowsChildOrder() {
++        let graph = Graph(VStack {
++            Text("a").preference(key: OrderedKey.self, value: ["a"])
++            Text("b").preference(key: OrderedKey.self, value: ["b"])
++        })
++
++        XCTAssertEqual(graph.root?.preferences.value(for: OrderedKey.self), ["a", "b"])
++    }
++
++    func testObserverRunsAfterSettledGraphAndOnlyForChangedValue() {
++        let model = PreferenceModel()
++        let log = PreferenceLog()
++        let graph = Graph(PreferenceScreen(model: model, log: log))
++
++        graph.flush()
++        XCTAssertEqual(log.values, [3])
++        model.first = 2
++        model.second = 1
++        graph.flush()
++        XCTAssertEqual(log.values, [3])
++        model.second = 4
++        graph.flush()
++        XCTAssertEqual(log.values, [3, 6])
++    }
++
++    func testDescendantPreferenceChangeBubblesWithoutParentBodyEvaluation() {
++        let model = PreferenceModel()
++        let log = PreferenceLog()
++        let graph = Graph(NestedPreferenceScreen(model: model, log: log))
++
++        graph.flush()
++        XCTAssertEqual(log.values, [1])
++        model.first = 7
++        graph.flush()
++        XCTAssertEqual(log.values, [1, 7])
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceValuesTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceValuesTests.swift
+new file mode 100644
+index 00000000..279243b6
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PreferenceValuesTests.swift
+@@ -0,0 +1,24 @@
++import SwiftRightRuntime
++import XCTest
++@testable import SwiftRightRuntime
++
++private enum StringListKey: PreferenceKey {
++    static let defaultValue: [String] = []
++    static func reduce(value: inout [String], nextValue: () -> [String]) {
++        value.append(contentsOf: nextValue())
++    }
++}
++
++final class PreferenceValuesTests: XCTestCase {
++    func testDefaultAndSharedReduction() {
++        var values = PreferenceValues()
++        XCTAssertEqual(values.value(for: StringListKey.self), [])
++
++        values.reduce(["first"], for: StringListKey.self)
++        var child = PreferenceValues()
++        child.set(["second"], for: StringListKey.self)
++        values.merge(child)
++
++        XCTAssertEqual(values.value(for: StringListKey.self), ["first", "second"])
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift
+new file mode 100644
+index 00000000..6fb5fa7f
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/PrimaryToggleStyleWitness.swift
+@@ -0,0 +1,8 @@
++import SwiftRightRuntime
++
++struct Witness_toggle: View {
++    @State private var enabled = true
++    var body: some View {
++        Toggle("Enabled", isOn: $enabled).labelsHidden().toggleStyle(.automatic)
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+index 88ad1f55..1a7927c5 100644
+--- a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift
+@@ -160,0 +161 @@ final class SR1ControlTests: XCTestCase {
++        XCTAssertNil(images[0].imageSizing)
+@@ -162,0 +164 @@ final class SR1ControlTests: XCTestCase {
++        XCTAssertNil(images[1].imageSizing)
+@@ -174,0 +177,45 @@ final class SR1ControlTests: XCTestCase {
++        XCTAssertEqual(first?.accessibility.label, "star.fill")
++        XCTAssertNil(first?.imageSizing)
++    }
++
++    func testResizableImageUsesProposalAndRetainsResizeOptions() {
++        let insets = EdgeInsets(top: 1, leading: 2, bottom: 3, trailing: 4)
++        let graph = Graph(Image(systemName: "star.fill").resizable(capInsets: insets, resizingMode: .tile))
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 80, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.image, .system("star.fill"))
++        XCTAssertEqual(image?.frame.width, 80)
++        XCTAssertEqual(image?.frame.height, 30)
++        XCTAssertEqual(image?.accessibility.label, "star.fill")
++        XCTAssertEqual(image?.imageSizing?.isResizable, true)
++        XCTAssertEqual(image?.imageSizing?.capInsets, insets)
++        XCTAssertEqual(image?.imageSizing?.resizingMode, .tile)
++        XCTAssertEqual(image?.imageSizing?.scalesToFit, false)
++    }
++
++    func testScaledToFitPreservesAspectRatioInsideProposal() {
++        let graph = Graph(Image(systemName: "star.fill").resizable().scaledToFit())
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.frame.width, 30)
++        XCTAssertEqual(image?.frame.height, 9)
++        XCTAssertEqual(image?.imageSizing?.scalesToFit, true)
++        XCTAssertEqual(image?.accessibility.label, "star.fill")
++    }
++
++    func testScaledToFitWithoutResizableKeepsNaturalImageSize() {
++        let graph = Graph(Image(systemName: "star.fill").scaledToFit())
++        graph.imageIntrinsicSize = { _ in LayoutSize(width: 40, height: 12) }
++        graph.rootProposal = ProposedViewSize(width: 30, height: 30)
++        graph.flush()
++
++        let image = graph.snapshot()
++        XCTAssertEqual(image?.frame.width, 40)
++        XCTAssertEqual(image?.frame.height, 12)
++        XCTAssertEqual(image?.imageSizing?.isResizable, false)
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift
+new file mode 100644
+index 00000000..df557658
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScalarPaddingTests.swift
+@@ -0,0 +1,18 @@
++import SwiftRightRuntime
++import XCTest
++
++struct ScalarPaddingProbe: View {
++    var body: some View { Text("ab").padding(10) }
++}
++
++@MainActor
++final class ScalarPaddingTests: XCTestCase {
++    func testScalarPaddingInsetsEveryEdge() throws {
++        let graph = Graph(ScalarPaddingProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let padding = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(padding.kind, "modifier.padding")
++        XCTAssertEqual(padding.frame, LayoutRect(x: 0, y: 0, width: 36, height: 36))
++        XCTAssertEqual(padding.children[0].frame, LayoutRect(x: 10, y: 10, width: 16, height: 16))
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift
+new file mode 100644
+index 00000000..1e0d6dc3
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ScrollViewAxisTests.swift
+@@ -0,0 +1,144 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++final class ScrollAxisModel {
++    var isHorizontal = true
++}
++
++@MainActor
++final class ScrollViewAxisTests: XCTestCase {
++    struct HorizontalContent: View {
++        var body: some View {
++            ScrollView(.horizontal, showsIndicators: false) {
++                HStack(spacing: 0) {
++                    Text("1234567890")
++                    Text("abcdefghij")
++                }
++            }
++        }
++    }
++
++    struct VerticalContent: View {
++        var body: some View {
++            ScrollView(.vertical, showsIndicators: true) {
++                VStack(spacing: 0) {
++                    Text("line 0")
++                    Text("line 1")
++                    Text("line 2")
++                    Text("line 3")
++                    Text("line 4")
++                }
++            }
++        }
++    }
++
++    private func text(_ graph: Graph, _ value: String) -> ResolvedNode? {
++        var nodes: [ResolvedNode] = []
++        collect(graph.snapshot(), into: &nodes) { $0.kind == "Text" && $0.text == value }
++        return nodes.first
++    }
++
++    func testConfiguredHorizontalScrollUsesWidthForContentAndClamping() throws {
++        let graph = Graph(HorizontalContent())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        let first = try XCTUnwrap(text(graph, "1234567890"))
++        let second = try XCTUnwrap(text(graph, "abcdefghij"))
++
++        XCTAssertEqual(graph.snapshot()?.frame.width, 40)
++        XCTAssertGreaterThan(second.frame.minX, first.frame.minX)
++        XCTAssertEqual(first.frame.minX, 0)
++
++        graph.scroll(id, to: 24)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 24)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minX, -24)
++
++        graph.scroll(id, to: 999)
++        graph.flush()
++        XCTAssertGreaterThan(graph.scrollOffset(id) ?? 0, 24)
++        XCTAssertLessThan(text(graph, "1234567890")?.frame.minX ?? 0, -24)
++    }
++
++    func testConfiguredVerticalScrollUsesHeightForContentAndClamping() throws {
++        let graph = Graph(VerticalContent())
++        graph.rootProposal = ProposedViewSize(width: 100, height: 40)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++
++        XCTAssertEqual(text(graph, "line 4")?.frame.minY, 64)
++        graph.scroll(id, to: 24)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 24)
++        XCTAssertEqual(text(graph, "line 0")?.frame.minY, -24)
++        XCTAssertEqual(text(graph, "line 4")?.frame.minY, 40)
++
++        graph.scroll(id, to: 999)
++        graph.flush()
++        XCTAssertEqual(graph.scrollOffset(id), 40)
++        XCTAssertEqual(text(graph, "line 0")?.frame.minY, -40)
++    }
++
++    func testConfiguredTwoAxisOffsetsClampIndependently() throws {
++        struct BothAxes: View {
++            var body: some View {
++                ScrollView([.horizontal, .vertical]) {
++                    VStack(spacing: 0) {
++                        HStack(spacing: 0) {
++                            Text("1234567890")
++                            Text("abcdefghij")
++                        }
++                        Text("lower")
++                        Text("lowest")
++                        Text("extra 0")
++                        Text("extra 1")
++                        Text("extra 2")
++                        Text("extra 3")
++                    }
++                }
++            }
++        }
++        let graph = Graph(BothAxes())
++        graph.rootProposal = ProposedViewSize(width: 40, height: 40)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        graph.scroll(id, to: LayoutPoint(x: 20, y: 20))
++        graph.flush()
++
++        XCTAssertEqual(graph.scrollOffsets(id)?.x, 20)
++        XCTAssertEqual(graph.scrollOffsets(id)?.y, 20)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minX, -20)
++        XCTAssertEqual(text(graph, "1234567890")?.frame.minY, -20)
++    }
++
++    func testChangingAxesOnSameScrollViewInvalidatesWrappedContentSize() throws {
++        struct AxisChangingScreen: View {
++            @Bindable var model: ScrollAxisModel
++
++            var body: some View {
++                ScrollView(model.isHorizontal ? .horizontal : .vertical) {
++                    Text(String(repeating: "wrap ", count: 16))
++                }
++            }
++        }
++        let model = ScrollAxisModel()
++        let graph = Graph(AxisChangingScreen(model: model))
++        graph.rootProposal = ProposedViewSize(width: 40, height: nil)
++        graph.flush()
++        let id = try XCTUnwrap(graph.ids(ofKind: "ScrollView").first)
++        let instance = try XCTUnwrap(graph.nodeInstance(id))
++        let horizontalHeight = try XCTUnwrap(everyNode(graph.snapshot()).first { $0.kind == "ScrollView" }?.frame.height)
++
++        model.isHorizontal = false
++        graph.flush()
++
++        XCTAssertEqual(graph.nodeInstance(id), instance, "axis update keeps same ScrollView node")
++        let verticalHeight = try XCTUnwrap(everyNode(graph.snapshot()).first { $0.kind == "ScrollView" }?.frame.height)
++        XCTAssertGreaterThan(verticalHeight, horizontalHeight, "finite-width vertical content wraps into more height")
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
+new file mode 100644
+index 00000000..802c238d
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ShapeTests.swift
+@@ -0,0 +1,55 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++@MainActor
++final class ShapeTests: XCTestCase {
++    func testRoundedRectangleDefaultMatchesSDKContinuousStyle() {
++        let graph = Graph(RoundedRectangle(cornerRadius: 6))
++        graph.flush()
++        XCTAssertEqual(graph.snapshot()?.shape?.geometry, .roundedRectangle(cornerRadius: 6, style: .continuous))
++        XCTAssertEqual(RoundedRectangle(cornerRadius: 6, style: .circular).shapeGeometry,
++                       .roundedRectangle(cornerRadius: 6, style: .circular))
++    }
++
++    func testRoundedRectangleStrokeRecordsGeometryAndLineWidth() {
++        let graph = Graph(RoundedRectangle(cornerRadius: 6, style: .continuous).stroke(Color.blue, lineWidth: 2.5))
++        graph.rootProposal = ProposedViewSize(width: 32, height: 24)
++        graph.flush()
++
++        let node = graph.snapshot()
++        XCTAssertEqual(node?.kind, "RoundedRectangle")
++        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 32, height: 24))
++        XCTAssertEqual(node?.shape?.geometry, .roundedRectangle(cornerRadius: 6, style: .continuous))
++        XCTAssertEqual(node?.shape?.paint?.kind, .stroke)
++        XCTAssertEqual(node?.shape?.paint?.color, Color.blue.resolvedColor)
++        XCTAssertEqual(node?.shape?.paint?.lineWidth, 2.5)
++    }
++
++    func testCircleFillRecordsShapeIdentityAndBounds() {
++        let graph = Graph(Circle().fill(Color.green))
++        graph.rootProposal = ProposedViewSize(width: 18, height: 18)
++        graph.flush()
++
++        let node = graph.snapshot()
++        XCTAssertEqual(node?.kind, "Circle")
++        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 18, height: 18))
++        XCTAssertEqual(node?.shape?.geometry, .circle)
++        XCTAssertEqual(node?.shape?.paint?.kind, .fill)
++        XCTAssertEqual(node?.shape?.paint?.color, Color.green.resolvedColor)
++    }
++
++    func testRectangleFillRecordsProposedBoundsAndResolvedPaint() {
++        let graph = Graph(Rectangle().fill(Color.red))
++        graph.rootProposal = ProposedViewSize(width: 40, height: 20)
++        graph.flush()
++
++        let node = graph.snapshot()
++        XCTAssertEqual(node?.kind, "Rectangle")
++        XCTAssertEqual(node?.frame, LayoutRect(x: 0, y: 0, width: 40, height: 20))
++        XCTAssertEqual(node?.shape?.geometry, .rectangle)
++        XCTAssertEqual(node?.shape?.paint?.kind, .fill)
++        XCTAssertEqual(node?.shape?.paint?.color, Color.red.resolvedColor)
++        XCTAssertNil(node?.shape?.paint?.lineWidth)
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SnapshotStorageTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SnapshotStorageTests.swift
+new file mode 100644
+index 00000000..5308c6d4
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SnapshotStorageTests.swift
+@@ -0,0 +1,80 @@
++import Foundation
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@MainActor
++final class SnapshotStorageTests: XCTestCase {
++    func testEqualShapesIgnoreIndependentStorageBoxes() {
++        let firstGraph = Graph(Rectangle())
++        let secondGraph = Graph(Rectangle())
++        firstGraph.flush()
++        secondGraph.flush()
++
++        XCTAssertEqual(firstGraph.snapshot(), secondGraph.snapshot())
++        XCTAssertEqual(firstGraph.snapshot()?.shape, secondGraph.snapshot()?.shape)
++    }
++
++    func testDifferentGeometryOrPaintMakesSnapshotsUnequal() {
++        let rectangle = Graph(Rectangle())
++        let circle = Graph(Circle())
++        let red = Graph(Rectangle().fill(Color.red))
++        let blue = Graph(Rectangle().fill(Color.blue))
++        rectangle.flush()
++        circle.flush()
++        red.flush()
++        blue.flush()
++
++        XCTAssertNotEqual(rectangle.snapshot(), circle.snapshot())
++        XCTAssertNotEqual(red.snapshot(), blue.snapshot())
++        XCTAssertNotEqual(red.snapshot()?.shape, blue.snapshot()?.shape)
++    }
++
++    func testLegacySnapshotHasNoShapeMetadata() {
++        let graph = Graph(Text("legacy"))
++        graph.flush()
++
++        XCTAssertNil(graph.snapshot()?.shape)
++    }
++
++    func testRetainedSnapshotKeepsShapeValueAfterGraphChanges() {
++        let store = SnapshotShapeStore()
++        let graph = Graph(SnapshotShapeView(store: store))
++        graph.flush()
++        let retained = graph.snapshot()
++
++        store.showCircle = true
++        graph.flush()
++
++        XCTAssertEqual(firstShape(in: retained)?.geometry, .rectangle)
++        XCTAssertEqual(firstShape(in: graph.snapshot())?.geometry, .circle)
++    }
++}
++
++@MainActor
++private func firstShape(in node: ResolvedNode?) -> ResolvedShape? {
++    guard let node else { return nil }
++    if let shape = node.shape { return shape }
++    for child in node.children {
++        if let shape = firstShape(in: child) { return shape }
++    }
++    return nil
++}
++
++@Observable
++@MainActor
++private final class SnapshotShapeStore {
++    var showCircle = false
++}
++
++private struct SnapshotShapeView: View {
++    let store: SnapshotShapeStore
++
++    var body: some View {
++        if store.showCircle {
++            Circle()
++        } else {
++            Rectangle()
++        }
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift
+new file mode 100644
+index 00000000..ca0c0c9e
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/StackAdditionTests.swift
+@@ -0,0 +1,45 @@
++import Foundation
++import SwiftRightRuntime
++import XCTest
++
++struct ZStackProbe: View {
++    let alignment: Alignment
++    var body: some View {
++        ZStack(alignment: alignment) {
++            Text("long")
++            Text("x")
++        }
++    }
++}
++
++@MainActor
++final class StackAdditionTests: XCTestCase {
++    func testZStackMeasuresLargestChildPlacesByAlignmentAndKeepsOrder() throws {
++        let graph = Graph(ZStackProbe(alignment: .bottomTrailing), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let stack = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(stack.kind, "ZStack")
++        XCTAssertEqual(stack.frame.size, LayoutSize(width: 32, height: 16))
++        XCTAssertEqual(stack.children.map(\.text), ["long", "x"])
++        XCTAssertEqual(stack.children.map(\.frame.origin), [LayoutPoint(x: 0, y: 0), LayoutPoint(x: 24, y: 0)])
++    }
++}
++
++struct OverlayProbe: View {
++    var body: some View {
++        Text("base").overlay(alignment: .bottomTrailing) { Text("longlong") }
++    }
++}
++
++extension StackAdditionTests {
++    func testOverlayKeepsBaseMeasurementPlacesAboveBaseAndPreservesOrder() throws {
++        let graph = Graph(OverlayProbe(), measurer: FixedAdvanceTextMeasurer())
++        graph.flush()
++        let overlay = try XCTUnwrap(graph.snapshot()).children[0]
++        XCTAssertEqual(overlay.kind, "Overlay")
++        XCTAssertEqual(overlay.frame.size, LayoutSize(width: 32, height: 16))
++        XCTAssertEqual(overlay.children.map(\.text), ["base", "longlong"])
++        XCTAssertEqual(overlay.children[0].frame, LayoutRect(x: 0, y: 0, width: 32, height: 16))
++        XCTAssertEqual(overlay.children[1].frame, LayoutRect(x: -32, y: 0, width: 64, height: 16))
++    }
++}
+diff --git a/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift
+new file mode 100644
+index 00000000..e10cced2
+--- /dev/null
++++ b/probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/ToggleStyleTests.swift
+@@ -0,0 +1,68 @@
++import Observation
++import SwiftRightRuntime
++import XCTest
++
++@Observable
++@MainActor
++private final class ToggleStyleModel {
++    var enabled = true
++}
++
++private struct AutomaticStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden().toggleStyle(.automatic) }
++}
++
++private struct SwitchStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden().toggleStyle(.switch) }
++}
++
++private struct LegacyStyleScreen: View {
++    @Bindable var model: ToggleStyleModel
++    var body: some View { Toggle("Enabled", isOn: $model.enabled).labelsHidden() }
++}
++
++@MainActor
++final class ToggleStyleTests: XCTestCase {
++    private func toggle(in node: ResolvedNode?) -> ResolvedNode? {
++        guard let node else { return nil }
++        if node.kind == "Toggle" { return node }
++        for child in node.children {
++            if let result = toggle(in: child) { return result }
++        }
++        return nil
++    }
++
++    func testAutomaticStyleMetadataLeavesLegacyToggleGeometryAndAccessibilityUnchanged() {
++        let legacyGraph = Graph(LegacyStyleScreen(model: ToggleStyleModel()))
++        let styledGraph = Graph(AutomaticStyleScreen(model: ToggleStyleModel()))
++        legacyGraph.flush()
++        styledGraph.flush()
++
++        let legacyToggle = toggle(in: legacyGraph.snapshot())
++        let styledToggle = toggle(in: styledGraph.snapshot())
++        XCTAssertNil(legacyToggle?.toggleStyle)
++        XCTAssertEqual(styledToggle?.toggleStyle, "DefaultToggleStyle")
++        XCTAssertEqual(styledToggle?.frame, legacyToggle?.frame)
++        XCTAssertEqual(styledToggle?.children, legacyToggle?.children)
++        XCTAssertEqual(styledToggle?.labelsHidden, legacyToggle?.labelsHidden)
++        XCTAssertEqual(styledToggle?.accessibility, legacyToggle?.accessibility)
++
++        let id = styledGraph.ids(ofKind: "Toggle").first!
++        XCTAssertTrue(styledGraph.activateToggle(id))
++        styledGraph.flush()
++        XCTAssertEqual(toggle(in: styledGraph.snapshot())?.accessibility.value, "0")
++    }
++
++    func testSwitchStyleMetadataIsRecordedWithoutChangingToggleKind() {
++        let graph = Graph(SwitchStyleScreen(model: ToggleStyleModel()))
++        graph.flush()
++
++        let toggle = toggle(in: graph.snapshot())
++        XCTAssertEqual(toggle?.kind, "Toggle")
++        XCTAssertEqual(toggle?.toggleStyle, "SwitchToggleStyle")
++        XCTAssertEqual(toggle?.accessibility.role, "checkbox")
++        XCTAssertEqual(toggle?.accessibility.value, "1")
++    }
++}

@@ -1,0 +1,1918 @@
+{
+  "kind": "read-only-windows-original113-contract-audit",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "originalCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+  "scope": {
+    "dellActions": 0,
+    "compilerRuns": 0,
+    "testRuns": 0,
+    "runtimeEdits": 0,
+    "existingReceiptsChanged": false
+  },
+  "contractStatus": "HELD Windows original113 green not established",
+  "latestWindowsFull175": {
+    "buildExit": 0,
+    "testExit": 1,
+    "tests": 175,
+    "passedTests": 173,
+    "failedTests": 2,
+    "failedAssertions": 3,
+    "originalTests": 113,
+    "originalPassed": 111,
+    "originalFailed": 2,
+    "addedTests": 62,
+    "addedPassed": 62,
+    "failures": [
+      {
+        "test": "PerformanceTests.testSingleRowEditCommitTime",
+        "original113": true,
+        "sourceLines": [
+          292,
+          293
+        ],
+        "typingMs": 2.9427,
+        "scrollMs": 4.173,
+        "rowEditMs": 8.2319,
+        "limitsMs": {
+          "typing": 2,
+          "scroll": 4,
+          "rowEdit": 15
+        },
+        "failedAssertions": 2
+      },
+      {
+        "test": "TaskIDTests.testSameIdDoesNotRestartTask",
+        "original113": true,
+        "sourceLine": 91,
+        "expected": [
+          "a"
+        ],
+        "actual": [],
+        "failedAssertions": 1
+      }
+    ]
+  },
+  "testPreservation": {
+    "originalMethodNames": [
+      "AnimationTests.testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce",
+      "AnimationTests.testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce",
+      "AnimationTests.testReduceMotionJumpsToFinalValueAndStillCompletes",
+      "AnimationTests.testOpacityChangeInterpolates",
+      "AnimationTests.testAnimationStartedBeforeFirstTickRunsFrameByFrameOnAnAbsoluteHostClock",
+      "AnimationTests.testMotionBeginsAtTheFirstTickAfterItIsCreatedEvenAfterLongTickPause",
+      "AnimationTests.testFlushBetweenTicksDoesNotBeginOrFinishAMotion",
+      "AnimationTests.testReduceMotionCommitsNoIntermediateFramesWhileTicksArrive",
+      "AnimationTests.testAnimationWithoutChangeCompletesAtCommit",
+      "BindingCollectionTests.testBindingIsRandomAccessCollection",
+      "BindingCollectionTests.testBindableProjectedRowsSupportCountAndSubscript",
+      "BindingCollectionTests.testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove",
+      "FocusContainerTests.testRemovingFocusedRowClearsFocusInEveryContainer",
+      "FocusContainerTests.testListReinsertRestoresFocus",
+      "FocusContainerTests.testVStackAndLazyReinsertDoesNotRestoreFocus",
+      "FocusContainerTests.testRemovingUnfocusedRowKeepsFocus",
+      "LazyContainerTests.testLazyVStackReinsertResetsStateWhileLifecycleFires",
+      "ScrollViewTests.testScrollOffsetShiftsContentAndClamps",
+      "FocusTraversalTests.testForwardFollowsTreeOrderAndWraps",
+      "FocusTraversalTests.testBackwardStartsAtLastAndWraps",
+      "FocusTraversalTests.testTabContinuesFromPointerFocus",
+      "FocusTraversalTests.testOrderFollowsRowOrderAfterInsertAbove",
+      "FocusTraversalTests.testDisabledStopsAreSkipped",
+      "FocusTraversalTests.testNoStopsReturnsFalse",
+      "FocusTraversalTests.testButtonsAreStopsOnlyWhenAllControlsEnabled",
+      "FocusTraversalTests.testKeyDispatchMapsTabAndShiftTab",
+      "InitialFocusTests.testVStackFocusesFirstFieldAndCommitsIt",
+      "InitialFocusTests.testLazyVStackFocusesFirstField",
+      "InitialFocusTests.testListFocusesNothing",
+      "InitialFocusTests.testTextThenListFocusesNothing",
+      "InitialFocusTests.testFieldBeforeListTakesFocusAheadOfIt",
+      "InitialFocusTests.testDisabledFirstFieldIsSkipped",
+      "InitialFocusTests.testButtonsAreNotKeyViewsByDefault",
+      "InitialFocusTests.testNoFocusBoundFieldFocusesNothing",
+      "InitialFocusTests.testExistingFocusIsNotStolen",
+      "InitialFocusTests.testSecondCallDoesNothing",
+      "InitialFocusTests.testTornDownGraphFocusesNothing",
+      "InitialFocusTests.testFocusComesAfterAllAppearsAndBeforeAnyTaskBody",
+      "InitialFocusTests.testOnlyTheFirstRowReportsFocus",
+      "InitialFocusTests.testInitialFocusSelectsAllAndTypingReplaces",
+      "InitialFocusTests.testExternalTextChangeMovesFocusedCaretToEnd",
+      "InitialFocusTests.testOwnEditDoesNotJumpTheCaret",
+      "InitialFocusTests.testExternalTextChangeWhileComposingKeepsComposition",
+      "LayoutTests.testTextWrapsWhenProposedWidthShrinks",
+      "LayoutTests.testHStackDistributesWidthToSpacer",
+      "LayoutTests.testVStackAlignmentLeadingCenterTrailing",
+      "LayoutTests.testPaddingInsetsChild",
+      "LayoutTests.testCustomLayoutSwitchesAtWidthThreshold",
+      "LayoutTests.testFramesArePixelAlignedAtScale2_5",
+      "LayoutTests.testRelayoutRemeasuresOnlyChangedText",
+      "OnChangeTests.testActionRunsOncePerValueChangeWithOldAndNew",
+      "OnChangeTests.testInitialAndArgumentlessActions",
+      "OnChangeTests.testListReinsertWithChangedValueRunsOnceWithPreservedState",
+      "OnChangeTests.testListReinsertWithUnchangedValueRunsNothing",
+      "OnChangeTests.testListEditAfterReinsertCompareWithReinsertedValue",
+      "OnChangeTests.testVStackAndLazyReinsertAreFreshAndRunNothing",
+      "OnChangeTests.testVStackAndLazyReinsertWithPreviousValueRunNothing",
+      "OnChangeTests.testListEvictedRowLosesItsBaselineWithItsState",
+      "PerformanceTests.testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows",
+      "PerformanceTests.testRowEditWorkIsLinearAndMeasuresOnlyChangedText",
+      "PerformanceTests.testScrollOnlyCommitEvaluatesAndMeasuresNothing",
+      "PerformanceTests.testRepeatedEvaluationDoesNotStackObservationRegistrations",
+      "PerformanceTests.testRemovedRowsLeaveNoObservationRegistrationsBehind",
+      "PerformanceTests.testSingleRowEditCommitTime",
+      "PerformanceTests.testIncrementalCommitsEqualAFreshGraph",
+      "RowRefreshTests.testEditingOneRowEvaluatesThatRowOnly",
+      "RowRefreshTests.testInsertRemoveAndReorderEvaluateOnlyNewRows",
+      "RowRefreshTests.testParentChangeReachesRowsWhoseElementsDidNotChange",
+      "RowRefreshTests.testRowBindingReadsAndWritesLiveOutsideEvaluation",
+      "RowRefreshTests.testTypingIntoARowFieldUpdatesModelAndDisplay",
+      "RowRefreshTests.testNonEquatableElementsStillUpdate",
+      "RowRefreshTests.testRemovedRowsStopObserving",
+      "RuntimeTests.testF1_SurvivingRowIdentityAcrossInsertAbove",
+      "RuntimeTests.testF2_ReorderPreservesStateAndFocus",
+      "RuntimeTests.testF3_ListReinsertPreservesStateWhileLifecycleFires",
+      "RuntimeTests.testF3_VStackReinsertResetsState",
+      "RuntimeTests.testF3_ListRetainedStateIsBounded",
+      "RuntimeTests.testF4_StaleAsyncResultIsRejectedAfterRemoval",
+      "RuntimeTests.testEnvironmentOverridePropagation",
+      "RuntimeTests.testObservationFineGrainedInvalidation",
+      "RuntimeTests.testBindingWriteBackThroughForEach",
+      "RuntimeTests.testTransactionAnimationTagRecorded",
+      "RuntimeTests.testCommitSinkReceivesResolvedTree",
+      "SR1ControlTests.testToggleFlipsBindingAndReportsCheckboxState",
+      "SR1ControlTests.testDisabledToggleDoesNotFlip",
+      "SR1ControlTests.testImageReferencesAndLabels",
+      "SR1ControlTests.testImageUsesHostIntrinsicSize",
+      "SR1ControlTests.testTextEditorInsertsLineBreaksAndMeasuresLines",
+      "SR1ControlTests.testReturnCommitsCompositionAndSingleLineRejectsBreaks",
+      "SR1ControlTests.testLabelDividerAndStyleResolve",
+      "SR1ControlTests.testDisabledBlocksButtonsAndNestedFalseDoesNotReenable",
+      "SR1SelectionMenuTests.testSingleSelectionClickAndKeyboardNavigation",
+      "SR1SelectionMenuTests.testMultipleSelectionModifiersAndRanges",
+      "SR1SelectionMenuTests.testOnDeleteRunsWithRowOffsets",
+      "SR1SelectionMenuTests.testDeleteWithoutHandlerReturnsFalse",
+      "SR1SelectionMenuTests.testContextMenuAndMenuItemsDispatch",
+      "SR1SelectionMenuTests.testAlertPresentationAndActionDispatch",
+      "SR1SelectionMenuTests.testConfirmationDialogVisibilityAndDisabledAction",
+      "SR1SelectionMenuTests.testKeyboardRegistryLogicalMappingAndDispatch",
+      "TaskIDTests.testIdChangeCancelsAndRestartsTask",
+      "TaskIDTests.testSameIdDoesNotRestartTask",
+      "TaskIDTests.testDisappearCancelsTask",
+      "TeardownTests.testTearDownReleasesGraphNodesStateAndTaskCaptures",
+      "TeardownTests.testTearDownReleasesListRowsAndRowCache",
+      "TeardownTests.testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord",
+      "TeardownTests.testNothingCommitsAfterTearDown",
+      "TextInputTests.testMarkedTextDoesNotLeakIntoBindingUntilCommitted",
+      "TextInputTests.testUTF16RangesCountSurrogatePairs",
+      "TextInputTests.testSelectionOutsideCompositionCommits",
+      "TextInputTests.testEmptyReplaceEndsCompositionWithoutCommit",
+      "TextInputTests.testReplaceCommitsDirectlyAndEndsComposition",
+      "TextInputTests.testOutOfRangeOperationsAreRefused",
+      "TextInputTests.testCompositionStaysWithRowWhenRowInsertedAbove"
+    ],
+    "originalTestFiles": [
+      {
+        "name": "AnimationTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "BindingCollectionTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "FocusContainerTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "FocusTraversalTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "InitialFocusTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "LayoutTests.swift",
+        "byteIdentical": false
+      },
+      {
+        "name": "OnChangeTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "PerformanceTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "RowRefreshTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "RuntimeTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "SR1ControlTests.swift",
+        "byteIdentical": false
+      },
+      {
+        "name": "SR1SelectionMenuTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "TaskIDTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "TeardownTests.swift",
+        "byteIdentical": true
+      },
+      {
+        "name": "TextInputTests.swift",
+        "byteIdentical": true
+      }
+    ],
+    "removedOriginalTestLines": 0,
+    "changedFilesOnlyAdditions": [
+      "LayoutTests.swift",
+      "SR1ControlTests.swift"
+    ],
+    "performanceSourceHash": "sha256:497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+    "taskIDSourceHash": "sha256:6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+    "settleSourceHash": "sha256:26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e"
+  },
+  "originalWindowsPerformance": {
+    "successfulMeasuredOriginalProcesses": 7,
+    "allTypingLimitExceeded": true,
+    "scrollLimitExceeded": 6,
+    "rowEditLimitExceeded": 0,
+    "releaseOptimized": true,
+    "greenUnderCurrentLimitsEstablished": false,
+    "comparableDimensions": [
+      "same host/session/toolchain",
+      "exact unchanged performance test source",
+      "release optimized=true",
+      "serial alternating/cyclic controls",
+      "later cached runs exclude compiler activity"
+    ],
+    "remainingConfounds": [
+      "CPU samples vary; one before-process CPU sample does not measure benchmark interval load",
+      "earlier matched pair rebuilds between test invocations",
+      "no same-session direct original8e47 versus final374 cached pair exists",
+      "baseline old compile receipt lacks then-recorded binary hashes, later caches archive actual bytes truthfully"
+    ],
+    "baselineRawRows": [
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 1,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.2704,
+          "scroll": 3.7966,
+          "rowEdit": 3.4841
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 1
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-01-baseline/stdout.txt",
+          "hash": "sha256:772f1ebbda809caa78b615225264b05fd2aef311c9ca40669fb291f0b89d0c87",
+          "bytes": 1028
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 2,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.4299,
+          "scroll": 4.4408,
+          "rowEdit": 3.7677
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 12
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-02-baseline/stdout.txt",
+          "hash": "sha256:7f482801d214b500ad79e57c4b8d894e14ee2282c02089edb9180f1aa215c55e",
+          "bytes": 1289
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 3,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.7758,
+          "scroll": 4.2801,
+          "rowEdit": 4.0863
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 45
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-03-baseline/stdout.txt",
+          "hash": "sha256:e9a4101189775ef481fa3229567975ef328fe94255edbd3d9ca0572ff6b31f97",
+          "bytes": 1289
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 0,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 2.7637,
+          "scroll": 4.1905,
+          "rowEdit": 3.7773
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 37
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-baseline/stdout.txt",
+          "hash": "sha256:e7f25000cb03b06161d6342945978c43a650bc20754c67ac25d528fde5cebf5a",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 1,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.3442,
+          "scroll": 4.1332,
+          "rowEdit": 3.8352
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 18
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-baseline/stdout.txt",
+          "hash": "sha256:a1bfcb1db87ff85e02012abad5b5aab541dee0020df65621beb110559c44bda9",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 2,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.5006,
+          "scroll": 4.5718,
+          "rowEdit": 3.4727
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 18
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-baseline/stdout.txt",
+          "hash": "sha256:fe24741ac9669cd91fe07fc9d91c79ff41c87dbf5d18643add26b04a1208cbcf",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 3,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.6187,
+          "scroll": 4.2501,
+          "rowEdit": 3.7684
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 54
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-baseline/stdout.txt",
+          "hash": "sha256:04693682649b887ff6a0a98a8deadc097a3c955f9fbfce9bf9738339392802ba",
+          "bytes": 1192
+        },
+        "receiptError": ""
+      }
+    ]
+  },
+  "performanceEvidence": {
+    "rows": [
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 1,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.2704,
+          "scroll": 3.7966,
+          "rowEdit": 3.4841
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 1
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-01-baseline/stdout.txt",
+          "hash": "sha256:772f1ebbda809caa78b615225264b05fd2aef311c9ca40669fb291f0b89d0c87",
+          "bytes": 1028
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 1,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.8421,
+          "scroll": 4.7863,
+          "rowEdit": 3.9391
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 31
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-01-candidate/stdout.txt",
+          "hash": "sha256:2a86332c8ca4d3ef460027982c09b4aed966aecb1f26f879f1231186164a9eb6",
+          "bytes": 1285
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 2,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 3.8984,
+          "scroll": 6.3065,
+          "rowEdit": 4.6761
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 10
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-02-candidate/stdout.txt",
+          "hash": "sha256:f1aabb82274334272b45e6aafc029afb36060fe2551a57bb13508dc7f9507738",
+          "bytes": 1280
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 2,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.4299,
+          "scroll": 4.4408,
+          "rowEdit": 3.7677
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 12
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-02-baseline/stdout.txt",
+          "hash": "sha256:7f482801d214b500ad79e57c4b8d894e14ee2282c02089edb9180f1aa215c55e",
+          "bytes": 1289
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 3,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 2.7758,
+          "scroll": 4.2801,
+          "rowEdit": 4.0863
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 45
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-03-baseline/stdout.txt",
+          "hash": "sha256:e9a4101189775ef481fa3229567975ef328fe94255edbd3d9ca0572ff6b31f97",
+          "bytes": 1289
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-final-9060345a-20261011/matched-original-final-r1",
+        "row": 3,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": null,
+        "metricsMs": {
+          "typing": 3.5824,
+          "scroll": 8.5615,
+          "rowEdit": 4.7616
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 49
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-03-candidate/stdout.txt",
+          "hash": "sha256:42dc2efbca9627b80019fe1d8818afbd09347a29f9bf3afd00b1e078b71b9bda",
+          "bytes": 1285
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r1",
+        "row": 0,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": -1073740612,
+        "warmup": true,
+        "metricsMs": null,
+        "optimized": null,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 66
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r1/round-00-baseline/stdout.txt",
+          "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "receiptError": "Exactly requested performance test did not actually execute"
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 0,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 2.7637,
+          "scroll": 4.1905,
+          "rowEdit": 3.7773
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 37
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-baseline/stdout.txt",
+          "hash": "sha256:e7f25000cb03b06161d6342945978c43a650bc20754c67ac25d528fde5cebf5a",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 0,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 3.5634,
+          "scroll": 6.1199,
+          "rowEdit": 6.2305
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 46
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-candidate/stdout.txt",
+          "hash": "sha256:14667ad8c975e70f1c60cac88ef900a5db61470c875fc6da907a5477eb39f678",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 0,
+        "label": "hotpath",
+        "runtimeCommit": "a1ec1fe3acbfb01a670f46ffa57255acab25f88b",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 3.2767,
+          "scroll": 5.3857,
+          "rowEdit": 4.5471
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 63
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-hotpath/stdout.txt",
+          "hash": "sha256:48f7fba6ce67fb0a24af83ccdb2676959850b9fb1bc39827e9c56b49bfd2b901",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 1,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.3442,
+          "scroll": 4.1332,
+          "rowEdit": 3.8352
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 18
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-baseline/stdout.txt",
+          "hash": "sha256:a1bfcb1db87ff85e02012abad5b5aab541dee0020df65621beb110559c44bda9",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 1,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.3243,
+          "scroll": 5.8064,
+          "rowEdit": 4.5104
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 17
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-candidate/stdout.txt",
+          "hash": "sha256:f44158c7aed433c8ae73ed1c8bb58eda486466d100ae71b015c431cac2313265",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 1,
+        "label": "hotpath",
+        "runtimeCommit": "a1ec1fe3acbfb01a670f46ffa57255acab25f88b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.3462,
+          "scroll": 6.1066,
+          "rowEdit": 4.5687
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 31
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-hotpath/stdout.txt",
+          "hash": "sha256:77cb9acde365fd2218fa5b7baa979bf634a8468ae2fe32799fad02a0cd8bee48",
+          "bytes": 1192
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 2,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 5.7603,
+          "scroll": 6.477,
+          "rowEdit": 5.3315
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 33
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-candidate/stdout.txt",
+          "hash": "sha256:c2067fec97dcf45ff41b0baff7a5facd2a0dba3c7a1901b28412ffd3a09b368a",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 2,
+        "label": "hotpath",
+        "runtimeCommit": "a1ec1fe3acbfb01a670f46ffa57255acab25f88b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.4913,
+          "scroll": 6.0284,
+          "rowEdit": 4.4391
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 62
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-hotpath/stdout.txt",
+          "hash": "sha256:2fc7a5deb24989e100ee623df993189cda558fd8878bb9ae7a904975fef30cfa",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 2,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.5006,
+          "scroll": 4.5718,
+          "rowEdit": 3.4727
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 18
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-baseline/stdout.txt",
+          "hash": "sha256:fe24741ac9669cd91fe07fc9d91c79ff41c87dbf5d18643add26b04a1208cbcf",
+          "bytes": 1197
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 3,
+        "label": "hotpath",
+        "runtimeCommit": "a1ec1fe3acbfb01a670f46ffa57255acab25f88b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.525,
+          "scroll": 5.6291,
+          "rowEdit": 4.5317
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 56
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-hotpath/stdout.txt",
+          "hash": "sha256:80ae9570eac2538c0e0caa0360fbda1895b1e9be5c63263220745b2cd270c9aa",
+          "bytes": 1195
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 3,
+        "label": "baseline",
+        "runtimeCommit": "8e47b89b3e9ae488e77ea8b5a2e4663053601c0d",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.6187,
+          "scroll": 4.2501,
+          "rowEdit": 3.7684
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 54
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-baseline/stdout.txt",
+          "hash": "sha256:04693682649b887ff6a0a98a8deadc097a3c955f9fbfce9bf9738339392802ba",
+          "bytes": 1192
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-hotpath-a1ec1fe3-20261011/cached-three-way-r2",
+        "row": 3,
+        "label": "candidate",
+        "runtimeCommit": "9060345a6e757fe18208683a536d9fbd98be01aa",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.7357,
+          "scroll": 6.1543,
+          "rowEdit": 4.9571
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 25
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-candidate/stdout.txt",
+          "hash": "sha256:49566c76d692b5f4f8c57d83a2174f865d3a55ba701b580062eb64fee28b30e7",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 0,
+        "label": "current67",
+        "runtimeCommit": "67b841fbbb5b8571a14390637bd875b62bf433ad",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 3.412,
+          "scroll": 7.8253,
+          "rowEdit": 5.5557
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 21
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-00-current67/stdout.txt",
+          "hash": "sha256:8c2ad62d2044902734cde180203ca52d1954475c0053cd6fcebf9100c6d8d7a7",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 0,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 4.9522,
+          "scroll": 6.0313,
+          "rowEdit": 4.7888
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 54
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-00-postshape/stdout.txt",
+          "hash": "sha256:3e3af19e706d2d66d03ab6394c5ffd748839d034fbe56764f0e20be674ca849d",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 1,
+        "label": "current67",
+        "runtimeCommit": "67b841fbbb5b8571a14390637bd875b62bf433ad",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 4.9683,
+          "scroll": 7.1417,
+          "rowEdit": 4.7238
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 72
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-01-current67/stdout.txt",
+          "hash": "sha256:b18631041ef392b7a04427a43851a9a05c788d866d30450257cde52a56a49add",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 1,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.8682,
+          "scroll": 4.8684,
+          "rowEdit": 4.5095
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 56
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-01-postshape/stdout.txt",
+          "hash": "sha256:bf56d989814f3b888f7f212f666ec05ec596e2021fd2009b67b429d7217141ea",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 2,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.5782,
+          "scroll": 4.4896,
+          "rowEdit": 4.2581
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 26
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-02-postshape/stdout.txt",
+          "hash": "sha256:8ae8deb39af014ed69086d1f1942889f78bc0936ee55bdd8096ced2bfbddf818",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 2,
+        "label": "current67",
+        "runtimeCommit": "67b841fbbb5b8571a14390637bd875b62bf433ad",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.3569,
+          "scroll": 5.3811,
+          "rowEdit": 4.6559
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 27
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-02-current67/stdout.txt",
+          "hash": "sha256:f696c8cf446ac1ff2c8a9a9f1ece4e5f09c72e6b6e3c6018deab12122f3c9a39",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 3,
+        "label": "current67",
+        "runtimeCommit": "67b841fbbb5b8571a14390637bd875b62bf433ad",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 4.4046,
+          "scroll": 5.7334,
+          "rowEdit": 4.7403
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 30
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-03-current67/stdout.txt",
+          "hash": "sha256:c19a8005ac50ca1e407dc46996d06dc17587aa96a2b9aa8eab9e7bc84e3d8337",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-shape-bbceb5a1-20261011/cached-paired-r1",
+        "row": 3,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.9469,
+          "scroll": 5.3034,
+          "rowEdit": 4.2885
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 36
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-03-postshape/stdout.txt",
+          "hash": "sha256:8d938c400ea703a7146c9a47017e10f2d71b238c97217e983b74118848754691",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 0,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 5.5101,
+          "scroll": 9.1055,
+          "rowEdit": 7.3662
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 51
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-00-postshape/stdout.txt",
+          "hash": "sha256:e545d831f280a1a01ebbb1d36891c6c558856720309cad09100069f8d13f1a8e",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 0,
+        "label": "fontstorage",
+        "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "exitCode": 1,
+        "warmup": true,
+        "metricsMs": {
+          "typing": 5.4507,
+          "scroll": 5.2302,
+          "rowEdit": 5.6032
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 61
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-00-fontstorage/stdout.txt",
+          "hash": "sha256:b2cfb238090697c51a012869f7863f8996ee5f5b150492d99efc85392450b5f0",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 1,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 2.9351,
+          "scroll": 4.3902,
+          "rowEdit": 3.9659
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 28
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-01-postshape/stdout.txt",
+          "hash": "sha256:2611907a582cd8803c65879bce993cc12d3f57552a32a27730ab3a04ad67c10a",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 1,
+        "label": "fontstorage",
+        "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 4.4019,
+          "scroll": 5.1283,
+          "rowEdit": 4.29
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 5
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-01-fontstorage/stdout.txt",
+          "hash": "sha256:ac313c2ebe05770f61b526790653a1231f02aa1493105375027a8997c353337c",
+          "bytes": 1189
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 2,
+        "label": "fontstorage",
+        "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.6921,
+          "scroll": 6.2973,
+          "rowEdit": 7.2225
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 58
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-02-fontstorage/stdout.txt",
+          "hash": "sha256:f885b7584a71bde50fd4842b19ac45149c10c568cc4c45faa1dfb44573bba40b",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 2,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 4.445,
+          "scroll": 9.4596,
+          "rowEdit": 7.6773
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 65
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-02-postshape/stdout.txt",
+          "hash": "sha256:a577160bb7376af2209bc144816ba5db0fa47e53dae0c5e9efa8bfedc14bb734",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 3,
+        "label": "postshape",
+        "runtimeCommit": "bbceb5a14cab2be125af68f8e84014a29f3277a7",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 4.1808,
+          "scroll": 7.0258,
+          "rowEdit": 4.5396
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 27
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-03-postshape/stdout.txt",
+          "hash": "sha256:2c13869510fc06b260d113e198cb371659e4a11ed593522b82b81564b65a8f1e",
+          "bytes": 1193
+        },
+        "receiptError": ""
+      },
+      {
+        "archive": "api-font-37429120-20261011/cached-paired-r1",
+        "row": 3,
+        "label": "fontstorage",
+        "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "exitCode": 1,
+        "warmup": false,
+        "metricsMs": {
+          "typing": 3.2448,
+          "scroll": 5.2359,
+          "rowEdit": 4.2364
+        },
+        "optimized": true,
+        "cpuBefore": [
+          {
+            "DeviceID": "CPU0",
+            "LoadPercentage": 19
+          }
+        ],
+        "raw": {
+          "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-03-fontstorage/stdout.txt",
+          "hash": "sha256:0bf273821a1db378283632eaa6b1ad0343eed610c9c15c440c6827b8f9b54d7d",
+          "bytes": 1191
+        },
+        "receiptError": ""
+      }
+    ],
+    "interpretation": [
+      "Original8e47 also exceeds same typing/scroll bounds, so absolute latest failures alone do not establish additive causation.",
+      "906/a1 cached candidates are measurably slower than original baseline in these recorded nonwarm comparisons; shared-load hypothesis cannot erase observed differences.",
+      "Later shape/font cached controls show measured improvements versus predecessor, not restored original-baseline equivalence or threshold green.",
+      "Current374 was not directly paired against8e47 under this latest cached timing phase; net additive effect remains unresolved."
+    ],
+    "causalRegressionClaim": false,
+    "sharedHostLoadCauseEstablished": false
+  },
+  "taskIDEvidence": {
+    "unmodifiedOriginalBaselineControls": "3 isolated +2 class processes all pass",
+    "unmodifiedPostshapeFontControls": "postshape isolated2/3fail; font1/3fail; all4 class processes pass",
+    "messageOnlyDiagnosticControls": "baseline1/3fail; postshape1/3fail; font0/3fail; failed events start a only",
+    "traceMessageDeltaExplicit": true,
+    "preAdditionRuntimeFailureReproduced": true,
+    "originalFullSuiteGreenEstablishedBySelectedControls": false,
+    "causeEstablished": false
+  },
+  "unresolvedFacts": [
+    "Windows original113 subset currently111pass/2failed tests; Mac175pass does not satisfy Windows gate.",
+    "No archived comparable exact8e47 release performance control is green at2/4/15ms.",
+    "Load versus additive net performance cost is not causally isolated for latest374.",
+    "TaskID assertion can fail on pre-addition runtime with message-only diagnostics, but start-only events do not identify scheduling, cancellation, weak owner or token rejection.",
+    "Selected passes do not prove full-suite original113 green."
+  ],
+  "references": [
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime-source-receipt.json",
+      "hash": "sha256:b62714036db26bedbdf3a1c7b074ac37589b84ef2cd541f44bc7692fb16af66b",
+      "bytes": 7552
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/AnimationTests.swift",
+      "hash": "sha256:27b2b9f9aeb1a5728bf39f7e7b97a6258bf1089148faefa869ce4971311ffe70",
+      "bytes": 12367
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/BindingCollectionTests.swift",
+      "hash": "sha256:f0f961a66221e36c06bb46f7d7b3a99b1e4d44ca9b7010108394b1ea346120b8",
+      "bytes": 2137
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/FocusContainerTests.swift",
+      "hash": "sha256:03306e5791e3cb4cab96e5a4050d4bc12586c7b5d9c619934b611ff6331ab4cf",
+      "bytes": 7548
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/FocusTraversalTests.swift",
+      "hash": "sha256:71020427b7d0b8e02bb361a42754f454aa30b41c5d718c92c2f5e012b46a29e2",
+      "bytes": 5474
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/InitialFocusTests.swift",
+      "hash": "sha256:45a7082edb5a9827cdb75cae69adad226882b5b2de6697ebe92b317a2f7488ae",
+      "bytes": 12131
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift",
+      "hash": "sha256:ec4a39d7891c62271f6ea26c2ce974734d9b2305476a4cba7492699f8df49574",
+      "bytes": 7740
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/OnChangeTests.swift",
+      "hash": "sha256:1495d2883db22969b7c823353bb3b7c878e894b56e9b7c53642c169dc4acc619",
+      "bytes": 9836
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "hash": "sha256:497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+      "bytes": 14017
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/RowRefreshTests.swift",
+      "hash": "sha256:3582b0b7431d2a55b69e6f64f8b6cef96f4b1935e814cce07d5b3bb92cf971ab",
+      "bytes": 7338
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/RuntimeTests.swift",
+      "hash": "sha256:26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e",
+      "bytes": 15830
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift",
+      "hash": "sha256:6faa640af88aa70a33cd24bffd3ddcc02e6dc5b293b70a1dfeadbeec6ea5d2bf",
+      "bytes": 9452
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/SR1SelectionMenuTests.swift",
+      "hash": "sha256:9cc67eb5b8b3d95792a51f9de5dc0ee80b4c125c3f8b7127b8242afef93d5e4f",
+      "bytes": 14063
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "hash": "sha256:6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "bytes": 3571
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/TeardownTests.swift",
+      "hash": "sha256:4f4802f60795c917e14c4e449bf71079460d7857c5a24025d1c8fdebd56929b1",
+      "bytes": 5685
+    },
+    {
+      "path": "factory/native/windows/api-baseline-8e47b89-20261011/runtime/Tests/SwiftRightRuntimeTests/TextInputTests.swift",
+      "hash": "sha256:3c823b60fc2cbf108470e323c6300c4bb231beced7276fca88a11a6f72f6f237",
+      "bytes": 7618
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-01-baseline/stdout.txt",
+      "hash": "sha256:772f1ebbda809caa78b615225264b05fd2aef311c9ca40669fb291f0b89d0c87",
+      "bytes": 1028
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-01-candidate/stdout.txt",
+      "hash": "sha256:2a86332c8ca4d3ef460027982c09b4aed966aecb1f26f879f1231186164a9eb6",
+      "bytes": 1285
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-02-baseline/stdout.txt",
+      "hash": "sha256:7f482801d214b500ad79e57c4b8d894e14ee2282c02089edb9180f1aa215c55e",
+      "bytes": 1289
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-02-candidate/stdout.txt",
+      "hash": "sha256:f1aabb82274334272b45e6aafc029afb36060fe2551a57bb13508dc7f9507738",
+      "bytes": 1280
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-03-baseline/stdout.txt",
+      "hash": "sha256:e9a4101189775ef481fa3229567975ef328fe94255edbd3d9ca0572ff6b31f97",
+      "bytes": 1289
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/pair-03-candidate/stdout.txt",
+      "hash": "sha256:42dc2efbca9627b80019fe1d8818afbd09347a29f9bf3afd00b1e078b71b9bda",
+      "bytes": 1285
+    },
+    {
+      "path": "factory/native/windows/api-final-9060345a-20261011/matched-original-final-r1/timing-receipt.json",
+      "hash": "sha256:123952467ac2165c4a5947be3ff242213d280d71d340665100ca137b3e0f568f",
+      "bytes": 7067
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-analysis.json",
+      "hash": "sha256:cebd6db389b1f5128f381b79f7d9bf54333060c7ac1072f680701a5bc1833956",
+      "bytes": 6177
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-00-fontstorage/stdout.txt",
+      "hash": "sha256:b2cfb238090697c51a012869f7863f8996ee5f5b150492d99efc85392450b5f0",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-00-postshape/stdout.txt",
+      "hash": "sha256:e545d831f280a1a01ebbb1d36891c6c558856720309cad09100069f8d13f1a8e",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-01-fontstorage/stdout.txt",
+      "hash": "sha256:ac313c2ebe05770f61b526790653a1231f02aa1493105375027a8997c353337c",
+      "bytes": 1189
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-01-postshape/stdout.txt",
+      "hash": "sha256:2611907a582cd8803c65879bce993cc12d3f57552a32a27730ab3a04ad67c10a",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-02-fontstorage/stdout.txt",
+      "hash": "sha256:f885b7584a71bde50fd4842b19ac45149c10c568cc4c45faa1dfb44573bba40b",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-02-postshape/stdout.txt",
+      "hash": "sha256:a577160bb7376af2209bc144816ba5db0fa47e53dae0c5e9efa8bfedc14bb734",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-03-fontstorage/stdout.txt",
+      "hash": "sha256:0bf273821a1db378283632eaa6b1ad0343eed610c9c15c440c6827b8f9b54d7d",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/round-03-postshape/stdout.txt",
+      "hash": "sha256:2c13869510fc06b260d113e198cb371659e4a11ed593522b82b81564b65a8f1e",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/cached-paired-r1/timing-receipt.json",
+      "hash": "sha256:77353b5ab31104bed395b5dc5710394bee1139180b416f2cc95eb4dcb6ffe58d",
+      "bytes": 33466
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/headless-receipt.json",
+      "hash": "sha256:aafce45aca4f3028099a45a3b03afccec3c376b4afd3104c9b2964c3ee1cb897",
+      "bytes": 2068
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime-source-receipt.json",
+      "hash": "sha256:66e98c24a2395c0c19fcdbc25da2ead7fd85982a221ea110c0d4b11640385166",
+      "bytes": 11266
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/AnimationTests.swift",
+      "hash": "sha256:27b2b9f9aeb1a5728bf39f7e7b97a6258bf1089148faefa869ce4971311ffe70",
+      "bytes": 12367
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/BindingCollectionTests.swift",
+      "hash": "sha256:f0f961a66221e36c06bb46f7d7b3a99b1e4d44ca9b7010108394b1ea346120b8",
+      "bytes": 2137
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/FocusContainerTests.swift",
+      "hash": "sha256:03306e5791e3cb4cab96e5a4050d4bc12586c7b5d9c619934b611ff6331ab4cf",
+      "bytes": 7548
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/FocusTraversalTests.swift",
+      "hash": "sha256:71020427b7d0b8e02bb361a42754f454aa30b41c5d718c92c2f5e012b46a29e2",
+      "bytes": 5474
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/InitialFocusTests.swift",
+      "hash": "sha256:45a7082edb5a9827cdb75cae69adad226882b5b2de6697ebe92b317a2f7488ae",
+      "bytes": 12131
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/LayoutTests.swift",
+      "hash": "sha256:482ffcfae4ed71c9934ce98d8a9f2e852e039efe0ce8b4015138a188ffcec7de",
+      "bytes": 11950
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/OnChangeTests.swift",
+      "hash": "sha256:1495d2883db22969b7c823353bb3b7c878e894b56e9b7c53642c169dc4acc619",
+      "bytes": 9836
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/PerformanceTests.swift",
+      "hash": "sha256:497ffc46feff33ed193fd38e16d0f09864c3cc5726a08dca73f0f43807f1f4a8",
+      "bytes": 14017
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/RowRefreshTests.swift",
+      "hash": "sha256:3582b0b7431d2a55b69e6f64f8b6cef96f4b1935e814cce07d5b3bb92cf971ab",
+      "bytes": 7338
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/RuntimeTests.swift",
+      "hash": "sha256:26a8a11ad70dcf5b64450fe75976e7149eadcaeccbc076143c6ccc0c21b32b6e",
+      "bytes": 15830
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/SR1ControlTests.swift",
+      "hash": "sha256:fff1a120c4a75b19916a7c8e22cbb886cc8bac2d20474a2bb3732de7e31f416f",
+      "bytes": 11670
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/SR1SelectionMenuTests.swift",
+      "hash": "sha256:9cc67eb5b8b3d95792a51f9de5dc0ee80b4c125c3f8b7127b8242afef93d5e4f",
+      "bytes": 14063
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/TaskIDTests.swift",
+      "hash": "sha256:6f6e2d750e32e9169d34599620666b4846c174e5aea12e2db343f636e729d1dc",
+      "bytes": 3571
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/TeardownTests.swift",
+      "hash": "sha256:4f4802f60795c917e14c4e449bf71079460d7857c5a24025d1c8fdebd56929b1",
+      "bytes": 5685
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Tests/SwiftRightRuntimeTests/TextInputTests.swift",
+      "hash": "sha256:3c823b60fc2cbf108470e323c6300c4bb231beced7276fca88a11a6f72f6f237",
+      "bytes": 7618
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-analysis.json",
+      "hash": "sha256:8399a9202a0041da6ae784880deee612e3ffa42908155f62d36bc2c1d712e3f3",
+      "bytes": 7710
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-00-fontstorage/stdout.txt",
+      "hash": "sha256:02c1066f0a781cd8ff8f7da10c07752d2b9f37c36a1e9b3f11f9e5100a37ca49",
+      "bytes": 785
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-00-postshape/stdout.txt",
+      "hash": "sha256:9276a0efb7f15bbd7a9613ba218fa8b9e6c3fe337de4b246e11f8a23531cb609",
+      "bytes": 786
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-01-fontstorage/stdout.txt",
+      "hash": "sha256:f062ee3a53d8bf90e500b4c210d0f54c53bfb221e49e1465579733a19f2f22dd",
+      "bytes": 561
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-01-postshape/stdout.txt",
+      "hash": "sha256:18dae960ed1bac355fdd305e3df3e0c701382588f3d16ffc27bcc3b7dcfddfda",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-02-fontstorage/stdout.txt",
+      "hash": "sha256:f39fbea0843ebbc47718403ba0f637e75b8d454b76c6eed87e318126c7a3de28",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-02-postshape/stdout.txt",
+      "hash": "sha256:9c18b27c4d022dbdf635addd4782fc6e6618f92c3d7c910992e94a6174949f7b",
+      "bytes": 786
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-03-fontstorage/stdout.txt",
+      "hash": "sha256:158a7ba52a84ec4b0eb6f564b85e687fd3d5b00f77509a6a7f4c51b7e1e31b64",
+      "bytes": 904
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-03-postshape/stdout.txt",
+      "hash": "sha256:efcb00c11a10a0df6d4e0574ac4b3d752e67f6d415dd518579bc1ecc2518d0e6",
+      "bytes": 904
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-04-fontstorage/stdout.txt",
+      "hash": "sha256:11c39ba9d7f7e9b47de428248207495b43a6324aa81eb7963b6b9c7e59149def",
+      "bytes": 904
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/round-04-postshape/stdout.txt",
+      "hash": "sha256:2ffda10bf03f9d6eb06ffa24c8ec05e1a5701b68c20794d39b4e7cdf6cae779e",
+      "bytes": 904
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/taskid-diagnostics-r1/taskid-receipt.json",
+      "hash": "sha256:72b606ffadab840975684d0ffb45ceb1d1e1034813a384261baf6f89c4d1ed23",
+      "bytes": 35432
+    },
+    {
+      "path": "factory/native/windows/api-font-37429120-20261011/test.stdout.txt",
+      "hash": "sha256:fd5c38467922e1b1516698b9f1012939b13f091ac16a7298b6a5d066fe8f549e",
+      "bytes": 45164
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r1/round-00-baseline/stdout.txt",
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r1/timing-receipt.json",
+      "hash": "sha256:df5259c1e9a66664f90357ecdc9a28df0ec44ba2df05736d5d371f611bc0f2ef",
+      "bytes": 32172
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-baseline/stdout.txt",
+      "hash": "sha256:e7f25000cb03b06161d6342945978c43a650bc20754c67ac25d528fde5cebf5a",
+      "bytes": 1197
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-candidate/stdout.txt",
+      "hash": "sha256:14667ad8c975e70f1c60cac88ef900a5db61470c875fc6da907a5477eb39f678",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-00-hotpath/stdout.txt",
+      "hash": "sha256:48f7fba6ce67fb0a24af83ccdb2676959850b9fb1bc39827e9c56b49bfd2b901",
+      "bytes": 1197
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-baseline/stdout.txt",
+      "hash": "sha256:a1bfcb1db87ff85e02012abad5b5aab541dee0020df65621beb110559c44bda9",
+      "bytes": 1197
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-candidate/stdout.txt",
+      "hash": "sha256:f44158c7aed433c8ae73ed1c8bb58eda486466d100ae71b015c431cac2313265",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-01-hotpath/stdout.txt",
+      "hash": "sha256:77cb9acde365fd2218fa5b7baa979bf634a8468ae2fe32799fad02a0cd8bee48",
+      "bytes": 1192
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-baseline/stdout.txt",
+      "hash": "sha256:fe24741ac9669cd91fe07fc9d91c79ff41c87dbf5d18643add26b04a1208cbcf",
+      "bytes": 1197
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-candidate/stdout.txt",
+      "hash": "sha256:c2067fec97dcf45ff41b0baff7a5facd2a0dba3c7a1901b28412ffd3a09b368a",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-02-hotpath/stdout.txt",
+      "hash": "sha256:2fc7a5deb24989e100ee623df993189cda558fd8878bb9ae7a904975fef30cfa",
+      "bytes": 1197
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-baseline/stdout.txt",
+      "hash": "sha256:04693682649b887ff6a0a98a8deadc097a3c955f9fbfce9bf9738339392802ba",
+      "bytes": 1192
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-candidate/stdout.txt",
+      "hash": "sha256:49566c76d692b5f4f8c57d83a2174f865d3a55ba701b580062eb64fee28b30e7",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/round-03-hotpath/stdout.txt",
+      "hash": "sha256:80ae9570eac2538c0e0caa0360fbda1895b1e9be5c63263220745b2cd270c9aa",
+      "bytes": 1195
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-three-way-r2/timing-receipt.json",
+      "hash": "sha256:739ce41b5242430c1c24082012053dc91e5fce717f64d9804be590468b3732c5",
+      "bytes": 42628
+    },
+    {
+      "path": "factory/native/windows/api-hotpath-a1ec1fe3-20261011/cached-timing-analysis.json",
+      "hash": "sha256:2b48196d7414258e0fd19eea524044a1911364f6e40717f3160641415f976913",
+      "bytes": 9485
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-analysis.json",
+      "hash": "sha256:1d0b6ca856d6ada3382e454f0ca256f7e95a4428d28776dd55c243b4880e14a8",
+      "bytes": 6527
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-00-current67/stdout.txt",
+      "hash": "sha256:8c2ad62d2044902734cde180203ca52d1954475c0053cd6fcebf9100c6d8d7a7",
+      "bytes": 1191
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-00-postshape/stdout.txt",
+      "hash": "sha256:3e3af19e706d2d66d03ab6394c5ffd748839d034fbe56764f0e20be674ca849d",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-01-current67/stdout.txt",
+      "hash": "sha256:b18631041ef392b7a04427a43851a9a05c788d866d30450257cde52a56a49add",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-01-postshape/stdout.txt",
+      "hash": "sha256:bf56d989814f3b888f7f212f666ec05ec596e2021fd2009b67b429d7217141ea",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-02-current67/stdout.txt",
+      "hash": "sha256:f696c8cf446ac1ff2c8a9a9f1ece4e5f09c72e6b6e3c6018deab12122f3c9a39",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-02-postshape/stdout.txt",
+      "hash": "sha256:8ae8deb39af014ed69086d1f1942889f78bc0936ee55bdd8096ced2bfbddf818",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-03-current67/stdout.txt",
+      "hash": "sha256:c19a8005ac50ca1e407dc46996d06dc17587aa96a2b9aa8eab9e7bc84e3d8337",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/round-03-postshape/stdout.txt",
+      "hash": "sha256:8d938c400ea703a7146c9a47017e10f2d71b238c97217e983b74118848754691",
+      "bytes": 1193
+    },
+    {
+      "path": "factory/native/windows/api-shape-bbceb5a1-20261011/cached-paired-r1/timing-receipt.json",
+      "hash": "sha256:dc65f37d41991720498d92cf252f5476517e56b8c4a37e1daa8f77a5a69fa888",
+      "bytes": 33258
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/round-00-baseline/stdout.txt",
+      "hash": "sha256:5df71ff89b5b5b72e41f0f767aae6cec2bc2080e047cf81ddf65c6dede40cbfa",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/round-01-baseline/stdout.txt",
+      "hash": "sha256:c08e766ca3256a6e985972b13b0661c58bb775d7ccf2425b1e12b2944a1a3f32",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/round-02-baseline/stdout.txt",
+      "hash": "sha256:2a0134758efecec14f79b8b31d6f6b1190c92ead5680662a28acf06a4b524382",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/round-03-baseline/stdout.txt",
+      "hash": "sha256:dd08a06b679dcfeecdb5a048eccd964989b59d9862af58c37119185ce5f3cde2",
+      "bytes": 904
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/round-04-baseline/stdout.txt",
+      "hash": "sha256:b6a2d08088afea62fd37682162bbc826db037859c54e4cfa533e0063cc2a3767",
+      "bytes": 903
+    },
+    {
+      "path": "factory/native/windows/taskid-baseline-8e47-20261011/baseline-r1/taskid-receipt.json",
+      "hash": "sha256:c40b1e18043bb15aa5bfb0a7ddc2930608c3b6efa343127c00697d32d92a91a9",
+      "bytes": 14805
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/analysis.json",
+      "hash": "sha256:adcd02840f921b656027170fe5b051e920cbc7314a829d3e0fd4df1dc7960f9e",
+      "bytes": 2684
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-00-baseline/stdout.txt",
+      "hash": "sha256:f4be2225ded495ea741029400d8fa3d713cba3889c65eacb8b39a3488b34ba8d",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-00-fontstorage/stdout.txt",
+      "hash": "sha256:ca4076ed5a0cc01eb35f30b0098443bca8a43d08412be0265dc798f83a47fc8d",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-00-postshape/stdout.txt",
+      "hash": "sha256:74d644ce3e1d644cf097bda0a51d302352983ee2e59ba73b8402a9683ce969d6",
+      "bytes": 813
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-01-baseline/stdout.txt",
+      "hash": "sha256:3e6476005769d2982a63e5ef904c5aa6ff63e6b0172b005bc1b6ed9383cf5c5d",
+      "bytes": 561
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-01-fontstorage/stdout.txt",
+      "hash": "sha256:f2d05c535a9be93bd61ae5dbcecdcc6c738ba87719f4184cbb9bbe51519b5fdc",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-01-postshape/stdout.txt",
+      "hash": "sha256:449d2c51a5ae8dbc19ed62f10ca12dc849318be737cc1e8547ffe2138dc36389",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-02-baseline/stdout.txt",
+      "hash": "sha256:ec985f497e9e811547172645b0d62c2d295caa5c1f10b3aa4f1621d89c324e46",
+      "bytes": 812
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-02-fontstorage/stdout.txt",
+      "hash": "sha256:b881d604cca4cfbdb97805e76b8da33de704058dfe32e029aeeddb0e89623dac",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/round-02-postshape/stdout.txt",
+      "hash": "sha256:17325afb0e505fdd960e57f1340b2516b0cf9db24b79a64014c814f6db9466eb",
+      "bytes": 566
+    },
+    {
+      "path": "factory/native/windows/taskid-message-trace-20261011/trace-r1/trace-receipt.json",
+      "hash": "sha256:ed4a787b685b14a0fb1a7e33e9e368a72675af791a3d1cf893a971a190c80483",
+      "bytes": 43702
+    },
+    {
+      "path": "factory/runtime-additions/windows-contract-audit-v1/original-test-diff.txt",
+      "hash": "sha256:ad765b0d5142c54fcd9367ef565f1e75212601f2f6a48cabfb11097862664184",
+      "bytes": 56417
+    }
+  ]
+}
