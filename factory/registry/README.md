@@ -1,6 +1,6 @@
 # F2 block registry
 
-`manifest.json` is maintainer-curated membership for five Round 1 & five Round 2 blocks. `symbols` contains exact module-qualified paths today; selectors may be prefixed with `path:`. Once F1 catalogue is generated, pin each selector as `usr:<USR>`. Builder resolves every selector to one non-hidden catalogue entry and writes only those USRs. It never copies symbol status into block status.
+`manifest.json` is maintainer-curated membership for five Round 1 & five Round 2 blocks. `symbols` contains 65 exact `usr:<USR>` selectors across ten blocks. Selectors may also use `path:`, subject to unique resolution. [Versioned membership binding](public-source-binding-v1/README.md) revalidates current USRs against pinned F1 base & prepares comparison with its reviewed successor. Builder resolves every selector to one non-hidden catalogue entry and writes only those USRs. It never copies symbol status into block status.
 
 `inventoryStatus` & `progress` are explicit manifest fields (defaulting to `inventory` & `not-started`). `unsupported` must be declared by curation; `blocked` progress requires a reason, RFC3339 `openedAt`, & owner. Semantic dependencies must name blocks in same registry. Any dependency cycle requires one shared `bootstrapGroup`.
 
