@@ -1,0 +1,27 @@
+{
+  "kind": "host-validity-fix-source-replay",
+  "parentSha256": "40dbc9003e3167e3637401beebed058814a1d5bd6a96f0ab95fc035d9c85a927",
+  "runnerSha256": "4a62d93c69e7499b753d30c36f18c68b77d83808d3ab9d4179678bdceae87772",
+  "delta": "One immediate throw after unchanged original computed predicate; exact removal reconstructs parent bytes",
+  "pythonOfflineRawChecks": [
+    {
+      "name": "baseline",
+      "validHost": true,
+      "stdoutSha256": "dd8633ead6e325c8b1108517f8882974a782d15e7b6b0cc0fb60b7d36dad511a"
+    },
+    {
+      "name": "run03",
+      "validHost": false,
+      "stdoutSha256": "8896571462bc18905e0af405fedae9685c98371bd88453d85479474e74dd8321"
+    },
+    {
+      "name": "run16",
+      "validHost": false,
+      "stdoutSha256": "a94274882fcd1be6f121a75f80a0e2bcda46227b4eaf2ecae7d3172b533599ee"
+    }
+  ],
+  "productionPowerShellControls": "prepared unrun; actual AST-extracted predicate plus immediate guard tests baseline/run03/run16/nonzeroexit",
+  "remoteActions": 0,
+  "nativeActions": 0,
+  "compilerActions": 0
+}

@@ -1,0 +1,117 @@
+{
+  "actions": {
+    "compiler": 0,
+    "native": 0,
+    "protectedEdits": 0,
+    "remote": 0
+  },
+  "files": [
+    {
+      "bytes": 539,
+      "path": "package/Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "bytes": 362,
+      "path": "package/Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "path": "package/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "path": "package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 4574,
+      "path": "package/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03"
+    },
+    {
+      "bytes": 2814,
+      "path": "package/Sources/FactoryProbe/MetricsLogging.swift",
+      "sha256": "2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4"
+    },
+    {
+      "bytes": 2349,
+      "path": "package/Sources/FactoryProbe/MetricsPayload.swift",
+      "sha256": "cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"
+    },
+    {
+      "bytes": 223,
+      "path": "package/Sources/FactoryProbe/Witness.swift",
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 15254,
+      "path": "package/Sources/FactoryProbe/main.swift",
+      "sha256": "76e51bba847f6e438345f6cf57f30d92fc8a6d5c716e362e894f6016cd73593e"
+    },
+    {
+      "bytes": 8326,
+      "path": "package/plan.json",
+      "sha256": "9fefa7415459cac5e0ed1622209c113b0190b1a09c12f8cc95c15c2f1074eff0"
+    },
+    {
+      "bytes": 11275,
+      "path": "package/runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "path": "package/runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "bytes": 1878,
+      "path": "package/witness.manifest.json",
+      "sha256": "0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+    },
+    {
+      "bytes": 29725,
+      "path": "runner/capture-repeat.ps1",
+      "sha256": "f24dc8417d94b297229f29f2203d51c7bf4c05aaf365c71f8876f8ebfb55d7cd"
+    }
+  ],
+  "hostDiagnostics": [
+    "Original EnumThreadWindows/title/PID/thread/onecandidate/expectedHWND/IsWindow/GetClientRect/DPI/foreground checks retained.",
+    "Diagnostic tracks bounded64 samePID/thread top-level candidate identities+titleMatched and overflow without limiting original candidatecount or changing enumcontinue decisions.",
+    "Only original HWND guard failure prints synchronous numeric details+UTC/monotonic/phase/knownwindowClosed, then flushesstdout and throws same NSError.",
+    "WindowClosed flag set at original closecallback entry; used only in diagnosticreceipt, never to skip/read/accept HWND.",
+    "Ready/event/tick pass diagnosticphase; graph/layout/measurement/activation/timing callbacks unchanged."
+  ],
+  "kind": "padding-window-diagnosis-source-v1",
+  "operationalCompileRequest": {
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "kind": "swiftpm-windows-gui-release/1",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-window-diagnosis-r1\\scratch",
+    "target": "windows-x86_64"
+  },
+  "qualification": "hold; diagnostics-only source; frozenTupleBound=false",
+  "runnerTemplate": {
+    "childDeadlineSeconds": 15,
+    "originalCleanupHelperUnchanged": true,
+    "parent": "factory/native/windows/seed-stack-lifecycle-capture-v1/capture-repeat.ps1",
+    "parentSha256": "900b1ce8deeb3cfe52fa5fb5b0ceb967a56803381addf3cb1ee6c21cd65b3f51",
+    "path": "runner/capture-repeat.ps1",
+    "points": [
+      "owned-close-posted (after original15sdeadline established)",
+      "original-15s-deadline (before unchanged error)",
+      "before-original-cleanup",
+      "after-original-cleanup"
+    ],
+    "proof": "p.Handle captured once within originaltry; zero-time originalhandle waits bracketHasExited+GetExitCodeProcess; Stopwatch/UTC/readsuccess/outcode/handlePID recorded; no newhandle or kill; no timeoutreset.",
+    "rawStreamDeadlineSeconds": 5,
+    "samplingErrors": "separate kernelSampleErrors receipt; original primaryerror and existing cleanup decisions retain priority",
+    "status": "source-only observer template; historical admissionpaths intentionally retained; requires root/f1 fresh exact package/compile/capture rebinding"
+  },
+  "sourcePlanSha256": "9fefa7415459cac5e0ed1622209c113b0190b1a09c12f8cc95c15c2f1074eff0",
+  "sourceVerification": "Original predicate/bounds/error-priority strings retained; Witness/adapter/fill/text/sharedJSONpayload exact; no compiler/native execution.",
+  "status": "source-frozen; no compile/native dispatch"
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "name": "baseline",
+    "originalPath": "factory/native/windows/padding-settled-capture-v4/actual-single-r1/native-01/host.stdout.txt",
+    "path": "factory/native/windows/native-host-validity-fix-v1/fixtures/baseline.stdout.bin",
+    "sha256": "dd8633ead6e325c8b1108517f8882974a782d15e7b6b0cc0fb60b7d36dad511a",
+    "bytes": 25651,
+    "exitCode": 0,
+    "exitCodeAuthority": "baseline actual native-observation exit0; faults deliberately test most permissive exit0 to isolate output predicate",
+    "expected": "accept",
+    "errorToken": null
+  },
+  {
+    "name": "run03",
+    "originalPath": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-03/host.stdout.txt",
+    "path": "factory/native/windows/native-host-validity-fix-v1/fixtures/run03.stdout.bin",
+    "sha256": "8896571462bc18905e0af405fedae9685c98371bd88453d85479474e74dd8321",
+    "bytes": 18443,
+    "exitCode": 0,
+    "exitCodeAuthority": "baseline actual native-observation exit0; faults deliberately test most permissive exit0 to isolate output predicate",
+    "expected": "reject",
+    "errorToken": "FactoryOwnedRendererHWNDAmbiguous"
+  },
+  {
+    "name": "run16",
+    "originalPath": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-16/host.stdout.txt",
+    "path": "factory/native/windows/native-host-validity-fix-v1/fixtures/run16.stdout.bin",
+    "sha256": "a94274882fcd1be6f121a75f80a0e2bcda46227b4eaf2ecae7d3172b533599ee",
+    "bytes": 18586,
+    "exitCode": 0,
+    "exitCodeAuthority": "baseline actual native-observation exit0; faults deliberately test most permissive exit0 to isolate output predicate",
+    "expected": "reject",
+    "errorToken": "FactoryOwnedRendererHWNDAmbiguous"
+  }
+]

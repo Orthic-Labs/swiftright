@@ -1,0 +1,36 @@
+{
+  "verdict": "CLEAR_MINIMAL_SOURCE_AND_CONTROL_DESIGN",
+  "findings": [],
+  "stageRowsVerified": 10,
+  "exactDelta": "One fail-closed throw immediately after unchanged validHost predicate, before accepted record; every other runner byte equals frozen v4. Existing catch/finally preserves original error, raw sealing, owned cleanup &lock protocol. No timeout or native behavior edits.",
+  "fixtures": [
+    {
+      "fixture": "baseline",
+      "rawSha256": "dd8633ead6e325c8b1108517f8882974a782d15e7b6b0cc0fb60b7d36dad511a",
+      "offlinePredicateAccept": true,
+      "syntheticExitCode": 0
+    },
+    {
+      "fixture": "run03",
+      "rawSha256": "8896571462bc18905e0af405fedae9685c98371bd88453d85479474e74dd8321",
+      "offlinePredicateAccept": false,
+      "syntheticExitCode": 0
+    },
+    {
+      "fixture": "run16",
+      "rawSha256": "a94274882fcd1be6f121a75f80a0e2bcda46227b4eaf2ecae7d3172b533599ee",
+      "offlinePredicateAccept": false,
+      "syntheticExitCode": 0
+    }
+  ],
+  "controls": "AST extracts exactly one actual production assignment plus immediate throw guard, executes combined production script against actual baseline/run03/run16 bytes at permissive synthetic exit0; nonzero-exit fixture independently rejects. Windows PS execution not performed by reviewer.",
+  "historicalScope": "Actual runs03/16 exit codes not inferred; permissive exit0 is deliberate control assumption. Historical raw errors remain unchanged.",
+  "reviewExecution": "Offline Python source/hash/predicate replay only; zero native/compiler/remote actions",
+  "sourcePins": {
+    "factory/native/windows/native-host-validity-fix-v1/root-stage-manifest.json": "f1f03d5dfea9938d6cd360713481b9d3f80fcee48fbfb13b2f4e3ef905dec679",
+    "factory/native/windows/native-host-validity-fix-v1/capture-repeat.ps1": "4a62d93c69e7499b753d30c36f18c68b77d83808d3ab9d4179678bdceae87772",
+    "factory/native/windows/native-host-validity-fix-v1/parent-capture-repeat.ps1": "40dbc9003e3167e3637401beebed058814a1d5bd6a96f0ab95fc035d9c85a927",
+    "factory/native/windows/native-host-validity-fix-v1/test-host-output.ps1": "424246fe226f0041899df3f382f2ca5bd5d1f3916eb3c2e93d9a8b4ebcd78c80",
+    "factory/native/windows/native-host-validity-fix-v1/fixtures.json": "2591510257c4f1197dfd2a8bce61eb322e363ef64dd24afb0d9ad7e5d60fdb45"
+  }
+}

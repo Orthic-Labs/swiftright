@@ -1,0 +1,10 @@
+--- factory/native/windows/padding-settled-capture-v4/capture-repeat.ps1
++++ factory/native/windows/native-host-validity-fix-v1/capture-repeat.ps1
+@@ -199,6 +199,7 @@
+   Complete-FactoryRawStreams $rawStreams
+   $hostOutput=Get-Content -Raw (Join-Path $dir 'host.stdout.txt')
+   $validHost=($p.ExitCode -eq 0 -and $hostOutput -match 'FACTORY_BACKGROUND_GUARD thread-cbt-activation-veto' -and $hostOutput -match 'FACTORY_RENDERER_READY' -and $hostOutput -match 'FACTORY_COMMIT' -and $hostOutput -notmatch 'FACTORY_(RENDER|STARTUP)_ERROR')
++  if(-not $validHost){throw 'Owned host output failed original validity predicate'}
+   $records += [ordered]@{foregroundBeforeLaunch=$foregroundBefore.ToInt64();foregroundAfterWindow=$foregroundAfter.ToInt64();activationVeto='thread-cbt';hostValid=$validHost;probeForegroundAtCapture=$fgAtCapture;dpiAwarenessRequested='per-monitor-v2';backgroundPlacementRequested=$true;index=$i;case=$plan.case;manifestHash=$plan.manifestHash;exitCode=$p.ExitCode;exeSha256=$compiled.exeSha256;rendererSha256=$plan.rendererSha256;sourceHash=$plan.sourceHash;compileReceiptHash=$CompileReceiptHash;runtimeSourceCommit=$plan.runtimeSourceCommit;runtimeSourceTreeHash=$plan.runtimeSourceTreeHash;captureMethod='UIA+PrintWindow(PW_CLIENTONLY|PW_RENDERFULLCONTENT)+CopyFromScreen';occlusionQualified=$false;nativeParity='hold';frozenTupleBound=$false;closureBinding=$null;reason='Single source-bound observation only; provider exports, tuple qualification &parity remain held';files=@(Get-ChildItem -LiteralPath $dir -File|ForEach-Object{[ordered]@{path=$_.Name;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})}
+  } catch {$primaryError=$_} finally {
+   try{$preCleanupExitObservation=[ordered]@{at=[DateTimeOffset]::UtcNow.ToString('o');kernelWaitResult=[FactoryProcessWaitV5]::WaitForSingleObject($p.Handle,0);hasExitedObserved=[bool]$p.HasExited;rawStreams=@($rawStreams|ForEach-Object{Get-FactoryRawStreamState $_})}}catch{$streamErrors+=('Pre-cleanup exit observation: '+[string]$_)}

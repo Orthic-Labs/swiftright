@@ -1,0 +1,26 @@
+{
+  "verdict": "CLEAR_DIAGNOSTIC_SOURCE_ONLY",
+  "findings": [],
+  "manifestSha256": "24ad001b43aa369c62c41455b2bb5f5783a9ddddad367ae85d8ead0d31718be6",
+  "planSha256": "9fefa7415459cac5e0ed1622209c113b0190b1a09c12f8cc95c15c2f1074eff0",
+  "runnerSha256": "f24dc8417d94b297229f29f2203d51c7bf4c05aaf365c71f8876f8ebfb55d7cd",
+  "manifestRowsVerified": 14,
+  "checks": [
+    "Original HWND enumeration acceptance, candidatecount/title/PID/thread/expectedHWND/IsWindow/readback/DPI/foreground guards unchanged; bounded64 diagnostic candidates do not cap original matchcount.",
+    "Failure-only receipt immediately before same NSError; phase &known-close flag diagnostic-only. No post-close suppression.",
+    "Main normalized delta equals metrics-v2; windowClosed flag only propagated to receipts. Witness/layout/measurement/fill/runtime/shared serializer unchanged.",
+    "One original Process.Handle captured inside existing try; zero-time before/after kernel waits bracket Framework.HasExited/GetExitCodeProcess with monotonic clocks plus handlePID; no reopening, reset or new cleanup decisions.",
+    "Original15s deadline established before sample; sample executes before unchanged deadline throw. Existing5s streams/cleanup/errorpriority retained. Sampling failures recorded separately."
+  ],
+  "boundary": "Runner is source-only historical lifecycle template with historical stack admission routes. Requires fresh padding route/compile/host-validity bindings before any dispatch; no launch acceptance emitted. Diagnostic IO changes observational overhead without timing qualification.",
+  "reviewExecution": "Offline Python/source/hash only; zero native/compiler/remote actions",
+  "pins": {
+    "factory/native/windows/padding-window-diagnosis-v1/source-manifest.json": "24ad001b43aa369c62c41455b2bb5f5783a9ddddad367ae85d8ead0d31718be6",
+    "factory/native/windows/padding-window-diagnosis-v1/package/plan.json": "9fefa7415459cac5e0ed1622209c113b0190b1a09c12f8cc95c15c2f1074eff0",
+    "factory/native/windows/padding-window-diagnosis-v1/runner/capture-repeat.ps1": "f24dc8417d94b297229f29f2203d51c7bf4c05aaf365c71f8876f8ebfb55d7cd",
+    "factory/native/windows/padding-window-diagnosis-v1/package/Sources/FactoryProbe/main.swift": "76e51bba847f6e438345f6cf57f30d92fc8a6d5c716e362e894f6016cd73593e",
+    "factory/native/windows/padding-window-diagnosis-v1/package/Sources/FactoryProbe/FactoryViewport.swift": "19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+    "factory/native/windows/padding-window-diagnosis-v1/package/Sources/FactoryProbe/MetricsLogging.swift": "2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+    "factory/native/windows/seed-stack-lifecycle-capture-v1/capture-repeat.ps1": "900b1ce8deeb3cfe52fa5fb5b0ceb967a56803381addf3cb1ee6c21cd65b3f51"
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "kind":  "production-host-validity-raw-controls",
+    "driverSha256":  "4a62d93c69e7499b753d30c36f18c68b77d83808d3ab9d4179678bdceae87772",
+    "productionSource":  "$validHost=($p.ExitCode -eq 0 -and $hostOutput -match \u0027FACTORY_BACKGROUND_GUARD thread-cbt-activation-veto\u0027 -and $hostOutput -match \u0027FACTORY_RENDERER_READY\u0027 -and $hostOutput -match \u0027FACTORY_COMMIT\u0027 -and $hostOutput -notmatch \u0027FACTORY_(RENDER|STARTUP)_ERROR\u0027)\nif(-not $validHost){throw \u0027Owned host output failed original validity predicate\u0027}",
+    "controls":  [
+                     {
+                         "accepted":  true,
+                         "rawSha256":  "dd8633ead6e325c8b1108517f8882974a782d15e7b6b0cc0fb60b7d36dad511a",
+                         "name":  "baseline",
+                         "exitCode":  0,
+                         "reason":  ""
+                     },
+                     {
+                         "accepted":  false,
+                         "rawSha256":  "8896571462bc18905e0af405fedae9685c98371bd88453d85479474e74dd8321",
+                         "name":  "run03",
+                         "exitCode":  0,
+                         "reason":  "Owned host output failed original validity predicate"
+                     },
+                     {
+                         "accepted":  false,
+                         "rawSha256":  "a94274882fcd1be6f121a75f80a0e2bcda46227b4eaf2ecae7d3172b533599ee",
+                         "name":  "run16",
+                         "exitCode":  0,
+                         "reason":  "Owned host output failed original validity predicate"
+                     },
+                     {
+                         "accepted":  false,
+                         "name":  "nonzero-exit",
+                         "exitCode":  1
+                     }
+                 ],
+    "nativeActions":  0,
+    "compilerActions":  0,
+    "passed":  true
+}
+
