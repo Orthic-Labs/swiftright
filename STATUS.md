@@ -1,4 +1,4 @@
-Last updated: 2026-10-11T09:42:19Z
+Last updated: 2026-10-11T09:56:26Z
 
 # SwiftRight — RightKit port status
 
