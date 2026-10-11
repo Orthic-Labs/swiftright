@@ -1,0 +1,60 @@
+{
+  "launchArgs": [
+    "--fixture",
+    "F5"
+  ],
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch at the platform's own default window size (no resize); snapshot",
+      "ops": [],
+      "settleMs": 2000
+    },
+    {
+      "id": "resize_narrow_release",
+      "logicalAction": "resize client to 360x560 DIP; engine releases update-1 and insert-1",
+      "ops": [
+        {
+          "json": {
+            "height": 560,
+            "step": "resize",
+            "width": 360
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "key": "update-1",
+            "step": "release",
+            "value": 0
+          },
+          "op": "stdin"
+        },
+        {
+          "json": {
+            "key": "insert-1",
+            "step": "release",
+            "value": 0
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 2500
+    },
+    {
+      "id": "resize_wide_again",
+      "logicalAction": "resize client to 720x560 DIP",
+      "ops": [
+        {
+          "json": {
+            "height": 560,
+            "step": "resize",
+            "width": 720
+          },
+          "op": "stdin"
+        }
+      ],
+      "settleMs": 2000
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "description": "F5-nosize cross-platform logical script (gen-cross.py)",
+  "fixtureId": "F5-nosize",
+  "keepLayoutPasses": true,
+  "modelRows": "all",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch at the platform's own default window size (no resize); snapshot"
+    },
+    {
+      "id": "resize_narrow_release",
+      "logicalAction": "resize client to 360x560 DIP; engine releases update-1 and insert-1"
+    },
+    {
+      "id": "resize_wide_again",
+      "logicalAction": "resize client to 720x560 DIP"
+    }
+  ]
+}

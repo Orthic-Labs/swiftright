@@ -1,4 +1,4 @@
-Last updated: 2026-10-11T09:14:10Z
+Last updated: 2026-10-11T09:16:55Z
 
 # SwiftRight — pending (SR0 close-out lane)
 
@@ -11,7 +11,7 @@ Last updated: 2026-10-11T09:14:10Z
 | 5 | Cross-compare used 3 runs per side; contract says 20 | needs Adrian: accept the deviation, or run the 20-run version (about 4 h on the Dell)? |
 | 6 | Freeze: CONTRACT.md v1.0-rc to v1.0, ABI 0.6 frozen | needs Adrian: sign off the freeze? |
 | 7 | Retry-cap overruns after 9 October | needs Adrian: acknowledge (recorded in docs/sr0-retry-ledger.md) |
-| 8 | Unproven recorder items (CROSS-ALL.md) | R8 settled (8f548ef8: Mac and Windows both reject late results after close, 0 effects diffs in 3/3 pairs; all 16 Mac baselines unchanged with the new opt-in fixture variant). R6: proposed accepted-limitation (needs a Mac input-source change). R5 (F5 initial window size): in progress, probe config being written; needs a Mac fixture variant and a paired Windows run |
+| 8 | Unproven recorder items (CROSS-ALL.md) | R8 settled (8f548ef8). R5 closed: the two start sizes are constants of the two test hosts (Mac fixture 480x560, Windows host 640x480), not SwiftUI behaviour; an optional probe F5-nosize is committed, not run. R6: proposed accepted-limitation (needs a Mac input-source change) |
 | 9 | Selection highlight not painted (caret only) | open, SR1 |
 | 10 | Renderer ready metrics report the wrong height before the window settles (docs/sr0-findings.md §12) | open, SR1 (ABI 0.7 proposal has it) |
 | 11 | IME candidate list does not follow a mid-composition layout move | known limitation, SR1 (TSF) |

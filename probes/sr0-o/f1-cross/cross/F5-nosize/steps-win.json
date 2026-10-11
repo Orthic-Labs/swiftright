@@ -1,0 +1,39 @@
+{
+  "fixtureId": "F5-nosize",
+  "sourceHash": "",
+  "steps": [
+    {
+      "capture": true,
+      "id": "initial",
+      "logicalAction": "launch at the platform's own default window size (no resize); snapshot",
+      "ops": [],
+      "settleMs": 2000
+    },
+    {
+      "capture": true,
+      "id": "resize_narrow_release",
+      "logicalAction": "resize client to 360x560 DIP; engine releases update-1 and insert-1",
+      "ops": [
+        {
+          "height": 560,
+          "op": "resize",
+          "width": 360
+        }
+      ],
+      "settleMs": 2500
+    },
+    {
+      "capture": true,
+      "id": "resize_wide_again",
+      "logicalAction": "resize client to 720x560 DIP",
+      "ops": [
+        {
+          "height": 560,
+          "op": "resize",
+          "width": 720
+        }
+      ],
+      "settleMs": 2000
+    }
+  ]
+}

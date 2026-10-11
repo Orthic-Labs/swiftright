@@ -68,7 +68,7 @@ func motionConditions(_ payload: [String: Any]) -> [String: String] {
 }
 
 /// Mapping rules (recorded as adaptations E1..E4 in RESULT.md).
-func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], endNs: UInt64) -> EventMapping {
+func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], endNs: UInt64, keepLayoutPasses: Bool = false) -> EventMapping {
     var m = EventMapping()
     for s in stepStarts { m.perStep[s.id] = MappedStep() }
     func step(for t: UInt64) -> String? {
@@ -124,6 +124,10 @@ func mapEvents(_ events: [Event], stepStarts: [(id: String, start: UInt64)], end
             // Only the mode a step ENDS in is compared (a step may pass through intermediate modes while the window settles).
             if e.node == "layout", (e.payload["degenerate"] as? Bool) != true, let mode = e.payload["mode"] as? String {
                 endMode[sid] = mode
+                // Probe configs only (stimulus `keepLayoutPasses`, default off): every non-degenerate pass, in recorded order.
+                if keepLayoutPasses {
+                    m.perStep[sid]!.effects.append("layout-pass mode=\(mode) width=\((e.payload["width"] as? NSNumber)?.intValue ?? -1)")
+                }
             } else { m.excluded["\(e.kind)/\(ph)", default: 0] += 1 }
         case ("lifecycle", "released") where e.node == "tree":
             m.perStep[sid]!.lifecycle.append(TLifecycle(kind: "treeReleased", node: "tree"))
@@ -174,7 +178,7 @@ func effectNode(_ line: String) -> String {
     case "remove-row":
         if let r = line.range(of: " row=") { return "row/" + String(line[r.upperBound...]) }
         return "model"
-    case "layout-mode": return "layout"
+    case "layout-mode", "layout-pass": return "layout"
     case "animation-policy": return "animation"
     default: return parts.count > 1 ? parts[1] : head
     }
@@ -182,7 +186,7 @@ func effectNode(_ line: String) -> String {
 
 private func isModelOp(_ line: String) -> Bool {
     let head = line.split(separator: " ", maxSplits: 1).first.map(String.init) ?? ""
-    return ["insert-row", "remove-row", "layout-mode", "animation-policy"].contains(head)
+    return ["insert-row", "remove-row", "layout-mode", "layout-pass", "animation-policy"].contains(head)
 }
 
 /// Model-level operations (driver-ordered) keep their place; the scheduler-ordered lines between two of them (engine

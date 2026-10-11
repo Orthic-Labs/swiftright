@@ -105,7 +105,8 @@ if mode == "mac" {
 guard raw.map(\.id) == stepOrder else { eprint("step ids \(raw.map(\.id)) differ from the stimulus \(stepOrder)"); exit(3) }
 
 let events = try loadEvents(path: evPath)
-let mapping = mapEvents(events, stepStarts: raw.map { ($0.id, $0.startNs) }, endNs: raw.last!.endNs)
+let mapping = mapEvents(events, stepStarts: raw.map { ($0.id, $0.startNs) }, endNs: raw.last!.endNs,
+                          keepLayoutPasses: (stim["keepLayoutPasses"] as? Bool) == true)
 
 var applied = Set<String>()
 var steps: [TStep] = []

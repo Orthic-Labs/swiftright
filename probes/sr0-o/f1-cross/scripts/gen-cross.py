@@ -30,7 +30,7 @@ FIXTURE_NUMBER = {f"F{n}": n for n in range(1, 10)}
 F3_VARIANTS = ["list-1s", "list-3s", "vstack-1s", "vstack-3s", "lazy-1s", "lazy-3s"]
 CONFIGS = ["F1", "F2", "F3", *[f"F3-{v}" for v in F3_VARIANTS], "F4", "F5", "F6", "F6-reduced", "F7", "F8", "F9"]
 # probe id -> (base config, extra steps appended to the base plan)
-PROBES = {"F3-list-1s-typeafter": "F3-list-1s", "F9-keepalive": "F9"}
+PROBES = {"F3-list-1s-typeafter": "F3-list-1s", "F9-keepalive": "F9", "F5-nosize": "F5"}
 
 
 def rid(n, slot):
@@ -88,6 +88,15 @@ def plan_for(config):
                 if s["id"] == "close_window":
                     s["logical"] = "close the window; the runtime tears down tasks and rejects late results"
                     s["mac"] = [stdin(step="close-window"), stdin(step="release-all")]
+            return plan
+        if config == "F5-nosize":
+            # R5: no forced start size. Each platform lays out at its own default window size; the later resize steps stay.
+            initial = plan["steps"][0]
+            initial["win"] = []
+            initial["mac"] = []
+            initial["winSettle"] = 2000
+            initial["macSettle"] = 2000
+            initial["logical"] = "launch at the platform's own default window size (no resize); snapshot"
             return plan
         plan["steps"] = plan["steps"] + probe_steps(config)
         return plan
@@ -305,6 +314,8 @@ def main():
         stim = {"fixtureId": config, "description": f"{config} cross-platform logical script (gen-cross.py)",
                 "modelRows": "all",
                 "steps": [{"id": s["id"], "logicalAction": s["logical"]} for s in p["steps"]]}
+        if config == "F5-nosize":      # R5: keep every layout pass (opt-in assembler flag) so the settle sequence is visible
+            stim["keepLayoutPasses"] = True
         if config == "F9":      # F9-keepalive compares effects in every step (no ignore)
             stim["ignoreEffectsInSteps"] = ["close_window"]
             stim["ignoreEffectsReason"] = ("Windows' in-process script releases the pending engine calls after the close (late results rejected); "
