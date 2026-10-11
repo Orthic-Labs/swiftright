@@ -1,0 +1,109 @@
+{
+  "kind": "windows-kernel-exit-admission-audit-v1",
+  "decision": "GUARD-GAP-FOUND; current production CLI remains blocked",
+  "scope": "read-only existing source & prior independent receipt reviews; no diagnostics/tests/GUI/remote actions rerun",
+  "sourcePins": [
+    {
+      "path": "factory/pipeline/workflow.py",
+      "sha256": "38ebf511e22c176912c9def6e948a1eb980bfb121273908be5298cbae3f69f37",
+      "bytes": 31322
+    },
+    {
+      "path": "factory/gate/core.py",
+      "sha256": "2aca85a79f3f7394a715a4a97b0c9b755f24378c0882672f0662406ee50fb896",
+      "bytes": 30267
+    },
+    {
+      "path": "factory/reports/report.py",
+      "sha256": "f5b81c85aeaad6380ddd27eee897b400275943b905dce26dd133a3932ad6730d",
+      "bytes": 25752
+    },
+    {
+      "path": "factory/pipeline/test_windows_archive.py",
+      "sha256": "aa32e7c5808776e36fc3130e2ebf44053b89f73ae0b6f2369ee7acb5a5a2c423",
+      "bytes": 6976
+    },
+    {
+      "path": "factory/gate/test_gate.py",
+      "sha256": "41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+      "bytes": 12867
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v2/independent-review/actual-review-f7-v1/stack017-kernel-exit-correction-r1.json",
+      "sha256": "81432a65833007c3f381adb5d2a800a8611ae6ef40b9700322721957d4f37745",
+      "bytes": 1849
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/independent-review/actual-f7-v1/single-stack-overlay-r1-failed-r2.json",
+      "sha256": "bf839f3ac6ed80225b9445b3fdd6e2b8a712d252a8b56bc91283f347fd6904a1",
+      "bytes": 14070
+    }
+  ],
+  "existingBarriers": [
+    {
+      "path": "factory/pipeline/workflow.py",
+      "line": 88,
+      "facts": "validate_windows_archive binds Witness/plan/case/tuple/raw receipt/clock/actual executable hash/renderer/file/UIA hashes, hostValid is True & exitCode ==0. Matching nativeParity/occlusionQualified fields are equality checks, not qualified-exit proof."
+    },
+    {
+      "path": "factory/pipeline/workflow.py",
+      "line": 164,
+      "facts": "collect rejects synthetic/stale/schema-invalid/duplicate captures & requires adjacent raw PNG/source/receipt bindings. Current raw single receipts are objects, whereas validator requires array; existing raw packet cannot be admitted directly without normalization."
+    },
+    {
+      "path": "factory/pipeline/workflow.py",
+      "line": 350,
+      "facts": "gate & gate_evidence omit trusted semantic/timing/rebuild/seeded callbacks & sr0_closed, write status blocked & parityGranted False. Raw nativeParity relabel alone cannot make these CLI paths pass."
+    },
+    {
+      "path": "factory/gate/core.py",
+      "line": 258,
+      "facts": "F10 _capture_issues checks case/tuple/independentRun/resetVerified/non-synthetic/unique runEvidenceHash/run counts; does not check nativeParity, occlusionQualified, OS exit, raw file archives, kernel signal or terminal streams."
+    },
+    {
+      "path": "factory/gate/core.py",
+      "line": 474,
+      "facts": "evaluate_gate additionally requires exact semantic repeatability/trusted comparators/protected config/normalizer fault controls/trusted rebuild/SR0 closure/promotion. These are independent barriers, not Windows OS-exit validators."
+    },
+    {
+      "path": "factory/reports/report.py",
+      "line": 168,
+      "facts": "Passing report requires bound passing verdict,20 perplatform refs,semantic/timing/repeatability/channels & supplied passing F10 receipt; no additional OS-exit proof is read."
+    }
+  ],
+  "concreteAcceptingPaths": [
+    {
+      "entry": "validate_windows_archive(capture, directory)",
+      "condition": "An otherwise fully bound normalized archive with row.hostValid=True & row.exitCode=0 and absent capture-outcome/kernel proof passes this validator. Existing test_windows_archive.py:46 positive contract deliberately has no kernel cleanup/stream proof. This is archive acceptance, not parity; no new runtime execution was used."
+    },
+    {
+      "entry": "evaluate_gate(... supplied trusted callbacks, sr0_closed=True, reviewed promotion/config ...)",
+      "condition": "If all current independent gate requirements are satisfied, Windows captures lacking retained-kernel proof are not rejected by _capture_issues. Even nativeParity=hold is not an F10 issue. This is a source-derived conditional accepting path, not demonstrated passing current actual evidence."
+    },
+    {
+      "entry": "normalized-only label mutation",
+      "condition": "Changing normalized nativeParity while leaving raw row unchanged is rejected. Changing raw+normalized labels & recomputing required raw hashes is not prevented by label equality; labels never prove kernel signal. Gate bypass via direct in-memory captures also avoids archive validator."
+    }
+  ],
+  "numericGap": "row.exitCode !=0 admits False because False==0; matching raw index uses equality so True==1. Qualified admission must use type(value) is int & exact0/nonnegative real run/PID checks.",
+  "historicalPolicy": "Old native-v5/v6/seeded-v2 HasExited-only artifacts remain observational. Existing raw files/reviews stay unchanged; no retroactive kernel certificate or promotion from labels. V5 seeded failed stack does have retained kernel0 cleanup & sealed streams, but primary renderer deadline means completed capture0 & no qualification.",
+  "minimalFactoryOnlyRecommendation": {
+    "archiveGuard": "Add separate verified Windows exit-proof classification to existing adjacent archive validator. Require capture-outcome/owned-process/WM_CLOSE proof in raw file bindings; exact receipt/hash/case/source/compile/exe/runtime/renderer/PID/path/start/HWND joins; retained-kernel-handle exitCertification, kernelExitSignaled is True, kernelWaitResult exact integer0, strict exitCode integer0; both uniquely named stdout/stderr copy completed/no faults, sealed/destination closed, rawHashStates qualified sealed-raw & hashes actual files; no primaryError/streamErrors. Preserve old archives as observational rather than fabricate proof.",
+    "gateGuard": "F10 qualification must separately require verified raw-backed exit admission per Windows capture, including direct evaluate_gate callers. Use reader-backed verifier/trusted archive admission callback whose evidence binds actual raw proof bytes &capture hash; do not trust mutable conditions/nativeParity labels or unverified booleans. Missing proof adds explicit issue, so old observations cannot pass even when other trusted callbacks exist.",
+    "scope": "Kernel cleanup certificate is necessary, not sufficient: failed capture or unqualified paint/tuple/source/reset/timing/provider channels remain held. No renderer/runtime/bridge changes needed."
+  },
+  "meaningfulFaultsRecommended": [
+    "Original HasExited-only otherwise valid archive: collected observational, F10 qualified admission rejects missing retained kernel proof.",
+    "Normalized nativeParity promoted but original row unchanged: reject label mismatch; both raw+normalized promoted with hashes refreshed: still reject missing kernel proof.",
+    "Kernel wait258 despite HasExitedtrue; waitFailed4294967295; string0; booleanFalse: all reject.",
+    "Kernel signal0 from wrong PID/path/start/retained owner or copied foreign outcome: reject identity joins.",
+    "Valid kernel0 cleanup but primary renderer deadline: reject completed-capture admission.",
+    "Copy tasks incomplete/faulted/cancelled; destination not closed; unsealed diagnostic-partial/unqualified hash state: reject.",
+    "Sealed stdout/stderr altered afterreceipt; missing/duplicate stream names; bound outcome omitted: reject actual raw hashes/membership.",
+    "exitCodeFalse or indexTrue: reject exact integer types.",
+    "Direct evaluate_gate with all other passing trusted callbacks & missing proof: blocked; changing only labels cannot resolve.",
+    "Positive separate unit fixture with exact bound retainedkernel0 + terminal streams &valid observation admits exit classification only; preserve no native/parity claim."
+  ],
+  "implementationMade": false,
+  "causalClaims": false
+}

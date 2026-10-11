@@ -1,0 +1,29 @@
+{
+  "kind": "independent-mac-origin-admission-repaired-review-v2",
+  "decision": "blocked-exact-argv-and-nested-shapes",
+  "sourceSha256": "e9022943d639753cfacbfbe7ed6696a38951f443c8068c691e89951ebdf08238",
+  "testsSha256": "eed8b037ff5ab0012ca185741e6301fd1dfabf7279012ab7ded81a948dec9381",
+  "repairedPriorFaults": 8,
+  "actualArchivedCompatibilityPositives": 5,
+  "schemaLocation": "Only meta.conditions.macOrigin; top-level is explicitly rejected.",
+  "remainingFindings": [
+    {
+      "id": "unbound-prefix-source",
+      "evidence": "Fresh clean fixture with /unbound/Other.swift inserted before -o returns empty issues. Only argv slice after output is checked.",
+      "repair": "Require exact mode-specific main/AX option prefix +unique output +complete ordered source argv; reject extra source anywhere."
+    },
+    {
+      "id": "nested-adapter-shape",
+      "evidence": "CaptureHost.swift=None crashes before _validate_receipt source-field guard.",
+      "repair": "Validate item dict before .get; return source-field issue."
+    },
+    {
+      "id": "nested-output-shape",
+      "evidence": "outputBinary=[] crashes in early receipt binary join.",
+      "repair": "Validate compiler/output dictionaries before all nested .get; return output/receipt-shape issue."
+    }
+  ],
+  "testsAssessment": "Fresh fixture per fault & specific issue tokens replace v1 contaminated controls. Independent controls establish clean empty-issue positive before every mutation.",
+  "readerScope": "Five actual archive positives use SHA-pinned archive byte mapping; original compiler/xcrun tool bytes read only with recorded exact hash, never executed. Integrated mandatory reader remains separately scoped.",
+  "reviewerCompilerNativeRemoteRuns": 0
+}

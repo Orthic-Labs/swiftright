@@ -16,6 +16,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from .mac_origin_admission import mac_origin_admission_issues
+from .windows_exit_admission import windows_exit_admission_issues
+
 try:  # Works as both ``python -m factory.gate`` and ``python -m gate``.
     from factory.tools.canonical_json import CanonicalJSONError, sha256
     from factory.recipes.cases import expand_cases
@@ -24,6 +27,35 @@ except ImportError:  # pragma: no cover - alternate package root
     from ..recipes.cases import expand_cases
 
 MIN_RUNS = 20
+
+
+def _origin_issues(
+    captures: list[dict[str, Any]], reader: Callable[..., bytes] | None,
+    issues: list[str],
+) -> None:
+    """Read archived bytes for every native run, including gate-seeded runs.
+
+    The reader supplies bytes scoped to a capture, never an admission verdict.
+    Platform guards verify those bytes and their invocation/ownership joins.
+    """
+    if not callable(reader):
+        issues.append("native origin archive reader unavailable; qualification held")
+        return
+    guards = {"macos": mac_origin_admission_issues, "windows": windows_exit_admission_issues}
+    for capture in captures:
+        cid = capture.get("id", "<unknown>")
+        guard = guards.get(capture.get("platform"))
+        if guard is None:
+            issues.append(f"{cid}: native origin platform unsupported")
+            continue
+        try:
+            observed = guard(capture, lambda reference: reader(capture=capture, reference=reference))
+            if not isinstance(observed, list) or any(not isinstance(item, str) for item in observed):
+                raise TypeError("origin guard returned invalid issue list")
+        except Exception as exc:
+            issues.append(f"{cid}: native origin verification failed: {exc}")
+            continue
+        issues.extend(f"{cid}: native origin: {item}" for item in observed)
 
 
 def _ref_hash(artifact: dict[str, Any]) -> str:
@@ -392,6 +424,7 @@ def evaluate_gate(
     seeded_capture_runner: Callable[..., list[dict[str, Any]]] | None = None,
     semantic_comparator: Callable[..., dict[str, Any]] | None = None,
     timing_comparator: Callable[..., dict[str, Any]] | None = None,
+    origin_reader: Callable[..., bytes] | None = None,
     trusted_rebuild: dict[str, Any] | None = None, merged_commit: str | None = None,
     sr0_closed: bool = False, promotion_request: dict[str, Any] | None = None,
     now: datetime | None = None,
@@ -471,6 +504,7 @@ def evaluate_gate(
             except Exception as exc:
                 issues.append(f"gate-seeded capture runner failed: {exc}")
 
+    _origin_issues(captures, origin_reader, issues)
     by_case, capture_ids = _capture_issues(all_cases, captures, tuple_value, issues)
     # Semantic equality and timing are separate dimensions. Captured channels are
     # compared byte-for-byte here; host comparators may attach explicit results.

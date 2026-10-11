@@ -1,0 +1,45 @@
+{
+  "kind": "independent-isolated-mac-origin-production-faults-v1",
+  "syntheticFixtures": true,
+  "nativeRuns": 0,
+  "faults": [
+    {
+      "fault": "missing-compiled-adapter",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "extra-unbound-source-argv",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "compiler-before-resolver",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "resolver-stdout-unrelated-tool",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "claimed-AX-available-origin-omitted",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "compiler-sourceDrift-true",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "empty-compiler-argv",
+      "exception": "IndexError: list index out of range"
+    },
+    {
+      "fault": "missing-capture-case",
+      "exception": "AttributeError: 'NoneType' object has no attribute 'get'"
+    }
+  ]
+}

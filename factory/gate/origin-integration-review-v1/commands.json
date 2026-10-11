@@ -1,0 +1,28 @@
+{
+  "exitCode": 1,
+  "priorSuccessfulTargetedRun": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -m unittest factory.gate.test_origin_integration factory.pipeline.test_windows_archive factory.pipeline.test_windows_archive_numeric_origin -v",
+    "exitCode": 0,
+    "macOriginGuardSha256": "sha256:abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e",
+    "stderr": "final-rerun.stderr.txt",
+    "stderrSha256": "sha256:9fef12d4756b5b015e0e74f7227af41dc2d6b8f7187bb736697787f6562f75f1",
+    "stdout": "final-rerun.stdout.txt",
+    "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests": 23
+  },
+  "reason": "Both test modules failed to import because jsonschema is absent.",
+  "stderr": "retest.stderr.txt",
+  "stdout": "retest.stdout.txt",
+  "successfulTargetedRun": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 factory/.venv/bin/python -m unittest factory.gate.test_origin_integration factory.pipeline.test_windows_archive factory.pipeline.test_windows_archive_numeric_origin -v",
+    "exitCode": 0,
+    "macOriginGuardSha256": "sha256:abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e",
+    "macOriginTestSha256": "sha256:987470965d52453fdd11f461516114e91d76d6e64ae8901090a380031ee1cf7e",
+    "stderr": "final-rerun-v2.stderr.txt",
+    "stderrSha256": "sha256:5d5a19311e2bbb10fa6ef7dedcb64d291824a0bc547c9ab7e91f4570919245a5",
+    "stdout": "final-rerun-v2.stdout.txt",
+    "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests": 23
+  },
+  "testCommand": "PYTHONDONTWRITEBYTECODE=1 /Users/adrdsouza/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m unittest factory.gate.test_origin_integration factory.pipeline.test_windows_archive_numeric_origin -v"
+}

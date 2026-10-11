@@ -107,7 +107,11 @@ def validate_windows_archive(capture, directory):
     receipts = load_raw_json(receipt_path)
     if not isinstance(receipts, list):
         raise ValueError('Windows raw receipt must retain original observation array')
-    matching = [r for r in receipts if r.get('index') == capture['meta']['run']]
+    run = capture['meta']['run']
+    if type(run) is not int or run < 1:
+        raise ValueError('Windows capture run must be a positive integer')
+    matching = [r for r in receipts if isinstance(r, dict)
+                and type(r.get('index')) is int and r.get('index') == run]
     if len(matching) != 1:
         raise ValueError('Windows receipt run missing or duplicated')
     row = matching[0]
@@ -117,7 +121,8 @@ def validate_windows_archive(capture, directory):
             or 'sha256:' + row.get('rendererSha256', '') != conditions.get('actualRendererHash')
             or conditions.get('actualRendererHash') != capture['tuple']['rendererHash']
             or conditions.get('tupleWindowsHostHash') != capture['tuple']['hostHashes']['windows']
-            or row.get('hostValid') is not True or row.get('exitCode') != 0):
+            or row.get('hostValid') is not True
+            or type(row.get('exitCode')) is not int or row.get('exitCode') != 0):
         raise ValueError('Windows raw receipt case/source/host/renderer binding mismatch')
     for key in ('nativeParity', 'occlusionQualified'):
         if conditions.get(key) != row.get(key):

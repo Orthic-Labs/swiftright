@@ -1,0 +1,82 @@
+{
+  "kind": "independent-isolated-mac-origin-production-faults-v2",
+  "syntheticFixtures": true,
+  "nativeRuns": 0,
+  "faults": [
+    {
+      "fault": "missing-compiled-adapter",
+      "issues": [
+        "mac-origin:source-join: main",
+        "mac-origin:source-join: receipt compiled adapter",
+        "mac-origin:source-set: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "extra-unbound-source-argv",
+      "issues": [
+        "mac-origin:source-argv: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "compiler-before-resolver",
+      "issues": [
+        "mac-origin:process-time: main compiler precedes resolver"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "resolver-stdout-unrelated-tool",
+      "issues": [
+        "mac-origin:hash: main resolver stdout",
+        "mac-origin:resolver-identity: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "claimed-AX-available-origin-omitted",
+      "issues": [
+        "mac-origin:ax-join: AVAILABLE requires auxiliaryAX"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "sourceDrift-true",
+      "issues": [
+        "mac-origin:receipt-status: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "empty-compiler-argv",
+      "issues": [
+        "mac-origin:compiler-argv: main direct",
+        "mac-origin:output-argv: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "missing-capture-case",
+      "issues": [
+        "mac-origin:case-join",
+        "mac-origin:summary-case-join",
+        "mac-origin:wrong-case"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "extra-unbound-source-before-output",
+      "issues": [],
+      "incorrectlyAccepted": true
+    },
+    {
+      "fault": "malformed-adapter-record",
+      "exception": "AttributeError: 'NoneType' object has no attribute 'get'"
+    },
+    {
+      "fault": "malformed-output-record",
+      "exception": "AttributeError: 'list' object has no attribute 'get'"
+    }
+  ]
+}

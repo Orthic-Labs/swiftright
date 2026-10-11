@@ -1,0 +1,113 @@
+{
+  "kind": "mac-origin-admission-audit-v1",
+  "version": "1.0",
+  "scope": "Read-only source audit of historical Mac capture admission. No compiler, capture, remote, Git, GUI, or production-source execution was performed.",
+  "disposition": "historical-origin-promotion-blocked",
+  "conclusion": "Existing candidate and closure policy blocks automatic historical promotion, but Mac pipeline validation has no compiler-OS-origin receipt requirement. A future caller that supplies an old Mac artifact through a bound host/capture adapter can satisfy current generic Mac source/binary checks without proving its compiler invocation. Fresh actual-v1 compiler receipts remain separate evidence; this audit does not re-review them.",
+  "sourcePins": [
+    {
+      "path": "factory/pipeline/tuple10.py",
+      "sha256": "63baabd5dc3c3ffd75fca0c639ca13ae54d406c7a84cd7430c72edbdb63b7b2e",
+      "anchors": ["49-111", "114-189", "220-239", "243-269"]
+    },
+    {
+      "path": "factory/native/macos/measure_host.py",
+      "sha256": "4e9123102a833a9f8c45668127977640d01950facd7e83a274d9e7ed325ae5a7",
+      "anchors": ["44-69"]
+    },
+    {
+      "path": "factory/native/macos/capture.py",
+      "sha256": "f8ab9640bfb04a2c488a6f606828c16fa3712099957dced1d4bb46edc2401e0a",
+      "anchors": ["42-65", "126-143", "163-194", "295-333"]
+    },
+    {
+      "path": "factory/native/macos/check_evidence.py",
+      "sha256": "1c172b8de9f5f99a2e4813658b8cdbc17e0466b958a8484062a0ad6fce1bb93f",
+      "anchors": ["7-46"]
+    },
+    {
+      "path": "factory/native/macos/TUPLE10-PLAN.md",
+      "sha256": "34e800c44c0ea92c8115b1b3a1e794309f3dfd15ea0bcf414363c44cf8be3e41",
+      "anchors": ["3-12", "20-24", "34-46", "60-62"]
+    },
+    {
+      "path": "factory/spec/protocols/acceptance-and-coverage.md",
+      "sha256": "34917cf81883d6a992c3d0e8c2650decfcebbfc8c0499b5424d3071e705caa82",
+      "anchors": ["3-9"]
+    }
+  ],
+  "existingBarriers": [
+    {
+      "path": "factory/spec/protocols/acceptance-and-coverage.md",
+      "lines": "3-9",
+      "finding": "Mac starts candidate-only; candidate generation, receipt generation, or pass verdict cannot promote. Accepted golden requires exact case/tuple plus maintainer-bound candidate/diff/reviewer/timestamp/decision. Headless evidence cannot grant parity."
+    },
+    {
+      "path": "factory/native/macos/TUPLE10-PLAN.md",
+      "lines": "3-12,20-24",
+      "finding": "Capture requires final bound tuple10 plus explicit CLOSED status. Old captures remain historical bytes with no rebinding; plan requires fresh captures and fresh internal scratch."
+    },
+    {
+      "path": "factory/pipeline/tuple10.py",
+      "lines": "114-184,220-239,243-269",
+      "finding": "Closure binds changed runtime, postclosure measurements, and new platform host bytes; candidate summary marks parity false and requires new Mac/Windows captures. closure_check states hosts bind newly built factory hosts, never old archives."
+    }
+  ],
+  "acceptingPathAndGap": [
+    {
+      "path": "factory/pipeline/tuple10.py",
+      "lines": "49-111",
+      "finding": "validate_host_receipt checks Mac platform, tupleIndependent, runtime commit, postclosure timing, closure links, source bytes, and binary bytes. Compiler receipt fields are required only inside the Windows branch at lines 82-110; Mac has no compiler OS-origin check."
+    },
+    {
+      "path": "factory/native/macos/measure_host.py",
+      "lines": "44-69",
+      "finding": "Mac qualification host invokes xcrun swiftc and persists build stdout/stderr through logged(), but host-measurement.json contains source/adapter/compiledAdapter/binary/toolchain/inventory fields, with no compiler receipt path/hash, argv identity, process timing, exit record, or raw stream hashes."
+    },
+    {
+      "path": "factory/native/macos/capture.py",
+      "lines": "42-65,126-143,163-194",
+      "finding": "Legacy/current Mac candidate builds log plain stdout/stderr and summary marks candidateOnly/not-promoted. Fresh AX build likewise stores source/binary identity without compiler-origin receipt. No source-level rejection distinguishes old capture build evidence from current receipt-backed build evidence."
+    },
+    {
+      "path": "factory/native/macos/check_evidence.py",
+      "lines": "7-46",
+      "finding": "Evidence verifier checks capture/raw/image hashes, independent PIDs, font resource joins, AX owner hash, and candidateOnly. It does not inspect compiler receipt existence, provenance, or OS-origin fields."
+    },
+    {
+      "path": "factory/native/macos/TUPLE10-PLAN.md",
+      "lines": "20,34",
+      "finding": "Plan text says pipeline validates a raw receipt hash, while measure_host output shown above does not emit a compiler receipt field. This is an implementation-contract mismatch to resolve before any future Mac promotion gate."
+    }
+  ],
+  "minimalFactoryOnlyGuard": {
+    "where": "Add Mac-specific admission validation before tuple host binding and before selecting captures for any promotion-capable bundle; keep candidate observation path available.",
+    "historicalPolicy": "Reject historical Mac capture or host artifacts lacking receipt-backed build lineage as promotion inputs. Keep them observational/candidate-only; never reconstruct missing compiler OS origin.",
+    "requiredReceipt": [
+      "explicit version and platform=macos",
+      "exact xcrun/swiftc argv plus logical argv0 and resolved compiler path",
+      "compiler path/tool identity and pre/post hashes",
+      "owned PID/PGID, UTC start/end, natural exit code, timeout=false, drained stdout/stderr",
+      "raw stdout/stderr paths and hashes",
+      "source/adapter pre/post bytes and hashes",
+      "output binary path and hash",
+      "receipt path/hash archived under same fresh internal run and joined to bound host/capture"
+    ],
+    "faultControls": [
+      "missing-mac-compiler-receipt",
+      "historical-candidate-without-receipt",
+      "receipt-platform-or-tool-mismatch",
+      "receipt-source-or-binary-hash-drift",
+      "receipt-timeout-or-nonzero-exit",
+      "missing-or-unhashed-raw-stream",
+      "closure/runtime/tuple/case/source join mismatch"
+    ],
+    "compatibility": "Do not alter existing candidate evidence, old bytes, or public/runtime APIs. Guard only promotion-capable Mac host/capture selection."
+  },
+  "notClaimed": [
+    "No fresh compiler or capture run was executed.",
+    "No causal performance or parity conclusion is drawn.",
+    "Fresh actual-v1 receipt review is treated as separate existing evidence, not repeated here.",
+    "No historical compiler receipt is inferred from build stdout/stderr, binary hash, or source hash alone."
+  ]
+}

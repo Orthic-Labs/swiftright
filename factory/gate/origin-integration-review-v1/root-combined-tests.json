@@ -1,0 +1,32 @@
+{
+  "kind": "root-unit-test-run",
+  "command": [
+    "factory/.venv/bin/python",
+    "-m",
+    "unittest",
+    "factory.gate.test_gate",
+    "factory.gate.test_origin_integration",
+    "factory.gate.test_mac_origin_admission",
+    "factory.gate.test_windows_exit_admission",
+    "factory.pipeline.test_windows_archive",
+    "factory.pipeline.test_windows_archive_numeric_origin"
+  ],
+  "tests": 59,
+  "status": "pass",
+  "exitCode": 0,
+  "elapsedSeconds": 41.534,
+  "sourceHashes": {
+    "factory/gate/core.py": "bcf1eedc5b1ff8e843e134d3ed9e3bd301eec9616f700bbf1b7f25ddcb4d2a04",
+    "factory/gate/mac_origin_admission.py": "abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e",
+    "factory/gate/windows_exit_admission.py": "20078311fc6dcfb8c43a3ab10582cf8d0490a003e3a8d5eb779cf91ac329ca59",
+    "factory/pipeline/workflow.py": "8516dc3d79486f6e9a887931ffc95c7abc3d2f3246902cdcdef0815294425c77",
+    "factory/gate/test_gate.py": "41ec0e6395b5286fed8b67974b72767eeb190ebb2699914db3db196830ebde16",
+    "factory/gate/test_origin_integration.py": "f34e01f59224bd20cc67d32e3f523f10f88b558ce7f7b82f27eaf40ffcfd9a92",
+    "factory/gate/test_mac_origin_admission.py": "987470965d52453fdd11f461516114e91d76d6e64ae8901090a380031ee1cf7e",
+    "factory/gate/test_windows_exit_admission.py": "b66819ba918467b3d40a695860a635a7b6d8d28665aca91fbe7ec4aa1d628a19",
+    "factory/pipeline/test_windows_archive.py": "aa32e7c5808776e36fc3130e2ebf44053b89f73ae0b6f2369ee7acb5a5a2c423",
+    "factory/pipeline/test_windows_archive_numeric_origin.py": "30e77bb9dc5f547b5223e71f9df9335517b416878f99a14ce93e327c79e30b7d"
+  },
+  "nativeOrCompilerRuns": 0,
+  "qualificationClaim": false
+}

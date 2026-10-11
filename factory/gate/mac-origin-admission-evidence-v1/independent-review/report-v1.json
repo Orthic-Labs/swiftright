@@ -1,0 +1,45 @@
+{
+  "kind": "independent-mac-origin-admission-review-v1",
+  "decision": "blocked-source-integration",
+  "reviewedSource": {
+    "sha256": "4dd1cc83931b5fbd8fb60959289c1ef50a772d95e067bbadfd3cf84093cf31fc",
+    "testsSha256": "c8e8fee32b79ce98a6e02e1e7e2495ebf4b9f2148d66c8b9042482db5d0402a5"
+  },
+  "actualArchivedPositiveCases": 5,
+  "actualPositiveScope": "Compatibility replay succeeds with exact archived receipt/source/binary/stream byte hashes; missing archived tool bytes read from exact current recorded paths/hashes, no execution. Integrated reader not qualified.",
+  "findings": [
+    {
+      "id": "schema-location",
+      "recommendation": "Use only meta.conditions.macOrigin, compatible with closed capture schema; reject unsupported top-level location. No permissive fallback."
+    },
+    {
+      "id": "adapter-membership",
+      "evidence": "Fresh fixture minus CaptureHost.swift accepted. compiledAdapterHash absent tolerated; source_names=None permits varying compiler source membership.",
+      "recommendation": "Require compiledAdapterHash and exact Witness.swift/CaptureHost.swift source set; join adapter raw bytes/ref to summary; exact argv source inventory, reject extras/repeated -o."
+    },
+    {
+      "id": "auxiliary-AX",
+      "evidence": "Summary claims AVAILABLE with auxiliaryAX omitted, accepted.",
+      "recommendation": "Require AX refs/receipt when summary or requested channel claims AX availability; bind exact summary status/hash fields. Preserve held AX path explicitly."
+    },
+    {
+      "id": "resolver-identity-time",
+      "evidence": "Resolver stdout /tmp/swiftc mismatches logical path yet passes; compiler before resolver also passes.",
+      "recommendation": "Join raw resolver stdout parsed exact path to logicalCompilerPath, require resolver completion before compiler start; exact xcrun identity and mode/argv checks."
+    },
+    {
+      "id": "uncaught-malformed",
+      "evidence": "Empty direct argv raises IndexError; missing case raises AttributeError.",
+      "recommendation": "Shape/type guards return issue lists for malformed inputs."
+    },
+    {
+      "id": "fault-contamination",
+      "evidence": "Producer combined fault test mutates same receipt without resetting; tool failure persists into PID/drift/stream. Drift mutation targets compiler.sourceDrift whereas implementation reads receipt.sourceDrift.",
+      "recommendation": "Fresh positive fixture per mutation; assert specific production issue, mutate authoritative drift field. Synthetic controls remain labeled synthetic."
+    }
+  ],
+  "independentFaults": "faults-v1.json",
+  "actualReplay": "actual-replay-result-v1.json",
+  "reviewerNativeCompilerRemoteRuns": 0,
+  "sourceEditsToProducer": 0
+}

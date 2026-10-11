@@ -1,0 +1,72 @@
+{
+  "decision": "PASS-FAIL-CLOSED-API; WORKFLOW-READER-UNWIRED",
+  "gateIntegration": {
+    "callerVerdictOrLabelsTrusted": false,
+    "captureScopedRead": "reader receives capture plus exact reference supplied by platform guard",
+    "captureTiming": "evaluate_gate appends seeded_capture_runner output before _origin_issues(captures, origin_reader, issues)",
+    "coreOriginGuard": "factory/gate/core.py::_origin_issues",
+    "guards": [
+      "macos_origin_admission_issues",
+      "windows_exit_admission_issues"
+    ],
+    "malformedOrWrongBytesBlock": true,
+    "missingReaderBlocks": true,
+    "readerExceptionBlocks": true,
+    "readerRequired": true,
+    "unsupportedPlatformBlocks": true
+  },
+  "macGuardConcurrentChange": {
+    "initialInspectionSha256": "sha256:ae156753a743cfdda12cf6e012127d42b5aedf28ab29d5043bb2dfbd9ed5e316",
+    "macGuardTestInitialInspectionSha256": "sha256:e02c95b136cb43a21747bddbef138e271f1068a20c851da66c852c6761c3c957",
+    "macGuardTestSuccessfulRunSha256": "sha256:987470965d52453fdd11f461516114e91d76d6e64ae8901090a380031ee1cf7e",
+    "reviewScope": "Integration boundary only; concurrently changed Mac guard v4 implementation & its test were not reviewed as feature changes.",
+    "successfulTestRunSha256": "sha256:abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e"
+  },
+  "nativeExecution": false,
+  "reviewScope": "Exact-source audit of gate origin integration & Windows raw archive numeric checks; no production source edits.",
+  "sourcePins": "source-pins.json",
+  "tests": {
+    "localTargetedRerun": {
+      "interpreter": "factory/.venv/bin/python",
+      "originIntegrationTests": 7,
+      "result": "PASS",
+      "stderr": "final-rerun-v2.stderr.txt",
+      "stdout": "final-rerun-v2.stdout.txt",
+      "tests": 23,
+      "windowsArchiveBindingTests": 11,
+      "windowsArchiveNumericOriginTests": 5
+    },
+    "parentReportedGateSuite": {
+      "count": 42,
+      "rerunByThisReview": false,
+      "result": "PASS"
+    },
+    "parentReportedOriginIntegration": {
+      "count": 7,
+      "rerunByThisReview": false,
+      "result": "PASS after Windows v2"
+    },
+    "preservedImportFailures": {
+      "reason": "jsonschema missing from system & bundled Python environments",
+      "stderr": "retest.stderr.txt",
+      "stdout": "retest.stdout.txt"
+    }
+  },
+  "windowsArchiveNumeric": {
+    "captureRunRequiresExactPositiveInt": true,
+    "isolatedCases": [
+      "bool exitCode",
+      "bool index",
+      "bool capture run",
+      "string index"
+    ],
+    "rebindingRawReceiptHash": "tests mutated archived receipt then rebound its actual receipt hash, isolating numeric type checks",
+    "receiptExitCodeRequiresExactInt": true,
+    "receiptIndexRequiresExactInt": true
+  },
+  "workflow": {
+    "gateEvidenceCallsEvaluateGateWithoutOriginReader": true,
+    "reportCallsEvaluateGateWithoutOriginReader": true,
+    "result": "both offline workflow paths remain origin-held; no reader/verdict bypass found"
+  }
+}

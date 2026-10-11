@@ -1,0 +1,91 @@
+{
+  "kind": "independent-windows-exit-admission-guard-v1",
+  "decision": "blocked-for-exact-compiler-invocation-and-terminal-certificate-admission",
+  "producerPins": [
+    {
+      "bytes": 14095,
+      "hash": "sha256:0a62b5ae1f4df8f6bedc2afd569d0b266efdf9fd2069fe17ee942f34ca8e45f8",
+      "path": "factory/gate/test_windows_exit_admission.py"
+    },
+    {
+      "bytes": 15334,
+      "hash": "sha256:3f149daa68b0f2c8fe45180efd1aaf0b6934657cc0a4056e7f72a4346e14f19d",
+      "path": "factory/gate/windows_exit_admission.py"
+    },
+    {
+      "bytes": 2143,
+      "hash": "sha256:83f56177908212091def916ea4cb1fdd3f098aa6e8c89834b0486d40576180a0",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/README.md"
+    },
+    {
+      "bytes": 1178,
+      "hash": "sha256:79f88a89af6bdf85735ea139b175a01c58b0bd2222ae212fb8ab0d3779055065",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/controls-process.json"
+    },
+    {
+      "bytes": 1929,
+      "hash": "sha256:cc0db3180fb3d5fc6a1db73b63c5bc59f5b7238afa74d2965d3c2247c4e7fa81",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/controls.stderr.bin"
+    },
+    {
+      "bytes": 0,
+      "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/controls.stdout.bin"
+    },
+    {
+      "bytes": 3641,
+      "hash": "sha256:6e3e7bd995a25496f5c04e1ece87ef67eba209a50bf3bc61e17d5b99d721c526",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/record_controls.py"
+    },
+    {
+      "bytes": 904,
+      "hash": "sha256:83b5634cb17ef9a13a162e48a6a88f900e0b7b18daec1bdc715d14c66d888b05",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/report.json"
+    },
+    {
+      "bytes": 22708,
+      "hash": "sha256:578e08c0f6d97019f73f32b6c845365480532ce9f913194f5ac58abb370fb6a8",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/synthetic-fixture.json"
+    },
+    {
+      "bytes": 3523,
+      "hash": "sha256:753f8c173a8653baa0e197f2ff020c93af16a571d86ec48d9534562f00fff510",
+      "path": "factory/pipeline/exit-admission-audit-v1/guard-evidence-v1/synthetic-structural-result.json"
+    }
+  ],
+  "sourceStageSha256": "7c9d7ae09726632b745ba5274a8870159c37876b57329ac33bdeeca23f7053a9",
+  "suppliedTestsPassed": 11,
+  "independentSemanticFaults": [
+    {
+      "fault": "wrong-compile-invocation",
+      "accepted": true,
+      "mutatedFields": {
+        "argv": "unrelated.exe --no-source",
+        "cwd": "D:\\foreign"
+      },
+      "issues": []
+    },
+    {
+      "fault": "nonterminal-cleanup-status",
+      "accepted": true,
+      "mutatedFields": {
+        "status": "hold-cleanup"
+      },
+      "issues": []
+    }
+  ],
+  "actualFailedStack": {
+    "path": "factory/native/windows/round1-seeded-native-v5/single-stack-overlay-r1/replays/run-001/native-01/capture-outcome.json",
+    "sha256": "2441dd79b1215be130b986789c716dec6d732730eabf63df969ed0a0572a8418",
+    "primaryError": "Owned renderer child deadline",
+    "kernelWaitResult": 0,
+    "primaryFailureAdmission": "blocked despite successful cleanup; isolated actual error transplanted into otherwise accepted raw fixture"
+  },
+  "schema": "conditions.windowsExitProof object permitted by canonicalValue; captured hash computed over capture & independent raw hashes, no circular capture binding",
+  "positiveScope": "synthetic archive only; nativeParityGranted remains false",
+  "requiredChanges": [
+    "Derive &bind expected compiler invocation source/cwd/tool/target/build flags from archived plan/request authority, with isolated wrong argv/cwd faults",
+    "Require retained cleanup permitted terminal status (matching production certificate), isolated status fault"
+  ],
+  "reviewActions": "read-only plus offline Python test/fault replay; no native/remote/Git"
+}

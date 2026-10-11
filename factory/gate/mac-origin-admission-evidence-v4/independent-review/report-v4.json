@@ -1,0 +1,16 @@
+{
+  "kind": "independent-mac-origin-source-review-v4",
+  "decision": "clear-scoped-origin-admission",
+  "sourceSha256": "abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e",
+  "testsSha256": "987470965d52453fdd11f461516114e91d76d6e64ae8901090a380031ee1cf7e",
+  "isolatedMainFaults": 13,
+  "isolatedAXShapeFaults": 3,
+  "publicBoundaryFaults": 4,
+  "actualFiveArchiveCompatibilityPositives": 5,
+  "scope": "Schema-compatible conditions.macOrigin only; mandatory witness/adapter exact source set, mode-specific exact main/AX argv, source/case/summary/binary/receipt joins, source drift, owned compiler/resolver PID+PGID/cleanup/time ordering, resolver raw identity, tool hashes/raw streams, mandatory AX origin for AVAILABLE. Public malformed boundary returns BLOCKED issue lists.",
+  "readerScope": "Exact byte refs/hash archive mapping; current recorded compiler/xcrun bytes read by matching receipt hash where tools are absent archive. No tool execution. Core reader policy/integration admission remains root-owned.",
+  "candidateOnly": true,
+  "parityGranted": false,
+  "promotionEligible": false,
+  "reviewerNativeCompilerRemoteRuns": 0
+}

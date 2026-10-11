@@ -1,0 +1,42 @@
+{
+  "kind": "isolated-public-boundary-controls-v4",
+  "synthetic": true,
+  "faults": [
+    {
+      "fault": "nested-unhashable-hash",
+      "issues": [
+        "mac-origin:bad-ref: main source Witness.swift",
+        "mac-origin:source-join: main"
+      ],
+      "reportStatus": "BLOCKED"
+    },
+    {
+      "fault": "reader-error",
+      "issues": [
+        "mac-origin:read-failed: adapter: isolated unavailable input",
+        "mac-origin:read-failed: binary: isolated unavailable input",
+        "mac-origin:read-failed: case: isolated unavailable input",
+        "mac-origin:read-failed: compiler receipt: isolated unavailable input",
+        "mac-origin:read-failed: source: isolated unavailable input",
+        "mac-origin:read-failed: summary: isolated unavailable input"
+      ],
+      "reportStatus": "BLOCKED"
+    },
+    {
+      "fault": "missing-origin",
+      "issues": [
+        "mac-origin:missing-origin"
+      ],
+      "reportStatus": "BLOCKED"
+    },
+    {
+      "fault": "top-level-origin-only",
+      "issues": [
+        "mac-origin:missing-origin",
+        "mac-origin:unsupported-location: top-level macOrigin"
+      ],
+      "reportStatus": "BLOCKED"
+    }
+  ],
+  "nativeCompilerRuns": 0
+}

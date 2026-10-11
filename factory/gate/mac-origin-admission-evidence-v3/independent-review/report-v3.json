@@ -1,0 +1,28 @@
+{
+  "kind": "independent-mac-origin-source-review-v3",
+  "decision": "blocked-two-nested-typeguards",
+  "sourceSha256": "ae156753a743cfdda12cf6e012127d42b5aedf28ab29d5043bb2dfbd9ed5e316",
+  "testsSha256": "e02c95b136cb43a21747bddbef138e271f1068a20c851da66c852c6761c3c957",
+  "previousFaultsRejected": 12,
+  "actualFiveArchiveCompatibilityPositives": 5,
+  "remaining": [
+    {
+      "field": "receipt.invocationMode",
+      "mutation": [],
+      "failure": "TypeError at membership in set",
+      "repair": "Require str before set membership; return invocation-mode issue."
+    },
+    {
+      "field": "summary.freshAXClient",
+      "mutations": [
+        null,
+        [],
+        "AVAILABLE"
+      ],
+      "failure": "AttributeError with otherwise valid AX refs/source/receipt/binary",
+      "repair": "Require dict before field .get; return ax-join/ax-shape issue."
+    }
+  ],
+  "originScope": "Only exact conditions.macOrigin accepted. Exact main/AX argv templates now reject sources/flags before or after -o. Five genuine archived receipt/source/binary positives retain raw hashes; tool bytes read from current recorded paths by exact hash without execution.",
+  "nativeCompilerRemoteRuns": 0
+}

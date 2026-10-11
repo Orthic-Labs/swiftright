@@ -1,0 +1,110 @@
+{
+  "kind": "independent-isolated-mac-origin-production-faults-v3",
+  "syntheticFixtures": true,
+  "nativeRuns": 0,
+  "faults": [
+    {
+      "fault": "missing-compiled-adapter",
+      "issues": [
+        "mac-origin:source-join: main",
+        "mac-origin:source-join: receipt compiled adapter",
+        "mac-origin:source-set: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "extra-unbound-source-argv",
+      "issues": [
+        "mac-origin:compiler-argv: main exact template",
+        "mac-origin:source-argv: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "compiler-before-resolver",
+      "issues": [
+        "mac-origin:process-time: main compiler precedes resolver"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "resolver-stdout-unrelated-tool",
+      "issues": [
+        "mac-origin:hash: main resolver stdout",
+        "mac-origin:resolver-identity: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "claimed-AX-available-origin-omitted",
+      "issues": [
+        "mac-origin:ax-join: AVAILABLE requires auxiliaryAX"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "sourceDrift-true",
+      "issues": [
+        "mac-origin:receipt-status: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "empty-compiler-argv",
+      "issues": [
+        "mac-origin:compiler-argv: main exact template",
+        "mac-origin:output-argv: main"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "missing-capture-case",
+      "issues": [
+        "mac-origin:case-join",
+        "mac-origin:summary-case-join",
+        "mac-origin:wrong-case"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "extra-unbound-source-before-output",
+      "issues": [
+        "mac-origin:compiler-argv: main exact template"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "malformed-adapter-record",
+      "issues": [
+        "mac-origin:compiler-argv: main exact template",
+        "mac-origin:source-argv: main",
+        "mac-origin:source-drift: main",
+        "mac-origin:source-field: main.CaptureHost.swift",
+        "mac-origin:source-join: main",
+        "mac-origin:source-join: receipt compiled adapter"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "malformed-output-record",
+      "issues": [
+        "mac-origin:binary-join: receipt",
+        "mac-origin:compiler-argv: main",
+        "mac-origin:missing-receipt-field: main output binary",
+        "mac-origin:missing-ref: main output binary"
+      ],
+      "incorrectlyAccepted": false
+    },
+    {
+      "fault": "malformed-invocation-mode",
+      "exception": "TypeError: cannot use 'list' as a set element (unhashable type: 'list')"
+    },
+    {
+      "fault": "extra-unbound-flag",
+      "issues": [
+        "mac-origin:compiler-argv: main exact template"
+      ],
+      "incorrectlyAccepted": false
+    }
+  ]
+}

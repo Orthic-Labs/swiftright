@@ -1,0 +1,24 @@
+{
+  "coreWorkflowEdited": false,
+  "exitCode": 0,
+  "faultFamilies": [
+    "legacy HasExited without kernel signal",
+    "primary failure despite valid cleanup",
+    "nonzero/noninteger kernel wait",
+    "PID/path/start/WM_CLOSE ownership",
+    "terminal stream count/completion/closure",
+    "stream raw hashes/missing bytes",
+    "source/compile/exe/runtime/tool joins",
+    "case/run/strict exit/duplicate row",
+    "reference coverage/path/hash/duplicate JSON",
+    "direct label/caller-pass spoof"
+  ],
+  "fixtureScope": "All mocked source/tool/exe/DLL/receipt bytes synthetic; no native qualification claim.",
+  "guardAPI": "windows_exit_admission_issues(capture, reader) -> list[str]",
+  "kind": "windows-exit-admission-guard-control-review-v1",
+  "nativeQualifications": 0,
+  "remoteActions": 0,
+  "status": "ready-for-independent-source-review",
+  "syntheticFixturesOnly": true,
+  "tests": 11
+}
