@@ -1,0 +1,46 @@
+{
+  "kind": "factory-uia-snapshot-worker-contract-v1",
+  "sourceBindings": [
+    {
+      "path": "worker.ps1",
+      "sha256": "74dae20f9ba2273eb2f91f942d9d7421de5f303b2d9e0b73dad4d3e6a3274c09",
+      "bytes": 3686
+    },
+    {
+      "path": "read-uia.ps1",
+      "sha256": "99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad",
+      "bytes": 751
+    },
+    {
+      "path": "schema.ps1",
+      "sha256": "ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61",
+      "bytes": 5887
+    },
+    {
+      "path": "support/cleanup.ps1",
+      "sha256": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+      "bytes": 6746
+    },
+    {
+      "path": "support/stream-seal.ps1",
+      "sha256": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+      "bytes": 6200
+    }
+  ],
+  "readUiaSha256": "99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad",
+  "powershellMembership": [
+    "invoke-worker.ps1",
+    "read-uia.ps1",
+    "run-controls.ps1",
+    "schema.ps1",
+    "support/cleanup.ps1",
+    "support/stream-seal.ps1",
+    "test-pure.ps1",
+    "worker.ps1"
+  ],
+  "parentMustNotLoadUIAutomation": true,
+  "naturalWorkerExitBeforePixelsAndClose": true,
+  "workerExitDeadlineSeconds": 15,
+  "rawCopyDeadlineSeconds": 5,
+  "rawClosureDeadlineSeconds": 5
+}

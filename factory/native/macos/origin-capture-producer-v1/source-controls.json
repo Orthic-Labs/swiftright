@@ -1,0 +1,23 @@
+{
+  "kind": "f5-mac-origin-source-controls",
+  "version": 1,
+  "controls": [
+    {"id": "missing-origin", "expected": "fresh item rejected before qualification"},
+    {"id": "capture-id-mismatch", "expected": "normalized item raises before artifact write"},
+    {"id": "symlink-origin-file", "expected": "regular-file ref rejected"},
+    {"id": "source-byte-mutation", "expected": "hash/size join rejected"},
+    {"id": "case-byte-mutation", "expected": "canonical case join rejected"},
+    {"id": "compiler-receipt-missing", "expected": "fresh build item aborts"},
+    {"id": "tool-before-after-drift", "expected": "receipt status not SUCCESS"},
+    {"id": "source-drift", "expected": "receipt status not SUCCESS"},
+    {"id": "unbound-compiler-argv", "expected": "receipt admission rejected"},
+    {"id": "available-ax-without-auxiliary", "expected": "origin admission rejected"},
+    {"id": "duplicate-or-missing-run", "expected": "20-row evidence check rejected"}
+  ],
+  "execution": {
+    "nativeRuns": 0,
+    "compilerRuns": 0,
+    "permissionRequests": 0,
+    "historicalCaptureWrites": 0
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "controls": {
+    "AVAILABLE-without-auxiliary": "mac-origin:ax-join",
+    "actual-mocked-producer-main-and-AX-to-real-guard": "PASS fixture only",
+    "archived-aliases-after-live-source/tool/binary-removal": "PASS no live/compiler execution",
+    "argv-extra": {
+      "issues": [
+        "mac-origin:compiler-argv: main exact template",
+        "mac-origin:source-argv: main"
+      ],
+      "rejection": "mac-origin:compiler-argv"
+    },
+    "bool-pid": {
+      "issues": [
+        "mac-origin:process-owner: main.compiler",
+        "mac-origin:process: main.compiler.pid"
+      ],
+      "rejection": "mac-origin:process"
+    },
+    "cleanup-int0": {
+      "issues": [
+        "mac-origin:cleanup: main.compiler.timedOut"
+      ],
+      "rejection": "mac-origin:cleanup"
+    },
+    "compiler-before-resolver": {
+      "issues": [
+        "mac-origin:process-time: main compiler precedes resolver"
+      ],
+      "rejection": "mac-origin:process-time"
+    },
+    "gzip-control": "PASS extracted raw hash matches; gzip bytes themselves are not reader-compatible",
+    "missing-descriptor-ref": "mac-origin:missing-ref",
+    "naive-clock": {
+      "issues": [
+        "mac-origin:bad-timezone: main.compiler.endedAtUtc"
+      ],
+      "rejection": "mac-origin:bad-timezone"
+    },
+    "nonexecutable-output": "ACCEPTED producer+byte guard; launch not executed; must validate executable output before statusSUCCESS",
+    "output-hash": {
+      "issues": [
+        "mac-origin:binary-join: main",
+        "mac-origin:binary-join: receipt",
+        "mac-origin:read-failed: main output binary: Mac reference bytes differ from pinned hash"
+      ],
+      "rejection": "mac-origin:binary-join"
+    },
+    "owner-false": {
+      "issues": [
+        "mac-origin:process-owner: main.compiler"
+      ],
+      "rejection": "mac-origin:process-owner"
+    },
+    "raw-hash": {
+      "issues": [
+        "mac-origin:read-failed: main compiler stdout: Mac reference bytes differ from pinned hash"
+      ],
+      "rejection": "mac-origin:read-failed"
+    },
+    "resolver-failure": {
+      "ownedSignals": [],
+      "returncode": 1,
+      "status": "RESOLVE_FAILED"
+    },
+    "resolver/compiler-argv-pipes-owned-session": "PASS exact producer calls",
+    "shallow-checker-invalid-bool-pid": "ACCEPTED defect; real guard rejects same receipt",
+    "source-drift": {
+      "ownedSignals": [],
+      "returncode": 125,
+      "status": "SOURCE_DRIFT"
+    },
+    "timeout": {
+      "ownedSignals": [
+        [
+          31002,
+          15
+        ],
+        [
+          31002,
+          9
+        ]
+      ],
+      "returncode": 124,
+      "status": "TIMEOUT"
+    },
+    "tool-alias-drift": {
+      "issues": [
+        "mac-origin:tool-drift"
+      ],
+      "rejection": "mac-origin:tool-drift"
+    },
+    "wrong-case-ref": "mac-origin:read-failed"
+  },
+  "scope": "offline synthetic mocked producer; no compiler/resolver/native/remote execution"
+}

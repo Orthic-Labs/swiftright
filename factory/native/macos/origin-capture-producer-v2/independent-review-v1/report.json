@@ -1,0 +1,69 @@
+{
+  "TCCJudgment": "CaptureHost.swift &AXClient.swift use AXIsProcessTrusted/CGPreflightScreenCaptureAccess; no CGRequestScreenCaptureAccess orAXIsProcessTrustedWithOptions present. Internal_scratch publicCLI confinement unchanged; fixturesneverexecuted.",
+  "cleanup": "TemporaryDirectory inside.factory-work removed; noownedfixture staging retained",
+  "controls": {
+    "count": 10,
+    "path": "controls-results.json",
+    "sha256": "4ec1f154b4f2483d6945f3760df1cfacbd4eaa1b63b939d1561e0841159b3b1b"
+  },
+  "findings": [
+    {
+      "evidence": "CLI callsfresh_ax_preflight(scratch, outputroot), writesaxreceipt+streams atoutputroot. capture descriptor/file_ref &archive_origin instead expectper-case evidence/ax-compiler-receipt.json. Actualarchive_origin offline reproduction raisesCaptureError missingcaseauxreceipt even whenfresh_client.compilerReceiptPath exactparentreceipt exists.",
+      "id": "AVAILABLE-auxiliary-receipt-path",
+      "repair": "Use recordedfreshclientreceiptpath &source/binary identities. Archiveall references fromauxreceipt (resolver/compilerstreams,sources,output) &bind originalpaths unchanged; do not invent/copyreceipt withrewrittenprocesspaths.",
+      "severity": "blocking-before-fresh20",
+      "source": "capture.py341/342/559 vs535/259"
+    },
+    {
+      "evidence": "Archiveorigin calls _materialize_compiler_tools only for maincompilerreceipt; auxiliaryreceipt separately archived but its tool paths never materialized. Samehashsamepaths maysharealiases, butdifferentauxcompilerpath/hash cannotbe replayed afterliveinputs removed.",
+      "id": "auxiliary-tool-closure",
+      "repair": "Materialize/bindtools fromboth exactmain &auxreceipts. Conflictinglogicalpath/hashes mustreject explicitly ratherthanoverwriteone mapping.",
+      "severity": "blocking-durable-auxiliary-proof",
+      "source": "capture.py255/256 main _materialize_compiler_tools only"
+    }
+  ],
+  "fixedV1Findings": [
+    "Actualproduction archive_origin closure +ArchiveByteReader+guard+checker replay pass after deleting ownedfixture livework/source/binary/case/receipts/tools.",
+    "Toolgzip materializes matching exact rawbytes at0644; real reader admits extractedbytes without installedtool.",
+    "Actualcompiler_build regular0644 output returnsOUTPUT_MODE/nonzero; no launch.",
+    "Outercheck_evidence.verify invokes fullguard at70 aftershallowjoins; typedPID/falseowner/intcleanup/rawhash/reversedUTC rejected byrealguard."
+  ],
+  "kind": "fresh-mac-origin-producer-v2-independent-review",
+  "scope": "offline mocked compiler/resolver &productionarchive/reader/guard/checker source review; no native/compiler/remote/Git; existing history unchanged",
+  "scriptSha256": "a58ccf5d8e458726cab58e1a79bb1f11ef0af52be963d603128c0859de4d611f",
+  "sourcePins": [
+    {
+      "path": "factory/native/macos/capture.py",
+      "sha256": "c2e650ffb7bc52596cdfa9d6314aadd36c93b3365fafd44fd82adc25536f0ee9"
+    },
+    {
+      "path": "factory/native/macos/normalize.py",
+      "sha256": "057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2"
+    },
+    {
+      "path": "factory/native/macos/check_evidence.py",
+      "sha256": "6a75764fc7972f989eefc237a13a906583ff37663347c7aafabd73124aa06d27"
+    },
+    {
+      "path": "factory/native/macos/test_capture.py",
+      "sha256": "14092307ac7f61176e03a083b79e2169411e1fafc249b31c1717f58ec2fb15f2"
+    },
+    {
+      "path": "factory/gate/mac_origin_admission.py",
+      "sha256": "abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e"
+    },
+    {
+      "path": "factory/pipeline/archive_reader.py",
+      "sha256": "8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e"
+    },
+    {
+      "path": "factory/native/macos/CaptureHost.swift",
+      "sha256": "749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b"
+    },
+    {
+      "path": "factory/native/macos/AXClient.swift",
+      "sha256": "9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+    }
+  ],
+  "verdict": "HOLD_AUXILIARY_CLI_ARCHIVE_WIRING"
+}

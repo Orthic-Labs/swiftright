@@ -2,9 +2,11 @@
 """No-prompt native candidate collector. Fresh executables live on internal disk."""
 from __future__ import annotations
 import argparse
+import gzip
 import json
 import os
 import signal
+import stat
 from pathlib import Path
 import re
 import shutil
@@ -27,6 +29,73 @@ class CaptureError(ValueError): pass
 
 def digest(path: Path) -> str:
     return file_hash(path)
+
+def file_ref(path: Path) -> dict:
+    path = Path(path).expanduser()
+    if path.is_symlink():
+        raise CaptureError(f'origin artifact is not a regular file: {path}')
+    path = path.resolve()
+    if not path.is_file():
+        raise CaptureError(f'origin artifact is not a regular file: {path}')
+    return {'path': str(path), 'sha256': digest(path), 'bytes': path.stat().st_size}
+
+def _write_exact(path: Path, raw: bytes, mode: int = 0o644) -> None:
+    if path.exists():
+        if path.is_symlink() or not path.is_file() or path.read_bytes() != raw or stat.S_IMODE(path.stat().st_mode) != mode:
+            raise CaptureError(f'archive reuse differs: {path}')
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(raw)
+    path.chmod(mode)
+
+def _archive_file(path: Path, archive_root: Path, path_map: dict[str, str], *, executable: bool = False) -> None:
+    path = Path(path)
+    if path.is_symlink() or not path.is_file():
+        raise CaptureError(f'archive source is not regular: {path}')
+    if executable and not (stat.S_IMODE(path.stat().st_mode) & 0o111):
+        raise CaptureError(f'archive executable lacks execute mode: {path}')
+    raw = path.read_bytes()
+    target = archive_root / 'files' / f'{digest(path)[7:]}-{path.name}'
+    _write_exact(target, raw, stat.S_IMODE(path.stat().st_mode) or 0o644)
+    path_map[str(path.resolve())] = str(target.resolve())
+
+def _materialize_compiler_tools(receipt: dict, evidence: Path, archive_root: Path, path_map: dict[str, str]) -> None:
+    """Bind receipt tool paths to exact shared archive bytes, never gzip as raw."""
+    compiler = receipt.get('compiler') or {}
+    tool_archive = REPO / 'factory/oracle/mac/compiler-tool-archive-v1'
+    manifest = json.loads((tool_archive / 'archive-manifest.json').read_text())
+    shared = evidence.parent / 'mac-origin-tool-cache'
+    shared.mkdir(parents=True, exist_ok=True)
+    known = {entry['sha256']: entry for entry in manifest.get('entries', [])}
+    for logical, real, expected in (
+        ('/usr/bin/xcrun', '/usr/bin/xcrun', compiler.get('xcrunHash')),
+        (compiler.get('logicalCompilerPath'), compiler.get('realPathBefore'), (compiler.get('realToolBefore') or {}).get('sha256')),
+    ):
+        if not isinstance(logical, str) or not isinstance(real, str) or not isinstance(expected, str):
+            raise CaptureError('compiler receipt lacks tool identity')
+        entry = known.get(expected)
+        if entry is not None:
+            archive_path = tool_archive / entry['archivePath']
+            compressed = archive_path.read_bytes()
+            if len(compressed) != entry['archiveBytes'] or digest_bytes(compressed) != entry['archiveSha256']:
+                raise CaptureError(f'compiler archive bytes differ: {archive_path}')
+            raw = gzip.decompress(compressed) if entry['compression'] == 'gzip' else compressed
+            if len(raw) != entry['bytes'] or digest_bytes(raw) != entry['sha256']:
+                raise CaptureError(f'compiler archive raw bytes differ: {archive_path}')
+            target = tool_archive / entry['archivePath'] if entry['compression'] == 'none' else shared / f'{expected[7:]}.raw'
+            _write_exact(target, raw, 0o644)
+        else:
+            source = Path(real)
+            if source.is_symlink() or not source.is_file() or digest(source) != expected:
+                raise CaptureError('unarchived compiler tool does not match receipt')
+            target = shared / f'{expected[7:]}.raw'
+            _write_exact(target, source.read_bytes(), 0o644)
+        path_map[logical] = str(target.resolve())
+        path_map[real] = str(target.resolve())
+
+def digest_bytes(raw: bytes) -> str:
+    import hashlib
+    return 'sha256:' + hashlib.sha256(raw).hexdigest()
 
 def write(path: Path, obj: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -63,6 +132,160 @@ def logged(command: list[str], prefix: Path, timeout: int = 60) -> subprocess.Co
     prefix.with_suffix('.stdout.txt').write_text(result.stdout)
     prefix.with_suffix('.stderr.txt').write_text(result.stderr)
     return result
+
+def _compiler_snapshot(paths: list[Path]) -> dict:
+    return {path.name: {'path': str(path), 'sha256': digest(path), 'bytes': path.stat().st_size} for path in paths}
+
+def _safe_drain(process: subprocess.Popen, timeout: int = 5) -> tuple[bytes, bytes, dict]:
+    cleanup = {'termSent': False, 'killSent': False, 'groupMissing': False, 'timedOut': False, 'drainTimedOut': False}
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+        return stdout, stderr, cleanup
+    except subprocess.TimeoutExpired:
+        cleanup['timedOut'] = True
+        try:
+            os.killpg(process.pid, signal.SIGTERM); cleanup['termSent'] = True
+        except ProcessLookupError:
+            cleanup['groupMissing'] = True
+        try:
+            stdout, stderr = process.communicate(timeout=5)
+            return stdout, stderr, cleanup
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(process.pid, signal.SIGKILL); cleanup['killSent'] = True
+            except ProcessLookupError:
+                cleanup['groupMissing'] = True
+            try:
+                stdout, stderr = process.communicate(timeout=5)
+                return stdout, stderr, cleanup
+            except subprocess.TimeoutExpired:
+                cleanup['drainTimedOut'] = True
+                return b'', b'', cleanup
+
+def _write_process_receipt(evidence: Path, receipt: dict, receipt_name: str = 'compiler-receipt.json') -> Path:
+    path = evidence / receipt_name
+    try:
+        write(path, receipt)
+    except Exception as error:
+        (evidence / receipt_name.replace('.json', '.failure.txt')).write_text(repr(error) + '\n' + repr(receipt))
+        raise CaptureError(f'cannot persist {receipt_name}: {error}') from error
+    return path
+
+def _tool_snapshot(path: Path, logical: Path | None = None) -> dict:
+    if not path.is_file() or path.is_symlink():
+        raise CaptureError(f'compiler tool is not a regular file: {path}')
+    return {'logicalPath': str(logical or path), 'realPath': str(path), 'sha256': digest(path), 'bytes': path.stat().st_size}
+
+def _compiler_build_common(source_paths: list[Path], work: Path, evidence: Path, executable: Path, *, receipt_name: str, stream_prefix: str, parse_as_library: bool) -> tuple[subprocess.CompletedProcess, dict]:
+    """Build below internal scratch & persist exact origin receipt before return."""
+    source_paths = [Path(path) for path in source_paths]
+    before = _compiler_snapshot(source_paths)
+    resolver = ['/usr/bin/xcrun', '--find', 'swiftc']
+    resolver_out = evidence / f'{stream_prefix}-swiftc-resolve.stdout.txt'
+    resolver_err = evidence / f'{stream_prefix}-swiftc-resolve.stderr.txt'
+    resolver_receipt = {'argv': resolver, 'pid': None, 'pgid': None, 'startedAtUtc': datetime.now(timezone.utc).isoformat(), 'endedAtUtc': None, 'exitCode': None, 'stdoutPath': str(resolver_out), 'stderrPath': str(resolver_err), 'ownedProcessGroup': True}
+    try:
+        process = subprocess.Popen(resolver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False, start_new_session=True)
+        resolver_receipt['pid'] = process.pid; resolver_receipt['pgid'] = process.pid
+        rout, rerr, cleanup = _safe_drain(process, 30)
+        resolver_receipt['cleanup'] = cleanup; resolver_receipt['exitCode'] = process.returncode
+    except Exception as error:
+        rout, rerr = b'', repr(error).encode(); resolver_receipt['error'] = repr(error)
+        resolver_receipt['cleanup'] = {'groupMissing': False, 'termSent': False, 'killSent': False, 'timedOut': False, 'drainTimedOut': False}
+    resolver_receipt['endedAtUtc'] = datetime.now(timezone.utc).isoformat()
+    resolver_out.write_bytes(rout); resolver_err.write_bytes(rerr)
+    resolver_receipt['stdoutHash'] = digest(resolver_out); resolver_receipt['stderrHash'] = digest(resolver_err)
+    if resolver_receipt['exitCode'] != 0 or not rout.strip():
+        receipt = {'kind': 'swift-compiler-process-receipt', 'version': '2', 'invocationMode': 'xcrun', 'resolver': resolver_receipt, 'sourceBefore': before, 'sourceAfter': _compiler_snapshot(source_paths), 'sourceDrift': before != _compiler_snapshot(source_paths), 'compiler': None, 'status': 'RESOLVE_FAILED'}
+        _write_process_receipt(evidence, receipt, receipt_name)
+        return subprocess.CompletedProcess(resolver, resolver_receipt['exitCode'] or 127, rout.decode(errors='replace'), rerr.decode(errors='replace')), receipt
+    logical_path = Path(rout.decode(errors='replace').strip().splitlines()[-1])
+    real_path = logical_path.resolve()
+    tool_before = _tool_snapshot(real_path, logical_path)
+    args = (['-parse-as-library'] if parse_as_library else []) + ['-O', '-o', str(executable)] + [str(path) for path in source_paths]
+    command = ['/usr/bin/xcrun', 'swiftc', *args]
+    compiler = {'argv': command, 'logicalCompilerName': 'swiftc', 'logicalCompilerPath': str(logical_path), 'realPathBefore': str(real_path), 'realHashBefore': tool_before['sha256'], 'realToolBefore': tool_before, 'pid': None, 'pgid': None, 'startedAtUtc': datetime.now(timezone.utc).isoformat(), 'endedAtUtc': None, 'exitCode': None, 'timedOut': False, 'ownedProcessGroup': True, 'cwd': str(work), 'stdoutPath': str(evidence / f'{stream_prefix}.stdout.txt'), 'stderrPath': str(evidence / f'{stream_prefix}.stderr.txt')}
+    try:
+        process = subprocess.Popen(command, cwd=str(work), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False, start_new_session=True)
+        compiler['pid'] = process.pid; compiler['pgid'] = process.pid
+        stdout, stderr, cleanup = _safe_drain(process, 120)
+        compiler['cleanup'] = cleanup; compiler['exitCode'] = process.returncode
+    except Exception as error:
+        stdout, stderr = b'', repr(error).encode(); compiler['error'] = repr(error)
+        compiler['cleanup'] = {'groupMissing': False, 'termSent': False, 'killSent': False, 'timedOut': False, 'drainTimedOut': False}
+    compiler['endedAtUtc'] = datetime.now(timezone.utc).isoformat()
+    build_stdout = Path(compiler['stdoutPath']); build_stderr = Path(compiler['stderrPath'])
+    build_stdout.write_bytes(stdout); build_stderr.write_bytes(stderr)
+    compiler['stdoutHash'] = digest(build_stdout); compiler['stderrHash'] = digest(build_stderr)
+    compiler['timedOut'] = bool(compiler['cleanup'].get('timedOut') or compiler['cleanup'].get('drainTimedOut'))
+    after = _compiler_snapshot(source_paths); source_drift = before != after
+    compiler['sourceBefore'] = before; compiler['sourceAfter'] = after; compiler['sourceDrift'] = source_drift
+    tool_after = _tool_snapshot(real_path, logical_path)
+    compiler['realToolAfter'] = tool_after; compiler['realToolDrift'] = tool_before != tool_after
+    compiler['xcrunPath'] = '/usr/bin/xcrun'; compiler['xcrunHash'] = digest(Path('/usr/bin/xcrun'))
+    compiler['outputBinary'] = {'path': str(executable), 'sha256': digest(executable), 'bytes': executable.stat().st_size} if executable.is_file() and not executable.is_symlink() else None
+    compiler['outputMode'] = stat.S_IMODE(executable.stat().st_mode) if compiler['outputBinary'] else None
+    compiler['outputExecutable'] = bool(compiler['outputMode'] is not None and compiler['outputMode'] & 0o111)
+    status = 'SOURCE_DRIFT' if source_drift else ('TOOL_DRIFT' if compiler['realToolDrift'] else ('TIMEOUT' if compiler['timedOut'] else ('OUTPUT_MODE' if compiler['exitCode'] == 0 and compiler['outputBinary'] and not compiler['outputExecutable'] else ('SUCCESS' if compiler['exitCode'] == 0 and compiler['outputBinary'] else 'FAILED'))))
+    receipt = {'kind': 'swift-compiler-process-receipt', 'version': '2', 'invocationMode': 'xcrun', 'resolver': resolver_receipt, 'sourceBefore': before, 'sourceAfter': after, 'sourceDrift': source_drift, 'compiler': compiler, 'status': status}
+    _write_process_receipt(evidence, receipt, receipt_name)
+    code = 125 if source_drift or compiler['realToolDrift'] else (124 if compiler['timedOut'] else (126 if status == 'OUTPUT_MODE' else (compiler['exitCode'] if compiler['exitCode'] is not None else 127)))
+    return subprocess.CompletedProcess(command, code, stdout.decode(errors='replace'), stderr.decode(errors='replace')), receipt
+
+def compiler_build(work: Path, evidence: Path, executable: Path) -> tuple[subprocess.CompletedProcess, dict]:
+    return _compiler_build_common([work / 'Witness.swift', work / 'CaptureHost.swift'], work, evidence, executable, receipt_name='compiler-receipt.json', stream_prefix='build', parse_as_library=True)
+
+def auxiliary_compiler_build(source: Path, evidence: Path, executable: Path) -> tuple[subprocess.CompletedProcess, dict]:
+    return _compiler_build_common([source], source.parent, evidence, executable, receipt_name='ax-compiler-receipt.json', stream_prefix='ax-build', parse_as_library=False)
+
+def archive_origin(evidence: Path, captures: list[dict], case_file: Path, work: Path, executable: Path, fresh_client: dict | None) -> tuple[object, dict]:
+    """Create durable byte closure & reader for one fresh case."""
+    from factory.pipeline.archive_reader import ArchiveByteReader
+    from factory.gate.mac_origin_admission import mac_origin_admission_issues
+    archive_root = evidence / 'origin-archive'
+    archive_root.mkdir(parents=True, exist_ok=True)
+    path_map: dict[str, str] = {}
+    for path in sorted(p for p in evidence.rglob('*') if p.is_file() and archive_root not in p.parents):
+        _archive_file(path, archive_root, path_map)
+    _archive_file(case_file, archive_root, path_map)
+    _archive_file(work / 'Witness.swift', archive_root, path_map)
+    _archive_file(work / 'CaptureHost.swift', archive_root, path_map)
+    _archive_file(executable, archive_root, path_map, executable=True)
+    compiler_receipt = json.loads((evidence / 'compiler-receipt.json').read_text())
+    _materialize_compiler_tools(compiler_receipt, evidence, archive_root, path_map)
+    if fresh_client and fresh_client.get('externalAX') == 'AVAILABLE':
+        # Bind auxiliary files to exact paths emitted by fresh_ax_preflight.
+        # Its receipt is written beside output, rather than per-case evidence.
+        aux_receipt_path = Path(fresh_client.get('compilerReceiptPath', ''))
+        aux_source_path = Path(fresh_client.get('sourcePath', ''))
+        aux_binary_path = Path(fresh_client.get('executable', ''))
+        for path, is_executable in ((aux_source_path, False), (aux_binary_path, True), (aux_receipt_path, False)):
+            _archive_file(path, archive_root, path_map, executable=is_executable)
+        aux_receipt = json.loads(aux_receipt_path.read_text())
+        _materialize_compiler_tools(aux_receipt, evidence, archive_root, path_map)
+        # Auxiliary receipt streams live beside its receipt, outside evidence.
+        aux_compiler = aux_receipt.get('compiler') if isinstance(aux_receipt, dict) else None
+        aux_resolver = aux_receipt.get('resolver') if isinstance(aux_receipt, dict) else None
+        for process in (aux_resolver, aux_compiler):
+            if isinstance(process, dict):
+                for key in ('stdoutPath', 'stderrPath'):
+                    stream_path = process.get(key)
+                    if isinstance(stream_path, str):
+                        _archive_file(Path(stream_path), archive_root, path_map)
+    tool_archive = REPO / 'factory/oracle/mac/compiler-tool-archive-v1'
+    shared_tool_cache = evidence.parent / 'mac-origin-tool-cache'
+    roots = [str(archive_root.resolve()), str(tool_archive.resolve()), str(shared_tool_cache.resolve())]
+    config = {'version': 1, 'macRoots': roots, 'windowsArchives': {}, 'macPathMap': path_map}
+    config_path = evidence / 'origin-reader-config.json'
+    write(config_path, config)
+    reader = ArchiveByteReader(mac_roots=roots, windows_archives={}, mac_path_map=path_map)
+    for capture in captures:
+        issues = mac_origin_admission_issues(capture, lambda ref, item=capture: reader(capture=item, reference=ref))
+        if issues:
+            raise CaptureError('Mac origin admission failed: ' + '; '.join(issues))
+    manifest = {'version': 1, 'status': 'PASS', 'archiveRoot': str(archive_root.resolve()), 'readerConfig': str(config_path.resolve()), 'readerConfigHash': digest(config_path), 'macPathMapEntries': len(path_map), 'toolArchiveManifest': str((tool_archive / 'archive-manifest.json').resolve()), 'captures': [capture['id'] for capture in captures], 'candidateOnly': True}
+    write(evidence / 'origin-archive-manifest.json', manifest)
+    return reader, manifest
 
 def nonvacuous(raw: dict) -> bool:
     image = raw.get('image', {})
@@ -130,8 +353,9 @@ def fresh_ax_preflight(scratch: Path, evidence: Path) -> dict:
     copied = work / 'AXClient.swift'
     copied.write_bytes(source.read_bytes())
     executable = work / 'f5-ax-client'
-    result = logged(['/usr/bin/xcrun', 'swiftc', '-O', '-o', str(executable), str(copied)], evidence / 'fresh-ax-build', 120)
-    info = {'sourceHash': digest(source), 'permissionRequests': False, 'externalAX': 'HELD', 'kind': 'fresh-client'}
+    result, compiler_receipt = auxiliary_compiler_build(copied, evidence, executable)
+    receipt_path = evidence / 'ax-compiler-receipt.json'
+    info = {'sourceHash': digest(source), 'permissionRequests': False, 'externalAX': 'HELD', 'kind': 'fresh-client', 'sourcePath': str(copied), 'compilerReceiptPath': str(receipt_path), 'compilerReceiptHash': digest(receipt_path), 'compilerStatus': compiler_receipt.get('status'), 'compilerExitCode': (compiler_receipt.get('compiler') or {}).get('exitCode'), 'compileAttempt': 1}
     if result.returncode: return info
     info.update({'executable': str(executable), 'binaryHash': digest(executable)})
     identity = logged(['/usr/bin/codesign', '-dv', '--verbose=4', str(executable)], evidence / 'fresh-ax-identity')
@@ -185,8 +409,10 @@ def capture(manifest_path: Path, scratch: Path, output: Path, runs: int, recorde
     adapted = harness.read_text().replace('__WITNESS_TYPE__', manifest['witnessType'])
     (work / 'CaptureHost.swift').write_text(adapted)
     executable = work / 'capture-host'
-    build = logged(['/usr/bin/xcrun', 'swiftc', '-parse-as-library', '-O', '-o', str(executable), str(work / 'Witness.swift'), str(work / 'CaptureHost.swift')], evidence / 'build', 120)
+    build, compiler_receipt = compiler_build(work, evidence, executable)
     summary = {'kind': 'macos-host-capture-candidate', 'version': '0.1', 'case': manifest['case'], 'block': manifest['block'], 'probeManifest': manifest, 'sourceHash': digest(source), 'provenance': provenance(source, producer='factory/native/macos'), 'adapterSourceHash': digest(harness), 'compiledAdapterHash': digest(work / 'CaptureHost.swift'), 'executionRoot': str(work), 'candidateOnly': True, 'acceptance': 'not-promoted', 'independentProcessesPerRun': True, 'recorder': recorder, 'freshAXClient': fresh_client, 'runs': [], 'channels': {}}
+    receipt_path = evidence / 'compiler-receipt.json'
+    summary.update({'compilerReceipt': compiler_receipt, 'compilerReceiptPath': str(receipt_path), 'compilerReceiptHash': digest(receipt_path)})
     if build.returncode:
         summary.update({'status': 'BUILD_FAILED', 'buildExit': build.returncode})
         write(evidence / 'summary.json', summary)
@@ -216,6 +442,8 @@ def capture(manifest_path: Path, scratch: Path, output: Path, runs: int, recorde
         case_inputs = case.get('inputs', {})
         if inputs.get('colorScheme', 'light') != case_inputs.get('color-scheme', case_inputs.get('colorScheme', 'light')):
             raise CaptureError('environment color scheme differs from canonical case')
+    origin_summary = evidence / 'origin-summary.json'
+    write(origin_summary, summary)
     scale = str(manifest.get('caseInputs', {}).get('scale', 1))
     scheme = str(inputs.get('colorScheme', 'light'))
     resource_args = []
@@ -304,11 +532,30 @@ def capture(manifest_path: Path, scratch: Path, output: Path, runs: int, recorde
         font_observed = all(json.loads((evidence / f'run-{row["run"]:03d}' / 'instrumented.raw.json').read_text()).get('registeredFontResource', {}).get('resourceHash') == font_resource['hash'] for row in summary['runs'])
         summary['channels']['registeredFontProvider'] = 'OBSERVED: hash-bound process CoreText font descriptor identity' if font_observed else 'HELD'
     from factory.native.macos.normalize import normalize_run
+    normalized_captures = []
     for row in summary['runs']:
         if (evidence / f'run-{row["run"]:03d}' / 'instrumented.raw.json').exists():
             directory = evidence / f'run-{row["run"]:03d}'
-            normalize_run(directory, manifest, case, row['run'], summary['channels'], summary['binaryHash'])
+            origin = {
+                'version': '1',
+                'captureId': f'{case["id"]}.macos.run-{row["run"]:03d}',
+                'summary': file_ref(origin_summary),
+                'case': file_ref(case_file),
+                'source': file_ref(work / 'Witness.swift'),
+                'adapter': file_ref(work / 'CaptureHost.swift'),
+                'binary': file_ref(executable),
+                'compilerReceipt': file_ref(evidence / 'compiler-receipt.json'),
+            }
+            if fresh_client and fresh_client.get('externalAX') == 'AVAILABLE':
+                # Reuse exact producer paths; do not reconstruct output-root receipt location.
+                ax_receipt = Path(fresh_client['compilerReceiptPath'])
+                ax_source = Path(fresh_client['sourcePath'])
+                ax_binary = Path(fresh_client['executable'])
+                origin['auxiliaryAX'] = {'receipt': file_ref(ax_receipt), 'source': file_ref(ax_source), 'binary': file_ref(ax_binary)}
+            normalized_captures.append(normalize_run(directory, manifest, case, row['run'], summary['channels'], summary['binaryHash'], origin))
             row['captureHash'] = digest(directory / 'capture.json')
+    if normalized_captures:
+        archive_origin(evidence, normalized_captures, case_file, work, executable, fresh_client)
     write(evidence / 'summary.json', summary)
     return summary
 

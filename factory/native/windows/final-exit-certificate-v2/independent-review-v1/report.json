@@ -1,0 +1,128 @@
+{
+  "kind": "factory-final-exit-certificate-v2-independent-review-v1",
+  "sourceStage": "55ec268f5af7658571a1515895782b68e2974dc8166b4617adc29d7d4b5c459b",
+  "verdict": "CLEAR_SOURCE_PENDING_WINDOWS_RECEIPT",
+  "scope": "incremental source review only; no native/remote/compiler/Git execution",
+  "pureControls": "UNRUN_ON_THIS_HOST; root Windows receipt required",
+  "controls": [
+    "same-original-handle-zero",
+    "qualification-drift",
+    "missing-kernel",
+    "HasExited-only",
+    "wrong-handle-pid",
+    "new-handle",
+    "raw-open",
+    "foreign-owner",
+    "one-stream",
+    "duplicate-stream",
+    "typed-true",
+    "bool-wait",
+    "still-active",
+    "exit-query-failed",
+    "raw-byte-drift",
+    "compile-byte-drift",
+    "exe-byte-drift",
+    "terminal-worker-false",
+    "missing-ref",
+    "deadline-preserved-release",
+    "failed-proof-no-release"
+  ],
+  "findings": [],
+  "checks": [
+    {
+      "name": "stage-manifest-sha",
+      "ok": true,
+      "detail": "55ec268f5af7658571a1515895782b68e2974dc8166b4617adc29d7d4b5c459b"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v2/README.md",
+      "ok": true,
+      "detail": "sha=ccbce311f72e5c6f200bea3ff97f8548b62058eb2bcd4615895b1e6e99d1f29c;size=814"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v2/final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4;size=8684"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v2/source-delta-check.json",
+      "ok": true,
+      "detail": "sha=1100e8ee2beeac0bb9d597333755d704a5955c1451a0becfe64ca9bb15826925;size=270"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v2/test-final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=574dfbe21097a8d03698fcfb7e90b2a448a443ebca2cfedabd7dfa35b9f44995;size=6612"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/README.md",
+      "ok": true,
+      "detail": "sha=c4cb95cc3eac07d6fad58098bd7bc91101cc160f57228877dab8dd78c98f5957;size=3661"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=8a7450385fe7802137d6042e89eac3af0288883181dc693ea8e60f0ef9024c6d;size=8608"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/root-stage-manifest.json",
+      "ok": true,
+      "detail": "sha=e2672aef4a123e808a0b7b34629f61ff4a39ac5763481a8a9234119e8adfe308;size=1985"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/test-final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=39d06e9415da740a15db42406f22bf0d886e4b4bef65933dbcc4408beac17318;size=6508"
+    },
+    {
+      "name": "v1-helper-pinned",
+      "ok": true,
+      "detail": "8a7450385fe7802137d6042e89eac3af0288883181dc693ea8e60f0ef9024c6d"
+    },
+    {
+      "name": "v1-controls-pinned",
+      "ok": true,
+      "detail": "39d06e9415da740a15db42406f22bf0d886e4b4bef65933dbcc4408beac17318"
+    },
+    {
+      "name": "exact-helper-delta",
+      "ok": true,
+      "detail": "one qualification predicate"
+    },
+    {
+      "name": "exact-control-delta",
+      "ok": true,
+      "detail": "one qualification-drift control"
+    },
+    {
+      "name": "all-prior-controls-retained",
+      "ok": true,
+      "detail": "V1 Assert-Control names remain present"
+    },
+    {
+      "name": "21-controls",
+      "ok": true,
+      "detail": "19 Assert-Control rows plus 2 release controls"
+    },
+    {
+      "name": "exact-qualification-guard",
+      "ok": true,
+      "detail": "release proof rejects promoted label"
+    },
+    {
+      "name": "zero-wait-identity-raw-joins",
+      "ok": true,
+      "detail": "existing final sample and archive joins retained"
+    },
+    {
+      "name": "no-direct-lock-or-process-io",
+      "ok": true,
+      "detail": "helper stays callback-only"
+    },
+    {
+      "name": "pure-controls",
+      "ok": true,
+      "detail": "controls stay synthetic"
+    }
+  ]
+}

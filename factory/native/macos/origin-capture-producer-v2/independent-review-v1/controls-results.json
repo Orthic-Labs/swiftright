@@ -1,0 +1,38 @@
+{
+  "controls": {
+    "TCC-source-controls": "PASS preflightonly/no permission request APIs",
+    "actualCLI-AVAILABLE-parent-aux-receipt": {
+      "error": "archive source is not regular: /Volumes/D/claude/swiftright/.factory-work/mac-origin-v2-review-oaa_0hu9/aux/evidence/ax-compiler-receipt.json",
+      "result": "BLOCKER reproduced"
+    },
+    "cleanup-int0": {
+      "issues": [
+        "mac-origin:cleanup: main.compiler.killSent"
+      ],
+      "rejection": "mac-origin:cleanup"
+    },
+    "compiler-nonexec-output": "PASS OUTPUT_MODE &nonzero, no launch",
+    "fullguard-malformed-boolPID": "PASS realguard rejects; outer verify invokes guard at70",
+    "ownerfalse": {
+      "issues": [
+        "mac-origin:process-owner: main.compiler"
+      ],
+      "rejection": "mac-origin:process-owner"
+    },
+    "production-gzip-tool-mapping": "PASS exact extracted0644rawbytes",
+    "production-main-archive-after-live-deletion": "PASS realarchive+reader+guard+checker fixtureonly",
+    "rawhash": {
+      "issues": [
+        "mac-origin:read-failed: main compiler stdout: Mac reference bytes differ from pinned hash"
+      ],
+      "rejection": "mac-origin:read-failed"
+    },
+    "reversedUTC": {
+      "issues": [
+        "mac-origin:process-time: main.compiler"
+      ],
+      "rejection": "mac-origin:process-time"
+    }
+  },
+  "scope": "offline synthetic mocked resolver/compiler; no native/compiler/remote execution"
+}

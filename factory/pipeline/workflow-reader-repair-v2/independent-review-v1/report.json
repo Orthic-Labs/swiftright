@@ -1,0 +1,30 @@
+{
+  "actualControls": {
+    "artifactReader": "ArchiveByteReader(mac_roots=repo-root)",
+    "baselineCollected": 20,
+    "gateEvidenceNativeCaptureCount": 20,
+    "gateEvidenceParityGranted": false,
+    "mutationCollected": 19,
+    "mutationReason": "verified reader returned bytes differing from expected hash: /Volumes/D/claude/swiftright/factory/native/macos/evidence/20261010-gate-seeded/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json",
+    "originReader": "ArchiveByteReader(mac_roots=mac-capture-root)",
+    "prepareCaseDenominator": 81,
+    "source": "factory/pipeline/workflow.py",
+    "verdict": "PASS_READER_BOUND_ARTIFACT_REPLAY",
+    "witnessMutationReason": "verified reader returned bytes differing from expected hash: /Volumes/D/claude/swiftright/factory/recipes/witnesses/swiftui.custom-layout.witness.swift"
+  },
+  "producerStageSha256": "39407ec98c8a18be0e9b48b41318deb0e89ed529a70507166da101ee97ffec83",
+  "scope": "Source/Python generation & reader controls only; no compile/native/remote actions; per-read expected snapshot hashes require caller fixed input closure",
+  "source": {
+    "bytes": 36745,
+    "path": "factory/pipeline/workflow.py",
+    "sha256": "sha256:c66219c4944bdac1b1c9ff481edcda18c82331847ea13b32099e25d483b4cc86"
+  },
+  "temporaryWitnessProbeCount": 81,
+  "verdict": "CLEAR_BOUNDED_READER_CALLBACK_AND_GENERATOR_REPAIR",
+  "verified": [
+    "prepare artifact_reader separate from OriginTrap callback; no origin callback consumed for artifacts",
+    "Actual generator consumes temporary copies whose full bytes equal recipe source pins",
+    "Returned capture ID & witness source drift reject exact hash mismatch before parse/generation",
+    "Legacy omitted-reader paths preserved; collect keyword reader explicitly retained"
+  ]
+}

@@ -12,7 +12,7 @@ def measured(value):
     if isinstance(value, dict): return {key: measured(item) for key, item in value.items()}
     return value
 
-def normalize_run(directory: Path, manifest: dict, case: dict, run: int, channels: dict, binary_hash: str) -> dict:
+def normalize_run(directory: Path, manifest: dict, case: dict, run: int, channels: dict, binary_hash: str, origin: dict | None = None) -> dict:
     raw_file = directory / 'instrumented.raw.json'
     raw = json.loads(raw_file.read_text())
     clock = {'clockId': 'macos.dispatch.uptime', 'startNs': raw['monoStartNs'], 'endNs': raw['monoEndNs'], 'scope': 'same-process render interval only'}
@@ -41,7 +41,12 @@ def normalize_run(directory: Path, manifest: dict, case: dict, run: int, channel
             if node.get('label') or node.get('title'): record['label'] = node.get('label') or node['title']
             if 'value' in node: record['value'] = node['value']
             ax.append(record)
-    capture = {'kind': 'capture', 'version': '0.1', 'id': f'{case["id"]}.macos.run-{run:03d}', 'provenance': provenance(raw_file, [{'id': 'macos.capture.binary', 'hash': binary_hash}], producer='factory/native/macos'), 'case': manifest['case'], 'platform': 'macos', 'tuple': case['tuple'], 'meta': {'run': run, 'host': {'id': 'factory.host.macos.measured', 'hash': case['tuple']['hostHashes']['macos']}, 'conditions': {'candidateOnly': True, 'observationalOnly': True, 'channelStatus': channels, 'clockScope': clock['scope'], 'caseInputs': case['inputs']}, 'clock': {'clockId': clock['clockId'], 'correlationHash': canonical_hash(clock)}}, 'layout': layout, 'ax': ax, 'events': [{'id': 'offscreen.begin', 'kind': 'capture-render-begin', 'timeNs': clock['startNs'], 'clockId': clock['clockId']}, {'id': 'offscreen.end', 'kind': 'capture-render-end', 'timeNs': clock['endNs'], 'clockId': clock['clockId']}], 'anim': [], 'images': images, 'text': []}
+    conditions = {'candidateOnly': True, 'observationalOnly': True, 'channelStatus': channels, 'clockScope': clock['scope'], 'caseInputs': case['inputs']}
+    if origin is not None:
+        if origin.get('captureId') != f'{case["id"]}.macos.run-{run:03d}':
+            raise ValueError('origin captureId does not match normalized capture')
+        conditions['macOrigin'] = origin
+    capture = {'kind': 'capture', 'version': '0.1', 'id': f'{case["id"]}.macos.run-{run:03d}', 'provenance': provenance(raw_file, [{'id': 'macos.capture.binary', 'hash': binary_hash}], producer='factory/native/macos'), 'case': manifest['case'], 'platform': 'macos', 'tuple': case['tuple'], 'meta': {'run': run, 'host': {'id': 'factory.host.macos.measured', 'hash': case['tuple']['hostHashes']['macos']}, 'conditions': conditions, 'clock': {'clockId': clock['clockId'], 'correlationHash': canonical_hash(clock)}}, 'layout': layout, 'ax': ax, 'events': [{'id': 'offscreen.begin', 'kind': 'capture-render-begin', 'timeNs': clock['startNs'], 'clockId': clock['clockId']}, {'id': 'offscreen.end', 'kind': 'capture-render-end', 'timeNs': clock['endNs'], 'clockId': clock['clockId']}], 'anim': [], 'images': images, 'text': []}
     validate_artifact(capture)
     write_artifact(directory / 'capture.json', capture)
     return capture

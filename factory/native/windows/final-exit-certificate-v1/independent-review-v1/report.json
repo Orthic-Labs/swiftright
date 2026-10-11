@@ -1,0 +1,141 @@
+{
+  "kind": "factory-final-exit-certificate-independent-review-v1",
+  "sourceStage": "e2672aef4a123e808a0b7b34629f61ff4a39ac5763481a8a9234119e8adfe308",
+  "verdict": "HOLD_QUALIFICATION_BINDING",
+  "scope": "read-only source review; no native/remote/compiler/Git execution",
+  "pureControls": "UNRUN_ON_THIS_HOST; root Windows receipt required",
+  "controls": [
+    "same-original-handle-zero",
+    "missing-kernel",
+    "HasExited-only",
+    "wrong-handle-pid",
+    "new-handle",
+    "raw-open",
+    "foreign-owner",
+    "one-stream",
+    "duplicate-stream",
+    "typed-true",
+    "bool-wait",
+    "still-active",
+    "exit-query-failed",
+    "raw-byte-drift",
+    "compile-byte-drift",
+    "exe-byte-drift",
+    "terminal-worker-false",
+    "missing-ref",
+    "deadline-preserved-release",
+    "failed-proof-no-release"
+  ],
+  "findings": [
+    {
+      "severity": "admission-blocker",
+      "id": "certificate-qualification-not-bound",
+      "file": "factory/native/windows/final-exit-certificate-v1/final-exit-certificate.ps1",
+      "function": "Test-FactoryFinalReleaseProof",
+      "detail": "Proof enforces kind/scope, start lineage, worker/cert/raw/compile/exe hashes, but does not enforce qualification == failed-or-successful-observation-only. Constructor emits label, yet an archived cert with altered qualification can pass owner-release proof.",
+      "fix": "Require exact qualification label in proof & add one negative control mutating it; preserve qualification as diagnostic-only."
+    }
+  ],
+  "checks": [
+    {
+      "name": "stage-manifest-sha",
+      "ok": true,
+      "detail": "e2672aef4a123e808a0b7b34629f61ff4a39ac5763481a8a9234119e8adfe308"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/README.md",
+      "ok": true,
+      "detail": "sha=c4cb95cc3eac07d6fad58098bd7bc91101cc160f57228877dab8dd78c98f5957;size=3661"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=8a7450385fe7802137d6042e89eac3af0288883181dc693ea8e60f0ef9024c6d;size=8608"
+    },
+    {
+      "name": "file:factory/native/windows/final-exit-certificate-v1/test-final-exit-certificate.ps1",
+      "ok": true,
+      "detail": "sha=39d06e9415da740a15db42406f22bf0d886e4b4bef65933dbcc4408beac17318;size=6508"
+    },
+    {
+      "name": "file:factory/native/windows/stack-lifecycle-next-capture-v1/support/cleanup.ps1",
+      "ok": true,
+      "detail": "sha=a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7;size=6746"
+    },
+    {
+      "name": "file:factory/native/windows/stack-lifecycle-next-capture-v1/support/stream-seal.ps1",
+      "ok": true,
+      "detail": "sha=4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d;size=6200"
+    },
+    {
+      "name": "file:factory/native/windows/stack-lifecycle-next-capture-v1/support/lifecycle-timing.ps1",
+      "ok": true,
+      "detail": "sha=c6951ea443587b3027141f4d08ddc942b8d364a7b920bee16e3a5cc76b7c62a5;size=2397"
+    },
+    {
+      "name": "file:factory/native/windows/stack-lifecycle-next-capture-v1/root-release-r1/release.ps1",
+      "ok": true,
+      "detail": "sha=8354fdf0a605d0071cbd76d720e14be8e69e327c7c5a60c5b4ad34a7737455f3;size=5183"
+    },
+    {
+      "name": "manifest-file-count",
+      "ok": true,
+      "detail": "count=7"
+    },
+    {
+      "name": "strict-start-identity",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "zero-wait-double-kernel",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "same-handle-pid-exit",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "sealed-raw-join",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "lineage-byte-joins",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "release-after-proof",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "no-direct-lock-io",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "controls-pure",
+      "ok": true,
+      "detail": "required source tokens present"
+    },
+    {
+      "name": "twenty-controls",
+      "ok": true,
+      "detail": "assert-controls=18 plus 2 release controls"
+    },
+    {
+      "name": "failed-outcome-preserved",
+      "ok": true,
+      "detail": "deadline failure and callback refusal controls present"
+    },
+    {
+      "name": "qualification-immutable-in-proof",
+      "ok": false,
+      "detail": "proof must reject certificate qualification drift"
+    }
+  ]
+}

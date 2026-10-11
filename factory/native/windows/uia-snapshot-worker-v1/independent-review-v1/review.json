@@ -1,0 +1,31 @@
+{
+  "kind": "factory-uia-snapshot-worker-independent-source-review-v1",
+  "status": "source-review-clear-integration-not-included",
+  "reviewedStageManifestSha256": "a386a18fa3e14174e52ead92ef513503e2b2075f646c219d921bd05cd7fa0d57",
+  "reviewedFiles": {
+    "invoke-worker.ps1": "9c02e6b9e963c3e57141287f884d558f370482e509f5ab20d8a884988956681a",
+    "worker.ps1": "74dae20f9ba2273eb2f91f942d9d7421de5f303b2d9e0b73dad4d3e6a3274c09",
+    "read-uia.ps1": "99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad",
+    "schema.ps1": "ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61",
+    "cleanup.ps1": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+    "stream-seal.ps1": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+    "worker-contract.json": "c274a88ba33ffbfa3334e5f2d8a0929d09c942c53ba71db06eddc08024463bd3"
+  },
+  "review": {
+    "uiaReader": "Byte-identical to original capture Read-UIA function; traversal order, fields, depth and child bounds preserved.",
+    "parentIsolation": "Parent entry has no UIAutomation assembly, AutomationElement, Read-UIA or live UIA type references; JSON scalar validation is the only boundary.",
+    "targetOwnership": "Worker rechecks PID, executable path, UTC start, HWND-to-PID mapping, non-exited state, lock owner and non-foreground target/worker before root acquisition, before traversal and after traversal.",
+    "naturalExit": "Parent requires WaitForExit then retained process-handle WaitForSingleObject result 0 before cleanup; proof requires exit code 0, pre-cleanup kernel 0, already-signaled cleanup, no kill and empty primary/stream errors.",
+    "rawStreams": "Parent waits for both raw copies, closes and seals destinations, measures hashes, validates exact stdout/stderr pair, then validates UIA bytes and returns. Caller cannot receive a successful result before this sequence completes.",
+    "boundedCleanup": "Worker exit is bounded at 15 seconds; copy and each destination closure are bounded at 5 seconds; failed/timeout cleanup cannot qualify snapshot. Original capture helper bytes are retained unchanged.",
+    "backgroundAndActivation": "Worker makes no activation/window/input calls; target or worker foreground state aborts; lock and target guards bracket each UIA phase.",
+    "integrationBoundary": "Packet is an isolated source recipe. No production capture caller is changed or included, so pixel and WM_CLOSE ordering is specified for future caller integration, not demonstrated by this packet.",
+    "nativeBoundary": "No Windows/native execution was performed or claimed."
+  },
+  "independentChecks": {
+    "sourceVerifier": "verify-source.py passed; reported 17 exact-source/membership/static controls.",
+    "rootStageManifest": "All 16 listed files matched exact SHA-256 and byte-size pins.",
+    "nativeExecuted": false,
+    "powershellPureControlsExecutedByReviewer": false
+  }
+}

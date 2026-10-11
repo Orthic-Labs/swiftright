@@ -1,6 +1,6 @@
 # ABI 0.7 proposal — HELD
 
-Proposal only, following ABI 0.6 freeze. `render/`, bridge ABI, headers & implementation remain HELD until `docs/sr0-status.md` explicitly records SR0 **CLOSED**, expected tuple10. Tuple10 staging, proposal approval or factory receipts do not substitute for closure. No current qualification changes follow from this document.
+Proposal only, following ABI 0.6 freeze. `render/`, bridge ABI, headers & implementation remain HELD until `docs/sr0-status.md` explicitly records SR0 **CLOSED**, baseline tuple11. Tuple11 staging, proposal approval or factory receipts do not substitute for closure. No current qualification changes follow from this document.
 
 ## Evidence & scope
 
@@ -14,19 +14,19 @@ F7 capture implementation reuse: Smoke09 PrintWindow `PW_RENDERFULLCONTENT` plus
 
 ### Initial settled client metrics
 
-ABI 0.7 must either report settled client size through `ready`, or guarantee a window-metrics event carrying settled size before first layout. This is a proposed post-closure guarantee; no ABI 0.6 layout, callback signature or current protected implementation is changed here.
+An opt-in ABI 0.7 host contract must either receive settled client size through `ready`, or wait for a settled window-metrics event before first layout. Preserve legacy `swr_run` callback order & behavior; define any renderer scheduling change through a separately versioned run/options contract after closure. Existing factory workaround reads owned client size/scale & preserves ready samples.
 
 Original factory run requested 320×240 DIPs, logged ready 800×1396 physical pixels at scale2.5, then measured an 800×600 physical client at DPI240. These are same-run samples from different phases, not a synchronized proof of cause. [Exact source/raw joins](../pipeline/viewport-original-run-facts-v1/facts.json) preserve this distinction; SR0 owner records likely early ready sampling in `docs/sr0-findings.md` §12 as an SR1 item.
 
-Next observational padding run should log requested DIPs, ready metrics & owned `GetClientRect` in ready callback, then raw first actual window-metrics event & another client measurement in that callback. Include PID/HWND/thread, monotonic/UTC clocks, event sequence, DPI/scale & first-layout ordering. A tick/poll read cannot stand in for an actual metrics event. Missing event or unsettled size remains explicit; host continues laying out from measured client/scale while preserving ready values. One such run supplies bounded diagnostic evidence, not broader parity or repeatability qualification.
+Source-bound padding single using tuple11 renderer & additive runtime37429120 supplied this proof (its plan records frozenTupleBound=false): requested320×240 DIP; ready/Bridge.metrics800×1396px while owned client800×600px at240DPI/scale2.5. First real window-metrics event carries800×600px & arrives0.5071ms after first layout; Bridge.metrics still carries old height. [Raw single review](../native/windows/padding-settled-capture-v4/actual-single-review-v1/report.json) binds callbacks, PID/HWND/thread, event sequence & clocks. This demonstrates current ordering/metrics mismatch for one run; host workaround remains required.
 
-Keep major0; minor becomes7 only after closure/freeze. Preserve every ABI0.6 field, offset, enum, callback, ownership rule & function signature. Append five size words to `swr_bootstrap_info`, six pointers to `swr_api`; keep all other existing structs unchanged. Do not repurpose reserved slots. `swr_frame` is a new opaque `uint64_t` generation handle.
+Keep legacy0/6/16 constants, `swr_bootstrap_info`88 bytes, `swr_api`136 bytes & every existing export/layout/enum/callback/behavior unchanged. After closure add separate0/7/22 constants, `swr_bootstrap_info_v07`108 bytes & `swr_api_v07`184 bytes: identical field offsets plus five size words/six pointers. Do not repurpose reserved slots. `swr_frame` is a new opaque `uint64_t` generation handle. [Compatibility source review](compatibility-review-v1/proposal.md) specifies exact legacy/versioned behavior.
 
-Retain **exact major/minor** validation. Current0.6 Swift loader rejects0.7 before table access;0.7 loader rejects0.6. Append-only layout does not promise cross-minor binary compatibility. `swr_bootstrap_query` remains caller-bounded & allocation/thread/callback-free: return `struct_size=108`, `api_table_size=184`, `fn_count=22`, `abi_minor=7`; never write beyond caller_size. Existing88-byte callers can read minor then refuse safely.0.7 loader requires full108-byte bootstrap, pointer_width64, supported arch & all size values before resolving/getting API.
+Retain exact validation independently for both views. Existing `swr_bootstrap_query` returns unchanged0.6 metadata & writes exactly88 bytes; existing `swr_get_api` returns unchanged16-pointer136-byte table, accepting existing minimum-size/oversized buffers with identical errors. New `swr_bootstrap_query_v07` requires at least108 bytes, writes exactly108, returns size108/API184/count22/minor7; new `swr_get_api_v07` requires at least184 bytes & writes exactly184. Both discovery paths remain allocation/thread/callback-free, with no global mode selection. Unchanged0.6 loader uses legacy names & must run against new DLL. New0.7 loader resolves versioned names, validates full bootstrap identity/width/arch/sizes before table use; old DLL fails through missing versioned exports.
 
 Bootstrap tail: `uint32_t frame_request_size@88=32, frame_info_size@92=144, node_geometry_size@96=64, frame_record_size@100=72, clock_sample_size@104=64`. Alignment4, total108. Supported runtime target remains Windows x64; arm64 layout proof supports fixed-layout reasoning, not Windows arm64 qualification. Mac arm64 oracle remains native SwiftUI.
 
-`get_api(out,caller_size)` must receive184 bytes from0.7 hosts; reject smaller tables with `SWR_E_ABI`, no writes. Table `struct_size=184`, reserved0, no NULL appended pointers; unsupported presentation feedback reports status/validity through implemented exports. Later minor revisions repeat exact-version handshake, append tails & advertise sizes; breaking existing layouts require new major. No optional capabilities registry is needed for this bounded revision.
+Versioned `swr_get_api_v07(out,caller_size)` rejects short/null storage with `SWR_E_ABI`, no writes. New table size184/reserved0 has original16 pointer identities/signatures plus six non-null appended pointers. Pointer offsets match legacy prefix; whole136-byte prefix differs at `struct_size`, intentionally. Legacy `swr_get_api` keeps its136-byte view. Unsupported presentation feedback reports status/validity through implemented exports. Future revisions retain each released view & use explicit versioned discovery; breaking existing layouts require new major.
 
 Indices below are zero-based; table header is8 bytes, pointer width8.
 
@@ -57,7 +57,7 @@ C declarations live in standalone `abi-0.7-layout-mock.c`; use C fixed-width int
 
 Geometry output entries use fixed64-byte stride, with no embedded struct_size; frame_nodes belongs to exact0.7 table. For later growth use new version/table contract. `frame_info` & clock output callers initialize struct_size to exact declared size; renderer verifies before reading/writing. Record output always72-byte stride.
 
-Frozen0.6 sizes read from identical headers: bootstrap88/4, api136/8, callbacks112/8, transaction72/8, node144/8, primitive80/8, semantic88/8, AX text run80/8, event136/8, measure request88/8, measure result56/8, line24/4, cell24/4, stats200/8, modal request80/8. Those structs remain unchanged except bootstrap/API appended tails.
+Frozen0.6 sizes read from identical headers: bootstrap88/4, api136/8, callbacks112/8, transaction72/8, node144/8, primitive80/8, semantic88/8, AX text run80/8, event136/8, measure request88/8, measure result56/8, line24/4, cell24/4, stats200/8, modal request80/8. All legacy structs remain unchanged. Only new versioned bootstrap/API types append tails.
 
 ## Frames, buffers & errors
 
@@ -107,7 +107,7 @@ Outcomes:1 confirmed presented,2 submitted without presentation feedback,3 dropp
 
 Use factory consumers/test builds, not production injection functions. Reject ABI/minor/size/count/arch/pointer mismatch before function calls; forged sizes/reserved flags; null/short buffers with canaries; multiplication overflow; stale/double-released/reused-slot handles; wrong thread; IME borrow; resize/DPI/close during pending copy; exhausted retention/ring; device loss; withheld presentation feedback; ring overflow; malformed clock correlation. No GUI or renderer work is authorized by this proposal itself.
 
-Qualification must bind new0.7 tuple, header bytes, bridge/compiler/renderer hashes & raw receipts. Require matching Rust repr(C), C/MSVC & Swift importer sizes/offsets on Windows x64, unchanged0.6 prefix & exact-version refusal in both directions. Arm64 mock proof is layout evidence only.
+Qualification must bind new0.7 tuple, header bytes, bridge/compiler/renderer hashes & raw receipts. Require Rust repr(C), C/MSVC & Swift importer size/offset agreement on Windowsx64; preserve all legacy layouts/constants/16 pointers. Run unchanged tuple11 BridgeSmoke.exe `85d5f8ba…` against new DLL: normal40/40 & timeout41/41, with raw streams, exact hashes & owned exit proof. Historical tuple11 carried receipts do not prove new DLL. Test exact/oversized buffers, short/null no-write errors & canaries for both88/136 legacy &108/184 versioned views; new loader must refuse missing versioned exports on old DLL. Arm64 mock proof is layout evidence only.
 
 Require independent opaque/alpha/color/orientation/stride/crop controls, per-primitive rect/text/image/underline pixel controls, glyph/font identity, draw counters, changing-frame non-staleness, resize/DPI geometry correlation & instrumented-vs-uninstrumented output/timing transparency. Count assertions never replace pixels. Provider geometry must match independently observed committed display geometry; proposal/alignment/baseline channels lacking source remain held.
 

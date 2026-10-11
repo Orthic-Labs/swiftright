@@ -1,0 +1,69 @@
+{
+  "kind": "f5-mac-origin-capture-plan",
+  "version": 1,
+  "status": "proposal-only",
+  "target": {
+    "block": "swiftui.padding-frame",
+    "rowsPerCase": 20,
+    "freshOnly": true,
+    "candidateOnly": true,
+    "existingRawSeedDisposition": "observational-only; missing macOrigin cannot be retro-qualified"
+  },
+  "currentGap": {
+    "captureProducer": "factory/native/macos/capture.py currently invokes xcrun swiftc via logged() without receipt-backed resolver/compiler/tool/source/stream/output records",
+    "normalizer": "factory/native/macos/normalize.py currently emits conditions without macOrigin",
+    "evidenceChecker": "factory/native/macos/check_evidence.py currently validates capture/raw/image/PID joins without origin admission",
+    "schemaDisposition": "existing meta.conditions additionalProperties canonicalValue accepts macOrigin; no schema edit"
+  },
+  "requiredOriginBindings": {
+    "captureId": "capture.id exact equality",
+    "case": "canonical case JSON bytes + sha256 + byte count",
+    "source": "actual Witness.swift bytes used by build",
+    "adapter": "generated CaptureHost.swift bytes used by build",
+    "binary": "fresh capture-host bytes used by all run channels",
+    "compilerReceipt": "actual receipt JSON bytes",
+    "toolBytes": [
+      {"logicalPath": "/usr/bin/xcrun", "receiptField": "compiler.xcrunHash"},
+      {"logicalPath": "receipt.compiler.realPathBefore", "receiptField": "compiler.realToolBefore.sha256"}
+    ],
+    "streams": ["resolver.stdoutPath", "resolver.stderrPath", "compiler.stdoutPath", "compiler.stderrPath"],
+    "optionalAuxiliaryAX": "required exactly when summary.freshAXClient.externalAX == AVAILABLE; absent when HELD"
+  },
+  "receiptContract": {
+    "kind": "swift-compiler-process-receipt",
+    "version": 2,
+    "status": "SUCCESS",
+    "sourceDrift": false,
+    "resolverArgv": ["/usr/bin/xcrun", "--find", "swiftc"],
+    "compilerArgvTemplate": ["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-o", "<binary>", "<Witness.swift>", "<CaptureHost.swift>"],
+    "requiredProcessFacts": ["pid", "pgid", "ownedProcessGroup", "startedAtUtc", "endedAtUtc", "exitCode", "cleanup"],
+    "requiredCleanupFalse": ["timedOut", "drainTimedOut", "killSent", "termSent", "groupMissing"]
+  },
+  "archivePolicy": {
+    "root": "internal factory archive only",
+    "reader": "ArchiveByteReader with explicit macPathMap for absolute receipt paths",
+    "historicalToolArchive": "reusable only for exact matching tool hashes; otherwise successor archive required",
+    "currentToolReadsDuringReplay": 0,
+    "nativeExecutionsDuringReview": 0,
+    "sourcePolicy": "archive exact actual source bytes & generated SDK adapter bytes; do not infer from sourceHash labels"
+  },
+  "controls": [
+    "missing macOrigin",
+    "top-level macOrigin instead of meta.conditions.macOrigin",
+    "captureId mismatch",
+    "wrong case bytes/hash",
+    "source/adapter/binary byte or hash mutation",
+    "missing compiler receipt",
+    "resolver or compiler stream mutation",
+    "sourceDrift true",
+    "tool before/after drift or wrong archived tool bytes",
+    "extra compiler argv source/flag or wrong cwd",
+    "nonzero exit, timeout, unowned PGID, or cleanup flag",
+    "freshAXClient AVAILABLE without exact auxiliaryAX receipt/source/binary",
+    "20-row duplicate ID/missing-row count"
+  ],
+  "handoff": {
+    "paddingCoordinator": "Use fresh candidate IDs, exact origin PASS/issue codes, channel holds & 20-row count as separate dimensions. Do not transform old seed rows or infer parity.",
+    "rootIntegration": "After producer output exists, call existing mac_origin_admission_issues with byte reader; preserve rejected evidence & reasons."
+  }
+}

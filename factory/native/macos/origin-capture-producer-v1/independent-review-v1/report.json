@@ -1,0 +1,70 @@
+{
+  "cleanup": "Owned TemporaryDirectory under ignored .factory-work removed on success/failure; no retained owned scratch",
+  "contractJudgment": {
+    "archiveReader": "Verified aliases pass after live fixture sources/tools/binaries removed. Reader accepts stable extracted bytes mapped from exact original logicalpaths; live installed tool is unnecessary for lateradmission.",
+    "clocks": "compiler/resolver UTC timezone-aware & ordering separate from render monotonic clock; no correlation inferred",
+    "originDescriptor": "Main sixrefs+version1 string, captureId checked byproducer/checker; AVAILABLE requires aux receipt/source/binary; each descriptor bound bytes/hash",
+    "ownership": "mock calls prove producer passes start_new_session=True &separate binary pipes; typedpid/pgid/nonzero exits/falsecleanup must pass fullguard",
+    "positiveBaseline": "Actual producer functions with mocked processes yield guardPASS main+AX; synthetic fixture only, never qualification evidence",
+    "receiptVersion": "actual producer/guard use string2; receipt-contract.json uses numeric2 example, should match actual strict guard"
+  },
+  "controls": {
+    "count": 21,
+    "path": "controls-results.json",
+    "sha256": "8e079fee6321e6cc0ac458ef7a1a38e537d499db01d49c959f9eef265f9bf445"
+  },
+  "controlsScriptSha256": "251bfddcf1315162dc3fc72939dafe56932806355b5784ae620758d047fc196b",
+  "findings": [
+    {
+      "evidence": "Producer captures refs to live work source/binary, live canonical case & installed tool. No archival source/tool/stream mapping produced. Existing origin reader only admits declared roots/maps.",
+      "id": "durable-origin-archive-missing",
+      "repair": "Persist immutable exact raw source/case/summary/receipt/binary/resolver+compiler stdout/stderr/tool bytes; emit explicit macPathMap/roots reader config. All receipt logicalpaths remain unchanged; tool gzip must be bounded-decompressed then raw size/hash verified before mapping. Never execute archived bytes.",
+      "severity": "blocking-before-scratch-cleanup"
+    },
+    {
+      "evidence": "Offline checker _verify_origin accepts compiler.pid=True while production guard rejects identical receipt. Other process/cleanup/clock/tool fields similarly not checked. capture() never calls guard before launching host/preflight.",
+      "id": "checker-does-not-validate-origin",
+      "repair": "Use real mac_origin_admission_issues with production archived reader for exact candidate descriptor; reject nonempty issues before launch/normalization-success, retain issues/receipt. check_evidence should repeat full guard from durable reader config; shallow refs alone are insufficient.",
+      "severity": "blocking-before-fresh20"
+    },
+    {
+      "evidence": "Mock compiler exits0 &creates regular0644 output; producer statusSUCCESS and guard origin bytesPASS, no execution. Byte guard cannot see filemode.",
+      "id": "nonexecutable-output-success",
+      "repair": "Validate newly owned output regular/non-symlink/executable before SUCCESS & launch; archive original mode receipt separately if asserting executable origin. No invented process receipt or bytesEXEC claim.",
+      "severity": "blocking-producer-status"
+    }
+  ],
+  "kind": "fresh-mac-origin-producer-independent-review-v1",
+  "scope": "source review +offline synthetic mocked resolver/compiler; no compiler/native/build/remote execution; frozen histories unchanged",
+  "sourcePins": [
+    {
+      "path": "factory/native/macos/capture.py",
+      "sha256": "51875c4bd14fbf71da9690bcb6447bba26e95c0fed743007d7c86459d81f55fd"
+    },
+    {
+      "path": "factory/native/macos/normalize.py",
+      "sha256": "057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2"
+    },
+    {
+      "path": "factory/native/macos/check_evidence.py",
+      "sha256": "f5ab125be730db53c7e99884597f379043b067c96087c919bb69521b2a40d8ba"
+    },
+    {
+      "path": "factory/native/macos/test_capture.py",
+      "sha256": "d3b9c6df02050bf3d87b725cdd462b9d88aaea5445cf58abd5edef0d470e4970"
+    },
+    {
+      "path": "factory/gate/mac_origin_admission.py",
+      "sha256": "abac68ee7d425aa6303b58a2a3e38eaf522385d3decc0e129760292cbcfec11e"
+    },
+    {
+      "path": "factory/pipeline/archive_reader.py",
+      "sha256": "8e1307c6a86323d7d4d464bf1d57e734f83c5f4dfb4ee41ad3a8d2d3016b668e"
+    },
+    {
+      "path": "factory/native/macos/origin-capture-producer-v1/receipt-contract.json",
+      "sha256": "6a324ddc3da8914c3faaa7a36f662db72a1a73e6fa14674ed665d28d47f78f1d"
+    }
+  ],
+  "verdict": "HOLD_DURABLE_ORIGIN_AND_VERIFIER_GAPS"
+}

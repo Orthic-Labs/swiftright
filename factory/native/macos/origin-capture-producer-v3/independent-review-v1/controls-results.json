@@ -1,0 +1,14 @@
+{
+  "controls": {
+    "actual-normalize-envelope+outer-checker+CLI-parent-aux": "PASS schema-valid synthetic candidate; no semantic/parity claim",
+    "durable-byte-mutation": "PASS exact reader hash rejection",
+    "full-AVAILABLE-replay-live-inputs-deleted": "PASS bothcompilers+auxstreams &outerchecker",
+    "nonexec-output-regression": "PASS OUTPUT_MODE/nonzero",
+    "same-logical-tool-path-conflicting-hashes": {
+      "error": "Mac origin admission failed: mac-origin:read-failed: compiler real tool: Mac reference bytes differ from pinned hash",
+      "rejection": "fullguard read-failed before PASS"
+    },
+    "typed-boolPID-outerchecker": "PASS exact production guard rejection"
+  },
+  "scope": "offline mocked producer &real schema-normalize/archive/checker/guard; no native/compiler/remote execution"
+}

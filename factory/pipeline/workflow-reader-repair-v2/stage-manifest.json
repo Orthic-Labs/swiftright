@@ -1,0 +1,42 @@
+{
+  "controls": [
+    "valid returned JSON capture ID drift rejected by exact returned-byte hash",
+    "baseline actual Mac20 collect passes",
+    "gate_evidence reads plan/cases/tuple/config/recipes/manifests/captures via artifact_reader",
+    "prepare uses artifact_reader separate from origin_reader",
+    "probe witness bytes are materialized only after reader verification",
+    "valid returned witness drift rejected before generator"
+  ],
+  "fileCount": 3,
+  "files": [
+    {
+      "bytes": 380,
+      "path": "factory/pipeline/workflow-reader-repair-v2/README.md",
+      "sha256": "sha256:ec327a06206e91a4882db3238bd41d21665bddced76476146e60f2d264a78a28"
+    },
+    {
+      "bytes": 815,
+      "path": "factory/pipeline/workflow-reader-repair-v2/execution.json",
+      "sha256": "sha256:efecb8a55e1c1667bae13a15424d702a486f5147ba516ae9a5e8e6bab0ef6ef3"
+    },
+    {
+      "bytes": 5002,
+      "path": "factory/pipeline/workflow-reader-repair-v2/test_reader_repair.py",
+      "sha256": "sha256:64aba00cedb505f637ec88685a78fad20799e89f34f7b942a48bd47d90004bce"
+    }
+  ],
+  "maxBytes": 5002,
+  "preimage": "factory/pipeline/workflow-reader-repair-v1",
+  "schema": "workflow-reader-repair-v2",
+  "source": {
+    "bytes": 36745,
+    "path": "factory/pipeline/workflow.py",
+    "sha256": "sha256:c66219c4944bdac1b1c9ff481edcda18c82331847ea13b32099e25d483b4cc86"
+  },
+  "status": "reader-bound-artifact-and-witness-parsing",
+  "tests": {
+    "bytes": 5002,
+    "path": "factory/pipeline/workflow-reader-repair-v2/test_reader_repair.py",
+    "sha256": "sha256:64aba00cedb505f637ec88685a78fad20799e89f34f7b942a48bd47d90004bce"
+  }
+}

@@ -2,12 +2,16 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from collections import Counter
+from contextlib import contextmanager
 from pathlib import Path
 import secrets
 import shlex
+import tempfile
 
-from factory.core.artifacts import artifact_ref, canonical_hash, file_hash, load_artifact, write_artifact
+from factory.core.artifacts import artifact_ref, canonical_hash, file_hash, load_artifact, validate_artifact, write_artifact
+from factory.tools import canonical_json
 from factory.recipes.recipes import load_recipes
 from factory.recipes.cases import expand_cases, validate_case_manifest
 from factory.probes.generator import generate_probe
@@ -27,8 +31,95 @@ def fresh_output(path):
     return out
 
 
-def prepare(output, tuple_path, config_path, seed=0, snapshot_created_at=None):
-    tuple_value, config = load_artifact(tuple_path), load_artifact(config_path)
+def _verified_bytes(path, reader=None):
+    """Return one immutable parse input, optionally through supplied byte reader.
+
+    Hash is taken before reader invocation & checked again against returned bytes;
+    parser consumes returned bytes only. Legacy direct reads remain available when
+    caller omits reader.
+    """
+    path = Path(path).resolve()
+    expected = file_hash(path)
+    if reader is None:
+        return path.read_bytes()
+    try:
+        raw = reader(capture={'platform': 'macos'}, reference={'path': str(path), 'sha256': expected})
+    except Exception as exc:
+        raise ValueError(f'verified reader rejected {path}: {exc}') from exc
+    if not isinstance(raw, bytes) or 'sha256:' + hashlib.sha256(raw).hexdigest() != expected:
+        raise ValueError(f'verified reader returned bytes differing from expected hash: {path}')
+    return raw
+
+
+def _artifact(path, reader=None):
+    return canonical_json.loads(_verified_bytes(path, reader)) if reader is not None else load_artifact(path)
+
+
+def _source_json(path, reader=None):
+    raw = _verified_bytes(path, reader)
+    return canonical_json.loads(raw), raw, 'sha256:' + hashlib.sha256(raw).hexdigest()
+
+
+def _recipes(reader=None):
+    if reader is None:
+        return load_recipes()
+    from factory.recipes.recipes import DATA, WITNESSES
+    recipes = [_artifact(path, reader) for path in sorted(DATA.glob('*.json'))]
+    for recipe in recipes:
+        validate_artifact(recipe)
+        for witness in recipe['witnesses']:
+            path = WITNESSES / f"{witness['id']}.swift"
+            actual = 'sha256:' + hashlib.sha256(_verified_bytes(path, reader)).hexdigest()
+            if actual != witness['sourceHash']:
+                raise ValueError(f'witness source hash mismatch: {path}')
+            for resource in witness.get('resources', []):
+                if resource['hash'] != actual:
+                    raise ValueError(f'witness resource hash mismatch: {path}')
+        for negative in recipe.get('negativeCases', []):
+            path = WITNESSES / f"{negative['id']}.swift"
+            if 'sha256:' + hashlib.sha256(_verified_bytes(path, reader)).hexdigest() != negative.get('sourceHash'):
+                raise ValueError(f'negative witness source hash mismatch: {path}')
+    ids = [recipe['id'] for recipe in recipes]
+    if len(ids) != len(set(ids)):
+        raise ValueError('duplicate recipe ID')
+    return recipes
+
+
+@contextmanager
+def _verified_witness_root(recipes, reader):
+    """Materialize reader-verified witness bytes for generator's path API."""
+    if reader is None:
+        yield None
+        return
+    from factory.recipes.recipes import WITNESSES
+    work = ROOT / 'factory' / '.factory-work'
+    work.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='workflow-witness-', dir=work) as scratch:
+        root = Path(scratch)
+        seen = set()
+        for recipe in recipes:
+            entries = list(recipe.get('witnesses', [])) + list(recipe.get('negativeCases', []))
+            for entry in entries:
+                witness_id = entry['id']
+                if witness_id in seen:
+                    continue
+                seen.add(witness_id)
+                source = WITNESSES / f'{witness_id}.swift'
+                target = root / f'{witness_id}.swift'
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(_verified_bytes(source, reader))
+        yield root
+
+
+def _generate_probe(recipe, case, output, artifact_reader=None):
+    if artifact_reader is None:
+        return generate_probe(recipe, case, output)
+    with _verified_witness_root([recipe], artifact_reader) as witness_root:
+        return generate_probe(recipe, case, output, witness_root=witness_root)
+
+
+def prepare(output, tuple_path, config_path, seed=0, snapshot_created_at=None, origin_reader=None, artifact_reader=None):
+    tuple_value, config = _artifact(tuple_path, artifact_reader), _artifact(config_path, artifact_reader)
     if canonical_hash(config) != tuple_value.get('acceptanceConfigHash'):
         raise ValueError('acceptance config does not bind measured tuple')
     baseline = config.get('baseline')
@@ -38,14 +129,14 @@ def prepare(output, tuple_path, config_path, seed=0, snapshot_created_at=None):
             raise ValueError('prepare seed differs from bound baseline seed')
     out = fresh_output(output)
     cases, probes, manifests = [], [], []
-    for recipe in load_recipes():
+    for recipe in _recipes(artifact_reader):
         expansion = expand_cases(recipe, tuple_value, seed=seed, snapshot_created_at=snapshot_created_at)
         validate_case_manifest(expansion)
         write_artifact(out / 'manifests' / (recipe['block'] + '.json'), expansion['manifest'])
         manifests.append(expansion['manifest'])
         for case in expansion['cases']:
             write_artifact(out / 'cases' / (case['id'].replace('/', '--') + '.json'), case)
-            probes.append(generate_probe(recipe, case, out / 'probes'))
+            probes.append(_generate_probe(recipe, case, out / 'probes', artifact_reader))
             cases.append(case)
     write_artifact(out / 'cases.json', cases)
     write_artifact(out / 'probe-manifests.json', probes)
@@ -71,7 +162,7 @@ def validate_batch(value, cases):
     validate_case_manifest(value if 'manifest' in value else {'manifest': value}, cases)
 
 
-def load_raw_json(path):
+def load_raw_json(path, reader=None):
     """Native raw measurements allow floats; duplicate keys/constants do not."""
     def pairs(items):
         result = {}
@@ -82,13 +173,13 @@ def load_raw_json(path):
         return result
     def constant(_):
         raise ValueError('non-finite constant in raw native JSON')
-    return json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=pairs, parse_constant=constant)
+    return json.loads(_verified_bytes(path, reader).decode('utf-8-sig'), object_pairs_hook=pairs, parse_constant=constant)
 
 
-def validate_windows_archive(capture, directory):
+def validate_windows_archive(capture, directory, reader=None):
     """Bind normalized Windows capture to adjacent owned source & raw receipt."""
     directory = Path(directory).resolve()
-    plan = load_artifact(directory / 'plan.json')
+    plan = _artifact(directory / 'plan.json', reader)
     source_hash = file_hash(directory / 'Witness.swift')
     conditions = capture['meta']['conditions']
     if (plan.get('case') != capture['case'] or plan.get('sourceHash') != source_hash
@@ -97,14 +188,14 @@ def validate_windows_archive(capture, directory):
         raise ValueError('Windows source/plan/case binding mismatch')
     if (conditions.get('rawWitnessHash') != source_hash
             or conditions.get('rawPlanHash') != file_hash(directory / 'plan.json')
-            or load_artifact(directory / 'tuple.json') != capture['tuple']):
+            or _artifact(directory / 'tuple.json', reader) != capture['tuple']):
         raise ValueError('Windows raw witness/plan/tuple archive binding mismatch')
     receipt_path = directory / 'native-observation.json'
     receipt_hash = file_hash(receipt_path)
     if (conditions.get('rawReceiptHash') != receipt_hash
             or capture['meta']['clock']['correlationHash'] != receipt_hash):
         raise ValueError('Windows raw receipt/clock archive hash mismatch')
-    receipts = load_raw_json(receipt_path)
+    receipts = load_raw_json(receipt_path, reader)
     if not isinstance(receipts, list):
         raise ValueError('Windows raw receipt must retain original observation array')
     run = capture['meta']['run']
@@ -149,7 +240,7 @@ def validate_windows_archive(capture, directory):
         raise ValueError('Windows raw UIA archive hash mismatch')
 
 
-def collect(cases, evidence_roots, exclude_capture_dirs=None):
+def collect(cases, evidence_roots, exclude_capture_dirs=None, reader=None):
     """Only explicit roots; duplicates, stale bindings & synthetic captures rejected."""
     from factory.tools.schema_validate import load_registry, validate_artifact
     registry, schemas = load_registry(ROOT / 'factory/spec/schema')
@@ -170,7 +261,7 @@ def collect(cases, evidence_roots, exclude_capture_dirs=None):
         for path in sorted(root.rglob('capture.json')):
             record = {'path': str(path), 'hash': file_hash(path)}
             try:
-                value = load_artifact(path)
+                value = _artifact(path, reader)
                 if any(p == path.parent or p in path.parents for p in excluded):
                     superseded.append({**record, 'capture': artifact_ref(value), 'case': value.get('case'), 'reason': 'explicitly superseded capture directory'})
                     continue
@@ -197,14 +288,14 @@ def collect(cases, evidence_roots, exclude_capture_dirs=None):
                 if value['platform'] == 'macos':
                     if file_hash(path.parent / 'instrumented.raw.json') != value['provenance']['sourceHash']:
                         raise ValueError('provenance raw source hash mismatch')
-                    if canonical_hash(load_artifact(path.parent / 'clock.json')) != value['meta']['clock']['correlationHash']:
+                    if canonical_hash(_artifact(path.parent / 'clock.json', reader)) != value['meta']['clock']['correlationHash']:
                         raise ValueError('clock correlation archive hash mismatch')
                 else:
-                    validate_windows_archive(value, path.parent)
+                    validate_windows_archive(value, path.parent, reader)
                 archive = {**record, 'capture': artifact_ref(value), 'case': value['case'], 'platform': value['platform'], 'files': files}
                 summary_path = path.parent.parent / 'summary.json'
                 if value['platform'] == 'macos' and summary_path.exists():
-                    summary = load_raw_json(summary_path)
+                    summary = load_raw_json(summary_path, reader)
                     if summary.get('case') != value['case'] or summary.get('sourceHash') != summary.get('probeManifest', {}).get('sourceHash'):
                         raise ValueError('Mac source summary case/manifest binding mismatch')
                     if {'id': 'macos.capture.binary', 'hash': summary.get('binaryHash')} not in value['provenance'].get('inputs', []):
@@ -231,21 +322,21 @@ def validate_primary_source(case, lineage, captures, mac_archives, superseded):
             raise ValueError('superseded primary source lacks complete20 canonical replacement captures')
 
 
-def report(output, cases_path, roots, primary_path, config_path, registry_path, demand_path, compile_path=None, corrections_dir=None, native_holds_path=None, exclude_capture_dirs=None):
+def report(output, cases_path, roots, primary_path, config_path, registry_path, demand_path, compile_path=None, corrections_dir=None, native_holds_path=None, exclude_capture_dirs=None, origin_reader=None, artifact_reader=None):
     from factory.comparison import compare_case
     from factory.reports.report import build_report
-    from factory.shell.report_demand import build_report_demand, load_source_json
-    cases = load_artifact(cases_path)
-    collected = collect(cases, roots, exclude_capture_dirs)
-    config = load_artifact(config_path)
-    registry, registry_bytes, _ = load_source_json(registry_path)
-    demand, demand_bytes, _ = load_source_json(demand_path)
+    from factory.shell.report_demand import build_report_demand
+    cases = _artifact(cases_path, artifact_reader)
+    collected = collect(cases, roots, exclude_capture_dirs, reader=artifact_reader)
+    config = _artifact(config_path, artifact_reader)
+    registry, registry_bytes, _ = _source_json(registry_path, artifact_reader)
+    demand, demand_bytes, _ = _source_json(demand_path, artifact_reader)
     report_demand = demand
     if isinstance(demand, dict) and "pilot_blocks" in demand and "journey_demands" in demand:
         crosswalk_path = ROOT / 'factory/shell/report-demand-integration-v1/crosswalk.json'
         manifest_path = ROOT / 'factory/registry/manifest.json'
-        _, manifest_bytes, _ = load_source_json(manifest_path)
-        _, crosswalk_bytes, _ = load_source_json(crosswalk_path)
+        _, manifest_bytes, _ = _source_json(manifest_path, artifact_reader)
+        _, crosswalk_bytes, _ = _source_json(crosswalk_path, artifact_reader)
         report_demand = build_report_demand(
             demand_bytes,
             manifest_bytes,
@@ -260,22 +351,22 @@ def report(output, cases_path, roots, primary_path, config_path, registry_path, 
     if report_demand is not demand:
         write_artifact(out / 'report-demand.json', report_demand)
     paths = build_report(registry, cases, collected['captures'], verdicts, out / 'report', report_demand)
-    compile_value = load_artifact(compile_path) if compile_path else {}
+    compile_value = _artifact(compile_path, artifact_reader) if compile_path else {}
     compile_by_block = {v['block']: v for v in compile_value.get('records', [])}
-    native_holds = load_artifact(native_holds_path) if native_holds_path else {}
+    native_holds = _artifact(native_holds_path, artifact_reader) if native_holds_path else {}
     native_by_block = {v['block']: v for v in native_holds.get('rows', [])}
     primaries = []
-    for primary in load_artifact(primary_path):
+    for primary in _artifact(primary_path, artifact_reader):
         case = next(c for c in cases if c['id'] == primary['case'])
         original_path = Path(primary['manifestPath'])
-        original = load_artifact(original_path)
+        original = _artifact(original_path, artifact_reader)
         if original['case'] != artifact_ref(case) or file_hash(original_path.parent / original['sourceFile']) != original['sourceHash']:
             raise ValueError('primary manifest has stale case binding')
         lineage = [{'manifest': str(original_path), 'manifestHash': file_hash(original_path), 'sourceHash': original['sourceHash'], 'status': 'original'}]
         if corrections_dir:
             correction_path = Path(corrections_dir) / original_path.name
             if correction_path.exists():
-                correction = load_artifact(correction_path)
+                correction = _artifact(correction_path, artifact_reader)
                 if correction['case'] != artifact_ref(case) or file_hash(correction_path.parent / correction['sourceFile']) != correction['sourceHash']:
                     raise ValueError('corrected source lineage binding invalid')
                 lineage[0]['status'] = 'superseded-source-observation-only'
@@ -326,25 +417,32 @@ def report(output, cases_path, roots, primary_path, config_path, registry_path, 
     return summary
 
 
-def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test_seed=None, origin_reader=None):
+def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test_seed=None, origin_reader=None, artifact_reader=None):
     from factory.gate.core import evaluate_gate, expand_gate_seeded_cases
     out = fresh_output(output)
-    cases, tuple_value, config = load_artifact(cases_path), load_artifact(tuple_path), load_artifact(config_path)
-    collected = collect(cases, roots)
+    cases, tuple_value, config = (_artifact(cases_path, artifact_reader), _artifact(tuple_path, artifact_reader),
+                                  _artifact(config_path, artifact_reader))
+    collected = collect(cases, roots, reader=artifact_reader)
     seed = secrets.randbits(64) if test_seed is None else test_seed
     reports, plan, seeded_all = [], [], []
-    for recipe in load_recipes():
+    for recipe in _recipes(artifact_reader):
         selected = [c for c in cases if c['block'] == recipe['block']]
-        manifest = load_artifact(Path(manifests_dir) / (recipe['block'] + '.json'))
+        manifest = _artifact(Path(manifests_dir) / (recipe['block'] + '.json'), artifact_reader)
         validate_batch(manifest, selected)
         seeded = expand_gate_seeded_cases(recipe, tuple_value, seed)
         seeded_all.extend(seeded)
         commands = []
         for case in seeded:
             write_artifact(out / 'seed-cases' / (case['id'].replace('/', '--') + '.json'), case)
-            generate_probe(recipe, case, out / 'seed-probes')
+            generated = _generate_probe(recipe, case, out / 'seed-probes', artifact_reader)
             # Locate generated manifest by its exact case binding, never reuse baseline.
-            candidates = [p for p in (out / 'seed-probes').glob('*.manifest.json') if load_artifact(p).get('case', {}).get('id') == case['id']]
+            expected_probe = out / 'seed-probes' / f"{case['id'].replace('/', '_')}.manifest.json"
+            if isinstance(generated, Path):
+                candidates = [generated] if generated.is_file() else []
+            else:
+                candidates = [expected_probe] if (
+                    isinstance(generated, dict) and generated.get('case', {}).get('id') == case['id']
+                    and expected_probe.is_file()) else []
             if len(candidates) != 1:
                 raise ValueError('seed probe manifest binding unavailable')
             manifest_path = candidates[0]
@@ -364,10 +462,10 @@ def gate(output, cases_path, roots, tuple_path, config_path, manifests_dir, test
     return value
 
 
-def queue(output, registry_path):
+def queue(output, registry_path, artifact_reader=None):
     from factory.queue.store import QueueStore, BlockedError
     out = fresh_output(output)
-    registry = load_artifact(registry_path)
+    registry = _artifact(registry_path, artifact_reader)
     store = QueueStore(out / 'queue-state.json', registry_path)
     outcomes = []
     for block in registry['blocks']:
@@ -381,14 +479,15 @@ def queue(output, registry_path):
     return summary
 
 
-def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path, manifests_dir, exclude_capture_dirs=None, origin_reader=None):
+def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path, manifests_dir, exclude_capture_dirs=None, origin_reader=None, artifact_reader=None):
     """Reevaluate one recorded seed batch with its own archived captures."""
     from factory.gate.core import evaluate_gate, expand_gate_seeded_cases
-    plan = load_artifact(plan_path)
+    plan = _artifact(plan_path, artifact_reader)
     seed = plan['seed']
-    cases, tuple_value, config = load_artifact(cases_path), load_artifact(tuple_path), load_artifact(config_path)
-    recipes = load_recipes()
-    seed_cases = load_artifact(Path(plan_path).parent / 'seed-cases.json')
+    cases, tuple_value, config = (_artifact(cases_path, artifact_reader), _artifact(tuple_path, artifact_reader),
+                                  _artifact(config_path, artifact_reader))
+    recipes = _recipes(artifact_reader)
+    seed_cases = _artifact(Path(plan_path).parent / 'seed-cases.json', artifact_reader)
     expected = {p['block']: p['cases'] for p in plan['seedPlan']}
     for recipe in recipes:
         seeded = [c for c in seed_cases if c['block'] == recipe['block']]
@@ -404,12 +503,12 @@ def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path,
         for cmd in commands:
             if file_hash(cmd['manifest']) != cmd['manifestHash']:
                 raise ValueError('seed probe manifest changed since recorded plan')
-    collected = collect(cases + seed_cases, roots, exclude_capture_dirs)
+    collected = collect(cases + seed_cases, roots, exclude_capture_dirs, reader=artifact_reader)
     out = fresh_output(output)
     reports = []
     for recipe in recipes:
         selected = [c for c in cases if c['block'] == recipe['block']]
-        validate_batch(load_artifact(Path(manifests_dir) / (recipe['block'] + '.json')), selected)
+        validate_batch(_artifact(Path(manifests_dir) / (recipe['block'] + '.json'), artifact_reader), selected)
         seeded = [c for c in seed_cases if c['block'] == recipe['block']]
         ids = {c['id'] for c in selected + seed_cases if c['block'] == recipe['block']}
         reports.append(evaluate_gate(recipe=recipe, cases=selected,
@@ -429,21 +528,21 @@ def gate_evidence(output, plan_path, cases_path, roots, tuple_path, config_path,
     return value
 
 
-def font_addendum(output, roots, cases_dir, resource_path, private_collection_path, typecheck_path, binding_path):
+def font_addendum(output, roots, cases_dir, resource_path, private_collection_path, typecheck_path, binding_path, artifact_reader=None):
     """Separate measured font candidate; never changes fixed81 denominator."""
-    cases = [load_artifact(p) for p in sorted(Path(cases_dir).glob('*.json'))]
-    collected = collect(cases, roots)
+    cases = [_artifact(p, artifact_reader) for p in sorted(Path(cases_dir).glob('*.json'))]
+    collected = collect(cases, roots, reader=artifact_reader)
     # Native resource/control receipts retain raw measured JSON floats; refs
     # bind exact bytes rather than converting those upstream measurements.
-    resource = load_raw_json(resource_path)
+    resource = load_raw_json(resource_path, artifact_reader)
     resource_root = Path(resource_path).parent
     for part in ('font', 'license'):
         if file_hash(resource_root / resource[part]['path']) != resource[part]['sha256']:
             raise ValueError('font resource/license raw hash binding mismatch')
-    private = load_raw_json(private_collection_path)
+    private = load_raw_json(private_collection_path, artifact_reader)
     if private.get('resourceHash') != resource['font']['sha256']:
         raise ValueError('private DirectWrite collection binds different font resource')
-    observed = load_artifact(typecheck_path)
+    observed = _artifact(typecheck_path, artifact_reader)
     typecheck_root = Path(typecheck_path).parent
     checks = []
     for row in observed['sources']:

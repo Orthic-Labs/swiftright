@@ -1,0 +1,25 @@
+{
+  "kind": "f5-mac-origin-producer-v2-repair",
+  "version": 2,
+  "fixes": [
+    "immutable origin archive closure includes evidence raw files, canonical case, source, adapter, binary, receipts & streams",
+    "explicit ArchiveByteReader config uses macRoots and absolute macPathMap targets",
+    "matching compiler-tool-archive-v1 entries use archive hash and decompressed raw hash; gzip is never mapped as raw",
+    "full mac_origin_admission_issues runs through ArchiveByteReader before fresh success",
+    "outputBinary requires regular file with execute mode; receipt records outputMode and outputExecutable",
+    "receipt contract uses numeric version 2"
+  ],
+  "frozenV1": {
+    "capture.py": "sha256:51875c4bd14fbf71da9690bcb6447bba26e95c0fed743007d7c86459d81f55fd",
+    "normalize.py": "sha256:057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2",
+    "check_evidence.py": "sha256:f5ab125be730db53c7e99884597f379043b067c96087c919bb69521b2a40d8ba",
+    "test_capture.py": "sha256:d3b9c6df02050bf3d87b725cdd462b9d88aaea5445cf58abd5edef0d470e4970"
+  },
+  "liveV2": {
+    "capture.py": "sha256:ea41b8dd6885c0ebcf2975206b398fac42aa7f587887696749f820f25b76db15",
+    "normalize.py": "sha256:057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2",
+    "check_evidence.py": "sha256:6a75764fc7972f989eefc237a13a906583ff37663347c7aafabd73124aa06d27",
+    "test_capture.py": "sha256:14092307ac7f61176e03a083b79e2169411e1fafc249b31c1717f58ec2fb15f2"
+  },
+  "execution": {"native": 0, "compiler": 0, "permissionRequests": 0}
+}

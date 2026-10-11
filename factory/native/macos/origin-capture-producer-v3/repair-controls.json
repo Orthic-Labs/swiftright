@@ -1,0 +1,29 @@
+{
+  "kind": "f5-mac-origin-producer-v3-repair",
+  "version": 3,
+  "fixes": [
+    "fresh_ax_preflight exposes exact copied sourcePath alongside compilerReceiptPath and executable",
+    "AVAILABLE origin descriptors bind exact producer paths from fresh_client",
+    "auxiliary receipt resolver/compiler streams are archived from receipt fields",
+    "auxiliary compiler tools are materialized by receipt hashes before reader construction",
+    "offline control replays full admission after deleting all live fixture inputs"
+  ],
+  "frozenV2": {
+    "capture.py": "sha256:ea41b8dd6885c0ebcf2975206b398fac42aa7f587887696749f820f25b76db15",
+    "normalize.py": "sha256:057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2",
+    "check_evidence.py": "sha256:6a75764fc7972f989eefc237a13a906583ff37663347c7aafabd73124aa06d27",
+    "test_capture.py": "sha256:14092307ac7f61176e03a083b79e2169411e1fafc249b31c1717f58ec2fb15f2"
+  },
+  "liveV3": {
+    "capture.py": "sha256:c2e650ffb7bc52596cdfa9d6314aadd36c93b3365fafd44fd82adc25536f0ee9",
+    "normalize.py": "sha256:057050f8db5fc284beabfdbcb4546db32f7bada88039d5f1ab94bac14e4f3cf2",
+    "check_evidence.py": "sha256:6a75764fc7972f989eefc237a13a906583ff37663347c7aafabd73124aa06d27",
+    "test_capture.py": "sha256:14092307ac7f61176e03a083b79e2169411e1fafc249b31c1717f58ec2fb15f2",
+    "test_aux_archive.py": "sha256:df58c1beb3aa9f7e06f8e759530079e68ad600dc0f517cfe230d9826328c3631"
+  },
+  "execution": {
+    "native": 0,
+    "compiler": 0,
+    "permissionRequests": 0
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "coreJudgment": [
+    "Proposal23/25/29 &implementation29 preserve legacy0/6/16 constants,88/136types,legacydiscovery,minsize/oversized errors/fullwrites &16pointeridentity; new _v07 exports use108/184 separatetypes.",
+    "Proposal17 preserves ready/run callbackbehavior, scopes settled contract to opt-in separatelyversioned run/options.",
+    "Qualification110 &implementation64 require unchangedtuple11 BridgeSmoke40/40 &41/41 againstnewDLL, with exactraw receipts &bothviewcanaries."
+  ],
+  "findings": [
+    {
+      "contradiction": "CLOSED expectedtuple10 conflicts with proposal3 baseline tuple11 &implementation49 CLOSED baseline tuple11.",
+      "correction": "Replace expectedtuple10 with baseline tuple11.",
+      "line": 3,
+      "path": "factory/abi/IMPLEMENTATION-PLAN.md"
+    },
+    {
+      "contradiction": "Those structs remain unchanged except bootstrap/API appended tails conflicts with23 frozen legacy88/136types &separatev07types.",
+      "correction": "All listed0.6structs remain unchanged; only separatev07bootstrap/APItypes appendtails.",
+      "line": 60,
+      "path": "factory/abi/abi-0.7-proposal.md"
+    },
+    {
+      "contradiction": "Fresh tuple11 padding single overstates fulltuplebinding. Exactbuildv4plan runtime37429120 &frozenTupleBound=false; docs finalSR0tuple11 runtime8e47b89. SharedcanonicalrendererE280 doesnotmake factoryhost finaltuple11.",
+      "correction": "Fresh source-bound padding single using tuple11 renderer; preserve measuredmetrics &explicitfactory-runtime/host binding.",
+      "line": 21,
+      "path": "factory/abi/abi-0.7-proposal.md"
+    }
+  ],
+  "kind": "abi07-root-revision-review-v1",
+  "scope": "read-only source/document review; no protected/native/compiler/Git edits",
+  "sourcePins": [
+    {
+      "path": "factory/abi/abi-0.7-proposal.md",
+      "sha256": "1d96d08053e040c15cda05e1d3d045b484d053a60c13ccf4f2e391c3b320e8fd"
+    },
+    {
+      "path": "factory/abi/IMPLEMENTATION-PLAN.md",
+      "sha256": "39638f9d480bc2e56cda1aba3c943f5dc779af832946f290915249d498b67435"
+    },
+    {
+      "path": "factory/abi/compatibility-review-v1/proposal.md",
+      "sha256": "5cba38ac2b5dca74d57c0cba575de75f08de681d45baa92f2811145ba2fe5500"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-build-v4/package/plan.json",
+      "sha256": "fe088dc1318e6ebc319c95ee169c2c91aa7e630fd19d81729389ebedb8397b20"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-single-review-v1/report.json",
+      "sha256": "e603699bca5b731316b17190c47425d7afbd06fa46d7b358b11f167e1f244bbe"
+    },
+    {
+      "path": "docs/sr0-status.md",
+      "sha256": "afa195e442ac739a5ce2ac4c9cf8de473819f90202824c7612445cfb8541c760"
+    }
+  ],
+  "verdict": "CORE_COMPATIBILITY_CLEAR_WITH_THREE_DOC_CORRECTIONS"
+}

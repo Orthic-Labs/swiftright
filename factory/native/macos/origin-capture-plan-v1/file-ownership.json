@@ -1,0 +1,57 @@
+{
+  "kind": "f5-mac-origin-capture-file-ownership",
+  "version": 1,
+  "status": "proposal-only",
+  "owner": "factory/native/macos",
+  "ownedFutureEdits": [
+    {
+      "path": "factory/native/macos/capture.py",
+      "scope": "Add receipt-backed compiler invocation around existing internal-scratch build; write exact source/tool/stream/output refs; attach summary compilerReceipt; preserve recorder/AX/TCC and process-group behavior."
+    },
+    {
+      "path": "factory/native/macos/normalize.py",
+      "scope": "Accept per-run origin descriptor inputs; emit only meta.conditions.macOrigin plus captureId equality field; preserve existing v0.1 envelope, IDs, tuple, observations & candidate flags."
+    },
+    {
+      "path": "factory/native/macos/check_evidence.py",
+      "scope": "Require origin descriptor presence, byte/hash refs & per-run captureId/case/source/adapter/binary joins before PASS; retain existing raw/image/PID checks."
+    },
+    {
+      "path": "factory/native/macos/test_capture.py",
+      "scope": "Add pure fixture controls for missing origin, wrong captureId, wrong case/source/adapter/tool/receipt/binary/stream, unavailable AX, available AX without auxiliary refs, and exact 20-row count. No native execution in focused controls."
+    }
+  ],
+  "integrationInputsOnly": [
+    {
+      "path": "factory/gate/mac_origin_admission.py",
+      "scope": "Existing reader-backed verifier; consume its required descriptor/receipt contract; no edit in this plan."
+    },
+    {
+      "path": "factory/pipeline/archive_reader.py",
+      "scope": "Existing constrained reader; supply explicit Mac roots/path map from fresh archive; no edit in this plan."
+    },
+    {
+      "path": "factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json",
+      "scope": "Read exact tool hashes only; create successor archive metadata when fresh tool bytes differ; never mutate historical manifest."
+    }
+  ],
+  "protectedNoEdits": [
+    "factory/core/artifacts.py",
+    "factory/gate/core.py",
+    "factory/pipeline/workflow.py",
+    "factory/spec/schema/capture.schema.json",
+    "factory/native/macos/AXClient.swift",
+    "factory/native/macos/CaptureHost.swift",
+    "factory/pipeline/manifests/swiftui.padding-frame.json",
+    "factory/native/macos/evidence/**",
+    "factory/oracle/mac/seed-origin-actual-v1/**",
+    "factory/oracle/mac/seed-origin-actual-v2/**"
+  ],
+  "forbiddenActions": [
+    "retrofit macOrigin into historical captures",
+    "reconstruct compiler receipts from summary labels",
+    "request TCC permission or alter permission stores",
+    "execute compiler/native tools during source review",
+    "claim parity, baseline, promotion, or causal performance result"
+  ]
+}

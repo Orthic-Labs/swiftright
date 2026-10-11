@@ -1,0 +1,23 @@
+{
+  "kind": "swift-compiler-process-receipt",
+  "version": 2,
+  "invocationMode": "xcrun",
+  "resolverArgv": ["/usr/bin/xcrun", "--find", "swiftc"],
+  "mainCompilerArgv": ["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-o", "<capture-host>", "<Witness.swift>", "<CaptureHost.swift>"],
+  "axCompilerArgv": ["/usr/bin/xcrun", "swiftc", "-O", "-o", "<f5-ax-client>", "<AXClient.swift>"],
+  "requiredStatus": "SUCCESS",
+  "requiredSourceDrift": false,
+  "requiredCleanupFalse": ["timedOut", "drainTimedOut", "killSent", "termSent", "groupMissing"],
+  "requiredFiles": ["resolver stdout", "resolver stderr", "compiler stdout", "compiler stderr", "sourceBefore", "sourceAfter", "realToolBefore", "realToolAfter", "outputBinary", "/usr/bin/xcrun"],
+  "sourceSets": {
+    "main": ["Witness.swift", "CaptureHost.swift"],
+    "auxiliaryAX": ["AXClient.swift"]
+  },
+  "archiveRules": [
+    "read only exact regular files",
+    "reject symlink source/tool/output",
+    "retain exact byte count plus sha256",
+    "use existing compiler-tool archive only for exact tool hash match",
+    "never execute archived bytes during replay"
+  ]
+}
