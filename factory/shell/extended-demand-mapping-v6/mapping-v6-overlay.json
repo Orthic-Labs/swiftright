@@ -1,0 +1,174 @@
+{
+  "ambiguousRows": [
+    {
+      "demand": "Binding(get:set:)",
+      "disposition": "ambiguous-catalogue-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "ambiguous-source-bound-held",
+      "reason": "Existing catalogue candidates remain ambiguous; current host evidence cannot select exact SDK declaration.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-001"
+    },
+    {
+      "demand": "Button actions",
+      "disposition": "ambiguous-catalogue-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "ambiguous-source-bound-held",
+      "reason": "Existing catalogue candidates remain ambiguous; current host evidence cannot select exact SDK declaration.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-002"
+    },
+    {
+      "demand": "radio/checkbox controls",
+      "disposition": "ambiguous-catalogue-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "ambiguous-source-bound-held",
+      "reason": "Existing catalogue candidates remain ambiguous; current host evidence cannot select exact SDK declaration.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-045"
+    }
+  ],
+  "baseMappingPath": "factory/shell/extended-demand-mapping-v5/mapping-v5.json",
+  "baseMappingSha256": "584d2fb652ebb8a08000ee4345c56205ed600680c837868a4fd9c3a796888ca7",
+  "controls": [
+    "exact base mapping hash",
+    "exact snapshot bytes/hash",
+    "reject SwiftUI/registry marker drift",
+    "reject row/denominator/promotion drift"
+  ],
+  "denominator": 107,
+  "kind": "extended-demand-mapping-v6-overlay",
+  "newFullDemandResolutions": 0,
+  "registryPromotion": 0,
+  "remainingUnresolved": [
+    {
+      "demand": "crop/text editing controls",
+      "disposition": "unresolved-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "unresolved-held",
+      "reason": "Exact source is host-side .bin and contains no SwiftUI import or registry selector; no exact SDK declaration/overload identity is proven.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-013",
+      "sourceRefs": [
+        {
+          "bytes": 25078,
+          "containsRegistrySelector": false,
+          "containsSwiftUIImport": false,
+          "originalPath": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "snapshotPath": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshots/source-09-0ed60c870fcfcb05.bin",
+          "sourceLanguage": ".bin",
+          "utf8Search": {
+            "SwiftUI": 0,
+            "registry": 0,
+            "swiftui": 0
+          }
+        }
+      ]
+    },
+    {
+      "demand": "custom pointer gestures",
+      "disposition": "unresolved-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "unresolved-held",
+      "reason": "Exact source is host-side .bin and contains no SwiftUI import or registry selector; no exact SDK declaration/overload identity is proven.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-014",
+      "sourceRefs": [
+        {
+          "bytes": 5950,
+          "containsRegistrySelector": false,
+          "containsSwiftUIImport": false,
+          "originalPath": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "snapshotPath": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshots/source-08-c6e425f44259088d.bin",
+          "sourceLanguage": ".bin",
+          "utf8Search": {
+            "SwiftUI": 0,
+            "registry": 0,
+            "swiftui": 0
+          }
+        }
+      ]
+    },
+    {
+      "demand": "document scroll/acknowledgement gating",
+      "disposition": "unresolved-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "unresolved-held",
+      "reason": "Exact source is host-side .bin and contains no SwiftUI import or registry selector; no exact SDK declaration/overload identity is proven.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-017",
+      "sourceRefs": [
+        {
+          "bytes": 24969,
+          "containsRegistrySelector": false,
+          "containsSwiftUIImport": false,
+          "originalPath": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "snapshotPath": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshots/source-06-d80f967e8e156a63.bin",
+          "sourceLanguage": ".bin",
+          "utf8Search": {
+            "SwiftUI": 0,
+            "registry": 0,
+            "swiftui": 0
+          }
+        }
+      ]
+    },
+    {
+      "demand": "navigation transitions",
+      "disposition": "unresolved-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "unresolved-held",
+      "reason": "Exact source is host-side .bin and contains no SwiftUI import or registry selector; no exact SDK declaration/overload identity is proven.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-039",
+      "sourceRefs": [
+        {
+          "bytes": 2227,
+          "containsRegistrySelector": false,
+          "containsSwiftUIImport": false,
+          "originalPath": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "snapshotPath": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshots/source-02-cce566059ce3c2e2.bin",
+          "sourceLanguage": ".bin",
+          "utf8Search": {
+            "SwiftUI": 0,
+            "registry": 0,
+            "swiftui": 0
+          }
+        }
+      ]
+    },
+    {
+      "demand": "ordered multi-step flow",
+      "disposition": "unresolved-held",
+      "fullDemandResolved": false,
+      "priorDisposition": "unresolved-held",
+      "reason": "Exact source is host-side .bin and contains no SwiftUI import or registry selector; no exact SDK declaration/overload identity is proven.",
+      "registryPromotion": false,
+      "rowKey": "f12-extended-040",
+      "sourceRefs": [
+        {
+          "bytes": 12881,
+          "containsRegistrySelector": false,
+          "containsSwiftUIImport": false,
+          "originalPath": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "snapshotPath": "factory/shell/extended-demand-mapping-v1/evidence/source-snapshots/source-10-8eff4d33f0ce06f5.bin",
+          "sourceLanguage": ".bin",
+          "utf8Search": {
+            "SwiftUI": 0,
+            "registry": 0,
+            "swiftui": 0
+          }
+        }
+      ]
+    }
+  ],
+  "rowCount": 107,
+  "sdkArchiveResolution": 0,
+  "status": "source-audit-only",
+  "version": "6"
+}

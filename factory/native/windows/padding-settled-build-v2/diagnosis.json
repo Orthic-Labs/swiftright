@@ -1,0 +1,38 @@
+{
+  "kind": "actual-r1-json-array-source-diagnosis",
+  "refs": {
+    "console/controls.json": {
+      "path": "factory/native/windows/padding-settled-build-v1/root-controls-r1/actual/stream-control-results/console/controls.json",
+      "hash": "sha256:5a315927ae224bf565871a6e99a2b9f729d0ec2f43870d91e1da7276ee514c22"
+    },
+    "io/controls.json": {
+      "path": "factory/native/windows/padding-settled-build-v1/root-controls-r1/actual/stream-control-results/io/controls.json",
+      "hash": "sha256:f45d8778847c2446f2649cc99bb3ea1e21e728a7afc1246025b752533ca61d4b"
+    },
+    "receipt.json": {
+      "path": "factory/native/windows/padding-settled-build-v1/root-controls-r1/actual/stream-control-results/receipt.json",
+      "hash": "sha256:b33f47788a5c465ea042eb02ef21598c05937a6bf117e09f0da31071ada75e85"
+    }
+  },
+  "observedConsoleCount": 2,
+  "observedConsoleModes": [
+    "volume",
+    "inherit"
+  ],
+  "observedIOCount": 6,
+  "observedIOModes": [
+    "real-copy-close-read-hash-idempotent",
+    "unfinished",
+    "faulted",
+    "failed-flush-successful-dispose-reject-seal",
+    "actual-close-timeout-capture-coordinator-hash-gate",
+    "both-real-streams-sealed-all-file-hashes"
+  ],
+  "kernelWaits": [
+    0,
+    0
+  ],
+  "sourceFinding": "PS5 pipeline array wrapping at four decoder sites; direct variable assignment resolves array shape without mode/count relaxation",
+  "actualPS5NewDecoderReplay": "prepared-unrun",
+  "nativeActions": 0
+}

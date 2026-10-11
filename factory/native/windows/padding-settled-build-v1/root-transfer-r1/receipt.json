@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-11T08:13:06.456283+00:00",
+  "sourceStageHash": "5756aa3041c7559b53c5d1ca7b8c7ea0cfa791adae3f2b5480699eec050f99d3",
+  "operations": [
+    {
+      "index": 0,
+      "argv": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "win",
+        "powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-EncodedCommand",
+        "JABFAHIAcgBvAHIAQQBjAHQAaQBvAG4AUAByAGUAZgBlAHIAZQBuAGMAZQA9ACcAUwB0AG8AcAAnAAoAJABoAG8AcwB0AFIAbwBvAHQAPQAnAEQAOgBcAEMAbABhAHUAZABlAFwAcwB3AGkAZgB0AHIAaQBnAGgAdABcAC4AZgBhAGMAdABvAHIAeQAtAHcAbwByAGsAXABoAG8AcwB0AHMAXABwAGEAZABkAGkAbgBnAC0AcwBlAHQAdABsAGUAZAAnAAoAJABiAHIAaQBkAGcAZQBSAG8AbwB0AD0AJwBEADoAXABDAGwAYQB1AGQAZQBcAHMAdwBpAGYAdAByAGkAZwBoAHQAXAAuAGYAYQBjAHQAbwByAHkALQB3AG8AcgBrAFwAaQBuAHAAdQB0AHMAXABTAHcAaQBmAHQAUgBpAGcAaAB0AEIAcgBpAGQAZwBlACcACgBpAGYAKAAoAFQAZQBzAHQALQBQAGEAdABoACAALQBMAGkAdABlAHIAYQBsAFAAYQB0AGgAIAAkAGgAbwBzAHQAUgBvAG8AdAApACAALQBvAHIAIAAoAFQAZQBzAHQALQBQAGEAdABoACAALQBMAGkAdABlAHIAYQBsAFAAYQB0AGgAIAAkAGIAcgBpAGQAZwBlAFIAbwBvAHQAKQApAHsAdABoAHIAbwB3ACAAJwBPAHcAbgBlAGQAIABmAHIAZQBzAGgAIABzAHQAYQBnAGkAbgBnACAAYQBsAHIAZQBhAGQAeQAgAGUAeABpAHMAdABzADsAIABkAG8AIABuAG8AdAAgAG8AdgBlAHIAdwByAGkAdABlACcAfQAKAE4AZQB3AC0ASQB0AGUAbQAgAC0ASQB0AGUAbQBUAHkAcABlACAARABpAHIAZQBjAHQAbwByAHkAIAAtAEYAbwByAGMAZQAgAC0AUABhAHQAaAAgACgAUwBwAGwAaQB0AC0AUABhAHQAaAAgACQAaABvAHMAdABSAG8AbwB0ACAALQBQAGEAcgBlAG4AdAApAHwATwB1AHQALQBOAHUAbABsAAoATgBlAHcALQBJAHQAZQBtACAALQBJAHQAZQBtAFQAeQBwAGUAIABEAGkAcgBlAGMAdABvAHIAeQAgAC0ARgBvAHIAYwBlACAALQBQAGEAdABoACAAKABTAHAAbABpAHQALQBQAGEAdABoACAAJABiAHIAaQBkAGcAZQBSAG8AbwB0ACAALQBQAGEAcgBlAG4AdAApAHwATwB1AHQALQBOAHUAbABsAAoA"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "a3639af5e23464fc391dae127fd5493f02c8178068a35866d9c7fdd35dcd623f"
+    },
+    {
+      "index": 1,
+      "argv": [
+        "scp",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "-r",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/padding-settled-transfer/padding-settled",
+        "win:D:/Claude/swiftright/.factory-work/hosts/"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "index": 2,
+      "argv": [
+        "scp",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=8",
+        "-r",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/padding-settled-transfer/SwiftRightBridge",
+        "win:D:/Claude/swiftright/.factory-work/inputs/"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "nativeExecuted": false,
+  "deletedRemoteFiles": 0
+}

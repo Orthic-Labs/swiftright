@@ -1,0 +1,34 @@
+{
+  "kind": "independent-padding-build-v2-decoder-source-review/1",
+  "disposition": "CLEAR_FOR_FRESH_HEADLESS_CONTROLS",
+  "pins": {
+    "root-stage-manifest.json": "8e64672c25020f9504b41e6635b82bc642db1a2c36759b68ddba287114f94223",
+    "build-hosts-v2.ps1": "36437632f3c6ac8fb3a4b27058c0df67c61dbe08a5e0aac8508f814a99a8eff3",
+    "stream-control-admission.ps1": "1b40b1a913221121144b5aca7fc069cc30abfe76ca159ef05cacdfae5e76cca2",
+    "test-stream-admission.ps1": "ef8977debeca930c7f958ef89f4081dbe7a934bfa3a3f7437ec7e4a68cf39c17",
+    "test-json-array-shape.ps1": "e02d32cd666cebb19065f21db8535d223d48237eb4096bfbdf19f62cf2faff97",
+    "preflight.ps1": "400417705f80ed4edbf2362a3d2773f6a65d19a503a85de70175c95a52972117",
+    "package/plan.json": "82628daf6254cef21ec023acfd35f9a030141a9a0976a1816c91d5f0d632e5cd"
+  },
+  "stageReferencesVerified": 70,
+  "offlineTests": {
+    "tests": 9,
+    "exitCode": 0
+  },
+  "findings": [],
+  "checks": [
+    "Four decoder sites use actual production Read-CompilerControlRows: decoded variable then @ variable, comma-array return",
+    "Non-array root,emptyarray,nonobject rows rejected; exact1/2/6 shape controls plus7malformed controls invoke actual shared function",
+    "Exact stream modes/counts/typed flags/knownbytes/rawmembership/closure authority predicates unchanged",
+    "Builder changes only admission helper pin; plan/preflight/kernel/stream IO helpers byteequal admittedv1",
+    "No relabeled old actual control result; fresh actual PS5 controls required by build gate",
+    "15s/5s capture unaffected;300000ms build/5000ms raw closure unchanged"
+  ],
+  "execution": {
+    "powershell": false,
+    "native": false,
+    "remote": false,
+    "compiler": false
+  },
+  "nextStep": "Root runs fresh PS5 decoder/full headless controls; actual successful receipts gate one guarded build."
+}

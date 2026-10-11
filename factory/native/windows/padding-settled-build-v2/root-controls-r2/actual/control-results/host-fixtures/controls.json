@@ -1,0 +1,32 @@
+﻿{
+    "helperSha256":  "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+    "kind":  "synthetic-production-host-input-guard-controls",
+    "normalPassed":  true,
+    "pass":  true,
+    "faults":  [
+                   {
+                       "fault":  "missing-source",
+                       "rejected":  true
+                   },
+                   {
+                       "fault":  "extra-unbound-source",
+                       "rejected":  true
+                   },
+                   {
+                       "fault":  "equal-count-wrong-source",
+                       "rejected":  true
+                   },
+                   {
+                       "fault":  "omitted-binding",
+                       "rejected":  true
+                   },
+                   {
+                       "fault":  "raw-hash-drift",
+                       "rejected":  true
+                   }
+               ],
+    "synthetic":  true,
+    "compilerInvocations":  0,
+    "filesRetained":  true,
+    "nativeWindows":  0
+}

@@ -1,0 +1,24 @@
+{
+  "kind": "actual-padding-compilation-local-review",
+  "acceptedObservationalCompile": true,
+  "issues": [],
+  "rawRefs": {
+    "observation.json": "sha256:33eaea411164c7c650fe69521ba01ee81a0855fa31f8ff345d0b08a3202de9ba",
+    "compile.stdout.bin": "sha256:ec8ebb4a488c1446dbce53731dc7ba7349d20982dee7e8ea9a2f200b064f9aed",
+    "compile.stderr.bin": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "FactoryProbe.exe": "sha256:431e68252a68dbbc0218c6bd854eb130b7a0385713f98d07ec4b3c3cf5f2cbc3",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftdoc": "sha256:0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae",
+    "runtime-module-archive/x86_64-unknown-windows-msvc.swiftmodule": "sha256:06a112ada5498f6ed9f6707d5b52529f9c9e6e7cb05d07c138b7c6bc3258041f"
+  },
+  "nativeActions": 0,
+  "qualification": "hold",
+  "scope": "frozen producer +reported actual driver invocation/kernel/streams +archived exe/module bytes; no backend/native/parity attestation",
+  "decision": "CLEAR-OBSERVATIONAL-COMPILATION",
+  "producerStageHash": "sha256:6a83289103471c1d4b2221c81479bbe3cd5aea501eec3e35c0aaccb309a20800",
+  "sourceInspection": {
+    "actualCompilerDiagnostics": "stderr empty; stdout successful release build",
+    "missingWindowMetricsEvent": "explicit hold on close remains; actual event pending native observation",
+    "rendererBeforeOperation": "production preflight hardpins owned DLL e280f4\u2026 before caller launch",
+    "providerScope": "unchanged supported padding/color/retained-text scope; unsupported metadata aborts"
+  }
+}
