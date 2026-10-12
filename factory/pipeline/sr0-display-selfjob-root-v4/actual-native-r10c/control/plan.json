@@ -1,0 +1,295 @@
+{
+    "schema":  "sr0-display-selfjob-v4-fresh-one-run-r8",
+    "status":  "source-pin-plan",
+    "execution":  "fresh native diagnostic only; strict display gate retained; no eligibility claim",
+    "stageRoot":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10",
+    "base":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1",
+    "factoryRoot":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r10",
+    "controlRoot":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\control-root",
+    "requestedControlRoot":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r10",
+    "controlReceiptRoot":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r10",
+    "requiredControlReceipts":  [
+                                    "drain-controls-r10.json"
+                                ],
+    "runRoot":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r10\\run",
+    "manifestPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r10\\one-shot-manifest.json",
+    "lockPath":  "D:\\Claude\\desktop.lock",
+    "taskName":  "SR0-factory-display-selfjob-v7-root-r8",
+    "tag":  "SR0-factory-display-selfjob-v7-root-r8",
+    "schedulePath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\schedule-once-v7.ps1",
+    "workerPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\run-once-v7.ps1",
+    "collectorPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\collector-selfjob-v7-drain-pidjoin.ps1",
+    "coordinatorPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\coordinator-selfjob-v5.ps1",
+    "wrapperPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\launch-once-v7.vbs",
+    "frozenTaskPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\task-workload-v8.ps1",
+    "drainTaskPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\task-workload-drain-v1.ps1",
+    "helperPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\Sr0OwnedJobProcess-v15.cs",
+    "drainHelperPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\workload-drain-helper-v1.ps1",
+    "identityHelperPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\workload-identity-v6.ps1",
+    "parserPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\receipt-parser-v4.ps1",
+    "launcherHelperPath":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\Sr0LauncherOwnedJobProcess-v4.cs",
+    "workloadExe":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+    "rendererDll":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\swiftright_render.dll",
+    "presentMonExe":  "D:\\Claude\\tools\\presentmon\\PresentMon-2.6.0-x64.exe",
+    "memoryLimitFlags":  "0x200",
+    "aggregateJobMemoryLimitBytes":  1073741824,
+    "killOnJobClose":  false,
+    "deadlineSeconds":  900,
+    "pollSeconds":  1,
+    "warmup":  10,
+    "measure":  60,
+    "runs":  1,
+    "noActivate":  true,
+    "noResources":  true,
+    "streamCapBytes":  8388608,
+    "csvCapBytes":  67108864,
+    "sourceFiles":  [
+                        {
+                            "name":  "coordinator",
+                            "path":  "coordinator-selfjob-v5.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\coordinator-selfjob-v5.ps1",
+                            "bytes":  11858,
+                            "sha256":  "0458ceff8b921fbacb6f893d77ad70dd8a61a6b2ec7e97465f0b801c0acc35b8"
+                        },
+                        {
+                            "name":  "parser",
+                            "path":  "receipt-parser-v4.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\receipt-parser-v4.ps1",
+                            "bytes":  6836,
+                            "sha256":  "8a9c033b0a2272ec39a555e9c1e7b4e9b6c22b46fec8a5ee1967891b384f422d"
+                        },
+                        {
+                            "name":  "helper",
+                            "path":  "Sr0OwnedJobProcess-v15.cs",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\pilot-next-source-v1\\windows-capture-v1\\Sr0OwnedJobProcess-v15.cs",
+                            "bytes":  6495,
+                            "sha256":  "89ce3d84f565180c89ad43a753f7c9e44319dca206f3c5d6d5ba80ac5e05197a"
+                        },
+                        {
+                            "name":  "launcherHelper",
+                            "path":  "Sr0LauncherOwnedJobProcess-v4.cs",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\Sr0LauncherOwnedJobProcess-v4.cs",
+                            "bytes":  12124,
+                            "sha256":  "e109c28e59142c2431a0ab4f32252596f5d3ca4b6850547ee04b13267d940f01"
+                        },
+                        {
+                            "name":  "frozenTask",
+                            "path":  "task-workload-v8.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\qualification\\tuple12-takeover\\workload-controls-v8\\task-workload.ps1",
+                            "bytes":  36190,
+                            "sha256":  "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e"
+                        },
+                        {
+                            "name":  "collector",
+                            "path":  "collector-selfjob-v7-drain-pidjoin.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\collector-selfjob-v7-drain-pidjoin.ps1",
+                            "bytes":  42207,
+                            "sha256":  "16ed5095c1302c78a6b623bca161a772f78977b055568af6229fbe9a5a29f483"
+                        },
+                        {
+                            "name":  "drainTask",
+                            "path":  "task-workload-drain-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\task-workload-drain-v1.ps1",
+                            "bytes":  37508,
+                            "sha256":  "28b2d42d3f71cb77af23efae64b23143fe57fb15396aea25cd270020a8a6598b"
+                        },
+                        {
+                            "name":  "drainHelper",
+                            "path":  "workload-drain-helper-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\workload-drain-helper-v1.ps1",
+                            "bytes":  2513,
+                            "sha256":  "d3e42971353516ed714edff1c848a48269acaa0f908b6ae1acd591f35878b1d8"
+                        },
+                        {
+                            "name":  "identityHelper",
+                            "path":  "workload-identity-v6.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\workload-identity-v6.ps1",
+                            "bytes":  3209,
+                            "sha256":  "1cd6c8a486a33cb318e5fab9b0613d888920b1fc9d52cac7849bd75e39d84309"
+                        },
+                        {
+                            "name":  "controlSampler",
+                            "path":  "control-root/sample-resources.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\qualification\\tuple12-takeover\\workload-controls-v8\\sample-resources.ps1",
+                            "bytes":  15895,
+                            "sha256":  "90b2bc9fda6c2b5e0c7ca244508e1a7d84e9a5640d2089394ea51e7cc6d11b13"
+                        },
+                        {
+                            "name":  "controls-drain",
+                            "path":  "test-workload-drain-controls-r10.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\prospective-native-stage-v1\\test-workload-drain-controls-r10.ps1",
+                            "bytes":  7398,
+                            "sha256":  "568d854a8ef91a25e4570cce1e0467abaa8143d34f926d779622f38a703ca5a1"
+                        },
+                        {
+                            "name":  "drainControls",
+                            "path":  "run-source-controls-r8.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\prospective-native-stage-v1\\run-source-controls-r8.ps1",
+                            "bytes":  2777,
+                            "sha256":  "7751ef325ba63d2504651a23c81324a199e140bf6c4891e4cd0e0087e71b422b"
+                        },
+                        {
+                            "name":  "worker",
+                            "path":  "run-once-v7.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\prospective-native-stage-v1\\run-once-v7.ps1",
+                            "bytes":  17006,
+                            "sha256":  "9a41ea6efec88d593a0b4eecda930417bb0f23f01f8d06976ab7d136d43d3f78"
+                        },
+                        {
+                            "name":  "schedule",
+                            "path":  "schedule-once-v7.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\prospective-native-stage-v1\\schedule-once-v7.ps1",
+                            "bytes":  9693,
+                            "sha256":  "7b328a98beb98d0db448182bb63d5366a2aaaae77c09ef6ba7f5d782b65c9098"
+                        },
+                        {
+                            "name":  "wrapper",
+                            "path":  "launch-once-v7.vbs",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\prospective-native-stage-v1\\launch-once-v7.vbs",
+                            "bytes":  516,
+                            "sha256":  "962d827963e5fc0c9dae1069a7eae1bfc8c45ec2e8383d3f23c9e797745a4bf0"
+                        },
+                        {
+                            "name":  "control-test-collector-forced-stop-controls-v1.ps1",
+                            "path":  "source-controls/test-collector-forced-stop-controls-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-collector-forced-stop-controls-v1.ps1",
+                            "bytes":  3339,
+                            "sha256":  "8704edd784492baba8d26b5c81905cf8d69caaf26b4d67671d64e25dbb2646ad"
+                        },
+                        {
+                            "name":  "control-test-coordinator-forced-stop-controls-v1.ps1",
+                            "path":  "source-controls/test-coordinator-forced-stop-controls-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-coordinator-forced-stop-controls-v1.ps1",
+                            "bytes":  3550,
+                            "sha256":  "30343aa022ea2d097de1950a1451f76cf8ca5ee2601d49b0a10eab978e9bdc5c"
+                        },
+                        {
+                            "name":  "control-test-v5-wrapper-controls-v1.ps1",
+                            "path":  "source-controls/test-v5-wrapper-controls-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-v5-wrapper-controls-v1.ps1",
+                            "bytes":  2896,
+                            "sha256":  "f57b4d5b5a4476b5ad839bed7e48acb3ac2a54996d3120697e2aa4b806b2d86c"
+                        },
+                        {
+                            "name":  "control-display-parser-adapter-v1.ps1",
+                            "path":  "source-controls/display-parser-adapter-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\display-parser-adapter-v1.ps1",
+                            "bytes":  8359,
+                            "sha256":  "e9803bfde30891da212c1c6c668ee250d393c2fc7420a290f59c2aa5b98bb870"
+                        },
+                        {
+                            "name":  "control-test-display-parser-adapter-controls-v1.ps1",
+                            "path":  "source-controls/test-display-parser-adapter-controls-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-display-parser-adapter-controls-v1.ps1",
+                            "bytes":  2827,
+                            "sha256":  "666f7881185c364c93bd6c879e9e5a7b4ba078b4cacc27d8c9e054124e1377cd"
+                        },
+                        {
+                            "name":  "control-observer-source-v5-r1.ps1",
+                            "path":  "source-controls/observer-source-v5-r1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\observer-source-v5-r1.ps1",
+                            "bytes":  23925,
+                            "sha256":  "a9cecf369df580f9f0ae63ed8746812bc6a6bd0e56b289c6af47e72ed3c398fe"
+                        },
+                        {
+                            "name":  "control-test-observer-source-v5-controls-r1.ps1",
+                            "path":  "source-controls/test-observer-source-v5-controls-r1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-observer-source-v5-controls-r1.ps1",
+                            "bytes":  11290,
+                            "sha256":  "3a8632c59dd508a3665272ca1d6daf3bfb263b9acc48aa1d688575b49064b6eb"
+                        },
+                        {
+                            "name":  "control-test-forced-stop-admission-v5.ps1",
+                            "path":  "source-controls/test-forced-stop-admission-v5.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-forced-stop-admission-v5.ps1",
+                            "bytes":  3188,
+                            "sha256":  "a574ba3845a1e7426e5e88ce8bdca78b0060e28db1600a1cbaf552c3cee1cef6"
+                        },
+                        {
+                            "name":  "control-materialize-analysis-inputs-v1.ps1",
+                            "path":  "source-controls/materialize-analysis-inputs-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\materialize-analysis-inputs-v1.ps1",
+                            "bytes":  4797,
+                            "sha256":  "20d46de79ff49f616ef99fd20c8b67940c2578ec739c7f38c99b49ce7450fd0e"
+                        },
+                        {
+                            "name":  "control-test-materialize-analysis-inputs-controls-v1.ps1",
+                            "path":  "source-controls/test-materialize-analysis-inputs-controls-v1.ps1",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\test-materialize-analysis-inputs-controls-v1.ps1",
+                            "bytes":  2406,
+                            "sha256":  "ca8243babe7c8be447f608bbbda2e8806b11258ac35ac9cbe026cafdd0eadb76"
+                        },
+                        {
+                            "name":  "control-analyze_workload-v3-adapter-v1.py",
+                            "path":  "source-controls/analyze_workload-v3-adapter-v1.py",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\analyze_workload-v3-adapter-v1.py",
+                            "bytes":  91086,
+                            "sha256":  "d068aed982569e48dbccd760c66ba5789e73c9a31b37a3888264c31a769b43b7"
+                        },
+                        {
+                            "name":  "legacy-source-pins",
+                            "path":  "source-controls/v5-root-source-pins.json",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-root-v4\\v5-root-r6\\source-pins.json",
+                            "bytes":  3233,
+                            "sha256":  "fc11300adfee215eec720c466747f1937cba3add935f9b758234846c09fe6d78"
+                        },
+                        {
+                            "name":  "integration-source-pins",
+                            "path":  "source-controls/v5-r6-integration-source-pins.json",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\source-pins.json",
+                            "bytes":  2151,
+                            "sha256":  "39822c7145bb178483fc7cb6e4fcf8842784e87301d894fe8b3ff4c1b99fdc87"
+                        },
+                        {
+                            "name":  "integration-readme",
+                            "path":  "source-controls/v5-r6-integration-README.md",
+                            "source":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\source-root-r10\\factory\\pipeline\\sr0-display-selfjob-v4\\v5-r6-integration-v1\\README.md",
+                            "bytes":  3367,
+                            "sha256":  "a977f875d3a17bdce3cadc08a4a767182b95983c19d47fcf39964ad0643e0be4"
+                        },
+                        {
+                            "name":  "workloadExe",
+                            "path":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+                            "source":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+                            "bytes":  5233152,
+                            "sha256":  "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+                            "external":  true
+                        },
+                        {
+                            "name":  "rendererDll",
+                            "path":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\swiftright_render.dll",
+                            "source":  "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\swiftright_render.dll",
+                            "bytes":  11887616,
+                            "sha256":  "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+                            "external":  true
+                        },
+                        {
+                            "name":  "presentMonExe",
+                            "path":  "D:\\Claude\\tools\\presentmon\\PresentMon-2.6.0-x64.exe",
+                            "source":  "D:\\Claude\\tools\\presentmon\\PresentMon-2.6.0-x64.exe",
+                            "bytes":  980320,
+                            "sha256":  "b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af",
+                            "external":  true
+                        }
+                    ],
+    "sourcePins":  {
+                       "drainControlTestSha256":  "568d854a8ef91a25e4570cce1e0467abaa8143d34f926d779622f38a703ca5a1",
+                       "drainControlRunnerSha256":  "7751ef325ba63d2504651a23c81324a199e140bf6c4891e4cd0e0087e71b422b",
+                       "frozenTask":  "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e",
+                       "drainTask":  "28b2d42d3f71cb77af23efae64b23143fe57fb15396aea25cd270020a8a6598b",
+                       "helper":  "89ce3d84f565180c89ad43a753f7c9e44319dca206f3c5d6d5ba80ac5e05197a",
+                       "drainHelper":  "d3e42971353516ed714edff1c848a48269acaa0f908b6ae1acd591f35878b1d8",
+                       "identityHelper":  "1cd6c8a486a33cb318e5fab9b0613d888920b1fc9d52cac7849bd75e39d84309",
+                       "parser":  "8a9c033b0a2272ec39a555e9c1e7b4e9b6c22b46fec8a5ee1967891b384f422d",
+                       "launcherHelper":  "e109c28e59142c2431a0ab4f32252596f5d3ca4b6850547ee04b13267d940f01",
+                       "worker":  "9a41ea6efec88d593a0b4eecda930417bb0f23f01f8d06976ab7d136d43d3f78",
+                       "collector":  "16ed5095c1302c78a6b623bca161a772f78977b055568af6229fbe9a5a29f483",
+                       "coordinator":  "0458ceff8b921fbacb6f893d77ad70dd8a61a6b2ec7e97465f0b801c0acc35b8",
+                       "wrapper":  "962d827963e5fc0c9dae1069a7eae1bfc8c45ec2e8383d3f23c9e797745a4bf0",
+                       "workloadExe":  "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+                       "rendererDll":  "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+                       "presentMonExe":  "b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af"
+                   },
+    "nativeActions":  0,
+    "qualificationClaim":  false
+}

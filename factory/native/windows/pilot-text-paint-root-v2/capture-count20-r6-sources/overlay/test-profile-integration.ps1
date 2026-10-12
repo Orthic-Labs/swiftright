@@ -1,0 +1,4 @@
+param([string]$GuardPath,[string]$Root,[string]$SourceInputsPath)
+$ErrorActionPreference='Stop';. $GuardPath;$si=Get-Content -Raw $SourceInputsPath|ConvertFrom-Json;Assert-FactoryIntegrationSources $Root $si|Out-Null
+$rows=@();foreach($n in @('kind','count','caseID','caseHash','sourceHash','tupleID','planHash','compileReceiptHash','tupleHash','bindingHash','recipeHash','exeHash','runtimeSourceCommit','rendererSha256','integrationBindingsHash')){$bad=$si|ConvertTo-Json -Depth 32|ConvertFrom-Json;if($n -ceq 'count'){$bad.$n=21}else{$bad.$n='fault-'+[string]$bad.$n};$reject=$false;try{Assert-FactoryIntegrationSources $Root $bad|Out-Null}catch{$reject=$true};if(-not $reject){throw ('accepted source fault '+$n)};$rows+=@{field=$n;rejected=$true}}
+@{status='passed';faults=$rows;nativeActions=0;lockActions=0}|ConvertTo-Json -Depth 6
