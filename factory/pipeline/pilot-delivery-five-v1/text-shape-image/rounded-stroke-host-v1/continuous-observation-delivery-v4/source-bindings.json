@@ -1,0 +1,240 @@
+{
+  "kind": "rounded-stroke-continuous-observation-delivery-source-bindings-v4",
+  "status": "source-ready-pending-root-build",
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "controls": "sha256:646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1",
+    "shapes": "sha256:3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+  },
+  "bridge": {
+    "types": "sha256:2f51d62f8778f16fb71b9c44a674c889ee41a7c67ee5af23acbfe2a633296dfd",
+    "marshal": "sha256:ee8345a4f011f5a40c2bb53bcd49dc8a8a9600eb1a8d10c2c3bde770917cb375",
+    "renderer": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "witness": {
+    "path": "package/Sources/FactoryProbe/Witness.swift",
+    "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+    "source": "RoundedRectangle(cornerRadius:6).stroke(Color.blue,lineWidth:2).frame(width:40,height:20)"
+  },
+  "host": {
+    "main": "sha256:bb2bae596ffc20eb879d770b7b13dcd1fd284e4e6a3ea460073066021500a590",
+    "shapePrimitive": "sha256:554526bc9f8dbf8d7b3ce5d54465dea02558369e4efcfb0e5a8aa41c43e6481e",
+    "centeredLayoutAdapter": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+    "sourceBindings": [
+      {
+        "path": "Package.swift",
+        "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+        "bytes": 539
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+        "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+        "bytes": 1392
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryContainer.swift",
+        "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+        "bytes": 362
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryFill.swift",
+        "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+        "bytes": 1646
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+        "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+        "bytes": 512
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryShapePrimitive.swift",
+        "sha256": "sha256:554526bc9f8dbf8d7b3ce5d54465dea02558369e4efcfb0e5a8aa41c43e6481e",
+        "bytes": 2912
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+        "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+        "bytes": 1023
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryViewport.swift",
+        "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+        "bytes": 3051
+      },
+      {
+        "path": "Sources/FactoryProbe/Witness.swift",
+        "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+        "bytes": 298
+      },
+      {
+        "path": "Sources/FactoryProbe/main.swift",
+        "sha256": "sha256:bb2bae596ffc20eb879d770b7b13dcd1fd284e4e6a3ea460073066021500a590",
+        "bytes": 13212
+      },
+      {
+        "path": "reference-witness.swift",
+        "sha256": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+        "bytes": 191
+      }
+    ]
+  },
+  "abiMapping": {
+    "fill": "Primitive.rect color + radius",
+    "stroke": "Primitive.rect color=0 + borderColor + borderWidth",
+    "continuousRounded": "observation-only ABI rect-radius-border approximation; no continuous semantics or parity claim",
+    "circularRounded": "source route ready"
+  },
+  "holds": [
+    "fresh root bounded prebuild/final compile receipt",
+    "native capture/paired capture receipts",
+    "renderer sampling parity at host DPI",
+    "centered subtree translation must be validated against root pixel-frame observation"
+  ],
+  "outputs": null,
+  "paths": {
+    "workspaceRoot": "D:\\Claude\\swiftright",
+    "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+    "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+    "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v4\\package"
+  },
+  "compiler": {
+    "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "sha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "argv": [
+      "build",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v4\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v4\\package\\build-continuous-observation-r2\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v4\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v4\\package\\build-continuous-observation-r2\\scratch"
+  },
+  "package": {
+    "plan": "package/plan.json",
+    "planSha256": "sha256:8f0f79a4da0dad126b21be9fe3a37ec4224146a3ee1b546ca670e05ad64e10a9",
+    "packageSwift": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+    "runtimeReceipt": "sha256:9c1c34cff32fd7078727daa54253a407c4771fe1da440537c3a109e9b6c25221",
+    "runtimeTree": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "sourceBindings": [
+      {
+        "path": "Package.swift",
+        "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+        "bytes": 539
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+        "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+        "bytes": 1392
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryContainer.swift",
+        "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+        "bytes": 362
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryFill.swift",
+        "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+        "bytes": 1646
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+        "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+        "bytes": 512
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryShapePrimitive.swift",
+        "sha256": "sha256:554526bc9f8dbf8d7b3ce5d54465dea02558369e4efcfb0e5a8aa41c43e6481e",
+        "bytes": 2912
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+        "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+        "bytes": 1023
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryViewport.swift",
+        "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+        "bytes": 3051
+      },
+      {
+        "path": "Sources/FactoryProbe/Witness.swift",
+        "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+        "bytes": 298
+      },
+      {
+        "path": "Sources/FactoryProbe/main.swift",
+        "sha256": "sha256:bb2bae596ffc20eb879d770b7b13dcd1fd284e4e6a3ea460073066021500a590",
+        "bytes": 13212
+      },
+      {
+        "path": "reference-witness.swift",
+        "sha256": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+        "bytes": 191
+      }
+    ],
+    "sourceBindingsHash": "sha256:c4c89b900d1d9dd044c289c92c1ee2840ec2378c976a03e81775a4242fcc569a"
+  },
+  "boundedAdapter": {
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "sourceBindings": [
+      {
+        "path": "tools/prepare-bounded-stage.ps1",
+        "sha256": "sha256:315638ea1da4d01a5d9ab4d114d1f6941284f04a8ed1b736e0eef31392ec1227",
+        "bytes": 2581
+      },
+      {
+        "path": "tools/compile-bounded.ps1",
+        "sha256": "sha256:4c7a3875498e1aa3e043c08eb140b9b4ee30ed99ea1c58ccb796dfc67c4e752e",
+        "bytes": 2258
+      }
+    ],
+    "sourceBindingsHash": "sha256:08f57b954317061a8a4e47c9ab11c1405a40d106abb8502665aca3d8550bb0d9"
+  },
+  "macSource": {
+    "plan": "mac-source/plan.json",
+    "manifest": "mac-source/source-manifest.json",
+    "witness": "mac-source/Sources/FactoryProbe/Witness.swift",
+    "adapter": "mac-source/Sources/FactoryProbe/CaptureHost.swift",
+    "status": "source-ready-pending-root-compile-capture",
+    "planSha256": "sha256:e92a7f7c8496558bdd1fa25d8dd6d68701b0a20c22d96a99a0af1d08caecd6db",
+    "manifestSha256": "sha256:1ce851ac0625b8b42f4760a4dfdadb468540025a5b4389fad49fd1efc75362af",
+    "witnessSha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+    "adapterSha256": "sha256:2a7f0bccf52649ce6ace936879ee8287a0e5b3fe2c00d309d22b4c8e23fa1698"
+  },
+  "strokeGeometry": {
+    "swiftUI": "centered stroke on RoundedRectangle path",
+    "abi": "SWR_PRIM_RECT optional radius/border fields; edge placement unspecified",
+    "evidence": [
+      "package/Sources/FactoryProbe/FactoryShapePrimitive.swift:5-8",
+      "factory/native/windows/remaining-five-hosts-v2/dependencies/staged-bridge-inputs-r09/Sources/CSwiftRight/swiftright.h:310-332"
+    ],
+    "correction": "stroke primitive expands resolved bounds by half scaled lineWidth & offsets corner radius by same half width; actual continuous geometry remains unproven",
+    "status": "observation-only ABI approximation; fresh native diff required"
+  }
+}

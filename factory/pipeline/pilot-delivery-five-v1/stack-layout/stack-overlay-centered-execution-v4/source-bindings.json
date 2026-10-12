@@ -1,0 +1,163 @@
+{
+  "kind": "windows-stack-overlay-centered-execution-source-manifest-v4",
+  "status": "source-ready-pending-root-build-and-capture",
+  "candidate": "swiftui.stack-overlay.centered-host.execution-v4",
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "sourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+  },
+  "renderer": {
+    "tuple": "tuple11",
+    "sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "abi": "0.6"
+  },
+  "bridge": {
+    "commit": "0a745ab",
+    "headerCommit": "862997c",
+    "abi": "0.6"
+  },
+  "witness": {
+    "path": "package/Sources/FactoryProbe/Witness.swift",
+    "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+    "sameSourceBytes": true
+  },
+  "recipe": {
+    "path": "recipe.json",
+    "sha256": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+    "canonicalHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0"
+  },
+  "hostCorrection": {
+    "kind": "intrinsic-root-subtree-centering-v1",
+    "source": "FactoryCenteredLayout.swift",
+    "translation": "viewport.x + (viewport.w - root.w)/2 - root.x; viewport.y + (viewport.h - root.h)/2 - root.y",
+    "scope": "every resolved node in root subtree; background unchanged",
+    "runtimeBehaviorChanged": false
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "sha256:4fcebdd55b19329c4030c96a2c1c406b1bdb24db63ff0bc31b077d36e588e07d",
+      "bytes": 1013
+    },
+    {
+      "path": "package/Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539
+    },
+    {
+      "path": "package/Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+      "bytes": 1392
+    },
+    {
+      "path": "package/Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:370878e9b695905bf0ca00bd20ae835937a66a37754ece6c993d42289ed9c49c",
+      "bytes": 1646
+    },
+    {
+      "path": "package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    {
+      "path": "package/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    {
+      "path": "package/Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+      "bytes": 424
+    },
+    {
+      "path": "package/Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:159843d9a7170851358c8566f4cae92b4d15df3554b6b9baa1878a41892b096d",
+      "bytes": 13760
+    },
+    {
+      "path": "package/case.json",
+      "sha256": "sha256:e97c766a72389731fc45acece637a9efe0f7421f2fc079d5e24b88eb6c40f863",
+      "bytes": 1143
+    },
+    {
+      "path": "package/runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    {
+      "path": "package/runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    {
+      "path": "recipe.json",
+      "sha256": "sha256:9337fae8fede347b991b0fe65b7a29fbcd2059788668b18402ab25860b1b87b3",
+      "bytes": 1797
+    },
+    {
+      "path": "review-notes.md",
+      "sha256": "sha256:5857c1d9d0f6cedc7a71beef4f8cc7e17ba616696e4a1601ea98c7e6c4171f4c",
+      "bytes": 2155
+    },
+    {
+      "path": "witness.swift",
+      "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+      "bytes": 424
+    }
+  ],
+  "filesSha256": "sha256:6b50180506c2ab829af4962b0e476919b66f591a81f0b209c33d383af0df8a6b",
+  "compile": {
+    "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v4/package",
+    "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v4\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v4\\package\\build-stack-overlay-execution-v4\\scratch",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "compilerHash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "memoryCapBytes": 1073741824,
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v4\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v4\\package\\build-stack-overlay-execution-v4\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ]
+  },
+  "sourceOnly": {
+    "nativeActions": 0,
+    "compilerActions": 0,
+    "claims": [
+      "source-ready",
+      "compile-request-ready"
+    ],
+    "forbiddenClaims": [
+      "exeHash",
+      "compileReceiptHash",
+      "nativeObservation"
+    ]
+  },
+  "executionEligible": false,
+  "nativeParity": "hold-until-root-build-and-capture"
+}

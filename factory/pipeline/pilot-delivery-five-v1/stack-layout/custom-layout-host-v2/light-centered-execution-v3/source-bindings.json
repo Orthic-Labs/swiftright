@@ -1,0 +1,92 @@
+{
+  "kind": "factory-custom-layout-light-centered-execution-source-bindings-v2",
+  "status": "source-ready-pending-root-build",
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "lockActions": 0,
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "receiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+  },
+  "case": {
+    "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a",
+    "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29"
+  },
+  "environmentInputs": {
+    "colorScheme": "light"
+  },
+  "hostCorrection": {
+    "kind": "intrinsic-subtree-centering-v1",
+    "source": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+    "formula": "viewport origin + (viewport size - intrinsic root pixel frame size) / 2 - intrinsic root pixel frame origin",
+    "scope": "all resolved nodes in root subtree; host background remains full viewport",
+    "hardcodedLeafCoordinates": false,
+    "runtimeValidation": "pending-native-count1"
+  },
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "bytes": 539,
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "path": "case.json",
+      "bytes": 2061,
+      "sha256": "sha256:93add3c7c82114d0220235fce38b8ad67ac0fd03d5363e4668714d31e80b4c42"
+    },
+    {
+      "path": "witness.manifest.json",
+      "bytes": 3354,
+      "sha256": "sha256:4e8546fc2d49c4f61f94461ebbd7ebd23a51edeadc5753551c8ff48b1f311332"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "bytes": 1392,
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "bytes": 362,
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "bytes": 1646,
+      "sha256": "sha256:21da245416c4bc6bd04981269546236e2a4c9d06dea4ecf2bd0664bf4dccf96f"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "bytes": 1023,
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "bytes": 3051,
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "bytes": 2257,
+      "sha256": "sha256:f032a6b2a4b1f850fcce02ed97964eb05c2bc8965feb3403db975c8da44c7ee3"
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "bytes": 15442,
+      "sha256": "sha256:b9322b83aee02a0950ec665b3500345316bce084622235c751012695c93ba804"
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "bytes": 11275,
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "bytes": 2825,
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    }
+  ],
+  "qualified": false,
+  "executionVariant": "light-centered-execution-v3-generic-system-color",
+  "filesSha256": "sha256:4558e5ed347d38a65a1c22e11a42f53e0027236f1f053733b8f2d0a1b37e554d"
+}

@@ -1,0 +1,9 @@
+# Centered ZStack/overlay execution source packet v4
+
+Fresh source packet preserving stack-overlay witness bytes & intrinsic-root centering. Runtime node `Overlay` is admitted as an explicit structural container because current 37429120 resolved graph emits `Overlay` for witness `.overlay`; child order & resolved geometry remain unchanged. No broad node fallback, runtime, renderer, bridge, or witness edits.
+
+Windows stage: `D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v4\\package`; scratch: `...\\build-stack-overlay-execution-v4\\scratch`. Root must regenerate operational compile plan from this packet, then run existing retained-handle compiler/capture flow.
+
+Witness: `sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee`. Runtime `37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b`, tree `sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e`, renderer `sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93`, ABI `0.6`.
+
+Semantic mapping correction: generic light `system.red` uses `0xff383cff` & `system.blue` uses `0x0088ffff`; no Mac bitmap is bundled or read by host.
