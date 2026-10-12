@@ -1,0 +1,20 @@
+[
+    {
+        "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-drain-controls-r9\\actual-controls.json",
+        "sha256":  "1dafced194a6b033638659e1be2d264d6af773c52b68482b8f0ae8da77b322d5",
+        "bytes":  1910,
+        "text":  "{\r\n    \"kind\":  \"sr0-display-workload-drain-controls-r9\",\r\n    \"status\":  \"held\",\r\n    \"failure\":  \"drain case failed: inherited-pipe-delay\",\r\n    \"helperSha256\":  \"d3e42971353516ed714edff1c848a48269acaa0f908b6ae1acd591f35878b1d8\",\r\n    \"failedCase\":  {\r\n                       \"name\":  \"inherited-pipe-delay\",\r\n                       \"file\":  \"C:\\\\WINDOWS\\\\System32\\\\cmd.exe\",\r\n                       \"argv\":  \"/d /s /c D:\\\\Claude\\\\swiftright\\\\.factory-work\\\\root-tools\\\\sr0-drain-controls-r9\\\\work\\\\inherited-pipe-launcher-r9.cmd\",\r\n                       \"exit\":  -1,\r\n                       \"expectedExit\":  0,\r\n                       \"expectTerminal\":  true,\r\n                       \"expectInheritedPipeDelay\":  true,\r\n                       \"proof\":  {\r\n                                     \"processWaitCompleted\":  false,\r\n                                     \"processTerminal\":  false,\r\n                                     \"processWaitError\":  null,\r\n                                     \"stdoutCompleted\":  false,\r\n                                     \"stderrCompleted\":  false,\r\n                                     \"stdoutFaulted\":  false,\r\n                                     \"stderrFaulted\":  false,\r\n                                     \"stdoutCanceled\":  false,\r\n                                     \"stderrCanceled\":  false,\r\n                                     \"streamsDrained\":  false,\r\n                                     \"timeoutSeconds\":  15,\r\n                                     \"elapsedMilliseconds\":  15009,\r\n                                     \"totalBudgetBounded\":  true\r\n                                 },\r\n                       \"stdout\":  \"\",\r\n                       \"stderr\":  \"\",\r\n                       \"cleanupError\":  null,\r\n                       \"failure\":  \"drain case failed: inherited-pipe-delay\"\r\n                   },\r\n    \"nativeQualificationClaim\":  false\r\n}\r\n"
+    },
+    {
+        "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-drain-controls-r9\\work\\inherited-pipe-launcher-r9.cmd",
+        "sha256":  "4e6ab96703bed8953f1a2b18918b07c05ba21dc6be1a6889821e7b04c297dd80",
+        "bytes":  281,
+        "text":  "@echo off\r\nstart \"\" /b \"\r\nC:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\r\n\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"\r\nD:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-drain-controls-r9\\work\\inherited-pipe-child-r9.ps1\r\n\"\r\necho parent-exit\r\nexit /b 0\r\n"
+    },
+    {
+        "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-drain-controls-r9\\work\\inherited-pipe-child-r9.ps1",
+        "sha256":  "b6c1947b335e4f379759fc89ebead3a3ed54cb3f95d08c40a26f741acbf25912",
+        "bytes":  54,
+        "text":  "Start-Sleep -Seconds 2\r\nWrite-Output inherited-delay\r\n"
+    }
+]

@@ -1,0 +1,702 @@
+{
+  "platform": "windows",
+  "overall": "INCOMPLETE",
+  "refusal_reasons": [
+    "r1: window not displayed for most of the measured window (PresentMon: 2268 presents, 110 displayed, ~3600 expected): minimized, occluded by another window, or throttled"
+  ],
+  "limits": {
+    "bridge_input_p95_ms": 1.0,
+    "bridge_input_p99_ms": 2.0,
+    "bridge_frame_p95_ms": 2.0,
+    "bridge_frame_p99_ms": 4.0,
+    "visible_p95_ms": 50.0,
+    "visible_p99_ms": 100.0,
+    "presentation_p95_margin_ms": 0.1,
+    "presentation_missed_factor": 1.5,
+    "mainactor_p99_ms": 16.7,
+    "clock_corr_p95_ms": 2.0,
+    "calibration_floor_p95_ms": 34.0
+  },
+  "failed": [
+    {
+      "id": "W2",
+      "name": "bridge time per input p95 (ms)",
+      "run": "r1",
+      "value": 3.0441,
+      "limit": 1.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "n=569"
+    },
+    {
+      "id": "W2",
+      "name": "bridge time per input p99 (ms)",
+      "run": "r1",
+      "value": 9.7626,
+      "limit": 2.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": ""
+    },
+    {
+      "id": "W3",
+      "name": "bridge time per committed frame p95 (ms)",
+      "run": "r1",
+      "value": 3.4404,
+      "limit": 2.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "n=3734"
+    },
+    {
+      "id": "W3",
+      "name": "bridge time per committed frame p99 (ms)",
+      "run": "r1",
+      "value": 8.3452,
+      "limit": 4.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": ""
+    },
+    {
+      "id": "W6",
+      "name": "main-actor enqueue->exec p99 (ms)",
+      "run": "r1",
+      "value": 68.3826,
+      "limit": 16.7,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "n=9428 max=372.85"
+    },
+    {
+      "id": "C",
+      "name": "PresentMon rows in measured window (capture integrity)",
+      "run": "r1",
+      "value": false,
+      "limit": true,
+      "op": "bool",
+      "status": "FAIL",
+      "detail": "rows=2268 expect~3600 pid=22656"
+    },
+    {
+      "id": "W5",
+      "name": "refresh period measured (ms) within 60 Hz +-0.5%",
+      "run": "r1",
+      "value": false,
+      "limit": true,
+      "op": "bool",
+      "status": "FAIL",
+      "detail": "refresh_ms=33.329 hz=30.004"
+    },
+    {
+      "id": "W5",
+      "name": "presented interval p95 (ms) <= refresh + 0.1",
+      "run": "r1",
+      "value": 1833.1842000000001,
+      "limit": 33.4294,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "p50=516.723 p99=1999.725 max=1999.757"
+    },
+    {
+      "id": "W4",
+      "name": "input->visible p95 (ms)",
+      "run": "r1",
+      "value": 1543.5486,
+      "limit": 50.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "n=569 p50=394.95"
+    },
+    {
+      "id": "W4",
+      "name": "input->visible p99 (ms)",
+      "run": "r1",
+      "value": 1992.9686,
+      "limit": 100.0,
+      "op": "<=",
+      "status": "FAIL",
+      "detail": "max=2103.41"
+    }
+  ],
+  "runs": {
+    "r1": {
+      "summary": {
+        "rows": 200,
+        "key_rate_hz": 10.0,
+        "foreign_chars": [],
+        "keys": {
+          "injected": 657,
+          "in_run": 657,
+          "post_run": 0,
+          "typed": 657,
+          "post_run_unapplied": 0,
+          "inject_stop": "deadline"
+        },
+        "context": {
+          "disturbed_by_user_input": false,
+          "user_input_events": 0,
+          "min_idle_ms": 1453,
+          "foreground_changes": 0,
+          "foreground_owners": [],
+          "minimized_samples": 0,
+          "overlay": {
+            "pre": {
+              "overlay_modules": "nvspcap64.dll",
+              "modules_total": 105,
+              "overlay_procs": "nvcontainer,NVDisplay.Container,NVIDIA"
+            },
+            "post": {
+              "overlay_modules": "nvspcap64.dll",
+              "modules_total": 105,
+              "overlay_procs": "nvcontainer,NVDisplay.Container,NVIDIA"
+            }
+          },
+          "host_top": "MsMpEng(56032):11.02;WmiPrvSE(6968):3.48;System(4):3.46;svchost(36052):2.89;svchost(5748):0.91;scenarios-f5c3815d52c7387f(32728):0.89"
+        },
+        "inputs_in_window": 569,
+        "frames_in_window": 3734,
+        "bridge_input_ms": {
+          "n": 569,
+          "p50": 0.7171,
+          "p95": 3.0441,
+          "p99": 9.7626,
+          "max": 134.2452
+        },
+        "handler_input_ms": {
+          "n": 569,
+          "p50": 8.8955,
+          "p95": 32.7601,
+          "p99": 73.964,
+          "max": 213.9374
+        },
+        "bridge_frame_ms": {
+          "n": 3734,
+          "p50": 1.4167,
+          "p95": 3.4404,
+          "p99": 8.3452,
+          "max": 134.2452
+        },
+        "frame_upserts_max": 599,
+        "mainactor_ms": {
+          "n": 9428,
+          "p50": 6.4796,
+          "p95": 32.4565,
+          "p99": 68.3826,
+          "max": 372.8466
+        },
+        "resources": {
+          "present": false,
+          "expected": false
+        },
+        "render_complete_ms": {
+          "n": 2268,
+          "p50": 6.369,
+          "p95": 11.4607,
+          "p99": 14.3871,
+          "max": 25.3891
+        },
+        "presents_in_window": 2268,
+        "displayed_in_window": 110,
+        "presented_interval_ms": {
+          "n": 110,
+          "p50": 516.7226,
+          "p95": 1833.1842000000001,
+          "p99": 1999.7249000000002,
+          "max": 1999.7566000000002
+        },
+        "refresh_ms": 33.3294,
+        "missed_vblanks": 96,
+        "fps": {
+          "p50": 1.9352743619110135,
+          "p95_tail": 0.5454989193120909,
+          "mean": 1.8333333333333333
+        },
+        "pm_dropped_in_window": 2158,
+        "clock_correlation_ms": {
+          "n": 2268,
+          "p50": 0.1546,
+          "p95": 0.3061,
+          "p99": 1.0403,
+          "max": 25.9553
+        },
+        "visible_ms": {
+          "n": 569,
+          "p50": 394.9509,
+          "p95": 1543.5486,
+          "p99": 1992.9686,
+          "max": 2103.4138
+        },
+        "visible_join": {
+          "commit_end_fallbacks": 0,
+          "tick_gap_rows": 0
+        },
+        "instrumentation_microbench_ns": {
+          "timestamp_pair": 41.1545,
+          "recorder_append": 89.405
+        },
+        "instrumentation_estimate_ms_per_frame": 0.00037349867202797195,
+        "renderer": {
+          "renderer_paints": 2582,
+          "renderer_commits_accepted": 4290,
+          "renderer_commits_deferred": 657,
+          "renderer_measure_calls": 16148,
+          "renderer_measure_cache_hits": 3168,
+          "max_upserts_per_commit": 600,
+          "max_primitives_per_commit": 1995
+        }
+      },
+      "invalid": [
+        "window not displayed for most of the measured window (PresentMon: 2268 presents, 110 displayed, ~3600 expected): minimized, occluded by another window, or throttled"
+      ],
+      "flags": [
+        "CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []",
+        "CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 105 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 105 modules)",
+        "CONTEXT: busiest other processes over the key script (% of the whole machine): MsMpEng(56032):11.02;WmiPrvSE(6968):3.48;System(4):3.46;svchost(36052):2.89;svchost(5748):0.91;scenarios-f5c3815d52c7387f(32728):0.89",
+        "CONTEXT: msUntilRenderComplete p50 6.37 p95 11.46 p99 14.39 max 25.39 ms; dropped (replaced) presents 2158 of 2268"
+      ],
+      "checks": [
+        {
+          "id": "P",
+          "name": "DPI scale pinned",
+          "run": "r1",
+          "value": 2.5,
+          "limit": 2.5,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "P",
+          "name": "window size pinned (960x640 DIP)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "P",
+          "name": "ABI 0.6",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "abi=0.6"
+        },
+        {
+          "id": "P",
+          "name": "no debugger attached",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "P",
+          "name": "full instrumentation level",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "instr=full"
+        },
+        {
+          "id": "W1",
+          "name": "wrong-node edits",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "stale-owner result commits",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "commits after window close",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "row count constant (min=max=200)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "min=200 max=200"
+        },
+        {
+          "id": "W1",
+          "name": "unique stable row ids",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "run completed (app_exit complete, window closed)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "cancellation exercised (stale results rejected > 0)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "interrupted animation exercised",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W0",
+          "name": "async ops delivered (>= 95% of 20/s)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "started=1384 want>=1330 skipped=14"
+        },
+        {
+          "id": "W0",
+          "name": "reorders delivered (>= 1/s)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "reorders=70"
+        },
+        {
+          "id": "W1",
+          "name": "commit errors",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "renderer commits rejected",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "renderer live nodes after teardown",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "renderer host panics / thread violations / reentry / dropped events",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "measure/draw failures",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W1",
+          "name": "lost valid edits (posted up to measure end - applied)",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": "injected=657 in_run=657 post_run=0 typed=657"
+        },
+        {
+          "id": "W1",
+          "name": "active text equals injected sequence",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "id": "W2",
+          "name": "bridge time per input p95 (ms)",
+          "run": "r1",
+          "value": 3.0441,
+          "limit": 1.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "n=569"
+        },
+        {
+          "id": "W2",
+          "name": "bridge time per input p99 (ms)",
+          "run": "r1",
+          "value": 9.7626,
+          "limit": 2.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": ""
+        },
+        {
+          "id": "W3",
+          "name": "bridge time per committed frame p95 (ms)",
+          "run": "r1",
+          "value": 3.4404,
+          "limit": 2.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "n=3734"
+        },
+        {
+          "id": "W3",
+          "name": "bridge time per committed frame p99 (ms)",
+          "run": "r1",
+          "value": 8.3452,
+          "limit": 4.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": ""
+        },
+        {
+          "id": "W6",
+          "name": "main-actor samples sufficient (starvation guard)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "n=9428 need>=5000"
+        },
+        {
+          "id": "W6",
+          "name": "main-actor enqueue->exec p99 (ms)",
+          "run": "r1",
+          "value": 68.3826,
+          "limit": 16.7,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "n=9428 max=372.85"
+        },
+        {
+          "id": "C",
+          "name": "PresentMon rows in measured window (capture integrity)",
+          "run": "r1",
+          "value": false,
+          "limit": true,
+          "op": "bool",
+          "status": "FAIL",
+          "detail": "rows=2268 expect~3600 pid=22656"
+        },
+        {
+          "id": "W5",
+          "name": "refresh period measured (ms) within 60 Hz +-0.5%",
+          "run": "r1",
+          "value": false,
+          "limit": true,
+          "op": "bool",
+          "status": "FAIL",
+          "detail": "refresh_ms=33.329 hz=30.004"
+        },
+        {
+          "id": "W5",
+          "name": "missed vblanks (interval > 1.5 x refresh) [reported, not gated]",
+          "run": "r1",
+          "value": 96,
+          "limit": 0,
+          "op": "info",
+          "status": "INFO",
+          "detail": "n=110"
+        },
+        {
+          "id": "W5",
+          "name": "presented interval p95 (ms) <= refresh + 0.1",
+          "run": "r1",
+          "value": 1833.1842000000001,
+          "limit": 33.4294,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "p50=516.723 p99=1999.725 max=1999.757"
+        },
+        {
+          "id": "CAL",
+          "name": "clock correlation: |tick QPC - nearest present start| p95 (ms)",
+          "run": "r1",
+          "value": 0.3061,
+          "limit": 2.0,
+          "op": "<=",
+          "status": "PASS",
+          "detail": "n=2268 p50=0.155"
+        },
+        {
+          "id": "W4",
+          "name": "every injected key in the window has a visible response",
+          "run": "r1",
+          "value": 0,
+          "limit": 0,
+          "op": "==",
+          "status": "PASS",
+          "detail": "keys=569"
+        },
+        {
+          "id": "W4",
+          "name": "input->visible p95 (ms)",
+          "run": "r1",
+          "value": 1543.5486,
+          "limit": 50.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "n=569 p50=394.95"
+        },
+        {
+          "id": "W4",
+          "name": "input->visible p99 (ms)",
+          "run": "r1",
+          "value": 1992.9686,
+          "limit": 100.0,
+          "op": "<=",
+          "status": "FAIL",
+          "detail": "max=2103.41"
+        },
+        {
+          "id": "CAL",
+          "name": "keys in window (script delivered 10/s)",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "keys=569 need>=541 (key schedule covers 56.9 of 60.0 s)"
+        },
+        {
+          "id": "CAL",
+          "name": "key schedule covers >= 90% of the measured window",
+          "run": "r1",
+          "value": true,
+          "limit": true,
+          "op": "bool",
+          "status": "PASS",
+          "detail": "56.9 of 60.0 s"
+        }
+      ]
+    }
+  },
+  "resources": {
+    "r1": {
+      "present": false,
+      "expected": false
+    }
+  },
+  "flags": [
+    "r1: CONTEXT: user input during the key script: none (disturbed=false); foreground changes 0 []",
+    "r1: CONTEXT: overlay hooks in the workload process: pre: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 105 modules); post: modules=nvspcap64.dll procs=nvcontainer,NVDisplay.Container,NVIDIA (of 105 modules)",
+    "r1: CONTEXT: busiest other processes over the key script (% of the whole machine): MsMpEng(56032):11.02;WmiPrvSE(6968):3.48;System(4):3.46;svchost(36052):2.89;svchost(5748):0.91;scenarios-f5c3815d52c7387f(32728):0.89",
+    "r1: CONTEXT: msUntilRenderComplete p50 6.37 p95 11.46 p99 14.39 max 25.39 ms; dropped (replaced) presents 2158 of 2268"
+  ],
+  "incremental": [
+    {
+      "id": "W7",
+      "name": "Rust compiler invocations during UI-only incremental builds",
+      "run": "set",
+      "value": 0,
+      "limit": 0,
+      "op": "==",
+      "status": "PASS",
+      "detail": "edits=3"
+    },
+    {
+      "id": "W7",
+      "name": "renderer / engine artifact hashes identical",
+      "run": "set",
+      "value": true,
+      "limit": true,
+      "op": "bool",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "W7",
+      "name": "incremental builds succeeded",
+      "run": "set",
+      "value": true,
+      "limit": true,
+      "op": "bool",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "build": {
+    "adapterDerived": true,
+    "configuration": "release",
+    "dll": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\swiftright_render.dll",
+    "dllSha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+    "dll_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+    "exe": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+    "exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+    "source": "explicit-build-receipt",
+    "sourceManifestSha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+    "sourcePath": "/Volumes/D/claude/swiftright/probes/sr0-b/workload/out/tuple12-source-build-v1/observed-workload-r10-v7-r1/runs/build.json",
+    "sourceSha256": "0056577ca0ffa702db2640fadaa94e6f21fb53cce72257d4f588ef3e71b5f4e3"
+  },
+  "overhead_ab": {
+    "measured": false
+  }
+}

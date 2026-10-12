@@ -1,0 +1,68 @@
+{
+  "comparison": {
+    "reason": "no-worse-than-Mac comparison requires comparable Mac timing report; existing Mac F1 report has no visible timing percentile fields",
+    "requiredNextInput": "fresh Mac timing report with raw timing refs joined to same case/tuple",
+    "status": "held",
+    "thresholdsUnchanged": true
+  },
+  "inputs": {
+    "macReport": {
+      "bytes": 11260,
+      "path": "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/mac-f1-report-r1.json",
+      "sha256": "bd60e535212ecbcfa6470040c250cfd12229b1da02afe30a993929750ed8c0b9"
+    },
+    "windowsReport": {
+      "bytes": 19755,
+      "path": "/Volumes/D/claude/swiftright/factory/pipeline/sr0-display-selfjob-root-v4/observer-r6/strict-input-repair-r2/strict-report/report.json",
+      "sha256": "65ddd5888f796d674a36563d0a45d49e9f67acf4ff3ca6fca06beff0b025c5bb"
+    }
+  },
+  "kind": "sr0-display-paired-timing-diagnosis-v1",
+  "mac": {
+    "hold": "Mac F1 report carries capture identities/qualification, not comparable visible timing percentiles",
+    "observedRuns": 20,
+    "passedRuns": 20,
+    "requiredRuns": 20,
+    "status": "qualified",
+    "timingFieldsPresent": false
+  },
+  "parityClaim": false,
+  "qualificationClaim": false,
+  "status": "diagnostic-held",
+  "windows": {
+    "overall": "INCOMPLETE",
+    "timing": {
+      "clockCorrelationMs": {
+        "max": 25.9553,
+        "n": 2268,
+        "p50": 0.1546,
+        "p95": 0.3061,
+        "p99": 1.0403
+      },
+      "displayedInWindow": 110,
+      "droppedInWindow": 2158,
+      "expectedRows": 200,
+      "invalid": [
+        "window not displayed for most of the measured window (PresentMon: 2268 presents, 110 displayed, ~3600 expected): minimized, occluded by another window, or throttled"
+      ],
+      "missedVblanks": 96,
+      "presentedIntervalMs": {
+        "max": 1999.7566000000002,
+        "n": 110,
+        "p50": 516.7226,
+        "p95": 1833.1842000000001,
+        "p99": 1999.7249000000002
+      },
+      "presentsInWindow": 2268,
+      "refreshMs": 33.3294,
+      "runId": "r1",
+      "visibleMs": {
+        "max": 2103.4138,
+        "n": 569,
+        "p50": 394.9509,
+        "p95": 1543.5486,
+        "p99": 1992.9686
+      }
+    }
+  }
+}
