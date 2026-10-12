@@ -1,0 +1,20 @@
+# Rectangle F10 typed Windows20 materializer r1
+
+Source-only F10 packet. `materialize_typed_windows_r1.py` consumes explicit measured Windows Count20 raw export, explicit three-artifact export, explicit host-source root, explicit runtime-source root, & `f10-input-map-r4.json`. It creates fresh per-capture archive roots under `.factory-work`, uses hardlinks where possible, rejects symlinks, streams files at 16MiB/file & 32MiB/archive bounds, records dynamic native closure count, & emits `typed-captures.json`, `reader-input.json`, & `materializer-receipt.json`. It never changes raw exports, assigns semantic status, or grants parity.
+
+Each typed capture carries exact `windowsExitProof` roles: outcome, observation, owned, close, plan, compile, witness, exe, renderer, runtimeReceipt, runtimeTree, stdout, stderr. Host/runtime bindings are read from explicit roots & checked against plan/tree hashes; measured capture IDs, host identity, & process-local clock identity are joined from each raw measured-capture-identity file. Runtime file count comes from measured runtime tree; native file count comes from each observation row.
+
+Root invocation:
+
+```text
+python factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/f10-typed-materializer-r1/materialize_typed_windows_r1.py --raw-root factory/native/windows/pilot-rectangle-fixed-root-v2/actual-count20-r4 --artifact-root factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1 --host-root <exact-byte-bound-host-package-root> --runtime-root <exact-37429120-runtime-source-root> --input-map factory/pipeline/paired-rectangle-fixed-r11-root-v3/f10-input-map-r4.json --output-root .factory-work/f10-rectangle-typed-r1
+python factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/f10-typed-materializer-r1/run_reader_controls_r1.py --reader-input .factory-work/f10-rectangle-typed-r1/reader-input.json --captures .factory-work/f10-rectangle-typed-r1/typed-captures.json --output .factory-work/f10-rectangle-typed-r1/reader-controls.json
+```
+
+`host-root` must contain exact bytes for every `plan.sourceBindings` path, including `witness.manifest.json`; `runtime-root` must contain every path in measured `native/runtime-source-tree.json`. No substitute or relabeled prior host is accepted. Reader controls invoke `factory.gate.windows_exit_admission.verify_windows_exit_admission` via `ArchiveByteReader`, then exercise missing-role, proof-hash, case-drift, & reader-byte-drift faults. Output remains `qualified=false`, `nativeParityGranted=false`, `semantic=held`, `timing=raw-only`.
+
+Measured path inventory: `actual-count20-r4/native` contains 12 of 13 host source bindings with exact plan hashes; only `witness.manifest.json` is absent locally. Required hash is `sha256:2bda38a7f0aed16e89148cbb9158535c7e8f6fb638896e413b1eed5ce81c8b22`; it must come from exact Windows source archive. Known local runtime root with all 21 measured hashes is `.factory-work/sr1-adapter-v12-r17-r1/trusted-reader-byte-archive-r2/capture-ddec48b71148ef03186a36369d2d64d5cb767a0a246769564ca2650f110ede6a/runtime`. Artifact root is `factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1` with `artifacts/swift.exe`, `artifacts/host.exe`, `artifacts/renderer.dll`.
+
+Rectangle r4 compile facts are retained in each typed capture under `meta.compile` from measured `plan.compileRequest` & `native/observation.json`. Current measured request has `maxParallelJobs=1` & measured argv contains `--jobs 1`; frozen `windows_exit_admission.py` requires exact request keys & argv without that option. Materializer preserves those facts & must report reader admission hold until compatible fresh compiler evidence exists; it does not normalize or fabricate compiler identity.
+
+Gate successor note: `factory/gate/windows_exit_admission.py` accepts legacy exact compile requests unchanged, plus measured `maxParallelJobs: 1` only. With that field it requires exact argv insertion `--jobs 1`; values 2, bool, string, missing/undeclared argv flag, & unknown fields remain blocked. Reader controls exercise each fault through production gate joins.

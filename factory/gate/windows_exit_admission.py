@@ -23,7 +23,19 @@ MANIFEST_DEPENDENCY = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.
 
 def _production_compile_argv(request):
     """Exact production SwiftPM GUI host request, not an arbitrary argv whitelist."""
-    if not isinstance(request,dict) or set(request)!={'kind','packagePath','scratchPath','compilerPath','target','configuration'}:
+    if not isinstance(request,dict):
+        raise ValueError('exact compiler request required')
+    base_keys={'kind','packagePath','scratchPath','compilerPath','target','configuration'}
+    keys=set(request)
+    if keys == base_keys:
+        maximum_parallel_jobs = None
+    elif keys == base_keys | {'maxParallelJobs'}:
+        # Measured Rectangle r4 declares one bounded SwiftPM worker.  Keep
+        # unknown keys rejected & preserve old requests without this field.
+        maximum_parallel_jobs = request['maxParallelJobs']
+        if type(maximum_parallel_jobs) is not int or maximum_parallel_jobs != 1:
+            raise ValueError('maxParallelJobs must be exact integer 1')
+    else:
         raise ValueError('exact compiler request required')
     if request['kind']!='swiftpm-windows-gui-release/1' or request['target']!='windows-x86_64' or request['configuration']!='release':
         raise ValueError('unsupported compiler request target/configuration')
@@ -34,8 +46,9 @@ def _production_compile_argv(request):
     package=PureWindowsPath(request['packagePath']);scratch=PureWindowsPath(request['scratchPath'])
     if package not in scratch.parents or scratch.name!='scratch':
         raise ValueError('compiler scratch must belong to host package')
+    jobs = ' --jobs 1' if maximum_parallel_jobs == 1 else ''
     return ('build --package-path "'+request['packagePath']+'" --scratch-path "'+request['scratchPath']+
-            '" -c release -Xlinker /MANIFEST:EMBED -Xlinker "'+MANIFEST_DEPENDENCY+
+            '"'+jobs+' -c release -Xlinker /MANIFEST:EMBED -Xlinker "'+MANIFEST_DEPENDENCY+
             '" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup')
 
 def _safe_path(path):

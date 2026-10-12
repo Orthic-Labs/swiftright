@@ -46,7 +46,7 @@ def manifest_sha(path: Path) -> str:
 
 def row_index(document: dict) -> dict[str, dict]:
     rows = document.get("files")
-    if not isinstance(rows, list) or not rows:
+    if not isinstance(rows, list) or not rows or len(rows) > 2048:
         raise InputError("export manifest files array required")
     result = {}
     for row in rows:
@@ -133,8 +133,13 @@ def external_bindings(document: dict, rows: dict[str, dict], issues: list[str]) 
 def assess_export(document: dict, manifest_path: Path, expected_tuple: str = EXPECTED_TUPLE, expected_case: str = EXPECTED_CASE) -> dict:
     rows = row_index(document)
     issues: list[str] = []
-    if document.get("count") != 760:
-        issues.append("export count must equal 760")
+    # Export row count is producer-owned and may change as proof closure grows.
+    # Bind declared count to this manifest instead of an obsolete 760 constant.
+    declared_count = document.get("count")
+    if type(declared_count) is not int or declared_count <= 0:
+        issues.append("export count must be a positive integer")
+    elif declared_count != len(rows):
+        issues.append(f"export count/manifest row mismatch: declared {declared_count}, rows {len(rows)}")
     if document.get("tupleID") != expected_tuple:
         issues.append("export tupleID mismatch")
     if document.get("originalParentKernelExitCertificate") is not True:
@@ -163,7 +168,7 @@ def assess_export(document: dict, manifest_path: Path, expected_tuple: str = EXP
         "status": "ready-for-root-materialization" if not issues else "held",
         "qualified": False,
         "source": source,
-        "export": {"declaredCount": document.get("count"), "manifestSha256": source["manifestSha256"], "originalParentKernelExitCertificate": document.get("originalParentKernelExitCertificate")},
+        "export": {"declaredCount": declared_count, "manifestRowCount": len(rows), "manifestSha256": source["manifestSha256"], "originalParentKernelExitCertificate": document.get("originalParentKernelExitCertificate")},
         "proofRows": proof_rows,
         "externalByteBindings": external,
         "missingOrBlocked": issues,
