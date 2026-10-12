@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "f70ab1ebe1f70ea4833bb1944a1195e89875684882ae0541a5f9a3da5904dd2c",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\rounded-shared-native-install-r16.ps1",
+    "-ScriptSha256",
+    "dd9613246f8a45f77b1bd9ffc8b413ac65ed17aa8d3d3d4c8aa24e9ea0bdc8b0",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\rounded-shared-native-install-r16-transport.json",
+    "-DeadlineSeconds",
+    "150"
+  ],
+  "scriptSha256": "dd9613246f8a45f77b1bd9ffc8b413ac65ed17aa8d3d3d4c8aa24e9ea0bdc8b0",
+  "budgetBytes": 268435456
+}
