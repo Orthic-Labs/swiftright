@@ -1,0 +1,81 @@
+{
+  "binaryRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/bin",
+  "build": {
+    "buildScript": "tools/build-mac-source.sh",
+    "compileRequest": "compile-request.json",
+    "configuration": "release",
+    "frontendThreads": "root compile request must bind supported pass-through after pinned swift build help",
+    "jobs": 1,
+    "packagePath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/source",
+    "prepScript": "tools/prepare-mac-source.sh",
+    "supervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py"
+  },
+  "buildRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/build",
+  "cacheRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5",
+  "entryArguments": [
+    "--preflight --scale 2.5 --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/scratch/count1",
+    "--observe --scale 2.5 --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/scratch/count1"
+  ],
+  "fixedHostPoints": {
+    "height": 240,
+    "width": 320
+  },
+  "expectedPixelSize": {
+    "height": 600,
+    "width": 800
+  },
+  "hostBackground": "opaque-white",
+  "witnessPlacement": "centered-in-fixed-viewport",
+  "renderScale": 2.5,
+  "hashClaims": 0,
+  "kind": "factory-custom-layout-mac-source-plan-v2",
+  "maxResidentBytes": 1073741824,
+  "nativeActions": 0,
+  "packetVersion": "custom-layout-rtl-width32-execution-v5-mac",
+  "permissionRequests": false,
+  "requiredJoinsAfterBuild": [
+    "build receipt path",
+    "executable path",
+    "receipt source hash equals witnessHash",
+    "receipt runtime commit equals runtimeCommit",
+    "preflight observation scratch receipt",
+    "observe observation scratch receipt"
+  ],
+  "rootGroupSupervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py (required, 1 GiB aggregate)",
+  "rootRSSSupervisor": "task_info(mach_task_self_) before-render/after-render",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "sameSourceWitnessBytes": true,
+  "scratchRootPrefix": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/scratch/",
+  "sourceBindingsRepinned": true,
+  "stagedSourceRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/source",
+  "status": "SOURCE_READY_ROOT_GROUP_SUPERVISOR_REQUEST",
+  "windowsPackageWitnessHash": "sha256:4986259c19269c4caf2331171de66f0c98a992821f1919eadca970e27b6131c5",
+  "windowsPackageWitnessPath": "Sources/FactoryProbe/Witness.swift",
+  "windowsPlanHash": "sha256:4ff24ad48af6ca66cc88484c90e9f729302f41d87171b3ea99c7e9b03fa0fb10",
+  "windowsPlanPath": "package/plan.json",
+  "witnessHash": "sha256:4986259c19269c4caf2331171de66f0c98a992821f1919eadca970e27b6131c5",
+  "macSourceBindings": [
+    {
+      "path": "Package.swift",
+      "bytes": 369,
+      "sha256": "sha256:6389697a9952f3ea3b3978470b06baf5b7c3c0583b756856e7562a09aa43379b"
+    },
+    {
+      "path": "Sources/CustomLayoutMacHost/CaptureHost.swift",
+      "bytes": 8366,
+      "sha256": "sha256:c8fef36c22eefab8fa478e47df83eba11b2316affd05d8ae21d3fb19810b2808"
+    },
+    {
+      "path": "Sources/CustomLayoutMacHost/Witness.swift",
+      "bytes": 2257,
+      "sha256": "sha256:4986259c19269c4caf2331171de66f0c98a992821f1919eadca970e27b6131c5"
+    }
+  ],
+  "macSourceBindingsHash": "sha256:9cc3432ae5b44e6f4981229f22f621a9f085e3e79ea5394e49159d512602e0c6",
+  "case": {
+    "id": "swiftui.custom-layout.recipe/case/6f604b656b080f22",
+    "hash": "sha256:6f604b656b080f22"
+  },
+  "packagePath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-width32-v5/source",
+  "layoutDirectionDelivery": "Graph.evaluate applies modifier.environment; original WitnessMeasuredLayout does not read EnvironmentValues.layoutDirection; host performs no child-order reversal"
+}
