@@ -1,0 +1,113 @@
+{
+    "kind":  "factory-uia-final-exit-certificate-v1",
+    "scope":  "owner-release-only",
+    "qualification":  "failed-or-successful-snapshot-only",
+    "start":  {
+                  "pid":  36820,
+                  "retainedHandle":  2652,
+                  "path":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                  "startedAt":  "2026-10-12T19:45:23.1371197Z",
+                  "lockOwner":  "factory-rectangle-0286000af61d4e3cbf92ef69c87b130d 2026-10-12T19:45:18.3834649+00:00",
+                  "workerId":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\native\\count1-r1\\native-01\\uia-worker",
+                  "workerExeHash":  "60c9b29843624dd8af6b6a7b26147753be6aeef65098b9a503cc50850afe410f",
+                  "sourceContractHash":  "5d2f40a9b39131d1ea1c53b3e99f0e7ee42b8528a7408519d3943793c5efcdd2",
+                  "configHash":  "6e181990473d4cc86beba2c434945d1ed256568d520a482f2e3b95d95063a554",
+                  "workerScriptHash":  "a831e9da8c2f9e18cbf6a94c816dc33d2932deaa925e5be7e51d8d50bf7fc5b0"
+              },
+    "sample":  {
+                   "phase":  "raw-closure-final",
+                   "at":  "2026-10-12T19:45:24.3108733+00:00",
+                   "waitMilliseconds":  0,
+                   "retainedHandle":  2652,
+                   "handlePid":  36820,
+                   "kernelBefore":  0,
+                   "kernelAfter":  0,
+                   "getExitCodeSucceeded":  true,
+                   "exitCode":  0,
+                   "errors":  [
+
+                              ]
+               },
+    "rawStreams":  [
+                       {
+                           "name":  "stdout",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stdout",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion",
+                           "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\native\\count1-r1\\native-01\\uia-worker\\stdout.bin",
+                           "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                       },
+                       {
+                           "name":  "stderr",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stderr",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion",
+                           "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\native\\count1-r1\\native-01\\uia-worker\\stderr.bin",
+                           "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                       }
+                   ]
+}

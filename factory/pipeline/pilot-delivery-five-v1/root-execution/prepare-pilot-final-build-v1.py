@@ -15,12 +15,18 @@ PACKETS = {
     'image': 'text-shape-image/image-host-package-v1',
     'image-v2': 'text-shape-image/image-host-package-v2',
     'image-star-provider': 'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2',
+    'image-star-observation': 'text-shape-image/image-system-star-fill-v3',
+    'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v4',
     'rounded-stroke': 'text-shape-image/rounded-stroke-host-v1',
     'rounded-stroke-centered': 'text-shape-image/rounded-stroke-host-v1/centered-delivery-v1',
     'rounded-stroke-circular': 'text-shape-image/rounded-stroke-host-v1/circular-centered-delivery-v2',
-    'stack-overlay-centered': 'stack-layout/stack-overlay-centered-delivery-v1',
+    'rounded-stroke-observation': 'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v3',
+    'stack-overlay-centered': 'stack-layout/stack-overlay-centered-execution-v2',
+    'stack-overlay-observation': 'stack-layout/stack-overlay-centered-execution-v3',
     'custom-layout': 'stack-layout/custom-layout-host-v1',
     'custom-layout-v2': 'stack-layout/custom-layout-host-v2',
+    'custom-layout-centered': 'stack-layout/custom-layout-host-v2/light-centered-delivery-v1',
+    'custom-layout-observation': 'stack-layout/custom-layout-host-v2/light-centered-execution-v2',
 }
 RUNTIME_TREE = 'sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e'
 RUNTIME_COMMIT = '37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b'
@@ -119,6 +125,7 @@ RECIPE_REGISTRY = {
     # Gate-seeded RoundedRectangle packets carry a typed recipe reference, not
     # a filesystem path. Keep registry resolution explicit & hash-bound.
     'swiftui.shapes.fill-stroke.recipe': ROOT / 'factory/recipes/data/swiftui.shapes.fill-stroke.json',
+    'swiftui.custom-layout.recipe': ROOT / 'factory/recipes/data/swiftui.custom-layout.json',
 }
 
 def _declared_recipe_paths(owner: dict, recipe_id: str) -> list[Path]:
@@ -155,12 +162,20 @@ def resolve_packet_recipe(case: dict, packet_plan: dict, plan: dict) -> tuple[Pa
         return recipe_path, packet_recipe, packet_recipe_hash
     require(isinstance(reference, dict), 'case recipe must be path string or typed object')
     recipe_id = reference.get('id')
-    recipe_hash = reference.get('hash')
+    recipe_hash = reference.get('hash') or reference.get('canonicalHash')
     require(isinstance(recipe_id, str) and recipe_id, 'typed recipe id missing')
     require(isinstance(recipe_hash, str) and re.fullmatch(r'sha256:[0-9a-f]{64}', recipe_hash),
             'typed recipe hash must be sha256-prefixed lowercase hex')
 
-    declared = _declared_recipe_paths(packet_plan, recipe_id) + _declared_recipe_paths(plan, recipe_id)
+    # Prospective stack/layout cases declare recipe paths relative to package.
+    # Resolve those directly; compiler plans retain the measured source package.
+    reference_path = reference.get('path')
+    if isinstance(reference_path, str):
+        resolved = (packet / reference_path).resolve()
+        resolved.relative_to(ROOT)
+        declared = [resolved]
+    else:
+        declared = _declared_recipe_paths(packet_plan, recipe_id) + _declared_recipe_paths(plan, recipe_id)
     registry_path = RECIPE_REGISTRY.get(recipe_id)
     if registry_path is not None:
         declared.append(registry_path)
@@ -178,12 +193,15 @@ def resolve_packet_recipe(case: dict, packet_plan: dict, plan: dict) -> tuple[Pa
 
 def materialize_case(case: dict, plan: dict, packet_plan: dict, host_hash: str) -> tuple[dict, dict]:
     """Expand packet recipe into one canonical case, preserving explicit inputs."""
-    raw_inputs = case.get('inputs') or {}
+    raw_inputs = case.get('inputs') or case.get('caseInputs') or {}
     axis_key_map = {
         'name': 'name', 'sourceWidth': 'source-width', 'sourceHeight': 'source-height',
         'frameWidth': 'frame-width', 'frameHeight': 'frame-height',
         'colorScheme': 'color-scheme', 'sampling': 'sampling',
         'sourcePixelHash': 'source-pixel-hash',
+        'zStackAlignment': 'z-stack-alignment',
+        'overlayAlignment': 'overlay-alignment',
+        'overlayText': 'overlay-text',
     }
     inputs = {axis_key_map.get(key, key): value for key, value in raw_inputs.items()}
     recipe_case = case
@@ -322,7 +340,7 @@ require(plan.get('rendererSha256') == RENDERER, 'renderer drift')
 require(plan.get('compilerHash') == COMPILER, 'compiler drift')
 require(plan.get('packageSourcePath') == f'factory/pipeline/pilot-delivery-five-v1/{PACKETS[args.host]}/package', 'packet source path drift')
 require(plan.get('packetPlanHash') == 'sha256:' + digest(packet_plan_raw), 'packet plan hash drift')
-require(plan.get('candidate') == packet_plan.get('candidate'), 'candidate drift')
+require(plan.get('candidate') == packet_plan.get('candidate', load_json(packet / 'case.json')['block'] + '.pilot'), 'candidate drift')
 
 source_rows = plan.get('sourceBindings') or []
 seen: set[str] = set(); total = 0

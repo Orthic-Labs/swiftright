@@ -1,22 +1,32 @@
 """Pin one source-only pilot packet to bounded native retained-handle compiler lifecycle."""
 from pathlib import Path
 import argparse,hashlib,json,zipfile
-p=argparse.ArgumentParser();p.add_argument('--host',choices=('image','image-v2','image-star-provider','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','stack-overlay-centered','custom-layout','custom-layout-v2'),required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--host',choices=('image','image-v2','image-star-provider','image-star-observation','stack-overlay-colors','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','rounded-stroke-observation','stack-overlay-centered','stack-overlay-observation','custom-layout','custom-layout-v2','custom-layout-centered','custom-layout-observation'),required=True);a=p.parse_args()
 repo=Path('/Volumes/D/claude/swiftright')
-rel={'image':'text-shape-image/image-host-package-v1','image-v2':'text-shape-image/image-host-package-v2','image-star-provider':'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2','rounded-stroke':'text-shape-image/rounded-stroke-host-v1','rounded-stroke-centered':'text-shape-image/rounded-stroke-host-v1/centered-delivery-v1','rounded-stroke-circular':'text-shape-image/rounded-stroke-host-v1/circular-centered-delivery-v2','stack-overlay-centered':'stack-layout/stack-overlay-centered-delivery-v1','custom-layout':'stack-layout/custom-layout-host-v1','custom-layout-v2':'stack-layout/custom-layout-host-v2'}[a.host]
+rel={'image':'text-shape-image/image-host-package-v1','image-v2':'text-shape-image/image-host-package-v2','image-star-provider':'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2','image-star-observation':'text-shape-image/image-system-star-fill-v3','stack-overlay-colors':'stack-layout/stack-overlay-centered-execution-v4','rounded-stroke':'text-shape-image/rounded-stroke-host-v1','rounded-stroke-centered':'text-shape-image/rounded-stroke-host-v1/centered-delivery-v1','rounded-stroke-circular':'text-shape-image/rounded-stroke-host-v1/circular-centered-delivery-v2','rounded-stroke-observation':'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v3','stack-overlay-centered':'stack-layout/stack-overlay-centered-execution-v2','stack-overlay-observation':'stack-layout/stack-overlay-centered-execution-v3','custom-layout':'stack-layout/custom-layout-host-v1','custom-layout-v2':'stack-layout/custom-layout-host-v2','custom-layout-centered':'stack-layout/custom-layout-host-v2/light-centered-delivery-v1','custom-layout-observation':'stack-layout/custom-layout-host-v2/light-centered-execution-v2'}[a.host]
 new_host=a.host!='image'
 packet=repo/'factory/pipeline/pilot-delivery-five-v1'/rel/'package'
-out=repo/'factory/pipeline/pilot-delivery-five-v1/root-execution'/(a.host+'-compile-r1');out.mkdir()
+out=repo/'factory/pipeline/pilot-delivery-five-v1/root-execution'/(a.host+'-compile-r1')
+out.mkdir(exist_ok=True)
+assert {path.name for path in out.iterdir()} <= {'Sr0OwnedJobProcess.cs'}, 'compile request already prepared'
 def rd(path,cap=4194304):
  assert path.is_file() and not path.is_symlink() and path.stat().st_size<=cap
  return path.read_bytes()
 def sha(b):return hashlib.sha256(b).hexdigest()
 def jd(v):return (json.dumps(v,indent=2,sort_keys=True)+'\n').encode()
 raw=rd(packet/'plan.json');plan=json.loads(raw)
-case_raw=rd(packet/'case.json');canonical_case=json.loads(case_raw)['id']
+case_raw=rd(packet/'case.json');case_doc=json.loads(case_raw);canonical_case=case_doc['id']
+plan.setdefault('candidate', case_doc['block']+'.pilot')
+plan.setdefault('witness', 'Sources/FactoryProbe/Witness.swift')
 assert plan['runtimeSourceTreeHash']=='sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e'
 plan['rendererSha256']=plan['rendererSha256'].removeprefix('sha256:')
 plan['compilerHash']=plan['compilerHash'].removeprefix('sha256:')
+if 'rendererPath' not in plan: plan['rendererPath']=plan['rendererLoadPath']
+if 'bridgeBindings' not in plan:
+ donor=json.loads(rd(repo/'factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/plan-prebuild-v4.json'))
+ assert donor['bridgePackagePath']==plan['bridgePackagePath'] and donor['rendererSha256']==plan['rendererSha256']
+ assert donor['runtimeSourceTreeHash']==plan['runtimeSourceTreeHash']
+ plan['bridgeBindings']=donor['bridgeBindings']
 assert plan['rendererSha256']=='e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93'
 assert plan['compilerHash']=='1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a'
 assert plan.get('sourceCommit',plan.get('runtimeSourceCommit'))=='37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b'

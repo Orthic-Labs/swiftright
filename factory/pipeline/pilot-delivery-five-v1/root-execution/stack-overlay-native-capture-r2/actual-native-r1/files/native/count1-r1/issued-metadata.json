@@ -1,0 +1,78 @@
+{
+    "kind":  "factory-prelaunch-capture-metadata-v2",
+    "version":  2,
+    "createdAt":  "2026-10-12T19:44:52.5586057+00:00",
+    "runID":  "65c79d01044f4addb67dbb4cfae6ec92",
+    "runRoot":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\native\\count1-r1",
+    "expectedCount":  1,
+    "case":  {
+                 "id":  "swiftui.stack-overlay.recipe/case/a6df11b1e81c2764",
+                 "hash":  "sha256:0b90bdf569a038e7a17399abc63d765329fcd97a0e41812d918602f43dc7786d"
+             },
+    "historicalTemplateTupleClosed":  false,
+    "recipe":  {
+                   "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\admission-count1-r2\\recipe.json",
+                   "sha256":  "sha256:906604e0df2f61ebbc8a8f7cad7042cc8150972e4c744b9264f6be16caebfc58",
+                   "bytes":  4319
+               },
+    "plan":  {
+                 "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\plan.json",
+                 "sha256":  "sha256:2f23a18101d2555245f6a5768fcc332fc62f00978bbef17925e2e5f8211c7ae2",
+                 "bytes":  38642
+             },
+    "sourceHash":  "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+    "compile":  {
+                    "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\final-r1\\observation.json",
+                    "sha256":  "sha256:22487612b1a7b6c1909aafd7edd0a66fa173b59f535d240ea6cb924c6a9ed2cf",
+                    "bytes":  3051
+                },
+    "exe":  {
+                "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+                "sha256":  "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2",
+                "bytes":  3656192
+            },
+    "renderer":  {
+                     "path":  "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+                     "sha256":  "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+                     "bytes":  11885056
+                 },
+    "sourceBoundCandidateTuple":  {
+                                      "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\admission-count1-r2\\candidate-binding.json",
+                                      "sha256":  "sha256:bc7cab101b17619cf1e7472fbfcf5de168da95c9cdaa7248e2614e2d22f55343",
+                                      "bytes":  938
+                                  },
+    "candidateTuple":  {
+                           "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\admission-count1-r2\\candidate-tuple.json",
+                           "sha256":  "sha256:ac8bc48a2898758f53826a0b3e886dc3e43186bb63ea49ef94ae7fd690a4efa7",
+                           "bytes":  1860
+                       },
+    "candidateContext":  {
+                             "bytes":  916,
+                             "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\captures\\count1-r2\\admission-count1-r2\\context.json",
+                             "sha256":  "sha256:820dc199b7da06dd71e7934eb906c3d31e265e29424477e977e8740d2835d379"
+                         },
+    "producedRuntimeModules":  null,
+    "serializerControlSha256":  "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+    "frozenTupleBound":  false,
+    "hostArguments":  [
+                          "--factory-capture-lease-seconds=40"
+                      ],
+    "captures":  [
+                     {
+                         "run":  1,
+                         "captureID":  "capture/8f06200d4879436f9efbd72519ed6173",
+                         "imageID":  "image/b8e472ee464042bea3909848accdd5ff",
+                         "provenance":  {
+                                            "sourceHash":  "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+                                            "createdAt":  "2026-10-12T19:44:52.5586057+00:00",
+                                            "producer":  "factory/pipeline/pilot-next-source-v1/windows-capture-v1/count20-successor-v1/issue-rectangle-metadata-v1.ps1"
+                                        },
+                         "plannedHostIdentity":  "owned-renderer/65c79d01044f4addb67dbb4cfae6ec92/1",
+                         "plannedClockIdentity":  "parent-monotonic-clock/65c79d01044f4addb67dbb4cfae6ec92/1",
+                         "measuredHostIdentity":  null,
+                         "measuredClockIdentity":  null,
+                         "measurementStatus":  "pending-actual-launch-joins"
+                     }
+                 ],
+    "qualification":  "sourceBoundCandidate-observation-only"
+}

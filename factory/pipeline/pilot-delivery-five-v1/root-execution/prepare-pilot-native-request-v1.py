@@ -1,12 +1,12 @@
 """Join measured final artifacts to root-owned native preparer request."""
 from pathlib import Path,PureWindowsPath
 import argparse,hashlib,json,subprocess
-p=argparse.ArgumentParser();p.add_argument('--host',choices=('image','rounded-stroke'),required=True)
+p=argparse.ArgumentParser();p.add_argument('--host',choices=('image','rounded-stroke','stack-overlay','custom-layout'),required=True)
 p.add_argument('--revision',type=int,choices=range(1,21),default=1)
-p.add_argument('--delivery',choices=('original','centered','circular'),default='centered')
+p.add_argument('--delivery',choices=('original','centered','circular','observation'),default='centered')
 p.add_argument('--mac-revision',type=int,choices=range(1,11),default=1);a=p.parse_args()
 repo=Path('/Volumes/D/claude/swiftright');base=repo/'factory/pipeline/pilot-delivery-five-v1/root-execution'
-stage_host=a.host+'-'+a.delivery if a.host=='rounded-stroke' and a.delivery in ('centered','circular') else a.host
+stage_host=a.host+'-'+a.delivery if a.delivery in ('centered','circular','observation') and a.host in ('rounded-stroke','stack-overlay','custom-layout') else a.host
 packet=base/(stage_host+'-compile-r1');actual=packet/'actual-final-r1'
 def sha(path):
     assert path.is_file() and not path.is_symlink() and path.stat().st_size<=67108864
@@ -29,7 +29,7 @@ argv=[str(repo/'factory/.venv/bin/python'),str(base/'prepare-pilot-native-captur
  '--serializer-control-path',str(PureWindowsPath(r'D:\Claude\swiftright\.factory-work\hosts\rectangle\dependencies\serializer-actual-r2\control.json')),
  '--serializer-control-artifact-path',str(serializer),'--renderer-artifact-path',str(renderer),
  '--case-artifact-path',str(packet/'materialized-case.json')]
-if a.host=='rounded-stroke':
+if a.host=='rounded-stroke' and a.delivery!='observation':
  mac_run=base/f'rounded-stroke-full-viewport-v1/observed-mac20-r{a.mac_revision}/run-001'
  argv+=['--mac-sidecar-receipt-path',str(base/'rounded-stroke-full-viewport-v1/build-r1/receipt.json'),
  '--mac-sidecar-image-path',str(mac_run/'client.png'),

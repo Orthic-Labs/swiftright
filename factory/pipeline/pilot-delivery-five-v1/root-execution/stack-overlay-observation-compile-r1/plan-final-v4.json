@@ -1,0 +1,592 @@
+{
+  "actualPrebuildArgv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "boundedAdapter": {
+    "fileCap": 256,
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "outputCapBytes": 8388608,
+    "qualification": "source-only compile request; root archives fresh compiler receipt, EXE, native lifecycle, screenshot/UIA, and layout joins",
+    "sourceCapBytes": 268435456,
+    "timeoutSeconds": 600
+  },
+  "bridgeABI": "0.6",
+  "bridgeBindings": [
+    {
+      "bytes": 1527,
+      "path": "Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "bytes": 841,
+      "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "bytes": 30,
+      "path": "Sources/CDispatchPrivate/shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "bytes": 71,
+      "path": "Sources/CSwiftRight/module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "bytes": 41937,
+      "path": "Sources/CSwiftRight/swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "bytes": 23494,
+      "path": "Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "bytes": 3794,
+      "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "bytes": 3266,
+      "path": "Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "bytes": 10915,
+      "path": "Sources/SwiftRightBridge/Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "bytes": 12904,
+      "path": "Sources/SwiftRightBridge/Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    }
+  ],
+  "bridgeHeaderCommit": "862997c",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "candidate": "swiftui.stack-overlay.centered-host.execution-v3",
+  "canonicalCaseHash": "sha256:0b90bdf569a038e7a17399abc63d765329fcd97a0e41812d918602f43dc7786d",
+  "case": {
+    "hash": "sha256:0b90bdf569a038e7a17399abc63d765329fcd97a0e41812d918602f43dc7786d",
+    "id": "swiftui.stack-overlay.recipe/case/a6df11b1e81c2764"
+  },
+  "caseHash": "sha256:0b90bdf569a038e7a17399abc63d765329fcd97a0e41812d918602f43dc7786d",
+  "caseMaterialization": {
+    "axisJoin": {
+      "candidateCount": 1,
+      "normalizedInputs": {
+        "circle": {
+          "fill": "red",
+          "height": 12,
+          "width": 12
+        },
+        "color-scheme": "light",
+        "overlay-alignment": "bottomTrailing",
+        "overlay-text": "+",
+        "rectangle": {
+          "fill": "blue",
+          "height": 32,
+          "width": 48
+        },
+        "z-stack-alignment": "trailing"
+      },
+      "selectedCaseId": "swiftui.stack-overlay.recipe/case/a6df11b1e81c2764",
+      "selectedCoverage": "full-product",
+      "transparencyRowsExcluded": 1
+    },
+    "caseSetHash": "sha256:ef5fb5b0ed749d182750e95b2e6788edfcf31215ad74f70d9ffafb0ac547a6ea",
+    "inputKeyMap": {
+      "colorScheme": "color-scheme",
+      "frameHeight": "frame-height",
+      "frameWidth": "frame-width",
+      "name": "name",
+      "overlayAlignment": "overlay-alignment",
+      "overlayText": "overlay-text",
+      "sampling": "sampling",
+      "sourceHeight": "source-height",
+      "sourcePixelHash": "source-pixel-hash",
+      "sourceWidth": "source-width",
+      "zStackAlignment": "z-stack-alignment"
+    },
+    "packetCaseId": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515",
+    "packetCaseRawJsonHash": "sha256:e97c766a72389731fc45acece637a9efe0f7421f2fc079d5e24b88eb6c40f863",
+    "packetRecipeCanonicalHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+    "packetRecipePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v3/recipe.json",
+    "rawInputs": {
+      "circle": {
+        "fill": "red",
+        "height": 12,
+        "width": 12
+      },
+      "colorScheme": "light",
+      "overlayAlignment": "bottomTrailing",
+      "overlayText": "+",
+      "rectangle": {
+        "fill": "blue",
+        "height": 32,
+        "width": 48
+      },
+      "zStackAlignment": "trailing"
+    },
+    "recipe": {
+      "assertions": [
+        {
+          "channel": "paint",
+          "expected": {
+            "assertions": [
+              {
+                "channel": "layout",
+                "expected": {
+                  "alignment": "topLeading+bottomTrailing",
+                  "composition": "ZStack-with-overlay"
+                },
+                "id": "swiftui.stack-overlay.assertion.primary",
+                "observability": "available"
+              }
+            ],
+            "axes": [
+              {
+                "coverage": "pairwise",
+                "id": "alignment",
+                "values": [
+                  "leading",
+                  "center",
+                  "trailing"
+                ]
+              },
+              {
+                "coverage": "pairwise",
+                "id": "color-scheme",
+                "values": [
+                  "light",
+                  "dark"
+                ]
+              }
+            ],
+            "block": "swiftui.stack-overlay",
+            "id": "swiftui.stack-overlay.recipe",
+            "instrumentationTransparency": {
+              "case": "swiftui.stack-overlay.instrumentation-transparency",
+              "channels": [
+                "layout",
+                "paint"
+              ]
+            },
+            "kind": "recipe",
+            "negativeCases": [
+              {
+                "id": "swiftui.stack-overlay.negative.invalid-member",
+                "mode": "must-not-compile",
+                "sourceHash": "sha256:993a7c1fa3354ef3169330573c01bb102d220937e500f03c1ef31ba259ede153"
+              }
+            ],
+            "provenance": {
+              "createdAt": "2026-10-10T17:26:20Z",
+              "producer": "factory/recipes-draft",
+              "review": {
+                "at": "2026-10-10T17:26:20Z",
+                "decision": "candidate",
+                "reviewer": "pending-maintainer-review"
+              },
+              "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+            },
+            "stimuli": [],
+            "version": "0.1",
+            "witnesses": [
+              {
+                "id": "swiftui.stack-overlay.witness",
+                "resources": [
+                  {
+                    "hash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+                    "id": "swiftui.stack-overlay.witness.swift"
+                  }
+                ],
+                "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+              }
+            ]
+          },
+          "id": "swiftui.stack-overlay.recipe.assertion.primary",
+          "observability": "available"
+        }
+      ],
+      "axes": [
+        {
+          "coverage": "full-product",
+          "id": "z-stack-alignment",
+          "values": [
+            "trailing"
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "overlay-alignment",
+          "values": [
+            "bottomTrailing"
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "color-scheme",
+          "values": [
+            "light"
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "rectangle",
+          "values": [
+            {
+              "fill": "blue",
+              "height": 32,
+              "width": 48
+            }
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "circle",
+          "values": [
+            {
+              "fill": "red",
+              "height": 12,
+              "width": 12
+            }
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "overlay-text",
+          "values": [
+            "+"
+          ]
+        }
+      ],
+      "block": "swiftui.stack-overlay",
+      "id": "swiftui.stack-overlay.recipe",
+      "instrumentationTransparency": {
+        "case": "swiftui.stack-overlay.recipe.instrumentation-transparency",
+        "channels": [
+          "layout",
+          "paint"
+        ]
+      },
+      "kind": "recipe",
+      "negativeCases": [],
+      "provenance": {
+        "createdAt": "2026-10-12T00:00:00Z",
+        "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+        "review": {
+          "at": "2026-10-12T00:00:00Z",
+          "decision": "candidate",
+          "reviewer": "root"
+        },
+        "sourceHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0"
+      },
+      "stimuli": [],
+      "version": "0.1",
+      "witnesses": [
+        {
+          "id": "swiftui.stack-overlay.recipe.witness",
+          "resources": [
+            {
+              "hash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+              "id": "factory-probe-witness.swift"
+            }
+          ],
+          "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+        }
+      ]
+    },
+    "recipeHash": "sha256:74578039ce576ee4902259c798272192c5d766084d4eb21b123bc2c534a63b72",
+    "recipeSeedJoin": null
+  },
+  "casePath": "case.json",
+  "caseRawJsonHash": "sha256:e97c766a72389731fc45acece637a9efe0f7421f2fc079d5e24b88eb6c40f863",
+  "compileRequest": {
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "buildSystem": "native",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "executionEligible": false,
+    "kind": "swiftpm-windows-gui-release/1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package\\build-stack-overlay-execution-v3\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch",
+    "target": "windows-x86_64"
+  },
+  "compileRequestArgvOrdering": {
+    "actual": "native-before-package",
+    "declared": "native-before-package",
+    "defect": false,
+    "source": "retained-prebuild-builder-receipt"
+  },
+  "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "executionEligible": false,
+  "expectedHostHash": "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2",
+  "frontendCommandScan": {
+    "bytes": 43681,
+    "frontendCommandCount": 3,
+    "frontendCommands": [
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Alignment.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Animation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Axis.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Controls.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\FocusTraversal.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Geometry.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Graph.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Keyboard.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Layout.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\LayoutEngine.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Modifiers.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Preferences.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Presentation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Selection.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Shapes.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\State.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextInput.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextMeasurement.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\ToggleStyles.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Views.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.5r7xm0\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 6 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightRuntime -package-name runtime -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Alignment.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Animation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Axis.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Controls.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\FocusTraversal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Geometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Graph.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Keyboard.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Layout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\LayoutEngine.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Modifiers.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Preferences.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Presentation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Selection.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Shapes.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\State.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextInput.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextMeasurement.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\ToggleStyles.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Views.swift.o",
+        "index": 1,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.t57fRt\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightBridge -package-name swiftrightbridge -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Bridge.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\ButtonFocusGate.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Loader.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Marshal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Types.swift.o",
+        "index": 2,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\FactoryCenteredLayout.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\FactoryFill.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\FactoryTextGeometry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\FactoryViewport.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\Witness.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\Sources\\FactoryProbe\\main.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.bLfeg5\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -entry-point-function-name FactoryProbe_main -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name FactoryProbe -package-name package -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryCenteredLayout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryFill.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryTextGeometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryViewport.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\Witness.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\main.swift.o",
+        "index": 3,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      }
+    ],
+    "lastNumThreads": 1,
+    "numThreadsOccurrenceCount": 3,
+    "numThreadsValues": [
+      1,
+      1,
+      1
+    ],
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-observation-compile-r1/actual-prebuild-r1/compile.stdout.bin",
+    "proof": "actual-stdout-stream-scan",
+    "requiredLastNumThreads": 1,
+    "sha256": "sha256:072b4d5b94d15cd861d0e60629cd222d0055a07a4f68b3cbdfb49f930690290c"
+  },
+  "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "hostCorrection": {
+    "kind": "intrinsic-root-subtree-centering-v1",
+    "runtimeBehaviorChanged": false,
+    "scope": "every resolved node in root subtree; background unchanged",
+    "source": "FactoryCenteredLayout.swift",
+    "translation": "viewport.x + (viewport.w - root.w)/2 - root.x; viewport.y + (viewport.h - root.h)/2 - root.y"
+  },
+  "hostHash": "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2",
+  "kind": "factory-pilot-five-compiler-plan-v1",
+  "materializedCase": {
+    "block": "swiftui.stack-overlay",
+    "coverage": "full-product",
+    "expectedCaseSetHash": "sha256:ef5fb5b0ed749d182750e95b2e6788edfcf31215ad74f70d9ffafb0ac547a6ea",
+    "id": "swiftui.stack-overlay.recipe/case/a6df11b1e81c2764",
+    "inputs": {
+      "circle": {
+        "fill": "red",
+        "height": 12,
+        "width": 12
+      },
+      "color-scheme": "light",
+      "overlay-alignment": "bottomTrailing",
+      "overlay-text": "+",
+      "rectangle": {
+        "fill": "blue",
+        "height": 32,
+        "width": 48
+      },
+      "z-stack-alignment": "trailing"
+    },
+    "kind": "case",
+    "provenance": {
+      "createdAt": "2026-10-12T00:00:00Z",
+      "inputs": [
+        {
+          "hash": "sha256:74578039ce576ee4902259c798272192c5d766084d4eb21b123bc2c534a63b72",
+          "id": "swiftui.stack-overlay.recipe"
+        }
+      ],
+      "producer": "factory/recipes.expand_cases",
+      "sourceHash": "sha256:995d26938747df5f53bce0c685ea5c8d575148eb006e4dea4c138ccb5c4eb9e8"
+    },
+    "recipe": {
+      "hash": "sha256:74578039ce576ee4902259c798272192c5d766084d4eb21b123bc2c534a63b72",
+      "id": "swiftui.stack-overlay.recipe"
+    },
+    "tuple": {
+      "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+      "factoryVersion": "0.1-working-observation",
+      "hostHashes": {
+        "windows": "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2"
+      },
+      "id": "sr1-stack-overlay-observation-delivery-r11-20261012-r1",
+      "macosBuild": "26A434",
+      "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+      "toolchains": {
+        "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+        "winSwift": "Swift 6.4.0+Asserts; measured compiler sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+      }
+    },
+    "version": "0.1"
+  },
+  "nativeParity": "prebuild-validated-final-build-pending",
+  "outputs": {
+    "prebuildExeBytes": 3656192,
+    "prebuildExePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "prebuildExeSha256": "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2"
+  },
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v3/package",
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package",
+  "packetPlanHash": "sha256:4fdd3c07473fd290886186dae2cae49bd25e9bb345a6402298536c1b2ca692f8",
+  "phase": "final",
+  "prebuildReceipt": "factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-observation-compile-r1/actual-prebuild-r1/observation.json",
+  "prebuildReceiptHash": "sha256:73297838bbfb20689607beb2aba4eee34dfcc4d127b2bd6fc8313ae1914bfc3f",
+  "recipeCanonicalHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+  "recipePath": "../recipe.json",
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "rendererTuple": "tuple11",
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-observation\\package\\build-bound-r1\\scratch",
+  "sourceBindings": [
+    {
+      "bytes": 539,
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "bytes": 1392,
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166"
+    },
+    {
+      "bytes": 1646,
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 1023,
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 424,
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+    },
+    {
+      "bytes": 13760,
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:159843d9a7170851358c8566f4cae92b4d15df3554b6b9baa1878a41892b096d"
+    },
+    {
+      "bytes": 1143,
+      "path": "case.json",
+      "sha256": "sha256:e97c766a72389731fc45acece637a9efe0f7421f2fc079d5e24b88eb6c40f863"
+    },
+    {
+      "bytes": 11275,
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "bytes": 2825,
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    }
+  ],
+  "sourceBindingsHash": "sha256:aad558b9865c2df17405918ea0a26efe48ca8c20a91f9edfe40071e8357902be",
+  "sourceBindingsPath": "../source-bindings.json",
+  "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+  "sourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "status": "final-plan-ready-pending-final-build",
+  "tuple": {
+    "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+    "factoryVersion": "0.1-working-observation",
+    "hostHashes": {
+      "windows": "sha256:36e14334f98135298d2f039885218d228b916a362580ba3b4a1d12e85519a7f2"
+    },
+    "id": "sr1-stack-overlay-observation-delivery-r11-20261012-r1",
+    "macosBuild": "26A434",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+    "toolchains": {
+      "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+      "winSwift": "Swift 6.4.0+Asserts; measured compiler sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    }
+  },
+  "witness": "Sources/FactoryProbe/Witness.swift"
+}

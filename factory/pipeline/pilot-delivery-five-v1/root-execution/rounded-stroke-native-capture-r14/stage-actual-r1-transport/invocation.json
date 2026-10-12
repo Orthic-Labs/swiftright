@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "f70ab1ebe1f70ea4833bb1944a1195e89875684882ae0541a5f9a3da5904dd2c",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\rounded-observation-capture-install-r1.ps1",
+    "-ScriptSha256",
+    "fac5cf92a096d83c9b7953e180523b23cde6b2a8307268c0daca8c3d32ef6f4c",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\rounded-observation-capture-install-r1-transport.json",
+    "-DeadlineSeconds",
+    "180"
+  ],
+  "scriptSha256": "fac5cf92a096d83c9b7953e180523b23cde6b2a8307268c0daca8c3d32ef6f4c",
+  "budgetBytes": 268435456
+}

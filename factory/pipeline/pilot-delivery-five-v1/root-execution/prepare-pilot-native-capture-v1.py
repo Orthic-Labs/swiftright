@@ -7,7 +7,7 @@ DONOR=REPO/'factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-col
 CACHE=REPO/'.factory-work/pilot-delivery-five-v1/generic-native-capture'
 
 p=argparse.ArgumentParser()
-p.add_argument('--host',choices=('image','rounded-stroke','custom-layout'),required=True)
+p.add_argument('--host',choices=('image','rounded-stroke','custom-layout','stack-overlay'),required=True)
 p.add_argument('--plan',required=True)
 p.add_argument('--revision',type=int,choices=range(1,21),default=1)
 p.add_argument('--compile-receipt-hash',required=True)
@@ -187,7 +187,7 @@ def rebind_source_pin_graph(files, donor_rows):
 plan_path=Path(a.plan)
 if not plan_path.is_absolute():plan_path=REPO/plan_path
 plan_raw=rd(plan_path);plan=json.loads(plan_raw.decode('utf-8-sig'));plan_hash=sha(plan_raw)
-raw_case_path=plan.get('casePath') or plan.get('rawCasePath') or 'plan.json'
+raw_case_path=plan.get('casePath') or plan.get('rawCasePath') or ('case.json' if any(row.get('path')=='case.json' for row in plan.get('sourceBindings',[])) else 'plan.json')
 raw_case=plan_path.parent/raw_case_path
 raw_case_pin=req(plan,'caseRawJsonHash') if raw_case_path!='plan.json' else None
 raw_case_hash=unprefix(raw_case_pin) if raw_case_pin else None
@@ -250,8 +250,8 @@ source_hash=req(plan,'sourceHash');runtime_commit=req(plan,'runtimeSourceCommit'
 runtime_tree=req(plan,'runtimeSourceTreeHash')
 renderer_path=req(plan,'rendererPath','rendererLoadPath');renderer_hash=unprefix(req(plan,'rendererSha256'))
 mac_sidecar=None
-if a.host=='rounded-stroke' and (not a.mac_sidecar_receipt_path or not a.mac_sidecar_image_path):
-    raise SystemExit('Rounded capture requires measured Mac sidecar receipt/image')
+# Windows observation may precede Mac pairing; missing sidecar stays explicitly
+# unqualified in existing context. A supplied sidecar still gets every check.
 if a.mac_sidecar_receipt_path or a.mac_sidecar_image_path:
     if not (a.mac_sidecar_receipt_path and a.mac_sidecar_image_path and a.mac_sidecar_manifest_path and a.mac_sidecar_observation_path): raise SystemExit('Mac sidecar receipt/image/manifest/raw observation must be supplied together')
     mac_receipt_local,mac_receipt_raw,mac_receipt_hash,mac_receipt_bytes=measured_json(a.mac_sidecar_receipt_path,'Mac sidecar receipt')
@@ -521,7 +521,7 @@ $cfg.issuedMetadataHash=(Get-FileHash -LiteralPath $cfg.issuedMetadataPath).Hash
 & (Join-Path $Overlay 'coordinator-count1-v3.ps1') -Template (Join-Path $Control 'config-template.json') -TemplateHash $cfgHash -PreflightOnly|Set-Content -LiteralPath (Join-Path $Control 'coordinator-preflight.json') -Encoding UTF8
 [ordered]@{status='admission-ready';nativeActions=0;compilerActions=0;lockActions=0;configHash=$cfgHash;issuedMetadataHash=$cfg.issuedMetadataHash}|ConvertTo-Json
 '''
-zip_rel=zip_path.relative_to(REPO/'.factory-work').as_posix().replace('/','\\')
+zip_rel=zip_path.name
 plan_b64=base64.b64encode(plan_raw).decode('ascii')
 for k,v in {'HOST_ROOT':target_root,'NS':target_ns,'PACKAGE':package_path,'ZIP':zip_rel,'ZIP_HASH':sha(rd(zip_path)),'REV':str(a.revision),'PLAN_HASH':plan_hash,'PLAN_BYTES':str(len(plan_raw)),'PLAN_BASE64':plan_b64,'COMPILE_HASH':compile_hash,'COMPILE_BYTES':str(compile_bytes),'EXE_HASH':exe_hash,'EXE_BYTES':str(exe_bytes),'SERIALIZER_HASH':serializer_hash,'SERIALIZER_BYTES':str(serializer_bytes),'RENDERER_BYTES':str(renderer_bytes),'QUALIFICATION':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host'}.items():installer=installer.replace('__'+k+'__',v)
 (out/f'install-native-capture-r{a.revision}.ps1').write_text(installer)

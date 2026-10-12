@@ -16,7 +16,7 @@ MAX_STREAM = 8 * 1024 * 1024
 MAX_EXE = 64 * 1024 * 1024
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--host', choices=('image', 'image-star-provider', 'rounded-stroke', 'rounded-stroke-centered', 'rounded-stroke-circular', 'stack-overlay-centered'), required=True)
+parser.add_argument('--host', choices=('image', 'image-star-provider','image-star-observation','stack-overlay-colors', 'rounded-stroke', 'rounded-stroke-centered', 'rounded-stroke-circular', 'rounded-stroke-observation', 'stack-overlay-centered', 'stack-overlay-observation', 'custom-layout-centered', 'custom-layout-observation'), required=True)
 parser.add_argument('--phase', choices=('prebuild', 'final'), default='final')
 parser.add_argument('--timeout', type=int, default=60)
 args = parser.parse_args()

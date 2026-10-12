@@ -7,7 +7,7 @@ from pathlib import Path, PureWindowsPath
 import subprocess
 
 parser=argparse.ArgumentParser()
-parser.add_argument('--host',choices=('image','image-star-provider','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','stack-overlay-centered'),required=True)
+parser.add_argument('--host',choices=('image','image-star-provider','image-star-observation','stack-overlay-colors','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','rounded-stroke-observation','stack-overlay-centered','stack-overlay-observation','custom-layout-centered','custom-layout-observation'),required=True)
 args=parser.parse_args()
 repo=Path('/Volumes/D/claude/swiftright')
 out=repo/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{args.host}-compile-r1'

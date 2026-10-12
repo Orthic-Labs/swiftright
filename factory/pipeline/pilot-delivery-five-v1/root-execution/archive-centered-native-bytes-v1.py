@@ -6,7 +6,7 @@ p=argparse.ArgumentParser()
 p.add_argument('--revision',type=int,choices=range(1,21),required=True)
 p.add_argument('--count',type=int,choices=(1,20),default=1)
 p.add_argument('--attempt',type=int,choices=range(1,5),default=1)
-p.add_argument('--host',choices=('rectangle','rounded-stroke','image','custom-layout'),default='rectangle')
+p.add_argument('--host',choices=('rectangle','rounded-stroke','image','stack-overlay','custom-layout'),default='rectangle')
 a=p.parse_args()
 tag=('r' if a.count==1 else 'count20-r')+str(a.revision)
 repo=Path('/Volumes/D/claude/swiftright')
@@ -22,7 +22,7 @@ if generic:
     prep=json.loads(preparation.read_text())
     stage=PureWindowsPath(prep['compileReceiptPath']).parent.parent
     assert stage.parent==PureWindowsPath(r'D:\Claude\swiftright\.factory-work\hosts')
-    assert stage.name in (a.host,a.host+'-centered',a.host+'-circular')
+    assert stage.name in (a.host,a.host+'-centered',a.host+'-circular',a.host+'-observation')
     remote=(stage/'captures'/f'count1-r{a.revision}').as_posix()
 else:
     remote='D:/Claude/swiftright/.factory-work/hosts/rectangle/captures/centered-'+tag
