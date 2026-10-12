@@ -1,0 +1,9 @@
+# Adversarial framing correction R4
+
+Adrian challenged whether checkpoint reviewer was receiving a biased version of his objective. Root inspected exact R3 prompt & result: original five→ten→twenty outcome was explicit, but root supplied preferred fixes & a fourteen-file whitelist. R3 genuinely challenged weak reader controls, misleading hash labels & incomplete paint/semantic claims; that does not prove independence of direction framing.
+
+New mandatory `adversarial-objective-v1.md` preserves direct user outcome, distinguishes implementation/verification/parity/goldens, asks reviewer to reject current approach when warranted, steelman alternative delivery paths, challenge invented/stale holds & select evidence independently. `run-review.py` prepends this brief to every invocation & records policy, packet & combined input hashes. Archive verifies these hashes. Recurring heartbeat also requires this adversarial method; checkpoint packet contains evidence entry points with disputed claims, not preferred corrections.
+
+Both workers & new native/compiler dispatch paused before fresh sessionb9a1dcf5-6d9a-4ae3-9025-3b419a263c0f at2026-10-12 16:32:48UTC. CLI rejected request with HTTP429 usage_limit_reached before any model input/output or model usage. Exit1, peak336592896B, no budget failure, owned group quiescent. `actual-r4/` preserves exact invocation, terminal, API failure & supervision. No R4 review/verdict is claimed & no substitute model is used.
+
+CLI reports reset00:20 IST; next inferred retry is2026-10-12 18:50UTC. R3 remains last completed review & its hourly deadline remains17:16:28UTC. Continue only already reviewed implementation work before that deadline; pause new implementation/compiler/native dispatch when deadline arrives until actual Fable review succeeds. Root may archive existing terminal bytes, update holds & inspect resources during that pause.

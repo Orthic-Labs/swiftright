@@ -37,6 +37,14 @@ assert actual_models and all(name.startswith('claude-fable-') for name in actual
 assert result['subagent_stats']['spawned'] == 0
 assert a.verdict in result['result'][:100]
 assert invocation['nativeWorkPaused'] is True
+if a.revision >= 4:
+    policy = out.parent / 'adversarial-objective-v1.md'
+    prompt = repo / invocation['promptPath']
+    assert invocation['objectiveBriefPath'] == str(policy.relative_to(repo))
+    assert invocation['objectiveBriefSha256'] == hashlib.sha256(read(policy)).hexdigest()
+    assert invocation['promptSha256'] == hashlib.sha256(read(prompt)).hexdigest()
+    review_input = read(policy) + b'\n\n--- CHECKPOINT EVIDENCE PACKET (DISPUTED CLAIMS) ---\n\n' + read(prompt)
+    assert invocation['reviewInputSha256'] == hashlib.sha256(review_input).hexdigest()
 for name, data in [('cli-result.json', raw), ('supervision.json', supervision_raw),
                    ('review.md', (result['result'] + '\n').encode())]:
     with (out / name).open('xb') as stream:
@@ -59,5 +67,9 @@ ledger = {
     'peakGroupRssBytes': supervision['peakGroupRssBytes'], 'exitCode': 0,
     'ownedGroupQuiescent': True,
 }
+if a.revision >= 4:
+    ledger['objectiveBriefPath'] = invocation['objectiveBriefPath']
+    ledger['objectiveBriefSha256'] = invocation['objectiveBriefSha256']
+    ledger['reviewInputSha256'] = invocation['reviewInputSha256']
 (out.parent / 'checkpoint-ledger.json').write_text(json.dumps(ledger, indent=2) + '\n')
 print(json.dumps(ledger))
