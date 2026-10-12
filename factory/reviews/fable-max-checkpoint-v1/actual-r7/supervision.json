@@ -1,0 +1,28 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "python3",
+    "factory/reviews/fable-max-checkpoint-v1/run-review.py",
+    "--prompt",
+    "factory/reviews/fable-max-checkpoint-v1/review-prompt-r7.md",
+    "--out",
+    "factory/reviews/fable-max-checkpoint-v1/actual-r7",
+    "--text-read-only"
+  ],
+  "pid": 21129,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-12T20:09:09.088939+00:00",
+  "finishedAt": "2026-10-12T20:15:59.743172+00:00",
+  "seconds": 410.654,
+  "peakGroupRssBytes": 342376448,
+  "stdout": {
+    "bytes": 7162,
+    "sha256": "53051ae6ab0b4828e99214e1f6b5345e19de83a69cc31f7bc20f7db9bab9624e"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ownedGroupQuiescent": true
+}

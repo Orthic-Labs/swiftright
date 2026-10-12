@@ -11,6 +11,8 @@ import uuid
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--prompt", type=Path, required=True)
 parser.add_argument("--out", type=Path, required=True)
+parser.add_argument("--text-read-only", action="store_true",
+                    help="Disable inventory/search tools for memory-bounded text review")
 args = parser.parse_args()
 repo = Path(__file__).resolve().parents[3]
 prompt = args.prompt.resolve()
@@ -30,7 +32,7 @@ argv = [
     "--effort", "max", "--session-id", session,
     "--name", "SwiftRight checkpoint Fable Max",
     "--output-format", "json", "--restricted", "--safe-mode",
-    "--strict-mcp-config", "--tools", "Read,Glob,Grep",
+    "--strict-mcp-config", "--tools", "Read" if args.text_read_only else "Read,Glob,Grep",
     "--permission-mode", "plan", "--permission-prompts", "none",
     "--disable-slash-commands", "--no-chrome",
 ]
@@ -42,7 +44,8 @@ invocation = {"kind": "factory-fable-max-review-invocation-v1", "sessionId": ses
               "objectiveBriefPath": str(policy.relative_to(repo)),
               "objectiveBriefSha256": hashlib.sha256(policy_bytes).hexdigest(),
               "reviewInputSha256": hashlib.sha256(review_input).hexdigest(),
-              "startedAt": started, "readOnly": True, "nativeWorkPaused": True}
+              "startedAt": started, "readOnly": True, "nativeWorkPaused": True,
+              "selectedTools": ["Read"] if args.text_read_only else ["Read", "Glob", "Grep"]}
 (args.out / "invocation.json").write_text(json.dumps(invocation, indent=2) + "\n")
 result = subprocess.run(argv, cwd=repo, input=review_input, check=False)
 terminal = {**invocation, "endedAt": dt.datetime.now(dt.timezone.utc).isoformat(),

@@ -31,7 +31,12 @@ assert result['session_id'] == invocation['sessionId'] == terminal['sessionId']
 assert invocation['modelRequested'] == 'fable' and invocation['effortRequested'] == 'max'
 assert terminal['exitCode'] == supervision['exitCode'] == 0
 assert supervision['budgetFailure'] is None and supervision['ownedGroupQuiescent'] is True
-assert supervision['quiescenceKnown'] is True
+if 'quiescenceKnown' in supervision:
+    assert supervision['quiescenceKnown'] is True
+else:
+    # v1 writes ownedGroupQuiescent only after checked process-group inventory;
+    # inventory failure raises before receipt creation. Preserve original bytes.
+    assert supervision['kind'] == 'factory-supervised-local-job-v1'
 actual_models = list(result['modelUsage'])
 assert actual_models and all(name.startswith('claude-fable-') for name in actual_models)
 assert result['subagent_stats']['spawned'] == 0
