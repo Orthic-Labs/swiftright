@@ -1,5 +1,16 @@
 # SR0 & SR1 running holds
 
+## Actual checkpoint — 2026-10-12 20:09 UTC
+
+Both source workers idle; all owned compiler/native jobs terminal. Hourly Fable Max r7 is running read-only under768MiB RSS cap. New implementation dispatch pauses until actual review is reconciled. Original five remain0/5 fully verified.
+
+- Custom Layout: corrected generic light red, one Windows capture matches full800×600 Mac RGB pixels exactly; Mac20 repeats. Hold: fresh Windows20 behavior comparison still needed, Count1 is insufficient.
+- RoundedRectangle: centered stroke correction captures; differing pixels reduced2176→1648. Hold: default continuous corners remain circular renderer approximation; protected renderer/ABI await SR0 closure. No parity claim.
+- ZStack/overlay: placement captures; source color correction ready. Hold: default body text provider/metrics differ & no defensible fixture offset exists; corrected native comparison pending.
+- Image `star.fill`: fresh original Mac20 repeats exactly. Windows prebuild failed unavailable CryptoKit; fresh v4 source removes it. Hold: Windows v4 compilation/capture pending, Segoe glyph proxy does not prove SF Symbol parity.
+- Tinos Text: fresh Windows v3 removes CryptoKit; Mac deployment target repaired. Hold: actual renderer font selection & paired captures pending.
+- Ten/twenty expansion: held until original five verified. SR0 stays OPEN; protected renderer/ABI, Narrator listen, W08, final performance/qualification work remain separate holds. No new certification machinery is authorized by these observations.
+
 ## Resumed original-five delivery — 2026-10-12 19:44 UTC
 
 User resumed both source workers & heartbeat. Fable r6 corrections govern delivery: actual original witnesses first, no substitute cohort or extra certification gate. Root serially supervises compiler/native jobs; local control cap128MiB, Windows compiler cap1GiB. Original cohort remains0/5 complete.

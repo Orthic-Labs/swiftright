@@ -7,7 +7,7 @@ DONOR=REPO/'factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-col
 CACHE=REPO/'.factory-work/pilot-delivery-five-v1/generic-native-capture'
 
 p=argparse.ArgumentParser()
-p.add_argument('--host',choices=('image','rounded-stroke','custom-layout','stack-overlay'),required=True)
+p.add_argument('--host',choices=('image','rounded-stroke','custom-layout','stack-overlay','bundled-font'),required=True)
 p.add_argument('--plan',required=True)
 p.add_argument('--revision',type=int,choices=range(1,21),default=1)
 p.add_argument('--compile-receipt-hash',required=True)
