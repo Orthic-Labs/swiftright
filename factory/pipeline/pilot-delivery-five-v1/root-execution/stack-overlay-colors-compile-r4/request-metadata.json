@@ -1,0 +1,72 @@
+{
+  "compileRequest": {
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package\\build-bound-r1\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "buildSystem": "native",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "executionEligible": false,
+    "kind": "swiftpm-windows-gui-release/1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package\\build-bound-r1\\scratch",
+    "target": "windows-x86_64"
+  },
+  "compilerActions": 0,
+  "kind": "source-only-stack-overlay-v8-incremental-compile-request",
+  "nativeActions": 0,
+  "priorV7": {
+    "historicalEvidenceRoot": "factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-colors-compile-r3",
+    "planPath": "factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-colors-compile-r3/plan-prebuild-v4.json",
+    "planSha256": "a798eba6d348d3d75efddb4eecd1198e01105f1afc9eae2f376ca0cf18c5c59a",
+    "retiredStage": "D:\\Claude\\swiftright\\.factory-work\\retired\\stack-overlay-colors-v7-observed-20261012-2150",
+    "sourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v7"
+  },
+  "prospectiveStage": {
+    "cachePolicy": "reuse-v7-build-bound-r1-scratch only after root proves retired stage quiescent; archive prior package/source/plan before v8 install",
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors\\package\\build-bound-r1\\scratch",
+    "sourceReplacement": "v8 package only",
+    "stagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors"
+  },
+  "qualification": "source-only request; root must archive fresh compiler/native lifecycle evidence; no parity claim",
+  "requestRevision": "stack-overlay-colors-v8-body-policy-r1",
+  "sourcePacket": {
+    "candidate": "swiftui.stack-overlay.centered-host.execution-v8-native-body-policy",
+    "packagePlanSha256": "sha256:bd2fbbb745a91840c1c32983d235cdb24767b1a53d648b0f36bc8de3abf1a97e",
+    "path": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v8",
+    "resolverSha256": "f8f5da702526ad9136cbd2c801fd66229727ec88954ec3a26eab968cf757b212",
+    "sourceBindingsHash": "sha256:0160b8e9dcbc8d7751b5e9ecfa97161595197598dbbdcf1333f2a7d457581c8f",
+    "witnessHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+  }
+}

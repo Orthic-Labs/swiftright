@@ -1,0 +1,88 @@
+{
+  "kind": "factory-stack-overlay-centered-v6-mac-diagnostic-source-plan-v1",
+  "packetVersion": "stack-overlay-centered-execution-v6-mac-diagnostic",
+  "status": "SOURCE_READY_ROOT_GROUP_SUPERVISOR_REQUEST",
+  "case": {
+    "id": "swiftui.stack-overlay.recipe/case/aac89c30fbc61515",
+    "hash": "sha256:6b612bc12777ef3f5e6447d435128a3f805f8f990ece4eab9a91d9dec36f9cd0"
+  },
+  "recipe": {
+    "id": "swiftui.stack-overlay.recipe",
+    "hash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0"
+  },
+  "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+  "witness": {
+    "path": "Sources/StackOverlayMacHost/Witness.swift",
+    "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+    "sameSourceBytes": true
+  },
+  "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "host": {
+    "widthPoints": 320,
+    "heightPoints": 240,
+    "renderScale": 2.5,
+    "expectedPixels": {
+      "width": 800,
+      "height": 600
+    },
+    "background": "white",
+    "colorScheme": "light",
+    "placement": "centered-in-fixed-viewport"
+  },
+  "entryArguments": [
+    "--preflight --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/stack-overlay-centered-v6-mac/scratch/preflight",
+    "--observe --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/stack-overlay-centered-v6-mac/scratch/observe"
+  ],
+  "cacheRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/stack-overlay-centered-v6-mac",
+  "scratchRootPrefix": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/stack-overlay-centered-v6-mac/scratch/",
+  "rootGroupSupervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py",
+  "maxResidentBytes": 1073741824,
+  "permissionRequests": false,
+  "screenCapture": false,
+  "accessibilityQueries": false,
+  "nativeActions": 0,
+  "qualification": "held",
+  "diagnostic": {
+    "kind": "same-bare-text-separate-probe",
+    "text": "+",
+    "renderer": "SwiftUI.TextRenderer",
+    "metrics": [
+      "typographicBounds.origin",
+      "width",
+      "ascent",
+      "descent",
+      "leading",
+      "rect"
+    ],
+    "providerMetadata": "unavailable-public-TextRenderer-API",
+    "mainWitnessPaintUnchanged": true,
+    "probePaintPath": "separate ImageRenderer; output discarded"
+  },
+  "macSourceBindings": [
+    {
+      "path": "Package.swift",
+      "bytes": 337,
+      "sha256": "sha256:79dad8b517c3e365655999902e073c9cd95eb4d57e16378767ca5011bfe9784d"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1071,
+      "sha256": "sha256:c0ccd01e248019613f9481e76d60aea5bbada54c89e4a22c685486933a02e450"
+    },
+    {
+      "path": "Sources/StackOverlayMacHost/CaptureHost.swift",
+      "bytes": 10322,
+      "sha256": "sha256:5e4a5a21b78aee2efe4906a431eec767ae575fb5a9d24f102542e719206908e1"
+    },
+    {
+      "path": "Sources/StackOverlayMacHost/Witness.swift",
+      "bytes": 424,
+      "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+    }
+  ],
+  "macSourceBindingsHash": "sha256:f4eb59648e69d1f790ebf1bfde3248299a18fb52feea5fce1f8f51e5073e4acc"
+}

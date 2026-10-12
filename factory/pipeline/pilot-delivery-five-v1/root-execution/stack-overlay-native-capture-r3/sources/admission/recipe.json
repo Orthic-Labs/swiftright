@@ -1,0 +1,169 @@
+{
+  "assertions": [
+    {
+      "channel": "paint",
+      "expected": {
+        "assertions": [
+          {
+            "channel": "layout",
+            "expected": {
+              "alignment": "topLeading+bottomTrailing",
+              "composition": "ZStack-with-overlay"
+            },
+            "id": "swiftui.stack-overlay.assertion.primary",
+            "observability": "available"
+          }
+        ],
+        "axes": [
+          {
+            "coverage": "pairwise",
+            "id": "alignment",
+            "values": [
+              "leading",
+              "center",
+              "trailing"
+            ]
+          },
+          {
+            "coverage": "pairwise",
+            "id": "color-scheme",
+            "values": [
+              "light",
+              "dark"
+            ]
+          }
+        ],
+        "block": "swiftui.stack-overlay",
+        "id": "swiftui.stack-overlay.recipe",
+        "instrumentationTransparency": {
+          "case": "swiftui.stack-overlay.instrumentation-transparency",
+          "channels": [
+            "layout",
+            "paint"
+          ]
+        },
+        "kind": "recipe",
+        "negativeCases": [
+          {
+            "id": "swiftui.stack-overlay.negative.invalid-member",
+            "mode": "must-not-compile",
+            "sourceHash": "sha256:993a7c1fa3354ef3169330573c01bb102d220937e500f03c1ef31ba259ede153"
+          }
+        ],
+        "provenance": {
+          "createdAt": "2026-10-10T17:26:20Z",
+          "producer": "factory/recipes-draft",
+          "review": {
+            "at": "2026-10-10T17:26:20Z",
+            "decision": "candidate",
+            "reviewer": "pending-maintainer-review"
+          },
+          "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+        },
+        "stimuli": [],
+        "version": "0.1",
+        "witnesses": [
+          {
+            "id": "swiftui.stack-overlay.witness",
+            "resources": [
+              {
+                "hash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d",
+                "id": "swiftui.stack-overlay.witness.swift"
+              }
+            ],
+            "sourceHash": "sha256:e050cf6be46f838b3ad1510047b610841eeee3121002652b4be7869e0932400d"
+          }
+        ]
+      },
+      "id": "swiftui.stack-overlay.recipe.assertion.primary",
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "coverage": "full-product",
+      "id": "z-stack-alignment",
+      "values": [
+        "trailing"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "overlay-alignment",
+      "values": [
+        "bottomTrailing"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "color-scheme",
+      "values": [
+        "light"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "rectangle",
+      "values": [
+        {
+          "fill": "blue",
+          "height": 32,
+          "width": 48
+        }
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "circle",
+      "values": [
+        {
+          "fill": "red",
+          "height": 12,
+          "width": 12
+        }
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "overlay-text",
+      "values": [
+        "+"
+      ]
+    }
+  ],
+  "block": "swiftui.stack-overlay",
+  "id": "swiftui.stack-overlay.recipe",
+  "instrumentationTransparency": {
+    "case": "swiftui.stack-overlay.recipe.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  },
+  "kind": "recipe",
+  "negativeCases": [],
+  "provenance": {
+    "createdAt": "2026-10-12T00:00:00Z",
+    "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+    "review": {
+      "at": "2026-10-12T00:00:00Z",
+      "decision": "candidate",
+      "reviewer": "root"
+    },
+    "sourceHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0"
+  },
+  "stimuli": [],
+  "version": "0.1",
+  "witnesses": [
+    {
+      "id": "swiftui.stack-overlay.recipe.witness",
+      "resources": [
+        {
+          "hash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+          "id": "factory-probe-witness.swift"
+        }
+      ],
+      "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
+    }
+  ]
+}
