@@ -1,0 +1,2145 @@
+{
+  "baseline": {
+    "count": 20,
+    "passed": 0,
+    "results": [
+      {
+        "captureHash": "sha256:c013495c119de586ea60733d13b7b716ac7fd74002df37b3904f8125c5afd72c",
+        "evidence": {
+          "captureHash": "sha256:c013495c119de586ea60733d13b7b716ac7fd74002df37b3904f8125c5afd72c",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:ab8fe8bf2acfc06bb57b4aa53cb01b4baeee6ecab57482abee6c769ce9927201",
+              "path": "native/native-01/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:43f492300d43565b1eae0a9e4398faf52ca45fc38fde1f66a50ebac764e4d7f7",
+              "path": "native/native-01/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:5a2d21ae74e0b21a7294897e9e86443747fa27749d6bb8e5bd455eafd6423201",
+              "path": "native/native-01/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:4a7a698f3f9d9b882f8bb580332d17b17626c07a6784f096705fcde54690db74",
+              "path": "native/native-01/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:42b8da07fd5aa1451a723c287ec8be147c7a759c4f2d71f278201ada4f200b92",
+              "path": "native/native-01/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:c77658e56a780c76b35d1dbe4af13aa213ead3a7d490d39020ce6f9103361371",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:0f514fc369609feaed696a2de63720e61b5c19abc54c772dba74a7c205fd3a48",
+        "evidence": {
+          "captureHash": "sha256:0f514fc369609feaed696a2de63720e61b5c19abc54c772dba74a7c205fd3a48",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:a42e2006744154fe9863b139d098108752552e7211a11b976c67f674ca82a8e7",
+              "path": "native/native-02/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:d16606f634ab6c15c42764bd68fe8960aba01e5a7a6f9b11c79574862eb0ba31",
+              "path": "native/native-02/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:0d908f11d782253bc4ba15c811e2ddf4578c7db1dc6d5b607f67bd984ece352a",
+              "path": "native/native-02/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:792d2357985489ef7fd62eee8936d7d83ccf3c32f228a6c6d103cc37478580e5",
+              "path": "native/native-02/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:39d8146f9e2a69823deca689176f3cb639c811ccbf92f764540d1cabe88eb19e",
+              "path": "native/native-02/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:38e346744210be30afdda21c1ce94414e1b3523ee4f36dcb82120ccfeb5931e1",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:b2160b0131c321fa8d43b46dec502e27dc2c3d3ba4e4b4c674caef8562f80f44",
+        "evidence": {
+          "captureHash": "sha256:b2160b0131c321fa8d43b46dec502e27dc2c3d3ba4e4b4c674caef8562f80f44",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:4264c9213507eaf0f2447df944526d1d656322671c5e411022d8734c3bacdfe3",
+              "path": "native/native-03/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:796c91f325f025a3e63f3183715816da629b7b1610cc48756288787127c1e6dc",
+              "path": "native/native-03/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:70676a68c4874e78cf9aa55824f3e6ae1af56e3c251ee7b35d3176b778230ae3",
+              "path": "native/native-03/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:d355cf2245c7fa9cfc9c7587550e09c1da47c7117fbc521720b47447b77aa800",
+              "path": "native/native-03/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:904cfdcb67f1e47323096f2f562c44e64dfd3a654a7d71ba46eae4b30dfdaa8a",
+              "path": "native/native-03/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:36712dca166a6b78274bfb463650cd5dad3bf233ba74a3189ebf978922f76a27",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:52600492c746554a742dacd12a9b571d7f19c5149573ba5c566a7843b016368a",
+        "evidence": {
+          "captureHash": "sha256:52600492c746554a742dacd12a9b571d7f19c5149573ba5c566a7843b016368a",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:1d9bf56c03a74938242ff520469864c63c8efe925d73fb2a00160d0b6f8fb234",
+              "path": "native/native-04/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:11da74996fb345e5335f7c1b7ec8f46e8fd265d4ef32da0067237c7c5e8141e0",
+              "path": "native/native-04/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:5799e78b677883ce11f8800e45de616cecd6001e328b6beca689c1012b4d9899",
+              "path": "native/native-04/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:60b100d9445b2b56391f7a9174a93e2094234e9cefc847684427b73f59924cf1",
+              "path": "native/native-04/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:59ebe5f6daaea476d307b86eaa1cd6fd0bca0ec1b1e1f47e610f1d659f59008e",
+              "path": "native/native-04/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:4ee88ee272575b7f99b0aa0e0bcbfdc57ac056d215fa79553bbfbe371749e792",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:f7414fb1aa9a25962d1b534cd849b31208cd6c022f5c922e8e118a46dca74fa4",
+        "evidence": {
+          "captureHash": "sha256:f7414fb1aa9a25962d1b534cd849b31208cd6c022f5c922e8e118a46dca74fa4",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:18b5dfe29c6cd35dd01b0e354d3a1edb5269dca6c55fd7a80e61213f4feee859",
+              "path": "native/native-05/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:6a24660da8ca74fd2f5fbcc736ef4c1179223af893d7da94b0675bb62f1eb5c1",
+              "path": "native/native-05/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:eb73a052a818604d2a6d5beb9e0ac00c51b9c003cd84c97bb35b63ddaaa4d367",
+              "path": "native/native-05/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:988195e9eac6681c94875405a0ad2c760a388904ad6d04521a469145912eae9c",
+              "path": "native/native-05/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:e57e2f1bbc4c43de3aafeceac2af9fcad5749feee85a6a63b2cc89ea11420888",
+              "path": "native/native-05/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:ef4e3aa358a6f580f79438d961e7e25e02dffd9a52c903687c223bb42c174a11",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:4e2425757d84836d93d04d80f421f184333b887f5f1d50c1a2b6f077e47acf39",
+        "evidence": {
+          "captureHash": "sha256:4e2425757d84836d93d04d80f421f184333b887f5f1d50c1a2b6f077e47acf39",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:b5659f3a3ad9f2005968567631522ccabf71b9921f724d056be314be34af9d6a",
+              "path": "native/native-06/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:657309907c94d47da455953f4c27cc612ed3c9ec065d69cc242494b03ccda951",
+              "path": "native/native-06/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:fbef6245e56d1219c307a3c192ee213875f614465b227585929c3a41a2bc965e",
+              "path": "native/native-06/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:29bb9a064c809d5da715817608c793f3090e85d234dbcb399bfd257e094ddb3f",
+              "path": "native/native-06/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:c9a47d39eb08d9abeae2666182a2b077d7a3696004e860cc469aa1f67675ef3c",
+              "path": "native/native-06/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:1702f31265f941bb4f8c67d4f26718eabad5354d98de015ae03c3987c828e281",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:c2395d816cfdad6e27774b11c21dc2c4517066a4c839afb1270e1dc4b292b5b0",
+        "evidence": {
+          "captureHash": "sha256:c2395d816cfdad6e27774b11c21dc2c4517066a4c839afb1270e1dc4b292b5b0",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:bfa7a9fa4e12e5bb4634a5d741360de5556c77ce2906e86432b50f46bde8c45c",
+              "path": "native/native-07/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:1a19f3ef5da8e91d197dfa41194e127f062008cfbfb3b47c1728cd2126bff1d7",
+              "path": "native/native-07/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:61412647aa503b4a432c033001cb4571f854ee43fba7724b121d08299f50d6dc",
+              "path": "native/native-07/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:d5bd887dffccfd210ea5bef1f2346f227140e30412b912a8618df95444dacb57",
+              "path": "native/native-07/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:8d449325a3ab557c904ff993d61861b7c6c1c8cd40a7296c4f268e2cbc2052cf",
+              "path": "native/native-07/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:eda3865d2a5458bb36a64a626519841e3a518d6d26d655e41ef983fbc2c7d2dc",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:f4f1ecec71ac9d5b24228d84fa01711f4daefbc8ff3aee1b1c9f118c50e6f7f9",
+        "evidence": {
+          "captureHash": "sha256:f4f1ecec71ac9d5b24228d84fa01711f4daefbc8ff3aee1b1c9f118c50e6f7f9",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:befc0e69201f968add4700b4d6b74f01106e3262daa2f6db3d38c6c305d36d54",
+              "path": "native/native-08/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:4dfcb29f8e3b26f4cf7cb8c5e2fefc778602adb001e4e2f3bc7c653fdcd96046",
+              "path": "native/native-08/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:9d541ae1ae1d9a027175fbb84009f0e1170fc267eaa40176699bb3841d26a1d4",
+              "path": "native/native-08/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:b9fc9730ae708d0b7279eb5be5d9fd197a432fd9d59c014bab9dafcf7b266242",
+              "path": "native/native-08/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:eff85825248759483d16e17679d9306f262e4b1295d59635be822e706d9f6b2f",
+              "path": "native/native-08/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:d3d5c5bae459714a8c74df74e204b1995fb0f2a7e44495089e03df9cb15196f1",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:7cdb8ed3d84df8e59ddb5b1964de324572f690ebf4f322e70bed98b116835dca",
+        "evidence": {
+          "captureHash": "sha256:7cdb8ed3d84df8e59ddb5b1964de324572f690ebf4f322e70bed98b116835dca",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:67e47b1ca6c30e7c563704adff406846679bad55c5c7ac33a7d3fd84d019a1f9",
+              "path": "native/native-09/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:707f2925142ae81e68257dd19571922911313b08f3e16a1e5365e5f9c14a9bb2",
+              "path": "native/native-09/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:0fd07a822a7d646a7b2330759b14908fe748cd2706f3821d409299864fc48fc5",
+              "path": "native/native-09/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:72b454f431b021a18207e11fcf8ee42d284dfb7116b9635f813fcae51b8db0e8",
+              "path": "native/native-09/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:5ad7f43671e566ef2c072d8c43834f78d0547c70849f3a29a9aaa14624fa4e0b",
+              "path": "native/native-09/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:1afb92570bd9f6e3ebbed09d39c00797185590110c03edd732a28713e45197b8",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:59ed9a1790e9e3c4ff9ecd28a5cea34f6349807553d76470143064bbe17a8f29",
+        "evidence": {
+          "captureHash": "sha256:59ed9a1790e9e3c4ff9ecd28a5cea34f6349807553d76470143064bbe17a8f29",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:35489aab74c066edc873e3b8167c6436afc1bda54a3404e34e30ac0e7b23d83a",
+              "path": "native/native-10/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:ec9f36a537252b6e7e06c8c40751df0da74f3030e7bef1b0fc21fab83bddf15b",
+              "path": "native/native-10/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:1193b26f9de357ad7544f1ccb7e53db23cfb772cecbe2f0cc1d0b6e8dd89df90",
+              "path": "native/native-10/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:995c4a29fb65681ecb3a7a84c4313cded78463a7f9064c3c922d8e9979833b38",
+              "path": "native/native-10/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:6fdb38ace27e6f93c07a06e4a20e4ed255bb9583aca458e13496d795d5b5523e",
+              "path": "native/native-10/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:6734a596de906b8448c2648ac9a64cfcbf9134b1800e500dc4519feb9383eb72",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:221089a93047b18f4dbd33f17b9f6a039820a35a473b70819a8dd4cb2e5944da",
+        "evidence": {
+          "captureHash": "sha256:221089a93047b18f4dbd33f17b9f6a039820a35a473b70819a8dd4cb2e5944da",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:3aad3c4cc79bf360bf0bc76d7ffe6862fc34b7f318f4dd5fac463b9c0d3edfa9",
+              "path": "native/native-11/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:0abda9c7ef752b0ca60395d77df155e25ed995fef95f1285b25a39c95bc625e2",
+              "path": "native/native-11/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:cc4ce0ccd4048f1a23cc38ed2f89ca2a661cb1e0b8731743c0fa95ced3523f8d",
+              "path": "native/native-11/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:ba26e14509170a2ee99d83bf138ba6f59a91fc5398787567680943b38d8b0393",
+              "path": "native/native-11/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:7608f58efae34453bc410d6e57a30753957d66ba676c8f45c87b86e7daf15df6",
+              "path": "native/native-11/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:67a6bbbd0de5fa0e4930a7c8fdced25f162821d96c5feb7c4cf5442446424134",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:8e5d2bb3c6509f9c62b5b921304b95c99a1bd49ff82289f06c07f43d102af643",
+        "evidence": {
+          "captureHash": "sha256:8e5d2bb3c6509f9c62b5b921304b95c99a1bd49ff82289f06c07f43d102af643",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:9ef5eab344501cd4aa5d9d1563d23f52bfbe84f7335357f1e4dc458efb073546",
+              "path": "native/native-12/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:f02f02a9e3972c72bf7a7bce365888c5842d31a44614093f3f961abec57e2d5e",
+              "path": "native/native-12/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:a77e3bc1c3505281feaa3743e91ccdfcde0ff0312888ad59d4fd1f312383f46a",
+              "path": "native/native-12/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:44287407df185e9deafb8797fd3949dd6dda5a5addd221bed72df974be717c4c",
+              "path": "native/native-12/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:767141ebd89c446cfecf955b56a35121e72e2e77ba28c83eca9b70052fd1b4a1",
+              "path": "native/native-12/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:3065a407e7dd99b9e5e124d66b99f526816b2c412e3e059dbb497bfdf6115183",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:a9e78c42bad2cc1dbd1b038b8036ddee44324fb3af1d521959d2fd4098cc9f19",
+        "evidence": {
+          "captureHash": "sha256:a9e78c42bad2cc1dbd1b038b8036ddee44324fb3af1d521959d2fd4098cc9f19",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:29643361cac741c95d1c1e146563d33448b7ca6acfcf094f420082be6dea31a5",
+              "path": "native/native-13/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:706bd22cf0a9b43eab6d77081e84cedcd5f21597a1cb873505f286e6eafec605",
+              "path": "native/native-13/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:4a5620b1bddbcbb95f28a086580fb0b2b06ce267e9b90de69135a40b0e92be09",
+              "path": "native/native-13/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:a04c2aa30de36dc30523a141f098eb9fb642406acf42c8594ca31fd1ca200899",
+              "path": "native/native-13/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:3a1dfced9c611bd585628666d9ca0c2d04053ad4bc1c5c924235d60f094f096a",
+              "path": "native/native-13/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:fefe144daf8847706979398b66962b1b5f55cab20928bca82b5234a7e2c9118e",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:b9cfba34edc2db614765e7ead444d7ba84310778d0238719324e88adb1679b4c",
+        "evidence": {
+          "captureHash": "sha256:b9cfba34edc2db614765e7ead444d7ba84310778d0238719324e88adb1679b4c",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:f0a47cc141797f6852bc4a086714930db0ab70f2213fc916c509f0af7c878fab",
+              "path": "native/native-14/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:3a6f3770aea71e0c8142e059738507b5a508b36f1dcef68955f706e5a8c7b42c",
+              "path": "native/native-14/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:77372266e8b5f38c5d356ce99c0787b0d96a4056d880873c394bb7b525d4f5f8",
+              "path": "native/native-14/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:cbd19f42bf5e91694d058f04bd24e844d00a053605cc4e25b2a9663336cb7c4b",
+              "path": "native/native-14/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:3febf0239683121b9a4e38803286c3d53777d525a383d6bff441bb34ec408e50",
+              "path": "native/native-14/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:6e5647974bc01e5ebb84eeb4f3d8259388c0665acbcdbb817ff870596acbe185",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:00ed12fe911d3f1b12933c49c86d5cdf07e55950a60f20fb76e2554567217932",
+        "evidence": {
+          "captureHash": "sha256:00ed12fe911d3f1b12933c49c86d5cdf07e55950a60f20fb76e2554567217932",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:9034e5f48a1c64bf64ae8662b36f6dcbdf8d605ea7cc5dd1b179efcea970bc77",
+              "path": "native/native-15/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:27768a2c5643bed4a2c31de6ec6717a799b53cc137139f1bbecc3fef78749bbe",
+              "path": "native/native-15/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:78c05194158c16a25ffd0d7a876476f36f864f6ba65485e0ad381a62b61c4595",
+              "path": "native/native-15/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:0a00026d45016459025181f130a7f2591a0fb20a5aee1f506a749a1798aaff6a",
+              "path": "native/native-15/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:cf4a254610e00d8004f4f900d5770791d83d7dfa9584a41fc7decb6f74db12ab",
+              "path": "native/native-15/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:8ba7db5b3239e547968c6dc29cd96c4c518ef3d914d90cde747f13b6fb6a4190",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:2d0addb6dee5a4c48865f28e92038708e40715058ef7719c3dcc3361d1129bff",
+        "evidence": {
+          "captureHash": "sha256:2d0addb6dee5a4c48865f28e92038708e40715058ef7719c3dcc3361d1129bff",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:ea11fdfd0114c6f9ff5d2713e3247a5cd2931a307b463cad24c42270f678c96c",
+              "path": "native/native-16/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:991701ecbf07190603bc75de7e06f20cff939989d663575d5dcda41be404a42f",
+              "path": "native/native-16/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:432aaae581f040ccd6f1b07e9718b76c2d2b24899775265d8d107dd20ad0b3ee",
+              "path": "native/native-16/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:4073209eb7adc8f7de7aa1e92a6ac5d043312c91649ef291320ef6e40c338fbe",
+              "path": "native/native-16/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:b961ab057caa80616f590a114a0397ac2dd3684bcfc2a94c563fe23de566365b",
+              "path": "native/native-16/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:10c60c48466f7fc0486e98577c59cddfae0054f65bd090ea5c761f1f99433d4f",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:36dad60942096017a1765bd13399f6c1565d51a62afcbe9b76d32b1c864c47ab",
+        "evidence": {
+          "captureHash": "sha256:36dad60942096017a1765bd13399f6c1565d51a62afcbe9b76d32b1c864c47ab",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:e0905f59e146406b34302e4458403a18a6d4c9aa255bb0e0c07d5d6d08aa709b",
+              "path": "native/native-17/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:2bd10cc09a09662c07273dac46b4963c6336bd7eeb513d86b4d4d935d50a0be6",
+              "path": "native/native-17/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:2a24b95f17d0ed05eacc1e74273a45c4cd0447fbb2b58ed322bc4fca03493117",
+              "path": "native/native-17/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:5282f7bcd9f4912b9250b478272c0db4deb3e5eaaebd1dc9e40f74723cc96bbb",
+              "path": "native/native-17/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:dcc2d6587f034e8abbbe0b8270ed4f4c2643306efa10f9cb2f7502828818a19d",
+              "path": "native/native-17/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:2f238392cffbbf8454189877e29f55893144c3f7adb6c033c5e5d8d0043074ee",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:f8814cbb0ad293fd13fb7c859e603b11b7bece6d9dd097f17cf5a73304d601fb",
+        "evidence": {
+          "captureHash": "sha256:f8814cbb0ad293fd13fb7c859e603b11b7bece6d9dd097f17cf5a73304d601fb",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:598df7a5a1b313728ed3533f7758e2285c87c8a3fe46e3979564d21e1e72bf0f",
+              "path": "native/native-18/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:9b2a5376538ba84ee9c4c222617e4aba7e51c8cd0361990d1d4314efd5da3967",
+              "path": "native/native-18/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:cf9a97f2763a79796ffb59c345569be8688862fa1cb930fba81329210ee88e4f",
+              "path": "native/native-18/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:0198143e202c89d710571009bac70403763d20510fc5b884072ca9c918493a8d",
+              "path": "native/native-18/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:81fc924a1a991dc451a3385ba99e79448afba9bc52671652d56b4da92e97ad09",
+              "path": "native/native-18/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:fcedf4e2062d440de394f1f89c636aa634549f6742222fb574869f49785dc29e",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:8ac2ab388d66ca99e49c03b6b5d31f3caf6830f461642007aacfd23242484415",
+        "evidence": {
+          "captureHash": "sha256:8ac2ab388d66ca99e49c03b6b5d31f3caf6830f461642007aacfd23242484415",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:216e6c0fa020f920163fcb887e321691fec44f6c4b3ab9349de4e0f8639e924b",
+              "path": "native/native-19/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:e6d3f723b378356f15f04aa52bc635e86b9d92de100e2ba3fe8df08495632c9e",
+              "path": "native/native-19/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:21975ca03adb1f5ba55d3d54bceb52388d86ae7a2b86fbd88bab59b1b590e86e",
+              "path": "native/native-19/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:bf2088f80990b314d9e8d2ee7779a39dc774d2cd9e1839a681c9711e36908b50",
+              "path": "native/native-19/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:47000f3c5094a62d2f664dbf58763c7025520ab6bef1fabc7eaf424d019ed1e0",
+              "path": "native/native-19/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:2b0c417ffe2409dcec720b041a25af4106ceb8b590c79881331ca7f1c2941fed",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      },
+      {
+        "captureHash": "sha256:43e5c1b7264dbee83965268ef38a8c2925563fcb68192bd6aa8e21c5b5f3998f",
+        "evidence": {
+          "captureHash": "sha256:43e5c1b7264dbee83965268ef38a8c2925563fcb68192bd6aa8e21c5b5f3998f",
+          "issues": [
+            "host/raw proof path collision"
+          ],
+          "kind": "windows-exit-admission/1",
+          "rawInputs": {
+            "close": {
+              "hash": "sha256:b7ab9b38254dae5e8ec22b110392ad28e1c73fbc8020018f13dc201d80677afe",
+              "path": "native/native-20/owned-close.json"
+            },
+            "compile": {
+              "hash": "sha256:bef8851cef48e96889bb46f8e66d85cff7f9f0f8f19e34c65d3d09c38036010b",
+              "path": "native/observation.json"
+            },
+            "compiler": {
+              "hash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+              "path": "tool/compiler.bin"
+            },
+            "exe": {
+              "hash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+              "path": "tool/FactoryProbe.exe"
+            },
+            "host:Package.swift": {
+              "hash": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+              "path": "host/Package.swift"
+            },
+            "host:Sources/FactoryProbe/CaptureLease.swift": {
+              "hash": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222",
+              "path": "host/Sources/FactoryProbe/CaptureLease.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryContainer.swift": {
+              "hash": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+              "path": "host/Sources/FactoryProbe/FactoryContainer.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryFill.swift": {
+              "hash": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+              "path": "host/Sources/FactoryProbe/FactoryFill.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryTextGeometry.swift": {
+              "hash": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+              "path": "host/Sources/FactoryProbe/FactoryTextGeometry.swift"
+            },
+            "host:Sources/FactoryProbe/FactoryViewport.swift": {
+              "hash": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03",
+              "path": "host/Sources/FactoryProbe/FactoryViewport.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsLogging.swift": {
+              "hash": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4",
+              "path": "host/Sources/FactoryProbe/MetricsLogging.swift"
+            },
+            "host:Sources/FactoryProbe/MetricsPayload.swift": {
+              "hash": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1",
+              "path": "host/Sources/FactoryProbe/MetricsPayload.swift"
+            },
+            "observation": {
+              "hash": "sha256:6ca52a171b05b5619eeaeb0a7c7711d95ad7d00dee1c6e9e0b925f8662b66b29",
+              "path": "native/native-observation.json"
+            },
+            "outcome": {
+              "hash": "sha256:9cd2f061c3e1f3b9763a2cbfc52a4c2cd5d9d795d7a193cc0d0e90e330228a76",
+              "path": "native/native-20/capture-outcome.json"
+            },
+            "owned": {
+              "hash": "sha256:ddd0b26b9cddc3cf9920f3647ff024d9922dc788bf12a87ad0f739937b5a57bc",
+              "path": "native/native-20/owned-process.json"
+            },
+            "plan": {
+              "hash": "sha256:de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+              "path": "native/plan.json"
+            },
+            "renderer": {
+              "hash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+              "path": "tool/swiftright_render.dll"
+            },
+            "runtimeReceipt": {
+              "hash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+              "path": "proof/runtime-source-receipt.json"
+            },
+            "runtimeTree": {
+              "hash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+              "path": "proof/runtime-source-tree.json"
+            },
+            "stderr": {
+              "hash": "sha256:95c0af8dc01528ddba42e3f131dc545bdc51e5dec4e99f64ae3e23a76fa0b392",
+              "path": "native/native-20/host.stderr.txt"
+            },
+            "stdout": {
+              "hash": "sha256:d28efc8ddf07c1ea69b1891078cbbc048cc2613261cb4ee6d056bdcf35cbb37f",
+              "path": "native/native-20/host.stdout.txt"
+            },
+            "witness": {
+              "hash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+              "path": "host/Sources/FactoryProbe/Witness.swift"
+            }
+          }
+        },
+        "evidenceHash": "sha256:01af7059fbf6bb21e6f324ab2e2591ce0a148ad2d81dc79dfe89b75297b3d065",
+        "issues": [
+          "host/raw proof path collision"
+        ],
+        "nativeParityGranted": false,
+        "status": "blocked"
+      }
+    ]
+  },
+  "comparison": {
+    "nativeParity": "held",
+    "semantic": "held",
+    "status": "held-observation-only",
+    "timing": "raw-only"
+  },
+  "diagnostic": "baseline admission must pass 20/20 before fault controls",
+  "faults": [],
+  "macReport": {
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-next-source-v1/paired-text-paint-r12-root-v1/actual-paired-report-r3.json",
+    "status": "held",
+    "terminalEvidence": "Mac original-process exit/cleanup evidence absent"
+  },
+  "nativeParityGranted": false,
+  "qualified": false,
+  "schema": "factory-text-production-reader-controls-r1",
+  "status": "blocked"
+}

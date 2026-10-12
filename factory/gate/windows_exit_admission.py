@@ -26,6 +26,7 @@ def _production_compile_argv(request):
     if not isinstance(request,dict):
         raise ValueError('exact compiler request required')
     base_keys={'kind','packagePath','scratchPath','compilerPath','target','configuration'}
+    frontend_threads = None
     keys=set(request)
     if keys == base_keys:
         maximum_parallel_jobs = None
@@ -35,6 +36,14 @@ def _production_compile_argv(request):
         maximum_parallel_jobs = request['maxParallelJobs']
         if type(maximum_parallel_jobs) is not int or maximum_parallel_jobs != 1:
             raise ValueError('maxParallelJobs must be exact integer 1')
+    elif keys == base_keys | {'jobs','maxParallelJobs','maxFrontendThreads'}:
+        # Text r10 measured an explicitly bounded SwiftPM request. Keep this
+        # nine-key shape separate from legacy six/seven-key requests.
+        for key in ('jobs', 'maxParallelJobs', 'maxFrontendThreads'):
+            if type(request[key]) is not int or request[key] != 1:
+                raise ValueError(f'{key} must be exact integer 1')
+        maximum_parallel_jobs = 1
+        frontend_threads = 1
     else:
         raise ValueError('exact compiler request required')
     if request['kind']!='swiftpm-windows-gui-release/1' or request['target']!='windows-x86_64' or request['configuration']!='release':
@@ -47,8 +56,9 @@ def _production_compile_argv(request):
     if package not in scratch.parents or scratch.name!='scratch':
         raise ValueError('compiler scratch must belong to host package')
     jobs = ' --jobs 1' if maximum_parallel_jobs == 1 else ''
+    frontend = ' -Xswiftc -num-threads -Xswiftc 1' if frontend_threads == 1 else ''
     return ('build --package-path "'+request['packagePath']+'" --scratch-path "'+request['scratchPath']+
-            '"'+jobs+' -c release -Xlinker /MANIFEST:EMBED -Xlinker "'+MANIFEST_DEPENDENCY+
+            '"'+jobs+frontend+' -c release -Xlinker /MANIFEST:EMBED -Xlinker "'+MANIFEST_DEPENDENCY+
             '" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup')
 
 def _safe_path(path):
@@ -135,6 +145,7 @@ def verify_windows_exit_admission(capture, *, read_bytes):
         require(type(row['hwnd']) is int and row['hwnd']==close['hwnd'],'observation/WM_CLOSE HWND mismatch')
         cleanup=outcome['cleanup']
         require(cleanup['exitCertification']=='retained-kernel-handle' and cleanup['kernelExitSignaled'] is True and cleanup['confirmedOwnedExit'] is True and type(cleanup['kernelWaitResult']) is int and cleanup['kernelWaitResult']==0 and type(cleanup['status']) is str and cleanup['status'] in TERMINAL_CLEANUP and _empty_error(cleanup['error']),'terminal retained kernel signal0 required; HasExited alone insufficient')
+        require(isinstance(outcome.get('lockOwner'), str) and outcome['lockOwner'], 'lock owner proof missing')
         source=_hash(data['witness']);exe=_hash(data['exe']);renderer=_hash(data['renderer'])
         require(capture['provenance']['sourceHash']==conditions['actualSourceHash']==plan['sourceHash']==row['sourceHash']==outcome['sourceHash']==build['sourceHash']==source,'Witness source identity mismatch')
         require(capture['case']==plan['case']==row['case'],'case identity mismatch')

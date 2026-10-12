@@ -1,0 +1,58 @@
+{
+  "kind": "factory-text-production-reader-source-manifest-v1",
+  "status": "root-reader-controls-r12-pass-native-parity-held",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3993,
+      "sha256": "sha256:16c95858f281e66dc44d71b9b6ea83e3d5af5e93f07cc17e422e84dce114fcfd"
+    },
+    {
+      "path": "materialize_text_reader_r1.py",
+      "bytes": 36878,
+      "sha256": "sha256:057ef6d9c3a2bd5b3c4abad70a6df547a96f843580f691633443676f5e616a8f"
+    },
+    {
+      "path": "run_text_reader_controls_r1.py",
+      "bytes": 15285,
+      "sha256": "sha256:62a3f3f51e220834f349c42bc5767fb595f465123eb6d3d13ad450b82324d00f"
+    },
+    {
+      "path": "run_paired_report_controls_r1.py",
+      "bytes": 5206,
+      "sha256": "sha256:5b088551a248be44842fa05b57685688ed3fbd1c956ac270e2b79b1212c14b32"
+    }
+  ],
+  "inputs": {
+    "windowsArchive": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r10-r1",
+    "hostSourceRoot": "factory/native/windows/pilot-text-paint-root-v2/package",
+    "runtimeSourceRoot": "factory/native/windows/api-font-37429120-20261011/runtime",
+    "compilerBinary": "factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1/artifacts/swift.exe",
+    "windowsExecutable": "factory/native/windows/pilot-text-paint-root-v2/actual-final-r7/FactoryProbe.exe",
+    "rendererBinary": "factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1/artifacts/renderer.dll",
+    "compilerSha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "windowsExecutableSha256": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+    "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "productionGate": "factory/gate/windows_exit_admission.py",
+    "productionGateSha256": "sha256:d2b1413d4c3930da10c4e24e14c120bfeda49ae7b8f34574e3f468d424f2ab76",
+    "compileContractTests": "factory/tests/test_windows_compile_request.py",
+    "compileContractTestsSha256": "sha256:770855e95c690c02b3f49f3469e244f2d92f67aaf594aad2e73146b209ef1763",
+    "readerInput": "factory/pipeline/pilot-next-source-v1/text-f10-reader-root-v1/actual-reader-input-r2.json",
+    "macReport": "factory/pipeline/pilot-next-source-v1/paired-text-exit-proof-root-v1/actual-paired-report-r2.json",
+    "caseID": "swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.54310440be2e6418",
+    "tupleID": "sr1-text-paint-v2-r11-paired20-20261012",
+    "qualified": false,
+    "nativeActions": 0,
+    "macReportBytes": 558997,
+    "macReportSha256": "sha256:95667649a0bf556ac8d250d89abf5088bdb34efb67788325def832dba1c8cd6a",
+    "pairedReportControls": "factory/pipeline/pilot-next-source-v1/text-production-reader-root-v1/run_paired_report_controls_r1.py",
+    "pairedReportControlsSha256": "sha256:5b088551a248be44842fa05b57685688ed3fbd1c956ac270e2b79b1212c14b32"
+  },
+  "actualControls": {
+    "path": "actual-reader-controls-r12.json",
+    "sha256": "sha256:28c4e56817c9e7b51e6c01eedad6ec051d512d2f3cdbfa3c8c8d84f04b711b0d",
+    "accepted": 20,
+    "faultControls": 6,
+    "qualified": false
+  }
+}

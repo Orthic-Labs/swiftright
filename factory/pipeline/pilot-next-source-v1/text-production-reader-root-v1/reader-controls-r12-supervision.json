@@ -1,0 +1,45 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "python3",
+    "factory/pipeline/pilot-next-source-v1/text-production-reader-root-v1/run_text_reader_controls_r1.py",
+    "--reader-input",
+    ".factory-work/text-production-reader-r6/reader-input.json",
+    "--captures",
+    ".factory-work/text-production-reader-r6/typed-captures.json",
+    "--output",
+    "factory/pipeline/pilot-next-source-v1/text-production-reader-root-v1/actual-reader-controls-r12.json"
+  ],
+  "pid": 5827,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-12T12:36:58.795495+00:00",
+  "finishedAt": "2026-10-12T12:37:02.971980+00:00",
+  "seconds": 4.176,
+  "peakGroupRssBytes": 59703296,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 16,
+    "errors": []
+  },
+  "finalInventory": {
+    "known": true,
+    "count": 0,
+    "rssBytes": 0,
+    "error": "",
+    "attempts": 1
+  },
+  "quiescenceKnown": true,
+  "ownedGroupQuiescent": true,
+  "termination": [],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 69,
+    "sha256": "43a2a59e6dca3da6c9c1c05ef397abd7e7843f4e3d2e0327cf74d28d954b66d1"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "baseline": {
+    "status": "accepted",
+    "summary": {
+      "bytesRead": 1733140,
+      "exitProofs": 80,
+      "kind": "factory-text-exit-proof-paired20-observed-v1",
+      "macRawRefs": 140,
+      "macRows": 20,
+      "parity": "held",
+      "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-next-source-v1/paired-text-exit-proof-root-v1/actual-paired-report-r2.json",
+      "qualification": false,
+      "windowsRawRefs": 200,
+      "windowsRows": 20
+    }
+  },
+  "cases": [
+    {
+      "name": "wrong-case",
+      "reason": "paired macos identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "wrong-tuple",
+      "reason": "paired macos identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "wrong-source",
+      "reason": "paired macos identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "raw-hash",
+      "reason": "Windows row 1 raw 0 reference hash/bytes drift: native/native-01/capture-outcome.json",
+      "status": "rejected"
+    },
+    {
+      "name": "exit-role",
+      "reason": "paired Mac row 1 host exit proof mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "pid",
+      "reason": "paired Mac row 1 host exit proof mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "terminal",
+      "reason": "paired Windows row 1 terminal proof mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "missing-ordinal",
+      "reason": "paired Mac row 2 identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "duplicate-run",
+      "reason": "paired Windows row 2 identity mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "qualified",
+      "reason": "paired report must remain unqualified/parity-held",
+      "status": "rejected"
+    },
+    {
+      "name": "parity",
+      "reason": "paired report must remain unqualified/parity-held",
+      "status": "rejected"
+    },
+    {
+      "name": "png-repeatability",
+      "reason": "paired image repeatability claim mismatch",
+      "status": "rejected"
+    }
+  ],
+  "nativeActions": 0,
+  "rawEvidenceMutated": false,
+  "schema": "factory-text-paired-report-controls-r1",
+  "status": "SOURCE_CONTROLS_PASS"
+}
