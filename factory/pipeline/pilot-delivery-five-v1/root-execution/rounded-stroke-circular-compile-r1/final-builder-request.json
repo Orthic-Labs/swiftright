@@ -1,0 +1,135 @@
+{
+  "actualPrebuildReceipt": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/actual-prebuild-r1/observation.json",
+  "actualPrebuildReceiptHash": "sha256:1a9e46dee1e51bdcc09f6153ed5bad4d0572079f37c3dc06c425a27f9d9fdb70",
+  "actualReceiptArgv": "build --build-system native -v --package-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\" --scratch-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\" --jobs 1 -Xswiftc -j1 -Xswiftc -num-threads -Xswiftc 1 -c release -Xlinker /MANIFEST:EMBED -Xlinker \"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup",
+  "argv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "argvOrderingDefect": {
+    "actual": "native-before-package",
+    "declared": "native-before-package",
+    "defect": false,
+    "source": "retained-prebuild-builder-receipt"
+  },
+  "attempt": 1,
+  "builderPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/build-owned-final-v1.ps1",
+  "builderSha256": "sha256:1dd1ff52fc8d0af837d39acfe53a0b37a37f6edeba18c75c432e24f0f0d047dd",
+  "canonicalCaseHash": "sha256:bac32db5d6059f63be00448746df4b51cdcbda8c8f3c24fb9c96b08335cdf08e",
+  "captureGate": "root-final-build-receipt-then-native-count1-before-count20",
+  "case": {
+    "hash": "sha256:bac32db5d6059f63be00448746df4b51cdcbda8c8f3c24fb9c96b08335cdf08e",
+    "id": "swiftui.shapes.fill-stroke.recipe/case/3583aa7a825127bc"
+  },
+  "caseHash": "sha256:bac32db5d6059f63be00448746df4b51cdcbda8c8f3c24fb9c96b08335cdf08e",
+  "caseRawJsonHash": "sha256:26dab4867398bae5f1e9992a701f82e260fcd85a3649d790e8b984648039fd88",
+  "declaredCompileRequestArgv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "executionEligible": true,
+  "expectedHostHash": "sha256:1f2840ffcb4b1fed804d8c364cacfb793c481a024bc89e80ba70457712750c4e",
+  "frontendCommandScan": {
+    "bytes": 45417,
+    "frontendCommandCount": 3,
+    "frontendCommands": [
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Alignment.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Animation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Axis.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Controls.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\FocusTraversal.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Geometry.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Graph.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Keyboard.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Layout.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\LayoutEngine.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Modifiers.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Preferences.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Presentation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Selection.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Shapes.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\State.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextInput.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextMeasurement.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\ToggleStyles.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Views.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.exEoGQ\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 6 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightRuntime -package-name runtime -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Alignment.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Animation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Axis.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Controls.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\FocusTraversal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Geometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Graph.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Keyboard.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Layout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\LayoutEngine.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Modifiers.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Preferences.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Presentation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Selection.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Shapes.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\State.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextInput.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextMeasurement.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\ToggleStyles.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Views.swift.o",
+        "index": 1,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.MS3uE7\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightBridge -package-name swiftrightbridge -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Bridge.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\ButtonFocusGate.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Loader.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Marshal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Types.swift.o",
+        "index": 2,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryCenteredLayout.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryContainer.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryFill.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryProviderPolicy.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryShapePrimitive.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryTextGeometry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\FactoryViewport.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\Witness.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\Sources\\FactoryProbe\\main.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.MvZljL\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -entry-point-function-name FactoryProbe_main -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name FactoryProbe -package-name package -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryCenteredLayout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryContainer.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryFill.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryProviderPolicy.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryShapePrimitive.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryTextGeometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryViewport.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\Witness.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\main.swift.o",
+        "index": 3,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      }
+    ],
+    "lastNumThreads": 1,
+    "numThreadsOccurrenceCount": 3,
+    "numThreadsValues": [
+      1,
+      1,
+      1
+    ],
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/actual-prebuild-r1/compile.stdout.bin",
+    "proof": "actual-stdout-stream-scan",
+    "requiredLastNumThreads": 1,
+    "sha256": "sha256:8d621dc2bc103fa5bb77ac430655d43bfc3c0a8e4d1ea024b966caaa0d38049e"
+  },
+  "host": "rounded-stroke-circular",
+  "kind": "factory-pilot-five-bounded-final-builder-request-v1",
+  "maxFrontendThreads": 1,
+  "maxParallelJobs": 1,
+  "memoryCapBytes": 1073741824,
+  "nativeActions": 0,
+  "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+  "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package",
+  "phase": "final",
+  "planPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/plan-final-v4.json",
+  "planSha256": "f13717701c7c68fc5098754fbe51091d3434bd963c347e30338ff5480afc894e",
+  "prebuildBuilderPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/build-owned-pilot-v1.ps1",
+  "prebuildPlanPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-stroke-circular-compile-r1/plan-prebuild-v4.json",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-circular\\package\\build-bound-r1\\scratch"
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py", line 417, in <module>
+    materialized_case, case_meta = materialize_case(case, plan, packet_plan, host_hash)
+                                   ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py", line 203, in materialize_case
+    require(seed['recipe'].get('id') == case['recipe'].get('id'), 'recipe seed id differs from compiled packet')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py", line 88, in require
+    raise RuntimeError(message)
+RuntimeError: recipe seed id differs from compiled packet

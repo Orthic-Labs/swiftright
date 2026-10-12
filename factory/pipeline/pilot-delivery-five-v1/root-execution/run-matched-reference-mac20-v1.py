@@ -4,13 +4,14 @@ import hashlib,json,subprocess,argparse
 ap=argparse.ArgumentParser()
 ap.add_argument("--host",choices=("rounded-stroke","custom-layout","stack-overlay"),required=True)
 ap.add_argument("--plan",type=Path,required=True)
+ap.add_argument("--revision",type=int,choices=range(1,11),default=1)
 a=ap.parse_args()
 
 REPO=Path('/Volumes/D/claude/swiftright')
 PACKET=REPO/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{a.host}-full-viewport-v1'
 INTERNAL=Path('/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1')/f'{a.host}-full-viewport-r1'
-OUT=PACKET/'observed-mac20-r1'
-LOGS=REPO/f'.factory-work/root-logs/{a.host}-full-viewport-mac20-r1'
+OUT=PACKET/f'observed-mac20-r{a.revision}'
+LOGS=REPO/f'.factory-work/root-logs/{a.host}-full-viewport-mac20-r{a.revision}'
 BUILD=PACKET/'build-r1/receipt.json'
 PLAN=a.plan if a.plan.is_absolute() else REPO/a.plan
 PLAN.resolve().relative_to(REPO)
@@ -27,7 +28,7 @@ for source in build['sources']:
     assert sha(raw(REPO/source['path']))==sha(raw(Path(source['internalPath'])))==source['sha256']
 assert not OUT.exists() and not LOGS.exists()
 OUT.mkdir();LOGS.mkdir()
-internal=INTERNAL/'mac20-r1';internal.mkdir()
+internal=INTERNAL/f'mac20-r{a.revision}';internal.mkdir()
 runs=[]
 for number in range(1,21):
     name=f'run-{number:03d}';log=LOGS/name;target=OUT/name;png=internal/(name+'.png')
