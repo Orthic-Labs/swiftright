@@ -1,0 +1,75 @@
+{
+  "schema": "sr0-display-selfjob-r12-manifest-successor-source-v2",
+  "status": "source-only-ready-for-root-review",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3612,
+      "sha256": "6a58324aabfd79128963bcefb0a5b87b74c61118abb3c3ff2c5db240bf315ebe"
+    },
+    {
+      "path": "admission-helper-r12.ps1",
+      "bytes": 3811,
+      "sha256": "0a7f63f92ef3b83811acee15c4298e08e8b7c398c477695c056f9d467d78812b"
+    },
+    {
+      "path": "install_r12_sources.ps1",
+      "bytes": 14453,
+      "sha256": "d4c447c8d04251218748abd7b5e2964857ec11d7e826a54af2838af94b8ba387"
+    },
+    {
+      "path": "make_r12_stage.py",
+      "bytes": 15162,
+      "sha256": "c2fa694ced37c13f05c348537c3f923da43d41a513b4f120b62045538e894d99"
+    },
+    {
+      "path": "pack_r12_sources.py",
+      "bytes": 3510,
+      "sha256": "33775b3e5d83f15c82984fa35294559b8d88ef0349a6df0ea6b24487522098fd"
+    },
+    {
+      "path": "preflight-r12.ps1",
+      "bytes": 6016,
+      "sha256": "79a6affc748e249ff2a3bd3041db2f81ca9e613c0d956cb1effcd9be499cf98e"
+    },
+    {
+      "path": "run-admission-r12.ps1",
+      "bytes": 3027,
+      "sha256": "40c73f7ef57977e4f510a4fc7cd989ee08eeb6f5e22b697ad52ac3dcd1790158"
+    },
+    {
+      "path": "run-source-controls-r12.ps1",
+      "bytes": 4112,
+      "sha256": "5b091cd956c7e7f9e075b4f3a5f6a89a545906b8c68e0ed661f3900f635372b5"
+    },
+    {
+      "path": "schedule-once-v8-admission.ps1",
+      "bytes": 11359,
+      "sha256": "f21f9752a7e3746f8875874fd0dd37858c9a6857f6ac083eb239adf68c2005a5"
+    },
+    {
+      "path": "test-manifest-admission-controls-r12.ps1",
+      "bytes": 3263,
+      "sha256": "12ca2f358754785611ac8a4ec4e96919d026325be200cc87cb832a97e1c37f95"
+    }
+  ],
+  "sourceCount": 30,
+  "binaryCount": 3,
+  "stageRowCount": 33,
+  "policy": {
+    "sharedAdmissionPredicate": "admission-helper-r12.ps1",
+    "admissionManifestImmutable": true,
+    "runManifestFresh": true,
+    "nativeActions": 0,
+    "lockActions": 0,
+    "deadlineSeconds": 900,
+    "pollSeconds": 1,
+    "aggregateJobMemoryLimitBytes": 1073741824,
+    "aggregateLimitFlags": 512,
+    "killOnJobClose": false,
+    "rows": 200,
+    "keyRate": 10,
+    "warmup": 10,
+    "measure": 60
+  }
+}

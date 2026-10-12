@@ -1,0 +1,40 @@
+{
+  "kind": "factory-padding-incremental-root-v4-source-manifest-v1",
+  "status": "source-only-ready-for-root-review",
+  "files": [
+    {
+      "path": "build-padding-incremental-v3.ps1",
+      "role": "production-builder",
+      "bytes": 18765,
+      "sha256": "289685c0208b2edfcaf714431f608a5d9dd687de2261798cd55cd76fc2b36e06"
+    },
+    {
+      "path": "test-padding-incremental-controls-v3.ps1",
+      "role": "production-preflight-controls",
+      "bytes": 5879,
+      "sha256": "71d4704777be52e5513d3d44788272151f5f744a29e2509ef610f9f948bec737"
+    },
+    {
+      "path": "README.md",
+      "role": "root-invocation",
+      "bytes": 2256,
+      "sha256": "19340840f087fb15b4d508d75dee36627eeeb062345902d77d50e91d88614fcc"
+    }
+  ],
+  "policy": {
+    "memoryCapBytes": 1073741824,
+    "jobFlags": 512,
+    "killOnJobClose": false,
+    "runtimeRowsMustHashActualRuntimePackage": true,
+    "maxParallelJobs": 1,
+    "maxFrontendThreadsObserved": null,
+    "nativeActions": 0,
+    "lockActions": 0,
+    "compilerActions": 0,
+    "runtimeTreePathMustBeExplicit": true,
+    "runtimeTreeRowsMustHashActualRuntimePackage": true
+  },
+  "hostHash": "3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "fileCount": 3
+}

@@ -1,0 +1,135 @@
+{
+    "kind":  "factory-padding-incremental-root-v4-controls-v1",
+    "status":  "SOURCE_CONTROLS_PASS",
+    "cases":  15,
+    "rows":  [
+                 {
+                     "name":  "positive-preflight",
+                     "accepted":  true,
+                     "expectedAccepted":  true,
+                     "passed":  true,
+                     "detail":  ""
+                 },
+                 {
+                     "name":  "wrong-plan-hash",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh plan hash mismatch"
+                 },
+                 {
+                     "name":  "wrong-source-hash",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh-source hash drift: Package.swift"
+                 },
+                 {
+                     "name":  "wrong-case-identity",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh case identity drift"
+                 },
+                 {
+                     "name":  "wrong-host-hash",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh case identity drift"
+                 },
+                 {
+                     "name":  "wrong-tuple-ref",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh-tuple hash mismatch"
+                 },
+                 {
+                     "name":  "wrong-donor-receipt-hash",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "Cannot process command because of one or more missing mandatory parameters: FreshPlanSha256."
+                 },
+                 {
+                     "name":  "wrong-memory-cap",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "memory policy drift"
+                 },
+                 {
+                     "name":  "wrong-operational-package",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "required path missing: D:\\Claude\\swiftright\\.factory-work\\root-tools\\padding-incremental-v4-r2\\controls\\missing-package"
+                 },
+                 {
+                     "name":  "wrong-operational-cache",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "required path missing: D:\\Claude\\swiftright\\.factory-work\\root-tools\\padding-incremental-v4-r2\\controls\\missing-scratch"
+                 },
+                 {
+                     "name":  "wrong-plan-kind",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh plan kind mismatch"
+                 },
+                 {
+                     "name":  "wrong-job-flags",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "memory policy drift"
+                 },
+                 {
+                     "name":  "wrong-runtime-tree-hash",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "donor receipt lineage mismatch"
+                 },
+                 {
+                     "name":  "wrong-runtime-tree-path",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "fresh runtime-source-tree.json missing"
+                 },
+                 {
+                     "name":  "frontend-observation-not-null",
+                     "accepted":  false,
+                     "expectedAccepted":  false,
+                     "passed":  true,
+                     "detail":  "frontend thread observation must remain null"
+                 }
+             ],
+    "nativeActions":  0,
+    "controlRoot":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\padding-incremental-v4-r2\\controls"
+}
+{
+    "status":  "preflight-passed",
+    "kind":  "factory-padding-incremental-root-v4",
+    "phase":  "preflight",
+    "freshPlanSha256":  "214e73d4239604be7580add966c86fd387fa7985fef79ee307de81846a8b2433",
+    "donorPlanSha256":  "ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
+    "donorReceiptSha256":  "1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+    "operationalPackage":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+    "operationalScratch":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-capture-lease-r1\\scratch",
+    "sourceRows":  13,
+    "sourceBytes":  45590,
+    "bridgeRows":  10,
+    "runtimeRows":  21,
+    "runtimeBytes":  248686,
+    "memoryCapBytes":  1073741824,
+    "jobFlags":  512,
+    "maxParallelJobs":  1,
+    "maxFrontendThreadsObserved":  null,
+    "nativeActions":  0,
+    "cachedArgv":  "build --package-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\" --scratch-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-capture-lease-r1\\scratch\" -c release -Xlinker /MANIFEST:EMBED -Xlinker \"/MANIFESTDEPENDENCY:type=\u0027win32\u0027 name=\u0027Microsoft.Windows.Common-Controls\u0027 version=\u00276.0.0.0\u0027 processorArchitecture=\u0027*\u0027 publicKeyToken=\u00276595b64144ccf1df\u0027 language=\u0027*\u0027\" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup --jobs 1"
+}
