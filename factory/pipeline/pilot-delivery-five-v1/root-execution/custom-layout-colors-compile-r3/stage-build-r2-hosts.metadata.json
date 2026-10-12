@@ -1,0 +1,36 @@
+{
+  "kind": "factory-custom-layout-active-stage-request-v1",
+  "sourceRequestPath": "factory/pipeline/pilot-delivery-five-v1/root-execution/custom-layout-colors-compile-r3",
+  "sourceSealedStageScript": "stage-build-r2.ps1",
+  "sourceSealedStageScriptSha256": "a9af12f69f0314152594b4e53a3bfbd97f51c0d4ad8983d211acea9a09bf30b0",
+  "correctedStageScript": "stage-build-r2-hosts.ps1",
+  "correctedStageScriptSha256": "6c98ef9a00a2966d4115db7dcd0fc666d1e2baa8ac745c7bc886fc85bd67f85f",
+  "correctedStageScriptBytes": 98698,
+  "stage": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors",
+  "retiredSourceStage": "D:\\Claude\\swiftright\\.factory-work\\retired\\custom-layout-colors-primary-paired20-20261012-2110",
+  "planSha256": "ddf207c2cd22b77f74022e2ae6dfe8059ffa8c872700e10270e71e8fd88bee30",
+  "builderSha256": "9c15fd8a6c1b43fe3f1b4a728f674e1dea0a3d5d3616c46903e9f72a07f166a2",
+  "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "sourceBindingsHash": "sha256:d7049fc1c6e8be3425a0082f4773489e91503e9cda0a3839e39712288e2aeb36",
+  "caseFullHash": "sha256:9e168af9151444e67b5d17d8dc0951539a59bfa6f887516c1f76296bae3ab6b0",
+  "templateSha256": "613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+  "attempt": 2,
+  "change": "operational stage root only; witness, source rows, runtime, renderer, ABI unchanged",
+  "execution": "root-owned; prospective source packet; no local jobs",
+  "originalRetiredPathInputsArchive": "original-retired-path-inputs/manifest.json",
+  "originalRetiredPathInputs": [
+    {
+      "path": "original-retired-path-inputs/plan-prebuild-v4.json",
+      "sha256": "sha256:48cabd4a26db72ed28e9c4f9ea7fe8e0f5edc98bd7bd00ab3ccd31e9ef5cef26",
+      "bytes": 12179
+    },
+    {
+      "path": "original-retired-path-inputs/build-owned-pilot-v1.ps1",
+      "sha256": "sha256:68dc6b899139384d0d0aeea9141069b0c43af6d89dc5cad5b1c6140297096acb",
+      "bytes": 11191
+    }
+  ],
+  "activeSuccessorPlanSha256": "sha256:ddf207c2cd22b77f74022e2ae6dfe8059ffa8c872700e10270e71e8fd88bee30",
+  "activeSuccessorBuilderSha256": "sha256:9c15fd8a6c1b43fe3f1b4a728f674e1dea0a3d5d3616c46903e9f72a07f166a2",
+  "archiveJoin": "active local plan/builder now match actual receipt; old retired-path bytes retained separately"
+}
