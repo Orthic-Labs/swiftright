@@ -1,0 +1,21 @@
+﻿{
+    "kind":  "factory-uia-fromhandle-mta-controls-v6",
+    "status":  "SOURCE_CONTROLS_PASS",
+    "workerApartment":  "MTA",
+    "parentApartment":  "observed-STA-or-MTA",
+    "parentWorkerDeadlineSeconds":  15,
+    "schemaPositive":  "production Assert-UiaSnapshotWorkerProof accepted exact v2 natural-exit fixture",
+    "schemaFaultsRejected":  [
+                                 "missing-parent-apartment",
+                                 "wrong-worker-apartment",
+                                 "legacy-proof-kind"
+                             ],
+    "cleanupFaultsRejected":  [
+                                  "missing-kernel-exit-read",
+                                  "still-active-259",
+                                  "wait-result-258",
+                                  "kill-attempted"
+                              ],
+    "nativeActions":  0,
+    "compilerActions":  0
+}

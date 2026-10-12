@@ -1,20 +1,26 @@
 # SR0 & SR1 running holds
 
-Updated 2026-10-12 05:10 UTC. Root owns native/remote jobs, process supervision & Git. Two source owners work independently; neither launches jobs. Harness repairs below remain active work.
+Updated 2026-10-12 07:27 UTC. Root owns native/remote jobs, process supervision & Git. Two source owners work independently; neither launches jobs. Current receipts below supersede historical retries.
 
 | Hold | Why | Required evidence |
 |---|---|---|
 | SR0 W08 helper qualification | Dependency availability does not prove install-registration repair, cancellation, relaunch or data integrity | Signed upstream helper & genuine recovery receipts |
 | Full16 Mac ×20 | Existing granted recorder covers F1; generalized same-team recorder lacks process-level no-prompt admission | Signing/admission proof without permission UI, then native captures |
-| Strict displayed workload | Original diagnostic recorded2268 presents but110 displayed; W5 p95 present1833ms & input-visible1543.55ms exceed unchanged limits | Fresh qualifying displayed evidence; adapter corrections preserve raw failures |
+| Strict displayed workload | Fresh r13 recorded3601 presents but47 displayed;3554 were replaced. Strict analyzer refuses display context; presentation p95 is3999.415ms & input-visible p95 is3044.3844ms | Isolated interactive, fully visible capture without foreground stealing; preserve raw failures & unchanged timing rules |
 | Narrator speech | Automated provider checks cannot establish spoken output | Human listening receipt |
 | SR0 freeze/general renderer/ABI changes | docs/sr0-status.md remains OPEN | Qualification receipts & freeze sign-off |
 | ABI0.7-dependent stack/custom layout | Provider/layout/timing exports remain held; stack lifecycle needs run-bound diagnosis | Closure, append-only ABI proof & admitted hosts |
 | Parity/golden promotion | Exact paired20 source/case/tuple joins & production reader admission are required | Reviewed paired20 report & frozen contract |
 | Rectangle strict color | Paired20 geometry agrees, but exact red differs: Mac RGBA255,56,60,255 vs Windows255,59,48,255 | Source-bound color correction & fresh paired evidence; no RGB normalisation |
+| Text strict geometry & capture admission | Paired20 text/viewport agree & each host repeats pixels exactly; AX dimensions are Mac28×28 vs Windows28×28.8DIP. Existing Mac process rows lack original exit/cleanup evidence; Windows paint/line-break exports are absent | Preserve diagnostic observations; repair measured font geometry, join genuine Mac exit evidence & admit production archive reader |
 | VM capture | Host capture works; VM permissions remain deferred | Later isolated no-prompt VM admission |
 
 ## Completed evidence
+
+- Fresh SR0 r13 capture completes with original retained handles, natural workload/PresentMon exit0, sealed streams & normal lock release. Root verified65 raw files/3711789B on Mac. Capture-held production predicate accepts actual receipts & rejects9 faults. Native observer transport is terminal, self-only & sealed; qualification remains held. `root-source-admission-r13-v1/actual-native-raw-r3/` preserves original bytes.
+- SR0 r13 frozen strict analyzer ran against bounded, hash-verified raw tables plus genuine build provenance. Display evidence is insufficient:47 displayed of3601 presents. Same-source incremental v9 joins independently through `sr0-r13-offline-analysis-v3/actual-provenance-r1.json`; that receipt remains `artifact_restoration_only` & does not remove display refusal.
+- Fresh Text Count1-r12 passes native capture, original retained parent kernel/.NET exit0, strict renderer/worker releases & desktop lock release. Verified93-file archive is `factory/native/windows/pilot-text-paint-root-v2/actual-count1-r12-root-v7-r1/`. Prospective kernel cleanup & V6 caller fixes are exercised by actual native evidence.
+- Fresh Text Count20-r10 completes20/20 Windows runs, original retained parent kernel/.NET exit0, all cleanup guards & normal lock release. Root verified1023 files/4108893B. Paired reader consumes20 Mac &20 Windows observations, agrees on `Aa` &120×48DIP viewport, finds exact pixel repeatability within each host, & exposes28 vs28.8DIP text height. `paired-text-paint-r12-root-v1/actual-paired-report-r2.json` is diagnostic; source review retains genuine missing Mac exit evidence as a qualification hold.
 
 - Runtime175/175 on both hosts. Incremental v9 passes3 actual Windows release builds: original kernel handles, sealed streams, active0, restored source/artifact hashes, zero Rust invocations. Commit f4a82fab32df22946b6ec5f3e06d2ffe5287cb06.
 - Tuple12 F1 paired20 semantic report qualified; timing remains observational. All16 Windows configurations have Count1 smoke evidence.
@@ -26,6 +32,10 @@ Updated 2026-10-12 05:10 UTC. Root owns native/remote jobs, process supervision 
 - Text default paint repair passes Windows prebuild-r6/final-r7; EXE33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7. Fresh paint case has20 Mac native/AX runs. Circle has repaired single-thread Windows builds &20 Mac native captures; shape AX remains held. Completed Mac producer bytes are archived & owned internal scratch removed.
 
 ## Active work
+
+- Text paired20 observation is complete; production reader admission, exact geometry & missing Mac original-exit evidence remain held. Windows batch ran07:05–07:07UTC, within original capture/release budgets, then exited cleanly. Root is validating comparator fault controls & preserving earlier failed schema reports.
+- Circle diagnostic v10 source packet prepares successfully after canonical/raw recipe identities & measured serializer path are corrected. Windows source admission is supervised, without native/lock/compiler actions. Padding MTA v2 requires genuine fresh compile-plan bytes from measured Windows receipt path before preparation. Circle instrumentation changes source identity; fresh same-source Mac evidence is required before pairing. Historical failures & archives stay immutable.
+- SR0 Mac generalized recorder still lacks no-prompt signing/AX admission: original helper returns `SessionCreate(0,0)=100001` before signing; existing granted binary is F1-only. No permission UI is triggered.
 
 - Rectangle MTA worker fixes prior Count20-r2/r3 STA timeout. Historical Count1-r8 missed invoker; Count1-r9 captured successfully but legacy release predicate rejected MTA config. Separate original-handle/source-bound proof released r9 owner without altering historical receipt. Fresh r10/r11 admissions caught path substitution & helper namespace errors before native action; r12 & Count20-r4 pass.
 - Circle Count1-r3 failed before UIA start because invoker defaulted to wrong source root. Separate supplemental-r4 proves original terminal renderer/parent & source-before-start failure, then released exact owner. Text/Circle Count1-r4 specify producer worker root. Both actual admissions pass after root repaired stale issuer hashes; failed admission receipts remain intact.
@@ -44,6 +54,8 @@ Updated 2026-10-12 05:10 UTC. Root owns native/remote jobs, process supervision 
 ## Resource & workspace supervision
 
 Local jobs use explicit time/RSS/output budgets & tracked sessions; transport128MiB local,256MiB Windows, native/compiler1GiB Windows. Actual transport controls prove timeout/descendant termination, foreign survival, output cap & hash rejection. Completed preparation/transport groups peak below32MiB & report quiescence.
+
+Latest snapshot07:07UTC: largest Codex renderer1338.5MiB; swap4571.50MiB of6144MiB. Text20 transport peaks below32MiB & completes with confirmed quiescence; latest paired comparisons/source preparation stay below6MiB. Root serializes all Dell transports & windowed work.
 
 Mac snapshot05:07 UTC: largest Codex renderer1888.1MiB, Claude renderer729.8MiB; swap5043.81MiB of6144MiB. No runaway owned Python. Snapshot runs below5MiB with confirmed quiescence. F10's initial full-file hash implementation hit128MiB cap & was stopped with confirmed quiescence; streaming repair completes materialization below32MiB & reader below58MiB. Recent preparation/transport groups stay below32MiB. Parallel SCP transfers timed out before remote execution; root serializes Dell transfers. Nested PowerShell controls use bounded1GiB Windows envelope. Prior23:07 UTC incident's three owned16.8GiB Windows inspectors were cancelled by exact identity; replacements cap processes before script evaluation.
 

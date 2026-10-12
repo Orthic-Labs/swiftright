@@ -1,0 +1,3 @@
+Set sh = CreateObject("WScript.Shell")
+rc = sh.Run("powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\factory\native\windows\.work\text-mta-r11-count1-r12\overlay-count1-r5\interactive-task-text-single-v3.ps1"" -Config ""D:\Claude\swiftright\factory\native\windows\.work\text-mta-r11-count1-r12\control-count1-r5\config.json""", 0, True)
+WScript.Quit rc

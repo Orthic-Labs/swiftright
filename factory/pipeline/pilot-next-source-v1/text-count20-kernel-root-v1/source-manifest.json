@@ -1,0 +1,39 @@
+{
+  "kind": "factory-text-count20-kernel-root-source-manifest-v1",
+  "status": "source-only",
+  "files": [
+    {
+      "path": "prepare-text-count20-root-v1.py",
+      "bytes": 36608,
+      "sha256": "93e5fbdcf5cb6d5a52b3a284b542df6f59f723bce06435f0c9d3c671973f3f43"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2762,
+      "sha256": "7b79bb3d7bfdf19c7c976673a35bc16d931ccac8507b5398818d0023a50336bb"
+    }
+  ],
+  "inputs": {
+    "donorRoot": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r12-root-v7-sources",
+    "count1Certificate": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r12-root-v7-r1/control/coordinator.json",
+      "bytes": 1353,
+      "sha256": "08a40c6605ba69fe5545e681feb85dfce1bc24e0f116102b19674a6593fa5f1d"
+    },
+    "lifecycleRoot": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1"
+  },
+  "output": {
+    "namespace": "text-mta-r11-count20-r10",
+    "rootV3Cleanup": {
+      "bytes": 11288,
+      "sha256": "cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13",
+      "roles": [
+        "producer/support/cleanup.ps1",
+        "producer/dependencies/uia-worker/support/cleanup.ps1"
+      ]
+    },
+    "nativeActions": 0,
+    "lockActions": 0,
+    "compilerActions": 0
+  }
+}
