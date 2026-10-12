@@ -7,10 +7,11 @@ from pathlib import Path, PureWindowsPath
 import subprocess
 
 parser=argparse.ArgumentParser()
-parser.add_argument('--host',choices=('image','image-star-provider','image-star-observation','stack-overlay-colors','custom-layout-colors','rounded-stroke-boundary','bundled-font-observation','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','rounded-stroke-observation','stack-overlay-centered','stack-overlay-observation','custom-layout-centered','custom-layout-observation'),required=True)
+parser.add_argument('--host',choices=('image','image-star-provider','image-star-observation','stack-overlay-colors','custom-layout-colors','rounded-stroke-boundary','bundled-font-compiled','bundled-font-live','bundled-font-observation','rounded-stroke','rounded-stroke-centered','rounded-stroke-circular','rounded-stroke-observation','stack-overlay-centered','stack-overlay-observation','custom-layout-centered','custom-layout-observation'),required=True)
+parser.add_argument('--compile-revision',type=int,choices=range(1,11),default=1)
 args=parser.parse_args()
 repo=Path('/Volumes/D/claude/swiftright')
-out=repo/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{args.host}-compile-r1'
+out=repo/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{args.host}-compile-r{args.compile_revision}'
 request=json.loads((out/'final-builder-request.json').read_text())
 plan_name='plan-prebuild-native-r2.json' if args.host=='image' else 'plan-prebuild-v4.json'
 builder_name='build-owned-native-r2.ps1' if args.host=='image' else 'build-owned-pilot-v1.ps1'
@@ -27,8 +28,8 @@ assert sum(row['bytes'] for row in sources)<=1024*1024
 assert sources[2]['sha256']==request['planSha256']
 assert 'sha256:'+sources[3]['sha256']==request['builderSha256']
 stage=str(PureWindowsPath(r'D:\Claude\swiftright\.factory-work\hosts')/args.host)
-remote_script=stage+r'\stage-final-r1.ps1'
-remote_receipt=stage+r'\final-r1-transport.json'
+remote_script=stage+f'\\stage-final-compile-r{args.compile_revision}.ps1'
+remote_receipt=stage+f'\\final-compile-r{args.compile_revision}-transport.json'
 script=r'''$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
 $Stage='__STAGE__';$Requests=Join-Path $Stage 'requests-final-r1'
 if(@(Get-Process swift,swiftc,swift-build,clang,FactoryProbe -ErrorAction SilentlyContinue).Count){throw 'compiler/native lane busy'}

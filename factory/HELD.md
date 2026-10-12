@@ -1,14 +1,16 @@
 # Running held-work list
 
-## Original-five execution — 12 October 2026, 21:31 UTC
+## Original-five execution — 12 October 2026, 22:04 UTC
 
-- Fable R8 corrections reconciled; both source lanes active. No ten/twenty expansion before original five work & are verified.
-- Custom Layout selected primary two-child case has exact paired20 pixels; fresh direct-API witness now has Mac20 repeatability. Windows direct-API build & paired proof remain executable work, not protected holds.
-- Image v7 original `star.fill` witness compiles on Mac & repeats20 with byte-identical Windows source. Windows v6 quote/import errors archived; incremental v7 retry pending. Symbol shape/face/orientation remain unproven until actual Windows capture.
-- Stack v6 Windows compiler rejected missing `self` capture. Fresh source correction & incremental retry pending; typography differences remain observations, not established renderer attribution.
+- Fable R8 corrections reconciled. R9 requested actual fable/max at checkpoint but returned HTTP429 usage_limit_reached before any review. Reset13October06:10IST (00:40UTC); last completed review unchanged. Both workers & new implementation/compiler/native dispatch paused until actual mandatory review succeeds. No replacement model or early retry.
+- Custom Layout selected primary two-child case has historical adapted-source exact paired20 pixels. Fresh direct original API witness has Mac20 repeatability, successful Windows prebuild/final & one exact full800x600RGB pair. Direct Count20-r4 failed at run17 after16 observations: owned child exit1 records FactoryOwnedRendererHWNDAmbiguous during shutdown. Failed raw receipts & selected terminal diagnostics preserved; lock released, all owned jobs terminal. Closing-lifecycle diagnosis/fix & new twenty-run batch remain pending review; zero fresh original paired20 claims.
+- Image original `star.fill` witness compiles on Mac & repeats20 with byte-identical Windows source. Quote/import/type errors corrected in v9. Four builder/preflight staging failures are preserved before compiler start. Prospective r4 guard corrects exact hash-prefix/path joins; actual preflight/compile held for Fable. Current Segoe Fluent Icons mapping is explicitly an unverified substitute; native chosen glyph/orientation/shape & resource placement remain unproven. It does not complete original symbol parity.
+- Stack v7 fixes explicit `self`, compiles & completes actual Windows Count1 with released lock. Correct semantic blue reduces raw full-viewport differences from9600 to307 pixels, with identical block bounds. Existing host hardcodes font_size16DIP & line_height24DIP; native Windows default-font policy source is being reviewed for DPI correctness before compilation. This is host work, not established renderer attribution.
 - Original bundled-font single-line truncation is implementable through existing measurement/run API; earlier ABI lineLimit hold withdrawn. Source implementation prepared; real Windows run pending. Actual renderer selection of bundled Tinos remains unproven & may need protected resource-loading work.
 - Rounded original initializer defaults continuous in installed Apple SDK. Corrected semantic blue leaves572 differing pixels; existing circular-border approximation cannot establish continuous-path behavior. Renderer/ABI edits remain protected while SR0 OPEN.
 - Builds stay serial with1GiB compiler cap; controls128MiB. Current Mac20 controllers peaked below49MiB & terminated all owned processes. Fresh Mac binaries run only on internal disk; no permission requests.
+- Windows active host stages remain three: Rectangle dependency, Image & Custom. Terminal Stack v7 stage moved into ignored repo retirement directory after exact compiler/native bytes were archived; nothing deleted on Dell.
+- Pending dispatch order after review reconciliation: fix original Custom shutdown error & rerun paired20; execute corrected Image/Stack/font hosts using existing API; finish original five before ten/twenty. General continuous-path & private-font renderer changes retain recorded SR0 boundary.
 
 Updated 11 October 2026. Candidate implementation continues independently of these holds. No row grants parity or promotes a golden.
 

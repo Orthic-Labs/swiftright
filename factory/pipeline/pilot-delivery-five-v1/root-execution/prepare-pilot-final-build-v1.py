@@ -15,10 +15,12 @@ PACKETS = {
     'image': 'text-shape-image/image-host-package-v1',
     'image-v2': 'text-shape-image/image-host-package-v2',
     'image-star-provider': 'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2',
-    'image-star-observation': 'text-shape-image/image-system-star-fill-v3',
-    'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v4',
-    'custom-layout-colors': 'stack-layout/custom-layout-host-v2/light-centered-execution-v3',
-    'rounded-stroke-boundary': 'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v4',
+    'image-star-observation': 'text-shape-image/image-system-star-fill-v9',
+    'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v7',
+    'custom-layout-colors': 'stack-layout/custom-layout-host-v2/original-api-execution-v6',
+    'rounded-stroke-boundary': 'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v5',
+    'bundled-font-compiled': 'text-shape-image/bundled-font-readiness-v6-line-limit-host',
+    'bundled-font-live': 'text-shape-image/bundled-font-readiness-v3-windows-host',
     'bundled-font-observation': 'text-shape-image/bundled-font-readiness-v2/windows-host',
     'rounded-stroke': 'text-shape-image/rounded-stroke-host-v1',
     'rounded-stroke-centered': 'text-shape-image/rounded-stroke-host-v1/centered-delivery-v1',
@@ -39,8 +41,10 @@ DEP = "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--host', choices=tuple(PACKETS), required=True)
-parser.add_argument('--attempt', type=int, choices=(1, 2), default=None,
+parser.add_argument('--attempt', type=int, choices=range(1, 11), default=None,
                     help='1 selects plan-prebuild-v4; 2 selects native-r2 Image retry')
+parser.add_argument('--compile-revision', type=int, choices=range(1, 11), default=1,
+                    help='rolling root compile stage revision')
 parser.add_argument('--actual-dir', help='fresh actual-prebuild-rN directory')
 parser.add_argument('--stdout-path', help='actual compile.stdout.bin; defaults inside actual-dir')
 parser.add_argument('--seed-case-artifact', type=Path,
@@ -48,10 +52,8 @@ parser.add_argument('--seed-case-artifact', type=Path,
 args = parser.parse_args()
 
 attempt = args.attempt if args.attempt is not None else (2 if args.host == 'image' else 1)
-if attempt == 2 and args.host != 'image':
-    raise SystemExit('--attempt 2 is reserved for existing Image native-r2 retry')
-out = EXEC / (args.host + '-compile-r1')
-plan_name = 'plan-prebuild-native-r2.json' if attempt == 2 else 'plan-prebuild-v4.json'
+out = EXEC / (args.host + f'-compile-r{args.compile_revision}')
+plan_name = 'plan-prebuild-native-r2.json' if attempt == 2 and args.host == 'image' else 'plan-prebuild-v4.json'
 builder_name = 'build-owned-native-r2.ps1' if args.host == 'image' and attempt == 2 else 'build-owned-pilot-v1.ps1'
 actual_dir = Path(args.actual_dir) if args.actual_dir else out / f'actual-prebuild-r{attempt}'
 if not actual_dir.is_absolute():
@@ -129,6 +131,7 @@ RECIPE_REGISTRY = {
     # a filesystem path. Keep registry resolution explicit & hash-bound.
     'swiftui.shapes.fill-stroke.recipe': ROOT / 'factory/recipes/data/swiftui.shapes.fill-stroke.json',
     'swiftui.custom-layout.recipe': ROOT / 'factory/recipes/data/swiftui.custom-layout.json',
+    'swiftui.text.bundled-font.tinos-pilot.recipe': ROOT / 'factory/resources/fonts/pilot/recipe.json',
 }
 
 def _declared_recipe_paths(owner: dict, recipe_id: str) -> list[Path]:
@@ -191,7 +194,16 @@ def resolve_packet_recipe(case: dict, packet_plan: dict, plan: dict) -> tuple[Pa
     require(packet_recipe_hash == recipe_hash, 'typed recipe canonical hash mismatch')
     provenance_hash = (case.get('provenance') or {}).get('sourceHash')
     if provenance_hash is not None:
-        require(provenance_hash == packet_recipe_hash, 'case provenance recipe hash mismatch')
+        provenance = case['provenance']
+        if provenance.get('producer') == 'factory/recipes.expand_cases':
+            descriptor = {key: case[key] for key in ('id', 'inputs', 'coverage')}
+            if 'seed' in case:
+                descriptor['seed'] = case['seed']
+            require(provenance_hash == canonical_sha256(descriptor), 'case descriptor provenance hash mismatch')
+            require({'id': recipe_id, 'hash': packet_recipe_hash} in provenance.get('inputs', []),
+                    'case recipe provenance input mismatch')
+        else:
+            require(provenance_hash == packet_recipe_hash, 'case provenance recipe hash mismatch')
     return recipe_path, packet_recipe, packet_recipe_hash
 
 def materialize_case(case: dict, plan: dict, packet_plan: dict, host_hash: str) -> tuple[dict, dict]:
@@ -358,9 +370,11 @@ for row in source_rows:
 require(len(source_rows) <= 256 and total <= 268435456, 'source bounds exceeded')
 
 compile_request = plan.get('compileRequest') or {}
-package_path = plan.get('packageStagePath')
+package_path = compile_request.get('packagePath')
 scratch_path = compile_request.get('scratchPath')
 require(isinstance(package_path, str) and isinstance(scratch_path, str), 'compile paths missing')
+require(plan.get('packageStagePath') in (package_path, package_path.removesuffix('\\package')),
+        'packet stage must identify exact compiler package or its owning stage')
 require(package_path.endswith('\\package') and scratch_path.startswith(package_path + '\\'), 'compile path namespace drift')
 require(compile_request.get('buildSystem') == 'native', 'native build system missing')
 expected_argv = [
@@ -470,6 +484,9 @@ for protected_output in (final_plan_path, out / 'build-owned-final-v1.ps1',
     require(not protected_output.exists(), f'refuse overwrite of historical output: {protected_output}')
 final_plan_path.write_text(json.dumps(final_plan, indent=2, sort_keys=True) + '\n')
 builder = read(builder_path, 16 * 1024 * 1024).decode('utf-8')
+candidate_predicate = re.compile(r"\$plan\.candidate -cne '[^']*'")
+require(len(candidate_predicate.findall(builder)) == 1, 'builder candidate predicate missing or duplicated')
+builder = candidate_predicate.sub("$plan.candidate -cne '" + plan['candidate'] + "'", builder, count=1)
 case_predicate = re.compile(r"\$plan\.case\.id -notlike '[^']*'")
 require(case_predicate.search(builder) is not None, 'builder case predicate missing')
 builder = case_predicate.sub("$plan.case.id -cne '" + materialized_case['id'] + "'", builder, count=1)

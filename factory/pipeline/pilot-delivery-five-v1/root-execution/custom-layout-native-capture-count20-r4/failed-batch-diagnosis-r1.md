@@ -1,0 +1,7 @@
+Direct original Custom Layout repeat batch failed at attempted run17 after16 observations. It is not a completed20 batch. Raw coordinator reports failed status, child exit1, wholeBatchExitConfirmed & released lock; subsequent read-only inspection observed lock free & zero Swift/native jobs.
+
+Selected diagnostic bytes are preserved under failed-run-diagnostic-r1 with exact remote paths, sizes & SHA256 in its manifest. Run17 final retained-handle certificate records kernel exit1 & sealed streams. Its stdout records valid ready/client metrics and170 commits, then window-close/teardown/shutdown callbacks; final reported error is FactoryOwnedRendererHWNDAmbiguous. Existing host tick re-enumerates owned HWND without an explicit closing state. Error timing & host-versus-renderer cause require lifecycle diagnosis; shutdown race is a hypothesis, not established product attribution.
+
+Original validity predicate remains unchanged: exit0, background guard, renderer ready, commit & absence of render/startup errors. No retry occurred. Whole failed stage remains intact inside ignored Dell repo workspace. First direct Count1 pair is exact full800x600RGB; failed Count20 does not supersede it or complete original paired20 verification.
+
+Mandatory checkpoint Fable Max attempt returned usage_limit_reached before reviewing. Implementation/native/compiler dispatch remains paused until actual review succeeds after reported reset13October06:10IST.

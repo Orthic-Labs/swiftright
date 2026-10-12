@@ -16,17 +16,19 @@ MAX_STREAM = 8 * 1024 * 1024
 MAX_EXE = 64 * 1024 * 1024
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--host', choices=('image', 'image-star-provider','image-star-observation','stack-overlay-colors','custom-layout-colors','rounded-stroke-boundary','bundled-font-observation', 'rounded-stroke', 'rounded-stroke-centered', 'rounded-stroke-circular', 'rounded-stroke-observation', 'stack-overlay-centered', 'stack-overlay-observation', 'custom-layout-centered', 'custom-layout-observation'), required=True)
+parser.add_argument('--host', choices=('image', 'image-star-provider','image-star-observation','stack-overlay-colors','custom-layout-colors','rounded-stroke-boundary','bundled-font-compiled','bundled-font-live','bundled-font-observation', 'rounded-stroke', 'rounded-stroke-centered', 'rounded-stroke-circular', 'rounded-stroke-observation', 'stack-overlay-centered', 'stack-overlay-observation', 'custom-layout-centered', 'custom-layout-observation'), required=True)
 parser.add_argument('--phase', choices=('prebuild', 'final'), default='final')
+parser.add_argument('--attempt', type=int, choices=range(1, 11), default=1)
+parser.add_argument('--compile-revision', type=int, choices=range(1, 11), default=1)
 parser.add_argument('--timeout', type=int, default=60)
 args = parser.parse_args()
 if not 1 <= args.timeout <= 300:
     raise SystemExit('--timeout must be between 1 and 300 seconds')
 
-base = EXEC / f'{args.host}-compile-r1'
+base = EXEC / f'{args.host}-compile-r{args.compile_revision}'
 plan_path = base / f'plan-{args.phase}-v4.json'
-archive = base / f'actual-{args.phase}-r1'
-remote_root = f'D:/Claude/swiftright/.factory-work/hosts/{args.host}/{args.phase}-r1'
+archive = base / f'actual-{args.phase}-r{args.attempt}'
+remote_root = f'D:/Claude/swiftright/.factory-work/hosts/{args.host}/{args.phase}-r{args.attempt}'
 receipt_name = 'observation.json'
 stream_names = ('compile.stdout.bin', 'compile.stderr.bin')
 
