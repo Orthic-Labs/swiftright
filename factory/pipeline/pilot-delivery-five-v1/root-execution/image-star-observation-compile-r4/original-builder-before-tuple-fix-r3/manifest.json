@@ -1,0 +1,29 @@
+{
+  "kind": "factory-image-v9-builder-tuple-fix-input-reconciliation-v1",
+  "rootPlanSha256": "50796e95331c12822536db5b02862bbb97a450ea679484c1f2079fd136725c04",
+  "originalInputs": [
+    {
+      "path": "original-builder-before-tuple-fix-r3/build-owned-pilot-v1.ps1",
+      "sha256": "c2e0469bd5960a805714463413d4d70748768efac15ca6e88ec0049f64259750",
+      "bytes": 11184
+    },
+    {
+      "path": "original-builder-before-tuple-fix-r3/compile-v9-prebuild-r3.ps1",
+      "sha256": "386b38e2e51304fd2519ac8637b61ae2e5ae5bc027991c445f1c06bc4db923d2",
+      "bytes": 1010
+    }
+  ],
+  "activeInputs": [
+    {
+      "path": "build-owned-pilot-v1.ps1",
+      "sha256": "326dc89dd49a7a8ec105b907817830fd32af78a38918761019ff233dc693abd5",
+      "bytes": 11198
+    },
+    {
+      "path": "compile-v9-prebuild-r3.ps1",
+      "sha256": "4e2f81ba1ec57e3946fa496cdb90297f81e16a1fa0479ec0bfc91bf6214249c6",
+      "bytes": 1010
+    }
+  ],
+  "reason": "rendererSha256/compilerHash in sealed plan include sha256 prefix; builder tuple guard corrected to exact stored values"
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "factory-image-v9-stage-resume-r4-request-v1",
+  "resumePath": "factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r4/resume-v9-stage-r4.ps1",
+  "resumeSha256": "sha256:d9ec3523cc118804cff6dcecbe76afdf9d4c14a1d74215ba0d399d5d2c7c0da3",
+  "resumeBytes": 40667,
+  "builderPath": "factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r4/build-owned-pilot-v1-r4.ps1",
+  "builderSha256": "sha256:f4049ca730d8791a61e8a5295982bb3afbf3f42124e15cf35b54be6215585b5b",
+  "builderBytes": 12058,
+  "preimageBuilderSha256": "sha256:326dc89dd49a7a8ec105b907817830fd32af78a38918761019ff233dc693abd5",
+  "preimageBuilderBytes": 11198,
+  "planSha256": "sha256:50796e95331c12822536db5b02862bbb97a450ea679484c1f2079fd136725c04",
+  "helperSha256": "sha256:112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "archive": "source-before-operational-fix-r4/0-build-owned-pilot-v1.ps1",
+  "attempt": 3,
+  "compilerStarted": false,
+  "nativeActions": 0,
+  "failedPreflight": "r3 line19 operational hash drift: compilerHash/rendererSha256 in sealed plan are sha256-prefixed while Hash returns bare hex; path-key audit remained incomplete",
+  "corrections": [
+    "Normalize every plan hash comparison through strict BareHash (optional sha256: prefix, exactly 64 hex); no hash guard removed.",
+    "Keep compilerHash and rendererSha256 tuple values pinned to exact sha256-prefixed constants.",
+    "Validate compilerPath, rendererPath, rendererLoadPath, runtimeSourcePath, runtimePackagePath, bridgePackagePath against canonical stage paths.",
+    "Verify runtime source rows through plan.runtimeSourcePath; runtimePackagePath remains separately exact-checked.",
+    "Validate compileRequest.packagePath, scratchPath, nativeProductPath, kind, configuration, target.",
+    "Normalize sourceBindings, runtime receipt/tree, witness, owned helper hashes; helper plan value remains bare, metadata records sha256 prefix.",
+    "Preserve plan SHA, sourceBindingsHash, sourceHash, witness bytes, runtime/renderer/compiler tuple, argv, attempt=3, source rows unchanged."
+  ],
+  "auditKeys": {
+    "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+    "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+    "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+    "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e"
+  }
+}

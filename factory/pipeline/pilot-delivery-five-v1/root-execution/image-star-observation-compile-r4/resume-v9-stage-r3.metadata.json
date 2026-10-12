@@ -1,0 +1,22 @@
+{
+  "kind": "factory-image-v9-stage-resume-r3-request-v1",
+  "resumePath": "factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r4/resume-v9-stage-r3.ps1",
+  "resumeSha256": "sha256:74258f7ab8b30f216a8372226699d96e8bf1e4e8aaa49edfeeaa007d700b216c",
+  "resumeBytes": 39514,
+  "planSha256": "sha256:50796e95331c12822536db5b02862bbb97a450ea679484c1f2079fd136725c04",
+  "candidate": "swiftui.image.system-star-fill.provider-bound.v9",
+  "failedPreflight": "tuple source pin mismatch: plan rendererSha256/compilerHash carry sha256: prefix; installed builder compared bare values",
+  "installedBuilderSha256": "sha256:c2e0469bd5960a805714463413d4d70748768efac15ca6e88ec0049f64259750",
+  "fixedBuilderSha256": "sha256:326dc89dd49a7a8ec105b907817830fd32af78a38918761019ff233dc693abd5",
+  "fixedBuilderBytes": 11198,
+  "helperSha256": "sha256:112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "archive": "source-before-tuple-fix-r3/0-build-owned-pilot-v1.ps1",
+  "attempt": 3,
+  "action": "verify installed v9 builder; archive it immutably; install tuple-prefix-fixed builder; run PreflightOnly only",
+  "nativeActions": 0,
+  "audit": {
+    "tupleGuards": "rendererSha256/compilerHash compared with sha256-prefixed plan values",
+    "operationalPaths": "package/scratch/runtime/bridge/renderer/compiler paths retained from sealed plan",
+    "argv": "existing builder argv retains native ordering, jobs1, -Xswiftc -j1, -Xswiftc -num-threads -Xswiftc 1"
+  }
+}
