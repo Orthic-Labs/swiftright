@@ -25,6 +25,8 @@ Work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). SR0 evidence bi
 - Parity will be a tested contract, never a promise. Every API in the published inventory will have a compile fixture, a behavioural trace recorded on macOS and a Windows replay; unsupported APIs will fail at Windows compile time.
 - No compiler fork, no transpiler, no emulator for macOS binaries, no native WinUI controls, no second-language shell, and no AI service or network connection to render UI.
 
+Source for each point: [docs/architecture.md](docs/architecture.md), section 1 (product definition and hard requirements) and section 3 (architecture decisions AD2 to AD8).
+
 ## Architecture
 
 Read [SwiftRight architecture v0.5](docs/architecture.md), dated 8 October 2026, & [review history with v0.5 dispositions](docs/architecture-review.md#v05-sequential-adversarial-review-8-october-2026). The Windows renderer is a Rust cdylib on GPUI 0.2.2, AccessKit 0.25.1 & accesskit_windows 0.35.1 (`render/swiftright-render`), exposed to Swift through a versioned C ABI (0.6) that `packages/SwiftRightBridge` consumes. GPUI is the first renderer; Slint remains an unqualified alternative. UIA, IME & Narrator paths are exercised by the SR0 native-interaction probes, and the known limitations are listed in `docs/sr0-status.md`.
