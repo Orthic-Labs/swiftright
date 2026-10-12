@@ -1,0 +1,38 @@
+{
+  "kind": "factory-circle-windows-source-manifest-v1",
+  "version": 1,
+  "candidate": "swiftui.circle.fixed.pilot-next",
+  "status": "SOURCE_ONLY",
+  "controlStatusMarker": "SOURCE_CONTROLS_PASS",
+  "files": {
+    "copier": {"path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/windows-source-v1/prepare-circle-windows-package.py", "bytes": 10760, "sha256": "sha256:6c57dd4b73f5f09b5dfc885a22976a158507a54d928c1c4063124e7e2ad18abf"},
+    "compiler": {"path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/windows-source-v1/build-circle-owned-v1.ps1", "bytes": 11104, "sha256": "sha256:ce82d584cb64e6da609de26530b6f9654f156183707f0c45263b925b25957604"},
+    "controls": {"path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/windows-source-v1/test-circle-windows-controls.py", "bytes": 7589, "sha256": "sha256:0943158fbec039260c559c5e227605becf1f856393174e3cf2cbe68188a5adbd"},
+    "readme": {"path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/windows-source-v1/README.md", "bytes": 2518, "sha256": "sha256:f3be16291a6133d4f78b213a6c066088db6516383332e6aecf7eb384f99fb8cc"}
+  },
+  "circleWitness": {"path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/witness.swift", "bytes": 344, "sha256": "sha256:01f9fef3ab058a958bebf886191519e0102b05ff6b46acedd0d59a7aa8601f2e"},
+  "baseInputs": {
+    "sourcePackageRole": "factory/native/windows/pilot-rectangle-root-v1/package",
+    "sourcePlanRole": "factory/native/windows/pilot-rectangle-root-v1/package/plan-final-v3.json",
+    "requiredPlanKind": "factory-rectangle-compiler-plan-v2",
+    "requiredPlanPhase": "final",
+    "prebuildManifestRole": "root-provided Circle metadata JSON: candidate swiftui.circle.fixed.pilot-next, qualification prebuild, case null, sourceHash exact Circle witness",
+    "outputFresh": true
+  },
+  "transforms": {
+    "mainWitnessCall": {"from": "Witness_shapes_rectangle_fill()", "to": "Witness_circle_fixed()", "count": 1},
+    "prebuildManifestReplacement": {"path": "witness.manifest.json", "requiresDonorBinding": true, "recordsDonorAndReplacementHashes": true},
+    "stderrMarkers": ["FACTORY_BRIDGE_LOAD_BEGIN", "FACTORY_BRIDGE_LOAD_END", "FACTORY_BRIDGE_ON_READY", "FACTORY_BRIDGE_RUN_BEGIN", "FACTORY_BRIDGE_RUN_END"],
+    "witnessSemanticTokens": ["Circle()", "Color.blue", ".frame(width: 40, height: 40)", ".light"]
+  },
+  "pins": {
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "compilerSha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "compileJobs": 1,
+    "maxFrontendThreads": 1,
+    "compileMemoryCapBytes": 1073741824
+  },
+  "freshBindingsRequiredBeforeFinalCompile": ["sourceHash", "recipeHash", "caseId", "caseHash", "tupleId", "tupleHash", "runtimeCommit", "runtimeSourceTreeHash", "rendererHash", "compilerReceiptHash", "windowsExeHash", "macHostHash", "captureIds", "imageIds", "measuredClientMetrics"],
+  "effects": {"compilerActions": 0, "nativeActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}

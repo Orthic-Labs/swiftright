@@ -1,0 +1,69 @@
+{
+    "schema":  "sr0-display-selfjob-parser-controls-v4",
+    "status":  "source-admitted",
+    "archivedReceipt":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r3\\archived-v7.txt",
+    "runs":  3,
+    "noResources":  false,
+    "cases":  [
+                  {
+                      "name":  "baseline",
+                      "ownershipTerminal":  true,
+                      "qualificationPass":  true,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "natural-nonzero",
+                      "ownershipTerminal":  true,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "identity",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "stream-drain",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "terminal",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "count",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  0
+                  }
+              ],
+    "nativeActions":  0,
+    "lockActions":  0
+}
+{
+    "schema":  "sr0-display-selfjob-envelope-controls-v4",
+    "status":  "source-admitted",
+    "nativeActions":  0,
+    "lockActions":  0,
+    "noActivateMandatory":  true,
+    "foregroundPath":  false,
+    "directFrozenTask":  true,
+    "pureParser":  true
+}

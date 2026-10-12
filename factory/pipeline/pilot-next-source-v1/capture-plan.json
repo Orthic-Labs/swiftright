@@ -1,0 +1,35 @@
+{
+  "kind": "pilot-next-source-capture-plan-v1",
+  "version": "1",
+  "candidate": "swiftui.shapes.rectangle-fill.pilot-next",
+  "platforms": {
+    "mac": {
+      "protocol": "factory/pipeline/pilot-next-source-v1/mac-capture-same-group-v1/capture_origin_rectangle_r1.py",
+      "preflight": [
+        "measured host build receipt exists on internal disk",
+        "host binary hash is recomputed from bytes before materialization",
+        "AX trust preflight reports no permission request",
+        "fresh external AX client is supervised as one owned process group",
+        "root supervisor must retain child-PGID ownership proof; frozen r11 detached sessions remain held until same-group successor or equivalent bounded drain receipt",
+        "scratch is a fresh child of /Users/adrdsouza/Library/Caches/SwiftRightFactory",
+        "HOST_HASH_DRIFT stops before AX/native action"
+      ],
+      "capture": "20 fresh runs only after tuple/case/manifest/source joins pass",
+      "output": "fresh repo archive under factory/oracle/mac/pilot-next-source-v1"
+    },
+    "windows": {
+      "protocol": "existing factory Windows lease host scaffold, source-bound replay only",
+      "preflight": [
+        "fresh Mac-generated case ID/hash and tuple ID are inputs",
+        "compiler receipt proves exact staged Package.swift, runtime source, witness, and manifest bytes",
+        "runtimeCommit=37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+        "rendererHash=sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+        "fresh capture IDs preserve issuer order and pair each run with its image ID",
+        "all worker/renderer/provider/terminal proofs are actual producer outputs"
+      ],
+      "capture": "20 fresh runs only after source admission returns PASS",
+      "output": "fresh Windows archive under factory/native/windows/pilot-next-source-v1"
+    }
+  },
+  "qualification": "held until both 20-run archives, source closure, provider semantics, and paired comparison pass"
+}

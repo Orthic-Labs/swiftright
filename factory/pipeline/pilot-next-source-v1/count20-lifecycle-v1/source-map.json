@@ -1,0 +1,106 @@
+{
+  "kind": "factory-count1-count20-lifecycle-source-map-v1",
+  "version": 1,
+  "source": {
+    "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/coordinator-count20-lifecycle-v1.ps1",
+    "role": "coordinator Count1/20 outer lifecycle",
+    "bytes": 12166,
+    "sha256": "sha256:1ef298f2e418d63945306a9cfca14336ce51b3218e67f2921fb120e41a8d2a40"
+  },
+  "overlaySources": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/interactive-task-rectangle-count20-v1.ps1",
+      "role": "interactive self-job, desktop, dispatch, memory & task receipts",
+      "bytes": 8594,
+      "sha256": "sha256:3743abd6fb2edb5414f556758277ec173f94f032cb6385d65655d91751b10d36"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/dispatch-rectangle-count20-v1.ps1",
+      "role": "Count1/20 source and dispatch gates",
+      "bytes": 5876,
+      "sha256": "sha256:f644ea9ec8fd253c42323aee664831f6a0cadb7d7b4b38b024d11e2d0cfcdc15"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/capture-rectangle-count20-v1.ps1",
+      "role": "Count1/20 native sequence, retained handles, streams & release",
+      "bytes": 44982,
+      "sha256": "sha256:79518748d316edd514b713b079b72a74ac45fa675ccda83f5806a7eb1fb11131"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/all-owned-release-rectangle-r1.ps1",
+      "role": "frozen per-run release helper copy",
+      "bytes": 8043,
+      "sha256": "sha256:97af99f02b85fc311710fab2cf9013e55dcc1957ef7a550408d9c3401f94950c"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/uia-worker-invoke-v2.ps1",
+      "role": "frozen UIA worker retained-handle helper copy",
+      "bytes": 11365,
+      "sha256": "sha256:8b0d0b301f17229faddc149ee5df42c2183cfe442779a133c990866c42313d8c"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/Sr0OwnedJobProcess-v15.cs",
+      "role": "frozen 1 GiB self-job helper copy",
+      "bytes": 6495,
+      "sha256": "sha256:89ce3d84f565180c89ad43a753f7c9e44319dca206f3c5d6d5ba80ac5e05197a"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/README.md",
+      "role": "source contract",
+      "bytes": 1134,
+      "sha256": "sha256:dfb89ee0fefd12a73e92433fdf9b86a5c89ebce66f8d4a2ff6ea01031fd10351"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1/test-count20-lifecycle-source-controls.py",
+      "role": "bounded source-only Count1/Count20 invariant controls",
+      "bytes": 2248,
+      "sha256": "sha256:ab1aaf47d899963b55df9cd271d22e638c79bf3e78cec7fc5d49a50e87b6ad05"
+    }
+  ],
+  "constraints": {
+    "acceptedCounts": [
+      1,
+      20
+    ],
+    "count20Runs": "exactly 1..20",
+    "nativeDirectories": "native-01..native-20",
+    "retainedParentHandle": "required",
+    "memoryLimitBytes": 1073741824,
+    "memoryLimitFlags": 512,
+    "activeProcessCount": "exactly 1 after dispatch",
+    "wholeBatchExitConfirmed": "required before lock release",
+    "budgets": {
+      "setupSeconds": 180,
+      "captureSeconds": {
+        "count1": 60,
+        "count20": 600
+      },
+      "cleanupSeconds": 60,
+      "outerSeconds": {
+        "count1": 300,
+        "count20": 840
+      },
+      "schedulerMinutes": {
+        "count1": 5,
+        "count20": 15
+      }
+    },
+    "nativeWindowActions": 0,
+    "compilerActions": 0,
+    "remoteActions": 0,
+    "lockActions": 0
+  },
+  "derivedFrom": {
+    "path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3",
+    "frozen": true
+  },
+  "requiredProofs": [
+    "issued capture/image IDs preserve issuance order and run index",
+    "sourceInputs/case/tuple/compile/renderer/serializer exact joins",
+    "task start & result atomic receipts",
+    "retained parent kernel/.NET exit",
+    "per-run owned worker/render/stream release",
+    "all Count20 native directories audited",
+    "lock CAS release only after whole-batch proof"
+  ]
+}

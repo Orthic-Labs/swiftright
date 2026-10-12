@@ -1,0 +1,37 @@
+﻿{
+    "kind":  "factory-circle-final-plan-eligibility-controls-v1",
+    "status":  "SOURCE_CONTROLS_PASS",
+    "nativeActions":  0,
+    "cases":  [
+                  {
+                      "name":  "baseline",
+                      "accepted":  true,
+                      "reason":  ""
+                  },
+                  {
+                      "name":  "prebuild-phase",
+                      "accepted":  false,
+                      "reason":  "Circle final plan phase mismatch"
+                  },
+                  {
+                      "name":  "ineligible",
+                      "accepted":  false,
+                      "reason":  "Circle final plan is not execution eligible"
+                  },
+                  {
+                      "name":  "wrong-kind",
+                      "accepted":  false,
+                      "reason":  "Circle final plan kind mismatch"
+                  },
+                  {
+                      "name":  "explicit-wrong-host",
+                      "accepted":  false,
+                      "reason":  "Circle explicit hostMode mismatch"
+                  },
+                  {
+                      "name":  "missing-phase",
+                      "accepted":  false,
+                      "reason":  "Circle final plan phase mismatch"
+                  }
+              ]
+}

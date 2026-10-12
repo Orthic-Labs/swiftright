@@ -1,0 +1,73 @@
+﻿{
+    "schema":  "sr0-display-evidence-controls-v4",
+    "status":  "passed",
+    "nativeActions":  0,
+    "lockActions":  0,
+    "sourceCsv":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\presentmon-archived.csv",
+    "sourceMeta":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\meta-archived.json",
+    "boundedLimits":  {
+                          "csvBytes":  67108864,
+                          "metaBytes":  2097152,
+                          "rows":  2000000
+                      },
+    "cases":  [
+                  {
+                      "name":  "positive",
+                      "status":  "observed",
+                      "reason":  "displayed-rows-observed",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  52,
+                      "droppedRows":  3547
+                  },
+                  {
+                      "name":  "all-dropped",
+                      "status":  "held",
+                      "reason":  "all-presentmon-rows-dropped-or-occluded",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  0,
+                      "droppedRows":  3599
+                  },
+                  {
+                      "name":  "invalid-display",
+                      "status":  "held",
+                      "reason":  "all-presentmon-rows-dropped-or-occluded",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "invalid-timing",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "zero-rows",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "missing-input",
+                      "status":  "rejected",
+                      "reason":  "missing-explicit-csv",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "wrong-pid",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  }
+              ],
+    "qualification":  "separate-workload-gate",
+    "nativeConclusion":  "display-context-only; strict PresentMon displayed-row gate unchanged"
+}

@@ -1,0 +1,169 @@
+{
+    "topCpu":  [
+                   {
+                       "pid":  39404,
+                       "name":  "python",
+                       "cpuSeconds":  21.203125,
+                       "rssBytes":  3569033216,
+                       "privateBytes":  4116148224
+                   },
+                   {
+                       "pid":  36052,
+                       "name":  "svchost",
+                       "cpuSeconds":  0.828125,
+                       "rssBytes":  40427520,
+                       "privateBytes":  33484800
+                   },
+                   {
+                       "pid":  57212,
+                       "name":  "find",
+                       "cpuSeconds":  0.75,
+                       "rssBytes":  18268160,
+                       "privateBytes":  16433152
+                   },
+                   {
+                       "pid":  14612,
+                       "name":  "find",
+                       "cpuSeconds":  0.71875,
+                       "rssBytes":  17444864,
+                       "privateBytes":  16367616
+                   },
+                   {
+                       "pid":  21656,
+                       "name":  "python",
+                       "cpuSeconds":  0.671875,
+                       "rssBytes":  2897952768,
+                       "privateBytes":  3529723904
+                   },
+                   {
+                       "pid":  5124,
+                       "name":  "find",
+                       "cpuSeconds":  0.671875,
+                       "rssBytes":  20254720,
+                       "privateBytes":  16695296
+                   },
+                   {
+                       "pid":  44924,
+                       "name":  "find",
+                       "cpuSeconds":  0.640625,
+                       "rssBytes":  20140032,
+                       "privateBytes":  16527360
+                   },
+                   {
+                       "pid":  56032,
+                       "name":  "MsMpEng",
+                       "cpuSeconds":  0.390625,
+                       "rssBytes":  634941440,
+                       "privateBytes":  600563712
+                   }
+               ],
+    "stdout":  "FACTORY_CAPTURE_LEASE nanoseconds=40000000000 source=explicit-bounded-diagnostic-option\r\n",
+    "os":  {
+               "TotalVisibleMemorySize":  66772024,
+               "FreePhysicalMemory":  29502752
+           },
+    "taskStatus":  "hold-harness-error",
+    "error":  "Renderer window deadline",
+    "memory":  {
+                   "kind":  "factory-interactive-job-memory-receipt-v1",
+                   "runID":  "39d1b62677064c04a0438fb1e28de10a",
+                   "issuedMetadataHash":  "11f99f089b59ea2ff36aa061fc013b3e25664dbdf1c5eb8828580f99999ff9c0",
+                   "parentPid":  2248,
+                   "jobMemoryLimitBytes":  1073741824,
+                   "limitFlags":  512,
+                   "peakJobMemoryUsedBytes":  192106496,
+                   "activeProcessCount":  1,
+                   "status":  "rejected",
+                   "killOnJobClose":  false,
+                   "error":  "Renderer window deadline"
+               },
+    "stderr":  "[swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -\u003e 1\r\n",
+    "outcome":  {
+                    "error":  null,
+                    "primaryError":  "Renderer window deadline",
+                    "cleanupError":  null,
+                    "status":  null,
+                    "exitCode":  null,
+                    "stdoutBytes":  null,
+                    "stderrBytes":  null,
+                    "rawStreams":  [
+                                       {
+                                           "name":  "stdout",
+                                           "copyCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "sealed":  true,
+                                           "hashQualification":  "sealed-raw",
+                                           "taskStatus":  "RanToCompletion",
+                                           "taskIsCompleted":  true,
+                                           "taskIsFaulted":  false,
+                                           "taskIsCanceled":  false,
+                                           "taskException":  "",
+                                           "sourceIsAsync":  false,
+                                           "closure":  {
+                                                           "deadlineMilliseconds":  5000,
+                                                           "flushDisposition":  "requested-terminal-copy",
+                                                           "flushCompleted":  true,
+                                                           "destinationClosed":  true,
+                                                           "completedWithinDeadline":  true,
+                                                           "deadlineExpired":  false,
+                                                           "error":  "",
+                                                           "before":  {
+                                                                          "name":  "stdout",
+                                                                          "copyCompleted":  true,
+                                                                          "destinationClosed":  false,
+                                                                          "sealed":  false,
+                                                                          "hashQualification":  "diagnostic-partial",
+                                                                          "taskStatus":  "RanToCompletion",
+                                                                          "taskIsCompleted":  true,
+                                                                          "taskIsFaulted":  false,
+                                                                          "taskIsCanceled":  false,
+                                                                          "taskException":  "",
+                                                                          "sourceIsAsync":  false,
+                                                                          "closure":  null,
+                                                                          "closureTaskStatus":  "not-started"
+                                                                      }
+                                                       },
+                                           "closureTaskStatus":  "RanToCompletion"
+                                       },
+                                       {
+                                           "name":  "stderr",
+                                           "copyCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "sealed":  true,
+                                           "hashQualification":  "sealed-raw",
+                                           "taskStatus":  "RanToCompletion",
+                                           "taskIsCompleted":  true,
+                                           "taskIsFaulted":  false,
+                                           "taskIsCanceled":  false,
+                                           "taskException":  "",
+                                           "sourceIsAsync":  false,
+                                           "closure":  {
+                                                           "deadlineMilliseconds":  5000,
+                                                           "flushDisposition":  "requested-terminal-copy",
+                                                           "flushCompleted":  true,
+                                                           "destinationClosed":  true,
+                                                           "completedWithinDeadline":  true,
+                                                           "deadlineExpired":  false,
+                                                           "error":  "",
+                                                           "before":  {
+                                                                          "name":  "stderr",
+                                                                          "copyCompleted":  true,
+                                                                          "destinationClosed":  false,
+                                                                          "sealed":  false,
+                                                                          "hashQualification":  "diagnostic-partial",
+                                                                          "taskStatus":  "RanToCompletion",
+                                                                          "taskIsCompleted":  true,
+                                                                          "taskIsFaulted":  false,
+                                                                          "taskIsCanceled":  false,
+                                                                          "taskException":  "",
+                                                                          "sourceIsAsync":  false,
+                                                                          "closure":  null,
+                                                                          "closureTaskStatus":  "not-started"
+                                                                      }
+                                                       },
+                                           "closureTaskStatus":  "RanToCompletion"
+                                       }
+                                   ]
+                },
+    "lock":  "free"
+}

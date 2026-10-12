@@ -1,0 +1,55 @@
+{
+  "kind": "factory-fresh-capture-staging-source-v1",
+  "version": 1,
+  "status": "prospective-source-only",
+  "nativeActions": 0,
+  "profiles": [
+    "text-style",
+    "circle",
+    "rectangle"
+  ],
+  "rows": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/fresh-capture-staging-v1/stage_fresh_capture_v1.py",
+      "role": "fresh-text-circle-rectangle-measured-capture-stager",
+      "bytes": 31521,
+      "sha256": "sha256:059f63e3e018de29730617397891f16b90983c0000c81b52f47e202b46e2eb89"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/fresh-capture-staging-v1/test_stage_fresh_capture_controls.py",
+      "role": "fresh-capture-admission-fault-controls",
+      "bytes": 3623,
+      "sha256": "sha256:8da1f80f2f0f3c9e7d9abfcfe8c594e36034f75b4ed0b7bb93ce3dc06ab10e56"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/fresh-capture-staging-v1/README.md",
+      "role": "fresh-capture-staging-contract",
+      "bytes": 3338,
+      "sha256": "sha256:226cd8909a39623563302c7a3f68ec2b764e690bb64daef5acc18eec765395b7"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/fresh-capture-staging-v1/test_rectangle_donor_controls.py",
+      "role": "admitted-Rectangle-donor-baseline-plus-six-fault-controls",
+      "bytes": 2443,
+      "sha256": "sha256:d1e3420bf37faf4bbdeb570cbc7713ba92c5373531bcc0d202eb2c1828385ca3"
+    }
+  ],
+  "requiredOverlay": {
+    "path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/uia-worker-invoke-v2.ps1",
+    "role": "required-uia-worker-overlay",
+    "mustBeExplicit": true
+  },
+  "guards": [
+    "fresh manifest/case/tuple canonical joins",
+    "exact recipe bytes preserved",
+    "final plan/compile receipt/executable joins",
+    "compiled source/runtime/renderer joins",
+    "compile exit/stream/job/native closure",
+    "fresh Count1 & Count20 roots",
+    "nativeActions=0 before root dispatch",
+    "admitted Rectangle Count1 donor full source-input/config bindings",
+    "fresh Rectangle Count20 count/runRoot/capture-plan rebasing",
+    "Rectangle context/tuple/binding/integration/plan/compile/exe/renderer/recipe/serializer transport rows with exact source paths, byte counts & hashes",
+    "donor evidence retains original hashes & lineage; no relabel"
+  ]
+}

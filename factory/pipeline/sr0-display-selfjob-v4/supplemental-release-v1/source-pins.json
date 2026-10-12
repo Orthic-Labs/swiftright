@@ -1,0 +1,34 @@
+{
+  "kind": "sr0-display-selfjob-v4-supplemental-release-v1-pins",
+  "sourceFiles": {
+    "productionGate": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/supplemental-release-v1/validate-release-evidence-v1.py",
+      "sha256": "532ee3732756ffb4c7341bbec93a7f3d9214d3dcba360f9ba686d1ba55690398"
+    },
+    "controls": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/supplemental-release-v1/test-release-evidence-controls-v1.py",
+      "sha256": "70054774d3567a6bc00c97f1fed32afd62df973714442fba0a422e34e589ce6e"
+    }
+  },
+  "observedEvidence": {
+    "archiveRoot": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-inspect-r7-transport",
+    "collectorKind": "sr0-display-collector-v5",
+    "launcherKind": "sr0-display-launcher-v5",
+    "observerKind": "sr0-display-selfjob-v5-fresh-observer-r1",
+    "collectorPresentMonExitRaw": 4294967295,
+    "collectorPresentMonExitSigned": -1,
+    "collectorWorkloadExit": 0,
+    "collectorPresentMonStderrBytes": 65,
+    "collectorPeakJobMemoryAfterBytes": 506167296,
+    "collectorActiveAfter": 1,
+    "collectorJobMemoryLimitBytes": 1073741824,
+    "collectorLimitFlagsAfter": 512,
+    "csvParserFailure": "PresentMon CSV workload ProcessID mismatch",
+    "qualificationClaim": false,
+    "lockMutationPerformed": false
+  },
+  "bounds": {
+    "receiptBytes": 2097152,
+    "streamBytes": 8388608
+  }
+}

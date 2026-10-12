@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r3\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r3\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "cf3d74ac5e11cb4382e236d67f302396a52fdb71773f20c92a6fd576fff2d718",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\circle\\stage-prebuild-r1.ps1",
+    "-ScriptSha256",
+    "8750707982e16a4994a05cd285f6996b0adc02559c481a9e132a938e7ad0cbe4",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\circle\\stage-preflight-transport-r1.json",
+    "-DeadlineSeconds",
+    "45"
+  ],
+  "scriptSha256": "8750707982e16a4994a05cd285f6996b0adc02559c481a9e132a938e7ad0cbe4",
+  "budgetBytes": 268435456
+}

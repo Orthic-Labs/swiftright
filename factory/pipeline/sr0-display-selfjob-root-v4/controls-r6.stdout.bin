@@ -1,0 +1,142 @@
+{
+    "schema":  "sr0-display-selfjob-parser-controls-v4",
+    "status":  "source-admitted",
+    "archivedReceipt":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r6\\archived-v7.txt",
+    "runs":  3,
+    "noResources":  false,
+    "cases":  [
+                  {
+                      "name":  "baseline",
+                      "ownershipTerminal":  true,
+                      "qualificationPass":  true,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "natural-nonzero",
+                      "ownershipTerminal":  true,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "identity",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "stream-drain",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "terminal",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  3
+                  },
+                  {
+                      "name":  "count",
+                      "ownershipTerminal":  false,
+                      "qualificationPass":  false,
+                      "workerRows":  3,
+                      "samplerRows":  3,
+                      "streamDrainRows":  0
+                  }
+              ],
+    "nativeActions":  0,
+    "lockActions":  0
+}
+{
+    "schema":  "sr0-display-selfjob-envelope-controls-v4",
+    "status":  "source-admitted",
+    "nativeActions":  0,
+    "lockActions":  0,
+    "noActivateMandatory":  true,
+    "foregroundPath":  false,
+    "directFrozenTask":  true,
+    "pureParser":  true
+}
+{
+    "schema":  "sr0-display-evidence-controls-v4",
+    "status":  "passed",
+    "nativeActions":  0,
+    "lockActions":  0,
+    "sourceCsv":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r6\\presentmon-archived.csv",
+    "sourceMeta":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r6\\meta-archived.json",
+    "boundedLimits":  {
+                          "csvBytes":  67108864,
+                          "metaBytes":  2097152,
+                          "rows":  2000000
+                      },
+    "cases":  [
+                  {
+                      "name":  "positive",
+                      "status":  "observed",
+                      "reason":  "displayed-rows-observed",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  52,
+                      "droppedRows":  3547
+                  },
+                  {
+                      "name":  "all-dropped",
+                      "status":  "held",
+                      "reason":  "all-presentmon-rows-dropped-or-occluded",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  0,
+                      "droppedRows":  3599
+                  },
+                  {
+                      "name":  "invalid-display",
+                      "status":  "held",
+                      "reason":  "all-presentmon-rows-dropped-or-occluded",
+                      "rawPresentRows":  3599,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "invalid-timing",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "zero-rows",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "missing-input",
+                      "status":  "rejected",
+                      "reason":  "missing-explicit-csv",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  },
+                  {
+                      "name":  "wrong-pid",
+                      "status":  "held",
+                      "reason":  "no-presentmon-rows-for-pid-in-measure-window",
+                      "rawPresentRows":  0,
+                      "displayedRows":  0,
+                      "droppedRows":  0
+                  }
+              ],
+    "qualification":  "separate-workload-gate",
+    "nativeConclusion":  "display-context-only; strict PresentMon displayed-row gate unchanged"
+}

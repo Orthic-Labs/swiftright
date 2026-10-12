@@ -1,0 +1,250 @@
+{
+  "checks": [
+    {
+      "detail": "sr0-display-collector-v5",
+      "name": "collector-kind",
+      "passed": true
+    },
+    {
+      "detail": "sr0-display-launcher-v5",
+      "name": "launcher-kind",
+      "passed": true
+    },
+    {
+      "detail": "fresh observer v5 r1",
+      "name": "observer-kind",
+      "passed": true
+    },
+    {
+      "detail": "collector/launcher taskName & tag agree",
+      "name": "owner-task-tag-join",
+      "passed": true
+    },
+    {
+      "detail": "lock remains held",
+      "name": "collector-hold-preserved",
+      "passed": true
+    },
+    {
+      "detail": "qualification remains false",
+      "name": "collector-not-qualified",
+      "passed": true
+    },
+    {
+      "detail": "parentOriginalHandleRetained=true",
+      "name": "collector-parentOriginalHandleRetained",
+      "passed": true
+    },
+    {
+      "detail": "parentOriginalHandleAcquired=true",
+      "name": "collector-parentOriginalHandleAcquired",
+      "passed": true
+    },
+    {
+      "detail": "sessionMatch=true",
+      "name": "collector-sessionMatch",
+      "passed": true
+    },
+    {
+      "detail": "desktopAvailable=true",
+      "name": "collector-desktopAvailable",
+      "passed": true
+    },
+    {
+      "detail": "desktopNameRead=true",
+      "name": "collector-desktopNameRead",
+      "passed": true
+    },
+    {
+      "detail": "Default desktop, lastError 0",
+      "name": "collector-desktop",
+      "passed": true
+    },
+    {
+      "detail": "presentMonHandleAcquired=true",
+      "name": "collector-presentMonHandleAcquired",
+      "passed": true
+    },
+    {
+      "detail": "presentMonTerminal=true",
+      "name": "collector-presentMonTerminal",
+      "passed": true
+    },
+    {
+      "detail": "presentMonExitIdentity=true",
+      "name": "collector-presentMonExitIdentity",
+      "passed": true
+    },
+    {
+      "detail": "presentMonSessionAbsent=true",
+      "name": "collector-presentMonSessionAbsent",
+      "passed": true
+    },
+    {
+      "detail": "presentMonStreamsSealed=true",
+      "name": "collector-presentMonStreamsSealed",
+      "passed": true
+    },
+    {
+      "detail": "workloadHandleAcquired=true",
+      "name": "collector-workloadHandleAcquired",
+      "passed": true
+    },
+    {
+      "detail": "workloadTerminal=true",
+      "name": "collector-workloadTerminal",
+      "passed": true
+    },
+    {
+      "detail": "workloadExitIdentity=true",
+      "name": "collector-workloadExitIdentity",
+      "passed": true
+    },
+    {
+      "detail": "activeReadableAfter=true",
+      "name": "collector-activeReadableAfter",
+      "passed": true
+    },
+    {
+      "detail": "activeSelfOnly=true",
+      "name": "collector-activeSelfOnly",
+      "passed": true
+    },
+    {
+      "detail": "forced-owned stop attempted",
+      "name": "collector-pm-forced-stop",
+      "passed": true
+    },
+    {
+      "detail": "PM exit raw/signed join is -1",
+      "name": "collector-pm-exit",
+      "passed": true
+    },
+    {
+      "detail": "logman stop exit 0",
+      "name": "collector-pm-stop-exit",
+      "passed": true
+    },
+    {
+      "detail": "exact bounded benign stderr",
+      "name": "collector-pm-stderr",
+      "passed": true
+    },
+    {
+      "detail": "workload exit 0",
+      "name": "collector-workload-exit",
+      "passed": true
+    },
+    {
+      "detail": "no stream/output/deadline fault",
+      "name": "collector-no-faults",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonStdoutBytes",
+      "name": "collector-presentMonStdoutBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonStderrBytes",
+      "name": "collector-presentMonStderrBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonStopStdoutBytes",
+      "name": "collector-presentMonStopStdoutBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonStopStderrBytes",
+      "name": "collector-presentMonStopStderrBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonQueryStdoutBytes",
+      "name": "collector-presentMonQueryStdoutBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded presentMonQueryStderrBytes",
+      "name": "collector-presentMonQueryStderrBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded workloadStdoutBytes",
+      "name": "collector-workloadStdoutBytes",
+      "passed": true
+    },
+    {
+      "detail": "bounded workloadStderrBytes",
+      "name": "collector-workloadStderrBytes",
+      "passed": true
+    },
+    {
+      "detail": "self-only 1 GiB job",
+      "name": "collector-job-active",
+      "passed": true
+    },
+    {
+      "detail": "peak within 1 GiB",
+      "name": "collector-job-peak",
+      "passed": true
+    },
+    {
+      "detail": "launcher self-only descendants quiesced",
+      "name": "launcher-self-only",
+      "passed": true
+    },
+    {
+      "detail": "launcher memory cap respected",
+      "name": "launcher-cap",
+      "passed": true
+    },
+    {
+      "detail": "coordinator original handle terminal",
+      "name": "launcher-coordinator-terminal",
+      "passed": true
+    },
+    {
+      "detail": "collector original handle terminal",
+      "name": "launcher-collector-terminal",
+      "passed": true
+    },
+    {
+      "detail": "launcher did not terminate unrelated processes",
+      "name": "launcher-no-termination",
+      "passed": true
+    },
+    {
+      "detail": "observer within deadline & streams sealed",
+      "name": "observer-deadline",
+      "passed": true
+    },
+    {
+      "detail": "schedule original handle terminal",
+      "name": "observer-schedule",
+      "passed": true
+    },
+    {
+      "detail": "worker original handle terminal",
+      "name": "observer-worker",
+      "passed": true
+    },
+    {
+      "detail": "observer transport self-only",
+      "name": "observer-transport-self-only",
+      "passed": true
+    }
+  ],
+  "evidenceMode": "bounded-receipt-fields; no lock or process mutation",
+  "failedChecks": [],
+  "kind": "sr0-display-selfjob-v4-supplemental-release-v1",
+  "lockMutationPerformed": false,
+  "lockReleaseDecision": "owner-cas-eligible-release-only",
+  "qualification": "blocked",
+  "qualificationClaim": false,
+  "reason": "process/parser qualification failed; release gate evaluates ownership cleanup only",
+  "releaseEligible": true,
+  "releaseOnly": true,
+  "status": "release-eligible-held"
+}

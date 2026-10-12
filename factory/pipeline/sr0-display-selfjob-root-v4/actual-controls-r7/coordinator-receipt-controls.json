@@ -1,0 +1,29 @@
+﻿{
+    "kind":  "sr0-display-coordinator-v4-receipt-controls",
+    "status":  "passed",
+    "cases":  [
+                  {
+                      "name":  "missing-start",
+                      "status":  "held",
+                      "errors":  [
+                                     "parent-certificate-missing:start-receipt-timeout",
+                                     "parent-certificate-missing:final-receipt-timeout",
+                                     "parent-certificate-missing:no-retained-process"
+                                 ]
+                  },
+                  {
+                      "name":  "invalid-parent",
+                      "status":  "held",
+                      "errors":  [
+                                     "parent-certificate-invalid:You cannot call a method on a null-valued expression.",
+                                     "parent-certificate-missing:final-receipt-timeout",
+                                     "parent-certificate-missing:kernel-terminal-timeout"
+                                 ]
+                  }
+              ],
+    "nativeActions":  0,
+    "lockActions":  0,
+    "guiActions":  0,
+    "deletions":  0,
+    "checkedAt":  "2026-10-11T22:28:00.6934350+00:00"
+}

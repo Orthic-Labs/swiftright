@@ -1,0 +1,45 @@
+{
+  "kind": "factory-count1-lifecycle-source-map-v3",
+  "version": 1,
+  "source": {
+    "path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/coordinator-count1-lifecycle-v3.ps1",
+    "role": "prospective-count1-coordinator",
+    "budgetsSeconds": {"outer": 300, "setup": 180, "capture": 60, "cleanup": 60},
+    "nativeWindowDeadlineSeconds": 30,
+    "nativeExitCleanupSeconds": 15
+  },
+  "overlaySources": [
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/interactive-task-rectangle-single-v3.ps1", "role": "interactive-task-desktop-and-memory-gate"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/dispatch-rectangle-single-v3.ps1", "role": "count1-dispatch"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/capture-rectangle-single-v3.ps1", "role": "count1-capture-window-inventory"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/uia-worker-invoke-v2.ps1", "role": "count1-uia-worker-retained-handle-fast-exit-overlay", "bytes": 11365, "sha256": "8b0d0b301f17229faddc149ee5df42c2183cfe442779a133c990866c42313d8c"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/all-owned-release-rectangle-r1.ps1", "role": "release-helper-with-definite-no-worker-start-branch", "bytes": 14413, "sha256": "9200fa49335a18cca8a4d6843995074dcfc623975ff2a12a503ab58e4fe343ac"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/Sr0OwnedJobProcess-v15.cs", "role": "frozen-self-job-helper-copy"}
+  ],
+  "sourceControls": [
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/recipe-binding-control-v1.ps1", "role": "optional-plan-source-recipe-ref-path-hash-bytes-join"},
+    {"path": "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3/test-uia-worker-fast-exit-controls.py", "role": "source-only-fast-exit-handle-stream-cleanup-fault-controls", "bytes": 4633, "sha256": "cc59a4b1f92ed2c5fd33ae29f7733dfa2c5ec147e26a2f65084ad5d90b400ca7"},
+    {"path": "factory/pipeline/pilot-next-source-v1/pilot-generic-capture-v1/support/definite-no-worker-start-v1.ps1", "role": "pinned-definite-prestart-validator", "bytes": 4792, "sha256": "8c8f81b6f9cacbb234c6585ecc2d81947ffd753ef24725f2fdc457294c7fa7ed"},
+    {"path": "factory/pipeline/pilot-next-source-v1/pilot-generic-capture-v1/support/test-definite-no-worker-start-controls.ps1", "role": "production-definite-prestart-fault-controls", "bytes": 3153, "sha256": "12d1394bf74514ce1a31b5c4fe5a30b8bf3c010872ec2b4ca23eee29463df666"}
+  ],
+  "derivedFrom": {
+    "path": "factory/native/windows/pilot-rectangle-fixed-root-v2/coordinator-count1-r1.ps1",
+    "hashRequiredAtStaging": true
+  },
+  "requiredProofs": [
+    "desktop-availability-default-readable",
+    "atomic-task-start-and-result-receipts",
+    "bounded-enumwindows-owned-pid-diagnostic",
+    "task-start-lineage",
+    "task-result-final-read",
+    "retained-parent-handle",
+    "kernel-terminal-exit",
+    "memory-cap-and-active-self-only",
+    "all-owned-renderer-and-worker-release",
+    "lock-cas-release"
+  ],
+  "nativeWindowActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0
+}

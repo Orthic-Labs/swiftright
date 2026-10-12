@@ -1,0 +1,3 @@
+Set sh = CreateObject("WScript.Shell")
+rc = sh.Run("powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\factory\native\windows\.work\rectangle-fixed-r11-v2\overlay-count20-r2\interactive-task-rectangle-count20-v1.ps1"" -Config ""D:\Claude\swiftright\factory\native\windows\.work\rectangle-fixed-r11-v2\control-count20-r2\config.json""", 0, True)
+WScript.Quit rc

@@ -1,0 +1,98 @@
+{
+  "kind": "factory-text-windows-style-overlay-source-v1",
+  "version": 1,
+  "status": "prospective-source-only",
+  "failureInput": {
+    "path": "factory/native/windows/pilot-text-root-v1/actual-failed-count1-r5/native/Sources/FactoryProbe/main.swift",
+    "error": "FactoryUnsupportedMeasurementStyle",
+    "line": 20,
+    "nativeActions": 0
+  },
+  "rows": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v1/patch_text_measurer.py",
+      "role": "fresh-main-style-overlay-generator",
+      "bytes": 4153,
+      "sha256": "525e96f67f45f5c896b5ea48990f00a21b9cddd438ae2cf3f6c5b5a20c521a79"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v1/test_text_measurer_style_controls.py",
+      "role": "source-only-style-fault-controls",
+      "bytes": 2828,
+      "sha256": "3ec77b8b7ea53d13d1ce026b6ba6f99a6340908899680bbacfd228896b712a7f"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v1/README.md",
+      "role": "style-overlay-source-contract",
+      "bytes": 2890,
+      "sha256": "5da387f0640c7b967b7b06504a4d60b23aff00d049c02e24ce8e640e361b47ca"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v1/materialize-text-style-case-v1.py",
+      "role": "fresh-tuple-case-final-plan-materializer",
+      "bytes": 17273,
+      "sha256": "sha256:e740be068c8e1bee05303993f0e07a2b6c380d40def8eca1488a52ebd8104a8c"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v1/test_materialize_text_style_case_controls.py",
+      "role": "fresh-tuple-case-measurement-fault-controls",
+      "bytes": 3757,
+      "sha256": "9e88b86a71347617d1431fd77c50fa008ce1affec09d2760e796b05941375d0c"
+    }
+  ],
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "lineage": {
+    "failedDonorMainSha256": "98492c1059c7734df79cbdccfb7c56211aadb9da32b2bdca6403719faab3d0ba",
+    "failedDonorWitnessSha256": "4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+    "failedDonorPlanSha256": "0a0bd332d34fc71da63ec59e453a901fd315967fb0556939b73228d68ab16ec3",
+    "failedDonorCompileReceiptHash": "a5842fbea8266587cf4749ed2376fb18d42a19c8ee0996346cc503f9358feb8f",
+    "failedDonorExeHash": "bca8fe5528b7845bf6000b31c1f45006db0685c6e8d16db1b650945db1a7a5e5",
+    "historicalDonorQualified": false,
+    "freshBuildRequired": true,
+    "freshTupleCaseMetadataRequired": true,
+    "rebindHistoricalCaseForbidden": true
+  },
+  "acceptedStyle": {
+    "fontMetadata": {
+      "familyName": null,
+      "fontID": "Font.system(size:24,weight:regular,design:default).id",
+      "pointSize": 24,
+      "weight": "regular",
+      "design": "default",
+      "isCustom": false
+    },
+    "lineLimit": null,
+    "scale": "measured request scale"
+  },
+  "preservedRejection": [
+    "legacy-body-without-metadata",
+    "custom-family",
+    "wrong-size",
+    "wrong-weight",
+    "wrong-design",
+    "line-limit",
+    "scale-drift",
+    "wrong-font-id"
+  ],
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "freshBuildSequence": [
+    "copy immutable donor package into fresh owned package; preserve donor hashes as lineage only",
+    "run patch_text_measurer.py once; bind new plan.sourceHash to generated main.swift bytes",
+    "emit prebuild plan with case absent; compile under existing jobs-1 lifecycle",
+    "materialize fresh tuple/case from measured compiler receipt, source, runtime, renderer, & host hashes",
+    "run materialize-text-style-case-v1.py only after actual prebuild receipt has exit/stream/job/native closure; output remains held until fresh native Count1/Count20",
+    "emit final plan with fresh case & measured expectedHostHash; issue fresh Count1 metadata before native",
+    "admit Count1, then issue/admit Count20; historical donor case, tuple, & receipts remain immutable"
+  ],
+  "freshMetadata": {
+    "count1BeforeCount20": true,
+    "captureIDsMustBeFresh": true,
+    "historicalMetadataRebindForbidden": true,
+    "sourceHashMustBeGeneratedOverlay": true,
+    "caseAndTupleMustUseMeasuredFinalBuild": true,
+    "windowsPrebuildReceiptRequired": true,
+    "archivedMacCaseReused": false,
+    "archivedMacHostReusedAsMeasuredInput": true
+  }
+}

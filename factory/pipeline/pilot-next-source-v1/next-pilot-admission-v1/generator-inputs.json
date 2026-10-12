@@ -1,0 +1,144 @@
+{
+  "schema": "next-pilot-generator-inputs-v1",
+  "status": "source-ready-held",
+  "qualification": "held",
+  "selectionRationale": "Toggle & disabled are registry control-state candidates with generated smoke outputs, recipe templates, & no renderer or ABI change proposed.",
+  "shared": {
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "rendererAbi": "0.6",
+    "rendererHash": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "registryEvidence": {
+      "path": "factory/registry/evidence/block-registry.json",
+      "bytes": 6595,
+      "sha256": "sha256:1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983"
+    },
+    "registryMembership": {
+      "path": "factory/registry/public-source-binding-v1/expected-registry-membership.json",
+      "bytes": 10915,
+      "sha256": "sha256:f1d482a89d7d09d741cb3dc0d49fc6532cb06a758a28c27efd09836f17728af3"
+    },
+    "registryResolution": {
+      "path": "factory/registry/public-source-binding-v1/registry-resolution.json",
+      "bytes": 8088,
+      "sha256": "sha256:d2287efa22421402f20cecc0cb4fc7de762374fe619fb25061dc7cecb063e948"
+    },
+    "generatorTemplate": {
+      "toggle": {
+        "path": "factory/recipes/witnesses/swiftui.toggle.witness.swift",
+        "bytes": 189,
+        "sha256": "sha256:9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c",
+        "templateFields": ["initial", "style"]
+      },
+      "disabled": {
+        "path": "factory/recipes/witnesses/swiftui.disabled.witness.swift",
+        "bytes": 177,
+        "sha256": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+        "templateFields": ["disabled", "color-scheme"]
+      }
+    }
+  },
+  "blocks": [
+    {
+      "id": "swiftui.toggle",
+      "candidateStatus": "held-candidate",
+      "registryStatus": "inventory",
+      "registryProgress": "not-started",
+      "bootstrapGroup": "control-state",
+      "semanticDependencies": ["swiftui.disabled"],
+      "symbols": [
+        "s:7SwiftUI6ToggleV",
+        "s:7SwiftUI6ToggleV4isOn5labelACyxGAA7BindingVySbG_xyXEtcfc",
+        "s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEG10Foundation23LocalizedStringResourceV_AA7BindingVySbGtcfc",
+        "s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEGAA18LocalizedStringKeyV_AA7BindingVySbGtcfc",
+        "s:7SwiftUI6ToggleVA2A4TextVRszrlE_4isOnACyAEGqd___AA7BindingVySbGtcSyRd__lufc"
+      ],
+      "recipe": {
+        "path": "factory/recipes/data/swiftui.toggle.json",
+        "bytes": 1897,
+        "sha256": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9",
+        "id": "swiftui.toggle.recipe"
+      },
+      "generatedCandidate": {
+        "sourcePath": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.swift",
+        "sourceBytes": 254,
+        "sourceSha256": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331",
+        "manifestPath": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.manifest.json",
+        "manifestBytes": 1776,
+        "manifestSha256": "sha256:ea1e48d8ea6bacbc256902afe0332718cfad791a4fb5123667100ef5f5d628af",
+        "caseId": "factory.probes.smoke.swiftui.toggle",
+        "caseHash": "sha256:9285e4480097d9ee373b283734b40f7c1ad790c995ecc82c7527b6f3327959e3",
+        "caseInputs": {"initial": false, "style": "automatic"},
+        "witnessType": "Witness_toggle",
+        "executionEligible": false
+      },
+      "negative": {
+        "path": "factory/recipes/witnesses/swiftui.toggle.negative.invalid-member.swift",
+        "bytes": 143,
+        "sha256": "sha256:35d951c666eaeaa0e7dd69fd20de45424e91717345853c46f1131750b553bfe8",
+        "mode": "must-not-compile"
+      },
+      "sourceFamily": {
+        "seedSourcePath": "factory/oracle/mac/seed-origin-v7/inputs/swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.swift",
+        "seedSourceBytes": 250,
+        "seedSourceSha256": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+        "seedManifestPath": "factory/oracle/mac/seed-origin-v7/inputs/swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+        "seedManifestBytes": 1801,
+        "seedManifestSha256": "sha256:00dae64ecf76966af6e2538e56f6b33dd6c6e664d82657dfd96f0604d3adeed1"
+      },
+      "generatorRequest": {
+        "template": "factory/recipes/witnesses/swiftui.toggle.witness.swift",
+        "values": {"initial": false, "style": "automatic"},
+        "mustPreserve": ["#if os(Windows) import SwiftRightRuntime #else import SwiftUI #endif", "Toggle", "labelsHidden", "toggleStyle"],
+        "mustReject": ["instrumentation insertion", "renderer ABI substitution", "post-capture relabel"]
+      }
+    },
+    {
+      "id": "swiftui.disabled",
+      "candidateStatus": "held-candidate",
+      "registryStatus": "inventory",
+      "registryProgress": "not-started",
+      "bootstrapGroup": "control-state",
+      "semanticDependencies": ["swiftui.toggle"],
+      "symbols": ["s:7SwiftUI4ViewPAAE8disabledyQrSbF"],
+      "recipe": {
+        "path": "factory/recipes/data/swiftui.disabled.json",
+        "bytes": 1702,
+        "sha256": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296",
+        "id": "swiftui.disabled.recipe"
+      },
+      "generatedCandidate": {
+        "sourcePath": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.swift",
+        "sourceBytes": 229,
+        "sourceSha256": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed",
+        "manifestPath": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.manifest.json",
+        "manifestBytes": 1826,
+        "manifestSha256": "sha256:96e08adaabfec69b419b8a51f0bfdf308968d8a1d4a38d8bdb4fdc42a23d603d",
+        "caseId": "factory.probes.smoke.swiftui.disabled",
+        "caseHash": "sha256:7fd2af5558a871cee9e59ddcb2a0437599da3b0f87c11b8eca52e367bc093c95",
+        "caseInputs": {"disabled": true, "color-scheme": "light"},
+        "witnessType": "Witness_disabled",
+        "executionEligible": false
+      },
+      "negative": {
+        "path": "factory/recipes/witnesses/swiftui.disabled.negative.disabled-action.swift",
+        "bytes": 266,
+        "sha256": "sha256:c70568f284de73c863bc5f656853b060619988b059c64b59da921b0aa20e444d",
+        "mode": "apple-behaviour"
+      },
+      "sourceFamily": {
+        "seedSourcePath": "factory/oracle/mac/seed-origin-v7/inputs/swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258.swift",
+        "seedSourceBytes": 229,
+        "seedSourceSha256": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+        "seedManifestPath": "factory/oracle/mac/seed-origin-v7/inputs/swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+        "seedManifestBytes": 1854,
+        "seedManifestSha256": "sha256:723db682df397090441c14c70475ea4d8fb8e244668e272e749f579df90ab54c"
+      },
+      "generatorRequest": {
+        "template": "factory/recipes/witnesses/swiftui.disabled.witness.swift",
+        "values": {"disabled": true, "color-scheme": "light"},
+        "mustPreserve": ["#if os(Windows) import SwiftRightRuntime #else import SwiftUI #endif", "Button(\"Continue\")", ".disabled(true)", "environment(\\.colorScheme, .light)"],
+        "mustReject": ["source-only disabled inference", "instrumentation insertion", "post-capture relabel"]
+      }
+    }
+  ]
+}

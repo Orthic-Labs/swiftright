@@ -1,0 +1,34 @@
+{
+  "kind": "factory-text-paint-default-overlay-source-v1",
+  "version": 1,
+  "status": "prospective-source-only",
+  "failureInput": {
+    "path": "factory/native/windows/pilot-text-style-root-v1/actual-count1-r2-diagnostic/native/native-01/host.stdout.txt",
+    "error": "FactoryUnsupportedTextPaintStyle",
+    "fontMeasurement": {"widthPX": 69.228516, "heightPX": 72.5},
+    "nativeActions": 0,
+    "setWindowPos": "secondary"
+  },
+  "rows": [
+    {"path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v2/patch_text_paint_default_v1.py", "role": "fresh-main-font-and-paint-overlay-generator", "bytes": 5688, "sha256": "d8b0588ae6df02bb6626084e8d1feb5307a7c9d2969c8d6b4521b95ff974d807"},
+    {"path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v2/test_text_paint_default_controls_v1.py", "role": "source-only-font-and-paint-fault-controls", "bytes": 4427, "sha256": "8b5de97654bb6a6d36acccf7a95a2e6859d576ec57c8fe9df8c903e308293318"},
+    {"path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-style-v2/README.md", "role": "fresh-overlay-contract", "bytes": 1852, "sha256": "d38280624c0e028316c877f7797044faaaccdddb27630c1f8bc75014024a5de8"},
+    {"path": "factory/native/windows/pilot-text-style-root-v1/package/Sources/FactoryProbe/main.swift", "role": "immutable-donor-main", "bytes": 16103, "sha256": "46d801645d479cbf459f08bac1292c5f3c89d82acf56862f0ad1549aa5093a95"},
+    {"path": "factory/native/windows/pilot-text-style-root-v1/package/Sources/FactoryProbe/Witness.swift", "role": "immutable-witness-source", "bytes": 403, "sha256": "4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"},
+    {"path": "factory/native/windows/api-final-9060345a-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift", "role": "immutable-resolved-color-contract", "bytes": 13611, "sha256": "154ab349766ab3d555eba5570e9b00b65da7f523a005cea74f205473c29a22ee"}
+  ],
+  "paintContract": {
+    "swiftUIExpression": "Color.primary",
+    "resolvedColor": "semantic:label",
+    "packedRGBA8": "0x1f1f1fff",
+    "channels": {"red": 31, "green": 31, "blue": 31, "alpha": 255},
+    "opacity": 1,
+    "customRGBA": false,
+    "sourceEvidence": "Controls.swift Color.primary -> semantic label; donor NativeMeasurer bridge color 0x1f1f1fff"
+  },
+  "fontContract": {"fontID": "Font.system(size:24,weight:regular,design:default).id", "familyName": null, "pointSize": 24, "weight": "regular", "design": "default", "isCustom": false, "lineLimit": null, "scale": "measured request scale"},
+  "rejected": ["legacy-body-without-metadata", "custom-family", "wrong-size", "wrong-weight", "wrong-design", "line-limit", "scale-drift", "wrong-font-id", "nil-paint", "secondary-paint", "custom-rgba-paint", "opacity-drift", "paint-byte-drift"],
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "freshBinding": {"sourceHash": "generated overlay main.swift", "caseTuple": "fresh measured output required", "historicalRebind": false}
+}

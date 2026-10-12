@@ -1,0 +1,24 @@
+{
+  "kind": "source-bound-case-inputs-v1",
+  "version": "1",
+  "candidate": "swiftui.circle.fixed.pilot-next",
+  "recipe": {
+    "id": "swiftui.circle.fixed.recipe",
+    "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/recipe.json",
+    "sha256": "sha256:22cbc4a3652dbc14ea500112bc440056047c324a0a30f633d66d4913dc00858c"
+  },
+  "inputs": {
+    "shape": "Circle()",
+    "style": "fill(Color.blue)",
+    "colorScheme": "light",
+    "frameDip": {"width": 40, "height": 40},
+    "viewportDip": {"width": 320, "height": 240}
+  },
+  "assertions": {
+    "shapeGeometry": "circle",
+    "semanticColor": "system.blue",
+    "backendPrimitive": "rect-radius-20",
+    "channels": ["layout", "paint"]
+  },
+  "status": "source-ready-measured-tuple-required"
+}

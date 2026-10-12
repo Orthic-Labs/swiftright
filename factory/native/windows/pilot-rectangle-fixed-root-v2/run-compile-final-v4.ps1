@@ -1,0 +1,1 @@
+& 'D:\Claude\swiftright\.factory-work\hosts\rectangle\compile-final-v4.ps1'

@@ -1,0 +1,16 @@
+{
+  "kind": "source-bound-case-inputs-v1",
+  "version": "1",
+  "candidate": "swiftui.text.layout.baseline.pilot-next",
+  "recipe": {"id": "swiftui.text.layout.baseline.recipe", "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/recipe.json", "hash": "sha256:f36beada372c117f860413ddfedb3645b11292a0ab8d2c71d9dc781ef6f8f12d"},
+  "inputs": {
+    "text": "Aa",
+    "font": {"family": "system", "size": 24, "weight": "regular", "design": "default"},
+    "foreground": "primary",
+    "colorScheme": "light",
+    "viewport": {"width": 120, "height": 48, "alignment": "center"}
+  },
+  "witness": {"path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/witness.swift", "sha256": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"},
+  "assertions": {"channels": ["layout", "paint", "text-observation"], "preserveRawAX": true, "frame": {"width": 120, "height": 48}},
+  "status": "source-ready-measured-tuple-required"
+}

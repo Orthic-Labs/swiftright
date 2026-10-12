@@ -1,0 +1,31 @@
+{
+  "kind": "factory-generic-capture-profile-contracts-v1",
+  "version": 1,
+  "nativeActions": 0,
+  "profiles": {
+    "text": {
+      "candidate": "swiftui.text.layout.baseline.pilot-next",
+      "casePrefix": "swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.",
+      "planKind": "factory-text-compiler-plan-v1",
+      "compileReceiptKind": "factory-text-owned-compile-v1",
+      "recipeHash": "sha256:ebb561f9bd90022182328202879f7a6f5067c192823d519698d11a678653f73d",
+      "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "recipe": {"id": "swiftui.text.layout.baseline.recipe", "block": "swiftui.text.layout.baseline", "font": {"family": "system", "size": 24, "weight": "regular", "design": "default"}, "viewportDip": {"width": 120, "height": 48}},
+      "sourceManifest": "text/source-dependency-manifest.json"
+    },
+    "circle": {
+      "candidate": "swiftui.circle.fixed.pilot-next",
+      "casePrefix": "swiftui.circle.fixed.recipe.pilot-next.circle-fixed-light.",
+      "planKind": "factory-circle-compiler-plan-v1",
+      "compileReceiptKind": "factory-circle-owned-compile-v1",
+      "recipeHash": "sha256:57fcd72382175df83a1fe29e4e387f1e902a37174caa44cd8fc50ebc0f411a15",
+      "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "recipe": {"id": "swiftui.circle.fixed.recipe", "block": "swiftui.circle.fill", "semanticColor": "system.blue", "frameDip": {"width": 40, "height": 40}, "viewportDip": {"width": 320, "height": 240}},
+      "sourceManifest": "circle/source-dependency-manifest.json"
+    }
+  },
+  "budgets": {"windowSeconds": 30, "exitSeconds": 15, "count1OuterSeconds": 300, "count20OuterSeconds": 840},
+  "requiredJoins": ["source", "runtime", "renderer", "recipe", "case", "tuple", "context", "binding", "integrationBindings", "serializer", "compileReceipt", "executable"]
+}

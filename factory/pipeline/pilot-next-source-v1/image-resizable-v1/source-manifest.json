@@ -1,0 +1,30 @@
+{
+  "kind": "factory-image-resizable-source-manifest-v1",
+  "version": 1,
+  "candidate": "swiftui.image.resizable.star-fill.pilot-next",
+  "status": "SOURCE_ONLY_HOLD",
+  "recipeRef": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/recipe.json",
+  "witnessRef": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/witness.swift",
+  "inputs": {
+    "symbol": "star.fill",
+    "resizable": true,
+    "fit": "contain",
+    "foreground": "yellow",
+    "colorScheme": "light",
+    "frame": {"width": 32, "height": 32}
+  },
+  "providerRequirement": "sfSymbolProvider",
+  "abiPrimitive": {"register": "swr_image_register", "release": "swr_image_release", "revision": "0.6"},
+  "rgbaProposal": {
+    "candidate": "swiftui.image.rgba-registered.v1",
+    "witness": "factory/pipeline/pilot-next-source-v1/image-resizable-v1/witness-rgba.swift",
+    "asset": "factory/pipeline/pilot-next-source-v1/image-resizable-v1/image-asset.swift",
+    "rendererBranch": "factory/pipeline/pilot-next-source-v1/image-resizable-v1/image-render-branch.swift",
+    "recipe": "factory/pipeline/pilot-next-source-v1/image-resizable-v1/rgba-recipe.json",
+    "sampling": "nearest source expansion to 32x32; backend draw is identity-sized",
+    "status": "PROPOSAL_SOURCE_ONLY"
+  },
+  "requiredFreshValues": ["sourceHash", "recipeHash", "tupleId", "tupleHash", "caseId", "caseHash", "rendererHash", "compilerReceiptHash", "captureIds", "imageIds"],
+  "qualification": "held-until-provider-or-rgba-block-admitted",
+  "effects": {"nativeActions": 0, "compilerActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}

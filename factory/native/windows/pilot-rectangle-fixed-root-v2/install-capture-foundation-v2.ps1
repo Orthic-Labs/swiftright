@@ -1,0 +1,9 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$zip='D:\Claude\swiftright\.factory-work\rectangle-fixed-capture-foundation-v2.zip';$temp='D:\Claude\swiftright\.factory-work\hosts\rectangle\capture-foundation-v2';$producer='D:\Claude\swiftright\factory\native\windows\.work\rectangle-fixed-r11-v2\producer';$host='D:\Claude\swiftright\.factory-work\hosts\rectangle'
+if(@(Get-Process swift,swiftc,swift-build,clang,FactoryProbe -ErrorAction SilentlyContinue).Count -or (Get-Content -Raw 'D:\Claude\desktop.lock').Trim() -cne 'free'){throw 'owned stage not quiescent'}
+if((Get-FileHash $zip).Hash.ToLowerInvariant() -cne 'dbba72a068770890065951590d0c3865342a170f43d77c63b8ac0def1eb30101' -or (Test-Path $temp) -or (Test-Path $producer)){throw 'fresh pinned foundation required'}
+Expand-Archive -LiteralPath $zip -DestinationPath $temp;$m=Get-Content -Raw (Join-Path $temp 'stage-manifest.json')|ConvertFrom-Json
+foreach($row in $m.files){$f=Join-Path $temp $row.path;if((Get-Item $f).Length -ne $row.bytes -or (Get-FileHash $f).Hash.ToLowerInvariant() -cne $row.sha256){throw 'source stage drift'}}
+New-Item -ItemType Directory $producer|Out-Null;Copy-Item -Path (Join-Path $temp 'producer\*') -Destination $producer -Recurse
+foreach($row in @($m.files|Where-Object{$_.path.StartsWith('host/')})){$f=Join-Path $host $row.path.Substring(5);if(Test-Path $f){if($row.path -cne 'host/package/plan.json' -or (Get-FileHash $f).Hash.ToLowerInvariant() -cne 'a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a'){throw 'overwrite scope rejected'}};Copy-Item -LiteralPath (Join-Path $temp $row.path) -Destination $f -Force}
+& (Join-Path $host 'preflight-capture-v2.ps1') -CompileReceiptSha256 '21b08f393d3c1bc9650b960a5b32aea01be826c704ebf7b8cb52e1d62d32cd0c' -ExeSha256 '62aa7d5b9a5b9001d697822d26b2d102d8934de1de4a02103f810e756f71af66' -SerializerControlSha256 '952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba'

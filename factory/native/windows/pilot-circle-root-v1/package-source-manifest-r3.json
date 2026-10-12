@@ -1,0 +1,121 @@
+{
+  "kind": "factory-circle-windows-source-package-v1",
+  "status": "SOURCE_ONLY",
+  "candidate": "swiftui.circle.fixed.pilot-next",
+  "basePlan": {
+    "path": "/Volumes/D/claude/swiftright/factory/native/windows/pilot-rectangle-root-v1/package/plan-final-v3.json",
+    "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+  },
+  "baseSourceBindings": [
+    {
+      "path": "Package.swift",
+      "bytes": 539,
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "path": "Sources/FactoryProbe/CaptureLease.swift",
+      "bytes": 398,
+      "sha256": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "bytes": 362,
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "bytes": 1646,
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "bytes": 1023,
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "bytes": 4574,
+      "sha256": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03"
+    },
+    {
+      "path": "Sources/FactoryProbe/MetricsLogging.swift",
+      "bytes": 2814,
+      "sha256": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4"
+    },
+    {
+      "path": "Sources/FactoryProbe/MetricsPayload.swift",
+      "bytes": 2349,
+      "sha256": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "bytes": 262,
+      "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "bytes": 15692,
+      "sha256": "sha256:1ac0c0d8d67ec4d1e3d2111475827b10c14ae920b2f42cf289702029f80b4e65"
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "bytes": 11275,
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "bytes": 2825,
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "path": "witness.manifest.json",
+      "bytes": 268,
+      "expectedSha256": "sha256:2bda38a7f0aed16e89148cbb9158535c7e8f6fb638896e413b1eed5ce81c8b22",
+      "actualSha256": "sha256:be67e189aa540a591a7d19453367cfcab03744e660edf674581ba72e339fea15",
+      "bindingMatched": false,
+      "replaced": true
+    }
+  ],
+  "transforms": {
+    "mainWitnessCall": {
+      "from": "Witness_shapes_rectangle_fill()",
+      "to": "Witness_circle_fixed()",
+      "count": 1,
+      "sha256": "sha256:900b982ac3ee69bc61814fa60eab7df379feaec89e0d2ab0a862a0386cded6e7",
+      "bytes": 16047
+    },
+    "circleWitness": {
+      "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-next-source-v1/circle-fixed-v1/witness.swift",
+      "sha256": "sha256:01f9fef3ab058a958bebf886191519e0102b05ff6b46acedd0d59a7aa8601f2e",
+      "bytes": 344,
+      "exact": true
+    },
+    "prebuildManifestReplacement": {
+      "path": "witness.manifest.json",
+      "replacementSha256": "sha256:4abc17bf5d5f125ba36ff9a21b92b6edf2e8b1ca15dbc1820f383a42c69d2bfc",
+      "replacementBytes": 239,
+      "metadataSha256": "sha256:4abc17bf5d5f125ba36ff9a21b92b6edf2e8b1ca15dbc1820f383a42c69d2bfc",
+      "replacesDonor": {
+        "path": "witness.manifest.json",
+        "bytes": 268,
+        "expectedSha256": "sha256:2bda38a7f0aed16e89148cbb9158535c7e8f6fb638896e413b1eed5ce81c8b22",
+        "actualSha256": "sha256:be67e189aa540a591a7d19453367cfcab03744e660edf674581ba72e339fea15",
+        "bindingMatched": false
+      }
+    },
+    "startupMarkers": [
+      "FACTORY_BRIDGE_LOAD_BEGIN",
+      "FACTORY_BRIDGE_LOAD_END",
+      "FACTORY_BRIDGE_ON_READY",
+      "FACTORY_BRIDGE_RUN_BEGIN",
+      "FACTORY_BRIDGE_RUN_END"
+    ]
+  },
+  "effects": {
+    "compilerActions": 0,
+    "nativeActions": 0,
+    "remoteActions": 0,
+    "guiActions": 0,
+    "lockActions": 0
+  }
+}

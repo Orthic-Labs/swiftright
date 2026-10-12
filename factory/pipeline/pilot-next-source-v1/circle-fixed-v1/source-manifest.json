@@ -1,0 +1,146 @@
+{
+  "kind": "factory-circle-fixed-source-manifest-v1",
+  "version": 1,
+  "candidate": "swiftui.circle.fixed.pilot-next",
+  "status": "SOURCE_ONLY",
+  "controlStatusMarker": "SOURCE_CONTROLS_PASS",
+  "packet": {
+    "witness": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/witness.swift",
+      "bytes": 344,
+      "sha256": "sha256:01f9fef3ab058a958bebf886191519e0102b05ff6b46acedd0d59a7aa8601f2e"
+    },
+    "recipe": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/recipe.json",
+      "bytes": 1331,
+      "sha256": "sha256:22cbc4a3652dbc14ea500112bc440056047c324a0a30f633d66d4913dc00858c"
+    },
+    "caseInputs": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/case-inputs.json",
+      "bytes": 760,
+      "sha256": "sha256:1b0dd101b364a7cb05f896c46ba08c1594b54e523fc2d41c139bdd2d3dd26700"
+    },
+    "hostBranch": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/host-branch.swift",
+      "bytes": 2030,
+      "sha256": "sha256:d4a0461bc9fe1bfa6e81e01dbf56c6804d2482a74aad80ccb19bd0e3c33d977f"
+    },
+    "factoryFillGlue": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/factory-fill-glue.swift",
+      "bytes": 1646,
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    "planGenerator": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/prepare-circle-plan.py",
+      "bytes": 3461,
+      "sha256": "sha256:a0b908a12961b7de81a0794255d3ab2a070889121a6346d4b1c427ff240cc8fc"
+    },
+    "materializer": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/materialize-circle-case-v1.py",
+      "bytes": 10446,
+      "sha256": "sha256:3917bac3eaa57dac16904042b0cbce02bd082acffc077a9ef22daf1f487234e3"
+    },
+    "controls": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/test-circle-controls.py",
+      "bytes": 3051,
+      "sha256": "sha256:d07f047a8bce91e41369aa417f9ecbf43323d1deb1feb4d4397fa4c3e774b3c2"
+    },
+    "readme": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/README.md",
+      "bytes": 3608,
+      "sha256": "sha256:0a92ae70bdd2d4c53e6a513c969299841601aba10b18d2bb47b16e6e22e62dc4"
+    }
+  },
+  "macCapture": {
+    "source": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/mac-capture-v1/capture_origin_circle_r1.py",
+      "bytes": 35679,
+      "sha256": "sha256:be7887d7b8225a79f8816c66a6fe739450b96c4fbb3b5c0235d261a9686a1bb9"
+    },
+    "host": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/mac-capture-v1/CaptureHost.swift",
+      "bytes": 13839,
+      "sha256": "sha256:6a6dda83909673528e0c627e4dcba3a8512ee1994ba058fe0a8884fdcde7e7f4",
+      "fixedViewportDip": {"width": 320, "height": 240},
+      "sizingOptions": []
+    },
+    "axClient": {
+      "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/mac-capture-v1/AXClient.swift",
+      "bytes": 4086,
+      "sha256": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+    },
+    "witnessType": "Witness_circle_fixed",
+    "pilotBlock": "swiftui.circle.fixed"
+  },
+  "existingInputs": {
+    "runtimeShapes": {
+      "path": "factory/native/windows/module-origin-37429120-20261011/runtime/Sources/SwiftRightRuntime/Shapes.swift",
+      "bytes": 3541,
+      "sha256": "sha256:3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+    },
+    "factoryFill": {
+      "path": "factory/native/windows/remaining-five-hosts-v2/shapes.fill-stroke/package/Sources/FactoryProbe/FactoryFill.swift",
+      "bytes": 1646,
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    "factoryViewport": {
+      "path": "factory/native/windows/remaining-five-hosts-v2/shapes.fill-stroke/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "bytes": 3051,
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    "factoryProbeReference": {
+      "path": "factory/native/windows/remaining-five-hosts-v2/shapes.fill-stroke/package/Sources/FactoryProbe/main.swift",
+      "bytes": 13240,
+      "sha256": "sha256:7eb1781ce3ed1c12c79d49113e921df1b34730ece8460d16555528660c05e3dc"
+    }
+  },
+  "contract": {
+    "shape": "Circle()",
+    "style": "fill(Color.blue)",
+    "colorScheme": "light",
+    "frameDip": {
+      "width": 40,
+      "height": 40
+    },
+    "viewportDip": {
+      "width": 320,
+      "height": 240
+    },
+    "semanticColor": "system.blue",
+    "semanticColorARGB": "0x007affff",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "rendererABI": "0.6",
+    "backendPrimitive": "rect-radius-20"
+  },
+  "requiredFreshBindings": [
+    "sourceHash",
+    "recipeHash",
+    "caseId",
+    "caseHash",
+    "tupleId",
+    "tupleHash",
+    "runtimeCommit",
+    "runtimeSourceTreeHash",
+    "rendererHash",
+    "compilerReceiptHash",
+    "windowsExeHash",
+    "macHostHash",
+    "captureIds",
+    "imageIds",
+    "measuredClientMetrics"
+  ],
+  "replayPlan": {
+    "count1BeforeCount20": true,
+    "count20": 20,
+    "rawEvidencePreserved": true,
+    "qualification": "held-until-measured-capture"
+  },
+  "effects": {
+    "compilerActions": 0,
+    "nativeActions": 0,
+    "remoteActions": 0,
+    "guiActions": 0,
+    "lockActions": 0
+  }
+}

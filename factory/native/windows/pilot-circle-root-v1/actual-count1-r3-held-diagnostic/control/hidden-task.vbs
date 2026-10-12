@@ -1,0 +1,3 @@
+Set sh = CreateObject("WScript.Shell")
+rc = sh.Run("powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\factory\native\windows\.work\circle-r11-v1\overlay-count1-r3\interactive-task-circle-single-v3.ps1"" -Config ""D:\Claude\swiftright\factory\native\windows\.work\circle-r11-v1\control-count1-r3\config.json""", 0, True)
+WScript.Quit rc

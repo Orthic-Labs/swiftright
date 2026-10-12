@@ -1,0 +1,25 @@
+{
+  "kind": "source-bound-case-inputs-v1",
+  "version": "1",
+  "candidate": "swiftui.shapes.rectangle-fill.pilot-next",
+  "recipe": {
+    "id": "swiftui.shapes.fill-stroke.recipe",
+    "path": "factory/pipeline/pilot-next-source-v1/recipe.json",
+    "hash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57"
+  },
+  "inputs": {
+    "shape": "Rectangle()",
+    "style": "fill(Color.red)",
+    "color-scheme": "light"
+  },
+  "witness": {
+    "path": "factory/pipeline/pilot-next-source-v1/witness.swift",
+    "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+  },
+  "assertions": {
+    "width": 40,
+    "height": 20,
+    "channels": ["layout", "paint"]
+  },
+  "status": "source-ready-measured-tuple-required"
+}

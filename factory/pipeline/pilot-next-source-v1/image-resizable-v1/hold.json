@@ -1,0 +1,35 @@
+{
+  "kind": "factory-image-resizable-hold-v1",
+  "candidate": "swiftui.image.resizable.star-fill.pilot-next",
+  "status": "HOLD_PROTECTED_RENDERER_PROVIDER",
+  "recipe": {
+    "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/recipe.json",
+    "sha256": "sha256:7386167602d42709e1c7458837b60ed44a832a30a7398bed6d498a4f51dc21d5",
+    "witnessPath": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/witness.swift",
+    "witnessSha256": "sha256:4a9c0ad851d32019523ec3a8224073fa93a2ac4e032a87683633870e617f71dd"
+  },
+  "blockers": [
+    {
+      "id": "sf-symbol-provider-missing",
+      "evidencePath": "factory/native/windows/remaining-five-hosts-v2/image/package/plan.json",
+      "evidenceSha256": "sha256:09ed4bb3e35e859ed53653a22ba43dedc6183e90c6ac117496d74ad3369b8456",
+      "fact": "ABI0.6 has image_register RGBA bytes but no SF Symbol catalogue/provider"
+    },
+    {
+      "id": "renderer-image-node-missing",
+      "evidencePath": "factory/native/windows/remaining-five-hosts-v2/image/package/Sources/FactoryProbe/main.swift",
+      "evidenceSha256": "sha256:fecc6d294c74da9c1d81e0ea6f6813489765277f95031142dd62de04bfc47253",
+      "fact": "Renderer switch has no Image node/provider branch"
+    }
+  ],
+  "abiPrimitive": {
+    "register": "swr_image_register",
+    "release": "swr_image_release",
+    "bridgeEvidencePath": "factory/native/windows/remaining-five-hosts-v2/dependencies/staged-bridge-inputs-r09/Sources/SwiftRightBridge/Bridge.swift",
+    "bridgeEvidenceSha256": "sha256:cce02240c0b1f4e4af771a998177f0ee880d235b4781b416d23f49a6ab9a7f56",
+    "headerEvidencePath": "factory/native/windows/remaining-five-hosts-v2/dependencies/staged-bridge-inputs-r09/Sources/CSwiftRight/swiftright.h",
+    "headerEvidenceSha256": "sha256:d7e0dc20261574eda91ac74a714d6460b21e45cdf6335b4fb64a30db5876f649"
+  },
+  "nextBlock": "swiftui.image.rgba-registered-v1",
+  "effects": {"nativeActions": 0, "compilerActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}

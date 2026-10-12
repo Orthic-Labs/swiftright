@@ -1,0 +1,62 @@
+{
+  "kind": "sr0-display-strict-input-repair-v1-pins",
+  "sourceFiles": {
+    "materializer": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/materialize-strict-inputs-v1.ps1",
+      "sha256": "99f60b670af2f50011d75edb0b31953c2831171b1a351dc4df577274f3296323"
+    },
+    "analyzer": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/analyze-workload-v3-strict-input-v1.py",
+      "sha256": "d068aed982569e48dbccd760c66ba5789e73c9a31b37a3888264c31a769b43b7"
+    },
+    "controls": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/test-strict-input-repair-controls-v1.ps1",
+      "sha256": "78585cc7e282072dd5abc92f1cf7afc8bfdb59a20eea382b21f1abc278795386"
+    }
+  },
+  "macMaterializer": {
+    "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/materialize-mac-archive-v1.py",
+    "sha256": "fdb79f6214c46e4e92b685c40863a8c1093e9c0cd074d8df8442ae48fa01c768",
+    "rawRoot": "probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/actual-mac20",
+    "build": "probes/sr0-b/workload/out-mac/build-mac.json",
+    "incremental": null,
+    "maxFileBytes": 67108864,
+    "maxTotalBytes": 134217728
+  },
+  "windowsMaterializer": {
+    "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/materialize-windows-inputs-v1.py",
+    "sha256": "9a468e7b167f51230cffb9281d66dab32d3d876865d184131ca6a1d33137e623",
+    "rawRoot": "factory/pipeline/sr0-display-selfjob-root-v4/observer-r6/actual-native-raw",
+    "build": "probes/sr0-b/workload/out/tuple12-source-build-v1/observed-workload-r10-v7-r1/runs/build.json",
+    "incremental": "qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/incremental.json",
+    "maxResultBytes": 2097152,
+    "maxCsvBytes": 67108864,
+    "maxStreamBytes": 8388608,
+    "maxTraceBytes": 33554432,
+    "maxTotalBytes": 134217728
+  },
+  "raw": {
+    "root": "factory/pipeline/sr0-display-selfjob-root-v4/observer-r6/actual-native-raw",
+    "resultSha256": "29a286681773306a803e5cc593021e44d79828977a09c050ae2ff8be02a0b814",
+    "csvSha256": "93c935def2e87455c71dab9b4c729f441776b4e51ce3146c854cb1cfd03713bf",
+    "resultBytes": 2720,
+    "csvBytes": 693538,
+    "presentmonStderrBytes": 65,
+    "retainedHandle": 2660
+  },
+  "explicitBindings": {
+    "build": "probes/sr0-b/workload/out/tuple12-source-build-v1/observed-workload-r10-v7-r1/runs/build.json",
+    "incremental": "qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/incremental.json",
+    "sourceManifestSha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+    "sourceFileSha256": "6e0f6ffb9d5afebb249412e92cbc76583a17c1a24f6602016d86dfdfa94b5429",
+    "exeSha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+    "rendererSha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"
+  },
+  "qualification": {
+    "displayGatePreserved": true,
+    "parityClaim": false,
+    "nativeActions": 0,
+    "compilerActions": 0
+  }
+}
+

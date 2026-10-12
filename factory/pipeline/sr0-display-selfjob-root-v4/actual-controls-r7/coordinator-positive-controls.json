@@ -1,0 +1,32 @@
+﻿{
+    "kind":  "sr0-display-coordinator-v4-positive-controls",
+    "status":  "passed",
+    "cases":  [
+                  {
+                      "name":  "zero",
+                      "expectedExit":  0,
+                      "status":  "passed",
+                      "parentCertificatePresent":  true,
+                      "parentKernelTerminal":  true,
+                      "parentExitSigned":  0,
+                      "parentExitDotnet":  0,
+                      "childExit":  0
+                  },
+                  {
+                      "name":  "natural-nonzero",
+                      "expectedExit":  17,
+                      "status":  "passed",
+                      "parentCertificatePresent":  true,
+                      "parentKernelTerminal":  true,
+                      "parentExitSigned":  17,
+                      "parentExitDotnet":  17,
+                      "childExit":  17
+                  }
+              ],
+    "processLaunches":  2,
+    "nativeActions":  0,
+    "lockActions":  0,
+    "guiActions":  0,
+    "deletions":  0,
+    "checkedAt":  "2026-10-11T22:28:23.0885385+00:00"
+}

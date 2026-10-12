@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "f70ab1ebe1f70ea4833bb1944a1195e89875684882ae0541a5f9a3da5904dd2c",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\observer-r6\\export-final-observer-r1.ps1",
+    "-ScriptSha256",
+    "0115fc2bdacaf5d9ae205229a4e9d7a4a6fccc99a0347126ee7b593a35c467d5",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\observer-r6\\export-final-observer-r1-transport.json",
+    "-DeadlineSeconds",
+    "45"
+  ],
+  "scriptSha256": "0115fc2bdacaf5d9ae205229a4e9d7a4a6fccc99a0347126ee7b593a35c467d5",
+  "budgetBytes": 268435456
+}

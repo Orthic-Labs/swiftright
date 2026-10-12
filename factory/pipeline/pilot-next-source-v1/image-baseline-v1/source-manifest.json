@@ -1,0 +1,61 @@
+{
+  "kind": "factory-image-source-manifest-v1",
+  "version": 1,
+  "candidate": "swiftui.image.baseline.pilot-next",
+  "block": "swiftui.image",
+  "status": "SOURCE_ONLY",
+  "nativeCapture": "not-run",
+  "qualification": "held-until-fresh-tuple-case-count1-count20-reader",
+  "rows": [
+    {
+      "role": "witness",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/witness.swift",
+      "bytes": 307,
+      "sha256": "sha256:4a9c0ad851d32019523ec3a8224073fa93a2ac4e032a87683633870e617f71dd"
+    },
+    {
+      "role": "recipe",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/recipe.json",
+      "bytes": 664,
+      "sha256": "sha256:7386167602d42709e1c7458837b60ed44a832a30a7398bed6d498a4f51dc21d5"
+    },
+    {
+      "role": "README",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/README.md",
+      "bytes": 1285,
+      "sha256": "sha256:12549bfa205f26c705fc9f75260f58898c8635926a149f9050b4799a022a2334"
+    },
+    {
+      "role": "windows-plan-generator",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/windows-capture-v1/prepare-image-windows-plan-v1.py",
+      "bytes": 5689,
+      "sha256": "sha256:bc469f5d1bdd30adee67f6907d8cae38a77b73fd923f3541ba90260b581638e8"
+    },
+    {
+      "role": "case-materializer",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/windows-capture-v1/materialize-image-case-v1.py",
+      "bytes": 4372,
+      "sha256": "sha256:aa13a91d309f7e1eecf373d82cd71046d5a67c71cee53325d8d91d50ff24870b"
+    },
+    {
+      "role": "admission-validator",
+      "path": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/windows-capture-v1/validate-image-admission-v1.py",
+      "bytes": 5192,
+      "sha256": "sha256:1d99f871f402d0a68854aa245693fc69a21e91db45c34a5ec471beab9d4cb107"
+    }
+  ],
+  "requiredFreshValues": [
+    "sourceHash",
+    "recipeHash",
+    "caseId",
+    "caseHash",
+    "tupleId",
+    "tupleHash",
+    "macHostHash",
+    "windowsHostHash",
+    "compilerReceiptHash",
+    "captureIds",
+    "imageIds"
+  ],
+  "effects": {"nativeActions": 0, "compilerActions": 0, "remoteActions": 0, "lockActions": 0}
+}

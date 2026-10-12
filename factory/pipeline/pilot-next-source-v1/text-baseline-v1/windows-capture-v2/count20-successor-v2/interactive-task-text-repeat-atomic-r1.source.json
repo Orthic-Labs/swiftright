@@ -1,0 +1,25 @@
+{
+  "kind": "factory-text-interactive-task-atomic-writer-source-v1",
+  "status": "SOURCE_ONLY",
+  "baseSource": {
+    "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-capture-v2/count20-successor-v2/interactive-task-text-repeat.ps1",
+    "role": "historical-prospective-base"
+  },
+  "overlay": {
+    "path": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-capture-v2/count20-successor-v2/interactive-task-text-repeat-atomic-r1.ps1",
+    "bytes": 6884,
+    "sha256": "2874225bf21459f6781c1a128dfdc36205131bf5a58ed21af448bb5e6fbf368d"
+  },
+  "writer": {
+    "receipts": [
+      "task-start.json",
+      "task-result.json"
+    ],
+    "staging": "same-directory fresh GUID temp file",
+    "serialization": "UTF-8 JSON <=2MiB",
+    "publish": "single File.Move into previously absent destination",
+    "existingEvidence": "never opened, replaced, or deleted"
+  },
+  "nativeWindowActions": 0,
+  "compilerActions": 0
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "pilot-next-source-manifest-v1",
+  "version": "1",
+  "candidate": "swiftui.shapes.rectangle-fill.pilot-next",
+  "recipe": {
+    "id": "swiftui.shapes.fill-stroke.recipe",
+    "path": "factory/pipeline/pilot-next-source-v1/recipe.json",
+    "sha256": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57"
+  },
+  "caseInputs": {
+    "shape": "Rectangle()",
+    "style": "fill(Color.red)",
+    "color-scheme": "light"
+  },
+  "witness": {
+    "path": "factory/pipeline/pilot-next-source-v1/witness.swift",
+    "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d",
+    "type": "Witness_shapes_rectangle_fill"
+  },
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "renderer": {"sha256":"sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"},
+  "status": "source-bound-only",
+  "measuredTuple": "required-before-case-materialization",
+  "nativeCapture": "not-run"
+}

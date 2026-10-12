@@ -1,0 +1,29 @@
+{
+  "kind": "factory-rectangle-count20-uia-diagnostic-source-manifest-v1",
+  "version": 1,
+  "status": "SOURCE_ONLY",
+  "nativeActions": 0,
+  "fixedWorkerExitDeadlineSeconds": 15,
+  "rows": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/worker.ps1",
+      "bytes": 4878,
+      "sha256": "sha256:6205d23d9ec74266dc2f0d53ae4863fd79ccb46c91152e2a972046f33dc0a327"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/read-uia.ps1",
+      "bytes": 751,
+      "sha256": "sha256:99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/worker-contract.json",
+      "bytes": 2169,
+      "sha256": "sha256:9f89142d50a137d68d141b195ec9165faf598801515399b56a295e407d96c6f1"
+    }
+  ],
+  "replacements": {
+    "workerContract": "stage packet worker-contract.json as producer dependencies/uia-worker/worker-contract.json; retain schema/invoker/helper rows unchanged",
+    "workerSource": "stage packet worker.ps1 as producer dependencies/uia-worker/worker.ps1; update worker-contract sourceBindings.worker.ps1 to listed hash",
+    "readUia": "stage packet read-uia.ps1 only if existing producer read-uia bytes match listed hash; otherwise preserve producer file & report drift"
+  }
+}

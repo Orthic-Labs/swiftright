@@ -1,0 +1,29 @@
+{
+  "kind": "factory-paired-text-circle-reader-source-manifest-v1",
+  "version": 1,
+  "status": "SOURCE_ONLY",
+  "nativeActions": 0,
+  "profiles": ["text", "circle"],
+  "entry": {
+    "path": "factory/pipeline/pilot-next-source-v1/paired-text-circle-v1/compare_paired.py",
+    "role": "bounded-paired-archive-reader-and-fault-controls",
+    "sha256": "sha256:c30a56110ff67b9cdcbd90bb1cb9f4985e417a087312564f2de43db25da198dc",
+    "bytes": 17917
+  },
+  "constraints": {
+    "jsonBytes": 2097152,
+    "evidenceBytes": 67108864,
+    "imageBytes": 8388608,
+    "totalEvidenceBytes": 268435456,
+    "pixels": 4000000,
+    "runs": 20,
+    "semanticStatus": "held",
+    "parityStatus": "held"
+  },
+  "requiredJoins": [
+    "caseID", "caseHash", "tupleID", "tupleHash", "sourceHash", "recipeHash",
+    "compileReceiptHash", "executableHash", "rendererHash", "captureID", "imageID",
+    "originalHandleRetained", "ownedExited", "jobActiveCount", "lockReleased"
+  ],
+  "faultControls": ["missing-run", "wrong-pid", "wrong-case", "wrong-byte-hash", "wrong-parent-proof", "wrong-pixel-ref"]
+}

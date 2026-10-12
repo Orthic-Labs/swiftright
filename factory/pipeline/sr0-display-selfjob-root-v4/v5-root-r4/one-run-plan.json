@@ -1,0 +1,85 @@
+{
+  "aggregateJobMemoryLimitBytes": 1073741824,
+  "base": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1",
+  "controlRoot": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7",
+  "deadlineSeconds": 900,
+  "execution": "fresh native diagnostic only; strict display gate retained",
+  "factoryRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4",
+  "keyRate": 10,
+  "killOnJobClose": false,
+  "lockPath": "D:\\Claude\\desktop.lock",
+  "manifestPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v5-r4\\one-shot-manifest.json",
+  "measure": 60,
+  "memoryLimitFlags": "0x200",
+  "noActivate": true,
+  "noResources": true,
+  "pollSeconds": 1,
+  "rows": 200,
+  "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v5-r4",
+  "runs": 1,
+  "schedulePath": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r4\\schedule-once-v5.ps1",
+  "scheduleSha256": "0e4764909669db74bb54a57c42ae4718b35d4081db9fb86764357cbc9bac3d82",
+  "schema": "sr0-display-selfjob-v4-fresh-one-run",
+  "sources": {
+    "collector": {
+      "bytes": 41233,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r4\\collector-selfjob-v5.ps1",
+      "sha256": "8445b49736fad71ef946749be4c16edfd29b4c1ff7966d63e3d61291fd63d024"
+    },
+    "coordinator": {
+      "bytes": 9580,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r4\\coordinator-selfjob-v5.ps1",
+      "sha256": "413611aba3abe96204b8511df206c7c70207709191e5efa28cebdba0b5dcf268"
+    },
+    "frozenTask": {
+      "bytes": 36190,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\task-workload-v8.ps1",
+      "sha256": "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e"
+    },
+    "helper": {
+      "bytes": 6495,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\Sr0OwnedJobProcess-v15.cs",
+      "sha256": "89ce3d84f565180c89ad43a753f7c9e44319dca206f3c5d6d5ba80ac5e05197a"
+    },
+    "launcherHelper": {
+      "bytes": 12112,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\Sr0LauncherOwnedJobProcess-v4.cs",
+      "sha256": "4b9e3d22978b2f17887c72ea28973ccfb4043f047c1287bdae0cffa8c6258a5d"
+    },
+    "parser": {
+      "bytes": 6836,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\controls-r7\\receipt-parser-v4.ps1",
+      "sha256": "8a9c033b0a2272ec39a555e9c1e7b4e9b6c22b46fec8a5ee1967891b384f422d"
+    },
+    "presentMonExe": {
+      "bytes": 980320,
+      "path": "D:\\Claude\\tools\\presentmon\\PresentMon-2.6.0-x64.exe",
+      "sha256": "b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af"
+    },
+    "rendererDll": {
+      "bytes": 11887616,
+      "path": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\swiftright_render.dll",
+      "sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"
+    },
+    "worker": {
+      "bytes": 15281,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r4\\run-once-v5.ps1",
+      "sha256": "7ce4fe7c5d16481949198df300ede44a0fae74d11f37aab4aa466e255d52224d"
+    },
+    "workloadExe": {
+      "bytes": 5233152,
+      "path": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\scratch\\out\\Products\\Release-windows-x86_64\\WorkloadWin.exe",
+      "sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c"
+    },
+    "wrapper": {
+      "bytes": 516,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r4\\launch-once-v5.vbs",
+      "sha256": "962d827963e5fc0c9dae1069a7eae1bfc8c45ec2e8383d3f23c9e797745a4bf0"
+    }
+  },
+  "status": "source-pin-plan",
+  "tag": "SR0-factory-display-selfjob-v5-root-r4",
+  "taskName": "SR0-factory-display-selfjob-v5-root-r4",
+  "warmup": 10,
+  "wscriptPath": "C:\\Windows\\System32\\wscript.exe"
+}

@@ -1,0 +1,59 @@
+{
+  "kind": "factory-count20-mta-admission-source-map-v1",
+  "version": 1,
+  "sources": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/stage-count20-mta-admission.ps1",
+      "role": "contract-driven-count20-stager-admission",
+      "bytes": 9791,
+      "sha256": "3a4cf0dde419bef1fa84d3cff7478742e4e10c627937755d43c4cb5bcaede037"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/capture-rectangle-count20-mta-v1.ps1",
+      "role": "active Count20 capture bound to MTA invoker overlay",
+      "bytes": 44982,
+      "sha256": "32efde5f75aecb8b35d7e2c26ddfdc62ff96189de78a655017540caa5427f72c"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/assert-count20-count1-certificate.ps1",
+      "role": "strict successful Count1 prerequisite production guard",
+      "bytes": 3139,
+      "sha256": "a84ce5acaeaf9c2f63ec15a1a44901a736a03e194fa4297577f686a3f66a61c2"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/test-count20-count1-certificate-controls.ps1",
+      "role": "production certificate positive and fault controls",
+      "bytes": 2287,
+      "sha256": "b53ad01da3453730ded3cce60031102a840e4758f8e718624ee407a29be47992"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/prepare-count20-execution-v1.ps1",
+      "role": "fresh Count20 issuer/coordinator execution-template preparation",
+      "bytes": 8428,
+      "sha256": "232b7f4a3c5d79bc41c1289949fedebefec267abdd310ece16ef2890ecfcd6bb"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/count20-mta-admission-v1/README.md",
+      "role": "staging-command contract",
+      "bytes": 3816,
+      "sha256": "df43ca50303579e2d3425eedd5ddb34a4033057bd56042a73acf62fae6185236"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1/assert-uia-source-closure.ps1",
+      "role": "pre-native-UIA-source-closure-admission",
+      "bytes": 8202,
+      "sha256": "65452d50bed0ac3f581a6fe485954c506aa60314af49b49be61030d5f47ffe0b"
+    }
+  ],
+  "requiredWorkerContractBinding": "invoke-worker-mta.ps1",
+  "activeOverlay": {
+    "capturePath": "lifecycle/capture-rectangle-count20-v1.ps1",
+    "invokerPath": "lifecycle/uia-worker-invoke-v2.ps1",
+    "workerApartment": "MTA"
+  },
+  "requiredCounts": [1, 20],
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0
+}

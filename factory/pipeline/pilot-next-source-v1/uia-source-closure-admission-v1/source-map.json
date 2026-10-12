@@ -1,0 +1,36 @@
+{
+  "kind": "factory-uia-source-closure-admission-source-map-v1",
+  "version": 1,
+  "sources": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1/assert-uia-source-closure.ps1",
+      "role": "pre-native-uia-producer-source-closure-admission",
+      "bytes": 8202,
+      "sha256": "65452d50bed0ac3f581a6fe485954c506aa60314af49b49be61030d5f47ffe0b"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1/test-uia-source-closure-controls.ps1",
+      "role": "source-only-positive-and-fault-controls",
+      "bytes": 5082,
+      "sha256": "b3cf7046fbe81b0ac92eca0d8aa4883b312f7c61b7bc59e8bfc92daeb26ffc90"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1/README.md",
+      "role": "staging-contract",
+      "bytes": 1426,
+      "sha256": "34d425aa0697466ed151026d3f73967463628476888b66de1803b21f3ddc45e0"
+    }
+  ],
+  "requiredIntegrationRows": [
+    "dependencies/uia-worker/worker.ps1",
+    "dependencies/uia-worker/invoke-worker-mta.ps1",
+    "dependencies/uia-worker/read-uia.ps1",
+    "dependencies/uia-worker/schema.ps1",
+    "dependencies/uia-worker/worker-contract.json",
+    "dependencies/uia-worker/support/cleanup.ps1"
+  ],
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0
+}

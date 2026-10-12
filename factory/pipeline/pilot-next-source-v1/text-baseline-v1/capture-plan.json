@@ -1,0 +1,14 @@
+{
+  "kind": "factory-text-capture-plan-v1",
+  "version": 1,
+  "candidate": "swiftui.text.layout.baseline.pilot-next",
+  "count1ThenCount20": true,
+  "runtimeAPI": {"name": "SwiftUI.Text", "existing": true, "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b"},
+  "renderer": {"sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"},
+  "font": {"family": "system", "size": 24, "weight": "regular", "design": "default", "fallbackPolicy": "record-measured-family-or-hold"},
+  "viewport": {"width": 120, "height": 48, "alignment": "center", "scale": "record-per-run"},
+  "mac": {"captureSource": "factory/pipeline/pilot-next-source-v1/mac-capture-same-group-v1", "permissionRequests": false, "activation": "background-orderBack", "preserveRawAX": true},
+  "windows": {"adapterSource": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/windows-capture-v1", "permissionRequests": false, "activation": "background", "preserveRawUIA": true},
+  "requiredJoins": ["recipeHash", "witnessHash", "caseHash", "tupleID", "runtimeCommit", "rendererHash", "compileReceipt", "hostHash", "font", "viewport", "rawAX", "rawUIA", "pixelArchive"],
+  "qualification": "hold-until-fresh-count1-and-count20-independent-reader"
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "next-pilot-capture-demands-v1",
+  "status": "held-source-demand",
+  "qualification": "held",
+  "shared": {
+    "requiredCounts": [1, 20],
+    "order": "fresh Count1 source-bound proof precedes fresh Count20",
+    "sourceJoin": ["case bytes/hash", "tuple bytes/hash", "recipe bytes/hash", "witness bytes/hash", "manifest bytes/hash", "runtime source tree", "compiler receipt", "renderer bytes/hash", "host binary bytes/hash", "acceptance config"],
+    "freshness": ["new capture IDs", "new run IDs", "new metadata nonce", "new Mac host receipt", "new Windows host receipt"],
+    "protocolRefs": [
+      "factory/pipeline/pilot-next-source-v1/count1-lifecycle-v3",
+      "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1",
+      "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1"
+    ],
+    "forbidden": ["reuse Padding/Rectangle/Text/Circle capture IDs", "historical tuple relabel", "renderer ABI change", "source-only qualification", "synthetic provider evidence"]
+  },
+  "blocks": [
+    {
+      "id": "swiftui.toggle",
+      "candidateCaseId": "factory.probes.smoke.swiftui.toggle",
+      "candidateCaseHash": "sha256:9285e4480097d9ee373b283734b40f7c1ad790c995ecc82c7527b6f3327959e3",
+      "caseInputs": {"initial": false, "style": "automatic"},
+      "sourceRefs": {
+        "source": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.swift",
+        "manifest": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.manifest.json",
+        "recipe": "factory/recipes/data/swiftui.toggle.json",
+        "witnessTemplate": "factory/recipes/witnesses/swiftui.toggle.witness.swift",
+        "negative": "factory/recipes/witnesses/swiftui.toggle.negative.invalid-member.swift"
+      },
+      "sourceAdmission": {
+        "generator": "substitute initial=false & style=automatic into exact witness template; preserve platform imports",
+        "compile": "fresh Mac & Windows source-bound compiler receipts; source hash must equal emitted witness bytes",
+        "preflight": "exact Toggle symbol joins from registry; no renderer switch-paint claim"
+      },
+      "macDemand": [
+        "permission-free AX preflight; background capture; fresh host/compiler/source receipts",
+        "AX role/value/state for Toggle before stimulus",
+        "one bounded space stimulus; prove state false→true & action ownership",
+        "compositor pixels/layout frame retained separately from state result"
+      ],
+      "windowsDemand": [
+        "fresh renderer-host compile from same witness & runtime tree",
+        "UIA role/name/toggle state before & after one bounded space stimulus",
+        "PrintWindow/compositor raw pixels & client metrics with DPI metadata",
+        "worker/renderer/original-parent terminal, memory, lock, & stream proofs for every run"
+      ],
+      "holds": [
+        "registry progress is not-started",
+        "native switch paint is unavailable in ABI0.6 plan; no paint parity claim",
+        "space stimulus, hit-testing, AX state, fresh host hashes, & Count1/Count20 archives absent",
+        "provider parity, tuple freeze, & qualification remain held"
+      ]
+    },
+    {
+      "id": "swiftui.disabled",
+      "candidateCaseId": "factory.probes.smoke.swiftui.disabled",
+      "candidateCaseHash": "sha256:7fd2af5558a871cee9e59ddcb2a0437599da3b0f87c11b8eca52e367bc093c95",
+      "caseInputs": {"disabled": true, "color-scheme": "light"},
+      "sourceRefs": {
+        "source": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.swift",
+        "manifest": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.manifest.json",
+        "recipe": "factory/recipes/data/swiftui.disabled.json",
+        "witnessTemplate": "factory/recipes/witnesses/swiftui.disabled.witness.swift",
+        "negative": "factory/recipes/witnesses/swiftui.disabled.negative.disabled-action.swift"
+      },
+      "sourceAdmission": {
+        "generator": "substitute disabled=true & color-scheme=light into exact witness template; preserve platform imports",
+        "compile": "fresh Mac & Windows source-bound compiler receipts; source hash must equal emitted witness bytes",
+        "preflight": "exact View.disabled symbol join; no enabled/disabled state inferred from source alone"
+      },
+      "macDemand": [
+        "permission-free AX preflight; background capture; fresh host/compiler/source receipts",
+        "AX enabled/action attributes for Button; attempt bounded activation only after baseline",
+        "compositor pixels/layout frame & dark/light environment metadata retained",
+        "record provider inability separately if disabled action is not exposed"
+      ],
+      "windowsDemand": [
+        "fresh renderer-host compile from same witness & runtime tree",
+        "UIA IsEnabled/InvokePattern baseline; bounded invoke must produce zero action when disabled",
+        "PrintWindow/compositor raw pixels, client metrics, DPI, & color scheme retained",
+        "worker/renderer/original-parent terminal, memory, lock, & stream proofs for every run"
+      ],
+      "holds": [
+        "registry progress is not-started",
+        "existing seed plan has executionEligible=false & native hit-testing unattempted",
+        "fresh source-bound host/compiler receipts, Count1/Count20 archives, & action-state evidence absent",
+        "font/theme behavior, provider parity, tuple freeze, & qualification remain held"
+      ]
+    }
+  ]
+}

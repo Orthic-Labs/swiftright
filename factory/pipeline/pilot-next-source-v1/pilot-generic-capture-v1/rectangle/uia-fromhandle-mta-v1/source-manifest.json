@@ -1,0 +1,20 @@
+{
+  "kind": "factory-rectangle-uia-fromhandle-mta-successor-v2",
+  "status": "prospective-source-only",
+  "observedFailure": {"stage":"before-from-handle","r3Archive":"factory/native/windows/pilot-rectangle-fixed-root-v2/actual-count20-r3-diagnostic/native/native-01/uia-worker","workerDeadlineSeconds":15,"nativeActions":0},
+  "workerApartment": "MTA",
+  "parentApartment": "observed-per-invocation",
+  "rows": [
+    {"path":"worker.ps1","role":"dedicated-MTA-FromHandle-worker","bytes":5400,"sha256":"144820b93ef5374f10461d798f935f5399e2eaeec7f82a6e6d2eb84c0eed9af4"},
+    {"path":"invoke-worker-mta.ps1","role":"retained-parent-invoker-derived-uia-worker-invoke-v2","bytes":11500,"sha256":"e8b62b517bb38d21b9006bdea5a5e76dd8b19491a8c5e37403d6cfa2bfe5a547"},
+    {"path":"worker-contract.json","role":"worker-helper-contract","bytes":1119,"sha256":"367cfa970f1a6e51b1c6b5f2c027df6256a9d2c4332923a8838c641f677fbae0"},
+    {"path":"schema.ps1","role":"MTA-aware-worker-schema","bytes":5931,"sha256":"21f7ec5659d877c7c2005b34535f0747a2dc528104d2cb3de9c6c3e90c5952f2"},
+    {"path":"read-uia.ps1","role":"pinned-UIA-reader","bytes":751,"sha256":"99622f92f851d8669b6f2b3b6290a542aa7d263406ac4bd93e8ad7bb6af881ad"},
+    {"path":"support/cleanup.ps1","role":"pinned-release-helper","bytes":6746,"sha256":"a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7"},
+    {"path":"support/stream-seal.ps1","role":"pinned-stream-helper","bytes":6200,"sha256":"4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d"},
+    {"path":"support/final-exit-certificate.ps1","role":"v2-terminal-helper","bytes":12293,"sha256":"3e3a2cab99320534cd8b3e43d32f3848cceb42a29fe767b7cc5994da4485230d"},
+    {"path":"test-uia-fromhandle-mta-controls.ps1","role":"production-schema-and-apartment-fault-controls-v5","bytes":4708,"sha256":"f0a5c50e942328af62e5716b24469694a3f5fedd5199fbd66ca6a003994632a1"},
+    {"path":"README.md","role":"stage-repair-contract","bytes":1206,"sha256":"476dd2b547da1336d88b4c9001794c36543e13139c604f7a17a1e2bc1d8c983a"}
+  ],
+  "preservedWorkerPins": {"targetIdentity":"measured-before-use","workerDeadlineSeconds":15,"uiaAssertions":"unchanged","nativeWindowActions":0,"compilerActions":0}
+}

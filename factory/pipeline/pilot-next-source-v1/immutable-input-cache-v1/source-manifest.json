@@ -1,0 +1,18 @@
+{
+  "kind": "factory-immutable-input-cache-source-manifest-v1",
+  "version": 1,
+  "candidate": "factory.immutable-input-cache.v1",
+  "status": "SOURCE_ONLY",
+  "files": {
+    "helper": {"path": "factory/pipeline/pilot-next-source-v1/immutable-input-cache-v1/immutable-input-cache.ps1", "bytes": 5896, "sha256": "sha256:be04b36dd0727b67a04fd643b39f24e54156cc013b5b034804fca362b9f1425d"},
+    "controls": {"path": "factory/pipeline/pilot-next-source-v1/immutable-input-cache-v1/test-immutable-input-cache-controls.ps1", "bytes": 2430, "sha256": "sha256:849cd84f2e8234b154714baf64c3bd12a29e26faf862370777c8c07022c5cd4d"},
+    "readme": {"path": "factory/pipeline/pilot-next-source-v1/immutable-input-cache-v1/README.md", "bytes": 1945, "sha256": "sha256:b0744cb5af182e8f28fb2699abffb92e2c8e3185ece1f471aee02de2fc7f39c4"}
+  },
+  "limits": {"maxHandles": 512, "maxDistinctInputBytes": 1073741824, "hashChunkBytes": 131072, "maxInputBytes": 67108864},
+  "lease": {"fileMode": "Open", "fileAccess": "Read", "fileShare": "Read", "options": "SequentialScan"},
+  "cachePolicy": {"whitelistOnly": true, "outputsCached": false, "ambientGetFileHashOverride": false, "closeInFinally": true},
+  "whitelistRoles": ["source", "tool", "exe", "dll", "reference"],
+  "requiredFaultControls": ["wrongHashRejected", "writeBlockedWhileLeased", "unlistedOutputRehashed", "reparseRejected"],
+  "integration": {"callers": ["preflight-capture-v2.ps1", "dispatcher", "capture-prelude"], "preserveDeadlines": {"setupSeconds": 180, "rendererSeconds": 30, "childExitSeconds": 15}},
+  "effects": {"compilerActions": 0, "nativeActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}

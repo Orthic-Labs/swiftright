@@ -1,0 +1,26 @@
+# Executes coordinator against two owned child fixtures, proving retained kernel-handle terminal
+# identity for natural zero & natural nonzero child exits.
+[CmdletBinding()]
+param([Parameter(Mandatory)][string]$CoordinatorPath,[Parameter(Mandatory)][string]$ChildPath,[Parameter(Mandatory)][string]$OutputPath)
+$ErrorActionPreference='Stop'
+$root=[IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $OutputPath) ("coordinator-positive-"+[guid]::NewGuid().ToString('N'))));[IO.Directory]::CreateDirectory($root)|Out-Null
+function New-Receipt([string]$Path,[string]$Text){if(Test-Path -LiteralPath $Path){throw "positive receipt must be fresh: $Path"};$bytes=[Text.Encoding]::UTF8.GetBytes($Text+"`r`n");$stream=[IO.File]::Open($Path,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read);try{$stream.Write($bytes,0,$bytes.Length);$stream.Flush($true)}finally{$stream.Dispose()}}
+function Read-BoundedJson([string]$Path){$item=Get-Item -LiteralPath $Path -Force;if(($item.Attributes -band [IO.FileAttributes]::ReparsePoint)-ne 0 -or $item.Length -gt 2097152){throw "positive verdict exceeds bound: $Path"};return [IO.File]::ReadAllText($item.FullName)|ConvertFrom-Json}
+$childItem=Get-Item -LiteralPath $ChildPath -Force -ErrorAction Stop;if($childItem.Length -gt 2097152 -or ($childItem.Attributes -band [IO.FileAttributes]::ReparsePoint)-ne 0){throw 'positive child source exceeds bound'};$childSource=[IO.File]::ReadAllText($childItem.FullName);foreach($needle in @('Write-AtomicFresh','[IO.File]::Move','parentHandleRetained','parentOriginalHandleRetained','Start-Sleep','exit $ExitCode')){if($childSource.IndexOf($needle,[StringComparison]::Ordinal)-lt 0){throw "positive child token missing: $needle"}};if($childSource.IndexOf('[IO.File]::Delete',[StringComparison]::OrdinalIgnoreCase)-ge 0){throw 'positive child contains deletion'}
+function Run-Positive([string]$Name,[int]$ExpectedExit){
+  $case=Join-Path $root $Name;[IO.Directory]::CreateDirectory($case)|Out-Null;$start=Join-Path $case 'start.json';$final=Join-Path $case 'final.json';$verdict=Join-Path $case 'verdict.json';$lock=Join-Path $case 'lock.txt';New-Receipt $lock 'SR0-DISPLAY-SELFJOB-positive'
+  $task="positive-$Name";$ps=Join-Path $PSHOME 'powershell.exe';$child=Start-Process -FilePath $ps -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File',$ChildPath,'-StartPath',$start,'-FinalPath',$final,'-TaskName',$task,'-ExitCode',([string]$ExpectedExit),'-HoldSeconds','8') -PassThru -WindowStyle Hidden
+  try{
+    $startDeadline=[DateTime]::UtcNow.AddSeconds(15);while(-not(Test-Path -LiteralPath $start) -and [DateTime]::UtcNow -lt $startDeadline){if($child.HasExited){throw "fixture exited before start receipt: $Name"};Start-Sleep -Milliseconds 100};if(-not(Test-Path -LiteralPath $start)){throw "fixture start receipt timeout: $Name"};$s=Read-BoundedJson $start;if(-not [bool]$s.parentHandleRetained -or [int64]$s.parentHandle -eq 0 -or [int64]$s.activeProcessCount -ne 1){throw "fixture start handle proof missing: $Name"}
+    & $ps -NoProfile -ExecutionPolicy Bypass -File $CoordinatorPath -StartReceiptPath $start -FinalReceiptPath $final -OutputPath $verdict -LockPath $lock -TaskName $task -MaxWaitSeconds 30 -PollSeconds 1 | Out-Null
+    $coordinatorExit=$LASTEXITCODE;if($coordinatorExit -ne 0){throw "coordinator positive case failed: $Name exit=$coordinatorExit"}
+    $v=Read-BoundedJson $verdict;$f=Read-BoundedJson $final;$expectedFinalStatus=if($ExpectedExit -eq 0){'completed'}else{'qualification-failed'}
+    if([string]$f.status -ne $expectedFinalStatus -or [int64]$f.workloadExit -ne $ExpectedExit -or -not [bool]$f.workloadExitIdentity){throw "fixture final ownership receipt mismatch: $Name"}
+    if([string]$v.status -ne 'passed' -or -not [bool]$v.parentCertificatePresent -or -not [bool]$v.parentKernelTerminal){throw "coordinator positive proof missing: $Name"}
+    if([int64]$v.parentExitSigned -ne $ExpectedExit -or [int64]$v.parentExitDotnet -ne $ExpectedExit){throw "coordinator exit identity mismatch: $Name"}
+    if(-not $child.HasExited){[void]$child.WaitForExit(15000)};if(-not $child.HasExited -or [int]$child.ExitCode -ne $ExpectedExit){throw "fixture exit mismatch: $Name"}
+    return [ordered]@{name=$Name;expectedExit=$ExpectedExit;status=[string]$v.status;parentCertificatePresent=[bool]$v.parentCertificatePresent;parentKernelTerminal=[bool]$v.parentKernelTerminal;parentExitSigned=[int64]$v.parentExitSigned;parentExitDotnet=[int64]$v.parentExitDotnet;childExit=[int]$child.ExitCode}
+  }finally{if($child){try{if(-not $child.HasExited){$child.Kill()}}catch{};try{[void]$child.WaitForExit(15000)}catch{};try{$child.Dispose()}catch{}}}
+}
+$cases=@((Run-Positive 'zero' 0),(Run-Positive 'natural-nonzero' 17))
+$parent=Split-Path -Parent ([IO.Path]::GetFullPath($OutputPath));if(-not(Test-Path -LiteralPath $parent)){[IO.Directory]::CreateDirectory($parent)|Out-Null};$out=[ordered]@{kind='sr0-display-coordinator-v4-positive-controls';status='passed';cases=$cases;processLaunches=2;nativeActions=0;lockActions=0;guiActions=0;deletions=0;checkedAt=[DateTimeOffset]::UtcNow.ToString('o')};$out|ConvertTo-Json -Depth 12|Set-Content -LiteralPath $OutputPath -Encoding UTF8

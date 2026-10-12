@@ -1,0 +1,22 @@
+harness=task-workload host=BOGUS-DELL user=adrds session=1 started=2026-10-12T06:27:40.7876152+05:30
+host qpc_freq=10000000 input_struct=0 gpu=Intel(R) Iris(R) Xe Graphics driver=32.0.101.7084 refresh_hz=60 res=3456x2160
+controller name=NVIDIA GeForce RTX 4070 Laptop GPU driver=32.0.16.1692 refresh_hz= res=x
+controller name=Intel(R) Iris(R) Xe Graphics driver=32.0.101.7084 refresh_hz=60 res=3456x2160
+exe=D:\Claude\swiftright\.work\sr0-r12-workload-v1\scratch\out\Products\Release-windows-x86_64\WorkloadWin.exe exe_sha256=7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c dll_sha256=7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2 instr=full runs=1 warmup_s=10 measure_s=60 rate_hz=10 rows=200 key_tail_s=0.5 resources=off key_mode=char foreground_s=8 paint_phase_ms=default
+power=Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)
+=== RUN r1 start=2026-10-12T06:27:41.0061143+05:30
+worker run=r1 pid=17992 parent_pid=46448 full_path=D:\Claude\swiftright\.work\sr0-r12-workload-v1\scratch\out\Products\Release-windows-x86_64\WorkloadWin.exe
+host_startup_guard run=r1 result=PASS arg=--sr0-noactivate
+pid run=r1 pid=17992 handle=2756 start_utc=2026-10-12T00:57:41.2309903Z qpc_start=1298541310778
+window_ready run=r1 visible=1 consecutive_answers=3 hung=0 after_ms=1366
+background_noactivate run=r1 result=PASS startup_activation=guarded zorder=HWND_BOTTOM
+window run=r1 hwnd=1775734 foreground=noactivate-background background_noactivate=PASS dpi=240 client_px=2400x1600 user_idle_ms=875
+context run=r1 phase=pre overlay_modules=nvspcap64.dll modules_total=105 overlay_procs=nvcontainer,NVDisplay.Container,NVIDIA Overlay
+inject run=r1 sent=669 fg_lost=0 send_fail=0 fg_events=0 fg_recovered=0 stop=deadline user_input_events=0 min_idle_ms=1609 minimized_samples=0 csv=D:\Claude\swiftright\factory\native\windows\.work\sr0-display-selfjob-v4\one-run-v5-r6\r1\inject.csv key_mode=char rate_hz=10 key_deadline_ms_from_start=69500
+context run=r1 phase=post overlay_modules=nvspcap64.dll modules_total=105 overlay_procs=nvcontainer,NVDisplay.Container,NVIDIA Overlay
+host_top run=r1 span_s=67.2 logical_cpus=20 pct_of_machine_excluding_workload=MsMpEng(56032):9.67;svchost(4724):5.28;WmiPrvSE(6968):2.5;svchost(36052):1.23;System(4):1.06;svchost(5748):1.01
+pid_exit run=r1 pid=17992 handle=2756 qpc_end=1299289345321 exit=0 kernel_terminal=1 kernel_exit_raw=0 kernel_exit=0 dotnet_exit=0
+stream_drains run=r1 worker_stdout=0 worker_stderr=1 sampler_stdout=1 sampler_stderr=1
+run_state id=r1 valid=0 reason=stream-drain-timeout
+worker_terminal=0 sampler_terminal=1 task_quiescent=0
+finished=2026-10-12T06:29:27.6624352+05:30 runs_valid=0 of 1

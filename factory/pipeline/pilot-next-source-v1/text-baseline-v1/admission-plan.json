@@ -1,0 +1,16 @@
+{
+  "kind": "factory-text-admission-plan-v1",
+  "version": 1,
+  "candidate": "swiftui.text.layout.baseline.pilot-next",
+  "stages": [
+    {"name": "source", "requires": ["recipe", "witness", "capture-plan", "runtime-api"]},
+    {"name": "mac-prebuild", "requires": ["compilerReceipt", "sourceHash", "streamSeals", "ownedExit", "binaryHash"]},
+    {"name": "windows-prebuild", "requires": ["sameWitnessHash", "sameRecipeHash", "rendererHash", "runtimeCommit", "fontContract", "viewportContract"]},
+    {"name": "case-materialization", "requires": ["measuredTuple", "macHostHash", "windowsHostHash", "exactCaseHash"]},
+    {"name": "count1", "requires": ["freshIssuedIDs", "rawAX", "rawUIA", "pixelArchive", "workerTerminal", "rendererTerminal", "memoryBound", "lockReleased"]},
+    {"name": "count20", "requires": ["successfulCount1", "20OrderedIDs", "sameFontContract", "sameViewportContract", "allRawJoins", "trustedReader"]}
+  ],
+  "rejectBeforeCapture": ["recipeHashDrift", "witnessHashDrift", "caseHashDrift", "tupleHostDrift", "runtimeDrift", "rendererDrift", "fontDrift", "viewportDrift", "missingRawAX", "missingRawUIA", "promptRequest", "foregroundActivation"],
+  "rawEvidencePolicy": {"ax": "preserve-entire-tree", "uia": "preserve-entire-tree", "pixels": "preserve-original-archive", "missingSemanticValue": "hold-with-reason"},
+  "historicalEvidence": "never-relabel"
+}
