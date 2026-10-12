@@ -1,8 +1,29 @@
+<img src=".github/banner.svg" alt="SwiftRight, in development: one Swift codebase, real SwiftUI on macOS, a SwiftUI-semantics runtime on Windows" width="100%">
+
 # SwiftRight
 
 A Swift desktop application SDK for macOS & Windows, in development: one SwiftUI codebase, actual SwiftUI/AppKit on Mac & a SwiftRight-owned SwiftUI-semantics runtime on Windows, drawn by a Rust renderer on GPUI 0.2.2 with AccessKit.
 
 **Status:** SR0 (dependency, host & slice qualification) is built and receipted but not closed, and work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). The Windows renderer, bridge, runtime & the SliceApp example build and run; the last fully qualified build is tuple 11 (fixture matrix 320/320, cross-compare against the Mac oracle 16/16; [docs/sr0-status.md](docs/sr0-status.md)). Still open: the slice contract is not frozen, the Windows MSIX package fails one interrupted-update check (W08), & the decisions listed under PENDING in `docs/sr0-status.md`. This is not a released SDK and not a claim of complete SwiftUI compatibility.
+
+## Where it stands
+
+Work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). SR0 evidence binds to one pinned set of builds (runtime commit, bridge header, renderer DLL hash, fixture binaries) recorded in [docs/sr0-snapshot.md](docs/sr0-snapshot.md); open items are in [docs/sr0-status.md](docs/sr0-status.md).
+
+| Measured on tuple 11 | Result | Where |
+|---|---|---|
+| Fixture matrix, 16 configurations x 20 runs, on the pinned Windows renderer | 320/320 | [docs/sr0-snapshot.md](docs/sr0-snapshot.md) |
+| Cross-compare of the same configurations against the macOS oracle | 16/16, 0 unallowed differences, 69 fault controls rejected | `probes/sr0-o/f1-cross/CROSS-ALL.md` |
+| Bridge smoke, timeout mode and pixel assertions | 40/40, 41/41, 10/10 | `examples/BridgeSmoke/` |
+| SliceApp packaged for both platforms | MSIX 0.1.0.0 and DMG 0.1.0 / 0.1.1 built; MSIX fails one interrupted-update check (W08) | `examples/SliceApp/`, [docs/sr0-status.md](docs/sr0-status.md) |
+
+## How it will work
+
+- On macOS, SwiftRight types will be SwiftUI's own types, with a direct AppKit escape hatch.
+- On Windows, a SwiftRight-owned runtime will own identity, state lifetime, dependency tracking, bindings, environment, layout proposals, transactions and lifecycle, and will render through a versioned C ABI to the Rust renderer. GPUI is the first renderer; Slint remains an unqualified alternative. UI Automation accessibility is a prerequisite, not an assumption.
+- Existing Rust engines will keep working: on Windows they load in-process as separate versioned DLLs behind their own C ABI, so a UI-only change does not rebuild the rendering stack.
+- Parity will be a tested contract, never a promise. Every API in the published inventory will have a compile fixture, a behavioural trace recorded on macOS and a Windows replay; unsupported APIs will fail at Windows compile time.
+- No compiler fork, no transpiler, no emulator for macOS binaries, no native WinUI controls, no second-language shell, and no AI service or network connection to render UI.
 
 ## Architecture
 
@@ -46,3 +67,7 @@ SwiftRight owns UI semantics & Swift adapters; RightKit supplies existing shared
 ## Licence
 
 No licence has been chosen yet. Until a licence file is added, all rights are reserved; the source is published for reading.
+
+---
+
+<picture><source media="(prefers-color-scheme: dark)" srcset=".github/orthic-labs-mark.svg"><img src=".github/orthic-labs-mark-light.svg" alt="Orthic Labs" width="22" style="max-width:100%;height:auto"></picture> **[Orthic Labs](https://orthiclabs.com)** · [github.com/Orthic-Labs](https://github.com/Orthic-Labs) · More: [Legion](https://github.com/Orthic-Labs/legion) · [SellRight](https://github.com/Orthic-Labs/sellright) · [Ember](https://github.com/Orthic-Labs/ember) · [Pulse](https://github.com/Orthic-Labs/pulse) · [RightKit](https://github.com/Orthic-Labs/rightkit) · [RustRight](https://github.com/Orthic-Labs/rustright)
