@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+repo=${1:?repo}
+scratch=${2:?internal scratch}
+case "$scratch" in /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/*) ;; *) echo "internal scratch required" >&2; exit 2;; esac
+source="$repo/factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v1/mac-source"
+dest="$scratch/image-system-star-fill-mac-source"
+[ ! -e "$dest" ] || { echo "fresh scratch required" >&2; exit 3; }
+[ -f "$source/Sources/FactoryProbe/Witness.swift" ]
+[ -f "$source/Sources/FactoryProbe/CaptureHost.swift" ]
+grep -F 'Image(systemName: "star.fill")' "$source/Sources/FactoryProbe/Witness.swift" >/dev/null
+! grep -E 'NSImage|Bundle\.module|CGRequestScreenCaptureAccess|AXIsProcessTrustedWithOptions' "$source/Sources/FactoryProbe"/*.swift >/dev/null
+mkdir -p "$dest"
+cp -R "$source/." "$dest/"
+printf '%s\n' '{"kind":"mac-source-stage-v1","probeTag":"swiftui.image.system-star-fill.v1","compilerStarted":false,"permissionRequests":false,"status":"source-staged"}'

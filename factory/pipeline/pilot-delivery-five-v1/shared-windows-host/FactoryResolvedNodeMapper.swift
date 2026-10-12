@@ -120,10 +120,23 @@ func factorySharedShapePrimitive(_ node: ResolvedNode, bounds: Rect,
               logicalWidth.isFinite, logicalWidth >= 0 else {
             throw NSError(domain: "FactoryShapeStrokeWidthRequired", code: 1)
         }
-        return .rect(bounds, color: 0, radius: radius,
+        let borderWidth = Float(logicalWidth) * scale
+        guard borderWidth.isFinite, borderWidth >= 0 else {
+            throw NSError(domain: "FactoryShapeStrokeWidthInvalid", code: 1)
+        }
+        // ABI border paint is centered on path edge. Expand path bounds by half
+        // stroke width so outer edge matches SwiftUI stroke geometry.
+        let halfBorder = borderWidth / 2
+        let strokedBounds = Rect(x: paintBounds.x - halfBorder,
+                                 y: paintBounds.y - halfBorder,
+                                 w: paintBounds.w + borderWidth,
+                                 h: paintBounds.h + borderWidth)
+        let strokedRadius = min(radius + halfBorder,
+                                 min(strokedBounds.w, strokedBounds.h) / 2)
+        return .rect(strokedBounds, color: 0, radius: strokedRadius,
                      borderColor: try factorySharedResolvedFill(paint.color,
                                                                  opacity: node.opacity),
-                     borderWidth: Float(logicalWidth) * scale)
+                     borderWidth: borderWidth)
     }
 }
 

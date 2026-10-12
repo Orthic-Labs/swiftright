@@ -1,0 +1,44 @@
+{
+  "schema": "factory-system-image-provider-map-v2",
+  "mappingVersion": "named-glyph-provider-v1",
+  "providerPolicy": {
+    "kind": "name-to-glyph-provider",
+    "resolution": "provider-table",
+    "parity": "substitute-provider-unverified",
+    "maxSymbols": 128,
+    "rasterization": "live-native-gdi-glyph-outline",
+    "cache": "none"
+  },
+  "symbols": {
+    "star.fill": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "E735",
+      "glyphIndex": 1408,
+      "foregroundSemantic": "system.yellow",
+      "width": 34,
+      "height": 30,
+      "status": "provider-live-declared",
+      "fontMetrics": {
+        "designUnitsPerEm": 2048,
+        "ascent": 2048,
+        "descent": 0,
+        "lineGap": 0
+      },
+      "glyphMetrics": {
+        "leftSideBearing": 2,
+        "advanceWidth": 2048,
+        "rightSideBearing": 2,
+        "topSideBearing": 49,
+        "advanceHeight": 2048,
+        "bottomSideBearing": 48
+      },
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      }
+    }
+  }
+}

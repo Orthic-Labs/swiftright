@@ -1,0 +1,189 @@
+{
+  "kind": "windows-observational-plan-v6-system-image",
+  "status": "source-ready-pending-root-build-and-native-render",
+  "candidate": "swiftui.image.system-star-fill.provider-bound.v8",
+  "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeSourceReceiptHash": "sha256:9c1c34cff32fd7078727daa54253a407c4771fe1da440537c3a109e9b6c25221",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "bridgeHeaderCommit": "862997c",
+  "bridgeABI": "0.6",
+  "rendererTuple": "tuple11",
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "compilerHash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v8/package",
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch",
+  "witness": "Sources/FactoryProbe/Witness.swift",
+  "sourceHash": "sha256:0862162052b143a52e3f556e41f70fa02612b0b3f6ee83d7f7aecd835f6a018b",
+  "recipePath": "../recipe.json",
+  "recipeCanonicalHash": "sha256:7f6914ffd582afda8d12a0d0e5b3b8d2fb36ef98d7b3425f9dc5e9aac0d39012",
+  "casePath": "case.json",
+  "caseHash": null,
+  "providerRequirements": [
+    {
+      "identity": "star.fill",
+      "provider": "Segoe Fluent Icons",
+      "glyph": "E735",
+      "mappingPath": "FactorySystemImageAssets.json",
+      "requiredStatus": "provider-live-declared",
+      "mappingSha256": "sha256:f68691213b2d0454f08230ea898b12d8f61740f44a20340b4966495249296812",
+      "materialization": "Live native GDI GetGlyphOutlineW rasterization is required at current target size/tint; historical r4 bytes remain provenance only and are not runtime input.",
+      "mappingVersion": "named-glyph-provider-v1",
+      "providerPolicy": "substitute-provider-unverified"
+    }
+  ],
+  "sourceBindingsPath": "../source-bindings.json",
+  "sourceBindingsHash": "sha256:8298d0f4405ee8f33b75d2045de7cde55e6bfadbae055b4847933ae600ab72a0",
+  "boundedAdapter": {
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "sourceCapBytes": 268435456,
+    "fileCap": 256,
+    "outputCapBytes": 8388608,
+    "timeoutSeconds": 600,
+    "qualification": "source-only compile request; root archives fresh compiler receipt, measured provider map, EXE, native capture, and paired joins"
+  },
+  "compileRequest": {
+    "kind": "swiftpm-windows-gui-release/1",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "target": "windows-x86_64",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch",
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "memoryCapBytes": 1073741824,
+    "argv": [
+      "build",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill-provider-bound-r7-v8\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill-provider-bound-r7-v8\\package\\build-system-star-provider-bound-r7-v8\\scratch",
+      "--build-system",
+      "native",
+      "-v",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "providerAssetMustBeMaterializedBeforeCompile": true,
+    "executionEligible": false
+  },
+  "imageSemantics": {
+    "runtimeRole": "ResolvedAccessibility.role=image from current 37429120 Graph.swift",
+    "bridgeRole": "NodeRole.image from current 0a745ab SwiftRightBridge Types.swift",
+    "registration": "ABI 0.6 retained RGBA8 ImageHandle; release at teardown",
+    "sourceWitness": "Image(systemName: star.fill).resizable().scaledToFit().frame(width: 32, height: 32).foregroundStyle(.yellow).environment(colorScheme: .light)",
+    "symbolMapping": "Name-to-glyph provider table: star.fill -> Segoe Fluent Icons E735; substitute provider, no SF Symbol parity claim.",
+    "hostContext": "Mac original host fixed 320x240 topLeading; Windows root proposal remains full client 320x240 with no centering transform.",
+    "providerEvidence": "provider-evidence/join.json; registry consumes live map declaration and current GDI raster, with no cached RGBA sidecar dependency."
+  },
+  "executionEligible": false,
+  "nativeParity": "hold-until-root-native-render-and-Mac-comparison",
+  "outputs": null,
+  "sourceBindings": [
+    {
+      "path": "FactorySystemImageAssets.json",
+      "sha256": "sha256:f68691213b2d0454f08230ea898b12d8f61740f44a20340b4966495249296812",
+      "bytes": 1190
+    },
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:9c1c34cff32fd7078727daa54253a407c4771fe1da440537c3a109e9b6c25221",
+      "bytes": 11265
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:4044c2229c8dd6f4564bc57f390ff7a33d3feac8297eaea0f2f5455a7bdb3af2",
+      "bytes": 1673
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512
+    },
+    {
+      "path": "Sources/FactoryProbe/FactorySystemImageRegistry.swift",
+      "sha256": "sha256:7d02f8da710d485ba2d357092d9cbc9377773df7e0e55b8a5325735e9f00f723",
+      "bytes": 8590
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:0862162052b143a52e3f556e41f70fa02612b0b3f6ee83d7f7aecd835f6a018b",
+      "bytes": 361
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:1042e4eb22f899e02136e8607dbda25ce94c1ff5a8669b280bb0b5ca05461ce8",
+      "bytes": 13955
+    },
+    {
+      "path": "case.json",
+      "sha256": "sha256:e270ddee7ce8ed806d772f41c0dae676347b2a9d9df956965022d5d014b9a85f",
+      "bytes": 1908
+    },
+    {
+      "path": "Sources/FactoryProbe/FactorySHA256.swift",
+      "sha256": "sha256:0d14fb83a13fa1fd3eafba3dbb4a0c727b227acefe3231efc5cd56c7f83d238a",
+      "bytes": 4281
+    },
+    {
+      "path": "Sources/FactoryProbe/FactorySystemImageProvider.swift",
+      "sha256": "sha256:c252d273af4a1e4fbe716ace3f18a4d5f641c1306569d6a9f14f096b828349b5",
+      "bytes": 6663
+    }
+  ],
+  "macSourcePath": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v8/mac-source",
+  "macWitnessHash": "sha256:0862162052b143a52e3f556e41f70fa02612b0b3f6ee83d7f7aecd835f6a018b",
+  "macPlanPath": "mac-source/plan.json",
+  "executionVariant": "image-system-star-fill-v8-provider-bound"
+}

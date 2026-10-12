@@ -1,5 +1,15 @@
 # Running held-work list
 
+## Original-five execution — 12 October 2026, 21:31 UTC
+
+- Fable R8 corrections reconciled; both source lanes active. No ten/twenty expansion before original five work & are verified.
+- Custom Layout selected primary two-child case has exact paired20 pixels; fresh direct-API witness now has Mac20 repeatability. Windows direct-API build & paired proof remain executable work, not protected holds.
+- Image v7 original `star.fill` witness compiles on Mac & repeats20 with byte-identical Windows source. Windows v6 quote/import errors archived; incremental v7 retry pending. Symbol shape/face/orientation remain unproven until actual Windows capture.
+- Stack v6 Windows compiler rejected missing `self` capture. Fresh source correction & incremental retry pending; typography differences remain observations, not established renderer attribution.
+- Original bundled-font single-line truncation is implementable through existing measurement/run API; earlier ABI lineLimit hold withdrawn. Source implementation prepared; real Windows run pending. Actual renderer selection of bundled Tinos remains unproven & may need protected resource-loading work.
+- Rounded original initializer defaults continuous in installed Apple SDK. Corrected semantic blue leaves572 differing pixels; existing circular-border approximation cannot establish continuous-path behavior. Renderer/ABI edits remain protected while SR0 OPEN.
+- Builds stay serial with1GiB compiler cap; controls128MiB. Current Mac20 controllers peaked below49MiB & terminated all owned processes. Fresh Mac binaries run only on internal disk; no permission requests.
+
 Updated 11 October 2026. Candidate implementation continues independently of these holds. No row grants parity or promotes a golden.
 
 Current takeover: root manages two source owners, SR0 & SR1. Factory padding r8 records actual UIA/PrintWindow bytes, sealed streams & numeric kernel exits; production archive reader admits its 13-role proof with no issues. Fresh padding Count20-r7 now has 20/20 production archive-reader proofs; paired comparison correctly blocks historical Mac r09 against Windows r11 case/tuple binding. Fresh matched-case captures are next. SR0 F1×20-r1/r2/r3 failed batches stay immutable; r5 driver checks a refreshed owned HWND/client before input. Full Mac matrix needs process-level no-prompt signer proof; W08 upstream repair & Narrator listening remain explicit holds. Every historical result below retains its original scope.
