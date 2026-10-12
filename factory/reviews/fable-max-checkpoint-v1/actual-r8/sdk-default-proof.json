@@ -1,0 +1,24 @@
+{
+  "kind": "factory-fable-r8-primary-sdk-correction-v1",
+  "path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/SwiftUICore.framework/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+  "bytes": 1472347,
+  "sha256": "4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13",
+  "lines13042to13056": [
+    "@frozen public struct RoundedRectangle : SwiftUICore::Shape {",
+    "  public var cornerSize: CoreFoundation::CGSize",
+    "  public var style: SwiftUICore::RoundedCornerStyle",
+    "  @inlinable public init(cornerSize: CoreFoundation::CGSize, style: SwiftUICore::RoundedCornerStyle = .continuous) {",
+    "        self.cornerSize = cornerSize",
+    "        self.style = style",
+    "    }",
+    "  @inlinable public init(cornerRadius: CoreFoundation::CGFloat, style: SwiftUICore::RoundedCornerStyle = .continuous) {",
+    "        let cornerSize = CGSize(width: cornerRadius, height: cornerRadius)",
+    "        self.init(cornerSize: cornerSize, style: style)",
+    "    }",
+    "  nonisolated public func path(in rect: CoreFoundation::CGRect) -> SwiftUICore::Path",
+    "  @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)",
+    "  nonisolated public var layoutDirectionBehavior: SwiftUICore::LayoutDirectionBehavior {",
+    "    get"
+  ],
+  "roundedInitializerDefault": "continuous"
+}

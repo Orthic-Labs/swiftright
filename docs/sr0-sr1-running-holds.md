@@ -1,5 +1,36 @@
 # SR0 & SR1 running holds
 
+## Fable R8 reconciled — 2026-10-12 21:22 UTC
+
+Actual Fable/max OFF-TRACK verdict retained with exactAPI/session bytes. Review corrected lost sharedstroke expansion & fixable hostlineLimit. Its circular-default claim was disproved by currentSDKSwiftUICore line13049 (continuous); nativeLayout geometry bridge already exists at pinnedruntime374. Evidence & reconciliation: `factory/reviews/fable-max-checkpoint-v1/reconciliation-r8.md`.
+
+Withdraw protected-ABI lineLimit hold: original single-line truncation can be implemented by existing host measurer/retained runs; worker owns that concrete repair now. Genuine Tinos renderer resource selection remains unproven/protected. Shared centeredstroke bug being repaired; actual Roundedv5 already expanded geometry, so r16continuous residual remains separate. Custom original primarytwochild20exact remains verified selected staticbehavior; unnecessary aliases will be removed & original expandedtemplate compiled through available runtime. Draft RTL/statefulaxes do not automatically gate original pilot delivery. No pixel tolerances/normalizers adopted.
+
+Fresh review completed21:18:13UTC, exit0/quiescent,peak475037696B; nextdeadline22:18:13UTC or majorcheckpointsooner. Bothsourceworkers resumed, root builds actualImage/Stack; no newfactoryframework. Originalfivewholecohort0/5, ten/twentyhelduntilfiveverified. Renderer/ABI/SR0protectedpaths remainheldwhileSR0OPEN. No review orpeer grants permissionchange.
+
+## Original-five checkpoint — 2026-10-12 21:09 UTC
+
+Custom primary two-child width48/spacing4 case now has fresh Mac20/Windows20 exact full800×600 RGB pixels, alongside original one-child width32 exact20. Evidence: `factory/pipeline/pilot-delivery-five-v1/root-execution/custom-layout-native-capture-count20-r3/paired20-pixel-comparison.json`. Selected static behavior is verified; whole original cohort remains0/5, no ten/twenty expansion. RTLwidth32 source v5 exists; stateful environment-change & invalid-member coverage remain unobserved.
+
+Observed product holds, independent of capture infrastructure:
+- Rounded original continuous stroke: semantic blue repaired1648→572 differing pixels; origin agrees, Windows right/bottom coverage1px shorter. Current circular ABI border approximation cannot express continuous corners; protected renderer/ABI support held while SR0OPEN. No normalization/fixture offset applied.
+- Tinos original: fresh actual Windows Count1 & Mac20 exist. lineLimit1 paints3lines; actual font selection unproven because privateGDI registration does not populate rendererDirectWrite system collection. Resource/customcollection & maxLines/truncation need protected renderer/ABI route. Fresh v5 rejects lost semantics explicitly; hold is not implementation.
+- Stack: Mac publicTextRenderer probe executed, unchanged main witness pixels exact vs originalreference. Actual Macline16DIP vs WindowshosthardcodedSegoeUI16/24; providerpolicy gap needs legitimate shared semanticdefault resolution, not glyph-derived fixture settings. Sourcev6WindowsstageZIP prepared; actualcompile/capture pending.
+- Image: liveGDIprovider v6 source prepared, cachedsingle-glyph sidecar removed; actualWindowscompile/capture pending. SegoeFluentIconsE735 substitution is explicit, does not establish SF Symbol parity; selectedface & rasterorientation need observation.
+- SR0 remainsOPEN: tuple11lastqualified,tuple12candidate; protected renderer/ABI boundary remains. Peercoordination sent viaPulse with observed holds, no permission change inferred.
+
+Both sourceworkers terminal at checkpoint. New implementation/compiler/native dispatch paused for freshFablemax r8 major checkpoint review, earlier than21:15:59UTC hourly deadline. Current ownedjobs terminal & lockfree; required archives verified. Font/Rounded stages moved within ignoredrepo.factory-work/retired, no Delldeletion. Sourcecommit98c7677 scopes165ownedpaths1.69MB. RootWindowscompiler cap1GiB, observedCustomprebuildJobpeak958824448B; all supervisedlocalcontrols within caps/quiescent.
+
+## Resumed delivery — 2026-10-12 20:48 UTC
+
+Fable Max r7 completed & corrections reconciled. Original five remain0/5 fully verified; no expansion dispatch. Both source workers resumed, root owns actual jobs. No new framework: existing execution helpers now accept fresh compile revisions for rolling stage reuse.
+
+- Custom Layout: one-child Mac20/Windows20 full800×600 RGB comparison is exact in every pair; original primary two-child width48/spacing4 case is next. Evidence: `factory/pipeline/pilot-delivery-five-v1/root-execution/custom-layout-native-capture-count20-r2/paired20-pixel-comparison.json`. Count20 admission failure was wrong source-input kind/count, repaired without relaxing joins. Failed installer & mistakenly dispatched rejected entry are retained; neither launched native windows.
+- Tinos: corrected Windows v4 incremental prebuild passed, final build passed; fresh Mac20 repeats. Native Windows capture pending. Private GDI registration cannot supply renderer's DirectWrite system font collection; actual family selection remains unproven. Real fix requires protected renderer/custom collection support, held while SR0 stays OPEN. Recipe source found at `factory/resources/fonts/pilot/recipe.json`; finalizer now follows actual expanded-case descriptor provenance instead of assuming sourceHash means recipe hash.
+- RoundedRectangle & ZStack: Fable found wrong semantic blue dominates prior differences. Previous corner-only/font attribution is withdrawn. Shared colour corrections & Stack common mapper are source-ready; fresh native residual comparison pending before cause assignment.
+- Image: live provider v6 is source-ready; actual Windows compilation/capture pending. GDI row orientation unverified; Segoe substitution cannot prove original SF Symbol parity.
+- Ten/twenty expansion: held until original five verified. Protected renderer/ABI, SR0 matrix/performance repair, W08, Narrator listen & freeze remain as documented. Current actual review deadline21:15:59UTC; native/compiler groups remain supervised & rolling stages stay inside ignored workspace.
+
 ## Actual checkpoint — 2026-10-12 20:09 UTC
 
 Both source workers idle; all owned compiler/native jobs terminal. Hourly Fable Max r7 is running read-only under768MiB RSS cap. New implementation dispatch pauses until actual review is reconciled. Original five remain0/5 fully verified.
