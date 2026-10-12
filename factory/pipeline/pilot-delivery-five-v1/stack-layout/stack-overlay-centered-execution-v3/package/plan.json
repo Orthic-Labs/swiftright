@@ -1,0 +1,156 @@
+{
+  "kind": "windows-observational-plan-v3-stack-overlay-centered",
+  "status": "source-ready-pending-root-build-and-capture",
+  "candidate": "swiftui.stack-overlay.centered-host.execution-v3",
+  "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "bridgeHeaderCommit": "862997c",
+  "bridgeABI": "0.6",
+  "rendererTuple": "tuple11",
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "compilerHash": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v3/package",
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package\\build-stack-overlay-execution-v3\\scratch",
+  "witness": "Sources/FactoryProbe/Witness.swift",
+  "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+  "recipePath": "../recipe.json",
+  "recipeCanonicalHash": "sha256:defb1db9e15fc29a4a6e959addb972ded0b0681bcddbde8c48529f849f1d1fd0",
+  "casePath": "case.json",
+  "caseHash": null,
+  "hostCorrection": {
+    "kind": "intrinsic-root-subtree-centering-v1",
+    "source": "FactoryCenteredLayout.swift",
+    "translation": "viewport.x + (viewport.w - root.w)/2 - root.x; viewport.y + (viewport.h - root.h)/2 - root.y",
+    "scope": "every resolved node in root subtree; background unchanged",
+    "runtimeBehaviorChanged": false
+  },
+  "boundedAdapter": {
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "sourceCapBytes": 268435456,
+    "fileCap": 256,
+    "outputCapBytes": 8388608,
+    "timeoutSeconds": 600,
+    "qualification": "source-only compile request; root archives fresh compiler receipt, EXE, native lifecycle, screenshot/UIA, and layout joins"
+  },
+  "compileRequest": {
+    "kind": "swiftpm-windows-gui-release/1",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "target": "windows-x86_64",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package\\build-stack-overlay-execution-v3\\scratch",
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "memoryCapBytes": 1073741824,
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package\\build-stack-overlay-execution-v3\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-centered-execution-v3\\package\\build-stack-overlay-execution-v3\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "executionEligible": false,
+    "buildSystem": "native"
+  },
+  "executionEligible": false,
+  "sourceBindingsPath": "../source-bindings.json",
+  "sourceBindingsHash": "sha256:aad558b9865c2df17405918ea0a26efe48ca8c20a91f9edfe40071e8357902be",
+  "nativeParity": "hold-until-root-build-and-capture",
+  "outputs": null,
+  "sourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+      "bytes": 1392
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+      "bytes": 424
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:159843d9a7170851358c8566f4cae92b4d15df3554b6b9baa1878a41892b096d",
+      "bytes": 13760
+    },
+    {
+      "path": "case.json",
+      "sha256": "sha256:e97c766a72389731fc45acece637a9efe0f7421f2fc079d5e24b88eb6c40f863",
+      "bytes": 1143
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    }
+  ],
+  "tuple": {
+    "id": "sr1-stack-overlay-centered-execution-v3-r1-20261013",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "abiVersion": "0.6",
+    "hostHashes": {
+      "windows": null
+    }
+  },
+  "packetPlanHash": "sha256:56abab1c174650831d1db920fb3d8c22b2b211ecfdda367e59dcf30a075446a3"
+}

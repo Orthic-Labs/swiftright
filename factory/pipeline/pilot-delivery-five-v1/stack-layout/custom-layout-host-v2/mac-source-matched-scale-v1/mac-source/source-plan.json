@@ -1,0 +1,79 @@
+{
+  "kind": "factory-custom-layout-matched-scale-mac-source-plan-v1",
+  "packetVersion": "custom-layout-host-v2-mac-source-matched-scale-v1",
+  "status": "SOURCE_READY_ROOT_GROUP_SUPERVISOR_REQUEST",
+  "case": {
+    "id": "swiftui.custom-layout.recipe/case/b30ed0b185e8cb29",
+    "hash": "sha256:fb33f02bd1f764e233bc356d2ceabb980203876ded9dd25e59c122d6dab1a39a"
+  },
+  "recipe": {
+    "id": "swiftui.custom-layout.recipe",
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1"
+  },
+  "sourceHash": "sha256:f032a6b2a4b1f850fcce02ed97964eb05c2bc8965feb3403db975c8da44c7ee3",
+  "witness": {
+    "path": "Sources/CustomLayoutMacHost/Witness.swift",
+    "sha256": "sha256:f032a6b2a4b1f850fcce02ed97964eb05c2bc8965feb3403db975c8da44c7ee3",
+    "sameSourceBytes": true,
+    "windowsPath": "Sources/FactoryProbe/Witness.swift"
+  },
+  "windowsPlanHash": "sha256:87e4874cc0fa73c189bc75bda92f948aa28046190975a9069a8ad582b938c43a",
+  "windowsManifestHash": "sha256:4e8546fc2d49c4f61f94461ebbd7ebd23a51edeadc5753551c8ff48b1f311332",
+  "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "treeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "host": {
+    "widthPoints": 320,
+    "heightPoints": 240,
+    "witnessIntrinsicPoints": {
+      "width": 32,
+      "height": 32
+    },
+    "renderScale": 2.5,
+    "expectedPixels": {
+      "width": 800,
+      "height": 600
+    },
+    "background": "opaque-white",
+    "colorScheme": "light",
+    "placement": "centered-in-fixed-viewport",
+    "paintPath": "NSHostingView.layoutSubtreeIfNeeded + ImageRenderer.cgImage"
+  },
+  "entryArguments": [
+    "--preflight --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-matched-scale-v1/scratch/preflight",
+    "--observe --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-matched-scale-v1/scratch/observe"
+  ],
+  "cacheRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-matched-scale-v1",
+  "scratchRootPrefix": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-matched-scale-v1/scratch/",
+  "rootGroupSupervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py",
+  "maxResidentBytes": 1073741824,
+  "permissionRequests": false,
+  "screenCapture": false,
+  "accessibilityQueries": false,
+  "nativeActions": 0,
+  "qualification": "held",
+  "colorObservation": {
+    "macObservedRGBA": [
+      255,
+      56,
+      60,
+      255
+    ],
+    "currentWindowsSemanticRGBA": [
+      255,
+      59,
+      48,
+      255
+    ],
+    "prospectiveWindowsSemanticRGBA": [
+      255,
+      56,
+      60,
+      255
+    ],
+    "prospectivePatch": "prospective/factory-fill-red-v1.patch",
+    "appliedToV2WindowsPackage": false
+  }
+}
