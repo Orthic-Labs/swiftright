@@ -282,6 +282,12 @@ public struct EnvironmentValues {
         get { self[ToggleStyleMetadataKey.self] }
         set { self[ToggleStyleMetadataKey.self] = newValue }
     }
+
+    /// The `.buttonStyle` selected for the Buttons below (the style's type name); nil when none applies.
+    var buttonStyleMetadata: String? {
+        get { self[ButtonStyleMetadataKey.self] }
+        set { self[ButtonStyleMetadataKey.self] = newValue }
+    }
 }
 
 private enum LayoutDirectionKey: EnvironmentKey {
@@ -301,6 +307,10 @@ private enum LabelsHiddenKey: EnvironmentKey {
 }
 
 private enum ToggleStyleMetadataKey: EnvironmentKey {
+    static var defaultValue: String? { nil }
+}
+
+private enum ButtonStyleMetadataKey: EnvironmentKey {
     static var defaultValue: String? { nil }
 }
 

@@ -105,7 +105,7 @@ public final class ResolvedNodePainter {
             nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: primitives, semantic: emission.semantic))
             let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
             // A Button's label takes the button's label colour (grey when the button is disabled) unless the label sets its own.
-            let childTextColor = n.kind == "Button" ? ButtonArtwork.labelColor(isEnabled: n.accessibility.isEnabled) << 8 | 0xff : textColor
+            let childTextColor = n.kind == "Button" ? try ButtonPainter.labelColor(of: n) : textColor
             for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
@@ -192,10 +192,14 @@ public final class ResolvedNodePainter {
 
         case "Button":
             let plan = try ButtonPainter.plan(node, bounds: bounds, scale: scale)
-            let handle = try images.registerImage(width: UInt32(plan.image.width), height: UInt32(plan.image.height), rgba: plan.image.rgba, stride: 0)
-            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
-            pendingShapeImages[id] = handle
-            return NodeEmission(primitives: [.image(handle, plan.placement)],
+            var primitives: [Primitive] = []
+            if let image = plan.image {
+                let handle = try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
+                if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+                pendingShapeImages[id] = handle
+                primitives = [.image(handle, plan.placement)]
+            }
+            return NodeEmission(primitives: primitives,
                                 semantic: SemanticNode(role: .button, label: node.accessibility.label ?? "",
                                                        actions: plan.isEnabled ? [.invoke] : [], identifier: node.id, disabled: !plan.isEnabled),
                                 flags: [.hitTarget], structural: false)

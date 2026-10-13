@@ -9,7 +9,8 @@
  3. the straight top and bottom bands between the caps are the flat fill colour of the Mac button;
  4. the label is centred in the button (vertically and horizontally within labelCentreTolerancePx) and its darkest ink is within labelColourTolerance
     of the Mac's darkest ink (the label colour: dark when enabled, grey when disabled).
-It REPORTS, never gates: the button width on each side and their difference (the label advance difference), both label ink boxes, the label pixels that differ."""
+It REPORTS, never gates: the button width on each side and their difference (the label advance difference), both label ink boxes, the label pixels that differ.
+`.borderedProminent` and the default button (accent fill, white label) use the same gate: the fill is read from the Mac button, the label ink is the luminance farthest from it."""
 import json, sys
 from pathlib import Path
 from PIL import Image, ImageChops
@@ -20,7 +21,7 @@ from pair_control_report import bbox_nonwhite
 
 
 def label_ink(img, button, fill, cap, thresh=40):
-    """bbox and darkest luminance of the pixels in the button's label region that differ from the fill by at least thresh."""
+    """bbox and extreme luminance (the label colour) of the pixels in the button's label region that differ from the fill by at least thresh."""
     x0, y0, x1, y1 = button
     rect = (x0 + cap - 4, y0 + 4, x1 - cap + 4, y1 - 4)
     crop = img.crop(rect)
@@ -29,7 +30,8 @@ def label_ink(img, button, fill, cap, thresh=40):
     mask = lum.point(lambda v: 255 if abs(v - f) >= thresh else 0)
     b = mask.getbbox()
     if b is None: return None, None
-    return [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]], min(lum.getdata())
+    # the label's ink colour: the luminance farthest from the fill's (darkest on a light fill, brightest on the prominent accent fill)
+    return [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]], max(lum.getdata(), key=lambda v: abs(v - f))
 
 
 def main():

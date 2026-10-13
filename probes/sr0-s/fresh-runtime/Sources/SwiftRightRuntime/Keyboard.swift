@@ -40,6 +40,22 @@ public struct EventModifiers: OptionSet, Hashable, Sendable {
     public static let control = EventModifiers(rawValue: 1 << 3)
 }
 
+/// A key with its modifiers. Apple: https://developer.apple.com/documentation/swiftui/keyboardshortcut
+public struct KeyboardShortcut: Hashable, Sendable {
+    public let key: KeyEquivalent
+    public let modifiers: EventModifiers
+    public init(_ key: KeyEquivalent, modifiers: EventModifiers = .command) { self.key = key; self.modifiers = modifiers }
+    /// Return, no modifiers: the default button of a window.
+    public static let defaultAction = KeyboardShortcut(.return, modifiers: [])
+    /// Escape, no modifiers: the cancel button.
+    public static let cancelAction = KeyboardShortcut(.escape, modifiers: [])
+}
+
+extension KeyboardShortcut {
+    /// True for the shortcut that makes a Button the window's default button.
+    var isDefaultAction: Bool { key == KeyEquivalent.return && modifiers.isEmpty }
+}
+
 public struct KeyboardChord: Hashable, Sendable {
     public let key: KeyEquivalent
     public let modifiers: EventModifiers

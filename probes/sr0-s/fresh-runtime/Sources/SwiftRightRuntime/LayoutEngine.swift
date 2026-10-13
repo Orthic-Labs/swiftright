@@ -274,17 +274,21 @@ extension Graph {
 
     // MARK: Button
 
-    /// A Button is its label inside the bordered push button macOS draws by default: the label plus `ButtonMetrics.padding`, the label centred in
-    /// the button. (No `buttonStyle` exists in the runtime yet, so every Button is this style.)
+    /// A Button is its label inside the push button macOS draws for the bordered looks (the label plus `ButtonMetrics.padding`, the label centred in the
+    /// button), or the label alone for `.borderless` and `.plain`.
+    private func buttonPadding(_ node: Node) -> LayoutSize {
+        ButtonMetrics.padding(for: ButtonLook(style: node.environment.buttonStyleMetadata, isDefaultAction: false))
+    }
+
     private func measureButton(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
-        let padding = ButtonMetrics.padding
+        let padding = buttonPadding(node)
         let inner = ProposedViewSize(width: proposal.width.map { max(0, $0 - 2 * padding.width) }, height: proposal.height.map { max(0, $0 - 2 * padding.height) })
         let label = measureGroup(node, inner)
         return LayoutSize(width: label.width + 2 * padding.width, height: label.height + 2 * padding.height)
     }
 
     private func placeButton(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
-        let padding = ButtonMetrics.padding
+        let padding = buttonPadding(node)
         let inner = LayoutRect(x: rect.minX + padding.width, y: rect.minY + padding.height,
                                width: max(0, rect.width - 2 * padding.width), height: max(0, rect.height - 2 * padding.height))
         let innerProposal = ProposedViewSize(width: proposal.width.map { max(0, $0 - 2 * padding.width) }, height: proposal.height.map { max(0, $0 - 2 * padding.height) })

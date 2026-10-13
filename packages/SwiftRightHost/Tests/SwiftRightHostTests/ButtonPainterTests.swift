@@ -10,6 +10,17 @@ private struct Witness_DisabledButtonView: View {
     var body: some View { Button("Run") {}.disabled(true) }
 }
 
+private struct Witness_ProminentButton: View { var body: some View { Button("Run") {}.buttonStyle(.borderedProminent) } }
+private struct Witness_DefaultActionButton: View { var body: some View { Button("Run") {}.keyboardShortcut(.defaultAction) } }
+private struct Witness_DisabledDefaultActionButton: View { var body: some View { Button("Run") {}.keyboardShortcut(.defaultAction).disabled(true) } }
+private struct Witness_BorderlessButton: View { var body: some View { Button("Run") {}.buttonStyle(.borderless) } }
+private struct Witness_DisabledBorderlessButton: View { var body: some View { Button("Run") {}.buttonStyle(.borderless).disabled(true) } }
+private struct Witness_PlainButton: View { var body: some View { Button("Run") {}.buttonStyle(.plain) } }
+private struct Witness_DisabledPlainButton: View { var body: some View { Button("Run") {}.buttonStyle(.plain).disabled(true) } }
+private struct Witness_RedBorderlessButton: View { var body: some View { Button("Run") {}.buttonStyle(.borderless).foregroundStyle(Color.red) } }
+private struct Witness_RedBorderedButton: View { var body: some View { Button("Run") {}.foregroundStyle(Color.red) } }
+private struct Witness_DestructiveButton: View { var body: some View { Button("Run", role: .destructive) {} } }
+
 /// A Button is one image primitive (the bordered push button artwork) plus button semantics; its label paints itself in the button's label colour.
 @MainActor
 final class ButtonPainterTests: XCTestCase {
@@ -71,5 +82,60 @@ final class ButtonPainterTests: XCTestCase {
         XCTAssertEqual(Double(button.pixelFrame.width - label.pixelFrame.width), 24 * 2.5, accuracy: 1.0)
         XCTAssertEqual(Double(button.pixelFrame.height - label.pixelFrame.height), 8 * 2.5, accuracy: 1.0)
         XCTAssertEqual(Double(label.pixelFrame.x - button.pixelFrame.x), 12 * 2.5, accuracy: 1.0)
+    }
+
+    // MARK: styles (decision 12)
+
+    private func fill(_ r: (nodes: [(ResolvedNode, NodeEmission)], images: FakeImages, runs: FakeRuns)) throws -> [UInt8]? {
+        r.images.registered.values.first.map { Array($0.rgba[((30 * Int($0.width)) + 60) * 4 ..< ((30 * Int($0.width)) + 60) * 4 + 3]) }
+    }
+
+    func testProminentAndDefaultActionPaintTheAccentFillAndAWhiteLabel() throws {
+        for r in [try paint(Witness_ProminentButton()), try paint(Witness_DefaultActionButton())] {
+            XCTAssertEqual(try fill(r), [0, 123, 255])
+            XCTAssertEqual(r.runs.colours, [0xffffffff])
+        }
+    }
+
+    func testDisabledDefaultActionIsAnOrdinaryDisabledButton() throws {
+        let r = try paint(Witness_DisabledDefaultActionButton())
+        XCTAssertEqual(try fill(r), [245, 245, 245])
+        XCTAssertEqual(r.runs.colours, [0xb6b6b6ff])
+    }
+
+    func testBorderlessAndPlainHaveNoBodyButStayHitTargets() throws {
+        for r in [try paint(Witness_BorderlessButton()), try paint(Witness_PlainButton())] {
+            let button = try XCTUnwrap(r.nodes.first { $0.0.kind == "Button" })
+            XCTAssertEqual(button.1.primitives.count, 0)
+            XCTAssertTrue(r.images.registered.isEmpty)
+            XCTAssertEqual(button.1.flags, [.hitTarget])
+            XCTAssertEqual(button.1.semantic?.role, .button)
+            XCTAssertEqual(button.1.semantic?.actions, [.invoke])
+        }
+    }
+
+    func testBorderlessAndPlainLabelColours() throws {
+        XCTAssertEqual(try paint(Witness_BorderlessButton()).runs.colours, [0x7f7f7fff])
+        XCTAssertEqual(try paint(Witness_DisabledBorderlessButton()).runs.colours, [0xbfbfbfff])
+        XCTAssertEqual(try paint(Witness_PlainButton()).runs.colours, [nil], "an enabled plain label keeps the default text colour")
+        XCTAssertEqual(try paint(Witness_DisabledPlainButton()).runs.colours, [0x0000006c], "half of the label colour's opacity")
+    }
+
+    /// Known limit: a Text label inherits the Button's foreground through the environment and cannot tell it from its own, so it always wins; SwiftUI keeps a
+    /// prominent label white and dims a disabled plain label to half opacity. Only the borderless and enabled plain cases are exact.
+    func testForegroundStyleColoursABorderlessLabel() throws {
+        let colours = try paint(Witness_RedBorderlessButton()).runs.colours
+        XCTAssertEqual(colours.count, 1)
+        XCTAssertNotEqual(colours, [0x7f7f7fff])
+    }
+
+    func testForegroundOnABorderedButtonTintsItsFillAndIsNotModelled() {
+        XCTAssertThrowsError(try paint(Witness_RedBorderedButton()))
+    }
+
+    func testRoleDoesNotChangeThePaint() throws {
+        let plain = try paint(Witness_ButtonView()), destructive = try paint(Witness_DestructiveButton())
+        XCTAssertEqual(plain.runs.colours, destructive.runs.colours)
+        XCTAssertEqual(try fill(plain), try fill(destructive))
     }
 }

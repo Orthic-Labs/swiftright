@@ -182,6 +182,13 @@ extension View {
         }))
     }
 
+    /// Selects the style of the Buttons in this view. Apple: https://developer.apple.com/documentation/swiftui/view/buttonstyle(_:)
+    public func buttonStyle<S: ButtonStyle>(_ style: S) -> some View {
+        Modified(content: self, spec: .environment({ environment in
+            environment.buttonStyleMetadata = String(describing: S.self)
+        }))
+    }
+
     /// Hides control labels from resolved content while preserving their accessibility titles.
     public func labelsHidden() -> some View {
         Modified(content: self, spec: .environment({ environment in
@@ -193,6 +200,12 @@ extension View {
     /// platform's primary modifier. Apple: https://developer.apple.com/documentation/swiftui/view/keyboardshortcut(_:modifiers:)
     public func keyboardShortcut(_ key: KeyEquivalent, modifiers: EventModifiers = .command) -> some View {
         Modified(content: self, spec: .keyboardShortcut(key, modifiers))
+    }
+
+    /// Registers a keyboard shortcut for the button inside this view. Apple: https://developer.apple.com/documentation/swiftui/view/keyboardshortcut(_:)
+    /// `.defaultAction` (Return) also makes the button the default button, which macOS draws as the prominent push button.
+    public func keyboardShortcut(_ shortcut: KeyboardShortcut) -> some View {
+        Modified(content: self, spec: .keyboardShortcut(shortcut.key, shortcut.modifiers))
     }
 
     /// Disables controls in this view. Nested `disabled(false)` does not re-enable a disabled ancestor.

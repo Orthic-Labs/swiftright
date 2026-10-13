@@ -647,6 +647,7 @@ enum LayoutKey: Equatable {
     case flexibleFrame(FlexibleFrameSpec)
     case spacer(CGFloat)
     case toggleLabelHidden
+    case button(String?)
     case image(ImageSpec)
     case scrollView(ScrollViewConfiguration)
 }
@@ -724,6 +725,10 @@ public struct ResolvedNode: Equatable, Sendable {
     public let presentation: ResolvedPresentation?
     /// Modifier nodes created by `.keyboardShortcut(_:modifiers:)`.
     public let shortcut: ResolvedShortcut?
+    /// Button nodes only: the `.buttonStyle` type metadata; nil when none applies.
+    public let buttonStyle: String?
+    /// Button nodes only: true under `.keyboardShortcut(.defaultAction)` (Return, no modifiers), the window's default button.
+    public let isDefaultButton: Bool
 }
 
 extension ResolvedNode {
@@ -732,7 +737,8 @@ extension ResolvedNode {
         ResolvedNode(id: id, instance: instance, kind: kind, text: text, frame: frame, pixelFrame: pixelFrame, opacity: opacity,
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
-                     imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut)
+                     imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton)
     }
 }
 
@@ -1550,6 +1556,7 @@ public final class Graph {
         case .spacer(let length): key = .spacer(length)
         case .toggle where node.environment.labelsHidden: key = .toggleLabelHidden
         case .toggle: key = .none
+        case .button: key = .button(node.environment.buttonStyleMetadata)
         case .image(let spec): key = .image(spec)
         case .scrollView(let configuration): key = .scrollView(configuration)
         case .layout: key = .always
@@ -1776,6 +1783,16 @@ public final class Graph {
             fieldStyle = node.environment.textFieldStyleMetadata
             placeholder = placeholderOf(node)
         }
+        var buttonStyle: String?
+        var isDefaultButton = false
+        if case .button = kind {
+            buttonStyle = node.environment.buttonStyleMetadata
+            var ancestor = node.parent
+            while let a = ancestor, !isDefaultButton {
+                if case .modifier(.keyboardShortcut(let key, let modifiers)) = a.kind, KeyboardShortcut(key, modifiers: modifiers).isDefaultAction { isDefaultButton = true }
+                ancestor = a.parent
+            }
+        }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1806,7 +1823,9 @@ public final class Graph {
             shapeStorage: shape.map(ResolvedShapeStorage.init),
             menu: node.menuEntries.map(resolveMenu),
             presentation: node.presented.map(resolvePresentation),
-            shortcut: shortcut
+            shortcut: shortcut,
+            buttonStyle: buttonStyle,
+            isDefaultButton: isDefaultButton
         )
     }
 
