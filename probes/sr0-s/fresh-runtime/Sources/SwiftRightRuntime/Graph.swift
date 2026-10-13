@@ -830,6 +830,12 @@ public final class Graph {
     public var imageIntrinsicSize: (ImageReference) -> LayoutSize = { _ in LayoutSize(width: 24, height: 24) } {
         didSet { for node in nodes.values { node.sizeCache.removeAll() } }
     }
+    /// Intrinsic size SwiftUI uses for `resizable().scaledToFit()/scaledToFill` of an image reference when it
+    /// differs from the natural size above (SF Symbols fit by a larger default symbol size than their natural
+    /// image size). Nil (the default) keeps the natural size.
+    public var imageFitIntrinsicSize: (ImageReference) -> LayoutSize? = { _ in nil } {
+        didSet { for node in nodes.values { node.sizeCache.removeAll() } }
+    }
     /// Phase counters, nil (off) by default. See `GraphProfile`.
     public var profile: GraphProfile?
     /// Platform used to map native chords to logical commands (CONTRACT section 4).

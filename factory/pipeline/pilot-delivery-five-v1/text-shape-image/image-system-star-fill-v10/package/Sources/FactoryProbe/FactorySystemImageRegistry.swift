@@ -17,6 +17,40 @@ import SwiftRightBridge
         let fontEmSize: Float?
         let source: String?
     }
+    /// Mac-measured SF Symbol layout metrics (factory/tools/symbol-metrics); never outlines.
+    struct Layout: Decodable {
+        let aspect: Double
+        let inkRect: [Double]
+        let intrinsicSize: [Double]
+        let sourceOversample: UInt32?
+        let fitIntrinsicSize: [Double]?
+        /// One Mac device configuration: the Image view's pixel-snapped size and the half-coverage ink box inside it.
+        struct DeviceInk: Decodable {
+            let scale: Double
+            let viewFramePx: [Int]
+            let inkBoxPx: [Int]
+            let fitIntrinsicSize: [Double]
+        }
+        let deviceInk: [DeviceInk]?
+        /// Intrinsic size SwiftUI fitted this symbol by at the given screen scale (calibrated config), else the large-frame value.
+        func fitIntrinsic(scale: Double) -> [Double]? {
+            deviceInk?.first(where: { abs($0.scale - scale) < 1e-6 && $0.fitIntrinsicSize.count == 2 })?.fitIntrinsicSize ?? fitIntrinsicSize
+        }
+        /// Mac half-coverage pixel ink box (relative to the view frame) for this screen scale and view size, when calibrated.
+        func deviceInkBox(scale: Double, widthPx: UInt32, heightPx: UInt32) -> SystemImageDeviceInkBox? {
+            guard scale > 0, let hit = deviceInk?.first(where: {
+                $0.viewFramePx.count == 4 && $0.inkBoxPx.count == 4 && abs($0.scale - scale) < 1e-6
+                    && $0.viewFramePx[2] == Int(widthPx) && $0.viewFramePx[3] == Int(heightPx) }) else { return nil }
+            let box = SystemImageDeviceInkBox(left: hit.inkBoxPx[0], top: hit.inkBoxPx[1], right: hit.inkBoxPx[2], bottom: hit.inkBoxPx[3])
+            return box.isValid ? box : nil
+        }
+        var metrics: SystemImageLayoutMetrics? {
+            guard inkRect.count == 4 else { return nil }
+            let m = SystemImageLayoutMetrics(aspect: aspect, inkLeft: inkRect[0], inkTop: inkRect[1],
+                                             inkRight: inkRect[2], inkBottom: inkRect[3])
+            return m.isValid ? m : nil
+        }
+    }
     struct SymbolProvider: Decodable {
         let provider: String
         let providerVersion: String
@@ -29,6 +63,7 @@ import SwiftRightBridge
         let glyphMetrics: GlyphMetrics?
         let fontMetrics: GlyphMetrics?
         let rasterization: Rasterization?
+        let layout: Layout?
     }
     struct ProviderPolicy: Decodable {
         let kind: String
@@ -45,6 +80,8 @@ import SwiftRightBridge
         let symbols: [String: SymbolProvider]
     }
 
+    /// Symbols overflow their frames by a pixel or two; the raster canvas keeps that ink.
+    static let overflowInset: UInt32 = 4
     static let mappingFile = "FactorySystemImageAssets.json"
     private let bridge: Bridge
     let mapping: Mapping
@@ -55,11 +92,19 @@ import SwiftRightBridge
         let height: UInt32
     }
     private var handles: [HandleKey: ImageHandle] = [:]
+    /// Screen scale of the owned window; selects the Mac device-pixel ink calibration.
+    var scale: Double = 1
 
     init(_ bridge: Bridge) throws {
         self.bridge = bridge
-        let url = URL(fileURLWithPath: CommandLine.arguments[0])
-            .deletingLastPathComponent().appendingPathComponent(Self.mappingFile)
+        // Next to the executable, else in the package root above a SwiftPM scratch layout
+        // (<package>/scratch/<triple>/release/FactoryProbe.exe), so a plain SwiftPM build needs no copy step.
+        var directory = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
+        var url = directory.appendingPathComponent(Self.mappingFile)
+        for _ in 0..<5 where !FileManager.default.fileExists(atPath: url.path) {
+            directory = directory.deletingLastPathComponent()
+            url = directory.appendingPathComponent(Self.mappingFile)
+        }
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw NSError(domain: "FactorySystemImageMappingMissing", code: 1,
                           userInfo: [NSLocalizedDescriptionKey: url.path])
@@ -85,7 +130,10 @@ import SwiftRightBridge
                   !entry.provider.isEmpty, !entry.providerVersion.isEmpty,
                   !entry.glyph.isEmpty, entry.width > 0, entry.width <= 4096,
                   entry.height > 0, entry.height <= 4096,
-                  entry.status == "provider-live-declared" else {
+                  entry.status == "provider-live-declared",
+                  entry.layout == nil || (entry.layout!.metrics != nil && entry.layout!.intrinsicSize.count == 2
+                    && entry.layout!.intrinsicSize.allSatisfy { $0.isFinite && $0 > 0 }
+                    && (1...8).contains(entry.layout!.sourceOversample ?? 1)) else {
                 throw NSError(domain: "FactorySystemImageProviderEntryInvalid", code: 1,
                               userInfo: [NSLocalizedDescriptionKey: name])
             }
@@ -109,7 +157,17 @@ import SwiftRightBridge
 
     func intrinsicSize(for reference: ImageReference) -> LayoutSize {
         guard let (_, entry) = try? provider(for: reference) else { return .zero }
+        if let layout = entry.layout {   // SF Symbol intrinsic size measured on the Mac
+            return LayoutSize(width: CGFloat(layout.intrinsicSize[0]), height: CGFloat(layout.intrinsicSize[1]))
+        }
         return LayoutSize(width: CGFloat(entry.width), height: CGFloat(entry.height))
+    }
+
+    /// What SwiftUI fits `resizable().scaledToFit()` symbols by (see `Graph.imageFitIntrinsicSize`).
+    func fitIntrinsicSize(for reference: ImageReference) -> LayoutSize? {
+        guard let (_, entry) = try? provider(for: reference), let size = entry.layout?.fitIntrinsic(scale: scale),
+              size.count == 2, size.allSatisfy({ $0.isFinite && $0 > 0 }) else { return nil }
+        return LayoutSize(width: CGFloat(size[0]), height: CGFloat(size[1]))
     }
 
     func handle(for reference: ImageReference, tint: UInt32, width targetWidth: UInt32,
@@ -128,13 +186,23 @@ import SwiftRightBridge
             glyph: glyph, foregroundSemantic: entry.foregroundSemantic,
             parity: mapping.providerPolicy.parity)
         let raster = try FactorySystemImageProvider.rasterize(descriptor, width: targetWidth,
-                                                               height: targetHeight, tint: tint)
+                                                               height: targetHeight, tint: tint,
+                                                               layout: entry.layout?.metrics,
+                                                               deviceInk: entry.layout?.deviceInkBox(scale: scale, widthPx: targetWidth, heightPx: targetHeight),
+                                                               inset: entry.layout == nil ? 0 : Self.overflowInset,
+                                                               oversample: entry.layout?.sourceOversample ?? 1)
         let handle = try bridge.registerImage(width: raster.width, height: raster.height,
                                               rgba: raster.rgba, stride: raster.width * 4)
         handles[key] = handle
         let metrics = entry.fontMetrics ?? entry.glyphMetrics
-        print("FACTORY_SYSTEM_IMAGE name=\(name) provider=\(entry.provider) providerVersion=\(entry.providerVersion) glyph=\(entry.glyph) sourceBounds=\(raster.glyphWidth)x\(raster.glyphHeight) targetBounds=\(raster.width)x\(raster.height) renderedBounds=\(raster.renderedWidth)x\(raster.renderedHeight) tintRGBA=\(String(format: "%08x", tint)) nonZeroCoverage=\(raster.nonZeroCoverage) maxCoverage=\(raster.maxCoverage) fontHeight=\(raster.fontHeight) fontAscent=\(raster.fontAscent) averageCharWidth=\(raster.averageCharWidth) cellIncrement=\(raster.cellIncrementX),\(raster.cellIncrementY) selectedFace=\(raster.selectedFace) glyphOrigin=\(raster.glyphOriginX),\(raster.glyphOriginY) declaredUnitsPerEm=\(metrics?.designUnitsPerEm.map(String.init) ?? "nil") rasterization=live-gdi-getglyphoutlinew parity=\(mapping.providerPolicy.parity) registration=abi-0.6")
+        print("FACTORY_SYSTEM_IMAGE name=\(name) provider=\(entry.provider) providerVersion=\(entry.providerVersion) glyph=\(entry.glyph) sourceBounds=\(raster.glyphWidth)x\(raster.glyphHeight) targetBounds=\(raster.width)x\(raster.height) renderedBounds=\(raster.renderedWidth)x\(raster.renderedHeight) layoutMetrics=\(entry.layout == nil ? "none" : "mac-measured") placement=\(raster.placement) halfCoverageBox=\(raster.halfCoverageBox) macInkBox=\(raster.macInkBox) deviceInkMatched=\(raster.deviceInkMatched) inkRect=\(raster.inkRect) tintRGBA=\(String(format: "%08x", tint)) nonZeroCoverage=\(raster.nonZeroCoverage) maxCoverage=\(raster.maxCoverage) fontHeight=\(raster.fontHeight) fontAscent=\(raster.fontAscent) averageCharWidth=\(raster.averageCharWidth) cellIncrement=\(raster.cellIncrementX),\(raster.cellIncrementY) selectedFace=\(raster.selectedFace) glyphOrigin=\(raster.glyphOriginX),\(raster.glyphOriginY) declaredUnitsPerEm=\(metrics?.designUnitsPerEm.map(String.init) ?? "nil") rasterization=live-gdi-getglyphoutlinew parity=\(mapping.providerPolicy.parity) registration=abi-0.6")
         return handle
+    }
+
+    /// Canvas margin (px) around the frame for a symbol with layout metrics.
+    func canvasInset(for reference: ImageReference) -> Float {
+        guard let (_, entry) = try? provider(for: reference), entry.layout != nil else { return 0 }
+        return Float(Self.overflowInset)
     }
 
     func releaseAll() {
@@ -158,7 +226,8 @@ import SwiftRightBridge
     let targetWidth = UInt32(max(1, node.pixelFrame.width))
     let targetHeight = UInt32(max(1, node.pixelFrame.height))
     let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight)
-    print("FACTORY_SYSTEM_IMAGE_FRAME name=\(reference.name) widthPX=\(node.pixelFrame.width) heightPX=\(node.pixelFrame.height) tintRGBA=\(String(format: "%08x", tint))")
-    return .image(handle, Rect(x: Float(node.pixelFrame.x), y: Float(node.pixelFrame.y),
-                                w: Float(node.pixelFrame.width), h: Float(node.pixelFrame.height)))
+    let inset = registry.canvasInset(for: reference)
+    print("FACTORY_SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(node.pixelFrame.x) yPX=\(node.pixelFrame.y) widthPX=\(node.pixelFrame.width) heightPX=\(node.pixelFrame.height) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
+    return .image(handle, Rect(x: Float(node.pixelFrame.x) - inset, y: Float(node.pixelFrame.y) - inset,
+                                w: Float(node.pixelFrame.width) + 2 * inset, h: Float(node.pixelFrame.height) + 2 * inset))
 }

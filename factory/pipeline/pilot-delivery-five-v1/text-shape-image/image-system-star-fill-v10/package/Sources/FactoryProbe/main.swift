@@ -88,9 +88,13 @@ func factoryResolvedFill(_ value: ResolvedColor, opacity: Double) throws -> UInt
             measurer = nativeMeasurer
             let registry = try FactorySystemImageRegistry(bridge)
             systemImages = registry
+            registry.scale = Double(scale)
             let graph = Graph(Witness_image_baseline(), measurer: nativeMeasurer, scale: CGFloat(scale))
             graph.imageIntrinsicSize = { reference in
                 registry.intrinsicSize(for: reference)
+            }
+            graph.imageFitIntrinsicSize = { reference in
+                registry.fitIntrinsicSize(for: reference)
             }
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
             graph.commitSink = { [weak self] record in self?.commit(record) }
