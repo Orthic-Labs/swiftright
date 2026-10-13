@@ -1,0 +1,40 @@
+{
+ "case": "image-system-star-fill-gen-48pt",
+ "run": "20261013-172157",
+ "pairs": 3,
+ "gatePassed": 0,
+ "gate": "frame (logged frame + exact outside frame), half-coverage ink bbox, tint colour; glyph shape reported only",
+ "shapeExclusion": {
+  "name": "image-system-star-fill glyph shape",
+  "rect": [
+   -4,
+   -2,
+   124,
+   122
+  ],
+  "reason": "SF Symbols cannot ship on Windows; provider maps to Segoe Fluent Icons (docs/sr1-decisions.md item 3)"
+ },
+ "summary": {
+  "frameMatches": 0,
+  "inkBBoxMatches": 0,
+  "tintMatches": 0,
+  "glyphShapeDiffPixels": []
+ },
+ "rows": [
+  {
+   "run": 1,
+   "error": "missing windows capture",
+   "ok": false
+  },
+  {
+   "run": 2,
+   "error": "missing windows capture",
+   "ok": false
+  },
+  {
+   "run": 3,
+   "error": "missing windows capture",
+   "ok": false
+  }
+ ]
+}
