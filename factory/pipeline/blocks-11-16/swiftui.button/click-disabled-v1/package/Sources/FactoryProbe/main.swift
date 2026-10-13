@@ -79,7 +79,7 @@ struct HostPlacement {
 }
 
 @MainActor final class CaptureHost {
-    static let centered = true
+    static let centered = false
     static let dark = false
 
     let bridge: Bridge
@@ -136,7 +136,7 @@ struct HostPlacement {
             images.scale = Double(scale)
             systemImages = images
             painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images)
-            let graph = Graph(Witness_button_click_disabled(), measurer: measurer, scale: CGFloat(scale))
+            let graph = Graph(ZStack(alignment: .center) { Witness_button_click_disabled() }.frame(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center), measurer: measurer, scale: CGFloat(scale))
             images.install(on: graph)
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
             graph.commitSink = { [weak self] record in self?.commit(record) }

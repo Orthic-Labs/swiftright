@@ -24,6 +24,11 @@ let package = Package(name: "FactoryProbe", dependencies: [
 '''
 
 
+def centre_through_runtime(w):
+    return ("ZStack(alignment: .center) { " + w + " }.frame(width: CGFloat(metrics.width) / CGFloat(scale), "
+            "height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case"); ap.add_argument("--witness", required=True)
@@ -38,7 +43,9 @@ def main():
     for extra in ("FactorySystemImageAssets.json",):
         (pkg / extra).unlink(missing_ok=True)
     text = (HERE / "CaptureHost.template.swift").read_text()
-    text = text.replace("@@WITNESS@@", a.witness).replace("@@CENTERED@@", "true" if a.centered else "false").replace("@@DARK@@", "true" if a.dark else "false")
+    witness = centre_through_runtime(a.witness) if a.centered else a.witness
+    # --centered now centres through the runtime (a ZStack in a viewport-sized frame, as the Mac hosts do); the host never translates the finished tree (docs: blocks-6-10/pixel-ties/README.md)
+    text = text.replace("@@WITNESS@@", witness).replace("@@CENTERED@@", "false").replace("@@DARK@@", "true" if a.dark else "false")
     assert "@@" not in text
     (src / "main.swift").write_text(text)
     shutil.copy(HERE / "FactoryViewport.swift", src / "FactoryViewport.swift")

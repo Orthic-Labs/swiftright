@@ -162,19 +162,19 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
         'dump' { Dump-Process $proc $mainH (Join-Path $out ("uia-$n-" + [string]$step.label + '.json')); return 'ok' }
         'shot' { return [IxNative]::Shot($mainH, (Join-Path $out ("native-$n-" + [string]$step.label + '.png'))) }
         'key' {
-            $vk = Get-Vk ([string]$step.key); $mods = @($step.mods | Where-Object { $_ })
-            $ext = $vk -in 33, 34, 35, 36, 37, 38, 39, 40, 45, 46
+            $keyVk = Get-Vk ([string]$step.key); $mods = @($step.mods | Where-Object { $_ })
+            $ext = $keyVk -in 33, 34, 35, 36, 37, 38, 39, 40, 45, 46
             if ($mods.Count -gt 0 -or $step.input) {
                 [IxNative]::Foreground($h); Start-Sleep -Milliseconds 80
                 $mv = @($mods | ForEach-Object { Get-Vk ([string]$_) })
                 foreach ($m in $mv) { [IxNative]::keybd_event([byte]$m, 0, 0, [UIntPtr]::Zero) }
-                [IxNative]::keybd_event([byte]$vk, 0, $(if ($ext) { 1 } else { 0 }), [UIntPtr]::Zero); Start-Sleep -Milliseconds 30
-                [IxNative]::keybd_event([byte]$vk, 0, $(if ($ext) { 3 } else { 2 }), [UIntPtr]::Zero)
+                [IxNative]::keybd_event([byte]$keyVk, 0, $(if ($ext) { 1 } else { 0 }), [UIntPtr]::Zero); Start-Sleep -Milliseconds 30
+                [IxNative]::keybd_event([byte]$keyVk, 0, $(if ($ext) { 3 } else { 2 }), [UIntPtr]::Zero)
                 [array]::Reverse($mv); foreach ($m in $mv) { [IxNative]::keybd_event([byte]$m, 0, 2, [UIntPtr]::Zero) }
                 return 'ok(input)'
             }
-            [void][IxNative]::PostMessageW($h, $WM.KEYDOWN, [IntPtr]$vk, (KeyLParam $vk $false $ext)); Start-Sleep -Milliseconds 30
-            [void][IxNative]::PostMessageW($h, $WM.KEYUP, [IntPtr]$vk, (KeyLParam $vk $true $ext)); return 'ok(post)'
+            [void][IxNative]::PostMessageW($h, $WM.KEYDOWN, [IntPtr]$keyVk, (KeyLParam $keyVk $false $ext)); Start-Sleep -Milliseconds 30
+            [void][IxNative]::PostMessageW($h, $WM.KEYUP, [IntPtr]$keyVk, (KeyLParam $keyVk $true $ext)); return 'ok(post)'
         }
         'char' {
             foreach ($ch in ([string]$step.text).ToCharArray()) { [void][IxNative]::PostMessageW($h, $WM.CHAR, [IntPtr][int]$ch, [IntPtr]1); Start-Sleep -Milliseconds 15 }

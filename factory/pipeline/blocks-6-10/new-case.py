@@ -5,7 +5,7 @@ from pathlib import Path
 H = Path(__file__).resolve().parent
 ap = argparse.ArgumentParser(); ap.add_argument("case"); ap.add_argument("witness_file"); ap.add_argument("expr")
 ap.add_argument("--clock", help="F1 manual clock: comma-separated seconds; writes pair.json {\"clock\":[..]} and uses the Mac clock host (MacClockHost.template.swift)");
-ap.add_argument("--settle", default="0.3"); ap.add_argument("--centered", action="store_true", default=True)
+ap.add_argument("--settle", default="0.3"); ap.add_argument("--centered", action="store_true", default=True)  # centres through the runtime (stamp-case.py), not by translating the tree
 a = ap.parse_args()
 case = H / a.case; w = Path(a.witness_file).read_bytes()
 (case / "package/Sources/FactoryProbe").mkdir(parents=True, exist_ok=True)

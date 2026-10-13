@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """new-case.py <block-dir/case> <Witness.swift> 'Witness_x()' [--settle S] [--steps steps.json] [--pair-json extra.json]
-Creates package/ (Windows: Witness.swift + the blocks-11-16 host, root centred in the viewport) and mac-source/ (Witness byte-identical + the blocks-11-16 Mac host).
+Creates package/ (Windows: Witness.swift + the blocks-11-16 host, root centred through the runtime in the viewport) and mac-source/ (Witness byte-identical + the blocks-11-16 Mac host).
 --steps: interaction steps (the F2 vocabulary, factory/tools/sandbox/guest/job-interact.ps1); written to pair.json "steps" (Windows Sandbox) and "macArgs" (--steps, the Mac host).
 --pair-json: a JSON object merged into pair.json (gates, excludeRects)."""
 import argparse, json, shutil, subprocess, sys
@@ -18,7 +18,9 @@ t = (H / "shared-mac-host/CaptureHost.template.swift").read_text()
 (case / "mac-source/Sources/MacHost/CaptureHost.swift").write_text(t.replace("@@WITNESS@@", a.expr).replace("@@SETTLE@@", a.settle))
 subprocess.check_call([sys.executable, str(H.parent / "pilot-delivery-five-v1/shared-windows-host/stamp-case.py"), str(case), "--witness", a.expr, "--centered"], stdout=subprocess.DEVNULL)
 src = case / "package/Sources/FactoryProbe"
-(src / "main.swift").write_text((H / "shared-windows-host/CaptureHost.template.swift").read_text().replace("@@WITNESS@@", a.expr).replace("@@CENTERED@@", "true").replace("@@DARK@@", "false"))
+# centre through the runtime (ZStack in a viewport-sized frame, as the Mac hosts do), never by translating the finished tree (blocks-6-10/pixel-ties/README.md)
+centred = "ZStack(alignment: .center) { " + a.expr + " }.frame(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center)"
+(src / "main.swift").write_text((H / "shared-windows-host/CaptureHost.template.swift").read_text().replace("@@WITNESS@@", centred).replace("@@CENTERED@@", "false").replace("@@DARK@@", "false"))
 shutil.copy(H / "shared-windows-host/FactoryViewport.swift", src / "FactoryViewport.swift")
 cfg = {}
 if a.pair_json: cfg.update(json.loads(Path(a.pair_json).read_text()))
