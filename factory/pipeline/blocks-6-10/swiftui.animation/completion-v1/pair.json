@@ -32,8 +32,9 @@
     "line": 270
    }
   ],
-  "extentTolerancePx": 1.0,
-  "progressTolerance": 0.004,
-  "stripPx": 1
+  "extentTolerancePx": 2.0,
+  "progressTolerance": 0.005,
+  "stripPx": 1,
+  "note": "2 px: SwiftUI's built-in spring integrates in fixed steps and its value depends on how it is sampled (0.3 s reads 0.886455 under the manual clock, 0.890036 in a fresh sparse probe, a 0.0036 difference = up to 1.4 px here); the runtime table follows the sparse probe (decision C4)"
  }
 }

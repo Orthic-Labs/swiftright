@@ -20,9 +20,12 @@ struct Witness_anim_disables: View {
             var silenced = Transaction()
             silenced.disablesAnimations = true
             withTransaction(silenced) { wide = true }
-            var explicit = Transaction(animation: FactoryAnim.wrap(.linear(duration: 1)))
-            explicit.disablesAnimations = true
-            withTransaction(explicit) { wide2 = true }
+            // a separate update: state changes in one flush all take the last explicit transaction (decision C7)
+            FactoryClock.at(0) {
+                var explicit = Transaction(animation: FactoryAnim.wrap(.linear(duration: 1)))
+                explicit.disablesAnimations = true
+                withTransaction(explicit) { wide2 = true }
+            }
         }
     }
 }

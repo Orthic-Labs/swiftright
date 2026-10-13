@@ -460,6 +460,9 @@ final class AnimationMeasuredTests: XCTestCase {
         XCTAssertEqual(bar(graph)?.opacity ?? -1, 0.5, accuracy: 1e-9)
         XCTAssertEqual(done, 0)
         graph.tick(now: 1.0)
+        XCTAssertEqual(colourCount(graph), 2, "measured: at exactly the end time the removed view is still presented (alpha 0), it goes with the next tick")
+        XCTAssertEqual(bar(graph)?.opacity ?? -1, 0, accuracy: 1e-9)
+        graph.tick(now: 1.01)
         XCTAssertEqual(colourCount(graph), 1, "only the red sibling is left when the animation has finished")
         XCTAssertEqual(done, 1, "the transaction waits for the removal")
     }

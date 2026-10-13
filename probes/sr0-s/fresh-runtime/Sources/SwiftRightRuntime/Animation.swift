@@ -279,6 +279,8 @@ final class MotionLayer {
     var start: Double?
     var logicallyEnded = false
     var finished = false
+    /// False for a removal transition: the removed view is still presented at exactly the end time and goes with the first tick after it (measured).
+    var inclusiveEnd = true
     /// A spring that continued from an interrupted spring: displacement from `to` (target - value) and its rate of change per component.
     var continuation: (displacement: [Double], velocity: [Double])?
 
@@ -588,6 +590,7 @@ extension Graph {
     /// Moves one chain to `now`: anchors unstarted layers on a display tick, fires logical completions, folds finished layers into the base and,
     /// when none is left, fires the removal completions. Returns the presented value (the chain's base once it has no layer).
     func advanceChain(_ chain: MotionChain, now: Double, anchoring: Bool) -> Presentation {
+        func inclusiveEnd(_ layer: MotionLayer) -> Bool { layer.inclusiveEnd }
         if anchoring {
             for layer in chain.layers where layer.start == nil { layer.start = now }
         }
@@ -598,7 +601,7 @@ extension Graph {
                 layer.logicallyEnded = true
                 layer.transaction.layerLogicallyEnded()
             }
-            if elapsed >= layer.visualDuration { layer.finished = true }
+            if inclusiveEnd(layer) ? elapsed >= layer.visualDuration : elapsed > layer.visualDuration { layer.finished = true }
         }
         let value = chain.value(at: now)
         // finished layers at the bottom of the chain fold into its base

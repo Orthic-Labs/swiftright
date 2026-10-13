@@ -158,7 +158,9 @@ extension Graph {
         }
         end.frame = LayoutRect(x: start.frame.minX + dx, y: start.frame.minY + dy, width: start.frame.width, height: start.frame.height)
         let chain = MotionChain(base: start)
-        chain.layers.append(MotionLayer(to: end, animation: animation, transaction: transaction))
+        let layer = MotionLayer(to: end, animation: animation, transaction: transaction)
+        layer.inclusiveEnd = false
+        chain.layers.append(layer)
         let index = parent.childNodes.firstIndex { $0 === old } ?? parent.childNodes.count
         ghosts.append(Ghost(parentID: parent.idString, index: index, root: snapshot, chain: chain))
     }
