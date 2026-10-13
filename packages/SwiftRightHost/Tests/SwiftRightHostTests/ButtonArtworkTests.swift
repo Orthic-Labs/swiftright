@@ -1,0 +1,49 @@
+import XCTest
+import SwiftRightHost
+
+/// The button artwork against SwiftUI's own render of a 48 x 24 pt (120 x 60 px at scale 2.5) default Button, enabled and disabled: golden pixels measured on
+/// macOS (every 3rd pixel, label region excluded), flat fills exact, edges within 32/255 (docs/sr1-decisions.md, decision 5).
+final class ButtonArtworkTests: XCTestCase {
+    private func composite(_ image: ContinuousRGBAImage, _ x: Int, _ y: Int) -> [Int] {
+        let o = (y * image.width + x) * 4
+        let a = Double(image.rgba[o + 3]) / 255
+        return (0..<3).map { Int((Double(image.rgba[o + $0]) * a + 255 * (1 - a)).rounded()) }
+    }
+
+    private func golden(_ rows: [String], _ gy: Int, _ gx: Int) -> [Int] {
+        let hex = String(Array(rows[gy])[(gx * 6)..<(gx * 6 + 6)])
+        return [0, 2, 4].map { Int(hex.dropFirst($0).prefix(2), radix: 16)! }
+    }
+
+    private func assertMatchesSwiftUI(isEnabled: Bool, golden rows: [String], file: StaticString = #filePath, line: UInt = #line) {
+        let image = ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: isEnabled)
+        XCTAssertEqual(image.width, 120); XCTAssertEqual(image.height, 60)
+        var worst = 0
+        for gy in 0..<rows.count {
+            for gx in 0..<40 {
+                let x = gx * 3, y = gy * 3
+                if x >= 20 && x < 100 && y >= 10 && y < 50 { continue }          // the label region: the artwork has no label
+                worst = max(worst, zip(composite(image, x, y), golden(rows, gy, gx)).map { abs($0 - $1) }.max()!)
+            }
+        }
+        XCTAssertLessThanOrEqual(worst, 32, "worst probe difference \(worst)", file: file, line: line)
+    }
+
+    func testEnabledMatchesSwiftUI() { assertMatchesSwiftUI(isEnabled: true, golden: ButtonArtworkGolden.enabled) }
+    func testDisabledMatchesSwiftUI() { assertMatchesSwiftUI(isEnabled: false, golden: ButtonArtworkGolden.disabled) }
+
+    func testFlatFillsAndLabelColoursAreExact() {
+        XCTAssertEqual(composite(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: true), 60, 5), [235, 235, 235])
+        XCTAssertEqual(composite(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: false), 60, 5), [245, 245, 245])
+        XCTAssertEqual(ButtonArtwork.labelColor(isEnabled: true), 0x242424)
+        XCTAssertEqual(ButtonArtwork.labelColor(isEnabled: false), 0xb6b6b6)
+        XCTAssertEqual(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: true).rgba[3], 0, "corner is transparent")
+    }
+
+    func testWiderButtonKeepsItsCornersAndFlatMiddle() {
+        let wide = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true)
+        XCTAssertEqual(composite(wide, 150, 30), [235, 235, 235])
+        XCTAssertEqual(wide.rgba[3], 0)
+        XCTAssertEqual(wide.rgba[(299) * 4 + 3], 0, "right corner is transparent too")
+    }
+}

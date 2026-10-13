@@ -71,7 +71,7 @@ public final class ResolvedNodePainter {
     /// renderer. The painter's image handles follow the outcome of `submit` (kept on success, released on failure). `place` moves each
     /// node's pixel bounds (a host that centres or insets the tree); the optional background is not placed.
     public func commit(root: ResolvedNode, version: UInt64, previousLive: Set<UInt64>, background: Background? = nil,
-                       place: (Rect) -> Rect = { $0 }, submit: (Transaction) throws -> Void) throws -> Committed {
+                       place: (Rect) -> Rect = { $0 }, submit: (SwiftRightBridge.Transaction) throws -> Void) throws -> Committed {
         var nodes: [NodeUpsert] = []
         var current: Set<UInt64> = []
         var runtimeIDs: [UInt64: String] = [:]
@@ -82,23 +82,25 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
-            let emission = try emit(n, id: id, bounds: bounds)
+            let emission = try emit(n, id: id, bounds: bounds, textColor: textColor)
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
             // primitives in the scroll frame (intersected for nested scroll views).
             var primitives = emission.primitives
             if let clip, !primitives.isEmpty { primitives = [.clipPush(clip)] + primitives + [.clipPop] }
             nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: primitives, semantic: emission.semantic))
             let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
-            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip) }
+            // A Button's label takes the button's label colour (grey when the button is disabled) unless the label sets its own.
+            let childTextColor = n.kind == "Button" ? ButtonArtwork.labelColor(isEnabled: n.accessibility.isEnabled) << 8 | 0xff : textColor
+            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
-        try submit(Transaction(version: version, upserts: nodes, removes: Array(previousLive.subtracting(current))))
+        try submit(SwiftRightBridge.Transaction(version: version, upserts: nodes, removes: Array(previousLive.subtracting(current))))
         committed = true
         return Committed(live: current, runtimeIDs: runtimeIDs, nodeCount: nodes.count)
     }
@@ -115,7 +117,7 @@ public final class ResolvedNodePainter {
 
     /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
     /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
-    static let unpaintedPrimitives: Set<String> = ["Button", "TextField", "TextEditor", "Divider", "Menu", "List"]
+    static let unpaintedPrimitives: Set<String> = ["TextField", "TextEditor", "Divider", "Menu", "List"]
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
@@ -125,13 +127,16 @@ public final class ResolvedNodePainter {
     }
 
     /// `id` is the bridge node id the caller upserts this node under (image handles are keyed by it).
-    public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect) throws -> NodeEmission {
+    /// `textColor` is the colour a Text inherits from an ancestor (a Button's label colour), 0xRRGGBBAA; a Text's own foreground wins.
+    public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil) throws -> NodeEmission {
         switch node.kind {
         case "Text":
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
-            guard node.style.foreground == nil, node.opacity == 1 else { throw HostPaintError.unsupportedTextPaintStyle }
+            guard node.opacity == 1 else { throw HostPaintError.unsupportedTextPaintStyle }
             guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
-            let run = try text.run(text: string, font: node.style.font, bounds: bounds)
+            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: 1) } ?? textColor
+            let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
+                ?? text.run(text: string, font: node.style.font, bounds: bounds)
             return NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
                                 semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
                                 flags: [], structural: false)
@@ -156,6 +161,16 @@ public final class ResolvedNodePainter {
                                 semantic: SemanticNode(role: plan.role, label: node.accessibility.label ?? "", value: node.accessibility.value ?? "",
                                                        actions: plan.isEnabled ? [.invoke] : [], identifier: node.id, toggled: plan.toggled,
                                                        disabled: !plan.isEnabled),
+                                flags: [.hitTarget], structural: false)
+
+        case "Button":
+            let plan = try ButtonPainter.plan(node, bounds: bounds, scale: scale)
+            let handle = try images.registerImage(width: UInt32(plan.image.width), height: UInt32(plan.image.height), rgba: plan.image.rgba, stride: 0)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            return NodeEmission(primitives: [.image(handle, plan.placement)],
+                                semantic: SemanticNode(role: .button, label: node.accessibility.label ?? "",
+                                                       actions: plan.isEnabled ? [.invoke] : [], identifier: node.id, disabled: !plan.isEnabled),
                                 flags: [.hitTarget], structural: false)
 
         case "Color":

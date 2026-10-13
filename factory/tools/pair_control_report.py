@@ -55,6 +55,25 @@ def bbox_nonwhite(img, rect):
     return None if b is None else [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]]
 
 
+MIN_STRIP = 4   # a label strip narrower than this cannot hold a glyph, so it is not searched
+
+
+def label_box(img, c):
+    """Ink bbox of the label beside the control span c=(x0,x1): searches BOTH sides (a strip must be at least MIN_STRIP wide, and excludes the
+    control's own columns plus a 2 px guard) and returns the box on the side that holds the most ink, or None when neither side has any."""
+    w, h = img.size
+    cands = []
+    if c[0] - 2 >= MIN_STRIP: cands.append((0, 0, c[0] - 2, h))
+    if w - (c[1] + 2) >= MIN_STRIP: cands.append((c[1] + 2, 0, w, h))
+    best = None
+    for r in cands:
+        b = bbox_nonwhite(img, r)
+        if b is None: continue
+        area = (b[2] - b[0]) * (b[3] - b[1])
+        if best is None or area > best[0]: best = (area, b)
+    return None if best is None else best[1]
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["controlGate"]
@@ -81,19 +100,17 @@ def main():
         A.paste(im.crop(mb), (mb[0], mb[1])); B.paste(iw.crop(wb), (mb[0], mb[1]))
         gate = edge_gate(A, B)
         gate_ok = gate["verdict"] in ("exact", "edge-aa<=32") and gate["maxInBand"] <= aa
-        # label: ink left of the control for a switch, right of it for a checkbox (whichever side has ink)
-        def label_box(img, c):
-            left = bbox_nonwhite(img, (0, 0, max(1, c[0] - 2), img.size[1]))
-            right = bbox_nonwhite(img, (c[1] + 2, 0, img.size[0], img.size[1]))
-            return left or right
+        # label: ink beside the control (left for a switch, right for a checkbox): see label_box
         lm, lw = label_box(im, (mx0, mx1)), label_box(iw, (wx0, wx1))
+        if lm is None or lw is None:   # the case declares a label: finding none fails loudly, never passes
+            row["error"] = f"no label ink beside the control (mac={lm} windows={lw})"
         label_ok = lm is not None and lw is not None and abs((lm[1] + lm[3]) / 2 - (lw[1] + lw[3]) / 2) <= tol
         diff_px = None
         if lm and lw:
             x0, y0, x1, y1 = min(lm[0], lw[0]), min(lm[1], lw[1]), max(lm[2], lw[2]), max(lm[3], lw[3])
             d = ImageChops.difference(im.crop((x0, y0, x1, y1)), iw.crop((x0, y0, x1, y1))).convert("L").point(lambda v: 255 if v else 0)
             diff_px = sum(1 for p in d.getdata() if p) if not hasattr(d, "get_flattened_data") else sum(1 for p in d.get_flattened_data() if p)
-        row.update(ok=same_size and gate_ok and label_ok, controlBBox=dict(mac=mb, windows=wb, dxWindowsMinusMac=dx, dyWindowsMinusMac=wb[1] - mb[1]), sameSizeAndY=same_size,
+        row.update(ok=same_size and gate_ok and label_ok and 'error' not in row, controlBBox=dict(mac=mb, windows=wb, dxWindowsMinusMac=dx, dyWindowsMinusMac=wb[1] - mb[1]), sameSizeAndY=same_size,
                    controlGate=gate, labelInkBBox=dict(mac=lm, windows=lw, centreToleranceOk=label_ok), labelDifferingPixelsReported=diff_px)
     ok = sum(1 for r in rows if r.get("ok"))
     rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, gate="control size equal, y within %d px; control (translated by dx) exact with edge-aa<=%d; label vertical centre within %d px; label pixels reported only" % (ytol, aa, tol), rows=rows)

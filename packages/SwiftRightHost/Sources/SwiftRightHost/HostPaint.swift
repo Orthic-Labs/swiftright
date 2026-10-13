@@ -19,6 +19,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
     case continuousShapeRasterInput(Int)
     case unsupportedToggleStyle(String)
     case unsupportedTogglePaintStyle
+    case unsupportedButtonPaintStyle
 
     public var description: String {
         switch self {
@@ -29,7 +30,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
         case .shapeMetadataRequired: return "HostPaint: shape node without resolved geometry/paint"
         case .shapeStrokeWidthRequired: return "HostPaint: stroke without a finite non-negative line width"
         case .invalidScaledStrokeWidth: return "HostPaint: scaled stroke width is not finite"
-        case .unsupportedTextPaintStyle: return "HostPaint: Text with a foreground style or opacity is not painted yet"
+        case .unsupportedTextPaintStyle: return "HostPaint: Text with opacity is not painted yet"
         case .measuredRunGeometryMismatch(let text): return "HostPaint: no measured run matches the resolved bounds of '\(text)'"
         case .ambiguousMeasuredRun(let text): return "HostPaint: several different measured runs match '\(text)'"
         case .unsupportedNode(let kind): return "HostPaint: unsupported node kind '\(kind)'"
@@ -37,6 +38,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
         case .continuousShapeRasterInput(let code): return "HostPaint: continuous shape raster input invalid (\(code))"
         case .unsupportedToggleStyle(let style): return "HostPaint: Toggle style '\(style)' has no artwork yet (only the switch and checkbox styles are painted)"
         case .unsupportedTogglePaintStyle: return "HostPaint: Toggle with a foreground style or opacity is not painted yet"
+        case .unsupportedButtonPaintStyle: return "HostPaint: Button with a foreground style, opacity or an empty frame is not painted yet"
         }
     }
 }

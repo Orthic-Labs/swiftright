@@ -176,7 +176,9 @@ extension Graph {
             return LayoutSize(width: width ?? content.width, height: height ?? content.height)
         case .toggle:
             return measureToggle(node, proposal)
-        case .user, .button, .modifier, .menu:
+        case .button:
+            return measureButton(node, proposal)
+        case .user, .modifier, .menu:
             return measureGroup(node, proposal)
         }
     }
@@ -263,9 +265,30 @@ extension Graph {
             placeGroup(node, in: contentRect, proposal: contentProposal)
         case .toggle:
             placeToggle(node, in: rect, proposal: proposal)
-        case .user, .button, .modifier, .menu:
+        case .button:
+            placeButton(node, in: rect, proposal: proposal)
+        case .user, .modifier, .menu:
             placeGroup(node, in: rect, proposal: proposal)
         }
+    }
+
+    // MARK: Button
+
+    /// A Button is its label inside the bordered push button macOS draws by default: the label plus `ButtonMetrics.padding`, the label centred in
+    /// the button. (No `buttonStyle` exists in the runtime yet, so every Button is this style.)
+    private func measureButton(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
+        let padding = ButtonMetrics.padding
+        let inner = ProposedViewSize(width: proposal.width.map { max(0, $0 - 2 * padding.width) }, height: proposal.height.map { max(0, $0 - 2 * padding.height) })
+        let label = measureGroup(node, inner)
+        return LayoutSize(width: label.width + 2 * padding.width, height: label.height + 2 * padding.height)
+    }
+
+    private func placeButton(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+        let padding = ButtonMetrics.padding
+        let inner = LayoutRect(x: rect.minX + padding.width, y: rect.minY + padding.height,
+                               width: max(0, rect.width - 2 * padding.width), height: max(0, rect.height - 2 * padding.height))
+        let innerProposal = ProposedViewSize(width: proposal.width.map { max(0, $0 - 2 * padding.width) }, height: proposal.height.map { max(0, $0 - 2 * padding.height) })
+        placeGroup(node, in: inner, proposal: innerProposal)
     }
 
     // MARK: Toggle

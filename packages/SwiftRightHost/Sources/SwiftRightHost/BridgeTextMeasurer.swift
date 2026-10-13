@@ -33,6 +33,15 @@ extension BundledFontLibrary: CustomFontResolving {}
 @MainActor
 public protocol TextRunSource: AnyObject {
     func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle
+    /// The same run shaped in `color` (0xRRGGBBAA, baked into the shaped run by the renderer). Colour never changes the geometry.
+    func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle
+}
+
+extension TextRunSource {
+    /// A source without per-run colour paints every run in its one colour.
+    public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
+        try run(text: text, font: font, bounds: bounds)
+    }
 }
 
 public enum TextMeasureError: Error, Equatable, CustomStringConvertible {
@@ -172,12 +181,30 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     public let textColor: UInt32
     public private(set) var failures: [String] = []
     private let log: (String) -> Void
+    private struct ColouredKey: Hashable { let request: TextMeasureRequest; let color: UInt32 }
     private var retained: [TextMeasureRequest: SwiftRightBridge.TextMeasurement] = [:]
+    private var coloured: [ColouredKey: SwiftRightBridge.TextMeasurement] = [:]
     private static let cacheBound = 256
 
     public init(bridge: Bridge, scale: Float, body: BodyFontProfile, fonts: CustomFontResolving? = nil,
                 textColor: UInt32 = 0x1f1f1fff, log: @escaping (String) -> Void = { print($0) }) {
         self.bridge = bridge; self.scale = scale; self.body = body; self.fonts = fonts; self.textColor = textColor; self.log = log
+    }
+
+    /// Shapes `request` in `color` (the single-line search for `lineLimit(1)` included); the caller owns the returned run.
+    private func shape(_ request: TextMeasureRequest, color: UInt32) throws -> SwiftRightBridge.TextMeasurement {
+        let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: color)
+        if request.lineLimit == 1 {
+            let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth,
+                measure: { candidate -> SwiftRightBridge.TextMeasurement in
+                    var r = shaping; r.text = candidate
+                    return try bridge.measure(r)
+                },
+                width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
+            log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
+            return selection.measurement
+        }
+        return try bridge.measure(shaping)
     }
 
     public func measure(_ request: TextMeasureRequest) -> SwiftRightRuntime.TextMeasurement {
@@ -188,20 +215,9 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
                 result = cached
             } else {
                 guard retained.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
-                let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: textColor)
-                if request.lineLimit == 1 {
-                    let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth,
-                        measure: { candidate -> SwiftRightBridge.TextMeasurement in
-                            var r = shaping; r.text = candidate
-                            return try bridge.measure(r)
-                        },
-                        width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
-                    result = selection.measurement
-                    log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
-                } else {
-                    result = try bridge.measure(shaping)
-                }
+                result = try shape(request, color: textColor)
                 retained[request] = result
+                let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: textColor)
                 log("TEXT_MEASURE text=\(request.text) fontID=\(request.fontID) family=\(shaping.fontFamily) weight=\(shaping.weight) fontSizeDIP=\(shaping.fontSize) lineHeightDIP=\(shaping.lineHeight) proposedDIP=\(request.proposedWidth.map(String.init(describing:)) ?? "nil") widthPX=\(result.width) heightPX=\(result.height) firstBaselinePX=\(result.firstBaseline) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") scale=\(scale)")
             }
             return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale), height: CGFloat(result.height / scale)),
@@ -227,8 +243,35 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         return source.value.run
     }
 
+    /// The retained run of `run(text:font:bounds:)` re-shaped in `color`: same text, font and width, so the same geometry. Retained per request and colour.
+    public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
+        guard color != textColor else { return try run(text: text, font: font, bounds: bounds) }
+        let fontID = font?.id ?? "body"
+        let metadata = font?.metadata
+        let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale }
+        let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: $0.value.width, height: $0.value.height,
+                                                             lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline) }
+        let chosen = try RetainedRunChoice.choose(entries, bounds: bounds, scale: scale, text: text)
+        guard let source = matching.first(where: { $0.key.proposedWidth == chosen.proposedWidth && $0.value.width == chosen.width && $0.value.height == chosen.height }) else {
+            throw HostPaintError.measuredRunGeometryMismatch(text)
+        }
+        let key = ColouredKey(request: source.key, color: color)
+        if let hit = coloured[key] { return hit.run }
+        guard coloured.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
+        let result = try shape(source.key, color: color)
+        guard result.width == chosen.width, result.height == chosen.height, result.lines.count == chosen.lines else {
+            _ = bridge.release(result.run)
+            throw HostPaintError.measuredRunGeometryMismatch(text)
+        }
+        coloured[key] = result
+        log("TEXT_COLOURED_RUN text=\(text) colorRGBA=\(String(format: "%08x", color)) widthPX=\(result.width) heightPX=\(result.height)")
+        return result.run
+    }
+
     public func releaseAll() {
         retained.values.forEach { _ = bridge.release($0.run) }
         retained.removeAll()
+        coloured.values.forEach { _ = bridge.release($0.run) }
+        coloured.removeAll()
     }
 }

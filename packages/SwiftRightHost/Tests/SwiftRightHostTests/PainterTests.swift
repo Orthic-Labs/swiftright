@@ -4,7 +4,10 @@ import SwiftRightHost
 @MainActor
 final class FakeRuns: TextRunSource {
     var asked: [(String, Rect)] = []
-    func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle { asked.append((text, bounds)); return TextRunHandle(raw: 77) }
+    /// The colour each coloured run was asked for (nil for a plain run), in order.
+    var colours: [UInt32?] = []
+    func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle { asked.append((text, bounds)); colours.append(nil); return TextRunHandle(raw: 77) }
+    func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle { asked.append((text, bounds)); colours.append(color); return TextRunHandle(raw: 78) }
 }
 
 /// The product path end to end on the Mac: SwiftUI-source views -> runtime graph -> painter -> primitives, with no case adapter.
@@ -73,9 +76,17 @@ final class PainterTests: XCTestCase {
         XCTAssertEqual(runs.asked.first?.0, "+")
     }
 
-    func testUnsupportedNodesAndStyledTextFailVisibly() throws {
-        XCTAssertThrowsError(try paint(Text("x").foregroundStyle(Color.red), proposal: (100, 100), runs: FakeRuns(), glyphs: false))
-        XCTAssertThrowsError(try paint(Button("t") {}, proposal: (100, 100), glyphs: false))
+    func testUnsupportedNodesAndTranslucentTextFailVisibly() throws {
+        XCTAssertThrowsError(try paint(Text("x").opacity(0.5), proposal: (100, 100), runs: FakeRuns(), glyphs: false))
+        XCTAssertThrowsError(try paint(TextField("t", text: .constant("")), proposal: (100, 100), glyphs: false))
+    }
+
+    func testForegroundColourReachesTheTextRun() throws {
+        let runs = FakeRuns()
+        let r = try paint(VStack { Text("a").foregroundStyle(Color.red); Text("b") }, proposal: (320, 240), runs: runs, glyphs: false)
+        XCTAssertEqual(runs.asked.map { $0.0 }, ["a", "b"])
+        XCTAssertEqual(runs.colours, [0xff383cff, nil], "the red text asks for its colour, an unstyled one for the plain run")
+        XCTAssertEqual(r.nodes.compactMap { $0.1.primitives.first }.count, 2)
     }
 
     func testAFailedCommitReleasesTheNewShapeImagesAndKeepsTheOld() throws {
@@ -106,7 +117,7 @@ final class TreeCommitTests: XCTestCase {
         let images = FakeImages()
         let painter = ResolvedNodePainter(images: images, scale: 2.5, log: { _ in })
         let first = try tree(VStack { Rectangle().fill(Color.red).frame(width: 10, height: 10); Circle().fill(Color.blue).frame(width: 8, height: 8) })
-        var sent: [Transaction] = []
+        var sent: [SwiftRightBridge.Transaction] = []
         let bg = ResolvedNodePainter.Background(bounds: Rect(x: 0, y: 0, w: 250, h: 250), color: 0xffffffff)
         let a = try painter.commit(root: first, version: 1, previousLive: [], background: bg, place: { Rect(x: $0.x + 5, y: $0.y + 5, w: $0.w, h: $0.h) }) { sent.append($0) }
         let tx = try XCTUnwrap(sent.first)
