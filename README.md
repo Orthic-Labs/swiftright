@@ -4,18 +4,7 @@
 
 A Swift desktop application SDK for macOS & Windows, in development: one SwiftUI codebase, actual SwiftUI/AppKit on Mac & a SwiftRight-owned SwiftUI-semantics runtime on Windows, drawn by a Rust renderer on GPUI 0.2.2 with AccessKit.
 
-**Status:** SR0 (dependency, host & slice qualification) is built and receipted but not closed, and work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). The Windows renderer, bridge, runtime & the SliceApp example build and run; the last fully qualified build is tuple 11 (fixture matrix 320/320, cross-compare against the Mac oracle 16/16; [docs/sr0-status.md](docs/sr0-status.md)). Still open: the slice contract is not frozen, the Windows MSIX package fails one interrupted-update check (W08), & the decisions listed under PENDING in `docs/sr0-status.md`. This is not a released SDK and not a claim of complete SwiftUI compatibility.
-
-## Where it stands
-
-Work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). SR0 evidence binds to one pinned set of builds (runtime commit, bridge header, renderer DLL hash, fixture binaries) recorded in [docs/sr0-snapshot.md](docs/sr0-snapshot.md); open items are in [docs/sr0-status.md](docs/sr0-status.md).
-
-| Measured on tuple 11 | Result | Where |
-|---|---|---|
-| Fixture matrix, 16 configurations x 20 runs, on the pinned Windows renderer | 320/320 | [docs/sr0-snapshot.md](docs/sr0-snapshot.md) |
-| Cross-compare of the same configurations against the macOS oracle | 16/16, 0 unallowed differences, 69 fault controls rejected | `probes/sr0-o/f1-cross/CROSS-ALL.md` |
-| Bridge smoke, timeout mode and pixel assertions | 40/40, 41/41, 10/10 | `examples/BridgeSmoke/` |
-| SliceApp packaged for both platforms | MSIX 0.1.0.0 and DMG 0.1.0 / 0.1.1 built; MSIX fails one interrupted-update check (W08) | `examples/SliceApp/`, [docs/sr0-status.md](docs/sr0-status.md) |
+**Status:** Work is paused since 11 October 2026. SR0 remains open: the Windows renderer, bridge, runtime & SliceApp build and run, and tuple 11 is built and receipted (fixture matrix 320/320; Mac-oracle cross-compare 16/16, with 0 unallowed differences and 69 fault controls rejected). BridgeSmoke recorded 40/40 smoke, 41/41 timeout and 10/10 pixel assertions. The slice contract is not frozen, the Windows MSIX fails interrupted-update check W08, and pending decisions remain; this is not a released SDK or a claim of complete SwiftUI compatibility ([PENDING](PENDING.md); [SR0 status](docs/sr0-status.md); [tuple 11 snapshot](docs/sr0-snapshot.md); [cross-compare evidence](probes/sr0-o/f1-cross/CROSS-ALL.md)).
 
 ## How it will work
 
@@ -25,17 +14,17 @@ Work is paused since 11 October 2026 ([PENDING.md](PENDING.md)). SR0 evidence bi
 - Parity will be a tested contract, never a promise. Every API in the published inventory will have a compile fixture, a behavioural trace recorded on macOS and a Windows replay; unsupported APIs will fail at Windows compile time.
 - No compiler fork, no transpiler, no emulator for macOS binaries, no native WinUI controls, no second-language shell, and no AI service or network connection to render UI.
 
-Source for each point: [docs/architecture.md](docs/architecture.md), section 1 (product definition and hard requirements) and section 3 (architecture decisions AD2 to AD8).
+Source for each point: [architecture](docs/architecture.md), section 1 (product definition and hard requirements) and section 3 (architecture decisions AD2 to AD8).
 
 ## Architecture
 
-Read [SwiftRight architecture v0.5](docs/architecture.md), dated 8 October 2026, & [review history with v0.5 dispositions](docs/architecture-review.md#v05-sequential-adversarial-review-8-october-2026). The Windows renderer is a Rust cdylib on GPUI 0.2.2, AccessKit 0.25.1 & accesskit_windows 0.35.1 (`render/swiftright-render`), exposed to Swift through a versioned C ABI (0.6) that `packages/SwiftRightBridge` consumes. GPUI is the first renderer; Slint remains an unqualified alternative. UIA, IME & Narrator paths are exercised by the SR0 native-interaction probes, and the known limitations are listed in `docs/sr0-status.md`.
+Read [SwiftRight architecture v0.5](docs/architecture.md), dated 8 October 2026, & [review history with v0.5 dispositions](docs/architecture-review.md#v05-sequential-adversarial-review-8-october-2026). The Windows renderer is a Rust cdylib on GPUI 0.2.2, AccessKit 0.25.1 & accesskit_windows 0.35.1, exposed to Swift through a versioned C ABI (0.6) consumed by [SwiftRightBridge](packages/SwiftRightBridge/). The packaged example records its renderer pin in [renderer-pin.json](examples/SliceApp/Windows/renderer-pin.json). GPUI is the first renderer; Slint remains an unqualified alternative. UIA, IME & Narrator paths are exercised by the SR0 native-interaction probes, and known limitations are listed in [SR0 status](docs/sr0-status.md).
 
 The plan covers package boundaries, native backends, state and binding semantics, platform services, existing Rust-engine reuse, tooling, packaging, migration, conformance tests, performance measurements, and long-term maintenance.
 
 ## Targets
 
-Qualified targets are macOS 14 or later on Apple Silicon & Windows 11 x64 (`docs/sr0-status.md`, scope revision 1). Windows arm64 & Intel Macs are unsupported. The recorded hosts use Swift 6.4 on both platforms (`docs/sr0-snapshot.md`).
+Qualified targets are macOS 14 or later on Apple Silicon & Windows 11 x64 ([SR0 status](docs/sr0-status.md), scope revision 1). Windows arm64 & Intel Macs are unsupported. The recorded hosts use Swift 6.4 on both platforms ([SR0 snapshot](docs/sr0-snapshot.md)).
 
 ## Delivery sequence
 
@@ -54,15 +43,15 @@ The full plan defines acceptance criteria and platform boundaries for each gate.
 
 | Path | Contents |
 | --- | --- |
-| `docs/` | Architecture, SR0 status, findings, snapshot, retry ledger & the SR1 plan |
-| `render/swiftright-render/` | Rust GPUI renderer & its C ABI header |
-| `packages/SwiftRightBridge/` | Swift bridge to the renderer ABI |
-| `packages/SwiftRightServices/` | Swift client for Rust engines on the RightKit framed-sidecar wire |
-| `examples/` | `SliceApp` (packaged example), `BridgeSmoke`, `BridgeGeoModal` |
-| `probes/` | SR0 probe projects & results; `sr0-s/fresh-runtime` holds the Swift runtime that `SliceApp` depends on |
-| `factory/` | SR1 factory specifications, tools & spikes (draft) |
-| `qualification/` | Qualification runner, receipts & outputs |
-| `conformance/` | SR0 slice contract (draft) with accepted & candidate recordings |
+| [docs/](docs/) | Architecture, SR0 status, findings, snapshot, retry ledger & the SR1 plan |
+| [examples/SliceApp/Windows/renderer-pin.json](examples/SliceApp/Windows/renderer-pin.json) | Renderer pin for the packaged Windows example |
+| [packages/SwiftRightBridge/](packages/SwiftRightBridge/) | Swift bridge to the renderer ABI |
+| [packages/SwiftRightServices/](packages/SwiftRightServices/) | Swift client for Rust engines on the RightKit framed-sidecar wire |
+| [examples/](examples/) | SliceApp (packaged example), BridgeSmoke, BridgeGeoModal |
+| [probes/](probes/) | SR0 probe projects & results |
+| [factory/](factory/README.md) | SR1 factory specifications, tools & spikes (draft) |
+| [docs/qualification.md](docs/qualification.md) | Qualification runner, receipts & outputs |
+| [conformance/](conformance/) | SR0 slice contract (draft) with accepted & candidate recordings |
 
 SwiftRight owns UI semantics & Swift adapters; RightKit supplies existing shared capabilities, managed Rust builds & release machinery. This repository qualifies on local native hosts, without GitHub Actions.
 
