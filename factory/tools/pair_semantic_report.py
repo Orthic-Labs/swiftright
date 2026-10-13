@@ -36,7 +36,7 @@ WIN_ROLE = {"Button": "button", "CheckBox": "checkbox", "Text": "text", "Edit": 
 MAC_ROLE = {"AXButton": "button", "AXCheckBox": "checkbox", "AXCheckBox/AXSwitch": "switch", "AXStaticText": "text", "AXTextField": "textfield", "AXTextArea": "textfield",
             "AXImage": "image", "AXGroup": "group", "AXWindow": "window", "AXSheet": "dialog", "AXDialog": "dialog", "AXScrollArea": "pane", "AXSplitGroup": "group", "AXList": "list",
             "AXRadioButton": "radio", "AXSlider": "slider", "AXLink": "link", "AXMenuBar": "menubar", "AXToolbar": "toolbar", "AXPopUpButton": "combobox", "AXUnknown": "unknown",
-            "AXWindow/AXDialog": "dialog", "AXWindow/AXSystemDialog": "dialog", "AXWindow/AXFloatingWindow": "dialog", "AXButton/AXToolbarButton": "button"}
+            "AXWindow/AXDialog": "window", "AXWindow/AXSystemDialog": "window", "AXWindow/AXFloatingWindow": "window", "AXButton/AXToolbarButton": "button"}
 WIN_DIALOG_CLASSES = {"#32770"}   # TaskDialog / MessageBox host window class
 
 
@@ -61,6 +61,8 @@ def flatten_win(node, origin, scale, role_map, out, depth=0):
     """UIA node -> normalised element list (depth-first). origin = client origin in screen px, scale = px per point."""
     if node.get("role") == "TitleBar":
         return   # window chrome (system menu, minimise/maximise/close): the Mac host window is borderless, so it has none
+    if depth > 0 and node.get("role") == "Window":
+        return   # an owned window (a task dialog) is also listed under its owner by UIA; it is compared as its own window
     role = WIN_ROLE.get(node.get("role"), "unknown")
     toggle = norm_toggle_win(node.get("toggle"))
     if role == "button" and toggle:

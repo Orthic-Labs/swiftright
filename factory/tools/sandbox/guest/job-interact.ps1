@@ -10,6 +10,7 @@
 #   {"op":"ime","action":"compose","text":"にほ"}        ImmSetCompositionStringW(SCS_SETSTR) on the window's input context, then WM_IME_COMPOSITION(GCS_COMPSTR); falls back to posting
 #   {"op":"ime","action":"commit","text":"日本"}         WM_IME_COMPOSITION(GCS_RESULTSTR) when the IMM call is refused (recorded in the step log); "cancel" ends the composition
 #   {"op":"invoke","name":"OK"}                          UIA InvokePattern on the first element (in the target window) whose Name equals `name` (dialog buttons; the Sandbox cannot click a TaskDialog by pixels reliably)
+#   {"op":"foreground"}                                  give the target window the foreground inside the Sandbox (a task dialog's default button then reports keyboard focus in UIA)
 #   {"op":"wait","ms":300}
 #   {"op":"dump","label":"after-open"}                   extra UIA dump -> uia-NN-<label>.json
 #   {"op":"shot","label":"mid"}                          extra PrintWindow capture -> native-NN-<label>.png
@@ -156,6 +157,7 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
     $op = [string]$step.op
     $h = $(if ($op -in 'wait', 'dump', 'shot') { $mainH } else { Resolve-Target $proc $step $mainH })
     switch ($op) {
+        'foreground' { [IxNative]::Foreground($h); Start-Sleep -Milliseconds 300; return 'ok' }
         'wait' { Start-Sleep -Milliseconds ([int]$step.ms); return 'ok' }
         'dump' { Dump-Process $proc $mainH (Join-Path $out ("uia-$n-" + [string]$step.label + '.json')); return 'ok' }
         'shot' { return [IxNative]::Shot($mainH, (Join-Path $out ("native-$n-" + [string]$step.label + '.png'))) }

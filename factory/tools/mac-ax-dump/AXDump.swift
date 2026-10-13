@@ -94,6 +94,8 @@ enum AXDump {
         visit(main)
         for w in NSApp.windows where seenWindows.insert(ObjectIdentifier(w)).inserted {
             // windows the process created for presentation (NSAlert, panels); never AppKit's own status/tooltip windows
+            // NSAlert's panel is described by its own record (AlertHooks.record): its raw view tree carries hidden helper controls (suppression checkbox, help button, empty buttons)
+            if String(describing: type(of: w)) == "_NSAlertPanel" { continue }
             if w.isVisible || w is NSPanel || w.sheetParent != nil { windows.append(windowRecord(w, main: false, kind: w is NSPanel ? "alert" : "window")) }
         }
         var doc: [String: Any] = ["scale": scale, "windows": windows]

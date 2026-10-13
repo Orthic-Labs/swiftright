@@ -109,6 +109,13 @@ class SemanticTests(unittest.TestCase):
             (t / "run/windows/uia-01.json").write_text(json.dumps(dict(windows=[win_window([]), task])))   # the dialog is still open after the press
             self.assertEqual(subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True).returncode, 1)
 
+    def test_owned_dialog_listed_under_its_owner_is_not_compared_twice(self):
+        task = win_window([win_el("OK", "Button", 0, 0, 10, 10)], main=False, title="T", cls="#32770")
+        main = win_window([win_el("T", "Window", 0, 0, 10, 10, children=[win_el("OK", "Button", 0, 0, 10, 10)]), win_el("Waiting", "Text", 0, 20, 10, 10)])
+        w = dict(windows=[task, main])
+        m = dict(windows=[mac_window([mac_el(None, "AXStaticText", 0, 20, 10, 10, value="Waiting")]), mac_window([mac_el("OK", "AXButton", 0, 0, 10, 10)], main=False, title="T", kind="alert")])
+        self.assertEqual(S.compare_run(w, m, dict(fields=["role", "name", "count"], dialogs=dict(count=1)))[0], [])
+
     def test_real_windows_dump_flattens(self):
         # shape of an F2 dump from a real host run (checkbox): title-bar chrome is dropped, the control keeps role/toggle/bounds relative to the client origin
         w = dict(windows=[win_window([win_el("Enabled", "CheckBox", 0, 0, 16, 16, toggle="On", value="1", automationId="Root/#0/Modified/Modified/Toggle")])])

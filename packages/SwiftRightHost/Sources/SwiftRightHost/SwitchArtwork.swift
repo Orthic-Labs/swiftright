@@ -95,6 +95,7 @@ public enum SwitchArtwork {
         // dark: the knob is white at `knobAlpha` over the track, so it is a blend INSIDE the track; light: an opaque white knob over the track
         let knobAlpha = dark ? ToggleDarkData.knobAlpha : 1.0
         let strength = dark ? ToggleDarkData.shadowStrength : shadowStrength
+        let knobCap = dark ? ToggleDarkData.knobCap : SwitchArtworkData.knobCap
         let baseRGB = [Double(base >> 16 & 255), Double(base >> 8 & 255), Double(base & 255)]
         var rgba = [UInt8](repeating: 0, count: widthPX * heightPX * 4)
         for py in 0..<heightPX {
@@ -106,7 +107,7 @@ public enum SwitchArtwork {
                     for sx in 0..<n {
                         let x = (Double(px) + (Double(sx) + 0.5) / Double(n)) / pxPerPointX
                         guard inside(SwitchArtworkData.trackCap, x: x, y: y, width: controlWidth, height: controlHeight) else { continue }
-                        if inside(SwitchArtworkData.knobCap, x: x - knobX, y: y - knobInset, width: knobWidth, height: knobHeight) {
+                        if inside(knobCap, x: x - knobX, y: y - knobInset, width: knobWidth, height: knobHeight) {
                             if knobAlpha < 1 {
                                 trackSamples += 1
                                 for c in 0..<3 { colour[c] += 255 * knobAlpha + baseRGB[c] * (1 - knobAlpha) }

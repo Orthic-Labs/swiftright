@@ -122,11 +122,13 @@ struct Witness_cs_preferred_dark: View {
 alert_case() {
   d=$1; t=$2; b=$3; press=$4; how=$5
   mk "$d" "$t" "$b" --alert-host
-  if [ "$how" = "ESC" ]; then act='{"op":"key","key":"Escape","target":"dialog"}'; else act="{\"op\":\"invoke\",\"target\":\"dialog\",\"name\":\"$how\"}"; fi
+  if [ "$how" = "ESC" ]; then act='{"op":"key","key":"Escape","target":"dialog"}'
+  elif [ "$how" = "ENTER" ]; then act='{"op":"key","key":"Enter","target":"dialog"}'
+  else act="{\"op\":\"invoke\",\"target\":\"dialog\",\"name\":\"$how\"}"; fi
   cat > "$d/pair.json" <<JSON
-{"semanticGate": {"fields": ["role", "name", "enabled", "default", "dialogTitle", "count", "order"], "scope": "all", "pixels": "report-only", "phases": ["open", ""], "dialogs": {"count": {"open": 1, "": 0}}},
+{"semanticGate": {"fields": ["role", "name", "enabled", "dialogTitle", "count", "order"], "scope": "all", "pixels": "report-only", "phases": ["open", ""], "dialogs": {"count": {"open": 1, "": 0}}},
  "macArgs": ["--press", "$press"],
- "steps": [{"op": "wait", "ms": 1200}, {"op": "dump", "label": "open"}, $act, {"op": "wait", "ms": 800}]}
+ "steps": [{"op": "wait", "ms": 1200}, {"op": "foreground", "target": "dialog"}, {"op": "dump", "label": "open"}, $act, {"op": "wait", "ms": 800}]}
 JSON
 }
 STATUS='Rectangle().fill(done ? Color.green : Color.red).frame(width: 80, height: 40)
@@ -184,3 +186,9 @@ alert_case swiftui.alert/auto-cancel-v1 Witness_alert_auto_cancel "$(alert_view 
             Button("Copy link") { done = true }
             Button("Email") { }
         }')" 2 Cancel
+alert_case swiftui.alert/default-enter-v1 Witness_alert_default_enter "$(alert_view Witness_alert_default_enter '        .alert("Save changes?", isPresented: $show) {
+            Button("Save") { done = true }
+            Button("Don'"'"'t save", role: .destructive) { }
+        } message: {
+            Text("Your changes will be lost otherwise.")
+        }')" 0 ENTER
