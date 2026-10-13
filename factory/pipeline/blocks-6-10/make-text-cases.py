@@ -41,6 +41,98 @@ def cases():
     @State private var name = "Hello"
     var body: some View {{ TextField("Name", text: $name){pad} }}
 }}''', "Witness_tf_automatic", exclude=[("typed text glyphs", FIELD_RECT)], sem=SEM)
+    # --- block 13, interaction: typing and Return (onSubmit commits the text the binding holds)
+    click = {"op": "click", "x": 150, "y": 55}
+    case("swiftui.textfield", "submit-v1", '''struct Witness_tf_submit: View {
+    @State private var name = ""
+    @State private var submitted = "none"
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("Name", text: $name).textFieldStyle(.roundedBorder).onSubmit { submitted = name }
+            Text("submitted: \\(submitted)")
+            Text("typed: \\(name)")
+        }.frame(width: 120).padding(10)
+    }
+}''', "Witness_tf_submit", steps=[click, {"op": "char", "text": "hi"}, {"op": "wait", "ms": 200}, {"op": "key", "key": "Enter"}, {"op": "wait", "ms": 300}],
+         sem=dict(SEM, pixels="report-only"))
+    # --- block 14 swiftui.focus-state: Tab order, programmatic focus, the Bool form. The Text shows the FocusState value (gated through the semantic tree).
+    focus_tab = '''enum Field: Hashable { case first, second }
+
+struct Witness_focus_tab: View {
+    @State private var a = "one"
+    @State private var b = "two"
+    @FocusState private var focus: Field?
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("First", text: $a).textFieldStyle(.roundedBorder).focused($focus, equals: .first)
+            TextField("Second", text: $b).textFieldStyle(.roundedBorder).focused($focus, equals: .second)
+            Text("focus: \\(focus == .first ? "first" : focus == .second ? "second" : "none")")
+        }.frame(width: 120).padding(10)
+    }
+}'''
+    wait = lambda ms: {"op": "wait", "ms": ms}
+    tab_steps = [wait(300), {"op": "key", "key": "Tab"}, wait(250), {"op": "dump", "label": "t1"}, {"op": "key", "key": "Tab"}, wait(250), {"op": "dump", "label": "t2"},
+                 {"op": "key", "key": "Tab"}, wait(250), {"op": "dump", "label": "t3"}, {"op": "click", "x": 150, "y": 55}, wait(250), {"op": "dump", "label": "t4"}, wait(200)]
+    fsem = dict(SEM, pixels="report-only", phases=["t1", "t2", "t3", "t4", ""])
+    case("swiftui.focus-state", "tab-order-v1", focus_tab, "Witness_focus_tab", steps=tab_steps, sem=fsem)
+    case("swiftui.focus-state", "shift-tab-v1", focus_tab.replace("Witness_focus_tab", "Witness_focus_shifttab"), "Witness_focus_shifttab",
+         mac_steps=[{"op": "click", "x": 150, "y": 105}, wait(250), {"op": "key", "key": "Tab", "mods": ["shift"]}, wait(250)],
+         win_steps=[wait(1800)], script=[{"op": "focus", "field": 1}, {"op": "key", "name": "tab", "mods": ["shift"]}], sem=fsem | {"phases": [""]})
+    prog = '''enum Field: Hashable { case first, second }
+
+struct Witness_focus_programmatic: View {
+    @State private var a = "one"
+    @State private var b = "two"
+    @FocusState private var focus: Field?
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("First", text: $a).textFieldStyle(.roundedBorder).focused($focus, equals: .first)
+            TextField("Second", text: $b).textFieldStyle(.roundedBorder).focused($focus, equals: .second)
+            Text("focus: \\(focus == .first ? "first" : focus == .second ? "second" : "none")")
+            Button("Second") { focus = .second }.frame(width: 100, height: 24)
+            Button("Clear") { focus = nil }.frame(width: 100, height: 24)
+            Button("First") { focus = .first }.frame(width: 100, height: 24)
+        }.frame(width: 120).padding(10)
+    }
+}'''
+    prog_steps = [wait(300), {"op": "click", "x": 150, "y": 275}, wait(250), {"op": "dump", "label": "p1"}, {"op": "click", "x": 150, "y": 345}, wait(250), {"op": "dump", "label": "p2"},
+                  {"op": "click", "x": 150, "y": 415}, wait(250), {"op": "dump", "label": "p3"}, wait(200)]
+    case("swiftui.focus-state", "programmatic-v1", prog, "Witness_focus_programmatic", steps=prog_steps, sem=dict(SEM, roles=["textfield", "text", "button"], pixels="report-only", phases=["p1", "p2", "p3", ""]))
+    boolform = '''struct Witness_focus_bool: View {
+    @State private var a = "one"
+    @FocusState private var flag: Bool
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("Name", text: $a).textFieldStyle(.roundedBorder).focused($flag)
+            Text("flag: \\(flag ? "true" : "false")")
+            Button("Focus") { flag = true }.frame(width: 100, height: 24)
+            Button("Blur") { flag = false }.frame(width: 100, height: 24)
+        }.frame(width: 120).padding(10)
+    }
+}'''
+    case("swiftui.focus-state", "bool-form-v1", boolform, "Witness_focus_bool",
+         steps=[wait(300), {"op": "click", "x": 150, "y": 205}, wait(250), {"op": "dump", "label": "b1"}, {"op": "click", "x": 150, "y": 275}, wait(250), {"op": "dump", "label": "b2"}, wait(200)],
+         sem=dict(SEM, roles=["textfield", "text", "button"], pixels="report-only", phases=["b1", "b2", ""]))
+    # --- block 15 swiftui.ime-marked-text: the binding during composition. Windows: in-process script (ime_replace_and_mark / ime_replace / unmark through the product TextStore);
+    # Mac: NSTextInputClient on the field editor (setMarkedText / insertText), no input method involved.
+    ime = '''struct Witness_ime: View {
+    @State private var text = "ab"
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("Name", text: $text).textFieldStyle(.roundedBorder)
+            Text("bound: \\(text)")
+        }.frame(width: 120).padding(10)
+    }
+}'''
+    def imecase(name, script, mac):
+        wt = "Witness_ime_" + name.split("-")[1]
+        case("swiftui.ime-marked-text", name, ime.replace("Witness_ime", wt), wt, win_steps=[wait(2200)], script=script, mac_steps=[{"op": "click", "x": 150, "y": 55}, wait(250)] + mac + [wait(250)],
+             sem=dict(SEM, pixels="report-only"))
+    imecase("ime-composing-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "ni"}], [{"op": "ime", "action": "compose", "text": "ni"}])
+    imecase("ime-commit-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "ni"}, {"op": "commit", "text": "\u4f60"}], [{"op": "ime", "action": "compose", "text": "ni"}, {"op": "ime", "action": "commit", "text": "\u4f60"}])
+    imecase("ime-cancel-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "ni"}, {"op": "cancel"}], [{"op": "ime", "action": "compose", "text": "ni"}, {"op": "ime", "action": "cancel"}])
+    imecase("ime-recompose-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "n"}, {"op": "compose", "text": "ni"}, {"op": "compose", "text": "\u4f60"}],
+            [{"op": "ime", "action": "compose", "text": "n"}, {"op": "ime", "action": "compose", "text": "ni"}, {"op": "ime", "action": "compose", "text": "\u4f60"}])
     return out
 
 
@@ -68,10 +160,12 @@ def stamp(c):
         pj["excludeRects"] = [{"name": n, "rect": r} for n, r in c["exclude"]]
     if c.get("sem"):
         pj["semanticGate"] = c["sem"]
-    if c.get("steps"):
-        pj["steps"] = c["steps"]
-        pj["macArgs"] = ["--steps", json.dumps(c["steps"], separators=(",", ":"))]
-    elif c.get("sem"):
+    win_steps = c.get("win_steps", c.get("steps")); mac_steps = c.get("mac_steps", c.get("steps"))
+    if win_steps:
+        pj["steps"] = win_steps
+    if mac_steps:
+        pj["macArgs"] = ["--steps", json.dumps(mac_steps, separators=(",", ":"))]
+    if not win_steps and c.get("sem"):
         pj["steps"] = [{"op": "wait", "ms": 300}]   # the F2 interact job dumps the UIA tree for the semantic gate; the Mac side stays never-shown
     (d / "pair.json").write_text(json.dumps(pj, indent=1) + "\n")
     print("stamped", d.relative_to(HERE))

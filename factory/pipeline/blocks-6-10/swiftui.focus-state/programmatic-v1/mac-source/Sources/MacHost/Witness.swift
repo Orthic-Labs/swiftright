@@ -1,0 +1,23 @@
+#if os(Windows)
+import SwiftRightRuntime
+#else
+import SwiftUI
+#endif
+
+enum Field: Hashable { case first, second }
+
+struct Witness_focus_programmatic: View {
+    @State private var a = "one"
+    @State private var b = "two"
+    @FocusState private var focus: Field?
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("First", text: $a).textFieldStyle(.roundedBorder).focused($focus, equals: .first)
+            TextField("Second", text: $b).textFieldStyle(.roundedBorder).focused($focus, equals: .second)
+            Text("focus: \(focus == .first ? "first" : focus == .second ? "second" : "none")")
+            Button("Second") { focus = .second }.frame(width: 100, height: 24)
+            Button("Clear") { focus = nil }.frame(width: 100, height: 24)
+            Button("First") { focus = .first }.frame(width: 100, height: 24)
+        }.frame(width: 120).padding(10)
+    }
+}

@@ -148,10 +148,15 @@ final class TextFieldBlockTests: XCTestCase {
         XCTAssertEqual(tape.calls, [])
     }
 
-    func testReturnWithoutSubmitActionIsNotHandled() {
-        struct Bare: View { @State var t = "x"; var body: some View { TextField("t", text: $t) } }
+    func testReturnSelectsTheWholeTextWithOrWithoutSubmitAction() {
+        struct Bare: View { @State var t = "xyz"; var body: some View { TextField("t", text: $t) } }
         let graph = Graph(Bare()); graph.flush()
-        XCTAssertFalse(graph.pressReturn(inTextField: graph.ids(ofKind: "TextField")[0]))
+        let id = graph.ids(ofKind: "TextField")[0]
+        let state = graph.textInput(id)!
+        XCTAssertTrue(state.setSelection(UTF16Range(location: 1, length: 0)))
+        XCTAssertTrue(graph.pressReturn(inTextField: id))
+        XCTAssertEqual(state.selection, UTF16Range(location: 0, length: 3))
+        XCTAssertEqual(state.committed, "xyz")
     }
 
     func testTabIntoAFieldSelectsItsWholeText() {

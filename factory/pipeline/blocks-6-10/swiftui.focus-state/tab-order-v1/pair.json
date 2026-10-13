@@ -1,0 +1,86 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "pixels": "report-only",
+  "phases": [
+   "t1",
+   "t2",
+   "t3",
+   "t4",
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "t1"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "t2"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "t3"
+  },
+  {
+   "op": "click",
+   "x": 150,
+   "y": 55
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "t4"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":300},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"t1\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"t2\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"t3\"},{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"t4\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

@@ -122,9 +122,10 @@ extension Graph {
     public func pressReturn(inTextField id: String) -> Bool {
         guard let target = node(id), case .textField = target.kind, let state = target.textInput, target.environment.isEnabled else { return false }
         if state.composition != nil { return state.unmark() }
-        let actions = target.environment.submitActions
-        guard !actions.isEmpty else { return false }
-        actions.forEach { $0() }
+        target.environment.submitActions.forEach { $0() }
+        // AppKit ends editing on Return, with or without an action, and the field keeps focus with its whole text selected (macOS oracle: 0 + count).
+        selectAllInitially(under: target)
+        flush()
         return true
     }
 }

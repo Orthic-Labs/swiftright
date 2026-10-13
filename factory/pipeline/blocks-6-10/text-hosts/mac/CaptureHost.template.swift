@@ -41,8 +41,8 @@ let namedKeys: [String: KeySpec] = [
 
 @MainActor
 final class StepRunner {
-    let window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat
-    init(window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat) { self.window = window; self.host = host; self.height = height }
+    let window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat, ax: String?
+    init(window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat, ax: String?) { self.window = window; self.host = host; self.height = height; self.ax = ax }
 
     var client: NSTextInputClient? { window.firstResponder as? NSTextInputClient }
 
@@ -96,6 +96,11 @@ final class StepRunner {
                 default: break
                 }
             case "wait": spin(Double((step["ms"] as? NSNumber)?.doubleValue ?? 100) / 1000); continue
+            case "dump":
+                // the same label convention as the F2 UIA dump (uia-NN-<label>.json) and AlertHooks: ax-NN-<label>.json beside the final dump
+                if let ax, let label = step["label"] as? String { try? AXDump.write(main: window, scale: Double(captureScale), to: ax.replacingOccurrences(of: ".json", with: "-\(label).json")) }
+                fact("\(i):dump")
+                continue
             default: break
             }
             spin()
@@ -126,7 +131,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     spin(@@SETTLE@@)
-    if let steps { StepRunner(window: window, host: host, height: height).run(steps) }
+    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps) }
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     let pixelsWide = Int((width * captureScale).rounded()), pixelsHigh = Int((height * captureScale).rounded())
