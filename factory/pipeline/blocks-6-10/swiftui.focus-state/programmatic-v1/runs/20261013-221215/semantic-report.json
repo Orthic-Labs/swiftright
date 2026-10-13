@@ -1,0 +1,489 @@
+{
+ "pairs": 1,
+ "pass_": 0,
+ "fail": 1,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text",
+   "button"
+  ],
+  "pixels": "report-only",
+  "phases": [
+   "p1",
+   "p2",
+   "p3",
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "p1": {
+     "main": {
+      "windows": 9,
+      "mac": 6
+     }
+    },
+    "p2": {
+     "main": {
+      "windows": 9,
+      "mac": 6
+     }
+    },
+    "p3": {
+     "main": {
+      "windows": 9,
+      "mac": 6
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 9,
+      "mac": 6
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: none",
+     "mac": "focus: second",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "p1"
+    },
+    {
+     "where": "main[4]",
+     "field": "role",
+     "windows": "text",
+     "mac": "button",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p1"
+    },
+    {
+     "where": "main[4]",
+     "field": "name",
+     "windows": "Second",
+     "mac": "Clear",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p1"
+    },
+    {
+     "where": "main[5]",
+     "field": "name",
+     "windows": "Clear",
+     "mac": "First",
+     "role": [
+      "button",
+      "button"
+     ],
+     "phase": "p1"
+    },
+    {
+     "where": "main[6]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Clear",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       46.4,
+       134.0,
+       27.2,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p1"
+    },
+    {
+     "where": "main[7]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       36.8,
+       162.0,
+       46.4,
+       24.0
+      ],
+      "depth": 1,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": "p1"
+    },
+    {
+     "where": "main[8]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       48.8,
+       166.0,
+       22.4,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p1"
+    },
+    {
+     "where": "main[4]",
+     "field": "role",
+     "windows": "text",
+     "mac": "button",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p2"
+    },
+    {
+     "where": "main[4]",
+     "field": "name",
+     "windows": "Second",
+     "mac": "Clear",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p2"
+    },
+    {
+     "where": "main[5]",
+     "field": "name",
+     "windows": "Clear",
+     "mac": "First",
+     "role": [
+      "button",
+      "button"
+     ],
+     "phase": "p2"
+    },
+    {
+     "where": "main[6]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Clear",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       46.4,
+       134.0,
+       27.2,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p2"
+    },
+    {
+     "where": "main[7]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       36.8,
+       162.0,
+       46.4,
+       24.0
+      ],
+      "depth": 1,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": "p2"
+    },
+    {
+     "where": "main[8]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       48.8,
+       166.0,
+       22.4,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p2"
+    },
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: none",
+     "mac": "focus: first",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "p3"
+    },
+    {
+     "where": "main[4]",
+     "field": "role",
+     "windows": "text",
+     "mac": "button",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p3"
+    },
+    {
+     "where": "main[4]",
+     "field": "name",
+     "windows": "Second",
+     "mac": "Clear",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": "p3"
+    },
+    {
+     "where": "main[5]",
+     "field": "name",
+     "windows": "Clear",
+     "mac": "First",
+     "role": [
+      "button",
+      "button"
+     ],
+     "phase": "p3"
+    },
+    {
+     "where": "main[6]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Clear",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       46.4,
+       134.0,
+       27.2,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p3"
+    },
+    {
+     "where": "main[7]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       36.8,
+       162.0,
+       46.4,
+       24.0
+      ],
+      "depth": 1,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": "p3"
+    },
+    {
+     "where": "main[8]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       48.8,
+       166.0,
+       22.4,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "p3"
+    },
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: none",
+     "mac": "focus: first",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[4]",
+     "field": "role",
+     "windows": "text",
+     "mac": "button",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[4]",
+     "field": "name",
+     "windows": "Second",
+     "mac": "Clear",
+     "role": [
+      "text",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[5]",
+     "field": "name",
+     "windows": "Clear",
+     "mac": "First",
+     "role": [
+      "button",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[6]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Clear",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       46.4,
+       134.0,
+       27.2,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": ""
+    },
+    {
+     "where": "main[7]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       36.8,
+       162.0,
+       46.4,
+       24.0
+      ],
+      "depth": 1,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": ""
+    },
+    {
+     "where": "main[8]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "First",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       48.8,
+       166.0,
+       22.4,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": ""
+    }
+   ]
+  }
+ ]
+}

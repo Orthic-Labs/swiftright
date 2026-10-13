@@ -1,0 +1,37 @@
+{
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "error": "missing capture"
+  }
+ ],
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "'Count n' text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+   "rect": [
+    200,
+    195,
+    600,
+    245
+   ]
+  },
+  {
+   "name": "button width and label glyphs (Segoe UI vs SF, decision 2); the button artwork is gated by swiftui.button/bordered-v1, its action by the tree and the counter squares",
+   "rect": [
+    200,
+    260,
+    600,
+    330
+   ]
+  }
+ ]
+}

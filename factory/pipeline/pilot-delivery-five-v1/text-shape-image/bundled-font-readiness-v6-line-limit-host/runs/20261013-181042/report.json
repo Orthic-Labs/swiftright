@@ -1,0 +1,87 @@
+{
+ "pairs": 1,
+ "exact": 0,
+ "exactWithExclusions": 1,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 7235
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 3696,
+   "excluded": [
+    {
+     "name": "Tinos glyph region [0,5,297,53) (ink bbox mac [2,7,294,50]); AA only (DirectWrite grayscale vs CoreText); gated by factory/tools/pair_text_report.py: exact outside, half-coverage ink bbox within 1 px per edge",
+     "rect": [
+      0,
+      5,
+      297,
+      53
+     ],
+     "diffPixels": 3696,
+     "macInkBBox": [
+      2,
+      7,
+      294,
+      50
+     ],
+     "winInkBBox": [
+      3,
+      8,
+      294,
+      49
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "bff7c2a85-75604177-dirty",
+   "commit": "bff7c2a8583713599a8fc97850add7df372cfbb5",
+   "ref": "HEAD",
+   "mode": "working-tree",
+   "dirty": true,
+   "treeSha256": "sha256:7560417715d9453534f0fe5e053f45fcfdbb344754562bfe21e4ee8c93ae1868",
+   "files": 107,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-13T12:38:05Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/text-shape-image/bundled-font-readiness-v6-line-limit-host"
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "Tinos glyph region [0,5,297,53) (ink bbox mac [2,7,294,50]); AA only (DirectWrite grayscale vs CoreText); gated by factory/tools/pair_text_report.py: exact outside, half-coverage ink bbox within 1 px per edge",
+   "rect": [
+    0,
+    5,
+    297,
+    53
+   ]
+  }
+ ]
+}

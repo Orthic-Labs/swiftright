@@ -1,0 +1,352 @@
+{
+ "pairs": 2,
+ "pass_": 0,
+ "fail": 2,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "default",
+   "dialogTitle",
+   "count",
+   "order"
+  ],
+  "scope": "all",
+  "pixels": "report-only",
+  "phases": [
+   "open",
+   ""
+  ],
+  "dialogs": {
+   "count": {
+    "open": 1,
+    "": 0
+   }
+  }
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 3,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 0,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main",
+     "field": "count",
+     "windows": 3,
+     "mac": 1,
+     "phase": "open"
+    },
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "Your changes were saved.",
+     "mac": "Waiting",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "main[1]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "OK",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       253.6,
+       102.4,
+       66.8,
+       24.4
+      ],
+      "depth": 3,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": "open"
+    },
+    {
+     "where": "main[2]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Waiting",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       139.6,
+       136.0,
+       40.8,
+       16.0
+      ],
+      "depth": 1,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "open"
+    },
+    {
+     "where": "dialog0",
+     "field": "count",
+     "windows": 2,
+     "mac": 3,
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[0]",
+     "field": "role",
+     "windows": "text",
+     "mac": "dialog",
+     "role": [
+      "text",
+      "dialog"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[0]",
+     "field": "name",
+     "windows": "Your changes were saved.",
+     "mac": "Saved",
+     "role": [
+      "text",
+      "dialog"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[1]",
+     "field": "role",
+     "windows": "button",
+     "mac": "text",
+     "role": [
+      "button",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[1]",
+     "field": "name",
+     "windows": "OK",
+     "mac": "Your changes were saved.",
+     "role": [
+      "button",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[2]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "button",
+      "name": "OK",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": null,
+      "depth": 1,
+      "raw": "AXButton",
+      "default": true,
+      "cancel": false,
+      "destructive": false
+     },
+     "phase": "open"
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 3,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 0,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main",
+     "field": "count",
+     "windows": 3,
+     "mac": 1,
+     "phase": "open"
+    },
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "Your changes were saved.",
+     "mac": "Waiting",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "main[1]",
+     "field": "missing",
+     "windows": {
+      "role": "button",
+      "name": "OK",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       253.6,
+       102.4,
+       66.8,
+       24.4
+      ],
+      "depth": 3,
+      "raw": "Button"
+     },
+     "mac": null,
+     "phase": "open"
+    },
+    {
+     "where": "main[2]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Waiting",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       139.6,
+       136.0,
+       40.8,
+       16.0
+      ],
+      "depth": 1,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": "open"
+    },
+    {
+     "where": "dialog0",
+     "field": "count",
+     "windows": 2,
+     "mac": 3,
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[0]",
+     "field": "role",
+     "windows": "text",
+     "mac": "dialog",
+     "role": [
+      "text",
+      "dialog"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[0]",
+     "field": "name",
+     "windows": "Your changes were saved.",
+     "mac": "Saved",
+     "role": [
+      "text",
+      "dialog"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[1]",
+     "field": "role",
+     "windows": "button",
+     "mac": "text",
+     "role": [
+      "button",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[1]",
+     "field": "name",
+     "windows": "OK",
+     "mac": "Your changes were saved.",
+     "role": [
+      "button",
+      "text"
+     ],
+     "phase": "open"
+    },
+    {
+     "where": "dialog0[2]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "button",
+      "name": "OK",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": null,
+      "depth": 1,
+      "raw": "AXButton",
+      "default": true,
+      "cancel": false,
+      "destructive": false
+     },
+     "phase": "open"
+    }
+   ]
+  }
+ ]
+}

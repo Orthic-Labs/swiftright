@@ -1,0 +1,106 @@
+{
+ "pairs": 2,
+ "pass_": 0,
+ "fail": 2,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 2
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main",
+     "field": "count",
+     "windows": 3,
+     "mac": 2,
+     "phase": ""
+    },
+    {
+     "where": "main[2]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Add",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       149.2,
+       110.0,
+       21.6,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": ""
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 2
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main",
+     "field": "count",
+     "windows": 3,
+     "mac": 2,
+     "phase": ""
+    },
+    {
+     "where": "main[2]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Add",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       149.2,
+       110.0,
+       21.6,
+       16.0
+      ],
+      "depth": 2,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": ""
+    }
+   ]
+  }
+ ]
+}

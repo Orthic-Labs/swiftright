@@ -1,0 +1,99 @@
+{
+ "pairs": 1,
+ "pass_": 0,
+ "fail": 1,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "pixels": "report-only",
+  "phases": [
+   "t1",
+   "t2",
+   "t3",
+   "t4",
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "t1": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    },
+    "t2": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    },
+    "t3": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    },
+    "t4": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: first",
+     "mac": "focus: none",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "t1"
+    },
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: second",
+     "mac": "focus: none",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "t2"
+    },
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "focus: first",
+     "mac": "focus: none",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": "t3"
+    }
+   ]
+  }
+ ]
+}

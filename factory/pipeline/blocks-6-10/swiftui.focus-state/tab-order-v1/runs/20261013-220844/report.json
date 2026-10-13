@@ -1,0 +1,61 @@
+{
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 238,
+ "diffbbox": [
+  22,
+  22,
+  328,
+  219
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 5203,
+    "inBandDiff": 4959,
+    "outOfBandDiff": 244,
+    "maxInBand": 238,
+    "maxOutOfBand": 238,
+    "bandPixels": 16015
+   },
+   "exact": false,
+   "differentPixels": 5203,
+   "maxdiff": 238,
+   "diffbbox": [
+    22,
+    22,
+    328,
+    219
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "21f87ceb6-208c5335",
+   "commit": "21f87ceb6131bde3633c94ee33dffd73286fbc68",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:208c5335b02c458aa655335e187df45efabb9436f21a683080d6ccf3c95543c1",
+   "files": 150,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-13T16:38:40Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-6-10/swiftui.focus-state/tab-order-v1"
+ }
+}

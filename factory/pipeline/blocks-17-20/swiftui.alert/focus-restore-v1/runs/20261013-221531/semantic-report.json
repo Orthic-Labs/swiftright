@@ -1,0 +1,83 @@
+{
+ "pairs": 2,
+ "pass_": 2,
+ "fail": 0,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "dialogTitle",
+   "count",
+   "order"
+  ],
+  "scope": "all",
+  "pixels": "report-only",
+  "phases": [
+   "open",
+   ""
+  ],
+  "dialogs": {
+   "count": {
+    "open": 1,
+    "": 0
+   }
+  }
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "pass",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     },
+     "dialogs": {
+      "windows": 0,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": []
+  },
+  {
+   "run": 2,
+   "verdict": "pass",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     },
+     "dialogs": {
+      "windows": 0,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": []
+  }
+ ]
+}

@@ -1,0 +1,123 @@
+{
+ "pairs": 2,
+ "pass_": 0,
+ "fail": 2,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "dialogTitle",
+   "count",
+   "order"
+  ],
+  "scope": "all",
+  "pixels": "report-only",
+  "phases": [
+   "open",
+   ""
+  ],
+  "dialogs": {
+   "count": {
+    "open": 1,
+    "": 0
+   }
+  }
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "Waiting",
+     "mac": "Done",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "dialogs",
+     "field": "count",
+     "side": "windows",
+     "expected": 0,
+     "actual": 1,
+     "phase": ""
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "compared": {
+    "open": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 1
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 1,
+      "mac": 1
+     },
+     "dialogs": {
+      "windows": 1,
+      "mac": 0
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "Waiting",
+     "mac": "Done",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "dialogs",
+     "field": "count",
+     "side": "windows",
+     "expected": 0,
+     "actual": 1,
+     "phase": ""
+    }
+   ]
+  }
+ ]
+}
