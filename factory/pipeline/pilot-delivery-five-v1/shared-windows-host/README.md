@@ -1,5 +1,7 @@
 # Shared Windows host source
 
+`FactoryDefaultBodyFont.swift` is shared Windows default-body adapter. It resolves live DPI-aware `LOGFONTW`/face/metrics through `SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS)`, `CreateFontIndirectW`, `GetTextFaceW`, & `GetTextMetricsW`; it preserves selected family/size/line-height metadata & never targets Mac metrics.
+
 `FactoryFill.swift` is shared semantic paint policy. `FactoryResolvedNodeMapper.swift` is one generic resolved-node mapper for Text, Button, shape fill/stroke, Color, structural containers, runtime modifiers, Witness roots, & ABI 0.6 primitives. `FactoryWitnessBinding.swift` holds tiny case/witness metadata only.
 
 Per-witness `main.swift` retains its original `Graph(Witness_...)` construction. Integration replaces inline resolved fill/shape switch with `FactorySharedNodeMapper.emit`; no witness bytes, runtime, bridge, renderer, provider, geometry, or acceptance behavior are changed. Continuous rounded style remains explicit hold. Root must copy these files into fresh package sources, remove duplicate helper symbols, reseal source rows, then perform existing bounded build/capture.

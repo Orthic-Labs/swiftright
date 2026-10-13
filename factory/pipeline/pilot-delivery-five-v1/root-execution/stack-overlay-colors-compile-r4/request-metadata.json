@@ -42,7 +42,7 @@
     "target": "windows-x86_64"
   },
   "compilerActions": 0,
-  "kind": "source-only-stack-overlay-v8-incremental-compile-request",
+  "kind": "source-only-stack-overlay-v8-body-policy-compile-r4-request",
   "nativeActions": 0,
   "priorV7": {
     "historicalEvidenceRoot": "factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-colors-compile-r3",
@@ -59,14 +59,31 @@
     "sourceReplacement": "v8 package only",
     "stagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\stack-overlay-colors"
   },
-  "qualification": "source-only request; root must archive fresh compiler/native lifecycle evidence; no parity claim",
-  "requestRevision": "stack-overlay-colors-v8-body-policy-r1",
+  "qualification": "source-only request; root archives retired stage, runs preflight, then bounded compiler; no native/parity claim",
+  "requestRevision": "stack-overlay-colors-v8-body-policy-r4",
   "sourcePacket": {
     "candidate": "swiftui.stack-overlay.centered-host.execution-v8-native-body-policy",
-    "packagePlanSha256": "sha256:bd2fbbb745a91840c1c32983d235cdb24767b1a53d648b0f36bc8de3abf1a97e",
+    "packagePlanSha256": "sha256:bada33b6f865ab00d4529398ac886ec0e41a5940f22a3d6252c263c338491228",
     "path": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v8",
     "resolverSha256": "f8f5da702526ad9136cbd2c801fd66229727ec88954ec3a26eab968cf757b212",
     "sourceBindingsHash": "sha256:0160b8e9dcbc8d7751b5e9ecfa97161595197598dbbdcf1333f2a7d457581c8f",
-    "witnessHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee"
-  }
+    "witnessHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+    "compilePlanSha256": "sha256:57c6670ef57c0cad294250e48370f08603cf7a990d71e403f25a2127c63c77b4",
+    "stageBuildSha256": "sha256:8d64ab099972e33d71aaa19e64e156aaa11b33f05b9453b9e7084dcede0b0aa7",
+    "sourceHash": "sha256:d2194b7d67048519d8830550024c03a1ae0c53bca617afd53fce3a8969545aee",
+    "sourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v8"
+  },
+  "preflightBeforeCompile": true,
+  "sourceRowCount": 12,
+  "stagingEntryPath": "factory/pipeline/pilot-delivery-five-v1/root-execution/stack-overlay-colors-compile-r4/stage-build-r4-stack-v8.ps1",
+  "stagingEntrySha256": "sha256:8d64ab099972e33d71aaa19e64e156aaa11b33f05b9453b9e7084dcede0b0aa7",
+  "builderSha256": "sha256:dc8c7b6fe4a46d5c5438b455bd9de77b34ecbbd8decfe76e7ce9244c191e9dbd",
+  "helperSha256": "sha256:112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "retireRequiredStage": "D:\\Claude\\swiftright\\.factory-work\\retired\\stack-overlay-colors-v7-observed-20261012-2150",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "compilePlanSha256": "sha256:57c6670ef57c0cad294250e48370f08603cf7a990d71e403f25a2127c63c77b4",
+  "packagePlanSha256": "sha256:bada33b6f865ab00d4529398ac886ec0e41a5940f22a3d6252c263c338491228"
 }

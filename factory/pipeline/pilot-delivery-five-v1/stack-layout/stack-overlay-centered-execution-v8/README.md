@@ -2,7 +2,7 @@
 
 Fresh source packet derived from v7. Original Witness.swift bytes, runtime/bridge/renderer tuple, intrinsic subtree centering, background policy, & ABI 0.6 joins remain unchanged. `FactoryResolvedNodeMapper.swift` is copied from shared-windows-host and replaces only inline node paint dispatch; per-witness Graph construction remains `Graph(Witness_stack_overlay())`.
 
-Shared sources: `../shared-windows-host/FactoryFill.swift` & `../shared-windows-host/FactoryResolvedNodeMapper.swift`. Mapper consumes resolved node geometry/style and preserves unsupported provider/geometry errors; it does not substitute pixels, offsets, or runtime behavior. Root must reseal operational stage then perform existing bounded build/capture.
+Shared sources: `../shared-windows-host/FactoryFill.swift`, `../shared-windows-host/FactoryResolvedNodeMapper.swift`, & `../shared-windows-host/FactoryDefaultBodyFont.swift`. Windows package keeps byte-identical copy of shared body adapter; live DPI/profile inputs remain selected at runtime. Mapper consumes resolved node geometry/style and preserves unsupported provider/geometry errors; it does not substitute pixels, offsets, or runtime behavior. Root must reseal operational stage then perform existing bounded build/capture.
 
 Mac diagnostic source is under `mac-source/`. It preserves original witness paint, then records public macOS 15 `TextRenderer` typographic bounds for separate bare `Text("+")` probe. Family/point-size provider metadata is unavailable from public API.
 

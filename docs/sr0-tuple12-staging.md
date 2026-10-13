@@ -9,7 +9,7 @@ Tuple 12 staging was stopped at 2026-10-11 11:04–11:05 local, after stop was r
 | Stage source commit | `0e201571e4320a3b6ccce14313fd2ad67e523904` |
 | Product fixes commit | `4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2` |
 | Renderer source | `D:\.rightkit-managed\rightkit-build-control\ws\864173e69427\g\001\target\x86_64-pc-windows-msvc\release\swiftright_render.dll` |
-| Renderer sha256 | `C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F` |
+| Renderer sha256 | `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2` |
 | Staging root | `D:\Claude\swiftright\.work\sr0-r12` |
 | Stage capture | `/Volumes/D/sr0-artifacts/stage-r12.log` |
 

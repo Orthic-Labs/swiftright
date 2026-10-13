@@ -66,6 +66,29 @@ qualification/tuple12-cross20.sh qualification/out/tuple12-cross-20
 
 These wrappers are prepared only. Root serializes remote Windows, native, GUI, signing, and desktop-lock execution.
 
+## Strict Full-16 Windows assembler (source plan)
+
+`qualification/assemble-tuple12-windows-full-v1.py` is read-only & admits exactly 16 declared fixture/variant groups × 20 runs = 320 cases. It joins each `matrix-run.json` to one worker receipt & one driver trace, requires `mode=Full`, exact r5/worker-v3/coordinator-v3/EXE/DLL pins, retained handles plus terminal kernel proofs, startup owner/client checks, targeted `fg_changes=0`, noactivate ordering, fixture-native `SELFTEST-STAGES`/assertions, & exact native denominators: F1 17, F2 13, F3 variants 15, F4 12, F5 13, F6 16, F6-reduced 11, F7 20, F8 15, F9 11. Missing, duplicate, unknown, symlinked, stale, or failed case leaves report `incomplete`; no partial result is promoted.
+
+Assembler SHA-256 `85d8457b5734c4102e00ff6e2d692d67c63d827a59a84adc12505e3f8d967ec9`. Pure controls: `qualification/test_tuple12_windows_full_assembler_controls.py` SHA-256 `0bfb3c9e31d341e724ae33a4ad16d834c17efd2d9d040103da00f9fb551f17c3`, positive 1 + six mutation rejections. Run after root fetches fresh Full output:
+
+```sh
+python3 qualification/assemble-tuple12-windows-full-v1.py \
+  --root /Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-matrix-v1/Full-16-r5 \
+  --out /Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-matrix-v1/Full-16-r5-report.json \
+  --expected-exe 87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374 \
+  --expected-renderer 7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2 \
+  --expected-driver 5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4 \
+  --expected-worker 8d3918b5ecdf0ca31405015c17109166db732a8d6014aa4755410a1972aa3ec6 \
+  --expected-coordinator 4bef611745175a0d5b8716a5159620a4ba38694ae4de04c38183f20e0bdc63f4 \
+  --source-commit 0e201571e4320a3b6ccce14313fd2ad67e523904 \
+  --source-manifest-sha256 f45b9e0dab99428194946341b0170f0e3beed874f9f552d01fd9046f3200b7ca \
+  --base-path 'D:\\Claude\\swiftright\\.work\\sr0-r12-typecheck\\src' \
+  --driver-path 'D:\\Claude\\swiftright\\.work\\sr0-stage-tools\\tuple12-startupguard-matrix-v1\\drive-fixture-noactivate-focus-r5.ps1' \
+  --worker-path 'D:\\Claude\\swiftright\\.work\\sr0-stage-tools\\tuple12-startupguard-matrix-v1\\worker-v3.ps1' \
+  --coordinator-path 'D:\\Claude\\swiftright\\.work\\sr0-stage-tools\\tuple12-startupguard-matrix-v1\\coordinator-v3.ps1'
+```
+
 ## Closure split
 
 Computable close jobs: tuple12 stage/audit, source/header/hash binding, 16-config matrix, native R9, workload R10, package receipts, W08 helper proof, 20 Mac + 20 Windows cross traces/config, comparator controls, and manifest/freeze receipts. Human-only follow-up: listen to retained Narrator speech recordings on qualified tuple12 package, record listener/date/verdict, then attach receipt; it cannot turn failed automated gates green.

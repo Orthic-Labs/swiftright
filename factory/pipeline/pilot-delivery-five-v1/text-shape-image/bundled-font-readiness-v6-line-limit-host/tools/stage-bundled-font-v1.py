@@ -16,13 +16,13 @@ import subprocess
 import time
 
 ROOT = Path('/Volumes/D/claude/swiftright')
-PACKET = ROOT / 'factory/pipeline/pilot-delivery-five-v1/text-shape-image/bundled-font-readiness-v3'
-HOST = PACKET / 'windows-host'
+PACKET = ROOT / 'factory/pipeline/pilot-delivery-five-v1/text-shape-image/bundled-font-readiness-v6-line-limit-host'
+HOST = PACKET
 PACKAGE = HOST / 'package'
-CANARY = PACKET / 'windows-source/paint-canary-v1'
-PROVIDER_HELPER = ROOT / 'factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v1/windows-source/provider-raster/ProviderOwnedJobProcess.cs'
+PAINT_CANARY = PACKET / 'paint-canary-source/paint-canary.patch'
+PAINT_CANARY_README = PACKET / 'paint-canary-source/README.md'
 DISCOVERY = ROOT / 'factory/pipeline/pilot-delivery-five-v1/root-execution/system-image-tools-actual-r1/transport.json.stdout.bin'
-DEFAULT_STAGE = ROOT / '.factory-work/hosts/bundled-font-readiness-v3/windows-host-inputs-r1'
+DEFAULT_STAGE = ROOT / '.factory-work/hosts/bundled-font-readiness-v6-line-limit-host/windows-host-inputs-r1'
 REMOTE_REPO = r'D:/Claude/swiftright'
 PINNED_RUNNER = Path('/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/git-root/run_pinned_windows_v1.py')
 MAX_JSON = 4 * 1024 * 1024
@@ -45,11 +45,13 @@ args = parser.parse_args()
 if not 1 <= args.revision <= 10:
     raise SystemExit('--revision must be between 1 and 10')
 if args.stage is None:
-    args.stage = ROOT / f'.factory-work/hosts/bundled-font-readiness-v3/windows-host-inputs-r{args.revision}'
-REMOTE_INPUT = rf'D:/Claude/swiftright/.factory-work/hosts/bundled-font-readiness-v3/windows-host-inputs-r{args.revision}'
-REMOTE_OUTPUT = rf'D:/Claude/swiftright/.factory-work/hosts/bundled-font-readiness-v3/paint-canary-r{args.revision}'
+    args.stage = ROOT / f'.factory-work/hosts/bundled-font-readiness-v6-line-limit-host/windows-host-inputs-r{args.revision}'
+REMOTE_INPUT = rf'D:/Claude/swiftright/.factory-work/hosts/bundled-font-readiness-v6-line-limit-host/windows-host-inputs-r{args.revision}'
+REMOTE_OUTPUT = rf'D:/Claude/swiftright/.factory-work/hosts/bundled-font-readiness-v6-line-limit-host/paint-canary-r{args.revision}'
 if args.run_canary and not args.remote:
     raise SystemExit('--run-canary requires --remote')
+if args.run_canary:
+    raise SystemExit('v6 packet contains paint-canary.patch only; no canary executable/source is assumed')
 if not 30 <= args.timeout <= 1800:
     raise SystemExit('--timeout must be between 30 and 1800')
 if bool(args.vctip_path) != bool(args.vctip_sha256):
@@ -122,9 +124,6 @@ def stage_sources(inventory):
     require(package_plan.get('runtimeSourceCommit') == '37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b', 'host runtime pin mismatch')
     require(package_plan.get('rendererSha256') == 'e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93', 'host renderer pin mismatch')
     require(package_plan.get('bridgeSourceCommit') == '0a745ab', 'host bridge pin mismatch')
-    canary_plan = load_json(CANARY / 'plan.json')
-    require(canary_plan.get('runtimeCommit') == package_plan['runtimeSourceCommit'] and canary_plan.get('rendererSha256') == package_plan['rendererSha256'], 'canary/host tuple mismatch')
-    require(canary_plan.get('font', {}).get('resourceSha256') == 'sha256:' + FONT_SHA and canary_plan.get('texture') == 'DWRITE_TEXTURE_CLEARTYPE_3X1 -> per-pixel maximum coverage', 'canary plan/resource mismatch')
     package_entries = list(package_manifest.get('files', []))
     package_entries.append({'path': 'plan.json', 'sha256': None, 'bytes': None})
     for entry in package_entries:
@@ -138,14 +137,12 @@ def stage_sources(inventory):
         if entry['sha256'] is not None:
             require(sha == entry['sha256'].removeprefix('sha256:') and size == entry['bytes'], f'package source drift: {relative}')
         rows.append({'path': f'package/{relative}', 'bytes': size, 'sha256': sha, 'origin': 'windows-host/source-manifest.json'})
-    canary_files = ('FontCustomPaintCanary.cpp', 'README.md', 'plan.json')
-    for name in canary_files:
-        source = CANARY / name
-        copied = args.stage / 'paint-canary-v1' / name
+    for source, relative in ((PAINT_CANARY, 'package/paint-canary.patch'), (PAINT_CANARY_README, 'paint-canary-source/README.md')):
+        copied = args.stage / relative
         copy_bounded(source, copied)
         sha, size = digest(copied)
-        rows.append({'path': f'paint-canary-v1/{name}', 'bytes': size, 'sha256': sha, 'origin': 'windows-source/paint-canary-v1'})
-    for source, relative in ((HOST / 'tools/run-paint-canary-v1.ps1', 'tools/run-paint-canary-v1.ps1'), (PROVIDER_HELPER, 'tools/ProviderOwnedJobProcess.cs')):
+        rows.append({'path': relative, 'bytes': size, 'sha256': sha, 'origin': str(source.relative_to(ROOT))})
+    for source, relative in ((HOST / 'tools/stage-tinos-font.ps1', 'tools/stage-tinos-font.ps1'),):
         copied = args.stage / relative
         copy_bounded(source, copied)
         sha, size = digest(copied)
@@ -159,7 +156,8 @@ def stage_sources(inventory):
         'remoteInput': REMOTE_INPUT,
         'repo': REMOTE_REPO,
         'packagePath': REMOTE_INPUT + r'/package',
-        'paintCanarySource': REMOTE_INPUT + r'/paint-canary-v1/FontCustomPaintCanary.cpp',
+        'paintCanaryPatchPath': REMOTE_INPUT + r'/package/paint-canary.patch',
+        'paintCanarySource': None,
         'fontPath': REMOTE_INPUT + r'/package/Resources/Tinos-Regular.ttf',
         'fontSha256': 'sha256:' + FONT_SHA,
         'compilerPath': inventory['compiler']['path'],
@@ -169,35 +167,20 @@ def stage_sources(inventory):
         'swiftPath': json.loads((PACKAGE / 'plan.json').read_text(encoding='utf-8'))['compileRequest']['compilerPath'],
         'swiftPathMeasured': False,
         'compile': {
-            'canaryArgv': ['cl.exe', '/nologo', '/std:c++17', '/EHsc', '/O2', 'FontCustomPaintCanary.cpp', '/Fe:FontCustomPaintCanary.exe', 'dwrite.lib', 'ole32.lib'],
+            'canaryArgv': None,
             'swiftArgv': ['swift.exe', 'build', '--build-system', 'native', '-v', '--package-path', REMOTE_INPUT + r'/package', '--scratch-path', REMOTE_INPUT + r'/package/build-tinos-r3/scratch', '--jobs', '1', '-Xswiftc', '-j1', '-Xswiftc', '-num-threads', '-Xswiftc', '1', '-c', 'release'],
             'nativeProductPath': REMOTE_INPUT + r'/package/build-tinos-r3/scratch/x86_64-unknown-windows-msvc/release/FactoryProbe.exe',
             'swiftCompilerMustBeMeasuredBeforeStart': True,
         },
-        'canary': {
-            'sourcePath': REMOTE_INPUT + r'/paint-canary-v1/FontCustomPaintCanary.cpp',
-            'outputRoot': REMOTE_OUTPUT,
-            'compileArgv': ['cl.exe', '/nologo', '/std:c++17', '/EHsc', '/O2', REMOTE_INPUT + r'/paint-canary-v1/FontCustomPaintCanary.cpp', '/Fe:' + REMOTE_OUTPUT + r'/FontCustomPaintCanary.exe', 'dwrite.lib', 'ole32.lib'],
-            'runArgv': [REMOTE_OUTPUT + r'/FontCustomPaintCanary.exe', REMOTE_INPUT + r'/package/Resources/Tinos-Regular.ttf', 'sha256:' + FONT_SHA, REMOTE_OUTPUT + r'/positive/tinos.rgba.bin', REMOTE_OUTPUT + r'/positive/tinos.metadata.json', '18'],
-            'expectedOutputs': ['FontCustomPaintCanary.exe', 'tinos.rgba.bin', 'tinos.metadata.json', 'stdout.bin', 'stderr.bin', 'compile-receipt.json', 'paint-receipt.json'],
-            'positiveChecks': ['resourceSHA256', 'family=Tinos', 'postScriptName=Tinos-Regular', 'nonEmptyGlyphs>0', 'nonZeroAlphaPixels>0', 'rendererSelection=unproven', 'bridgeMeasurementSelection=unproven'],
-            'negativeControl': {'appendArg': '--fault-empty-coverage', 'expectedError': 'empty-coverage', 'accepted': False},
-        },
+        'canary': {'status': 'patch-only-not-runnable', 'patchPath': REMOTE_INPUT + r'/package/paint-canary.patch', 'sourcePath': None, 'executablePath': None, 'rendererSelection': 'unproven'},
         'rootPinnedInvocation': {
             'runner': str(PINNED_RUNNER),
             'argv': ['python3', str(PINNED_RUNNER), '--compiler-budget', '--deadline', str(args.timeout)],
-            'requirements': ['preflight measured cl/vcvars/font before compile', 'caller-pinned vctip path/hash when descendant exists', '1GiB Job Object', 'jobs=1', 'sealed stdout/stderr before quiescence decision', 'original process handle retained', 'exact vctip helper stop proof or no child', 'active process count=0', 'archive positive canary outputs before Swift host run'],
+            'requirements': ['preflight measured cl/vcvars/font before compile', '1GiB Job Object', 'jobs=1', 'sealed stdout/stderr before quiescence decision', 'original process handle retained', 'active process count=0', 'stage exact Tinos resource adjacent to executable before host launch'],
         },
-        'canaryOutputChecks': {
-            'texture': 'DWRITE_TEXTURE_CLEARTYPE_3X1',
-            'requireNonEmptyGlyphs': True,
-            'requireNonZeroAlphaPixels': True,
-            'requireNoClippedCoverage': True,
-            'negativeControlArg': '--fault-empty-coverage',
-            'negativeControlExpectedError': 'empty-coverage',
-        },
+        'canaryOutputChecks': {'status': 'patch-only-not-runnable', 'patchSha256': 'sha256:59f05a177b557559024604d668f633206efa147f99e4223acc76ea4e4a126765'},
         'launch': {
-            'resourceStageScript': REMOTE_INPUT + r'/package/tools/stage-tinos-font.ps1',
+            'resourceStageScript': REMOTE_INPUT + r'/tools/stage-tinos-font.ps1',
             'args': ['--tinos-font', REMOTE_INPUT + r'/package/Resources/Tinos-Regular.ttf'],
             'rendererPath': REMOTE_REPO + r'/.factory-work/inputs/renderer/swiftright_render.dll',
             'bridgePackagePath': REMOTE_REPO + r'/.factory-work/inputs/SwiftRightBridge',
@@ -230,6 +213,8 @@ def load_stage():
         require(sha == row['sha256'] and size == row['bytes'], f'staged source drift: {row["path"]}')
     sha, size = digest(args.stage / 'package/Resources/Tinos-Regular.ttf')
     require(sha == FONT_SHA and size == FONT_BYTES, 'staged resource drift')
+    patch_sha, patch_size = digest(args.stage / 'package/paint-canary.patch')
+    require(patch_sha == '59f05a177b557559024604d668f633206efa147f99e4223acc76ea4e4a126765' and patch_size == 5638, 'staged paint-canary patch drift')
     return manifest, request
 
 
@@ -272,38 +257,10 @@ def transport(manifest, request):
     request_path = args.stage / 'remote-request.json'
     records.append(run_capture(['scp', '-q', str(request_path), 'win:' + REMOTE_INPUT + '/remote-request.json'], transport_dir / 'scp-request.stdout.bin', transport_dir / 'scp-request.stderr.bin'))
     require(records[-1]['exitCode'] == 0, 'SCP failed: remote request')
-    preflight = """$ErrorActionPreference='Stop'; $root='__ROOT__'; if(-not (Test-Path -LiteralPath (Join-Path $root 'package\\Package.swift'))){throw 'package missing'}; if((Get-Item -LiteralPath (Join-Path $root 'package\\Resources\\Tinos-Regular.ttf')).Length -ne 521588){throw 'resource size mismatch'}; $h=(Get-FileHash -LiteralPath (Join-Path $root 'package\\Resources\\Tinos-Regular.ttf') -Algorithm SHA256).Hash.ToLowerInvariant(); if($h -ne '60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61'){throw 'resource hash mismatch'}; [ordered]@{kind='factory-bundled-font-stage-preflight-v1';status='passed';compilerStarted=$false;nativeActions=0;remoteDeletion=$false}|ConvertTo-Json -Compress""".replace('__ROOT__', REMOTE_INPUT.replace('/', '\\'))
+    preflight = """$ErrorActionPreference='Stop'; $root='__ROOT__'; if(-not (Test-Path -LiteralPath (Join-Path $root 'package\\Package.swift'))){throw 'package missing'}; if((Get-Item -LiteralPath (Join-Path $root 'package\\Resources\\Tinos-Regular.ttf')).Length -ne 521588){throw 'resource size mismatch'}; $h=(Get-FileHash -LiteralPath (Join-Path $root 'package\\Resources\\Tinos-Regular.ttf') -Algorithm SHA256).Hash.ToLowerInvariant(); if($h -ne '60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61'){throw 'resource hash mismatch'}; $p=Join-Path $root 'package\\paint-canary.patch'; if((Get-Item -LiteralPath $p).Length -ne 5638){throw 'paint-canary patch size mismatch'}; $ph=(Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash.ToLowerInvariant(); if($ph -ne '59f05a177b557559024604d668f633206efa147f99e4223acc76ea4e4a126765'){throw 'paint-canary patch hash mismatch'}; [ordered]@{kind='factory-bundled-font-stage-preflight-v1';status='passed';compilerStarted=$false;nativeActions=0;remoteDeletion=$false;canary='patch-only-not-runnable'}|ConvertTo-Json -Compress""".replace('__ROOT__', REMOTE_INPUT.replace('/', '\\'))
     records.append(run_capture(['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', args.host, 'powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-Command', preflight], transport_dir / 'preflight.stdout.bin', transport_dir / 'preflight.stderr.bin'))
     require(records[-1]['exitCode'] == 0, 'remote stage preflight failed')
-    if args.run_canary:
-        require(PINNED_RUNNER.is_file(), f'pinned runner missing: {PINNED_RUNNER}')
-        root_script = transport_dir / f'run-paint-canary-r{args.revision}.ps1'
-        require(not root_script.exists(), f'refuse overwrite root canary runner: {root_script}')
-        remote_script = REMOTE_REPO.replace('/', '\\') + rf'\.factory-work\hosts\bundled-font-readiness-v3\run-paint-canary-r{args.revision}.ps1'
-        remote_receipt = REMOTE_REPO.replace('/', '\\') + rf'\.factory-work\hosts\bundled-font-readiness-v3\run-paint-canary-r{args.revision}-transport.json'
-        script = """$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
-$root='__ROOT__';$runner=Join-Path $root 'tools\\run-paint-canary-v1.ps1'
-& $runner -CompilerPath 'C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe' -VcVars64Path 'C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat' -FontPath '__INPUT__\\package\\Resources\\Tinos-Regular.ttf' -Repo 'D:\\Claude\\swiftright' -Revision __REV__ -InnerDeadlineSeconds 120 __VCTIP__
-$manifest=Join-Path '__OUTPUT__' 'paint-canary-manifest.json';if(-not(Test-Path -LiteralPath $manifest)){throw 'paint canary manifest absent'};Get-Content -LiteralPath $manifest -Raw
-""".replace('__ROOT__', REMOTE_INPUT.replace('/', '\\')).replace('__INPUT__', REMOTE_INPUT.replace('/', '\\')).replace('__OUTPUT__', REMOTE_OUTPUT.replace('/', '\\')).replace('__REV__', str(args.revision)).replace('__VCTIP__', ("-VctipPath '" + args.vctip_path + "' -VctipSha256 '" + args.vctip_sha256 + "'" if args.vctip_path else ''))
-        root_script.write_text(script, encoding='utf-8')
-        helper_stdout = transport_dir / 'pinned-canary.stdout.bin'
-        helper_stderr = transport_dir / 'pinned-canary.stderr.bin'
-        records.append(run_capture(['python3', str(PINNED_RUNNER), '--script', str(root_script), '--remote-script', remote_script, '--remote-receipt', remote_receipt, '--archive', str(transport_dir / 'pinned-canary-archive'), '--deadline', str(args.timeout), '--compiler-budget'], helper_stdout, helper_stderr, args.timeout + 120))
-        require(records[-1]['exitCode'] == 0, 'pinned paint canary run failed')
-        archive = transport_dir / 'canary-output-archive'
-        require(not archive.exists(), f'refuse overwrite canary archive: {archive}')
-        archive.mkdir()
-        archive_paths = ('FontCustomPaintCanary.exe', 'compile.stdout.bin', 'compile.stderr.bin', 'compile-observation.json',
-                         'positive/tinos.rgba.bin', 'positive/tinos.metadata.json', 'positive/stdout.bin', 'positive/stderr.bin', 'positive/paint-receipt.json',
-                         'negative/stdout.bin', 'negative/stderr.bin', 'negative/paint-receipt.json',
-                         'paint-canary-manifest.json')
-        for relative in archive_paths:
-            local = archive / relative
-            local.parent.mkdir(parents=True, exist_ok=True)
-            remote = 'win:' + REMOTE_OUTPUT + '/' + relative
-            records.append(run_capture(['scp', '-q', remote, str(local)], archive / (relative.replace('/', '_') + '.scp.stdout.bin'), archive / (relative.replace('/', '_') + '.scp.stderr.bin')))
-            require(records[-1]['exitCode'] == 0, f'SCP failed canary output: {relative}')
+    require(not args.run_canary, 'v6 packet carries patch only; no canary executable/source is assumed')
     result = {'kind': 'factory-bundled-font-windows-transport-v1', 'host': args.host, 'records': records, 'nativeActions': 0, 'remoteDeletion': False, 'execution': 'root-owned-supervisor-required'}
     (transport_dir / 'transport-manifest.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     return result

@@ -1,11 +1,12 @@
 Last updated: 2026-10-11 (tuple12 takeover)
 
-State: STOPPED after parser failure before Dell root creation. Broker audit was READY with empty owners/inFlight. Tuple 12 renderer exists at sha256 `C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F`, source commit `0e201571e4320a3b6ccce14313fd2ad67e523904`; no tuple 12 artifact or qualification receipt exists. Transferred no-delete scripts are archived under `probes/sr0-s/fresh-on-bridge/out/tuple12-stage-takeover-r1` & are being transferred to Dell `.work\sr0-stage-tools`. Tuple 11 is last qualified baseline.
+State: RECOVERED-BUT-UNADMITTED. Broker audit was READY with empty owners/inFlight. Source closure `4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2` renderer recovery `rr-1791721085329-353f80ea918740ef` succeeded exit 0 with one Cargo job at 2026-10-11 12:33:41Z; receipt `probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/status-jobs1-r3.stdout.bin`. Exact DLL bytes/path & complete source closure are not admitted; `Cargo.lock` changed `e1d7816a…`→`7ae3c084…` & needs pre/post binding. No tuple 12 artifact or qualification receipt exists. Transferred no-delete scripts remain archived under `probes/sr0-s/fresh-on-bridge/out/tuple12-stage-takeover-r1`. Tuple 11 is last qualified baseline.
 # SwiftRight — pending (SR0 close-out lane)
 
 | # | Item | State |
 |---|---|---|
 | A | Stage tuple 12 | pending: fresh canonical `D:\Claude\swiftright\.work\sr0-r12` stage after parse preflight, with source/render/member hashes & full receipts |
+| A1 | Admit recovered renderer artifact | recovery command succeeded with one Cargo job; bind exact DLL bytes/path, complete source closure, & `Cargo.lock` pre/post receipts before stage admission |
 | B | W08: cancelled MSIX update leaves app unopenable | must be fixed upstream in RightKit; installed `@rightkit/release` 0.2.151 has no verified repair-helper/remediation proof |
 | C | Requalify tuple 12 | pending: matrix, smoke, pixels, text, modal, R9, R10, package & 20 Mac/20 Windows recordings per config; use tuple12 manifest candidate only after all hashes are receipted |
 | 1 | Prior qualification runner | tuple 11 automation remains historical baseline; tuple 12 runner launch/replay wrapper is prepared, no tuple 12 run |

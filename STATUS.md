@@ -11,6 +11,6 @@ Last updated: 2026-10-11 (tuple12 takeover)
 | RightKitSwift | not used: SwiftRight has no dependency on it |
 | Other RightKit crates & UI packages | local or not applicable: SwiftRight is SwiftUI-semantics runtime & renderer |
 
-SR0 state: OPEN. Tuple 12 renderer candidate is `C62B554B4B2545B8BE2429C2530E17B8C8B78DF97E67172B627E8CD18A5FE68F`, source commit `0e201571e4320a3b6ccce14313fd2ad67e523904`; Dell stage root was absent after parser failure, so tuple 12 is not staged or qualified. Tuple 11 remains last qualified baseline.
+SR0 state: OPEN. Tuple 12 source closure is `4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2`; managed recovery `rr-1791721085329-353f80ea918740ef` succeeded exit 0 with one granted Cargo job at 2026-10-11 12:33:41Z, process reaped. Receipt: `probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/status-jobs1-r3.stdout.bin`. Exact DLL bytes/path & complete closure remain unadmitted; `Cargo.lock` changed `e1d7816a…`→`7ae3c084…`. Tuple 12 is not staged or qualified. Tuple 11 remains last qualified baseline.
 
 Blocked on RightKit: W08 repair-helper proof. Installed release 0.2.151 has no verified repair/remediation helper match. W08 must be fixed upstream; adoption of release 0.2.151 is not W08 proof. Freeze remains held. User accepted 20 Mac & 20 Windows runs per config; Narrator speech listening remains later.
