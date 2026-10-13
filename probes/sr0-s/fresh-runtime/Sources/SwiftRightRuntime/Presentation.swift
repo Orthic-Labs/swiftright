@@ -54,6 +54,16 @@ extension TextField: @MainActor LabeledControl {
     var titleView: any View { label }
 }
 
+/// A TextField's placeholder: its prompt, else its title.
+@MainActor
+protocol PlaceholderControl {
+    var placeholderView: any View { get }
+}
+
+extension TextField: @MainActor PlaceholderControl {
+    var placeholderView: any View { prompt ?? label }
+}
+
 extension Modified: @MainActor WrappedModifier {
     var modifierInner: any View { content }
     var modifierSpec: ModifierSpec { spec }

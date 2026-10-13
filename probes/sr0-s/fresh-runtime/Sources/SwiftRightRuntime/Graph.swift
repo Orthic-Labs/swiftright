@@ -697,6 +697,10 @@ public struct ResolvedNode: Equatable, Sendable {
     public let labelsHidden: Bool?
     /// Explicit Toggle style type metadata; nil when no `.toggleStyle` modifier applies.
     public let toggleStyle: String?
+    /// TextField only: the `.textFieldStyle` type metadata; nil when none applies.
+    public let fieldStyle: String?
+    /// TextField only: the placeholder (the prompt, else the title), shown while the field is empty.
+    public let placeholder: String?
     /// Role, label, value, enablement and selection for the accessibility backend.
     public let accessibility: ResolvedAccessibility
     /// Font and foreground colour in effect at this node (inherited through the environment).
@@ -1426,7 +1430,7 @@ public final class Graph {
         if case .modifier(.focus(let link)) = kind, node.trackingLive, node.trackedFocusStorage == link.storage {
             // The only observable thing a `.focused` modifier reads is the focus storage, and the live registration already
             // covers that same storage: read the value without registering a second time.
-            node.focused = link.isFocused()
+            noteFocus(node, link.isFocused())
             produced = node.primitiveContent
         } else if tracksDependencies(kind, node) {
             node.retireTracking()
@@ -1537,7 +1541,7 @@ public final class Graph {
     private func produceContent(_ node: Node, _ kind: NodeKind) -> (any View)? {
         switch kind {
         case .textField, .textEditor: _ = node.textInput?.display
-        case .modifier(.focus(let link)): node.focused = link.isFocused()
+        case .modifier(.focus(let link)): noteFocus(node, link.isFocused())
         case .toggle(let binding): _ = binding.wrappedValue
         case .modifier(.presentation(let payload)):
             node.presented = payload.isPresented.wrappedValue
@@ -1728,6 +1732,12 @@ public final class Graph {
         let toggleStyle: String?
         if case .toggle = kind { toggleStyle = node.environment.toggleStyleMetadata }
         else { toggleStyle = nil }
+        var fieldStyle: String?
+        var placeholder: String?
+        if case .textField = kind {
+            fieldStyle = node.environment.textFieldStyleMetadata
+            placeholder = placeholderOf(node)
+        }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1748,6 +1758,8 @@ public final class Graph {
             children: children,
             labelsHidden: labelsHidden,
             toggleStyle: toggleStyle,
+            fieldStyle: fieldStyle,
+            placeholder: placeholder,
             accessibility: accessibility(of: node, children: children, selected: selected),
             style: node.style,
             image: image,
@@ -1824,6 +1836,13 @@ public final class Graph {
         guard let labeled = node.view as? LabeledControl else { return nil }
         let title = ViewWalk.plainText(labeled.titleView)
         return title.isEmpty ? nil : title
+    }
+
+    /// A TextField's placeholder: its prompt, else its title.
+    func placeholderOf(_ node: Node) -> String? {
+        guard let view = node.view as? PlaceholderControl else { return nil }
+        let text = ViewWalk.plainText(view.placeholderView)
+        return text.isEmpty ? nil : text
     }
 
     /// The text of the resolved descendants, in order, joined by spaces. Nil when there is none.

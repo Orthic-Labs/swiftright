@@ -35,9 +35,26 @@ public protocol TextRunSource: AnyObject {
     func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle
     /// The same run shaped in `color` (0xRRGGBBAA, baked into the shaped run by the renderer). Colour never changes the geometry.
     func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle
+    /// The run of `text` at its natural (unwrapped) size in `color`, with that size and baseline in pixels: the retained measurement a
+    /// TextField takes (its text is placed inside the field, so no resolved bounds name it). Nil when the source has no such measurement.
+    func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun?
+    /// Per-character cells of a run (physical px, relative to the line start), for caret and selection geometry; empty when unavailable.
+    func cells(of run: TextRunHandle) -> [CharCell]
+}
+
+/// A natural-size run: the handle and its pixel extent.
+public struct NaturalTextRun {
+    public let run: TextRunHandle
+    public let width: Float, height: Float, baseline: Float
+    public init(run: TextRunHandle, width: Float, height: Float, baseline: Float) {
+        self.run = run; self.width = width; self.height = height; self.baseline = baseline
+    }
 }
 
 extension TextRunSource {
+    public func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun? { nil }
+    public func cells(of run: TextRunHandle) -> [CharCell] { [] }
+
     /// A source without per-run colour paints every run in its one colour.
     public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
         try run(text: text, font: font, bounds: bounds)
@@ -267,6 +284,25 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         log("TEXT_COLOURED_RUN text=\(text) colorRGBA=\(String(format: "%08x", color)) widthPX=\(result.width) heightPX=\(result.height)")
         return result.run
     }
+
+    public func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun? {
+        let fontID = font?.id ?? "body"
+        let metadata = font?.metadata
+        guard let source = retained.first(where: { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata
+                                                    && Float($0.key.scale) == scale && $0.key.proposedWidth == nil && $0.key.lineLimit == nil }) else { return nil }
+        let measured = source.value
+        guard color != textColor else {
+            return NaturalTextRun(run: measured.run, width: measured.width, height: measured.height, baseline: measured.firstBaseline)
+        }
+        let key = ColouredKey(request: source.key, color: color)
+        if let hit = coloured[key] { return NaturalTextRun(run: hit.run, width: hit.width, height: hit.height, baseline: hit.firstBaseline) }
+        guard coloured.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
+        let result = try shape(source.key, color: color)
+        coloured[key] = result
+        return NaturalTextRun(run: result.run, width: result.width, height: result.height, baseline: result.firstBaseline)
+    }
+
+    public func cells(of run: TextRunHandle) -> [CharCell] { (try? bridge.cells(of: run)) ?? [] }
 
     public func releaseAll() {
         retained.values.forEach { _ = bridge.release($0.run) }

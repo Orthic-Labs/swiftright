@@ -49,7 +49,7 @@ def sync():
 
 def sync_capture_tool(tools_dir):
     """refresh only the capture script the guest runs (pair.py --sandbox calls this so the guest always uses the checkout's capture.ps1)"""
-    scp_to([Path(tools_dir) / "capture.ps1"], ROOT + r"\guest")
+    scp_to([Path(tools_dir) / "capture.ps1", HERE / "guest/job-clock.ps1"], ROOT + r"\guest")
 
 
 def status():
@@ -121,6 +121,21 @@ def capture(exe, runs, out, timeout_sec=None, renderer=None):
     if renderer:
         args["renderer"] = renderer   # Windows path of the renderer DLL the host loads for this job (SWIFTRIGHT_RENDER_DLL); default: the pinned inputs\\renderer file
     jid, st, res = run_job("capture", args, out / "_job", timeout_sec or runs * 90 + 300)
+    jd = out / "_job"
+    if (jd / "out").is_dir():
+        for f in (jd / "out").iterdir():
+            f.replace(out / f.name)
+    return jid, st, res
+
+
+def clock(exe, runs, out, times, timeout_sec=None, renderer=None):
+    """F1 manual-clock job: like capture() but the host replays Graph.tick(now:) at `times` (seconds) and one PNG per step lands as native-NN-fKK.png (host-NN-fKK.stdout.txt carries
+    HOST_GEOMETRY: the resolved frames and opacities at that step)."""
+    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    args = dict(exe=exe, runs=runs, clock=list(times))
+    if renderer:
+        args["renderer"] = renderer
+    jid, st, res = run_job("clock", args, out / "_job", timeout_sec or runs * len(times) * 12 + 300)
     jd = out / "_job"
     if (jd / "out").is_dir():
         for f in (jd / "out").iterdir():

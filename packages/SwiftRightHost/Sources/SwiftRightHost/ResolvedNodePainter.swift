@@ -21,12 +21,14 @@ public struct NodeEmission {
 @MainActor
 public final class ResolvedNodePainter {
     public let scale: Float
-    private let images: ImageRegistering
-    private let text: TextRunSource?
+    let images: ImageRegistering
+    let text: TextRunSource?
     private let systemImages: SystemImageRegistry?
     private let log: (String) -> Void
     private var shapeImages: [UInt64: ImageHandle] = [:]
-    private var pendingShapeImages: [UInt64: ImageHandle] = [:]
+    var pendingShapeImages: [UInt64: ImageHandle] = [:]
+    /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
+    var focusedFieldID: String?
 
     public init(images: ImageRegistering, scale: Float, text: TextRunSource? = nil, systemImages: SystemImageRegistry? = nil,
                 log: @escaping (String) -> Void = { print($0) }) {
@@ -79,6 +81,9 @@ public final class ResolvedNodePainter {
             nodes.append(NodeUpsert(id: background.id, bounds: background.bounds, primitives: [.rect(background.bounds, color: background.color)]))
             current.insert(background.id)
         }
+        // `focused` is the runtime id of the node a `.focused` modifier gave focus (CommitRecord.focused); the TextField it wraps is the focused field.
+        let focusedField = focused.flatMap { Self.focusedField(in: root, modifierID: $0) }
+        focusedFieldID = focusedField?.id
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
@@ -100,9 +105,24 @@ public final class ResolvedNodePainter {
             for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
-        try submit(SwiftRightBridge.Transaction(version: version, upserts: nodes, removes: Array(previousLive.subtracting(current))))
+        try submit(SwiftRightBridge.Transaction(version: version, focus: focusedField.map { UInt64($0.instance + 1) } ?? 0, upserts: nodes, removes: Array(previousLive.subtracting(current))))
         committed = true
         return Committed(live: current, runtimeIDs: runtimeIDs, nodeCount: nodes.count)
+    }
+
+    /// The first TextField at or under the node with runtime id `modifierID`.
+    static func focusedField(in root: ResolvedNode, modifierID: String) -> ResolvedNode? {
+        func firstField(_ n: ResolvedNode) -> ResolvedNode? {
+            if n.kind == "TextField" { return n }
+            for c in n.children { if let f = firstField(c) { return f } }
+            return nil
+        }
+        func find(_ n: ResolvedNode) -> ResolvedNode? {
+            if n.id == modifierID { return firstField(n) }
+            for c in n.children { if let f = find(c) { return f } }
+            return nil
+        }
+        return find(root)
     }
 
     /// Containers whose resolved frame clips their descendants (a scroll view shows only its viewport).
@@ -117,7 +137,7 @@ public final class ResolvedNodePainter {
 
     /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
     /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
-    static let unpaintedPrimitives: Set<String> = ["TextField", "TextEditor", "Divider", "Menu", "List"]
+    static let unpaintedPrimitives: Set<String> = ["TextEditor", "Divider", "Menu", "List"]
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
@@ -172,6 +192,9 @@ public final class ResolvedNodePainter {
                                 semantic: SemanticNode(role: .button, label: node.accessibility.label ?? "",
                                                        actions: plan.isEnabled ? [.invoke] : [], identifier: node.id, disabled: !plan.isEnabled),
                                 flags: [.hitTarget], structural: false)
+
+        case "TextField":
+            return try emitTextField(node, id: id, bounds: bounds)
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }

@@ -100,7 +100,7 @@ extension Graph {
     /// Launch focus selects the whole text of the field it lands on (macOS oracle, SR0-O cross-compare D2: AppKit selects all
     /// when a field is first responder at launch, selection 0+5 in F5 and the F3 VStack/lazy configurations). Focus given
     /// later by accessibility, pointer, Tab or `@FocusState` keeps the caret-at-end rule (F1, F2, F5 step 2, F7: 5+0).
-    private func selectAllInitially(under node: Node) {
+    func selectAllInitially(under node: Node) {
         var input: TextInputState?
         func find(_ n: Node) {
             guard input == nil, n.alive else { return }
@@ -124,6 +124,15 @@ extension Graph {
         case .moveFocusBackward: return moveFocus(forward: false)
         default: return false
         }
+    }
+
+    /// Sets a focus modifier node's focus flag. Gaining focus (Tab, or an assignment to `@FocusState`) selects the whole text of the field
+    /// (macOS 27 oracle, SR1 lane B: a field focused by Tab or by `focus = .x` reads selection 0 + count, from a probe in an offscreen
+    /// NSHostingView; a pointer click or an accessibility focus then places the caret, which the host does after the flush).
+    func noteFocus(_ node: Node, _ now: Bool) {
+        let gained = now && !node.focused
+        node.focused = now
+        if gained, node.alive { selectAllInitially(under: node) }
     }
 
     private func focusNodes() -> [Node] {

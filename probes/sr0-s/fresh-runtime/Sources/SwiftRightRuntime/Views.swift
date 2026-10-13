@@ -197,8 +197,11 @@ extension Button where Label == Text {
 public struct TextField<Label: View>: View, PrimitiveView {
     let text: Binding<String>
     let label: Label
-    public init(text: Binding<String>, @ViewBuilder label: () -> Label) {
+    /// The placeholder text when it differs from the title (`prompt:`).
+    let prompt: Text?
+    public init(text: Binding<String>, prompt: Text? = nil, @ViewBuilder label: () -> Label) {
         self.text = text
+        self.prompt = prompt
         self.label = label()
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
@@ -210,6 +213,13 @@ extension TextField where Label == Text {
     public init(_ titleKey: String, text: Binding<String>) {
         let label: () -> Text = { Text(titleKey) }
         self.init(text: text, label: label)
+    }
+
+    /// The placeholder is `prompt` when given, else the title (macOS: both draw the grey placeholder).
+    /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:prompt:)
+    public init(_ titleKey: String, text: Binding<String>, prompt: Text?) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(text: text, prompt: prompt, label: label)
     }
 }
 

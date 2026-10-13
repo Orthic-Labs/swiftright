@@ -30,7 +30,7 @@ def win(ps, **kw):
     return sh(SSH + [ps], **kw)
 
 
-def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, renderer=DEFAULT_RENDERER, steps=None):
+def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, renderer=DEFAULT_RENDERER, steps=None, clock=None):
     wdir = out / "windows"; wdir.mkdir(parents=True, exist_ok=True)
     host = rf"{WIN_ROOT}\hosts\{name}"; tools = rf"{WIN_ROOT}\pair-tools"
     pkg = rf"{host}\package"; exe = rf"{pkg}\{EXE_REL}"; ts = out.name
@@ -62,7 +62,10 @@ def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, rend
         sys.path.insert(0, str(Path(__file__).resolve().parent / "sandbox"))
         import client as sbx
         sbx.sync_capture_tool(TOOLS)
-        if steps is not None:
+        if clock is not None:
+            # F1: manual clock; the host replays Graph.tick(now:) at the case's times, one PNG per step (native-NN-fKK.png) + HOST_GEOMETRY in host-NN-fKK.stdout.txt
+            jid, st, res = sbx.clock(exe, runs, wdir, clock, renderer=renderer)
+        elif steps is not None:
             # F2: interaction job (key/char/click/ime/invoke steps, then a UIA dump of every window the host owns + PrintWindow); lands uia-NN.json beside native-NN.png
             jid, st, res = sbx.interact(exe, runs, wdir, steps, renderer=renderer)
         else:
@@ -96,13 +99,17 @@ def write_build_info(out, case, stage, stage_dir, renderer):
     print(f"build: stage {meta['name']} ({meta['mode']}{', DIRTY' if meta.get('dirty') else ''}) renderer sha256 {sha.strip()[:12]}", flush=True)
 
 
-def mac(case, name, runs, out):
+def mac(case, name, runs, out, clock=None):
     mdir = out / "mac"; mdir.mkdir(parents=True, exist_ok=True)
     cache = Path.home() / "Library/Caches/SwiftRightFactory/pair" / name
     (cache / "mc").mkdir(parents=True, exist_ok=True); (cache / "bin").mkdir(exist_ok=True)
     srcs = sorted(str(p) for p in (case / "mac-source/Sources").rglob("*.swift"))
     if any("AXDump." in Path(p).read_text() for p in srcs):
         srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AXDump.swift"))   # F3: in-process accessibility dump (no AX client API, no TCC)
+    if any("AlertHooks." in Path(p).read_text() for p in srcs):
+        srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AlertHooks.swift"))   # block 17: observe SwiftUI alerts without presenting them
+    pj = case / "pair.json"
+    mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
     sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(cache / "mc"),
         "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
     # the host only accepts scratch roots under a prefix hard-coded in its source
@@ -113,8 +120,13 @@ def mac(case, name, runs, out):
     scale_flag = ['"--scale"' in allsrc]
     ax_mode = '"--ax"' in allsrc                    # host writes the in-process accessibility dump when given --ax FILE
     for i in range(1, runs + 1):
+        if clock is not None:
+            # F1: one host run per run index, one PNG per clock step (mac/run-NN-fKK.png); MAC_FRAME lines (SwiftUI's own animation evaluation at each step) land in mac-run-NN.log
+            sh([str(cache / "bin/host"), "--scale", "2.5", "--clock", ",".join(repr(t) for t in clock), "--out", str(mdir), "--prefix", f"run-{i:02d}"],
+               log=out / f"mac-run-{i:02d}.log", timeout=120 + 20 * len(clock))
+            continue
         if png_mode:
-            sh([str(cache / "bin/host"), "--plain", "--scale", "2.5", "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else [])],
+            sh([str(cache / "bin/host"), "--plain", "--scale", "2.5", "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else []), *mac_args],
                log=out / f"mac-run-{i:02d}.log", timeout=120)
             continue
         scratch = base / f"pair-{out.name}-{i:02d}"
@@ -134,6 +146,17 @@ def load_exclusions(case, cli):
     for i, c in enumerate(cli or []):
         ex.append(dict(name=f"cli-text-{i + 1}", rect=tuple(int(v) for v in c.split(","))))
     return ex
+
+
+def load_clock(case, cli):
+    """F1 manual clock: --frames 0,0.1,0.25 (seconds) or <case>/pair.json {"clock":[..]}; None = plain single-frame case. Windows replays Graph.tick(now:) at these times, the Mac host moves its manual clock to them."""
+    if cli:
+        return [float(t) for t in cli.split(",")]
+    pj = case / "pair.json"
+    if pj.is_file():
+        c = json.loads(pj.read_text()).get("clock")
+        return [float(t) for t in c] if c else None
+    return None
 
 
 def load_steps(case, cli):
@@ -185,17 +208,21 @@ def edge_gate(im, iw, exclusions=()):
                 bandPixels=cnt(band))
 
 
-def compare(out, runs, exclusions=()):
+def compare(out, runs, exclusions=(), frames=0):
     """exact = pixel-identical outside the named exclusion rects. Excluded regions are reported separately
     (diff pixel count, ink bbox on each side); they never gate. Without exclusions this is the plain full-frame exact diff."""
     rows, first = [], None
-    for i in range(1, runs + 1):
-        a, b = out / f"mac/run-{i:02d}.png", out / f"windows/native-{i:02d}.png"
+    # frames > 0 (F1 manual clock): every run has one capture per clock step, run-NN-fKK.png / native-NN-fKK.png; each (run, frame) is one pair
+    items = [(i, k) for i in range(1, runs + 1) for k in (range(frames) if frames else [None])]
+    for i, k in items:
+        sfx = "" if k is None else f"-f{k:02d}"
+        a, b = out / f"mac/run-{i:02d}{sfx}.png", out / f"windows/native-{i:02d}{sfx}.png"
+        fr = {} if k is None else dict(frame=k)
         if not (a.is_file() and b.is_file()):
-            rows.append(dict(run=i, error="missing capture")); continue
+            rows.append(dict(run=i, **fr, error="missing capture")); continue
         im, iw = Image.open(a).convert("RGB"), Image.open(b).convert("RGB")
         if im.size != iw.size or im.size != (800, 600):
-            rows.append(dict(run=i, error=f"size mac={im.size} win={iw.size}")); continue
+            rows.append(dict(run=i, **fr, error=f"size mac={im.size} win={iw.size}")); continue
         full = ImageChops.difference(im, iw)
         gated = full.copy()
         for e in exclusions:
@@ -208,7 +235,7 @@ def compare(out, runs, exclusions=()):
         verdict = g["verdict"]
         if exclusions and verdict == "exact" and full_px > 0:
             verdict = "exact-with-exclusions"
-        row = dict(run=i, verdict=verdict, gate=g, exact=full_px == 0, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
+        row = dict(run=i, **fr, verdict=verdict, gate=g, exact=full_px == 0, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
         if exclusions:
             row["fullFrameDifferentPixels"] = full_px
             row["excluded"] = []
@@ -217,7 +244,7 @@ def compare(out, runs, exclusions=()):
                 row["excluded"].append(dict(name=e["name"], rect=list(r), diffPixels=npx(full.crop(r)) , macInkBBox=ink_bbox(im, r), winInkBBox=ink_bbox(iw, r)))
         rows.append(row)
         if bbox and first is None:
-            first = i; ImageChops.invert(gated).save(out / f"diff-{i:02d}.png")
+            first = i; ImageChops.invert(gated).save(out / f"diff-{i:02d}{sfx}.png")
     passing = ("exact", "exact-with-exclusions", "edge-aa<=32")
     ok = [r for r in rows if r.get("verdict") in passing]
     bad = [r for r in rows if r.get("verdict") not in passing]
@@ -225,7 +252,7 @@ def compare(out, runs, exclusions=()):
     nexw = sum(1 for r in rows if r.get("verdict") == "exact-with-exclusions")
     worst = max((r.get("maxdiff", 0) for r in rows), default=0)
     bbox = next((r.get("diffbbox") for r in bad if r.get("diffbbox")), None)
-    rep = dict(pairs=runs, exact=nex, exactWithExclusions=nexw, edgeAA=len(ok) - nex - nexw, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
+    rep = dict(pairs=len(items), frames=frames or None, exact=nex, exactWithExclusions=nexw, edgeAA=len(ok) - nex - nexw, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
     if (out / "build.json").is_file():
         rep["build"] = json.loads((out / "build.json").read_text())
     if exclusions:
@@ -234,10 +261,10 @@ def compare(out, runs, exclusions=()):
     (out / "report.json").write_text(json.dumps(rep, indent=1))
     for r in rows:
         if "gate" in r:
-            g = r["gate"]; print(f"  run {r['run']:02d} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
+            g = r["gate"]; print(f"  run {r['run']:02d}{'' if 'frame' not in r else ' f%02d' % r['frame']} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
     names = ", ".join(e["name"] + str(list(e["rect"])) for e in exclusions)
-    print(f"pairs={runs} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}")
-    return len(ok) == runs
+    print(f"pairs={len(items)} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}")
+    return len(ok) == len(items)
 
 
 def semantic_gate(case, out):
@@ -247,7 +274,7 @@ def semantic_gate(case, out):
     if not pj.is_file():
         return None
     cfg = json.loads(pj.read_text())
-    tool = "pair_semantic_report.py" if "semanticGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
+    tool = "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
     if not tool:
         return None
     r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / tool), str(case), str(out)], capture_output=True, text=True)
@@ -258,7 +285,7 @@ def semantic_gate(case, out):
 def semantic_decides(case):
     """Cases whose pixels differ by design inside regions the exclusions cannot name (Image(systemName:) glyphs; a labelled control whose x follows the label's width): the semantic gate alone decides."""
     cfg = json.loads((case / "pair.json").read_text())
-    return "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg
+    return "clockGate" in cfg or "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg
 
 
 def main():
@@ -269,15 +296,18 @@ def main():
     ap.add_argument("--shared", action="store_true", help="PrintWindow capture without the exclusive desktop lock (background, no activation, no input); default unchanged"); ap.add_argument("--sandbox", action="store_true", help="run the Windows capture inside the long-lived minimised Windows Sandbox (factory/tools/sandbox); the build still runs on the Dell host over SSH; default unchanged"); ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
     ap.add_argument("--exclude-text-bbox", action="append", metavar="X0,Y0,X1,Y1", help="named-in-report text region excluded from the pixel gate (repeatable); also <case>/pair.json excludeRects")
     ap.add_argument("--steps", metavar="FILE.json", help="F2: interaction steps for the Sandbox run (key/char/click/ime/invoke/wait/dump/shot); default: <case>/pair.json \"steps\" if present")
+    ap.add_argument("--frames", metavar="T0,T1,..", help="F1: manual-clock times in seconds (one capture pair per step per run); default: <case>/pair.json \"clock\" if present")
     ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
     if a.recompare:
-        out = Path(a.recompare).resolve(); n = len(list((out / "mac").glob("run-*.png")))
-        ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox))
+        out = Path(a.recompare).resolve(); clock = load_clock(case, a.frames)
+        n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})
+        ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox), len(clock or []))
         sem = semantic_gate(case, out)
         sys.exit(0 if (ok if sem is None else sem and (ok or semantic_decides(case))) else 1)
+    clock = load_clock(case, a.frames)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
     if not a.skip_windows:
@@ -285,10 +315,11 @@ def main():
         if a.renderer != DEFAULT_RENDERER and not a.sandbox: sys.exit("--renderer needs --sandbox (the Dell-desktop session path does not pass it to the host)")
         steps = load_steps(case, a.steps)
         if steps is not None and not a.sandbox: sys.exit("--steps (and pair.json steps) need --sandbox")
-        windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer, steps)
-    if not a.skip_mac: mac(case, name, a.runs, out)
+        if clock is not None and not a.sandbox: sys.exit("--frames (and pair.json clock) need --sandbox")
+        windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer, steps, clock)
+    if not a.skip_mac: mac(case, name, a.runs, out, clock)
     print(f"out={out}")
-    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox))
+    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []))
     sem = semantic_gate(case, out)
     if sem is None:
         sys.exit(0 if ok else 1)

@@ -98,7 +98,7 @@ extension Graph {
         case .text(let string):
             return measureText(node, string, width: proposal.width)
         case .textField:
-            return measureText(node, node.textInput?.display ?? "", width: nil)
+            return measureTextField(node, proposal)
         case .textEditor:
             // Greedy like SwiftUI TextEditor: takes each finite proposal axis, else the measured text.
             let measured = measureText(node, node.textInput?.display ?? "", width: proposal.width)
@@ -548,6 +548,18 @@ extension Graph {
         guard node.kind.passesThrough else { return nil }
         let children = childNodes(node)
         return children.count == 1 ? spacerLength(children[0], axis) : nil
+    }
+
+    /// A TextField takes the width it is offered (else its text plus the bezel inset) and a fixed height: 24 pt bezeled, one text line plain
+    /// (macOS 27 measured: `AppKitTextField` fills the proposal; ideal width = text + 2 x 4 pt, the placeholder when empty).
+    private func measureTextField(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
+        let artwork = TextFieldMetrics.artwork(forStyle: node.environment.textFieldStyleMetadata)
+        let shown = node.textInput?.display ?? ""
+        let text = shown.isEmpty ? (placeholderOf(node) ?? "") : shown
+        let measured = measureText(node, text, width: nil)
+        let inset = TextFieldMetrics.textInset(artwork)
+        let height = artwork == .bezel ? TextFieldMetrics.bezelHeight : max(measured.height, TextFieldMetrics.plainHeight)
+        return LayoutSize(width: finiteLength(proposal.width) ?? measured.width + 2 * inset, height: height)
     }
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {

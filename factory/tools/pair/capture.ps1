@@ -1,5 +1,6 @@
 # Runs inside the interactive session. Per run: launch host, find its window, push to background w/o activation, PrintWindow(flags 3), kill.
-param([Parameter(Mandatory)][string]$Exe,[Parameter(Mandatory)][string]$Out,[int]$Runs=1,[string]$Owner='swiftright-87',[switch]$Shared)
+# -Frames N (F1 manual clock; env SWIFTRIGHT_CLOCK holds the N clock times): the run launches the host once per frame k with SWIFTRIGHT_FRAME=k and writes native-NN-fKK.png / host-NN-fKK.stdout.txt.
+param([Parameter(Mandatory)][string]$Exe,[Parameter(Mandatory)][string]$Out,[int]$Runs=1,[string]$Owner='swiftright-87',[switch]$Shared,[int]$Frames=0)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Drawing
 Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
@@ -22,22 +23,28 @@ $env:Path='C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;'+
 $results=@()
 try{
  for($i=1;$i -le $Runs;$i++){
-  $n='{0:00}' -f $i;$p=$null;$status='failed'
-  try{
-   if(-not $Shared -and (Get-Content -Raw 'D:\Claude\desktop.lock').Trim() -cne $Owner){throw 'lock ownership lost'}
-   $si=[Diagnostics.ProcessStartInfo]::new($Exe);$si.Arguments='--factory-capture-lease-seconds=40';$si.UseShellExecute=$false;$si.CreateNoWindow=$true
-   $si.RedirectStandardOutput=$true;$si.RedirectStandardError=$true
-   $p=[Diagnostics.Process]::Start($si);$so=$p.StandardOutput.ReadToEndAsync();$se=$p.StandardError.ReadToEndAsync()
-   $deadline=[DateTime]::UtcNow.AddSeconds(30)
-   do{Start-Sleep -Milliseconds 100;$p.Refresh();if($p.HasExited){throw "host exited early code=$($p.ExitCode)"};if([DateTime]::UtcNow -gt $deadline){throw 'window deadline'}}while($p.MainWindowHandle -eq [IntPtr]::Zero)
-   $h=$p.MainWindowHandle
-   if(-not [PairNative]::SetWindowPos($h,[IntPtr]::new(1),0,0,0,0,0x0013)){throw 'SetWindowPos failed'}   # HWND_BOTTOM, NOSIZE|NOMOVE|NOACTIVATE
-   Start-Sleep -Milliseconds 500
-   $r=[PairNative]::Shot($h,(Join-Path $Out "native-$n.png"));if($r -ne 'ok'){throw $r};$status='ok'
-  }catch{$status=[string]$_}
-  finally{
-   if($p){try{if(-not $p.HasExited){$p.Kill()};[void]$p.WaitForExit(10000)}catch{}
-    try{[void]$so.Wait(5000);$so.Result|Set-Content (Join-Path $Out "host-$n.stdout.txt");$se.Result|Set-Content (Join-Path $Out "host-$n.stderr.txt")}catch{}}
+  $n='{0:00}' -f $i;$status='ok'
+  $fl=$(if($Frames -gt 0){0..($Frames-1)}else{@(-1)})
+  foreach($k in $fl){
+   $sfx=$(if($k -ge 0){'-f{0:00}' -f $k}else{''});$p=$null;$st='failed'
+   try{
+    if(-not $Shared -and (Get-Content -Raw 'D:\Claude\desktop.lock').Trim() -cne $Owner){throw 'lock ownership lost'}
+    $si=[Diagnostics.ProcessStartInfo]::new($Exe);$si.Arguments='--factory-capture-lease-seconds=40';$si.UseShellExecute=$false;$si.CreateNoWindow=$true
+    $si.RedirectStandardOutput=$true;$si.RedirectStandardError=$true
+    if($k -ge 0){$si.EnvironmentVariables['SWIFTRIGHT_FRAME']=[string]$k}
+    $p=[Diagnostics.Process]::Start($si);$so=$p.StandardOutput.ReadToEndAsync();$se=$p.StandardError.ReadToEndAsync()
+    $deadline=[DateTime]::UtcNow.AddSeconds(30)
+    do{Start-Sleep -Milliseconds 100;$p.Refresh();if($p.HasExited){throw "host exited early code=$($p.ExitCode)"};if([DateTime]::UtcNow -gt $deadline){throw 'window deadline'}}while($p.MainWindowHandle -eq [IntPtr]::Zero)
+    $h=$p.MainWindowHandle
+    if(-not [PairNative]::SetWindowPos($h,[IntPtr]::new(1),0,0,0,0,0x0013)){throw 'SetWindowPos failed'}   # HWND_BOTTOM, NOSIZE|NOMOVE|NOACTIVATE
+    Start-Sleep -Milliseconds 500
+    $r=[PairNative]::Shot($h,(Join-Path $Out "native-$n$sfx.png"));if($r -ne 'ok'){throw $r};$st='ok'
+   }catch{$st=[string]$_}
+   finally{
+    if($p){try{if(-not $p.HasExited){$p.Kill()};[void]$p.WaitForExit(10000)}catch{}
+     try{[void]$so.Wait(5000);$so.Result|Set-Content (Join-Path $Out "host-$n$sfx.stdout.txt");$se.Result|Set-Content (Join-Path $Out "host-$n$sfx.stderr.txt")}catch{}}
+   }
+   if($st -ne 'ok'){$status="frame $k`: $st"}
   }
   $results+=[ordered]@{run=$i;status=$status}
  }
