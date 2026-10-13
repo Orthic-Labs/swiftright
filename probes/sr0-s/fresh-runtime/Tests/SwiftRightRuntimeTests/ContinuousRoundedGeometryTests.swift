@@ -187,7 +187,7 @@ final class ContinuousRoundedGeometryTests: XCTestCase {
     }
 
     func testDevicePixelSnapMatchesSwiftUIEdgeRounding() {
-        func snap(_ o: Double, _ l: Double) -> (Double, Double) { let r = DevicePixelSnap.edges(origin: o, length: l); return (r.origin, r.length) }
+        func snap(_ o: Double, _ l: Double) -> (Double, Double) { let r = DevicePixelSnap.edges(origin: o, length: l, scale: 2.5); return (r.origin, r.length) }
         XCTAssertEqual(snap(350, 100).0, 350); XCTAssertEqual(snap(350, 100).1, 100)
         // 112.5 x 62.5 px at 343.75 / 268.75 -> 344...456 and 269...331
         XCTAssertEqual(snap(343.75, 112.5).0, 344); XCTAssertEqual(snap(343.75, 112.5).1, 112)

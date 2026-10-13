@@ -252,20 +252,22 @@ public struct PixelRect: Hashable, Sendable {
     public let height: Int
 }
 
-/// Rounds each edge of a logical rect to the physical pixel grid. Adjacent frames share edges,
-/// so rounding is applied to edges, not to origin and size independently.
+/// Rounds each edge of a logical rect to the physical pixel grid by SwiftUI's rule (`DevicePixelSnap`, including its value-dependent
+/// choice at exact half pixels). Adjacent frames share edges, so rounding is applied to edges, not to origin and size independently.
 func snapToPixelGrid(_ rect: LayoutRect, scale: CGFloat) -> LayoutRect {
-    let minX = (rect.minX * scale).rounded() / scale
-    let minY = (rect.minY * scale).rounded() / scale
-    let maxX = (rect.maxX * scale).rounded() / scale
-    let maxY = (rect.maxY * scale).rounded() / scale
+    let s = Double(scale)
+    let minX = CGFloat(DevicePixelSnap.point(Double(rect.minX), scale: s))
+    let minY = CGFloat(DevicePixelSnap.point(Double(rect.minY), scale: s))
+    let maxX = CGFloat(DevicePixelSnap.point(Double(rect.maxX), scale: s))
+    let maxY = CGFloat(DevicePixelSnap.point(Double(rect.maxY), scale: s))
     return LayoutRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
 }
 
 func pixelRect(_ rect: LayoutRect, scale: CGFloat) -> PixelRect {
-    let x0 = Int((rect.minX * scale).rounded())
-    let y0 = Int((rect.minY * scale).rounded())
-    let x1 = Int((rect.maxX * scale).rounded())
-    let y1 = Int((rect.maxY * scale).rounded())
+    let s = Double(scale)
+    let x0 = Int(DevicePixelSnap.pixel(Double(rect.minX), scale: s))
+    let y0 = Int(DevicePixelSnap.pixel(Double(rect.minY), scale: s))
+    let x1 = Int(DevicePixelSnap.pixel(Double(rect.maxX), scale: s))
+    let y1 = Int(DevicePixelSnap.pixel(Double(rect.maxY), scale: s))
     return PixelRect(x: x0, y: y0, width: x1 - x0, height: y1 - y0)
 }

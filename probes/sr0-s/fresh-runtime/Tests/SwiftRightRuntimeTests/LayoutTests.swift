@@ -298,9 +298,9 @@ final class LayoutTests: XCTestCase {
         graph.flush()
         let stack = try node(graph.snapshot(), 0)
         let padded = stack.children[0]
-        // Centered in 72 pt: (72 - 22) / 2 = 25 pt, which is 62.5 px and rounds to 63 px (25.2 pt).
-        XCTAssertEqual(padded.frame.minX, 25.2, accuracy: 1e-9)
-        XCTAssertEqual(padded.pixelFrame.x, 63)
+        // Centered in 72 pt: (72 - 22) / 2 = 25 pt, exactly 62.5 px. SwiftUI rounds that tie down, to 62 px (24.8 pt): DevicePixelSnap, measured.
+        XCTAssertEqual(padded.frame.minX, 24.8, accuracy: 1e-9)
+        XCTAssertEqual(padded.pixelFrame.x, 62)
 
         for item in everyNode(graph.snapshot()) {
             let x0 = item.frame.minX * 2.5

@@ -9,9 +9,11 @@ public struct ContinuousShapeRequest: Equatable {
     public var fillRGBA: UInt32?
     public var strokeRGBA: UInt32?
     public var strokeWidthPX: Float
-    public init(bounds: Rect, cornerRadiusPX: Float, fillRGBA: UInt32?, strokeRGBA: UInt32?, strokeWidthPX: Float) {
+    /// Device pixels per point: the unit `bounds` edges are snapped in (`DevicePixelSnap`).
+    public var scale: Float
+    public init(bounds: Rect, cornerRadiusPX: Float, fillRGBA: UInt32?, strokeRGBA: UInt32?, strokeWidthPX: Float, scale: Float = 1) {
         self.bounds = bounds; self.cornerRadiusPX = cornerRadiusPX; self.fillRGBA = fillRGBA
-        self.strokeRGBA = strokeRGBA; self.strokeWidthPX = strokeWidthPX
+        self.strokeRGBA = strokeRGBA; self.strokeWidthPX = strokeWidthPX; self.scale = scale
     }
 }
 
@@ -52,7 +54,7 @@ public enum ShapePainter {
                     bounds: bounds, cornerRadiusPX: Float(cornerRadius) * scale,
                     fillRGBA: paint.kind == .fill ? colour : nil,
                     strokeRGBA: paint.kind == .stroke ? colour : nil,
-                    strokeWidthPX: strokeWidth)
+                    strokeWidthPX: strokeWidth, scale: scale)
                 return .continuous(request)
             }
         }
@@ -85,8 +87,8 @@ public enum ContinuousShapeRaster {
         }
         // SwiftUI draws a frame on whole device pixels (both edges rounded; DevicePixelSnap), so the path
         // rectangle is the snapped one, never the fractional layout rectangle.
-        let snapX = DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w))
-        let snapY = DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h))
+        let snapX = DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w), scale: Double(request.scale))
+        let snapY = DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h), scale: Double(request.scale))
         let boundsX = Float(snapX.origin), boundsY = Float(snapY.origin)
         let boundsW = Float(snapX.length), boundsH = Float(snapY.length)
         guard boundsW > 0, boundsH > 0 else { throw HostPaintError.continuousShapeRasterInput(2) }
