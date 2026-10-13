@@ -39,10 +39,83 @@ extension Graph {
         case (let i?, true): target = (i + 1) % stops.count
         case (let i?, false): target = (i - 1 + stops.count) % stops.count
         }
-        guard case .modifier(.focus(let link)) = stops[target].kind else { return false }
-        link.focus()
+        focusStop(stops[target])
         flush()
         return true
+    }
+
+    /// Focuses a tab stop: a `.focused` modifier through its binding, an unbound TextField as the implicit focus. Either way the other
+    /// focus is released, so one node holds it. An unbound field selects its whole text on gaining focus, as a bound one does (`noteFocus`).
+    private func focusStop(_ stop: Node) {
+        if case .modifier(.focus(let link)) = stop.kind {
+            clearImplicitFocus()
+            link.focus()
+            return
+        }
+        guard case .textField = stop.kind else { return }
+        for node in nodes.values where node.alive && node.focused {
+            if case .modifier(.focus(let link)) = node.kind { link.release() }
+        }
+        clearImplicitFocus()
+        stop.focused = true
+        selectAllInitially(under: stop)
+    }
+
+    /// Clears the implicit focus of an unbound TextField (a field that has no `.focused` modifier keeps its flag on the node itself).
+    func clearImplicitFocus() {
+        for node in nodes.values where node.focused {
+            if case .textField = node.kind { node.focused = false }
+        }
+    }
+
+    /// Gives focus to the TextField `id` (a pointer press or an accessibility focus request): through its `.focused` binding when it has one,
+    /// otherwise as the implicit focus, which Tab continues from. The selection is left as the focus change set it (the whole text); a pointer
+    /// host places the caret afterwards. Returns false when `id` is not a live, enabled TextField. The new focus is committed.
+    @discardableResult
+    public func focusTextField(_ id: String) -> Bool {
+        guard let field = node(id), case .textField = field.kind, field.alive, field.environment.isEnabled else { return false }
+        // the nearest `.focused` modifier around the field, if any (it may wrap a row container that holds the field)
+        var wrapper: Node?
+        var current = field.parent
+        while let candidate = current {
+            if case .modifier(.focus) = candidate.kind { wrapper = candidate; break }
+            current = candidate.parent
+        }
+        focusStop(wrapper ?? field)
+        flush()
+        return true
+    }
+
+    /// True when `id` names a live TextField (not a TextEditor).
+    public func isTextField(_ id: String) -> Bool {
+        guard let field = node(id), field.alive, case .textField = field.kind else { return false }
+        return true
+    }
+
+    /// The runtime id of the TextField that holds the focus (bound through `.focused`, or implicit), nil when none does.
+    public var focusedTextFieldID: String? {
+        for node in nodes.values where node.alive && node.focused {
+            if case .textField = node.kind { return node.idString }
+            if case .modifier(.focus) = node.kind, let field = firstTextField(under: node) { return field.idString }
+        }
+        return nil
+    }
+
+    /// The first TextField in a node's subtree, in tree order.
+    private func firstTextField(under node: Node) -> Node? {
+        for child in childNodes(node) where child.alive {
+            if case .textField = child.kind { return child }
+            if let found = firstTextField(under: child) { return found }
+        }
+        return nil
+    }
+
+    /// Every TextField in a node's subtree.
+    private func textFields(under node: Node, into out: inout Set<NodeID>) {
+        for child in childNodes(node) where child.alive {
+            if case .textField = child.kind { out.insert(child.id) }
+            textFields(under: child, into: &out)
+        }
     }
 
     /// The node a window focuses when it is first shown, or nil when it focuses none.
@@ -132,14 +205,24 @@ extension Graph {
     func noteFocus(_ node: Node, _ now: Bool) {
         let gained = now && !node.focused
         node.focused = now
-        if gained, node.alive { selectAllInitially(under: node) }
+        if gained, node.alive {
+            clearImplicitFocus()
+            selectAllInitially(under: node)
+        }
     }
 
     private func focusNodes() -> [Node] {
         var out: [Node] = []
+        // a TextField wrapped by a `.focused` modifier is that modifier's stop; any other enabled TextField is a stop of its own
+        var claimed = Set<NodeID>()
         func visit(_ node: Node) {
             guard node.alive else { return }
-            if case .modifier(.focus) = node.kind, isTabStop(node) { out.append(node) }
+            if case .modifier(.focus) = node.kind, isTabStop(node) {
+                out.append(node)
+                textFields(under: node, into: &claimed)
+            } else if case .textField = node.kind, !claimed.contains(node.id), node.environment.isEnabled {
+                out.append(node)
+            }
             childNodes(node).forEach(visit)
         }
         if let root { visit(root) }

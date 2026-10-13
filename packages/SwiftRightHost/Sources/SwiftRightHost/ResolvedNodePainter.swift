@@ -29,17 +29,21 @@ public final class ResolvedNodePainter {
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
     /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
     var focusedFieldID: String?
+    var pendingFieldLayouts: [String: TextFieldLayout] = [:]
+    /// Where each TextField of the last committed tree put its text (runtime id), for caret placement and IME candidate anchoring.
+    public private(set) var fieldLayouts: [String: TextFieldLayout] = [:]
 
     public init(images: ImageRegistering, scale: Float, text: TextRunSource? = nil, systemImages: SystemImageRegistry? = nil,
                 log: @escaping (String) -> Void = { print($0) }) {
         self.images = images; self.scale = scale; self.text = text; self.systemImages = systemImages; self.log = log
     }
 
-    public func beginCommit() { pendingShapeImages = [:] }
+    public func beginCommit() { pendingShapeImages = [:]; pendingFieldLayouts = [:] }
 
     /// `committed == false` releases the images created for the failed commit and keeps the previous ones.
     public func endCommit(committed: Bool) {
         if committed {
+            fieldLayouts = pendingFieldLayouts
             for (id, handle) in shapeImages where pendingShapeImages[id] != handle { _ = images.release(handle) }
             shapeImages = pendingShapeImages
         } else {

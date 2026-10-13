@@ -44,6 +44,20 @@ private struct Selected: View {
     }
 }
 
+private struct MixedFields: View {
+    @State var a = "one"
+    @State var b = "two"
+    @State var c = "three"
+    @FocusState var focus: Int?
+    var body: some View {
+        VStack {
+            TextField("A", text: $a)
+            TextField("B", text: $b).focused($focus, equals: 2)
+            TextField("C", text: $c)
+        }
+    }
+}
+
 @MainActor
 final class TextFieldBlockTests: XCTestCase {
     private func nodes(_ graph: Graph) -> [ResolvedNode] { everyNode(graph.snapshot()) }
@@ -141,5 +155,40 @@ final class TextFieldBlockTests: XCTestCase {
         XCTAssertTrue(field.setSelection(UTF16Range(location: 5, length: 0)))
         graph.flush()
         XCTAssertEqual(field.selection, UTF16Range(location: 5, length: 0))
+    }
+
+    // A TextField without a focus binding still takes focus (macOS: any TextField does); Tab visits bound and unbound fields in tree order.
+    func testUnboundFieldsAreTabStopsAndTakeImplicitFocus() {
+        let graph = Graph(MixedFields()); graph.flush()
+        let ids = graph.ids(ofKind: "TextField")
+        XCTAssertEqual(graph.focusStops().count, 3)
+        XCTAssertNil(graph.focusedTextFieldID)
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[0])
+        XCTAssertEqual(graph.textInput(ids[0])?.selection, UTF16Range(location: 0, length: 3))
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[1])           // the bound one: the implicit focus left the first field
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[2])
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[0])           // wraps
+        XCTAssertTrue(graph.moveFocus(forward: false))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[2])
+    }
+
+    func testFocusTextFieldMovesBetweenBoundAndImplicitFocus() {
+        let graph = Graph(MixedFields()); graph.flush()
+        var focusedIDs: [String?] = []
+        graph.commitSink = { focusedIDs.append($0.focused) }
+        let ids = graph.ids(ofKind: "TextField")
+        XCTAssertTrue(graph.focusTextField(ids[1]))                // bound: through FocusState
+        XCTAssertEqual(graph.focusedTextFieldID, ids[1])
+        XCTAssertTrue(graph.focusTextField(ids[2]))                // unbound: the FocusState is released
+        XCTAssertEqual(graph.focusedTextFieldID, ids[2])
+        XCTAssertEqual(graph.focusStops().filter(\.isFocused).count, 1)
+        XCTAssertTrue(graph.focusTextField(ids[0]))
+        XCTAssertEqual(graph.focusedTextFieldID, ids[0])
+        XCTAssertEqual(focusedIDs.last ?? nil, ids[0], "the commit record reports the focused field")
+        XCTAssertFalse(graph.focusTextField("missing"))
     }
 }

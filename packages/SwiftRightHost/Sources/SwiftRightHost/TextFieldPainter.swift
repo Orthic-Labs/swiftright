@@ -40,6 +40,31 @@ public enum TextFieldGeometry {
     }
 }
 
+/// Where a painted TextField put its text, in window pixels: the origin of the shaped text and the x of every UTF-16 boundary. A pointer
+/// host places the caret with it and an IME host anchors the candidate window.
+public struct TextFieldLayout: Equatable {
+    public var bounds: Rect
+    public var textOriginX: Float
+    public var boundaries: [Float]
+    public var lineHeight: Float
+    public var textTop: Float
+
+    /// The UTF-16 offset whose boundary is nearest to window x `x`.
+    public func offset(atX x: Float) -> Int {
+        guard !boundaries.isEmpty else { return 0 }
+        let local = x - textOriginX
+        var best = 0
+        for (i, b) in boundaries.enumerated() where abs(b - local) < abs(boundaries[best] - local) { best = i }
+        return best
+    }
+
+    /// The window x of a UTF-16 offset (clamped).
+    public func x(ofOffset offset: Int) -> Float {
+        guard !boundaries.isEmpty else { return textOriginX }
+        return textOriginX + boundaries[min(max(offset, 0), boundaries.count - 1)]
+    }
+}
+
 extension ResolvedNodePainter {
     /// TextField: the bezel (a registered image) for the bezeled styles, the typed text or the placeholder as a shaped run clipped to the field,
     /// and for the focused field the selection highlight, caret and marked-text underline. Semantics: a text-field node with the committed value.
@@ -79,6 +104,8 @@ extension ResolvedNodePainter {
                 let visible = max(0, clip.w)
                 if caret > visible { originX -= caret - visible }
             }
+            pendingFieldLayouts[node.id] = TextFieldLayout(bounds: bounds, textOriginX: originX, boundaries: isPlaceholder ? [0] : xs,
+                                                           lineHeight: natural.height, textTop: originY)
             primitives.append(.clipPush(clip))
             if isFocused, !isPlaceholder, let selection = node.selection, selection.length > 0, selection.location + selection.length < xs.count {
                 let a = xs[selection.location], b = xs[selection.location + selection.length]
@@ -94,11 +121,17 @@ extension ResolvedNodePainter {
                     primitives.append(.rect(Rect(x: originX + xs[selection.location], y: originY, w: max(1, scale / 2), h: natural.height), color: TextFieldColors.caret))
                 }
             }
+            if isFocused, isPlaceholder {
+                primitives.append(.rect(Rect(x: bounds.x + inset, y: originY, w: max(1, scale / 2), h: natural.height), color: TextFieldColors.caret))
+            }
             primitives.append(.clipPop)
-        } else if isFocused {
-            // Empty focused field: the caret at the start of the text area.
+        } else {
             let height = bounds.h - 2 * (artwork == .bezel ? Float(TextFieldMetrics.bezelTextInset) * scale : 0)
-            primitives.append(.rect(Rect(x: bounds.x + inset, y: bounds.y + (bounds.h - height) / 2, w: max(1, scale / 2), h: height), color: TextFieldColors.caret))
+            let top = bounds.y + (bounds.h - height) / 2
+            pendingFieldLayouts[node.id] = TextFieldLayout(bounds: bounds, textOriginX: bounds.x + inset, boundaries: [0], lineHeight: height, textTop: top)
+            if isFocused {
+                primitives.append(.rect(Rect(x: bounds.x + inset, y: top, w: max(1, scale / 2), h: height), color: TextFieldColors.caret))
+            }
         }
         let semantic = SemanticNode(role: .textField, label: node.accessibility.label ?? node.placeholder ?? "", value: shown,
                                     actions: isEnabled ? [.focus, .setValue, .setSelection] : [], identifier: node.id, disabled: !isEnabled)
