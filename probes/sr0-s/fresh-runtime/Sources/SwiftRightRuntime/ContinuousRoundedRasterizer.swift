@@ -1,8 +1,9 @@
 import Foundation
 
 /// Bounded CPU raster output for a continuous rounded shape. Bytes are RGBA8,
-/// straight alpha. Coverage uses fixed 4x4 sampling; this is deterministic
-/// geometry transport for `SWR_PRIM_IMAGE`, not renderer antialias parity.
+/// straight alpha. Coverage is 16x16 supersampled (256 samples) on pixels
+/// within 0.75 px of a boundary and exact (0 or 1) elsewhere; this is deterministic
+/// geometry transport for `SWR_PRIM_IMAGE`.
 public struct ContinuousRGBAImage: Equatable, Sendable {
     public let width: Int
     public let height: Int
@@ -25,12 +26,16 @@ public enum ContinuousRoundedRasterizer {
     private static let maxRGBABytes = 16 * 1024 * 1024
     private static let maxPixels = maxRGBABytes / 4
     private static let maxSampleSegmentEvaluations = 100_000_000
-    private static let subdivisions = 8
+    private static let subdivisions = 12
+    private static let grid = 16
+    private static let edgeBand = 0.75
 
     public static func rasterize(width: Int, height: Int, cornerRadius: CGFloat,
                                  fillRGBA: UInt32? = nil,
                                  strokeRGBA: UInt32? = nil,
-                                 strokeWidth: CGFloat = 0) throws -> ContinuousRGBAImage {
+                                 strokeWidth: CGFloat = 0,
+                                 shapeWidth: CGFloat? = nil, shapeHeight: CGFloat? = nil,
+                                 offsetX: CGFloat = 0, offsetY: CGFloat = 0) throws -> ContinuousRGBAImage {
         guard width > 0, height > 0 else { throw ContinuousRoundedRasterError.invalidSize }
         guard width <= maxPixels / max(1, height) else { throw ContinuousRoundedRasterError.pixelLimitExceeded }
         let stroke = Double(strokeWidth)
@@ -39,9 +44,14 @@ public enum ContinuousRoundedRasterizer {
         let halfStroke = stroke / 2
         // Render centered stroke inside output extent. This supplies required
         // outer padding instead of clipping half stroke at bitmap edges.
-        let rect = LayoutRect(x: CGFloat(halfStroke), y: CGFloat(halfStroke),
-                              width: CGFloat(Double(width) - stroke),
-                              height: CGFloat(Double(height) - stroke))
+        // `offsetX/Y` is the fractional sub-pixel position of the stroked outer
+        // edge inside the bitmap (so the bitmap itself can be placed on an
+        // integer origin); `shapeWidth/Height` is the path rect size.
+        let ox = Double(offsetX), oy = Double(offsetY)
+        guard ox.isFinite, oy.isFinite, ox >= 0, oy >= 0, ox < 1, oy < 1 else { throw ContinuousRoundedRasterError.invalidSize }
+        let rect = LayoutRect(x: CGFloat(halfStroke + ox), y: CGFloat(halfStroke + oy),
+                              width: shapeWidth ?? CGFloat(Double(width) - stroke),
+                              height: shapeHeight ?? CGFloat(Double(height) - stroke))
         let path: [ContinuousPathElement]
         do {
             path = try ContinuousRoundedGeometry.path(in: rect, cornerRadius: cornerRadius)
@@ -51,28 +61,37 @@ public enum ContinuousRoundedRasterizer {
             throw ContinuousRoundedRasterError.unsupportedGeometry
         }
         let segments = flatten(path)
-        let sampleCount = width * height * 16
-        guard segments.count == 0 || sampleCount <= maxSampleSegmentEvaluations / segments.count else {
+        guard segments.count == 0 || width * height <= maxSampleSegmentEvaluations / segments.count else {
             throw ContinuousRoundedRasterError.workLimitExceeded
         }
         let bytes = width * height * 4
         var output = [UInt8](repeating: 0, count: bytes)
-        let samples: [(Double, Double)] = [(0.125, 0.125), (0.375, 0.125), (0.625, 0.125), (0.875, 0.125),
-                                            (0.125, 0.375), (0.375, 0.375), (0.625, 0.375), (0.875, 0.375),
-                                            (0.125, 0.625), (0.375, 0.625), (0.625, 0.625), (0.875, 0.625),
-                                            (0.125, 0.875), (0.375, 0.875), (0.625, 0.875), (0.875, 0.875)]
+        let hasFill = fillRGBA != nil, hasStroke = strokeRGBA != nil && stroke > 0
+        let step = 1.0 / Double(grid)
         for y in 0..<height {
             for x in 0..<width {
-                var fillHits = 0, strokeHits = 0
-                for (sx, sy) in samples {
-                    let point = (Double(x) + sx, Double(y) + sy)
-                    if fillRGBA != nil && inside(point, segments: segments) { fillHits += 1 }
-                    if strokeRGBA != nil && stroke > 0 && distanceSquared(point, segments: segments) <= halfStroke * halfStroke { strokeHits += 1 }
+                let center = (Double(x) + 0.5, Double(y) + 0.5)
+                let dist = distance(center, segments: segments)
+                let isInside = inside(center, segments: segments)
+                let fillNear = hasFill && dist <= edgeBand
+                let strokeNear = hasStroke && abs(dist - halfStroke) <= edgeBand
+                var fillCoverage = (hasFill && isInside) ? 1.0 : 0.0
+                var strokeCoverage = (hasStroke && dist <= halfStroke) ? 1.0 : 0.0
+                if fillNear || strokeNear {
+                    var fillHits = 0, strokeHits = 0
+                    for j in 0..<grid {
+                        for i in 0..<grid {
+                            let point = (Double(x) + (Double(i) + 0.5) * step, Double(y) + (Double(j) + 0.5) * step)
+                            if fillNear && inside(point, segments: segments) { fillHits += 1 }
+                            if strokeNear && distanceSquared(point, segments: segments) <= halfStroke * halfStroke { strokeHits += 1 }
+                        }
+                    }
+                    let n = Double(grid * grid)
+                    if fillNear { fillCoverage = Double(fillHits) / n }
+                    if strokeNear { strokeCoverage = Double(strokeHits) / n }
                 }
-                let fillCoverage = Double(fillHits) / 16
-                let strokeCoverage = Double(strokeHits) / 16
                 let fill = fillRGBA.map { unpack($0, coverage: fillCoverage) }
-                let strokeColor = strokeRGBA.map { unpack($0, coverage: strokeCoverage) }
+                let strokeColor = hasStroke ? strokeRGBA.map { unpack($0, coverage: strokeCoverage) } : nil
                 let composited = over(strokeColor, fill)
                 guard let composited, composited.alpha > 0 else { continue }
                 let index = (y * width + x) * 4
@@ -141,6 +160,10 @@ public enum ContinuousRoundedRasterizer {
             }
         }
         return hit
+    }
+
+    private static func distance(_ p: (Double, Double), segments: [Segment]) -> Double {
+        distanceSquared(p, segments: segments).squareRoot()
     }
 
     private static func distanceSquared(_ p: (Double, Double), segments: [Segment]) -> Double {
