@@ -3,17 +3,18 @@
 usage: pair_textcolour_report.py <case-dir> <runs/<ts> dir>   (after factory/tools/pair.py produced mac/ and windows/)
 <case>/pair.json supplies {"textColourGate": {"tolerance": 24, "regions": [{"name": ..., "rect": [x0,y0,x1,y1]}]}} (800x600 capture px, one text line each).
 Per run and region it GATES that the strongest ink pixel (the pixel farthest from white, a full-coverage glyph pixel) is within `tolerance` per channel of the
-Mac's, and that both sides have ink. Positions outside the regions are gated by the case's excludeRects pixel gate. It REPORTS the strongest pixel on each side."""
+Mac's, and that both sides have ink. Optional "background": [r,g,b] measures ink as the distance from that colour instead of from white (dark cases). Positions outside the regions are gated by the case's excludeRects pixel gate. It REPORTS the strongest pixel on each side."""
 import json, sys
 from pathlib import Path
 from PIL import Image
 
 
-def strongest(img, rect):
+def strongest(img, rect, background=None):
+    """the pixel farthest from white (default) or, for a dark case, from `background` (the window colour the ink sits on)"""
     best, bp = -1, None
     crop = img.crop(rect)
     for p in crop.getdata():
-        d = sum(255 - c for c in p)
+        d = sum(255 - c for c in p) if background is None else sum(abs(c - b) for c, b in zip(p, background))
         if d > best: best, bp = d, p
     return None if best <= 0 else list(bp)
 
@@ -32,7 +33,8 @@ def main():
         im, iw = Image.open(mac).convert("RGB"), Image.open(win).convert("RGB")
         ok = True
         for r in cfg["regions"]:
-            m, w = strongest(im, tuple(r["rect"])), strongest(iw, tuple(r["rect"]))
+            bg = cfg.get("background")
+            m, w = strongest(im, tuple(r["rect"]), bg), strongest(iw, tuple(r["rect"]), bg)
             good = m is not None and w is not None and all(abs(a - b) <= tol for a, b in zip(m, w))
             ok &= good
             row["regions"].append(dict(name=r["name"], mac=m, windows=w, ok=good))

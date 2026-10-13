@@ -120,8 +120,8 @@ struct Witness_cs_preferred_dark: View {
 # ---- block 17 (swiftui.alert): semantic only (native chrome); pixels are reported, never gate ----
 # alert_case <case-dir> <witness-type> <body> <mac display index to press> <windows step: button name | ESC> [dialog count after]
 alert_case() {
-  d=$1; t=$2; b=$3; press=$4; how=$5
-  mk "$d" "$t" "$b" --alert-host
+  d=$1; t=$2; b=$3; press=$4; how=$5; host=${6:-plain}
+  mk "$d" "$t" "$b" --alert-host $host
   if [ "$how" = "ESC" ]; then act='{"op":"key","key":"Escape","target":"dialog"}'
   elif [ "$how" = "ENTER" ]; then act='{"op":"key","key":"Enter","target":"dialog"}'
   else act="{\"op\":\"invoke\",\"target\":\"dialog\",\"name\":\"$how\"}"; fi
@@ -192,3 +192,50 @@ alert_case swiftui.alert/default-enter-v1 Witness_alert_default_enter "$(alert_v
         } message: {
             Text("Your changes will be lost otherwise.")
         }')" 0 ENTER
+
+# dismiss restores focus: the focus state the field had before the alert is the one it has after the button was pressed (SwiftUI keeps the FocusState binding across the presentation)
+alert_case swiftui.alert/focus-restore-v1 Witness_alert_focus "struct Witness_alert_focus: View {
+    @State private var name = \"ab\"
+    @State private var show = false
+    @State private var done = false
+    @FocusState private var focused: Bool
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField(\"Name\", text: \$name).focused(\$focused)
+            Text(focused ? \"focus: field\" : \"focus: none\")
+            Text(done ? \"Done\" : \"Waiting\")
+        }
+        .frame(width: 200)
+        .padding(10)
+        .onAppear { focused = true; show = true }
+        .alert(\"Save?\", isPresented: \$show) {
+            Button(\"OK\") { done = true }
+        } message: {
+            Text(\"Your name will be saved.\")
+        }
+    }
+}" 0 OK text
+
+# text in dark: the default Text colour (Color.primary), .secondary, accentColor and a system colour; ink colour is gated by the text-colour gate (decision 2: glyph shapes differ)
+mk swiftui.color-scheme/text-dark-v1 Witness_cs_text_dark "struct Witness_cs_text_dark: View {
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            Rectangle().fill(.background)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading)
+                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(.secondary)
+                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.accentColor)
+                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.red)
+            }
+            .padding(8)
+        }
+        .frame(width: 320, height: 240)
+        .environment(\\.colorScheme, .dark)
+    }
+}" $DARK
+cat > swiftui.color-scheme/text-dark-v1/pair.json <<JSON
+{"textColourGate": {"tolerance": 24, "background": [30, 30, 30], "regions": [
+  {"name": "primary", "rect": [0, 20, 800, 140]}, {"name": "secondary", "rect": [0, 140, 800, 260]},
+  {"name": "accentColor", "rect": [0, 260, 800, 380]}, {"name": "red", "rect": [0, 380, 800, 500]}]},
+ "excludeRects": [{"name": "text lines (glyph shapes differ: Segoe UI vs SF, decision 2)", "rect": [0, 20, 800, 500]}]}
+JSON

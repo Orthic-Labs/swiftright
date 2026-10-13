@@ -302,6 +302,41 @@ extension View {
         )))
     }
 
+    /// Presents an alert without a message while `isPresented` is true.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/alert(_:ispresented:actions:)
+    public func alert<Actions: View>(
+        _ title: String,
+        isPresented: Binding<Bool>,
+        @ViewBuilder actions: () -> Actions
+    ) -> some View {
+        Modified(content: self, spec: .presentation(PresentationPayload(
+            kind: .alert,
+            title: title,
+            isPresented: isPresented,
+            visibility: .automatic,
+            actions: actions(),
+            message: nil
+        )))
+    }
+
+    /// Presents a confirmation dialog without a message while `isPresented` is true.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:actions:)
+    public func confirmationDialog<Actions: View>(
+        _ title: String,
+        isPresented: Binding<Bool>,
+        titleVisibility: Visibility = .automatic,
+        @ViewBuilder actions: () -> Actions
+    ) -> some View {
+        Modified(content: self, spec: .presentation(PresentationPayload(
+            kind: .confirmationDialog,
+            title: title,
+            isPresented: isPresented,
+            visibility: titleVisibility,
+            actions: actions(),
+            message: nil
+        )))
+    }
+
     /// Presents a confirmation dialog while `isPresented` is true.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:actions:message:)
     public func confirmationDialog<Actions: View, Message: View>(
