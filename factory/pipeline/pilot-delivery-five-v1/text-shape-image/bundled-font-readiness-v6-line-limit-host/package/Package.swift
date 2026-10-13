@@ -2,8 +2,8 @@
 import PackageDescription
 let package = Package(name: "FactoryTinosProbe", dependencies: [
     .package(name: "fresh-runtime", path: "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime"),
-    .package(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge")
+    .package(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge-0.7")
 ], targets: [.executableTarget(name: "FactoryProbe", dependencies: [
     .product(name: "SwiftRightRuntime", package: "fresh-runtime"),
-    .product(name: "SwiftRightBridge", package: "SwiftRightBridge")
+    .product(name: "SwiftRightBridge", package: "SwiftRightBridge-0.7")
 ])], swiftLanguageModes: [.v5])

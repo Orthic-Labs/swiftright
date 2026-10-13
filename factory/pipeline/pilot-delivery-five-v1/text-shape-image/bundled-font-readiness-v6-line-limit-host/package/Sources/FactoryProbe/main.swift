@@ -14,17 +14,15 @@ func value(_ key: String) -> String? {
     return CommandLine.arguments[index + 1]
 }
 
-struct FactoryTinosRegistration {
+/// The pinned Tinos bytes. Registration with the renderer goes through the ABI 0.7 bridge entry
+/// (`BundledFontLibrary` -> `swr_font_register`), not GDI: GDI AddFontResourceEx never reached GPUI's text system.
+struct FactoryTinosResource {
     let path: String
     let resourceSHA256 = "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61"
     let family = "Tinos"
     let postScriptName = "Tinos-Regular"
-    private(set) var addedCount: Int32 = 0
-    private func sha256File(_ url: URL) throws -> String {
-        let handle = try FileHandle(forReadingFrom: url)
-        return try FactorySHA256.hash(fileAt: url)
-    }
-    mutating func register() throws {
+    /// Checks extension, size and SHA-256 before any byte reaches the renderer.
+    func verify() throws -> URL {
         let url = URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath()
         guard url.pathExtension.lowercased() == "ttf", FileManager.default.fileExists(atPath: url.path) else {
             throw NSError(domain: "FactoryTinosResourceUnavailable", code: 1)
@@ -33,24 +31,28 @@ struct FactoryTinosRegistration {
         guard let bytes = attributes[.size] as? NSNumber, bytes.int64Value == 521588 else {
             throw NSError(domain: "FactoryTinosResourceSizeMismatch", code: 1)
         }
-        guard try sha256File(url) == resourceSHA256 else {
+        guard try FactorySHA256.hash(fileAt: url) == resourceSHA256 else {
             throw NSError(domain: "FactoryTinosResourceHashMismatch", code: 1)
         }
-        let wide = Array(url.path.utf16) + [0]
-        let count = wide.withUnsafeBufferPointer { AddFontResourceExW($0.baseAddress, DWORD(FR_PRIVATE), nil) }
-        guard count > 0 else { throw NSError(domain: "FactoryTinosPrivateRegistrationFailed", code: 1) }
-        addedCount = count
-        print("FACTORY_TINOS_FONT_REGISTERED path=\(url.path) scope=process-private registrationCount=\(count) resourceSHA256=\(resourceSHA256) family=\(family) postScriptName=\(postScriptName) bytes=\(bytes.int64Value) metadataBinding=family+pointSize+weight rendererSelection=unproven")
+        print("FACTORY_TINOS_RESOURCE_VERIFIED path=\(url.path) resourceSHA256=\(resourceSHA256) bytes=\(bytes.int64Value)")
         fflush(stdout)
+        return url
     }
-    mutating func unregister() {
-        guard addedCount > 0 else { return }
-        let wide = Array(path.utf16) + [0]
-        let removed = wide.withUnsafeBufferPointer { RemoveFontResourceExW($0.baseAddress, DWORD(FR_PRIVATE), nil) }
-        print("FACTORY_TINOS_FONT_UNREGISTERED path=\(path) scope=process-private removed=\(removed) rendererSelection=unproven")
-        fflush(stdout)
-        addedCount = 0
+}
+
+/// Finds the bundled font: --tinos-font, else beside the exe, else the package Resources folder above it
+/// (the exe lives under <package>/scratch/<triple>/release).
+func factoryTinosFontPath() -> String {
+    if let explicit = value("--tinos-font") { return explicit }
+    let exeDir = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
+    var dir = exeDir
+    for _ in 0..<8 {
+        for candidate in [dir.appendingPathComponent("Tinos-Regular.ttf"), dir.appendingPathComponent("Resources/Tinos-Regular.ttf")] {
+            if FileManager.default.fileExists(atPath: candidate.path) { return candidate.path }
+        }
+        dir.deleteLastPathComponent()
     }
+    return exeDir.appendingPathComponent("Tinos-Regular.ttf").path
 }
 
 struct FactoryTinosProviderMetricsInput {
@@ -168,12 +170,12 @@ func tinosProviderMetrics(fontPath: String, pointSizeDIP: Float = 18) throws -> 
                     },
                     release: { bridge.release($0) })
                 result = selection.measurement
-                print("FACTORY_TINOS_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) candidateCount=\(selection.candidateCount) maxWidthPX=\(adapted.request.maxWidth) rendererSelection=unproven")
+                print("FACTORY_TINOS_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) candidateCount=\(selection.candidateCount) maxWidthPX=\(adapted.request.maxWidth)")
             } else {
                 result = try bridge.measure(adapted.request)
             }
             retained[request] = result
-            print("FACTORY_TINOS_MEASURE text=\(request.text) requestedFamily=\(resource.requestedFamily) family=\(adapted.request.fontFamily) fontSize=\(adapted.request.fontSize) lineHeight=\(adapted.request.lineHeight) providerFamily=\(resource.providerFamily) resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") rendererSelection=unproven")
+            print("FACTORY_TINOS_MEASURE text=\(request.text) requestedFamily=\(resource.requestedFamily) family=\(adapted.request.fontFamily) fontSize=\(adapted.request.fontSize) lineHeight=\(adapted.request.lineHeight) providerFamily=\(resource.providerFamily) resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil")")
             return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale), height: CGFloat(result.height / scale)), baseline: CGFloat(result.firstBaseline / scale), lineCount: result.lineCount)
         } catch { fatalError("Native Tinos measurement failed: \(error)") }
     }
@@ -183,7 +185,7 @@ func tinosProviderMetrics(fontPath: String, pointSizeDIP: Float = 18) throws -> 
         let candidates = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale && $0.key.lineLimit == 1 && factorySnappedExtentCanMatch($0.value.width, bounds.w, origin: bounds.x, scale: scale) && factorySnappedExtentCanMatch($0.value.height, bounds.h, origin: bounds.y, scale: scale) }.sorted { ($0.key.proposedWidth ?? .infinity) < ($1.key.proposedWidth ?? .infinity) }
         guard let chosen = candidates.first else { throw NSError(domain: "FactoryMeasuredRunGeometryMismatch", code: 1) }
         guard candidates.allSatisfy({ $0.value.width == chosen.value.width && $0.value.height == chosen.value.height && $0.value.lines == chosen.value.lines && $0.value.firstBaseline == chosen.value.firstBaseline }) else { throw NSError(domain: "FactoryAmbiguousMeasuredRun", code: 1) }
-        print("FACTORY_TINOS_RETAINED_RUN text=\(text) widthPX=\(chosen.value.width) heightPX=\(chosen.value.height) lines=\(chosen.value.lineCount) providerFamily=Tinos rendererSelection=unproven")
+        print("FACTORY_TINOS_RETAINED_RUN text=\(text) widthPX=\(chosen.value.width) heightPX=\(chosen.value.height) lines=\(chosen.value.lineCount) providerFamily=Tinos")
         return chosen.value.run
     }
     func releaseAll() { retained.values.forEach { bridge.release($0.run) }; retained.removeAll() }
@@ -202,7 +204,8 @@ func factoryResolvedFill(_ value: ResolvedColor, opacity: Double) throws -> UInt
     var graph: Graph?
     var window: BridgeWindow?
     var measurer: NativeMeasurer?
-    let resource: FactoryBundledFontResource
+    let tinos: FactoryTinosResource
+    var resource: FactoryBundledFontResource?
     let providerMetrics: FactoryTinosProviderMetricsInput
     var ownedHWND: HWND?
     var initialDPI: UInt32?
@@ -214,11 +217,34 @@ func factoryResolvedFill(_ value: ResolvedColor, opacity: Double) throws -> UInt
     var live: Set<UInt64> = []
     var runtimeIDs: [UInt64: String] = [:]
     var errors: [String] = []
-    init(_ bridge: Bridge, resource: FactoryBundledFontResource,
+    init(_ bridge: Bridge, tinos: FactoryTinosResource,
          providerMetrics: FactoryTinosProviderMetricsInput) {
         self.bridge = bridge
-        self.resource = resource
+        self.tinos = tinos
         self.providerMetrics = providerMetrics
+    }
+    /// Registers the bundled bytes with the renderer before the first measurement, then proves the family now
+    /// resolves to those bytes (and that an unregistered family still reports fallback).
+    func registerBundledFont() throws -> FactoryBundledFontResource {
+        let url = try tinos.verify()
+        let before = try bridge.resolveFont(family: tinos.family)
+        let unknown = try bridge.resolveFont(family: "SwiftRightNoSuchFamily")
+        guard before.source == .fallback, unknown.source == .fallback else {
+            throw NSError(domain: "FactoryTinosAlreadyResolvable", code: 1, userInfo: [NSLocalizedDescriptionKey: "before=\(before.source) unknown=\(unknown.source)"])
+        }
+        let library = BundledFontLibrary(bridge: bridge)
+        let reg = try library.register(file: url)
+        let after = try bridge.resolveFont(family: tinos.family)
+        let afterUnknown = try bridge.resolveFont(family: "SwiftRightNoSuchFamily")
+        guard reg.family == tinos.family, "sha256:" + reg.sha256Hex == tinos.resourceSHA256,
+              after.source == .bundled, after.handle == reg.handle, after.sha256 == reg.sha256,
+              afterUnknown.source == .fallback,
+              let provider = library.providerFamily(forCustomName: tinos.postScriptName) else {
+            throw NSError(domain: "FactoryTinosRegistrationMismatch", code: 1, userInfo: [NSLocalizedDescriptionKey: "reg=\(reg) after=\(after)"])
+        }
+        print("FACTORY_TINOS_FONT_REGISTERED path=\(url.path) scope=renderer-process abi=\(bridge.revision) handle=\(reg.handle) flags=\(reg.flags.rawValue) resourceSHA256=sha256:\(reg.sha256Hex) family=\(reg.family) weight=\(reg.weight) faces=\(reg.faceCount) providerFamily=\(provider) resolveBefore=\(before.source) resolveAfter=\(after.source) resolveUnknownBefore=\(unknown.source) resolveUnknownAfter=\(afterUnknown.source) rendererSelection=bundled-bytes")
+        fflush(stdout)
+        return FactoryBundledFontResource(requestedFamily: tinos.postScriptName, providerFamily: provider, postScriptName: tinos.postScriptName, resourceSHA256: tinos.resourceSHA256, path: url.path)
     }
     func ready(_ window: BridgeWindow) {
         self.window = window
@@ -230,6 +256,8 @@ func factoryResolvedFill(_ value: ResolvedColor, opacity: Double) throws -> UInt
             print("FACTORY_ABI_INITIAL_METRICS width=\(abi.width) height=\(abi.height) scale=\(abi.scale)")
             scale = metrics.scale
             viewport = Rect(x: 0, y: 0, w: Float(metrics.width), h: Float(metrics.height))
+            let resource = try registerBundledFont()
+            self.resource = resource
             let nativeMeasurer = NativeMeasurer(bridge, scale, resource: resource, providerMetrics: providerMetrics)
             measurer = nativeMeasurer
             let graph = Graph(Witness_tinos_bundled_text_pilot(), measurer: nativeMeasurer, scale: CGFloat(scale))
@@ -332,16 +360,15 @@ func factoryResolvedFill(_ value: ResolvedColor, opacity: Double) throws -> UInt
 }
 let result: Int32 = MainActor.assumeIsolated {
     do {
-        let fontPath = value("--tinos-font") ?? URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent().appendingPathComponent("Tinos-Regular.ttf").path
+        let fontPath = factoryTinosFontPath()
         let providerMetrics = try tinosProviderMetrics(fontPath: fontPath)
-        var registration = FactoryTinosRegistration(path: fontPath)
-        try registration.register()
-        defer { registration.unregister() }
-        print("FACTORY_TINOS_PROVIDER_METRICS lineHeightDIP=\(providerMetrics.lineHeightDIP) ascentDIP=\(providerMetrics.ascentDIP) descentDIP=\(providerMetrics.descentDIP) unitsPerEm=\(providerMetrics.unitsPerEm) ascentUnits=\(providerMetrics.ascentUnits) descentUnits=\(providerMetrics.descentUnits) lineGapUnits=\(providerMetrics.lineGapUnits) source=\(providerMetrics.source) family=Tinos postScriptName=Tinos-Regular resourceSHA256=\(registration.resourceSHA256) rendererSelection=unproven")
+        let tinos = FactoryTinosResource(path: fontPath)
+        print("FACTORY_TINOS_PROVIDER_METRICS lineHeightDIP=\(providerMetrics.lineHeightDIP) ascentDIP=\(providerMetrics.ascentDIP) descentDIP=\(providerMetrics.descentDIP) unitsPerEm=\(providerMetrics.unitsPerEm) ascentUnits=\(providerMetrics.ascentUnits) descentUnits=\(providerMetrics.descentUnits) lineGapUnits=\(providerMetrics.lineGapUnits) source=\(providerMetrics.source) family=Tinos postScriptName=Tinos-Regular resourceSHA256=\(tinos.resourceSHA256)")
         fflush(stdout)
-        let resource = FactoryBundledFontResource(requestedFamily: "Tinos-Regular", providerFamily: "Tinos", postScriptName: "Tinos-Regular", resourceSHA256: registration.resourceSHA256, path: fontPath)
-        let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll")
-        let host = RendererHost(bridge, resource: resource, providerMetrics: providerMetrics)
+        // ABI 0.7 renderer (font registration); the pinned 0.6 renderer under inputs\\renderer is not touched.
+        let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7\\swiftright_render.dll", minimumRevision: .v07)
+        print("FACTORY_ABI revision=\(bridge.revision) minor=\(bridge.info.abi_minor) fnCount=\(bridge.info.fn_count) fonts=\(bridge.supportsFontRegistration)")
+        let host = RendererHost(bridge, tinos: tinos, providerMetrics: providerMetrics)
         bridge.onReady = { window in MainActor.assumeIsolated { host.ready(window) } }
         bridge.onEvent = { event in MainActor.assumeIsolated { host.event(event) } }
         bridge.onTick = { _, time in MainActor.assumeIsolated { host.tick(time) } }

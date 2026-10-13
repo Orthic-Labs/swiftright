@@ -1,0 +1,64 @@
+{
+ "pairs": 1,
+ "exact": 1,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 7235
+   },
+   "exact": true,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 4267,
+   "excluded": [
+    {
+     "name": "Tinos Text line box [0,0,300,52): same font bytes both sides; Windows DirectWrite/GPUI rasterizer and baseline placement vs CoreText (sr1-decisions #2); judged on line count, ellipsis, bounds",
+     "rect": [
+      0,
+      0,
+      300,
+      52
+     ],
+     "diffPixels": 4267,
+     "macInkBBox": [
+      2,
+      7,
+      294,
+      50
+     ],
+     "winInkBBox": [
+      3,
+      10,
+      294,
+      51
+     ]
+    }
+   ]
+  }
+ ],
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "Tinos Text line box [0,0,300,52): same font bytes both sides; Windows DirectWrite/GPUI rasterizer and baseline placement vs CoreText (sr1-decisions #2); judged on line count, ellipsis, bounds",
+   "rect": [
+    0,
+    0,
+    300,
+    52
+   ]
+  }
+ ]
+}
