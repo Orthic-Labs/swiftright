@@ -10,6 +10,8 @@ Original five: Rectangle/RoundedRectangle fill & stroke; Image(systemName: "star
 
 Operational constraints: bounded memory, supervised owned processes, serialized compiler/native lane, shared Dell desktop lock, background/no-activate windows, no remote deletion, internal-disk Mac binaries & no permission prompts. Preserve recorded ownership/protected-code boundaries. Distinguish actual user constraints from rules invented by implementing agents; identify unnecessary or stale holds explicitly.
 
+Adrian, 13 October: if Fable hits its usage limit, continue working; do not stop. Preserve failed review bytes & retry timing without model substitution, keep last completed review unchanged, and continue implementation with both agents under existing resource/permission boundaries. Quota review debt is not an implementation hold.
+
 ## Required adversarial method
 
 - Independently derive what "working & verified" requires for each original witness. Separate implemented behavior, diagnostic observation, adequate verification, strict parity & reviewed golden promotion. Do not turn the strongest certification label into an invented prerequisite for useful implementation progress.
