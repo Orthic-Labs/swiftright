@@ -14,8 +14,16 @@ try {
     if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { throw "exe not visible in the guest: $src" }
     $work = 'C:\work\' + (Split-Path -Leaf $JobDir)
     New-Item -ItemType Directory -Force -Path $work | Out-Null
-    $exe = Join-Path $work 'FactoryProbe.exe'
+    # Keep the exe's path relative to the package root and copy the root's top-level files (e.g. FactorySystemImageAssets.json),
+    # because hosts search upward from the exe directory for resources.
+    $pkg = $src -replace '\\scratch\\.*$', ''
+    if ($pkg -ne $src -and (Test-Path -LiteralPath $pkg -PathType Container)) {
+        $exe = Join-Path $work ($src.Substring($pkg.Length).TrimStart('\'))
+        Get-ChildItem -LiteralPath $pkg -File | Copy-Item -Destination $work -Force
+    } else { $exe = Join-Path $work 'FactoryProbe.exe' }
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $exe) | Out-Null
     Copy-Item -LiteralPath $src -Destination $exe -Force
+    Get-ChildItem -LiteralPath (Split-Path -Parent $src) -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in ".dll",".json" } | Copy-Item -Destination (Split-Path -Parent $exe) -Force
     $res.exe_sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLower()
     $res.renderer_sha256 = (Get-FileHash -LiteralPath 'D:\Claude\swiftright\.factory-work\inputs\renderer\swiftright_render.dll' -Algorithm SHA256).Hash.ToLower()
     try { $res.video = @(Get-CimInstance Win32_VideoController | ForEach-Object { $_.Name + ' ' + $_.DriverVersion }) } catch { }
