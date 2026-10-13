@@ -31,39 +31,6 @@ func hostBundledFontDirectory() -> URL? {
     return nil
 }
 
-/// Manual-clock mode (F1, animation cases). SWIFTRIGHT_CLOCK = comma-separated seconds, SWIFTRIGHT_FRAME = index k. The host ignores display-tick times: on its first
-/// display tick it calls Graph.tick(now:) at clock[0] ... clock[k] in order (flushing after each step), then holds the state of step k for the capture and prints
-/// HOST_CLOCK_FRAME and HOST_GEOMETRY (the resolved frames and opacities). Without the variables nothing changes.
-struct HostClock {
-    let times: [Double]
-    let frame: Int
-    static let current: HostClock? = {
-        let env = ProcessInfo.processInfo.environment
-        guard let raw = env["SWIFTRIGHT_CLOCK"], !raw.isEmpty else { return nil }
-        let times = raw.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
-        guard !times.isEmpty, let k = env["SWIFTRIGHT_FRAME"].flatMap({ Int($0) }), k >= 0, k < times.count else { return nil }
-        return HostClock(times: times, frame: k)
-    }()
-}
-
-/// Case hook (the witness is byte-identical on both platforms): Windows runs the animation as authored; the Mac clock host wraps it so SwiftUI evaluates it at the manual clock.
-enum FactoryAnim {
-    static func wrap(_ animation: Animation) -> Animation { animation }
-}
-
-/// Case hook for events at a manual-clock time (the same call on the Mac clock host): `FactoryClock.at(0.4) { withAnimation(...) { ... } }`. The replay runs the action at the first
-/// step with time >= t, flushes, and ticks again at that time so a motion it starts begins there (a real display tick would anchor it at the next one).
-@MainActor enum FactoryClock {
-    private static var pending: [(Double, @MainActor () -> Void)] = []
-    static func at(_ t: Double, _ action: @escaping @MainActor () -> Void) { pending.append((t, action)) }
-    static func runDue(_ now: Double) -> Bool {
-        let due = pending.filter { $0.0 <= now + 1e-9 }
-        pending.removeAll { $0.0 <= now + 1e-9 }
-        for (_, action) in due { action() }
-        return !due.isEmpty
-    }
-}
-
 struct HostPlacement {
     let dx: Float, dy: Float
     func applying(to b: Rect) -> Rect { Rect(x: b.x + dx, y: b.y + dy, w: b.w, h: b.h) }
@@ -96,8 +63,6 @@ struct HostPlacement {
     var errors: [String] = []
     // The bridge drains late main-queue work after onWindowClosed; no window ownership lookup is valid then.
     var windowClosed = false
-    var lastRecord: CommitRecord?
-    var clockDone = false
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -144,7 +109,6 @@ struct HostPlacement {
 
     func commit(_ record: CommitRecord) {
         guard !windowClosed, let root = record.root, let window, let painter else { return }
-        lastRecord = record
         if let failure = measurer?.failures.first { fail(NSError(domain: "HostTextMeasurement", code: 1, userInfo: [NSLocalizedDescriptionKey: failure])); return }
         let rootPixel = root.pixelFrame
         let rootBounds = Rect(x: Float(rootPixel.x), y: Float(rootPixel.y), w: Float(rootPixel.width), h: Float(rootPixel.height))
@@ -189,39 +153,9 @@ struct HostPlacement {
             }
         } catch { fail(error); return }
         if started == nil { started = time }
-        if let clock = HostClock.current {
-            if !clockDone {
-                clockDone = true
-                for j in 0...clock.frame {
-                    graph?.tick(now: clock.times[j])
-                    graph?.flush()
-                    if FactoryClock.runDue(clock.times[j]) {
-                        graph?.flush()
-                        graph?.tick(now: clock.times[j])
-                        graph?.flush()
-                    }
-                }
-                print("HOST_CLOCK_FRAME index=\(clock.frame) t=\(clock.times[clock.frame]) times=\(clock.times)")
-                if let root = lastRecord?.root { print("HOST_GEOMETRY " + Self.geometryJSON(root, version: version)) }
-                fflush(stdout)
-            }
-        } else {
-            graph?.tick(now: Double(time) / 1_000_000_000)
-            graph?.flush()
-        }
+        graph?.tick(now: Double(time) / 1_000_000_000)
+        graph?.flush()
         if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }
-    }
-
-    /// Resolved tree as JSON: one row per node (pre-order) with its path id, kind, presented frame in points and opacity.
-    static func geometryJSON(_ root: ResolvedNode, version: UInt64) -> String {
-        var rows: [String] = []
-        func visit(_ n: ResolvedNode) {
-            let f = n.frame
-            rows.append("{\"id\":\"\(n.id)\",\"kind\":\"\(n.kind)\",\"x\":\(f.minX),\"y\":\(f.minY),\"w\":\(f.width),\"h\":\(f.height),\"opacity\":\(n.opacity)}")
-            n.children.forEach(visit)
-        }
-        visit(root)
-        return "{\"commit\":\(version),\"nodes\":[" + rows.joined(separator: ",") + "]}"
     }
 
     func closed() {
