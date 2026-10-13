@@ -64,6 +64,8 @@ Captured on product stage `f2fa32033-50ca6029` (renderer 0.7 `82513ae0...`, Sand
 | 19 | `removal-fade-v1`, `removal-move-v1` (ghost removal, sibling relayout) | 20 x 6 each | 120/120 exact each |
 | 19 | `opacity-text-v1` (Text under `.opacity(0.5)`) | 20 | 20 exact-with-exclusions (glyph regions named, decision 2); ink colour gate 20/20 (red mac (255,156,158) vs win (255,155,157)) |
 
+Tests: Windows runtime 333/333 on stage `5c5dd1ebd-ccf6c444` (default build, `--jobs 1`); Mac runtime 325/325 and host 118/118 (earlier tree, same animation code). One existing test changed: `testAnimationStartedBeforeFirstTickRunsFrameByFrameOnAnAbsoluteHostClock` now names `.easeInOut(duration: 0.35)` (it used `.default`, which is a 0.5 s spring), its frame-count assertion is unchanged; the interruption test was rewritten to the measured additive semantics.
+
 Product changes: `Animation.swift` (Bezier curves, spring table, layered interruption, completion criteria, scoped `.animation(_:value:)`, `withTransaction`), `Transition.swift` (`AnyTransition`, insertion starts, removal ghosts), `Graph.swift` (onAppear after first presentation, ghosts in resolve), `Edge` enum, Text opacity in `ResolvedNodePainter`. Measurements and decisions: `docs/sr1-decisions.md` C1-C10. Known limits: one explicit transaction per flush decides for every changed node; Image fade excluded; no `.scale`/custom `Transition`.
 
 **Known gaps:**
