@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\test-budget2g-r1\\run-control-suite-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\test-budget2g-r1\\Sr0RootControlSuiteJobV1.cs",
+    "-HelperSha256",
+    "2fe5f3fabc7f8de23fb28e9d15beefba9155cff4f14cf6e7ba63c4b5c9a2b265",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\rounded-api-test-r1.ps1",
+    "-ScriptSha256",
+    "ea6631309a521745230b0ac92fa3715fda704b329c536e9e09795d540d953b91",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\rounded-api-test-r1-control.json",
+    "-DeadlineSeconds",
+    "180"
+  ],
+  "scriptSha256": "ea6631309a521745230b0ac92fa3715fda704b329c536e9e09795d540d953b91",
+  "budgetBytes": 2147483648
+}

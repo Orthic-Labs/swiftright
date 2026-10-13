@@ -1,0 +1,16 @@
+{
+  "block": "swiftui.shapes.fill-stroke",
+  "candidate": "swiftui.shapes.fill-stroke.continuous-rgba-image.v1",
+  "witness": {
+    "path": "Sources/FactoryProbe/Witness.swift",
+    "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7"
+  },
+  "primitive": {
+    "kind": "image",
+    "transport": "Bridge.registerImage RGBA8 + Primitive.image",
+    "dynamicInputs": ["bounds", "cornerRadiusPX", "fillRGBA", "strokeRGBA", "strokeWidthPX"]
+  },
+  "providerRequirements": ["continuousRoundedShapeRGBA"],
+  "nativeParity": "source-only; pixel parity unclaimed",
+  "imageLifetime": "retain ImageHandle through primitive lifetime; release once after removal or shutdown"
+}

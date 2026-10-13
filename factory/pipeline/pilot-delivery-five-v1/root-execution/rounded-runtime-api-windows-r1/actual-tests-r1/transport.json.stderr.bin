@@ -1,0 +1,30 @@
+Building for production...
+[Provisioning 5 / 5]
+[Pre-planning 1 / 124]
+[Planning deferred tasks]
+D:\Claude\swiftright\.factory-work\runtime-stage\api-rounded-r1\runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:114:13: [1;33mwarning: [1;39mvariable 'units' was never mutated; consider changing to 'let' constant[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+[0;36m112 |[0;0m         defer { _ = DeleteDC(dc) }
+[0;36m113 |[0;0m         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+[0;36m114 |[0;0m         var units = Array(request.providerFamily.utf16) + [0]
+    [0;36m|[0;0m             `- [1;33mwarning: [1;39mvariable 'units' was never mutated; consider changing to 'let' constant[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+[0;36m115 |[0;0m         let font: HFONT? = units.withUnsafeBufferPointer { family in
+[0;36m116 |[0;0m             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+
+[29 / 46] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: [1;33mwarning: [1;39mreference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'[0;0m
+[0;36m1 |[0;0m _Builtin_stddef.wchar_t
+  [0;36m|[0;0m |- [1;33mwarning: [1;39mreference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'[0;0m
+  [0;36m|[0;0m |- [1;39mnote: [1;39mthe module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported[0;0m
+  [0;36m|[0;0m `- [1;39mnote: [1;39mdeclarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros[0;0m
+<unknown>:0: [1;39mnote: [1;39mattempting to recover from the previous modularization issue[0;0m
+
+[37 / 48]
+[41 / 48] SwiftRightRuntimeTests-product
+[43 / 48] SwiftRightRuntimeTests-test-runner
+[46 / 50] SwiftRightRuntimeTests-test-runner
+[48 / 50] SwiftRightRuntimeTests-test-runner
+Build complete! (76.50 secs)

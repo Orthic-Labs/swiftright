@@ -1,0 +1,13 @@
+{
+  "pid": 33666,
+  "pgid": 33666,
+  "argv": [
+    "factory/.venv/bin/python",
+    "-c",
+    "import json,os,subprocess,time; from pathlib import Path; p=Path(\"/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/runtime-rounded-api-r1\"); rows=sorted(str(x.relative_to(p)) for x in p.rglob(\"*\") if x.is_file()); procs=subprocess.check_output([\"ps\",\"-axo\",\"pid=,comm=\"]).decode().splitlines(); busy=[x.strip() for x in procs if any(x.strip().endswith(\" \"+n) for n in (\"swift\",\"swiftc\",\"swift-build\",\"clang\"))]; assert not busy, busy; Path(\"factory/pipeline/pilot-delivery-five-v1/root-execution/rounded-runtime-api-mac-r1/preflight.json\").write_text(json.dumps({\"stage\":str(p),\"files\":rows,\"fileCount\":len(rows),\"busyCompilerOrNative\":busy,\"maxResidentBytes\":1073741824,\"wallSeconds\":180,\"logBytes\":8388608,\"argv\":[\"swift\",\"test\",\"--package-path\",str(p),\"--scratch-path\",str(p/\"scratch\"),\"--jobs\",\"1\",\"--filter\",\"ContinuousRoundedGeometryTests\"]},indent=2)+\"\\\\n\")"
+  ],
+  "startedAt": "2026-10-13T03:14:27.769239+00:00",
+  "seconds": 15,
+  "rssMiB": 256,
+  "logMiB": 1
+}

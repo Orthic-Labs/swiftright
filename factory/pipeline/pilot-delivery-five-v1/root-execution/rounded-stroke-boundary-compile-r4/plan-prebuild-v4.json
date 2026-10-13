@@ -1,0 +1,256 @@
+{
+  "boundedAdapter": {
+    "compiler": "tools/compile-bounded.ps1",
+    "fileCap": 256,
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "outputCapBytes": 8388608,
+    "qualification": "source-only package; root must stage current runtime, regenerate receipts, then create fresh compile receipt",
+    "sourceBindings": [
+      {
+        "bytes": 2261,
+        "path": "tools/compile-bounded.ps1",
+        "sha256": "sha256:34ba1b0d842670076911819e4b5489a9a3b6d22d2a6c134f919b8379e4046963"
+      },
+      {
+        "bytes": 2584,
+        "path": "tools/prepare-bounded-stage.ps1",
+        "sha256": "sha256:22565c69464de5af9aecba978636f73bf398a12c31481df588378892ea4fca10"
+      }
+    ],
+    "sourceBindingsHash": "sha256:d576913de4cf88198bc346d5cc03f7d9dcdc8607793b3b85db31c9cfb1da9117",
+    "sourceCapBytes": 268435456,
+    "stager": "tools/prepare-bounded-stage.ps1",
+    "timeoutSeconds": 600
+  },
+  "bridgeBindings": [
+    {
+      "bytes": 1527,
+      "path": "Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "bytes": 841,
+      "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "bytes": 30,
+      "path": "Sources/CDispatchPrivate/shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "bytes": 71,
+      "path": "Sources/CSwiftRight/module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "bytes": 41937,
+      "path": "Sources/CSwiftRight/swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "bytes": 23494,
+      "path": "Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "bytes": 3794,
+      "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "bytes": 3266,
+      "path": "Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "bytes": 10915,
+      "path": "Sources/SwiftRightBridge/Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "bytes": 12904,
+      "path": "Sources/SwiftRightBridge/Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    }
+  ],
+  "bridgeCanonicalManifestHash": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+  "bridgeHeaderCommit": "862997c",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "candidate": "swiftui.shapes.fill-stroke.continuous-rgba-image.v1",
+  "case": null,
+  "caseHash": "sha256:3d4ff2bb17d444335cdf55a9cc410665bf77b5574f4beed57764f0f6ad2cf71e",
+  "casePath": "case.json",
+  "centeredLayoutAdapter": {
+    "bytes": 1392,
+    "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+    "semantics": "Translate complete intrinsic runtime root subtree into viewport center; background remains viewport.",
+    "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166"
+  },
+  "compileRequest": {
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package\\build-bound-r1\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "buildSystem": "native",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "kind": "swiftpm-windows-gui-release/1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package\\build-bound-r1\\scratch",
+    "target": "windows-x86_64"
+  },
+  "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "executionEligible": false,
+  "expectedHostHash": null,
+  "frozenTupleBound": false,
+  "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "hostHash": null,
+  "inputsRoot": "D:\\Claude\\swiftright\\.factory-work\\inputs",
+  "kind": "factory-pilot-five-compiler-plan-v1",
+  "nativeParity": "hold",
+  "outputs": null,
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/rounded-stroke-host-v1/continuous-geometry-delivery-v2/package",
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package",
+  "packetPlanHash": "sha256:e4a28fafc615d642c924bb93ca5370cd0de220c1b115c82a3748d8c3aca58a72",
+  "phase": "prebuild",
+  "providerRequirements": [
+    "continuousRoundedShapeRGBA"
+  ],
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtimeBinding": {
+    "commit": "56dc583882d8a84656a5a882fcff5d55f89a7a0a",
+    "sourceReceiptHash": "sha256:25837daa115754b6780d6928f2c641e655259aa681c6c7ed05648244ca33a1b7",
+    "treeHash": "sha256:b5f91ddb8487f1bce6789383e979bcd108663df0a240857784324b08aad89ff1"
+  },
+  "runtimeModuleOrigin": {
+    "acceptedReplayHash": "sha256:df4be5f8eb5d4ec8f82287b5c33c898cadb29703adc8a57f2a36628a295ca8e4",
+    "independentReviewHash": "sha256:5d81d19e3a34812e1d40dfaa30367ea749fbb6602652569a208ef89e7a9a4f98",
+    "receiptHash": "sha256:eb25de924faebd4ac8375521c6726f857aa9e8dc84a4b8aa7efe05e07eee7d33",
+    "scope": "Exact374 source lineage context; fresh SwiftPM host build recompiles runtime, must archive its own produced module bytes; not prebuilt module reuse"
+  },
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-rounded-r1\\runtime",
+  "runtimeSourceCommit": "56dc583882d8a84656a5a882fcff5d55f89a7a0a",
+  "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-rounded-r1\\runtime",
+  "runtimeSourceReceiptHash": "sha256:25837daa115754b6780d6928f2c641e655259aa681c6c7ed05648244ca33a1b7",
+  "runtimeSourceTreeFileHash": "sha256:b5f91ddb8487f1bce6789383e979bcd108663df0a240857784324b08aad89ff1",
+  "runtimeSourceTreeHash": "sha256:b5f91ddb8487f1bce6789383e979bcd108663df0a240857784324b08aad89ff1",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-boundary\\package\\build-bound-r1\\scratch",
+  "sourceBindings": [
+    {
+      "bytes": 555,
+      "path": "Package.swift",
+      "sha256": "sha256:930b4c9d84db23be94e5ad6b84e0dd37aee5d8fb8571477048018942a39fe781"
+    },
+    {
+      "bytes": 191,
+      "path": "reference-witness.swift",
+      "sha256": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+    },
+    {
+      "bytes": 1392,
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166"
+    },
+    {
+      "bytes": 362,
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 2268,
+      "path": "Sources/FactoryProbe/FactoryContinuousShapeAdapter.swift",
+      "sha256": "sha256:5e9fa8f86ea8ab0b4f0f174fba05b1c3d2ff592535992bf0bfd9606225582d2c"
+    },
+    {
+      "bytes": 2107,
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:195d4441b121e12a454cf070169ce9c82efc40f617b21805fdbdafb00d80339d"
+    },
+    {
+      "bytes": 512,
+      "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c"
+    },
+    {
+      "bytes": 2912,
+      "path": "Sources/FactoryProbe/FactoryShapePrimitive.swift",
+      "sha256": "sha256:554526bc9f8dbf8d7b3ce5d54465dea02558369e4efcfb0e5a8aa41c43e6481e"
+    },
+    {
+      "bytes": 1023,
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 298,
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7"
+    },
+    {
+      "bytes": 16008,
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:b745b763e5305daa06fe6994bcc1a12e394bb15f2338a0e65b34477dc39ec814"
+    }
+  ],
+  "sourceCommit": "56dc583882d8a84656a5a882fcff5d55f89a7a0a",
+  "sourceHash": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+  "stage": "D:\\Claude\\swiftright\\.factory-work\\hosts\\rounded-stroke-observation-v5",
+  "status": "source-ready-pending-root-runtime-staging",
+  "strokeGeometry": {
+    "abi": "SWR_PRIM_IMAGE registered RGBA8; no path primitive or renderer changes",
+    "adapter": "expand image canvas by full stroke width, shift primitive origin by half width, retain original corner radius",
+    "status": "source-only dynamic adapter; fresh native diff required",
+    "swiftUI": "centered stroke on RoundedRectangle path"
+  },
+  "tuple": {
+    "abiVersion": "0.6",
+    "hostHashes": {
+      "windows": null
+    },
+    "id": "sr1-rounded-stroke-boundary-delivery-r11-20261012-r1",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "56dc583882d8a84656a5a882fcff5d55f89a7a0a"
+  },
+  "witness": "Sources/FactoryProbe/Witness.swift"
+}
