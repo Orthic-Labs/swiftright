@@ -1265,7 +1265,9 @@ public final class Graph {
                     }
                 } else {
                     node.storage[onPreferenceChangeKey] = PreferenceObserverBaseline(key: observer.key, value: value)
-                    if !observer.equals(observer.defaultValue, value) { observer.action(value) }
+                    // SwiftUI reports the first reduced value even when it equals the key's default (macOS 27, measured: a tree without
+                    // contributors still calls the action once with defaultValue).
+                    observer.action(value)
                 }
             }
             for child in node.childNodes { visit(child) }

@@ -9,6 +9,12 @@ public protocol PreferenceKey {
     static func reduce(value: inout Value, nextValue: () -> Value)
 }
 
+extension PreferenceKey where Value: ExpressibleByNilLiteral {
+    /// Optional-valued keys need no explicit default: it is `nil`.
+    /// Apple: https://developer.apple.com/documentation/swiftui/preferencekey/defaultvalue-7pt4w
+    public static var defaultValue: Value { nil }
+}
+
 /// Type-erased preference values retained on graph nodes. Values stay typed at the API boundary;
 /// reduction invokes the originating key's implementation.
 struct PreferenceValues {
