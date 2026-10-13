@@ -1,0 +1,27 @@
+# Windows Sandbox worker (factory/tools/sandbox)
+
+A long-lived, minimised Windows Sandbox on the Dell runs a job worker (`guest/guest-worker.ps1`). `client.py` is the Mac-side client (`start` once per day, `sync` after editing guest scripts, `status`, `capture`, `interact`, `command`, `w08`). Jobs: `capture` (PrintWindow captures, used by `pair.py --sandbox`), `command`, `w08`, and the new `interact`. Nothing here opens a window on Adrian's desktop.
+
+## F2: the interaction job (`interact`, added 13 Oct 2026, shared by all round-3 lanes)
+
+`python3 factory/tools/pair.py <case> --runs N --stage S --renderer R --sandbox --steps steps.json` (or put `"steps": [...]` in the case's `pair.json`), or directly
+`python3 factory/tools/sandbox/client.py interact <exe> --steps steps.json --runs N --out DIR --renderer DLL`.
+
+Per run the guest launches the host exe (same copy/renderer/lease handling as `capture`), pushes its window to the bottom, runs the steps, then writes into the run's `windows/` folder:
+`native-NN.png` (PrintWindow of the main window, as `capture`), `uia-NN.json` (UI Automation tree of EVERY visible top-level window the process owns, including a TaskDialog; per element: name, role, localizedRole, automationId, className, bounds (screen px), enabled, focus, focusable, offscreen, toggle state, value, selected; per window: hwnd, class, title, rect, `client` = [x, y, w, h] screen px of the client area, dpi; plus the `focusedElement` of the process), `steps-NN.json` (what each step did), `uia-NN-<label>.json` / `native-NN-<label>.png` for `dump`/`shot` steps, `done.json`, `host-NN.std{out,err}.txt`.
+
+Steps (JSON list; every step may carry `"target":"dialog"` to address the newest other window the process owns, e.g. a TaskDialog; coordinates are client pixels):
+
+| op | fields | effect |
+| --- | --- | --- |
+| `key` | `key` (`Tab`, `Enter`, `Escape`, `Space`, arrows, `Home`, `End`, `Backspace`, `Delete`, `F1`..`F12`, a letter or digit, `vk:0x..`), `mods` (`shift`, `ctrl`, `alt`), `input` | WM_KEYDOWN/WM_KEYUP posted to the window. With `mods` or `input:true` the keys go through `keybd_event` after the Sandbox gives the window foreground (posted messages do not move GetKeyState); the host's own foreground guard (`factoryAbortOwnedForeground`) fails such a run, so use it only with a host that tolerates focus |
+| `char` | `text` | one WM_CHAR per UTF-16 unit |
+| `click` | `x`, `y`, `button` (`left`/`right`), `count` | WM_MOUSEMOVE, then button down/up posted at the client point |
+| `ime` | `action` (`compose`, `commit`, `cancel`), `text` | tries `ImmSetCompositionStringW` on the window's input context, then posts `WM_IME_STARTCOMPOSITION`/`WM_IME_COMPOSITION` (`GCS_COMPSTR`/`GCS_RESULTSTR`)/`WM_IME_ENDCOMPOSITION`. **Caveat:** `ImmGetContext` of another process's window returns NULL, so the IMM call is refused and only the posted messages arrive; the step log says `imc=False,imm-accepted=False`. A renderer that reads the composition with `ImmGetCompositionStringW` sees no text. Real composition needs an in-process hook (host side) or hardware |
+| `invoke` | `name` | UIA InvokePattern on the first element of the target window with that Name (dialog buttons) |
+| `wait` | `ms` | sleep |
+| `dump` | `label` | extra UIA dump |
+| `shot` | `label` | extra PrintWindow |
+
+The host's 10 s capture lease still bounds a run: keep step lists short (the guest waits 500 ms before and after the steps; `settleMs`).
+The Mac counterpart of the UIA dump is the in-process dump compared by `factory/tools/pair_semantic_report.py` (F3).

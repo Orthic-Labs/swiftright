@@ -30,7 +30,7 @@ def win(ps, **kw):
     return sh(SSH + [ps], **kw)
 
 
-def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, renderer=DEFAULT_RENDERER):
+def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, renderer=DEFAULT_RENDERER, steps=None):
     wdir = out / "windows"; wdir.mkdir(parents=True, exist_ok=True)
     host = rf"{WIN_ROOT}\hosts\{name}"; tools = rf"{WIN_ROOT}\pair-tools"
     pkg = rf"{host}\package"; exe = rf"{pkg}\{EXE_REL}"; ts = out.name
@@ -62,7 +62,11 @@ def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, rend
         sys.path.insert(0, str(Path(__file__).resolve().parent / "sandbox"))
         import client as sbx
         sbx.sync_capture_tool(TOOLS)
-        jid, st, res = sbx.capture(exe, runs, wdir, renderer=renderer)
+        if steps is not None:
+            # F2: interaction job (key/char/click/ime/invoke steps, then a UIA dump of every window the host owns + PrintWindow); lands uia-NN.json beside native-NN.png
+            jid, st, res = sbx.interact(exe, runs, wdir, steps, renderer=renderer)
+        else:
+            jid, st, res = sbx.capture(exe, runs, wdir, renderer=renderer)
         (out / "windows-session.log").write_text(json.dumps(dict(job=jid, status=st, result=res), indent=1))
         if st.get("state") != "done" or "done" not in res:
             sys.exit(f"Sandbox capture failed ({st.get('state')}): {res.get('error')}; see {out}/windows-session.log")
@@ -127,6 +131,17 @@ def load_exclusions(case, cli):
     for i, c in enumerate(cli or []):
         ex.append(dict(name=f"cli-text-{i + 1}", rect=tuple(int(v) for v in c.split(","))))
     return ex
+
+
+def load_steps(case, cli):
+    """Interaction steps: --steps <file.json> (a list, or {"steps":[..]}) or <case>/pair.json {"steps":[..]}; None = plain capture. Step vocabulary: factory/tools/sandbox/guest/job-interact.ps1."""
+    if cli:
+        v = json.loads(Path(cli).read_text())
+        return v["steps"] if isinstance(v, dict) else v
+    pj = case / "pair.json"
+    if pj.is_file():
+        return json.loads(pj.read_text()).get("steps")
+    return None
 
 
 def ink_bbox(img, rect):
@@ -250,6 +265,7 @@ def main():
     ap.add_argument("--renderer", default=DEFAULT_RENDERER, help="renderer DLL (Windows path) the host loads, per run via SWIFTRIGHT_RENDER_DLL (--sandbox only)")
     ap.add_argument("--shared", action="store_true", help="PrintWindow capture without the exclusive desktop lock (background, no activation, no input); default unchanged"); ap.add_argument("--sandbox", action="store_true", help="run the Windows capture inside the long-lived minimised Windows Sandbox (factory/tools/sandbox); the build still runs on the Dell host over SSH; default unchanged"); ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
     ap.add_argument("--exclude-text-bbox", action="append", metavar="X0,Y0,X1,Y1", help="named-in-report text region excluded from the pixel gate (repeatable); also <case>/pair.json excludeRects")
+    ap.add_argument("--steps", metavar="FILE.json", help="F2: interaction steps for the Sandbox run (key/char/click/ime/invoke/wait/dump/shot); default: <case>/pair.json \"steps\" if present")
     ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
     a = ap.parse_args()
@@ -264,7 +280,9 @@ def main():
     if not a.skip_windows:
         if not a.stage: sys.exit("--stage <name> is required (python3 factory/tools/stage-product.py)")
         if a.renderer != DEFAULT_RENDERER and not a.sandbox: sys.exit("--renderer needs --sandbox (the Dell-desktop session path does not pass it to the host)")
-        windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer)
+        steps = load_steps(case, a.steps)
+        if steps is not None and not a.sandbox: sys.exit("--steps (and pair.json steps) need --sandbox")
+        windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer, steps)
     if not a.skip_mac: mac(case, name, a.runs, out)
     print(f"out={out}")
     ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox))

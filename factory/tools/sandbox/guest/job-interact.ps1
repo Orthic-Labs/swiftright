@@ -1,0 +1,288 @@
+# job-interact.ps1 - kind=interact (F2). Like job-capture.ps1 (same exe copy, renderer, host lease) but per run it also DRIVES the host window and dumps its UI Automation tree.
+# args: {"exe":..., "runs":N, "renderer":..., "steps":[...], "settleMs":500}
+# Steps (executed in order against the host's main window; every step may carry "target":"main"|"dialog" - "dialog" = the newest other top-level window the process owns,
+# e.g. a TaskDialog; default main). All coordinates are client pixels of the target window:
+#   {"op":"key","key":"Tab"|"Enter"|"Escape"|"Space"|"Left"|"Right"|"Up"|"Down"|"Backspace"|"Delete"|"Home"|"End"|"F1".."F12"|"A".."Z"|"0".."9"|"vk:0x..", "mods":["shift","ctrl","alt"], "input":false}
+#        WM_KEYDOWN/WM_KEYUP posted to the window (no activation, no foreground). With "mods" (or "input":true) the keys go through keybd_event after the Sandbox gives the
+#        window the foreground, because posted messages do not move GetKeyState (the Sandbox is its own desktop; nothing reaches the Dell).
+#   {"op":"char","text":"héllo"}                         WM_CHAR per UTF-16 unit
+#   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
+#   {"op":"ime","action":"compose","text":"にほ"}        ImmSetCompositionStringW(SCS_SETSTR) on the window's input context, then WM_IME_COMPOSITION(GCS_COMPSTR); falls back to posting
+#   {"op":"ime","action":"commit","text":"日本"}         WM_IME_COMPOSITION(GCS_RESULTSTR) when the IMM call is refused (recorded in the step log); "cancel" ends the composition
+#   {"op":"invoke","name":"OK"}                          UIA InvokePattern on the first element (in the target window) whose Name equals `name` (dialog buttons; the Sandbox cannot click a TaskDialog by pixels reliably)
+#   {"op":"wait","ms":300}
+#   {"op":"dump","label":"after-open"}                   extra UIA dump -> uia-NN-<label>.json
+#   {"op":"shot","label":"mid"}                          extra PrintWindow capture -> native-NN-<label>.png
+# After the steps: settle, final UIA dump of EVERY top-level window the process owns (name, role/control type, value, bounds, focus, enabled, toggle state, automation id, class) -> uia-NN.json,
+# then PrintWindow of the main window -> native-NN.png. steps-NN.json logs what each step did (ok/error). done.json has one row per run.
+param([Parameter(Mandatory)][string]$JobDir)
+$ErrorActionPreference = 'Stop'
+$job = Get-Content -LiteralPath "$JobDir\job.json" -Raw | ConvertFrom-Json
+$runs = $(if ($job.args.runs) { [int]$job.args.runs } else { 1 })
+$settle = $(if ($null -ne $job.args.settleMs) { [int]$job.args.settleMs } else { 500 })
+$steps = @($job.args.steps)
+$res = [ordered]@{ kind = 'interact'; ok = $false; runs = $runs; exe_source = [string]$job.args.exe; steps = $steps.Count }
+
+Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
+using System; using System.Collections.Generic; using System.Drawing; using System.Drawing.Imaging; using System.Runtime.InteropServices; using System.Text;
+public static class IxNative {
+ [StructLayout(LayoutKind.Sequential)] public struct RECT {public int left,top,right,bottom;}
+ public delegate bool EnumProc(IntPtr h, IntPtr l);
+ [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h,out RECT r);
+ [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h,IntPtr dc,uint f);
+ [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h,IntPtr a,int x,int y,int cx,int cy,uint f);
+ [DllImport("user32.dll")] public static extern IntPtr SetThreadDpiAwarenessContext(IntPtr c);
+ [DllImport("user32.dll")] public static extern bool PostMessageW(IntPtr h,uint m,IntPtr w,IntPtr l);
+ [DllImport("user32.dll")] public static extern IntPtr SendMessageTimeoutW(IntPtr h,uint m,IntPtr w,IntPtr l,uint f,uint t,out IntPtr r);
+ [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc p, IntPtr l);
+ [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h,out uint pid);
+ [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+ [DllImport("user32.dll")] public static extern IntPtr GetWindow(IntPtr h,uint cmd);
+ [DllImport("user32.dll",CharSet=CharSet.Unicode)] public static extern int GetClassNameW(IntPtr h,StringBuilder b,int n);
+ [DllImport("user32.dll",CharSet=CharSet.Unicode)] public static extern int GetWindowTextW(IntPtr h,StringBuilder b,int n);
+ [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h,out RECT r);
+ [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h,ref POINT p);
+ [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
+ [StructLayout(LayoutKind.Sequential)] public struct POINT {public int x,y;}
+ public static int[] ClientScreen(IntPtr h){RECT r; GetClientRect(h,out r); POINT p=new POINT(); ClientToScreen(h,ref p); return new int[]{p.x,p.y,r.right-r.left,r.bottom-r.top};}
+ [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+ [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+ [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a,uint b,bool f);
+ [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
+ [DllImport("user32.dll")] public static extern void keybd_event(byte vk,byte scan,uint flags,UIntPtr extra);
+ [DllImport("user32.dll")] public static extern uint MapVirtualKeyW(uint code,uint type);
+ [DllImport("imm32.dll")] public static extern IntPtr ImmGetContext(IntPtr h);
+ [DllImport("imm32.dll")] public static extern bool ImmReleaseContext(IntPtr h,IntPtr c);
+ [DllImport("imm32.dll")] public static extern bool ImmSetCompositionStringW(IntPtr c,uint index,byte[] comp,uint compLen,byte[] read,uint readLen);
+ [DllImport("imm32.dll")] public static extern bool ImmNotifyIME(IntPtr c,uint action,uint index,uint value);
+ public static IntPtr[] TopWindows(uint pid){
+  var l=new List<IntPtr>();
+  EnumWindows(delegate(IntPtr h,IntPtr x){uint p; GetWindowThreadProcessId(h,out p); if(p==pid) l.Add(h); return true;},IntPtr.Zero);
+  return l.ToArray();
+ }
+ public static string Cls(IntPtr h){var b=new StringBuilder(256);GetClassNameW(h,b,256);return b.ToString();}
+ public static string Txt(IntPtr h){var b=new StringBuilder(512);GetWindowTextW(h,b,512);return b.ToString();}
+ public static string Shot(IntPtr h,string path){
+  RECT r; if(!GetClientRect(h,out r)) return "GetClientRect failed"; int w=r.right-r.left, ht=r.bottom-r.top; if(w<3||ht<3) return "bad size "+w+"x"+ht;
+  using(Bitmap b=new Bitmap(w,ht,PixelFormat.Format32bppArgb)){using(Graphics g=Graphics.FromImage(b)){g.Clear(Color.Magenta);IntPtr dc=g.GetHdc();try{if(!PrintWindow(h,dc,3))return "PrintWindow false";}finally{g.ReleaseHdc(dc);}} b.Save(path,ImageFormat.Png);}
+  return "ok";
+ }
+ public static IntPtr Lp(int x,int y){return (IntPtr)(((y&0xFFFF)<<16)|(x&0xFFFF));}
+ public static void Foreground(IntPtr h){
+  IntPtr fg=GetForegroundWindow(); uint pid; uint ft=GetWindowThreadProcessId(fg,out pid); uint me=GetCurrentThreadId();
+  if(ft!=0&&ft!=me) AttachThreadInput(me,ft,true);
+  SetForegroundWindow(h);
+  if(ft!=0&&ft!=me) AttachThreadInput(me,ft,false);
+ }
+}
+'@
+[void][IxNative]::SetThreadDpiAwarenessContext([IntPtr]::new(-4))
+
+$WM = @{ KEYDOWN = 0x100; KEYUP = 0x101; CHAR = 0x102; SYSKEYDOWN = 0x104; SYSKEYUP = 0x105; MOUSEMOVE = 0x200; LBUTTONDOWN = 0x201; LBUTTONUP = 0x202; RBUTTONDOWN = 0x204; RBUTTONUP = 0x205
+         IME_STARTCOMPOSITION = 0x10D; IME_ENDCOMPOSITION = 0x10E; IME_COMPOSITION = 0x10F }
+$VK = @{ Tab = 9; Enter = 13; Return = 13; Escape = 27; Esc = 27; Space = 32; Left = 37; Up = 38; Right = 39; Down = 40; Backspace = 8; Delete = 46; Home = 36; End = 35; PageUp = 33; PageDown = 34; Shift = 16; Ctrl = 17; Alt = 18 }
+function Get-Vk([string]$k) {
+    if ($VK.ContainsKey($k)) { return [int]$VK[$k] }
+    if ($k -match '^vk:(0x[0-9a-fA-F]+|\d+)$') { return [int]$Matches[1] }
+    if ($k -match '^F(\d{1,2})$') { return 0x6F + [int]$Matches[1] }
+    if ($k.Length -eq 1) { return [int][char]$k.ToUpper() }
+    throw "unknown key '$k'"
+}
+function KeyLParam([int]$vk, [bool]$up, [bool]$ext = $false) {
+    $scan = [IxNative]::MapVirtualKeyW([uint32]$vk, 0)
+    [uint32]$v = 1 + ($scan * 65536)
+    if ($ext) { $v += 16777216 }
+    if ($up) { $v += 3221225472 }
+    return [IntPtr][BitConverter]::ToInt32([BitConverter]::GetBytes($v), 0)
+}
+
+function Get-Windows([uint32]$procId) {
+    # visible top-level windows the process owns, top of the Z order first (a TaskDialog is an owned popup, so it is listed before its owner)
+    return @([IxNative]::TopWindows($procId) | Where-Object { $_ -ne [IntPtr]::Zero -and [IxNative]::IsWindowVisible($_) })
+}
+function Resolve-Target($proc, $step, $mainH) {
+    $t = $(if ($step.target) { [string]$step.target } else { 'main' })
+    if ($t -eq 'main') { return $mainH }
+    $others = @(Get-Windows $proc.Id | Where-Object { $_ -ne $mainH })
+    if ($others.Count -eq 0) { throw "no dialog window (target=dialog)" }
+    return $others[0]    # EnumWindows is top of the Z order first: the newest
+}
+
+function Rect-Of($h) { $r = New-Object IxNative+RECT; [void][IxNative]::GetWindowRect($h, [ref]$r); return @($r.left, $r.top, $r.right, $r.bottom) }
+
+function Dump-Element($el, [int]$depth, [int]$maxDepth) {
+    $o = [ordered]@{}
+    $c = $el.Current
+    $o.name = $c.Name; $o.role = $c.ControlType.ProgrammaticName -replace '^ControlType\.', ''; $o.localizedRole = $c.LocalizedControlType
+    $o.automationId = $c.AutomationId; $o.className = $c.ClassName
+    $r = $c.BoundingRectangle
+    $o.bounds = $(if ($r.IsEmpty) { $null } else { @([math]::Round($r.X, 1), [math]::Round($r.Y, 1), [math]::Round($r.Width, 1), [math]::Round($r.Height, 1)) })
+    $o.enabled = [bool]$c.IsEnabled; $o.focus = [bool]$c.HasKeyboardFocus; $o.offscreen = [bool]$c.IsOffscreen; $o.focusable = [bool]$c.IsKeyboardFocusable
+    try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.TogglePattern]::Pattern, [ref]$p)) { $o.toggle = $p.Current.ToggleState.ToString() } } catch { }
+    try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.ValuePattern]::Pattern, [ref]$p)) { $o.value = $p.Current.Value } } catch { }
+    try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern, [ref]$p)) { $o.selected = [bool]$p.Current.IsSelected } } catch { }
+    $kids = @()
+    if ($depth -lt $maxDepth) {
+        $w = [Windows.Automation.TreeWalker]::RawViewWalker
+        try { $k = $w.GetFirstChild($el) } catch { $k = $null }
+        while ($k) { $kids += , (Dump-Element $k ($depth + 1) $maxDepth); try { $k = $w.GetNextSibling($k) } catch { $k = $null } }
+    }
+    $o.children = $kids
+    return $o
+}
+
+function Dump-Process($proc, $mainH, [string]$path) {
+    $wins = @()
+    $focused = $null
+    try { $f = [Windows.Automation.AutomationElement]::FocusedElement; if ($f -and $f.Current.ProcessId -eq $proc.Id) { $focused = [ordered]@{ name = $f.Current.Name; role = $f.Current.ControlType.ProgrammaticName -replace '^ControlType\.', ''; automationId = $f.Current.AutomationId } } } catch { }
+    foreach ($h in (Get-Windows $proc.Id)) {
+        $w = [ordered]@{ hwnd = [int64]$h; main = ($h -eq $mainH); class = [IxNative]::Cls($h); title = [IxNative]::Txt($h); rect = (Rect-Of $h); client = [IxNative]::ClientScreen($h); dpi = [IxNative]::GetDpiForWindow($h) }
+        try { $w.tree = Dump-Element ([Windows.Automation.AutomationElement]::FromHandle($h)) 0 24 } catch { $w.error = $_.Exception.Message }
+        $wins += , $w
+    }
+    $doc = [ordered]@{ pid = $proc.Id; focusedElement = $focused; windows = $wins }
+    [IO.File]::WriteAllText($path, (ConvertTo-Json -InputObject $doc -Depth 40), (New-Object Text.UTF8Encoding($false)))
+}
+
+function Find-ByName($root, [string]$name) {
+    $cond = New-Object Windows.Automation.PropertyCondition([Windows.Automation.AutomationElement]::NameProperty, $name)
+    return $root.FindFirst([Windows.Automation.TreeScope]::Descendants, $cond)
+}
+
+function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
+    $op = [string]$step.op
+    $h = $(if ($op -in 'wait', 'dump', 'shot') { $mainH } else { Resolve-Target $proc $step $mainH })
+    switch ($op) {
+        'wait' { Start-Sleep -Milliseconds ([int]$step.ms); return 'ok' }
+        'dump' { Dump-Process $proc $mainH (Join-Path $out ("uia-$n-" + [string]$step.label + '.json')); return 'ok' }
+        'shot' { return [IxNative]::Shot($mainH, (Join-Path $out ("native-$n-" + [string]$step.label + '.png'))) }
+        'key' {
+            $vk = Get-Vk ([string]$step.key); $mods = @($step.mods | Where-Object { $_ })
+            $ext = $vk -in 33, 34, 35, 36, 37, 38, 39, 40, 45, 46
+            if ($mods.Count -gt 0 -or $step.input) {
+                [IxNative]::Foreground($h); Start-Sleep -Milliseconds 80
+                $mv = @($mods | ForEach-Object { Get-Vk ([string]$_) })
+                foreach ($m in $mv) { [IxNative]::keybd_event([byte]$m, 0, 0, [UIntPtr]::Zero) }
+                [IxNative]::keybd_event([byte]$vk, 0, $(if ($ext) { 1 } else { 0 }), [UIntPtr]::Zero); Start-Sleep -Milliseconds 30
+                [IxNative]::keybd_event([byte]$vk, 0, $(if ($ext) { 3 } else { 2 }), [UIntPtr]::Zero)
+                [array]::Reverse($mv); foreach ($m in $mv) { [IxNative]::keybd_event([byte]$m, 0, 2, [UIntPtr]::Zero) }
+                return 'ok(input)'
+            }
+            [void][IxNative]::PostMessageW($h, $WM.KEYDOWN, [IntPtr]$vk, (KeyLParam $vk $false $ext)); Start-Sleep -Milliseconds 30
+            [void][IxNative]::PostMessageW($h, $WM.KEYUP, [IntPtr]$vk, (KeyLParam $vk $true $ext)); return 'ok(post)'
+        }
+        'char' {
+            foreach ($ch in ([string]$step.text).ToCharArray()) { [void][IxNative]::PostMessageW($h, $WM.CHAR, [IntPtr][int]$ch, [IntPtr]1); Start-Sleep -Milliseconds 15 }
+            return 'ok'
+        }
+        'click' {
+            $x = [int]$step.x; $y = [int]$step.y; $right = ([string]$step.button -eq 'right')
+            $dn = $(if ($right) { $WM.RBUTTONDOWN } else { $WM.LBUTTONDOWN }); $up = $(if ($right) { $WM.RBUTTONUP } else { $WM.LBUTTONUP }); $mk = $(if ($right) { 2 } else { 1 })
+            $count = $(if ($step.count) { [int]$step.count } else { 1 })
+            [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            for ($i = 0; $i -lt $count; $i++) {
+                [void][IxNative]::PostMessageW($h, $dn, [IntPtr]$mk, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+                [void][IxNative]::PostMessageW($h, $up, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            }
+            return 'ok'
+        }
+        'ime' {
+            $act = [string]$step.action; $text = [string]$step.text
+            $GCS_COMPSTR = 0x8; $GCS_RESULTSTR = 0x800; $GCS_CURSORPOS = 0x80; $SCS_SETSTR = 9; $CPS_COMPLETE = 1; $CPS_CANCEL = 4; $NI_COMPOSITIONSTR = 0x15
+            $imc = [IxNative]::ImmGetContext($h); $how = 'imm'
+            $bytes = [Text.Encoding]::Unicode.GetBytes($text + [char]0)
+            $ok = $false
+            if ($act -eq 'compose') {
+                [void][IxNative]::PostMessageW($h, $WM.IME_STARTCOMPOSITION, [IntPtr]0, [IntPtr]0)
+                if ($imc -ne [IntPtr]::Zero) { $ok = [IxNative]::ImmSetCompositionStringW($imc, $SCS_SETSTR, $bytes, [uint32]($bytes.Length), $null, 0) }
+                [void][IxNative]::PostMessageW($h, $WM.IME_COMPOSITION, [IntPtr]($text.Length), [IntPtr]($GCS_COMPSTR -bor $GCS_CURSORPOS))
+            } elseif ($act -eq 'commit') {
+                if ($imc -ne [IntPtr]::Zero) { $ok = [IxNative]::ImmSetCompositionStringW($imc, $SCS_SETSTR, $bytes, [uint32]($bytes.Length), $null, 0); if ($ok) { [void][IxNative]::ImmNotifyIME($imc, $NI_COMPOSITIONSTR, $CPS_COMPLETE, 0) } }
+                [void][IxNative]::PostMessageW($h, $WM.IME_COMPOSITION, [IntPtr]($text.Length), [IntPtr]($GCS_RESULTSTR))
+                [void][IxNative]::PostMessageW($h, $WM.IME_ENDCOMPOSITION, [IntPtr]0, [IntPtr]0)
+            } elseif ($act -eq 'cancel') {
+                if ($imc -ne [IntPtr]::Zero) { $ok = [IxNative]::ImmNotifyIME($imc, $NI_COMPOSITIONSTR, $CPS_CANCEL, 0) }
+                [void][IxNative]::PostMessageW($h, $WM.IME_ENDCOMPOSITION, [IntPtr]0, [IntPtr]0)
+            } else { throw "unknown ime action '$act'" }
+            if ($imc -ne [IntPtr]::Zero) { [void][IxNative]::ImmReleaseContext($h, $imc) }
+            return ('ok(imc=' + ($imc -ne [IntPtr]::Zero) + ',imm-accepted=' + $ok + ',messages-posted)')
+        }
+        'invoke' {
+            $el = Find-ByName ([Windows.Automation.AutomationElement]::FromHandle($h)) ([string]$step.name)
+            if (-not $el) { throw "no element named '$($step.name)'" }
+            $p = $el.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern); $p.Invoke(); return 'ok'
+        }
+        default { throw "unknown op '$op'" }
+    }
+}
+
+try {
+    $env:Path = 'C:\swiftrt;' + $env:Path
+    $renderer = $(if ($job.args.renderer) { [string]$job.args.renderer } else { 'D:\Claude\swiftright\.factory-work\inputs\renderer\swiftright_render.dll' })
+    if (-not (Test-Path -LiteralPath $renderer)) { throw "renderer dll not visible in the guest: $renderer" }
+    $env:SWIFTRIGHT_RENDER_DLL = $renderer
+    $src = [string]$job.args.exe
+    if (-not (Test-Path -LiteralPath $src -PathType Leaf)) { throw "exe not visible in the guest: $src" }
+    $work = 'C:\work\' + (Split-Path -Leaf $JobDir)
+    New-Item -ItemType Directory -Force -Path $work | Out-Null
+    $pkg = $src -replace '\\scratch\\.*$', ''
+    if ($pkg -ne $src -and (Test-Path -LiteralPath $pkg -PathType Container)) {
+        $exe = Join-Path $work ($src.Substring($pkg.Length).TrimStart('\'))
+        Get-ChildItem -LiteralPath $pkg -File | Copy-Item -Destination $work -Force
+        if (Test-Path -LiteralPath "$pkg\Resources" -PathType Container) { Copy-Item -LiteralPath "$pkg\Resources" -Destination $work -Recurse -Force }
+    } else { $exe = Join-Path $work 'FactoryProbe.exe' }
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $exe) | Out-Null
+    Copy-Item -LiteralPath $src -Destination $exe -Force
+    Get-ChildItem -LiteralPath (Split-Path -Parent $src) -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in ".dll", ".json" } | Copy-Item -Destination (Split-Path -Parent $exe) -Force
+    $res.exe_sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLower()
+    $res.renderer = $renderer
+    $res.renderer_sha256 = (Get-FileHash -LiteralPath $renderer -Algorithm SHA256).Hash.ToLower()
+    try { $res.video = @(Get-CimInstance Win32_VideoController | ForEach-Object { $_.Name + ' ' + $_.DriverVersion }) } catch { }
+    $out = "$JobDir\out"
+    New-Item -ItemType Directory -Force -Path $out | Out-Null
+    $results = @()
+    $leaseArg = $(if ($job.args.leaseSeconds) { "--factory-capture-lease-seconds=$([int]$job.args.leaseSeconds)" } else { '--factory-capture-lease-seconds=40' })
+    for ($i = 1; $i -le $runs; $i++) {
+        $n = '{0:00}' -f $i; $p = $null; $status = 'failed'; $log = @()
+        try {
+            $si = [Diagnostics.ProcessStartInfo]::new($exe); $si.Arguments = $leaseArg; $si.UseShellExecute = $false; $si.CreateNoWindow = $true
+            $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true
+            $p = [Diagnostics.Process]::Start($si); $so = $p.StandardOutput.ReadToEndAsync(); $se = $p.StandardError.ReadToEndAsync()
+            $deadline = [DateTime]::UtcNow.AddSeconds(30)
+            do { Start-Sleep -Milliseconds 100; $p.Refresh(); if ($p.HasExited) { throw "host exited early code=$($p.ExitCode)" }; if ([DateTime]::UtcNow -gt $deadline) { throw 'window deadline' } } while ($p.MainWindowHandle -eq [IntPtr]::Zero)
+            $h = $p.MainWindowHandle
+            if (-not [IxNative]::SetWindowPos($h, [IntPtr]::new(1), 0, 0, 0, 0, 0x0013)) { throw 'SetWindowPos failed' }
+            Start-Sleep -Milliseconds $settle
+            $k = 0
+            foreach ($s in $steps) {
+                $k++
+                $r = 'ok'
+                try { $r = Do-Step $p $h $s $out $n } catch { $r = 'ERROR: ' + $_.Exception.Message }
+                $log += [ordered]@{ step = $k; op = [string]$s.op; result = $r }
+                if ($r -like 'ERROR*') { throw "step $k ($($s.op)): $r" }
+                if ($p.HasExited) { throw "host exited during step $k" }
+            }
+            Start-Sleep -Milliseconds $settle
+            Dump-Process $p $h (Join-Path $out "uia-$n.json")
+            $r = [IxNative]::Shot($h, (Join-Path $out "native-$n.png")); if ($r -ne 'ok') { throw $r }
+            $status = 'ok'
+        } catch { $status = [string]$_ }
+        finally {
+            [IO.File]::WriteAllText((Join-Path $out "steps-$n.json"), (ConvertTo-Json -InputObject @($log) -Depth 5), (New-Object Text.UTF8Encoding($false)))
+            if ($p) {
+                try { if (-not $p.HasExited) { $p.Kill() }; [void]$p.WaitForExit(10000) } catch { }
+                try { [void]$so.Wait(5000); $so.Result | Set-Content (Join-Path $out "host-$n.stdout.txt"); $se.Result | Set-Content (Join-Path $out "host-$n.stderr.txt") } catch { }
+            }
+        }
+        $results += [ordered]@{ run = $i; status = $status }
+    }
+    ConvertTo-Json -InputObject @($results) | Set-Content (Join-Path $out 'done.json')
+    $res.done = $results
+    $res.ok = [bool](@($results | Where-Object { $_.status -ne 'ok' }).Count -eq 0 -and $results.Count -eq $runs)
+} catch { $res.error = $_.Exception.Message }
+finally { Get-Process FactoryProbe -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue }
+[IO.File]::WriteAllText("$JobDir\result.json", (ConvertTo-Json -InputObject $res -Depth 6), (New-Object Text.UTF8Encoding($false)))
+exit 0

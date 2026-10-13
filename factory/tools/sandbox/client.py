@@ -5,6 +5,7 @@
   client.py start                     run start-worker.ps1 on the Dell (no-op when a worker heartbeat is fresh; at most once per day)
   client.py status                    heartbeat age, Sandbox processes, window state (IsIconic / foreground), recent jobs
   client.py capture EXE [--runs N] [--renderer DLL]  run FactoryProbe capture jobs in the Sandbox; PNGs and done.json to --out
+  client.py interact EXE --steps FILE.json [--runs N] [--renderer DLL]  F2: drive the host window (key/char/click/ime/invoke/wait/dump/shot steps) then dump its UIA tree (uia-NN.json) + PrintWindow; see guest/job-interact.ps1
   client.py w08 METHOD [--delays 240] run one W08 method (tier2-repair | tier2-feed-down | tier2-uninstall) in the Sandbox
   client.py w08-reset                 clean + verify the W08 package state only
   client.py command 'powershell text' run a command in the Sandbox desktop
@@ -127,11 +128,29 @@ def capture(exe, runs, out, timeout_sec=None, renderer=None):
     return jid, st, res
 
 
+def interact(exe, runs, out, steps, timeout_sec=None, renderer=None, settle_ms=500, lease_seconds=None):
+    """F2 interaction job: like capture() plus `steps` (list of dicts, see guest/job-interact.ps1). Lands native-NN.png, uia-NN.json (every top-level window the process owns,
+    UI Automation tree), uia-NN-<label>.json / native-NN-<label>.png for dump/shot steps, steps-NN.json (what each step did), done.json, host-NN logs in `out`."""
+    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    args = dict(exe=exe, runs=runs, steps=steps, settleMs=settle_ms)
+    if renderer:
+        args["renderer"] = renderer
+    if lease_seconds:
+        args["leaseSeconds"] = lease_seconds
+    jid, st, res = run_job("interact", args, out / "_job", timeout_sec or runs * 120 + 300)
+    jd = out / "_job"
+    if (jd / "out").is_dir():
+        for f in (jd / "out").iterdir():
+            f.replace(out / f.name)
+    return jid, st, res
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("sync"); sp.add_parser("start"); sp.add_parser("status"); wr = sp.add_parser("w08-reset"); wr.add_argument("--out", default=None)
     c = sp.add_parser("capture"); c.add_argument("exe"); c.add_argument("--runs", type=int, default=1); c.add_argument("--out", default="sandbox-capture"); c.add_argument("--renderer", default=None)
+    ix = sp.add_parser("interact"); ix.add_argument("exe"); ix.add_argument("--steps", required=True, help="JSON file: a list of steps"); ix.add_argument("--runs", type=int, default=1); ix.add_argument("--out", default="sandbox-interact"); ix.add_argument("--renderer", default=None)
     w = sp.add_parser("w08"); w.add_argument("method"); w.add_argument("--delays", default="240,360"); w.add_argument("--run-id", default=None); w.add_argument("--out", default=None); w.add_argument("--timeout", type=int, default=1500); w.add_argument("--pkg-dir", default=None, help="package folder under w08t2 (default pkgs)"); w.add_argument("--max-attempts", type=int, default=8, help="induction attempts the harness may use (about 70 s each); bounds the job")
     wn = sp.add_parser("window"); wn.add_argument("mode", choices=["min", "offscreen", "bottom"])
     k = sp.add_parser("command"); k.add_argument("script"); k.add_argument("--out", default=None)
@@ -148,6 +167,10 @@ def main():
         print(status())
     elif a.cmd == "capture":
         jid, st, res = capture(a.exe, a.runs, a.out, renderer=a.renderer); print(jid, st.get("state"), json.dumps(res, indent=1))
+    elif a.cmd == "interact":
+        steps = json.loads(Path(a.steps).read_text())
+        steps = steps["steps"] if isinstance(steps, dict) else steps
+        jid, st, res = interact(a.exe, a.runs, a.out, steps, renderer=a.renderer); print(jid, st.get("state"), json.dumps(res, indent=1))
     elif a.cmd in ("w08", "w08-reset"):
         method = getattr(a, "method", "")
         out = Path(getattr(a, "out", None) or f"sandbox-w08-{time.strftime('%Y%m%d-%H%M%S')}")
