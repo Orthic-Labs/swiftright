@@ -1,0 +1,10 @@
+# SR1 decisions
+
+## 2026-10-13: authority and open decisions
+
+On 13 October 2026, Adrian handed SR0 and SR1 to the Claude session "swiftright-87". His words: "carry on" and "you have permission to do whatever it takes to move the project forward". The session made the decisions below under that grant. Each one can be reversed if Adrian says so.
+
+1. **ABI 0.7 (additive) is approved.** The 0.6 table, layouts and behaviour stay unchanged. 0.7 appends entries only, starting with font-resource registration (`factory/abi/abi-0.7-proposal.md`, section "Private custom-font obligation"). Renderer work starts once tuple 12 qualification no longer depends on the renderer bytes, so that the pinned tuple 12 DLL is never rebuilt mid-qualification.
+2. **The Windows default body font is Segoe UI, not a copy of the Mac font.** SF Pro is licensed for Apple platforms only, so it cannot ship on Windows. Exact glyph pixels for `Font.body` therefore cannot match. Text cases are judged on semantics instead: line count, truncation and ellipsis, frame and bounds, colour, and alignment. Glyph pixels are reported but do not gate. A tolerance is never applied silently: each comparison report names the text regions it excludes from the pixel gate.
+3. **SF Symbols are not redistributed; the Windows provider maps them onto Segoe Fluent Icons.** The SF Symbols licence is also limited to Apple platforms. `Image(systemName:)` is judged on frame, aspect-fit, tint and content bounds, and the glyph-shape difference is reported. Exact symbol shapes would need an open-licensed symbol set that we author ourselves; that is a separate future block.
+4. **Lean loop.** New captures use `factory/tools/pair.py`: build, capture, then an exact RGB diff with a plain JSON report. Earlier receipt machinery is archived as history and is not required for new evidence.
