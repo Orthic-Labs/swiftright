@@ -1,3 +1,30 @@
+# SR1 status: 13 October 2026, evening
+
+Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's grant (`docs/sr1-decisions.md`). All five original blocks pass their gates on **one product build**: runtime, bridge and the new `packages/SwiftRightHost`, staged as `d124fbe94-bc0c222d`, with factory renderer 0.7 `82513ae0…`. Captures run in the minimised Windows Sandbox (`factory/tools/sandbox/`) through `factory/tools/pair.py`. An independent review is pending on the closure of its first-round caveats.
+
+| Block | Case (under `factory/pipeline/pilot-delivery-five-v1/`) | N | Verdict |
+|---|---|---|---|
+| Custom Layout LTR | `stack-layout/custom-layout-host-v2/light-centered-execution-v4` | 20 | 20 exact |
+| Custom Layout RTL | `stack-layout/custom-layout-host-v2/rtl-original-execution-v1` | 20 | 20 exact (runtime RTL mirroring `ef9e5b35`) |
+| RoundedRectangle continuous stroke | `text-shape-image/rounded-stroke-host-v1/continuous-geometry-delivery-v2` (+4 `gen-*` variants, N=3) | 20 | 20 edge-aa≤32 (max 9); variants all pass |
+| ZStack + overlay (body font) | `stack-layout/stack-overlay-centered-execution-v9` | 20 | 20 edge-aa≤32 outside the named `+` glyph region (decision 2) |
+| Text, bundled Tinos + lineLimit | `text-shape-image/bundled-font-readiness-v6-line-limit-host` | 20 | 20 exact-with-exclusions; text gate 20/20 (ink within 1 px, baseline equal) via ABI 0.7 font registration |
+| Image `star.fill` | `text-shape-image/image-system-star-fill-v10` (+16pt and 120x60 N=3; 48pt N=3 via a measured override, which is not evidence of generalisation) | 20 | frame, ink bbox and tint 20/20; glyph shape reported (decision 3) |
+
+Tests on the same build: Windows runtime 224, bridge 48, host 35; Mac runtime 216, bridge 48, host 35; 0 failures on either host.
+
+**Known gaps:**
+- SliceApp's own backend does not yet use `ResolvedNodePainter`.
+- Per-case provenance files (`source-bindings.json`, `plan.json`) describe the old host sources.
+- 41 symbol sizes use measured ink overrides.
+- Hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested.
+
+**Next:** scale to 10 blocks, then 20, using the same loop.
+
+---
+
+# Earlier checkpoint (09:21, before the handover)
+
 # SR0/SR1 delivery status — 13 October 2026
 
 Recorded after Adrian requested stop & full summary. Work is **paused by user**; both workers stopped, review heartbeat paused. No new implementation, compiler or native dispatch follows this checkpoint. Last owned archive completed at 09:13:58 IST; read-only Dell check at 09:16:58 IST found lock `free`, no Swift/C++ compiler or factory native processes, & three active stages. [Stop evidence](../factory/pipeline/pilot-delivery-five-v1/root-execution/stopped-20261013-0918-ist/dell-state/transport.json.stdout.bin).
