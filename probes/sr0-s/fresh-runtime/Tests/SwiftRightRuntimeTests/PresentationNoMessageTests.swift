@@ -1,4 +1,5 @@
 import SwiftRightRuntime
+import Observation
 import XCTest
 
 @Observable
