@@ -129,7 +129,7 @@ def main():
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("sync"); sp.add_parser("start"); sp.add_parser("status"); wr = sp.add_parser("w08-reset"); wr.add_argument("--out", default=None)
     c = sp.add_parser("capture"); c.add_argument("exe"); c.add_argument("--runs", type=int, default=1); c.add_argument("--out", default="sandbox-capture")
-    w = sp.add_parser("w08"); w.add_argument("method"); w.add_argument("--delays", default="240,360"); w.add_argument("--run-id", default=None); w.add_argument("--out", default=None); w.add_argument("--timeout", type=int, default=1500); w.add_argument("--max-attempts", type=int, default=8, help="induction attempts the harness may use (about 70 s each); bounds the job")
+    w = sp.add_parser("w08"); w.add_argument("method"); w.add_argument("--delays", default="240,360"); w.add_argument("--run-id", default=None); w.add_argument("--out", default=None); w.add_argument("--timeout", type=int, default=1500); w.add_argument("--pkg-dir", default=None, help="package folder under w08t2 (default pkgs)"); w.add_argument("--max-attempts", type=int, default=8, help="induction attempts the harness may use (about 70 s each); bounds the job")
     wn = sp.add_parser("window"); wn.add_argument("mode", choices=["min", "offscreen", "bottom"])
     k = sp.add_parser("command"); k.add_argument("script"); k.add_argument("--out", default=None)
     a = ap.parse_args()
@@ -148,7 +148,7 @@ def main():
     elif a.cmd in ("w08", "w08-reset"):
         method = getattr(a, "method", "")
         out = Path(getattr(a, "out", None) or f"sandbox-w08-{time.strftime('%Y%m%d-%H%M%S')}")
-        args = dict(action="reset") if a.cmd == "w08-reset" else dict(action="run", method=method, delays=a.delays, runId=a.run_id or out.name, maxAttempts=a.max_attempts)
+        args = dict(action="reset") if a.cmd == "w08-reset" else dict(action="run", method=method, delays=a.delays, runId=a.run_id or out.name, maxAttempts=a.max_attempts, **({'pkgDir': a.pkg_dir} if a.pkg_dir else {}))
         jid, st, res = run_job("w08", args, out, getattr(a, "timeout", 600))
         print(jid, st.get("state"), "ok=%s pass=%s needs_fresh_sandbox=%s" % (res.get("ok"), res.get("pass"), res.get("needs_fresh_sandbox")), "->", out)
     elif a.cmd == "command":

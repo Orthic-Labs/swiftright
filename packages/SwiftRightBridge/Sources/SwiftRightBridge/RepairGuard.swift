@@ -52,21 +52,33 @@ public enum RepairGuard {
                 try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
                 try Data(RepairGuardScript.source.utf8).write(to: script, options: .atomic)
             } catch { return }
-            // conhost --headless: PowerShell without a visible console window.
-            let p = Process()
-            p.executableURL = URL(fileURLWithPath: (env["SystemRoot"] ?? "C:\\Windows") + "\\System32\\conhost.exe")
-            p.arguments = ["--headless", "powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
-                           "-WindowStyle", "Hidden", "-File", script.path.replacingOccurrences(of: "/", with: "\\"),
-                           "-Install", "-Pfn", pfn]
-            p.standardInput = FileHandle.nullDevice
-            p.standardOutput = FileHandle.nullDevice
-            p.standardError = FileHandle.nullDevice
-            try? p.run()
+            launchHidden(script: script.path.replacingOccurrences(of: "/", with: "\\"), pfn: pfn, systemRoot: env["SystemRoot"] ?? "C:\\Windows")
         }
         #endif
     }
 
     #if os(Windows)
+    /// Runs the guard installer with CreateProcessW + CREATE_NO_WINDOW (no visible console, no inherited handles). Foundation's
+    /// `Process` is not used: with FileHandle.nullDevice on stdio it fast-fails (0xc0000409) inside a packaged launch.
+    static func launchHidden(script: String, pfn: String, systemRoot: String) {
+        let exe = systemRoot + "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        var commandLine = Array(("\"" + exe + "\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + script
+            + "\" -Install -Pfn \"" + pfn + "\"").utf16)
+        commandLine.append(0)
+        var startup = STARTUPINFOW()
+        startup.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
+        startup.dwFlags = DWORD(STARTF_USESHOWWINDOW)
+        startup.wShowWindow = WORD(SW_HIDE)
+        var info = PROCESS_INFORMATION()
+        let started = commandLine.withUnsafeMutableBufferPointer { buffer in
+            CreateProcessW(nil, buffer.baseAddress, nil, nil, false, DWORD(CREATE_NO_WINDOW), nil, nil, &startup, &info)
+        }
+        if started {
+            CloseHandle(info.hThread)
+            CloseHandle(info.hProcess)
+        }
+    }
+
     static func currentPackageFamilyName() -> String? {
         var length: UInt32 = 0
         let probe = GetCurrentPackageFamilyName(&length, nil)

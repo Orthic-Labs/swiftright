@@ -58,7 +58,8 @@ function Save([string]$Why) {
 
 try {
     # signer thumbprint (public cert out of the old package's signature) so the cleanup can remove exactly that cert
-    $oldMsix = Join-Path $W 'pkgs\old.msix'; $newMsix = Join-Path $W 'pkgs\new.msix'
+    $pkgSub = $(if ($A.pkgDir) { [string]$A.pkgDir } else { 'pkgs' })
+    $oldMsix = Join-Path $W "$pkgSub\old.msix"; $newMsix = Join-Path $W "$pkgSub\new.msix"
     $sig = Get-AuthenticodeSignature -FilePath $oldMsix
     $script:SignerThumb = [string]$sig.SignerCertificate.Thumbprint
     $res.signer_thumbprint = $script:SignerThumb
