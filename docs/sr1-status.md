@@ -71,12 +71,30 @@ Tests: Windows runtime 333/333 on stage `5c5dd1ebd-ccf6c444` (default build, `--
 
 Product changes: `Animation.swift` (Bezier curves, spring table, layered interruption, completion criteria, scoped `.animation(_:value:)`, `withTransaction`), `Transition.swift` (`AnyTransition`, insertion starts, removal ghosts), `Graph.swift` (onAppear after first presentation, ghosts in resolve), `Edge` enum, Text opacity in `ResolvedNodePainter`. Measurements and decisions: `docs/sr1-decisions.md` C1-C10. Known limits: one explicit transaction per flush decides for every changed node; Image fade excluded; no `.scale`/custom `Transition`.
 
+**Round 3, lane D (block 17 `swiftui.alert`, block 20 `swiftui.color-scheme`; F2 Sandbox interaction job, F3 semantic comparator).** Details and measurements: `docs/sr1-decisions.md` D1-D9, `factory/pipeline/blocks-17-20/README.md`. Pairs are Mac/Windows, N=20, Sandbox loop, renderer 0.7 `82513ae0...`.
+
+| Block | Case (under `factory/pipeline/blocks-17-20/`) | Stage | Verdict |
+|---|---|---|---|
+| 20 colour scheme | `swiftui.color-scheme/semantic-colours-dark-v1` (primary/secondary/accent/background/system colours in dark) | `dcce37ad2-e7b95a11` | 20 exact |
+| | `.../environment-read-v1` (`@Environment(\.colorScheme)` read branches under nested `.environment`) | same | 20 exact |
+| | `.../preferred-dark-v1` (`.preferredColorScheme(.dark)` reaches `.background` outside its subtree) | same | 20 exact |
+| | `.../checkbox-on-dark-v1`, `checkbox-off-dark-v1`, `checkbox-on-dark-disabled-v1`, `checkbox-off-dark-disabled-v1` | same (off cases on `639c20247-d91c7801`, identical checkbox code) | 20 edge-aa<=32 each (max 16, 5, 3, 3) |
+| | `.../switch-on-dark-v1`, `switch-off-dark-v1`, `switch-on-dark-disabled-v1`, `switch-off-dark-disabled-v1` | `2a7be1dc8-2ea6b0b5` | 20 edge-aa<=32 each (max 23, 7, 22, 8), out-of-band haze <=3 (`hazeTolerance`, D9) |
+| | `.../text-dark-v1` (default/secondary/accent/red Text in dark; ink colour gate) | `f2fa32033-50ca6029` | 20 exact-with-exclusions, text-colour gate 20/20 (ink colours identical) |
+| 17 alert | `swiftui.alert/ok-v1`, `no-actions-v1`, `confirm-delete-v1`, `confirm-cancel-v1`, `confirm-escape-v1`, `three-buttons-v1`, `default-enter-v1` | `a52f4c522-ebb34189` | semantic 20/20 each |
+| | `swiftui.alert/auto-cancel-v1` (message-less confirmationDialog gets Cancel) | `f2fa32033-50ca6029` | semantic 20/20 |
+| | `swiftui.alert/focus-restore-v1` (FocusState persists across the alert) | `dcce37ad2-e7b95a11` | semantic 20/20 |
+
+Semantic gate per run: open phase (TaskDialog UIA tree vs the Mac alert record: dialog count, title, message, button names/order/enabled) and final phase (after the button was pressed on each side: same main-window elements, no dialog left, binding reset). Pixels of the main window are reported, never gate.
+
+Tests on lane D's last stage (`600769e24-f54beafa`): Windows runtime 333, bridge 51 (1 skipped), host 120; Mac (git archive of `600769e24`) runtime 325, bridge 52 (1 skipped), host 120; 0 failures.
+
 **Known gaps:**
 - SliceApp's own backend does not yet use `ResolvedNodePainter`.
 - Per-case provenance files (`source-bindings.json`, `plan.json`) describe the old host sources.
 - 41 symbol sizes use measured ink overrides.
 - Hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested.
-- Toggle and Button artwork are measured at scale 2.5, light appearance only (the resolved tree carries no colour scheme, so a dark environment still paints light); Button has no `buttonStyle` variants (every Button is the bordered push button) and its pressed/focused states are unmeasured; the Windows default text colour is 0x1f1f1f against the Mac's 0x272727 (reported by the colour gate, within its tolerance); Toggle activation by pointer or keyboard is covered by unit tests (`activateToggle`, painter repaint), not by a Sandbox input run.
+- Toggle artwork is measured at scale 2.5 in light and dark (block 20); Button artwork is light only; Button has no `buttonStyle` variants (every Button is the bordered push button) and its pressed/focused states are unmeasured; the Windows default text colour is 0x1f1f1f against the Mac's 0x272727 (reported by the colour gate, within its tolerance); Toggle activation by pointer or keyboard is covered by unit tests (`activateToggle`, painter repaint), not by a Sandbox input run.
 
 **Next:** scale to 10 blocks, then 20, using the same loop.
 
