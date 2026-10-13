@@ -138,4 +138,15 @@ final class ButtonPainterTests: XCTestCase {
         XCTAssertEqual(plain.runs.colours, destructive.runs.colours)
         XCTAssertEqual(try fill(plain), try fill(destructive))
     }
+
+    func testButtonLabelTextPublishesNoSemanticNodeOfItsOwn() throws {
+        let painter = ResolvedNodePainter(images: FakeImages(), scale: 2.5, text: FakeRuns(), log: { _ in })
+        let graph = Graph(Witness_ButtonView(), scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        var sent: SwiftRightBridge.Transaction?
+        _ = try painter.commit(root: try XCTUnwrap(graph.snapshot()), version: 1, previousLive: [], submit: { sent = $0 })
+        let roles = try XCTUnwrap(sent).upserts.compactMap { $0.semantic?.role }
+        XCTAssertEqual(roles, [.button])
+    }
 }

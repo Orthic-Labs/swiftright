@@ -94,15 +94,17 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
-            let emission: NodeEmission
+            var emission: NodeEmission
             if let row, let rowList { emission = try emitListRow(n, id: id, row: row, listBounds: rowList.bounds, look: rowList.look) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
+            // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
+            if inButton, n.kind == "Text" { emission.semantic = nil }
             // A List row is hit anywhere along its width, not only where its content is.
             let nodeBounds = row?.rect ?? bounds
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
@@ -122,7 +124,7 @@ public final class ResolvedNodePainter {
                     try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look))
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: inButton || n.kind == "Button") }
             }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)

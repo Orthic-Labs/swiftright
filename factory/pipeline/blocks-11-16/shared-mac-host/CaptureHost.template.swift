@@ -195,7 +195,8 @@ final class Driver {
         }
         if let tv = table(), ["Down", "Up", "Delete", "Backspace", "Home", "End", "Space", "Return", "Enter"].contains(name) {
             if window.firstResponder !== tv { _ = window.makeFirstResponder(tv) }
-            tv.keyDown(with: ev)
+            // Delete reaches `deleteBackward:` through the text-input system a key-down goes through (a bare `keyDown` does not run SwiftUI's onDelete)
+            if name == "Delete" || name == "Backspace" { tv.interpretKeyEvents([ev]) } else { tv.keyDown(with: ev) }
             return
         }
         if !window.performKeyEquivalent(with: ev) { (window.firstResponder ?? host).keyDown(with: ev) }
