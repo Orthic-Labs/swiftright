@@ -20,6 +20,10 @@ private struct Witness_ListPlainSelected: View {
     }
 }
 
+private struct Witness_ListBareRows: View {
+    var body: some View { List { Text("A"); Text("B") }.frame(width: 200, height: 160) }
+}
+
 private struct Witness_ListSidebar: View {
     var body: some View { List { Text("A") }.listStyle(.sidebar).frame(width: 200, height: 160) }
 }
@@ -113,7 +117,7 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(list.semantic?.role, .list)
         let rows = flatten(r.root).first { $0.kind == "List" }!.children
         let first = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rows[0].instance + 1) })
-        XCTAssertEqual(first.semantic?.role, .listItem); XCTAssertEqual(first.semantic?.selected, false); XCTAssertEqual(first.primitives.count, 0)
+        XCTAssertEqual(first.semantic?.role, .listItem); XCTAssertEqual(first.semantic?.selected, false); XCTAssertFalse(first.primitives.contains { if case .image = $0 { return true } else { return false } }, "no highlight")
     }
 
     func testPlainStyleSelectionIsAFlatFullWidthRectangleAndSeparatorsReachTheEdge() throws {
@@ -151,5 +155,14 @@ final class ListPainterTests: XCTestCase {
             }
         }
         XCTAssertLessThanOrEqual(worst, 32, "worst corner difference \(worst) at \(at)")
+    }
+
+    func testARowThatIsABareTextStillPaintsItsText() throws {
+        let r = try commit(Witness_ListBareRows())
+        XCTAssertEqual(r.runs.asked.map { $0.0 }, ["A", "B"])
+        let rows = flatten(r.root).first { $0.kind == "List" }!.children
+        let first = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rows[0].instance + 1) })
+        XCTAssertEqual(first.semantic?.role, .listItem)
+        XCTAssertTrue(first.primitives.contains { if case .text = $0 { return true } else { return false } })
     }
 }

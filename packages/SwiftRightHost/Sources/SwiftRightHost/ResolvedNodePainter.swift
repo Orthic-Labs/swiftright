@@ -101,7 +101,7 @@ public final class ResolvedNodePainter {
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
             var emission: NodeEmission
-            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, listBounds: rowList.bounds, look: rowList.look) }
+            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, listBounds: rowList.bounds, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
             if inButton, n.kind == "Text" { emission.semantic = nil }
@@ -250,7 +250,7 @@ public final class ResolvedNodePainter {
     }
 
     /// One row of a List: its selection highlight (a rect primitive), and the row's semantics (a list item, selected or not) over the row's whole width.
-    func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, listBounds: Rect, look: ListLook) throws -> NodeEmission {
+    func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, listBounds: Rect, look: ListLook, contentBounds: Rect, textColor: UInt32?) throws -> NodeEmission {
         var primitives: [Primitive] = []
         switch ListPainter.highlight(for: row, listBounds: listBounds, look: look, scale: scale, active: listIsActive) {
         case .flat(let rect, let rgba)?:
@@ -265,10 +265,14 @@ public final class ResolvedNodePainter {
         case nil:
             break
         }
+        // a row that is itself a primitive (a bare Text) still paints its own content over the highlight
+        if !Self.isStructuralKind(node.kind) { primitives += try emit(node, id: id, bounds: contentBounds, textColor: textColor).primitives }
         return NodeEmission(primitives: primitives,
                             semantic: SemanticNode(role: .listItem, label: node.accessibility.label ?? "", identifier: node.id, selected: row.isSelected, disabled: !row.isEnabled),
                             flags: [.hitTarget], structural: false)
     }
+
+    static func isStructuralKind(_ kind: String) -> Bool { !(kind == "Text" || kind == "Color" || kind == "Image" || kind == "Rectangle" || kind == "RoundedRectangle" || kind == "Circle") }
 
     private func systemImagePrimitive(_ node: ResolvedNode, bounds: Rect, registry: SystemImageRegistry) throws -> Primitive {
         guard let reference = node.image else { throw HostPaintError.systemImageContractMismatch("no image reference") }
