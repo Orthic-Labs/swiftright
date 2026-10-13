@@ -1,0 +1,15 @@
+# Custom Layout original API execution source packet v7
+
+Fresh source-only packet for original recipe inputs `child-count=2`, `proposal-width=48`, `layout-direction=leftToRight`; case identity remains `swiftui.custom-layout.recipe/case/9e168af9151444e6`. Child frames remain 12x10 & 16x14, spacing remains 4, order remains `ForEach(0..<2)`. Runtime pin is `37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b`, renderer tuple11, ABI `0.6`.
+
+Windows & Mac `Witness.swift` bytes are identical SHA256 `sha256:afe77cdfbd5c73943aeebe52c515f2149c7951a4e3512f1678cda6625cdb58f7`. Source uses direct `Layout`, `ProposedViewSize`, `CGSize`, `CGRect`, & `CGPoint` APIs behind only conditional module imports; no `AppleLayout` or `AppleGeometry` aliases remain. This exercises current runtime geometry bridge (`Layout.swift`) through its direct CGSize/CGRect overloads.
+
+Windows package plan is resealed at `package/plan.json`; source bindings distinguish template recipe/case hash from expanded witness hash. Mac source plan is `mac-source/source-plan.json`, with same witness bytes, fixed 320x240pt opaque-white centered host, scale 2.5, and no native evidence. Root must perform existing bounded builds & captures; packet makes no parity claim.
+
+Windows rolling stage is `D:\Claude\swiftright\.factory-work\hosts\custom-layout-colors`; no dedicated fourth stage is created. Package plan uses existing `build-bound-r1\scratch` path so root can reuse current host staging contract.
+
+
+
+Lifecycle correction: `RendererHost` marks window closure before teardown & ignores late tick/event/commit callbacks drained after `onWindowClosed`; live ownership & DPI checks remain unchanged. This addresses failed Count20 run17 where `factoryOwnedClient` ran after destruction.
+
+`FactoryViewport.swift` is byte-identical to v6 (`sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae`); ownership, HWND identity, client metrics, foreground veto, and DPI drift checks remain active while window is live.

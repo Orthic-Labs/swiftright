@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py", line 357, in <module>
+    require(plan.get('packetPlanHash') == 'sha256:' + digest(packet_plan_raw), 'packet plan hash drift')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py", line 99, in require
+    raise RuntimeError(message)
+RuntimeError: packet plan hash drift

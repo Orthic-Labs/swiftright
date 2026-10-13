@@ -16,7 +16,7 @@ PACKETS = {
     'image-v2': 'text-shape-image/image-host-package-v2',
     'image-star-provider': 'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2',
     'image-star-observation': 'text-shape-image/image-system-star-fill-v9',
-    'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v7',
+    'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v8',
     'custom-layout-colors': 'stack-layout/custom-layout-host-v2/direct-original-execution-v7',
     'rounded-stroke-boundary': 'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v5',
     'bundled-font-compiled': 'text-shape-image/bundled-font-readiness-v6-line-limit-host',

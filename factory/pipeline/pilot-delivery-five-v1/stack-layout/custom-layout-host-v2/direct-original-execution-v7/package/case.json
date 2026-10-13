@@ -1,0 +1,66 @@
+{
+  "block": "swiftui.custom-layout",
+  "case": {
+    "hash": "sha256:9e168af9151444e67b5d17d8dc0951539a59bfa6f887516c1f76296bae3ab6b0",
+    "id": "swiftui.custom-layout.recipe/case/9e168af9151444e6"
+  },
+  "caseInputs": {
+    "child-count": 2,
+    "layout-direction": "leftToRight",
+    "proposal-width": 48
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "host-specific callback adapter required",
+      "native": "native host capture required",
+      "provider": "host-specific adapter required; no renderer ABI assumed",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.custom-layout:swiftui.custom-layout.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.custom-layout.witness",
+        "sourceHash": "sha256:afe77cdfbd5c73943aeebe52c515f2149c7951a4e3512f1678cda6625cdb58f7"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {},
+  "executionEligible": true,
+  "kind": "generated-probe",
+  "recipe": {
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+    "id": "swiftui.custom-layout.recipe"
+  },
+  "scenario": "baseline",
+  "sourceFile": "swiftui.custom-layout.recipe_case_9e168af9151444e6.swift",
+  "sourceHash": "sha256:afe77cdfbd5c73943aeebe52c515f2149c7951a4e3512f1678cda6625cdb58f7",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.custom-layout.witness",
+    "sourceHash": "sha256:afe77cdfbd5c73943aeebe52c515f2149c7951a4e3512f1678cda6625cdb58f7"
+  },
+  "witnessType": "Witness_custom_layout",
+  "id": "swiftui.custom-layout.recipe/case/9e168af9151444e6",
+  "hash": "sha256:9e168af9151444e67b5d17d8dc0951539a59bfa6f887516c1f76296bae3ab6b0"
+}

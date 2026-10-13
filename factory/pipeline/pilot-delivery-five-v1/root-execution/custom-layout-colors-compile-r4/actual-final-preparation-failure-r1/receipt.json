@@ -1,0 +1,29 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "factory/.venv/bin/python",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/prepare-pilot-final-build-v1.py",
+    "--host",
+    "custom-layout-colors",
+    "--compile-revision",
+    "4",
+    "--actual-dir",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/custom-layout-colors-compile-r4/actual-prebuild-r1"
+  ],
+  "pid": 14600,
+  "exitCode": 1,
+  "budgetFailure": null,
+  "startedAt": "2026-10-13T01:34:50.642621+00:00",
+  "finishedAt": "2026-10-13T01:34:50.926773+00:00",
+  "seconds": 0.284,
+  "peakGroupRssBytes": 622592,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 608,
+    "sha256": "49fd385c6911352d7494680a91e2e1eccb6c8b2b782ee184d2afeb3699b5a64b"
+  },
+  "ownedGroupQuiescent": true
+}
