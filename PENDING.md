@@ -15,6 +15,7 @@ State: RECOVERED-BUT-UNADMITTED. Broker audit was READY with empty owners/inFlig
 | 4 | W08 | must be fixed, not accepted as limitation |
 | 5 | Comparison repeat count | accepted: 20 Mac & 20 Windows per config on final 0.6 tuple |
 | 6 | Freeze | held until W08 & tuple12 qualification close |
+| 7a | Tuple 12 packages (MSIX/DMG) | BLOCKED 2026-10-13: swiftright has no `release` environment/secrets/vars (admin: create env `release` + Azure vars and Apple secrets as on legion/pulse, add Azure federated credential for `repo:Orthic-Labs/swiftright:environment:release`); right-git Windows checkout fails on long paths (needs RightKit sparse-checkout/longpaths option); SliceApp renderer pin still tuple 08. Details `docs/sr0-status.md` |
 | 7 | Signing | new-package signing approved using short-lived Azure certificate reissue; no fixed expiry deadline |
 | 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
 | 9 | Selection highlight not painted | SR1-owned limitation; unchanged |
