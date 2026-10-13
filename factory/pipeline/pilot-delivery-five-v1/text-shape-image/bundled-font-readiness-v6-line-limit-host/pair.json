@@ -1,1 +1,24 @@
-{"excludeRects": [{"name": "Tinos Text line box [0,0,300,52): same font bytes both sides; Windows DirectWrite/GPUI rasterizer and baseline placement vs CoreText (sr1-decisions #2); judged on line count, ellipsis, bounds", "rect": [0, 0, 300, 52]}]}
+{
+ "excludeRects": [
+  {
+   "name": "Tinos glyph region [0,5,297,53) (ink bbox mac [2,7,294,50]); AA only (DirectWrite grayscale vs CoreText); gated by factory/tools/pair_text_report.py: exact outside, half-coverage ink bbox within 1 px per edge",
+   "rect": [
+    0,
+    5,
+    297,
+    53
+   ]
+  }
+ ],
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rect": [
+   0,
+   5,
+   297,
+   53
+  ],
+  "edgeTolerancePx": 1,
+  "ink": "half-coverage (luminance<=127)"
+ }
+}

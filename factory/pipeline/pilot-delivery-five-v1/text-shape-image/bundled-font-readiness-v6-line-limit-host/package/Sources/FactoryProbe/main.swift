@@ -127,7 +127,8 @@ func tinosProviderMetrics(fontPath: String, pointSizeDIP: Float = 18) throws -> 
     let units = Float(file.unitsPerEm)
     let ascentDefault = pointSizeDIP * Float(file.ascentUnits) / units
     let descentDefault = pointSizeDIP * abs(Float(file.descentUnits)) / units
-    let lineHeightDefault = pointSizeDIP * (Float(file.ascentUnits) + abs(Float(file.descentUnits)) + Float(file.lineGapUnits)) / units
+    // SwiftUI/CoreText Text line height: round(ascent) + round(descent) in DIP; the hhea lineGap (leading) is not part of it (measured on macOS, ImageRenderer, Tinos 13/18/31 pt at 1x/2x/2.5x).
+    let lineHeightDefault = ascentDefault.rounded() + descentDefault.rounded()
     guard ascentDefault.isFinite, descentDefault.isFinite, lineHeightDefault.isFinite, lineHeightDefault > 0 else { throw NSError(domain: "FactoryTinosFontMetricsInvalid", code: 1) }
     let lineHeight = try validTinosMetric(value("--tinos-line-height"), key: "--tinos-line-height") ?? lineHeightDefault
     let ascent = try validTinosMetric(value("--tinos-ascent"), key: "--tinos-ascent") ?? ascentDefault
