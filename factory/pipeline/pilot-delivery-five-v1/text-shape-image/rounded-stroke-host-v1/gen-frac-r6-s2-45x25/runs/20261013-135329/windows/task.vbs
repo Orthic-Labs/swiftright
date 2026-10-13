@@ -1,0 +1,3 @@
+Set sh = CreateObject("WScript.Shell")
+rc = sh.Run("powershell.exe -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\.factory-work\pair-tools\capture.ps1"" -Exe ""D:\Claude\swiftright\.factory-work\hosts\gen-frac-r6-s2-45x25\package\scratch\x86_64-unknown-windows-msvc\release\FactoryProbe.exe"" -Out ""D:\Claude\swiftright\.factory-work\hosts\gen-frac-r6-s2-45x25\captures\20261013-135329"" -Runs 3 -Owner swiftright-87", 0, True)
+WScript.Quit rc

@@ -52,3 +52,4 @@ Frozen `8e47b89` Windows reference remains separate. All ten unchanged Windows p
 | Mirror child frames under rightToLeft layoutDirection (SwiftUI semantics) | `ef9e5b35` | 190 (Windows 197) |
 | SF Symbol layout metrics for `Image(systemName:)` (ink box, aspect-fit, device-pixel calibration; `Graph.imageFitIntrinsicSize`) | `599e9a26` | 211 (Windows 218) |
 | Rounded continuous stroke: 16x16 coverage, fractional bitmap offset, bottom-left corner fix, 0.2 px stroke flattening | `5e28680c`, follow-up flatten commit | 211 incl. 11 uncommitted Image-block tests (HEAD-only Mac not run; Windows 200 from HEAD export) |
+| Generalisation of Rounded continuous stroke and Image(systemName:) (variants r4/s1, r40/s8, 200x60 r12, 45x25 fractional frame; star.fill 16pt/48pt/120x60): spatial-index rasterizer, smoothstep stroke edge, DevicePixelSnap, scale-class symbol model | `398026a5`, `8b3df597`, `b5dd520f` | 215 (Windows 222) |

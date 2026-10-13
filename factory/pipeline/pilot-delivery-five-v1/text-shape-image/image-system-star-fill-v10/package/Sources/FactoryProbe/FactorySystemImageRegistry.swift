@@ -24,25 +24,47 @@ import SwiftRightBridge
         let intrinsicSize: [Double]
         let sourceOversample: UInt32?
         let fitIntrinsicSize: [Double]?
-        /// One Mac device configuration: the Image view's pixel-snapped size and the half-coverage ink box inside it.
-        struct DeviceInk: Decodable {
+        /// SwiftUI sizes a resizable symbol by an intrinsic box that depends only on the screen-scale CLASS (1x below
+        /// scale 2, 2x from 2), never on the frame; the ink fractions and edge biases predict the half-coverage ink box
+        /// for any frame (factory/tools/symbol-metrics/fit-layout.py).
+        struct ScaleClass: Decodable {
+            let scaleClass: String
+            let minScale: Double
+            let maxScaleExclusive: Double?
+            let fitIntrinsicSize: [Double]
+            let inkFractions: [Double]
+            let inkBias: [Double]
+        }
+        /// A measured Mac ink box the class model mispredicts (sharp-tip phase); used only on an exact (scale, view size) match.
+        struct InkOverride: Decodable {
             let scale: Double
             let viewFramePx: [Int]
             let inkBoxPx: [Int]
-            let fitIntrinsicSize: [Double]
         }
-        let deviceInk: [DeviceInk]?
-        /// Intrinsic size SwiftUI fitted this symbol by at the given screen scale (calibrated config), else the large-frame value.
-        func fitIntrinsic(scale: Double) -> [Double]? {
-            deviceInk?.first(where: { abs($0.scale - scale) < 1e-6 && $0.fitIntrinsicSize.count == 2 })?.fitIntrinsicSize ?? fitIntrinsicSize
+        let scaleClasses: [ScaleClass]?
+        let inkOverrides: [InkOverride]?
+        func scaleClass(scale: Double) -> ScaleClass? {
+            scaleClasses?.first(where: { scale >= $0.minScale && ($0.maxScaleExclusive.map { scale < $0 } ?? true)
+                && $0.fitIntrinsicSize.count == 2 && $0.inkFractions.count == 4 && $0.inkBias.count == 4 })
         }
-        /// Mac half-coverage pixel ink box (relative to the view frame) for this screen scale and view size, when calibrated.
+        /// Intrinsic size SwiftUI fits this symbol by at the given screen scale.
+        func fitIntrinsic(scale: Double) -> [Double]? { scaleClass(scale: scale)?.fitIntrinsicSize ?? fitIntrinsicSize }
+        /// Mac half-coverage pixel ink box (relative to the view frame): a measured override for this exact view size,
+        /// else the scale-class model's prediction for any size.
         func deviceInkBox(scale: Double, widthPx: UInt32, heightPx: UInt32) -> SystemImageDeviceInkBox? {
-            guard scale > 0, let hit = deviceInk?.first(where: {
-                $0.viewFramePx.count == 4 && $0.inkBoxPx.count == 4 && abs($0.scale - scale) < 1e-6
-                    && $0.viewFramePx[2] == Int(widthPx) && $0.viewFramePx[3] == Int(heightPx) }) else { return nil }
-            let box = SystemImageDeviceInkBox(left: hit.inkBoxPx[0], top: hit.inkBoxPx[1], right: hit.inkBoxPx[2], bottom: hit.inkBoxPx[3])
-            return box.isValid ? box : nil
+            guard scale > 0 else { return nil }
+            if let hit = inkOverrides?.first(where: { $0.viewFramePx.count == 4 && $0.inkBoxPx.count == 4 && abs($0.scale - scale) < 1e-6
+                    && $0.viewFramePx[2] == Int(widthPx) && $0.viewFramePx[3] == Int(heightPx) }) {
+                let box = SystemImageDeviceInkBox(left: hit.inkBoxPx[0], top: hit.inkBoxPx[1], right: hit.inkBoxPx[2], bottom: hit.inkBoxPx[3])
+                if box.isValid { return box }
+            }
+            return metrics(scale: scale)?.predictedInkBox(widthPx: Int(widthPx), heightPx: Int(heightPx))
+        }
+        func metrics(scale: Double) -> SystemImageLayoutMetrics? {
+            guard let c = scaleClass(scale: scale), c.fitIntrinsicSize[1] > 0 else { return metrics }
+            let m = SystemImageLayoutMetrics(aspect: c.fitIntrinsicSize[0] / c.fitIntrinsicSize[1], inkLeft: c.inkFractions[0], inkTop: c.inkFractions[1],
+                                             inkRight: c.inkFractions[2], inkBottom: c.inkFractions[3], inkBias: c.inkBias)
+            return m.isValid ? m : metrics
         }
         var metrics: SystemImageLayoutMetrics? {
             guard inkRect.count == 4 else { return nil }
@@ -187,7 +209,7 @@ import SwiftRightBridge
             parity: mapping.providerPolicy.parity)
         let raster = try FactorySystemImageProvider.rasterize(descriptor, width: targetWidth,
                                                                height: targetHeight, tint: tint,
-                                                               layout: entry.layout?.metrics,
+                                                               layout: entry.layout?.metrics(scale: scale),
                                                                deviceInk: entry.layout?.deviceInkBox(scale: scale, widthPx: targetWidth, heightPx: targetHeight),
                                                                inset: entry.layout == nil ? 0 : Self.overflowInset,
                                                                oversample: entry.layout?.sourceOversample ?? 1)
@@ -228,6 +250,9 @@ import SwiftRightBridge
     let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight)
     let inset = registry.canvasInset(for: reference)
     print("FACTORY_SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(node.pixelFrame.x) yPX=\(node.pixelFrame.y) widthPX=\(node.pixelFrame.width) heightPX=\(node.pixelFrame.height) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
-    return .image(handle, Rect(x: Float(node.pixelFrame.x) - inset, y: Float(node.pixelFrame.y) - inset,
-                                w: Float(node.pixelFrame.width) + 2 * inset, h: Float(node.pixelFrame.height) + 2 * inset))
+    // GPUI scales logical bounds by the display scale in f32, then floors the origin and ceils the size, so an
+    // integral device-pixel rect can stretch by a whole pixel (e.g. 128 px -> 129). Nudge it inside its pixel cell.
+    let guardBand: Float = 1.0 / 64
+    return .image(handle, Rect(x: Float(node.pixelFrame.x) - inset + guardBand, y: Float(node.pixelFrame.y) - inset + guardBand,
+                                w: Float(node.pixelFrame.width) + 2 * inset - 2 * guardBand, h: Float(node.pixelFrame.height) + 2 * inset - 2 * guardBand))
 }

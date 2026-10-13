@@ -1,0 +1,46 @@
+{
+  "kind": "continuous-rounded-shape-adapter-source-v1",
+  "status": "source-only-pending-root-integration",
+  "witness": {
+    "path": "../../package/Sources/FactoryProbe/Witness.swift",
+    "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+    "recipe": "RoundedRectangle(cornerRadius: 6).stroke(Color.blue, lineWidth: 2).frame(width: 40, height: 20)"
+  },
+  "case": {
+    "path": "../../package/case.json",
+    "sha256": "sha256:c2a99399c435d6c1e16bbb2d80675f1f8a4ab1aa3e654b7dcf4ff1ffd0410491",
+    "recipeId": "swiftui.shapes.fill-stroke.recipe",
+    "colorScheme": "light"
+  },
+  "plan": {
+    "path": "../../package/plan.json",
+    "sha256": "sha256:e4a28fafc615d642c924bb93ca5370cd0de220c1b115c82a3748d8c3aca58a72"
+  },
+  "adapter": {
+    "path": "Sources/FactoryProbe/FactoryContinuousShapeAdapter.swift",
+    "dynamicInputs": [
+      "bounds",
+      "cornerRadiusPX",
+      "fillRGBA",
+      "strokeRGBA",
+      "strokeWidthPX"
+    ],
+    "imageLifetime": "caller-retains ImageHandle until primitive removal, then releases exactly once",
+    "hostEntry": "Sources/FactoryProbe/main.swift",
+    "packageManifest": "Package.swift"
+  },
+  "runtimeBindings": {
+    "status": "placeholders-root-must-regenerate-after-staging",
+    "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-rounded-r1\\runtime",
+    "runtimeSourceTreeHash": null,
+    "runtimeSourceReceiptHash": null,
+    "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+    "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "geometryPolicy": {
+    "ordinaryRadiusOnly": true,
+    "unsupportedLargeRadius": "throw unsupportedRadiusExtent",
+    "stroke": "centered expansion via padded RGBA canvas",
+    "pixelParity": "unclaimed"
+  }
+}

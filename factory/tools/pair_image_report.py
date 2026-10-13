@@ -2,13 +2,13 @@
 """Semantic gate for an Image(systemName:) pair run (SF Symbols cannot ship on Windows; docs/sr1-decisions.md item 3).
 usage: pair_image_report.py <case-dir> <runs/<ts> dir>   (after factory/tools/pair.py produced mac/ and windows/)
 Case <case>/pair.json supplies {"imageFrame": {"name","tint":[r,g,b],"assets":<mapping json>,"symbol","scale","containerPx":[x0,y0,x1,y1],
-"shapeOutsetPx"}}: the expected Image view frame is containerPx origin + the Mac-measured viewFramePx for (symbol, scale) in the mapping table;
+"shapeOutsetPx"}}: the expected Image view frame is containerPx origin + the viewFramePx predicted by the mapping table's scale-class model for ANY container size (aspect-fit of the class intrinsic box, edges snapped half up; no per-configuration calibration);
 the shape region is that frame outset by shapeOutsetPx (symbols overflow their frame). Pixels are in the 800x600 capture on white.
 Per run it reports and GATES: frame (the host's logged image frame equals the expected rect; everything outside the frame is
 pixel-identical), ink bbox (half-coverage bounding boxes equal on both sides), tint (the fully covered colour equals the expected
 tint on both sides). The glyph SHAPE (all pixels inside the frame rect) is a named exclusion from the exact gate: its differing
 pixel count and any-coverage ink bboxes are reported, never gated. Any frame/bbox/tint mismatch is a real defect (exit 1)."""
-import json, re, sys
+import json, math, re, sys
 from collections import Counter
 from pathlib import Path
 from PIL import Image
@@ -50,18 +50,42 @@ def analyse(img, rect, tint):
                 fullCoveragePixels=sum(full.values()))
 
 
+def snap(v):
+    return math.floor(v + 0.5)
+
+
+def model_for(layout, scale, container):
+    """Expected Image view frame and half-coverage ink box (px, relative to the view frame) from the scale-class model in
+    the mapping table (factory/tools/symbol-metrics/fit-layout.py), for ANY container size; measured overrides win on an
+    exact (scale, view size) match. No per-configuration calibration is required."""
+    cls = next(c for c in layout["scaleClasses"] if scale >= c["minScale"] and (c["maxScaleExclusive"] is None or scale < c["maxScaleExclusive"]))
+    cw, ch = container[2] - container[0], container[3] - container[1]
+    fw, fh = cls["fitIntrinsicSize"]; a = fw / fh
+    h = min(cw / a, ch); w = h * a; x = (cw - w) / 2; y = (ch - h) / 2
+    l, t, r, b = snap(x), snap(y), snap(x + w), snap(y + h)
+    vw, vh = r - l, b - t
+    fr, bias = cls["inkFractions"], cls["inkBias"]
+    ink = [math.floor(fr[0] * vw + bias[0]), math.floor(fr[1] * vh + bias[1]), math.floor(fr[2] * vw + bias[2]), math.floor(fr[3] * vh + bias[3])]
+    source = "scale-class model"
+    for o in layout.get("inkOverrides", []):
+        if abs(o["scale"] - scale) < 1e-6 and o["viewFramePx"][2] == vw and o["viewFramePx"][3] == vh:
+            ink, source = list(o["inkBoxPx"]), "measured override (class model mispredicts this size)"
+    return dict(viewFramePx=[l, t, vw, vh], inkBoxPx=ink, source=source)
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["imageFrame"]
     tint, name = tuple(cfg["tint"]), cfg["name"]
     layout = json.loads((case / cfg["assets"]).read_text())["symbols"][cfg["symbol"]]["layout"]
-    cal = next(d for d in layout["deviceInk"] if abs(d["scale"] - cfg["scale"]) < 1e-6)
+    cal = model_for(layout, cfg["scale"], cfg["containerPx"])
     ox, oy = cfg["containerPx"][0], cfg["containerPx"][1]
     fx, fy, exp_w, exp_h = cal["viewFramePx"]
     frame = [ox + fx, oy + fy, ox + fx + exp_w, oy + fy + exp_h]            # expected Image view frame in the capture
     o = cfg["shapeOutsetPx"]
     rect = (frame[0] - o, frame[1] - o, frame[2] + o, frame[3] + o)         # shape region (frame + overflow margin)
     table_ink = cal["inkBoxPx"]
+    print(f"expected view frame px {frame}; expected ink box {table_ink} ({cal['source']})")
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
         n = mac.stem.split("-")[1]
@@ -89,7 +113,7 @@ def main():
         tint_ok = ma["fullCoverageColour"] == list(tint) == wa["fullCoverageColour"]
         row.update(ok=frame_ok and bbox_ok and tint_ok and table_ok,
                    frame=dict(match=frame_ok, expectedRectPx=frame, windowsLoggedRectPx=logged, differingPixelsOutsideShapeRegion=outside),
-                   inkBBox=dict(match=bbox_ok, macCaptureEqualsTableCalibration=table_ok, tableInkBoxPx=table_ink, rule="half-coverage (>=50% of tint) bounding box, px relative to the frame origin", mac=ma["inkBBoxHalfCoverage"], windows=wa["inkBBoxHalfCoverage"],
+                   inkBBox=dict(match=bbox_ok, macCaptureEqualsModel=table_ok, modelInkBoxPx=table_ink, modelSource=cal['source'], rule="half-coverage (>=50% of tint) bounding box, px relative to the frame origin", mac=ma["inkBBoxHalfCoverage"], windows=wa["inkBBoxHalfCoverage"],
                                 anyCoverageMac=ma["inkBBoxAnyCoverage"], anyCoverageWindows=wa["inkBBoxAnyCoverage"]),
                    tint=dict(match=tint_ok, expectedRGB=list(tint), macFullCoverageRGB=ma["fullCoverageColour"], windowsFullCoverageRGB=wa["fullCoverageColour"],
                              macFullCoveragePixels=ma["fullCoveragePixels"], windowsFullCoveragePixels=wa["fullCoveragePixels"]),
