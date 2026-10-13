@@ -138,4 +138,29 @@ final class TogglePainterTests: XCTestCase {
         XCTAssertEqual(images.live.count, 1)
         painter.releaseAll(); XCTAssertEqual(images.live.count, 0)
     }
+
+    /// The host's default-action path (`Graph.activateToggle`) flips an enabled switch and the next paint shows it; a disabled one ignores it.
+    func testActivationFlipsTheNextPaintAndDisabledIgnoresIt() throws {
+        func emission(_ graph: Graph, _ painter: ResolvedNodePainter) throws -> (ResolvedNode, NodeEmission) {
+            graph.flush()
+            let node = try XCTUnwrap(flatten(try XCTUnwrap(graph.snapshot())).first { $0.kind == "Toggle" })
+            painter.beginCommit(); defer { painter.endCommit(committed: true) }
+            return (node, try painter.emit(node, id: 3, bounds: Rect(x: 0, y: 0, w: 135, h: 60)))
+        }
+        let images = FakeImages()
+        let painter = ResolvedNodePainter(images: images, scale: 2.5, text: nil, log: { _ in })
+        let enabled = Graph(Witness_HiddenSwitchView(on: true), scale: 2.5)
+        let before = try emission(enabled, painter)
+        XCTAssertEqual(before.1.semantic?.toggled, .on)
+        XCTAssertTrue(enabled.activateToggle(try XCTUnwrap(enabled.ids(ofKind: "Toggle").first)))
+        let after = try emission(enabled, painter)
+        XCTAssertEqual(after.1.semantic?.toggled, .off)
+        XCTAssertEqual(after.0.accessibility.value, "0")
+        let disabled = Graph(Witness_DisabledSwitchView(), scale: 2.5)
+        let first = try emission(disabled, painter)
+        XCTAssertFalse(disabled.activateToggle(try XCTUnwrap(disabled.ids(ofKind: "Toggle").first)))
+        let second = try emission(disabled, painter)
+        XCTAssertEqual(first.1.semantic?.toggled, second.1.semantic?.toggled)
+        XCTAssertEqual(second.1.semantic?.toggled, .on)
+    }
 }
