@@ -53,7 +53,14 @@ parser.add_argument('--cached-frontend-actual', type=Path,
                     help='prior actual prebuild archive containing frontend commands & identical executable')
 parser.add_argument('--seed-case-artifact', type=Path,
                     help='original recipe seed when packet case is already materialized; same block/inputs required')
+parser.add_argument('--source-packet', type=Path, help='prospective source packet under pilot delivery root')
+parser.add_argument('--runtime-source-receipt', type=Path, help='actual factory-additive-runtime-source receipt')
 args = parser.parse_args()
+if bool(args.source_packet) != bool(args.runtime_source_receipt):
+    raise RuntimeError('--source-packet & --runtime-source-receipt must be supplied together')
+if args.source_packet:
+    packet_root = (ROOT / args.source_packet).resolve()
+    PACKETS[args.host] = packet_root.relative_to(ROOT / 'factory/pipeline/pilot-delivery-five-v1').as_posix()
 
 attempt = args.attempt if args.attempt is not None else (2 if args.host == 'image' else 1)
 out = EXEC / (args.host + f'-compile-r{args.compile_revision}')
@@ -342,6 +349,19 @@ def scan_frontend(path: Path, allow_empty: bool = False) -> dict:
         'lastNumThreads': values[-1] if values else None, 'requiredLastNumThreads': 1,
         'proof': 'actual-stdout-stream-scan',
     }
+
+if args.runtime_source_receipt:
+    runtime_receipt_path = (ROOT / args.runtime_source_receipt).resolve()
+    runtime_receipt_path.relative_to(ROOT)
+    runtime_receipt = load_json(runtime_receipt_path)
+    require(runtime_receipt.get('kind') == 'factory-additive-runtime-source', 'runtime source receipt kind mismatch')
+    require(runtime_receipt.get('synthetic') is False, 'synthetic runtime receipt')
+    RUNTIME_COMMIT = runtime_receipt.get('sourceCommit')
+    RUNTIME_TREE = runtime_receipt.get('sourceTreeHash')
+    require(isinstance(RUNTIME_COMMIT, str) and re.fullmatch(r'[0-9a-f]{40}', RUNTIME_COMMIT), 'runtime commit missing')
+    require(isinstance(RUNTIME_TREE, str) and re.fullmatch(r'sha256:[0-9a-f]{64}', RUNTIME_TREE), 'runtime tree missing')
+    require(digest(packet / 'runtime-source-receipt.json') == digest(runtime_receipt_path), 'packet runtime receipt drift')
+    require('sha256:' + digest(packet / 'runtime-source-tree.json') == RUNTIME_TREE, 'packet runtime tree drift')
 
 packet_plan_raw = packet / 'plan.json'
 packet_plan = load_json(packet_plan_raw)
