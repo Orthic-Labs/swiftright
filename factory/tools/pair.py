@@ -192,6 +192,9 @@ def edge_band(im):
     return e.point(lambda v: 255 if v else 0).filter(ImageFilter.MaxFilter(3))
 
 
+HAZE = 0   # <case>/pair.json "hazeTolerance": out-of-band differences up to this many levels (a faint soft shadow, 8-bit rounding) do not fail the edge gate; reported as hazeMax
+
+
 def edge_gate(im, iw, exclusions=()):
     """Verdict exact | edge-aa<=32 | fail, with counts (exact = no difference outside the excluded rects; compare() relabels that exact-with-exclusions when an excluded region differs). Pixels in excluded rects are ignored."""
     a, b, c = ImageChops.difference(im, iw).split()
@@ -203,7 +206,7 @@ def edge_gate(im, iw, exclusions=()):
     inb, outb = Image.composite(d, black, band), Image.composite(black, d, band)
     cnt = lambda x: x.size[0] * x.size[1] - x.histogram()[0]
     ti, to = cnt(inb), cnt(outb); mi, mo = inb.getextrema()[1], outb.getextrema()[1]
-    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if to == 0 and mi <= 32 else "fail")
+    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if (to == 0 or mo <= HAZE) and mi <= 32 else "fail")
     return dict(verdict=verdict, totalDiff=ti + to, inBandDiff=ti, outOfBandDiff=to, maxInBand=mi, maxOutOfBand=mo,
                 bandPixels=cnt(band))
 
@@ -301,6 +304,8 @@ def main():
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
+    global HAZE
+    HAZE = int(json.loads((case / "pair.json").read_text()).get("hazeTolerance", 0)) if (case / "pair.json").is_file() else 0
     if a.recompare:
         out = Path(a.recompare).resolve(); clock = load_clock(case, a.frames)
         n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})

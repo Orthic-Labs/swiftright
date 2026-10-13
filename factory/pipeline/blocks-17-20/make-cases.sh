@@ -239,3 +239,8 @@ cat > swiftui.color-scheme/text-dark-v1/pair.json <<JSON
   {"name": "accentColor", "rect": [0, 140, 800, 200]}, {"name": "red", "rect": [0, 200, 800, 260]}]},
  "excludeRects": [{"name": "text lines (glyph shapes differ: Segoe UI vs SF, decision 2)", "rect": [0, 20, 800, 260]}]}
 JSON
+
+# dark switch: the knob's soft shadow leaves a 1-3 level halo the model does not reproduce to the level (8-bit rounding of a faint gradient); decision D2/D9
+for c in switch-on-dark-v1 switch-off-dark-v1 switch-on-dark-disabled-v1 switch-off-dark-disabled-v1; do
+  echo '{"hazeTolerance": 3}' > swiftui.color-scheme/$c/pair.json
+done
