@@ -196,6 +196,8 @@ enum ModifierSpec {
     case preference(PreferenceContribution)
     case onPreferenceChange(PreferenceObserver)
     case opacity(Double)
+    /// SR1 round 3: `.transition(_:)`, read from the inserted subtree's top by the insertion animation.
+    case transition(AnyTransition)
     /// SR1: `.tag(_:)` value of a List row.
     case tag(AnyHashable)
     /// SR1: the `onDelete` hook of a List row.
@@ -223,6 +225,7 @@ enum ModifierSpec {
         case .preference: return "modifier.preference"
         case .onPreferenceChange: return "modifier.onPreferenceChange"
         case .opacity: return "modifier.opacity"
+        case .transition: return "modifier.transition"
         case .tag: return "modifier.tag"
         case .deletion: return "modifier.onDelete"
         case .contextMenu: return "modifier.contextMenu"
@@ -248,6 +251,7 @@ enum ModifierSpec {
         case .preference: return "preference"
         case .onPreferenceChange: return "onPreferenceChange"
         case .opacity: return "opacity"
+        case .transition: return "transition"
         case .tag: return "tag"
         case .deletion: return "onDelete"
         case .contextMenu: return "contextMenu"
@@ -511,7 +515,7 @@ final class Node {
     /// False until the first commit presents this node.
     var committed = false
     /// Running interpolation of `presentedFrame` and `presentedOpacity`.
-    var motion: Motion?
+    var motion: MotionChain?
     /// Per-field text input state (TextField and TextEditor nodes only).
     var textInput: TextInputState?
     /// Font value of the last measurement (the memo is keyed by text, font metadata, line limit and width).
@@ -809,6 +813,8 @@ public final class Graph {
     private var nodesByString: [String: Node] = [:]
     /// Nodes that hold or recently held a running motion, in path order once `animatingNeedsSort` is cleared.
     var animating: [Node] = []
+    /// onAppear actions of nodes that appeared in the running flush; `flush` runs them after presenting the state those nodes first appeared in.
+    var pendingAppear: [() -> Void] = []
     var animatingNeedsSort = false
     /// Bumped by each layout pass; see `Node.invalidateLayout(epoch:)`.
     private(set) var layoutEpoch = 0
@@ -825,7 +831,7 @@ public final class Graph {
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
     private var flushScheduled = false
-    private var sequence = 0
+    private(set) var sequence = 0
     private var instanceCounter = 0
     /// Host-supplied time in seconds of the last `tick(now:)`; nil before the first tick. It has no required origin. A motion
     /// does not start at it: a motion begins at the next tick (see `advanceMotions`).
@@ -911,6 +917,7 @@ public final class Graph {
     public func flush() {
         let flushStart = profile == nil ? 0 : GraphProfile.now()
         var rounds = 0
+        var presentedBeforeAppear = false
         while rounds < 64 {
             while !dirty.isEmpty, rounds < 64 {
                 rounds += 1
@@ -932,13 +939,24 @@ public final class Graph {
             }
             if !preferenceObserverNodes.isEmpty { deliverPreferenceChanges() }
             applyWindowSchemeRequest()
-            if dirty.isEmpty { break }
+            if dirty.isEmpty {
+                if pendingAppear.isEmpty { break }
+                // SwiftUI runs onAppear after the first render of the node, and what it changes is a second update (so `onAppear { withAnimation { ... } }`
+                // animates from the state the view first appeared in). Present that state first, then run the actions.
+                commit()
+                presentedBeforeAppear = true
+                let actions = pendingAppear
+                pendingAppear = []
+                for action in actions { action() }
+                if dirty.isEmpty { break }
+                presentedBeforeAppear = false
+            }
         }
         if profile != nil {
             profile!.flushes += 1
             profile!.evaluateNS &+= GraphProfile.now() &- flushStart
         }
-        commit()
+        if !presentedBeforeAppear { commit() }
     }
 
     public func snapshot() -> ResolvedNode? {
@@ -1231,10 +1249,7 @@ public final class Graph {
         }
         node.task?.cancel()
         node.task = nil
-        if let motion = node.motion {
-            node.motion = nil
-            motion.transaction.motionEnded()
-        }
+        endMotion(node)
         var wasFocused = false
         if node.focused, case .modifier(.focus(let link)) = node.kind {
             wasFocused = true
@@ -1253,16 +1268,20 @@ public final class Graph {
     /// reinserted node compares the new value with the last value the preserved view saw, as macOS 27 SwiftUI does
     /// (SR0-O F3: the preserved row saw `Row 4x`, the reinsertion brings `Row 4`, the action runs once more). A node with no
     /// stored baseline (first appearance, or any VStack / LazyVStack row, whose storage is not kept) only records one.
-    private func runOnChange(_ node: Node, value: AnyEquatable, initial: Bool, action: (Any, Any) -> Void) {
+    private func runOnChange(_ node: Node, value: AnyEquatable, initial: Bool, action: @escaping (Any, Any) -> Void) {
+        // While an onAppear of this flush is still waiting (see `pendingAppear`), an action that follows it in evaluation order waits behind it.
+        func run(_ old: Any, _ new: Any) {
+            if pendingAppear.isEmpty { action(old, new) } else { pendingAppear.append { action(old, new) } }
+        }
         if let baseline = node.storage[onChangeKey] as? OnChangeBaseline {
             let previous = baseline.value
             if !previous.matches(value.value) {
                 baseline.value = value
-                action(previous.value, value.value)
+                run(previous.value, value.value)
             }
         } else {
             node.storage[onChangeKey] = OnChangeBaseline(value)
-            if initial { action(value.value, value.value) }
+            if initial { run(value.value, value.value) }
         }
     }
 
@@ -1319,7 +1338,7 @@ public final class Graph {
         guard case .modifier(let spec) = node.kind else { return }
         switch spec {
         case .appear(let action):
-            action()
+            pendingAppear.append(action)
         case .task(let priority, let id, let action):
             node.taskID = id
             startTask(node, priority, action)
@@ -1403,7 +1422,7 @@ public final class Graph {
         }
         if case .modifier(.animation(let value, let animation)) = kind {
             if let previous = node.lastEquatable, !previous.matches(value.value) {
-                TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil))
+                TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil, scope: node))
             }
             node.lastEquatable = value
         }

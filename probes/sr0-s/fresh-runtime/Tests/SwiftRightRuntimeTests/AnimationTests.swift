@@ -85,8 +85,9 @@ final class AnimationTests: XCTestCase {
         XCTAssertEqual(done, 1, "completion does not fire again")
     }
 
-    // A second animated insert mid-flight retargets from the presented value (interruption). The first
-    // transaction's completion fires when it is superseded, and the second completes at its own end.
+    // A second animated insert mid-flight blends with the first (SwiftUI's additive interruption, measured on macOS): the first animation keeps
+    // running underneath until its own end, and the second animates from whatever the first presents. The first transaction's completion fires
+    // at its own logical end (not when it is interrupted), and the second completes at its own end.
     func testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce() {
         let model = ListModel()
         model.items = ["A"]
@@ -111,14 +112,17 @@ final class AnimationTests: XCTestCase {
             second += 1
         }
         graph.flush()
-        XCTAssertEqual(first, 1, "superseded transaction completes")
+        XCTAssertEqual(first, 0, "an interrupted transaction completes at its own end, not when it is interrupted")
         XCTAssertEqual(second, 0)
         XCTAssertEqual(textResolved(graph, "A")?.frame.minY ?? -1, 12, accuracy: 1e-9,
                        "the new motion starts from the presented value, not the old target")
 
         graph.tick(now: 0.5)  // the second motion begins at the next tick
+        XCTAssertEqual(first, 0)
         graph.tick(now: 1.0)
-        XCTAssertEqual(textResolved(graph, "A")?.frame.minY ?? -1, 30, accuracy: 1e-9, "12 + (48 - 12) * 0.5")
+        XCTAssertEqual(first, 1, "the first animation reached its end")
+        XCTAssertEqual(textResolved(graph, "A")?.frame.minY ?? -1, 36, accuracy: 1e-9,
+                       "lerp(first animation's value 24, target 48, progress 0.5): the first keeps running underneath")
 
         graph.tick(now: 1.5)
         XCTAssertEqual(textResolved(graph, "A")?.frame.minY ?? -1, 48, accuracy: 1e-9, "A at 48 after both inserts")
@@ -193,14 +197,14 @@ final class AnimationTests: XCTestCase {
         graph.flush()
 
         var done = 0
-        withAnimation(.default, {
+        withAnimation(.easeInOut(duration: 0.35), {
             model.items.insert("B", at: 0)
         }, completion: { done += 1 })
         graph.flush()
         XCTAssertEqual(done, 0, "the motion is running")
         records.removeAll()
 
-        // 60 Hz display ticks, the first at an absolute host time. The default animation lasts 0.35 s.
+        // 60 Hz display ticks, the first at an absolute host time. The animation lasts 0.35 s.
         let base = 5398.255
         var tickCommits = 0
         for frame in 0..<40 {

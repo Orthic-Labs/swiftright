@@ -622,7 +622,9 @@ extension MutableCollection where Self: RandomAccessCollection {
     }
 }
 
-public struct Edge: Sendable {
+public enum Edge: Int8, CaseIterable, Sendable {
+    case top = 0, leading, bottom, trailing
+
     public struct Set: OptionSet, Sendable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
