@@ -6,5 +6,11 @@
   "packageManager": "pnpm@11.24.0",
   "devDependencies": {
     "@rightkit/release": "0.2.151"
+  },
+  "scripts": {
+    "release:admit": "node scripts/release/candidate.mjs admit",
+    "release:summary": "node scripts/release/candidate.mjs summary",
+    "release:candidate": "node scripts/release/candidate.mjs build",
+    "release:check": "node scripts/release/candidate.mjs check"
   }
 }

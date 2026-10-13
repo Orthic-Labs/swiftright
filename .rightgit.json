@@ -1,14 +1,30 @@
 {
   "schemaVersion": 1,
   "compile": "github-actions-only",
-  "lanes": ["ci"],
-  "matrix": { "os": ["windows-2025"], "node": ["26.8.1"] },
+  "lanes": [
+    "ci",
+    "release-candidate"
+  ],
+  "matrix": {
+    "os": [
+      "windows-2025"
+    ],
+    "node": [
+      "26.8.1"
+    ]
+  },
   "packageManager": "pnpm@11.24.0",
   "templateVersion": "1.8.0",
   "defaultBranch": "master",
   "profile": "rust-hybrid",
-  "gate": { "path": "scripts/gate.sh" },
-  "rustCache": { "workspaces": ["render/swiftright-render"] },
+  "gate": {
+    "path": "scripts/gate.sh"
+  },
+  "rustCache": {
+    "workspaces": [
+      "render/swiftright-render"
+    ]
+  },
   "checkout": {
     "longPaths": true,
     "sparse": [
@@ -19,5 +35,30 @@
       "probes/sr0-s/fresh-runtime",
       "probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3"
     ]
+  },
+  "candidate": {
+    "buildScript": "release:candidate",
+    "checkScript": "release:check",
+    "admissionScript": "release:admit",
+    "stageSummaryScript": "release:summary",
+    "artifactRoot": "sliceapp-candidate",
+    "os": [
+      "windows-2025",
+      "xcode-27"
+    ],
+    "targets": [
+      {
+        "os": "windows-2025",
+        "platform": "windows",
+        "architecture": "x86_64"
+      },
+      {
+        "os": "xcode-27",
+        "platform": "macos",
+        "architecture": "arm64"
+      }
+    ],
+    "signWindows": true,
+    "signMacos": true
   }
 }
