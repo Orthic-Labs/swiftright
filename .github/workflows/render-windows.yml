@@ -1,0 +1,71 @@
+# Hand-written, build-only lane for the Windows renderer (render/swiftright-render).
+# Why it exists: Orthic-Labs/swiftright is PUBLIC, and workspace policy (docs/rules/rightkit.md,
+# public-ci.md) forbids local Cargo on public repositories: compile and test only in GitHub Actions.
+# It runs the renderer unit tests and builds the release DLL, then uploads the DLL, its SHA-256 and the
+# test log as one artifact. Actions are pinned to the same full commit SHAs the RightKit-rendered
+# workflows use; permissions are read-only; no secrets, no signing, no publication.
+name: render-windows
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "render/**"
+      - ".github/workflows/render-windows.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-windows-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: windows-2025
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: render/swiftright-render
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: |
+            render/swiftright-render -> target
+          cache-on-failure: true
+      - name: Toolchain
+        run: |
+          rustc --version
+          cargo --version
+      - name: Unit tests
+        run: |
+          cargo test --release --locked --target x86_64-pc-windows-msvc *> "$env:RUNNER_TEMP\cargo-test.log"
+          $code = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\cargo-test.log" -Tail 120
+          exit $code
+      - name: Release DLL
+        run: |
+          cargo build --release --locked --target x86_64-pc-windows-msvc *> "$env:RUNNER_TEMP\cargo-build.log"
+          $code = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\cargo-build.log" -Tail 60
+          exit $code
+      - name: Collect
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP "render-out"
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $dll = "target\x86_64-pc-windows-msvc\release\swiftright_render.dll"
+          Copy-Item $dll $out
+          Copy-Item "$env:RUNNER_TEMP\cargo-test.log", "$env:RUNNER_TEMP\cargo-build.log" $out
+          $hash = (Get-FileHash $dll -Algorithm SHA256).Hash.ToLower()
+          "$hash  swiftright_render.dll" | Set-Content (Join-Path $out "swiftright_render.dll.sha256")
+          "commit=$env:GITHUB_SHA`nrustc=$(rustc --version)" | Set-Content (Join-Path $out "build-info.txt")
+          Write-Host "swiftright_render.dll sha256=$hash"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: swiftright-render-${{ github.sha }}
+          path: ${{ runner.temp }}/render-out
+          retention-days: 14
+          if-no-files-found: error

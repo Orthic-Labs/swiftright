@@ -6,6 +6,18 @@ use std::ffi::{c_char, c_void};
 pub const ABI_MAJOR: u32 = 0;
 pub const ABI_MINOR: u32 = 6;
 pub const API_FN_COUNT: u32 = 16;
+/// Rev 0.7 (additive): minor/function count reported ONLY by the `_v07` discovery exports.
+pub const ABI_MINOR_V07: u32 = 7;
+pub const API_V07_FN_COUNT: u32 = 18;
+pub const FONT_MAX_BYTES: u64 = 32 * 1024 * 1024;
+pub const FONT_FAMILY_MAX: usize = 64;
+pub const FONT_NEW: u32 = 0x1;
+pub const FONT_DUPLICATE: u32 = 0x2;
+pub const FONT_SYSTEM_FAMILY: u32 = 0x4;
+pub const FONT_LATE: u32 = 0x8;
+pub const FONT_SRC_FALLBACK: u32 = 0;
+pub const FONT_SRC_BUNDLED: u32 = 1;
+pub const FONT_SRC_SYSTEM: u32 = 2;
 
 pub type Status = i32;
 pub const SWR_EMPTY: Status = 1;
@@ -152,6 +164,7 @@ pub struct Utf16Selection {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct BootstrapInfo {
     pub struct_size: u32,
     pub abi_major: u32,
@@ -511,7 +524,75 @@ pub struct Api {
     pub image_release: extern "C" fn(u64) -> Status,
 }
 
+/// Rev 0.7 `swr_font_info` (128 bytes).
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FontInfo {
+    pub struct_size: u32,
+    pub flags: u32,
+    pub font: u64,
+    pub family_len: u32,
+    pub weight: u32,
+    pub face_count: u32,
+    pub reserved: u32,
+    pub sha256: [u8; 32],
+    pub family: [u8; FONT_FAMILY_MAX],
+}
+
+/// Rev 0.7 `swr_font_resolution` (48 bytes).
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FontResolution {
+    pub struct_size: u32,
+    pub source: u32,
+    pub font: u64,
+    pub sha256: [u8; 32],
+}
+
+/// Rev 0.7 `swr_bootstrap_info_v07` (96 bytes): the 0.6 fields at identical offsets + 2 size words.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV07 {
+    pub base: BootstrapInfo,
+    pub font_info_size: u32,
+    pub font_resolution_size: u32,
+}
+
+/// Rev 0.7 `swr_api_v07` (152 bytes): the 16 pointers of `Api` at unchanged offsets + font entries.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ApiV07 {
+    pub struct_size: u32,
+    pub reserved: u32,
+    pub run: extern "C" fn(*const RunOptions, *const HostCallbacks) -> Status,
+    pub request_quit: extern "C" fn() -> Status,
+    pub window_request_close: extern "C" fn(u64) -> Status,
+    pub window_get_metrics: extern "C" fn(u64, *mut WindowMetrics) -> Status,
+    pub commit: extern "C" fn(*const Transaction) -> Status,
+    pub measure_text: extern "C" fn(*const MeasureRequest, *mut MeasureResult) -> Status,
+    pub text_run_cells: extern "C" fn(u64, *mut CharCell, u32, *mut u32) -> Status,
+    pub text_run_release: extern "C" fn(u64) -> Status,
+    pub event_pop: extern "C" fn(*mut Event) -> Status,
+    pub request_ticks: extern "C" fn(u64, i32) -> Status,
+    pub request_modal: extern "C" fn(u64, *const ModalRequest) -> Status,
+    pub selftest_reentry: extern "C" fn() -> Status,
+    pub get_stats: extern "C" fn(*mut Stats) -> Status,
+    pub shutdown_complete: extern "C" fn() -> Status,
+    pub image_register: extern "C" fn(*const u8, u32, u32, u32, *mut u64) -> Status,
+    pub image_release: extern "C" fn(u64) -> Status,
+    // Rev 0.7, appended.
+    pub font_register: extern "C" fn(*const u8, u64, *mut FontInfo) -> Status,
+    pub font_resolve: extern "C" fn(*const u8, u32, *mut FontResolution) -> Status,
+}
+
 // Sizes measured with clang on swiftright.h (x86_64 / arm64 agree).
+const _: () = assert!(std::mem::size_of::<FontInfo>() == 128);
+const _: () = assert!(std::mem::size_of::<FontResolution>() == 48);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV07>() == 96);
+const _: () = assert!(std::mem::size_of::<ApiV07>() == 152);
+const _: () = assert!(std::mem::offset_of!(ApiV07, font_register) == 136);
+const _: () = assert!(std::mem::offset_of!(FontInfo, sha256) == 32);
+const _: () = assert!(std::mem::offset_of!(FontInfo, family) == 64);
 const _: () = assert!(std::mem::size_of::<BootstrapInfo>() == 88);
 const _: () = assert!(std::mem::size_of::<HostCallbacks>() == 112);
 const _: () = assert!(std::mem::size_of::<Api>() == 136);

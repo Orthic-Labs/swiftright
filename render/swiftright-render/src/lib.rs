@@ -10,6 +10,7 @@
 
 mod abi;
 mod ax;
+mod font;
 mod pace;
 mod rt;
 mod text;
@@ -105,6 +106,177 @@ pub extern "C" fn swr_get_api(out: *mut Api, caller_size: u32) -> Status {
                 shutdown_complete: swr_shutdown_complete,
                 image_register: swr_image_register,
                 image_release: swr_image_release,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.7 discovery (additive): the 0.6 fields exactly as `swr_bootstrap_query` reports them
+/// except abi_minor 7, api_table_size 152 and fn_count 18, plus the two font size words. The
+/// legacy export above is untouched, so a 0.6 host never sees any of this.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v07(out: *mut BootstrapInfoV07, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV07>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut base = BootstrapInfo {
+            struct_size: need,
+            abi_major: ABI_MAJOR,
+            abi_minor: ABI_MINOR_V07,
+            pointer_width: (std::mem::size_of::<usize>() * 8) as u32,
+            arch: arch_bytes(),
+            host_callbacks_size: std::mem::size_of::<HostCallbacks>() as u32,
+            api_table_size: std::mem::size_of::<ApiV07>() as u32,
+            transaction_size: std::mem::size_of::<Transaction>() as u32,
+            node_size: std::mem::size_of::<Node>() as u32,
+            primitive_size: std::mem::size_of::<Primitive>() as u32,
+            semantic_size: std::mem::size_of::<Semantic>() as u32,
+            ax_text_run_size: std::mem::size_of::<AxTextRun>() as u32,
+            event_size: std::mem::size_of::<Event>() as u32,
+            measure_request_size: std::mem::size_of::<MeasureRequest>() as u32,
+            measure_result_size: std::mem::size_of::<MeasureResult>() as u32,
+            line_info_size: std::mem::size_of::<LineInfo>() as u32,
+            char_cell_size: std::mem::size_of::<CharCell>() as u32,
+            fn_count: API_V07_FN_COUNT,
+            stats_size: std::mem::size_of::<Stats>() as u32,
+        };
+        base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV07 {
+                base,
+                font_info_size: std::mem::size_of::<FontInfo>() as u32,
+                font_resolution_size: std::mem::size_of::<FontResolution>() as u32,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.7 function table: the 16 legacy pointers (same functions) + font_register/font_resolve.
+#[no_mangle]
+pub extern "C" fn swr_get_api_v07(out: *mut ApiV07, caller_size: u32) -> Status {
+    guard!({
+        if out.is_null() || (caller_size as usize) < std::mem::size_of::<ApiV07>() {
+            return E_ABI;
+        }
+        unsafe {
+            *out = ApiV07 {
+                struct_size: std::mem::size_of::<ApiV07>() as u32,
+                reserved: 0,
+                run: swr_run,
+                request_quit: swr_request_quit,
+                window_request_close: swr_window_request_close,
+                window_get_metrics: swr_window_get_metrics,
+                commit: swr_commit,
+                measure_text: swr_measure_text,
+                text_run_cells: swr_text_run_cells,
+                text_run_release: swr_text_run_release,
+                event_pop: swr_event_pop,
+                request_ticks: swr_request_ticks,
+                request_modal: swr_request_modal,
+                selftest_reentry: swr_selftest_reentry,
+                get_stats: swr_get_stats,
+                shutdown_complete: swr_shutdown_complete,
+                image_register: swr_image_register,
+                image_release: swr_image_release,
+                font_register: swr_font_register,
+                font_resolve: swr_font_resolve,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.7. Registers one TTF/OTF/TTC (borrowed bytes, copied and retained for the process:
+/// GPUI 0.2.2 cannot remove a font) into GPUI's DirectWrite text system so `font(<family>)`
+/// resolves to these bytes. UI thread, window must exist (call from `ready`).
+#[no_mangle]
+pub extern "C" fn swr_font_register(bytes: *const u8, len: u64, out: *mut FontInfo) -> Status {
+    guard!({
+        if bytes.is_null() || out.is_null() || len == 0 {
+            return E_BAD_ARG;
+        }
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        if unsafe { (*out).struct_size } < std::mem::size_of::<FontInfo>() as u32 {
+            return E_ABI;
+        }
+        if SHUTDOWN.load(SeqCst) {
+            return E_SHUTDOWN;
+        }
+        if len > FONT_MAX_BYTES {
+            return E_TOO_LARGE;
+        }
+        let data = unsafe { std::slice::from_raw_parts(bytes, len as usize) };
+        let meta = match font::parse(data) {
+            Ok(m) => m,
+            Err(e) => return e,
+        };
+        let sha = font::sha256(data);
+        let Ok(mut reg) = font::REGISTRY.lock() else { return E_STATE };
+        if let Some(e) = reg.find_sha(&sha).cloned() {
+            unsafe { font::fill_info(&mut *out, &e, FONT_DUPLICATE) };
+            return SWR_OK;
+        }
+        let late = reg.was_shaped(&meta.family);
+        let res = view::with_ui(|ui| -> Result<u32, Status> {
+            let ts = ui.text_system.clone().ok_or(E_NOT_READY)?;
+            let want = font::key(&meta.family);
+            let listed = ts.all_font_names().iter().any(|n| font::key(n) == want);
+            // 'static, never freed: DirectWrite's in-memory file reference does not copy.
+            let keep: &'static [u8] = Box::leak(data.to_vec().into_boxed_slice());
+            ts.add_fonts(vec![std::borrow::Cow::Borrowed(keep)]).map_err(|_| E_PLATFORM)?;
+            ui.cache.clear();
+            Ok(if listed { FONT_SYSTEM_FAMILY } else { 0 })
+        });
+        let sys = match res {
+            Err(e) | Ok(Err(e)) => return e,
+            Ok(Ok(f)) => f,
+        };
+        let e = reg.add(meta, sha);
+        unsafe { font::fill_info(&mut *out, &e, FONT_NEW | sys | if late { FONT_LATE } else { 0 }) };
+        SWR_OK
+    })
+}
+
+/// Rev 0.7. Where would `family` be shaped from? Never shapes, never registers.
+#[no_mangle]
+pub extern "C" fn swr_font_resolve(family: *const u8, family_len: u32, out: *mut FontResolution) -> Status {
+    guard!({
+        if family.is_null() || out.is_null() || family_len == 0 {
+            return E_BAD_ARG;
+        }
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        if unsafe { (*out).struct_size } < std::mem::size_of::<FontResolution>() as u32 {
+            return E_ABI;
+        }
+        if SHUTDOWN.load(SeqCst) {
+            return E_SHUTDOWN;
+        }
+        let name = match unsafe { utf8(family as *const std::ffi::c_char, family_len) } {
+            Ok(s) => s,
+            Err(e) => return e,
+        };
+        let ts = match view::with_ui(|ui| ui.text_system.clone()) {
+            Err(e) => return e,
+            Ok(None) => return E_NOT_READY,
+            Ok(Some(ts)) => ts,
+        };
+        let Ok(reg) = font::REGISTRY.lock() else { return E_STATE };
+        let names: Vec<String> = ts.all_font_names().iter().map(|n| font::key(n)).collect();
+        let (source, hit) = reg.resolve(name, |f| names.contains(&font::key(f)));
+        unsafe {
+            *out = FontResolution {
+                struct_size: std::mem::size_of::<FontResolution>() as u32,
+                source,
+                font: hit.map_or(0, |e| e.handle),
+                sha256: hit.map_or([0u8; 32], |e| e.sha256),
             };
         }
         SWR_OK
@@ -335,6 +507,9 @@ pub extern "C" fn swr_measure_text(req: *const MeasureRequest, out: *mut Measure
                 Some(m) => (m, true),
                 None => {
                     let ts = ui.text_system.clone().ok_or(E_NOT_READY)?;
+                    if let Ok(mut reg) = font::REGISTRY.lock() {
+                        reg.note_shaped(q.family);
+                    }
                     let m = Arc::new(text::shape(&ts, &q, key)?);
                     ui.cache.put(key, m.clone());
                     (m, false)

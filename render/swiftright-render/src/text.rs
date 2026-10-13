@@ -202,6 +202,11 @@ impl TextCache {
         self.map.get(&key).filter(|m| m.text == text).cloned()
     }
 
+    /// Drops every cached shaping (a registered font changes what a family resolves to).
+    pub fn clear(&mut self) {
+        self.map.clear();
+    }
+
     pub fn put(&mut self, key: u64, m: Arc<Measured>) {
         if self.map.len() >= CACHE_CAP {
             self.map.clear();

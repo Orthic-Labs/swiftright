@@ -27,6 +27,11 @@
  * SWR_MODAL_DIALOG: swr_modal_request grows a tail (48 -> 80 bytes) with swr_modal_item
  * entries; (e) multi-paragraph text: '\n' is accepted in swr_measure_text, see
  * swr_measure_request. The bootstrap minor is 0.6, so a 0.5 host or renderer is rejected.
+ * Revision 0.7 (ADDITIVE, bundled fonts): see "REVISION 0.7" at the end of this header. The
+ * 0.6 exports, layouts, constants and behaviour above are unchanged; `swr_bootstrap_query`
+ * and `swr_get_api` still describe 0.6 (88 / 136 bytes), so a 0.6 host runs unchanged on a
+ * 0.7 renderer. A 0.7 renderer adds two NEW exports, swr_bootstrap_query_v07 and
+ * swr_get_api_v07, that a 0.7 host resolves; a 0.6 renderer lacks them.
  *
  * The header is plain C99 with fixed-width types only, so the layout is the same
  * for the Rust renderer, the MSVC ABI and the Swift clang importer. No Swift
@@ -762,6 +767,138 @@ struct swr_api {
 };
 
 #define SWR_API_FN_COUNT 16
+
+/* ===========================================================================
+ * REVISION 0.7 (additive): bundled-font registration.
+ *
+ * NEGOTIATION. Nothing above changes. swr_bootstrap_query keeps returning 88 bytes with
+ * abi_minor 6 and swr_get_api keeps the 136-byte, 16-pointer table, so a 0.6 host runs
+ * unchanged on a 0.7 renderer. A 0.7 host first looks for swr_bootstrap_query_v07 (and
+ * swr_get_api_v07). Present: validate the 0.7 view (abi_minor 7, every size) and use the
+ * 0.7 table. Absent: the renderer is 0.6; the host either falls back to the 0.6 view with
+ * font registration reported as unavailable, or refuses, as its own policy says. The two
+ * views are selected only by symbol name; there is no global mode. Both discovery calls
+ * stay allocation-, thread- and callback-free.
+ *
+ * FONTS. swr_font_register hands the renderer the bytes of one TrueType/OpenType font
+ * (TTF/OTF; a TrueType collection registers every face) for THIS process only. The bytes
+ * are BORROWED for the call; the renderer copies them and keeps the copy for the life of
+ * the process: GPUI 0.2.2's DirectWrite text system has no way to remove a registered
+ * font, so there is no unregister entry and no resource release. Registering the same
+ * bytes again returns the same handle with SWR_FONT_DUPLICATE. After a successful call
+ * a measurement or primitive whose font family equals info.family (case-insensitive)
+ * is shaped with those bytes instead of a system face. Register before the first
+ * measurement of that family: GPUI caches the family resolution, and a family that was
+ * already measured reports SWR_FONT_LATE (measure results already retained are
+ * unaffected; the renderer drops its own text cache).
+ * UI thread only (SWR_E_WRONG_THREAD), only once the window exists (call it from `ready`;
+ * SWR_E_NOT_READY before), SWR_E_SHUTDOWN after shutdown has begun. Bad font bytes ->
+ * SWR_E_BAD_ARG; more than SWR_FONT_MAX_BYTES -> SWR_E_TOO_LARGE; family longer than
+ * SWR_FONT_FAMILY_MAX -> SWR_E_TOO_LARGE; platform refusal -> SWR_E_PLATFORM. The caller
+ * sets info->struct_size to sizeof(swr_font_info) (smaller -> SWR_E_ABI, nothing written).
+ *
+ * swr_font_resolve reports where a family name will be shaped from, without shaping:
+ * bundled bytes (with their handle and SHA-256), a system/GPUI-listed family, or the
+ * fallback. It is the negative control: an unregistered family reports FALLBACK, never a
+ * bundled result. */
+#define SWR_ABI_MINOR_V07 7
+#define SWR_API_V07_FN_COUNT 18
+#define SWR_FONT_MAX_BYTES (32u * 1024u * 1024u)
+#define SWR_FONT_FAMILY_MAX 64
+
+/* swr_font_info.flags */
+#define SWR_FONT_NEW           0x1u  /* first registration of these bytes */
+#define SWR_FONT_DUPLICATE     0x2u  /* same bytes registered before; handle unchanged */
+#define SWR_FONT_SYSTEM_FAMILY 0x4u  /* the family name was already listed by the text system */
+#define SWR_FONT_LATE          0x8u  /* the family had already been measured: GPUI may keep a cached resolution */
+
+/* swr_font_resolution.source */
+#define SWR_FONT_SRC_FALLBACK 0u  /* not bundled and not listed: shaped with the fallback face */
+#define SWR_FONT_SRC_BUNDLED  1u  /* shaped from registered bytes (font + sha256 identify them) */
+#define SWR_FONT_SRC_SYSTEM   2u  /* listed by the text system (installed family) */
+
+typedef uint64_t swr_font; /* opaque, 0 never valid; process lifetime */
+
+typedef struct swr_font_info {
+    uint32_t struct_size;   /* IN: sizeof(swr_font_info) */
+    uint32_t flags;         /* OUT: SWR_FONT_* */
+    swr_font font;          /* OUT: handle */
+    uint32_t family_len;    /* OUT: bytes in family */
+    uint32_t weight;        /* OUT: OS/2 usWeightClass of the first face (400 when absent) */
+    uint32_t face_count;    /* OUT: faces in the file */
+    uint32_t reserved;      /* OUT: 0 */
+    uint8_t  sha256[32];    /* OUT: SHA-256 of the registered bytes */
+    char     family[SWR_FONT_FAMILY_MAX]; /* OUT: family name (UTF-8, NUL padded) */
+} swr_font_info;
+
+typedef struct swr_font_resolution {
+    uint32_t struct_size;   /* IN: sizeof(swr_font_resolution) */
+    uint32_t source;        /* OUT: SWR_FONT_SRC_* */
+    swr_font font;          /* OUT: handle when BUNDLED, else 0 */
+    uint8_t  sha256[32];    /* OUT: bundled bytes' SHA-256, else zeros */
+} swr_font_resolution;
+
+/* 0.7 view of swr_bootstrap_info: the 88 bytes above, identical offsets (abi_minor 7,
+ * api_table_size sizeof(swr_api_v07), fn_count 18), plus the two size words. Requires
+ * caller_size >= sizeof(swr_bootstrap_info_v07) else SWR_E_BAD_ARG, nothing written. */
+typedef struct swr_bootstrap_info_v07 {
+    uint32_t struct_size;
+    uint32_t abi_major;
+    uint32_t abi_minor;
+    uint32_t pointer_width;
+    char     arch[16];
+    uint32_t host_callbacks_size;
+    uint32_t api_table_size;
+    uint32_t transaction_size;
+    uint32_t node_size;
+    uint32_t primitive_size;
+    uint32_t semantic_size;
+    uint32_t ax_text_run_size;
+    uint32_t event_size;
+    uint32_t measure_request_size;
+    uint32_t measure_result_size;
+    uint32_t line_info_size;
+    uint32_t char_cell_size;
+    uint32_t fn_count;
+    uint32_t stats_size;
+    uint32_t font_info_size;        /* sizeof(swr_font_info) = 128 */
+    uint32_t font_resolution_size;  /* sizeof(swr_font_resolution) = 48 */
+} swr_bootstrap_info_v07;
+
+SWR_API swr_status swr_bootstrap_query_v07(swr_bootstrap_info_v07 *out, uint32_t caller_size);
+
+SWR_API swr_status swr_font_register(const uint8_t *bytes, uint64_t len, swr_font_info *out);
+SWR_API swr_status swr_font_resolve(const uint8_t *family, uint32_t family_len,
+                                    swr_font_resolution *out);
+
+/* The 0.7 function table: the 16 pointers of swr_api at unchanged offsets, then the two
+ * font entries. struct_size/reserved as in swr_api. Requires caller_size >=
+ * sizeof(swr_api_v07) else SWR_E_ABI, nothing written. Future revisions append here. */
+struct swr_api_v07 {
+    uint32_t struct_size;
+    uint32_t reserved;
+    swr_status (*run)(const swr_run_options *, const swr_host_callbacks *);
+    swr_status (*request_quit)(void);
+    swr_status (*window_request_close)(swr_window);
+    swr_status (*window_get_metrics)(swr_window, swr_window_metrics *);
+    swr_status (*commit)(const swr_transaction *);
+    swr_status (*measure_text)(const swr_measure_request *, swr_measure_result *);
+    swr_status (*text_run_cells)(swr_text_run, swr_char_cell *, uint32_t, uint32_t *);
+    swr_status (*text_run_release)(swr_text_run);
+    swr_status (*event_pop)(swr_event *);
+    swr_status (*request_ticks)(swr_window, int32_t);
+    swr_status (*request_modal)(swr_window, const swr_modal_request *);
+    swr_status (*selftest_reentry)(void);
+    swr_status (*get_stats)(swr_stats *);
+    swr_status (*shutdown_complete)(void);
+    swr_status (*image_register)(const uint8_t *, uint32_t, uint32_t, uint32_t, swr_image *);
+    swr_status (*image_release)(swr_image);
+    swr_status (*font_register)(const uint8_t *, uint64_t, swr_font_info *);              /* rev 0.7 */
+    swr_status (*font_resolve)(const uint8_t *, uint32_t, swr_font_resolution *);          /* rev 0.7 */
+};
+typedef struct swr_api_v07 swr_api_v07;
+
+SWR_API swr_status swr_get_api_v07(swr_api_v07 *out, uint32_t caller_size);
 
 #ifdef __cplusplus
 }
