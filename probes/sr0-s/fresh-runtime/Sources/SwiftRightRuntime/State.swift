@@ -170,8 +170,9 @@ public enum ColorScheme: Hashable, Sendable {
     case dark
 }
 
-/// Direction value available to layout & text-flow providers.
-/// Reading this value does not perform automatic bidirectional layout.
+/// Layout direction. Under `.rightToLeft` the runtime mirrors each child's frame within its container's
+/// bounds after the container computes positions left-to-right (SwiftUI semantics); text glyph order and
+/// image content are not mirrored by layout.
 public enum LayoutDirection: Hashable, Sendable {
     case leftToRight
     case rightToLeft

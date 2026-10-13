@@ -191,7 +191,7 @@ extension Graph {
                 width: proposal.width.map { max(0, $0 - insets.horizontal) },
                 height: proposal.height.map { max(0, $0 - insets.vertical) }
             )
-            place(child, in: inner, proposal: innerProposal)
+            placeChild(child, in: inner, within: node, bounds: rect, proposal: innerProposal)
         case .modifier(.frame(let frame)):
             guard let child = childNodes(node).first else { return }
             let childProposal = ProposedViewSize(
@@ -207,7 +207,7 @@ extension Graph {
                 width: childSize.width,
                 height: childSize.height
             )
-            place(child, in: inner, proposal: childProposal)
+            placeChild(child, in: inner, within: node, bounds: rect, proposal: childProposal)
         case .modifier(.flexibleFrame(let frame)):
             guard let child = childNodes(node).first else { return }
             let childProposal = frame.childProposal(proposal)
@@ -220,11 +220,11 @@ extension Graph {
                 width: childSize.width,
                 height: childSize.height
             )
-            place(child, in: inner, proposal: childProposal)
+            placeChild(child, in: inner, within: node, bounds: rect, proposal: childProposal)
         case .stack(let spec):
-            placeStack(childNodes(node), spec, in: rect, proposal: proposal)
+            placeStack(childNodes(node), spec, in: rect, proposal: proposal, mirrored: mirrors(node))
         case .layout(let spec):
-            spec.place(rect, proposal, subviews(of: node), &node.layoutStorage)
+            spec.place(rect, proposal, subviews(of: node, mirroringIn: mirrors(node) ? rect : nil), &node.layoutStorage)
         case .scroll:
             // The content is laid out at its ideal height and shifted up by the scroll offset. The offset
             // is clamped so the content never scrolls past its own bounds.
@@ -260,9 +260,9 @@ extension Graph {
     private func placeGroup(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         let children = childNodes(node)
         if children.count == 1 {
-            place(children[0], in: rect, proposal: proposal)
+            placeChild(children[0], in: rect, within: node, bounds: rect, proposal: proposal)
         } else if children.count > 1 {
-            placeStack(children, groupStackSpec, in: rect, proposal: proposal)
+            placeStack(children, groupStackSpec, in: rect, proposal: proposal, mirrored: mirrors(node))
         }
     }
 
@@ -328,13 +328,13 @@ extension Graph {
         return StackPlan(children: children, sizes: sizes, proposals: proposals, size: axis.size(main: main, cross: cross))
     }
 
-    private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+    private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
         if spec.axis == .overlap {
-            placeOverlap(children, spec, in: rect, proposal: proposal)
+            placeOverlap(children, spec, in: rect, proposal: proposal, mirrored: mirrored)
             return
         }
         if spec.axis == .overlay {
-            placeOverlay(children, spec, in: rect, proposal: proposal)
+            placeOverlay(children, spec, in: rect, proposal: proposal, mirrored: mirrored)
             return
         }
         let axis = spec.axis
@@ -353,7 +353,7 @@ extension Graph {
             let origin = axis == .vertical
                 ? LayoutPoint(x: rect.minX + crossOffset, y: offset)
                 : LayoutPoint(x: offset, y: rect.minY + crossOffset)
-            place(child, in: LayoutRect(origin: origin, size: size), proposal: plan.proposals[index])
+            place(child, in: mirroredRect(LayoutRect(origin: origin, size: size), in: rect, if: mirrored), proposal: plan.proposals[index])
             offset += axis.main(size) + spec.spacing
         }
     }
@@ -379,10 +379,10 @@ extension Graph {
         return StackPlan(children: children, sizes: sizes, proposals: proposals, size: baseSize)
     }
 
-    private func placeOverlay(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+    private func placeOverlay(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
         guard let base = children.first else { return }
         let plan = overlayPlan(children, spec, proposal)
-        place(base, in: rect, proposal: plan.proposals[0])
+        place(base, in: mirroredRect(rect, in: rect, if: mirrored), proposal: plan.proposals[0])
         for index in 1..<children.count {
             let child = children[index]
             let size = plan.sizes[index]
@@ -400,11 +400,11 @@ extension Graph {
             case .center: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
             }
-            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: plan.proposals[index])
+            place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: plan.proposals[index])
         }
     }
 
-    private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) {
+    private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
         for child in children {
             let size = measure(child, proposal)
             let xSlack = rect.width - size.width
@@ -421,7 +421,7 @@ extension Graph {
             case .center: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
             }
-            place(child, in: LayoutRect(x: x, y: y, width: size.width, height: size.height), proposal: proposal)
+            place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: proposal)
         }
     }
 
@@ -504,7 +504,29 @@ extension Graph {
         return node.childNodes
     }
 
-    func subviews(of node: Node) -> Subviews {
-        Subviews(childNodes(node).map { Subview(graph: self, node: $0) })
+    func subviews(of node: Node, mirroringIn bounds: LayoutRect? = nil) -> Subviews {
+        Subviews(childNodes(node).map { Subview(graph: self, node: $0, mirrorBounds: bounds) })
+    }
+
+    // MARK: Layout direction
+    //
+    // SwiftUI semantics: containers compute positions as if left-to-right (leading = left); under a
+    // right-to-left environment the system mirrors each child's frame within its container's bounds,
+    // x' = minX + maxX - (x + width). Sizes never change and text glyph order is not touched. The
+    // direction is the one in effect at the container (its own environment, which includes its own
+    // `.environment(\.layoutDirection, _)` override), so a nested left-to-right override un-flips its subtree.
+
+    func mirrors(_ node: Node) -> Bool {
+        node.environment.layoutDirection == .rightToLeft
+    }
+
+    func mirroredRect(_ rect: LayoutRect, in bounds: LayoutRect, if mirrored: Bool) -> LayoutRect {
+        guard mirrored else { return rect }
+        return LayoutRect(x: bounds.minX + bounds.maxX - (rect.minX + rect.width), y: rect.minY,
+                          width: rect.width, height: rect.height)
+    }
+
+    private func placeChild(_ child: Node, in rect: LayoutRect, within node: Node, bounds: LayoutRect, proposal: ProposedViewSize) {
+        place(child, in: mirroredRect(rect, in: bounds, if: mirrors(node)), proposal: proposal)
     }
 }

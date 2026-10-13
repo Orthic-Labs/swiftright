@@ -57,6 +57,14 @@ extension Layout {
 public struct Subview {
     let graph: Graph
     let node: Node
+    /// Container bounds to mirror within when the container's layout direction is right-to-left.
+    let mirrorBounds: LayoutRect?
+
+    init(graph: Graph, node: Node, mirrorBounds: LayoutRect? = nil) {
+        self.graph = graph
+        self.node = node
+        self.mirrorBounds = mirrorBounds
+    }
 
     public func sizeThatFits(_ proposal: ProposedViewSize) -> LayoutSize {
         graph.measure(node, proposal)
@@ -71,7 +79,8 @@ public struct Subview {
     public func place(at position: LayoutPoint, anchor: UnitPoint = .topLeading, proposal: ProposedViewSize) {
         let size = graph.measure(node, proposal)
         let origin = LayoutPoint(x: position.x - anchor.x * size.width, y: position.y - anchor.y * size.height)
-        graph.place(node, in: LayoutRect(origin: origin, size: size), proposal: proposal)
+        let rect = LayoutRect(origin: origin, size: size)
+        graph.place(node, in: mirrorBounds.map { graph.mirroredRect(rect, in: $0, if: true) } ?? rect, proposal: proposal)
     }
 
     @_disfavoredOverload
