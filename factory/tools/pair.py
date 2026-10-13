@@ -101,6 +101,8 @@ def mac(case, name, runs, out):
     cache = Path.home() / "Library/Caches/SwiftRightFactory/pair" / name
     (cache / "mc").mkdir(parents=True, exist_ok=True); (cache / "bin").mkdir(exist_ok=True)
     srcs = sorted(str(p) for p in (case / "mac-source/Sources").rglob("*.swift"))
+    if any("AXDump." in Path(p).read_text() for p in srcs):
+        srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AXDump.swift"))   # F3: in-process accessibility dump (no AX client API, no TCC)
     sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(cache / "mc"),
         "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
     # the host only accepts scratch roots under a prefix hard-coded in its source
@@ -109,9 +111,10 @@ def mac(case, name, runs, out):
     allsrc = "\n".join(Path(s).read_text() for s in srcs)
     png_mode = 'value("--png")' in allsrc          # older rounded-style host: --plain --scale S --png FILE
     scale_flag = ['"--scale"' in allsrc]
+    ax_mode = '"--ax"' in allsrc                    # host writes the in-process accessibility dump when given --ax FILE
     for i in range(1, runs + 1):
         if png_mode:
-            sh([str(cache / "bin/host"), "--plain", "--scale", "2.5", "--png", str(mdir / f"run-{i:02d}.png")],
+            sh([str(cache / "bin/host"), "--plain", "--scale", "2.5", "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else [])],
                log=out / f"mac-run-{i:02d}.log", timeout=120)
             continue
         scratch = base / f"pair-{out.name}-{i:02d}"
@@ -244,7 +247,7 @@ def semantic_gate(case, out):
     if not pj.is_file():
         return None
     cfg = json.loads(pj.read_text())
-    tool = "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
+    tool = "pair_semantic_report.py" if "semanticGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
     if not tool:
         return None
     r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / tool), str(case), str(out)], capture_output=True, text=True)
@@ -255,7 +258,7 @@ def semantic_gate(case, out):
 def semantic_decides(case):
     """Cases whose pixels differ by design inside regions the exclusions cannot name (Image(systemName:) glyphs; a labelled control whose x follows the label's width): the semantic gate alone decides."""
     cfg = json.loads((case / "pair.json").read_text())
-    return "imageFrame" in cfg or "controlGate" in cfg or "buttonGate" in cfg
+    return "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg
 
 
 def main():

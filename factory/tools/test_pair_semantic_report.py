@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Unit tests for pair_semantic_report.py (python3 -m unittest factory/tools/test_pair_semantic_report.py)."""
+import json, sys, tempfile, unittest, subprocess
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import pair_semantic_report as S
+
+def win_window(children, main=True, title="Alchemist FactoryProbe", cls="Zed::Window", client=(100, 200, 800, 600), dpi=240):
+    root = dict(name=title, role="Window", localizedRole="region", bounds=[client[0] - 16, client[1] - 56, 832, 688], enabled=True, focus=False, children=[
+        dict(name=title, role="TitleBar", bounds=[client[0], client[1] - 56, 800, 56], enabled=True, focus=False, children=[dict(name="Close", role="Button", enabled=True, focus=False, children=[])])] + children)
+    return dict(hwnd=1, main=main, **{"class": cls}, title=title, rect=[0, 0, 1, 1], client=list(client), dpi=dpi, tree=root)
+
+def win_el(name, role, x, y, w, h, client=(100, 200), **kw):
+    d = dict(name=name, role=role, bounds=[client[0] + x * 2.5, client[1] + y * 2.5, w * 2.5, h * 2.5], enabled=True, focus=False, children=[])
+    d.update(kw); return d
+
+def mac_window(children, main=True, title="", kind="window"):
+    return dict(main=main, title=title, kind=kind, tree=dict(role="AXWindow", name=title, enabled=True, focus=False, bounds=[0, 0, 320, 240], children=children))
+
+def mac_el(name, role, x, y, w, h, **kw):
+    d = dict(name=name, role=role, bounds=[x, y, w, h], enabled=True, focus=False, children=[]); d.update(kw); return d
+
+class SemanticTests(unittest.TestCase):
+    def test_checkbox_pass_and_toggle_mismatch(self):
+        w = dict(windows=[win_window([win_el("Enabled", "CheckBox", 0, 0, 16, 16, toggle="On", value="1")])])
+        m = dict(windows=[mac_window([mac_el("Enabled", "AXCheckBox", 0, 0, 16, 16, value=1)])])
+        cfg = dict(fields=["role", "name", "toggle", "enabled", "bounds"], boundsTolerancePt=1)
+        mm, info = S.compare_run(w, m, cfg)
+        self.assertEqual(mm, []); self.assertEqual(info["main"], dict(windows=1, mac=1))
+        m["windows"][0]["tree"]["children"][0]["value"] = 0
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertEqual([x["field"] for x in mm], ["toggle"])
+
+    def test_switch_is_button_with_toggle_on_windows(self):
+        w = dict(windows=[win_window([win_el("Enabled", "Button", 0, 0, 54, 24, toggle="Off")])])
+        m = dict(windows=[mac_window([mac_el("Enabled", "AXCheckBox", 0, 0, 54, 24, subrole="AXSwitch", value=0)])])
+        mm, _ = S.compare_run(w, m, dict(fields=["role", "name", "toggle"]))
+        self.assertEqual(mm, [])
+
+    def test_titlebar_chrome_is_ignored_and_extra_element_fails(self):
+        w = dict(windows=[win_window([win_el("A", "Text", 0, 0, 10, 10), win_el("B", "Text", 0, 20, 10, 10)])])
+        m = dict(windows=[mac_window([mac_el(None, "AXStaticText", 0, 0, 10, 10, value="A")])])
+        mm, _ = S.compare_run(w, m, dict(fields=["role", "name"]))
+        self.assertEqual([x["field"] for x in mm], ["missing"])
+
+    def test_bounds_tolerance(self):
+        w = dict(windows=[win_window([win_el("Go", "Button", 10, 10, 50, 20)])])
+        m = dict(windows=[mac_window([mac_el("Go", "AXButton", 10, 12.5, 50, 20)])])
+        self.assertEqual(len(S.compare_run(w, m, dict(fields=["role", "bounds"], boundsTolerancePt=1))[0]), 1)
+        self.assertEqual(S.compare_run(w, m, dict(fields=["role", "bounds"], boundsTolerancePt=3))[0], [])
+        self.assertEqual(S.compare_run(w, m, dict(fields=["role"]))[0], [])
+
+    def test_dialog_scope_buttons_order_and_count(self):
+        task = win_window([win_el("Delete everything?", "Text", 0, 0, 100, 10), win_el("Delete", "Button", 0, 20, 60, 20), win_el("Cancel", "Button", 70, 20, 60, 20)], main=False, title="Confirm", cls="#32770")
+        w = dict(windows=[win_window([]), task])
+        sheet = mac_window([mac_el(None, "AXStaticText", 0, 0, 100, 10, value="Delete everything?"), mac_el("Delete", "AXButton", 0, 20, 60, 20), mac_el("Cancel", "AXButton", 70, 20, 60, 20)], main=False, title="", kind="sheet")
+        m = dict(windows=[mac_window([]), sheet])
+        cfg = dict(fields=["role", "name", "order", "count", "enabled"], scope="dialog", dialogs=dict(count=1))
+        self.assertEqual(S.compare_run(w, m, cfg)[0], [])
+        sheet["tree"]["children"].reverse()
+        self.assertTrue(S.compare_run(w, m, cfg)[0])
+        m["windows"].pop()
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertTrue(any(x["field"] == "count" and x.get("side") == "mac" for x in mm))
+
+    def test_focused_element(self):
+        w = dict(windows=[win_window([])], focusedElement=dict(name="OK", role="Button"))
+        m = dict(windows=[mac_window([])], focusedElement=dict(name="OK", role="AXButton"))
+        self.assertEqual(S.compare_run(w, m, dict(fields=["role"], focus="element"))[0], [])
+        m["focusedElement"]["name"] = "Cancel"
+        self.assertEqual(len(S.compare_run(w, m, dict(fields=["role"], focus="element"))[0]), 1)
+
+    def test_cli_writes_report_and_exit_code(self):
+        with tempfile.TemporaryDirectory() as t:
+            t = Path(t); (t / "case").mkdir(); (t / "run/windows").mkdir(parents=True); (t / "run/mac").mkdir()
+            (t / "case/pair.json").write_text(json.dumps(dict(semanticGate=dict(fields=["role", "name"]))))
+            (t / "run/windows/uia-01.json").write_text(json.dumps(dict(windows=[win_window([win_el("A", "Text", 0, 0, 1, 1)])])))
+            (t / "run/mac/ax-01.json").write_text(json.dumps(dict(windows=[mac_window([mac_el("A", "AXStaticText", 0, 0, 1, 1)])])))
+            r = subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertEqual(json.loads((t / "run/semantic-report.json").read_text())["pass_"], 1)
+            (t / "run/mac/ax-01.json").write_text(json.dumps(dict(windows=[mac_window([mac_el("B", "AXStaticText", 0, 0, 1, 1)])])))
+            self.assertEqual(subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True).returncode, 1)
+
+    def test_real_windows_dump_flattens(self):
+        # shape of an F2 dump from a real host run (checkbox): title-bar chrome is dropped, the control keeps role/toggle/bounds relative to the client origin
+        w = dict(windows=[win_window([win_el("Enabled", "CheckBox", 0, 0, 16, 16, toggle="On", value="1", automationId="Root/#0/Modified/Modified/Toggle")])])
+        g = S.win_groups(w, {})
+        kept = S.keep(g["main"], {})
+        self.assertEqual([(e["role"], e["name"], e["toggle"], e["bounds"]) for e in kept], [("checkbox", "Enabled", "on", [0.0, 0.0, 16.0, 16.0])])
+
+if __name__ == "__main__":
+    unittest.main()
