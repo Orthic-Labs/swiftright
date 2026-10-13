@@ -1,5 +1,7 @@
 # Phase 0 start — 10 October 2026
 
+**13 October current status:** [delivery summary & exact evidence](../docs/sr1-status.md). Work paused by Adrian; originalfive incomplete. Historical results below retain original scope. Latest matched API6 suite: Windows187/187 & Mac180/180; later Rounded focused tests6/6 each. Candidate renderer is tuple11, not a frozen tuple10 closure.
+
 Plan revision committed first as `56be363`. This batch adds factory files only. SR0 remains OPEN in
 `docs/sr0-status.md`; frozen-contract/ABI integration, native parity & golden promotion remain held.
 

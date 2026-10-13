@@ -1,4 +1,7 @@
-# SR1 factory — Phase 0 & independent spikes
+# SR1 factory — implementation, capture & verification
+
+[Current delivery status & evidence](../docs/sr1-status.md) is authoritative for13October; work paused by Adrian.
+Original-five milestone remains incomplete; cumulative ramp is5→10→20 total.
 
 Started 10 October 2026 under plan rev 3 (`56be363`). These are draft specifications, executable format checks &
 capture-method experiments. SR0 remains OPEN; none of this promotes goldens, changes SR0 evidence, or grants parity.
@@ -10,7 +13,8 @@ capture-method experiments. SR0 remains OPEN; none of this promotes goldens, cha
 Factory work proceeds while SR0 closes. Runtime source at `probes/sr0-s/fresh-runtime` is released additively:
 new API surface, unit tests &one commit per API, preserving original behavior. Renderer/bridge ABI remain held
 until explicit closure in `../docs/sr0-status.md`; FreshOnBridge fixtures, `qualification/` &`probes/sr0-o/` retain
-Swift Mac ownership. New closure bindings use tuple10, measured from `../docs/sr0-tuple10-staging.md`.
+Swift Mac ownership. Candidate hosts bind own measured tuple11 renderer & actual additive runtime; tuple12 SR0 candidate remains separate.
+Final frozen binding follows recorded SR0 closure. Existing-ABI candidate implementation does not wait for freeze.
 [Current results](pipeline/ADDITIVE-CURRENT.md) & [running holds](HELD.md) record exact evidence.
 
 Window-targeted input stays default. Dell windowed runs require `D:\Claude\desktop.lock`; ordinary windows stay
@@ -45,5 +49,6 @@ factory/.venv/bin/python factory/tools/schema_validate.py factory/spec/examples/
 1. Complete host capture/channel calibration & native timing controls; VM capture follows later permission provisioning.
 2. Review draft acceptance schemas, normalization rules & tolerances; synthetic controls cannot approve them.
 3. Observe recorded SR0 closure, then bind actual frozen contract/ABI & replace illustrative hashes with measured native inputs.
-4. Run Rectangle through real hosts, qualify 20 independent runs per side, review candidate promotion & retain all raw evidence.
+4. Finish original Rounded/Image/Stack/font/Custom obligations; Rectangle fill already has exact paired20 evidence.
+   Verify originalfive, fix gaps, then10 &20 total; reviewed promotion remains separate.
 5. Add only foundations needed by each pilot round; open contributor queue only at plan's specified exit.

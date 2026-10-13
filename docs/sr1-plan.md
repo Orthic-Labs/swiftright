@@ -1,6 +1,6 @@
 # SR1 plan: the parity factory and the full shell
 
-Status: plan rev 4 (11 October 2026), incorporating accepted validation findings & SR0 owner's additive runtime release. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
+Status: plan rev 5 (13 October 2026), reconciled with original-five delivery, cumulative5→10→20 ramp & latest capture/quota instructions. [Current delivery status & evidence](sr1-status.md) supersedes historical progress paragraphs; work paused by Adrian. Rev 1 (73533ef) was adversarially reviewed by Astra (gpt-6-astra, high);
 dispositions are at the end. Independent implementation proceeds under `factory/`; [current results](../factory/pipeline/ADDITIVE-CURRENT.md) & [held work](../factory/HELD.md) record measured progress. Historical head-start assets include ABI 0.6 (`4df7e67`), runtime inventory controls 62/62 (`14106d6`), Windows gallery build (`47e9066`) & Mac oracle fixtures G1-G8 (`c9347a0`, sweep interrupted).
 
 ## Entry criteria (checked mechanically, not asserted)
@@ -11,8 +11,9 @@ remain pinned to already-built `8e47b89` binaries. Renderer, bridge ABI, `swiftr
 `qualification/` & `probes/sr0-o/` remain protected. Existing assets may be inspected. Work depending on a frozen
 contract or ABI waits until `docs/sr0-status.md` says CLOSED, every SR0 row is PASS, receipts bind frozen tuple
 & slice contract/bridge ABI are frozen.
-New closure bindings use tuple 10 from `docs/sr0-tuple10-staging.md`, after measuring actual artifacts; tuple 09
-receipts remain historical. Write append-only ABI 0.7 proposals now; implementation follows recorded 0.6 freeze.
+Factory candidate hosts bind own hash-verified tuple11 renderer, ABI0.6 & actual additive runtime commits.
+Tuple12 remains SR0 candidate; final frozen binding follows recorded closure & measured artifacts. Tuple09/10
+receipts remain historical. Existing-ABI candidate implementation & capture do not wait for freeze. Write append-only ABI 0.7 proposals now; implementation follows recorded 0.6 freeze.
 SR0's results are bounded slice evidence for the SR0 inventory only; SR1 must not assume anything outside it.
 
 ## What already exists (reuse, do not rebuild)
@@ -44,7 +45,8 @@ Verified present in the repository on 10 October 2026. SR0 is still OPEN (`docs/
 - An allowance is scoped to fixture, step, leaf and node, with a reason; anything broader is rejected.
 - Traces must carry their test conditions (for example motion) and a mismatch fails the comparison.
 - Recorder normalisations can hide product defects, so every normalisation needs its own injected-fault control.
-- Three runs per side is below the contract's 20; a verdict from fewer is not evidence.
+- Fewer than20 repeats do not grant formal20-run qualification. Count1 pairs remain useful implementation evidence;
+  repeat count follows actual reliability needs during delivery, separate from five→ten→twenty block counts.
 - A self-test that never ran a path (the animated path) passes vacuously; require a positive observation per path.
 
 **Starting point per component:**
@@ -81,7 +83,7 @@ Mac" into "verified equivalent on Windows", and keeps it verified.
 SDK ─F1─> catalogue ─F2─> block registry ─┐
                                            ├─> recipes (authored, reviewed) ─F3─> cases ─F4─> probes
 shell journeys (F12) ─> demand map ───────┘
-probes ─┬─F5─> Mac capture (VM) ─> candidates ─> reviewed goldens ──┐
+probes ─┬─F5─> Mac host capture (VM later) ─> candidates ─> reviewed goldens ──┐
         ├─F6─> headless replay (unit evidence) ───────────┼─F8─> verdicts ─F9─> report
         └─F7─> Windows native replay (Dell) ──────────────┘          │
                        F10 trusted gate <─────────────────────────────┘ ─> status: parity
@@ -147,7 +149,9 @@ so a missing case is a failure, not a skip.
 each recipe includes an instrumentation-transparency check (the block with and without probes produces the same
 layout and paint).
 
-**F5. Mac capture (oracle).** Runs inside the clean macOS VM, never on the user's screen. Capture classes, each
+**F5. Mac capture (oracle).** Current authorized route uses Mac host with already-granted recorder permissions.
+Build/run fresh binaries from internal scratch; never execute fresh binaries from `/Volumes/D` or request permissions.
+An item needing a permission prompt stops & is listed. Clean VM capture remains later work. Capture classes, each
 qualified against window screenshots before use:
 - layout: frames of **tagged observable boundaries** via geometry hooks, plus proposal/measurement records from
   witness `Layout` containers, baselines and alignment guides; not "every view" (internal control trees and
@@ -161,7 +165,8 @@ qualified against window screenshots before use:
 - animation: stimulus and transaction times on the shared clock, per-frame interpolated values from samplers, and
   actual presented frames (screen capture timestamps) recorded separately; dropped frames kept as evidence;
 - events/state: SR0 TraceKit schema.
-**Repeatability:** every case runs 20 independent times per platform (SR0 contract rule). Semantic assertions and
+**Formal parity repeatability:** every accepted case runs20 independent times per platform. Implementation Count1
+pairs & bounded repeats may precede qualification; no automatic20-run prerequisite blocks a candidate fix. Semantic assertions and
 required event orderings agree exactly after reviewed normalisation, including declared unordered sets. Timing is a
 separate comparison: retain raw stimulus, transaction, sampler and presented-frame timestamps; compare durations,
 interruption velocity and stalls against recipe-declared bounds. Relative-order normalisation applies only to the
@@ -238,10 +243,12 @@ Spikes first, then cumulative rounds (each round adds to the previous):
   under `factory/` and use independent scaffolding; frozen-contract/ABI-dependent integration is held.
 - Round 1 (5 blocks): `Rectangle`/`RoundedRectangle` + `.fill`/`.stroke`, `Image`, `ZStack` + `.overlay`,
   `Text` (bundled font), one custom `Layout`.
-- Round 2 (+10, 15 total): `ScrollView`, `Toggle`, `.disabled`, `.padding`/`.frame`, `PreferenceKey`, `.popover`,
-  `withAnimation` spring with interruption, `TextField` with IME, environment (`.font`, colour scheme), `.contextMenu`.
-- Round 3 (+20, 35 total): the first shell journey's remaining blocks.
-Exit of each round: every case passes on the frozen tuple **and** every channel still rejects its mutation set; the
+- Round 2 (+5, 10 total): `ScrollView`, `Toggle`, `.disabled`, `.padding`/`.frame`, `PreferenceKey`.
+- Round 3 (+10, 20 total): first shell journey priorities, including presentation, animation interruption, IME &
+  environment demands selected from actual demand map. Fix each completed cohort before expanding.
+Working/verified candidate delivery proceeds through existing APIs while SR0 remains OPEN; builds & paired
+observations report actual gaps. Full parity exit remains separate: every accepted case passes on frozen tuple
+**and** every channel still rejects its mutation set; the
 factory changes needed in the round are recorded. The queue opens when round 3 completes with no factory change and
 the gate catches every seeded mutation.
 
@@ -261,7 +268,7 @@ numbers.
 ## Open decisions
 - Recipe authoring rate and reviewer capacity (measured in the spikes).
 - Which SDK version the goldens pin (ceiling = pinned Xcode SDK).
-- arm64 Windows (deferred; needs hardware).
+- Windows arm64 & Intel Mac are unsupported under accepted SR0 scope; changing scope is separate work.
 
 ## Review dispositions (Astra, rev 1)
 | # | Finding | Disposition |
