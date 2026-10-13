@@ -11,8 +11,7 @@ a=p.parse_args()
 tag=('r' if a.count==1 else 'count20-r')+str(a.revision)
 repo=Path('/Volumes/D/claude/swiftright')
 generic=a.host!='rectangle'
-if generic and a.count!=1:raise SystemExit('generic archive currently requires Count1')
-stem=f'{a.host}-native-capture-r{a.revision}' if generic else 'rectangle-centered-capture-'+tag
+stem=f'{a.host}-native-capture{"-count20" if a.count==20 else ""}-r{a.revision}' if generic else 'rectangle-centered-capture-'+tag
 base=repo/'factory/pipeline/pilot-delivery-five-v1/root-execution'/stem
 out=base/f'actual-native-r{a.attempt}'
 out.mkdir()
@@ -22,8 +21,8 @@ if generic:
     prep=json.loads(preparation.read_text())
     stage=PureWindowsPath(prep['compileReceiptPath']).parent.parent
     assert stage.parent==PureWindowsPath(r'D:\Claude\swiftright\.factory-work\hosts')
-    assert stage.name in (a.host,a.host+'-centered',a.host+'-circular',a.host+'-observation',a.host+'-colors',a.host+'-boundary',a.host+'-star-observation')
-    remote=(stage/'captures'/f'count1-r{a.revision}').as_posix()
+    assert stage.name in (a.host,a.host+'-centered',a.host+'-circular',a.host+'-observation',a.host+'-colors',a.host+'-boundary',a.host+'-star-observation',a.host+'-compiled')
+    remote=(stage/'captures'/f'count{a.count}-r{a.revision}').as_posix()
 else:
     remote='D:/Claude/swiftright/.factory-work/hosts/rectangle/captures/centered-'+tag
 zipname=f'actual-native-centered-count{a.count}.zip'

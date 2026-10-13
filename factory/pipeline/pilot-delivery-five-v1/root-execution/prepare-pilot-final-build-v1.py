@@ -17,7 +17,7 @@ PACKETS = {
     'image-star-provider': 'text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2',
     'image-star-observation': 'text-shape-image/image-system-star-fill-v9',
     'stack-overlay-colors': 'stack-layout/stack-overlay-centered-execution-v7',
-    'custom-layout-colors': 'stack-layout/custom-layout-host-v2/original-api-execution-v6',
+    'custom-layout-colors': 'stack-layout/custom-layout-host-v2/direct-original-execution-v7',
     'rounded-stroke-boundary': 'text-shape-image/rounded-stroke-host-v1/continuous-observation-delivery-v5',
     'bundled-font-compiled': 'text-shape-image/bundled-font-readiness-v6-line-limit-host',
     'bundled-font-live': 'text-shape-image/bundled-font-readiness-v3-windows-host',
@@ -351,8 +351,8 @@ require(plan.get('phase') == 'prebuild' and plan.get('executionEligible') is Fal
 require(plan.get('case') is None and plan.get('expectedHostHash') is None, 'prebuild already contains final bindings')
 require(plan.get('runtimeSourceCommit') == RUNTIME_COMMIT, 'runtime commit drift')
 require(plan.get('runtimeSourceTreeHash') == RUNTIME_TREE, 'runtime tree drift')
-require(plan.get('rendererSha256') == RENDERER, 'renderer drift')
-require(plan.get('compilerHash') == COMPILER, 'compiler drift')
+require(str(plan.get('rendererSha256')).removeprefix('sha256:') == RENDERER, 'renderer drift')
+require(str(plan.get('compilerHash')).removeprefix('sha256:') == COMPILER, 'compiler drift')
 require(plan.get('packageSourcePath') == f'factory/pipeline/pilot-delivery-five-v1/{PACKETS[args.host]}/package', 'packet source path drift')
 require(plan.get('packetPlanHash') == 'sha256:' + digest(packet_plan_raw), 'packet plan hash drift')
 require(plan.get('candidate') == packet_plan.get('candidate', load_json(packet / 'case.json')['block'] + '.pilot'), 'candidate drift')
@@ -427,8 +427,8 @@ else:
     }
 for key, expected in {
     'sourceHash': plan.get('sourceHash'), 'runtimeSourceCommit': RUNTIME_COMMIT,
-    'runtimeSourceTreeHash': RUNTIME_TREE, 'compilerHash': COMPILER,
-    'rendererSha256': RENDERER, 'target': 'windows-x86_64', 'configuration': 'release',
+    'runtimeSourceTreeHash': RUNTIME_TREE, 'compilerHash': plan['compilerHash'],
+    'rendererSha256': plan['rendererSha256'], 'target': 'windows-x86_64', 'configuration': 'release',
     'exitCode': 0, 'timedOut': False, 'outputCapExceeded': False, 'ownedExited': True,
     'streamDrainComplete': True, 'streamsSealed': True, 'originalHandleRetained': True,
     'jobActiveReadable': True, 'jobActiveCount': 0, 'kernelWait': 0,

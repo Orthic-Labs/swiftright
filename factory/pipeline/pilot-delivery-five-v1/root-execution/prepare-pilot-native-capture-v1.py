@@ -31,7 +31,14 @@ p.add_argument('--mac-sidecar-manifest-path',
                help='measured Mac archive manifest; required when sidecar is supplied')
 p.add_argument('--mac-sidecar-observation-path',
                help='raw Mac observation; required when sidecar is supplied')
+p.add_argument('--count',type=int,choices=(1,20),default=1)
+p.add_argument('--count1-proof')
 a=p.parse_args()
+if a.count==20:
+    if not a.count1_proof: raise SystemExit('Count20 requires original Count1 completion')
+    DONOR=REPO/'factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-color-capture-count20-r1/sources'
+def donor_name(name):
+    return name.replace('single-v3','count20-v1').replace('count1-v3','count20-v1') if a.count==20 else name
 
 def rd(path,cap=4194304):
     assert path.is_file() and not path.is_symlink() and path.stat().st_size<=cap, path
@@ -48,6 +55,12 @@ def req(obj,*keys):
             return obj[k]
     raise SystemExit('final compiled plan missing '+('/'.join(keys)))
 def unprefix(v):return str(v).removeprefix('sha256:')
+def normalize_renderer_hash(value,label):
+    """Accept one optional lowercase sha256: prefix & exactly 64 lowercase hex digits."""
+    text=str(value)
+    if re.fullmatch(r'sha256:[0-9a-f]{64}',text):return text[7:]
+    if re.fullmatch(r'[0-9a-f]{64}',text):return text
+    raise SystemExit(f'{label} must be bare 64-hex or one sha256: prefix')
 def nested(obj,*paths):
     for path in paths:
         cur=obj
@@ -248,7 +261,7 @@ tuple_id=req(tuple_obj,'id')
 witness=req(plan,'witness','witnessPath')
 source_hash=req(plan,'sourceHash');runtime_commit=req(plan,'runtimeSourceCommit','sourceCommit')
 runtime_tree=req(plan,'runtimeSourceTreeHash')
-renderer_path=req(plan,'rendererPath','rendererLoadPath');renderer_hash=unprefix(req(plan,'rendererSha256'))
+renderer_path=req(plan,'rendererPath','rendererLoadPath');renderer_hash=normalize_renderer_hash(req(plan,'rendererSha256'),'plan.rendererSha256')
 mac_sidecar=None
 # Windows observation may precede Mac pairing; missing sidecar stays explicitly
 # unqualified in existing context. A supplied sidecar still gets every check.
@@ -317,7 +330,8 @@ for key in ('exitCode','ownedExited','originalHandleRetained','streamDrainComple
 if receipt['exitCode']!=0 or receipt['ownedExited'] is not True or receipt['originalHandleRetained'] is not True or receipt['streamDrainComplete'] is not True or receipt['streamsSealed'] is not True or receipt['jobActiveCount']!=0 or receipt['cleanupJobActive']!=0 or receipt['kernelWait']!=0 or receipt['memoryCapBytes']!=1073741824 or receipt['nativeActions']!=0:
     raise SystemExit('compile receipt lifecycle admission failed')
 receipt_case=receipt.get('case') if isinstance(receipt.get('case'),dict) else {}
-if receipt_case.get('id')!=case_id or receipt_case.get('hash')!=case_hash or receipt['sourceHash']!=source_hash or receipt['runtimeSourceCommit']!=runtime_commit or receipt['runtimeSourceTreeHash']!=runtime_tree or unprefix(receipt['rendererSha256'])!=renderer_hash or unprefix(receipt['exeSha256'])!=exe_hash or winpath(receipt['exePath'])!=exe_path:
+receipt_renderer_hash=normalize_renderer_hash(receipt['rendererSha256'],'compile receipt rendererSha256')
+if receipt_case.get('id')!=case_id or receipt_case.get('hash')!=case_hash or receipt['sourceHash']!=source_hash or receipt['runtimeSourceCommit']!=runtime_commit or receipt['runtimeSourceTreeHash']!=runtime_tree or receipt_renderer_hash!=renderer_hash or unprefix(receipt['exeSha256'])!=exe_hash or winpath(receipt['exePath'])!=exe_path:
     raise SystemExit('compile receipt source/runtime/output join mismatch')
 exe_artifact_local,exe_artifact_raw,exe_artifact_hash,exe_artifact_bytes=measured(a.exe_artifact_path,'executable artifact',exe_hash)
 exe_bytes=int(receipt['exeBytes'])
@@ -335,17 +349,22 @@ host_hashes=tuple_obj.get('hostHashes')
 if not isinstance(host_hashes,dict) or host_hashes.get('windows')!='sha256:'+exe_hash:
     raise SystemExit('final tuple windows host hash differs from exe hash')
 
-out=REPO/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{a.host}-native-capture-r{a.revision}'
+if a.count==20:
+    proof=json.loads(rd(Path(a.count1_proof)))
+    if proof.get('count')!=1 or proof.get('status')!='completed-source-bound-observation' or proof.get('compileReceiptHash')!=compile_hash or proof.get('exeHash')!=exe_hash or not proof.get('lockReleased') or not proof.get('wholeBatchExitConfirmed') or proof.get('cleanupErrors'):
+        raise SystemExit('original Count1 proof differs from compiled host')
+tag=f'count{a.count}-r{a.revision}'
+out=REPO/f'factory/pipeline/pilot-delivery-five-v1/root-execution/{a.host}-native-capture{"-count20" if a.count==20 else ""}-r{a.revision}'
 out.mkdir(); sources=out/'sources'; sources.mkdir()
 old_root=r'D:\Claude\swiftright\.factory-work\hosts\rectangle'
-old_ns=old_root+r'\captures\color-r5'
+old_ns=old_root+(r'\captures\color-r5' if a.count==1 else r'\captures\color-count20-r1')
 target_root=package_path.rsplit('\\',1)[0]
-target_ns=target_root+r'\captures\count1-r'+str(a.revision)
-target_roots={k:target_ns+'\\'+k+'-count1-r'+str(a.revision) for k in ('producer','admission','overlay')}
-target_native=target_ns+r'\native\count1-r1'
+target_ns=target_root+'\\captures\\'+tag
+target_roots={k:target_ns+'\\'+k+'-'+tag for k in ('producer','admission','overlay')}
+target_native=target_ns+f'\\native\\count{a.count}-r1'
 changes=[(old_ns,target_ns),(old_root,target_root),('D:\\Claude\\swiftright\\factory\\native\\windows\\',target_ns+'\\native\\'),
          ('count1-r5','count1-r'+str(a.revision)),
-         ('color-r5','count1-r'+str(a.revision)),
+         ('color-r5',tag),('color-count20-r1',tag),
          ('D:\\Claude\\swiftright\\.factory-work\\hosts\\rectangle\\package',package_path)]
 # Exact old pins are replaced after metadata is built; path changes never touch protected controls semantics.
 old_pins={'caseID':'swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.73250c091e3660b1',
@@ -388,8 +407,75 @@ for rel,data in list(files.items()):
         text=data.decode()
         for x,y in replace_pairs:text=text.replace(x,y)
         files[rel]=text.encode()
+
+# Fresh capture overlays must accept exactly one optional lowercase sha256:
+# prefix on renderer pins. Bare wrong hashes still fail exact joins; duplicate
+# prefixes, malformed prefixes, uppercase prefixes, & wrong-length values fail.
+ps_renderer_normalizer="""function Normalize-RendererHash([object]$Value,[string]$Label){$s=[string]$Value;if($s -cmatch '^sha256:[0-9a-f]{64}$'){return $s.Substring(7)};if($s -cmatch '^[0-9a-f]{64}$'){return $s};throw ('Malformed renderer hash: '+$Label)}"""
+preflight_rel=donor_name('overlay/preflight-color-r1.ps1')
+preflight=files[preflight_rel].decode()
+if preflight.count('function Normalize-RendererHash')!=0:raise SystemExit('renderer normalizer already present in preflight')
+if preflight.count("$p=BJson $planPath;$c=BJson $receipt")!=1:raise SystemExit('preflight renderer anchor drift')
+preflight=preflight.replace("$ErrorActionPreference='Stop'", "$ErrorActionPreference='Stop'\n"+ps_renderer_normalizer, 1)
+preflight=preflight.replace("$p=BJson $planPath;$c=BJson $receipt", "$p=BJson $planPath;$c=BJson $receipt;$planRendererHash=Normalize-RendererHash $p.rendererSha256 'plan.rendererSha256';$receiptRendererHash=Normalize-RendererHash $c.rendererSha256 'receipt.rendererSha256'", 1)
+if preflight.count('$c.rendererSha256 -cne $p.rendererSha256')!=1:raise SystemExit('preflight renderer comparison drift')
+preflight=preflight.replace('$c.rendererSha256 -cne $p.rendererSha256', '$receiptRendererHash -cne $planRendererHash', 1)
+if preflight.count('(BHash $p.rendererPath) -cne $p.rendererSha256')!=1:raise SystemExit('preflight renderer file comparison drift')
+preflight=preflight.replace('(BHash $p.rendererPath) -cne $p.rendererSha256', '(BHash $p.rendererPath) -cne $planRendererHash', 1)
+if preflight.count('$p.rendererSha256 -cne \'e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93\'')!=1:raise SystemExit('preflight renderer constant drift')
+preflight=preflight.replace('$p.rendererSha256 -cne \'e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93\'', "$planRendererHash -cne 'e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93'", 1)
+files[preflight_rel]=preflight.encode()
+
+issuer_rel=donor_name('overlay/issue-rectangle-metadata-v1.ps1')
+issuer=files[issuer_rel].decode()
+if issuer.count('function Normalize-RendererHash')!=0:raise SystemExit('renderer normalizer already present in issuer')
+issuer_anchor="$plan=Json $PlanPath;$receipt=Json $CompileReceiptPath;$tuple=Json $TuplePath"
+if issuer.count(issuer_anchor)!=1:raise SystemExit('issuer renderer anchor drift')
+issuer=issuer.replace(issuer_anchor, issuer_anchor+"\n"+ps_renderer_normalizer+"\n$planRendererHash=Normalize-RendererHash $plan.rendererSha256 'plan.rendererSha256';$receiptRendererHash=Normalize-RendererHash $receipt.rendererSha256 'receipt.rendererSha256';$sourceRendererHash=Normalize-RendererHash $source.rendererSha256 'source.rendererSha256';$argumentRendererHash=Normalize-RendererHash $RendererHash 'RendererHash';$tupleRendererHash=Normalize-RendererHash $tuple.tuple.rendererHash 'tuple.rendererHash'", 1)
+for old,new in (('$plan.rendererSha256 -ne $RendererHash','$planRendererHash -ne $argumentRendererHash'),('$receipt.rendererSha256 -ne $RendererHash','$receiptRendererHash -ne $argumentRendererHash'),("$tuple.tuple.rendererHash -ne ('sha256:'+$RendererHash)",'$tupleRendererHash -ne $argumentRendererHash')):
+    if issuer.count(old)!=1:raise SystemExit('issuer renderer comparison drift: '+old)
+    issuer=issuer.replace(old,new,1)
+files[issuer_rel]=issuer.encode()
+
+capture_rel=donor_name('overlay/capture-rectangle-single-v3.ps1')
+capture=files[capture_rel].decode()
+if capture.count('function Normalize-RendererHash')!=0:raise SystemExit('renderer normalizer already present in capture')
+if capture.count("$plan=Get-Content -Raw (Join-Path $packagePath 'plan.json')|ConvertFrom-Json")!=1:raise SystemExit('capture plan anchor drift')
+capture=capture.replace("$plan=Get-Content -Raw (Join-Path $packagePath 'plan.json')|ConvertFrom-Json", "$plan=Get-Content -Raw (Join-Path $packagePath 'plan.json')|ConvertFrom-Json\n"+ps_renderer_normalizer+"\n$planRendererHash=Normalize-RendererHash $plan.rendererSha256 'plan.rendererSha256'", 1)
+capture=capture.replace('$plan.rendererSha256','$planRendererHash')
+capture=capture.replace("$planRendererHash=Normalize-RendererHash $planRendererHash 'plan.rendererSha256'", "$planRendererHash=Normalize-RendererHash $plan.rendererSha256 'plan.rendererSha256'", 1)
+source_document_anchor="$sourceDocument=Get-Content -Raw -LiteralPath $sourceInputs|ConvertFrom-Json"
+if capture.count(source_document_anchor)!=1:raise SystemExit('capture source-document anchor drift')
+capture=capture.replace(source_document_anchor, source_document_anchor+"\n$sourceRendererHash=Normalize-RendererHash $sourceDocument.rendererSha256 'source.rendererSha256'", 1)
+source_renderer_compare="$plan.rendererPath -ne $sourceDocument.rendererPath -or $planRendererHash -ne $sourceDocument.rendererSha256"
+if capture.count(source_renderer_compare)!=1:raise SystemExit('capture source renderer comparison drift')
+capture=capture.replace(source_renderer_compare, "$plan.rendererPath -ne $sourceDocument.rendererPath -or $planRendererHash -ne $sourceRendererHash", 1)
+compiled_anchor="$compiled=Get-Content -Raw $receiptPath|ConvertFrom-Json"
+if capture.count(compiled_anchor)!=1:raise SystemExit('capture compiled anchor drift')
+capture=capture.replace(compiled_anchor, compiled_anchor+"\n$compiledRendererHash=Normalize-RendererHash $compiled.rendererSha256 'compiled.rendererSha256'", 1)
+if capture.count('$compiled.rendererSha256 -ne $planRendererHash')!=1:raise SystemExit('capture compiled renderer comparison drift')
+capture=capture.replace('$compiled.rendererSha256 -ne $planRendererHash','$compiledRendererHash -ne $planRendererHash',1)
+files[capture_rel]=capture.encode()
+
+integration_rel='overlay/integration-fresh-rectangle-v1.ps1'
+integration=files[integration_rel].decode()
+if integration.count('function Normalize-RendererHash')!=0:raise SystemExit('renderer normalizer already present in integration guard')
+json_anchor="function Get-RectangleJson([string]$Path){$item=Get-Item -LiteralPath $Path -Force -ErrorAction Stop;if($item.PSIsContainer -or $item.LinkType -or $item.Length -gt 2097152){throw 'Integration JSON must be bounded regular file'};return (Get-Content -Raw -LiteralPath $item.FullName|ConvertFrom-Json)}"
+if integration.count(json_anchor)!=1:raise SystemExit('integration JSON anchor drift')
+integration=integration.replace(json_anchor, json_anchor+"\n"+ps_renderer_normalizer, 1)
+for old,new in (("$Context.tupleContext.rendererHash -ne ('sha256:'+$SourceInputs.rendererSha256)","(Normalize-RendererHash $Context.tupleContext.rendererHash 'context.rendererHash') -ne (Normalize-RendererHash $SourceInputs.rendererSha256 'source.rendererSha256')"),('$plan.rendererSha256 -ne $SourceInputs.rendererSha256',"(Normalize-RendererHash $plan.rendererSha256 'plan.rendererSha256') -ne (Normalize-RendererHash $SourceInputs.rendererSha256 'source.rendererSha256')"),('$receipt.rendererSha256 -ne $SourceInputs.rendererSha256',"(Normalize-RendererHash $receipt.rendererSha256 'receipt.rendererSha256') -ne (Normalize-RendererHash $SourceInputs.rendererSha256 'source.rendererSha256')"),("$tuple.tuple.rendererHash -ne ('sha256:'+$SourceInputs.rendererSha256)","(Normalize-RendererHash $tuple.tuple.rendererHash 'tuple.rendererHash') -ne (Normalize-RendererHash $SourceInputs.rendererSha256 'source.rendererSha256')")):
+    if integration.count(old)!=1:raise SystemExit('integration renderer comparison drift: '+old)
+    integration=integration.replace(old,new,1)
+files[integration_rel]=integration.encode()
+
+controls_rel=donor_name('overlay/test-rectangle-integration-controls.ps1')
+controls=files[controls_rel].decode()
+control_anchor="$wrongRenderer=Copy-Source $source;$wrongRenderer.rendererSha256='2'*64;$faults+=Expect-Reject 'wrong-renderer' {Assert-FactoryIntegrationSources $Root $wrongRenderer|Out-Null}"
+if controls.count(control_anchor)!=1:raise SystemExit('renderer control anchor drift')
+controls=controls.replace(control_anchor, control_anchor+"\n$doubleRenderer=Copy-Source $source;$doubleRenderer.rendererSha256='sha256:sha256:' + ('3'*64);$faults+=Expect-Reject 'double-renderer-prefix' {Assert-FactoryIntegrationSources $Root $doubleRenderer|Out-Null}\n$malformedRenderer=Copy-Source $source;$malformedRenderer.rendererSha256='sha256:' + ('g'*64);$faults+=Expect-Reject 'malformed-renderer-prefix' {Assert-FactoryIntegrationSources $Root $malformedRenderer|Out-Null}",1)
+files[controls_rel]=controls.encode()
 # Generic source inputs paths & exact source joins.
-si=json.loads(files['admission/source-inputs.json']);si.update(kind='factory-rectangle-source-inputs-v1',count=1,caseID=case_id,caseHash=case_hash,sourceHash=source_hash,tupleID=tuple_id,planHash=plan_hash,compileReceiptHash=compile_hash,compileReceiptPath=compile_path,compiledHostPackagePath=package_path,exeHash=exe_hash,exePath=exe_path,rendererPath=renderer_path,rendererSha256=renderer_hash,runtimeSourceCommit=runtime_commit,serializerControlSha256=serializer_hash,serializerPath=serializer_path,rawCasePath=winpath(raw_case_path),rawCaseHash='sha256:'+raw_case_hash,canonicalCasePath=package_path+'\\materialized-case.json',canonicalCaseHash='sha256:'+case_artifact_hash)
+si=json.loads(files['admission/source-inputs.json']);si.update(kind='factory-rectangle-source-inputs-v2' if a.count==20 else 'factory-rectangle-source-inputs-v1',count=a.count,caseID=case_id,caseHash=case_hash,sourceHash=source_hash,tupleID=tuple_id,planHash=plan_hash,compileReceiptHash=compile_hash,compileReceiptPath=compile_path,compiledHostPackagePath=package_path,exeHash=exe_hash,exePath=exe_path,rendererPath=renderer_path,rendererSha256=renderer_hash,runtimeSourceCommit=runtime_commit,serializerControlSha256=serializer_hash,serializerPath=serializer_path,rawCasePath=winpath(raw_case_path),rawCaseHash='sha256:'+raw_case_hash,canonicalCasePath=package_path+'\\materialized-case.json',canonicalCaseHash='sha256:'+case_artifact_hash)
 # Hash-bearing refs are finalized after all source files exist.
 for key,rel in [('contextRef','admission/context.json'),('tupleRef','admission/candidate-tuple.json'),('bindingRef','admission/candidate-binding.json'),('recipeRef','admission/recipe.json'),('capturePlanPath','producer/capture-plan.json')]:
     if key.endswith('Ref'):si[key]={'path':target_roots['admission']+'\\'+rel.split('/',1)[1],'bytes':0,'sha256':''}
@@ -415,6 +501,12 @@ if($c.phase -cne '__RECEIPT_PHASE__' -or $c.exitCode -ne 0 -or $c.timedOut -or $
 preflight=preflight.replace('__HOST_ROOT__',target_root).replace('__PACKAGE__',package_path).replace('__COMPILE_PATH__',compile_path).replace('__PLAN_HASH__',plan_hash).replace('__COMPILE_HASH__',compile_hash).replace('__COMPILE_BYTES__',str(compile_bytes)).replace('__EXE_HASH__',exe_hash).replace('__EXE_BYTES__',str(exe_bytes)).replace('__RECEIPT_PHASE__',phase).replace('__SERIALIZER_HASH__',serializer_hash).replace('__SERIALIZER_BYTES__',str(serializer_bytes)).replace('__SERIALIZER_PATH__',serializer_path).replace('__SOURCE_HASH__',source_hash).replace('__CASE_ID__',case_id).replace('__CASE_HASH__',case_hash).replace('__TUPLE_ID__',tuple_id).replace('__RENDERER_BYTES__',str(renderer_bytes))
 # PowerShell's built-in `h` alias resolves before a function named H.
 preflight=preflight.replace('function H(', 'function GetRootCaptureArtifactSha256(').replace('(H ', '(GetRootCaptureArtifactSha256 ')
+preflight_anchor="$p=Get-Content -Raw -LiteralPath $PlanPath|ConvertFrom-Json;$c=Get-Content -Raw -LiteralPath $ReceiptPath|ConvertFrom-Json"
+if preflight.count(preflight_anchor)!=1:raise SystemExit('final preflight renderer anchor drift')
+preflight=preflight.replace(preflight_anchor, preflight_anchor+"\n"+ps_renderer_normalizer+"\n$planRendererHash=Normalize-RendererHash $p.rendererSha256 'plan.rendererSha256';$receiptRendererHash=Normalize-RendererHash $c.rendererSha256 'receipt.rendererSha256'", 1)
+preflight_lifecycle="$c.nativeActions -ne 0 -or $c.sourceHash -ne $p.sourceHash"
+if preflight.count(preflight_lifecycle)!=1:raise SystemExit('final preflight renderer lifecycle anchor drift')
+preflight=preflight.replace(preflight_lifecycle, "$c.nativeActions -ne 0 -or $receiptRendererHash -ne $planRendererHash -or $c.sourceHash -ne $p.sourceHash", 1)
 files['overlay/preflight-color-r1.ps1']=preflight.encode();si['buildPreflightHash']=sha(files['overlay/preflight-color-r1.ps1'])
 # Patch only known Rectangle kind literals, retaining every identity/lifecycle
 # clause. Each replacement must match exactly once when present.
@@ -423,7 +515,7 @@ def patch_guard(rel,old,new):
     if count>1: raise SystemExit(f'ambiguous guard needle: {rel}: {old}')
     if count==1: text=text.replace(old,new,1)
     files[rel]=text.encode()
-for rel in ('overlay/capture-rectangle-single-v3.ps1','overlay/dispatch-rectangle-single-v3.ps1','overlay/issue-rectangle-metadata-v1.ps1','overlay/integration-fresh-rectangle-v1.ps1'):
+for rel in (donor_name('overlay/capture-rectangle-single-v3.ps1'),donor_name('overlay/dispatch-rectangle-single-v3.ps1'),'overlay/issue-rectangle-metadata-v1.ps1','overlay/integration-fresh-rectangle-v1.ps1'):
     patch_guard(rel,"$plan.kind -ne 'factory-rectangle-compiler-plan-v2'", "$plan.kind -notin @('factory-rectangle-compiler-plan-v2','factory-pilot-five-compiler-plan-v1')")
     patch_guard(rel,"$receipt.kind -ne 'factory-rectangle-owned-compile-v1'", "$receipt.kind -notin @('factory-rectangle-owned-compile-v1','factory-pilot-five-owned-compile-v1')")
     patch_guard(rel,"$sourceDocument.kind -ne 'factory-rectangle-source-inputs-v1'", "$sourceDocument.kind -notin @('factory-rectangle-source-inputs-v1','factory-pilot-source-inputs-v1')")
@@ -431,10 +523,10 @@ for rel in ('overlay/capture-rectangle-single-v3.ps1','overlay/dispatch-rectangl
     patch_guard(rel,"$plan.hostMode -ne 'renderer'", '$plan.executionEligible -ne $false')
 # Capture worker names receipt as `$compiled`; keep its positive lifecycle
 # admission while accepting measured pilot receipt kind.
-patch_guard('overlay/capture-rectangle-single-v3.ps1', "$compiled.kind -ne 'factory-rectangle-owned-compile-v1'", "$compiled.kind -notin @('factory-rectangle-owned-compile-v1','factory-pilot-five-owned-compile-v1')")
+patch_guard(donor_name('overlay/capture-rectangle-single-v3.ps1'), "$compiled.kind -ne 'factory-rectangle-owned-compile-v1'", "$compiled.kind -notin @('factory-rectangle-owned-compile-v1','factory-pilot-five-owned-compile-v1')")
 # Pilot compile schema pins runtime tree/receipt, not legacy capture helper.
 # Pin actual staged verifier bytes directly, also covered by source closure.
-capture_rel='overlay/capture-rectangle-single-v3.ps1'
+capture_rel=donor_name('overlay/capture-rectangle-single-v3.ps1')
 capture_text=files[capture_rel].decode()
 if capture_text.count('$plan.runtimeVerifierHash')!=2:raise SystemExit('runtime verifier guard anchors drift')
 capture_text=capture_text.replace('$plan.runtimeVerifierHash', "'"+sha(files['producer/support/verify-runtime-source.ps1'])+"'")
@@ -450,7 +542,7 @@ files[capture_rel]=capture_text.encode()
 # Donor callers predate measured size parameters. Forward exact archived
 # byte counts at every preflight call; retain mandatory byte/hash assertions.
 byte_arguments=f' -CompileReceiptBytes {compile_bytes} -ExeBytes {exe_bytes} -SerializerControlBytes {serializer_bytes} -RendererBytes {renderer_bytes}'
-for rel,variable,count in [('overlay/dispatch-rectangle-single-v3.ps1','buildPreflightPath',1),('overlay/capture-rectangle-single-v3.ps1','buildPreflight',2)]:
+for rel,variable,count in [(donor_name('overlay/dispatch-rectangle-single-v3.ps1'),'buildPreflightPath',1),(donor_name('overlay/capture-rectangle-single-v3.ps1'),'buildPreflight',2)]:
     old=f'& ${variable} -Phase Launch -CompileReceiptSha256 $CompileReceiptHash -ExeSha256 $ExeHash -SerializerControlSha256 $SerializerControlSha256'
     text=files[rel].decode()
     if text.count(old)!=count:raise SystemExit('preflight byte forwarding anchor drift: '+rel)
@@ -472,7 +564,7 @@ for rel,key in [('admission/context.json','contextRef'),('admission/candidate-tu
 si['tupleHash']=unprefix(si['tupleRef']['sha256']);si['bindingHash']=unprefix(si['bindingRef']['sha256']);si['recipeHash']=unprefix(si['recipeRef']['sha256']);si['integrationBindingsHash']=unprefix(si['integrationBindingsRef']['sha256'])
 files['admission/source-inputs.json']=jd(si)
 # Host binding is explicit & independently joined to final plan/source/tuple pins.
-host_binding={'kind':'factory-pilot-host-plan-binding-v1','host':a.host,'count':1,'revision':a.revision,'case':{'id':case_id,'hash':case_hash},'rawCase':{'path':winpath(raw_case_path),'sha256':'sha256:'+raw_case_hash},'canonicalCase':{'path':package_path+'\\materialized-case.json','bytes':case_artifact_bytes,'sha256':'sha256:'+case_artifact_hash},'recipe':{'id':recipe_id,'hash':recipe_hash,'registryHash':packet_recipe_hash},'tuple':{'id':tuple_id,'hash':'sha256:'+si['tupleHash']},'source':{'hash':source_hash,'runtimeCommit':runtime_commit,'runtimeTreeHash':runtime_tree},'compiledPlan':{'path':package_path+'\\plan.json','bytes':len(plan_raw),'sha256':'sha256:'+plan_hash},'compileReceipt':{'path':compile_path,'bytes':compile_bytes,'sha256':'sha256:'+compile_hash},'executable':{'path':exe_path,'bytes':exe_bytes,'sha256':'sha256:'+exe_hash},'serializerControl':{'path':serializer_path,'bytes':serializer_bytes,'sha256':'sha256:'+serializer_hash},'renderer':{'path':renderer_path,'bytes':renderer_bytes,'sha256':'sha256:'+renderer_hash},'package':package_path,'sourceStage':str(out/'sources'),'qualification':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host','macSidecar':mac_sidecar,'nativeActions':0,'compilerActions':0,'lockActions':0}
+host_binding={'kind':'factory-pilot-host-plan-binding-v1','host':a.host,'count':a.count,'revision':a.revision,'case':{'id':case_id,'hash':case_hash},'rawCase':{'path':winpath(raw_case_path),'sha256':'sha256:'+raw_case_hash},'canonicalCase':{'path':package_path+'\\materialized-case.json','bytes':case_artifact_bytes,'sha256':'sha256:'+case_artifact_hash},'recipe':{'id':recipe_id,'hash':recipe_hash,'registryHash':packet_recipe_hash},'tuple':{'id':tuple_id,'hash':'sha256:'+si['tupleHash']},'source':{'hash':source_hash,'runtimeCommit':runtime_commit,'runtimeTreeHash':runtime_tree},'compiledPlan':{'path':package_path+'\\plan.json','bytes':len(plan_raw),'sha256':'sha256:'+plan_hash},'compileReceipt':{'path':compile_path,'bytes':compile_bytes,'sha256':'sha256:'+compile_hash},'executable':{'path':exe_path,'bytes':exe_bytes,'sha256':'sha256:'+exe_hash},'serializerControl':{'path':serializer_path,'bytes':serializer_bytes,'sha256':'sha256:'+serializer_hash},'renderer':{'path':renderer_path,'bytes':renderer_bytes,'sha256':'sha256:'+renderer_hash},'package':package_path,'sourceStage':str(out/'sources'),'qualification':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host','macSidecar':mac_sidecar,'nativeActions':0,'compilerActions':0,'lockActions':0}
 files['admission/host-plan-binding.json']=jd(host_binding)
 # Final bottom-up reseal catches helper pins embedded in parent PowerShell
 # guards (including Count1 worker invoker) after every source edit.
@@ -485,14 +577,14 @@ for key,rel in (('contextRef','admission/context.json'),('tupleRef','admission/c
 for rel,data in files.items():
     dest=sources/rel;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data)
 rows=[{'path':rel,'bytes':len(data),'sha256':sha(data)} for rel,data in files.items()]
-stage={'kind':'factory-pilot-native-capture-source-stage-v1','host':a.host,'count':1,'files':rows,'roots':target_roots,'nativeActions':0,'compilerActions':0,'lockActions':0}
+stage={'kind':'factory-pilot-native-capture-source-stage-v1','host':a.host,'count':a.count,'files':rows,'roots':target_roots,'nativeActions':0,'compilerActions':0,'lockActions':0}
 stage_raw=jd(stage)
 # Manifest describes payload files. Its own identity is bound by ZIP hash;
 # adding a self row changes serialized bytes after hashing & cannot close.
 assert all(row['path']!='stage-manifest.json' for row in rows)
 (sources/'stage-manifest.json').write_bytes(stage_raw)
 # Root installer stages graph, performs actual compile receipt admission, then writes config and runs source preflight.
-zip_path=CACHE/f'{a.host}-native-capture-r{a.revision}.zip';zip_path.parent.mkdir(parents=True,exist_ok=True)
+zip_path=CACHE/f'{a.host}-native-capture{"-count20" if a.count==20 else ""}-r{a.revision}.zip';zip_path.parent.mkdir(parents=True,exist_ok=True)
 with zipfile.ZipFile(zip_path,'w',zipfile.ZIP_DEFLATED) as z:
     for rel,data in files.items():z.writestr(rel,data)
     z.writestr('stage-manifest.json',stage_raw)
@@ -521,6 +613,7 @@ $cfg.issuedMetadataHash=(Get-FileHash -LiteralPath $cfg.issuedMetadataPath).Hash
 & (Join-Path $Overlay 'coordinator-count1-v3.ps1') -Template (Join-Path $Control 'config-template.json') -TemplateHash $cfgHash -PreflightOnly|Set-Content -LiteralPath (Join-Path $Control 'coordinator-preflight.json') -Encoding UTF8
 [ordered]@{status='admission-ready';nativeActions=0;compilerActions=0;lockActions=0;configHash=$cfgHash;issuedMetadataHash=$cfg.issuedMetadataHash}|ConvertTo-Json
 '''
+installer=installer.replace('count1-r__REV__',f'count{a.count}-r__REV__').replace("'count1-r1'",f"'count{a.count}-r1'").replace('count=1;',f'count={a.count};').replace('-Count 1 ',f'-Count {a.count} ').replace('coordinator-count1-v3.ps1',donor_name('coordinator-count1-v3.ps1'))
 zip_rel=zip_path.name
 plan_b64=base64.b64encode(plan_raw).decode('ascii')
 for k,v in {'HOST_ROOT':target_root,'NS':target_ns,'PACKAGE':package_path,'ZIP':zip_rel,'ZIP_HASH':sha(rd(zip_path)),'REV':str(a.revision),'PLAN_HASH':plan_hash,'PLAN_BYTES':str(len(plan_raw)),'PLAN_BASE64':plan_b64,'COMPILE_HASH':compile_hash,'COMPILE_BYTES':str(compile_bytes),'EXE_HASH':exe_hash,'EXE_BYTES':str(exe_bytes),'SERIALIZER_HASH':serializer_hash,'SERIALIZER_BYTES':str(serializer_bytes),'RENDERER_BYTES':str(renderer_bytes),'QUALIFICATION':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host'}.items():installer=installer.replace('__'+k+'__',v)
@@ -528,8 +621,9 @@ for k,v in {'HOST_ROOT':target_root,'NS':target_ns,'PACKAGE':package_path,'ZIP':
 # Native entry invokes coordinator only after exact preflight/config/issued/source joins.
 entry=r'''$ErrorActionPreference='Stop';$Control='__CONTROL__';$Template=Join-Path $Control 'config-template.json';$Preflight=Join-Path $Control 'root-preflight.json';$Pins=Get-Content -Raw -LiteralPath (Join-Path $Control 'native-entry-pins.json')|ConvertFrom-Json;$C=Get-Content -Raw -LiteralPath $Template|ConvertFrom-Json;$hashPre=(Get-FileHash -LiteralPath $Preflight).Hash.ToLowerInvariant();$hashTpl=(Get-FileHash -LiteralPath $Template).Hash.ToLowerInvariant();if($hashPre -ne $Pins.preflightHash -or $hashTpl -ne $Pins.templateHash){throw 'preflight/config drift'};if($C.count -ne 1 -or $C.compileReceiptHash -ne '__COMPILE_HASH__' -or $C.exeHash -ne '__EXE_HASH__' -or $C.compileReceiptBytes -ne __COMPILE_BYTES__ -or $C.exeBytes -ne __EXE_BYTES__ -or $C.serializerControlBytes -ne __SERIALIZER_BYTES__ -or $C.rendererBytes -ne __RENDERER_BYTES__ -or $C.issuedMetadataHash -ne $Pins.issuedMetadataHash -or $C.issuedMetadataHash -ne (Get-FileHash -LiteralPath $C.issuedMetadataPath).Hash.ToLowerInvariant()){throw 'actual metadata/source pin mismatch'};$I=Get-Content -Raw -LiteralPath $C.issuedMetadataPath|ConvertFrom-Json;if($I.expectedCount -ne 1 -or $I.compile.sha256 -ne ('sha256:'+'__COMPILE_HASH__') -or $I.compile.bytes -ne __COMPILE_BYTES__ -or $I.exe.sha256 -ne ('sha256:'+'__EXE_HASH__') -or $I.exe.bytes -ne __EXE_BYTES__ -or $I.renderer.bytes -ne __RENDERER_BYTES__){throw 'issued metadata join mismatch'};& '__COORDINATOR__' -Template $Template -TemplateHash $Pins.templateHash;Get-Content -Raw -LiteralPath (Join-Path $Control 'coordinator.json')
 '''
-entry=entry.replace('__CONTROL__',target_roots['overlay'].replace('overlay-count1-r'+str(a.revision),'control-count1-r'+str(a.revision))).replace('__COMPILE_HASH__',compile_hash).replace('__COMPILE_BYTES__',str(compile_bytes)).replace('__EXE_HASH__',exe_hash).replace('__EXE_BYTES__',str(exe_bytes)).replace('__SERIALIZER_BYTES__',str(serializer_bytes)).replace('__RENDERER_BYTES__',str(renderer_bytes)).replace('__COORDINATOR__',target_roots['overlay']+'\\coordinator-count1-v3.ps1')
-(out/f'native-entry-count1-r{a.revision}.ps1').write_text(entry)
-prep={'kind':'factory-pilot-native-capture-preparation-v1','host':a.host,'count':1,'revision':a.revision,'donorRows':len(files),'planPath':str(plan_path),'planSha256':plan_hash,'compileReceiptHash':compile_hash,'compileReceiptPath':compile_path,'compileReceiptBytes':compile_bytes,'exeHash':exe_hash,'exePath':exe_path,'exeBytes':exe_bytes,'serializerControlSha256':serializer_hash,'serializerControlBytes':serializer_bytes,'rendererSha256':renderer_hash,'rendererBytes':renderer_bytes,'nativeActions':0,'compilerActions':0,'lockActions':0,'qualification':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host','macSidecar':mac_sidecar}
+entry=entry.replace('$C.count -ne 1 ',f'$C.count -ne {a.count} ').replace('$I.expectedCount -ne 1 ',f'$I.expectedCount -ne {a.count} ')
+entry=entry.replace('__CONTROL__',target_roots['overlay'].replace('overlay-'+tag,'control-'+tag)).replace('__COMPILE_HASH__',compile_hash).replace('__COMPILE_BYTES__',str(compile_bytes)).replace('__EXE_HASH__',exe_hash).replace('__EXE_BYTES__',str(exe_bytes)).replace('__SERIALIZER_BYTES__',str(serializer_bytes)).replace('__RENDERER_BYTES__',str(renderer_bytes)).replace('__COORDINATOR__',target_roots['overlay']+'\\'+donor_name('coordinator-count1-v3.ps1'))
+(out/f'native-entry-count{a.count}-r{a.revision}.ps1').write_text(entry)
+prep={'kind':'factory-pilot-native-capture-preparation-v1','host':a.host,'count':a.count,'revision':a.revision,'donorRows':len(files),'planPath':str(plan_path),'planSha256':plan_hash,'compileReceiptHash':compile_hash,'compileReceiptPath':compile_path,'compileReceiptBytes':compile_bytes,'exeHash':exe_hash,'exePath':exe_path,'exeBytes':exe_bytes,'serializerControlSha256':serializer_hash,'serializerControlBytes':serializer_bytes,'rendererSha256':renderer_hash,'rendererBytes':renderer_bytes,'nativeActions':0,'compilerActions':0,'lockActions':0,'qualification':'observational-hold-macos-sidecar-unqualified' if mac_sidecar else 'observational-hold-missing-macos-host','macSidecar':mac_sidecar}
 (out/'preparation.json').write_bytes(jd(prep))
-print(json.dumps({'host':a.host,'output':str(out),'installer':str(out/f'install-native-capture-r{a.revision}.ps1'),'entry':str(out/f'native-entry-count1-r{a.revision}.ps1'),'zip':str(zip_path),'rows':len(files),'nativeActions':0}))
+print(json.dumps({'host':a.host,'output':str(out),'installer':str(out/f'install-native-capture-r{a.revision}.ps1'),'entry':str(out/f'native-entry-count{a.count}-r{a.revision}.ps1'),'zip':str(zip_path),'rows':len(files),'nativeActions':0}))

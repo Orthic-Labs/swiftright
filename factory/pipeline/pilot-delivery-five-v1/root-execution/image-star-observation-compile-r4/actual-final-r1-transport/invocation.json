@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-control-suite-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootControlSuiteJobV1.cs",
+    "-HelperSha256",
+    "3ea2ea6d0134278fb704ef4ef8caf3fecc3b8e9463e1872b715baed70c6d0c76",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\stage-final-compile-r4.ps1",
+    "-ScriptSha256",
+    "2bc03de4afa8e7db75309db0881a22d1d73fe9d3467e88f80f63a5a85254a430",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\final-compile-r4-transport.json",
+    "-DeadlineSeconds",
+    "600"
+  ],
+  "scriptSha256": "2bc03de4afa8e7db75309db0881a22d1d73fe9d3467e88f80f63a5a85254a430",
+  "budgetBytes": 1073741824
+}

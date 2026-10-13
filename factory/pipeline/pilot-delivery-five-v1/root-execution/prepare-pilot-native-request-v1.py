@@ -3,11 +3,12 @@ from pathlib import Path,PureWindowsPath
 import argparse,hashlib,json,subprocess
 p=argparse.ArgumentParser();p.add_argument('--host',choices=('image','rounded-stroke','stack-overlay','custom-layout','bundled-font'),required=True)
 p.add_argument('--revision',type=int,choices=range(1,21),default=1)
-p.add_argument('--delivery',choices=('original','centered','circular','observation','colors','boundary','star-observation'),default='centered')
-p.add_argument('--mac-revision',type=int,choices=range(1,11),default=1);a=p.parse_args()
+p.add_argument('--compile-revision',type=int,choices=range(1,11),default=1)
+p.add_argument('--delivery',choices=('original','centered','circular','observation','colors','boundary','star-observation','live','compiled'),default='centered')
+p.add_argument('--mac-revision',type=int,choices=range(1,11),default=1);p.add_argument('--count',type=int,choices=(1,20),default=1);p.add_argument('--count1-proof');a=p.parse_args()
 repo=Path('/Volumes/D/claude/swiftright');base=repo/'factory/pipeline/pilot-delivery-five-v1/root-execution'
 stage_host=a.host+'-'+a.delivery if a.delivery!='original' and a.host in ('rounded-stroke','stack-overlay','custom-layout','bundled-font') or a.host=='image' and a.delivery=='star-observation' else a.host
-packet=base/(stage_host+'-compile-r1');actual=packet/'actual-final-r1'
+packet=base/(stage_host+f'-compile-r{a.compile_revision}');actual=packet/'actual-final-r1'
 def sha(path):
     assert path.is_file() and not path.is_symlink() and path.stat().st_size<=67108864
     h=hashlib.sha256()
@@ -29,6 +30,9 @@ argv=[str(repo/'factory/.venv/bin/python'),str(base/'prepare-pilot-native-captur
  '--serializer-control-path',str(PureWindowsPath(r'D:\Claude\swiftright\.factory-work\hosts\rectangle\dependencies\serializer-actual-r2\control.json')),
  '--serializer-control-artifact-path',str(serializer),'--renderer-artifact-path',str(renderer),
  '--case-artifact-path',str(packet/'materialized-case.json')]
+if a.count==20:
+ assert a.count1_proof, 'Count20 original Count1 proof required'
+ argv+=['--count','20','--count1-proof',a.count1_proof]
 if a.host=='rounded-stroke' and a.delivery in ('centered','circular'):
  mac_run=base/f'rounded-stroke-full-viewport-v1/observed-mac20-r{a.mac_revision}/run-001'
  argv+=['--mac-sidecar-receipt-path',str(base/'rounded-stroke-full-viewport-v1/build-r1/receipt.json'),
