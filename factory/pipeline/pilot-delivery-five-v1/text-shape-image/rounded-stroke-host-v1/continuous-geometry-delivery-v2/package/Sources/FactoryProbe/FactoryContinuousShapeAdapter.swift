@@ -21,23 +21,26 @@ func factoryContinuousShapePrimitive(_ bridge: Bridge,
           request.strokeWidthPX.isFinite, request.strokeWidthPX >= 0 else {
         throw NSError(domain: "FactoryContinuousShapeRasterInput", code: 1)
     }
-    // SwiftUI `.stroke` centers its line on original path, so half line width
-    // extends outside requested bounds. Rasterizer's inset path model becomes
-    // correct when image canvas is expanded by full stroke width, then image
-    // primitive is translated by half width. This keeps corner radius tied to
-    // original path instead of silently converting stroke into strokeBorder.
+    // SwiftUI `.stroke` centers its line on the original path, so half the line
+    // width extends outside the requested bounds. Apple anti-aliases at the true
+    // fractional position, while GPUI floors an image origin to whole pixels. So
+    // the bitmap is placed at the integer origin at or before the stroked outer
+    // edge, and the fractional remainder is baked into the raster itself.
     let halfStroke = request.strokeWidthPX / 2
-    let width = max(1, Int((request.bounds.w + request.strokeWidthPX).rounded(.up)))
-    let height = max(1, Int((request.bounds.h + request.strokeWidthPX).rounded(.up)))
+    let outerX = request.bounds.x - halfStroke, outerY = request.bounds.y - halfStroke
+    let originX = outerX.rounded(.down), originY = outerY.rounded(.down)
+    let fracX = Double(outerX) - Double(originX), fracY = Double(outerY) - Double(originY)
+    let width = max(1, Int((fracX + Double(request.bounds.w) + Double(request.strokeWidthPX)).rounded(.up)))
+    let height = max(1, Int((fracY + Double(request.bounds.h) + Double(request.strokeWidthPX)).rounded(.up)))
     let image = try ContinuousRoundedRasterizer.rasterize(
         width: width, height: height,
         cornerRadius: CGFloat(request.cornerRadiusPX),
         fillRGBA: request.fillRGBA,
         strokeRGBA: request.strokeRGBA,
-        strokeWidth: CGFloat(request.strokeWidthPX))
+        strokeWidth: CGFloat(request.strokeWidthPX),
+        shapeWidth: CGFloat(request.bounds.w), shapeHeight: CGFloat(request.bounds.h),
+        offsetX: CGFloat(fracX), offsetY: CGFloat(fracY))
     let handle = try bridge.registerImage(width: UInt32(width), height: UInt32(height), rgba: image.rgba)
-    let expandedBounds = Rect(x: request.bounds.x - halfStroke,
-                              y: request.bounds.y - halfStroke,
-                              w: Float(width), h: Float(height))
-    return (.image(handle, expandedBounds), handle)
+    let placement = Rect(x: originX, y: originY, w: Float(width), h: Float(height))
+    return (.image(handle, placement), handle)
 }

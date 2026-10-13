@@ -1,16 +1,23 @@
 {
  "pairs": 1,
  "exact": 0,
+ "edgeAA": 1,
+ "fail": 0,
  "maxdiff": 26,
- "diffbbox": [
-  430,
-  285,
-  460,
-  315
- ],
+ "diffbbox": null,
  "rows": [
   {
    "run": 1,
+   "verdict": "edge-aa<=32",
+   "gate": {
+    "verdict": "edge-aa<=32",
+    "totalDiff": 108,
+    "inBandDiff": 108,
+    "outOfBandDiff": 0,
+    "maxInBand": 26,
+    "maxOutOfBand": 0,
+    "bandPixels": 2328
+   },
    "exact": false,
    "differentPixels": 108,
    "maxdiff": 26,
