@@ -77,7 +77,9 @@ def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["imageFrame"]
     tint, name = tuple(cfg["tint"]), cfg["name"]
-    layout = json.loads((case / cfg["assets"]).read_text())["symbols"][cfg["symbol"]]["layout"]
+    assets = Path(__file__).resolve().parents[2] / cfg["assets"]   # the product's shipped symbol table (packages/SwiftRightHost/Assets/SystemImageAssets.json)
+    if not assets.is_file(): assets = case / cfg["assets"]
+    layout = json.loads(assets.read_text())["symbols"][cfg["symbol"]]["layout"]
     cal = model_for(layout, cfg["scale"], cfg["containerPx"])
     ox, oy = cfg["containerPx"][0], cfg["containerPx"][1]
     fx, fy, exp_w, exp_h = cal["viewFramePx"]
@@ -85,7 +87,10 @@ def main():
     o = cfg["shapeOutsetPx"]
     rect = (frame[0] - o, frame[1] - o, frame[2] + o, frame[3] + o)         # shape region (frame + overflow margin)
     table_ink = cal["inkBoxPx"]
+    general = cal["source"] == "scale-class model"      # a measured override is the Mac measurement of this exact frame fed back through the table
     print(f"expected view frame px {frame}; expected ink box {table_ink} ({cal['source']})")
+    if not general:
+        print("  NOTE: the ink box for this size is a measured Mac override (class model mispredicts it): the ink gate here compares the host with that measurement, so this case is NOT evidence of generalisation")
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
         n = mac.stem.split("-")[1]
@@ -98,7 +103,7 @@ def main():
             row.update(error=f"size mac={im.size} win={iw.size}", ok=False); rows.append(row); continue
         # frame: host-logged frame and identity outside the frame
         log = out / "windows" / f"host-{n}.stdout.txt"
-        m = re.search(r"FACTORY_SYSTEM_IMAGE_FRAME name=\S+ xPX=(-?\d+) yPX=(-?\d+) widthPX=(\d+) heightPX=(\d+)", log.read_text(errors="replace")) if log.is_file() else None
+        m = re.search(r"(?:FACTORY_)?SYSTEM_IMAGE_FRAME name=\S+ xPX=(-?\d+) yPX=(-?\d+) widthPX=(\d+) heightPX=(\d+)", log.read_text(errors="replace")) if log.is_file() else None
         logged = [int(m.group(1)), int(m.group(2)), int(m.group(1)) + int(m.group(3)), int(m.group(2)) + int(m.group(4))] if m else None
         a, b = im.copy(), iw.copy()
         shape_a, shape_b = im.crop(rect), iw.crop(rect)
@@ -120,7 +125,7 @@ def main():
                    glyphShape=dict(excludedFromExactGate=True, region=name, rect=list(rect), differingPixels=shape))
         rows.append(row)
     ok = sum(1 for r in rows if r.get("ok"))
-    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok,
+    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, inkBoxModelSource=cal["source"], generalisationEvidence=general,
                gate="frame (logged frame + exact outside frame), half-coverage ink bbox, tint colour; glyph shape reported only",
                shapeExclusion=dict(name=name, rect=list(rect), reason="SF Symbols cannot ship on Windows; provider maps to Segoe Fluent Icons (docs/sr1-decisions.md item 3)"),
                summary=dict(frameMatches=sum(1 for r in rows if r.get("frame", {}).get("match")),
@@ -130,7 +135,7 @@ def main():
                rows=rows)
     (out / "image-report.json").write_text(json.dumps(rep, indent=1))
     s = rep["summary"]
-    print(f"{name}: pairs={len(rows)} gate={ok}/{len(rows)} frame={s['frameMatches']} inkBBox={s['inkBBoxMatches']} tint={s['tintMatches']} shapeDiffPx={s['glyphShapeDiffPixels']} (shape excluded from exact gate)")
+    print(f"{name}: pairs={len(rows)} gate={ok}/{len(rows)} frame={s['frameMatches']} inkBBox={s['inkBBoxMatches']} tint={s['tintMatches']} shapeDiffPx={s['glyphShapeDiffPixels']} (shape excluded from exact gate)" + ("" if general else " [measured-override size: NOT generalisation evidence]"))
     if rows and rows[0].get("inkBBox"):
         r = rows[0]; print(f"  ink bbox mac={r['inkBBox']['mac']} windows={r['inkBBox']['windows']}  any-coverage mac={r['inkBBox']['anyCoverageMac']} windows={r['inkBBox']['anyCoverageWindows']}")
     sys.exit(0 if ok == len(rows) and rows else 1)

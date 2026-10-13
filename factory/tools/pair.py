@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Paired Mac/Windows capture + exact-RGB compare.  python3 pair.py <case-dir> --runs N [--skip-mac] [--skip-windows]
+"""Paired Mac/Windows capture + exact-RGB compare.  python3 pair.py <case-dir> --runs N --stage <name> [--renderer <dll>] [--sandbox]
 <case-dir>/package (Windows SwiftPM host, product FactoryProbe) and <case-dir>/mac-source (Mac host sources).
-Output: <case-dir>/runs/<ts>/{windows,mac}/*.png, report.json, diff-NN.png, *.log"""
+--stage names the ONE product tree every case builds against (factory/tools/stage-product.py: runtime + bridge + SwiftRightHost from a single
+commit); the package's @@PRODUCT_STAGE@@ token is replaced with it at zip time. --renderer is the DLL the host loads (default: the 0.7 baseline),
+passed to the host per run through SWIFTRIGHT_RENDER_DLL, so the pinned renderer under inputs\renderer is never overwritten or required.
+Output: <case-dir>/runs/<ts>/{windows,mac}/*.png, report.json, build.json (stage + renderer identity), diff-NN.png, *.log"""
 import argparse, json, re, shutil, subprocess, sys, time, zipfile, io
 from pathlib import Path
 from PIL import Image, ImageChops
@@ -10,6 +13,8 @@ TOOLS = Path(__file__).resolve().parent / "pair"
 WIN_ROOT = r"D:\Claude\swiftright\.factory-work"
 SSH = ["ssh", "-o", "BatchMode=yes", "win"]
 EXE_REL = r"scratch\x86_64-unknown-windows-msvc\release\FactoryProbe.exe"
+STAGE_ROOT = rf"{WIN_ROOT}\product-stage"
+DEFAULT_RENDERER = rf"{WIN_ROOT}\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll"
 
 
 def sh(cmd, log=None, check=True, timeout=None):
@@ -25,7 +30,7 @@ def win(ps, **kw):
     return sh(SSH + [ps], **kw)
 
 
-def windows(case, name, runs, out, shared=False, sandbox=False):
+def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, renderer=DEFAULT_RENDERER):
     wdir = out / "windows"; wdir.mkdir(parents=True, exist_ok=True)
     host = rf"{WIN_ROOT}\hosts\{name}"; tools = rf"{WIN_ROOT}\pair-tools"
     pkg = rf"{host}\package"; exe = rf"{pkg}\{EXE_REL}"; ts = out.name
@@ -33,14 +38,19 @@ def windows(case, name, runs, out, shared=False, sandbox=False):
     win(f'powershell -NoProfile -Command "New-Item -ItemType Directory -Force {tools},{host} | Out-Null"')
     sh(["scp", "-q", *map(str, TOOLS.glob("*.ps1")), f"win:{tools.replace(chr(92), '/')}/"])
     zp = out / "package.zip"
+    stage_dir = rf"{STAGE_ROOT}\{stage}"
     with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted((case / "package").rglob("*")):
             if f.is_file() and "scratch" not in f.relative_to(case / "package").parts:
-                z.write(f, f.relative_to(case / "package").as_posix())
+                if f.name == "Package.swift":
+                    z.writestr(f.relative_to(case / "package").as_posix(), f.read_text().replace("@@PRODUCT_STAGE@@", stage_dir.replace("\\", "\\\\")))
+                else:
+                    z.write(f, f.relative_to(case / "package").as_posix())
     wzip = rf"{host}\package-{ts}.zip"
     sh(["scp", "-q", str(zp), f"win:{wzip.replace(chr(92), '/')}"])
     zp.unlink()
-    win(f"powershell -NoProfile -ExecutionPolicy Bypass -File {tools}\\prep.ps1 -Zip {wzip} -Pkg {pkg} -Tag {ts}", log=out / "windows-extract.log")
+    win(f"powershell -NoProfile -ExecutionPolicy Bypass -File {tools}\\prep.ps1 -Zip {wzip} -Pkg {pkg} -Tag {ts} -Stage {stage_dir} -Renderer {renderer}", log=out / "windows-extract.log")
+    write_build_info(out, case, stage, stage_dir, renderer)
     t = time.time()
     r = win(f'powershell -NoProfile -ExecutionPolicy Bypass -File {tools}\\build.ps1 -Pkg {pkg}', log=out / "windows-build.log", check=False)
     sh(["scp", "-q", f"win:{pkg.replace(chr(92), '/')}/build.log", str(out / "windows-swift-build.log")], check=False)
@@ -52,7 +62,7 @@ def windows(case, name, runs, out, shared=False, sandbox=False):
         sys.path.insert(0, str(Path(__file__).resolve().parent / "sandbox"))
         import client as sbx
         sbx.sync_capture_tool(TOOLS)
-        jid, st, res = sbx.capture(exe, runs, wdir)
+        jid, st, res = sbx.capture(exe, runs, wdir, renderer=renderer)
         (out / "windows-session.log").write_text(json.dumps(dict(job=jid, status=st, result=res), indent=1))
         if st.get("state") != "done" or "done" not in res:
             sys.exit(f"Sandbox capture failed ({st.get('state')}): {res.get('error')}; see {out}/windows-session.log")
@@ -70,6 +80,16 @@ def windows(case, name, runs, out, shared=False, sandbox=False):
     done = json.loads((wdir / "done.json").read_text(encoding="utf-8-sig"))
     bad = [d for d in done if d["status"] != "ok"]
     print(f"windows capture {len(done) - len(bad)}/{runs} ok" + (f" first error: {bad[0]}" if bad else ""), flush=True)
+
+
+def write_build_info(out, case, stage, stage_dir, renderer):
+    """Identity of what was built and captured: the staged product (commit, tree hash, dirty) and the renderer DLL (sha256)."""
+    r = win(f'Get-Content {stage_dir}\\STAGE.json -Raw; "---"; (Get-FileHash {renderer} -Algorithm SHA256).Hash.ToLower()')
+    meta_txt, _, sha = r.stdout.partition("---")
+    meta = json.loads(meta_txt)
+    info = dict(stage=meta, renderer=dict(path=renderer, sha256=sha.strip()), case=str(case))
+    (out / "build.json").write_text(json.dumps(info, indent=1))
+    print(f"build: stage {meta['name']} ({meta['mode']}{', DIRTY' if meta.get('dirty') else ''}) renderer sha256 {sha.strip()[:12]}", flush=True)
 
 
 def mac(case, name, runs, out):
@@ -132,7 +152,7 @@ def edge_band(im):
 
 
 def edge_gate(im, iw, exclusions=()):
-    """Verdict exact | edge-aa<=32 | fail, with counts. Pixels in excluded rects are ignored."""
+    """Verdict exact | edge-aa<=32 | fail, with counts (exact = no difference outside the excluded rects; compare() relabels that exact-with-exclusions when an excluded region differs). Pixels in excluded rects are ignored."""
     a, b, c = ImageChops.difference(im, iw).split()
     d = ImageChops.lighter(ImageChops.lighter(a, b), c)
     for e in exclusions:
@@ -164,9 +184,15 @@ def compare(out, runs, exclusions=()):
             gated.paste((0, 0, 0), e["rect"])
         bbox = gated.getbbox()
         g = edge_gate(im, iw, exclusions)
-        row = dict(run=i, verdict=g["verdict"], gate=g, exact=bbox is None, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
+        full_px = npx(full)
+        # "exact" means pixel-identical over the whole frame. Identical outside named excluded regions while the regions differ is
+        # reported as exact-with-exclusions (never as exact); the regions are named in every report line and in report.json.
+        verdict = g["verdict"]
+        if exclusions and verdict == "exact" and full_px > 0:
+            verdict = "exact-with-exclusions"
+        row = dict(run=i, verdict=verdict, gate=g, exact=full_px == 0, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
         if exclusions:
-            row["fullFrameDifferentPixels"] = npx(full)
+            row["fullFrameDifferentPixels"] = full_px
             row["excluded"] = []
             for e in exclusions:
                 r = e["rect"]
@@ -174,26 +200,48 @@ def compare(out, runs, exclusions=()):
         rows.append(row)
         if bbox and first is None:
             first = i; ImageChops.invert(gated).save(out / f"diff-{i:02d}.png")
-    ok = [r for r in rows if r.get("verdict") in ("exact", "edge-aa<=32")]
-    bad = [r for r in rows if r.get("verdict") not in ("exact", "edge-aa<=32")]
+    passing = ("exact", "exact-with-exclusions", "edge-aa<=32")
+    ok = [r for r in rows if r.get("verdict") in passing]
+    bad = [r for r in rows if r.get("verdict") not in passing]
     nex = sum(1 for r in rows if r.get("verdict") == "exact")
+    nexw = sum(1 for r in rows if r.get("verdict") == "exact-with-exclusions")
     worst = max((r.get("maxdiff", 0) for r in rows), default=0)
     bbox = next((r.get("diffbbox") for r in bad if r.get("diffbbox")), None)
-    rep = dict(pairs=runs, exact=nex, edgeAA=len(ok) - nex, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
+    rep = dict(pairs=runs, exact=nex, exactWithExclusions=nexw, edgeAA=len(ok) - nex - nexw, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
+    if (out / "build.json").is_file():
+        rep["build"] = json.loads((out / "build.json").read_text())
     if exclusions:
         rep["gate"] = "exact outside excluded regions"
         rep["excludedRegions"] = [dict(name=e["name"], rect=list(e["rect"])) for e in exclusions]
     (out / "report.json").write_text(json.dumps(rep, indent=1))
     for r in rows:
         if "gate" in r:
-            g = r["gate"]; print(f"  run {r['run']:02d} {g['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
-    print(f"pairs={runs} exact={nex} edge-aa<=32={len(ok) - nex} fail={len(bad)} maxdiff={worst} diffbbox={bbox}" + (f" (gate excludes: {', '.join(e['name'] + str(list(e['rect'])) for e in exclusions)})" if exclusions else ""))
+            g = r["gate"]; print(f"  run {r['run']:02d} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
+    names = ", ".join(e["name"] + str(list(e["rect"])) for e in exclusions)
+    print(f"pairs={runs} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}")
     return len(ok) == runs
+
+
+def semantic_gate(case, out):
+    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool.
+    Returns None when the case declares none, else whether the semantic gate passed."""
+    pj = case / "pair.json"
+    if not pj.is_file():
+        return None
+    cfg = json.loads(pj.read_text())
+    tool = "pair_image_report.py" if "imageFrame" in cfg else "pair_text_report.py" if "textGate" in cfg else None
+    if not tool:
+        return None
+    r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / tool), str(case), str(out)], capture_output=True, text=True)
+    print(r.stdout + r.stderr, end="")
+    return r.returncode == 0
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case"); ap.add_argument("--runs", type=int, default=1)
+    ap.add_argument("--stage", help="name of the staged product tree (factory/tools/stage-product.py prints it); required for Windows builds")
+    ap.add_argument("--renderer", default=DEFAULT_RENDERER, help="renderer DLL (Windows path) the host loads, per run via SWIFTRIGHT_RENDER_DLL (--sandbox only)")
     ap.add_argument("--shared", action="store_true", help="PrintWindow capture without the exclusive desktop lock (background, no activation, no input); default unchanged"); ap.add_argument("--sandbox", action="store_true", help="run the Windows capture inside the long-lived minimised Windows Sandbox (factory/tools/sandbox); the build still runs on the Dell host over SSH; default unchanged"); ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
     ap.add_argument("--exclude-text-bbox", action="append", metavar="X0,Y0,X1,Y1", help="named-in-report text region excluded from the pixel gate (repeatable); also <case>/pair.json excludeRects")
     ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
@@ -202,13 +250,24 @@ def main():
     case = Path(a.case).resolve(); name = case.name
     if a.recompare:
         out = Path(a.recompare).resolve(); n = len(list((out / "mac").glob("run-*.png")))
-        sys.exit(0 if compare(out, n, load_exclusions(case, a.exclude_text_bbox)) else 1)
+        ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox))
+        sem = semantic_gate(case, out)
+        sys.exit(0 if (ok if sem is None else sem and (ok or "imageFrame" in json.loads((case / "pair.json").read_text()))) else 1)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
-    if not a.skip_windows: windows(case, name, a.runs, out, a.shared, a.sandbox)
+    if not a.skip_windows:
+        if not a.stage: sys.exit("--stage <name> is required (python3 factory/tools/stage-product.py)")
+        if a.renderer != DEFAULT_RENDERER and not a.sandbox: sys.exit("--renderer needs --sandbox (the Dell-desktop session path does not pass it to the host)")
+        windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer)
     if not a.skip_mac: mac(case, name, a.runs, out)
     print(f"out={out}")
-    sys.exit(0 if compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox)) else 1)
+    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox))
+    sem = semantic_gate(case, out)
+    if sem is None:
+        sys.exit(0 if ok else 1)
+    # An Image(systemName:) case differs from the Mac inside the glyph region by design (substitute provider): its semantic gate decides.
+    image = "imageFrame" in json.loads((case / "pair.json").read_text())
+    sys.exit(0 if sem and (ok or image) else 1)
 
 
 if __name__ == "__main__":
