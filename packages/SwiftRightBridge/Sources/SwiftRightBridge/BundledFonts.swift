@@ -91,6 +91,52 @@ public extension Bridge {
     }
 }
 
+/// The vertical metrics of a font file (`head` unitsPerEm, `hhea` ascent / descent / lineGap), read from the registered
+/// bytes. These are CoreText's metrics for the face: SwiftUI `Text` places its baseline at round(ascent) DIP below the line
+/// top and lays lines out at round(ascent) + round(descent); the font's lineGap (leading) is not part of the line height
+/// (measured on macOS, ImageRenderer, Tinos 13/18/31 pt at 1x/2x/2.5x).
+public struct FontFileMetrics: Equatable {
+    public let unitsPerEm: UInt16
+    public let ascentUnits: Int16
+    public let descentUnits: Int16
+    public let lineGapUnits: Int16
+
+    public func ascent(pointSize: Float) -> Float { pointSize * Float(ascentUnits) / Float(unitsPerEm) }
+    public func descent(pointSize: Float) -> Float { pointSize * abs(Float(descentUnits)) / Float(unitsPerEm) }
+    /// The line height SwiftUI/CoreText gives a single line of this face at `pointSize` (DIP).
+    public func lineHeight(pointSize: Float) -> Float { ascent(pointSize: pointSize).rounded() + descent(pointSize: pointSize).rounded() }
+
+    /// Parses TTF/OTF (and the first face of a TTC). Nil when a table is absent or the values are implausible.
+    public static func parse(_ bytes: [UInt8]) -> FontFileMetrics? {
+        func u16(_ o: Int) -> Int? { o >= 0 && o + 2 <= bytes.count ? Int(bytes[o]) << 8 | Int(bytes[o + 1]) : nil }
+        func u32(_ o: Int) -> Int? { o >= 0 && o + 4 <= bytes.count ? Int(bytes[o]) << 24 | Int(bytes[o + 1]) << 16 | Int(bytes[o + 2]) << 8 | Int(bytes[o + 3]) : nil }
+        var base = 0
+        if bytes.count >= 16, bytes[0] == 0x74, bytes[1] == 0x74, bytes[2] == 0x63, bytes[3] == 0x66 {   // "ttcf"
+            guard let first = u32(12) else { return nil }
+            base = first
+        }
+        guard let count = u16(base + 4), count > 0, count <= 512 else { return nil }
+        func table(_ tag: String) -> Int? {
+            let wanted = Array(tag.utf8)
+            for i in 0..<count {
+                let row = base + 12 + i * 16
+                guard row + 16 <= bytes.count else { return nil }
+                if Array(bytes[row..<(row + 4)]) == wanted {
+                    guard let offset = u32(row + 8), let length = u32(row + 12), offset <= bytes.count, length <= bytes.count - offset else { return nil }
+                    return offset
+                }
+            }
+            return nil
+        }
+        guard let head = table("head"), let hhea = table("hhea"),
+              let units = u16(head + 18), let ascent = u16(hhea + 4), let descent = u16(hhea + 6), let gap = u16(hhea + 8),
+              units > 0 else { return nil }
+        let a = Int16(truncatingIfNeeded: ascent), d = Int16(truncatingIfNeeded: descent)
+        guard a > 0, d != 0 else { return nil }
+        return FontFileMetrics(unitsPerEm: UInt16(units), ascentUnits: a, descentUnits: d, lineGapUnits: Int16(truncatingIfNeeded: gap))
+    }
+}
+
 /// The bundled font resources of an app: registers every font file in a resource directory with the
 /// renderer, and answers what `Font.custom(_:size:)` names mean. Use it from `onReady`, before the
 /// first measurement, so the first shaping of a family already sees the bundled bytes.
@@ -100,6 +146,8 @@ public final class BundledFontLibrary {
     public private(set) var registrations: [FontRegistration] = []
     /// lower-cased lookup key (family, file stem) -> provider family.
     private var providerFamilies: [String: String] = [:]
+    /// provider family (lower-cased) -> vertical metrics read from the registered bytes.
+    private var metricsByFamily: [String: FontFileMetrics] = [:]
     private let bridge: Bridge
 
     public init(bridge: Bridge) { self.bridge = bridge }
@@ -131,6 +179,7 @@ public final class BundledFontLibrary {
         let data = try Data(contentsOf: file, options: [.mappedIfSafe])
         let reg = try bridge.registerFont([UInt8](data))
         registrations.append(reg)
+        if let metrics = FontFileMetrics.parse([UInt8](data)) { metricsByFamily[reg.family.lowercased()] = metrics }
         providerFamilies[reg.family.lowercased()] = reg.family
         providerFamilies[file.deletingPathExtension().lastPathComponent.lowercased()] = reg.family
         return reg
@@ -143,5 +192,11 @@ public final class BundledFontLibrary {
         if let hit = providerFamilies[key] { return hit }
         if let dash = key.firstIndex(of: "-"), let hit = providerFamilies[String(key[..<dash])] { return hit }
         return nil
+    }
+
+    /// The vertical metrics (hhea) of the bundled face a `Font.custom` name selects, nil when none answers to it or the
+    /// bytes carried no usable tables.
+    public func metrics(forCustomName name: String) -> FontFileMetrics? {
+        providerFamily(forCustomName: name).flatMap { metricsByFamily[$0.lowercased()] }
     }
 }
