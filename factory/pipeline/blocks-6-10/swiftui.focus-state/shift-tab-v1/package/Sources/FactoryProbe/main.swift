@@ -200,6 +200,12 @@ struct HostPlacement {
             fflush(stdout)
             return
         }
+        // a pointer release over a Button runs it, over a Toggle flips it (the renderer reports the hit node; presses are left to text input)
+        if event.kind == .pointer, event.action == 2, let id = runtimeIDs[event.node] {
+            if !(graph?.tapButton(id) ?? false) { _ = graph?.activateToggle(id) }
+            graph?.flush()
+            return
+        }
         if event.kind == .axAction, event.action == 1, let id = runtimeIDs[event.node] {
             // the default (invoke) action of a Button runs it, of a Toggle flips it
             if !(graph?.tapButton(id) ?? false) { _ = graph?.activateToggle(id) }

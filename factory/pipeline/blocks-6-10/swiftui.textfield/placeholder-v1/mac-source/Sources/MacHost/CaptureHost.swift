@@ -41,8 +41,8 @@ let namedKeys: [String: KeySpec] = [
 
 @MainActor
 final class StepRunner {
-    let window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat
-    init(window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat) { self.window = window; self.host = host; self.height = height }
+    let window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat, ax: String?
+    init(window: NSWindow, host: NSHostingView<AnyView>, height: CGFloat, ax: String?) { self.window = window; self.host = host; self.height = height; self.ax = ax }
 
     var client: NSTextInputClient? { window.firstResponder as? NSTextInputClient }
 
@@ -83,7 +83,10 @@ final class StepRunner {
                 var mods: NSEvent.ModifierFlags = []
                 for m in (step["mods"] as? [String] ?? []) { switch m { case "shift": mods.insert(.shift); case "ctrl": mods.insert(.control); case "alt": mods.insert(.option); default: break } }
                 let name = step["key"] as? String ?? ""
-                if name == "Tab", mods.contains(.shift) { key("\u{19}", code: 48, mods: mods) }
+                if name == "Tab", !(window.firstResponder is NSTextView) {
+                    // A window that is never key has no first responder for the Tab event to start from: ask for the key-view step the event would make.
+                    if mods.contains(.shift) { window.selectPreviousKeyView(nil) } else { window.selectNextKeyView(nil) }
+                } else if name == "Tab", mods.contains(.shift) { key("\u{19}", code: 48, mods: mods) }
                 else if let spec = namedKeys[name] { key(spec.chars, code: spec.code, mods: mods) }
                 else if name.count == 1 { key(name.lowercased(), code: 0, mods: mods) }
             case "ime":
@@ -96,6 +99,11 @@ final class StepRunner {
                 default: break
                 }
             case "wait": spin(Double((step["ms"] as? NSNumber)?.doubleValue ?? 100) / 1000); continue
+            case "dump":
+                // the same label convention as the F2 UIA dump (uia-NN-<label>.json) and AlertHooks: ax-NN-<label>.json beside the final dump
+                if let ax, let label = step["label"] as? String { try? AXDump.write(main: window, scale: Double(captureScale), to: ax.replacingOccurrences(of: ".json", with: "-\(label).json")) }
+                fact("\(i):dump")
+                continue
             default: break
             }
             spin()
@@ -126,7 +134,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     spin(0.3)
-    if let steps { StepRunner(window: window, host: host, height: height).run(steps) }
+    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps) }
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     let pixelsWide = Int((width * captureScale).rounded()), pixelsHigh = Int((height * captureScale).rounded())

@@ -83,7 +83,10 @@ final class StepRunner {
                 var mods: NSEvent.ModifierFlags = []
                 for m in (step["mods"] as? [String] ?? []) { switch m { case "shift": mods.insert(.shift); case "ctrl": mods.insert(.control); case "alt": mods.insert(.option); default: break } }
                 let name = step["key"] as? String ?? ""
-                if name == "Tab", mods.contains(.shift) { key("\u{19}", code: 48, mods: mods) }
+                if name == "Tab", !(window.firstResponder is NSTextView) {
+                    // A window that is never key has no first responder for the Tab event to start from: ask for the key-view step the event would make.
+                    if mods.contains(.shift) { window.selectPreviousKeyView(nil) } else { window.selectNextKeyView(nil) }
+                } else if name == "Tab", mods.contains(.shift) { key("\u{19}", code: 48, mods: mods) }
                 else if let spec = namedKeys[name] { key(spec.chars, code: spec.code, mods: mods) }
                 else if name.count == 1 { key(name.lowercased(), code: 0, mods: mods) }
             case "ime":

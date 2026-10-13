@@ -97,7 +97,7 @@ struct Witness_focus_programmatic: View {
 }'''
     prog_steps = [wait(300), {"op": "click", "x": 150, "y": 275}, wait(250), {"op": "dump", "label": "p1"}, {"op": "click", "x": 150, "y": 345}, wait(250), {"op": "dump", "label": "p2"},
                   {"op": "click", "x": 150, "y": 415}, wait(250), {"op": "dump", "label": "p3"}, wait(200)]
-    case("swiftui.focus-state", "programmatic-v1", prog, "Witness_focus_programmatic", steps=prog_steps, sem=dict(SEM, roles=["textfield", "text", "button"], pixels="report-only", phases=["p1", "p2", "p3", ""]))
+    case("swiftui.focus-state", "programmatic-v1", prog, "Witness_focus_programmatic", steps=prog_steps, sem=dict(SEM, ignoreNames=["Second", "Clear", "First", "Focus", "Blur"], pixels="report-only", phases=["p1", "p2", "p3", ""]))
     boolform = '''struct Witness_focus_bool: View {
     @State private var a = "one"
     @FocusState private var flag: Bool
@@ -112,7 +112,7 @@ struct Witness_focus_programmatic: View {
 }'''
     case("swiftui.focus-state", "bool-form-v1", boolform, "Witness_focus_bool",
          steps=[wait(300), {"op": "click", "x": 150, "y": 205}, wait(250), {"op": "dump", "label": "b1"}, {"op": "click", "x": 150, "y": 275}, wait(250), {"op": "dump", "label": "b2"}, wait(200)],
-         sem=dict(SEM, roles=["textfield", "text", "button"], pixels="report-only", phases=["b1", "b2", ""]))
+         sem=dict(SEM, ignoreNames=["Second", "Clear", "First", "Focus", "Blur"], pixels="report-only", phases=["b1", "b2", ""]))
     # --- block 15 swiftui.ime-marked-text: the binding during composition. Windows: in-process script (ime_replace_and_mark / ime_replace / unmark through the product TextStore);
     # Mac: NSTextInputClient on the field editor (setMarkedText / insertText), no input method involved.
     ime = '''struct Witness_ime: View {
