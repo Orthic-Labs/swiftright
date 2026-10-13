@@ -11,7 +11,7 @@ import Foundation
 /// depending on the value: at scale 2.5, 1 pt rounds down (2.5 -> 2), 3 to 7 pt round up, 9 to 25 pt down, 27 to
 /// 127 pt up, 129 to 409 pt down, 411 pt and beyond up. Fitted on 2,400 tie probes (scales 1.25, 1.5, 2.5, 3, 5; ties
 /// at whole points and at inexact points), then held out on 10,600 more (scales 0.75 to 7, ImageRenderer and
-/// NSHostingView, x and y, padding/offset/overlay/stack paths, up to 7,500 px): no mismatch. Non-tie edges are plain
+/// NSHostingView, x and y, padding/offset/overlay/stack paths, up to 7,500 px): no mismatch, except 11 on a path whose position is inexact (below). Non-tie edges are plain
 /// nearest-pixel (600 random edges per scale, no mismatch). Both edges of a frame use it separately; the edge is the
 /// absolute position (origin plus offsets, summed in `Double`), never a position relative to the parent.
 /// Limit: the input must be the same `Double` SwiftUI computed. Exact layouts (whole and dyadic points) give the same

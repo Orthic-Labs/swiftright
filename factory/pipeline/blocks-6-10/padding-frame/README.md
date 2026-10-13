@@ -12,4 +12,4 @@ Five original cases, each a Witness (`package/Sources/FactoryProbe/Witness.swift
 
 Run: `python3 factory/tools/pair.py factory/pipeline/blocks-6-10/padding-frame/<case> --runs 20 --sandbox --stage <stage> --renderer D:\Claude\swiftright\.factory-work\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll`.
 
-**Tie rule for the witnesses.** An edge that lands exactly on a half device pixel (an odd number of points at scale 2.5, or 0.2 mod 0.4) is rounded by SwiftUI in a way that depends on the value (measured: 2.5 down, 7.5 up, 12.5 up, 17.5 up, 22.5 to 62.5 down, 67.5 up; 102.5 and 252.5 up) and that no rounding rule of ours reproduces. The witnesses are laid out so no edge sits on such a tie. Everything else, including fractional edges, matches.
+**Tie rule.** An edge on an exact half device pixel (an odd number of points at scale 2.5) is rounded by SwiftUI by a value-dependent rule that the runtime now reproduces (`DevicePixelSnap`, see `../pixel-ties/README.md`); these witnesses still avoid such edges, and `../pixel-ties/` holds the cases that land on them.

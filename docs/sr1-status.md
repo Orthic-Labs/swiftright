@@ -89,6 +89,8 @@ Semantic gate per run: open phase (TaskDialog UIA tree vs the Mac alert record: 
 
 Tests on lane D's last stage (`600769e24-f54beafa`): Windows runtime 333, bridge 51 (1 skipped), host 120; Mac (git archive of `600769e24`) runtime 325, bridge 52 (1 skipped), host 120; 0 failures.
 
+**Pixel ties (14 October, stage `3353d63f0-66399b28`, commit `3353d63f0`).** SwiftUI's rounding of edges on exact half device pixels is now reproduced: `DevicePixelSnap.pixel` = `floor((x + pl/2)/pl)`, `pl = 1/scale` in Double (value-dependent at scale 2.5: 1 pt down, 3-7 up, 9-25 down, 27-127 up, 129-409 down, 411+ up); evidence and probe in `factory/pipeline/blocks-6-10/pixel-ties/`. Cases `pixel-ties/ruler-v1`, `centered-origin-v1`, `layout-v1`: 20 exact each (all fail on stage `3b3e6b28e`). Regression N=3 of every case in the table above on the new stage: all 34 keep their verdicts (13 centred cases re-stamped to runtime centring). Tests: Windows runtime 273, host 78, bridge 51 (1 skipped); Mac runtime 325, host 78, bridge 52; 0 failures.
+
 **Known gaps:**
 - SliceApp's own backend does not yet use `ResolvedNodePainter`.
 - Per-case provenance files (`source-bindings.json`, `plan.json`) describe the old host sources.
