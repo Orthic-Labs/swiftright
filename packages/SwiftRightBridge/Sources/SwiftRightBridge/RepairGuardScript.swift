@@ -14,7 +14,7 @@ enum RepairGuardScript {
 #
 # Repair order: `Add-AppxPackage -AppInstallerFile <feed>` (known-good), then `Add-AppxPackage -Path <latest versioned msix uri>`.
 # Every decision is logged to repair.log next to this script. Exit codes: 0 healthy/repaired/cleaned up, 1 repair failed,
-# 2 guard misconfigured, 3 no install source known.
+# 2 guard misconfigured, 3 no install source known, 4 unhandled error (logged).
 # Requirement: the app's data directory must be physical (MSIX fileSystemWrite virtualization disabled, as SliceApp declares),
 # otherwise the packaged app writes this folder into its private LocalCache and the task cannot see it.
 [CmdletBinding()]
@@ -32,6 +32,7 @@ function Log([string]$m) {
         Add-Content -LiteralPath $LogPath -Value ((Get-Date).ToString('yyyy-MM-ddTHH:mm:ss.fffzzz') + ' [' + $Mode + '] ' + $m)
     } catch { }
 }
+trap { Log ('UNHANDLED ERROR: ' + $_.Exception.Message + ' at line ' + $_.InvocationInfo.ScriptLineNumber); exit 4 }
 function Read-Config { try { return (Get-Content -LiteralPath $ConfigPath -Raw -ErrorAction Stop | ConvertFrom-Json) } catch { return $null } }
 function Get-Family([string]$family) {
     $name = $family.Substring(0, $family.LastIndexOf('_'))
@@ -54,7 +55,9 @@ function Test-Reachable([string]$uri) {
 }
 function Get-MsixFromFeed([string]$feedUri) {
     $r = Invoke-WebRequest -Uri $feedUri -UseBasicParsing -TimeoutSec 20
-    $x = [xml]$r.Content
+    $text = $r.Content
+    if ($text -is [byte[]]) { $text = [Text.Encoding]::UTF8.GetString($text) }   # a non-text content type returns bytes
+    $x = [xml]($text.TrimStart([char]0xFEFF))
     $n = $x.GetElementsByTagName('MainPackage') | Select-Object -First 1
     if (-not $n) { $n = $x.GetElementsByTagName('MainBundle') | Select-Object -First 1 }
     if ($n -and $n.Uri) { return [string]$n.Uri }
@@ -121,7 +124,7 @@ if ($Install) {
 $cfg = Read-Config
 if (-not $cfg -or -not $cfg.pfn) { Log 'guard.json missing or unreadable; nothing to do'; exit 2 }
 $family = [string]$cfg.pfn
-$mutex = New-Object Threading.Mutex($false, 'Local\' + $family + '-Repair')
+$mutex = [Threading.Mutex]::new($false, ('Local\' + $family + '-Repair'))
 if (-not $mutex.WaitOne(0)) { Log 'another repair run is active; exiting'; exit 0 }
 try {
     $state = Get-StateText $family
