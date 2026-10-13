@@ -104,6 +104,11 @@ extension View {
         return Modified(content: self, spec: .focus(link))
     }
 
+    /// Gives focus to this view while `condition` is true: `.focused(_:equals: true)` of a `Bool` focus state. Apple: https://developer.apple.com/documentation/swiftui/view/focused(_:)
+    public func focused(_ condition: FocusState<Bool>.Binding) -> some View {
+        focused(condition, equals: true)
+    }
+
     /// Multiplies this view's opacity. Changes animate under an animated transaction.
     public func opacity(_ value: Double) -> some View {
         Modified(content: self, spec: .opacity(value))

@@ -57,6 +57,7 @@ enum AXDump {
         let label = string(get(object, "accessibilityLabel")) ?? string(get(object, "accessibilityTitle"))
         if let label, !label.isEmpty { d["name"] = label }
         if let v = number(get(object, "accessibilityValue")) { d["value"] = v }
+        if let placeholder = string(get(object, "accessibilityPlaceholderValue")), !placeholder.isEmpty { d["placeholder"] = placeholder }
         d["enabled"] = (get(object, "accessibilityEnabled", getter: "isAccessibilityEnabled") as? Bool) ?? true
         d["focus"] = (get(object, "accessibilityFocused", getter: "isAccessibilityFocused") as? Bool) ?? false
         if let id = string(get(object, "accessibilityIdentifier")), !id.isEmpty { d["id"] = id }

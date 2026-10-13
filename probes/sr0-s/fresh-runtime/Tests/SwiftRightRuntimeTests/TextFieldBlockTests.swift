@@ -58,6 +58,22 @@ private struct MixedFields: View {
     }
 }
 
+private struct BoolFocus: View {
+    @State var a = "one"
+    @State var b = "two"
+    @FocusState var aFocused: Bool
+    @FocusState var bFocused: Bool
+    var body: some View {
+        VStack {
+            TextField("A", text: $a).focused($aFocused)
+            TextField("B", text: $b).focused($bFocused)
+            Text("a=\(aFocused) b=\(bFocused)")
+            Button("focus b") { bFocused = true }
+            Button("blur") { aFocused = false; bFocused = false }
+        }
+    }
+}
+
 @MainActor
 final class TextFieldBlockTests: XCTestCase {
     private func nodes(_ graph: Graph) -> [ResolvedNode] { everyNode(graph.snapshot()) }
@@ -190,5 +206,23 @@ final class TextFieldBlockTests: XCTestCase {
         XCTAssertEqual(graph.focusedTextFieldID, ids[0])
         XCTAssertEqual(focusedIDs.last ?? nil, ids[0], "the commit record reports the focused field")
         XCTAssertFalse(graph.focusTextField("missing"))
+    }
+
+    // `@FocusState var x: Bool` with `.focused($x)`: the Bool form of the focus binding (macOS oracle: focus = true takes focus, false releases it).
+    func testBoolFocusStateFollowsFocusAndTab() {
+        let graph = Graph(BoolFocus()); graph.flush()
+        func status() -> String? { nodes(graph).compactMap(\.text).first { $0.hasPrefix("a=") } }
+        XCTAssertEqual(status(), "a=false b=false")
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(status(), "a=true b=false")
+        XCTAssertTrue(graph.moveFocus(forward: true))
+        XCTAssertEqual(status(), "a=false b=true")
+        let buttons = graph.ids(ofKind: "Button")
+        XCTAssertTrue(graph.tapButton(buttons[1])); graph.flush()
+        XCTAssertEqual(status(), "a=false b=false")
+        XCTAssertNil(graph.focusedTextFieldID)
+        XCTAssertTrue(graph.tapButton(buttons[0])); graph.flush()
+        XCTAssertEqual(status(), "a=false b=true")
+        XCTAssertEqual(graph.textInput(graph.ids(ofKind: "TextField")[1])?.selection, UTF16Range(location: 0, length: 3))
     }
 }

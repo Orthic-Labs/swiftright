@@ -338,6 +338,11 @@ public struct FocusState<Value: Hashable>: DynamicPropertyStorage {
         cell = StateCell(Value(nilLiteral: ()))
     }
 
+    /// `@FocusState var isFocused: Bool`: false until a view bound with `.focused(_:)` takes focus.
+    public init() where Value == Bool {
+        cell = StateCell(false)
+    }
+
     @MainActor
     public var wrappedValue: Value {
         get { cell.resolved.value }

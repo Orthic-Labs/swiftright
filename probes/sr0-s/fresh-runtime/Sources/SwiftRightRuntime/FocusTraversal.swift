@@ -50,6 +50,7 @@ extension Graph {
         if case .modifier(.focus(let link)) = stop.kind {
             clearImplicitFocus()
             link.focus()
+            releaseOtherFocus(besides: stop)
             return
         }
         guard case .textField = stop.kind else { return }
@@ -59,6 +60,17 @@ extension Graph {
         clearImplicitFocus()
         stop.focused = true
         selectAllInitially(under: stop)
+    }
+
+    /// One node holds the focus: when `node` gains it, every other `.focused` modifier that held it releases its binding (separate `FocusState`s,
+    /// such as two `Bool` ones, would otherwise both read true). A release only acts while its binding still names its own value.
+    func releaseOtherFocus(besides node: Node) {
+        var mine: ObjectIdentifier?
+        if case .modifier(.focus(let link)) = node.kind { mine = link.storage }
+        for other in nodes.values where other !== node && other.alive && other.focused {
+            // a modifier on the same FocusState follows that one value; only a different FocusState needs releasing
+            if case .modifier(.focus(let link)) = other.kind, link.storage != mine { link.release() }
+        }
     }
 
     /// Clears the implicit focus of an unbound TextField (a field that has no `.focused` modifier keeps its flag on the node itself).
@@ -207,6 +219,7 @@ extension Graph {
         node.focused = now
         if gained, node.alive {
             clearImplicitFocus()
+            releaseOtherFocus(besides: node)
             selectAllInitially(under: node)
         }
     }

@@ -85,6 +85,9 @@ def flatten_mac(node, role_map, out, depth=0):
     name = node.get("name")
     if role == "text" and not name and value is not None:
         name, value = value, None
+    # a text field's title is its placeholder on the Mac (AXPlaceholderValue); UIA publishes it as the Name
+    if role == "textfield" and not name and node.get("placeholder"):
+        name = node.get("placeholder")
     out.append(dict(role=role, name=clean(name), value=None if toggle else clean(value) if value is not None else None,
                     enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")), toggle=toggle, bounds=node.get("bounds"), depth=depth, raw=key,
                     default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive"))))
