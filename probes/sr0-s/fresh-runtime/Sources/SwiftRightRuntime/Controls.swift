@@ -367,6 +367,10 @@ private enum LineLimitKey: EnvironmentKey {
     static var defaultValue: Int? { nil }
 }
 
+private enum DefaultScrollAnchorKey: EnvironmentKey {
+    static var defaultValue: UnitPoint? { nil }
+}
+
 private enum ForegroundStyleKey: EnvironmentKey {
     static var defaultValue: ResolvedColor? { nil }
 }
@@ -387,6 +391,12 @@ extension EnvironmentValues {
     public var lineLimit: Int? {
         get { self[LineLimitKey.self] }
         set { self[LineLimitKey.self] = newValue }
+    }
+
+    /// Where a scroll view first positions its content (`.defaultScrollAnchor`); nil starts at the leading/top edge.
+    var defaultScrollAnchor: UnitPoint? {
+        get { self[DefaultScrollAnchorKey.self] }
+        set { self[DefaultScrollAnchorKey.self] = newValue }
     }
 
     public var foregroundStyle: ResolvedColor? {

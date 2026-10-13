@@ -246,8 +246,10 @@ extension Graph {
             let content = measureGroup(node, contentProposal)
             let maxX = configuration.axes.contains(.horizontal) ? max(0, content.width - rect.width) : 0
             let maxY = configuration.axes.contains(.vertical) ? max(0, content.height - rect.height) : 0
-            let offsetX = min(max(0, node.scrollOffsetX ?? 0), maxX)
-            let offsetY = min(max(0, node.scrollOffsetY ?? 0), maxY)
+            // A scroll view that was never scrolled starts where `.defaultScrollAnchor` puts it (the leading/top edge without one).
+            let anchor = node.environment.defaultScrollAnchor
+            let offsetX = min(max(0, node.scrollOffsetX ?? (anchor.map { maxX * $0.x } ?? 0)), maxX)
+            let offsetY = min(max(0, node.scrollOffsetY ?? (anchor.map { maxY * $0.y } ?? 0)), maxY)
             node.scrollOffsetX = offsetX
             node.scrollOffsetY = offsetY
             let contentRect = LayoutRect(
