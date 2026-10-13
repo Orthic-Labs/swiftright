@@ -1,0 +1,1333 @@
+{
+  "inputs": {
+    "branchProbe": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/tilde-sendable-probe.swift",
+      "sha256": "sha256:5855c068a23cb7690d57edc46897f75ed57f13e96839f8541fe755b5e468c6cd"
+    },
+    "freshBranchOutput": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/exact-branch.stdout",
+      "sha256": "sha256:ef91c3c3676eb785cd57326857f9f22eca63bda787220a2fb8d2780e4e5e6d4c"
+    },
+    "freshDemangleOutput": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/exact-demangle.stdout",
+      "sha256": "sha256:bb47e5aecbf8c2d81a415daae7570d0b7b121d48ffa657e738daab789066f64c"
+    },
+    "freshProbeReceipts": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/exact-probe-receipts.json",
+      "sha256": "sha256:04aed18e57ad16af0fa5f70d913f5fa806adee078a94b88d9c58f06e4ae8a2ba"
+    },
+    "freshResponse": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/sourcekit-index-output.txt",
+      "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+    },
+    "legacyRawEvidence": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/raw-record-evidence.json",
+      "sha256": "sha256:5287ecdbd267d2d30196855233ee285914b7e6bb4c24e25dafa911386bb1c89f"
+    },
+    "link": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/link-evidence.json",
+      "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+    },
+    "probeCapture": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/capture_exact_probes.py",
+      "sha256": "sha256:e7bdf26635be7ebbc17cdd4d37ba796e3a22cce249b4b5425ad84dda84fc6ffd"
+    },
+    "request": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+      "sha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+    },
+    "response": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+      "sha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+    },
+    "source": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+    },
+    "test": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/test_exact_identity_candidate.py",
+      "sha256": "sha256:7aad3332d4f139dd27a07d453acdf7bc98a964f6288b6b961504f177e5df7786"
+    },
+    "validator": {
+      "path": "/Volumes/D/claude/swiftright/factory/catalogue/duplicate-identity-spike/exact_identity_candidate.py",
+      "sha256": "sha256:50fd8272beb8f6242a968b7ce2f36dfe1d81066570f782fc5b02bcd03a016001"
+    }
+  },
+  "kind": "duplicate-exact-identity-review-candidate",
+  "pins": {
+    "demangle": "sha256:bb47e5aecbf8c2d81a415daae7570d0b7b121d48ffa657e738daab789066f64c",
+    "demangleTool": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe",
+    "link": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+    "request": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764",
+    "response": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+    "source": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+  },
+  "rows": [
+    {
+      "auditRowKey": "sha256:b53c943134f745c831d7f276573fe1bde35b43473c0ce111f5cbd27f5eb82be5",
+      "decision": {
+        "promotion": null,
+        "status": "held"
+      },
+      "faultControls": {
+        "actual-condition-mutated": {
+          "reasons": [
+            "source-bytes",
+            "source-lexical",
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-lexical"
+        },
+        "both-full-blocks-and-response-rehashed-wrong-usr": {
+          "reasons": [
+            "response-pin",
+            "response-bytes",
+            "semantic-usr",
+            "entity-full-identity",
+            "response-cardinality-position-block-entity"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "both-identical-column": {
+          "reasons": [
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-column"
+        },
+        "both-identical-effective_access": {
+          "reasons": [
+            "semantic-effective_access",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-effective_access"
+        },
+        "both-identical-is_implicit": {
+          "reasons": [
+            "semantic-is_implicit",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-is_implicit"
+        },
+        "both-identical-kind": {
+          "reasons": [
+            "semantic-kind",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-kind"
+        },
+        "both-identical-line": {
+          "reasons": [
+            "semantic-line",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-line"
+        },
+        "both-identical-name": {
+          "reasons": [
+            "semantic-name",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-name"
+        },
+        "both-identical-sourcekitContext": {
+          "reasons": [
+            "semantic-sourcekitContext",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-sourcekitContext"
+        },
+        "both-identical-usr": {
+          "reasons": [
+            "semantic-usr",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "branch-flag": {
+          "reasons": [
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-branch"
+        },
+        "changed-full-response": {
+          "reasons": [
+            "response-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "response-bytes"
+        },
+        "coforged-request-pins": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "coforged-toolchain": {
+          "reasons": [
+            "toolchain-identity"
+          ],
+          "rejected": true,
+          "requiredReason": "toolchain-identity"
+        },
+        "distinct-full-block": {
+          "reasons": [
+            "distinct-records",
+            "records-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-records"
+        },
+        "duplicate-demangle-section": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-nominal-tree-child": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-request-build-flag": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "frozen-signature": {
+          "reasons": [
+            "frozen-row-signature-key"
+          ],
+          "rejected": true,
+          "requiredReason": "frozen-row-signature-key"
+        },
+        "full-owner-tree-mutated": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "nonallowlisted-sdk-row": {
+          "reasons": [
+            "exact-five-key"
+          ],
+          "rejected": true,
+          "requiredReason": "exact-five-key"
+        },
+        "real-wrong-sdk-scope": {
+          "reasons": [
+            "source-scope"
+          ],
+          "rejected": true,
+          "requiredReason": "source-scope"
+        },
+        "third-card": {
+          "reasons": [
+            "cardinality",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "cardinality"
+        },
+        "true-distinct-card": {
+          "reasons": [
+            "distinct-entities",
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-entities"
+        }
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        4080,
+        "var"
+      ],
+      "rawPositions": [
+        {
+          "endByte": 2382158,
+          "startByte": 2381396
+        },
+        {
+          "endByte": 2382920,
+          "startByte": 2382158
+        }
+      ],
+      "signature": "public var $isOn: SwiftUICore.Binding<Swift.Bool> {",
+      "sourceReconstruction": {
+        "conditions": [
+          [
+            "compiler(>=5.3) && $TildeSendable",
+            true
+          ]
+        ],
+        "lineText": "  public var $isOn: SwiftUICore.Binding<Swift.Bool> {",
+        "scope": [
+          {
+            "kind": "struct",
+            "line": 4067,
+            "name": "ToggleStyleConfiguration"
+          }
+        ],
+        "uniqueActiveLines": [
+          4080
+        ]
+      },
+      "usr": "s:7SwiftUI24ToggleStyleConfigurationV5$isOnAA7BindingVySbGvp",
+      "validator": {
+        "accepted": true,
+        "reasons": []
+      }
+    },
+    {
+      "auditRowKey": "sha256:6c7900062d397e3256762aea3ab03200abd76f19127929c5ba10f36f1def1fd1",
+      "decision": {
+        "promotion": null,
+        "status": "held"
+      },
+      "faultControls": {
+        "actual-condition-mutated": {
+          "reasons": [
+            "source-bytes",
+            "source-lexical",
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-lexical"
+        },
+        "both-full-blocks-and-response-rehashed-wrong-usr": {
+          "reasons": [
+            "response-pin",
+            "response-bytes",
+            "semantic-usr",
+            "entity-full-identity",
+            "response-cardinality-position-block-entity"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "both-identical-column": {
+          "reasons": [
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-column"
+        },
+        "both-identical-effective_access": {
+          "reasons": [
+            "semantic-effective_access",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-effective_access"
+        },
+        "both-identical-is_implicit": {
+          "reasons": [
+            "semantic-is_implicit",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-is_implicit"
+        },
+        "both-identical-kind": {
+          "reasons": [
+            "semantic-kind",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-kind"
+        },
+        "both-identical-line": {
+          "reasons": [
+            "semantic-line",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-line"
+        },
+        "both-identical-name": {
+          "reasons": [
+            "semantic-name",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-name"
+        },
+        "both-identical-sourcekitContext": {
+          "reasons": [
+            "semantic-sourcekitContext",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-sourcekitContext"
+        },
+        "both-identical-usr": {
+          "reasons": [
+            "semantic-usr",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "branch-flag": {
+          "reasons": [
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-branch"
+        },
+        "changed-full-response": {
+          "reasons": [
+            "response-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "response-bytes"
+        },
+        "coforged-request-pins": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "coforged-toolchain": {
+          "reasons": [
+            "toolchain-identity"
+          ],
+          "rejected": true,
+          "requiredReason": "toolchain-identity"
+        },
+        "distinct-full-block": {
+          "reasons": [
+            "distinct-records",
+            "records-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-records"
+        },
+        "duplicate-demangle-section": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-nominal-tree-child": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-request-build-flag": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "frozen-signature": {
+          "reasons": [
+            "frozen-row-signature-key"
+          ],
+          "rejected": true,
+          "requiredReason": "frozen-row-signature-key"
+        },
+        "full-owner-tree-mutated": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "nonallowlisted-sdk-row": {
+          "reasons": [
+            "exact-five-key"
+          ],
+          "rejected": true,
+          "requiredReason": "exact-five-key"
+        },
+        "real-wrong-sdk-scope": {
+          "reasons": [
+            "source-scope"
+          ],
+          "rejected": true,
+          "requiredReason": "source-scope"
+        },
+        "third-card": {
+          "reasons": [
+            "cardinality",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "cardinality"
+        },
+        "true-distinct-card": {
+          "reasons": [
+            "distinct-entities",
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-entities"
+        }
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        5533,
+        "var"
+      ],
+      "rawPositions": [
+        {
+          "endByte": 3481548,
+          "startByte": 3480742
+        },
+        {
+          "endByte": 3482354,
+          "startByte": 3481548
+        }
+      ],
+      "signature": "public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {",
+      "sourceReconstruction": {
+        "conditions": [
+          [
+            "compiler(>=5.3) && $TildeSendable",
+            true
+          ]
+        ],
+        "lineText": "  public var $isExpanded: SwiftUICore.Binding<Swift.Bool> {",
+        "scope": [
+          {
+            "kind": "struct",
+            "line": 5507,
+            "name": "DisclosureGroupStyleConfiguration"
+          }
+        ],
+        "uniqueActiveLines": [
+          5533
+        ]
+      },
+      "usr": "s:7SwiftUI33DisclosureGroupStyleConfigurationV11$isExpandedAA7BindingVySbGvp",
+      "validator": {
+        "accepted": true,
+        "reasons": []
+      }
+    },
+    {
+      "auditRowKey": "sha256:7d64a86fdf92cf466245319ab77056dd46838a4642a7e4fcb1136a5b61263143",
+      "decision": {
+        "promotion": null,
+        "status": "held"
+      },
+      "faultControls": {
+        "actual-condition-mutated": {
+          "reasons": [
+            "source-bytes",
+            "source-lexical",
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-lexical"
+        },
+        "both-full-blocks-and-response-rehashed-wrong-usr": {
+          "reasons": [
+            "response-pin",
+            "response-bytes",
+            "semantic-usr",
+            "entity-full-identity",
+            "response-cardinality-position-block-entity"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "both-identical-column": {
+          "reasons": [
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-column"
+        },
+        "both-identical-effective_access": {
+          "reasons": [
+            "semantic-effective_access",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-effective_access"
+        },
+        "both-identical-is_implicit": {
+          "reasons": [
+            "semantic-is_implicit",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-is_implicit"
+        },
+        "both-identical-kind": {
+          "reasons": [
+            "semantic-kind",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-kind"
+        },
+        "both-identical-line": {
+          "reasons": [
+            "semantic-line",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-line"
+        },
+        "both-identical-name": {
+          "reasons": [
+            "semantic-name",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-name"
+        },
+        "both-identical-sourcekitContext": {
+          "reasons": [
+            "semantic-sourcekitContext",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-sourcekitContext"
+        },
+        "both-identical-usr": {
+          "reasons": [
+            "semantic-usr",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "branch-flag": {
+          "reasons": [
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-branch"
+        },
+        "changed-full-response": {
+          "reasons": [
+            "response-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "response-bytes"
+        },
+        "coforged-request-pins": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "coforged-toolchain": {
+          "reasons": [
+            "toolchain-identity"
+          ],
+          "rejected": true,
+          "requiredReason": "toolchain-identity"
+        },
+        "distinct-full-block": {
+          "reasons": [
+            "distinct-records",
+            "records-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-records"
+        },
+        "duplicate-demangle-section": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-nominal-tree-child": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-request-build-flag": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "frozen-signature": {
+          "reasons": [
+            "frozen-row-signature-key"
+          ],
+          "rejected": true,
+          "requiredReason": "frozen-row-signature-key"
+        },
+        "full-owner-tree-mutated": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "nonallowlisted-sdk-row": {
+          "reasons": [
+            "exact-five-key"
+          ],
+          "rejected": true,
+          "requiredReason": "exact-five-key"
+        },
+        "real-wrong-sdk-scope": {
+          "reasons": [
+            "source-scope"
+          ],
+          "rejected": true,
+          "requiredReason": "source-scope"
+        },
+        "third-card": {
+          "reasons": [
+            "cardinality",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "cardinality"
+        },
+        "true-distinct-card": {
+          "reasons": [
+            "distinct-entities",
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-entities"
+        }
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        9717,
+        "var"
+      ],
+      "rawPositions": [
+        {
+          "endByte": 5937263,
+          "startByte": 5936248
+        },
+        {
+          "endByte": 5938657,
+          "startByte": 5937642
+        }
+      ],
+      "signature": "@_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {",
+      "sourceReconstruction": {
+        "conditions": [
+          [
+            "compiler(>=5.3) && $TildeSendable",
+            true
+          ]
+        ],
+        "lineText": "  @_Concurrency.MainActor @preconcurrency public var $document: SwiftUICore.ObservedObject<Document>.Wrapper {",
+        "scope": [
+          {
+            "kind": "struct",
+            "line": 9703,
+            "name": "ReferenceFileDocumentConfiguration"
+          }
+        ],
+        "uniqueActiveLines": [
+          9717
+        ]
+      },
+      "usr": "s:7SwiftUI34ReferenceFileDocumentConfigurationV9$documentAA14ObservedObjectV7WrapperVyx_Gvp",
+      "validator": {
+        "accepted": true,
+        "reasons": []
+      }
+    },
+    {
+      "auditRowKey": "sha256:c0ea45aff366525715f0fa5f558fa97b52cdfd1364d9368e44aeb8c17f691100",
+      "decision": {
+        "promotion": null,
+        "status": "held"
+      },
+      "faultControls": {
+        "actual-condition-mutated": {
+          "reasons": [
+            "source-bytes",
+            "source-lexical",
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-lexical"
+        },
+        "both-full-blocks-and-response-rehashed-wrong-usr": {
+          "reasons": [
+            "response-pin",
+            "response-bytes",
+            "semantic-usr",
+            "entity-full-identity",
+            "response-cardinality-position-block-entity"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "both-identical-column": {
+          "reasons": [
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-column"
+        },
+        "both-identical-effective_access": {
+          "reasons": [
+            "semantic-effective_access",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-effective_access"
+        },
+        "both-identical-is_implicit": {
+          "reasons": [
+            "semantic-is_implicit",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-is_implicit"
+        },
+        "both-identical-kind": {
+          "reasons": [
+            "semantic-kind",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-kind"
+        },
+        "both-identical-line": {
+          "reasons": [
+            "semantic-line",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-line"
+        },
+        "both-identical-name": {
+          "reasons": [
+            "semantic-name",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-name"
+        },
+        "both-identical-sourcekitContext": {
+          "reasons": [
+            "semantic-sourcekitContext",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-sourcekitContext"
+        },
+        "both-identical-usr": {
+          "reasons": [
+            "semantic-usr",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "branch-flag": {
+          "reasons": [
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-branch"
+        },
+        "changed-full-response": {
+          "reasons": [
+            "response-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "response-bytes"
+        },
+        "coforged-request-pins": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "coforged-toolchain": {
+          "reasons": [
+            "toolchain-identity"
+          ],
+          "rejected": true,
+          "requiredReason": "toolchain-identity"
+        },
+        "distinct-full-block": {
+          "reasons": [
+            "distinct-records",
+            "records-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-records"
+        },
+        "duplicate-demangle-section": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-nominal-tree-child": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-request-build-flag": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "frozen-signature": {
+          "reasons": [
+            "frozen-row-signature-key"
+          ],
+          "rejected": true,
+          "requiredReason": "frozen-row-signature-key"
+        },
+        "full-owner-tree-mutated": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "nonallowlisted-sdk-row": {
+          "reasons": [
+            "exact-five-key"
+          ],
+          "rejected": true,
+          "requiredReason": "exact-five-key"
+        },
+        "real-wrong-sdk-scope": {
+          "reasons": [
+            "source-scope"
+          ],
+          "rejected": true,
+          "requiredReason": "source-scope"
+        },
+        "third-card": {
+          "reasons": [
+            "cardinality",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "cardinality"
+        },
+        "true-distinct-card": {
+          "reasons": [
+            "distinct-entities",
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-entities"
+        }
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        23750,
+        "var"
+      ],
+      "rawPositions": [
+        {
+          "endByte": 14161516,
+          "startByte": 14160736
+        },
+        {
+          "endByte": 14162296,
+          "startByte": 14161516
+        }
+      ],
+      "signature": "public var $document: SwiftUICore.Binding<Document> {",
+      "sourceReconstruction": {
+        "conditions": [
+          [
+            "compiler(>=5.3) && $TildeSendable",
+            true
+          ]
+        ],
+        "lineText": "  public var $document: SwiftUICore.Binding<Document> {",
+        "scope": [
+          {
+            "kind": "struct",
+            "line": 23734,
+            "name": "FileDocumentConfiguration"
+          }
+        ],
+        "uniqueActiveLines": [
+          23750
+        ]
+      },
+      "usr": "s:7SwiftUI25FileDocumentConfigurationV9$documentAA7BindingVyxGvp",
+      "validator": {
+        "accepted": true,
+        "reasons": []
+      }
+    },
+    {
+      "auditRowKey": "sha256:f8400fd8a37a3110482e53ddce839dd556f75d3578f4fd3aa26938da4ea9e778",
+      "decision": {
+        "promotion": null,
+        "status": "held"
+      },
+      "faultControls": {
+        "actual-condition-mutated": {
+          "reasons": [
+            "source-bytes",
+            "source-lexical",
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-lexical"
+        },
+        "both-full-blocks-and-response-rehashed-wrong-usr": {
+          "reasons": [
+            "response-pin",
+            "response-bytes",
+            "semantic-usr",
+            "entity-full-identity",
+            "response-cardinality-position-block-entity"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "both-identical-column": {
+          "reasons": [
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-column"
+        },
+        "both-identical-effective_access": {
+          "reasons": [
+            "semantic-effective_access",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-effective_access"
+        },
+        "both-identical-is_implicit": {
+          "reasons": [
+            "semantic-is_implicit",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-is_implicit"
+        },
+        "both-identical-kind": {
+          "reasons": [
+            "semantic-kind",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-kind"
+        },
+        "both-identical-line": {
+          "reasons": [
+            "semantic-line",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-line"
+        },
+        "both-identical-name": {
+          "reasons": [
+            "semantic-name",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-name"
+        },
+        "both-identical-sourcekitContext": {
+          "reasons": [
+            "semantic-sourcekitContext",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-sourcekitContext"
+        },
+        "both-identical-usr": {
+          "reasons": [
+            "semantic-usr",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "semantic-usr"
+        },
+        "branch-flag": {
+          "reasons": [
+            "source-branch"
+          ],
+          "rejected": true,
+          "requiredReason": "source-branch"
+        },
+        "changed-full-response": {
+          "reasons": [
+            "response-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "response-bytes"
+        },
+        "coforged-request-pins": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "coforged-toolchain": {
+          "reasons": [
+            "toolchain-identity"
+          ],
+          "rejected": true,
+          "requiredReason": "toolchain-identity"
+        },
+        "distinct-full-block": {
+          "reasons": [
+            "distinct-records",
+            "records-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-records"
+        },
+        "duplicate-demangle-section": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-nominal-tree-child": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "extra-request-build-flag": {
+          "reasons": [
+            "request-bytes"
+          ],
+          "rejected": true,
+          "requiredReason": "request-bytes"
+        },
+        "frozen-signature": {
+          "reasons": [
+            "frozen-row-signature-key"
+          ],
+          "rejected": true,
+          "requiredReason": "frozen-row-signature-key"
+        },
+        "full-owner-tree-mutated": {
+          "reasons": [
+            "demangle-bytes",
+            "usr-full-tree"
+          ],
+          "rejected": true,
+          "requiredReason": "usr-full-tree"
+        },
+        "nonallowlisted-sdk-row": {
+          "reasons": [
+            "exact-five-key"
+          ],
+          "rejected": true,
+          "requiredReason": "exact-five-key"
+        },
+        "real-wrong-sdk-scope": {
+          "reasons": [
+            "source-scope"
+          ],
+          "rejected": true,
+          "requiredReason": "source-scope"
+        },
+        "third-card": {
+          "reasons": [
+            "cardinality",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "cardinality"
+        },
+        "true-distinct-card": {
+          "reasons": [
+            "distinct-entities",
+            "semantic-column",
+            "entity-full-identity",
+            "entities-response-binding"
+          ],
+          "rejected": true,
+          "requiredReason": "distinct-entities"
+        }
+      },
+      "key": [
+        "SwiftUI",
+        "arm64e-apple-macos.swiftinterface",
+        32822,
+        "var"
+      ],
+      "rawPositions": [
+        {
+          "endByte": 19487646,
+          "startByte": 19486824
+        },
+        {
+          "endByte": 19488468,
+          "startByte": 19487646
+        }
+      ],
+      "signature": "public var $selection: SwiftUICore.Binding<Foundation.Date> {",
+      "sourceReconstruction": {
+        "conditions": [
+          [
+            "compiler(>=5.3) && $TildeSendable",
+            true
+          ]
+        ],
+        "lineText": "  public var $selection: SwiftUICore.Binding<Foundation.Date> {",
+        "scope": [
+          {
+            "kind": "struct",
+            "line": 32806,
+            "name": "DatePickerStyleConfiguration"
+          }
+        ],
+        "uniqueActiveLines": [
+          32822
+        ]
+      },
+      "usr": "s:7SwiftUI28DatePickerStyleConfigurationV10$selectionAA7BindingVy10Foundation0C0VGvp",
+      "validator": {
+        "accepted": true,
+        "reasons": []
+      }
+    }
+  ],
+  "status": "review-only",
+  "summary": {
+    "acceptedDuplicatePairs": 5,
+    "faultControls": 120,
+    "promotionsMade": 0
+  },
+  "toolchain": {
+    "compiler": {
+      "driverPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "executablePath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "version": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0"
+    },
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    },
+    "target": "arm64-apple-macosx27.0",
+    "xcodebuildVersion": "Xcode 27.0\nBuild version 27A266a"
+  },
+  "version": 2
+}

@@ -1,0 +1,13 @@
+{
+  "kind": "image-sampling-reference-v1",
+  "source": {"width": 4, "height": 4, "rgbaSha256": "dc3ae926d85afbeca3cc60a12a8c69faad0f0b31f60c76ebe55bf4be00aab008"},
+  "target": {"width": 32, "height": 32, "coordinateMapping": "clamp(((coordinate+0.5)*source/target)-0.5)", "interpolation": "bilinear", "channels": "opaque-srgb", "rounding": "nearest-integer"},
+  "expectedPixels": [
+    {"x": 0, "y": 0, "rgba": [255, 0, 0, 255]},
+    {"x": 15, "y": 15, "rgba": [143, 112, 112, 255]},
+    {"x": 16, "y": 16, "rgba": [112, 143, 112, 255]},
+    {"x": 31, "y": 31, "rgba": [0, 255, 0, 255]}
+  ],
+  "comparison": "Crop exact 32x32 image bounds from Mac & Windows observations; compare every RGBA byte, then separately record any renderer filter or DPI transform.",
+  "status": "source-reference-pending-root-capture"
+}

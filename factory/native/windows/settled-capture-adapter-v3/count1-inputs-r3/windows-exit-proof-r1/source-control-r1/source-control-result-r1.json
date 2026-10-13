@@ -1,0 +1,130 @@
+{
+  "compileArgvChecks": [
+    {
+      "name": "production-argv",
+      "pass": true
+    },
+    {
+      "name": "production-cwd",
+      "pass": true
+    },
+    {
+      "name": "production-target",
+      "pass": true
+    },
+    {
+      "name": "production-configuration",
+      "pass": true
+    },
+    {
+      "name": "production-compiler-path",
+      "pass": true
+    },
+    {
+      "name": "production-exit",
+      "pass": true
+    },
+    {
+      "name": "production-output-hash",
+      "pass": true
+    },
+    {
+      "name": "compiler-hash-shape",
+      "pass": true
+    }
+  ],
+  "compilerTransport": {
+    "action": "held; no compiler bytes synthesized",
+    "available": false,
+    "expectedSha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "path": "tool/compiler.bin"
+  },
+  "controlOnly": true,
+  "gate": {
+    "issues": [
+      "'ownedIdentity'"
+    ],
+    "nativeParityGranted": false,
+    "status": "blocked"
+  },
+  "ids": {
+    "captureID": "control-only/capture/r3",
+    "imageID": "control-only/image/r3",
+    "parityClaim": false,
+    "productionAdmission": false
+  },
+  "legacyMismatches": [
+    {
+      "actualKeys": [
+        "activationVeto",
+        "backgroundPlacementRequested",
+        "candidateBindingRef",
+        "candidateTupleRef",
+        "captureMethod",
+        "case",
+        "closureBinding",
+        "compileReceiptHash",
+        "dpiAwarenessRequested",
+        "exeSha256",
+        "exitCode",
+        "files",
+        "foregroundAfterWindow",
+        "foregroundBeforeLaunch",
+        "frozenTupleBound",
+        "hostValid",
+        "index",
+        "manifestHash",
+        "nativeParity",
+        "occlusionQualified",
+        "probeForegroundAtCapture",
+        "reason",
+        "rendererSha256",
+        "runtimeSourceCommit",
+        "runtimeSourceTreeHash",
+        "sourceHash"
+      ],
+      "predicate": "observation/ownedIdentity missing"
+    },
+    {
+      "closeHwnd": 41093876,
+      "observationHwnd": null,
+      "predicate": "observation/WM_CLOSE HWND mismatch"
+    }
+  ],
+  "missingTransitiveRefs": [],
+  "nativeWindowActions": 0,
+  "proofRoleHashesVerified": true,
+  "proofRoleReads": {
+    "close": 1,
+    "compile": 1,
+    "exe": 1,
+    "observation": 1,
+    "outcome": 1,
+    "owned": 1,
+    "plan": 1,
+    "renderer": 1,
+    "runtimeReceipt": 1,
+    "runtimeTree": 1,
+    "stderr": 1,
+    "stdout": 1,
+    "witness": 1
+  },
+  "proofRoles": [
+    "outcome",
+    "observation",
+    "owned",
+    "close",
+    "plan",
+    "compile",
+    "witness",
+    "exe",
+    "renderer",
+    "runtimeReceipt",
+    "runtimeTree",
+    "stdout",
+    "stderr"
+  ],
+  "schema": "windows-exit-proof-source-control-r1",
+  "source": "actual old-r3 pinned raw bytes",
+  "status": "blocked"
+}

@@ -1,0 +1,4389 @@
+{
+  "counts": {
+    "demands": 107,
+    "historicalEvidenceReceipts": 56,
+    "journeys": 26,
+    "receiptStateCounts": {
+      "changed_hash_anchor_missing": 1,
+      "changed_hash_anchor_present": 21,
+      "unchanged_exact": 34
+    },
+    "registryMappings": 0
+  },
+  "holds": {
+    "registryPromotion": 0,
+    "sourceInventoryOnlyDemands": 46,
+    "sourceProofRows": 0,
+    "unresolvedDemands": 61
+  },
+  "inputs": {
+    "demandPath": "factory/shell/demand.json",
+    "demandSha256": "45c48393b06b65b1b156f01272eb5c95517876df0aae790203bdbaa2ebbaf835",
+    "inventoryPath": "factory/shell/inventory.json",
+    "inventorySha256": "62e65c87a5fcd38610fb6a8a8c290e0eb6c889f308e444b244c0863c9e7b9eba"
+  },
+  "kind": "f12-source-receipt-refresh-audit",
+  "receiptAudit": [
+    {
+      "currentBytes": 2227,
+      "currentExactLineHits": [
+        26
+      ],
+      "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "historicalLine": 26,
+      "historicalLineMatches": true,
+      "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "historicalText": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {",
+      "id": "nav",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2227,
+      "currentExactLineHits": [
+        54
+      ],
+      "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "historicalLine": 54,
+      "historicalLineMatches": true,
+      "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+      "historicalText": "export function navNeighborIndex(",
+      "id": "nav-key",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 18747,
+      "currentExactLineHits": [],
+      "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+      "historicalLine": 97,
+      "historicalLineMatches": false,
+      "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+      "historicalText": "export function SettingsPanel({ backend, sections, title = \"Settings\", navHeading, navFooter, renderNavItem, hideNav = false, activeId, onActiveChange, defaultActiveId, search = true, loading, className }: SettingsPanelProps) {",
+      "id": "settings-panel",
+      "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+      "state": "changed_hash_anchor_missing"
+    },
+    {
+      "currentBytes": 4146,
+      "currentExactLineHits": [
+        12
+      ],
+      "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+      "historicalLine": 12,
+      "historicalLineMatches": true,
+      "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+      "historicalText": "export interface SettingsBackend {",
+      "id": "settings-backend",
+      "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 12881,
+      "currentExactLineHits": [
+        74
+      ],
+      "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "historicalLine": 74,
+      "historicalLineMatches": true,
+      "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "historicalText": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {",
+      "id": "onboard-flow",
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 12881,
+      "currentExactLineHits": [
+        151
+      ],
+      "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "historicalLine": 151,
+      "historicalLineMatches": true,
+      "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+      "historicalText": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;",
+      "id": "onboard-retry",
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 7849,
+      "currentExactLineHits": [
+        28
+      ],
+      "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+      "historicalLine": 28,
+      "historicalLineMatches": true,
+      "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+      "historicalText": "export interface PermissionsBackend {",
+      "id": "onboard-ports",
+      "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 27807,
+      "currentExactLineHits": [
+        209
+      ],
+      "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+      "historicalLine": 209,
+      "historicalLineMatches": true,
+      "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+      "historicalText": "export function MediaPlayer(props: MediaPlayerProps) {",
+      "id": "media-player",
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 5950,
+      "currentExactLineHits": [
+        47
+      ],
+      "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+      "historicalLine": 47,
+      "historicalLineMatches": true,
+      "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+      "historicalText": "export interface MediaAdapters {",
+      "id": "media-adapters",
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 25078,
+      "currentExactLineHits": [
+        97
+      ],
+      "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+      "historicalLine": 97,
+      "historicalLineMatches": true,
+      "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+      "historicalText": "export function ImageViewer(props: ImageViewerProps) {",
+      "id": "image-viewer",
+      "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 23406,
+      "currentExactLineHits": [
+        166
+      ],
+      "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+      "historicalLine": 159,
+      "historicalLineMatches": false,
+      "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+      "historicalText": "export function PdfViewer({",
+      "id": "pdf-viewer",
+      "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 3137,
+      "currentExactLineHits": [
+        11
+      ],
+      "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+      "historicalLine": 11,
+      "historicalLineMatches": true,
+      "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+      "historicalText": "export type PdfSource =",
+      "id": "pdf-source",
+      "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 24969,
+      "currentExactLineHits": [
+        272
+      ],
+      "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+      "historicalLine": 232,
+      "historicalLineMatches": false,
+      "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+      "historicalText": "export function LegalGate({",
+      "id": "legal-gate",
+      "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 14235,
+      "currentExactLineHits": [
+        167
+      ],
+      "currentSha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+      "historicalLine": 146,
+      "historicalLineMatches": false,
+      "historicalSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+      "historicalText": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {",
+      "id": "shortcuts",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 11740,
+      "currentExactLineHits": [
+        101
+      ],
+      "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+      "historicalLine": 101,
+      "historicalLineMatches": true,
+      "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+      "historicalText": "export function ShellProvider({",
+      "id": "shell-provider",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 1710,
+      "currentExactLineHits": [
+        16
+      ],
+      "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+      "historicalLine": 16,
+      "historicalLineMatches": true,
+      "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+      "historicalText": "export interface AppShellBridge {",
+      "id": "shell-bridge",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 5721,
+      "currentExactLineHits": [
+        82
+      ],
+      "currentSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+      "historicalLine": 82,
+      "historicalLineMatches": true,
+      "historicalSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+      "historicalText": "export function createThemeStore(options: ThemeStoreOptions) {",
+      "id": "theme-store",
+      "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 16293,
+      "currentExactLineHits": [
+        187
+      ],
+      "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "historicalLine": 187,
+      "historicalLineMatches": true,
+      "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "historicalText": ": \"Check for updates\"}",
+      "id": "updates",
+      "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4239,
+      "currentExactLineHits": [
+        57
+      ],
+      "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+      "historicalLine": 57,
+      "historicalLineMatches": true,
+      "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+      "historicalText": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);",
+      "id": "recovery",
+      "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2125,
+      "currentExactLineHits": [
+        14
+      ],
+      "currentSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+      "historicalLine": 14,
+      "historicalLineMatches": true,
+      "historicalSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+      "historicalText": "export class ErrorBoundary extends Component<Props, State> {",
+      "id": "error-boundary",
+      "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2169,
+      "currentExactLineHits": [
+        14
+      ],
+      "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "historicalLine": 14,
+      "historicalLineMatches": true,
+      "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "historicalText": "struct EditorScreen: View {",
+      "id": "slice-editor",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4312,
+      "currentExactLineHits": [
+        117
+      ],
+      "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "historicalLine": 117,
+      "historicalLineMatches": true,
+      "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "historicalText": "private func persist() {",
+      "id": "slice-model",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 1737,
+      "currentExactLineHits": [
+        33
+      ],
+      "currentSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+      "historicalLine": 33,
+      "historicalLineMatches": true,
+      "historicalSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+      "historicalText": "if (isPrintPreviewWindow()) {",
+      "id": "vr-entry-main",
+      "path": "/Volumes/D/claude/viewright/src/main.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 6150,
+      "currentExactLineHits": [
+        98
+      ],
+      "currentSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+      "historicalLine": 98,
+      "historicalLineMatches": true,
+      "historicalSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+      "historicalText": "await win.show();",
+      "id": "vr-entry-show",
+      "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 7360,
+      "currentExactLineHits": [
+        117
+      ],
+      "currentSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+      "historicalLine": 117,
+      "historicalLineMatches": true,
+      "historicalSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+      "historicalText": "export function AppRoot() {",
+      "id": "vr-entry-root",
+      "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2256,
+      "currentExactLineHits": [
+        7
+      ],
+      "currentSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+      "historicalLine": 7,
+      "historicalLineMatches": true,
+      "historicalSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+      "historicalText": "export function isPrintPreviewWindow(): boolean {",
+      "id": "vr-entry-print",
+      "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 21778,
+      "currentExactLineHits": [
+        242
+      ],
+      "currentSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+      "historicalLine": 242,
+      "historicalLineMatches": true,
+      "historicalSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+      "historicalText": "switch (doc.format) {",
+      "id": "vr-route-switch",
+      "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 22923,
+      "currentExactLineHits": [
+        157
+      ],
+      "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+      "historicalLine": 157,
+      "historicalLineMatches": true,
+      "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "historicalText": "// Register BEFORE `initial_open_paths`: that native command atomically marks the renderer",
+      "id": "vr-runtime-launch",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 22923,
+      "currentExactLineHits": [
+        106
+      ],
+      "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+      "historicalLine": 106,
+      "historicalLineMatches": true,
+      "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "historicalText": "// Persist the open-tab session (all tabs incl. untitled, + active) so it restores on next launch.",
+      "id": "vr-runtime-persist",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 22923,
+      "currentExactLineHits": [
+        299
+      ],
+      "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+      "historicalLine": 299,
+      "historicalLineMatches": true,
+      "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+      "historicalText": "if (sessionLoad) {",
+      "id": "vr-runtime-restore",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 8242,
+      "currentExactLineHits": [
+        70
+      ],
+      "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "historicalLine": 70,
+      "historicalLineMatches": true,
+      "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "historicalText": "pub fn initial_open_paths(",
+      "id": "vr-initial-paths",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2518,
+      "currentExactLineHits": [
+        41
+      ],
+      "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+      "historicalLine": 44,
+      "historicalLineMatches": false,
+      "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "historicalText": "pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, _cwd: String) {",
+      "id": "vr-second-instance",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 2518,
+      "currentExactLineHits": [
+        81
+      ],
+      "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+      "historicalLine": 84,
+      "historicalLineMatches": false,
+      "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+      "historicalText": "pub fn on_opened_urls(app: &AppHandle, urls: Vec<tauri::Url>) {",
+      "id": "vr-mac-opened",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 34865,
+      "currentExactLineHits": [
+        679
+      ],
+      "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+      "historicalLine": 680,
+      "historicalLineMatches": false,
+      "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "historicalText": "tauri::RunEvent::Reopen {",
+      "id": "vr-mac-reopen",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 9142,
+      "currentExactLineHits": [
+        217
+      ],
+      "currentSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+      "historicalLine": 217,
+      "historicalLineMatches": true,
+      "historicalSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+      "historicalText": "pub async fn save_session(tabs: Vec<(String, bool)>, app: AppHandle) -> Result<(), ViewRightError> {",
+      "id": "vr-library-session",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 7887,
+      "currentExactLineHits": [
+        35
+      ],
+      "currentSha256": "e4efd4a8deae9d2ac5b67f3c8ae7c4ab0211af5ad028e79e31e4d36b4ea7855b",
+      "historicalLine": 35,
+      "historicalLineMatches": true,
+      "historicalSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+      "historicalText": "export function SettingsPanel({ onClose }: { onClose: () => void }) {",
+      "id": "vr-settings-panel",
+      "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 19500,
+      "currentExactLineHits": [
+        354
+      ],
+      "currentSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+      "historicalLine": 352,
+      "historicalLineMatches": false,
+      "historicalSha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+      "historicalText": "export function SettingsProvider({ children }: { children: React.ReactNode }) {",
+      "id": "vr-settings-provider",
+      "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 53325,
+      "currentExactLineHits": [
+        744
+      ],
+      "currentSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+      "historicalLine": 744,
+      "historicalLineMatches": true,
+      "historicalSha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+      "historicalText": "window.addEventListener(\"viewright:open-settings\", handleOpenSettings);",
+      "id": "vr-settings-menu",
+      "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 34865,
+      "currentExactLineHits": [
+        372
+      ],
+      "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+      "historicalLine": 373,
+      "historicalLineMatches": false,
+      "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "historicalText": "// macOS: build a standard menu bar so Cmd+H (Hide), Cmd+Q (Quit), Cmd+M (Minimize),",
+      "id": "vr-native-menu-build",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 34865,
+      "currentExactLineHits": [
+        513
+      ],
+      "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+      "historicalLine": 514,
+      "historicalLineMatches": false,
+      "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "historicalText": ".on_menu_event(|app, event| {",
+      "id": "vr-native-menu-dispatch",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 34865,
+      "currentExactLineHits": [
+        545
+      ],
+      "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+      "historicalLine": 546,
+      "historicalLineMatches": false,
+      "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+      "historicalText": "WindowEvent::DragDrop(drag) => handle_drag_drop(window.app_handle(), window, drag),",
+      "id": "vr-native-drop",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 4982,
+      "currentExactLineHits": [
+        121
+      ],
+      "currentSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+      "historicalLine": 121,
+      "historicalLineMatches": true,
+      "historicalSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+      "historicalText": "/** Route one brokered native drop, preserving source order for insertion & fallback opens. */",
+      "id": "vr-drop-route",
+      "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 13093,
+      "currentExactLineHits": [
+        246
+      ],
+      "currentSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+      "historicalLine": 246,
+      "historicalLineMatches": true,
+      "historicalSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+      "historicalText": "/// Route new-window requests \u2014 `target=\"_blank\"`, middle-click, and the native \"open in new window\"",
+      "id": "vr-deeplink-context",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4313,
+      "currentExactLineHits": [
+        69
+      ],
+      "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+      "historicalLine": 69,
+      "historicalLineMatches": true,
+      "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "historicalText": "// Open an explicit URL preview as a VR web tab. Sources: the Open URL dialog/clipboard, a",
+      "id": "vr-deeplink-lifecycle",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 1182,
+      "currentExactLineHits": [
+        19
+      ],
+      "currentSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+      "historicalLine": 19,
+      "historicalLineMatches": true,
+      "historicalSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+      "historicalText": "pub fn plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {",
+      "id": "vr-deeplink-plugin",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 8242,
+      "currentExactLineHits": [
+        117
+      ],
+      "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "historicalLine": 117,
+      "historicalLineMatches": true,
+      "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+      "historicalText": "pub async fn open_file_dialog(",
+      "id": "vr-authority-dialogs",
+      "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 39537,
+      "currentExactLineHits": [
+        245
+      ],
+      "currentSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+      "historicalLine": 245,
+      "historicalLineMatches": true,
+      "historicalSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+      "historicalText": "export async function grantSiteRoot(",
+      "id": "vr-authority-bridge",
+      "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4313,
+      "currentExactLineHits": [
+        37
+      ],
+      "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+      "historicalLine": 37,
+      "historicalLineMatches": true,
+      "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "historicalText": "// Watch EVERY open file-backed tab plus each HTML session's visited sub-pages, in the one watcher.",
+      "id": "vr-watch-lifecycle",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 20513,
+      "currentExactLineHits": [
+        403
+      ],
+      "currentSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+      "historicalLine": 403,
+      "historicalLineMatches": true,
+      "historicalSha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+      "historicalText": "const reload = useCallback(",
+      "id": "vr-watch-conflict",
+      "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 16293,
+      "currentExactLineHits": [
+        174,
+        206,
+        223,
+        241,
+        260,
+        339,
+        360,
+        378,
+        386
+      ],
+      "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "historicalLine": 174,
+      "historicalLineMatches": true,
+      "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+      "historicalText": "<button",
+      "id": "vr-update-section",
+      "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 25653,
+      "currentExactLineHits": [
+        509
+      ],
+      "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "historicalLine": 509,
+      "historicalLineMatches": true,
+      "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "historicalText": "export async function checkForUpdate(",
+      "id": "vr-update-check",
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 25653,
+      "currentExactLineHits": [
+        622
+      ],
+      "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "historicalLine": 622,
+      "historicalLineMatches": true,
+      "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+      "historicalText": "export async function installPendingUpdate(",
+      "id": "vr-update-install",
+      "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4313,
+      "currentExactLineHits": [
+        47
+      ],
+      "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+      "historicalLine": 47,
+      "historicalLineMatches": true,
+      "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+      "historicalText": "if (!autoCheckUpdates || autoUpdateCheckRan.current) return;",
+      "id": "vr-update-background",
+      "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+      "state": "changed_hash_anchor_present"
+    },
+    {
+      "currentBytes": 1224,
+      "currentExactLineHits": [
+        16
+      ],
+      "currentSha256": "2db58ced1c6ecac3efcc2b4d2f71edbf87f94520380c6185124d4347793334c9",
+      "historicalLine": 16,
+      "historicalLineMatches": true,
+      "historicalSha256": "2db58ced1c6ecac3efcc2b4d2f71edbf87f94520380c6185124d4347793334c9",
+      "historicalText": "Window(\"SliceApp\", id: \"main\") {",
+      "id": "vr-slice-entry",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Entry/SliceAppEntry.swift",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 2169,
+      "currentExactLineHits": [
+        23
+      ],
+      "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "historicalLine": 23,
+      "historicalLineMatches": true,
+      "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+      "historicalText": "Button(\"Insert above\", action: { model.insertAbove(focusedID: focusBinding.wrappedValue) })",
+      "id": "vr-slice-screen",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+      "state": "unchanged_exact"
+    },
+    {
+      "currentBytes": 4312,
+      "currentExactLineHits": [
+        117
+      ],
+      "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "historicalLine": 117,
+      "historicalLineMatches": true,
+      "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+      "historicalText": "private func persist() {",
+      "id": "vr-slice-model",
+      "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+      "state": "unchanged_exact"
+    }
+  ],
+  "rows": [
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "Binding(get:set:)",
+      "evidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "slice-editor",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "Button actions",
+      "evidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "slice-editor",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "HTML media element and codec recovery",
+      "evidenceIds": [
+        "media-player",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "id": "media-player",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "media-playback",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "HTML subpage watch set",
+      "evidenceIds": [
+        "vr-watch-lifecycle",
+        "vr-watch-conflict"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-watch-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+          "historicalSha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+          "id": "vr-watch-conflict",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-watch-conflict",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "List/ForEach/onMove",
+      "evidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "slice-editor",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "PDF.js worker/render pipeline",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "React claim timeout",
+      "evidenceIds": [
+        "vr-native-drop",
+        "vr-drop-route"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-drop",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "historicalSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "id": "vr-drop-route",
+          "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-native-drop",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "SQLite tab-session restoration",
+      "evidenceIds": [
+        "vr-runtime-persist",
+        "vr-runtime-restore",
+        "vr-library-session"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-persist",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-restore",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "historicalSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "id": "vr-library-session",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-session-restore",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "Tauri drag-drop path broker",
+      "evidenceIds": [
+        "vr-native-drop",
+        "vr-drop-route"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-drop",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "historicalSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "id": "vr-drop-route",
+          "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-native-drop",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "Tauri file and document service integration",
+      "evidenceIds": [
+        "vr-route-switch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "historicalSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "id": "vr-route-switch",
+          "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-format-routes",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "Tauri hidden-window reveal timing",
+      "evidenceIds": [
+        "vr-entry-main",
+        "vr-entry-show",
+        "vr-entry-root",
+        "vr-entry-print"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "historicalSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "id": "vr-entry-main",
+          "path": "/Volumes/D/claude/viewright/src/main.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "historicalSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "id": "vr-entry-show",
+          "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "historicalSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "id": "vr-entry-root",
+          "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "historicalSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "id": "vr-entry-print",
+          "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-entry-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "TextField/FocusState",
+      "evidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "slice-editor",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "TextField/control variety",
+      "evidenceIds": [
+        "settings-panel",
+        "settings-backend"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+          "id": "settings-panel",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_missing"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "settings",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "URL event foreground/background tab routing",
+      "evidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "historicalSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "id": "vr-deeplink-context",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-deeplink-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "historicalSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "id": "vr-deeplink-plugin",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-web-deeplink",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "URL recent-history update",
+      "evidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "historicalSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "id": "vr-deeplink-context",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-deeplink-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "historicalSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "id": "vr-deeplink-plugin",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-web-deeplink",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "active tab selection",
+      "evidenceIds": [
+        "vr-runtime-launch",
+        "vr-initial-paths",
+        "vr-second-instance",
+        "vr-mac-opened"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-launch",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-initial-paths",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-launch-open",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "animation and dismiss interactions",
+      "evidenceIds": [
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "dialogs",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "argv/Finder/second-instance path broker",
+      "evidenceIds": [
+        "vr-runtime-launch",
+        "vr-initial-paths",
+        "vr-second-instance",
+        "vr-mac-opened"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-launch",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-initial-paths",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-launch-open",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "async loading and external-change reconciliation",
+      "evidenceIds": [
+        "settings-panel",
+        "settings-backend"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+          "id": "settings-panel",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_missing"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "settings",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "canvas/image transform",
+      "evidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "id": "image-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "image-view-edit",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "clean-document auto-reload",
+      "evidenceIds": [
+        "vr-watch-lifecycle",
+        "vr-watch-conflict"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-watch-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+          "historicalSha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+          "id": "vr-watch-conflict",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-watch-conflict",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "command palette modal and focus trap",
+      "evidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav-key",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "navigation",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "crash-safe atomic write",
+      "evidenceIds": [
+        "theme-store",
+        "settings-backend",
+        "onboard-flow",
+        "slice-model",
+        "slice-editor"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "historicalSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "id": "theme-store",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "persistence",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "crop/text editing controls",
+      "evidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "id": "image-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "image-view-edit",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "cross-process session writes",
+      "evidenceIds": [
+        "vr-runtime-persist",
+        "vr-runtime-restore",
+        "vr-library-session"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-persist",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-restore",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "historicalSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "id": "vr-library-session",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-session-restore",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "custom pointer gestures",
+      "evidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "id": "image-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "image-view-edit",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "debounced native settings mirror",
+      "evidenceIds": [
+        "vr-settings-panel",
+        "vr-settings-provider",
+        "vr-settings-menu"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e4efd4a8deae9d2ac5b67f3c8ae7c4ab0211af5ad028e79e31e4d36b4ea7855b",
+          "historicalSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+          "id": "vr-settings-panel",
+          "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+          "historicalSha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+          "id": "vr-settings-provider",
+          "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+          "historicalSha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+          "id": "vr-settings-menu",
+          "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-settings-shell",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "deep-link parsing/routing",
+      "evidenceIds": [
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "tray-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "diagnostics and logs",
+      "evidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "historicalSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "id": "error-boundary",
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-retry",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "recovery",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "dirty external-change conflict",
+      "evidenceIds": [
+        "vr-watch-lifecycle",
+        "vr-watch-conflict"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-watch-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+          "historicalSha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+          "id": "vr-watch-conflict",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-watch-conflict",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "dirty-save quit gate",
+      "evidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-build",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-dispatch",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-native-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "document save/find/view/error boundaries",
+      "evidenceIds": [
+        "vr-route-switch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "historicalSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "id": "vr-route-switch",
+          "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-format-routes",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "document scroll/acknowledgement gating",
+      "evidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "legal-acceptance",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "document/file adapter",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "document/session restoration",
+      "evidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "historicalSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "id": "error-boundary",
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-retry",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "recovery",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "download progress/cancel/retry",
+      "evidenceIds": [
+        "onboard-flow",
+        "onboard-ports",
+        "legal-gate"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "id": "onboard-ports",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "onboarding",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "download/install progress",
+      "evidenceIds": [
+        "updates",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "updates",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "updates",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "download/install/relaunch",
+      "evidenceIds": [
+        "vr-update-section",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-background"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "vr-update-section",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-check",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-install",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-update-background",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-updates-license",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "duplicate/window targeting policy",
+      "evidenceIds": [
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "tray-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "durable state + service sequencing",
+      "evidenceIds": [
+        "onboard-flow",
+        "onboard-ports",
+        "legal-gate"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "id": "onboard-ports",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "onboarding",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "error classification",
+      "evidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "historicalSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "id": "error-boundary",
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-retry",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "recovery",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "explicit browser escape",
+      "evidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "historicalSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "id": "vr-deeplink-context",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-deeplink-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "historicalSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "id": "vr-deeplink-plugin",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-web-deeplink",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "external-link policy",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "failed-install retry/public-installer fallback",
+      "evidenceIds": [
+        "vr-update-section",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-background"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "vr-update-section",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-check",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-install",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-update-background",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-updates-license",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "find input and IME",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "focus-trap/section navigation",
+      "evidenceIds": [
+        "vr-settings-panel",
+        "vr-settings-provider",
+        "vr-settings-menu"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e4efd4a8deae9d2ac5b67f3c8ae7c4ab0211af5ad028e79e31e4d36b4ea7855b",
+          "historicalSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+          "id": "vr-settings-panel",
+          "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+          "historicalSha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+          "id": "vr-settings-provider",
+          "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+          "historicalSha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+          "id": "vr-settings-menu",
+          "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-settings-shell",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "focus/IME behavior",
+      "evidenceIds": [
+        "shortcuts",
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "historicalSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+          "id": "shortcuts",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "shortcuts",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "format discriminator routing",
+      "evidenceIds": [
+        "vr-route-switch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "historicalSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "id": "vr-route-switch",
+          "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-format-routes",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "fullscreen host API",
+      "evidenceIds": [
+        "media-player",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "id": "media-player",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "media-playback",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "initial_open_paths handoff",
+      "evidenceIds": [
+        "vr-runtime-launch",
+        "vr-initial-paths",
+        "vr-second-instance",
+        "vr-mac-opened"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-launch",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-initial-paths",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-launch-open",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "key event routing",
+      "evidenceIds": [
+        "shortcuts",
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "historicalSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+          "id": "shortcuts",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "shortcuts",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "keyboard focus and navigation",
+      "evidenceIds": [
+        "settings-panel",
+        "settings-backend"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+          "id": "settings-panel",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_missing"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "settings",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "keyboard focus/roving selection",
+      "evidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav-key",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "navigation",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "keyboard transport shortcuts",
+      "evidenceIds": [
+        "media-player",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "id": "media-player",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "media-playback",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "large resource lifecycle",
+      "evidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "id": "image-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "image-view-edit",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "legal modal/eligibility controls",
+      "evidenceIds": [
+        "onboard-flow",
+        "onboard-ports",
+        "legal-gate"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "id": "onboard-ports",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "onboarding",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "legal-gate window state transitions",
+      "evidenceIds": [
+        "vr-entry-main",
+        "vr-entry-show",
+        "vr-entry-root",
+        "vr-entry-print"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "historicalSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "id": "vr-entry-main",
+          "path": "/Volumes/D/claude/viewright/src/main.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "historicalSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "id": "vr-entry-show",
+          "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "historicalSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "id": "vr-entry-root",
+          "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "historicalSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "id": "vr-entry-print",
+          "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-entry-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "license eligibility",
+      "evidenceIds": [
+        "vr-update-section",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-background"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "vr-update-section",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-check",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-install",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-update-background",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-updates-license",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "linked-document stream tokens",
+      "evidenceIds": [
+        "vr-authority-dialogs",
+        "vr-authority-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-authority-dialogs",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "historicalSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "id": "vr-authority-bridge",
+          "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-file-authority",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "localStorage-to-SQLite hydration",
+      "evidenceIds": [
+        "vr-settings-panel",
+        "vr-settings-provider",
+        "vr-settings-menu"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e4efd4a8deae9d2ac5b67f3c8ae7c4ab0211af5ad028e79e31e4d36b4ea7855b",
+          "historicalSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+          "id": "vr-settings-panel",
+          "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+          "historicalSha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+          "id": "vr-settings-provider",
+          "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+          "historicalSha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+          "id": "vr-settings-menu",
+          "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-settings-shell",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "macOS Opened/Reopen routing",
+      "evidenceIds": [
+        "vr-second-instance",
+        "vr-mac-opened",
+        "vr-mac-reopen"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-mac-reopen",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-single-instance-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "macOS menu construction",
+      "evidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-build",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-dispatch",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-native-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "media conversion service",
+      "evidenceIds": [
+        "media-player",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "id": "media-player",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "media-playback",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "menu event to keyboard/window bridge",
+      "evidenceIds": [
+        "vr-native-menu-build",
+        "vr-native-menu-dispatch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-build",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-menu-dispatch",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-native-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "missing-file recovery and dirty snapshot recovery",
+      "evidenceIds": [
+        "vr-runtime-persist",
+        "vr-runtime-restore",
+        "vr-library-session"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-persist",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-restore",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "historicalSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "id": "vr-library-session",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-session-restore",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "modal stacking/focus restoration",
+      "evidenceIds": [
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "dialogs",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "multi-tab file watcher",
+      "evidenceIds": [
+        "vr-watch-lifecycle",
+        "vr-watch-conflict"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-watch-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "6cbf185e7de46ca55b6d5d497eab43ff3f21cc1792a7bd01eb81e8d314d93783",
+          "historicalSha256": "7d4fb371d27537100ffe83f07c615f20a545dacca12d53e477904a688964aef8",
+          "id": "vr-watch-conflict",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentWatcher.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-watch-conflict",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "native menu/tray lifecycle",
+      "evidenceIds": [
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "tray-menu",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "native open/save/print dialogs",
+      "evidenceIds": [
+        "image-viewer",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "historicalSha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "id": "image-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "image-view-edit",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "native window readiness",
+      "evidenceIds": [
+        "vr-entry-main",
+        "vr-entry-show",
+        "vr-entry-root",
+        "vr-entry-print"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "historicalSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "id": "vr-entry-main",
+          "path": "/Volumes/D/claude/viewright/src/main.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "historicalSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "id": "vr-entry-show",
+          "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "historicalSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "id": "vr-entry-root",
+          "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "historicalSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "id": "vr-entry-print",
+          "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-entry-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "navigation transitions",
+      "evidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav-key",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "navigation",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "open-file event ordering",
+      "evidenceIds": [
+        "vr-runtime-launch",
+        "vr-initial-paths",
+        "vr-second-instance",
+        "vr-mac-opened"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-launch",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-initial-paths",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-launch-open",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "open/save dialog path authority",
+      "evidenceIds": [
+        "vr-authority-dialogs",
+        "vr-authority-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-authority-dialogs",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "historicalSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "id": "vr-authority-bridge",
+          "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-file-authority",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "ordered multi-step flow",
+      "evidenceIds": [
+        "onboard-flow",
+        "onboard-ports",
+        "legal-gate"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "id": "onboard-ports",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "onboarding",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "permission prompts",
+      "evidenceIds": [
+        "onboard-flow",
+        "onboard-ports",
+        "legal-gate"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "historicalSha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "id": "onboard-ports",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "onboarding",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "persistence",
+      "evidenceIds": [
+        "slice-editor",
+        "slice-model"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "slice-editor",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "platform file-association controls",
+      "evidenceIds": [
+        "vr-settings-panel",
+        "vr-settings-provider",
+        "vr-settings-menu"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e4efd4a8deae9d2ac5b67f3c8ae7c4ab0211af5ad028e79e31e4d36b4ea7855b",
+          "historicalSha256": "2cd3093ea4399fd452465c96d389f9d8a523f380bda3d17ddd38f6b36731cbc4",
+          "id": "vr-settings-panel",
+          "path": "/Volumes/D/claude/viewright/src/settings/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7510955c79389fcb945bb29ebafdcf939b5c1fe07bcfec2152fa8bc246a883db",
+          "historicalSha256": "fd23cfaa3631d1d6e3d92daed6e35bca99fa45d5ab4478ad6376cffac8eb2ae8",
+          "id": "vr-settings-provider",
+          "path": "/Volumes/D/claude/viewright/src/settings/settings.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eae0d7ca311275df27d31d71d073f8becc8ca022d0adde2070c6c2010bee22a",
+          "historicalSha256": "6046e417904361174b12be3625706521df6f5a854dbc2b6b7297d751d590a30c",
+          "id": "vr-settings-menu",
+          "path": "/Volumes/D/claude/viewright/src/app/App.tsx",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-settings-shell",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "platform installer and rollback",
+      "evidenceIds": [
+        "updates",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "updates",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "updates",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "prepare-setup handoff",
+      "evidenceIds": [
+        "vr-second-instance",
+        "vr-mac-opened",
+        "vr-mac-reopen"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-mac-reopen",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-single-instance-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "print-preview window isolation",
+      "evidenceIds": [
+        "vr-entry-main",
+        "vr-entry-show",
+        "vr-entry-root",
+        "vr-entry-print"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "historicalSha256": "7c56b3ff2e4e509e58b753c55dd3ef71e3294aab892b3569a3b0bdc575ed7834",
+          "id": "vr-entry-main",
+          "path": "/Volumes/D/claude/viewright/src/main.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "historicalSha256": "c8ff96020007a65392ea65497489ba47e27ac47708e090815eb494cb204ccd5e",
+          "id": "vr-entry-show",
+          "path": "/Volumes/D/claude/viewright/src/app/useReadyShow.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "historicalSha256": "f79c82437844291525bf8899a93994194ece74d02c24dfdce7b59449b5bcaee7",
+          "id": "vr-entry-root",
+          "path": "/Volumes/D/claude/viewright/src/app/AppRoot.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "historicalSha256": "16f41fad88d14038234c6872b00e9d119b0445bdb56f0bb87ad1d51ff0ed080f",
+          "id": "vr-entry-print",
+          "path": "/Volumes/D/claude/viewright/src/app/PrintPreviewWindow.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-entry-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "quit/close action",
+      "evidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "legal-acceptance",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "radio/checkbox controls",
+      "evidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "legal-acceptance",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "rebinding capture/conflict UX",
+      "evidenceIds": [
+        "shortcuts",
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "historicalSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+          "id": "shortcuts",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "shortcuts",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "receipt persistence/hash",
+      "evidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "legal-acceptance",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "recent token lifecycle",
+      "evidenceIds": [
+        "vr-authority-dialogs",
+        "vr-authority-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-authority-dialogs",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "historicalSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "id": "vr-authority-bridge",
+          "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-file-authority",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "relative HTML/MDX grants",
+      "evidenceIds": [
+        "vr-authority-dialogs",
+        "vr-authority-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "historicalSha256": "19710cbdf41937a16ac7be9fbd25fd19e47de39024a71a20560de9e6603ee219",
+          "id": "vr-authority-dialogs",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/dialogs.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "historicalSha256": "feea9eec4287f7d59b02e53be041782714ffd208f590e0aa9a7f07f37043b069",
+          "id": "vr-authority-bridge",
+          "path": "/Volumes/D/claude/viewright/src/state/tauriBridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-file-authority",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "restart/recovery strategy",
+      "evidenceIds": [
+        "updates",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "updates",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "updates",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "scale-adjusted drop coordinates",
+      "evidenceIds": [
+        "vr-native-drop",
+        "vr-drop-route"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-drop",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "historicalSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "id": "vr-drop-route",
+          "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-native-drop",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "schema migration",
+      "evidenceIds": [
+        "theme-store",
+        "settings-backend",
+        "onboard-flow",
+        "slice-model",
+        "slice-editor"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "historicalSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "id": "theme-store",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "persistence",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "sequence timeout",
+      "evidenceIds": [
+        "shortcuts",
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "historicalSha256": "3f66af70cdcf478778499b29cb56290861d22b44ee9688d275713c299c9e16d3",
+          "id": "shortcuts",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "shortcuts",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "settings storage/revision service",
+      "evidenceIds": [
+        "settings-panel",
+        "settings-backend"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+          "id": "settings-panel",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_missing"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "settings",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "sidebar panels",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "sidebar selection state",
+      "evidenceIds": [
+        "nav",
+        "nav-key",
+        "shell-provider",
+        "shell-bridge"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "historicalSha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "id": "nav-key",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "historicalSha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "id": "shell-bridge",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "navigation",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "signed updater state mapping",
+      "evidenceIds": [
+        "vr-update-section",
+        "vr-update-check",
+        "vr-update-install",
+        "vr-update-background"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "vr-update-section",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-check",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "historicalSha256": "f7c579d7201a76302df25b79c83c5e2a002337864cd994798bc5fa50b7be9c34",
+          "id": "vr-update-install",
+          "path": "/Volumes/D/claude/viewright/src/state/updateLicense.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-update-background",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-updates-license",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "single-instance focus/unminimize",
+      "evidenceIds": [
+        "vr-second-instance",
+        "vr-mac-opened",
+        "vr-mac-reopen"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-second-instance",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "7a8959dc30d14a640a68e03009ad2047589a6f0e1848114644f807112e33331b",
+          "historicalSha256": "b82553945d1afc95b3e30fafda29434d95902225f74d42cb68e6e7f500364c76",
+          "id": "vr-mac-opened",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/app_lifecycle.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-mac-reopen",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "vr-single-instance-window",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "source-order fallback opens",
+      "evidenceIds": [
+        "vr-native-drop",
+        "vr-drop-route"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "9784bb3fc7c32cc56638c3ac6744994dfef057140a95ee75b6c3e05e84e01c28",
+          "historicalSha256": "b97ca4536acfe69912aedc7397c9418b263d3f459ac24aa4c537d11f3525950b",
+          "id": "vr-native-drop",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/lib.rs",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "historicalSha256": "a1fda31b0e76a5093e5abd2e197b94102af615d5dcdbf01303622f3e05de4b9a",
+          "id": "vr-drop-route",
+          "path": "/Volumes/D/claude/viewright/src/app/dropCoordination.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-native-drop",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "startup/window recovery",
+      "evidenceIds": [
+        "error-boundary",
+        "onboard-retry",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "historicalSha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "id": "error-boundary",
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-retry",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "recovery",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "storage adapters and cross-process consistency",
+      "evidenceIds": [
+        "theme-store",
+        "settings-backend",
+        "onboard-flow",
+        "slice-model",
+        "slice-editor"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "historicalSha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "id": "theme-store",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "historicalSha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "id": "slice-model",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "historicalSha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "id": "slice-editor",
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "persistence",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "target=_blank context routing",
+      "evidenceIds": [
+        "vr-deeplink-context",
+        "vr-deeplink-lifecycle",
+        "vr-deeplink-plugin"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "historicalSha256": "5aedfae2ac1be8916977ceebe9d77c4b41962d43c654950d5cf0548eaacd969d",
+          "id": "vr-deeplink-context",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/context_menu.rs",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "1ec066d1b194d2c2d0330af843e5a71101412c5ff8bdc5bcd8b5ea42490de5c9",
+          "historicalSha256": "2afbaa893863005c7d038bfadb5c67b671244919b81ff1bd686a73f5c7c5f175",
+          "id": "vr-deeplink-lifecycle",
+          "path": "/Volumes/D/claude/viewright/src/app/AppLifecycle.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "historicalSha256": "69a7adec9f7f80460e5e34dacf7f0a6353046574b0c75310ac48ce4569e7d913",
+          "id": "vr-deeplink-plugin",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/external_navigation.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-web-deeplink",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "text entry/IME",
+      "evidenceIds": [
+        "shell-provider"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "historicalSha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "id": "shell-provider",
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "dialogs",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "time/progress animation",
+      "evidenceIds": [
+        "media-player",
+        "media-adapters"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "historicalSha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "id": "media-player",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "historicalSha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "id": "media-adapters",
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "media-playback",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "untitled localStorage restoration",
+      "evidenceIds": [
+        "vr-runtime-persist",
+        "vr-runtime-restore",
+        "vr-library-session"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-persist",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "70b27956dd7fea239d06e8fc0de995d34127253d5a2e6dbed89f202751c8bed1",
+          "historicalSha256": "918afc7122d0085780682f55fb7074d8b3428e6ffc48065b814584410d64e2a7",
+          "id": "vr-runtime-restore",
+          "path": "/Volumes/D/claude/viewright/src/app/useDocumentRuntimeEffects.ts",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "historicalSha256": "0c8b64603aa1e02f46baed7098f6a2d3ccc321cc64958a6ebd69925fa008d2d4",
+          "id": "vr-library-session",
+          "path": "/Volumes/D/claude/viewright/src-tauri/src/commands/library.rs",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-session-restore",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "update service/auth",
+      "evidenceIds": [
+        "updates",
+        "recovery"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "historicalSha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "id": "updates",
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "state": "unchanged_exact"
+        },
+        {
+          "currentSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "historicalSha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "id": "recovery",
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "updates",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "validation/errors",
+      "evidenceIds": [
+        "settings-panel",
+        "settings-backend"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "historicalSha256": "75f4e53e48cdecf5e02bc62d0099c013e504ac86f6dff5c3bcc3e5a8fcb768cf",
+          "id": "settings-panel",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "state": "changed_hash_anchor_missing"
+        },
+        {
+          "currentSha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "historicalSha256": "3054b7a3ce04922b04a3860cb38a6cdcf4729c66e6e87d3d9f3a7aef24676db8",
+          "id": "settings-backend",
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "settings",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "version policy",
+      "evidenceIds": [
+        "legal-gate",
+        "onboard-flow"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "historicalSha256": "bf190207d01701214a860158acb4e25a88e766df59b0e88e27f14ed6ce2f5797",
+          "id": "legal-gate",
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "historicalSha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "id": "onboard-flow",
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "legal-acceptance",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-drift",
+      "demand": "view-state persistence",
+      "evidenceIds": [
+        "pdf-viewer",
+        "pdf-source"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "historicalSha256": "4fa19e2548446290cb9a6b32d738023c21e355b0a1e5517a1c3c90d7c50a2c75",
+          "id": "pdf-viewer",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "state": "changed_hash_anchor_present"
+        },
+        {
+          "currentSha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "historicalSha256": "c00718ef545a5121e01326755eaff2104c6b0774f75bf3bbc72c2bf30335019d",
+          "id": "pdf-source",
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "state": "changed_hash_anchor_present"
+        }
+      ],
+      "journeyId": "pdf-reading",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "unmapped"
+    },
+    {
+      "associationKind": "journey-evidence-association-only",
+      "associationState": "source-receipt-current",
+      "demand": "viewer/editor adapter coverage",
+      "evidenceIds": [
+        "vr-route-switch"
+      ],
+      "evidenceRefs": [
+        {
+          "currentSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "historicalSha256": "e5a9fa5590def655da06e5f6941fc6ab3f1e938137b0f9b6d02cc6f04121ab84",
+          "id": "vr-route-switch",
+          "path": "/Volumes/D/claude/viewright/src/documents/DocumentRouter.tsx",
+          "state": "unchanged_exact"
+        }
+      ],
+      "journeyId": "vr-format-routes",
+      "registryBlockId": null,
+      "sourceProof": false,
+      "status": "source_inventory_only"
+    }
+  ],
+  "status": "source-only-no-promotion",
+  "version": 1
+}

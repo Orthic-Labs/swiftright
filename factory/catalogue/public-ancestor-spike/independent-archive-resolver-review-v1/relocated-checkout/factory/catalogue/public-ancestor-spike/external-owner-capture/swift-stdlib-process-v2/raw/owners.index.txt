@@ -1,0 +1,562 @@
+{
+  key.dependencies: [
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_StringProcessing.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        }
+      ]
+    },
+    {
+      key.kind: source.lang.swift.import.module.clang,
+      key.name: "_SwiftConcurrencyShims",
+      key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/_SwiftConcurrencyShims-375CYD2JCZPG2.pcm",
+      key.is_system: 1
+    },
+    {
+      key.kind: source.lang.swift.import.module.swift,
+      key.name: "Swift",
+      key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/_Concurrency.swiftmodule/arm64e-apple-macos.swiftinterface",
+      key.is_system: 1,
+      key.dependencies: [
+        {
+          key.kind: source.lang.swift.import.module.swift,
+          key.name: "Swift",
+          key.filepath: "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          key.is_system: 1
+        },
+        {
+          key.kind: source.lang.swift.import.module.clang,
+          key.name: "SwiftShims",
+          key.filepath: "/var/folders/xp/8dtgvyms3bb1yndrvmxhdg0h0000gn/C/clang/ModuleCache/1XKIJHIT40YRF/SwiftShims-375CYD2JCZPG2.pcm",
+          key.is_system: 1
+        }
+      ]
+    }
+  ],
+  key.entities: [
+    {
+      key.kind: source.lang.swift.ref.module,
+      key.name: "Swift",
+      key.usr: "c:@M@Swift",
+      key.line: 1,
+      key.column: 8
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerOptional",
+      key.usr: "s:6owners14_ownerOptionalypXpvp",
+      key.line: 3,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners14_ownerOptionalypXpvg",
+          key.line: 3,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners14_ownerOptionalypXpvs",
+          key.line: 3,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.enum,
+      key.name: "Optional",
+      key.usr: "s:Sq",
+      key.line: 3,
+      key.column: 32
+    },
+    {
+      key.kind: source.lang.swift.ref.enum,
+      key.name: "Never",
+      key.usr: "s:s5NeverO",
+      key.line: 3,
+      key.column: 41
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerNever",
+      key.usr: "s:6owners11_ownerNeverypXpvp",
+      key.line: 4,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerNeverypXpvg",
+          key.line: 4,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerNeverypXpvs",
+          key.line: 4,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.enum,
+      key.name: "Never",
+      key.usr: "s:s5NeverO",
+      key.line: 4,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerFloat",
+      key.usr: "s:6owners11_ownerFloatypXpvp",
+      key.line: 5,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerFloatypXpvg",
+          key.line: 5,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerFloatypXpvs",
+          key.line: 5,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Float",
+      key.usr: "s:Sf",
+      key.line: 5,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerDouble",
+      key.usr: "s:6owners12_ownerDoubleypXpvp",
+      key.line: 6,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners12_ownerDoubleypXpvg",
+          key.line: 6,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners12_ownerDoubleypXpvs",
+          key.line: 6,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Double",
+      key.usr: "s:Sd",
+      key.line: 6,
+      key.column: 30
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerInt",
+      key.usr: "s:6owners9_ownerIntypXpvp",
+      key.line: 7,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners9_ownerIntypXpvg",
+          key.line: 7,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners9_ownerIntypXpvs",
+          key.line: 7,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Int",
+      key.usr: "s:Si",
+      key.line: 7,
+      key.column: 27
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerInt8",
+      key.usr: "s:6owners10_ownerInt8ypXpvp",
+      key.line: 8,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners10_ownerInt8ypXpvg",
+          key.line: 8,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners10_ownerInt8ypXpvs",
+          key.line: 8,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Int8",
+      key.usr: "s:s4Int8V",
+      key.line: 8,
+      key.column: 28
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerInt16",
+      key.usr: "s:6owners11_ownerInt16ypXpvp",
+      key.line: 9,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerInt16ypXpvg",
+          key.line: 9,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerInt16ypXpvs",
+          key.line: 9,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Int16",
+      key.usr: "s:s5Int16V",
+      key.line: 9,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerInt32",
+      key.usr: "s:6owners11_ownerInt32ypXpvp",
+      key.line: 10,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerInt32ypXpvg",
+          key.line: 10,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerInt32ypXpvs",
+          key.line: 10,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Int32",
+      key.usr: "s:s5Int32V",
+      key.line: 10,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerInt64",
+      key.usr: "s:6owners11_ownerInt64ypXpvp",
+      key.line: 11,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerInt64ypXpvg",
+          key.line: 11,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerInt64ypXpvs",
+          key.line: 11,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "Int64",
+      key.usr: "s:s5Int64V",
+      key.line: 11,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerUInt",
+      key.usr: "s:6owners10_ownerUIntypXpvp",
+      key.line: 12,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners10_ownerUIntypXpvg",
+          key.line: 12,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners10_ownerUIntypXpvs",
+          key.line: 12,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "UInt",
+      key.usr: "s:Su",
+      key.line: 12,
+      key.column: 28
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerUInt8",
+      key.usr: "s:6owners11_ownerUInt8ypXpvp",
+      key.line: 13,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners11_ownerUInt8ypXpvg",
+          key.line: 13,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners11_ownerUInt8ypXpvs",
+          key.line: 13,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "UInt8",
+      key.usr: "s:s5UInt8V",
+      key.line: 13,
+      key.column: 29
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerUInt16",
+      key.usr: "s:6owners12_ownerUInt16ypXpvp",
+      key.line: 14,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners12_ownerUInt16ypXpvg",
+          key.line: 14,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners12_ownerUInt16ypXpvs",
+          key.line: 14,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "UInt16",
+      key.usr: "s:s6UInt16V",
+      key.line: 14,
+      key.column: 30
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerUInt32",
+      key.usr: "s:6owners12_ownerUInt32ypXpvp",
+      key.line: 15,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners12_ownerUInt32ypXpvg",
+          key.line: 15,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners12_ownerUInt32ypXpvs",
+          key.line: 15,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "UInt32",
+      key.usr: "s:s6UInt32V",
+      key.line: 15,
+      key.column: 30
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerUInt64",
+      key.usr: "s:6owners12_ownerUInt64ypXpvp",
+      key.line: 16,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners12_ownerUInt64ypXpvg",
+          key.line: 16,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners12_ownerUInt64ypXpvs",
+          key.line: 16,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.struct,
+      key.name: "UInt64",
+      key.usr: "s:s6UInt64V",
+      key.line: 16,
+      key.column: 30
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerRangeReplaceableCollection",
+      key.usr: "s:6owners32_ownerRangeReplaceableCollectionypXpvp",
+      key.line: 17,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners32_ownerRangeReplaceableCollectionypXpvg",
+          key.line: 17,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners32_ownerRangeReplaceableCollectionypXpvs",
+          key.line: 17,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.protocol,
+      key.name: "RangeReplaceableCollection",
+      key.usr: "s:Sm",
+      key.line: 17,
+      key.column: 55
+    },
+    {
+      key.kind: source.lang.swift.decl.var.global,
+      key.name: "_ownerMutableCollection",
+      key.usr: "s:6owners23_ownerMutableCollectionypXpvp",
+      key.line: 18,
+      key.column: 5,
+      key.entities: [
+        {
+          key.kind: source.lang.swift.decl.function.accessor.getter,
+          key.usr: "s:6owners23_ownerMutableCollectionypXpvg",
+          key.line: 18,
+          key.column: 5,
+          key.is_implicit: 1
+        },
+        {
+          key.kind: source.lang.swift.decl.function.accessor.setter,
+          key.usr: "s:6owners23_ownerMutableCollectionypXpvs",
+          key.line: 18,
+          key.column: 5,
+          key.is_implicit: 1
+        }
+      ],
+      key.effective_access: source.decl.effective_access.internal
+    },
+    {
+      key.kind: source.lang.swift.ref.protocol,
+      key.name: "MutableCollection",
+      key.usr: "s:SM",
+      key.line: 18,
+      key.column: 46
+    }
+  ]
+}

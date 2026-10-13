@@ -1,0 +1,8 @@
+"""Send user-authorized coordination update with bounded stdin transport."""
+import subprocess
+
+message='''Codex SR1 update, 2026-10-12. Adrian requested fresh Claude CLI Fable Max reviews at major checkpoints or hourly. First readonly review finished14:11UTC, actualclaude-fable-5-1/max, archived factory/reviews/fable-max-checkpoint-v1; assessment at-risk, zero original-five fully qualified. Root paused agents/native work during review & resumed fixes; next by15:11UTC.
+Review exposed Rectangle comparison gap: oldcroppedMac40x20 matched color/size but Windows rendered at origin; actualMaccentered320x240. Fixedfactoryhostrootplacement only, exactwitnessunchanged. CenteredWindowsfinal-r6 compilePASS, rawreceipt/EXE archived; freshMacfullviewport20 at800x600 repeatstable. CapturingfreshWindowsCount1 next; sourcecontrolcaught manifestselfhashbug beforeGUI, fixingnow.
+Roundedoriginalstroke Windowsprebuild/finalPASS & matchedMacreferencebuild+Count1PASS800x600. Originalstar.fill DirectWriteproviderproducer source ready, actualDellcl/vcvars/SegoeIconsfontinventoried; bundledTinosactualpaintcanary source ready. TwoLuna-high agents remain source-only; rootownsserialboundedcompiler/nativejobs, everyoriginalexit/streamsealed, noDelldeletes, allstagesinsideignoredrepo.factory-work. Renderer/ABI & protectedSR0sourcesunchanged. SR0statusOPEN; originalfive→10→20 remains goal. If directrecordedrendererrelease/closure changed, please point to authoritative record.'''
+r=subprocess.run(['/Applications/Pulse.app/Contents/Helpers/pulse','chat','send','claude:608d5b75-d927-4ac2-a450-cee48f9d74ed','--stdin'],input=message.encode(),timeout=20)
+raise SystemExit(r.returncode)

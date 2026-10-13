@@ -1,0 +1,82 @@
+diff --git a/package/Sources/FactoryProbe/Witness.swift b/package/Sources/FactoryProbe/Witness.swift
+--- a/package/Sources/FactoryProbe/Witness.swift
++++ b/package/Sources/FactoryProbe/Witness.swift
+@@
+ struct Witness_tinos_bundled_text_pilot: View {
+@@
+ }
++
++/// Same glyph text in exact bundled Tinos & explicit system serif control.
++struct Witness_tinos_paint_canary: View {
++    var body: some View {
++        HStack(spacing: 16) {
++            Text("Aa@#")
++                .font(.custom("Tinos-Regular", size: 18))
++                .lineLimit(1)
++                .frame(width: 128, alignment: .leading)
++            Text("Aa@#")
++                .font(.system(size: 18, weight: .regular, design: .serif))
++                .lineLimit(1)
++                .frame(width: 128, alignment: .leading)
++        }
++    }
++}
+diff --git a/package/Sources/FactoryProbe/main.swift b/package/Sources/FactoryProbe/main.swift
+--- a/package/Sources/FactoryProbe/main.swift
++++ b/package/Sources/FactoryProbe/main.swift
+@@
+-            guard Float(request.scale) == scale, request.fontID.hasPrefix("custom(Tinos-Regular,") else {
++            guard Float(request.scale) == scale else {
+                 throw NSError(domain: "FactoryUnsupportedMeasurementStyle", code: 1)
+             }
++            let isCustomTinos = request.fontID.hasPrefix("custom(Tinos-Regular,")
++            let isSystemSerif = request.fontID.hasPrefix("system(") && request.fontMetadata?.design == .serif
++            guard isCustomTinos || isSystemSerif else {
++                throw NSError(domain: "FactoryUnsupportedMeasurementStyle", code: 1)
++            }
+@@
+-            let adapted = try factoryBundledMeasureRequest(request, resource: resource, resolve: { _, metadata in
+-                guard metadata.isCustom, metadata.familyName == "Tinos-Regular" else { throw FactoryBundledFontAdapterError.familyMismatch }
+-                return FactoryBundledFontMetrics(lineHeightDIP: providerMetrics.lineHeightDIP, ascentDIP: providerMetrics.ascentDIP, descentDIP: providerMetrics.descentDIP)
+-            }, scale: scale)
+-            let result = try bridge.measure(adapted.request)
++            let result: SwiftRightBridge.TextMeasurement
++            let selectedFamily: String
++            if isCustomTinos {
++                let adapted = try factoryBundledMeasureRequest(request, resource: resource, resolve: { _, metadata in
++                    guard metadata.isCustom, metadata.familyName == "Tinos-Regular" else { throw FactoryBundledFontAdapterError.familyMismatch }
++                    return FactoryBundledFontMetrics(lineHeightDIP: providerMetrics.lineHeightDIP, ascentDIP: providerMetrics.ascentDIP, descentDIP: providerMetrics.descentDIP)
++                }, scale: scale)
++                result = try bridge.measure(adapted.request)
++                selectedFamily = adapted.request.fontFamily
++            } else {
++                let pointSize = Float(request.fontMetadata?.pointSize ?? 18)
++                result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: "Times New Roman", weight: 400,
++                    fontSize: pointSize, lineHeight: pointSize * 1.5, scale: scale,
++                    maxWidth: Float(request.proposedWidth ?? 0) * scale))
++                selectedFamily = "Times New Roman"
++            }
+             retained[request] = result
+-            print("FACTORY_TINOS_MEASURE text=\(request.text) family=\(adapted.request.fontFamily) fontSize=\(adapted.request.fontSize) lineHeight=\(adapted.request.lineHeight) providerFamily=Tinos resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") rendererSelection=unproven")
++            let channel = isCustomTinos ? "custom-tinos" : "system-serif-control"
++            print("FACTORY_TINOS_PAINT_CANARY_MEASURE channel=\(channel) text=\(request.text) family=\(selectedFamily) providerFamily=Tinos resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") rendererSelection=paint-pending")
+@@
+-        print("FACTORY_TINOS_RETAINED_RUN text=\(text) widthPX=\(chosen.value.width) heightPX=\(chosen.value.height) lines=\(chosen.value.lineCount) providerFamily=Tinos rendererSelection=unproven")
++        let channel = metadata?.isCustom == true ? "custom-tinos" : "system-serif-control"
++        print("FACTORY_TINOS_PAINT_CANARY_RUN channel=\(channel) text=\(text) widthPX=\(chosen.value.width) heightPX=\(chosen.value.height) lines=\(chosen.value.lineCount) providerFamily=Tinos rendererSelection=paint-pending")
+@@
+-    init(_ bridge: Bridge) { self.bridge = bridge }
++    let paintCanary: Bool
++    init(_ bridge: Bridge, paintCanary: Bool) { self.bridge = bridge; self.paintCanary = paintCanary }
+@@
+-            let graph = Graph(Witness_tinos_bundled_text_pilot(), measurer: nativeMeasurer, scale: CGFloat(scale))
++            let graph: Graph
++            if paintCanary {
++                graph = Graph(Witness_tinos_paint_canary(), measurer: nativeMeasurer, scale: CGFloat(scale))
++                print("FACTORY_TINOS_PAINT_CANARY enabled control=system-serif cropPair=Aa@# rendererSelection=paint-pending")
++            } else {
++                graph = Graph(Witness_tinos_bundled_text_pilot(), measurer: nativeMeasurer, scale: CGFloat(scale))
++            }
+@@
+-        let host = RendererHost(bridge)
++        let host = RendererHost(bridge, paintCanary: CommandLine.arguments.contains("--paint-canary"))

@@ -1,0 +1,137 @@
+{
+  "kind": "macos-source-package-plan-v1",
+  "status": "source-ready-pending-root-compile-capture",
+  "probeTag": "swiftui.image.rgba-registered.v1",
+  "witnessIdentity": "swiftui.image.rgba-registered.v1.witness",
+  "witnessPath": "Sources/FactoryProbe/Witness.swift",
+  "witnessSha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+  "adapterPath": "Sources/FactoryProbe/CaptureHost.swift",
+  "adapterOrigin": "factory/native/macos/CaptureHost.swift",
+  "adapterOriginSha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+  "adapterSha256": "sha256:3a48b5dfef35a74ad49922ee63b56745a9f587d51abf40eed3702e923f3780b0",
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74303a27803b70f15e4d71af134d7d39ecaf2b26744b2d183aac718b6b2d101f",
+      "bytes": 230
+    },
+    {
+      "path": "Resources/FactoryRGBA.xcassets/factory.rgba.square.v1.imageset/Contents.json",
+      "sha256": "sha256:4c1e2b7cec736b1cb298f4eac5edad8808224dac6305a535a865c357a355d569",
+      "bytes": 152
+    },
+    {
+      "path": "Resources/FactoryRGBA.xcassets/factory.rgba.square.v1.imageset/factory-rgba.png",
+      "sha256": "sha256:57b45fdbc5d9a86bbad5f547b6964e39ba0c872130c564877d306f61477f6bea",
+      "bytes": 83
+    },
+    {
+      "path": "Sources/FactoryProbe/CaptureHost.swift",
+      "sha256": "sha256:3a48b5dfef35a74ad49922ee63b56745a9f587d51abf40eed3702e923f3780b0",
+      "bytes": 13075
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+      "bytes": 424
+    },
+    {
+      "path": "asset-provisioning.json",
+      "sha256": "sha256:fc7479da537da1eb466c4d98b11e02b12fece82cec5be3c56136736692ebe78d",
+      "bytes": 868
+    },
+    {
+      "path": "permission-policy.json",
+      "sha256": "sha256:13c2a8e2706c8ea4d6d2cbdb761d3d9ce888e5250b2c9edddffa3ed32b60a933",
+      "bytes": 380
+    },
+    {
+      "path": "tools/compile-mac-source.sh",
+      "sha256": "sha256:e69ab7370a4c79f5dec6d52012a82a9e203644d5408385bcdecd79d8d78d856f",
+      "bytes": 1525
+    },
+    {
+      "path": "tools/prepare-mac-source.sh",
+      "sha256": "sha256:7e2a124f32a11530723488d0bf5ab20e885fafd8b7ada6ba60ed876a7ded8795",
+      "bytes": 991
+    },
+    {
+      "path": "tools/provision-main-bundle-assets.sh",
+      "sha256": "sha256:6d5570bb070a37a6fde3cdb414f3b10525d0ba9f433ab4d73dfb459c998470cb",
+      "bytes": 1429
+    }
+  ],
+  "fixedViewport": {
+    "widthPoints": 320,
+    "heightPoints": 240,
+    "alignment": "topLeading"
+  },
+  "observableTags": {
+    "probeTag": "swiftui.image.rgba-registered.v1",
+    "witnessIdentity": "swiftui.image.rgba-registered.v1.witness"
+  },
+  "internalScratchRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1",
+  "signedRecorderPattern": "factory/native/macos/CaptureHost.swift; root-owned signed recorder preflight",
+  "permissionPolicy": "permission-policy.json",
+  "permissionRequests": false,
+  "channels": {
+    "offscreenPaint": "pending-root-capture",
+    "rootLayout": "pending-root-capture",
+    "compositorPaint": "pending-root-capture",
+    "externalAccessibility": "pending-root-preflight",
+    "witnessInternalLayoutCallbacks": "held",
+    "animation": "not-attempted"
+  },
+  "caseHash": null,
+  "hostHash": null,
+  "binaryHash": null,
+  "outputs": null,
+  "executionEligible": false,
+  "nativeParity": "hold-until-root-receipts",
+  "compiler": {
+    "resolver": [
+      "/usr/bin/xcrun",
+      "--find",
+      "swiftc"
+    ],
+    "argv": [
+      "/usr/bin/xcrun",
+      "swiftc",
+      "-parse-as-library",
+      "-O",
+      "-o",
+      "<internal-app>/Contents/MacOS/FactoryProbe",
+      "<source>/Sources/FactoryProbe/Witness.swift",
+      "<source>/Sources/FactoryProbe/CaptureHost.swift"
+    ],
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "receipt": "root-owned compiler receipt required",
+    "sourceDrift": false
+  },
+  "rootScripts": {
+    "prepare": "tools/prepare-mac-source.sh",
+    "assets": "tools/provision-main-bundle-assets.sh",
+    "compile": "tools/compile-mac-source.sh"
+  },
+  "assetProvisioning": {
+    "manifest": "asset-provisioning.json",
+    "bundleLookup": "Bundle.main",
+    "catalog": "Resources/FactoryRGBA.xcassets",
+    "witnessImageName": "factory.rgba.square.v1",
+    "pngSha256": "sha256:57b45fdbc5d9a86bbad5f547b6964e39ba0c872130c564877d306f61477f6bea",
+    "actool": [
+      "/usr/bin/xcrun",
+      "actool"
+    ],
+    "status": "pending-root-actool-receipt"
+  },
+  "memorySupervision": {
+    "owner": "root",
+    "kind": "process-group-rss-watchdog",
+    "maxBytes": 1073741824,
+    "status": "required-before-root-compile",
+    "localVmUlimit": false,
+    "scope": "xcrun swiftc plus child processes in fresh internal scratch/app paths"
+  }
+}

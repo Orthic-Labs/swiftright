@@ -1,0 +1,26 @@
+﻿{
+    "kind":  "factory-worker-output-preflight-controls-v17",
+    "status":  "passed-source-only",
+    "controls":  [
+                     {
+                         "name":  "positive",
+                         "rejected":  false,
+                         "reason":  ""
+                     },
+                     {
+                         "name":  "wrong-namespace",
+                         "rejected":  true,
+                         "reason":  "Worker output namespace must be under factory/native/windows"
+                     },
+                     {
+                         "name":  "existing-worker",
+                         "rejected":  true,
+                         "reason":  "Worker run root must be fresh"
+                     }
+                 ],
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0
+}

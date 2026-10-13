@@ -1,0 +1,11 @@
+{
+  "kind": "factory-count1-r3-execution-overlay-source-checks-v1",
+  "status": "passed-source-only",
+  "count": 1,
+  "baseRoot": "..\\..",
+  "chain": ["coordinator-r3.ps1", "interactive-task-r3.ps1", "dispatch-r3.ps1", "capture-repeat-r3.ps1"],
+  "manifestGate": {"field": "sha256", "bytes": true, "beforeLockOrNative": true},
+  "faults": ["manifest-wrong-hash", "manifest-wrong-bytes"],
+  "nativeWindowActions": 0,
+  "lockActions": 0
+}

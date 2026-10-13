@@ -1,0 +1,32 @@
+{
+  "disposition": "BLOCKED_COUNT20",
+  "stageSha256": "0110cf69064b6ae4fb77908cc5104877c57a7ed55fe12aa8b73cea7bdd419e4a",
+  "verifiedReferences": 25,
+  "findings": [
+    {
+      "file": "dispatch.ps1:16 & capture-repeat.ps1:63",
+      "issue": "Both hardcode previous helper SHA355d2d; actual helper096e9b. Unconditional rejection before launch.",
+      "repair": "Pin current frozen helper in both callers."
+    },
+    {
+      "file": "support/test-first-proof.ps1:55",
+      "issue": "Scratch retirement moves to sibling path, outside required D:\\Claude\\_factory-old-DELETE-ME.",
+      "repair": "Move retained fixture tree only to unique child of required retirement root."
+    },
+    {
+      "file": "support/test-first-proof.ps1",
+      "issue": "Coherent pixel repeat fault catches arbitrary failure; required reason unasserted.",
+      "repair": "Assert exact repeat-stability error message for coherent mutation."
+    }
+  ],
+  "clearChecks": [
+    "Exact prior v1 captureRoot/runRoot in shared call paths",
+    "Fresh v2 repeat/coordinator namespace",
+    "Coherent changed repeat bytes/sample hash/pixel JSON hash/row file hashes added"
+  ],
+  "execution": {
+    "powershell": false,
+    "remote": false,
+    "native": false
+  }
+}

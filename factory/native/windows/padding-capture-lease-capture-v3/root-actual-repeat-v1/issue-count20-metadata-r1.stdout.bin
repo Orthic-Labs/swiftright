@@ -1,0 +1,135 @@
+{
+    "kind":  "factory-issued-metadata-ref-v1",
+    "path":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\issued-metadata.json",
+    "sha256":  "356dcf88dc0b4374b78b624fefe8f675b0fe71fe496838bb224672caa39b6508",
+    "bytes":  27527,
+    "runID":  "b3730674078e4a339ced14c0fba0a540",
+    "nativeActions":  0
+}
+{
+    "kind":  "factory-issued-metadata-full-guard-controls-v1",
+    "status":  "passed-source-only",
+    "frozenIntegrationPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-metadata-controls-v1\\..\\support\\integration.ps1",
+    "issuedMetadataPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\issued-metadata.json",
+    "issuedMetadataSha256":  "356dcf88dc0b4374b78b624fefe8f675b0fe71fe496838bb224672caa39b6508",
+    "count":  20,
+    "baseline":  {
+                     "name":  "admitted-baseline-actual",
+                     "accepted":  true,
+                     "rejected":  false,
+                     "nativeWindowActions":  0
+                 },
+    "faultControls":  [
+                          {
+                              "name":  "admitted-baseline-relocated-resealed",
+                              "accepted":  true,
+                              "rejected":  false,
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-expected-count",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-host-argument",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-source-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata source/template boundary mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-serializer-prefix",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued metadata admitted context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-runtime-modules",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued actual runtime module metadata mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-case",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:case",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-runtime",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:runtime",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-renderer",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:renderer",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-frozen",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "candidate-guard:tuple-ref",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-canonical-input-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Candidate binding raw/source joins missing",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "mac-context-path",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Mac context source ref missing: macContext_capture_index",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          }
+                      ],
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0,
+    "qualification":  "hold"
+}
+{
+    "issuedMetadataHash":  "356dcf88dc0b4374b78b624fefe8f675b0fe71fe496838bb224672caa39b6508",
+    "zipPath":  "D:\\Claude\\swiftright\\.factory-work\\transports\\count20-metadata-r1.zip",
+    "lockActions":  0,
+    "kind":  "root-count20-prelaunch-issued-and-full-guard-v1",
+    "guardHash":  "9f9b7e016a2d1c2772fbbbbad54913965de0e7bb58276edfc19f30923682e413",
+    "nativeActions":  0,
+    "bytes":  89293,
+    "sha256":  "eff0e94d4feb9a8a44a6d442e23be384ad0415771a81f6af054473caaf57d1af"
+}

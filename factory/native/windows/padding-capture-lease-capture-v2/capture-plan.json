@@ -1,0 +1,50 @@
+{
+  "kind": "padding-capture-lease-capture-source-plan-v1",
+  "case": {
+    "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+  },
+  "sourcePackagePath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-build-v1\\package",
+  "sourcePlanSha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
+  "compiledPlanSha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
+  "compiledHostPackagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+  "launchPreflightPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\preflight.ps1",
+  "launchPreflightSha256": "sha256:37ed4ec43f7b3e27db423d1b5564155ec58b0d5c61b021fa602a5919ebd15c6b",
+  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2",
+  "renderer": {
+    "rollingInputPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "serializerControl": {
+    "relativePath": "dependencies\\serializer-actual-r2\\control.json",
+    "hashInput": "Mandatory root-measured actual serializer controlSHA; buildpreflight checks reuse exactoriginal source/tool/argv/streams"
+  },
+  "dispatch": {
+    "first": {
+      "count": 1,
+      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-single-r1"
+    },
+    "retries": false,
+    "repeat": {
+      "count": 20,
+      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-repeat-r1",
+      "firstProofRequired": true
+    }
+  },
+  "qualification": "sourceBoundCandidate-observation-only; no historical frozen tuple claim",
+  "integration": {
+    "workerContractSha256": "7487595d84e251066aa8f532593f6f84e4a101153fc3854987054eb00ca5fa49",
+    "workerInvokerSha256": "155a29c64e1093b9570560fccf530b19b20d1602d64d5fbcc74c25dd7ee32d32",
+    "finalExitHelperSha256": "94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4",
+    "combinedReleaseHelperSha256": "c9fd2c0e59bfe7c00ca982fd56abb2cc346d603561c9ac720e37c90a55714985"
+  },
+  "hostArguments": [
+    "--factory-capture-lease-seconds=40"
+  ],
+  "metadataIssuerSha256": "b360ca9f8185f5845fae5450e2aa97eb89574a588a75adb131a00c37ed0de4b2",
+  "actualBuild": {
+    "compileReceiptSha256": "1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+    "exeSha256": "3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+    "receiptRef": "factory/native/windows/padding-capture-lease-build-v1/actual-build-r1/observation.json"
+  }
+}

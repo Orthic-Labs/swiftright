@@ -1,0 +1,4 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$base='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3';$m=Get-Content -Raw -LiteralPath (Join-Path $base 'coordinator-repeat-r1\issued-metadata.json')|ConvertFrom-Json
+$rows=@();foreach($key in @('plan','compile','exe','renderer','recipe','sourceBoundCandidateTuple','candidateTuple','candidateContext')){$r=$m.$key;$rows+=@{key=$key;recordedPath=$r.path;expectedHash=$r.sha256;expectedBytes=$r.bytes;actualHash=('sha256:'+(Get-FileHash -LiteralPath $r.path).Hash.ToLowerInvariant());actualBytes=(Get-Item -LiteralPath $r.path).Length}}
+@{kind='root-count20-preflight-inspection-v1';refs=$rows;lockState=[IO.File]::ReadAllText('D:\Claude\desktop.lock');nativeActions=0;outExists=(Test-Path -LiteralPath (Join-Path $base 'actual-repeat-r1'));coordinatorExists=(Test-Path -LiteralPath (Join-Path $base 'coordinator-repeat-r1\coordinator.json'))}|ConvertTo-Json -Depth 8

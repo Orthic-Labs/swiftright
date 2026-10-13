@@ -1,0 +1,560 @@
+{
+  "acceptance": "not-promoted",
+  "adapterSourceHash": "sha256:1309352243475b03196a93d3529d6d8e588d7ae076b2fc2f1ee0ddf44b4cc54f",
+  "binaryHash": "sha256:fb2757beded3e6d1d4d650b508ed28f2080f0168d56948f7a1dac2bc897db84c",
+  "block": "swiftui.text.layout.baseline",
+  "candidateOnly": true,
+  "case": {
+    "hash": "sha256:9790e99bc17dcd7f1eb3a3fb2cd5a449752d762748a640c7081cfe70aec7590e",
+    "id": "swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb"
+  },
+  "channels": {
+    "animation": "NOT_ATTEMPTED: static pilot",
+    "compositorPaint": "OBSERVED",
+    "events": "OBSERVED: render clock & host window display only",
+    "externalAX": "OBSERVED",
+    "offscreenPaint": "OBSERVED",
+    "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+    "rootLayout": "OBSERVED",
+    "textRenderer": "OBSERVED",
+    "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+    "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+  },
+  "compiledAdapterHash": "sha256:acbfaf6b532e80d4fb99b52ea5677e9d71db73723102c5b12bc2466e043ca3de",
+  "compilerReceipt": {
+    "compiler": {
+      "argv": [
+        "/usr/bin/xcrun",
+        "swiftc",
+        "-parse-as-library",
+        "-O",
+        "-o",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/capture-host",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/Witness.swift",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/CaptureHost.swift"
+      ],
+      "cleanup": {
+        "drainTimedOut": false,
+        "groupMissing": false,
+        "killSent": false,
+        "termSent": false,
+        "timedOut": false
+      },
+      "cwd": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb",
+      "endedAtUtc": "2026-10-11T21:47:44.842187+00:00",
+      "exitCode": 0,
+      "logicalCompilerName": "swiftc",
+      "logicalCompilerPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "outputBinary": {
+        "bytes": 196064,
+        "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/capture-host",
+        "sha256": "sha256:fb2757beded3e6d1d4d650b508ed28f2080f0168d56948f7a1dac2bc897db84c"
+      },
+      "ownedProcessGroup": false,
+      "parentProcessGroup": true,
+      "pgid": 83257,
+      "pid": 83718,
+      "realHashBefore": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "realPathBefore": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+      "realToolAfter": {
+        "bytes": 173118384,
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "realPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      },
+      "realToolBefore": {
+        "bytes": 173118384,
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "realPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      },
+      "realToolDrift": false,
+      "sourceAfter": {
+        "CaptureHost.swift": {
+          "bytes": 13061,
+          "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/CaptureHost.swift",
+          "sha256": "sha256:acbfaf6b532e80d4fb99b52ea5677e9d71db73723102c5b12bc2466e043ca3de"
+        },
+        "Witness.swift": {
+          "bytes": 403,
+          "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/Witness.swift",
+          "sha256": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+        }
+      },
+      "sourceBefore": {
+        "CaptureHost.swift": {
+          "bytes": 13061,
+          "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/CaptureHost.swift",
+          "sha256": "sha256:acbfaf6b532e80d4fb99b52ea5677e9d71db73723102c5b12bc2466e043ca3de"
+        },
+        "Witness.swift": {
+          "bytes": 403,
+          "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/Witness.swift",
+          "sha256": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+        }
+      },
+      "sourceDrift": false,
+      "startedAtUtc": "2026-10-11T21:47:43.210644+00:00",
+      "stderrHash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrPath": "factory/oracle/mac/text-origin-r11-root-v1/observed-mac1-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/build.stderr.txt",
+      "stdoutHash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutPath": "factory/oracle/mac/text-origin-r11-root-v1/observed-mac1-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/build.stdout.txt",
+      "timedOut": false,
+      "xcrunHash": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+      "xcrunPath": "/usr/bin/xcrun"
+    },
+    "invocationMode": "xcrun",
+    "kind": "swift-compiler-process-receipt",
+    "resolver": {
+      "argv": [
+        "/usr/bin/xcrun",
+        "--find",
+        "swiftc"
+      ],
+      "cleanup": {
+        "drainTimedOut": false,
+        "groupMissing": false,
+        "killSent": false,
+        "termSent": false,
+        "timedOut": false
+      },
+      "endedAtUtc": "2026-10-11T21:47:43.138442+00:00",
+      "exitCode": 0,
+      "ownedProcessGroup": false,
+      "parentProcessGroup": true,
+      "pgid": 83257,
+      "pid": 83664,
+      "startedAtUtc": "2026-10-11T21:47:43.131733+00:00",
+      "stderrHash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrPath": "factory/oracle/mac/text-origin-r11-root-v1/observed-mac1-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/swiftc-resolve.stderr.txt",
+      "stdoutHash": "sha256:ed46dae707e2fd5e1296f751075d9a1bab3c889dbfa81e2f953d86deda0ede3e",
+      "stdoutPath": "factory/oracle/mac/text-origin-r11-root-v1/observed-mac1-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/swiftc-resolve.stdout.txt"
+    },
+    "sourceAfter": {
+      "CaptureHost.swift": {
+        "bytes": 13061,
+        "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/CaptureHost.swift",
+        "sha256": "sha256:acbfaf6b532e80d4fb99b52ea5677e9d71db73723102c5b12bc2466e043ca3de"
+      },
+      "Witness.swift": {
+        "bytes": 403,
+        "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/Witness.swift",
+        "sha256": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+      }
+    },
+    "sourceBefore": {
+      "CaptureHost.swift": {
+        "bytes": 13061,
+        "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/CaptureHost.swift",
+        "sha256": "sha256:acbfaf6b532e80d4fb99b52ea5677e9d71db73723102c5b12bc2466e043ca3de"
+      },
+      "Witness.swift": {
+        "bytes": 403,
+        "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb/Witness.swift",
+        "sha256": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+      }
+    },
+    "sourceDrift": false,
+    "status": "SUCCESS",
+    "version": "2"
+  },
+  "executionRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb",
+  "freshAXClient": {
+    "binaryHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+    "executable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/external-ax-client/f5-ax-client",
+    "externalAX": "AVAILABLE",
+    "identityDetails": "Executable=/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/external-ax-client/f5-ax-client\nIdentifier=f5-ax-client\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=805 flags=0x20002(adhoc,linker-signed) hashes=22+0 location=embedded\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nCandidateCDHashFull sha256=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nHash choices=sha256\nCMSDigest=74868f6a9b8deb3cd520a88d3b32ab2de5610f50929c9be7ee85babef79dfcba\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=17992\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=74868f6a9b8deb3cd520a88d3b32ab2de5610f50\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n",
+    "kind": "fresh-client",
+    "permissionRequests": false,
+    "preflight": {
+      "axTrusted": true,
+      "permissionRequests": false,
+      "pid": 83590
+    },
+    "sourceHash": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+  },
+  "independentProcessesPerRun": true,
+  "kind": "macos-host-capture-candidate",
+  "permissionCapabilities": {
+    "axTrusted": true,
+    "display": {
+      "mainDisplayBoundsPoints": {
+        "height": 900,
+        "width": 1600,
+        "x": 0,
+        "y": 0
+      },
+      "mainDisplayPixels": {
+        "height": 900,
+        "width": 1600
+      },
+      "mainScreenBackingScaleFactor": 1
+    },
+    "fontInventory": {
+      "families": [
+        "Academy Engraved LET",
+        "Al Bayan",
+        "Al Nile",
+        "Al Tarikh",
+        "American Typewriter",
+        "Andale Mono",
+        "Apple Braille",
+        "Apple Chancery",
+        "Apple Color Emoji",
+        "Apple SD Gothic Neo",
+        "Apple Symbols",
+        "AppleGothic",
+        "AppleMyungjo",
+        "Arial",
+        "Arial Black",
+        "Arial Hebrew",
+        "Arial Hebrew Scholar",
+        "Arial Narrow",
+        "Arial Rounded MT Bold",
+        "Arial Unicode MS",
+        "Avenir",
+        "Avenir Next",
+        "Avenir Next Condensed",
+        "Ayuthaya",
+        "Baghdad",
+        "Bangla MN",
+        "Bangla Sangam MN",
+        "Baskerville",
+        "Beirut",
+        "Big Caslon",
+        "Bodoni 72",
+        "Bodoni 72 Oldstyle",
+        "Bodoni 72 Smallcaps",
+        "Bodoni Ornaments",
+        "Bradley Hand",
+        "Brush Script MT",
+        "Chalkboard",
+        "Chalkboard SE",
+        "Chalkduster",
+        "Charter",
+        "Cochin",
+        "Comic Sans MS",
+        "Copperplate",
+        "Corsiva Hebrew",
+        "Courier New",
+        "DIN Alternate",
+        "DIN Condensed",
+        "Damascus",
+        "DecoType Naskh",
+        "Devanagari MT",
+        "Devanagari Sangam MN",
+        "Didot",
+        "Diwan Kufi",
+        "Diwan Thuluth",
+        "Euphemia UCAS",
+        "Farah",
+        "Farisi",
+        "Futura",
+        "GB18030 Bitmap",
+        "Galvji",
+        "Geeza Pro",
+        "Geneva",
+        "Georgia",
+        "Gill Sans",
+        "Grantha Sangam MN",
+        "Gujarati MT",
+        "Gujarati Sangam MN",
+        "Gurmukhi MN",
+        "Gurmukhi MT",
+        "Gurmukhi Sangam MN",
+        "Heiti SC",
+        "Heiti TC",
+        "Helvetica",
+        "Helvetica Neue",
+        "Herculanum",
+        "Hiragino Maru Gothic ProN",
+        "Hiragino Mincho ProN",
+        "Hiragino Sans",
+        "Hiragino Sans GB",
+        "Hoefler Text",
+        "ITF Devanagari",
+        "ITF Devanagari Marathi",
+        "Impact",
+        "InaiMathi",
+        "Kailasa",
+        "Kannada MN",
+        "Kannada Sangam MN",
+        "Kefa III",
+        "Khmer MN",
+        "Khmer Sangam MN",
+        "Kohinoor Bangla",
+        "Kohinoor Devanagari",
+        "Kohinoor Gujarati",
+        "Kohinoor Telugu",
+        "Kokonor",
+        "Krungthep",
+        "KufiStandardGK",
+        "Lao MN",
+        "Lao Sangam MN",
+        "Lucida Grande",
+        "Luminari",
+        "Malayalam MN",
+        "Malayalam Sangam MN",
+        "Marker Felt",
+        "Menlo",
+        "Microsoft Sans Serif",
+        "Mishafi",
+        "Mishafi Gold",
+        "Monaco",
+        "Mshtakan",
+        "Mukta Mahee",
+        "Muna",
+        "Myanmar MN",
+        "Myanmar Sangam MN",
+        "Nadeem",
+        "New Peninim MT",
+        "Noteworthy",
+        "Noto Nastaliq Urdu",
+        "Noto Sans Batak",
+        "Noto Sans Kannada",
+        "Noto Sans NKo",
+        "Noto Sans Oriya",
+        "Noto Sans Sunuwar",
+        "Noto Sans Syriac",
+        "Noto Sans Tagalog",
+        "Noto Serif Myanmar",
+        "Optima",
+        "Oriya MN",
+        "Oriya Sangam MN",
+        "PT Mono",
+        "PT Sans",
+        "PT Sans Caption",
+        "PT Sans Narrow",
+        "PT Serif",
+        "PT Serif Caption",
+        "Palatino",
+        "Papyrus",
+        "Party LET",
+        "Phosphate",
+        "PingFang HK",
+        "PingFang MO",
+        "PingFang SC",
+        "PingFang TC",
+        "Plantagenet Cherokee",
+        "Raanana",
+        "STIX Two Math",
+        "STIX Two Text",
+        "STSong",
+        "Sana",
+        "Sathu",
+        "Savoye LET",
+        "Shree Devanagari 714",
+        "SignPainter",
+        "Silom",
+        "Sinhala MN",
+        "Sinhala Sangam MN",
+        "Skia",
+        "Snell Roundhand",
+        "Songti SC",
+        "Songti TC",
+        "Sukhumvit Set",
+        "Symbol",
+        "Tahoma",
+        "Tamil MN",
+        "Tamil Sangam MN",
+        "Telugu MN",
+        "Telugu Sangam MN",
+        "Thonburi",
+        "Times New Roman",
+        "Trattatello",
+        "Trebuchet MS",
+        "Verdana",
+        "Waseem",
+        "Webdings",
+        "Wingdings",
+        "Wingdings 2",
+        "Wingdings 3",
+        "Zapf Dingbats",
+        "Zapfino"
+      ],
+      "systemControl": {
+        "family": ".AppleSystemUIFont",
+        "postScriptName": ".SFNS-Regular",
+        "size": 16,
+        "unitsPerEm": 2048
+      }
+    },
+    "permissionRequests": false,
+    "pid": 83811,
+    "screenCaptureGranted": true
+  },
+  "probeManifest": {
+    "block": "swiftui.text.layout.baseline",
+    "candidate": "swiftui.text.layout.baseline.pilot-next",
+    "case": {
+      "hash": "sha256:9790e99bc17dcd7f1eb3a3fb2cd5a449752d762748a640c7081cfe70aec7590e",
+      "id": "swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.12e359146239a7bb"
+    },
+    "caseInputs": {
+      "colorScheme": "light",
+      "font": {
+        "design": "default",
+        "family": "system",
+        "size": 24,
+        "weight": "regular"
+      },
+      "foreground": "primary",
+      "text": "Aa",
+      "viewport": {
+        "alignment": "center",
+        "height": 48,
+        "width": 120
+      }
+    },
+    "channels": {
+      "assertionChannels": [
+        "layout",
+        "paint",
+        "text-observation"
+      ],
+      "font": {
+        "design": "default",
+        "family": "system",
+        "size": 24,
+        "weight": "regular"
+      },
+      "geometry": [
+        {
+          "channel": "layout",
+          "hostHookRequired": true,
+          "probeTag": "swiftui.text.layout.baseline",
+          "viewInstrumentationInserted": false
+        }
+      ],
+      "native": [],
+      "provider": [],
+      "text": {
+        "baselineMeasured": true,
+        "fallbackFamilyMeasured": true,
+        "rawAXPreserved": true,
+        "rawUIAPreserved": true
+      },
+      "transparency": {
+        "channels": [
+          "layout",
+          "paint",
+          "text-observation"
+        ],
+        "enabled": false,
+        "viewIsolatedFromInstrumentation": true
+      },
+      "viewport": {
+        "alignment": "center",
+        "height": 48,
+        "width": 120
+      }
+    },
+    "compileExpectation": "success",
+    "environmentInputs": {
+      "colorScheme": "light",
+      "font": {
+        "design": "default",
+        "family": "system",
+        "size": 24,
+        "weight": "regular"
+      },
+      "viewport": {
+        "alignment": "center",
+        "height": 48,
+        "width": 120
+      }
+    },
+    "executionEligible": true,
+    "kind": "generated-probe",
+    "recipe": {
+      "hash": "sha256:ebb561f9bd90022182328202879f7a6f5067c192823d519698d11a678653f73d",
+      "id": "swiftui.text.layout.baseline.recipe"
+    },
+    "recipeFile": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/recipe.json",
+    "scenario": "baseline",
+    "sourceFile": "witness.swift",
+    "sourceHash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+    "sourceRepositoryPath": "factory/pipeline/pilot-next-source-v1/text-baseline-v1/witness.swift",
+    "tuple": {
+      "hash": "sha256:12e359146239a7bb29d2c6f29b9324364ad71934dccc3a06ed72f9ad7299d1c8",
+      "id": "sr1-text-baseline-r11-source-paired20-20261011"
+    },
+    "tupleId": "sr1-text-baseline-r11-source-paired20-20261011",
+    "version": "0.1",
+    "witness": {
+      "id": "swiftui.text.layout.baseline.witness",
+      "sourceHash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+    },
+    "witnessType": "Witness_swiftui_text_layout_baseline"
+  },
+  "provenance": {
+    "createdAt": "2026-10-11T21:47:44.908493Z",
+    "producer": "factory/native/macos",
+    "sourceHash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e"
+  },
+  "recorder": {
+    "axTrusted": true,
+    "copiedBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "copiedExecutable": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/text-native-r1/existing-recorder/F1MacRecord.app/Contents/MacOS/F1MacRecord",
+    "externalAX": "HELD",
+    "genericProtocolSupported": false,
+    "identityDetails": "Executable=/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app/Contents/MacOS/F1MacRecord\nIdentifier=com.orthiclabs.swiftright.f1macrecord\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=497 flags=0x10000(runtime) hashes=8+3 location=embedded\nVersionPlatform=1\nVersionMin=983040\nVersionSDK=983040\nHash type=sha256 size=32\nCandidateCDHash sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nCandidateCDHashFull sha256=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nHash choices=sha256\nCMSDigest=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3ad3f3bd3e4473dacf2ab308d\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=49152\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=5be97a95eac4ae045c1af4ea56db3b29f8fc83f3\nSignature size=9048\nAuthority=Developer ID Application: Adrian D'souza (6KLGD3LLKF)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=9 Oct 2026 at 8:17:30\u202fAM\nInfo.plist entries=9\nTeamIdentifier=6KLGD3LLKF\nRuntime Version=15.0.0\nSealed Resources version=2 rules=13 files=0\nInternal requirements count=1 size=200\nTotal signatures=1\nChosen signature=1\n",
+    "permissionRequests": false,
+    "preflightExit": 2,
+    "preflightMethod": "AXIsProcessTrusted in unchanged signed recorder, then missing-fixture launch",
+    "reason": "signed binary hard-codes F1 stimuli & lacks generic --steps/launchArgs support; current source is newer than signed binary",
+    "sourceApp": "/Volumes/D/claude/swiftright/probes/sr0-o/f1-cross/out/signed/F1MacRecord.app",
+    "sourceBinaryHash": "sha256:39ae7c9c08e0cb46129281e5f6be336438350794101398c8f6474bbf70cc16a4",
+    "sourceBinaryProtocol": "F1-only"
+  },
+  "runs": [
+    {
+      "captureHash": "sha256:31c423f3751cc804b61369397b2f52607c2546c6a4f4b76ab75488ac363f332f",
+      "compositorPaint": "OBSERVED",
+      "compositorPngHash": "sha256:6d36feb860ae6e492f91dd8df55e9f60b38576225413983dab6ecfb5673badd9",
+      "compositorRawHash": "sha256:7879a93a39afb7332c0c43acb63a97e03a74ab0703883045b254c33e37179d19",
+      "compositorScope": "owned window including chrome; witness corroborated by external AXHostingView nodes",
+      "externalAX": "OBSERVED",
+      "externalAXClientHash": "sha256:7f1013de103feefabf35a525bfedd28a2abbe60763761c8e0372530f8a051581",
+      "externalAXRawHash": "sha256:e6ee8dfdbaa34fe9cb3572ee5c9226e7fc33323cde007586088322e8293a5758",
+      "externalAXWitnessNodes": 1,
+      "instrumentationPixelsEqual": true,
+      "instrumented": {
+        "image": {
+          "bytesPerRow": 480,
+          "height": 48,
+          "scale": 1,
+          "uniqueByteValues": 104,
+          "width": 120
+        },
+        "pid": 83857,
+        "pngHash": "sha256:31783bae3552b53af3573cd9cd4b15666c71f91ed4374d04e5a51eb0b6461f23",
+        "rawHash": "sha256:a112a8d25f42bfe94d5314aa6a3bbe7be24fd0bec23f5cf6d9343cf3f867c268",
+        "rootLayoutCallbacks": 2,
+        "status": "OBSERVED",
+        "textRendererRuns": 2
+      },
+      "offscreen": "OBSERVED",
+      "plain": {
+        "image": {
+          "bytesPerRow": 480,
+          "height": 48,
+          "scale": 1,
+          "uniqueByteValues": 104,
+          "width": 120
+        },
+        "pid": 83856,
+        "pngHash": "sha256:31783bae3552b53af3573cd9cd4b15666c71f91ed4374d04e5a51eb0b6461f23",
+        "rawHash": "sha256:2588cb7b73fad108c19e3806cb299288bae406ea5151873fa8d0781fa45f11bd",
+        "rootLayoutCallbacks": 0,
+        "status": "OBSERVED",
+        "textRendererRuns": 0
+      },
+      "rootHostGeometry": "OBSERVED",
+      "run": 1
+    }
+  ],
+  "sourceHash": "sha256:4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+  "status": "CANDIDATE_CAPTURED",
+  "version": "0.1"
+}

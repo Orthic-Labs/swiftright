@@ -1,0 +1,32 @@
+{
+  "kind": "sr0-tuple12-startupguard-matrix-controls-v7",
+  "status": "source-ready-pending-root-parse-headless-control-and-native-run",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "driver_sha256": "0b95be5be7e208e9f2d1eefe60287184278e39b6738a9c4fd8388b23f0828d1c",
+  "exe_sha256": "87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "worker": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v6/worker-v5.ps1",
+    "sha256": "b039d4dce888e3dabbb7c3109bcd64abbf2b6313fdc818b4b11398460cdbac39"
+  },
+  "coordinator": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v6/coordinator-v5.ps1",
+    "sha256": "e85c3c8f57b8e36d0df440bd60a884d28ce516824f8c127b5577345d1f982d6f"
+  },
+  "runner": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v7/run-matrix-v7.ps1",
+    "sha256": "93fd5533c6f2309b8a4c7541ab50bbb1fb16e18f2feb1b0aa397a731a3a7e292",
+    "change": "v7 bounds each hidden coordinator to 300 seconds, caps stdout/stderr at 8 MiB, samples RSS with 2 GiB cap, retains original handle, kills only exact coordinator on bounded failure, preserves lock, aborts remaining batch, & records raw outputs"
+  },
+  "headless_controls": {
+    "path": "qualification/tuple12-takeover/matrix-controls-v7/headless-controls.ps1",
+    "sha256": "46fed3a38cd97b0309a1c3523afbb9c849a8a33f0611de0e084e73ec73e2f97f",
+    "status": "prepared-positive-and-timeout-owned-process-controls-not-run"
+  },
+  "controls": {
+    "path": "qualification/test_tuple12_matrix_v7_controls.py",
+    "sha256": "1f2ba5e152c453e57aa96277abfe584d581ef7a089191c3fd112c470b9ce0b42",
+    "status": "prepared-not-run",
+    "faults": 5
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "python3",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/compare-centered-paired20-v1.py",
+    "--mac-root",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/observed-mac20-r1",
+    "--windows-root",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-centered-capture-count20-r1/actual-native-r1/files",
+    "--mac-build-receipt",
+    "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/build-r1/receipt.json",
+    "--output",
+    ".factory-work/comparator-check-r1/report.json"
+  ],
+  "pid": 69108,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-12T16:10:51.773332+00:00",
+  "finishedAt": "2026-10-12T16:10:52.056435+00:00",
+  "seconds": 0.283,
+  "peakGroupRssBytes": 4849664,
+  "stdout": {
+    "bytes": 11778,
+    "sha256": "79a72f0d5a683a43cde0f0a6eaea7a86708b7dfabddd391472332f3faa1c3dd9"
+  },
+  "stderr": {
+    "bytes": 337,
+    "sha256": "4437565b7dd3e145dac1494228c3d605120dfd1de14ae8a73d33d5456b732cf1"
+  },
+  "ownedGroupQuiescent": true
+}

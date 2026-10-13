@@ -1,0 +1,39 @@
+{
+  "baseline": {
+    "fileCount": 870,
+    "kind": "root-factory-native-v17-export-v1",
+    "ref": {
+      "bytes": 160504,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1/manifest.json",
+      "sha256": "sha256:46adbf7fc6f5d31922c8bbb45eed9e25a49772ec7422d51ece81bc98f0fa2b0e"
+    },
+    "totalBytes": 6948001
+  },
+  "faultControls": [
+    {
+      "name": "wrong-kind",
+      "reason": "r17 export manifest kind mismatch",
+      "status": "rejected"
+    },
+    {
+      "name": "wrong-bytes-hash",
+      "reason": "r17 inventory hash mismatch: issuer.stdout.json",
+      "status": "rejected"
+    },
+    {
+      "name": "wrong-byte-count",
+      "reason": "archive byte count mismatch: /Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1/issuer.stdout.json",
+      "status": "rejected"
+    },
+    {
+      "name": "missing-overlay-layout",
+      "reason": "r17 export layout missing: overlay/",
+      "status": "rejected"
+    }
+  ],
+  "lockActions": 0,
+  "nativeActions": 0,
+  "qualification": "source-control-only",
+  "schema": "factory-native-count20-r17-adapter-controls-v11",
+  "status": "baseline-admitted-faults-rejected"
+}

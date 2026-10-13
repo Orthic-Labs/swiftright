@@ -1,0 +1,54 @@
+{
+  "kind": "sr0-display-native-r10c-diagnosis-v1",
+  "archive": "factory/pipeline/sr0-display-selfjob-root-v4/actual-native-r10c",
+  "status": "terminal-observed-release-held",
+  "collector": {
+    "status": "failed",
+    "failure": "workload exit row count mismatch: 0 vs 1",
+    "workloadTargetPid": null,
+    "workloadProof": null,
+    "workloadHandleAcquired": true,
+    "workloadTerminal": true,
+    "workloadExit": 0,
+    "presentMonHandleAcquired": true,
+    "presentMonTerminal": true,
+    "presentMonExitSigned": -1,
+    "presentMonStopExit": 0,
+    "presentMonStreamsSealed": null,
+    "presentMonCsvEvidence": null,
+    "presentMonStderrEvidence": null,
+    "lockHeld": true,
+    "releaseAllowed": false,
+    "lockReleased": false,
+    "peakJobMemoryUsedBytes": 530046976
+  },
+  "launcher": {
+    "status": "held",
+    "coordinatorTerminal": true,
+    "coordinatorExit": 1,
+    "collectorTerminal": true,
+    "collectorExit": 1,
+    "aggregateActiveAfter": 1,
+    "aggregateSelfOnly": true,
+    "aggregateDescendantsQuiesced": true,
+    "aggregateMemoryCapExceeded": false,
+    "aggregatePeakAfterBytes": 703152128
+  },
+  "coordinator": {
+    "status": "held",
+    "parentCertificatePresent": false,
+    "parentKernelTerminal": true,
+    "parentExitSigned": 1,
+    "parentExitDotnet": 1,
+    "lockReleased": false
+  },
+  "raw": {
+    "presentmonCsv": {"bytes": 930224, "sha256": "75aedf1f3557887bf62cb6d0b4dc5b477c4cac5c66510d488fd4808dbb29cfa2"},
+    "presentmonStderr": {"bytes": 65, "sha256": "f522a4b28ee9eedb6189a4389f8fa839f193614ad098940bb23ae59e6d185b28"}
+  },
+  "eligibility": {
+    "childrenTerminalObserved": true,
+    "desktopLockReleaseEligible": false,
+    "reasons": ["collector row join failed", "PresentMon stream seal absent", "CSV/stderr evidence absent", "coordinator parent certificate absent"]
+  }
+}

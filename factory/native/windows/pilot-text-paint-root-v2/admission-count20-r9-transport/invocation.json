@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "f70ab1ebe1f70ea4833bb1944a1195e89875684882ae0541a5f9a3da5904dd2c",
+    "-ScriptPath",
+    "D:/Claude/swiftright/.factory-work/root-tools/text-mta-admission-count20-r9-entry.ps1",
+    "-ScriptSha256",
+    "0d9d231fe3e94da7f3bc7212ca888a74f3110734f49ee797e254a04fde0c6cba",
+    "-OutputPath",
+    "D:/Claude/swiftright/.factory-work/root-tools/text-mta-admission-count20-r9.transport.json",
+    "-DeadlineSeconds",
+    "120"
+  ],
+  "scriptSha256": "0d9d231fe3e94da7f3bc7212ca888a74f3110734f49ee797e254a04fde0c6cba",
+  "budgetBytes": 268435456
+}

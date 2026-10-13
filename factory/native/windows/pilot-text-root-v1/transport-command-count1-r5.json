@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r3\\run-root-transport-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r3\\Sr0RootTransportJobV1.cs",
+    "-HelperSha256",
+    "cf3d74ac5e11cb4382e236d67f302396a52fdb71773f20c92a6fd576fff2d718",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-baseline-r11-v2\\run-count1-v3-r5.ps1",
+    "-ScriptSha256",
+    "4f05ed192d93fff43d5fc6700daead216d8ea9b468048a52c019155700503c84",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-baseline-r11-v2\\control-count1-r5\\root-transport.json",
+    "-DeadlineSeconds",
+    "350"
+  ],
+  "remoteReceipt": "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-baseline-r11-v2\\control-count1-r5\\root-transport.json",
+  "productionTransportMemoryBytes": 268435456,
+  "nativeTaskMemoryBytes": 1073741824,
+  "compilerActions": 0
+}

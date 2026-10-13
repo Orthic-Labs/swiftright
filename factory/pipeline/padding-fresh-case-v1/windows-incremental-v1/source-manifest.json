@@ -1,0 +1,40 @@
+{
+  "schema": "factory-padding-windows-incremental-source-manifest-v2",
+  "status": "source-ready-pending-root-build-review",
+  "nativeActions": 0,
+  "lockActions": 0,
+  "compilerActions": 0,
+  "files": [
+    {
+      "path": "prepare-padding-incremental-v1.py",
+      "role": "bounded-donor-reuse-plan-emitter-measured-receipt-bound",
+      "sha256": "bea32c4e2d8708e9d87d76bd05c7d9a5f2ac05cef03796277474f1647f1ba0be",
+      "bytes": 16439
+    },
+    {
+      "path": "README.md",
+      "role": "root-command-contract",
+      "sha256": "c17513a600193211ebf0d660beed2db2603e8004686e1185798e9ba75cf572ad",
+      "bytes": 2068
+    },
+    {
+      "path": "build-padding-incremental-v1.ps1",
+      "role": "fresh-package-bounded-Windows-builder",
+      "sha256": "8911e30020dd860cf313b7cc1104ad4e0a1b3fd50c51915efc2ecf7be8a4b082",
+      "bytes": 19675
+    }
+  ],
+  "limits": {
+    "jsonBytes": 8388608,
+    "referenceFileBytes": 67108864,
+    "outputBytes": 2097152,
+    "hashChunkBytes": 1048576
+  },
+  "memoryBudget": {
+    "bytes": 1073741824,
+    "jobLimitFlags": 512,
+    "killOnJobClose": false,
+    "maxFrontendThreads": 1
+  },
+  "historicalPlanUntouched": true
+}

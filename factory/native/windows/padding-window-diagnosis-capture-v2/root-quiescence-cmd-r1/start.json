@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "cmd.exe /d /c tasklist /FI \"PID eq 56152\" /FO CSV"
+  ],
+  "startedAt": "2026-10-11T10:51:14.455995+00:00"
+}

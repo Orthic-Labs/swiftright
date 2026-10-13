@@ -1,0 +1,53 @@
+{
+  "kind": "factory-sr1-pilot-delivery-five-text-shape-image-source-v1",
+  "status": "proposal-only-ready-for-root-review",
+  "ownedScope": [
+    "factory/pipeline/pilot-delivery-five-v1/text-shape-image/"
+  ],
+  "cases": [
+    "Rectangle fill+stroke",
+    "Image system star.fill",
+    "Text bundled rounded font"
+  ],
+  "sourceFixes": {
+    "rectangleSystemRed": {
+      "oldRGBA": "ff3b30ff",
+      "proposedRGBA": "ff383cff",
+      "verification": "required fresh native receipt; packet does not claim applied fix",
+      "evidence": "paired-rectangle-fixed-r11-root-v3/comparison.json"
+    },
+    "textDefault24": {
+      "oldLineHeightDIP": 29,
+      "candidateLineHeightDIP": 28,
+      "observedScale": 2.5,
+      "observedWindowsDIP": 28.8,
+      "macDIP": 28.0,
+      "ownership": "native font provider/bridge metrics, not shared host normalization",
+      "verification": "required fresh native provider measurement; packet does not claim applied fix",
+      "evidence": "paired-text-exit-proof-root-v1/actual-paired-report-r2.json"
+    }
+  },
+  "imageProvider": {
+    "systemName": "star.fill",
+    "provider": "Segoe Fluent Icons",
+    "glyph": "E735",
+    "namedAssetPath": "FactoryImageAssets.json",
+    "namedAssetRule": "adjacent to executable, explicit bounded RGBA bytes, missing identity rejects",
+    "parityStatus": "held; no same-source Mac/Windows measurement in packet"
+  },
+  "bundledFontProvider": {
+    "design": "rounded",
+    "windowsPath": "C:\\Windows\\Fonts\\ARLRDBD.TTF",
+    "family": "Arial Rounded MT Bold",
+    "missingProvider": "FactoryRoundedFontProviderUnavailable",
+    "customFont": "FactoryABIPrivateFontCollectionUnavailable",
+    "defaultFallback": false,
+    "parityStatus": "held; no provider receipt in packet"
+  },
+  "holds": [
+    "existing compile/source/runtime/renderer/reader/native channels remain required",
+    "continuous rounded corners require existing explicit provider hold",
+    "Image named assets require actual source RGBA receipt",
+    "root owns compilation, capture, SSH, & Git"
+  ]
+}

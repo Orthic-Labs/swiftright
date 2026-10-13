@@ -1,0 +1,36 @@
+{
+  "kind": "independent-padding-repeat-source-review/1",
+  "disposition": "BLOCKED_COUNT20",
+  "stageSha256": "46f0612ddb974f0faa89637ab8e72506191552d864e5b34be068f0c159ed3352",
+  "verifiedReferences": 25,
+  "findings": [
+    {
+      "file": "capture-plan.json + dispatch.ps1 + capture-repeat.ps1 + support/first-proof.ps1",
+      "issue": "Prior single root/control are derived from v2 captureRoot, but root actual Count1 is immutable v1. Exact v1 single cannot admit v2 repeat.",
+      "repair": "Explicit exact priorCaptureRoot v1 and priorRunRoot v1 actual-single-r1; retain exact fresh v2 repeat namespace."
+    },
+    {
+      "file": "support/test-first-proof.ps1",
+      "issue": "finally recursively deletes ScratchRoot, violating retained Windows scratch policy.",
+      "repair": "Retain all fixture outputs."
+    },
+    {
+      "file": "support/test-first-proof.ps1",
+      "issue": "Pixel-byte fault leaves sample/row hashes stale; exercises hash mismatch, not new paired-pixel equality semantic guard.",
+      "repair": "Add changed repeat image with coherent sample/row hash updates; require repeat-stability rejection after accepted baseline."
+    }
+  ],
+  "clearChecks": [
+    "Frozen references match bytes/hashes",
+    "Coordinator exact v2 root & repeat namespace",
+    "New required owned-process/owned-close/outcome row file hash bindings",
+    "Pixel method/repeat exact cardinality plus actual paired SHA equality",
+    "Shared inherited cleanup/seal/owned-close bodies unchanged"
+  ],
+  "execution": {
+    "remote": false,
+    "native": false,
+    "powershell": false,
+    "compiler": false
+  }
+}

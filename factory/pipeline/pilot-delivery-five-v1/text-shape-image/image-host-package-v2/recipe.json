@@ -1,0 +1,13 @@
+{
+  "kind": "factory-image-rgba-recipe-v2",
+  "id": "swiftui.image.rgba-registered.v2-bilinear.recipe",
+  "block": "swiftui.image",
+  "candidate": "swiftui.image.rgba-registered.v2-bilinear",
+  "witness": "package/Sources/FactoryProbe/Witness.swift",
+  "asset": {"name": "factory.rgba.square.v1", "sourceWidth": 4, "sourceHeight": 4, "targetWidth": 32, "targetHeight": 32, "rawRGBAsha256": "sha256:dc3ae926d85afbeca3cc60a12a8c69faad0f0b31f60c76ebe55bf4be00aab008"},
+  "sampling": {"sourceToTarget": "bilinear-center-sampled-srgb-opaque", "coordinateMapping": "clamp(((coordinate+0.5)*source/target)-0.5)", "backendDraw": "identity-at-32x32-requested", "rendererFilter": "unverified-until-root-capture"},
+  "rgbaOrder": "row-major-RGBA8",
+  "foregroundTint": "none",
+  "colorScheme": "light",
+  "admission": "source-bound-RGBA-only; no-SF-Symbol-equivalence; prospective-until-root-pixel-join"
+}

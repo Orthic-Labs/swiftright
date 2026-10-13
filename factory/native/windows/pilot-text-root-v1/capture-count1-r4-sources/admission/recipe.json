@@ -1,0 +1,65 @@
+{
+  "assertions": {
+    "channels": [
+      "layout",
+      "paint",
+      "text-observation"
+    ],
+    "font": {
+      "design": "default",
+      "family": "system",
+      "size": 24,
+      "weight": "regular"
+    },
+    "frame": {
+      "height": 48,
+      "width": 120
+    },
+    "text": "Aa"
+  },
+  "block": "swiftui.text.layout.baseline",
+  "id": "swiftui.text.layout.baseline.recipe",
+  "inputs": {
+    "colorScheme": "light",
+    "font": {
+      "design": "default",
+      "family": "system",
+      "size": 24,
+      "weight": "regular"
+    },
+    "foreground": "primary",
+    "text": "Aa",
+    "viewport": {
+      "alignment": "center",
+      "height": 48,
+      "width": 120
+    }
+  },
+  "kind": "recipe",
+  "negativeCases": [
+    {
+      "id": "wrong-font-size",
+      "mustRejectBeforeCapture": true,
+      "mutation": "font.size=25"
+    },
+    {
+      "id": "wrong-viewport",
+      "mustRejectBeforeCapture": true,
+      "mutation": "viewport.width=121"
+    },
+    {
+      "id": "wrong-text",
+      "mustRejectBeforeCapture": true,
+      "mutation": "text=Ab"
+    }
+  ],
+  "provenance": {
+    "producer": "factory/pipeline/pilot-next-source-v1/text-baseline-v1",
+    "review": "source-candidate"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.text.layout.baseline.witness",
+    "source": "witness.swift"
+  }
+}

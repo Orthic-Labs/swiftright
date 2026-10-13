@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Independent bounded frozen source/observed-record review; never captures."""
+import collections,copy,gzip,hashlib,importlib.util,json,re,sys
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+BASE=HERE.parents[1]
+ROOT=BASE.parents[2]
+sys.path.insert(0,str(BASE))
+import exact_public_ancestor as g
+import compiler_children as c
+import review_inputs as independent
+
+def digest(data):return hashlib.sha256(data).hexdigest()
+def reject(faults,name,call,reason):
+ try:call()
+ except ValueError as error:
+  assert reason in str(error),(name,str(error));faults.append({'name':name,'reason':str(error)})
+ else:raise AssertionError('accepted '+name)
+def parent_of(e,entities):
+ context=e['sourcekitContext'][-1]
+ candidates=[p for p in entities if all(p.get(k)==context.get(k) for k in ('kind','name','usr','line','column'))]
+ assert candidates and all(p==candidates[0] for p in candidates)
+ return candidates[0],len(candidates)
+
+def main(pin,rawpin,rawsize):
+ artifact=BASE/'public-ancestor-evidence-v2.json.gz';compressed=artifact.read_bytes();assert digest(compressed)==pin
+ original=gzip.decompress(compressed);assert digest(original)==rawpin and len(original)==int(rawsize)
+ assert gzip.compress(original,compresslevel=9,mtime=0)==compressed
+ def no_original_reads(event,args):
+  if event=='open' and isinstance(args[0],(str,bytes)):
+   path=str(args[0]);assert not any(path.startswith(q) for q in ('/Applications/Xcode-27-RC.app/','/Users/adrdsouza/Library/Caches/SwiftRightFactory/','/usr/bin/xcrun')),('forbidden original read',path)
+  assert event not in {'subprocess.Popen','os.system'},('forbidden capture',event)
+ sys.addaudithook(no_original_reads)
+ frozen={str(p.relative_to(ROOT)):digest(p.read_bytes()) for p in [BASE/name for name in ('exact_public_ancestor.py','compiler_children.py','external_scopes.py','generate_public_ancestor.py','lexical_model_v2.py')]}
+ for path,sha in frozen.items():
+  target=HERE/'snapshots'/Path(path).name;target.parent.mkdir(exist_ok=True);data=(ROOT/path).read_bytes();assert not target.exists() or target.read_bytes()==data;target.write_bytes(data)
+ v,a=g.load_artifact(artifact,'sha256:'+pin,expected_raw_sha256='sha256:'+rawpin,expected_raw_bytes=int(rawsize),prefer_archive=True)
+ resolution=v.validate();assert resolution==a['resolution']
+ rebuilt=dict(a);rebuilt['resolution']=resolution
+ assert (json.dumps(rebuilt,sort_keys=True,separators=(',',':'))+'\n').encode()==original
+ raw=dict(v.inputs);trees=g.helper.trees(raw['trees']);inventory=a['resolution']['compilerInventory'];rows=a['resolution']['rows'];rowmap={tuple(r['key']):r for r in rows}
+ assert len(rows)==17846 and len(inventory)==19185 and len(rowmap)==17846
+ assert resolution['status']=='complete-source-public-api-accounting'
+ assert not resolution['heldReasons'] and resolution['heldCompilerRecordCount']==resolution['heldCompilerComponentCount']==resolution['heldPublicCompilerChildCount']==0
+ assert resolution['publicCompilerCatalogueUsrCount']==len({r['usr'] for r in rows if r.get('usr')})==11942
+ assert resolution['publicCompilerChildRecordCount']==2013 and resolution['publicCompilerChildUsrCount']==2008 and resolution['nonpublicParentAccessorRecordCount']==5
+ assert len(json.loads(raw['graphUsrClosure']))==108272
+
+ entities={m:g.helper.entities(raw[m+':index']) for m in ('SwiftUI','SwiftUICore')}
+ assert sum(map(len,entities.values()))==19185
+ sources={k[:-7]:value for k,value in raw.items() if k.endswith(':source')}
+ models={m:g.helper.source_model(s) for m,s in sources.items()}
+ lines={m:s.splitlines() for m,s in sources.items()}
+ branches={m:independent.branches(ls) for m,ls in lines.items()}
+ selected={m:{int(x.split(':')[1]) for x in json.loads(raw['processResults'])[m]['run']['stdout'].splitlines()} for m in entities}
+ nodes={m:c.ast_nodes(raw[m+':destructorAST']) for m in entities}
+ counts=collections.Counter();child_access=collections.Counter();generic=collections.Counter();dups=set();examples={};seen=set();faults=[]
+ for record in inventory:
+  m=record['module'];index=record['rawEntityIndex'];assert (m,index) not in seen;seen.add((m,index));e=entities[m][index]
+  for field,sourcefield in [('line','line'),('name','name'),('usr','usr'),('kind','kind'),('effectiveAccess','effective_access')]:assert record[field]==e.get(sourcefield)
+  assert record['rawContext']==e['sourcekitContext'] and record['isImplicit']==bool(e.get('is_implicit'))
+  category=record['category'];counts[category]+=1
+  if category=='source-extension-container':
+   token=lines[m][e['line']-1][e['column']-1:];assert re.match(re.escape(e['name'])+r'(?![\w$])',token)
+   assert not e.get('is_implicit') and e['usr'].startswith('s:e:')
+   assert len([p for p in entities[m] if (p['line'],p['column'])==(e['line'],e['column'])])==1
+  elif category in {'source-generic-parameter','source-property-initializer','source-property-accessor'}:
+   p,cardinality=parent_of(e,entities[m]);child=record['childEvidence'];anchor=record['parentAnchor'];assert anchor['usr']==p['usr'] and anchor['kind']==p['kind'] and anchor['rawCardinality']==cardinality
+   parentrow=rowmap[tuple(anchor['sourceKey'])];positions=[q for q in entities[m] if (q['line'],q['column'])==(e['line'],e['column'])]
+   if category=='source-property-accessor':
+    if len(positions)==2:
+     assert m=='SwiftUI' and e['line'] in {4081,5534,9718,23751,32823} and positions[0]==positions[1] and cardinality==2;dups.add((m,e['line']))
+    else:assert len(positions)==cardinality==1
+    n=c.accessor(e,p,nodes[m],trees,v.paths[m+':source'],sources[m]);assert child['typedAST']==n and child['typedAccess']==n['access'];child_access[n['access']]+=1
+    family='get' if e['kind'].endswith('.getter') else 'set';assert re.match(family+r'\b',lines[m][e['line']-1][e['column']-1:])
+    assert set(branches[m][e['line']])<=selected[m]
+    attrs=independent.own_attributes(lines[m],models[m],e['line']);assert attrs==child['ownSourceAttributes']
+    own=[{'category':independent.category(at['text']),'role':'accessor-declaration','module':m,'ownerLine':e['line'],'attribute':at} for at in attrs if independent.category(at['text'])]
+    if n['access'] in {'public','open'} and parentrow.get('usr'):
+     assert parentrow['usr']==p['usr'] and child['attributedRestrictions']==parentrow['attributedRestrictions']+own
+    elif n['access'] in {'public','open'}:
+     assert child['status']=='excluded-nonpublic-parent-api' and child['effectivePublic'] is False and m=='SwiftUI' and e['line'] in {433,3478,9759,9879,11686}
+     assert child['nonpublicOwnerEvidence']
+     for witness in child['nonpublicOwnerEvidence']:
+      scope=witness['sourceScope'];nominal=witness['rawNominal'];ast=witness['typedNominalAST'];tree=witness['nominalTree']
+      assert scope['explicitAccess']==nominal['effective_access'].rsplit('.',1)[-1]==ast['access']=='internal'
+      assert nominal in entities[m] and ast in n['owners'] and nominal['line']==scope['line']==ast['line']
+      assert re.search(r'\binternal\s+(struct|class|enum|protocol|actor)\s+'+re.escape(scope['name'])+r'\b',lines[m][scope['line']-1])
+      assert tree==trees[nominal['usr']]['children'][0]
+      parenttree=trees[p['usr']]['children'][0];assert tree in [q for q in parenttree['children'] if q['kind'] in {'Structure','Class','Enum','Protocol','Actor'}]
+     examples.setdefault('internal-ancestor',(m,e,p,n,child))
+    else:assert child['status']=='excluded-nonpublic-compiler-access'
+    examples.setdefault('accessor',(m,e,p,n))
+   else:
+    assert cardinality==len(positions)==1
+    if category=='source-property-initializer':assert c.initializer(e,p,trees,sources[m])==child['tree']
+    else:
+     try:tree=c.parameter(e,p,trees,sources[m])
+     except ValueError as error:
+      assert str(error)=='generic parameter exact full parent tree' and (m,e['line']) in g.PHYSICAL_GENERIC_COMPONENTS
+      extension_context=e['sourcekitContext'][-2];ext=[q for q in entities[m] if all(q.get(k)==extension_context.get(k) for k in ('kind','name','usr','line','column'))];assert len(ext)==1
+      proof=c.physical_parameter(e,p,ext[0],sources[m],raw[m+':destructorAST'],v.paths[m+':source']);assert proof==child['typedPhysicalParent'] and child['canonicalIdentityTransferred'] is False
+      assert child['childTree']==trees[e['usr']] and child['parentTree']==trees[p['usr']];generic['physical-distinct-tree']+=1;examples.setdefault('physical',(m,e,p,ext[0]))
+     else:assert tree==child['tree'];generic['full-parent-tree']+=1;examples.setdefault('parameter',(m,e,p))
+ assert len(seen)==19185 and child_access=={'public':2000,'open':18,'internal':108,'package':64} and generic=={'full-parent-tree':1446,'physical-distinct-tree':10} and len(dups)==5
+ assert dict(counts)==resolution['compilerRecordCategories']
+ restrictions=collections.Counter();mapped=0
+ for row in rows:
+  m,_,line,name=row['key'];assert line<=len(lines[m]);assert row['signature'] in lines[m][line-1] or row['signature']==lines[m][line-1].strip()
+  if not row.get('usr'):continue
+  mapped+=1;e=row['rawEntity'];assert e in entities[m] and not e.get('is_implicit') and row['usr']==e['usr'];assert set(branches[m][line])<=selected[m]
+  if row['kind']!='deinit':assert e['effective_access'].rsplit('.',1)[-1] in {'public','open'}
+  owner=row.get('owner')
+  root=trees[e['usr']]['children'];assert len(root)==1
+  direct=root[0]
+  if direct['kind']=='Static':assert len(direct['children'])==1;direct=direct['children'][0]
+  nominalkinds={'Structure','Class','Enum','Protocol','Actor','TypeAlias'}
+  directowners=[q for q in direct['children'] if q['kind'] in nominalkinds|{'Module','Extension'}];assert len(directowners)==1
+  actualowner=directowners[0]
+  if actualowner['kind']=='Extension':
+   actualnominal=[q for q in actualowner['children'] if q['kind'] in nominalkinds];assert len(actualnominal)==1;actualowner=actualnominal[0]
+  if owner:
+   assert actualowner==owner['nominalTree'],row['key']
+   if owner['chain'][-1].get('sourceLanguage')!='Clang':
+    assert owner['nominalUsr'] in trees
+    _,_,nominal=g.declaration_tree(trees[owner['nominalUsr']],owner['chain'][-1]['kind'],owner['chain'][-1]['name'])
+    assert nominal==owner['nominalTree'],row['key']
+   else:assert owner['canonicalImportCorrespondence']['nominalTree']==owner['nominalTree']
+   for ancestor in owner['chain']:
+    am=ancestor['module'];sourcekey=am if am in sources else 'external:'+am
+    if ancestor.get('sourceLanguage')=='Clang':
+     proof=ancestor['compiledImportProof'];data=v.read_input_bytes(ancestor['physicalSourcePath']);assert 'sha256:'+digest(data)==ancestor['physicalSourceSha256']==proof['sourceHash']
+     assert ancestor['attributes']==[] and ancestor['conditions']==proof['sourceConditionFrames'] and ancestor['text']==proof['sourceText']
+     assert proof['sourceText'] in data.decode() and ancestor['accessRule']=='exact exported physical declaration reached by successful ordinary external Swift import at pinned target'
+     for frame in ancestor['conditions']:
+      directive=data.decode().splitlines()[frame['branchLine']-1].strip();assert directive.startswith('#'+frame['directive']) and frame['expression'] in directive
+    elif sourcekey in sources:
+     text=lines[sourcekey][ancestor['line']-1]
+     for at in independent.attributes(text):text=text.replace(at,'',1)
+     assert re.search(r'\b(public|open)\b',text.split(ancestor['kind'],1)[0]),row['key']
+  else:assert actualowner['kind']=='Module' and actualowner['text']==row['compilerNamespace']
+  for scope in models[m][line]['scopes']:
+   if scope['kind']=='extension':
+    text=lines[m][scope['line']-1]
+    for at in independent.attributes(text):text=text.replace(at,'',1)
+    assert not re.search(r'\b(private|fileprivate|internal|package)\b',text.split('extension',1)[0]),row['key']
+  contexts=[('declaration',m,line)]+[('physical-extension',m,q['line']) for q in models[m][line]['scopes'] if q['kind']=='extension']+ [('resolved-nominal-ancestor',q['module'],q['line']) for q in (owner or {}).get('chain',[])]
+  derived=[]
+  for role,am,n in contexts:
+   if role=='resolved-nominal-ancestor' and any(q['module']==am and q['line']==n and q.get('sourceLanguage')=='Clang' for q in (owner or {}).get('chain',[])):continue
+   sourcekey=am if am in sources else 'external:'+am
+   if sourcekey not in sources:
+    assert any(q.get('sourceLanguage')=='Clang' and q['module']==am for q in owner['chain']),(am,owner)
+    continue
+   for at in independent.own_attributes(lines[sourcekey],models[sourcekey],n):
+    category=independent.category(at['text'])
+    if category:derived.append({'category':category,'role':role,'module':am,'ownerLine':n,'attribute':at})
+  assert derived==row['attributedRestrictions'],row['key'];restrictions.update(x['category'] for x in derived)
+ # Semantic child faults use unchanged pinned actual data around specific mutations.
+ m,e,p,n=examples['accessor'];call=lambda ee=e,pp=p,nn=nodes[m],tt=trees:c.accessor(ee,pp,nn,tt,v.paths[m+':source'],sources[m])
+ for field,value in [('kind','source.lang.swift.decl.enum'),('name','Wrong'),('usr','s:Wrong'),('line',p['line']+1),('column',p['column']+1)]:
+  bad=copy.deepcopy(p);bad[field]=value;reject(faults,'accessor-parent-'+field,lambda bad=bad:call(pp=bad),'raw exact parent context')
+ bad=copy.deepcopy(p);bad['kind']='source.lang.swift.decl.enum';be=copy.deepcopy(e);be['sourcekitContext'][-1]['kind']=bad['kind'];reject(faults,'coherent-accessor-parent-kind',lambda:call(ee=be,pp=bad),'raw/AST parent family')
+ bn=copy.deepcopy(nodes[m]);next(q for q in bn if q==n)['access']='package' if n['access']!='package' else 'public';reject(faults,'accessor-projected-access',lambda:call(nn=bn),'actual raw header')
+ other=next(q for q in entities[m] if q['kind']==p['kind'] and q['usr']!=p['usr'] and q['usr'] in trees and trees[q['usr']]!=trees[p['usr']])
+ bp=copy.deepcopy(p);bp['usr']=other['usr'];be=copy.deepcopy(e);be['sourcekitContext'][-1]['usr']=other['usr'];reject(faults,'coherent-known-parent-USR',lambda:call(ee=be,pp=bp),'full parent tree')
+ be=copy.deepcopy(e);be['column']+=1;reject(faults,'accessor-raw-physical-column',lambda:call(ee=be),'physical cardinality')
+ bn=copy.deepcopy(nodes[m]);ancestor=next(q for q in bn if q==n)['owners'][-1];ancestor['access']='package' if ancestor['access']!='package' else 'public';reject(faults,'accessor-ancestor-projected-access',lambda:call(nn=bn),'ancestor fields disagree')
+
+ reject(faults,'accessor-third-AST-card',lambda:call(nn=nodes[m]+[copy.deepcopy(n)]),'physical cardinality')
+ bn=copy.deepcopy(nodes[m]);node=next(q for q in bn if q==n);node['raw']=re.sub(r'\baccess=(public|open|internal|package|private|fileprivate)\b','',node['raw']);node['access']=None;reject(faults,'accessor-no-default-access',lambda:call(nn=bn),'typed AST family/access')
+
+ bt=copy.deepcopy(trees);roots=bt[e['usr']]['children'];roots=roots[0]['children'] if roots[0]['kind']=='Static' else roots;roots[0]['kind']='Setter' if roots[0]['kind']=='Getter' else 'Getter';reject(faults,'accessor-full-tree-family',lambda:call(tt=bt),'full parent tree identity')
+ m,e,p=examples['parameter']
+ for field,value in [('kind','source.lang.swift.decl.enum'),('name','Wrong'),('usr','s:Wrong'),('line',p['line']+1),('column',p['column']+1)]:
+  bad=copy.deepcopy(p);bad[field]=value;reject(faults,'parameter-parent-'+field,lambda bad=bad:c.parameter(e,bad,trees,sources[m]),'exact raw parent context')
+ be=copy.deepcopy(e);be['column']+=1;reject(faults,'parameter-source-column',lambda:c.parameter(be,p,trees,sources[m]),'source token')
+ m,e,p,ext=examples['physical'];bad=copy.deepcopy(ext);bad['usr']='s:e:Wrong';reject(faults,'physical-generic-extension-USR',lambda:c.physical_parameter(e,p,bad,sources[m],raw[m+':destructorAST'],v.paths[m+':source']),'exact raw parent/extension context')
+ reject(faults,'physical-generic-source-path',lambda:c.physical_parameter(e,p,ext,sources[m],raw[m+':destructorAST'],v.paths[m+':source']+'.wrong'),'typed function cardinality')
+ # Actual request/branch byte controls reach production provenance gates.
+ badraw=dict(raw);processes=json.loads(raw['processResults']);processes['SwiftUI']['run']['stdout']+='SwiftUI:999999\n';badraw['processResults']=json.dumps(processes)
+ reject(faults,'actual-branch-output',lambda:v.validate(badraw),'process output differs from actual captured')
+ badraw=dict(raw);badraw['SwiftUI:request']=raw['SwiftUI:request'].replace('"SwiftUI" ]','"SwiftUI", "-D", "WRONG_BUILD" ]')
+ assert badraw['SwiftUI:request']!=raw['SwiftUI:request']
+ reject(faults,'actual-extra-request-option',lambda:v.validate(badraw),'extra/missing compiler request/header options')
+ badartifact=copy.deepcopy(a);first=next(iter(badartifact['inputs']));badartifact['inputs'][first]['repositoryPath']='../outside-review'
+ path=HERE/'rejected-path-artifact.json';data=(json.dumps(badartifact,sort_keys=True,separators=(',',':'))+'\n').encode();path.write_bytes(data)
+ reject(faults,'archive-path-escape',lambda:g.load_artifact(path,'sha256:'+digest(data),expected_raw_sha256='sha256:'+digest(data),expected_raw_bytes=len(data),prefer_archive=True),'snapshot repository fallback path')
+ path.unlink()
+ # Compressed/raw whole pins, strict size & malformed payloads have independent controls.
+ reject(faults,'compressed-raw-hash',lambda:g.load_artifact(artifact,'sha256:'+pin,expected_raw_sha256='sha256:'+'0'*64,expected_raw_bytes=int(rawsize),prefer_archive=True),'raw')
+ reject(faults,'compressed-raw-size',lambda:g.load_artifact(artifact,'sha256:'+pin,expected_raw_sha256='sha256:'+rawpin,expected_raw_bytes=int(rawsize)+1,prefer_archive=True),'raw')
+ for name,data,rawdata in [('truncated-gzip',compressed[:-8],original),('invalid-json-gzip',gzip.compress(b'{invalid JSON',mtime=0),b'{invalid JSON')]:
+  path=HERE/(name+'.json.gz');path.write_bytes(data)
+  try:g.load_artifact(path,'sha256:'+digest(data),expected_raw_sha256='sha256:'+digest(rawdata),expected_raw_bytes=len(rawdata),prefer_archive=True)
+  except (ValueError,EOFError,gzip.BadGzipFile) as error:faults.append({'name':name,'reason':str(error)})
+  else:raise AssertionError('accepted '+name)
+  finally:path.unlink()
+ # Coherent fake public supplement for internal nominal child must fail complete acceptance.
+ candidate=copy.deepcopy(resolution);child=next(r['childEvidence'] for r in candidate['compilerInventory'] if (r.get('childEvidence') or {}).get('status')=='excluded-nonpublic-parent-api');child.update(status='eligible-compiler-mapped',effectivePublic=True);child.pop('nonpublicOwnerEvidence');candidate['publicCompilerChildren'].append(child)
+ reject(faults,'internal-ancestor-public-supplement',lambda:v.accept(candidate),'independent actual-input reconstruction differs from accepted artifact')
+ # Complete acceptance compares derived path, restrictions & accounting against frozen source reconstruction.
+ for name,mutate in [('row-path',lambda r:r.update(compilerPath=r['compilerPath']+'.Wrong')),('row-restrictions',lambda r:r.update(attributedRestrictions=[]))]:
+  candidate=copy.deepcopy(resolution);target=next(r for r in candidate['rows'] if r.get('usr') and (name!='row-restrictions' or r.get('attributedRestrictions')));mutate(target)
+  reject(faults,name,lambda candidate=candidate:v.accept(candidate),'independent actual-input reconstruction differs from accepted artifact')
+ assert artifact.read_bytes()==compressed
+ for path,sha in frozen.items():assert digest((ROOT/path).read_bytes())==sha
+ report={'kind':'independent-final-full-v2-access-review','artifactCompressedSha256':pin,'artifactRawSha256':rawpin,'artifactCompressedBytes':len(compressed),'artifactRawBytes':len(original),'originalSdkToolCacheReadsForbidden':True,'reviewerSha256':digest(Path(__file__).read_bytes()),'sourcePins':frozen,'dependencyPins':a['dependencies'],'inputPins':{k:dict(d) for k,d in a['inputs'].items()},'wholeArtifactByteEqualArchiveReplay':True,'sourceStarts':len(rows),'observedRecords':len(inventory),'categories':dict(counts),'sourceStatuses':resolution['byStatus'],'mappedSourceRows':mapped,'restrictionWitnessCounts':dict(restrictions),'observedAccessorAccess':dict(child_access),'genericProofs':dict(generic),'projectedGetterPairs':sorted(dups),'semanticFaults':faults,'scope':'Pinned 17846 physical source starts & 19185 observed SourceKit records; no assertion for unobserved compiler/SIL surface.','promotions':0}
+ output=HERE/'review-report.json';output.write_text(json.dumps(report,sort_keys=True,indent=2)+'\n');print(json.dumps({'reportSha256':digest(output.read_bytes()),'reviewerSha256':report['reviewerSha256'],'faults':len(faults)}))
+if __name__=='__main__':main(*sys.argv[1:])

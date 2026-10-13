@@ -1,0 +1,1216 @@
+{
+  "kind": "f1-public-ancestor-external-owner-raw-capture",
+  "version": 1,
+  "status": "raw-facts-only-no-eligibility-conclusion",
+  "method": "pinned Swift.swiftinterface owner lines + pinned SwiftUI/SwiftUICore extension headers + dedicated SourceKit index references + demangle output",
+  "inputs": {
+    "immutable836": {
+      "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+      "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+    },
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "target": "arm64-apple-macosx27.0",
+    "swiftInterface": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669"
+    },
+    "uiCoreInterfaces": [
+      {
+        "module": "SwiftUI",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      },
+      {
+        "module": "SwiftUICore",
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+      }
+    ]
+  },
+  "toolchain": {
+    "swiftc": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    },
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    },
+    "swiftDemangle": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "sha256": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe"
+    },
+    "swiftcTypecheck": {
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "swiftc",
+        "-typecheck",
+        "-sdk",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-target",
+        "arm64-apple-macosx27.0",
+        "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift"
+      ],
+      "exit": 0,
+      "stdout": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/swiftc.stdout",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/swiftc.stderr",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "sourcekitIndex": {
+      "argv": [
+        "xcrun",
+        "sourcekit-lsp",
+        "debug",
+        "run-sourcekitd-request",
+        "--request-file",
+        "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/requests/swift-stdlib-targets.yaml"
+      ],
+      "exit": 0,
+      "request": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/requests/swift-stdlib-targets.yaml",
+        "sha256": "sha256:1775fa26c72f9ebb9631e645d523ae9e0621da2a40396760373b9ec7658bf93a"
+      },
+      "output": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/raw/swift-stdlib-targets.index.txt",
+        "sha256": "sha256:395ef2244ac8f696125f830ad4cd03736e3920dad2288ea61c621caf8b06d0db"
+      },
+      "stderr": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/sourcekit.stderr",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "demangle": {
+      "argv": [
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+        "<",
+        "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/demangle.input.txt"
+      ],
+      "exit": 0,
+      "input": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/demangle.input.txt",
+        "sha256": "sha256:634294558e7cc7ef57a404788038fcc44049199fc55d1ac605d8a17df0bdd356"
+      },
+      "stdout": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/demangle.stdout",
+        "sha256": "sha256:214a2f4079dccdf82700d4a6686f1862f0d3bbed2cd25f87e7b38b713c72b3c6"
+      },
+      "stderr": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/receipts/demangle.stderr",
+        "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "targets": [
+    {
+      "target": "Swift.Optional",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Optional",
+        "kind": "enum",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 16948,
+          "text": "@frozen public enum Optional<Wrapped> : ~Swift::Copyable, ~Swift::Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 821,
+            "text": "extension Swift.Optional : SwiftUI.TableColumnContent where Wrapped : SwiftUI.TableColumnContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 13258,
+            "text": "extension Swift.Optional : SwiftUI.TabContent where Wrapped : SwiftUI.TabContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 19069,
+            "text": "extension Swift.Optional : SwiftUI.TableRowContent where Wrapped : SwiftUI.TableRowContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 23031,
+            "text": "extension Swift.Optional : SwiftUI.SliderTickContent where Wrapped : SwiftUI.SliderTickContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 24590,
+            "text": "extension Swift.Optional : SwiftUI.Commands where Wrapped : SwiftUI.Commands {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 25143,
+            "text": "extension Swift.Optional : SwiftUI.AccessibilityRotorContent where Wrapped : SwiftUI.AccessibilityRotorContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 27994,
+            "text": "extension Swift.Optional : SwiftUI.ToolbarContent where Wrapped : SwiftUI.ToolbarContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 28000,
+            "text": "extension Swift.Optional : SwiftUI.CustomizableToolbarContent where Wrapped : SwiftUI.CustomizableToolbarContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 29839,
+            "text": "extension Swift.Optional : SwiftUI.SceneAccessoryContent where Wrapped : SwiftUI.SceneAccessoryContent {",
+            "conditions": []
+          }
+        ],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "raw-header-records-only"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 3,
+          "referenceName": "Optional"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.enum",
+          "name": "Optional",
+          "usr": "s:Sq",
+          "line": 3,
+          "column": 32
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Never",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Never",
+        "kind": "enum",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 17607,
+          "text": "@frozen public enum Never {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 10485,
+            "text": "extension Swift.Never : SwiftUI.AccessibilityRotorContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 11817,
+            "text": "extension Swift.Never : SwiftUI.ImmersiveSpaceContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 12266,
+            "text": "extension Swift.Never : SwiftUI.ToolbarContent, SwiftUI.CustomizableToolbarContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 14436,
+            "text": "extension Swift.Never : SwiftUI._TableRowContentModifier {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 17233,
+            "text": "extension Swift.Never : SwiftUI.ControlWidgetConfiguration {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 20854,
+            "text": "extension Swift.Never : SwiftUI.TableColumnContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 21357,
+            "text": "extension Swift.Never : SwiftUI.Scene {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 21681,
+            "text": "extension Swift.Never : SwiftUI.CompositorContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 21904,
+            "text": "extension Swift.Never : SwiftUI.WidgetConfiguration {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 22088,
+            "text": "extension Swift.Never : SwiftUI.ControlWidgetTemplate {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 23342,
+            "text": "extension Swift.Never : SwiftUI.SceneAccessoryContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 25279,
+            "text": "extension Swift.Never {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 25285,
+            "text": "extension Swift.Never : SwiftUI.TableRowContent {",
+            "conditions": []
+          },
+          {
+            "role": "external-owner-extension-header",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+            "line": 33876,
+            "text": "extension Swift.Never : SwiftUI.Commands {}",
+            "conditions": []
+          }
+        ],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "raw-header-records-only"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 4,
+          "referenceName": "Never"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.enum",
+          "name": "Never",
+          "usr": "s:s5NeverO",
+          "line": 4,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Float",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Float",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 39669,
+          "text": "@frozen public struct Float {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 5,
+          "referenceName": "Float"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Float",
+          "usr": "s:Sf",
+          "line": 5,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Double",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Double",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 40283,
+          "text": "@frozen public struct Double {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 6,
+          "referenceName": "Double"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Double",
+          "usr": "s:Sd",
+          "line": 6,
+          "column": 30
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Int",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Int",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 45246,
+          "text": "@frozen public struct Int : Swift::FixedWidthInteger, Swift::SignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 7,
+          "referenceName": "Int"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Int",
+          "usr": "s:Si",
+          "line": 7,
+          "column": 27
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Int8",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Int8",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 41368,
+          "text": "@frozen public struct Int8 : Swift::FixedWidthInteger, Swift::SignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 8,
+          "referenceName": "Int8"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Int8",
+          "usr": "s:s4Int8V",
+          "line": 8,
+          "column": 28
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Int16",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Int16",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 42329,
+          "text": "@frozen public struct Int16 : Swift::FixedWidthInteger, Swift::SignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 9,
+          "referenceName": "Int16"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Int16",
+          "usr": "s:s5Int16V",
+          "line": 9,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Int32",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Int32",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 43290,
+          "text": "@frozen public struct Int32 : Swift::FixedWidthInteger, Swift::SignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 10,
+          "referenceName": "Int32"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Int32",
+          "usr": "s:s5Int32V",
+          "line": 10,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.Int64",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "Int64",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 44259,
+          "text": "@frozen public struct Int64 : Swift::FixedWidthInteger, Swift::SignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 11,
+          "referenceName": "Int64"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "Int64",
+          "usr": "s:s5Int64V",
+          "line": 11,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.UInt",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "UInt",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 44762,
+          "text": "@frozen public struct UInt : Swift::FixedWidthInteger, Swift::UnsignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 12,
+          "referenceName": "UInt"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "UInt",
+          "usr": "s:Su",
+          "line": 12,
+          "column": 28
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.UInt8",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "UInt8",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 40905,
+          "text": "@frozen public struct UInt8 : Swift::FixedWidthInteger, Swift::UnsignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 13,
+          "referenceName": "UInt8"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "UInt8",
+          "usr": "s:s5UInt8V",
+          "line": 13,
+          "column": 29
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.UInt16",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "UInt16",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 41864,
+          "text": "@frozen public struct UInt16 : Swift::FixedWidthInteger, Swift::UnsignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 14,
+          "referenceName": "UInt16"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "UInt16",
+          "usr": "s:s6UInt16V",
+          "line": 14,
+          "column": 30
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.UInt32",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "UInt32",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 42825,
+          "text": "@frozen public struct UInt32 : Swift::FixedWidthInteger, Swift::UnsignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 15,
+          "referenceName": "UInt32"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "UInt32",
+          "usr": "s:s6UInt32V",
+          "line": 15,
+          "column": 30
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.UInt64",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "UInt64",
+        "kind": "struct",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [
+          "@frozen"
+        ],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 43787,
+          "text": "@frozen public struct UInt64 : Swift::FixedWidthInteger, Swift::UnsignedInteger, Swift::_ExpressibleByBuiltinIntegerLiteral {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 16,
+          "referenceName": "UInt64"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.struct",
+          "name": "UInt64",
+          "usr": "s:s6UInt64V",
+          "line": 16,
+          "column": 30
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.RangeReplaceableCollection",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "RangeReplaceableCollection",
+        "kind": "protocol",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 18661,
+          "text": "public protocol RangeReplaceableCollection<Element> : Swift::Collection where Self.SubSequence : Swift::RangeReplaceableCollection {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 17,
+          "referenceName": "RangeReplaceableCollection"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.protocol",
+          "name": "RangeReplaceableCollection",
+          "usr": "s:Sm",
+          "line": 17,
+          "column": 55
+        },
+        "status": "exact-reference-usr"
+      }
+    },
+    {
+      "target": "Swift.MutableCollection",
+      "ownerSource": {
+        "module": "Swift",
+        "nominal": "MutableCollection",
+        "kind": "protocol",
+        "access": "public",
+        "readAccess": "public",
+        "attributes": [],
+        "enclosingNominalScopes": [],
+        "scopeLines": [],
+        "conditions": [],
+        "declaration": {
+          "role": "top-level-nominal-declaration",
+          "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/lib/swift/Swift.swiftmodule/arm64e-apple-macos.swiftinterface",
+          "sha256": "sha256:ccd1c05df90165f805e7de278ca3f6945f1a1544e9b8b3da0297ebfcc80f3669",
+          "line": 15531,
+          "text": "public protocol MutableCollection<Element> : Swift::Collection where Self.SubSequence : Swift::MutableCollection {",
+          "conditions": []
+        },
+        "status": "exact-source-record-top-level"
+      },
+      "extensionEvidence": {
+        "records": [],
+        "sources": [
+          {
+            "module": "SwiftUI",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+          },
+          {
+            "module": "SwiftUICore",
+            "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+            "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+          }
+        ],
+        "status": "no-direct-qualified-extension-header-found-in-pinned-UI-Core-sources"
+      },
+      "sourceKitReference": {
+        "probe": {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/swift-stdlib-v1/probes/swift-stdlib-targets.swift",
+          "sha256": "sha256:7be3e5725ba1e48e20271b2a941af1ea876e9a505bdc35ec2bbff34d9291df13",
+          "line": 18,
+          "referenceName": "MutableCollection"
+        },
+        "record": {
+          "kind": "source.lang.swift.ref.protocol",
+          "name": "MutableCollection",
+          "usr": "s:SM",
+          "line": 18,
+          "column": 46
+        },
+        "status": "exact-reference-usr"
+      }
+    }
+  ],
+  "heldRules": [
+    "graph absence is not exclusion",
+    "access/conditions/attributes are source facts only",
+    "ambiguous or missing joins remain unknown",
+    "no eligibility or promotion conclusion is recorded"
+  ]
+}

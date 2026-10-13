@@ -1,0 +1,53 @@
+{
+  "assertionChannels": [
+    "accessibility",
+    "events/state",
+    "presentation"
+  ],
+  "block": "swiftui.context-menu",
+  "case": {
+    "descriptor": {
+      "coverage": "declared",
+      "executionEligible": false,
+      "id": "swiftui.context-menu.negative.invalid-argument",
+      "inputs": {},
+      "projectedWitnessHash": "sha256:569a10128df248024552b57a307ef85d82c8e59c92d598ff17bd09178a2e08ad",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:474fd2d7ebab1d64a71a798314f7424297f6fd19e68690e2dbad60fa08e1c5b9",
+    "id": "swiftui.context-menu.negative.invalid-argument"
+  },
+  "caseInputs": {},
+  "compileExpectation": "failure",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:f6ef826e95be689facb77c1913ffab386631e5bd5dc332091709f8f9a2cb57d3",
+    "id": "swiftui.context-menu.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "negative:must-not-compile",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.View.contextMenu(menuItems:)",
+      "selector": "usr:s:7SwiftUI4ViewPAAE11contextMenu9menuItemsQrqd__yXE_tAaBRd__lF",
+      "symbolEvidenceSha256": "b3baa8fd7fc5c72abf35b9da4f529fa0e56ca35a466832f32ea3ee9c2082bc92"
+    }
+  ],
+  "sourceFile": "swiftui.context-menu.negative.invalid-argument.swift",
+  "sourceHash": "sha256:dcb3258ed668f152d5122dd93d3b8be53b6f4d144c7ad1e9d3cd2d993e7c042b",
+  "unsupportedObservability": {
+    "accessibility": "native accessibility capture is unavailable in source-only generation",
+    "events/state": "native event capture is unavailable in source-only generation",
+    "presentation": "native context-menu lifecycle is unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.context-menu.negative.invalid-argument",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.context-menu.negative.invalid-argument.swift",
+    "sourceHash": "sha256:569a10128df248024552b57a307ef85d82c8e59c92d598ff17bd09178a2e08ad"
+  },
+  "witnessType": "Negative_round2"
+}

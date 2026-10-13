@@ -1,0 +1,53 @@
+{
+  "assertionChannels": [
+    "accessibility",
+    "events/state",
+    "ime"
+  ],
+  "block": "swiftui.text-field-ime",
+  "case": {
+    "descriptor": {
+      "coverage": "declared",
+      "executionEligible": false,
+      "id": "swiftui.text-field-ime.negative.invalid-argument",
+      "inputs": {},
+      "projectedWitnessHash": "sha256:ad7da5b4ffb17005a310b3aaf828409c5e2fed0315b3a9f978b8fc125e1de224",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:72c92b27d0ba52b904ba52f83cf0c36c31e2f7c59342479bd134a6098456e343",
+    "id": "swiftui.text-field-ime.negative.invalid-argument"
+  },
+  "caseInputs": {},
+  "compileExpectation": "failure",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:e2db89b99c363c7b8de88647e4cb6ac2466c6686ec970c39646bb4e605a70fc2",
+    "id": "swiftui.text-field-ime.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "negative:must-not-compile",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.TextField.init(text:prompt:label:)",
+      "selector": "usr:s:7SwiftUI9TextFieldV4text6prompt5labelACyxGAA7BindingVySSG_AA0C0VSgxyXEtcfc",
+      "symbolEvidenceSha256": "7b6ec6c97a9000c5e0b814e09d423dcce20ccf9baeac16fae6f574d94d8d8c6e"
+    }
+  ],
+  "sourceFile": "swiftui.text-field-ime.negative.invalid-argument.swift",
+  "sourceHash": "sha256:3cf7f38fbdbc61a2ea286aca2ed04742d8aba6de1eba3b5aca20163286c61a9a",
+  "unsupportedObservability": {
+    "accessibility": "native accessibility capture is unavailable in source-only generation",
+    "events/state": "native event capture is unavailable in source-only generation",
+    "ime": "real marked-text provider and composition records are unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.text-field-ime.witness",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.text-field-ime.witness.swift",
+    "sourceHash": "sha256:2016be2e4aa068e01f822b9acbf5bbeba571a76dba60844faa669b2888d76c25"
+  },
+  "witnessType": "Witness_round2_ime"
+}

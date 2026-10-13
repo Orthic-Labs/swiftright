@@ -1,0 +1,45 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "python3",
+    "factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v1/windows-source/provider-raster/stage-provider-raster-v1.py",
+    "--revision",
+    "2",
+    "--remote",
+    "--run",
+    "--timeout",
+    "300"
+  ],
+  "pid": 27324,
+  "exitCode": 1,
+  "budgetFailure": null,
+  "startedAt": "2026-10-12T15:40:13.770192+00:00",
+  "finishedAt": "2026-10-12T15:40:27.780466+00:00",
+  "seconds": 14.01,
+  "peakGroupRssBytes": 55164928,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 50,
+    "errors": []
+  },
+  "finalInventory": {
+    "known": true,
+    "count": 0,
+    "rssBytes": 0,
+    "error": "",
+    "attempts": 1
+  },
+  "quiescenceKnown": true,
+  "ownedGroupQuiescent": true,
+  "termination": [],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 970,
+    "sha256": "a2810c163fa5ade19b990e7ee17f5ed3b363e41d4ab6f2b1b1fb456d83a0da9e"
+  }
+}

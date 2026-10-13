@@ -1,0 +1,83 @@
+observation.json
+{
+    "kind":  "factory-text-owned-compile-v1",
+    "phase":  "prebuild",
+    "case":  null,
+    "planSha256":  "7ef11e3921290d8872dad95e8f16d5bb16c03430dfe72671206020c2df0a107a",
+    "sourceHash":  "sha256:7e946629be84134780d8742ce5eeea84ac2fb03860a1a0884027126772894dbe",
+    "runtimeSourceCommit":  "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash":  "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "compilerHash":  "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "compilerPath":  "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "target":  "windows-x86_64",
+    "configuration":  "release",
+    "rendererSha256":  "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "argv":  "build --package-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\" --scratch-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\\build-bound-r1\\scratch\" --jobs 1 -c release -Xlinker /MANIFEST:EMBED -Xlinker \"/MANIFESTDEPENDENCY:type=\u0027win32\u0027 name=\u0027Microsoft.Windows.Common-Controls\u0027 version=\u00276.0.0.0\u0027 processorArchitecture=\u0027*\u0027 publicKeyToken=\u00276595b64144ccf1df\u0027 language=\u0027*\u0027\" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup",
+    "cwd":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package",
+    "startedAt":  "2026-10-11T21:28:56.6587791+00:00",
+    "processStartedAt":  "2026-10-11T21:28:57.1933252Z",
+    "finishedAt":  "2026-10-11T21:32:18.9754683+00:00",
+    "pid":  57564,
+    "exitCode":  1,
+    "timedOut":  false,
+    "outputCapExceeded":  false,
+    "ownedExited":  true,
+    "error":  "compiler exit 1",
+    "cleanupError":  null,
+    "streamDrainComplete":  true,
+    "streamsSealed":  true,
+    "originalHandleRetained":  true,
+    "jobActiveReadable":  true,
+    "jobActiveCount":  0,
+    "kernelWait":  0,
+    "memoryCapBytes":  1073741824,
+    "jobFlags":  512,
+    "nativeActions":  0,
+    "qualification":  "compile-only-not-native",
+    "stdoutSha256":  "9b17cfa1c142974fa1e01a6add46effde6f11f32833bd82b29a2a40da13d319c",
+    "stderrSha256":  "b05e1fb96911c72bb7323f54cdb5acb9e367aa69c3d2a33123186b18fc51ee2f",
+    "stdoutBytes":  328,
+    "stderrBytes":  13056,
+    "cleanupJobReadable":  true,
+    "cleanupJobActive":  0
+}
+
+compile.stdout.bin
+Building for production...
+[Computing dependencies]
+[Provisioning 2ƒ?%/ƒ?%8]
+[Constructing description]
+[Pre-planning 1ƒ?%/ƒ?%128]
+[Planning deferred tasks]
+[6ƒ?%/ƒ?%45]
+[29ƒ?%/ƒ?%46]
+[31ƒ?%/ƒ?%47]
+[37ƒ?%/ƒ?%48] SwiftRightBridge
+[39ƒ?%/ƒ?%49] SwiftRightRuntime-product
+[44ƒ?%/ƒ?%49] SwiftRightRuntime
+[48ƒ?%/ƒ?%51]
+
+compile.stderr.bin
+error: SwiftCompile normal x86_64 failed with a nonzero exit code. Command line:     cd D:\Claude\swiftright\.factory-work\hosts\text-baseline
+    
+D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\Witness.swift:11:14: [1;31merror: [1;39mvalue of type 'some View' has no member 'foregroundColor'[0;0m
+ [0;36m9 |[0;0m         Text("Aa")
+[0;36m10 |[0;0m             .font(.system(size: 24, weight: .regular, design: .default))
+[0;36m11 |[0;0m             .[4;39mforegroundColor[0;0m(Color.primary)
+   [0;36m|[0;0m              `- [1;31merror: [1;39mvalue of type 'some View' has no member 'foregroundColor'[0;0m
+[0;36m12 |[0;0m             .frame(width: 120, height: 48, alignment: .center)
+[0;36m13 |[0;0m             .environment(\.colorScheme, .light)
+
+D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\Witness.swift:13:26: [1;31merror: [1;39mcannot infer key path type from context; consider explicitly specifying a root type[0;0m
+[0;36m11 |[0;0m             .foregroundColor(Color.primary)
+[0;36m12 |[0;0m             .frame(width: 120, height: 48, alignment: .center)
+[0;36m13 |[0;0m             .environment([4;39m\[0;0m.colorScheme, .light)
+   [0;36m|[0;0m                          `- [1;31merror: [1;39mcannot infer key path type from context; consider explicitly specifying a root type[0;0m
+[0;36m14 |[0;0m     }
+[0;36m15 |[0;0m }
+Failed frontend command:
+C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin\swift-frontend.exe -frontend -c D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\CaptureLease.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\FactoryContainer.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\FactoryFill.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\FactoryTextGeometry.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\FactoryViewport.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\MetricsLogging.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\MetricsPayload.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\Witness.swift D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\Sources\FactoryProbe\main.swift -supplementary-output-file-map D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\supplementaryOutputs-3 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk -I D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Products\Release-windows-x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\Testing-6.4.0\usr\lib\swift\windows -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\Testing-6.4.0\usr\lib\swift\windows\x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\XCTest-6.4.0\usr\lib\swift\windows\x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\XCTest-6.4.0\usr\lib\swift\windows -module-cache-path D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\ModuleCache.noindex -color-diagnostics -Xcc -fcolor-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -swift-version 5 -O -D SWIFT_PACKAGE -D Xcode -serialize-debugging-options -enable-experimental-feature DebugDescriptionMacro -empty-abi-descriptor -external-plugin-path C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\host\plugins\testing#C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin\swift-plugin-server -validate-clang-modules-once -clang-build-session-file D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\ModuleCache.noindex\Session.modulevalidation -Xcc -working-directory -Xcc D:\Claude\swiftright\.factory-work\hosts\text-baseline -file-compilation-dir D:\Claude\swiftright\.factory-work\hosts\text-baseline -Xcc -fmodule-map-file=D:\Claude\swiftright\.factory-work\inputs\SwiftRightBridge\Sources\CSwiftRight\module.modulemap -Xcc -fmodule-map-file=D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex/GeneratedModuleMaps-windows-x86_64\CDispatchPrivate.modulemap -Xcc -fmodules-prune-interval=86400 -Xcc -fmodules-prune-after=345600 -Xcc -ID:\Claude\swiftright\.factory-work\inputs\SwiftRightBridge\Sources\CDispatchPrivate\include -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Products\Release-windows-x86_64\include -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources-normal\x86_64 -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources\x86_64 -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources -Xcc -DSWIFT_PACKAGE -no-auto-bridging-header-chaining -module-name FactoryProbe -package-name package -const-gather-protocols-file D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryProbe_const_extract_protocols.json -in-process-plugin-server-path C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin\SwiftInProcPluginServer.dll -plugin-path C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin -plugin-path C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\local\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -num-threads 20 -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\CaptureLease.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryContainer.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryFill.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryTextGeometry.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryViewport.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\MetricsLogging.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\MetricsPayload.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\Witness.o -o D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\main.o
+error: SwiftDriver\ Compilation\ Requirements FactoryProbe normal x86_64 com.apple.xcode.tools.swift.compiler failed with a nonzero exit code. Command line:     cd D:\Claude\swiftright\.factory-work\hosts\text-baseline
+    builtin-Swift-Compilation-Requirements -- C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin\swiftc.exe -module-name FactoryProbe -O -whole-module-optimization @D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryProbe.SwiftFileList -DSWIFT_PACKAGE -Xcc -fmodule-map-file=D:\Claude\swiftright\.factory-work\inputs\SwiftRightBridge\Sources\CSwiftRight\module.modulemap -Xcc -fmodule-map-file=D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex/GeneratedModuleMaps-windows-x86_64\CDispatchPrivate.modulemap -DXcode -external-plugin-path C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts/usr/lib/swift/host/plugins/testing#C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts/usr/bin/swift-plugin-server -enable-experimental-feature DebugDescriptionMacro -sdk C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk -target x86_64-unknown-windows-msvc -g -debug-info-format=dwarf -module-cache-path D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\ModuleCache.noindex -Xfrontend -serialize-debugging-options -libc MD -swift-version 5 -I D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Products\Release-windows-x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\Testing-6.4.0\usr\lib\swift\windows -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\Testing-6.4.0\usr\lib\swift\windows\x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\XCTest-6.4.0\usr\lib\swift\windows\x86_64 -Isystem C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\Library\XCTest-6.4.0\usr\lib\swift\windows -c -num-threads 20 -output-file-map D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryProbe-OutputFileMap.json -save-temps -color-diagnostics -emit-dependencies -emit-module -emit-module-path D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\Modules\FactoryProbe.swiftmodule -serialize-diagnostics -validate-clang-modules-once -clang-build-session-file D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\ModuleCache.noindex\Session.modulevalidation -Xcc -fmodules-prune-interval=86400 -Xcc -fmodules-prune-after=345600 -package-name package -emit-const-values -const-gather-protocols-list D:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\Objects-normal\x86_64\FactoryProbe_const_extract_protocols.json -Xcc -ID:\Claude\swiftright\.factory-work\inputs\SwiftRightBridge\Sources\CDispatchPrivate\include -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Products\Release-windows-x86_64\include -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources-normal\x86_64 -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources\x86_64 -Xcc -ID:\Claude\swiftright\.factory-work\hosts\text-baseline\package\build-bound-r1\scratch\out\Intermediates.noindex\FactoryProbe.build\Release-windows-x86_64\FactoryProbe-p.build\DerivedSources -Xcc -DSWIFT_PACKAGE -working-directory D:\Claude\swiftright\.factory-work\hosts\text-baseline -no-emit-module-separately-wmo
+error: Build failed
+

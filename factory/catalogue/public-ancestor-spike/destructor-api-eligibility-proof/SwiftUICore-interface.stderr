@@ -1,0 +1,1026 @@
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:4268:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 4266 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 4267 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 4268 | @_functionBuilder public struct KeyframesBuilder<Value> : ~Swift::Sendable {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 4269 |   public static func buildExpression<K>(_ expression: K) -> K where Value == K.Value, K : SwiftUICore::KeyframeTrackContent
+ 4270 |   public static func buildArray(_ components: [some KeyframeTrackContent<Value>]) -> some SwiftUICore::KeyframeTrackContent<Value>
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5557:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 5555 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 5556 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 5557 | @_functionBuilder public struct ViewBuilder {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+ 5558 |   #if compiler(>=5.3) && $InlineAlways
+ 5559 |   @export(implementation) @inline(always) public static func buildBlock() -> SwiftUICore::EmptyContent {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:11964:4: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+11962 |   #if compiler(>=5.3) && $TildeSendable
+11963 |   @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+11964 |   @_functionBuilder public struct DefinitionBuilder<Scope> : ~Swift::Sendable {
+      |    `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+11965 |     #if compiler(>=5.3) && $InlineAlways
+11966 |     @export(implementation) @inline(always) public static func buildExpression<D>(_ definition: D) -> D where Scope == D.Scope, D : SwiftUICore::AttributedTextFormattingDefinition {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:18322:2: warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+18320 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18321 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18322 | @_functionBuilder public struct KeyframeTrackContentBuilder<Value> : ~Swift::Sendable where Value : SwiftUICore::Animatable {
+      |  `- warning: '@_functionBuilder' has been renamed to '@resultBuilder'
+18323 |   public static func buildExpression<K>(_ expression: K) -> K where Value == K.Value, K : SwiftUICore::KeyframeTrackContent
+18324 |   public static func buildArray(_ components: [some KeyframeTrackContent<Value>]) -> some SwiftUICore::KeyframeTrackContent<Value>
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:1014:150: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 1012 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+ 1013 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+ 1014 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI16OffsetTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                      `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 1015 | }
+ 1016 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:1007:27: error: type 'OffsetTransition' does not conform to protocol 'Transition'
+ 1005 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 1006 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 1007 | nonisolated public struct OffsetTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'OffsetTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+ 1008 |   public var offset: CoreFoundation::CGSize
+ 1009 |   nonisolated public init(_ offset: CoreFoundation::CGSize)
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:1145:102: warning: conformance of '_ColorMonochromeEffect' to protocol 'EnvironmentalModifier' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+ 1143 | @_originallyDefinedIn(module: "SwiftUI", tvOS 14.0)
+ 1144 | @_originallyDefinedIn(module: "SwiftUI", watchOS 7.0)
+ 1145 | @frozen @_Concurrency::MainActor @preconcurrency public struct _ColorMonochromeEffect : SwiftUICore::EnvironmentalModifier, ~Swift::Sendable {
+      |                                                                                                      |- warning: conformance of '_ColorMonochromeEffect' to protocol 'EnvironmentalModifier' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+      |                                                                                                      |- note: isolate this conformance to the main actor with '@MainActor'
+      |                                                                                                      `- note: turn data races into runtime errors with '@preconcurrency'
+ 1146 |   @_Concurrency::MainActor @preconcurrency public var color: SwiftUICore::Color
+ 1147 |   @_Concurrency::MainActor @preconcurrency public var amount: Swift::Double
+      :
+ 1154 |   nonisolated public func resolve(in environment: SwiftUICore::EnvironmentValues) -> SwiftUICore::_ColorMonochromeEffect.SwiftUICore::_Resolved
+ 1155 |   @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+ 1156 |   @_Concurrency::MainActor @preconcurrency public static var _requiresMainThread: Swift::Bool {
+      |                                                              `- note: main actor-isolated static property '_requiresMainThread' cannot satisfy nonisolated requirement
+ 1157 |     get
+ 1158 |   }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3595:75: warning: external macro implementation type 'SwiftUIMacros.EntryMacro' could not be found for macro 'Entry()'; plugin for module 'SwiftUIMacros' not found
+ 3593 |   public static func timingCurve(_ curve: SwiftUICore::UnitCurve, duration: Foundation::TimeInterval) -> SwiftUICore::Animation
+ 3594 | }
+ 3595 | @attached(accessor) @attached(peer, names: prefixed(__Key_)) public macro Entry() = #externalMacro(
+      |                                                                           `- warning: external macro implementation type 'SwiftUIMacros.EntryMacro' could not be found for macro 'Entry()'; plugin for module 'SwiftUIMacros' not found
+ 3596 |     module: "SwiftUIMacros", type: "EntryMacro"
+ 3597 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3598:34: warning: external macro implementation type 'SwiftUIMacros.EntryDefaultValueMacro' could not be found for macro '__EntryDefaultValue()'; plugin for module 'SwiftUIMacros' not found
+ 3596 |     module: "SwiftUIMacros", type: "EntryMacro"
+ 3597 | )
+ 3598 | @attached(accessor) public macro __EntryDefaultValue() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.EntryDefaultValueMacro' could not be found for macro '__EntryDefaultValue()'; plugin for module 'SwiftUIMacros' not found
+ 3599 |     module: "SwiftUIMacros", type: "EntryDefaultValueMacro"
+ 3600 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3601:69: warning: external macro implementation type 'SwiftUIMacros.SendableEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3599 |     module: "SwiftUIMacros", type: "EntryDefaultValueMacro"
+ 3600 | )
+ 3601 | @freestanding(declaration, names: named(defaultValue)) public macro _EntryDefaultValue<T>(_ value: T, macroName: Swift::String) = #externalMacro(
+      |                                                                     `- warning: external macro implementation type 'SwiftUIMacros.SendableEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3602 |     module: "SwiftUIMacros", type: "SendableEntryDefaultMacro"
+ 3603 | ) where T : Swift::Sendable
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3604:69: warning: external macro implementation type 'SwiftUIMacros.UnsafeEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3602 |     module: "SwiftUIMacros", type: "SendableEntryDefaultMacro"
+ 3603 | ) where T : Swift::Sendable
+ 3604 | @freestanding(declaration, names: named(defaultValue)) public macro _EntryDefaultValue<T>(_ value: T, macroName: Swift::String) = #externalMacro(
+      |                                                                     `- warning: external macro implementation type 'SwiftUIMacros.UnsafeEntryDefaultMacro' could not be found for macro '_EntryDefaultValue(_:macroName:)'; plugin for module 'SwiftUIMacros' not found
+ 3605 |     module: "SwiftUIMacros", type: "UnsafeEntryDefaultMacro"
+ 3606 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3607:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3605 |     module: "SwiftUIMacros", type: "UnsafeEntryDefaultMacro"
+ 3606 | )
+ 3607 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: T.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3608 |     module: "SwiftUIMacros", type: "EntryTypeCheckMacro"
+ 3609 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3610:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3608 |     module: "SwiftUIMacros", type: "EntryTypeCheckMacro"
+ 3609 | )
+ 3610 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: T.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3611 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3612 | ) where T : AnyObject
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:3613:40: warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3611 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3612 | ) where T : AnyObject
+ 3613 | @freestanding(expression) public macro _SwiftUIEntryTypeCheck<T>(_ type: Swift::Optional<T>.Type, macroName: Swift::String, propertyName: Swift::String) -> Swift::Void = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.EntryTypeCheckClassMacro' could not be found for macro '_SwiftUIEntryTypeCheck(_:macroName:propertyName:)'; plugin for module 'SwiftUIMacros' not found
+ 3614 |     module: "SwiftUIMacros", type: "EntryTypeCheckClassMacro"
+ 3615 | ) where T : AnyObject
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:4075:29: error: property cannot be declared internal because its type uses a fileprivate type
+ 4073 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 4074 | @frozen public struct Font : Swift::Hashable, Swift::Sendable {
+ 4075 |   @_hasStorage internal var provider: SwiftUICore::AnyFontBox {
+      |                             `- error: property cannot be declared internal because its type uses a fileprivate type
+ 4076 |     get
+ 4077 |   }
+      :
+ 4088 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 4089 | @usableFromInline
+ 4090 | package class AnyFontBox : @unchecked Swift::Sendable {
+      |               `- note: type declared here
+ 4091 |   @objc @usableFromInline
+ 4092 |   deinit
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:4372:148: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 4370 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+ 4371 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+ 4372 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI14MoveTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                    `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 4373 | }
+ 4374 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:4365:27: error: type 'MoveTransition' does not conform to protocol 'Transition'
+ 4363 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 4364 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 4365 | nonisolated public struct MoveTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'MoveTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+ 4366 |   public var edge: SwiftUICore::Edge
+ 4367 |   nonisolated public init(edge: SwiftUICore::Edge)
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5203:151: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 5201 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+ 5202 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+ 5203 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI17OpacityTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                       `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 5204 | }
+ 5205 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5196:27: error: type 'OpacityTransition' does not conform to protocol 'Transition'
+ 5194 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 5195 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 5196 | nonisolated public struct OpacityTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'OpacityTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+ 5197 |   nonisolated public init()
+ 5198 |   nonisolated public func body(content: SwiftUICore::OpacityTransition.SwiftUICore::Content, phase: SwiftUICore::TransitionPhase) -> some SwiftUICore::View
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5494:159: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 5492 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+ 5493 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+ 5494 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI20AsymmetricTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACyxq_GG_AA0D5PhaseOtF", 0) __<Insertion, Removal>
+      |                                                                                                                                                               `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 5495 | }
+ 5496 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5483:27: error: type 'AsymmetricTransition<Insertion, Removal>' does not conform to protocol 'Transition'
+ 5481 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+ 5482 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+ 5483 | nonisolated public struct AsymmetricTransition<Insertion, Removal> : SwiftUICore::Transition, ~Swift::Sendable where Insertion : SwiftUICore::Transition, Removal : SwiftUICore::Transition {
+      |                           |- error: type 'AsymmetricTransition<Insertion, Removal>' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+ 5484 |   public var insertion: Insertion
+ 5485 |   public var removal: Removal
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:6004:119: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6002 |   @available(macOS, unavailable)
+ 6003 |   @available(watchOS, unavailable)
+ 6004 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI20AutomaticHoverEffectV4body7contentQrAA05EmptydE0V_tF", 0) __
+      |                                                                                                                       `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6005 | }
+ 6006 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5997:15: error: type 'AutomaticHoverEffect' does not conform to protocol 'CustomHoverEffect'
+ 1702 | @available(watchOS, unavailable)
+ 1703 | public protocol CustomHoverEffect {
+ 1704 |   associatedtype Body : SwiftUICore::CustomHoverEffect
+      |                  `- note: protocol requires nested type 'Body'
+ 1705 |   typealias Content = SwiftUICore::EmptyHoverEffect
+ 1706 |   func body(content: Self.Content) -> Self.Body
+      :
+ 5995 | @available(macOS, unavailable)
+ 5996 | @available(watchOS, unavailable)
+ 5997 | public struct AutomaticHoverEffect : SwiftUICore::CustomHoverEffect, ~Swift::Sendable {
+      |               |- error: type 'AutomaticHoverEffect' does not conform to protocol 'CustomHoverEffect'
+      |               `- note: add stubs for conformance
+ 5998 |   public init()
+ 5999 |   public func body(content: SwiftUICore::AutomaticHoverEffect.SwiftUICore::Content) -> some SwiftUICore::CustomHoverEffect
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:6048:119: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6046 |   @available(macOS, unavailable)
+ 6047 |   @available(watchOS, unavailable)
+ 6048 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI20HighlightHoverEffectV4body7contentQrAA05EmptydE0V_tF", 0) __
+      |                                                                                                                       `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6049 | }
+ 6050 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:6041:15: error: type 'HighlightHoverEffect' does not conform to protocol 'CustomHoverEffect'
+ 1702 | @available(watchOS, unavailable)
+ 1703 | public protocol CustomHoverEffect {
+ 1704 |   associatedtype Body : SwiftUICore::CustomHoverEffect
+      |                  `- note: protocol requires nested type 'Body'
+ 1705 |   typealias Content = SwiftUICore::EmptyHoverEffect
+ 1706 |   func body(content: Self.Content) -> Self.Body
+      :
+ 6039 | @available(macOS, unavailable)
+ 6040 | @available(watchOS, unavailable)
+ 6041 | public struct HighlightHoverEffect : SwiftUICore::CustomHoverEffect, ~Swift::Sendable {
+      |               |- error: type 'HighlightHoverEffect' does not conform to protocol 'CustomHoverEffect'
+      |               `- note: add stubs for conformance
+ 6042 |   public init()
+ 6043 |   public func body(content: SwiftUICore::HighlightHoverEffect.SwiftUICore::Content) -> some SwiftUICore::CustomHoverEffect
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:6092:114: error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6090 |   @available(macOS, unavailable)
+ 6091 |   @available(watchOS, unavailable)
+ 6092 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI15LiftHoverEffectV4body7contentQrAA05EmptydE0V_tF", 0) __
+      |                                                                                                                  `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+ 6093 | }
+ 6094 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:6085:15: error: type 'LiftHoverEffect' does not conform to protocol 'CustomHoverEffect'
+ 1702 | @available(watchOS, unavailable)
+ 1703 | public protocol CustomHoverEffect {
+ 1704 |   associatedtype Body : SwiftUICore::CustomHoverEffect
+      |                  `- note: protocol requires nested type 'Body'
+ 1705 |   typealias Content = SwiftUICore::EmptyHoverEffect
+ 1706 |   func body(content: Self.Content) -> Self.Body
+      :
+ 6083 | @available(macOS, unavailable)
+ 6084 | @available(watchOS, unavailable)
+ 6085 | public struct LiftHoverEffect : SwiftUICore::CustomHoverEffect, ~Swift::Sendable {
+      |               |- error: type 'LiftHoverEffect' does not conform to protocol 'CustomHoverEffect'
+      |               `- note: add stubs for conformance
+ 6086 |   public init()
+ 6087 |   public func body(content: SwiftUICore::LiftHoverEffect.SwiftUICore::Content) -> some SwiftUICore::CustomHoverEffect
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:8138:53: warning: external macro implementation type 'SwiftUIMacros.ProjectedValueMacro' could not be found for macro '_PropertyWrapperProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+ 8136 |   public typealias Element = SwiftUICore::AccessibilityDirectTouchOptions
+ 8137 | }
+ 8138 | @attached(accessor, names: named(get)) public macro _PropertyWrapperProjectedValue() = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.ProjectedValueMacro' could not be found for macro '_PropertyWrapperProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+ 8139 |     module: "SwiftUIMacros", type: "ProjectedValueMacro"
+ 8140 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:10809:149: error: unable to resolve type for _opaqueReturnTypeOf attribute
+10807 |   
+10808 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+10809 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI15SlideTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+10810 | }
+10811 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:10804:27: error: type 'SlideTransition' does not conform to protocol 'Transition'
+10802 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+10803 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+10804 | nonisolated public struct SlideTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'SlideTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+10805 |   nonisolated public init()
+10806 |   nonisolated public func body(content: SwiftUICore::SlideTransition.SwiftUICore::Content, phase: SwiftUICore::TransitionPhase) -> some SwiftUICore::View
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:11530:97: error: unable to resolve type for _opaqueReturnTypeOf attribute
+11528 |   @available(macOS 26.0, iOS 26.0, tvOS 26.0, watchOS 26.0, *)
+11529 |   @available(visionOS, unavailable)
+11530 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI20GlassEffectContainerV4bodyQrvp", 0) __<Content>
+      |                                                                                                 `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+11531 | }
+11532 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:11523:56: error: type 'GlassEffectContainer<Content>' does not conform to protocol 'View'
+11521 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *)
+11522 | @available(visionOS, unavailable)
+11523 | @_Concurrency::MainActor @preconcurrency public struct GlassEffectContainer<Content> : SwiftUICore::View where Content : SwiftUICore::View {
+      |                                                        |- error: type 'GlassEffectContainer<Content>' does not conform to protocol 'View'
+      |                                                        `- note: add stubs for conformance
+11524 |   @_Concurrency::MainActor @preconcurrency public init(spacing: CoreFoundation::CGFloat? = nil, @SwiftUICore::ContentBuilder content: () -> Content)
+11525 |   @_Concurrency::MainActor @preconcurrency public var body: some SwiftUICore::View {
+      :
+17485 |   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+17486 |   nonisolated static func _viewListCount(inputs: SwiftUICore::_ViewListCountInputs) -> Swift::Int?
+17487 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+17488 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency var body: Self.Body { get }
+17489 | }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:12122:118: error: unable to resolve type for _opaqueReturnTypeOf attribute
+12120 |   }
+12121 |   @available(macOS 26.0, iOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+12122 |   public typealias Body = @_opaqueReturnTypeOf("$sSq7SwiftUIAA34AttributedTextFormattingDefinitionRzlE4bodyQrvp", 0) __<Wrapped>
+      |                                                                                                                      `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+12123 |   @available(macOS 26.0, iOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+12124 |   public typealias Scope = Wrapped.Scope
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:12117:1: error: type 'Optional<Wrapped>' does not conform to protocol 'AttributedTextFormattingDefinition'
+11928 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+11929 | public protocol AttributedTextFormattingDefinition<Scope> {
+11930 |   associatedtype Body : SwiftUICore::AttributedTextFormattingDefinition
+      |                  `- note: protocol requires nested type 'Body'
+11931 |   associatedtype Scope : Foundation::AttributeScope where Self.Scope == Self.Body.Scope
+11932 |   @SwiftUICore::AttributedTextFormatting.SwiftUICore::DefinitionBuilder<Self.Scope> var body: Self.Body { get }
+      :
+12115 | }
+12116 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+12117 | extension Swift::Optional : SwiftUICore::AttributedTextFormattingDefinition where Wrapped : SwiftUICore::AttributedTextFormattingDefinition {
+      | |- error: type 'Optional<Wrapped>' does not conform to protocol 'AttributedTextFormattingDefinition'
+      | `- note: add stubs for conformance
+12118 |   public var body: some SwiftUICore::AttributedTextFormattingDefinition<Wrapped.Scope> {
+12119 |     get
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13291:119: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13289 |   }
+13290 |   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+13291 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI9RectangleV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                       `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13292 | }
+13293 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13251:1: error: type 'Rectangle' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13249 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13250 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13251 | extension SwiftUICore::Rectangle : SwiftUICore::InsettableShape {
+      | |- error: type 'Rectangle' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13252 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13253 |         return _Inset(amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13340:127: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13338 |   }
+13339 |   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+13340 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI16RoundedRectangleV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                               `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13341 | }
+13342 | @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13298:1: error: type 'RoundedRectangle' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13296 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13297 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13298 | extension SwiftUICore::RoundedRectangle : SwiftUICore::InsettableShape {
+      | |- error: type 'RoundedRectangle' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13299 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13300 |         return _Inset(base: self, amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13384:133: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13382 |   }
+13383 |   @available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+13384 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI22UnevenRoundedRectangleV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13385 | }
+13386 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13347:1: error: type 'UnevenRoundedRectangle' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13345 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13346 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13347 | extension SwiftUICore::UnevenRoundedRectangle : SwiftUICore::InsettableShape {
+      | |- error: type 'UnevenRoundedRectangle' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13348 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13349 |         return _Inset(base: self, amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13440:117: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13438 |   }
+13439 |   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+13440 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI7CapsuleV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13441 | }
+13442 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13391:1: error: type 'Capsule' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13389 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13390 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13391 | extension SwiftUICore::Capsule : SwiftUICore::InsettableShape {
+      | |- error: type 'Capsule' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13392 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13393 |         return _Inset(amount: _Inset._makeInset(amount, style: style))
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13487:117: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13485 |   }
+13486 |   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+13487 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI7EllipseV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13488 | }
+13489 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13447:1: error: type 'Ellipse' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13445 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13446 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13447 | extension SwiftUICore::Ellipse : SwiftUICore::InsettableShape {
+      | |- error: type 'Ellipse' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13448 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13449 |         return _Inset(amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13534:116: error: unable to resolve type for _opaqueReturnTypeOf attribute
+13532 |   }
+13533 |   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+13534 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI6CircleV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                    `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+13535 | }
+13536 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:13494:1: error: type 'Circle' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+13492 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+13493 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13494 | extension SwiftUICore::Circle : SwiftUICore::InsettableShape {
+      | |- error: type 'Circle' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+13495 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+13496 |         return _Inset(amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:14351:148: error: unable to resolve type for _opaqueReturnTypeOf attribute
+14349 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+14350 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+14351 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI14PushTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                    `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+14352 | }
+14353 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:14344:27: error: type 'PushTransition' does not conform to protocol 'Transition'
+14342 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+14343 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+14344 | nonisolated public struct PushTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'PushTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+14345 |   public var edge: SwiftUICore::Edge
+14346 |   nonisolated public init(edge: SwiftUICore::Edge)
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:16702:156: error: unable to resolve type for _opaqueReturnTypeOf attribute
+16700 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+16701 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *)
+16702 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI22SymbolEffectTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0E5PhaseOtF", 0) __
+      |                                                                                                                                                            `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+16703 | }
+16704 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:16688:64: error: type 'SymbolEffectTransition' does not conform to protocol 'Transition'
+16686 | @_originallyDefinedIn(module: "SwiftUI", watchOS 27.0)
+16687 | @_originallyDefinedIn(module: "SwiftUI", visionOS 27.0)
+16688 | @frozen @_Concurrency::MainActor @preconcurrency public struct SymbolEffectTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                                                                |- error: type 'SymbolEffectTransition' does not conform to protocol 'Transition'
+      |                                                                `- note: add stubs for conformance
+16689 |   @usableFromInline
+16690 |   @_Concurrency::MainActor @preconcurrency internal var config: Symbols::SymbolEffectConfiguration
+      :
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:17937:133: error: unable to resolve type for _opaqueReturnTypeOf attribute
+17935 |   }
+17936 |   @available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+17937 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI22ContainerRelativeShapeV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+17938 | }
+17939 | @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:17902:1: error: type 'ContainerRelativeShape' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+17900 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+17901 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+17902 | extension SwiftUICore::ContainerRelativeShape : SwiftUICore::InsettableShape {
+      | |- error: type 'ContainerRelativeShape' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+17903 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+17904 |         return _Inset(amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:18161:90: error: unable to resolve type for _opaqueReturnTypeOf attribute
+18159 |   }
+18160 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+18161 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI13PhaseAnimatorV4bodyQrvp", 0) __<Phase, Content>
+      |                                                                                          `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+18162 | }
+18163 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:18154:27: error: type 'PhaseAnimator<Phase, Content>' does not conform to protocol 'View'
+17485 |   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+17486 |   nonisolated static func _viewListCount(inputs: SwiftUICore::_ViewListCountInputs) -> Swift::Int?
+17487 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+17488 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency var body: Self.Body { get }
+17489 | }
+      :
+18152 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18153 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18154 | nonisolated public struct PhaseAnimator<Phase, Content> : SwiftUICore::View, ~Swift::Sendable where Phase : Swift::Equatable, Content : SwiftUICore::View {
+      |                           |- error: type 'PhaseAnimator<Phase, Content>' does not conform to protocol 'View'
+      |                           `- note: add stubs for conformance
+18155 |   nonisolated public init(_ phases: some Sequence<Phase>, trigger: some Equatable, @SwiftUICore::ContentBuilder content: @escaping (Phase) -> Content, animation: @escaping (Phase) -> SwiftUICore::Animation? = { _ in .default })
+18156 |   nonisolated public init(_ phases: some Sequence<Phase>, @SwiftUICore::ContentBuilder content: @escaping (Phase) -> Content, animation: @escaping (Phase) -> SwiftUICore::Animation? = { _ in .default })
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19226:16: error: property cannot be declared internal because its type uses a fileprivate type
+19222 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+19223 | @usableFromInline
+19224 | @frozen package struct PropertyList : Swift::CustomStringConvertible, ~Swift::Sendable {
+      |                        `- note: type declared here
+19225 |   @usableFromInline
+19226 |   internal var elements: SwiftUICore::PropertyList.SwiftUICore::Element?
+      |                `- error: property cannot be declared internal because its type uses a fileprivate type
+19227 |   @inlinable package init() { elements = nil }
+19228 |   @inlinable package var data: Swift::AnyObject? {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19893:122: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesMacro' could not be found for macro 'Animatable()'; plugin for module 'SwiftUIMacros' not found
+19891 | }
+19892 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19893 | @attached(extension, conformances: SwiftUICore::Animatable) @attached(member, names: named(animatableData)) public macro Animatable() = #externalMacro(
+      |                                                                                                                          `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesMacro' could not be found for macro 'Animatable()'; plugin for module 'SwiftUIMacros' not found
+19894 |     module: "SwiftUIMacros", type: "AnimatableValuesMacro"
+19895 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19897:57: warning: external macro implementation type 'SwiftUIMacros.AnimatableIgnoredMacro' could not be found for macro 'AnimatableIgnored()'; plugin for module 'SwiftUIMacros' not found
+19895 | )
+19896 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19897 | @attached(accessor, names: named(willSet)) public macro AnimatableIgnored() = #externalMacro(
+      |                                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatableIgnoredMacro' could not be found for macro 'AnimatableIgnored()'; plugin for module 'SwiftUIMacros' not found
+19898 |     module: "SwiftUIMacros", type: "AnimatableIgnoredMacro"
+19899 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19901:41: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19899 | )
+19900 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+19901 | @freestanding(declaration) public macro _SwiftUIAnimatableDataProperty(animatableMacroContext: Swift::String, kind: SwiftUICore::AnimatableValues<>) = #externalMacro(
+      |                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19902 |     module: "SwiftUIMacros", type: "AnimatableValuesDataPropertyMacro"
+19903 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19909:41: warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19907 | @available(watchOS, introduced: 6.0, deprecated: 26.0, obsoleted: 26.0)
+19908 | @available(visionOS, introduced: 1.0, deprecated: 26.0, obsoleted: 26.0)
+19909 | @freestanding(declaration) public macro _SwiftUIAnimatableDataProperty(animatableMacroContext: Swift::String, kind: SwiftUICore::AnimatablePair<SwiftUICore::EmptyAnimatableData, SwiftUICore::EmptyAnimatableData>) = #externalMacro(
+      |                                         `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataPropertyMacro' could not be found for macro '_SwiftUIAnimatableDataProperty(animatableMacroContext:kind:)'; plugin for module 'SwiftUIMacros' not found
+19910 |     module: "SwiftUIMacros", type: "AnimatablePairDataPropertyMacro"
+19911 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19913:34: warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataMacro' could not be found for macro '_AnimatableData()'; plugin for module 'SwiftUIMacros' not found
+19911 | )
+19912 | @available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *)
+19913 | @attached(accessor) public macro _AnimatableData() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.AnimatableValuesDataMacro' could not be found for macro '_AnimatableData()'; plugin for module 'SwiftUIMacros' not found
+19914 |     module: "SwiftUIMacros", type: "AnimatableValuesDataMacro")
+19915 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19916:34: warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataMacro' could not be found for macro '_AnimatablePairData()'; plugin for module 'SwiftUIMacros' not found
+19914 |     module: "SwiftUIMacros", type: "AnimatableValuesDataMacro")
+19915 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19916 | @attached(accessor) public macro _AnimatablePairData() = #externalMacro(
+      |                                  `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePairDataMacro' could not be found for macro '_AnimatablePairData()'; plugin for module 'SwiftUIMacros' not found
+19917 |     module: "SwiftUIMacros", type: "AnimatablePairDataMacro")
+19918 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19919:40: warning: external macro implementation type 'SwiftUIMacros.AnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19917 |     module: "SwiftUIMacros", type: "AnimatablePairDataMacro")
+19918 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19919 | @freestanding(expression) public macro _SwiftUIAnimatableProperty<T>(_ t: T.Type) -> T.Type = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.AnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19920 |     module: "SwiftUIMacros", type: "AnimatablePropertyMacro"
+19921 | ) where T : SwiftUICore::VectorArithmetic
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:19923:40: warning: external macro implementation type 'SwiftUIMacros.InvalidAnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19921 | ) where T : SwiftUICore::VectorArithmetic
+19922 | @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, visionOS 1.0, *)
+19923 | @freestanding(expression) public macro _SwiftUIAnimatableProperty<T>(_ t: T.Type) -> SwiftUICore::EmptyAnimatableData.Type = #externalMacro(
+      |                                        `- warning: external macro implementation type 'SwiftUIMacros.InvalidAnimatablePropertyMacro' could not be found for macro '_SwiftUIAnimatableProperty'; plugin for module 'SwiftUIMacros' not found
+19924 |     module: "SwiftUIMacros", type: "InvalidAnimatablePropertyMacro"
+19925 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20038:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State()'; plugin for module 'SwiftUIMacros' not found
+20036 |     }
+20037 | }
+20038 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State() = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State()'; plugin for module 'SwiftUIMacros' not found
+20039 |     module: "SwiftUIMacros", type: "StateMacro"
+20040 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20041:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20039 |     module: "SwiftUIMacros", type: "StateMacro"
+20040 | )
+20041 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State<Value>(initialValue: Value) = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20042 |     module: "SwiftUIMacros", type: "StateMacro"
+20043 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20044:145: warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(wrappedValue:)'; plugin for module 'SwiftUIMacros' not found
+20042 |     module: "SwiftUIMacros", type: "StateMacro"
+20043 | )
+20044 | @attached(accessor, names: named(init), named(get), named(set)) @attached(peer, names: prefixed(`_`), prefixed(__), prefixed(`$`)) public macro State<Value>(wrappedValue: Value) = #externalMacro(
+      |                                                                                                                                                 `- warning: external macro implementation type 'SwiftUIMacros.StateMacro' could not be found for macro 'State(wrappedValue:)'; plugin for module 'SwiftUIMacros' not found
+20045 |     module: "SwiftUIMacros", type: "StateMacro"
+20046 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20047:78: warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20045 |     module: "SwiftUIMacros", type: "StateMacro"
+20046 | )
+20047 | @attached(accessor, names: named(init), named(get), named(set)) public macro _StatePropertyWrapperStorage(initialValue: Swift::String) = #externalMacro(
+      |                                                                              `- warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage(initialValue:)'; plugin for module 'SwiftUIMacros' not found
+20048 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20049 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20050:78: warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage()'; plugin for module 'SwiftUIMacros' not found
+20048 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20049 | )
+20050 | @attached(accessor, names: named(init), named(get), named(set)) public macro _StatePropertyWrapperStorage() = #externalMacro(
+      |                                                                              `- warning: external macro implementation type 'SwiftUIMacros.StatePropertyWrapperStorageMacro' could not be found for macro '_StatePropertyWrapperStorage()'; plugin for module 'SwiftUIMacros' not found
+20051 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20052 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20053:53: warning: external macro implementation type 'SwiftUIMacros.StateInitialStoredValueMacro' could not be found for macro '_StateInitialStoredValue'; plugin for module 'SwiftUIMacros' not found
+20051 |     module: "SwiftUIMacros", type: "StatePropertyWrapperStorageMacro"
+20052 | )
+20053 | @attached(accessor, names: named(get)) public macro _StateInitialStoredValue(_ initialValue: Swift::String) = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.StateInitialStoredValueMacro' could not be found for macro '_StateInitialStoredValue'; plugin for module 'SwiftUIMacros' not found
+20054 |     module: "SwiftUIMacros", type: "StateInitialStoredValueMacro"
+20055 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20056:53: warning: external macro implementation type 'SwiftUIMacros.StateProjectedValueMacro' could not be found for macro '_StateProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+20054 |     module: "SwiftUIMacros", type: "StateInitialStoredValueMacro"
+20055 | )
+20056 | @attached(accessor, names: named(get)) public macro _StateProjectedValue() = #externalMacro(
+      |                                                     `- warning: external macro implementation type 'SwiftUIMacros.StateProjectedValueMacro' could not be found for macro '_StateProjectedValue()'; plugin for module 'SwiftUIMacros' not found
+20057 |     module: "SwiftUIMacros", type: "StateProjectedValueMacro"
+20058 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20059:59: warning: external macro implementation type 'SwiftUIMacros.StateTypeMacro' could not be found for macro '_SwiftUIState'; plugin for module 'SwiftUIMacros' not found
+20057 |     module: "SwiftUIMacros", type: "StateProjectedValueMacro"
+20058 | )
+20059 | @freestanding(declaration, names: arbitrary) public macro _SwiftUIState<T>(_ type: T.Type, _ named: Swift::String) = #externalMacro(
+      |                                                           `- warning: external macro implementation type 'SwiftUIMacros.StateTypeMacro' could not be found for macro '_SwiftUIState'; plugin for module 'SwiftUIMacros' not found
+20060 |     module: "SwiftUIMacros", type: "StateTypeMacro"
+20061 | )
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20903:99: error: unable to resolve type for _opaqueReturnTypeOf attribute
+20901 |   }
+20902 |   @available(macOS 15.0, iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+20903 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI22GroupElementsOfContentV4bodyQrvp", 0) __<Subviews, Content>
+      |                                                                                                   `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+20904 | }
+20905 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20898:27: error: type 'GroupElementsOfContent<Subviews, Content>' does not conform to protocol 'View'
+17485 |   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+17486 |   nonisolated static func _viewListCount(inputs: SwiftUICore::_ViewListCountInputs) -> Swift::Int?
+17487 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+17488 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency var body: Self.Body { get }
+17489 | }
+      :
+20896 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.2)
+20897 | @_originallyDefinedIn(module: "SwiftUI", visionOS 2.2)
+20898 | nonisolated public struct GroupElementsOfContent<Subviews, Content> : SwiftUICore::View, ~Swift::Sendable where Subviews : SwiftUICore::View, Content : SwiftUICore::View {
+      |                           |- error: type 'GroupElementsOfContent<Subviews, Content>' does not conform to protocol 'View'
+      |                           `- note: add stubs for conformance
+20899 |   nonisolated public var body: some SwiftUICore::View {
+20900 |     get
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:22162:100: warning: conformance of '_ColorMultiplyEffect' to protocol 'EnvironmentalModifier' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+22160 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+22161 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+22162 | @frozen @_Concurrency::MainActor @preconcurrency public struct _ColorMultiplyEffect : SwiftUICore::EnvironmentalModifier, Swift::Equatable, ~Swift::Sendable {
+      |                                                                                                    |- warning: conformance of '_ColorMultiplyEffect' to protocol 'EnvironmentalModifier' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+      |                                                                                                    |- note: isolate this conformance to the main actor with '@MainActor'
+      |                                                                                                    `- note: turn data races into runtime errors with '@preconcurrency'
+22163 |   @_Concurrency::MainActor @preconcurrency public var color: SwiftUICore::Color
+22164 |   @inlinable nonisolated public init(color: SwiftUICore::Color) {
+      :
+22167 |   nonisolated public func resolve(in environment: SwiftUICore::EnvironmentValues) -> SwiftUICore::_ColorMultiplyEffect.SwiftUICore::_Resolved
+22168 |   @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+22169 |   @_Concurrency::MainActor @preconcurrency public static var _requiresMainThread: Swift::Bool {
+      |                                                              `- note: main actor-isolated static property '_requiresMainThread' cannot satisfy nonisolated requirement
+22170 |     get
+22171 |   }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:23574:155: error: unable to resolve type for _opaqueReturnTypeOf attribute
+23572 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+23573 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+23574 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI21BlurReplaceTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0E5PhaseOtF", 0) __
+      |                                                                                                                                                           `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+23575 | }
+23576 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:23562:56: error: type 'BlurReplaceTransition' does not conform to protocol 'Transition'
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+      :
+23560 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+23561 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+23562 | @_Concurrency::MainActor @preconcurrency public struct BlurReplaceTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                                                        |- error: type 'BlurReplaceTransition' does not conform to protocol 'Transition'
+      |                                                        `- note: add stubs for conformance
+23563 |   public struct Configuration : Swift::Equatable, Swift::Sendable {
+23564 |     public static let downUp: SwiftUICore::BlurReplaceTransition.SwiftUICore::Configuration
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24311:149: error: unable to resolve type for _opaqueReturnTypeOf attribute
+24309 |   nonisolated public func _makeContentTransition(transition: inout SwiftUICore::_Transition_ContentTransition)
+24310 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+24311 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI15ScaleTransitionV4body7content5phaseQrAA22PlaceholderContentViewVyACG_AA0D5PhaseOtF", 0) __
+      |                                                                                                                                                     `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+24312 | }
+24313 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24303:27: error: type 'ScaleTransition' does not conform to protocol 'Transition'
+20520 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+20521 | @preconcurrency @_Concurrency::MainActor public protocol Transition {
+20522 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+20523 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content, phase: SwiftUICore::TransitionPhase) -> Self.Body
+20524 |   @_Concurrency::MainActor @preconcurrency static var properties: SwiftUICore::TransitionProperties { get }
+      :
+24301 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+24302 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+24303 | nonisolated public struct ScaleTransition : SwiftUICore::Transition, ~Swift::Sendable {
+      |                           |- error: type 'ScaleTransition' does not conform to protocol 'Transition'
+      |                           `- note: add stubs for conformance
+24304 |   public var scale: Swift::Double
+24305 |   public var anchor: SwiftUICore::UnitPoint
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24432:134: error: unable to resolve type for _opaqueReturnTypeOf attribute
+24430 |   @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+24431 |   @usableFromInline
+24432 |   package typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI23SafeAreaPaddingModifierV4body7contentQrAA05_ViewF8_ContentVyACG_tF", 0) __
+      |                                                                                                                                      `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+24433 | }
+24434 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24424:28: error: type 'SafeAreaPaddingModifier' does not conform to protocol 'ViewModifier'
+19369 |   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+19370 |   nonisolated static func _viewListCount(inputs: SwiftUICore::_ViewListCountInputs, body: (SwiftUICore::_ViewListCountInputs) -> Swift::Int?) -> Swift::Int?
+19371 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+19372 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency func body(content: Self.Content) -> Self.Body
+19373 |   typealias Content = SwiftUICore::_ViewModifier_Content<Self>
+      :
+24422 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.2)
+24423 | @usableFromInline
+24424 | nonisolated package struct SafeAreaPaddingModifier : SwiftUICore::ViewModifier, ~Swift::Sendable {
+      |                            |- error: type 'SafeAreaPaddingModifier' does not conform to protocol 'ViewModifier'
+      |                            `- note: add stubs for conformance
+24425 |   @usableFromInline
+24426 |   nonisolated package init(edges: SwiftUICore::Edge.SwiftUICore::Set, insets: SwiftUICore::EdgeInsets?)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24502:99: error: unable to resolve type for _opaqueReturnTypeOf attribute
+24500 |   }
+24501 |   @available(macOS 15.0, iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+24502 |   public typealias Body = @_opaqueReturnTypeOf("$s7SwiftUI22GroupSectionsOfContentV4bodyQrvp", 0) __<Sections, Content>
+      |                                                                                                   `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+24503 | }
+24504 | #else
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:24497:27: error: type 'GroupSectionsOfContent<Sections, Content>' does not conform to protocol 'View'
+17485 |   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+17486 |   nonisolated static func _viewListCount(inputs: SwiftUICore::_ViewListCountInputs) -> Swift::Int?
+17487 |   associatedtype Body : SwiftUICore::View
+      |                  `- note: protocol requires nested type 'Body'
+17488 |   @SwiftUICore::ContentBuilder @_Concurrency::MainActor @preconcurrency var body: Self.Body { get }
+17489 | }
+      :
+24495 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.2)
+24496 | @_originallyDefinedIn(module: "SwiftUI", visionOS 2.2)
+24497 | nonisolated public struct GroupSectionsOfContent<Sections, Content> : SwiftUICore::View, ~Swift::Sendable where Sections : SwiftUICore::View, Content : SwiftUICore::View {
+      |                           |- error: type 'GroupSectionsOfContent<Sections, Content>' does not conform to protocol 'View'
+      |                           `- note: add stubs for conformance
+24498 |   nonisolated public var body: some SwiftUICore::View {
+24499 |     get
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:25187:131: error: unable to resolve type for _opaqueReturnTypeOf attribute
+25185 |   }
+25186 |   @available(anyAppleOS 27.0, *)
+25187 |   public typealias InsetShape = @_opaqueReturnTypeOf("$s7SwiftUI20TextInputBorderShapeV5inset2byQr12CoreGraphics7CGFloatV_tF", 0) __
+      |                                                                                                                                   `- error: unable to resolve type for _opaqueReturnTypeOf attribute
+25188 | }
+25189 | @available(anyAppleOS 27.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:25146:1: error: type 'TextInputBorderShape' does not conform to protocol 'InsettableShape'
+13212 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+13213 | public protocol InsettableShape : SwiftUICore::Shape {
+13214 |   associatedtype InsetShape : SwiftUICore::InsettableShape
+      |                  `- note: protocol requires nested type 'InsetShape'
+13215 |   nonisolated func inset(by amount: CoreFoundation::CGFloat) -> Self.InsetShape
+13216 | }
+      :
+25144 | }
+25145 | @available(anyAppleOS 27.0, *)
+25146 | extension SwiftUICore::TextInputBorderShape : SwiftUICore::InsettableShape {
+      | |- error: type 'TextInputBorderShape' does not conform to protocol 'InsettableShape'
+      | `- note: add stubs for conformance
+25147 |   @inlinable nonisolated public func inset(by amount: CoreFoundation::CGFloat) -> some SwiftUICore::InsettableShape {
+25148 |         return _Inset(base: self, amount: amount)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5946:20: error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGPoint.Stride'
+ 5944 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+ 5945 |   @inlinable package static func - (lhs: CoreFoundation::CGPoint, rhs: CoreFoundation::CGSize) -> CoreFoundation::CGPoint {
+ 5946 |         return lhs + -rhs
+      |                    `- error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGPoint.Stride'
+ 5947 |     }
+ 5948 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5946:22: error: unary operator '-' cannot be applied to an operand of type 'CGSize'
+ 5944 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+ 5945 |   @inlinable package static func - (lhs: CoreFoundation::CGPoint, rhs: CoreFoundation::CGSize) -> CoreFoundation::CGPoint {
+ 5946 |         return lhs + -rhs
+      |                      `- error: unary operator '-' cannot be applied to an operand of type 'CGSize'
+ 5947 |     }
+ 5948 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5950:19: error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+ 5948 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+ 5949 |   @inlinable package static func += (lhs: inout CoreFoundation::CGPoint, rhs: CoreFoundation::CGSize) {
+ 5950 |         lhs = lhs + rhs
+      |                   `- error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+ 5951 |     }
+ 5952 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5954:19: error: binary operator '-' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+ 5952 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+ 5953 |   @inlinable package static func -= (lhs: inout CoreFoundation::CGPoint, rhs: CoreFoundation::CGSize) {
+ 5954 |         lhs = lhs - rhs
+      |                   `- error: binary operator '-' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+ 5955 |     }
+ 5956 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:5970:19: error: referencing operator function '*' on '_VectorMath' requires that 'CGPoint' conform to '_VectorMath'
+ 5968 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+ 5969 |   @inlinable package static func *= (lhs: inout CoreFoundation::CGPoint, rhs: CoreFoundation::CGFloat) {
+ 5970 |         lhs = lhs * rhs
+      |                   `- error: referencing operator function '*' on '_VectorMath' requires that 'CGPoint' conform to '_VectorMath'
+ 5971 |     }
+ 5972 | }
+      :
+18604 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18605 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18606 | extension SwiftUICore::_VectorMath {
+      | `- note: where 'Self' = 'CGPoint'
+18607 |   @inlinable public var magnitude: Swift::Double {
+18608 |     get {
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20211:16: error: binary operator '+=' cannot be applied to two 'CGSize' operands
+20209 |   @inlinable package static func + (lhs: CoreFoundation::CGSize, rhs: CoreFoundation::CGSize) -> CoreFoundation::CGSize {
+20210 |         var result = lhs
+20211 |         result += rhs
+      |                `- error: binary operator '+=' cannot be applied to two 'CGSize' operands
+20212 |         return result
+20213 |     }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20222:16: error: binary operator '-=' cannot be applied to two 'CGSize' operands
+20220 |   @inlinable package static func - (lhs: CoreFoundation::CGSize, rhs: CoreFoundation::CGSize) -> CoreFoundation::CGSize {
+20221 |         var result = lhs
+20222 |         result -= rhs
+      |                `- error: binary operator '-=' cannot be applied to two 'CGSize' operands
+20223 |         return result
+20224 |     }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20233:16: error: referencing operator function '*=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+18604 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18605 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18606 | extension SwiftUICore::_VectorMath {
+      | `- note: where 'Self' = 'CGSize'
+18607 |   @inlinable public var magnitude: Swift::Double {
+18608 |     get {
+      :
+20231 |   @inlinable package static func * (lhs: CoreFoundation::CGSize, rhs: Swift::Double) -> CoreFoundation::CGSize {
+20232 |         var result = lhs
+20233 |         result *= rhs
+      |                `- error: referencing operator function '*=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+20234 |         return result
+20235 |     }
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20238:13: error: referencing operator function '*=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+18604 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18605 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18606 | extension SwiftUICore::_VectorMath {
+      | `- note: where 'Self' = 'CGSize'
+18607 |   @inlinable public var magnitude: Swift::Double {
+18608 |     get {
+      :
+20236 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+20237 |   @inlinable package static func /= (lhs: inout CoreFoundation::CGSize, rhs: Swift::Double) {
+20238 |         lhs *= 1 / rhs
+      |             `- error: referencing operator function '*=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+20239 |     }
+20240 |   @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:20243:16: error: referencing operator function '/=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+18604 | @_originallyDefinedIn(module: "SwiftUI", tvOS 18.0)
+18605 | @_originallyDefinedIn(module: "SwiftUI", watchOS 11.0)
+18606 | extension SwiftUICore::_VectorMath {
+      | `- note: where 'Self' = 'CGSize'
+18607 |   @inlinable public var magnitude: Swift::Double {
+18608 |     get {
+      :
+20241 |   @inlinable package static func / (lhs: CoreFoundation::CGSize, rhs: Swift::Double) -> CoreFoundation::CGSize {
+20242 |         var result = lhs
+20243 |         result /= rhs
+      |                `- error: referencing operator function '/=' on '_VectorMath' requires that 'CGSize' conform to '_VectorMath'
+20244 |         return result
+20245 |     }
+
+
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface:23370:26: error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+23368 |   @inlinable package mutating func roundCoordinatesToNearestOrUp(toMultipleOf m: CoreFoundation::CGFloat) {
+23369 |         self = self.standardized
+23370 |         var max = origin + size
+      |                          `- error: binary operator '+' cannot be applied to operands of type 'CGPoint' and 'CGSize'
+23371 |         origin.roundToNearestOrUp(toMultipleOf: m)
+23372 |         max.roundToNearestOrUp(toMultipleOf: m)
+
+[#ConformanceIsolation]: <https://docs.swift.org/compiler/documentation/diagnostics/conformance-isolation>

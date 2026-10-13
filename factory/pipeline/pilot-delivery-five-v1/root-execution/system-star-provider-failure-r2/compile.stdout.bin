@@ -1,0 +1,20 @@
+**********************************************************************
+** Visual Studio 2026 Developer Command Prompt v18.8.0
+** Copyright (c) 2026 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+GlyphRasterProducer.cpp
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(1): warning C4005: 'UNICODE': macro redefinition
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(1): note: 'UNICODE' previously declared on the command line
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(2): warning C4005: '_UNICODE': macro redefinition
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(2): note: '_UNICODE' previously declared on the command line
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(172): error C2664: 'HRESULT IDWriteFontFace::GetGlyphIndicesW(const UINT32 *,UINT32,UINT16 *)': cannot convert argument 1 from 'UINT16 *' to 'const UINT32 *'
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(172): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or parenthesized function-style cast
+C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um\DWrite.h(1136): note: see declaration of 'IDWriteFontFace::GetGlyphIndicesW'
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(172): note: while trying to match the argument list '(UINT16 *, int, UINT16 *)'
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(181): error C2039: 'GetGlyphAdvances': is not a member of 'IDWriteFontFace'
+C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um\DWrite.h(1047): note: see declaration of 'IDWriteFontFace'
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(197): error C2065: 'DWRITE_TEXTURE_CLEARTYPE_3X1': undeclared identifier
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(197): error C2131: expression did not evaluate to a constant
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(197): note: a non-constant (sub-)expression was encountered
+D:\Claude\swiftright\.factory-work\hosts\system-star-fill\provider-raster-inputs-r2\provider-raster\GlyphRasterProducer.cpp(213): error C2589: '(': illegal token on right side of '::'

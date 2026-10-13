@@ -1,0 +1,3 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$base='D:\Claude\swiftright\probes\sr0-s\fresh-on-bridge\out\tuple12-startupguard-matrix-v1\F1-20-r4';$rows=@();if(Test-Path -LiteralPath $base){foreach($f in Get-ChildItem -LiteralPath $base -Filter 'worker-*.json' -File -Recurse){$a=Get-Content -Raw -LiteralPath $f.FullName|ConvertFrom-Json;$rows+=@{path=$f.FullName;status=$a.status;driverExitCode=$a.driverExitCode;childExitCode=$a.childExitCode}}}
+@{kind='root-f1-progress-observation-v1';at=[DateTimeOffset]::UtcNow.ToString('o');completedWorkerReceipts=$rows.Count;rows=$rows;lockState=[IO.File]::ReadAllText('D:\Claude\desktop.lock');nativeActions=0}|ConvertTo-Json -Depth 8

@@ -1,0 +1,31 @@
+{
+  "kind": "independent-capture-caller-source-review-v1",
+  "stage": "padding-capture-lease-capture-v1",
+  "stageHash": "sha256:04e544f5044707a31ce2326c8bf0c3b8e5e14155fbb16e527703092c17605247",
+  "runnerHash": "sha256:fe80ada6556ec763776e6744bfc0f2b0dc3d33d6e629c724a71737246827fddf",
+  "coordinatorHash": "sha256:a21530a46e33beb21ff0346229914482a1452706eeb706b14f67202f3f52016d",
+  "combinedReleaseHash": "sha256:64205826d6b8371bf5ba9f3cbcc5a1cb4d8a7e55bcd7a8f29e5fee92db15c128",
+  "actualReceiptHash": "sha256:1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+  "actualExeHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+  "verdict": "HOLD_SOURCE",
+  "checks": {
+    "manifest_57_entries_exact": true,
+    "verify_source_passed": true,
+    "offline_21_source_checks": true,
+    "actual_compile_pin_available": true,
+    "plan_exact_lease_source_join": true,
+    "fresh_count1_count20_no_retry": true,
+    "actual_receipt_exe_passed_to_preflight": true,
+    "prelaunch_identity_nulls": true,
+    "uia_before_pixels_close": true,
+    "renderer_final_and_worker_release_join": true,
+    "bounded_native_raw_guards": true,
+    "coordinator_holds_unknown_no_start": true,
+    "no_early_hold_release_on_empty_batch": false
+  },
+  "findings": [
+    "coordinator releases lock on hold-harness-error with zero native dirs/inventories without explicit no-invocation proof"
+  ],
+  "scope": "read-only source review; no native/compiler/remote/Git actions",
+  "requiredFix": "In coordinator finally, releaseAllowed must remain false for taskResult.status hold-harness-error or absent/unproven native invocation. Require completed-source-bound-observation plus exhaustive inventory, or durable source-owned no-invocation proof for every predeclared slot before release."
+}

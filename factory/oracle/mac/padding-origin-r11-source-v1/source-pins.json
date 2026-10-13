@@ -1,0 +1,641 @@
+{
+  "actualMaterialization": {
+    "caseCanonicalHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "hostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be977",
+    "refs": [
+      {
+        "bytes": 2244,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+        "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+      },
+      {
+        "bytes": 2334,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+        "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+      },
+      {
+        "bytes": 1896,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.manifest.json",
+        "sha256": "sha256:e39db8b6d3844c6de9811eb5783564b49eb8556bc3cc854e79c3a36c61f8e9e0"
+      },
+      {
+        "bytes": 223,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+        "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+      }
+    ],
+    "tupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011"
+  },
+  "actualWindowsReplay": {
+    "admissionV2": {
+      "actualCandidateBinding": {
+        "bytes": 1579,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/candidate-binding.json",
+        "sha256": "sha256:e2b7579d81923b8db2252b7c605af9c20fc80677cdaad4756e78fed94ccc0336"
+      },
+      "actualCompiler": {
+        "bytes": 45056,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/tool/compiler.bin",
+        "sha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+      },
+      "actualPlan": {
+        "bytes": 8974,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/plan.json",
+        "sha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10"
+      },
+      "actualProducerReceipt": {
+        "bytes": 17795,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/observation.json",
+        "sha256": "sha256:1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf"
+      },
+      "actualProofBundle": {
+        "bytes": 872540,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/proof-bundle-r7-v2c.actual.json",
+        "sha256": "sha256:b2d7655c34d1ae82c909f5f478993f421af31938dd57f1db115b414141ca36c9"
+      },
+      "actualRuntimeReceipt": {
+        "bytes": 11275,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/runtime-source-receipt.json",
+        "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+      },
+      "actualRuntimeTree": {
+        "bytes": 2825,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/runtime-source-tree.json",
+        "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+      },
+      "actualTrustedReader": {
+        "bytes": 219142,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-count20-r7.actual.json",
+        "sha256": "sha256:4ff0bc39d5d498c8f26b75a2d9b3b26563d26245c0cf3e6d5b113afeb9dc2253"
+      },
+      "blockedReasons": [
+        "actual plan witness source binding does not join fresh source",
+        "actual plan witness manifest binding does not join fresh manifest",
+        "proof witness manifest hash does not join fresh manifest"
+      ],
+      "controls": {
+        "bytes": 5148,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/test-admit-windows-replay-v2.py",
+        "sha256": "sha256:b72c281327dd7f8e2c6a0fc2b119a318ca0356de21ee22bdd5ba95e2effc3432"
+      },
+      "effects": {
+        "compilerActions": 0,
+        "lockActions": 0,
+        "nativeWindowActions": 0,
+        "remoteActions": 0
+      },
+      "output": {
+        "bytes": 1284,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/replay-admission-v2.json",
+        "sha256": "sha256:5d91b27704ec10c6b27a40399e208d3e09a956fd47b9ab51c707234b53c18565"
+      },
+      "source": {
+        "bytes": 13102,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/admit-windows-replay-v2.py",
+        "sha256": "sha256:73f5237f80385114f72b183383ca392ed1c5435487ce74adcd608c79578bb634"
+      },
+      "status": "fresh-windows-compile-required"
+    },
+    "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9",
+    "equivalenceAdmissionV3": {
+      "compiledManifest": {
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/host/witness.manifest.json",
+        "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+      },
+      "controls": {
+        "bytes": 4030,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/test-admit-windows-replay-v3-equivalence.py",
+        "sha256": "sha256:3f7a2a79641ad528642fe089c13818a9ff033269a19c1af5a803f714588ce44e"
+      },
+      "effects": {
+        "compilerActions": 0,
+        "lockActions": 0,
+        "nativeWindowActions": 0,
+        "remoteActions": 0
+      },
+      "freshCaptureIDsRequired": true,
+      "freshManifest": {
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/witness.manifest.json",
+        "sha256": "sha256:e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+      },
+      "freshMetadataRequired": true,
+      "output": {
+        "bytes": 3226,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/replay-equivalence-v3.json",
+        "sha256": "sha256:887c8563600f1bb655a4d00155276f8c6b15f1e42f0ee4be35ca848da187f9d4"
+      },
+      "readme": {
+        "bytes": 940,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/README.md",
+        "sha256": "sha256:1635ba6cfba7569318a99f738c556e92043c7e74095e3ffbaee4b74fb55722f4"
+      },
+      "semanticInputsEqual": true,
+      "source": {
+        "bytes": 14792,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/admit-windows-replay-v3-equivalence.py",
+        "sha256": "sha256:3e7468e307426f457baac6c6e903fcd0bc7e444deb2564be2b27d8beef36869e"
+      },
+      "status": "reuse-admitted-source-equivalent-v3-candidate-only"
+    },
+    "equivalenceAdmissionV4": {
+      "compiledManifest": {
+        "bytes": 1878,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/host/witness.manifest.json",
+        "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+      },
+      "controls": {
+        "bytes": 4416,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/test-admit-windows-replay-v4-equivalence.py",
+        "sha256": "sha256:c30c7fb6ff65e3bd45adade3895740ea8fcc264202a79deff68d14852a7acf0b"
+      },
+      "effects": {
+        "compilerActions": 0,
+        "lockActions": 0,
+        "nativeWindowActions": 0,
+        "remoteActions": 0
+      },
+      "freshCaptureIDsRequired": true,
+      "freshManifest": {
+        "bytes": 2406,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/witness.manifest.json",
+        "sha256": "sha256:e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+      },
+      "freshMetadataRequired": true,
+      "historicalDonorRelabel": false,
+      "output": {
+        "bytes": 3226,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/replay-equivalence-v4.json",
+        "sha256": "sha256:aa8f39419292d2170b9036f6ee648bf8b71f9ca9ddcf6205d1a03ea0b2f2f34d"
+      },
+      "readme": {
+        "bytes": 940,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/README.md",
+        "sha256": "sha256:64519475483d8ffdbf873fbbdcdfa312956799fb2a9ee76725724016af82c200"
+      },
+      "semanticInputsEqual": true,
+      "semanticInputsRule": "all manifest fields except explicit re-bound keys case and sourceBinding",
+      "source": {
+        "bytes": 14804,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/admit-windows-replay-v4-equivalence.py",
+        "sha256": "sha256:ec2d5d440aa7312dc2e90f16dbca7a0d5b460a0abf20e29a16f323db1a1950a5"
+      },
+      "status": "reuse-admitted-source-equivalent-v4-candidate-only"
+    },
+    "executableHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10",
+    "freshCount20SourceMapV1": {
+      "count": 20,
+      "donorMetadataManifest": {
+        "bytes": 21954,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-count20-metadata-r7/manifest.json",
+        "sha256": "sha256:3ee72b3db60ed804d48d1555e9d86a927321517401f94640e572c279c64ad2ce"
+      },
+      "donorNativeManifest": {
+        "bytes": 339943,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/manifest.json",
+        "sha256": "sha256:05151d8a29ca0bfc9d5c440924fd8547e16a89cb5e2d4c4c6b81880c9a1aa0f7"
+      },
+      "effects": {
+        "compilerActions": 0,
+        "lockActions": 0,
+        "nativeWindowActions": 0,
+        "remoteActions": 0
+      },
+      "freshCaptureIDsRequired": true,
+      "freshCase": {
+        "bytes": 2334,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+        "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+      },
+      "freshManifest": {
+        "bytes": 1896,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.manifest.json",
+        "sha256": "sha256:e39db8b6d3844c6de9811eb5783564b49eb8556bc3cc854e79c3a36c61f8e9e0"
+      },
+      "freshMetadataRequired": true,
+      "freshTuple": {
+        "bytes": 2244,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+        "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+      },
+      "historicalDonorRelabel": false,
+      "map": {
+        "bytes": 76562,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/count20-r11-input-map.pending.json",
+        "sha256": "sha256:985c4cb7728049031dc26905a1a5c4519aeeb226cf59932c232c5ce8ac4819ab"
+      },
+      "readme": {
+        "bytes": 2158,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/README.md",
+        "sha256": "sha256:2fffcfbc7815a0317d26b6f31c8e21e0423681c69311465e69339e62138033a6"
+      },
+      "repeatR7StageManifest": {
+        "bytes": 3023,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/stage-manifest-r7.json",
+        "sha256": "sha256:9f6b2821b205d3463063faf66ed5c550acd37a5292ec80b47552d50e61907fae"
+      },
+      "status": "source-ready-fresh-metadata-required-candidate-only"
+    },
+    "freshCount20SourceMapV2": {
+      "baseMap": {
+        "bytes": 76562,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/count20-r11-input-map.pending.json",
+        "sha256": "sha256:985c4cb7728049031dc26905a1a5c4519aeeb226cf59932c232c5ce8ac4819ab"
+      },
+      "controls": {
+        "bytes": 2491,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/test-count20-fresh-r11.py",
+        "sha256": "sha256:bf57d9a111c52b4c12c244dcf375df7badf5192fea00ab9105d5678b99078736"
+      },
+      "count": 20,
+      "effects": {
+        "compilerActions": 0,
+        "lockActions": 0,
+        "nativeWindowActions": 0,
+        "remoteActions": 0
+      },
+      "equivalenceV4": {
+        "bytes": 3226,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/replay-equivalence-v4.json",
+        "sha256": "sha256:aa8f39419292d2170b9036f6ee648bf8b71f9ca9ddcf6205d1a03ea0b2f2f34d"
+      },
+      "freshCaptureIDsRequired": true,
+      "freshCase": {
+        "bytes": 2334,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+        "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+      },
+      "freshManifest": {
+        "bytes": 1896,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.manifest.json",
+        "sha256": "sha256:e39db8b6d3844c6de9811eb5783564b49eb8556bc3cc854e79c3a36c61f8e9e0"
+      },
+      "freshMetadataRequired": true,
+      "freshTuple": {
+        "bytes": 2244,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+        "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+      },
+      "guard": {
+        "bytes": 7394,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/guard-count20-fresh-r11.ps1",
+        "sha256": "sha256:24d5e0661ff7734fb4f32a620802d872af48c09770f7556225a668b7aa9a5c87"
+      },
+      "historicalDonorRelabel": false,
+      "issuer": {
+        "bytes": 9142,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/issue-count20-fresh-r11.ps1",
+        "sha256": "sha256:ba5befd4a8d680e14b534c73175350e7583b389ea548c3d3c5e8370445a59cc3"
+      },
+      "launchRecipe": {
+        "bytes": 4125,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/launch-count20-fresh-r11.ps1",
+        "sha256": "sha256:de8a427e2b1af86029084f062262bf0ab5e5d5bf594a8cbadc973a0e21e2a973"
+      },
+      "map": {
+        "bytes": 3900,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/source-map-v2.json",
+        "sha256": "sha256:ffcdeaaed44f8f4484ac01022ecea6f078846499b5bce5ae0a2858224b8f4e18"
+      },
+      "readme": {
+        "bytes": 1722,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/README.md",
+        "sha256": "sha256:3e0d9dc0cb0f057ce7b89c3683b3eacfc06403be83aec8d806dae7cfd41d4fc0"
+      },
+      "status": "source-ready-fresh-metadata-required-candidate-only"
+    },
+    "freshWindowsCompilePacket": {
+      "compilerActionsExpected": 1,
+      "freshCase": {
+        "bytes": 2334,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-case.json",
+        "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+      },
+      "freshTuple": {
+        "bytes": 2244,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-tuple.json",
+        "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+      },
+      "freshWitnessManifest": {
+        "bytes": 2406,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.manifest.json",
+        "sha256": "sha256:e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+      },
+      "freshWitnessSource": {
+        "bytes": 223,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.swift",
+        "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+      },
+      "launcher": {
+        "bytes": 8766,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/prepare-fresh-windows-r11.ps1",
+        "sha256": "sha256:67610c78744fdbf414bee40786ae0860d71c11b85e5db94e0642740c6103f748"
+      },
+      "map": {
+        "bytes": 13415,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/source-bound-windows-r11-v2.json",
+        "sha256": "sha256:5e18d1b8da3f7903526ca4316e7661f2d90d753098a1cc3d3d5d98d0e3c86994"
+      },
+      "mapSha256": "sha256:5e18d1b8da3f7903526ca4316e7661f2d90d753098a1cc3d3d5d98d0e3c86994",
+      "nativeWindowActionsExpected": 0,
+      "readme": {
+        "bytes": 2315,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/README.md",
+        "sha256": "sha256:766ab8f6d221cfecd24b75aebd9695fadc2952d6f4a5fe8a7ff1b84aa4108138"
+      },
+      "status": "source-ready-root-compile-required",
+      "windowsExecutableReuse": false
+    },
+    "refs": [
+      {
+        "bytes": 1590,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/build-inputs.json",
+        "sha256": "sha256:1e7715a363d4ef0a341428c87744dcd2b55c7ecbfb76fb400976bf9fc5a8e1b5"
+      },
+      {
+        "bytes": 2406,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/witness.manifest.json",
+        "sha256": "sha256:e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+      },
+      {
+        "bytes": 223,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+        "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+      },
+      {
+        "bytes": 1633,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/compiler-receipt-ref.json",
+        "sha256": "sha256:e465f5b38ae568e3ec881a760e38748fa6ea76cd0f03a2ea3b25a18b274456e7"
+      },
+      {
+        "bytes": 3406,
+        "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/replay-admission.json",
+        "sha256": "sha256:64566738d2a13596456d101066d6866dea57714d06274acea755292eaaef882f"
+      }
+    ],
+    "status": "fresh-windows-compile-required-candidate-only",
+    "tupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011"
+  },
+  "candidateIDTemplate": "sr1-source-bound-r11-mac20-host-<actual-mac-host-hash-prefix>-20261011",
+  "canonicalCaseHash": "sha256:2e0552e1cff68a3fee3dc26a7db2d6662655858d7bf8e5a3bbe3820be36ceed2",
+  "commands": {
+    "bytes": 3050,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/COMMANDS.md",
+    "sha256": "sha256:d8a2849b14ec32e5d82d1d31ff4d14bc55418ec2fcb274947dbccd0be006aae7"
+  },
+  "effects": {
+    "compilerActions": 0,
+    "lockActions": 0,
+    "nativeWindowActions": 0,
+    "remoteActions": 0,
+    "sourceMutations": true
+  },
+  "frozenTupleBound": false,
+  "historicalContext": {
+    "historicalCaseHash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+    "macHostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "macHostHashUse": "template-context-only; actual hash must come from fresh internal host receipt",
+    "windowsR7": "immutable; cannot be rebound or relabeled"
+  },
+  "holds": [
+    "equivalence admission is candidate-only; fresh metadata/capture IDs remain required",
+    "fresh Mac20 native capture pending root",
+    "fresh Windows source-bound compile packet prepared; root compile required before Windows replay",
+    "fresh Windows source-bound compile required: actual r7 producer closure binds historical witness source/manifest bytes",
+    "fresh internal host preflight required",
+    "new Windows replay requires exact new case/source closure",
+    "tuple remains unfrozen"
+  ],
+  "packetDocuments": [
+    {
+      "bytes": 1344,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/README.md",
+      "sha256": "sha256:33590689069157bdcd2429855b26967af64388a7292313544c55bba37f1739ba"
+    },
+    {
+      "bytes": 2248,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/candidate-tuple-r11-mac20.json",
+      "sha256": "sha256:df637022afeb17cab5f5c729ef29dbb91183c9812dd9e8f47cce3b000a28b3c7"
+    },
+    {
+      "bytes": 2263,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/README.md",
+      "sha256": "sha256:945e3b703812e016fa6647dc23f820071d4cd9ae7f1381cdd1a9373feeaa6fff"
+    },
+    {
+      "bytes": 3117,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/WINDOWS-REPLAY-PLAN.md",
+      "sha256": "sha256:ace824515c0f5f820369f3969900f96e720e390f97de421addc1925f24ab6f33"
+    },
+    {
+      "bytes": 2315,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/README.md",
+      "sha256": "sha256:766ab8f6d221cfecd24b75aebd9695fadc2952d6f4a5fe8a7ff1b84aa4108138"
+    },
+    {
+      "bytes": 7906,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/prepare-fresh-windows-r11.ps1",
+      "sha256": "sha256:c4c8f622a256b059cb5ee765d734e224454fd554bd57a20730d058c083d27c6a"
+    },
+    {
+      "bytes": 13415,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/source-bound-windows-r11-v2.json",
+      "sha256": "sha256:5e18d1b8da3f7903526ca4316e7661f2d90d753098a1cc3d3d5d98d0e3c86994"
+    },
+    {
+      "bytes": 2334,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-case.json",
+      "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+    },
+    {
+      "bytes": 2244,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-tuple.json",
+      "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+    },
+    {
+      "bytes": 2406,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.manifest.json",
+      "sha256": "sha256:e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+    },
+    {
+      "bytes": 223,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 940,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/README.md",
+      "sha256": "sha256:1635ba6cfba7569318a99f738c556e92043c7e74095e3ffbaee4b74fb55722f4"
+    },
+    {
+      "bytes": 14792,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/admit-windows-replay-v3-equivalence.py",
+      "sha256": "sha256:3e7468e307426f457baac6c6e903fcd0bc7e444deb2564be2b27d8beef36869e"
+    },
+    {
+      "bytes": 4030,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/test-admit-windows-replay-v3-equivalence.py",
+      "sha256": "sha256:3f7a2a79641ad528642fe089c13818a9ff033269a19c1af5a803f714588ce44e"
+    },
+    {
+      "bytes": 940,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/README.md",
+      "sha256": "sha256:64519475483d8ffdbf873fbbdcdfa312956799fb2a9ee76725724016af82c200"
+    },
+    {
+      "bytes": 3226,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/replay-equivalence-v4.json",
+      "sha256": "sha256:aa8f39419292d2170b9036f6ee648bf8b71f9ca9ddcf6205d1a03ea0b2f2f34d"
+    },
+    {
+      "bytes": 2158,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/README.md",
+      "sha256": "sha256:2fffcfbc7815a0317d26b6f31c8e21e0423681c69311465e69339e62138033a6"
+    },
+    {
+      "bytes": 1722,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/README.md",
+      "sha256": "sha256:3e0d9dc0cb0f057ce7b89c3683b3eacfc06403be83aec8d806dae7cfd41d4fc0"
+    }
+  ],
+  "schema": "factory-macos-r11-source-bound-candidate-v2",
+  "sources": [
+    {
+      "bytes": 34170,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/capture_origin_r11.py",
+      "sha256": "sha256:e12c77b8b42b0798fe53bddfd16c0347491bfb56dc6956fe3681b5ee9a5b0d96"
+    },
+    {
+      "bytes": 4086,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/AXClient.swift",
+      "sha256": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404"
+    },
+    {
+      "bytes": 12723,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/CaptureHost.swift",
+      "sha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b"
+    },
+    {
+      "bytes": 3542,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/prepare-r11-host.py",
+      "sha256": "sha256:5405d8b8308abf0449b812432832b4e26f66d148ceb0ab10da71a370131364a7"
+    },
+    {
+      "bytes": 3928,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/materialize-r11-case.py",
+      "sha256": "sha256:beeb0c254bb1b68ee102f38cfb1f51370cf884e2a270f4846de6d85e793498fd"
+    },
+    {
+      "bytes": 3367,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/verify-r11-output.py",
+      "sha256": "sha256:ec99da18a882814d46589133de5ea7ed12e4248aef9a126d75dc31b51d925aa5"
+    },
+    {
+      "bytes": 223,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "bytes": 1898,
+      "path": "factory/recipes/data/swiftui.padding-frame.json",
+      "sha256": "sha256:c371fe9f27a86fcac6f59c66d98c72a15557a3d0b7f595732eb26967d1b55d37"
+    },
+    {
+      "bytes": 6723,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/admit-windows-replay.py",
+      "sha256": "sha256:d9e3819be7a425cd08a812e9279e5319d2bb07cf57c993819064522955ca5ca0"
+    },
+    {
+      "bytes": 13102,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/admit-windows-replay-v2.py",
+      "sha256": "sha256:73f5237f80385114f72b183383ca392ed1c5435487ce74adcd608c79578bb634"
+    },
+    {
+      "bytes": 5148,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/test-admit-windows-replay-v2.py",
+      "sha256": "sha256:b72c281327dd7f8e2c6a0fc2b119a318ca0356de21ee22bdd5ba95e2effc3432"
+    },
+    {
+      "bytes": 1284,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r1/fresh-windows-source-r11-h13bfe5b8fbd9/replay-admission-v2.json",
+      "sha256": "sha256:5d91b27704ec10c6b27a40399e208d3e09a956fd47b9ab51c707234b53c18565"
+    },
+    {
+      "bytes": 14792,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/admit-windows-replay-v3-equivalence.py",
+      "sha256": "sha256:3e7468e307426f457baac6c6e903fcd0bc7e444deb2564be2b27d8beef36869e"
+    },
+    {
+      "bytes": 4030,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r3-admission-v1/test-admit-windows-replay-v3-equivalence.py",
+      "sha256": "sha256:3f7a2a79641ad528642fe089c13818a9ff033269a19c1af5a803f714588ce44e"
+    },
+    {
+      "bytes": 14804,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/admit-windows-replay-v4-equivalence.py",
+      "sha256": "sha256:ec2d5d440aa7312dc2e90f16dbca7a0d5b460a0abf20e29a16f323db1a1950a5"
+    },
+    {
+      "bytes": 4416,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/test-admit-windows-replay-v4-equivalence.py",
+      "sha256": "sha256:c30c7fb6ff65e3bd45adade3895740ea8fcc264202a79deff68d14852a7acf0b"
+    },
+    {
+      "bytes": 76484,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/count20-r11-input-map.pending.json",
+      "sha256": "sha256:1cf6904b08c3b6cbe45cbc09da629e0831e56c3a66a0f3f8b4e3aa12245407a7"
+    },
+    {
+      "bytes": 3900,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/source-map-v2.json",
+      "sha256": "sha256:ffcdeaaed44f8f4484ac01022ecea6f078846499b5bce5ae0a2858224b8f4e18"
+    },
+    {
+      "bytes": 9142,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/issue-count20-fresh-r11.ps1",
+      "sha256": "sha256:ba5befd4a8d680e14b534c73175350e7583b389ea548c3d3c5e8370445a59cc3"
+    },
+    {
+      "bytes": 7394,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/guard-count20-fresh-r11.ps1",
+      "sha256": "sha256:24d5e0661ff7734fb4f32a620802d872af48c09770f7556225a668b7aa9a5c87"
+    },
+    {
+      "bytes": 4125,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/launch-count20-fresh-r11.ps1",
+      "sha256": "sha256:de8a427e2b1af86029084f062262bf0ab5e5d5bf594a8cbadc973a0e21e2a973"
+    },
+    {
+      "bytes": 2491,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/test-count20-fresh-r11.py",
+      "sha256": "sha256:bf57d9a111c52b4c12c244dcf375df7badf5192fea00ab9105d5678b99078736"
+    }
+  ],
+  "status": "source-ready-host-preflight-required",
+  "templateCase": {
+    "bytes": 2146,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.json",
+    "sha256": "sha256:9358bfce226bc2c210def2b9f477ef4b7cadd13ff5178eb6ea1ff551f9cfb9f6"
+  },
+  "templateManifest": {
+    "bytes": 1882,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.manifest.json",
+    "sha256": "sha256:f5f2e99fd5ae98a86d6b6f512a9fa627696432002bb2c869bac6dbc4b6042285"
+  },
+  "tupleTemplate": {
+    "acceptanceConfigHash": "sha256:c12eaec44a65627e6f546925664482736bfede7665ab593024c5fcd401998245",
+    "macosHostHash": "bound-from-internal-host-build-receipt",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "windowsHostHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10"
+  },
+  "verifier": {
+    "bytes": 3367,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/verify-r11-output.py",
+    "sha256": "sha256:ec99da18a882814d46589133de5ea7ed12e4248aef9a126d75dc31b51d925aa5"
+  },
+  "windowsReplayPlan": {
+    "bytes": 2967,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/WINDOWS-REPLAY-PLAN.md",
+    "sha256": "sha256:014c4b0ee5252cac9596698e59f4979bce3eabc7f6ff629dddbec6493f0a3387"
+  }
+}

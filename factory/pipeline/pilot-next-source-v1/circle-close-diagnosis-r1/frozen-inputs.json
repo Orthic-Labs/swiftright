@@ -1,0 +1,58 @@
+{
+  "schema": "factory-circle-close-diagnostic-inputs-v1",
+  "status": "source-bound-proposal",
+  "frozenNativeRoot": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/native",
+  "frozenPlan": {
+    "path": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/native/plan.json",
+    "sha256": "23f99cc23c81b2bb49b8bbe60a77123a94b840c8f2a0851073cd981760a5e308"
+  },
+  "frozenHostSources": [
+    {"path": "Sources/FactoryProbe/FactoryContainer.swift", "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"},
+    {"path": "Sources/FactoryProbe/FactoryFill.swift", "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"},
+    {"path": "Sources/FactoryProbe/FactoryTextGeometry.swift", "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"},
+    {"path": "Sources/FactoryProbe/FactoryViewport.swift", "sha256": "19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03"},
+    {"path": "Sources/FactoryProbe/MetricsLogging.swift", "sha256": "2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4"},
+    {"path": "Sources/FactoryProbe/MetricsPayload.swift", "sha256": "cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"},
+    {"path": "Sources/FactoryProbe/Witness.swift", "sha256": "01f9fef3ab058a958bebf886191519e0102b05ff6b46acedd0d59a7aa8601f2e"},
+    {"path": "Sources/FactoryProbe/CaptureLease.swift", "sha256": "a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222"},
+    {"path": "Package.swift", "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"},
+    {"path": "Sources/FactoryProbe/main.swift", "sha256": "900b982ac3ee69bc61814fa60eab7df379feaec89e0d2ab0a862a0386cded6e7"}
+  ],
+  "candidateHost": {
+    "path": "factory/pipeline/pilot-next-source-v1/circle-close-diagnosis-r1/candidate-main.swift",
+    "baseSha256": "900b982ac3ee69bc61814fa60eab7df379feaec89e0d2ab0a862a0386cded6e7",
+    "candidateSha256": "b761a826b249e7b918c6a25af8b3d9bccaced7005d1a35253fb3fd618a576a19",
+    "patchPath": "factory/pipeline/pilot-next-source-v1/circle-close-diagnosis-r1/circle-main-close-markers.patch",
+    "patchSha256": "1a390afdcb9e7a051472ddbf3218563be6608213f6670c59a1fa5f43e3c38f08",
+    "behavior": "diagnostic markers only; graph, measurement, bridge, deadline & exit semantics unchanged"
+  },
+  "frozenRuntime": {
+    "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "sourceReceiptPath": "runtime-source-receipt.json",
+    "sourceReceiptSha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "sourceTreePath": "runtime-source-tree.json",
+    "sourceTreeSha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "frozenRenderer": {
+    "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "frozenCaptureOverlay": {
+    "path": "factory/native/windows/pilot-circle-root-v1/capture-count1-r5g-sources/overlay/capture-circle-single-v3.ps1",
+    "sha256": "0a63f779cd9b7dfc8c6d41aa6c1ccab22f9082aebd9d84243c1e8b69b667bd32",
+    "nativeExitDeadlineSeconds": 15,
+    "rawDrainMilliseconds": 5000
+  },
+  "compiledObservation": {
+    "exeSha256": "76152979c8ae679b3643307ce7608112ddefd50ef60d83d5d7fe868002f36871",
+    "compileReceiptSha256": "f8284f2f9fee5f82411474ecc356e25c189dcdf984f8bfdb86f2563d85f687e3",
+    "exportManifestPath": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/export-manifest.json"
+  },
+  "candidateConstraints": [
+    "fresh candidate plan may update only host source binding/source hash; case, tuple semantics, runtime, renderer, compiler, package, scratch, lease & background/noactivate inputs stay pinned",
+    "only candidate-main.swift may differ; no bridge, runtime, renderer, overlay or raw receipt edits",
+    "retain 15-second close deadline & 5-second stream-drain deadline",
+    "direct retained-handle WaitForSingleObject/GetExitCodeProcess remains authoritative over Process.WaitForExit/HasExited",
+    "candidate run is diagnostic-only until markers, raw streams, direct handle certificate & cleanup active=0 agree"
+  ]
+}

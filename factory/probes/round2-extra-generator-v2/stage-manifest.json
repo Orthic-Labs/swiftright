@@ -1,0 +1,105 @@
+{
+  "entries": [
+    {
+      "bytes": 835,
+      "path": "factory/probes/round2-extra-generator-v2/README.md",
+      "role": "owned proposal",
+      "sha256": "0e5ee2e0503d4e4a50b0401cb8ed4af4419be16282b522559f01126273e91d1e"
+    },
+    {
+      "bytes": 2219,
+      "path": "factory/probes/round2-extra-generator-v2/config.json",
+      "role": "owned proposal",
+      "sha256": "641a4e58b4aefa2a8e7db659a9b69e86191064e773d4016813a4595d3c6c5454"
+    },
+    {
+      "bytes": 20045,
+      "path": "factory/probes/round2-extra-generator-v2/generate.py",
+      "role": "owned proposal",
+      "sha256": "49e799abba76ecd8fd7049f19dc3f8f31a202736bac933df1cdd4231b91e1d74"
+    },
+    {
+      "bytes": 4287,
+      "path": "factory/probes/round2-extra-generator-v2/test_generator.py",
+      "role": "owned proposal",
+      "sha256": "87e5c96e08707cd81eaa4dcba15a746e39014e01651400e4cc1a3b176c3602d7"
+    },
+    {
+      "bytes": 2347,
+      "path": "factory/probes/round2-extra-generator-v2/review-request.json",
+      "role": "owned proposal",
+      "sha256": "8203aa7e8dac94233b3276df1094c77468f06e244cb68c5c6d23789a0c2f83d9"
+    },
+    {
+      "bytes": 245,
+      "path": "factory/probes/round2-extra-generator-v2/check.stdout.txt",
+      "role": "owned proposal",
+      "sha256": "9fa701f6e8875cdd2fa5225e6ebb7a99e9859c15f663e037cec28a071d6cc600"
+    },
+    {
+      "bytes": 104,
+      "path": "factory/probes/round2-extra-generator-v2/test.stdout.txt",
+      "role": "owned proposal",
+      "sha256": "c12512c6653a144ebf642a9095d176caedcd5427570887144f74b30030d003c9"
+    },
+    {
+      "bytes": 10598,
+      "path": "factory/recipes/round2-extra-v1/root-stage-manifest.json",
+      "role": "frozen recipe stage",
+      "sha256": "42969de7d3810b8c5d174af990bc3cf5f35f17762c53f1f17fe265d17a22a304"
+    },
+    {
+      "bytes": 5398,
+      "path": "factory/recipes/round2-extra-v1/registry-source-join.json",
+      "role": "frozen source join",
+      "sha256": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a"
+    },
+    {
+      "bytes": 13334,
+      "path": "factory/recipes/round2-extra-v1/validation.json",
+      "role": "frozen projections",
+      "sha256": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba"
+    },
+    {
+      "bytes": 3669,
+      "path": "factory/recipes/round2-extra-v1/native-requirements.json",
+      "role": "frozen native holds",
+      "sha256": "2610d49e05a93ded6bea7e3bd903140ddb393f5ff778a4278b25ff6fd8218270"
+    },
+    {
+      "bytes": 6292,
+      "path": "factory/recipes/round2-extra-v1/dependencies/registry-candidate-manifest.json",
+      "role": "frozen candidate registry",
+      "sha256": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf"
+    },
+    {
+      "bytes": 2318,
+      "path": "factory/recipes/round2-extra-v1/dependencies/registry-stage-manifest.json",
+      "role": "frozen candidate registry stage",
+      "sha256": "e200fa92e234ab9ce9ba649b2bd3300fedc8ee6ecf1d92b131d0acf6d69c8a77"
+    },
+    {
+      "bytes": 40793212,
+      "path": "factory/catalogue/evidence/catalogue.json",
+      "role": "frozen catalogue",
+      "sha256": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+    }
+  ],
+  "kind": "round2-extra-f4-generator-stage-v2",
+  "producerPins": {
+    "candidate": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+    "recipeStage": "42969de7d3810b8c5d174af990bc3cf5f35f17762c53f1f17fe265d17a22a304",
+    "sourceJoin": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+    "validation": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba"
+  },
+  "result": {
+    "check": "ok",
+    "compilerRuns": 0,
+    "measurementTuple": null,
+    "nativeRuns": 0,
+    "negativeOutputs": 5,
+    "positiveOutputs": 19,
+    "registryPromotion": false
+  },
+  "scope": "source-only held successor proposal; v1 review faults repaired"
+}

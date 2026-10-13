@@ -1,0 +1,24 @@
+{
+  "kind": "sr0-tuple12-workload-coordinator-v1",
+  "status": "source-ready-pending-root-parse",
+  "source_sha256": "19e6da864f2d35919cb72ae93bcaf156d60f4ad40d0f1a65f4fab1ba1532d83d",
+  "controls_script": "qualification/test_tuple12_workload_coordinator_controls.py",
+  "controls_sha256": "53ba475b4c5c5e6a8a19663d3258373619b07fb1704f6b0920038f2ef28601f4",
+  "readme_sha256": "a41b06b2f4a3b90d98cb7f5b4754a6576d6a9c0b1ac19af58873f9e56b36f290",
+  "stage": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1",
+  "control_root": "D:\\Claude\\swiftright\\src\\qualification\\tuple12-takeover\\workload-controls-v3",
+  "analysis_root": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1\\src\\probes\\sr0-b\\workload\\analysis",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "policy": {
+    "runs": 3,
+    "warmup_s": 10,
+    "measure_s": 60,
+    "rows": 200,
+    "key_rate": 10,
+    "no_activate": true,
+    "lifecycle_proof": true,
+    "lock_cas": "exclusive silent loop",
+    "release": "orchestrator terminal + stream drain + task quiescence"
+  }
+}

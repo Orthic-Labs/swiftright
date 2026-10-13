@@ -1,0 +1,15 @@
+{
+  "kind": "factory-sr1-owner-review-v1",
+  "packet": "root-metadata-controls-v2",
+  "review": "source-only",
+  "passed": true,
+  "findings": [
+    "Count20 is constrained at issuer, guard controls, coordinator, & wrapper.",
+    "Guard controls run frozen Assert-LeaseIssuedMetadata against actual baseline, relocated resealed positive, & 11 one-field resealed faults.",
+    "Schema validator requires exact common.schema tuple and explicit local source-binding/source-archive files.",
+    "Coordinator checks manifest sha256 + bytes, actual build pins, first Count1 proof, full guard receipt, & Mac receipt before native lock path.",
+    "Prospective dispatcher & capture runner use parent frozen dependencies, corrected manifest sha256/bytes joins, & prospective dispatch.batch / actual-batch-r1 namespace.",
+    "Frozen capture plan has repeat, not batch; packet fails closed until reviewed dispatch.batch / actual-batch-r1 integration is supplied."
+  ],
+  "actions": {"nativeWindow": 0, "compiler": 0, "remote": 0, "lock": 0}
+}

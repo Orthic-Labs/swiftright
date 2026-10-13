@@ -1,0 +1,126 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "factory/oracle/mac/seed-origin-v8/capture_origin.py",
+    "--manifest",
+    "<five v8 manifest paths>",
+    "--case-root",
+    "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v8/inputs",
+    "--scratch",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/seed-origin-v8-capture-20261011",
+    "--output",
+    "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-actual-v2",
+    "--runs",
+    "20"
+  ],
+  "candidateOnly": true,
+  "caseRoot": "factory/oracle/mac/seed-origin-v8/inputs",
+  "collector": "factory/oracle/mac/seed-origin-v8/capture_origin.py",
+  "collectorSha256": "sha256:737399fcb39f13d79a8e908507210d0de733a3180b8eded63dfa7ec70ed2f8bf",
+  "kind": "seed-origin-v8-actual-capture-command-receipt",
+  "manifestSource": "factory/oracle/mac/seed-origin-v8/input-pins.json",
+  "manifestSourceSha256": "sha256:a101e26f36448cd37c7e712127e74e426d693b3432f64a4cea6e2d2d51c1d5a7",
+  "output": "factory/oracle/mac/seed-origin-actual-v2",
+  "permissionRequests": false,
+  "processOrigin": "collector subprocess itself had no parent-PID receipt; per-case resolver/compiler/AX receipts are retained unchanged",
+  "results": [
+    {
+      "case": {
+        "hash": "sha256:68c63ea77bd20a82644b951a8335e98f6717ac138a6c6b218b6d05dadd0848ba",
+        "id": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    },
+    {
+      "case": {
+        "hash": "sha256:a3e936cc5f688ebd885ba817e4f0b3b4df84e3b48f6bf6b0e2c92632f5dc93b4",
+        "id": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "NOT_APPLICABLE_OR_HELD",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    },
+    {
+      "case": {
+        "hash": "sha256:c2a99399c435d6c1e16bbb2d80675f1f8a4ab1aa3e654b7dcf4ff1ffd0410491",
+        "id": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "HELD",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "NOT_APPLICABLE_OR_HELD",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    },
+    {
+      "case": {
+        "hash": "sha256:29dfb27ddce10411c9fa742d5ebaf7ebef22134e1d35e64036b5952cf2254156",
+        "id": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "OBSERVED",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    },
+    {
+      "case": {
+        "hash": "sha256:7113610be80860ddf6b73d6b640fd19729288131f0b0ce712740f874f726da2f",
+        "id": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "channels": {
+        "animation": "NOT_ATTEMPTED: static pilot",
+        "compositorPaint": "OBSERVED",
+        "events": "OBSERVED: render clock & host window display only",
+        "externalAX": "OBSERVED",
+        "offscreenPaint": "OBSERVED",
+        "rootHostGeometry": "OBSERVED: actual NSHostingView fitting size/bounds, not internal Layout callbacks",
+        "rootLayout": "OBSERVED",
+        "textRenderer": "NOT_APPLICABLE_OR_HELD",
+        "witnessFontResolution": "HELD: TextRenderer does not expose resolved font; CoreText control kept separate",
+        "witnessInternalLayoutCallbacks": "HELD: root adapter does not instrument witness internal Layout"
+      },
+      "status": "CANDIDATE_CAPTURED"
+    }
+  ],
+  "scratch": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/seed-origin-v8-capture-20261011",
+  "status": "CANDIDATE_CAPTURED",
+  "version": "1"
+}

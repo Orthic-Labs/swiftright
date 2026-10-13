@@ -1,0 +1,128 @@
+{
+  "kind": "bundled-font-readiness-v3",
+  "status": "source-ready-provider-and-renderer-identity-hold",
+  "candidate": "swiftui.text.bundled-font.tinos-pilot",
+  "sourcePacket": {
+    "adapter": {
+      "path": "BundledFontMetadataAdapter.swift"
+    },
+    "hostPatch": {
+      "path": "metadata-host-adapter.patch"
+    },
+    "witness": {
+      "path": "Tinos-Witness.swift",
+      "sha256": "sha256:65f2a993080e86fa3fe1f87f20e625f1c0777ff91dc0ea2c3063ed26635eb131"
+    },
+    "resource": {
+      "path": "resources/Tinos-Regular.ttf",
+      "sha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+      "bytes": 521588,
+      "family": "Tinos",
+      "postScriptName": "Tinos-Regular"
+    },
+    "directWriteProviderSource": {
+      "path": "resources/directwrite-private-font.cpp"
+    },
+    "windowsFontProbe": {
+      "path": "windows-source/FontProbe.cpp",
+      "plan": "windows-source/plan.json",
+      "status": "source-only-diagnostic"
+    },
+    "macSource": {
+      "path": "mac-source",
+      "plan": "mac-source/plan.json",
+      "status": "source-ready-pending-root-compile-capture"
+    },
+    "windowsHost": {
+      "path": "windows-host",
+      "package": "windows-host/package",
+      "plan": "windows-host/package/plan.json",
+      "manifest": "windows-host/source-manifest.json",
+      "status": "source-ready-pending-root-bounded-build-capture"
+    },
+    "windowsPaintCanary": {
+      "path": "windows-source/paint-canary-v1",
+      "source": "FontCustomPaintCanary.cpp",
+      "plan": "windows-source/paint-canary-v1/plan.json",
+      "status": "source-ready-provider-paint-selection-held",
+      "rendererSelection": "unproven",
+      "bridgeMeasurementSelection": "unproven"
+    }
+  },
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "controls": {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Sources/SwiftRightRuntime/Controls.swift",
+      "sha256": "sha256:646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1",
+      "facts": [
+        "Font.custom(name:size:)",
+        "Font.Metadata familyName/pointSize/weight/isCustom",
+        "weight(_:) preserves metadata"
+      ]
+    },
+    "textMeasurement": {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Sources/SwiftRightRuntime/TextMeasurement.swift",
+      "sha256": "sha256:31c4bb8966422cc9405b25e41e63f9521d18b78d7150a26b8a15eb40370b787c",
+      "facts": [
+        "TextMeasureRequest.fontMetadata",
+        "TextMeasureRequest.lineLimit"
+      ]
+    },
+    "layoutEngine": {
+      "path": "factory/native/windows/api-font-37429120-20261011/runtime/Sources/SwiftRightRuntime/LayoutEngine.swift",
+      "sha256": "sha256:1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98",
+      "facts": [
+        "forwards fontMetadata",
+        "forwards lineLimit"
+      ]
+    }
+  },
+  "bridge": {
+    "typesPath": "factory/native/windows/canonical-inputs-v1/SwiftRightBridge/Sources/SwiftRightBridge/Types.swift",
+    "typesSha256": "sha256:d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+    "bridgePath": "factory/native/windows/canonical-inputs-v1/SwiftRightBridge/Sources/SwiftRightBridge/Bridge.swift",
+    "bridgeSha256": "sha256:d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+    "measureFields": [
+      "fontFamily",
+      "weight",
+      "fontSize",
+      "lineHeight",
+      "scale",
+      "maxWidth"
+    ],
+    "fontByteRegistration": "absent from ABI 0.6 swiftright.h; image_register is unrelated",
+    "lineLimitField": "absent from ABI 0.6 MeasureRequest"
+  },
+  "host": {
+    "path": "factory/native/windows/RendererHostAdditive.swift.in",
+    "sha256": "sha256:423b7b89d021ab446715f692ce8c81da4920f817700ac17aebfccd531653dfbd",
+    "currentCause": [
+      "rejects m.isCustom before ABI call",
+      "uses size * 1.5 line height",
+      "passes family string only after non-custom branch"
+    ],
+    "adapterScope": "BundledFontMetadataAdapter.swift supplies verified family/size/weight plus provider line metrics; Windows renderer identity remains held",
+    "bundledFontWindowsHost": {
+      "path": "windows-host/package/Sources/FactoryProbe/main.swift",
+      "status": "source-ready",
+      "registration": "AddFontResourceExW FR_PRIVATE before Bridge.load; RemoveFontResourceExW via defer",
+      "rendererSelection": "unproven"
+    }
+  },
+  "evidence": {
+    "macReceipt": "factory/native/macos/evidence/20261010-tinos-pilot/font-provider-receipt.json",
+    "macReceiptStatus": "PASS; 20/20 process-only resource identity runs",
+    "windowsProviderSource": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/bundled-font-readiness-v1/resources/directwrite-private-font.cpp",
+    "windowsStatus": "host source ready; native provider and renderer identity held"
+  },
+  "holds": [
+    "exact Tinos bytes must be selected by Windows measurement/render provider",
+    "factory probe cannot make isolated DirectWrite collection visible to existing renderer without renderer/provider hook",
+    "ABI 0.6 bridge has no font-byte registration API",
+    "ABI 0.6 MeasureRequest has no lineLimit field; Tinos witness requests lineLimit(1)",
+    "fresh root compile/count1/count20 native layout/text/paint/UIA receipts required",
+    "Windows host packet requires root provider metrics arguments and fresh bounded build/capture before any qualification"
+  ],
+  "qualification": "held; do not count toward five",
+  "measuredOutputs": null
+}

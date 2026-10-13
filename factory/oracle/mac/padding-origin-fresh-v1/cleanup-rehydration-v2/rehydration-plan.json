@@ -1,0 +1,90 @@
+{
+  "kind": "padding-origin-fresh-v1-cleanup-rehydration",
+  "version": 2,
+  "status": "ACTUAL_REPLAY_PASS_PENDING_PEER_REVIEW",
+  "protocol": {
+    "archiveManifestVersion": "1",
+    "versionType": "string-exact",
+    "boolAccepted": false,
+    "integerAccepted": false,
+    "unknownStringAccepted": false
+  },
+  "historicalReview": {
+    "actualMac20Status": "CLEAR_ACTUAL_CANDIDATE_ORIGIN_20",
+    "independentReport": "factory/oracle/mac/padding-origin-fresh-v1/independent-review-v1/report.json",
+    "independentReportSha256": "sha256:c34df5ee099add13ed3f9a39cd2a2349f6edcb9f460a547f8a71680b4bc54a6f",
+    "replayRan": true,
+    "cleanupRan": false
+  },
+  "archive": {
+    "manifest": "factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json",
+    "manifestSha256": "sha256:66cb21fad8d62d556e1954aeb9da232f5c05709f172242f050a227068629a8b7",
+    "extractor": "factory/oracle/mac/compiler-tool-archive-v1/archive_tool_bytes.py",
+    "extractorSha256": "sha256:d9853b3c78c647da7b6c5834e48d7b57460c6aa262b3697ddee27f462d5a0f5f",
+    "entries": [
+      {
+        "logicalPaths": ["/usr/bin/xcrun"],
+        "archivePath": "tools/xcrun",
+        "compression": "none",
+        "compressedBytes": 199024,
+        "compressedSha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+        "rawBytes": 199024,
+        "rawSha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+      },
+      {
+        "logicalPaths": [
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend"
+        ],
+        "archivePath": "tools/swift-frontend.gz",
+        "compression": "gzip",
+        "compressedBytes": 60527695,
+        "compressedSha256": "sha256:c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e",
+        "rawBytes": 173118384,
+        "rawSha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      }
+    ]
+  },
+  "helper": {
+    "path": "factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/rehydrate.py",
+    "sha256": "sha256:9d37f7fed087a011ea2a0704a077c44536dd39a9d30364f13e94d7603e793f4a",
+    "controls": "factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/test_rehydrate.py",
+    "controlsSha256": "sha256:2fc0186f05bf1deeed84e3ca7d8dfff3eb265e8822e4f0ac5aa8ed72c893e869",
+    "controlsPassed": 5
+  },
+  "consumerMappings": {
+    "reader": "factory.pipeline.reader_config.load_origin_reader_config -> factory.pipeline.archive_reader.ArchiveByteReader",
+    "macPathMap": {
+      "/usr/bin/xcrun": "xcrun",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw"
+    },
+    "mappingPolicy": "relative-to-rehydrated-cache; preserve current hash-named raw-cache target"
+  },
+  "actualReplay": {
+    "processReceipt": "factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/actual-replay-receipt.json",
+    "processReceiptSha256": "sha256:a872b5542146b6ddc102cadeafe5296c2a75ef232fde1780bba3bda2ce6437c1",
+    "status": "PASS",
+    "pid": 68959,
+    "exitCode": 0,
+    "currentToolReadsDuringReplay": 0,
+    "nativeExecutions": 0,
+    "compilerExecutions": 0,
+    "productionMapping": "PASS",
+    "outputDir": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/cleanup-rehydration-v2-actual",
+    "outputFiles": {
+      "xcrun": {"bytes": 199024, "mode": "0644", "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"},
+      "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw": {"bytes": 173118384, "mode": "0644", "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"},
+      "reader_config.json": {"bytes": 492, "mode": "0644", "sha256": "sha256:33e7a666fe8056585dd16afaa7a8db0ddbcac5d7fb6ef7aa29d39b2ec7bf41f4"},
+      "verification-receipt.json": {"bytes": 2469, "mode": "0644", "sha256": "sha256:ffb42e671e675211bec7fb33db2913105009620c408451da74fd76d44454c1e2"}
+    }
+  },
+  "cleanupBoundary": {
+    "currentActualCache": "factory/oracle/mac/padding-origin-fresh-v1/actual/mac-origin-tool-cache",
+    "internalScratch": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1",
+    "newReplayCache": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/cleanup-rehydration-v2-actual",
+    "owner": "root",
+    "deleteOnlyAfter": ["f1_residuals review", "duplicate_validator review", "consumer mapping review"],
+    "thisPacketDeletes": false
+  }
+}

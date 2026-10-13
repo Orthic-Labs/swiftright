@@ -1,0 +1,1 @@
+Archived root-owned bounded probe evidence. Source probe emitted eight records (four geometry controls × continuous/circular) in 9,518 bytes; compile 1.672s, run 0.586s, no window/AX/renderer. Copied from `.factory-work/root-logs/continuous-path-probe-run-r1`; source packet remains separate.

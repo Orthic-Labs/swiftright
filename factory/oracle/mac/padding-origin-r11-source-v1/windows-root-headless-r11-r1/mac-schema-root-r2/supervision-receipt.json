@@ -1,0 +1,37 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "factory/.venv/bin/python",
+    "factory/oracle/mac/padding-origin-r11-source-v1/mac-common-schema-r11-v1/verify-common-schema-r11.py",
+    "--tuple",
+    "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-headless-r11-r1/coordinator-r1/candidate-tuple.json",
+    "--schema",
+    "factory/native/windows/settled-capture-adapter-v3/dependencies/common.schema.json",
+    "--root-nonce",
+    "9ecd6b84d8a0429393909aba87743742",
+    "--source-hash",
+    "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "--expected-tuple-id",
+    "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "--source-binding-file",
+    "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-headless-r11-r1/actual-inputs/source-binding.json",
+    "--source-archive-file",
+    "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-headless-r11-r1/actual-inputs/source-binding.json"
+  ],
+  "pid": 84847,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-11T17:17:02.449089+00:00",
+  "finishedAt": "2026-10-11T17:17:03.301409+00:00",
+  "seconds": 0.852,
+  "peakGroupRssBytes": 31539200,
+  "stdout": {
+    "bytes": 2058,
+    "sha256": "20b11b0841f7ca730635f0dc4cfd3e31a02633ea9947f2f78ab2682e6ece47d1"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ownedGroupQuiescent": true
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "sr0-tuple12-workload-lifecycle-v6",
+  "status": "source-ready-pending-root-parse",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "overlay_source": {
+    "run-workload": "a593d2dc2eacec6f43fd47c49ef278cc388ec98af9f644c49e02dc44a727765d",
+    "task-workload": "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e",
+    "verify-artifacts": "d412213c28c4e716f76ef59b6a609c4297f566f05cf1942ceb0c520b6c2c8e82",
+    "sample-resources": "90b2bc9fda6c2b5e0c7ca244508e1a7d84e9a5640d2089394ea51e7cc6d11b13"
+  },
+  "controls_sha256": "1490ea2535b4404771507af36b8e614c2c6da9b2059c5d836e69d4f86c472bbb",
+  "v5_provenance": "qualification/tuple12-takeover/workload-controls-v5",
+  "notes": [
+    "PresentMon forced-stop path logs signed .NET exit, raw DWORD, kernel exit, stop mode, owned session stop result, and bounded session-absent proof.",
+    "Worker and sampler proof rejects raw sentinel 259 and requires signed kernel/.NET equality.",
+    "NoActivate semantic admission requires three valid runs, guarded startup, HWND_BOTTOM/SWP_NOACTIVATE, host startup marker, and WORKLOAD-WIN-DONE aborted=false."
+  ]
+}

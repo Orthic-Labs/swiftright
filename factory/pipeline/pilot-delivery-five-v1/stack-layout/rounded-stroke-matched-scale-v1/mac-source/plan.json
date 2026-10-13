@@ -1,0 +1,125 @@
+{
+  "kind": "macos-source-package-plan-v1",
+  "status": "source-ready-pending-root-compile-capture",
+  "probeTag": "swiftui.shapes.fill-stroke.abi-rect-border.v1",
+  "witnessIdentity": "swiftui.shapes.fill-stroke.abi-rect-border.v1.witness",
+  "witnessPath": "Sources/FactoryProbe/Witness.swift",
+  "witnessSha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+  "adapterPath": "Sources/FactoryProbe/CaptureHost.swift",
+  "adapterOrigin": "factory/native/macos/CaptureHost.swift",
+  "adapterOriginSha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+  "adapterSha256": "sha256:46ed21bd8826d78985a711289e3fc7704077bf91c02e0e485c5a98dc21aead6c",
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74303a27803b70f15e4d71af134d7d39ecaf2b26744b2d183aac718b6b2d101f",
+      "bytes": 230
+    },
+    {
+      "path": "Sources/FactoryProbe/CaptureHost.swift",
+      "sha256": "sha256:46ed21bd8826d78985a711289e3fc7704077bf91c02e0e485c5a98dc21aead6c",
+      "bytes": 13160
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+      "bytes": 298
+    },
+    {
+      "path": "permission-policy.json",
+      "sha256": "sha256:9dde8cacfceafacfbee523401d35fb126daccbc75091f4c3d8e988a69c6ea90d",
+      "bytes": 393
+    },
+    {
+      "path": "tools/compile-mac-source.sh",
+      "sha256": "sha256:0d2a7a064fda494596e77dd4d15f2b8f8cf598eb61a9f9b16179a9c34edcf866",
+      "bytes": 1602
+    },
+    {
+      "path": "tools/prepare-mac-source.sh",
+      "sha256": "sha256:74f145e6e096640fedc44ed20e12c99330a5800860a13f9cbe0c391ad3db9359",
+      "bytes": 1003
+    },
+    {
+      "path": "tools/provision-main-bundle-assets.sh",
+      "sha256": "sha256:69b8029d072e0097edce666fd9c240a65abfc8e1fff885725bacb349f4253630",
+      "bytes": 79
+    }
+  ],
+  "fixedViewport": {
+    "widthPoints": 320,
+    "heightPoints": 240,
+    "scale": 2.5,
+    "widthPixels": 800,
+    "heightPixels": 600,
+    "alignment": "center",
+    "background": "opaque white",
+    "colorScheme": "light"
+  },
+  "observableTags": {
+    "probeTag": "swiftui.shapes.fill-stroke.abi-rect-border.v1",
+    "witnessIdentity": "swiftui.shapes.fill-stroke.abi-rect-border.v1.witness"
+  },
+  "internalScratchRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/rounded-stroke-matched-scale-v1",
+  "signedRecorderPattern": "factory/native/macos/CaptureHost.swift; root-owned signed recorder preflight",
+  "permissionPolicy": "permission-policy.json",
+  "permissionRequests": false,
+  "channels": {
+    "offscreenPaint": "pending-root-capture",
+    "rootLayout": "pending-root-capture",
+    "compositorPaint": "pending-root-capture",
+    "externalAccessibility": "pending-root-preflight",
+    "witnessInternalLayoutCallbacks": "held",
+    "animation": "not-attempted"
+  },
+  "caseHash": null,
+  "hostHash": null,
+  "binaryHash": null,
+  "outputs": null,
+  "executionEligible": false,
+  "nativeParity": "hold-until-root-receipts",
+  "compiler": {
+    "resolver": [
+      "/usr/bin/xcrun",
+      "--find",
+      "swiftc"
+    ],
+    "argv": [
+      "/usr/bin/xcrun",
+      "swiftc",
+      "-parse-as-library",
+      "-O",
+      "-o",
+      "<internal-app>/Contents/MacOS/FactoryProbe",
+      "<source>/Sources/FactoryProbe/Witness.swift",
+      "<source>/Sources/FactoryProbe/CaptureHost.swift"
+    ],
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "receipt": "root-owned compiler receipt required",
+    "sourceDrift": false
+  },
+  "rootScripts": {
+    "prepare": "tools/prepare-mac-source.sh",
+    "assets": null,
+    "compile": "tools/compile-mac-source.sh"
+  },
+  "strokeGeometry": {
+    "swiftUI": "centered stroke on RoundedRectangle path",
+    "abi": "SWR_PRIM_RECT optional radius/border fields; header does not define inside or centered edge semantics",
+    "evidence": [
+      "package/Sources/FactoryProbe/FactoryShapePrimitive.swift:5-8 documents ABI mapping & centered-stroke hold",
+      "factory/native/windows/remaining-five-hosts-v2/dependencies/staged-bridge-inputs-r09/Sources/CSwiftRight/swiftright.h:310-332 defines rect/radius/border fields without edge placement"
+    ],
+    "correction": "none",
+    "status": "hold-until-paired-mac-windows-pixels"
+  },
+  "memorySupervision": {
+    "owner": "root",
+    "kind": "process-group-rss-watchdog",
+    "maxBytes": 1073741824,
+    "status": "required-before-root-compile",
+    "localVmUlimit": false,
+    "scope": "xcrun swiftc plus child processes in fresh internal scratch/app paths"
+  }
+}

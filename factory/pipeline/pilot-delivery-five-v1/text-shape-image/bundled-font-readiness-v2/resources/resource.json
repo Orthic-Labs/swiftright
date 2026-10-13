@@ -1,0 +1,70 @@
+{
+  "kind": "font-resource-candidate",
+  "version": "0.1",
+  "id": "font.tinos.regular",
+  "retrievedAt": "2026-10-10T17:39:50Z",
+  "font": {
+    "path": "Tinos-Regular.ttf",
+    "sha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "sizeBytes": 521588,
+    "family": "Tinos",
+    "fullName": "Tinos Regular",
+    "postScriptName": "Tinos-Regular",
+    "designer": "Steve Matteson",
+    "upstreamCopyright": "Copyright 2026 The Tinos Project Authors"
+  },
+  "license": {
+    "path": "OFL.txt",
+    "name": "SIL Open Font License 1.1",
+    "sha256": "sha256:cb3382d4643e8b02c12e322c220a3c76a5020d667e4fd4e7c75e744cca6caa6b",
+    "copyright": "Copyright 2026 The Tinos Project Authors",
+    "modified": false
+  },
+  "provenance": {
+    "fontUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/tinos/Tinos-Regular.ttf",
+    "fontRepository": "https://github.com/google/fonts",
+    "fontRepositoryPath": "ofl/tinos/Tinos-Regular.ttf",
+    "googleFontsGitBlobSha": "893a1b525962984481aee5ce275516d384eb4865",
+    "googleFontsApiSizeBytes": 521588,
+    "metadataPath": "METADATA.pb",
+    "metadataSha256": "sha256:e9db6bd24890351be0ac41486fbcf4ccb10b34ec19f2e77d7a5517f2eb1dbafe",
+    "metadataUpstreamSourceCommit": "3b4482a99b80ea5fc75f187b1be3120a3f5905b3",
+    "licenseUrl": "https://raw.githubusercontent.com/googlefonts/tinos/main/OFL.txt",
+    "licenseRepository": "https://github.com/googlefonts/tinos"
+  },
+  "qualification": {
+    "status": "candidate",
+    "review": "pending maintainer review",
+    "platform": "macOS 27.0.1 build 26A434",
+    "registration": {
+      "api": "CTFontManagerRegisterFontsForURL",
+      "scope": "process",
+      "registered": true,
+      "systemFontInstallationPerformed": false,
+      "permissionPromptObserved": false
+    },
+    "postScriptNameObserved": "Tinos-Regular",
+    "metricsAt18pt": {
+      "ascent": 16.0400390625,
+      "descent": 3.8935546875,
+      "leading": 0.7646484375,
+      "capHeight": 11.7861328125,
+      "xHeight": 8.26171875,
+      "unitsPerEm": 2048
+    },
+    "imageRenderer": {
+      "pngPath": "evidence/tinos-render.png",
+      "pngSha256": "sha256:774f1e91cb6984f130f50b6ec00a41c3483a5761035591471d5bd30064081c0a",
+      "widthPixels": 510,
+      "heightPixels": 172,
+      "scale": 2,
+      "controlSourcePath": "font-control.swift",
+      "controlSourceSha256": "sha256:bf53085cf75fefd93634e64dc60931da147be16b7a4186171da609e9138b7e38",
+      "resultPath": "evidence/tinos-process-qualification.json"
+    },
+    "windowsFontApi": {
+      "status": "held",
+      "detail": "DirectWrite private font collection behavior remains unverified; requires Windows-native host qualification."
+    }
+  }
+}

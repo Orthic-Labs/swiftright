@@ -1,0 +1,111 @@
+{
+    "kind":  "factory-final-exit-certificate-v1",
+    "scope":  "owner-release-only",
+    "qualification":  "failed-or-successful-observation-only",
+    "start":  {
+                  "pid":  61364,
+                  "retainedHandle":  2952,
+                  "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\rectangle\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+                  "startedAt":  "2026-10-12T16:06:22.5634346Z",
+                  "lockOwner":  "factory-rectangle-61ae3e015fe043c0aad1d5b23fac5dd2 2026-10-12T16:06:14.3608807+00:00",
+                  "workerId":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\rectangle\\captures\\centered-count20-r1\\native\\count20-r1\\native-02",
+                  "compileReceiptHash":  "c6d2b4818d455087ac91c85cf07ce51abe19845c034e7217eb091a128b734e9b",
+                  "exeHash":  "ff678d7e8859f56a37b731e399fa14e6903f71a2d5e9f5dbe76bf0a5f23bd848"
+              },
+    "sample":  {
+                   "phase":  "raw-closure-final",
+                   "at":  "2026-10-12T16:06:26.3811973+00:00",
+                   "waitMilliseconds":  0,
+                   "retainedHandle":  2952,
+                   "handlePid":  61364,
+                   "kernelBefore":  0,
+                   "kernelAfter":  0,
+                   "getExitCodeSucceeded":  true,
+                   "exitCode":  0,
+                   "errors":  [
+
+                              ]
+               },
+    "rawStreams":  [
+                       {
+                           "name":  "stdout",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stdout",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion",
+                           "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\rectangle\\captures\\centered-count20-r1\\native\\count20-r1\\native-02\\host.stdout.txt",
+                           "sha256":  "9c5f69dc49dfe2e8554bcebc1565ebcc2546cc4531a88514d5d753d9b3094aa1"
+                       },
+                       {
+                           "name":  "stderr",
+                           "copyCompleted":  true,
+                           "destinationClosed":  true,
+                           "sealed":  true,
+                           "hashQualification":  "sealed-raw",
+                           "taskStatus":  "RanToCompletion",
+                           "taskIsCompleted":  true,
+                           "taskIsFaulted":  false,
+                           "taskIsCanceled":  false,
+                           "taskException":  "",
+                           "sourceIsAsync":  false,
+                           "closure":  {
+                                           "deadlineMilliseconds":  5000,
+                                           "flushDisposition":  "requested-terminal-copy",
+                                           "flushCompleted":  true,
+                                           "destinationClosed":  true,
+                                           "completedWithinDeadline":  true,
+                                           "deadlineExpired":  false,
+                                           "error":  "",
+                                           "before":  {
+                                                          "name":  "stderr",
+                                                          "copyCompleted":  true,
+                                                          "destinationClosed":  false,
+                                                          "sealed":  false,
+                                                          "hashQualification":  "diagnostic-partial",
+                                                          "taskStatus":  "RanToCompletion",
+                                                          "taskIsCompleted":  true,
+                                                          "taskIsFaulted":  false,
+                                                          "taskIsCanceled":  false,
+                                                          "taskException":  "",
+                                                          "sourceIsAsync":  false,
+                                                          "closure":  null,
+                                                          "closureTaskStatus":  "not-started"
+                                                      }
+                                       },
+                           "closureTaskStatus":  "RanToCompletion",
+                           "path":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\rectangle\\captures\\centered-count20-r1\\native\\count20-r1\\native-02\\host.stderr.txt",
+                           "sha256":  "82e0cff0a139eb547c791c1530dd48413b6c6e6f784b76936a63f91c38955fcc"
+                       }
+                   ]
+}

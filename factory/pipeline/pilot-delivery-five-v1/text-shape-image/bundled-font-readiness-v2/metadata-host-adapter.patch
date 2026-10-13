@@ -1,0 +1,41 @@
+# Prospective diff against
+# factory/native/windows/remaining-five-hosts-v2/text.bundled-font/package/Sources/FactoryProbe/main.swift
+# Apply only after a Windows provider supplies exact Tinos bytes + metrics.
+# This is source guidance; no production host was edited by this packet.
+@@ NativeMeasurer.measure
+-            guard request.fontID == "body", request.fontMetadata == nil, request.lineLimit == nil,
+-                  Float(request.scale) == scale else { throw NSError(domain: "FactoryUnsupportedMeasurementStyle", code: 1) }
++            guard Float(request.scale) == scale else {
++                throw NSError(domain: "FactoryUnsupportedMeasurementScale", code: 1)
++            }
++            // resource resolver must verify Tinos-Regular.ttf SHA-256 before returning metrics.
++            let bound = try factoryBundledMeasureRequest(
++                request,
++                resource: FactoryBundledFontResource(
++                    family: "Tinos",
++                    postScriptName: "Tinos-Regular",
++                    resourceSHA256: "60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
++                    path: "factory/resources/fonts/Tinos-Regular.ttf"
++                ),
++                resolve: factoryResolveBundledFont,
++                scale: scale
++            )
+             let result: SwiftRightBridge.TextMeasurement
+             if let cached = retained[request] { result = cached }
+             else {
+                 guard retained.count < 128 else { throw NSError(domain: "FactoryMeasurementCacheBound", code: 1) }
+-                result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: "Segoe UI",
+-                  color: 0x1f1f1fff, fontSize: 16, lineHeight: 24, scale: scale,
+-                  maxWidth: Float(request.proposedWidth ?? 0) * scale))
++                result = try bridge.measure(bound.request)
+                 retained[request] = result
+@@
+-            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale),
+-              height: CGFloat(result.height / scale)), baseline: CGFloat(result.firstBaseline / scale), lineCount: result.lineCount)
++            // ABI 0.6 MeasureRequest has no lineLimit field. Keep lineLimit shaping held;
++            // do not truncate or rewrite result height in host.
++            guard request.lineLimit == nil else {
++                throw NSError(domain: "FactoryLineLimitShapingUnavailable", code: 1)
++            }
++            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale),
++              height: CGFloat(result.height / scale)), baseline: CGFloat(result.firstBaseline / scale), lineCount: result.lineCount)

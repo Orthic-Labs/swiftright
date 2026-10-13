@@ -1,0 +1,58 @@
+{
+  "assetCandidate": {
+    "assetSourcePath": "FactoryImageAsset.swift",
+    "assetSourceSha256": "sha256:9581980d63ed0b13ba268edabf5f9cf1f600425f8434dce31caaa475e764b69f",
+    "height": 2,
+    "name": "sr1.rgba.checker",
+    "recipePath": "asset-recipe.json",
+    "recipeSha256": "sha256:68defadea08010920c1a690d8dbd20d58f731f4ed697f6a270dc598867ed0d44",
+    "rgbaSha256": "sha256:c21b35e3f28e676cedf24c13575a7346682e101a2d26aad9598d0cdbcee9ee3b",
+    "routePatchPath": "main-image-route.patch",
+    "routePatchSha256": "sha256:a2d2a04057ebd824754182515550057ed59693ce95246b1659e67154b5366ca9",
+    "width": 2,
+    "witnessPath": "asset-Witness.swift",
+    "witnessSha256": "sha256:ce5f98509a95a62b698fd16b4d01b3eea7995101d7aa5c2db7fb0cafd31df88e"
+  },
+  "candidate": "swiftui.image.named-rgba-checker.pilot-next",
+  "holds": [
+    "original star.fill source remains held; no SF Symbol substitution",
+    "named asset route is prospective until root build/capture",
+    "provider.paint, native.screenshot, native.uia, native parity, & qualification pending",
+    "asset handle must be registered once, reused by Image reference, & released on window close"
+  ],
+  "kind": "prospective-image-named-rgba-adapter-v1",
+  "originalPilot": {
+    "candidate": "swiftui.image.baseline.pilot-next",
+    "hold": "star.fill requires SF Symbol catalogue/provider; ABI 0.6 image_register does not provide one",
+    "recipePath": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/recipe.json",
+    "recipeSha256": "sha256:7386167602d42709e1c7458837b60ed44a832a30a7398bed6d498a4f51dc21d5",
+    "status": "held",
+    "witnessPath": "factory/pipeline/pilot-next-source-v1/image-baseline-v1/witness.swift",
+    "witnessSha256": "sha256:4a9c0ad851d32019523ec3a8224073fa93a2ac4e032a87683633870e617f71dd"
+  },
+  "pendingMeasured": [
+    "sourceHash",
+    "recipeHash",
+    "caseId",
+    "caseHash",
+    "tupleId",
+    "tupleHash",
+    "windowsHostHash",
+    "compileReceiptHash",
+    "exeHash",
+    "nativeRows",
+    "parity"
+  ],
+  "pins": {
+    "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b"
+  },
+  "requiredInputs": [
+    "fresh package source manifest including FactoryImageAsset.swift, asset-Witness.swift, & patched main.swift",
+    "fresh Image recipe/case for named RGBA asset",
+    "fresh runtime source receipt/tree, bridge bindings, compiler, renderer, compile receipt, EXE, tuple, binding",
+    "fresh count1 then count20 native rows with layout, paint, screenshot, & UIA joins"
+  ],
+  "status": "source-only"
+}

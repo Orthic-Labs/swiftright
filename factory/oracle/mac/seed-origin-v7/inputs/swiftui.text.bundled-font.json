@@ -1,0 +1,92 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.text.bundled-font.recipe",
+  "provenance": {
+    "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.text.bundled-font",
+  "witnesses": [
+    {
+      "id": "swiftui.text.bundled-font.witness",
+      "sourceHash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70",
+      "resources": [
+        {
+          "id": "swiftui.text.bundled-font.witness.swift",
+          "hash": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.text.bundled-font.assertion.primary",
+      "channel": "text",
+      "expected": {
+        "text": "SwiftRight AV",
+        "font": "bundled-font-qualification-held",
+        "expectedLines": 1
+      },
+      "observability": "available"
+    },
+    {
+      "id": "swiftui.text.bundled-font.assertion.font-resource",
+      "channel": "text",
+      "expected": {
+        "bundledFont": "qualification-held",
+        "reason": "repository contains no bundled font resource"
+      },
+      "observability": "blocked"
+    }
+  ],
+  "axes": [
+    {
+      "id": "size",
+      "values": [
+        12,
+        16,
+        20
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "weight",
+      "values": [
+        "regular",
+        "medium",
+        "bold"
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "width",
+      "values": [
+        80,
+        120
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.text.bundled-font.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:ef279c643d80960ed6e7b4444c7b2493c9bf1ebda1e65ecdbc8ed7bc81aef12f"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.text.bundled-font.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

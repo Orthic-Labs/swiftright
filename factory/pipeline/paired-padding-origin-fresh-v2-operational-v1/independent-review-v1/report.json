@@ -1,0 +1,123 @@
+{
+  "actualCounts": {
+    "descriptorsVerified": 180,
+    "parityQualified": false,
+    "schemaCollected": 20,
+    "semanticOriginAccepted": 20,
+    "windowsTyped": 0
+  },
+  "controls": {
+    "actualTempRemoved": true,
+    "missingMappingFault": [
+      "mac-origin:read-failed: adapter: review missing mapping"
+    ],
+    "sameLengthSourceFault": [
+      "mac-origin:hash: adapter",
+      "mac-origin:hash: main source CaptureHost.swift"
+    ],
+    "semanticOriginBaseline20": true,
+    "sourcePinFunctionCalled": false,
+    "validJSONArtifactFault": "verified reader returned bytes differing from expected hash: /Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/actual/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258/run-001/capture.json"
+  },
+  "findings": [
+    {
+      "id": "dead-source-pin-gate",
+      "proof": "verify_source_pins defined but actual main never invokes it (independent spy observed zero calls). execute_workflow uses workflow current-file-hash snapshots, unlike v1 explicit immutable runs/source gate. Recorded actual bytes independently match frozen packet, but reusable v2 cannot claim immutable source closure.",
+      "required": "Call & retain immutable source pin verification before workflow consumption; test changed valid capture/source pin fails specific gate. Preserve this frozen packet in successor."
+    }
+  ],
+  "rehydrationReceipt": {
+    "compilerExecutions": 0,
+    "configSha256": "sha256:9d6e346a20fbd246683f89a362a8433e13a8f54714d1b55c9c2f38aef2e58a3d",
+    "helper": {
+      "argv": [
+        "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+        "/Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/rehydrate.py",
+        "--output-dir",
+        "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/paired-padding-origin-fresh-v2-operational-r1-56009"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "exitCode": 0,
+      "helperPath": "/Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/rehydrate.py",
+      "helperSha256": "sha256:9d37f7fed087a011ea2a0704a077c44536dd39a9d30364f13e94d7603e793f4a",
+      "planSha256": "sha256:1d5334affee4c5214a25177d3865d643536ae9d28462a03add8c6068f865311a",
+      "status": "PASS",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSha256": "sha256:ffb42e671e675211bec7fb33db2913105009620c408451da74fd76d44454c1e2",
+      "tempRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/paired-padding-origin-fresh-v2-operational-r1-56009",
+      "verificationReceipt": {
+        "archiveManifest": {
+          "path": "/Volumes/D/claude/swiftright/factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json",
+          "sha256": "sha256:66cb21fad8d62d556e1954aeb9da232f5c05709f172242f050a227068629a8b7"
+        },
+        "archiveManifestVersion": "1",
+        "candidateOnly": true,
+        "compilerExecutions": 0,
+        "currentToolReadsDuringReplay": 0,
+        "extracted": [
+          {
+            "action": "WRITTEN",
+            "archivePath": "tools/xcrun",
+            "archiveSha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+            "bytes": 199024,
+            "mode": "0644",
+            "path": "xcrun",
+            "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+          },
+          {
+            "action": "WRITTEN",
+            "archivePath": "tools/swift-frontend.gz",
+            "archiveSha256": "sha256:c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e",
+            "bytes": 173118384,
+            "mode": "0644",
+            "path": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw",
+            "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+          }
+        ],
+        "modePolicy": "0644-exact",
+        "nativeExecutions": 0,
+        "noExecutableFallback": true,
+        "productionMapping": {
+          "reader": "factory.pipeline.archive_reader.ArchiveByteReader",
+          "references": [
+            {
+              "bytes": 199024,
+              "logicalPath": "/usr/bin/xcrun",
+              "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+              "target": "xcrun"
+            },
+            {
+              "bytes": 173118384,
+              "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+              "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+              "target": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw"
+            },
+            {
+              "bytes": 173118384,
+              "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+              "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+              "target": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw"
+            }
+          ],
+          "status": "PASS"
+        },
+        "readerConfig": {
+          "action": "WRITTEN",
+          "path": "reader_config.json",
+          "sha256": "sha256:33e7a666fe8056585dd16afaa7a8db0ddbcac5d7fb6ef7aa29d39b2ec7bf41f4"
+        },
+        "status": "PASS",
+        "version": 1
+      }
+    },
+    "nativeExecutions": 0,
+    "schema": "paired-padding-origin-fresh-v2-operational-rehydration-receipt",
+    "status": "PASS",
+    "tempRemoved": true,
+    "tempRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/paired-padding-origin-fresh-v2-operational-r1-56009"
+  },
+  "scope": "Actual archive-only Python rehydration & production collect/comparator/F9/F10 offline replay; no installed/current tool execution, compiler/native/remote actions. Full semantic origin guard baseline+source/mapping faults tested; no Windows parity claim.",
+  "sourceSha256": "70437f576b7875d9c76b3103156452045c6331baddfce2aade21887a87032932",
+  "stageSha256": "fe7089790a08fa57733b871e891a1691cebd5d121c6e6ca14fe7e8ba8d4791a4",
+  "verdict": "CLEAR_ACTUAL_ARCHIVE_REPLAY_HOLD_MISSING_FROZEN_SOURCE_PIN_GATE"
+}

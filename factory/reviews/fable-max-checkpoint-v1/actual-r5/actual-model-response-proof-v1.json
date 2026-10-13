@@ -1,0 +1,95 @@
+{
+  "kind": "factory-actual-fable-availability-proof-v1",
+  "sessionId": "0fc4962a-d0fa-4ca4-a782-21eb705c9bc1",
+  "actualModels": [
+    "claude-fable-5-1"
+  ],
+  "actualAssistantRows": 40,
+  "transcriptSha256": "51493b5a597b6cc32e491b3142f69c2aaf5ff7e6a36fe17eef9972cd58d0b9b7",
+  "transcriptBytes": 550366,
+  "reviewCompleted": false,
+  "modelResponseObserved": true,
+  "lastToolCalls": [
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v1/windows-source/provider-bound-delivery-v2/provider-evidence/provider-metadata.json"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-delivery-v1/witness.swift"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-delivery-v1/package/Sources/FactoryProbe/FactoryCenteredLayout.swift"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/stack-layout/stack-overlay-centered-delivery-v1/review-notes.md"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/observed-mac20-r1/summary.json"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/docs/sr0-status.md",
+        "limit": 60
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/text-shape-image/rounded-stroke-host-v1/mac-source/Sources/FactoryProbe/Witness.swift"
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "style: RoundedCornerStyle = \\.",
+        "glob": "**/Shapes.swift",
+        "output_mode": "content",
+        "-n": true,
+        "head_limit": 30
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "cornerRadius: CoreFoundation\\.CGFloat, style: SwiftUI\\.RoundedCornerStyle = ",
+        "path": "/Volumes/D/claude/swiftright/factory/catalogue",
+        "output_mode": "content",
+        "-n": true,
+        "head_limit": 10
+      }
+    },
+    {
+      "name": "Glob",
+      "input": {
+        "pattern": "**/swiftright.h"
+      }
+    },
+    {
+      "name": "Glob",
+      "input": {
+        "pattern": "factory/pipeline/pilot-delivery-five-v1/*"
+      }
+    },
+    {
+      "name": "Glob",
+      "input": {
+        "pattern": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-centered-capture-count20-r1/*"
+      }
+    }
+  ]
+}

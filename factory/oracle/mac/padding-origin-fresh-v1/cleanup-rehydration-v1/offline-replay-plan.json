@@ -1,0 +1,38 @@
+{
+  "kind": "padding-origin-fresh-v1-offline-rehydration-replay",
+  "version": 1,
+  "status": "NOT_RUN",
+  "commandShape": ["PYTHONDONTWRITEBYTECODE=1", "python3", "factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v1/rehydrate.py", "--output-dir", "<new-internal-cache-child>"],
+  "preconditions": [
+    "pin archive-manifest.json, compressed archive members, raw hashes & extractor source before replay",
+    "use fresh internal cache child; do not target existing actual/mac-origin-tool-cache or scratch",
+    "verify output path is internal SwiftRightFactory cache and not repository volume",
+    "do not open installed /usr/bin/xcrun or Xcode swift-frontend paths"
+  ],
+  "steps": [
+    "verify frozen archive manifest and each compressed member size/hash",
+    "decompress gzip frontend in memory, verify reconstructed size/hash",
+    "write xcrun and hash-named frontend raw bytes only as regular mode 0644 files",
+    "write relative reader_config.json preserving consumer raw-cache mapping",
+    "load config with factory.pipeline.reader_config.load_origin_reader_config",
+    "read mapped logical paths through ArchiveByteReader and compare exact pinned hashes",
+    "write separate verification receipt with currentToolReadsDuringReplay=0, nativeExecutions=0, compilerExecutions=0"
+  ],
+  "faultControls": {
+    "tamperedCompressedBytes": "reject compressed hash",
+    "truncatedGzip": "reject decompression or raw size/hash",
+    "archivePathTraversal": "reject relative member traversal",
+    "divergentExistingBytes": "reject and preserve existing file",
+    "existing0755": "reject; never chmod or claim 0644",
+    "symlinkOutput": "reject",
+    "specialOutput": "reject",
+    "missingMappedTarget": "strict reader config rejects"
+  },
+  "postconditions": [
+    "all output files mode 0644 and regular",
+    "no executable/special/mode fallback",
+    "existing actual capture/archive bytes unchanged",
+    "current actual cache and internal scratch remain until root cleanup decision"
+  ],
+  "replayEvidence": "not generated; this source packet does not run replay"
+}

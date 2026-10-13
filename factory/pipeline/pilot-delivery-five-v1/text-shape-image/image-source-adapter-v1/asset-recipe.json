@@ -1,0 +1,27 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.image.named-rgba.recipe",
+  "block": "swiftui.image",
+  "provenance": {
+    "producer": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-source-adapter-v1",
+    "review": "prospective-source-only"
+  },
+  "witness": {
+    "id": "swiftui.image.named-rgba.witness",
+    "source": "asset-Witness.swift",
+    "sourceHash": "sha256:ce5f98509a95a62b698fd16b4d01b3eea7995101d7aa5c2db7fb0cafd31df88e"
+  },
+  "inputs": {
+    "asset": "sr1.rgba.checker",
+    "assetWidth": 2,
+    "assetHeight": 2,
+    "assetRGBAHash": "sha256:c21b35e3f28e676cedf24c13575a7346682e101a2d26aad9598d0cdbcee9ee3b",
+    "resizable": true,
+    "fit": "contain",
+    "colorScheme": "light",
+    "frame": {"width": 32, "height": 32}
+  },
+  "axes": {"colorScheme": ["light"]},
+  "qualification": "prospective; requires fresh Windows count1/count20 evidence"
+}

@@ -1,0 +1,30 @@
+{
+  "kind": "sr0-tuple12-workload-lifecycle-controls-v3",
+  "status": "source-ready-pending-Windows-parse",
+  "base_source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "source_manifest_sha256": "f45b9e0dab99428194946341b0170f0e3beed874f9f552d01fd9046f3200b7ca",
+  "materialized_source_manifest_sha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+  "workload_stage": "D:\\Claude\\swiftright\\.work\\sr0-r12-workload-v1",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "build_receipt": "probes/sr0-b/workload/out/tuple12-source-build-v1/observed-build-r1",
+  "overlay_source": {
+    "run_workload_sha256": "494ede1a50db4fd8fa7702a0c9ff079dcef3a3e1ab9886e1c2921709d1379e86",
+    "task_workload_sha256": "caecff705f7faebe88792f3f875263ee1069638447f145c3c6f05457c7a8d571",
+    "verify_artifacts_sha256": "d412213c28c4e716f76ef59b6a609c4297f566f05cf1942ceb0c520b6c2c8e82",
+    "sample_resources_sha256": "90b2bc9fda6c2b5e0c7ca244508e1a7d84e9a5640d2089394ea51e7cc6d11b13"
+  },
+  "policy": {
+    "workload_runs_per_configuration": 3,
+    "cross_compare_runs_per_side": 20,
+    "noactivate": true,
+    "lifecycle_proof": true,
+    "default_force_branch_preserved": true,
+    "presentmon_unique_session": "SR0BWL-$Tag",
+    "control_root_override": true,
+    "analysis_root_override": true
+  },
+  "controls_script": "qualification/test_tuple12_workload_lifecycle_v3_controls.py",
+  "controls_sha256": "d9bda02269fd4aa179d0142a646362e5191c5c955e601baaf1f4ee644ccb2a00",
+  "readme_sha256": "a5a301c8a9a7b1bf4d5d494ab3d527623b57fdf6ed5eab319a82bd5073536896"
+}

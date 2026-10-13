@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://swiftright.dev/factory/spec/v0.1/case.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["kind", "version", "id", "provenance", "recipe", "block", "inputs", "expectedCaseSetHash", "coverage", "tuple"], "properties": {
+    "kind": { "const": "case" }, "version": { "const": "0.1" }, "id": { "$ref": "common.schema.json#/$defs/id" }, "provenance": { "$ref": "common.schema.json#/$defs/provenance" }, "recipe": { "$ref": "common.schema.json#/$defs/hashRef" }, "block": { "$ref": "common.schema.json#/$defs/id" },
+    "inputs": { "type": "object", "additionalProperties": { "$ref": "common.schema.json#/$defs/canonicalValue" } }, "expectedCaseSetHash": { "$ref": "common.schema.json#/$defs/sha256" }, "coverage": { "enum": ["declared", "pairwise", "full-product", "stateful", "gate-seeded"] }, "seed": { "type": "integer" }, "tuple": { "$ref": "common.schema.json#/$defs/tuple" },
+    "settlement": { "type": "object", "additionalProperties": false, "required": ["timeoutMs", "conditions"], "properties": { "timeoutMs": { "type": "integer", "minimum": 1 }, "conditions": { "type": "array", "minItems": 1, "items": { "type": "string" } } } }
+  }, "allOf": [{ "$ref": "common.schema.json#/$defs/envelope" }, { "if": { "properties": { "coverage": { "const": "gate-seeded" } } }, "then": { "required": ["seed"] } }]
+}

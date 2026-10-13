@@ -1,0 +1,23 @@
+{
+  "kind": "remaining-five-v5-root-admission-offline-static-validation-r1",
+  "transferManifestSha256": "sha256:f545b56726f3f79981809c7ca3833dfe1613d45c9746b211236a7cf2cc3a2664",
+  "transferScriptSha256": "sha256:dd54896c4a3e93de6f39581e51d6d8231a98f1f445bf6b328082e5f434cb5c56",
+  "admissionScriptSha256": "sha256:07c6cf0ed95602ed82ee11933395c0b94afd9e26509e93e1676914a3520f2c2c",
+  "payloadFiles": 122,
+  "externalRequirements": 70,
+  "planCount": 5,
+  "sourceStageRecordsChecked": 146,
+  "windowsPowerShellAvailable": false,
+  "windowsScriptExecutionPerformed": false,
+  "swiftCompilerInvocations": 0,
+  "nativeCalls": 0,
+  "remoteCalls": 0,
+  "checks": [
+    "146 frozen stage records and payload joins",
+    "five exact plan/target pins",
+    "manifest external requirements match plan paths and hashes",
+    "no reserved PowerShell Host/PID/input variable assignments",
+    "external validation precedes destination creation",
+    "all source/stream/kernel controls precede five full preflights"
+  ]
+}

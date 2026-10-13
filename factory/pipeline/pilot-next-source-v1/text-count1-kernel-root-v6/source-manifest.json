@@ -1,0 +1,20 @@
+{
+  "kind": "factory-text-count1-kernel-root-v6-source-manifest-v1",
+  "status": "source-only-pending-root-transport-and-preflight",
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "files": [
+    {"path":"prepare_text_count1_kernel_root_v6.py","bytes":41965,"sha256":"a9141f228e2069c8b7ea27857c25202cf3fa8bc461f7c015d6587c1a07aa7d4f"},
+    {"path":"test-uia-mta-controls-r6.ps1","bytes":5418,"sha256":"6f09f43e7283a332bbe857102100a238e86865eda5cc1a5ccd615a75d3332858"},
+    {"path":"README.md","bytes":2012,"sha256":"8b06acb6f5b646f1a41a53b68dc864fd3232f1451f3e217ca29489e9cbba3bd1"},
+    {"path":"../../owned-child-kernel-cleanup-root-v3/cleanup-kernel-authority-v3.ps1","bytes":11288,"sha256":"cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13"},
+    {"path":"../../../native/windows/pilot-text-paint-root-v2/install-count1-r10-root-v5-r2.ps1","bytes":8905,"sha256":"57c9feb06f5045f523eb7363efdea1afb1e53b47d6cf0abb306a345b8956b140"}
+  ],
+  "measuredDonor": {
+    "hostPlanSha256":"de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642",
+    "sourceSha256":"4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+    "exeSha256":"33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+    "cleanupSha256":"cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13"
+  },
+  "cleanupFaults": ["missing-kernel-exit-read","still-active-259","wait-result-258","kill-attempted"]
+}

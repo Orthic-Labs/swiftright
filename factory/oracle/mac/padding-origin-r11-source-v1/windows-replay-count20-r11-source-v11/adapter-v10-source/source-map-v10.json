@@ -1,0 +1,104 @@
+{
+  "kind": "factory-fresh-r11-count20-adapter-source-map-v10",
+  "status": "source-ready-r16-task-memory-proof-pending",
+  "issuedLineage": {
+    "runID": "01acb1d24a04471fa5709dac1c4a73c5",
+    "issuedMetadataSha256": "sha256:7216cd29266556cff4fec9a214f4bd5b403218db27d2007edc90823334e500e6"
+  },
+  "plan": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/fresh-count20-adapter-plan-v2.json",
+    "sha256": "sha256:6fa3d83e9ccac74abafd3b9c9ee1226bcd604b06b7aab5be358dfc10f13449b4",
+    "bytes": 3146
+  },
+  "sources": {
+    "boundedIO": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v9-source/bounded_io_v9.py",
+      "sha256": "sha256:4d24a489ebd52adbec9f20363302662f4af6421887596af4554394fe8f3bece5",
+      "bytes": 6247
+    },
+    "lineage": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/lineage_v10.py",
+      "sha256": "sha256:18fbd6ce05fabc0741a7ded921eaa3ece77b46f575cf2054187f2b69a1964c4a",
+      "bytes": 4032
+    },
+    "produceInputMap": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/produce-input-map-v10.py",
+      "sha256": "sha256:fb2c650ed2a02f437b57531c78c77e7b079413b65b6625731d92590e8f2c2a34",
+      "bytes": 3663
+    },
+    "produceInputs": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/produce-inputs-v10.py",
+      "sha256": "sha256:34bc75517cc60311178ab89547c46e4bc3fd6a63f7e2647de8ffa4c91829cce3",
+      "bytes": 2789
+    },
+    "runAdapter": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/run-adapter-v10.py",
+      "sha256": "sha256:674b7931b9d0d976f89c7a6327fba6604af9aba6af8d05e6754f33e3dd90372e",
+      "bytes": 6996
+    },
+    "trustedReader": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/run-trusted-reader-v10.py",
+      "sha256": "sha256:9a1415230fd50ba4e1df3541b6c6f7541a7462e55335c915e963d9d604f622e2",
+      "bytes": 6604
+    },
+    "memoryFixtureControls": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/test-memory-lineage-fixture-controls-v10.py",
+      "sha256": "sha256:da2a59fe18a208e239ca5608e9d7bb424c920567c17f4b2f97ed1fafb1118c11",
+      "bytes": 3787
+    },
+    "README": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/README.md",
+      "sha256": "sha256:0791a59cd8db5b327510c7f8c01fe3f9d182b3eb89f74e920ea5418c23c36778",
+      "bytes": 1624
+    },
+    "planDeriver": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/derive-adapter-plan-r16.py",
+      "sha256": "sha256:7b98a0e05d83d74615f674d3b2e337e6e884925c3a21236827ca9c6cef2930ba",
+      "bytes": 4540
+    },
+    "planDeriverFixtureControls": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/test-r16-plan-deriver-fixtures.py",
+      "sha256": "sha256:2b7213d8fdd9100478199e92ae64b06bc911f7962d70bc553e2c1b330848b594",
+      "bytes": 3620
+    },
+    "r16Commands": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/r16-adapter-commands-v1.md",
+      "sha256": "sha256:68bf627deb10e40ecb765228fede155b8bf7d734c8b7a7b2cdb4849328ce6be5",
+      "bytes": 5225
+    }
+  },
+  "frozenDependencies": {
+    "producerV7": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v7-source/produce-inputs-v7.py",
+      "sha256": "sha256:9598dac17eabb3a137b3a60b37f3ff3839444dd50e5cdd1de99ca60b90058ab5",
+      "bytes": 4941
+    },
+    "normalizerV6": {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/run-adapter-v6.py",
+      "sha256": "sha256:c9cc0824541912584234a10ad774b2c3f70856be79d1df2beebcd6cc06f1cf3d",
+      "bytes": 6604
+    },
+    "proofBuilderR2": {
+      "path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/windows-exit-proof-r2/build-count20-proof-r2.py",
+      "sha256": "sha256:e31898549158c4e39939fe91181605819a14325b681a43d00e402be9d5079739",
+      "bytes": 10352
+    }
+  },
+  "bounds": {
+    "jsonBytes": 2097152,
+    "archiveFileBytes": 67108864,
+    "archiveOperationBytes": 268435456,
+    "chunkBytes": 1048576
+  },
+  "rules": [
+    "issued runID and metadata SHA256 are required from plan & actual task result",
+    "memory receipt requires actual 1 GiB job cap, 0x200 limit flag, active process count 1, killOnJobClose false, bounded peak, positive parent PID",
+    "every input/archive ref is stat/hash/byte checked before production validation",
+    "fixture controls are never native evidence or qualification"
+  ],
+  "r16IssuedEvidence": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-headless-v16-r1/coordinator-r1/issued-metadata.json",
+    "sha256": "sha256:7216cd29266556cff4fec9a214f4bd5b403218db27d2007edc90823334e500e6",
+    "bytes": 29313
+  }
+}

@@ -1,0 +1,81 @@
+{
+    "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\text-late-cleanup-r2\\cleanup-result.json",
+    "bytes":  5196,
+    "sha256":  "2fd77664984b7561af5541a467c061174e92e3c25e46c8e797576f7004547f74",
+    "receipt":  {
+                    "kind":  "text-count20-r9-owned-cleanup-v1",
+                    "status":  "cleanup-held",
+                    "qualificationClaim":  false,
+                    "lockAction":  "none",
+                    "expectedOwner":  "factory-rectangle-9526f6f062a841d69ec4a860f4b4cd03 2026-10-12T03:57:15.1903850+00:00",
+                    "identityPath":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\text-late-cleanup-r2\\identity-input.json",
+                    "identitySha256":  "f564dcbe1bc473ddc8096c5d14c072614540b98aacefc78fe431bafa5833e3c5",
+                    "coordinatorPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\control-count20-r5\\coordinator.json",
+                    "coordinatorSha256":  "72b872b2e87b2bb239e68c6ce33ae8a2b895f4fd19c72aedad5479e3e304cb6a",
+                    "taskResultPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\control-count20-r5\\task-result.json",
+                    "taskResultSha256":  "fdea9ecef57d92e8d988cfb99ca8b7ec5f65572ce08537310431dffae84120e2",
+                    "sourceInputsPath":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\admission-count20-r5\\source-inputs.json",
+                    "sourceInputsSha256":  "6c335ddead9c023b1faf40bc9e02fb679112f48ec1955934dd28ce4268789c22",
+                    "outcomePaths":  [
+                                         "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\native\\count20-r5\\native-01\\capture-outcome.json",
+                                         "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\native\\count20-r5\\native-02\\capture-outcome.json"
+                                     ],
+                    "outcomeSha256s":  [
+                                           "6021dfdab7ab245976dcc88cbbd6d7642ce64a684a65f9d8c4ef628bc916c3b9",
+                                           "60ebf282f7d16b48a4eb6d9408fcd1574addc49459376f9d9e7e4db209e47a55"
+                                       ],
+                    "inventoryPaths":  [
+                                           "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\native\\count20-r5\\native-01\\owned-worker-inventory.json",
+                                           "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\text-mta-r11-count20-r9\\native\\count20-r5\\native-02\\owned-worker-inventory.json"
+                                       ],
+                    "inventorySha256s":  [
+                                             "5605275d710cd041872674c94cbfe9f8c90a34e4cde3b711eb2533f3ca1cc186",
+                                             "3c40c9f1b47b0e0ccdc2d2134968de55c65d7e225466ac31cd7a3bfd76ec719f"
+                                         ],
+                    "identities":  [
+                                       {
+                                           "pid":  50080,
+                                           "expectedPath":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\\build-bound-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+                                           "expectedStartUtc":  "2026-10-12T03:57:39.1989562Z",
+                                           "expectedExeSha256":  "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+                                           "action":  "absent-at-cleanup",
+                                           "identityMatch":  true,
+                                           "hasExited":  null,
+                                           "kernelTerminal":  true,
+                                           "exitCodeRaw":  null,
+                                           "streamsSealed":  true,
+                                           "memoryBounded":  true,
+                                           "currentAbsenceAuthority":  "current-not-present-at-cleanup",
+                                           "absenceDecision":  "absent-original-terminal-proof",
+                                           "absenceWithOriginalTerminalProof":  true
+                                       },
+                                       {
+                                           "pid":  26108,
+                                           "expectedPath":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\\build-bound-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+                                           "expectedStartUtc":  "2026-10-12T03:58:13.9333787Z",
+                                           "expectedExeSha256":  "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+                                           "action":  "absent-at-cleanup",
+                                           "identityMatch":  false,
+                                           "hasExited":  null,
+                                           "kernelTerminal":  false,
+                                           "exitCodeRaw":  null,
+                                           "streamsSealed":  false,
+                                           "memoryBounded":  true,
+                                           "currentAbsenceAuthority":  "current-not-present-at-cleanup",
+                                           "absenceDecision":  "held-absent-without-proof",
+                                           "currentAbsenceOriginalProof":  false
+                                       }
+                                   ],
+                    "failed":  [
+                                   "PID 26108 absent without pinned original terminal proof"
+                               ],
+                    "deadlineSeconds":  30,
+                    "memoryLimitBytes":  1073741824,
+                    "streamCapBytes":  8388608,
+                    "terminationPolicy":  "only exact PID+path+UTC start+EXE hash; kernel wait retained until sealed receipt",
+                    "historicalFailurePreserved":  true,
+                    "nativeActions":  0,
+                    "terminationActions":  0,
+                    "checkedAt":  "2026-10-12T04:25:19.3642725+00:00"
+                }
+}

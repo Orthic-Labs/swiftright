@@ -1,0 +1,303 @@
+{
+  "count": 11,
+  "effectivePublicRetained": true,
+  "indexSha256": "sha256:293b704c69ef4e80c577a79b23e556f1c480417caac656fddd3b75c2f6ffd506",
+  "kind": "independent-internal-documentation-restriction-facts",
+  "linkSha256": "836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+  "promotionsMade": 0,
+  "rows": [
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "declaration",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 61,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.struct",
+        "line": 15758,
+        "name": "LazyState",
+        "sourcekitContext": [],
+        "usr": "s:11SwiftUICore9LazyStateV"
+      },
+      "line": 15758,
+      "sourceText": "@_documentation(visibility: internal) @frozen public struct LazyState<Value> : SwiftUICore::DynamicProperty {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 15,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.enum",
+        "line": 15759,
+        "name": "Storage",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV7StorageO"
+      },
+      "line": 15759,
+      "sourceText": "  public enum Storage : @unchecked Swift::Sendable {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 10,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.enumelement",
+        "line": 15760,
+        "name": "thunk(_:)",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          },
+          {
+            "column": 15,
+            "kind": "source.lang.swift.decl.enum",
+            "line": 15759,
+            "name": "Storage",
+            "usr": "s:11SwiftUICore9LazyStateV7StorageO"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV7StorageO5thunkyAEyx_GxyccAGmlF"
+      },
+      "line": 15760,
+      "sourceText": "    case thunk(() -> Value)"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 10,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.enumelement",
+        "line": 15761,
+        "name": "value(_:)",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          },
+          {
+            "column": 15,
+            "kind": "source.lang.swift.decl.enum",
+            "line": 15759,
+            "name": "Storage",
+            "usr": "s:11SwiftUICore9LazyStateV7StorageO"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV7StorageO5valueyAEyx_GxcAGmlF"
+      },
+      "line": 15761,
+      "sourceText": "    case value(Value)"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 10,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.function.constructor",
+        "line": 15766,
+        "name": "init(initialValue:)",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV12initialValueACyxGxyc_tcfc"
+      },
+      "line": 15766,
+      "sourceText": "  public init(initialValue thunk: @escaping () -> Value)"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 34,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.function.constructor",
+        "line": 15767,
+        "name": "init(_initialValue:)",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV13_initialValueACyxGx_tcfc"
+      },
+      "line": 15767,
+      "sourceText": "  @export(implementation) public init(_initialValue: Value) {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 14,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.var.instance",
+        "line": 15773,
+        "name": "wrappedValue",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV12wrappedValuexvp"
+      },
+      "line": 15773,
+      "sourceText": "  public var wrappedValue: Value {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 14,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.var.instance",
+        "line": 15777,
+        "name": "projectedValue",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV14projectedValueAA7BindingVyxGvp"
+      },
+      "line": 15777,
+      "sourceText": "  public var projectedValue: SwiftUICore::Binding<Value> {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 22,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.function.method.static",
+        "line": 15780,
+        "name": "_makeProperty(in:container:fieldOffset:inputs:)",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV13_makeProperty2in9container11fieldOffset6inputsyAA08_DynamicF6BufferVz_AA11_GraphValueVyqd__GSiAA01_N6InputsVztlFZ"
+      },
+      "line": 15780,
+      "sourceText": "  public static func _makeProperty<V>(in buffer: inout SwiftUICore::_DynamicPropertyBuffer, container: SwiftUICore::_GraphValue<V>, fieldOffset: Swift::Int, inputs: inout SwiftUICore::_GraphInputs)"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 21,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.var.static",
+        "line": 15782,
+        "name": "_propertyStorageSize",
+        "sourcekitContext": [
+          {
+            "column": 61,
+            "kind": "source.lang.swift.decl.struct",
+            "line": 15758,
+            "name": "LazyState",
+            "usr": "s:11SwiftUICore9LazyStateV"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateV20_propertyStorageSizeSiSgvpZ"
+      },
+      "line": 15782,
+      "sourceText": "  public static var _propertyStorageSize: Swift::Int? {"
+    },
+    {
+      "documentationRestriction": {
+        "ownerLine": 15758,
+        "role": "resolved-nominal-ancestor",
+        "text": "@_documentation(visibility: internal)"
+      },
+      "entity": {
+        "column": 21,
+        "effective_access": "source.decl.effective_access.public",
+        "kind": "source.lang.swift.decl.function.constructor",
+        "line": 15793,
+        "name": "init()",
+        "sourcekitContext": [
+          {
+            "column": 24,
+            "kind": "source.lang.swift.decl.extension.struct",
+            "line": 15792,
+            "name": "LazyState",
+            "usr": "s:e:s:11SwiftUICore9LazyStateVAAs23ExpressibleByNilLiteralRzlEACyxGycfc"
+          }
+        ],
+        "usr": "s:11SwiftUICore9LazyStateVAAs23ExpressibleByNilLiteralRzlEACyxGycfc"
+      },
+      "line": 15793,
+      "sourceText": "  @inlinable public init() {"
+    }
+  ],
+  "sourceSha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+}

@@ -1,0 +1,34 @@
+{
+  "kind": "round2-extra-f4-generator-review-request",
+  "version": "0.2",
+  "successor": "factory/probes/round2-extra-generator-v3",
+  "supersedes": "factory/probes/round2-extra-generator-v2",
+  "reason": "Repair output-binding HOLD from independent review ca156189d597733f9acd7f542a21f2744408155d0effffad0f46bb31dfb4e606.",
+  "requestedReviewer": "f7_windows",
+  "scope": "offline source-only review",
+  "claims": {
+    "outputs": 19,
+    "positiveOutputs": 14,
+    "negativeOutputs": 5,
+    "compilerRuns": 0,
+    "nativeRuns": 0,
+    "registryPromotion": false,
+    "qualification": "held"
+  },
+  "controls": [
+    "baseline generation yields 19 manifests & 19 source files",
+    "case id/descriptor mismatch rejects",
+    "frozen descriptor membership rejects",
+    "sourceHash/sourceFile mutations reject",
+    "positive & negative witness identity/type/sourceHash mutations reject",
+    "exact source-use selector/path/cardinality/USR joins reject omission, addition, reorder, wrong selector, duplicate block",
+    "candidate registry promotion, unsupported-channel, & unknown-case faults reject"
+  ],
+  "frozenInputs": {
+    "candidate": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+    "sourceJoin": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+    "validation": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba",
+    "native": "2610d49e05a93ded6bea7e3bd903140ddb393f5ff778a4278b25ff6fd8218270",
+    "catalogue": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+  }
+}

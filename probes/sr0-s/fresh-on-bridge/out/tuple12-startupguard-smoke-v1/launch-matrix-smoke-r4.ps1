@@ -1,0 +1,7 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$stage='D:\Claude\swiftright\.work\sr0-matrix-controls-v1'
+$rows=@'
+[{"path": "worker-v3.ps1", "sha256": "8d3918b5ecdf0ca31405015c17109166db732a8d6014aa4755410a1972aa3ec6", "bytes": 13888}, {"path": "coordinator-v3.ps1", "sha256": "4bef611745175a0d5b8716a5159620a4ba38694ae4de04c38183f20e0bdc63f4", "bytes": 10563}, {"path": "drive-fixture-noactivate-focus-r4.ps1", "sha256": "34d28b1f4cc6a4fccb279639ae767c069a40ae081290ef2b11aebafd52b441b4", "bytes": 27397}]
+'@|ConvertFrom-Json
+foreach($r in $rows){$f=Join-Path $stage $r.path;if((Get-FileHash -LiteralPath $f).Hash.ToLowerInvariant() -cne $r.sha256 -or (Get-Item -LiteralPath $f).Length -ne $r.bytes){throw 'smoke successor source drift'}}
+& (Join-Path $stage 'coordinator-v3.ps1') -Base 'D:\Claude\swiftright\.work\sr0-r12-typecheck\src' -Worker (Join-Path $stage 'worker-v3.ps1') -Driver (Join-Path $stage 'drive-fixture-noactivate-focus-r4.ps1') -ExpectDriver '34d28b1f4cc6a4fccb279639ae767c069a40ae081290ef2b11aebafd52b441b4' -ExpectWorker '8d3918b5ecdf0ca31405015c17109166db732a8d6014aa4755410a1972aa3ec6' -ExpectExe '87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374' -ExpectDll '7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2' -OutRoot 'D:\Claude\swiftright\probes\sr0-s\fresh-on-bridge\out\tuple12-startupguard-smoke-v4' -Fixture F1 -KeyMode char

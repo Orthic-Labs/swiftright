@@ -1,0 +1,34 @@
+{
+  "kind": "factory-text-circle-paired20-input-v1",
+  "status": "pending-fresh-windows-count20",
+  "count": 20,
+  "profiles": {
+    "text": {
+      "reader": "../paired-text-circle-v1/compare_paired.py",
+      "macSource": "factory/oracle/mac/text-origin-r11-root-v1/observed-style-mac20-r3",
+      "requiredCasePrefix": "swiftui.text.layout.baseline.recipe.pilot-next.text-baseline-light.",
+      "viewportDip": {"width": 120, "height": 48}
+    },
+    "padding": {
+      "reader": "factory/pipeline/paired-padding-origin-fresh-v3-operational-v1/f10-trusted-reader-v1/trusted-reader-report.py",
+      "comparator": "factory/pipeline/paired-padding-origin-fresh-v3-operational-v1/paired-inputs-r3/run-paired-comparison-r3.py",
+      "macSource": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1",
+      "tupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+      "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9"
+    }
+  },
+  "requiredJoins": [
+    "caseID/caseHash/tupleID/tupleHash/sourceHash/recipeHash exact on every raw & metrics row",
+    "captureID/imageID preserve issued array order & are unique across 20 runs",
+    "raw PID equals retained-parent proof PID on each platform",
+    "all refs stat regular non-reparse, exact SHA-256 & exact bytes before JSON/image read",
+    "Windows export count equals manifest row count & contains native-01..native-20 proof roles",
+    "original parent kernel/.NET exit, streams, active-job zero, lock release, & memory receipt are present",
+    "semantic, paint, geometry, timing, & raw evidence statuses remain separate"
+  ],
+  "qualification": {"qualified": false, "nativeParityGranted": false, "goldens": 0, "promotion": "held"},
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0
+}

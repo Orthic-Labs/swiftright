@@ -1,0 +1,94 @@
+{
+  "kind": "remaining-five-source-readiness-v2",
+  "rows": [
+    {
+      "case": {
+        "hash": "sha256:68c63ea77bd20a82644b951a8335e98f6717ac138a6c6b218b6d05dadd0848ba",
+        "id": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "holds": [
+        "Disabled hit-testing/input qualification unattempted; enabled metadata only",
+        "Native observations require coordinated lock + fresh compiler proof",
+        "Font/theme parity remains held"
+      ],
+      "label": "disabled",
+      "planHash": "sha256:88ea8ba155e9e5129d0b52bfd449ccf429874b8f494d961571304ec89dbedc94",
+      "prospectiveNativeCandidate": true,
+      "providerRequirements": [],
+      "remotePackage": "D:\\Claude\\swiftright\\factory\\native\\windows\\remaining-five-hosts-v2\\disabled\\package",
+      "sourceHash": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349"
+    },
+    {
+      "case": {
+        "hash": "sha256:a3e936cc5f688ebd885ba817e4f0b3b4df84e3b48f6bf6b0e2c92632f5dc93b4",
+        "id": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "holds": [
+        "ABI0.6 has image_register RGBA bytes but no SF Symbol catalogue/provider; no star substitute",
+        "DisplayScale/colorScheme injection qualification held"
+      ],
+      "label": "image",
+      "planHash": "sha256:09ed4bb3e35e859ed53653a22ba43dedc6183e90c6ac117496d74ad3369b8456",
+      "prospectiveNativeCandidate": false,
+      "providerRequirements": [
+        "sfSymbolProvider"
+      ],
+      "remotePackage": "D:\\Claude\\swiftright\\factory\\native\\windows\\remaining-five-hosts-v2\\image\\package",
+      "sourceHash": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171"
+    },
+    {
+      "case": {
+        "hash": "sha256:c2a99399c435d6c1e16bbb2d80675f1f8a4ab1aa3e654b7dcf4ff1ffd0410491",
+        "id": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "holds": [
+        "ABI0.6 rect radius/border cannot attest SwiftUI continuous corner + centered stroke semantics; no rect-border approximation"
+      ],
+      "label": "shapes.fill-stroke",
+      "planHash": "sha256:d35185ded7ff87b49fb4287c9905401689f791d36b05c32b0f481cfd0aa83ee1",
+      "prospectiveNativeCandidate": false,
+      "providerRequirements": [
+        "centeredContinuousRoundedStroke"
+      ],
+      "remotePackage": "D:\\Claude\\swiftright\\factory\\native\\windows\\remaining-five-hosts-v2\\shapes.fill-stroke\\package",
+      "sourceHash": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7"
+    },
+    {
+      "case": {
+        "hash": "sha256:29dfb27ddce10411c9fa742d5ebaf7ebef22134e1d35e64036b5952cf2254156",
+        "id": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "holds": [
+        "Exact witness requests rounded system design/medium/lineLimit2, not a Tinos asset",
+        "ABI0.6 has family/size/weight measure inputs but no attested rounded family provider or lineLimit shaping; no Segoe fallback"
+      ],
+      "label": "text.bundled-font",
+      "planHash": "sha256:cf6accbe7453a7e68aea1cec46c645a3f03ec5ea154c45d04171b813caed8160",
+      "prospectiveNativeCandidate": false,
+      "providerRequirements": [
+        "roundedFontProvider",
+        "lineLimitShaping"
+      ],
+      "remotePackage": "D:\\Claude\\swiftright\\factory\\native\\windows\\remaining-five-hosts-v2\\text.bundled-font\\package",
+      "sourceHash": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91"
+    },
+    {
+      "case": {
+        "hash": "sha256:7113610be80860ddf6b73d6b640fd19729288131f0b0ce712740f874f726da2f",
+        "id": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258"
+      },
+      "holds": [
+        "ABI0.6 exposes switch/checkbox semantics + toggled state, not native switch paint",
+        "No hand-painted knobs/hosted replacement; state stimulus/hit-testing unattempted"
+      ],
+      "label": "toggle",
+      "planHash": "sha256:420a1bdeb1e03bb85471c1b5951e7b1a41628472ffd6e5a92017edb7f9e39b72",
+      "prospectiveNativeCandidate": false,
+      "providerRequirements": [
+        "nativeSwitchPainting"
+      ],
+      "remotePackage": "D:\\Claude\\swiftright\\factory\\native\\windows\\remaining-five-hosts-v2\\toggle\\package",
+      "sourceHash": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a"
+    }
+  ]
+}

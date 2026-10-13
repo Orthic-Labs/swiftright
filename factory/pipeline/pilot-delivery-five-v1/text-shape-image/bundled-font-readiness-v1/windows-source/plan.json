@@ -1,0 +1,46 @@
+{
+  "kind": "windows-bundled-font-probe-source-v1",
+  "status": "source-ready-pending-root-native-run",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "bridgeABI": "0.6",
+  "font": {
+    "family": "Tinos",
+    "postScriptName": "Tinos-Regular",
+    "sha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "sizeBytes": 521588
+  },
+  "source": "FontProbe.cpp",
+  "sourceOrigin": "resources/directwrite-private-font.cpp plus factory-owned GetClientRect/system-collection probe",
+  "observables": [
+    "GetClientRect",
+    "FR_PRIVATE result",
+    "private DirectWrite family/PostScript",
+    "system collection family presence",
+    "resource hash argument"
+  ],
+  "qualification": "held-until-root-native-render",
+  "rendererOrAbiEdits": false,
+  "sourceBindings": {
+    "fontResource": "../resources/Tinos-Regular.ttf",
+    "privateCollectionReference": "../resources/directwrite-private-font.cpp"
+  },
+  "requiredChannels": [
+    "UIA",
+    "compile/source join",
+    "native layout",
+    "provider paint RGBA hash",
+    "provider paint canary",
+    "screenshot",
+    "text run/glyph paint"
+  ],
+  "executionEligible": false,
+  "rootCommand": "FontProbe.exe <staged-Tinos-Regular.ttf> Tinos Tinos-Regular <owned-HWND-as-hex> sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+  "paintCanary": {
+    "path": "paint-canary-v1/FontCustomPaintCanary.cpp",
+    "plan": "paint-canary-v1/plan.json",
+    "status": "source-ready-provider-paint-selection-held",
+    "rendererSelection": "unproven",
+    "bridgeMeasurementSelection": "unproven"
+  }
+}

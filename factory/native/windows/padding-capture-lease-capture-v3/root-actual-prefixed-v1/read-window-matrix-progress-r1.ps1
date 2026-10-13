@@ -1,0 +1,3 @@
+$ErrorActionPreference='Stop';$base='D:\Claude\swiftright\probes\sr0-s\fresh-on-bridge\out\tuple12-startupguard-matrix-v1\F1-20-r1'
+$rows=@();if(Test-Path -LiteralPath $base){foreach($f in Get-ChildItem -LiteralPath $base -Filter 'matrix-run.json' -Recurse -File){$o=Get-Content -Raw -LiteralPath $f.FullName|ConvertFrom-Json;$rows+=@{run=$o.run;status=$o.status;sha256=(Get-FileHash -LiteralPath $f.FullName).Hash.ToLowerInvariant()}}}
+@{kind='root-readonly-F1-matrix-progress';completed=$rows.Count;runs=$rows;lockState=[IO.File]::ReadAllText('D:\Claude\desktop.lock');nativeActions=0}|ConvertTo-Json -Depth 8

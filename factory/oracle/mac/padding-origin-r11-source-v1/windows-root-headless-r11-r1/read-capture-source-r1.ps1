@@ -1,0 +1,5 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$producer='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3'
+function Read-Bounded([string]$p){$i=Get-Item -LiteralPath $p;if($i.Length -gt 2MB -or ($i.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe JSON'};[IO.File]::ReadAllText($p)|ConvertFrom-Json}
+$planPath=Join-Path $producer 'capture-plan.json';$plan=Read-Bounded $planPath;$compilePath=Join-Path $plan.compiledHostPackagePath 'build-capture-lease-r1\observation.json';$compile=Read-Bounded $compilePath
+[ordered]@{kind='root-factory-source-schema-observation-v1';planPath=$planPath;planSha256=(Get-FileHash -LiteralPath $planPath).Hash.ToLowerInvariant();plan=$plan;compilePath=$compilePath;compileSha256=(Get-FileHash -LiteralPath $compilePath).Hash.ToLowerInvariant();compile=$compile;desktopLock=[IO.File]::ReadAllText('D:\Claude\desktop.lock').Trim();nativeWindowActions=0;compilerActions=0;guiActions=0;lockActions=0}|ConvertTo-Json -Depth 24

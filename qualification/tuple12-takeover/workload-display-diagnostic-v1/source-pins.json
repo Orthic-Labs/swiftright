@@ -1,0 +1,16 @@
+{
+  "kind": "sr0-tuple12-workload-display-diagnostic-v1",
+  "status": "source-ready-pending-root-parse-and-one-run",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "run_script": { "path": "qualification/tuple12-takeover/workload-display-diagnostic-v1/run-one-diagnostic.ps1", "sha256": "PENDING_ROOT_HASH" },
+  "sampler_script": { "path": "qualification/tuple12-takeover/workload-display-diagnostic-v1/display-context-sampler-v1.ps1", "sha256": "PENDING_ROOT_HASH" },
+  "controls": { "path": "qualification/test_tuple12_workload_display_diagnostic_controls.py", "sha256": "PENDING_ROOT_HASH", "status": "prepared-not-run" },
+  "workload_controls": { "path": "qualification/tuple12-takeover/workload-controls-v8/run-workload.ps1", "binding": "root-pins-existing-v8-source" },
+  "analysis": { "path": "qualification/tuple12-takeover/workload-analysis-v3", "binding": "root-pins-existing-v3-source" },
+  "limits": { "runs": 1, "lock_wait_seconds": 60, "run_budget_seconds_default": 400, "sampler_seconds_default": 35, "sample_milliseconds": 250 },
+  "mutation": { "desktop": false, "permissions": false, "new_tasks": false, "input": false, "process_kill": false },
+  "mutation_scope": "wrapper & sampler only; pinned workload-controls-v8 retains its existing native task lifecycle",
+  "interpretation": "read-only HWND/session/visibility/point-occlusion context; strict PresentMon displayed-row conclusion remains unchanged"
+}

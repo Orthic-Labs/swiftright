@@ -1,0 +1,5 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$ns='D:\Claude\swiftright\factory\native\windows\.work\windows-replay-r11\r17';$run=Join-Path $ns 'replays\r1';$dirs=@();if(Test-Path -LiteralPath $run){$dirs=@(Get-ChildItem -LiteralPath $run -Directory|Where-Object{$_.Name -like 'native-*'})};if($dirs.Count -gt 20){throw 'Progress bound'}
+$complete=@($dirs|Where-Object{Test-Path -LiteralPath (Join-Path $_.FullName 'native.pixels.json')});$closed=@($dirs|Where-Object{Test-Path -LiteralPath (Join-Path $_.FullName 'terminal-worker.json')})
+$proof=@{};foreach($n in @('coordinator.json','task-result.json')){$p=Join-Path $ns ('coordinator-r1\'+$n);if(Test-Path -LiteralPath $p){$i=Get-Item -LiteralPath $p;if($i.Length -gt 2MB){throw 'Progress proof bound'};$proof[$n]=[IO.File]::ReadAllText($p)|ConvertFrom-Json}}
+[ordered]@{kind='root-native-r17-progress-v1';started=$dirs.Count;pixels=$complete.Count;rendererTerminal=$closed.Count;proof=$proof;lockState=[IO.File]::ReadAllText('D:\Claude\desktop.lock').Trim()}|ConvertTo-Json -Depth 10

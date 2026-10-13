@@ -1,0 +1,130 @@
+{
+  "kind": "macos-bundled-font-source-package-v1",
+  "status": "source-ready-pending-root-compile-capture",
+  "probeTag": "swiftui.text.bundled-font.tinos-pilot.v1",
+  "witnessIdentity": "swiftui.text.bundled-font.tinos-pilot.witness",
+  "witnessPath": "Sources/FactoryProbe/Witness.swift",
+  "adapterPath": "Sources/FactoryProbe/CaptureHost.swift",
+  "adapterOrigin": "factory/native/macos/CaptureHost.swift",
+  "font": {
+    "path": "Resources/Tinos-Regular.ttf",
+    "sha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "bytes": 521588,
+    "family": "Tinos",
+    "postScriptName": "Tinos-Regular"
+  },
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74303a27803b70f15e4d71af134d7d39ecaf2b26744b2d183aac718b6b2d101f",
+      "bytes": 230
+    },
+    {
+      "path": "README.md",
+      "sha256": "sha256:29a375fabf5e530d1b99625789181dffb86473c3499756a76b215b8a8421a7d1",
+      "bytes": 563
+    },
+    {
+      "path": "permission-policy.json",
+      "sha256": "sha256:13c2a8e2706c8ea4d6d2cbdb761d3d9ce888e5250b2c9edddffa3ed32b60a933",
+      "bytes": 380
+    },
+    {
+      "path": "font-provisioning.json",
+      "sha256": "sha256:ca03dd3dda16bdbd198f675e067dc956a7080a40fba7b3bb686c79b1a41d08a0",
+      "bytes": 475
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:c8574cf0abbcf8d59cbfdde31f3ef6f64949cb0eb91a1f3a001d4452c83fcf8a",
+      "bytes": 400
+    },
+    {
+      "path": "Sources/FactoryProbe/CaptureHost.swift",
+      "sha256": "sha256:44a114b2c5da4ea6ecf53644e2641300e2b9ce10a1d134ac91fcdc38f37e428d",
+      "bytes": 13102
+    },
+    {
+      "path": "Resources/Tinos-Regular.ttf",
+      "sha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+      "bytes": 521588
+    },
+    {
+      "path": "tools/prepare-mac-source.sh",
+      "sha256": "sha256:5b9eb21b45e815fddaeb223887ec6ddc6a5c7d893f97aa36c0c3904489d5bd00",
+      "bytes": 1605
+    },
+    {
+      "path": "tools/compile-mac-source.sh",
+      "sha256": "sha256:8501c51b742bc90542052d8703c74dec2c67f89bb6c17492661d523f61f7cb18",
+      "bytes": 1542
+    }
+  ],
+  "fixedViewport": {
+    "widthPoints": 320,
+    "heightPoints": 240,
+    "alignment": "topLeading"
+  },
+  "registration": {
+    "api": "CTFontManagerRegisterFontsForURL",
+    "scope": "process",
+    "globalInstall": false,
+    "descriptorCheck": true,
+    "hashCheck": true
+  },
+  "observables": [
+    "registeredFontResource",
+    "fontDescriptorURL",
+    "postScriptName",
+    "family",
+    "unitsPerEm",
+    "ascent",
+    "descent",
+    "leading",
+    "rootLayout",
+    "textRendererRuns",
+    "permissions"
+  ],
+  "permissionPolicy": "permission-policy.json",
+  "fontProvisioning": "font-provisioning.json",
+  "internalScratchRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1",
+  "compiler": {
+    "resolver": [
+      "/usr/bin/xcrun",
+      "--find",
+      "swiftc"
+    ],
+    "argv": [
+      "/usr/bin/xcrun",
+      "swiftc",
+      "-parse-as-library",
+      "-O",
+      "-o",
+      "<internal-app>/Contents/MacOS/FactoryProbe",
+      "<source>/Sources/FactoryProbe/Witness.swift",
+      "<source>/Sources/FactoryProbe/CaptureHost.swift"
+    ],
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "memorySupervision": "root-owned process-group RSS <= 1073741824 bytes"
+  },
+  "rootScripts": {
+    "prepare": "tools/prepare-mac-source.sh",
+    "compile": "tools/compile-mac-source.sh"
+  },
+  "channels": {
+    "offscreenPaint": "pending-root-capture",
+    "rootLayout": "pending-root-capture",
+    "compositorPaint": "pending-root-capture",
+    "externalAccessibility": "pending-root-preflight",
+    "registeredFontProvider": "pending-root-capture",
+    "witnessFontResolution": "held",
+    "animation": "not-attempted"
+  },
+  "caseHash": null,
+  "hostHash": null,
+  "binaryHash": null,
+  "outputs": null,
+  "executionEligible": false,
+  "qualification": "candidate; do not count toward five until root receipts"
+}

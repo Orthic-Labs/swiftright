@@ -1,0 +1,35 @@
+{
+  "kind": "sr0-tuple12-mac-holds-review-v2",
+  "status": "source-only-holds-open",
+  "inputs": {
+    "source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+    "mac_sign_review": "qualification/tuple12-mac-sign-no-ui-v1/root-review.json",
+    "mac_sign_process": "qualification/tuple12-mac-sign-no-ui-v1/sign-process.json",
+    "mac_capture_contract": "docs/sr0-tuple12-mac-capture.md",
+    "mac_recovery_contract": "docs/sr0-tuple12-mac-recorder-recovery.md",
+    "w08_handoff": "docs/sr0-w08-upstream-handoff.md",
+    "w08_diagnosis": "docs/sr0-w08-upstream-diagnosis.md",
+    "swift_mac_transcript": "examples/SliceApp/r7-final-transcript.txt",
+    "w08_receipt": "qualification/receipts/package/win-r5-10-offline/W08-interrupted-update.json",
+    "w08_hold_state": "qualification/receipts/package-history/win-r5-08-offline/hold-open-W08-state.json"
+  },
+  "holds": {
+    "mac_generalized_signing": "human_or_signer_owner_no_ui_proof",
+    "mac_ax_trust": "active_user_existing_trust_receipt",
+    "w08_recovery": "RightKit_owner_versioned_helper_and_clean_guest_receipts"
+  },
+  "safe_scope": [
+    "preserve receipts and fresh namespaces",
+    "read-only source/plan/receipt joins",
+    "prepare future receipt schema",
+    "request upstream helper handoff"
+  ],
+  "prohibited_until_hold_closes": [
+    "codesign or prompt-enabled signer fallback",
+    "TCC/AX permission mutation",
+    "generalized Mac capture",
+    "manual or local W08 package repair",
+    "GUI, remote, process, or test execution in source lane"
+  ],
+  "execution": { "signing": false, "capture": false, "repair": false, "tests": false, "remote": false }
+}

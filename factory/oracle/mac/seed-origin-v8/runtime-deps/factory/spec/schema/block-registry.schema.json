@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swiftright.dev/factory/spec/v0.1/block-registry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "version",
+    "id",
+    "provenance",
+    "blocks"
+  ],
+  "properties": {
+    "kind": {
+      "const": "block-registry"
+    },
+    "version": {
+      "const": "0.1"
+    },
+    "id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "provenance": {
+      "$ref": "common.schema.json#/$defs/provenance"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "symbols",
+          "inventoryStatus",
+          "progress",
+          "semanticDependencies"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.schema.json#/$defs/id"
+          },
+          "symbols": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "inventoryStatus": {
+            "enum": [
+              "inventory",
+              "adapted",
+              "unsupported"
+            ]
+          },
+          "progress": {
+            "enum": [
+              "not-started",
+              "recipe",
+              "implementing",
+              "blocked",
+              "parity",
+              "waived"
+            ]
+          },
+          "semanticDependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/id"
+            },
+            "uniqueItems": true
+          },
+          "bootstrapGroup": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]*$"
+          },
+          "blocked": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reason",
+              "openedAt",
+              "owner"
+            ],
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "openedAt": {
+                "$ref": "common.schema.json#/$defs/rfc3339"
+              },
+              "owner": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "common.schema.json#/$defs/hashRef"
+                }
+              }
+            }
+          },
+          "waiver": {
+            "$ref": "common.schema.json#/$defs/hashRef"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "progress": {
+                  "const": "blocked"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "blocked"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/envelope"
+    }
+  ]
+}

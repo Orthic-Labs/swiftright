@@ -1,0 +1,83 @@
+--- probes/sr0-b/workload/scripts/task-workload.ps1	2026-10-10 01:21:22
++++ /tmp/task-workload-overlay2.ps1	2026-10-11 20:14:17
+@@ -44,7 +44,8 @@
+   [switch]$MemDeep,                                         # R10 memory diagnosis: SWR_MEM_DEEP=1 (the renderer also walks the process heaps and address space every 5th memory sample; slow, never a gated run)
+   [string]$RunPrefix = 'r',
+   [ValidateSet('char', 'all')][string]$KeyMode = 'char',   # char: WM_CHAR only; all: WM_KEYDOWN + WM_CHAR + WM_KEYUP (types every key twice)
+-  [int]$ForegroundSeconds = 8                               # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
++  [int]$ForegroundSeconds = 8,
++  [switch]$NoActivate                                         # opt-in: keep workload bottommost & never call foreground takeover
+ )
+ $ErrorActionPreference = 'Continue'
+ $swiftBin = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin'
+@@ -71,6 +72,7 @@
+     [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+     [DllImport("user32.dll")] static extern bool BringWindowToTop(IntPtr h);
+     [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr h, int cmd);
++    [DllImport("user32.dll", SetLastError = true)] static extern bool SetWindowPos(IntPtr h, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+     [DllImport("user32.dll")] static extern bool IsIconic(IntPtr h);
+     [DllImport("user32.dll")] static extern bool AllowSetForegroundWindow(int pid);
+     [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+@@ -100,6 +102,16 @@
+     }
+ 
+     public static bool Hung(IntPtr hwnd) { return hwnd != IntPtr.Zero && IsHungAppWindow(hwnd); }
++
++    // HWND_BOTTOM + SWP_NOACTIVATE keeps this workload behind other windows without synthesizing input.
++    // This is a post-HWND guard; caller records startup activation as unproven until a host CBT guard is bound.
++    public static bool BottomNoActivate(IntPtr hwnd, out RECT client) {
++        client = new RECT();
++        if (!Visible(hwnd) || !GetClientRect(hwnd, out client) || client.Right <= 0 || client.Bottom <= 0) return false;
++        const uint SWP_NOSIZE = 0x0001, SWP_NOMOVE = 0x0002, SWP_NOACTIVATE = 0x0010, SWP_SHOWWINDOW = 0x0040;
++        ShowWindow(hwnd, 4); // SW_SHOWNOACTIVATE; return value is previous visibility, not success.
++        return SetWindowPos(hwnd, (IntPtr)1, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
++    }
+ 
+     // Who holds a window: "hwnd=.. pid=.. name=.. class=.. title='..'" (the foreground owner when a take-over fails or a loss happens).
+     public static string Owner(IntPtr h) {
+@@ -291,7 +303,8 @@
+   $lines.Add("=== RUN $id start=$(Get-Date -Format o)")
+   $psi = New-Object System.Diagnostics.ProcessStartInfo
+   $psi.FileName = $exe
+-  $psi.Arguments = "--run-id $id --out `"$dir`" --warmup-s $Warmup --measure-s $Measure --instr $Instr --rows $Rows"
++  $noActivateArgs = if ($NoActivate) { ' --sr0-noactivate' } else { '' }
++  $psi.Arguments = "--run-id $id --out `"$dir`" --warmup-s $Warmup --measure-s $Measure --instr $Instr --rows $Rows$noActivateArgs"
+   $psi.WorkingDirectory = $bin
+   $psi.UseShellExecute = $false
+   $psi.RedirectStandardOutput = $true
+@@ -340,18 +353,29 @@
+     # failure here voids the run; the foreground owner is then recorded as context (fg_event lines, activity.csv).
+     $acqLog = New-Object System.Text.StringBuilder
+     $idle0 = [Inj]::IdleMs()
+-    $fg = if ($idle0 -ge 0 -and $idle0 -lt 2000) { 'skipped-user-active' } else { [Inj]::Acquire($hwnd, $proc.Id, 2000, $acqLog) }
+-    foreach ($l in ($acqLog.ToString() -split "`r?`n" | Where-Object { $_ })) { $lines.Add("fg_attempt run=$id $l") }
+-    $rc = New-Object Inj+RECT; [void][Inj]::GetClientRect($hwnd, [ref]$rc)
++    $rc = New-Object Inj+RECT
++    $backgroundNoActivate = 'not-requested'
++    if ($NoActivate) {
++      $backgroundNoActivate = if ([Inj]::BottomNoActivate($hwnd, [ref]$rc)) { 'PASS' } else { 'FAIL' }
++      $fg = 'noactivate-background'
++      $lines.Add("background_noactivate run=$id result=$backgroundNoActivate startup_activation=guarded zorder=HWND_BOTTOM")
++      if ($backgroundNoActivate -ne 'PASS') { $valid = $false; $reason = 'background-noactivate-failed' }
++    } else {
++      $fg = if ($idle0 -ge 0 -and $idle0 -lt 2000) { 'skipped-user-active' } else { [Inj]::Acquire($hwnd, $proc.Id, 2000, $acqLog) }
++      foreach ($l in ($acqLog.ToString() -split "`r?`n" | Where-Object { $_ })) { $lines.Add("fg_attempt run=$id $l") }
++      [void][Inj]::GetClientRect($hwnd, [ref]$rc)
++    }
+     $dpi = [Inj]::GetDpiForWindow($hwnd)
+-    $lines.Add("window run=$id hwnd=$($hwnd.ToInt64()) foreground=$fg dpi=$dpi client_px=$($rc.Right)x$($rc.Bottom) user_idle_ms=$idle0")
++    $lines.Add("window run=$id hwnd=$($hwnd.ToInt64()) foreground=$fg background_noactivate=$backgroundNoActivate dpi=$dpi client_px=$($rc.Right)x$($rc.Bottom) user_idle_ms=$idle0")
+     # Context: overlay hooks in our process, overlay/capture helper processes, and the host's CPU by process over the key script.
+     $ctx0 = Get-OverlayContext $proc.Id
+     $lines.Add("context run=$id phase=pre overlay_modules=$(if ($ctx0.hits) { $ctx0.hits } else { 'none' }) modules_total=$($ctx0.total) overlay_procs=$(if ($ctx0.procs) { $ctx0.procs } else { 'none' })")
+     $cpuA = Get-CpuMap; $tA = [System.Diagnostics.Stopwatch]::GetTimestamp()
+     # Keys from now until the run ends (warm-up + measured + margin); the analyzer keeps those inside the measured window.
+     $keyDeadline = $qs + [long](($Warmup + $Measure - $KeyTailS) * $swFreq)
+-    $res = [Inj]::Run($hwnd, $proc.Id, $KeyRate, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline, "$dir\activity.csv")
++    # A failed noactivate guard records failure & executes zero-duration Run, so no targeted input is sent.
++    $runSeconds = if ($backgroundNoActivate -eq 'FAIL') { -1 } else { $Warmup + $Measure + 6 }
++    $res = [Inj]::Run($hwnd, $proc.Id, [math]::Max($KeyRate, 1), $runSeconds, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline, "$dir\activity.csv")
+     $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode rate_hz=$KeyRate key_deadline_ms_from_start=$([int](($keyDeadline - $qs) * 1000 / $swFreq))")
+     foreach ($l in (Get-Content "$dir\fg_events.csv" -ErrorAction SilentlyContinue | Select-Object -Skip 1)) { $lines.Add("fg_event run=$id $l") }
+     $cpuB = Get-CpuMap; $spanS = ([System.Diagnostics.Stopwatch]::GetTimestamp() - $tA) / $swFreq
+

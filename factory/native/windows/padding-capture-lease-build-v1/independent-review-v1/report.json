@@ -1,0 +1,23 @@
+{
+  "kind": "independent-source-review-v1",
+  "stage": "padding-capture-lease-build-v1",
+  "stageHash": "sha256:7bdef39d93dc2d953ef391a7d71070ec1e6abbdbdd9f25de2e60e4eb720bd00c",
+  "planHash": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10",
+  "builderHash": "sha256:d0d549701de65c9e97f1633a011a30ca39624ca668c4c832c3932b0b7302462a",
+  "preflightHash": "sha256:37ed4ec43f7b3e27db423d1b5564155ec58b0d5c61b021fa602a5919ebd15c6b",
+  "verdict": "CLEAR_SOURCE_PENDING_WINDOWS_BUILD_RECEIPT",
+  "checks": {
+    "manifest_84_entries_exact": true,
+    "verify_source_passed": true,
+    "source_fault_controls_passed": true,
+    "parser_default_10_explicit_40": true,
+    "argument_rejection_before_bridge_load": true,
+    "plan_exact_40_fresh_scratch": true,
+    "prelaunch_null_measured_joins": true,
+    "preflight_actual_receipt_exe_guard": true,
+    "no_native_or_compiler_run": true
+  },
+  "findings": [],
+  "scope": "read-only source review; no native/compiler/remote/Git actions",
+  "nextGate": "Windows headless compiler receipt must bind exact plan/source/runtime/renderer/compiler bytes, owned process handle, two sealed streams, exitCode=0, kernel wait=0, fresh build-capture-lease-r1 scratch."
+}

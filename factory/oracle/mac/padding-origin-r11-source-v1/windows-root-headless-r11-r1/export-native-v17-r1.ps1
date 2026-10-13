@@ -1,0 +1,12 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$root='D:\Claude\swiftright\factory\native\windows\.work\windows-replay-r11\r17';$zip='D:\Claude\swiftright\.factory-work\windows-replay-r11-r17-native-r1.zip'
+if(Test-Path -LiteralPath $zip){throw 'Fresh export required'}
+Add-Type -AssemblyName System.IO.Compression;Add-Type -AssemblyName System.IO.Compression.FileSystem
+$rows=@();$total=0;$watch=[Diagnostics.Stopwatch]::StartNew();$pending=[Collections.Generic.Stack[string]]::new();$pending.Push($root);$dirs=0
+while($pending.Count){$d=$pending.Pop();$di=Get-Item -LiteralPath $d;if(($di.Attributes -band [IO.FileAttributes]::ReparsePoint) -or -not $d.StartsWith($root,[StringComparison]::OrdinalIgnoreCase)){throw 'Export directory unsafe'};$dirs++;if($dirs -gt 512){throw 'Directory bound'}
+ foreach($f in Get-ChildItem -LiteralPath $d -Force){if($watch.Elapsed.TotalSeconds -gt 120 -or ($f.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Export input unsafe/deadline'};if($f.PSIsContainer){$pending.Push($f.FullName);continue};if($f.Length -gt 64MB -or $rows.Count -ge 2000){throw 'File bound'};$total+=$f.Length;if($total -gt 256MB){throw 'Aggregate bound'};$rows+= [ordered]@{path=$f.FullName.Substring($root.Length+1).Replace('\','/');sha256=(Get-FileHash -LiteralPath $f.FullName).Hash.ToLowerInvariant();bytes=$f.Length}}
+}
+$manifest=[ordered]@{kind='root-factory-native-v17-export-v1';files=$rows;totalBytes=$total;fileCount=$rows.Count;directoryCount=$dirs;limits=@{files=2000;fileBytes=67108864;totalBytes=268435456;seconds=120};lockState=[IO.File]::ReadAllText('D:\Claude\desktop.lock').Trim();qualification='hold'}
+$archive=[IO.Compression.ZipFile]::Open($zip,[IO.Compression.ZipArchiveMode]::Create)
+try{foreach($r in $rows){if($watch.Elapsed.TotalSeconds -gt 120){throw 'ZIP deadline'};$null=[IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,(Join-Path $root $r.path),$r.path,[IO.Compression.CompressionLevel]::Optimal)};$e=$archive.CreateEntry('manifest.json');$s=$e.Open();try{$b=[Text.UTF8Encoding]::new($false).GetBytes(($manifest|ConvertTo-Json -Depth 8));$s.Write($b,0,$b.Length)}finally{$s.Dispose()}}finally{$archive.Dispose()}
+[ordered]@{zipPath=$zip;sha256=(Get-FileHash -LiteralPath $zip).Hash.ToLowerInvariant();bytes=(Get-Item -LiteralPath $zip).Length;files=$rows.Count;totalBytes=$total;qualification='hold'}|ConvertTo-Json

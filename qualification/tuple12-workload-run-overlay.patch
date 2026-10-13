@@ -1,0 +1,28 @@
+--- probes/sr0-b/workload/scripts/run-workload.ps1
++++ /tmp/run-workload-overlay.ps1
+@@ -19,6 +19,7 @@
+   [switch]$NoResources,               # skip the resource sampler (overhead A/B)
+   [string]$PaintPhaseMs = '',         # R10 A/B: SWR_PAINT_PHASE_MS handed to the renderer through task-workload.ps1 (0 = pacing off; '' = renderer default)
+   [switch]$MemDeep,                   # R10 memory diagnosis: SWR_MEM_DEEP=1 for the renderer (heap and address-space walk every 5th memory sample; diagnostic run, perturbs timing)
++  [switch]$NoActivate,                 # tuple12 opt-in: pass startup guard & bottommost window policy to task-workload.ps1
+   [string]$Tag = '',
+   [string]$ExpectDll = 'E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93',
+   [double]$ExpectScale = 2.5,         # Dell tuple: 250% (dpi 240); every SR0 Dell record is scale 2.5
+@@ -55,7 +56,7 @@
+   while ((Get-Process -Name 'PresentMon-2.6.0-x64' -ErrorAction SilentlyContinue) -and (Get-Date) -lt $d) { Start-Sleep -Seconds 2 }
+ }
+ 
+-Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure rows=$Rows key_rate=$KeyRate resources=$(if ($NoResources) { 'off' } else { 'on' }) paint_phase_ms=$(if ($PaintPhaseMs -eq '') { 'default' } else { $PaintPhaseMs })"
++Log "run-workload tag=$Tag instr=$Instr runs=$Runs warmup=$Warmup measure=$Measure rows=$Rows key_rate=$KeyRate noactivate=$(if ($NoActivate) { 'on' } else { 'off' }) resources=$(if ($NoResources) { 'off' } else { 'on' }) paint_phase_ms=$(if ($PaintPhaseMs -eq '') { 'default' } else { $PaintPhaseMs })"
+ $null = Log ("whoami=" + (whoami) + " elevated=" + ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+ 
+ # 1) gates
+@@ -100,7 +101,7 @@
+ Start-Sleep -Seconds 5
+ 
+ # 3) interactive one-shot task
+-$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoResources) { ' -NoResources' })$(if ($PaintPhaseMs -ne '') { " -PaintPhaseMs $PaintPhaseMs" })$(if ($MemDeep) { ' -MemDeep' })"
++$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoActivate) { ' -NoActivate' })$(if ($NoResources) { ' -NoResources' })$(if ($PaintPhaseMs -ne '') { " -PaintPhaseMs $PaintPhaseMs" })$(if ($MemDeep) { ' -MemDeep' })"
+ $act = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arg -WorkingDirectory $Base
+ $pri = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
+ $set = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes (($Runs * ($Warmup + $Measure + 60)) / 60 + 10)) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries

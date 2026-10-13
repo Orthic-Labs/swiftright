@@ -1,0 +1,27 @@
+{
+  "kind": "independent-source-review-v1",
+  "stage": "uia-worker-final-release-v1",
+  "stageHash": "sha256:d49226c58406fc4e466444a463b63764b8dc788b03690b28aec4647a07859216",
+  "contractHash": "sha256:7487595d84e251066aa8f532593f6f84e4a101153fc3854987054eb00ca5fa49",
+  "helperHash": "sha256:d706f2e705b93fe0cc8c853c59858c917afbfe46d23b3364ca908446ab7bf28e",
+  "invokerHash": "sha256:155a29c64e1093b9570560fccf530b19b20d1602d64d5fbcc74c25dd7ee32d32",
+  "verdict": "CLEAR_SOURCE_PENDING_WINDOWS_CONTROLS",
+  "checks": {
+    "manifest_25_entries_exact": true,
+    "verify_source_passed": true,
+    "local_27_source_controls_passed": true,
+    "parent_no_uia_launch_attempt_precedes_start": true,
+    "native_init_precedes_start": true,
+    "same_handle_sample_after_raw_close_before_dispose": true,
+    "original_outcome_before_final_sample": true,
+    "bounded_15s_5s_guards": true,
+    "final_certificate_owner_only_exact_qualification": true,
+    "strict_final_sample_guards": true,
+    "complete_byte_join_reader": true,
+    "exhaustive_inventory": true,
+    "no_compile_receipt_claim": true
+  },
+  "findings": [],
+  "scope": "read-only source review; no native/compiler/remote/Git actions",
+  "nextGate": "Run Windows pure/final controls. Prospective native worker must retain original handle, seal raw streams, sample zero-wait same handle after closure, and archive exhaustive worker inventory before coordinator release."
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "independent-actual-build-review-v1",
+  "stage": "padding-capture-lease-build-v1/actual-build-r1",
+  "receiptSha256": "sha256:1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+  "exeSha256": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+  "verdict": "CLEAR_ACTUAL_BUILD_RECEIPT",
+  "checks": {
+    "receipt_hash_expected": true,
+    "receipt_identity": true,
+    "compiler_success_owned": true,
+    "exe_hash_alias": true,
+    "exe_pe_receipt": true,
+    "raw_streams_two_sealed": true,
+    "raw_bytes_join": true,
+    "runtime_modules_join": true,
+    "source_tool_context": true,
+    "source_controls_no_native": true
+  },
+  "findings": [],
+  "scope": "offline receipt/archive review; no native/compiler/remote/Git actions",
+  "nextGate": "Use exact receipt/exe pins for capture caller; retain required launch executable/module/archive bytes until capture completes."
+}

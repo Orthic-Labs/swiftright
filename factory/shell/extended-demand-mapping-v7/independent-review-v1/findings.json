@@ -1,0 +1,63 @@
+{
+  "kind": "extended-demand-mapping-v7-independent-source-review",
+  "version": 1,
+  "reviewStatus": "bounded-review-with-validator-gaps",
+  "scope": "Read-only review of exact v7 stage, generator, verifier, mutation controls, frozen v6 overlay, and registry snapshot.",
+  "sourcePins": {
+    "v7StageManifest": "9c1dc5e5649d9175305bf54c21abcfbfb74251a885cfe06d461824ad750af71a",
+    "v7Overlay": "9617a692eff9607056e217d50842f543b1dd54795f75720f8ed0f532beb6b5f3",
+    "v7Generator": "500ec32b528dd06adff203773b9b1775d6687610d69d45e2f88cd49d5d612192",
+    "v7Verifier": "0fb08c011c15d016c9839958bec2e10e24a0b50d9e5651b2aa924caf5bdc2e6c",
+    "v7Tests": "f3c8c891a3f49eb01235b13ea8fabcd1b2d4e2dea525e89b721aec917dbc90e0",
+    "v7Controls": "1a2e3db2719a557f0cf5a4fde39c7cf7ce04df622052e5d2a0dff4b20f3ea3c1",
+    "v7Readme": "dd3dc996b51169b5e7ec0bd2f90eddb1b1d5788c1869bb1c976f59ff021340c9",
+    "v6Overlay": "f806795690e20f1221d218ba5531094b97e95d3300ebc9aef229c5633d057a89",
+    "registrySnapshot": "1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983"
+  },
+  "verifiedFacts": {
+    "denominator": 107,
+    "unresolvedHeld": 5,
+    "ambiguousHeld": 3,
+    "v7OverlayRows": 8,
+    "newFullDemandResolutions": 0,
+    "registryPromotions": 0,
+    "registryBlocks": 10,
+    "rowKeys": [
+      "f12-extended-013", "f12-extended-014", "f12-extended-017", "f12-extended-039", "f12-extended-040",
+      "f12-extended-001", "f12-extended-002", "f12-extended-045"
+    ],
+    "requirementsOnly": true
+  },
+  "replay": {
+    "commands": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 factory/shell/extended-demand-mapping-v7/verify_v7.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 factory/shell/extended-demand-mapping-v7/test_mapping_v7.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 factory/shell/extended-demand-mapping-v7/freeze_stage.py"
+    ],
+    "results": ["PASS: verifier", "PASS: all 7 declared mutation controls", "PASS: 7 frozen files, 14,627 bytes"]
+  },
+  "findings": [
+    {
+      "id": "V7-VERIFY-01",
+      "severity": "review-gap",
+      "summary": "Verifier accepts changed disposition while priorDisposition still matches frozen v6.",
+      "reproduction": "Copy mapping-v7-action-overlay.json, set rows[0].disposition='resolved', preserve priorDisposition, and call verify_v7.verify(temp_path); verifier returns PASS.",
+      "impact": "The verifier does not enforce that each v7 disposition remains equal to its frozen v6 disposition. Current generated artifact itself is correct and remains requirements-only."
+    },
+    {
+      "id": "V7-VERIFY-02",
+      "severity": "review-gap",
+      "summary": "Verifier only checks requiredEvidence is a list of length at least two.",
+      "reproduction": "Set rows[0].requiredEvidence=['anything','anything'] in a temporary overlay; verifier returns PASS.",
+      "impact": "The validator does not protect actionable evidence text from weakening. Frozen stage hashes still bind current artifact bytes."
+    },
+    {
+      "id": "V7-VERIFY-03",
+      "severity": "review-gap",
+      "summary": "Numeric zero check accepts boolean false due to Python equality semantics.",
+      "reproduction": "Set newFullDemandResolutions=false in a temporary overlay; verifier returns PASS because false == 0.",
+      "impact": "Strict JSON integer typing is not enforced for this count field; current artifact contains integer zero."
+    }
+  ],
+  "controlAssessment": "The seven declared controls reject their named denominator, row-set, promotion, base-pin, registry-pin, resolution, and identity mutations. They do not exercise disposition preservation, requirement-text integrity, or strict count typing. No candidate identity, full-demand resolution, registry promotion, or coverage assertion is validated or introduced by this review."
+}

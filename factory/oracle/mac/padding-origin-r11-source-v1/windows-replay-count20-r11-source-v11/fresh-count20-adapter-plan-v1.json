@@ -1,0 +1,56 @@
+{
+  "kind": "factory-fresh-r11-count20-adapter-plan-v1",
+  "version": 1,
+  "status": "pending-windows-native-archive",
+  "qualification": "observation-only",
+  "count": 20,
+  "tuple": {
+    "id": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9",
+    "caseHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "macHostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "windowsHostHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a"
+  },
+  "captureIdentity": {
+    "expectedCount": 20,
+    "capturePattern": "^capture/[0-9a-f]{32}$",
+    "imagePattern": "^image/[0-9a-f]{32}$",
+    "runs": "1..20 unique",
+    "producer": "factory-prelaunch-capture-metadata-v2",
+    "measurementStatus": "pending-actual-launch-joins",
+    "measuredHostIdentity": "required after Windows launch",
+    "measuredClockIdentity": "required after Windows launch"
+  },
+  "mac": {
+    "archiveRoot": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1",
+    "rawManifest": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/raw-archive-manifest.json", "sha256": "sha256:f9088161d15ab3369e3084c8410569244aa392c044e465b7eba85c689f26d1bc", "bytes": 202035},
+    "review": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/root-review-r1.json", "sha256": "sha256:8fc50078ad13a79ebab332dfb9ea955b66f75222e73e9713b006fbf79ab315ee2", "bytes": 1158},
+    "comparator": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/mac-only-production-comparator-r1.json", "sha256": "sha256:b6c25c7a61dbe2e9062d3a887c75dfe83711724daad954903db0ddc5465e114e", "bytes": 15765},
+    "comparatorStatus": "blocked-until-windows-20"
+  },
+  "windows": {
+    "archiveRoot": null,
+    "manifest": null,
+    "status": "pending-root-fetch",
+    "required": "actual 20-run whole archive with coordinator, metadata, 20 capture IDs/images, all raw streams, 13 proof roles, runtime tree/modules, compiler/source/exe/renderer joins"
+  },
+  "pipeline": {
+    "source": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source",
+    "sourceHashes": {
+      "produceInputMap": "sha256:8da6af4d61b07eb6793ec17ceaee993e2e25e0d58578c974e3375506d76d94ec",
+      "produceInputs": "sha256:e853386ea44a31d6a710cee33bfeb5dde9c8ce06c93ff0fc3f00ad07788e0e3b",
+      "runAdapter": "sha256:c9cc0824541912584234a10ad774b2c3f70856be79d1df2beebcd6cc06f1cf3d"
+    },
+    "steps": ["produce-input-map-v6", "produce-inputs-v6", "proof-r2", "run-adapter-v6", "trusted-reader", "paired-production-comparison"],
+    "pendingRule": "allow-pending may create map only; strict pipeline rejects absent Windows refs & invents no hashes"
+  },
+  "guards": {
+    "nativeWindowActions": 0,
+    "compilerActions": 0,
+    "lockActions": 0,
+    "relabelHistoricalRecords": false,
+    "parity": "hold",
+    "goldenFreeze": "hold"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "assertions": [
+    {
+      "channel": "paint",
+      "expected": {
+        "assertions": [
+          {
+            "channel": "layout",
+            "expected": {
+              "height": 20,
+              "shape": "Rectangle-or-RoundedRectangle",
+              "style": "fill-or-stroke",
+              "width": 40
+            },
+            "id": "swiftui.shapes.fill-stroke.assertion.primary",
+            "observability": "available"
+          }
+        ],
+        "axes": [
+          {
+            "coverage": "pairwise",
+            "id": "shape",
+            "values": [
+              "Rectangle()",
+              "RoundedRectangle(cornerRadius: 6)"
+            ]
+          },
+          {
+            "coverage": "pairwise",
+            "id": "style",
+            "values": [
+              "fill(Color.red)",
+              "stroke(Color.blue, lineWidth: 2)"
+            ]
+          },
+          {
+            "coverage": "pairwise",
+            "id": "color-scheme",
+            "values": [
+              "light",
+              "dark"
+            ]
+          }
+        ],
+        "block": "swiftui.shapes.fill-stroke",
+        "id": "swiftui.shapes.fill-stroke.recipe",
+        "instrumentationTransparency": {
+          "case": "swiftui.shapes.fill-stroke.instrumentation-transparency",
+          "channels": [
+            "layout",
+            "paint"
+          ]
+        },
+        "kind": "recipe",
+        "negativeCases": [
+          {
+            "id": "swiftui.shapes.fill-stroke.negative.invalid-member",
+            "mode": "must-not-compile",
+            "sourceHash": "sha256:0e94a9dc43a419e8be26428539895719858ba9295b19f383567757302e95ffe3"
+          }
+        ],
+        "provenance": {
+          "createdAt": "2026-10-10T17:26:20Z",
+          "producer": "factory/recipes-draft",
+          "review": {
+            "at": "2026-10-10T17:26:20Z",
+            "decision": "candidate",
+            "reviewer": "pending-maintainer-review"
+          },
+          "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+        },
+        "stimuli": [],
+        "version": "0.1",
+        "witnesses": [
+          {
+            "id": "swiftui.shapes.fill-stroke.witness",
+            "resources": [
+              {
+                "hash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+                "id": "swiftui.shapes.fill-stroke.witness.swift"
+              }
+            ],
+            "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+          }
+        ]
+      },
+      "id": "swiftui.shapes.fill-stroke.recipe.assertion.primary",
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "coverage": "full-product",
+      "id": "color-scheme",
+      "values": [
+        "light"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "shape",
+      "values": [
+        "RoundedRectangle(cornerRadius: 6)"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "style",
+      "values": [
+        "stroke(Color.blue, lineWidth: 2)"
+      ]
+    }
+  ],
+  "block": "swiftui.shapes.fill-stroke",
+  "id": "swiftui.shapes.fill-stroke.recipe",
+  "instrumentationTransparency": {
+    "case": "swiftui.shapes.fill-stroke.recipe.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  },
+  "kind": "recipe",
+  "negativeCases": [],
+  "provenance": {
+    "createdAt": "2026-10-12T00:00:00Z",
+    "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+    "review": {
+      "at": "2026-10-12T00:00:00Z",
+      "decision": "candidate",
+      "reviewer": "root"
+    },
+    "sourceHash": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57"
+  },
+  "stimuli": [],
+  "version": "0.1",
+  "witnesses": [
+    {
+      "id": "swiftui.shapes.fill-stroke.recipe.witness",
+      "resources": [
+        {
+          "hash": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+          "id": "factory-probe-witness.swift"
+        }
+      ],
+      "sourceHash": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7"
+    }
+  ]
+}

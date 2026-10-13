@@ -1,0 +1,46 @@
+{
+  "kind": "round2-extra-f4-source-config",
+  "version": "0.1",
+  "scope": "candidate source generation only",
+  "expectedBlocks": [
+    "swiftui.popover",
+    "swiftui.animation.spring-interruption",
+    "swiftui.text-field-ime",
+    "swiftui.environment-font-color-scheme",
+    "swiftui.context-menu"
+  ],
+  "unsupportedObservability": {
+    "swiftui.popover": {
+      "presentation": "native presentation lifecycle and owned secondary window are unavailable in source-only generation",
+      "events/state": "native event capture is unavailable in source-only generation",
+      "accessibility": "native accessibility capture is unavailable in source-only generation"
+    },
+    "swiftui.animation.spring-interruption": {
+      "events/state": "native event capture is unavailable in source-only generation",
+      "presentation": "timed native presentation geometry is unavailable in source-only generation"
+    },
+    "swiftui.text-field-ime": {
+      "events/state": "native event capture is unavailable in source-only generation",
+      "accessibility": "native accessibility capture is unavailable in source-only generation",
+      "ime": "real marked-text provider and composition records are unavailable in source-only generation"
+    },
+    "swiftui.environment-font-color-scheme": {
+      "layout": "native inherited layout readback is unavailable in source-only generation",
+      "paint": "native font shaping and paint readback are unavailable in source-only generation",
+      "events/state": "native event capture is unavailable in source-only generation"
+    },
+    "swiftui.context-menu": {
+      "events/state": "native event capture is unavailable in source-only generation",
+      "accessibility": "native accessibility capture is unavailable in source-only generation",
+      "presentation": "native context-menu lifecycle is unavailable in source-only generation"
+    }
+  },
+  "sourcePolicy": {
+    "imports": "same-source generator imports only; no view callbacks or instrumentation inserted",
+    "caseBindings": "consume validation.json descriptor IDs and inputs byte-for-byte",
+    "executionEligible": false,
+    "compileRuns": 0,
+    "nativeRuns": 0,
+    "registryPromotion": false
+  }
+}

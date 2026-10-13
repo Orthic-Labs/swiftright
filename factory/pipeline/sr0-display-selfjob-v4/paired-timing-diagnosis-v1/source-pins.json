@@ -1,0 +1,52 @@
+{
+  "kind": "sr0-display-paired-timing-diagnosis-v1-pins",
+  "mac": {
+    "captureStart": "probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/capture-start.json",
+    "observedRuns": 20,
+    "passedRuns": 20,
+    "rawRoot": "probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/actual-mac20",
+    "report": "probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/mac-f1-report-r1.json",
+    "requiredRuns": 20,
+    "sourceManifest": "probes/sr0-s/fresh-on-bridge/out/tuple12-mac-preflight-takeover-v1/mac-source-manifest.json",
+    "timingComparisonReady": false
+  },
+  "qualification": {
+    "compilerActions": 0,
+    "nativeActions": 0,
+    "parityClaim": false,
+    "thresholdsUnchanged": true
+  },
+  "sourceFiles": {
+    "diagnosis": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/paired-timing-diagnosis-v1/diagnose-paired-timing-v1.py",
+      "sha256": "d4d6bde198a847734ca45f06b174f307eaeafa880b9764bc361cc8a9a0864d30"
+    },
+    "readme": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/paired-timing-diagnosis-v1/README.md",
+      "sha256": "7a7385272cef61f849573e96692bc831fe5c1b66b5085688a6344dd409c2d77a"
+    },
+    "windowsAnalyzer": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/analyze-workload-v3-strict-input-v1.py",
+      "sha256": "d068aed982569e48dbccd760c66ba5789e73c9a31b37a3888264c31a769b43b7"
+    },
+    "windowsMaterializer": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/strict-input-repair-v1/materialize-windows-inputs-v1.py",
+      "sha256": "9a468e7b167f51230cffb9281d66dab32d3d876865d184131ca6a1d33137e623"
+    }
+  },
+  "windows": {
+    "build": "probes/sr0-b/workload/out/tuple12-source-build-v1/observed-workload-r10-v7-r1/runs/build.json",
+    "failedV5RawRoot": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-native-raw",
+    "incremental": "qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/incremental.json",
+    "maxCsvBytes": 67108864,
+    "maxRawResultBytes": 2097152,
+    "maxReportBytes": 4194304,
+    "maxStreamBytes": 8388608,
+    "rawRoot": "factory/pipeline/sr0-display-selfjob-root-v4/observer-r6/actual-native-raw",
+    "rendererSha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+    "sourceFileSha256": "6e0f6ffb9d5afebb249412e92cbc76583a17c1a24f6602016d86dfdfa94b5429",
+    "sourceManifestSha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+    "strictReport": "factory/pipeline/sr0-display-selfjob-root-v4/observer-r6/strict-input-repair-r2/strict-report/report.json",
+    "workloadExeSha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c"
+  }
+}

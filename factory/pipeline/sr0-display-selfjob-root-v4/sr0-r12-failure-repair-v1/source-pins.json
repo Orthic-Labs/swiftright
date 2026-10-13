@@ -1,0 +1,25 @@
+{
+  "schema": "sr0-r12-failure-repair-v1-source-pins",
+  "rawFailureRoot": "factory/pipeline/sr0-display-selfjob-root-v4/native-r10c-recovery-v1/root-native-r12-observer-r13-r1/actual-failure",
+  "taskName": "SR0-factory-display-selfjob-v7-root-r12",
+  "expectedRows": 1,
+  "strictParser": {
+    "workloadIdentityHelperSha256": "4e7af8708f78b1613196cc710c6cd7222f9a0485984326bd2e390df422a2d9ad",
+    "collectorFrozenTaskSha256": "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e"
+  },
+  "failureFacts": {
+    "collectorKind": "sr0-display-collector-v8-drain-pidjoin",
+    "collectorFailure": "workload exit row count mismatch: 0 vs 1",
+    "workloadExit": 0,
+    "workloadTargetPid": null,
+    "workloadStdoutBytes": 0,
+    "workloadStderrBytes": 0,
+    "qualificationClaim": false
+  },
+  "candidate": {
+    "taskSource": "task-workload-v9-failure-publication.ps1",
+    "publicationRule": "flush after retained child handle/start identity/kernel exit/stream diagnostics",
+    "displayQualification": false,
+    "lockRelease": false
+  }
+}

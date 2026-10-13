@@ -1,0 +1,70 @@
+{
+  "kind": "independent-readonly-lifecycle-wait-r2-review-v1",
+  "status": "CLEAR_FOR_ROOT_DISPATCH",
+  "checks": [
+    "r2 exact parent-specified SHA",
+    "exact single quoted old runroot",
+    "body exactly admitted r1 except one literal",
+    "prefix exact explicit readonly wait grammar",
+    "prefix copied approved padding wrapper",
+    "prefix only read exact desktoplock/free guard",
+    "prefix no mutation/window/task/delete/kill/deadline/output/retry verbs",
+    "one unchanged actual driver invocation",
+    "Count1 stack fresh r2 runroot",
+    "compile/exe measured pins unchanged",
+    "all hash/control/deadline/driver body bytes unchanged",
+    "diagnostic capture frozen source/dependency pins intact",
+    "diagnostic producer frozen source intact",
+    "busy r1 exact two forensic files",
+    "busy r1 failed single no retry",
+    "busy r1 dispatch bytes joined",
+    "busy r1 no lock acquired/released/retained",
+    "busy r1 no task/window launch",
+    "busy observations all nonfree/unacquired",
+    "busy compile/exe pins preserved for r2",
+    "busy holds unchanged no evidence promotion"
+  ],
+  "checkCount": 21,
+  "r1BodySha256": "9b79a8a11a5893259eaa39829de1af62b9db934b7567a5cce75df0f100943b75",
+  "r2WrapperSha256": "3450c6ba3a4590830619f10b08610f899fde32756457f4e7d02787c82c3b32a9",
+  "prefixSha256": "e51642f87bc8b2ce5142f1c93d3fa84af9c8d4573c3872cd22dbe5c6611bee19",
+  "prefixBytes": 172,
+  "bodyChange": "exactly one single quoted RunRoot literal r1 -> r2",
+  "busyR1Status": "hold-desktop-busy",
+  "busyR1NativeLaunched": false,
+  "busyR1LockAcquired": false,
+  "busyR1LockReleased": false,
+  "busyObservationCount": 121,
+  "freshR2RunRootObserved": true,
+  "readOnlyReview": true,
+  "remoteNativeCompilerGitActions": 0,
+  "nativeParity": "hold",
+  "frozenTupleBound": false,
+  "evidence": [
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-capture-v1/root-single-lifecycle-r1.ps1",
+      "sha256": "sha256:9b79a8a11a5893259eaa39829de1af62b9db934b7567a5cce75df0f100943b75",
+      "bytes": 32485
+    },
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-capture-v1/root-wait-single-lifecycle-r2.ps1",
+      "sha256": "sha256:3450c6ba3a4590830619f10b08610f899fde32756457f4e7d02787c82c3b32a9",
+      "bytes": 32657
+    },
+    {
+      "path": "factory/native/windows/round1-seeded-native-v5/root-wait-single-padding-r1.ps1",
+      "sha256": "sha256:6d17c9826484684fee5815385d7060963e0d8c8cfb386cb43d57a19017d4bcb8",
+      "bytes": 18006
+    },
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-capture-v1/single-stack-lifecycle-r1/batch.json",
+      "sha256": "sha256:4eb5242f97074c347223b40177e4d068bd930b4639ad00156e04c970440fe39f",
+      "bytes": 1038
+    },
+    {
+      "path": "factory/native/windows/seed-stack-lifecycle-capture-v1/single-stack-lifecycle-r1/replays/run-001/dispatch.json",
+      "sha256": "sha256:bde45bf8717c9d43535e50020f1c2c57e5c1021a9c59f17ef03b11b8f07840b8",
+      "bytes": 31674
+    }
+  ]
+}

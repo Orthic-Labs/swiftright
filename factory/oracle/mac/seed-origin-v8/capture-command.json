@@ -1,0 +1,42 @@
+{
+  "argvPlanned": [
+    "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+    "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v8/capture_origin.py",
+    "--manifest",
+    "<each v8 inputs manifest>",
+    "--case-root",
+    "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v8/inputs",
+    "--scratch",
+    "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v8-capture-20261011",
+    "--output",
+    "/Volumes/D/claude/swiftright/factory/native/macos/evidence/seed-origin-v8-capture-20261011",
+    "--runs",
+    "20"
+  ],
+  "canonicalCases": [
+    "inputs/swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258.json",
+    "inputs/swiftui.image.recipe.gate-seeded.ca4e13f820f5d258.json",
+    "inputs/swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258.json",
+    "inputs/swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258.json",
+    "inputs/swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.json"
+  ],
+  "captureStatus": "NOT_RUN",
+  "caseRoot": "factory/oracle/mac/seed-origin-v8/inputs",
+  "collector": "factory/oracle/mac/seed-origin-v8/capture_origin.py",
+  "heldCases": {
+    "swiftui.text.bundled-font": "held: bundled-font observability remains unresolved; no eligibility/promotion claim"
+  },
+  "kind": "seed-origin-v8-capture-command-plan",
+  "manifests": [
+    "inputs/swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+    "inputs/swiftui.image.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+    "inputs/swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+    "inputs/swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+    "inputs/swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.manifest.json"
+  ],
+  "noCaptureExecuted": true,
+  "runsPerCase": 20,
+  "seed": 14577611000270672472,
+  "status": "NOT_RUN",
+  "version": "1"
+}

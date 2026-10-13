@@ -1,0 +1,23 @@
+{
+  "kind": "factory-circle-close-diagnostic-source-manifest-v1",
+  "status": "SOURCE_ONLY",
+  "stageRoot": "D:\\Claude\\swiftright\\.factory-work\\hosts\\circle-close-r1",
+  "files": [
+    {"path": "prepare-circle-close-diagnostic.py", "bytes": 11893, "sha256": "fd1112467a01eecea3317cbe23256d345e1f506418e7cd19114dbf30cba4bb17"},
+    {"path": "install-circle-close-diagnostic-v1.ps1", "bytes": 5263, "sha256": "e1900f40dac3f2dc72340e23e8cdeb646f2b7c40afb3785d082bbb6d3c0bda14"},
+    {"path": "build-circle-close-diagnostic-v1.ps1", "bytes": 11113, "sha256": "79448e4ba729185a1d791a23c2e4a2b8815579c315e4095018026b3f79b01344"},
+    {"path": "candidate-main.swift", "bytes": 16961, "sha256": "b761a826b249e7b918c6a25af8b3d9bccaced7005d1a35253fb3fd618a576a19"},
+    {"path": "circle-main-close-markers.patch", "bytes": 3863, "sha256": "1a390afdcb9e7a051472ddbf3218563be6608213f6670c59a1fa5f43e3c38f08"},
+    {"path": "frozen-inputs.json", "sha256": "76da4970b14085d1e8108ddd643c832c4634b756b82a990cea376951c96c8757"},
+    {"path": "diagnosis.json", "sha256": "7b1ad418b96229333d973465871f38c93930e8888283b76cdd277c0ffdf4700b"}
+  ],
+  "baseSources": {
+    "buildCircleOwnedV2Path": "factory/native/windows/pilot-circle-root-v1/build-circle-owned-v2.ps1",
+    "buildCircleOwnedV2Sha256": "3d4b4d4cee16ad0ee974b624d6fb0eee2c2ce77ac82a7ed8d719b09d34c12808",
+    "helperPath": "factory/pipeline/pilot-next-source-v1/windows-task-memory-v1/Sr0OwnedJobProcess.cs",
+    "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+    "donorPlanPath": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/native/plan.json",
+    "donorPlanSha256": "23f99cc23c81b2bb49b8bbe60a77123a94b840c8f2a0851073cd981760a5e308"
+  },
+  "effects": {"compilerActions": 0, "nativeActions": 0, "remoteActions": 0, "guiActions": 0, "lockActions": 0}
+}

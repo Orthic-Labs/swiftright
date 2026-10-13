@@ -1,0 +1,62 @@
+{
+  "kind": "factory-mta-count20-stage-source-map-v1",
+  "status": "source-only-pending-root-review",
+  "profiles": [
+    "text",
+    "circle"
+  ],
+  "entry": "stage_mta_count20.py",
+  "requiredInputs": {
+    "donorRoot": "admitted Count1 r5 stage-manifest plus profile-specific producer/admission/overlay",
+    "count1Certificate": "actual successful original Count1 coordinator JSON; exact sha256 and bytes supplied on CLI",
+    "lifecycleRoot": "factory/pipeline/pilot-next-source-v1/count20-lifecycle-v1",
+    "profileCapture": "donor overlay/capture-{profile}-single-v3.ps1; transformed only in fresh stage"
+  },
+  "count1CertificateGates": [
+    "count == 1",
+    "status == completed-source-bound-observation or completed",
+    "lockReleased == true",
+    "wholeBatchExitConfirmed == true",
+    "taskParentProof/parentProof.kernelWait == 0",
+    "measured sourceInputsHash, issuedMetadataHash, compileReceiptHash, exeHash"
+  ],
+  "count20Lifecycle": {
+    "count": 20,
+    "runIndexes": "1..20",
+    "runDirectories": "native-01..native-20",
+    "setupSeconds": 180,
+    "nativeWindowSeconds": 30,
+    "nativeExitSeconds": 15,
+    "captureSeconds": 600,
+    "cleanupSeconds": 60,
+    "outerSeconds": 840,
+    "schedulerMinutes": 15
+  },
+  "closure": {
+    "mtaWorker": "producer/dependencies/uia-worker/invoke-worker-mta.ps1",
+    "workerContract": "producer/dependencies/uia-worker/worker-contract.json",
+    "rendererFinalExit": "producer/support/final-exit-certificate.ps1",
+    "workerFinalExit": "producer/dependencies/uia-worker/support/final-exit-certificate.ps1",
+    "mtaControls": [
+      "overlay/final-exit-certificate-mta-v1.ps1",
+      "overlay/test-mta-config-admission.ps1",
+      "overlay/test-uia-mta-controls.ps1"
+    ],
+    "sourceBindings": "overlay rows are emitted into config.sourceBindings; producer integration rows remain separately sealed"
+  },
+  "limits": {
+    "maxFiles": 256,
+    "maxFileBytes": 8388608,
+    "maxTotalBytes": 33554432
+  },
+  "effects": {
+    "nativeActions": 0,
+    "compilerActions": 0,
+    "lockActions": 0,
+    "remoteActions": 0
+  },
+  "stagerSha256": "ad498580622e48947b44c625f59f608d7a31412293340db78c9681d461149a36",
+  "stagerBytes": 31076,
+  "graphReseal": "candidate tuple sourceInputs/context, canonicalTupleRef, source-inputs tuple/context/binding refs resealed after namespace transforms",
+  "count20FaultSeed": "test-profile-integration.ps1 mutates count 20 -> 21"
+}

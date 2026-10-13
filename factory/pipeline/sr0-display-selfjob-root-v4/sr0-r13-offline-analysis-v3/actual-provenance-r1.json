@@ -1,0 +1,72 @@
+{
+  "holds": [
+    "incremental proof now joins same source/build/artifact lineage; no qualification promotion",
+    "47 displayed of 3601 presents; 3554 replaced, with p95 presentation interval 3999.415 ms & input-to-visible p95 3044.3844 ms",
+    "strict refusal reports minimized, occluded, or throttled; isolated interactive full-visible run is required to distinguish cause",
+    "incremental proof is artifact_restoration_only; it does not claim final-noop identity"
+  ],
+  "kind": "sr0-r13-offline-provenance-adapter-v3",
+  "materializer": {
+    "bytes": 11672,
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/sr0-display-selfjob-root-v4/sr0-r13-offline-analysis-v2/materializer-receipt-r1.json",
+    "sha256": "fda5f160be3cb617ed7e97e5913866a7eb4333f4ccc0a24c6befb0b5ac96c596"
+  },
+  "nativeActions": 0,
+  "parityClaim": false,
+  "platform": "windows",
+  "qualificationClaim": false,
+  "rawInputsUnchanged": true,
+  "sameHostSourceJoin": {
+    "compiledSourceManifest": {
+      "bytes": 10992,
+      "path": "/Volumes/D/claude/swiftright/qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/compiled-source-manifest.json",
+      "sha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468"
+    },
+    "incremental": {
+      "bytes": 13257,
+      "path": "/Volumes/D/claude/swiftright/qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/incremental.json",
+      "sha256": "e41bd6479dfb1dbac0867a85b43ba700b933b6c4e3bf14d9c38dbf0eb6c4126c"
+    },
+    "releaseBuildMetadata": {
+      "bytes": 2106,
+      "path": "/Volumes/D/claude/swiftright/qualification/tuple12-takeover/root-process-validation-v9/observed-incremental-v9-r1/release-build-metadata-v6-r1.json",
+      "sha256": "3aec37529dc5e0b4de2b74af57d3f33c47de1b1f6c2a6dc8210cab265cd0f318"
+    },
+    "rendererDllSha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+    "sourceFileSha256": "6e0f6ffb9d5afebb249412e92cbc76583a17c1a24f6602016d86dfdfa94b5429",
+    "sourceManifestSha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+    "workloadExeSha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c"
+  },
+  "status": "diagnostic-held",
+  "strictReport": {
+    "overall": "INCOMPLETE",
+    "ref": {
+      "bytes": 17685,
+      "path": "/Volumes/D/claude/swiftright/factory/pipeline/sr0-display-selfjob-root-v4/sr0-r13-offline-analysis-v2/strict-report-r1/report.json",
+      "sha256": "db3c2e347efc585414895774f292f6c0af6f7fbcacd382396f71f6362e3c8981"
+    },
+    "refusalReasons": [
+      "r1: window not displayed for most of the measured window (PresentMon: 3601 presents, 47 displayed, ~3600 expected): minimized, occluded by another window, or throttled",
+      "set: W7 UI-only incremental build record present not measurable"
+    ]
+  },
+  "timing": {
+    "displayedInWindow": 47,
+    "presentedIntervalMs": {
+      "max": 4016.0551,
+      "n": 47,
+      "p50": 1983.0561,
+      "p95": 3999.4150000000004,
+      "p99": 4016.0551
+    },
+    "presentsInWindow": 3601,
+    "replacedInWindow": 3554,
+    "visibleMs": {
+      "max": 3961.9117,
+      "n": 589,
+      "p50": 1049.3926,
+      "p95": 3044.3844,
+      "p99": 3844.3857
+    }
+  }
+}

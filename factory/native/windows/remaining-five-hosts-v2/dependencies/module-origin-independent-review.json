@@ -1,0 +1,49 @@
+{
+  "kind": "independent-actual-module-origin-review",
+  "freeze": {
+    "path": "factory/native/windows/completed-module-origin-freeze-v2-20261011.json",
+    "sha256": "245b3e8e91c02e501f5f16e850e81734d431c3315c1a3059f1625e5438a4dec8",
+    "verifiedFileCount": 125,
+    "fileByteHashErrors": []
+  },
+  "sourceClearance": {
+    "builderSHA256": "fbf68c00d20cdc40d4538d70f06f28b2850443c2477807cb01db7719e12b2c76",
+    "verifierR6SHA256": "60585941bae1256a6be8d5db7184558fdc7f5b5695c5810f6e76cd1068387e87",
+    "testsR6SHA256": "728de009c76b6d17b180282379dc8ffa930e69595b08149b881c713798d1c046",
+    "independentlyReplayedR6TestCount": 8,
+    "timeArithmetic": "Exact integer UTC 100 ns ticks. Production controls reject reversed 100 ns ordering & 900.0000009 second duration; exact endpoints accepted."
+  },
+  "actualEvidenceClearance": {
+    "receiptSHA256": "eb25de924faebd4ac8375521c6726f857aa9e8dc84a4b8aa7efe05e07eee7d33",
+    "independentCopiedEvidenceReplay": "Accepted true; reasons empty. Explicit Windows-to-local mapping resolves installed compiler path to exact archived compiler bytes. Source/module/receipt pins remain unchanged.",
+    "dellPython310SameReceiptReplaySHA256": "df4be5f8eb5d4ec8f82287b5c33c898cadb29703adc8a57f2a36628a295ca8e4",
+    "dellSameReceiptReplay": {
+      "accepted": true,
+      "qualification": "observed-owned-compiler-module-origin",
+      "reasons": []
+    },
+    "checks": [
+      "Complete 56-file snapshot coverage & actual bytes; canonical 21 source bindings",
+      "Pinned source receipt & tar; original package-prefix-normalized tar contents equal snapshot",
+      "Pinned compiler executable & helper archive copies",
+      "Durable PID, exact OS executable/argv/parent/start, source cwd, launch time window, process & launch archives",
+      "Natural driver exit 0; exact raw stdout/stderr hash & length joins",
+      "Exact two target module directory files; nonzero sizes, content hashes & identical archived copies"
+    ],
+    "moduleSHA256": "7dc9bc0b7b4b966c0a6cc3bf0307f9c44606f61cd5e7ee96ca28828038134691",
+    "moduleBytes": 882196,
+    "documentationSHA256": "0f55b5b61d955b9551b8f5aadb09a28fb3e6de82d5fca1a00b571726734ae0ae",
+    "documentationBytes": 68260
+  },
+  "qualification": "Observed fresh owned compiler driver output module origin for runtime commit 37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b. Scope excludes transient backend binary attestation, historical 81 module origin upgrade, renderer/native parity & test result qualification.",
+  "preservedHistory": [
+    "Initial unqualified capture failure",
+    "Startup r2 ancestry loop failure & selected unqualified scratch modules",
+    "Startup r3 malformed transient child failure",
+    "Original R4 Python 3.10 seven-digit timestamp parser rejection",
+    "R5 precision collapse & R6 strict controls",
+    "Original runtime performance & TaskID failures",
+    "Original v1 freeze c475ecb5 & historical README 5b5718 retained; v2 binds current README bca43abb"
+  ],
+  "actions": "Read-only final freeze verification & new report only. No additional compiler, test process, verifier replay or GUI run during final freeze check."
+}

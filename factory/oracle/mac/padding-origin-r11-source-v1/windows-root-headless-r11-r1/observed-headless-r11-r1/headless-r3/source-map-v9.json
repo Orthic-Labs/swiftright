@@ -1,0 +1,64 @@
+{
+  "schema": "factory-windows-count20-r11-metadata-controls-source-map-v9",
+  "status": "source-ready-headless-controls-pending",
+  "count": 20,
+  "controlsKind": "factory-issued-metadata-full-guard-controls-v1",
+  "effects": {
+    "compilerActions": 0,
+    "nativeWindowActions": 0,
+    "guiActions": 0,
+    "remoteActions": 0,
+    "lockActions": 0
+  },
+  "activeErrorContracts": {
+    "metadata": "Fresh issued metadata context mismatch",
+    "runtimeModules": "Issued actual runtime module metadata mismatch",
+    "tupleCase": "fresh candidate case mismatch",
+    "tupleRuntimeRenderer": "fresh host/runtime envelope mismatch",
+    "bindingFrozen": "fresh tuple reference mismatch",
+    "bindingCanonicalInputs": "fresh candidate binding source-input hash mismatch",
+    "macContext": "Mac context source ref mismatch"
+  },
+  "faults": [
+    "metadata-expected-count",
+    "metadata-host-argument",
+    "metadata-source-hash",
+    "metadata-serializer-prefix",
+    "metadata-runtime-modules",
+    "tuple-case",
+    "tuple-runtime",
+    "tuple-renderer",
+    "binding-frozen",
+    "binding-canonical-input-hash",
+    "mac-context-path"
+  ],
+  "macContextMutation": "freshCase ref is resealed to existing freshManifest path/hash/bytes; active integration must reject tuple/context join drift",
+  "measuredExeHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+  "sources": {
+    "integration": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v9/integration-fresh-r11-v5.ps1",
+      "sha256": "sha256:0af5130e11fcd4f82c42471914a8361fd1132012ed67187357b4828b3d9eefd0",
+      "bytes": 33071
+    },
+    "controls": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v9/test-full-metadata-controls-v9.ps1",
+      "sha256": "sha256:c216427131d9ff1468fabe853de6458ef7e29cd334e39b066fb24f39c5cebc23",
+      "bytes": 7120
+    },
+    "README": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v9/README.md",
+      "sha256": "sha256:1d5da113ca45c8be38e22567ce1c64d99cdfaad0e6be4ac33736015c17a2a2bf",
+      "bytes": 1073
+    },
+    "v8SourceMap": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v8/source-map-v8.json",
+      "sha256": "sha256:424136caffcc4f02651cd96b3e6d5d542970337392f3e5f14578593fba31264e",
+      "bytes": 4907
+    },
+    "v7ControlsOrigin": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v7/test-full-metadata-controls-v7.ps1",
+      "sha256": "sha256:1399a5ddcbe4a894fb87858d78373b8ba8372331b21eed55c58528998a39efef",
+      "bytes": 6938
+    }
+  }
+}

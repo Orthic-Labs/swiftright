@@ -1,0 +1,61 @@
+{
+  "assertionChannels": [
+    "events/state",
+    "presentation"
+  ],
+  "block": "swiftui.animation.spring-interruption",
+  "case": {
+    "descriptor": {
+      "coverage": "full-product",
+      "executionEligible": false,
+      "id": "swiftui.animation.spring-interruption.recipe/case/86635cc4e0b4a9e9",
+      "inputs": {
+        "distance": 80
+      },
+      "projectedWitnessHash": "sha256:a8280c4ae6b6652748ade67244e9b87675c2f832d0d98f74c1313e3ffaf51369",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:f2a9dfa42dfa3136702ff75bec14e89d6e0f08999d2a4b771cb1a39b8423c293",
+    "id": "swiftui.animation.spring-interruption.recipe/case/86635cc4e0b4a9e9"
+  },
+  "caseInputs": {
+    "distance": 80
+  },
+  "compileExpectation": "success",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:6d490903df442283df81c4ca940f73e1d1add37d49fe7cf86ed26207d1f63bd3",
+    "id": "swiftui.animation.spring-interruption.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "candidate-projection",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.Animation.spring",
+      "selector": "usr:s:7SwiftUI9AnimationV6springACvpZ",
+      "symbolEvidenceSha256": "2587593d6f3898737b462ffc9a2dc313a9f35db0b4be6412b4bf4ab682d4e571"
+    },
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.withAnimation(_:_:)",
+      "selector": "usr:s:7SwiftUI13withAnimationyxAA0D0VSg_xyKXEtKlF",
+      "symbolEvidenceSha256": "155d93f2f0137a33db1aaee54f2d96e50fa6b96da17ce953fe595b380509bc5f"
+    }
+  ],
+  "sourceFile": "swiftui.animation.spring-interruption.recipe_case_86635cc4e0b4a9e9.swift",
+  "sourceHash": "sha256:11307fd9e1c7c4d1120bba538be8078e49c389a2f430b0b6d374bd328e318485",
+  "unsupportedObservability": {
+    "events/state": "native event capture is unavailable in source-only generation",
+    "presentation": "timed native presentation geometry is unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.animation.spring-interruption.witness",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.animation.spring-interruption.witness.swift",
+    "sourceHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2"
+  },
+  "witnessType": "Witness_round2_spring"
+}

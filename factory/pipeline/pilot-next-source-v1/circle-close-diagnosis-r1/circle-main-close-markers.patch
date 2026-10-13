@@ -1,0 +1,60 @@
+--- factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/native/Sources/FactoryProbe/main.swift	2026-10-12 08:20:01
++++ factory/pipeline/pilot-next-source-v1/circle-close-diagnosis-r1/candidate-main.swift	2026-10-12 08:26:05
+@@ -8,6 +8,13 @@
+     fflush(stderr)
+ }
+ 
++// Diagnostic-only host markers. They carry monotonic process-local ticks; they do not
++// alter shutdown ordering or replace retained-kernel-handle observations.
++func factoryCloseMarker(_ phase: String) {
++    let ticks = DispatchTime.now().uptimeNanoseconds
++    factoryStderr("FACTORY_CLOSE_PHASE phase=\(phase) uptimeNs=\(ticks) pid=\(GetCurrentProcessId())")
++}
++
+ // Thread-local factory hook vetoes activation before staged renderer creates its window.
+ let factoryActivationVeto: HOOKPROC = { code, wParam, lParam in
+     if code == Int32(HCBT_ACTIVATE) || code == Int32(HCBT_SETFOCUS) { return 1 }
+@@ -217,26 +224,42 @@
+         bridge.onTick = { _, time in MainActor.assumeIsolated { host.tick(time) } }
+         bridge.onWindowClosed = { MainActor.assumeIsolated {
+             host.windowClosed = true
++            factoryCloseMarker("window-closed-enter")
+             if !host.firstWindowMetricsEventSeen {
+                 do { try host.metricsLog.emit(["record": "window-metrics-status", "phase": "window-closed", "source": "Bridge.onWindowClosed", "status": "held-missing-actual-windowMetrics-event", "pid": GetCurrentProcessId(), "thread": GetCurrentThreadId(), "hwnd": host.ownedHWND.map { UInt(bitPattern: $0) } ?? 0, "dpi": host.initialDPI ?? 0, "scale": Double(host.scale), "firstLayoutLogged": host.firstLayoutLogged]) } catch { host.errors.append(String(describing: error)) }
+             } else {
+                 do { try host.metricsLog.emit(["record": "window-metrics-status", "phase": "window-closed", "source": "Bridge.onWindowClosed", "status": "observed-actual-windowMetrics-event", "pid": GetCurrentProcessId(), "thread": GetCurrentThreadId(), "hwnd": host.ownedHWND.map { UInt(bitPattern: $0) } ?? 0, "dpi": host.initialDPI ?? 0, "scale": Double(host.scale)]) } catch { host.errors.append(String(describing: error)) }
+             }
++            factoryCloseMarker("before-graph-teardown")
+             host.graph?.tearDown()
++            factoryCloseMarker("after-graph-teardown")
++            factoryCloseMarker("before-measurer-release")
+             host.measurer?.releaseAll()
+-            do { try bridge.shutdownComplete() } catch { host.errors.append(String(describing: error)) }
++            factoryCloseMarker("after-measurer-release")
++            factoryCloseMarker("before-shutdown-complete")
++            do {
++                try bridge.shutdownComplete()
++                factoryCloseMarker("after-shutdown-complete")
++            } catch {
++                host.errors.append(String(describing: error))
++                factoryCloseMarker("shutdown-complete-threw")
++            }
+         } }
+         guard let activationHook = SetWindowsHookExW(Int32(WH_CBT), factoryActivationVeto, nil, GetCurrentThreadId()) else {
+             print("FACTORY_STARTUP_ERROR activation veto hook failed"); return 78
+         }
+         defer { UnhookWindowsHookEx(activationHook) }
+         print("FACTORY_BACKGROUND_GUARD thread-cbt-activation-veto")
++        factoryCloseMarker("before-bridge-run")
+         factoryStderr("FACTORY_BRIDGE_RUN_BEGIN")
+         try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240)
++        factoryCloseMarker("after-bridge-run")
+         factoryStderr("FACTORY_BRIDGE_RUN_END")
+         host.errors.forEach { print("FACTORY_RENDER_ERROR \($0)") }
++        factoryCloseMarker("mainactor-return")
+         return host.errors.isEmpty ? 0 : 1
+     } catch { print("FACTORY_STARTUP_ERROR \(error)"); return 78 }
+ }
++factoryCloseMarker("before-process-exit")
+ fflush(stdout)
+ exit(result)

@@ -1,0 +1,562 @@
+{
+  "findings": [
+    {
+      "line": 239,
+      "module": "SwiftUI",
+      "name": "SnapshotResponse",
+      "ownSourceAttributes": [
+        {
+          "line": 234,
+          "text": "@available(watchOS 9.0, *)"
+        },
+        {
+          "line": 235,
+          "text": "@available(iOS, unavailable)"
+        },
+        {
+          "line": 236,
+          "text": "@available(macOS, unavailable)"
+        },
+        {
+          "line": 237,
+          "text": "@available(tvOS, unavailable)"
+        },
+        {
+          "line": 238,
+          "text": "@available(visionOS, unavailable)"
+        },
+        {
+          "line": 239,
+          "text": "public struct SnapshotResponse : Swift.Sendable {"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:7SwiftUI16SnapshotResponseV"
+    },
+    {
+      "line": 240,
+      "module": "SwiftUI",
+      "name": "init(restoredDefaultState:estimatedSnapshotExpiration:identifier:)",
+      "ownSourceAttributes": [
+        {
+          "line": 240,
+          "text": "  public init(restoredDefaultState: Swift.Bool = false, estimatedSnapshotExpiration: Foundation.Date? = nil, identifier: Swift.String? = nil)"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 239,
+          "name": "SnapshotResponse",
+          "sourceAttributes": [
+            {
+              "line": 234,
+              "text": "@available(watchOS 9.0, *)"
+            },
+            {
+              "line": 235,
+              "text": "@available(iOS, unavailable)"
+            },
+            {
+              "line": 236,
+              "text": "@available(macOS, unavailable)"
+            },
+            {
+              "line": 237,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 238,
+              "text": "@available(visionOS, unavailable)"
+            },
+            {
+              "line": 239,
+              "text": "public struct SnapshotResponse : Swift.Sendable {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:7SwiftUI16SnapshotResponseV20restoredDefaultState09estimatedC10Expiration10identifierACSb_10Foundation4DateVSgSSSgtcfc"
+    },
+    {
+      "line": 6136,
+      "module": "SwiftUICore",
+      "name": "DepthAlignmentKey",
+      "ownSourceAttributes": [
+        {
+          "line": 6130,
+          "text": "@available(visionOS 1.0, *)"
+        },
+        {
+          "line": 6131,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", visionOS 1.0)"
+        },
+        {
+          "line": 6132,
+          "text": "@available(iOS, unavailable)"
+        },
+        {
+          "line": 6133,
+          "text": "@available(macOS, unavailable)"
+        },
+        {
+          "line": 6134,
+          "text": "@available(watchOS, unavailable)"
+        },
+        {
+          "line": 6135,
+          "text": "@available(tvOS, unavailable)"
+        },
+        {
+          "line": 6136,
+          "text": "@_documentation(visibility: private) public struct DepthAlignmentKey : Swift::Hashable, Swift::Comparable, Swift::Sendable {"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore17DepthAlignmentKeyV"
+    },
+    {
+      "line": 6137,
+      "module": "SwiftUICore",
+      "name": "<(_:_:)",
+      "ownSourceAttributes": [
+        {
+          "line": 6137,
+          "text": "  public static func < (lhs: SwiftUICore::DepthAlignmentKey, rhs: SwiftUICore::DepthAlignmentKey) -> Swift::Bool"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 6136,
+          "name": "DepthAlignmentKey",
+          "sourceAttributes": [
+            {
+              "line": 6130,
+              "text": "@available(visionOS 1.0, *)"
+            },
+            {
+              "line": 6131,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", visionOS 1.0)"
+            },
+            {
+              "line": 6132,
+              "text": "@available(iOS, unavailable)"
+            },
+            {
+              "line": 6133,
+              "text": "@available(macOS, unavailable)"
+            },
+            {
+              "line": 6134,
+              "text": "@available(watchOS, unavailable)"
+            },
+            {
+              "line": 6135,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 6136,
+              "text": "@_documentation(visibility: private) public struct DepthAlignmentKey : Swift::Hashable, Swift::Comparable, Swift::Sendable {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore17DepthAlignmentKeyV1loiySbAC_ACtFZ"
+    },
+    {
+      "line": 6151,
+      "module": "SwiftUICore",
+      "name": "depthKey",
+      "ownSourceAttributes": [
+        {
+          "line": 6151,
+          "text": "  @_documentation(visibility: private) public var depthKey: SwiftUICore::DepthAlignmentKey"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 6149,
+          "name": "DepthAlignment",
+          "sourceAttributes": [
+            {
+              "line": 6144,
+              "text": "@available(visionOS 1.0, *)"
+            },
+            {
+              "line": 6145,
+              "text": "@available(iOS, unavailable)"
+            },
+            {
+              "line": 6146,
+              "text": "@available(macOS, unavailable)"
+            },
+            {
+              "line": 6147,
+              "text": "@available(watchOS, unavailable)"
+            },
+            {
+              "line": 6148,
+              "text": "@available(tvOS, unavailable)"
+            },
+            {
+              "line": 6149,
+              "text": "@frozen public struct DepthAlignment : Swift::Equatable, Swift::Sendable {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore14DepthAlignmentV8depthKeyAA0cdF0Vvp"
+    },
+    {
+      "line": 12412,
+      "module": "SwiftUICore",
+      "name": "AnyLocationBase",
+      "ownSourceAttributes": [
+        {
+          "line": 12407,
+          "text": "@_hasMissingDesignatedInitializers @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+        },
+        {
+          "line": 12408,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+        },
+        {
+          "line": 12409,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+        },
+        {
+          "line": 12410,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+        },
+        {
+          "line": 12411,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+        },
+        {
+          "line": 12412,
+          "text": "@_documentation(visibility: private) open class AnyLocationBase : @unchecked Swift::Sendable {"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore15AnyLocationBaseC"
+    },
+    {
+      "line": 12420,
+      "module": "SwiftUICore",
+      "name": "AnyLocation",
+      "ownSourceAttributes": [
+        {
+          "line": 12415,
+          "text": "@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+        },
+        {
+          "line": 12416,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+        },
+        {
+          "line": 12417,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+        },
+        {
+          "line": 12418,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+        },
+        {
+          "line": 12419,
+          "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+        },
+        {
+          "line": 12420,
+          "text": "@_documentation(visibility: private) open class AnyLocation<Value> : SwiftUICore::AnyLocationBase, @unchecked Swift::Sendable {"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore11AnyLocationC"
+    },
+    {
+      "line": 14128,
+      "module": "SwiftUICore",
+      "name": "key",
+      "ownSourceAttributes": [
+        {
+          "line": 14128,
+          "text": "  @_documentation(visibility: private) public let key: SwiftUICore::AlignmentKey"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 14126,
+          "name": "HorizontalAlignment",
+          "sourceAttributes": [
+            {
+              "line": 14121,
+              "text": "@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+            },
+            {
+              "line": 14122,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+            },
+            {
+              "line": 14123,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+            },
+            {
+              "line": 14124,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+            },
+            {
+              "line": 14125,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+            },
+            {
+              "line": 14126,
+              "text": "@frozen public struct HorizontalAlignment : Swift::Equatable {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore19HorizontalAlignmentV3keyAA0D3KeyVvp"
+    },
+    {
+      "line": 14146,
+      "module": "SwiftUICore",
+      "name": "key",
+      "ownSourceAttributes": [
+        {
+          "line": 14146,
+          "text": "  @_documentation(visibility: private) public let key: SwiftUICore::AlignmentKey"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 14144,
+          "name": "VerticalAlignment",
+          "sourceAttributes": [
+            {
+              "line": 14139,
+              "text": "@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)"
+            },
+            {
+              "line": 14140,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+            },
+            {
+              "line": 14141,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+            },
+            {
+              "line": 14142,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+            },
+            {
+              "line": 14143,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+            },
+            {
+              "line": 14144,
+              "text": "@frozen public struct VerticalAlignment : Swift::Equatable {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore17VerticalAlignmentV3keyAA0D3KeyVvp"
+    },
+    {
+      "line": 15540,
+      "module": "SwiftUICore",
+      "name": "init(wrappedValue:)",
+      "ownSourceAttributes": [
+        {
+          "line": 15539,
+          "text": "  @available(*, unavailable, message: \"The wrapped value must be an object that conforms to Observable\")"
+        },
+        {
+          "line": 15540,
+          "text": "  public init(wrappedValue: Value)"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 15534,
+          "name": "Bindable",
+          "sourceAttributes": [
+            {
+              "line": 15529,
+              "text": "@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)"
+            },
+            {
+              "line": 15530,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+            },
+            {
+              "line": 15531,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+            },
+            {
+              "line": 15532,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+            },
+            {
+              "line": 15533,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+            },
+            {
+              "line": 15534,
+              "text": "@dynamicMemberLookup @propertyWrapper public struct Bindable<Value> {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore8BindableV12wrappedValueACyxGx_tcfc"
+    },
+    {
+      "line": 15542,
+      "module": "SwiftUICore",
+      "name": "init(projectedValue:)",
+      "ownSourceAttributes": [
+        {
+          "line": 15541,
+          "text": "  @available(*, unavailable, message: \"The wrapped value must be an object that conforms to Observable\")"
+        },
+        {
+          "line": 15542,
+          "text": "  public init(projectedValue: SwiftUICore::Bindable<Value>)"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.struct",
+          "line": 15534,
+          "name": "Bindable",
+          "sourceAttributes": [
+            {
+              "line": 15529,
+              "text": "@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)"
+            },
+            {
+              "line": 15530,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", iOS 18.0)"
+            },
+            {
+              "line": 15531,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", macOS 15.0)"
+            },
+            {
+              "line": 15532,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", tvOS 18.0)"
+            },
+            {
+              "line": 15533,
+              "text": "@_originallyDefinedIn(module: \"SwiftUI\", watchOS 11.0)"
+            },
+            {
+              "line": 15534,
+              "text": "@dynamicMemberLookup @propertyWrapper public struct Bindable<Value> {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore8BindableV14projectedValueACyxGAE_tcfc"
+    },
+    {
+      "line": 15556,
+      "module": "SwiftUICore",
+      "name": "init(wrappedValue:)",
+      "ownSourceAttributes": [
+        {
+          "line": 15555,
+          "text": "  @available(*, unavailable, message: \"@Bindable only works with Observable types. For ObservableObject types, use @ObservedObject instead.\")"
+        },
+        {
+          "line": 15556,
+          "text": "  public init(wrappedValue: Value)"
+        }
+      ],
+      "physicalOwnerSourceAttributes": [
+        {
+          "kind": "source.lang.swift.decl.extension.struct",
+          "line": 15554,
+          "name": "Bindable",
+          "sourceAttributes": [
+            {
+              "line": 15554,
+              "text": "extension SwiftUICore::Bindable where Value : Combine::ObservableObject {"
+            }
+          ]
+        }
+      ],
+      "rawEffectiveAccess": "source.decl.effective_access.public",
+      "sourceConditions": [],
+      "usr": "s:11SwiftUICore8BindableVAA7Combine16ObservableObjectRzlE12wrappedValueACyxGx_tcfc"
+    }
+  ],
+  "helperSha256": "83c3500b32658fdb3b075a2a96f5e0d781711e802e29c620e50aa6f3a73883a5",
+  "inputs": {
+    "SwiftUI": {
+      "index": {
+        "path": "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+        "sha256": "352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34"
+      },
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38"
+      }
+    },
+    "SwiftUICore": {
+      "index": {
+        "path": "/Volumes/D/claude/swiftright/factory/catalogue/compiler-cursor-spike/index-core-output.txt",
+        "sha256": "293b704c69ef4e80c577a79b23e556f1c480417caac656fddd3b75c2f6ffd506"
+      },
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+        "sha256": "4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13"
+      }
+    }
+  },
+  "kind": "independent-access-attribution-facts",
+  "linkSha256": "836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec",
+  "noSpiInPinnedPublicSources": {
+    "SwiftUI": true,
+    "SwiftUICore": true
+  },
+  "promotionsMade": 0,
+  "publicNominalsWithoutOwnPublicOrOpenModifier": {
+    "SwiftUI": [],
+    "SwiftUICore": []
+  },
+  "reviewRules": [
+    "Documentation visibility private proves documentation suppression; raw compiler still reports public access.",
+    "Target macOS unavailable or wildcard unavailable must inherit from own attributes, physical extensions & resolved nominal ancestors.",
+    "Other-platform unavailability does not prove macOS compiler ineligibility.",
+    "Missing raw identities, unresolved external owners & ambiguous owners remain held without direct hidden proof."
+  ],
+  "reviewerSourceSha256": "30ce5dadbe95206f0fc01820d45f0081357c10ddb45d1017fd5124779e9c3d7e",
+  "scope": "exact immutable836 two arm64e interface source/index streams"
+}

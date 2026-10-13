@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/independent-access-review/final-full-v2/review_semantics_preflight.py", line 187, in <module>
+    if __name__=='__main__':main(*sys.argv[1:])
+                            ~~~~^^^^^^^^^^^^^^^
+  File "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/independent-access-review/final-full-v2/review_semantics_preflight.py", line 36, in main
+    target=HERE/'snapshots'/Path(path).name;target.parent.mkdir(exist_ok=True);data=(ROOT/path).read_bytes();assert not target.exists() or target.read_bytes()==data;target.write_bytes(data)
+                                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

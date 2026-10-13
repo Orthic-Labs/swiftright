@@ -1,0 +1,38 @@
+{
+  "kind": "factory-system-image-provider-raster-plan-v1",
+  "identity": "star.fill",
+  "provider": "Segoe Fluent Icons",
+  "glyph": "E735",
+  "fontSource": "read-only Windows system font collection",
+  "rasterApi": [
+    "DWriteCreateFactory",
+    "GetSystemFontCollection",
+    "CreateGlyphRunAnalysis",
+    "GetAlphaTextureBounds",
+    "CreateAlphaTexture"
+  ],
+  "texture": "DWRITE_TEXTURE_CLEARTYPE_3X1",
+  "color": "RGBA FF CC 00 with DirectWrite alpha mask",
+  "maxBytes": 67108864,
+  "outputRoot": "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\provider-raster-r1",
+  "runtimeEdits": false,
+  "witnessEdits": false,
+  "fontInstallation": false,
+  "licenseStatus": "unverified",
+  "status": "source-ready-pending-root-preflight",
+  "producerSource": "GlyphRasterProducer.cpp",
+  "ownedProcessSource": "ProviderOwnedJobProcess.cs",
+  "runner": "produce-provider-raster-v1.ps1",
+  "compileModel": "cl.exe-compatible /std:c++17 /EHsc /O2 with dwrite.lib and ole32.lib",
+  "processReceipt": "compile-observation.json plus producer-observation.json; originalHandleRetained, streamDrainComplete, streamsSealed-before-quiescence, exact helper stop proof when vctip remains, jobActiveCount=0 required",
+  "fontPathInput": "explicit measured installed Segoe Fluent Icons file; runner hashes bytes; no guessing or installation",
+  "compilerEnvironment": "read-only VSCEIP OptIn diagnostic, then measured vcvars64.bat with VSCMD_SKIP_SENDTELEMETRY=1 before and after setup, retained cmd.exe child in same 1GiB Job Object",
+  "vctipSupervision": "after original cl/cmd exit 0 & sealed stream hashes, inspect every remaining Job Object PID; only one exact vctip.exe descendant with pinned image path/hash, job membership, start identity, & retained handle may be terminated; any ambiguity or foreign child fails",
+  "fontIdentityBinding": "IDWriteFontFile reference key for explicit FontPath must match selected system face file set",
+  "processMetadata": "runner adds producer PID to provider metadata and manifest",
+  "faultControls": {
+    "emptyCoverage": "--FaultMode empty-coverage injects transparent alpha then producer must fail empty-coverage; it cannot produce an accepted map",
+    "positive": "default FaultMode none requires nonZeroAlphaPixels > 0",
+    "vctipIdentity": "vctip-wrong-path, vctip-nonmembership, & vctip-retained-handle controls must fail admission; no foreign descendant may be terminated"
+  }
+}

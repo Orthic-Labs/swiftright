@@ -1,0 +1,102 @@
+{
+  "kind": "factory-native-count20-adapter-source-map-v11",
+  "status": "source-ready-r17-export-role-map-source-only",
+  "observedExport": {
+    "archiveRoot": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1",
+    "manifest": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1/manifest.json",
+      "sha256": "sha256:46adbf7fc6f5d31922c8bbb45eed9e25a49772ec7422d51ece81bc98f0fa2b0e",
+      "bytes": 160504,
+      "fileCount": 870,
+      "totalBytes": 6948001
+    },
+    "issuedMetadata": "sha256:876611d051d5f9af06e87d52c148da7df5fd37381caebf4e2c2caea4935e4adf",
+    "taskResult": "sha256:42a4ded2b593944103f47f020156fd269260eeb6f0d611d324ba064a9bfda478",
+    "candidateTuple": "sha256:d6822964bee88e90d9150427eb0dc9b2613228d403da544cafad25dbbf4e0dc5",
+    "candidateBinding": "sha256:6b49eb92bb3550581ba2d04b8bfe50b58dcb2041a07884806ae121a3987592f3",
+    "sourceBinding": "sha256:21fe0b64c8d9d5886fb4c2470274959793b5c7a53d31039d862947b20a8dd4c4",
+    "compileObservation": "sha256:1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+    "nativeObservation": "sha256:ffaf3cb644baf011f2fa04f5c2e748eb50b2632d20ebe7b9d4744358d89de7a5",
+    "runtimeReceipt": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+    "runtimeTree": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "runID": "4895b9f9f6f24e79bac1b964d3182ec8",
+    "nativeCount": 20,
+    "nativeRawFilesPerRun": 24,
+    "memoryPeakBytes": 371793920,
+    "memoryLimitBytes": 1073741824,
+    "activeProcessCount": 1
+  },
+  "producer": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v11-source/produce-input-map-v11.py",
+    "sha256": "sha256:83140cb1734d5808f80f0629abf87c5d6dbc6515869be061af54e3cbd575db90",
+    "bytes": 26757,
+    "role": "explicit-r17-export-inventory-producer",
+    "nativeActions": 0,
+    "lockActions": 0
+  },
+  "controls": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v11-source/test-adapter-v11-controls.py",
+    "sha256": "sha256:c302ab1766476640074642b5859dbf9ca221d009b52e6f6e5caf69ecc2600193",
+    "bytes": 3451,
+    "baseline": "real export manifest",
+    "faults": [
+      "wrong export kind",
+      "wrong measured hash",
+      "wrong measured byte count",
+      "missing required layout prefix"
+    ],
+    "nativeActions": 0,
+    "lockActions": 0
+  },
+  "readme": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v11-source/README.md",
+    "sha256": "sha256:12ec7d0ec8762afdb56fd8302c03e9b3fe3f26492379ee22107f1583f5f239ef",
+    "bytes": 3796
+  },
+  "expectedExport": {
+    "kind": "root-factory-native-v17-export-v1",
+    "layout": [
+      "coordinator-r1/",
+      "actual-inputs/",
+      "overlay/",
+      "replays/r1/",
+      "replays/r1/native-01..20/"
+    ],
+    "archiveRoot": "factory/oracle/mac/padding-origin-r11-source-v1/windows-root-headless-r11-r1/observed-native-v17-r1",
+    "readOnly": true
+  },
+  "requiredMeasuredRoles": [
+    "issuedMetadata",
+    "taskResult",
+    "memoryReceipt",
+    "adapterPlan",
+    "sourceBinding",
+    "compiler",
+    "source",
+    "runtime",
+    "renderer",
+    "host",
+    "case",
+    "tuple",
+    "rawStreams",
+    "workerOutputs",
+    "windowsExitProof"
+  ],
+  "bounds": {
+    "jsonBytes": 2097152,
+    "archiveFileBytes": 67108864,
+    "archiveOperationBytes": 268435456,
+    "chunkBytes": 1048576
+  },
+  "holds": [
+    "proof bundle must attach all 13 Windows exit-proof roles for each of 20 runs",
+    "trusted ArchiveByteReader must admit exact archive bytes before comparison",
+    "parity, timing, golden, tuple freeze, & qualification remain held"
+  ],
+  "frozenInputsPreserved": [
+    "adapter-v9-source",
+    "adapter-v10-source",
+    "adapter-v10-r17-source",
+    "r17 producer/coordinator sources"
+  ]
+}

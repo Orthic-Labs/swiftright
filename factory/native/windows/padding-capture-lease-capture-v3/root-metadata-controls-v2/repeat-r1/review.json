@@ -1,0 +1,16 @@
+{
+  "kind": "factory-count20-repeat-successor-review-v1",
+  "status": "source-ready-hold-root-review",
+  "count": 20,
+  "finding": "Prior v2 packet referenced nonexistent dispatch.batch/actual-batch-r1; repeat-r1 binds frozen dispatch.repeat/actual-repeat-r1.",
+  "chain": ["resume-issued-coordinator-repeat.ps1", "interactive-task-repeat.ps1", "dispatch-repeat.ps1", "capture-repeat-repeat.ps1"],
+  "firstProof": "Required before lock/native path in coordinator, dispatcher, & capture.",
+  "freshOutput": "actual-repeat-r1",
+  "retries": false,
+  "frozenCount1Source": "root-metadata-controls-v1/execute-r3",
+  "nativeWindowActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0,
+  "qualification": "held"
+}

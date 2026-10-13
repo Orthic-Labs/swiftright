@@ -1,0 +1,50 @@
+{
+  "binaryRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/bin",
+  "build": {
+    "buildScript": "tools/build-mac-source.sh",
+    "compileRequest": "compile-request.json",
+    "configuration": "release",
+    "frontendThreads": "root compile request must bind supported pass-through after pinned swift build help",
+    "jobs": 1,
+    "packagePath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/source",
+    "prepScript": "tools/prepare-mac-source.sh",
+    "supervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py"
+  },
+  "buildRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/build",
+  "cacheRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1",
+  "entryArguments": [
+    "--preflight --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/scratch/count1",
+    "--observe --scratch-root /Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/scratch/count1"
+  ],
+  "fixedHostPoints": {
+    "height": 240,
+    "width": 320
+  },
+  "hashClaims": 0,
+  "kind": "factory-custom-layout-mac-source-plan-v2",
+  "maxResidentBytes": 1073741824,
+  "nativeActions": 0,
+  "packetVersion": "custom-layout-host-v2",
+  "permissionRequests": false,
+  "requiredJoinsAfterBuild": [
+    "build receipt path",
+    "executable path",
+    "receipt source hash equals witnessHash",
+    "receipt runtime commit equals runtimeCommit",
+    "preflight observation scratch receipt",
+    "observe observation scratch receipt"
+  ],
+  "rootGroupSupervisor": "/Volumes/D/claude/swiftright/factory/tools/supervise-job-v2.py (required, 1 GiB aggregate)",
+  "rootRSSSupervisor": "task_info(mach_task_self_) before-render/after-render",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "sameSourceWitnessBytes": true,
+  "scratchRootPrefix": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/scratch/",
+  "sourceBindingsRepinned": true,
+  "stagedSourceRoot": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-r1/source",
+  "status": "SOURCE_READY_ROOT_GROUP_SUPERVISOR_REQUEST",
+  "windowsPackageWitnessHash": "sha256:f032a6b2a4b1f850fcce02ed97964eb05c2bc8965feb3403db975c8da44c7ee3",
+  "windowsPackageWitnessPath": "Sources/FactoryProbe/Witness.swift",
+  "windowsPlanHash": "sha256:87e4874cc0fa73c189bc75bda92f948aa28046190975a9069a8ad582b938c43a",
+  "windowsPlanPath": "package/plan.json",
+  "witnessHash": "sha256:f032a6b2a4b1f850fcce02ed97964eb05c2bc8965feb3403db975c8da44c7ee3"
+}

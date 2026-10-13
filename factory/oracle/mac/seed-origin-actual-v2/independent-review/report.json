@@ -1,0 +1,63 @@
+{
+  "archiveMapIntegrityDetails": [
+    {
+      "actualBytes": 1153,
+      "actualSha256": "sha256:233714ad190f266a54ea0946bb41fd14c8b7b4a308f5a6c1a829cffabc4a1095",
+      "expectedBytes": 1153,
+      "expectedSha256": "sha256:202cd05db010a4329708a73167b9971ace22009702d3678d4db2d897435bf892",
+      "path": "fault-controls.json"
+    }
+  ],
+  "archiveMapIntegrityFailures": [
+    "fault-controls.json"
+  ],
+  "archiveMapRows": 2134,
+  "candidateOnly": true,
+  "cases": 5,
+  "decision": "BLOCKED",
+  "failures": [],
+  "kind": "seed-origin-actual-v2-independent-review",
+  "nativeCompilerRemoteRuns": 0,
+  "notes": [
+    "capture-command-receipt explicitly records no collector parent-PID receipt; per-case resolver/compiler/AX process receipts are retained",
+    "font resolution remains HELD; shapes external AX remains HELD",
+    "no parity or promotion decision"
+  ],
+  "rows": [
+    {
+      "case": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258",
+      "f10Issues": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258",
+      "f10Issues": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258",
+      "f10Issues": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258",
+      "f10Issues": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258",
+      "f10Issues": [],
+      "runs": 20
+    }
+  ],
+  "runs": 100,
+  "sourcePins": {
+    "actualArchiveMap": "sha256:e33bdf9f96b5b989d946d8be152cf7a560f7adb793bff6f2bc08dae547d9e7df",
+    "actualStageManifest": "sha256:6a41b76a6bd6129e2f4b212d9b9997c73d31800968a99077ee5b5d4c04c84515",
+    "v8AXClient": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404",
+    "v8CaptureHost": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+    "v8Collector": "sha256:737399fcb39f13d79a8e908507210d0de733a3180b8eded63dfa7ec70ed2f8bf",
+    "v8StageManifest": "sha256:0641bf7030594ecd4dfd86ca60d30961f0ed3c849e7b79a0576dd25f13530942"
+  },
+  "version": "1"
+}

@@ -1,0 +1,1266 @@
+{
+  "export": {
+    "declaredCount": 760,
+    "manifestSha256": "sha256:5669dc4b825ba451aaf0df91a1791440a62e2591d111c84b2cc2340f3f3d87b5",
+    "originalParentKernelExitCertificate": false
+  },
+  "externalByteBindings": {},
+  "kind": "factory-rectangle-f10-adapter-input-v1",
+  "missingOrBlocked": [
+    "parent kernel exit certificate is not admitted",
+    "compiler byte binding requires exactly one explicit export row; found 0",
+    "exe byte binding requires exactly one explicit export row; found 0",
+    "renderer byte binding requires exactly one explicit export row; found 0"
+  ],
+  "nativeActions": 0,
+  "proofRows": [
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 211,
+          "path": "native/native-01/owned-close.json",
+          "sha256": "sha256:fc4077b9a97e7ed1b4a83e667eaa9933d83dd4d6f02ce86161aabbac62232d85"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-01/capture-outcome.json",
+          "sha256": "sha256:6cc111c9e7c6b60626374c42ca745d631943cebe9ee0df28b5c2f9b806a0c8c6"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-01/owned-process.json",
+          "sha256": "sha256:6da9db5d9891448f1e15ed5aced2b7c043a46a28fd26de33197a8deb228a7a86"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1341,
+          "path": "native/native-01/host.stderr.txt",
+          "sha256": "sha256:f14c06e67c7de3728b6051a4db8cae26a1fb845308c559c9fb766c70a153d9f1"
+        },
+        "stdout": {
+          "bytes": 77661,
+          "path": "native/native-01/host.stdout.txt",
+          "sha256": "sha256:9726541b2be4b0bf01b14a50ae1f47a3174f5ae8d48dc05c7ae7d2b555eee05b"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 1
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-02/owned-close.json",
+          "sha256": "sha256:926be046b0f02ff67603309ba47fb78afb96a32708c611688a781e8da03c1730"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-02/capture-outcome.json",
+          "sha256": "sha256:036188984158f0c7317ecd2d1c522831bb1578cca5a1a0d6dc063ca9e3d6f889"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-02/owned-process.json",
+          "sha256": "sha256:bb1f9455e48efa2c72dbc209d5869f6f8b32ed7240f457256b79ff7ea9c5903d"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1434,
+          "path": "native/native-02/host.stderr.txt",
+          "sha256": "sha256:68034e9cd191040e02821e27dd56d31e40ea2c47f2460a68b095546af05d2a48"
+        },
+        "stdout": {
+          "bytes": 44666,
+          "path": "native/native-02/host.stdout.txt",
+          "sha256": "sha256:5814dfd60823359c1361f798012a9e8fd0d4194d790dd0460b05516664ddbf03"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 2
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-03/owned-close.json",
+          "sha256": "sha256:de6a6db454521304695671771aa63e98fb278c8f95d9fb2e4c47d5610db7a06e"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-03/capture-outcome.json",
+          "sha256": "sha256:70d1b8115b9e517b5e1159c2dafae1096d9708efd2fc0653e382a45d01621c6f"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-03/owned-process.json",
+          "sha256": "sha256:bfe33ecd842d548edbd1e8ca16d3b416ea23db00b89f90c23762662f2371db59"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1339,
+          "path": "native/native-03/host.stderr.txt",
+          "sha256": "sha256:aee53032cb0ac326a8bf6fdcad6334a8fca29a35f477e99d72331c2004b530c9"
+        },
+        "stdout": {
+          "bytes": 57046,
+          "path": "native/native-03/host.stdout.txt",
+          "sha256": "sha256:2affddc193ae201195250d6e88167b0479f114bc214fd7d5fb42f054f01271eb"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 3
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-04/owned-close.json",
+          "sha256": "sha256:2b9d86acf3e46f7a069f7d5e7af2fc7927c73ce87a84154dcd0bc2f7f00d7ef2"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-04/capture-outcome.json",
+          "sha256": "sha256:3a850467c178296aedcb95951c0b251b9e33ee69fe3c0fb2dbedc46c2eb010eb"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-04/owned-process.json",
+          "sha256": "sha256:85fc40dcc349102596a88947e9e09cca35482fedd7b00239d2697a8cb27dff6a"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1530,
+          "path": "native/native-04/host.stderr.txt",
+          "sha256": "sha256:be794eca1b7358549c4f3702ef77f6fcf36484b85d9bc2ee2b76148e5205bcd0"
+        },
+        "stdout": {
+          "bytes": 51766,
+          "path": "native/native-04/host.stdout.txt",
+          "sha256": "sha256:92bdfcd8a921e222b633098e2ed610bfa770c025b9158f05613250e5db1f5241"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 4
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-05/owned-close.json",
+          "sha256": "sha256:f58754def5c186c74f7f1d2f92daaaa2aa9e22cb566b3318d12c43aa64b95065"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-05/capture-outcome.json",
+          "sha256": "sha256:8f28d54b8342c6006e5a7752e1231cb5062e759bfa0cb91eeab71fdfa3ae18d8"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-05/owned-process.json",
+          "sha256": "sha256:6b6c02a7c6ba55c70984b5175621de28177a06399c9a78a7ffe1da2b147c8230"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1453,
+          "path": "native/native-05/host.stderr.txt",
+          "sha256": "sha256:a426de08aeb00feeaa3632321f7d2a24abca7be5d23bb340596d82411714ba41"
+        },
+        "stdout": {
+          "bytes": 198976,
+          "path": "native/native-05/host.stdout.txt",
+          "sha256": "sha256:c5b122c4f40333eefde803619a0347746032cc71574ee7521723ec0f825c23ec"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 5
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 211,
+          "path": "native/native-06/owned-close.json",
+          "sha256": "sha256:8aacacebe840344e97c6da0c6eb553015a97f6c3d74f089e61ac0f72facb690a"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15470,
+          "path": "native/native-06/capture-outcome.json",
+          "sha256": "sha256:45b70f788db496b85e0e6be7a8090ee8a9015918b057c9782e056f888956587a"
+        },
+        "owned": {
+          "bytes": 242,
+          "path": "native/native-06/owned-process.json",
+          "sha256": "sha256:38354e1e738fb1f0def430aafda9a6f289839f731e5d9a2aade1ec4c16388a02"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1337,
+          "path": "native/native-06/host.stderr.txt",
+          "sha256": "sha256:cfb5554d658c0620d6e081c200620001dd0ff5903e080b70b96b5b3308685bb7"
+        },
+        "stdout": {
+          "bytes": 43511,
+          "path": "native/native-06/host.stdout.txt",
+          "sha256": "sha256:56cc64fc17719722c55323d6dcd4ebb6bcba6cb894817aae92c66ff12d7d8a13"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 6
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-07/owned-close.json",
+          "sha256": "sha256:c26dbc42e9a5ec9aa058ac1829cfe4b3fde5355a1e10b32f0df779c928357bb5"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-07/capture-outcome.json",
+          "sha256": "sha256:fec6c78d49cc48e1fc8cf8299d02e21458eb155432edfe6a93c7878f7e14587a"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-07/owned-process.json",
+          "sha256": "sha256:c642b47cba4e0f2ccb1eae3b6f84be7df866ba587a7bc7cef81bf66aff80cb3a"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1346,
+          "path": "native/native-07/host.stderr.txt",
+          "sha256": "sha256:6facf35b2d50d9f5e0010af87d46c84b3cad32de7bc802e951df268c2225106c"
+        },
+        "stdout": {
+          "bytes": 144331,
+          "path": "native/native-07/host.stdout.txt",
+          "sha256": "sha256:567e4df9166383ba645719095fdb157e35ba311ec006d37c4cea401293060fd0"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 7
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-08/owned-close.json",
+          "sha256": "sha256:291d627fdfd7b7dfc0fcbf715dade2c80e9f8fe7b55be5738ef4e9373c01b1f0"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-08/capture-outcome.json",
+          "sha256": "sha256:fa41e5112af368a828c67cacd59e2b1125d08e91773da6b668dac5b609aabb05"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-08/owned-process.json",
+          "sha256": "sha256:ddd3cb97658e5a79a08258ddac265682f3d29d0814dc7385465627a16838e927"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1452,
+          "path": "native/native-08/host.stderr.txt",
+          "sha256": "sha256:76b8d83bfc450866e895b15231fc832d3d0d0b1098d1ee71f9fdbdf06e8290cb"
+        },
+        "stdout": {
+          "bytes": 261060,
+          "path": "native/native-08/host.stdout.txt",
+          "sha256": "sha256:7953ae0fed7d7fd013d831ae63ad154cc07d47b4b58d3affd86e8864ff541135"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 8
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-09/owned-close.json",
+          "sha256": "sha256:dda037487228c018c7e2525f6f255f73af4036381c95bb2ed9230416ed51890f"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-09/capture-outcome.json",
+          "sha256": "sha256:7181e6db829ff136b92f5baa23a9ed8087603bd69af2d05ad25ae2d0a8e7ae18"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-09/owned-process.json",
+          "sha256": "sha256:fc7eb18cdbf407c623d1cacdc28bc939de019580382948cc790b0ee43e05aeac"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1345,
+          "path": "native/native-09/host.stderr.txt",
+          "sha256": "sha256:2b167e2bee6d9ca45e18a0119840296100096b5001a4df691059ce95d5a11a69"
+        },
+        "stdout": {
+          "bytes": 134431,
+          "path": "native/native-09/host.stdout.txt",
+          "sha256": "sha256:6b689754d3f5d8d08b6a17f7d0778da22eaa10e16868c85d21f262cc40a48693"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 9
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-10/owned-close.json",
+          "sha256": "sha256:d502c2230622fb5075d4dbc64d33e3f74ea94542961331c4c08d4656c3feb81e"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-10/capture-outcome.json",
+          "sha256": "sha256:329a7e901477044abc7f9da2a071f71ef70232c7c555469c380f7c30f9d3bc9b"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-10/owned-process.json",
+          "sha256": "sha256:bb4867b2394f3e39b8bd064b18830d3aeefc1fdb17c483b000959a01d5ef8f0a"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1446,
+          "path": "native/native-10/host.stderr.txt",
+          "sha256": "sha256:5557b1e3cbb78ba2d3bec2e0712e216971d1a1f2e11519fdd74cdccd054c4a94"
+        },
+        "stdout": {
+          "bytes": 170258,
+          "path": "native/native-10/host.stdout.txt",
+          "sha256": "sha256:69baa6ea34af9a5ffae5c2cda81b14618d975127fc76cb884b07f57f2a377dbd"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 10
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-11/owned-close.json",
+          "sha256": "sha256:fe9130582769248e5808865bb69f111e2b2497dc060b50a2c2f472a27784b1eb"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-11/capture-outcome.json",
+          "sha256": "sha256:8ffc0920e2b4ca8593d97e317f03a6b75f4d154708821894671cabbdfc524fce"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-11/owned-process.json",
+          "sha256": "sha256:d974a39da05c334f20d7a6b72f5f74d0b648e8bf149f45427d14fcb22c3d82e4"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1450,
+          "path": "native/native-11/host.stderr.txt",
+          "sha256": "sha256:a7849cfdad92942c7041b571700c9565b6f7d68465a227565da1b733d75d0181"
+        },
+        "stdout": {
+          "bytes": 191335,
+          "path": "native/native-11/host.stdout.txt",
+          "sha256": "sha256:358ff723a66323f6da7997f82b08badff97e575f4ad88c85e6e0ba4a1febfc4b"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 11
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 213,
+          "path": "native/native-12/owned-close.json",
+          "sha256": "sha256:27b99e8e2703128c0cf0d1788d9ee2b18e729f732f4dc19b88f883247e0dc8f4"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-12/capture-outcome.json",
+          "sha256": "sha256:d49fae441dcd2ff6c83c6e0b23c75ffe14f7b3024ef6ebbf7c30b8c3f8c34a4d"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-12/owned-process.json",
+          "sha256": "sha256:dd5cdf95a32d68950ecefe996d840362f85be5cbc67f6bdcd08d4989a54cfd6c"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1346,
+          "path": "native/native-12/host.stderr.txt",
+          "sha256": "sha256:a1e693da440e61cee5e831b32d53a2786a35289d86fc39be4d74230cd510144f"
+        },
+        "stdout": {
+          "bytes": 88731,
+          "path": "native/native-12/host.stdout.txt",
+          "sha256": "sha256:9170f1a6031cca908820799704d536cd154302cbdde4a5ea34947aa00b04457a"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 12
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-13/owned-close.json",
+          "sha256": "sha256:db37fbf619154c7d80589fec26c66fe18dd5786f50e889ff8fcd4b9afbfeb2be"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-13/capture-outcome.json",
+          "sha256": "sha256:b1517201c7195762067b73000dd169c710e8da865a679d84154280e44f5161f2"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-13/owned-process.json",
+          "sha256": "sha256:157ce9aadd1244fc8bc33cfbd5a064189e6090b9510c132a66b9f86787a52b00"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1436,
+          "path": "native/native-13/host.stderr.txt",
+          "sha256": "sha256:e3cfdbabadf1f3680664ea15b892bcf32b5443ce71d2dde97e48c9d1fe98c573"
+        },
+        "stdout": {
+          "bytes": 118591,
+          "path": "native/native-13/host.stdout.txt",
+          "sha256": "sha256:57dd1755c8c39b07183c52d41c56f6173aada6ffece20223807b2230b3a561a8"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 13
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 210,
+          "path": "native/native-14/owned-close.json",
+          "sha256": "sha256:88e164039284139a88f6d2d2e84f1341bcf3b8c35f6f05020f3e5e23e20c9d78"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15469,
+          "path": "native/native-14/capture-outcome.json",
+          "sha256": "sha256:32e46e905634300f6f74abf171f931542be934039a13ee7f863dfdda909f1d4b"
+        },
+        "owned": {
+          "bytes": 241,
+          "path": "native/native-14/owned-process.json",
+          "sha256": "sha256:9d919625317f10d658b0822994a6bf3078009e0d3eaeb3931619d3614f80cf44"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1436,
+          "path": "native/native-14/host.stderr.txt",
+          "sha256": "sha256:4caebf48620f42d29d3e8e773097e1eae076e9e1da6825f543b4e31ee2330934"
+        },
+        "stdout": {
+          "bytes": 107196,
+          "path": "native/native-14/host.stdout.txt",
+          "sha256": "sha256:1099e7f439e7ea6f0998b5c264b2479787df479c0b97de537fcda333f1d48e5c"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 14
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-15/owned-close.json",
+          "sha256": "sha256:a5ad80f38dec9501db9585ff4a6265030cf1b6bbef216e9ecd3aabd317c8c22a"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-15/capture-outcome.json",
+          "sha256": "sha256:a074688cea6d82642f92a812b241056c8973ceeaed06d80897c172d956386f63"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-15/owned-process.json",
+          "sha256": "sha256:6874b2db3c17bed046ca179ef700837052762c59d9bd8508241bbe0d6fc8d545"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1435,
+          "path": "native/native-15/host.stderr.txt",
+          "sha256": "sha256:dae3ab1ad0cf9a6eff4d18e4b888b700256efe98c6f69109f4f438b97afd7d27"
+        },
+        "stdout": {
+          "bytes": 87241,
+          "path": "native/native-15/host.stdout.txt",
+          "sha256": "sha256:1deb5485fc85062fbacb364069e2ac8c186e99fba5bbf207cb0a2e5ba3369a65"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 15
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-16/owned-close.json",
+          "sha256": "sha256:9675d0177dec7b606590ef9a75fa893d17e89477f480191c273de4073998cf1f"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-16/capture-outcome.json",
+          "sha256": "sha256:58152cdeb5c7fc4fdd051b01820f86773844cfe089bcf55512be7a5379b88783"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-16/owned-process.json",
+          "sha256": "sha256:3efe48e724eff5b03aceddd8e5c65046f6c4bae561f9b483f0997b66046ae68a"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1543,
+          "path": "native/native-16/host.stderr.txt",
+          "sha256": "sha256:cc87949928921456b79d638a3d552856174489fdd6d40d1cfb6b696ef492db50"
+        },
+        "stdout": {
+          "bytes": 185198,
+          "path": "native/native-16/host.stdout.txt",
+          "sha256": "sha256:72e30acc5fe7bacb7be0f1b03e5c9a0ddeebd76ec4454cfbebd38216abd849da"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 16
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-17/owned-close.json",
+          "sha256": "sha256:aced722c78813b7aaf25cd0f0c1a922291f511fa601184792f0f65487387451e"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-17/capture-outcome.json",
+          "sha256": "sha256:3eef16d8e644569494a2de7f08cc332bb873f3ca7b56455f0509ba77c0831b13"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-17/owned-process.json",
+          "sha256": "sha256:97fa077e90961fc5c5756b719b19c6586db1fc2300abe329321044c22a3903d1"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1346,
+          "path": "native/native-17/host.stderr.txt",
+          "sha256": "sha256:f9fe3e2c46444aa6b827b10d138010b240e8eafb9244e124865a7cb637b87e3c"
+        },
+        "stdout": {
+          "bytes": 86086,
+          "path": "native/native-17/host.stdout.txt",
+          "sha256": "sha256:96c62b7a7fcd66b570da59982867a32edafec8f0d6835e752a4f570440681a9e"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 17
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 213,
+          "path": "native/native-18/owned-close.json",
+          "sha256": "sha256:e3e50542f829f37a8d6572faf3ab2ce60312d1ad9735a84695c9762a928d48bb"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-18/capture-outcome.json",
+          "sha256": "sha256:2b3445c9454b31462b988276237ce00093e076d69e2205492d182ae13a2ec260"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-18/owned-process.json",
+          "sha256": "sha256:c33defce45ecb848b118cb5492bcfd7770648c4ccfea83568dc7bed85b238eff"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1543,
+          "path": "native/native-18/host.stderr.txt",
+          "sha256": "sha256:680df83002c05caabf7ae6a859bd850ab76ebb6693a502f8f31f45f7af0a94b6"
+        },
+        "stdout": {
+          "bytes": 170756,
+          "path": "native/native-18/host.stdout.txt",
+          "sha256": "sha256:4b459e0605fb2a2d5f03635612c1151daba2841c19e48abbbe92420c29b2d3b5"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 18
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-19/owned-close.json",
+          "sha256": "sha256:85edda0671f0c1ae90925cf20274371f2abde9b05b765dd22111cfcda9fb9f3a"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-19/capture-outcome.json",
+          "sha256": "sha256:bfccd2472cf67bd57d3b07a66a8e8aa23d4b827859968fc09b9a829476407605"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-19/owned-process.json",
+          "sha256": "sha256:8a217312867c63dcd7756543db759dae6342c3c5fcb33e36b5ab4edcc8406f0e"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1435,
+          "path": "native/native-19/host.stderr.txt",
+          "sha256": "sha256:dc05b6d0ec9273e268004634eb9322c83e4427fe4f07ef07f982a5df7b951055"
+        },
+        "stdout": {
+          "bytes": 48631,
+          "path": "native/native-19/host.stdout.txt",
+          "sha256": "sha256:c211a7212e9724c8dbb5157561f70c11d1bf34c2b885e463beaec133a32e1456"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 19
+    },
+    {
+      "missing": [],
+      "roles": {
+        "close": {
+          "bytes": 212,
+          "path": "native/native-20/owned-close.json",
+          "sha256": "sha256:33c05537006ef2b872f91e5eef6ca3804b4d1aa81167677c2a79406ded27aff2"
+        },
+        "compile": {
+          "bytes": 2943,
+          "path": "native/observation.json",
+          "sha256": "sha256:5c6e63f04155f9996a438d05ae42e6080403e3c7069363cdd234be35f7db0228"
+        },
+        "observation": {
+          "bytes": 169743,
+          "path": "native/native-observation.json",
+          "sha256": "sha256:2db62ec3c668e7a554d45dff7d03d49cfcf8e247f2c297317ce169e5ad07142e"
+        },
+        "outcome": {
+          "bytes": 15471,
+          "path": "native/native-20/capture-outcome.json",
+          "sha256": "sha256:3893f640eb216a46da910c6ebb07e0c582b49c9ea590a488d59e651ef6622e89"
+        },
+        "owned": {
+          "bytes": 243,
+          "path": "native/native-20/owned-process.json",
+          "sha256": "sha256:053dddda287895559f318d89824e370c82ba58d0ac19f44168f77ac7c2f094cc"
+        },
+        "plan": {
+          "bytes": 10529,
+          "path": "native/plan.json",
+          "sha256": "sha256:a218eecec68ad66e61cc592d345eaad5eba32860859c846acda1f80615149e8a"
+        },
+        "runtimeReceipt": {
+          "bytes": 11275,
+          "path": "native/runtime-source-receipt.json",
+          "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+        },
+        "runtimeTree": {
+          "bytes": 2825,
+          "path": "native/runtime-source-tree.json",
+          "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+        },
+        "stderr": {
+          "bytes": 1340,
+          "path": "native/native-20/host.stderr.txt",
+          "sha256": "sha256:be9e40bc5d486bebd5560b3ea493febd8825afa9c07efb13d94aa2194ad602cd"
+        },
+        "stdout": {
+          "bytes": 74866,
+          "path": "native/native-20/host.stdout.txt",
+          "sha256": "sha256:ad6097241f8da80012a90ad21c40139634439eff784a7ce225813241bc02496c"
+        },
+        "witness": {
+          "bytes": 262,
+          "path": "native/Sources/FactoryProbe/Witness.swift",
+          "sha256": "sha256:5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d"
+        }
+      },
+      "run": 20
+    }
+  ],
+  "qualified": false,
+  "source": {
+    "caseID": "swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.025c6e76f4061037",
+    "manifestPath": "factory/native/windows/pilot-rectangle-root-v1/actual-count20-r3/export-manifest.json",
+    "manifestSha256": "sha256:5669dc4b825ba451aaf0df91a1791440a62e2591d111c84b2cc2340f3f3d87b5",
+    "requiredCount": 20,
+    "tupleID": "sr1-rectangle-r11-source-paired20-20261011"
+  },
+  "status": "held",
+  "version": 1,
+  "windowsExitProof": {
+    "nativeParityGranted": false,
+    "roles": [
+      "outcome",
+      "observation",
+      "owned",
+      "close",
+      "plan",
+      "compile",
+      "witness",
+      "exe",
+      "renderer",
+      "runtimeReceipt",
+      "runtimeTree",
+      "stdout",
+      "stderr"
+    ]
+  }
+}

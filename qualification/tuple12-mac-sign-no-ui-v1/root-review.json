@@ -1,0 +1,24 @@
+{
+  "kind": "root-sr0-generalized-recorder-no-ui-signing-review-v1",
+  "status": "held-before-signing",
+  "signingInvocations": 0,
+  "captureInvocations": 0,
+  "tccMutations": 0,
+  "identityAvailable": "Developer ID Application: Adrian D'souza (6KLGD3LLKF)",
+  "keyACLReadOnly": "matching private-key sign ACL explicitly allows /usr/bin/codesign with Apple requirement; no key bytes read",
+  "processPreflight": {
+    "phase": "signer-session-preflight",
+    "createStatus": 100001,
+    "infoStatus": 0,
+    "securitySessionID": 100020,
+    "attributes": 24624,
+    "graphicAccess": true,
+    "ttyAccess": true,
+    "setInteractionStatus": 0,
+    "getInteractionStatus": 0,
+    "interactionAllowed": false
+  },
+  "blocker": "SessionCreate(0,0) failed100001; existing security session has graphic/TTY access. Helper disabled userinteraction & aborted beforecodesign. Noninteractive localhostSSH denied authentication. No prompt-enabled signer fallback attempted.",
+  "receiptSha256": "611c1892ef94ff9db768027a4fbcab3a364cd1b9cbcb533e133f6bf53f5c58f8",
+  "unsignedRecorderSha256": "3f3ec1041e35f598b96e85182aa5499b5b4315b2e7e9fdb03a0871aabeb83b13"
+}

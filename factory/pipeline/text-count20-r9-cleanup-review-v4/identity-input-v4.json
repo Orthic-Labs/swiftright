@@ -1,0 +1,142 @@
+{
+  "kind": "text-count20-r9-current-quiescence-identities-v4",
+  "owner": "factory-rectangle-9526f6f062a841d69ec4a860f4b4cd03 2026-10-12T03:57:15.1903850+00:00",
+  "sourceInputsHash": "6c335ddead9c023b1faf40bc9e02fb679112f48ec1955934dd28ce4268789c22",
+  "exeHash": "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+  "identities": [
+    {
+      "role": "coordinator-parent",
+      "pid": 53320,
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "startUtc": "2026-10-12T03:57:15.9117507Z",
+      "exeSha256": "60c9b29843624dd8af6b6a7b26147753be6aeef65098b9a503cc50850afe410f",
+      "proofPath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/coordinator.json",
+      "proofSha256": "72b872b2e87b2bb239e68c6ce33ae8a2b895f4fd19c72aedad5479e3e304cb6a",
+      "startEvidencePath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/task-start.json",
+      "startEvidenceSha256": "3cd011fdff7cea6f40a490b8e7719918e50fb4358d795defe47f718d1c0586e7",
+      "originalTerminalProof": true,
+      "streamsSealed": true
+    },
+    {
+      "role": "renderer-native-01",
+      "pid": 50080,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\\build-bound-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+      "startUtc": "2026-10-12T03:57:39.1989562Z",
+      "exeSha256": "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+      "proofPath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/final-exit-certificate.json",
+      "proofSha256": "9df73f734475186056b94ee054e7c4b17c6b40e5167a4da8a503f4d12883a631",
+      "originalTerminalProof": true,
+      "streamsSealed": true,
+      "pinFiles": [
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/owned-process.json",
+          "sha256": "56b9df144500aa2131cead9b4c09493a54a4f87e255c75e54ffaead975a524ef",
+          "kind": "ownedProcess"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/terminal-worker.json",
+          "sha256": "ab15eb93b22944faa8a578cc4cfc0216eaa8221a3e0fe59e494647af0a6ca631",
+          "kind": "terminalWorker"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/capture-outcome.json",
+          "sha256": "6021dfdab7ab245976dcc88cbbd6d7642ce64a684a65f9d8c4ef628bc916c3b9",
+          "kind": "outcome"
+        }
+      ]
+    },
+    {
+      "role": "renderer-native-02",
+      "pid": 26108,
+      "path": "D:\\Claude\\swiftright\\.factory-work\\hosts\\text-baseline\\package\\build-bound-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+      "startUtc": "2026-10-12T03:58:13.9333787Z",
+      "exeSha256": "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+      "proofPath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/final-release-hold.json",
+      "proofSha256": "728bc2d64193cb81ecc86bc996a503235c804d9dd5a8158d62eb367c86442d04",
+      "originalTerminalProof": false,
+      "streamsSealed": false,
+      "pinFiles": [
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/owned-process.json",
+          "sha256": "c267d6fa8f34dc75aa7a1cea000d6505f51716e8dc3c7e8011415b1df0b63498",
+          "kind": "ownedProcess"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/capture-outcome.json",
+          "sha256": "60ebf282f7d16b48a4eb6d9408fcd1574addc49459376f9d9e7e4db209e47a55",
+          "kind": "outcome"
+        }
+      ]
+    },
+    {
+      "role": "uia-worker-native-01",
+      "pid": 39196,
+      "path": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "startUtc": "2026-10-12T03:57:44.4714493Z",
+      "exeSha256": "60c9b29843624dd8af6b6a7b26147753be6aeef65098b9a503cc50850afe410f",
+      "proofPath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/uia-worker/final-exit-certificate.json",
+      "proofSha256": "baef07bee7a1dfb4c56417731c4752bce621e7cc5f6eba47552c5599dd56a2fb",
+      "originalTerminalProof": true,
+      "streamsSealed": true,
+      "pinFiles": [
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/uia-worker/owned-worker.json",
+          "sha256": "d54178d88c588b41e0248942eae9ad232415aa29d13307653b298ff77e664176",
+          "kind": "ownedWorker"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/uia-worker/terminal-worker.json",
+          "sha256": "3e8b1bf51e2b0b72f58edfc46f8f0ecdfce74d528929ef1d135cd30da94b8397",
+          "kind": "terminalWorker"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/uia-worker/worker-exit.json",
+          "sha256": "e4bbd1139b08f6cb3dc61d856e0770027b189aebe254e71d4099e3391fe6f804",
+          "kind": "outcome"
+        }
+      ]
+    },
+    {
+      "role": "uia-worker-native-02",
+      "pid": 51896,
+      "path": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "startUtc": "2026-10-12T03:58:17.2063076Z",
+      "exeSha256": "60c9b29843624dd8af6b6a7b26147753be6aeef65098b9a503cc50850afe410f",
+      "proofPath": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/uia-worker/final-exit-certificate.json",
+      "proofSha256": "5af9559f370b768f10fd1aa2b01a9a1083f0332823877f6814b747c0811a1e69",
+      "originalTerminalProof": true,
+      "streamsSealed": true,
+      "pinFiles": [
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/uia-worker/owned-worker.json",
+          "sha256": "04d3ab190b5a613db1020a281f59277d5a2d744c29d1d42e349df342713f1a02",
+          "kind": "ownedWorker"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/uia-worker/terminal-worker.json",
+          "sha256": "4ad6c5207accbf4f17de89b47ea1bb3e0647763e8b67dc63e758ed83fe8fea0b",
+          "kind": "terminalWorker"
+        },
+        {
+          "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/uia-worker/worker-exit.json",
+          "sha256": "1114f2e7641cbddd4f12a3f81e3693c324ad17a2084aae7cc2842b405b76ab50",
+          "kind": "outcome"
+        }
+      ]
+    }
+  ],
+  "workerInventories": [
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/owned-worker-inventory.json",
+      "sha256": "5605275d710cd041872674c94cbfe9f8c90a34e4cde3b711eb2533f3ca1cc186",
+      "rendererRole": "renderer-native-01",
+      "uiaRole": "uia-worker-native-01"
+    },
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/owned-worker-inventory.json",
+      "sha256": "3c40c9f1b47b0e0ccdc2d2134968de55c65d7e225466ac31cd7a3bfd76ec719f",
+      "rendererRole": "renderer-native-02",
+      "uiaRole": "uia-worker-native-02"
+    }
+  ]
+}

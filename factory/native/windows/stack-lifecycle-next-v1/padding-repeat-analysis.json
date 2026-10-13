@@ -1,0 +1,135 @@
+{
+  "kind": "padding-repeat-exit-and-owned-window-analysis",
+  "status": "bounded-read-only; causal hypotheses disconfirmable",
+  "bindings": [
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-18/capture-outcome.json",
+      "sha256": "8bf715d05abcd043327632616e141578a8400df25fda7312e65971de00472119"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-18/owned-close.json",
+      "sha256": "57e18f5909d3aa8d34296aff64d5c354775ed1824f792d06b116aa24c59998d1"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-18/host.stdout.txt",
+      "sha256": "2c06ce69c21e21cbef1ce85cff1cf5f242c5b5f18672328184e44d1e6110dfb1"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-18/host.stderr.txt",
+      "sha256": "443ae3209cb59092015b9d463c80c66f49a0b290bbb6badec4f8b76b0d882666"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-03/host.stdout.txt",
+      "sha256": "8896571462bc18905e0af405fedae9685c98371bd88453d85479474e74dd8321"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-03/owned-close.json",
+      "sha256": "1b99607da5cfac8871838759f06da4672dbacc54ef4d34451a36a458d77ef987"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-16/host.stdout.txt",
+      "sha256": "a94274882fcd1be6f121a75f80a0e2bcda46227b4eaf2ecae7d3172b533599ee"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/native-16/owned-close.json",
+      "sha256": "b90b968e2f284d0e5979725f766a8c7c1a7d82e4de464a787918d1bad6d4c877"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/capture-repeat.ps1",
+      "sha256": "40dbc9003e3167e3637401beebed058814a1d5bd6a96f0ab95fc035d9c85a927"
+    },
+    {
+      "path": "factory/native/windows/padding-settled-capture-v4/actual-repeat-r1/Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "path": "factory/native/windows/stack-lifecycle-next-build-v1/dependencies/SwiftRightBridge/Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "path": "factory/native/windows/stack-lifecycle-next-build-v1/dependencies/SwiftRightBridge/Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "path": "render/swiftright-render/src/view.rs",
+      "sha256": "9999cbc2dcbb5e6437aa766c8ad829a0784981e1339520ceef329df02641c5ea"
+    }
+  ],
+  "sourceCaution": "Canonical Bridge source binds current owned input context. Local renderer source is a read-only implementation reference; this note does not establish its exact compilation into consumed renderer DLL.",
+  "batchDisposition": "17 completed captures comprise15 host-valid and2 host-invalid; run18 deadline; zero completed20 batch",
+  "run18Timing": {
+    "start": "2026-10-11T09:28:59.1645532Z",
+    "harnessWM_CLOSE": "2026-10-11T09:29:09.6936180+00:00",
+    "hostOnReady": "2026-10-11T09:29:00.704Z",
+    "hostWindowClosed": "2026-10-11T09:29:09.704Z",
+    "preCleanup": "2026-10-11T09:29:24.7514883+00:00",
+    "closePostToCallbackMS": 10.382,
+    "closePostToPreCleanupSeconds": 15.0578703,
+    "facts": [
+      "Host window-closed callback occurs promptly after owned WM_CLOSE; no evidence of15s close-message dispatch delay.",
+      "Renderer shutdownstats report545 commits/544ticks/no renderer error; these un-timestamped bytes do not prove kernel exit.",
+      "Original kernel258 read precedes HasExitedtrue getter; samples are sequential and may straddle natural exit.",
+      "Cleanup kernel0/no-kill and both streams sealed; no streamErrors.",
+      "Host own10s timer starts on firsttick; windowclosed~9s afteronReady gives no evidence hosttimer caused close."
+    ]
+  },
+  "harnessInspection": [
+    "Start returns one Process object used by WaitForExit(100), p.Handle sampling and cleanup; no dispose/reassign inside run.",
+    "CopyToAsync uses redirected BaseStreams; state WaitingForActivation is not proof of threadpool starvation or inherited writer.",
+    "Managed AutomationElement root remains referenced through close/wait; exported UIA data consists of pure scalar records.",
+    "Canonical Bridge Loader uses LoadLibraryW; no explicit FreeLibrary or Bridge deinit unload exists. Process-level loader detach remains a separate later hypothesis."
+  ],
+  "disconfirmableHypotheses": [
+    {
+      "name": "late child shutdown after rendererrun/stats",
+      "needed": "Existing lifecycle runreturn/actor/unhook/beforeexit UTC+tick markers relative to original handlewait.",
+      "disconfirm": "Original handle consistently0 before WaitForExit reportsfalse."
+    },
+    {
+      "name": "managedProcess wait or sample race",
+      "needed": "Store original numeric handle once afterStart; zero-time wait before and after HasExited/GetExitCodeProcess with individualStopwatch/UTC timestamps &WaitForExit return duration.",
+      "disconfirm": "Same original handle remains258 across sustained bracket while productstage marker shows stalled native path."
+    },
+    {
+      "name": "UIA/COM provider lifetime interaction",
+      "needed": "Current lifecycle baseline first; record client root reference lifetime &child beforeexit marker. If lateexit reproduced, separately labeled fresh diagnostic with UIA owned recorder process fully exited beforeclose, keeping capture channels/guards/deadlines.",
+      "disconfirm": "Same lateexit occurs without liveUIA client refs; or stalled marker identifies unrelated factory teardown.",
+      "forbiddenShortcut": "No global UIA disconnect; no ReleaseComObject on managed AutomationElement; no assertion relaxation."
+    }
+  ],
+  "ownedHWNDAmbiguity": {
+    "runs": [
+      3,
+      16
+    ],
+    "facts": [
+      "Both ready/firstlayout/actualwindowmetrics succeed before final hosterror FactoryOwnedRendererHWNDAmbiguous.",
+      "Errors are printed after Bridge.run returns, not at throw; actual errorphase/time and candidatecount missing.",
+      "Current enumeration already restricts exactPID,UIthread,title Alchemist FactoryProbe.",
+      "Composite failure also covers EnumThreadWindowsfalse,0matches,expectedmismatch or invalidHWND; ambiguity name cannot prove duplicate windows.",
+      "Renderer drain source reference invokes pendingtick before WINDOW_CLOSED cleanup; factory tick may enumerate destroyed window before close callback."
+    ],
+    "leadingHypothesis": "close-versus-lasttick race causing0matches or invalid expectedHWND; not established",
+    "minimalDiagnostic": "Before original throw, emit plain lifecycle-style phase/UTC/tick timestamp, EnumThreadWindowsrc, matchcount, expectedHWND, IsWindow(expected), each candidate HWND/PID/thread/title/class/owner. No synthetic event or guard bypass.",
+    "filterProposal": "Only if diagnostics establish same-title helper windows: exact independently established renderer class +PID/thread/title/owner policy for initialselection, then exact expectedHWND plus all identity checks for subsequentreads. Require exactly1renderer candidate;0/2renderer matches or invalidexpected always reject. A classfilter does not fix destroyed-window0matches.",
+    "faultControls": [
+      "Valid unique renderer succeeds.",
+      "SamePID/thread/title differentclass helper excluded only when actualrendererclass authority is independently bound.",
+      "Duplicate true rendererclass sameidentity rejects.",
+      "WrongPID/thread/title/class/owner rejects.",
+      "ExpectedHWND mismatch/zero/destroyed rejects.",
+      "Enumfailure/0matches rejects; error remains visible."
+    ]
+  },
+  "invariants": [
+    "Original15s child and5s copy/closure bounds retained",
+    "No protected source edits; frozen lifecycle package unchanged",
+    "No productcause asserted from timing/statistics only",
+    "Fresh factorydiagnostic only; no retry/promotion/nativeparity"
+  ],
+  "actions": {
+    "remote": 0,
+    "native": 0,
+    "protectedEdits": 0
+  }
+}

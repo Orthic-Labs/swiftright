@@ -1,0 +1,34 @@
+{
+  "kind": "round2-extra-f4-generator-review-request-v2",
+  "version": "0.1",
+  "requester": "root/f1_edge_cases",
+  "reviewer": "root/f7_windows",
+  "scope": "offline source-only successor; no compiler/native execution",
+  "proposalPath": "factory/probes/round2-extra-generator-v2/generate.py",
+  "configPath": "factory/probes/round2-extra-generator-v2/config.json",
+  "supersededReview": "factory/probes/round2-extra-generator-v1/independent-review-f7-v1/report.json",
+  "supersededReviewSha256": "60fece3243c2dd751ebb6d03db499479327e4d2cd7cf0fc43a45d25b3a384746",
+  "expectedBlocks": ["swiftui.popover", "swiftui.animation.spring-interruption", "swiftui.text-field-ime", "swiftui.environment-font-color-scheme", "swiftui.context-menu"],
+  "expectedOutputs": 19,
+  "sourceUsePaths": {
+    "swiftui.popover": ["SwiftUI.View.popover(isPresented:attachmentAnchor:arrowEdge:content:)"],
+    "swiftui.animation.spring-interruption": ["SwiftUI.Animation.spring", "SwiftUI.withAnimation(_:_:)"],
+    "swiftui.text-field-ime": ["SwiftUI.TextField.init(text:prompt:label:)"],
+    "swiftui.environment-font-color-scheme": ["SwiftUI.View.environment(_:_:)" , "SwiftUI.EnvironmentValues.font", "SwiftUI.EnvironmentValues.colorScheme"],
+    "swiftui.context-menu": ["SwiftUI.View.contextMenu(menuItems:)" ]
+  },
+  "sourceInputs": {
+    "candidateManifest": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+    "sourceJoin": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+    "validation": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba",
+    "nativeRequirements": "2610d49e05a93ded6bea7e3bd903140ddb393f5ff778a4278b25ff6fd8218270",
+    "catalogue": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+  },
+  "reviewQuestions": [
+    "Does each negative output bind exact negative source id, hash, path, and Negative_round2 declaration?",
+    "Does public generate reject empty, extra, reordered, duplicate, or wrong source-use selectors?",
+    "Do output validators reject wrong witness declaration names, hashes, paths, and positive/negative identity swaps?",
+    "Are all five blocks held identity-only with compilerRuns=0, nativeRuns=0, and registryPromotion=false?"
+  ],
+  "execution": {"compilerRuns": 0, "nativeRuns": 0, "measurementTuple": null, "registryPromotion": false}
+}

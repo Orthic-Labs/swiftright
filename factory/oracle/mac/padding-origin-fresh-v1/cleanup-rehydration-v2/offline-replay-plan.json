@@ -1,0 +1,33 @@
+{
+  "kind": "padding-origin-fresh-v1-offline-rehydration-replay",
+  "version": 2,
+  "status": "PASS",
+  "command": ["/usr/bin/python3", "/Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v2/rehydrate.py", "--output-dir", "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/cleanup-rehydration-v2-actual"],
+  "processReceipt": "actual-replay-receipt.json",
+  "stepsPassed": [
+    "strict archive manifest version string 1",
+    "compressed xcrun size/hash",
+    "gzip frontend reconstruction size/hash",
+    "regular 0644 data-only writes",
+    "relative reader config with hash-named raw-cache mapping",
+    "production load_origin_reader_config + ArchiveByteReader reads for all 3 logical mappings",
+    "zero current installed compiler reads, native executions, compiler executions"
+  ],
+  "faultControls": {
+    "manifestVersionBool": "REJECTED",
+    "manifestVersionInt": "REJECTED",
+    "manifestVersionUnknownString": "REJECTED",
+    "tamperedCompressedBytes": "covered by unit control",
+    "truncatedGzip": "covered by unit control",
+    "divergentExistingBytes": "covered by unit control",
+    "existing0755": "covered by unit control",
+    "symlinkOutput": "covered by unit control",
+    "archivePathTraversal": "covered by unit control"
+  },
+  "postconditions": [
+    "all replay output files are regular mode 0644",
+    "no executable/special/mode fallback",
+    "existing actual capture/archive bytes unchanged",
+    "current actual cache and prior internal scratch remain untouched"
+  ]
+}

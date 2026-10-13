@@ -1,0 +1,34 @@
+--- a/Sources/FactoryProbe/main.swift
++++ b/Sources/FactoryProbe/main.swift
+@@
+     var graph: Graph?
+     var window: BridgeWindow?
+     var measurer: NativeMeasurer?
++    var imageAssets: FactoryImageAssetStore?
+@@
+             let nativeMeasurer = NativeMeasurer(bridge, scale)
+             measurer = nativeMeasurer
+-            let graph = Graph(Witness_image(), measurer: nativeMeasurer, scale: CGFloat(scale))
++            imageAssets = FactoryImageAssetStore(bridge)
++            let graph = Graph(Witness_image_asset(), measurer: nativeMeasurer, scale: CGFloat(scale))
+@@
+             case "Color":
+                 guard let color=n.color else { throw NSError(domain:"FactoryColorMetadataRequired",code:1) }
+                 primitives=[.rect(bounds,color:try factoryResolvedFill(color,opacity:n.opacity))]
+                 print("FACTORY_NATIVE_COLOR node=\(n.id) x=\(bounds.x) y=\(bounds.y) width=\(bounds.w) height=\(bounds.h)")
++            case "Image":
++                guard let reference = n.image, let imageAssets else {
++                    throw NSError(domain:"FactoryImageMetadataRequired",code:1)
++                }
++                let handle = try imageAssets.handle(for: reference)
++                primitives = [.image(handle, bounds)]
++                semantic = SemanticNode(role: .image, label: n.accessibility.label ?? reference.name,
++                  identifier: n.id, disabled: !n.accessibility.isEnabled)
+@@
+-        let requirements: [FactoryNativeProviderRequirement] = [.sfSymbolProvider]
++        let requirements: [FactoryNativeProviderRequirement] = []
+@@
+             host.graph?.tearDown()
+             host.measurer?.releaseAll()
++            host.imageAssets?.releaseAll()
+*** End Patch

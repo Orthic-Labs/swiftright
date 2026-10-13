@@ -1,0 +1,20 @@
+{
+  "kind": "factory-count20-metadata-controls-source-checks-v1",
+  "status": "source-ready-hold-plan-field",
+  "count": 20,
+  "controlRoot": "coordinator-batch-r1",
+  "requestedRunRoot": "actual-batch-r1",
+  "frozenPlanRunRoot": "actual-repeat-r1",
+  "frozenPlanDispatchField": "repeat",
+  "nativeWindowActions": 0,
+  "compilerActions": 0,
+  "remoteActions": 0,
+  "lockActions": 0,
+  "requirements": [
+    "Count1 adapter success precedes Count20",
+    "full guard receipt has admitted baseline + relocated positive + 11 unique rejected faults",
+    "Mac schema receipt validates exact tuple, source-binding, source-archive, schema, tool, & root nonce joins",
+    "issuer and coordinator refuse overwrite",
+    "missing dispatch.batch / actual-batch-r1 fails closed"
+  ]
+}

@@ -1,0 +1,13 @@
+/Volumes/D/claude/swiftright/qualification/tuple12-mac-sign-no-ui-v1/sign-no-ui.c:13:17: warning: 'SecKeychainSetUserInteractionAllowed' is deprecated: first deprecated in macOS 10.10 - SecKeychain is deprecated [-Wdeprecated-declarations]
+   13 |   OSStatus ui = SecKeychainSetUserInteractionAllowed(false);
+      |                 ^
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Security.framework/Headers/SecKeychain.h:639:10: note: 'SecKeychainSetUserInteractionAllowed' has been explicitly marked deprecated here
+  639 | OSStatus SecKeychainSetUserInteractionAllowed(Boolean state)
+      |          ^
+/Volumes/D/claude/swiftright/qualification/tuple12-mac-sign-no-ui-v1/sign-no-ui.c:14:46: warning: 'SecKeychainGetUserInteractionAllowed' is deprecated: first deprecated in macOS 10.10 - SecKeychain is deprecated [-Wdeprecated-declarations]
+   14 |   Boolean allowed = true; OSStatus uiCheck = SecKeychainGetUserInteractionAllowed(&allowed);
+      |                                              ^
+/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Security.framework/Headers/SecKeychain.h:649:10: note: 'SecKeychainGetUserInteractionAllowed' has been explicitly marked deprecated here
+  649 | OSStatus SecKeychainGetUserInteractionAllowed(Boolean *state)
+      |          ^
+2 warnings generated.

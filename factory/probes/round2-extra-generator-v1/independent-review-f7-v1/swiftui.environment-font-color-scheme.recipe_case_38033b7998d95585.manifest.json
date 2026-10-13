@@ -1,0 +1,71 @@
+{
+  "assertionChannels": [
+    "events/state",
+    "layout",
+    "paint"
+  ],
+  "block": "swiftui.environment-font-color-scheme",
+  "case": {
+    "descriptor": {
+      "coverage": "full-product",
+      "executionEligible": false,
+      "id": "swiftui.environment-font-color-scheme.recipe/case/38033b7998d95585",
+      "inputs": {
+        "font-size": 24,
+        "scheme": "light"
+      },
+      "projectedWitnessHash": "sha256:709b2d2cd717ae0379aba4f245038cf25025e43dd6ceef6c43a861d0562d07f3",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:9c0a4d5404e918002af25362063674ab8525c8ee462fa34ae11eac49b9ad36b7",
+    "id": "swiftui.environment-font-color-scheme.recipe/case/38033b7998d95585"
+  },
+  "caseInputs": {
+    "font-size": 24,
+    "scheme": "light"
+  },
+  "compileExpectation": "success",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:c98734100c67cca92b22de7ba922e091e7cf3bb9a53197dbef3bdc51e6b3d4c7",
+    "id": "swiftui.environment-font-color-scheme.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "candidate-projection",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.View.environment(_:_:)",
+      "selector": "usr:s:7SwiftUI4ViewPAAE11environmentyQrs15WritableKeyPathCyAA17EnvironmentValuesVqd__G_qd__tlF",
+      "symbolEvidenceSha256": "efccbc5282a9d165043b61e8c5c1fb5278da158cc32899939182688699ade13d"
+    },
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.EnvironmentValues.font",
+      "selector": "usr:s:7SwiftUI17EnvironmentValuesV4fontAA4FontVSgvp",
+      "symbolEvidenceSha256": "cb8beaf516357b88b196b5b11c3aab5bc4a2c447809663970f6bd69ff4f48e76"
+    },
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.EnvironmentValues.colorScheme",
+      "selector": "usr:s:7SwiftUI17EnvironmentValuesV11colorSchemeAA05ColorF0Ovp",
+      "symbolEvidenceSha256": "215e2e6216d5fd8a0c6266b2a66844fac89de57d931143533e754d43a9c58dcb"
+    }
+  ],
+  "sourceFile": "swiftui.environment-font-color-scheme.recipe_case_38033b7998d95585.swift",
+  "sourceHash": "sha256:83dcaa82af4741e2307ab535f5f40e64242d259417c9ea114e2e1b57058e6f38",
+  "unsupportedObservability": {
+    "events/state": "native event capture is unavailable in source-only generation",
+    "layout": "native inherited layout readback is unavailable in source-only generation",
+    "paint": "native font shaping and paint readback are unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.environment-font-color-scheme.witness",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.environment-font-color-scheme.witness.swift",
+    "sourceHash": "sha256:b1ab2a7dff46996d66e9a4b72c1fed29d94f3248af32f84b66a3ac047ed58aac"
+  },
+  "witnessType": "Witness_round2_environment"
+}

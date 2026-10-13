@@ -1,0 +1,9 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$zip='D:\Claude\swiftright\.factory-work\windows-replay-r11-headless-r2.zip';$stage='D:\Claude\swiftright\.factory-work\windows-replay-r11\headless-r2'
+if((Get-FileHash -LiteralPath $zip).Hash.ToLowerInvariant() -cne 'a587cbae9e3bfae3d382849381e76adcbc09a088fc2cb9aca308c5b10bca5fc7'){throw 'ZIP drift'};if(Test-Path -LiteralPath $stage){throw 'Fresh stage required'};Expand-Archive -LiteralPath $zip -DestinationPath $stage
+$script=Join-Path $stage 'integration-fresh-r11-v4.ps1';if((Get-FileHash -LiteralPath $script).Hash.ToLowerInvariant() -cne '751b53552480b7b308e722beba99c7ddadeed6e8a3202a29edaed37245c332a6'){throw 'Integration source drift'}
+$t=$null;$e=$null;$null=[System.Management.Automation.Language.Parser]::ParseFile($script,[ref]$t,[ref]$e);if($e.Count){throw 'Integration parse failed'};. $script
+$issued='D:\Claude\swiftright\.factory-work\windows-replay-r11\coordinator-r1\issued-metadata.json';$run='D:\Claude\swiftright\.factory-work\windows-replay-r11\replays\r1';$producer='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3'
+$h=(Get-FileHash -LiteralPath $issued).Hash.ToLowerInvariant();$null=Assert-LeaseIssuedMetadata $issued $h $run 20 '1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf' '3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a' '952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba' $producer
+$r=[ordered]@{kind='root-factory-fresh-baseline-r2';status='passed-baseline-only';issuedMetadataPath=$issued;issuedMetadataHash=$h;integrationSourceSha256='751b53552480b7b308e722beba99c7ddadeed6e8a3202a29edaed37245c332a6';at=[DateTimeOffset]::UtcNow.ToString('o');nativeWindowActions=0;compilerActions=0;lockActions=0}
+[IO.File]::WriteAllText((Join-Path $stage 'root-baseline-r2.json'),($r|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false));$r|ConvertTo-Json

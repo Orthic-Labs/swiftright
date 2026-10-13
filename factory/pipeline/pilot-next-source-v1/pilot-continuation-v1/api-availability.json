@@ -1,0 +1,23 @@
+{
+  "schema": "control-state-api-availability-v1",
+  "status": "source-reviewed-held",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "rendererAbi": "0.6",
+  "blocks": {
+    "swiftui.toggle": {
+      "publicSymbols": ["SwiftUI.Toggle", "Binding<Bool>", "View.labelsHidden", "View.toggleStyle"],
+      "generatedWitness": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.swift",
+      "providerState": ["AX role/value/state required", "UIA TogglePattern/state required"],
+      "paint": "held: ABI0.6 plan has no measured switch-paint adapter",
+      "availability": "source symbols present; runtime/provider availability unmeasured"
+    },
+    "swiftui.disabled": {
+      "publicSymbols": ["SwiftUI.View.disabled(Bool)", "SwiftUI.Button", "EnvironmentValues.colorScheme"],
+      "generatedWitness": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.swift",
+      "providerState": ["AX enabled/action attributes required", "UIA IsEnabled/InvokePattern required"],
+      "paint": "provider/theme output unmeasured",
+      "availability": "source symbols present; runtime/provider availability unmeasured"
+    }
+  },
+  "forbiddenClaims": ["executionEligible", "native capture", "provider parity", "paint parity", "qualification", "tuple freeze"]
+}

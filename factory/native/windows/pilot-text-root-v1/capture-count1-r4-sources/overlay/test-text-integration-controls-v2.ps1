@@ -1,0 +1,5 @@
+param([string]$GuardPath,[string]$Root,[string]$SourceInputsPath)
+$ErrorActionPreference='Stop';. $GuardPath;$si=Get-Content -Raw $SourceInputsPath|ConvertFrom-Json;Assert-FactoryIntegrationSources $Root $si|Out-Null
+$bad=$si|ConvertTo-Json -Depth 32|ConvertFrom-Json;$bad.recipeHash='sha256:'+$bad.recipeHash;$rejected=$false;try{Assert-FactoryIntegrationSources $Root $bad|Out-Null}catch{$rejected=$true};if(-not $rejected){throw 'prefixed recipeHash fault accepted'}
+$cases=@();foreach($n in @('kind','count','caseID','caseHash','sourceHash','tupleID','planHash','compileReceiptHash','tupleHash','bindingHash','recipeHash','exeHash','runtimeSourceCommit','rendererSha256','integrationBindingsHash')){$bad=$si|ConvertTo-Json -Depth 32|ConvertFrom-Json;if($n -ceq 'count'){$bad.$n=20}else{$bad.$n='fault-'+[string]$bad.$n};$rejected=$false;try{Assert-FactoryIntegrationSources $Root $bad|Out-Null}catch{$rejected=$true};if(-not $rejected){throw ('source fault accepted: '+$n)};$cases+=@{field=$n;rejected=$true}}
+@{status='passed';faults=$cases;nativeActions=0;lockActions=0}|ConvertTo-Json -Depth 8

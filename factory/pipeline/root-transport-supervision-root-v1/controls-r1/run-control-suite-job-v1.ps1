@@ -1,0 +1,36 @@
+# Root transport wrapper. Admit current-process 1 GiB job before reading/running pinned script.
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory)][string]$HelperPath,
+  [Parameter(Mandatory)][string]$HelperSha256,
+  [Parameter(Mandatory)][string]$ScriptPath,
+  [Parameter(Mandatory)][string]$ScriptSha256,
+  [Parameter(Mandatory)][string]$OutputPath,
+  [ValidateRange(1,1100)][int]$DeadlineSeconds=45,
+  [string[]]$ScriptArguments=@()
+)
+$ErrorActionPreference='Stop'
+function Require([bool]$Condition,[string]$Message){if(-not $Condition){throw $Message}}
+function Require-BoundedFile([string]$Path,[string]$Label){$item=Get-Item -LiteralPath $Path -Force -ErrorAction Stop;Require (($item.Attributes -band [IO.FileAttributes]::ReparsePoint)-eq 0) "$Label reparse input";Require (-not $item.PSIsContainer -and $item.Length -le 2097152) "$Label exceeds 2 MiB";return $item}
+function Hash-BoundedFile([string]$Path,[string]$Label){$item=Require-BoundedFile $Path $Label;return (Get-FileHash -LiteralPath $item.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
+function Write-AtomicFresh([string]$Path,[object]$Value){if(Test-Path -LiteralPath $Path){throw "root transport output must be fresh: $Path"};$parent=Split-Path -Parent ([IO.Path]::GetFullPath($Path));if(-not(Test-Path -LiteralPath $parent)){[IO.Directory]::CreateDirectory($parent)|Out-Null};$tmp="$Path.$PID.$([guid]::NewGuid().ToString('N')).tmp";$bytes=[Text.Encoding]::UTF8.GetBytes(($Value|ConvertTo-Json -Depth 8)+"`r`n");$s=[IO.File]::Open($tmp,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read);try{$s.Write($bytes,0,$bytes.Length);$s.Flush($true)}finally{$s.Dispose()};[IO.File]::Move($tmp,$Path)}
+function Quote-Arg([string]$Value){if($Value -notmatch '[\s"]'){return $Value};return '"'+$Value.Replace('"','\"')+'"'}
+function Short-Error([object]$ErrorRecord){$m=[string]$ErrorRecord.Exception.Message;if($m.Length -gt 1024){return $m.Substring(0,1024)};return $m}
+Require ($HelperSha256 -match '^[0-9a-fA-F]{64}$') 'helper SHA-256 invalid';Require ($ScriptSha256 -match '^[0-9a-fA-F]{64}$') 'script SHA-256 invalid';$helperItem=Require-BoundedFile $HelperPath 'helper';$scriptItem=$null;$job=$null;$child=$null;$childHandle=[IntPtr]::Zero;$childHandleAcquired=$false;$childTerminal=$false;$childExit=$null;$childExitRaw=[uint32]259;$childExitSigned=$null;$childExitIdentity=$false;$initial=$null;$final=$null;$cleanup=$null;$failure=$null;$timedOut=$false;$powershell=Join-Path $PSHOME 'powershell.exe';$budgetBytes=1073741824;$startedAt=[DateTimeOffset]::UtcNow;$runStatus='held'
+try {
+  $actualHelperSha=Hash-BoundedFile $helperItem.FullName 'helper';Require ($actualHelperSha -ceq $HelperSha256.ToLowerInvariant()) 'helper SHA-256 mismatch'
+  Add-Type -Path $helperItem.FullName
+  $job=[Sr0RootControlSuiteJobV1]::CreateCurrentProcess();$initial=$job.Query();[Sr0RootControlSuiteJobV1]::RequireMemoryOnly($initial);Require ($initial.ActiveCount -eq 1) 'root transport initial self-only proof missing'
+  $scriptItem=Require-BoundedFile $ScriptPath 'script';$actualScriptSha=Hash-BoundedFile $scriptItem.FullName 'script';Require ($actualScriptSha -ceq $ScriptSha256.ToLowerInvariant()) 'script SHA-256 mismatch'
+  $args=@('-NoProfile','-ExecutionPolicy','Bypass','-File',$scriptItem.FullName)+@($ScriptArguments|ForEach-Object{[string]$_});$psi=New-Object Diagnostics.ProcessStartInfo;$psi.FileName=$powershell;$psi.Arguments=(($args|ForEach-Object{Quote-Arg $_}) -join ' ');$psi.WorkingDirectory=(Split-Path -Parent $scriptItem.FullName);$psi.UseShellExecute=$false;$psi.CreateNoWindow=$true;$child=[Diagnostics.Process]::Start($psi);Require ($null -ne $child) 'root transport script did not start';$childHandle=$child.Handle;Require ($childHandle -ne [IntPtr]::Zero) 'root transport child handle missing';$childHandleAcquired=$true
+  $watch=[Diagnostics.Stopwatch]::StartNew();while(-not $child.HasExited -and $watch.Elapsed.TotalSeconds -lt $DeadlineSeconds){Start-Sleep -Milliseconds 250};if(-not $child.HasExited){$timedOut=$true;$cleanup=$job.TerminateOwnedChildren(1,15000);throw 'root transport script deadline expired'}
+  [void]$child.WaitForExit(5000);$childExit=[int64]$child.ExitCode;$childTerminal=[Sr0RootControlSuiteJobV1]::Terminal($childHandle,[ref]$childExitRaw);$childExitSigned=[Sr0RootControlSuiteJobV1]::SignedDword($childExitRaw);$childExitIdentity=$childTerminal -and $childExitSigned -eq $childExit;Require $childExitIdentity 'root transport child kernel/.NET exit identity mismatch';if($childExit -ne 0){throw "root transport script exit was nonzero: $childExit"}
+  $final=$job.WaitForOnlyCurrent(15000);Require ($final.ActiveCount -eq 1) 'root transport final active proof missing';$runStatus='passed'
+} catch {$failure=Short-Error $_}
+finally {
+  if($child){try{if(-not $child.HasExited){$timedOut=$true;if($job){$cleanup=$job.TerminateOwnedChildren(1,15000)};[void]$child.WaitForExit(5000)};if($childHandleAcquired){$childTerminal=[Sr0RootControlSuiteJobV1]::Terminal($childHandle,[ref]$childExitRaw);$childExitSigned=[Sr0RootControlSuiteJobV1]::SignedDword($childExitRaw);if($child.HasExited){$childExit=[int64]$child.ExitCode};$childExitIdentity=$childTerminal -and $childExit -ne $null -and $childExitSigned -eq $childExit}}catch{if(-not $failure){$failure=Short-Error $_}}}
+  if($job){try{if($null -eq $final -or $final.ActiveCount -ne 1){$final=$job.WaitForOnlyCurrent(15000)};if($null -eq $final){$final=$job.Query()}}catch{if(-not $failure){$failure=Short-Error $_}}}
+  $receipt=[ordered]@{kind='sr0-root-transport-job-v1';status=if($runStatus -eq 'passed' -and $null -eq $failure -and $null -ne $final -and $final.ActiveCount -eq 1){'passed'}else{'held'};budgetBytes=$budgetBytes;limitFlags=if($initial){$initial.LimitFlags}else{$null};activeBefore=if($initial){$initial.ActiveCount}else{$null};peakBeforeBytes=if($initial){$initial.PeakBytes}else{$null};activeAfter=if($final){$final.ActiveCount}else{$null};peakAfterBytes=if($final){$final.PeakBytes}else{$null};selfOnly=if($final){$final.ActiveCount -eq 1}else{$false};helperPath=$helperItem.FullName;helperSha256=$HelperSha256.ToLowerInvariant();helperSizeBytes=$helperItem.Length;scriptPath=[IO.Path]::GetFullPath($ScriptPath);scriptSha256=$ScriptSha256.ToLowerInvariant();scriptSizeBytes=if($scriptItem){$scriptItem.Length}else{$null};childPid=if($child){$child.Id}else{$null};childPath=$powershell;childHandleAcquired=$childHandleAcquired;childTerminal=$childTerminal;childExit=$childExit;childExitRaw=$childExitRaw;childExitSigned=$childExitSigned;childExitIdentity=$childExitIdentity;timedOut=$timedOut;cleanupAttempted=if($cleanup){$cleanup.Attempted}else{$false};cleanupBefore=if($cleanup){$cleanup.BeforeCount}else{$null};cleanupTerminated=if($cleanup){$cleanup.TerminatedCount}else{$null};cleanupOpenFailed=if($cleanup){$cleanup.OpenFailedCount}else{$null};cleanupAfter=if($cleanup){$cleanup.AfterCount}else{$null};cleanupSelfOnly=if($cleanup){$cleanup.SelfOnly}else{$null};failure=$failure;startedAt=$startedAt.ToString('o');endedAt=[DateTimeOffset]::UtcNow.ToString('o')};try{Write-AtomicFresh $OutputPath $receipt}catch{if(-not $failure){$failure=Short-Error $_}}
+  if($child){try{$child.Dispose()}catch{}};if($job){try{$job.Dispose()}catch{}}
+}
+if($runStatus -eq 'passed' -and $null -eq $failure){exit 0}else{exit 1}

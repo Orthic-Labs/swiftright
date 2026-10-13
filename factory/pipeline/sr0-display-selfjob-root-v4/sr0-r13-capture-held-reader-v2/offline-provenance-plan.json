@@ -1,0 +1,34 @@
+{
+  "schema": "sr0-r13-strict-display-offline-provenance-v1",
+  "parser": "qualification/tuple12-takeover/workload-analysis-v3/analyze_workload.py",
+  "parserSha256": "35330066332c30e96d5e3a6232a0188889760ad73b7d4c04f1d9fb9f178b535a",
+  "sourceRunRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r13\\run",
+  "requiredFiles": [
+    "result-workload.txt",
+    "presentmon.csv",
+    "presentmon.console.txt",
+    "build.json",
+    "r1/meta.json",
+    "r1/integrity.json",
+    "r1/inputs.csv",
+    "r1/frames.csv",
+    "r1/bridge_input.csv",
+    "r1/ticks.csv",
+    "r1/mainactor.csv",
+    "r1/inject.csv"
+  ],
+  "sealedR13Csv": {
+    "path": "run/presentmon.csv",
+    "bytes": 926320,
+    "sha256": "b080fcab80dd5b802a82e844cdd2a8e7c95c84a1e4b9efc9e6b72c4820a2f76e"
+  },
+  "consoleProvenance": {
+    "status": "missing-from-r13-capture",
+    "sealedInputs": ["run/presentmon.stdout.txt", "run/presentmon.stderr.txt"],
+    "allowedDerivation": "bounded byte-preserving derivation from sealed PresentMon streams only",
+    "requiredReceipt": ["input paths", "input bytes", "input SHA-256", "stream order", "derived bytes", "derived SHA-256"],
+    "syntheticLinesAllowed": false,
+    "qualificationClaim": false
+  },
+  "qualificationClaim": false
+}

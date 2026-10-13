@@ -1,0 +1,27 @@
+{
+  "findings": [
+    "No subprocess execution in producer; literal exit0 fields for Swift/typecheck, SourceKit & three Clang runs; missing cwd & most actual argv.",
+    "Controls are boolean metadata; test reruns assembler & compares metadata, not raw semantic faults.",
+    "Module export validation uses substring presence only; does not reconstruct exact umbrella/export/header graph.",
+    "Generator pins AST bytes but never parses actual declaration/definition/cardinality/typedef/redecl identity.",
+    "Independent full CoreGraphics AST inspection found nine root nodes for three nominal names (complete definitions, redeclarations, typedefs). Top-level location-file propagation indicates CFCGTypes.h; CGPoint complete definition line51 & typedef offset1441/col35, while derived evidence claims CGGeometry.h line25. Exact complete AST location resolution & conditional source join required.",
+    "Full AppKit AST contains multiple NSWindow forward/redecl nodes; matching name or mangledName alone cannot prove exact unique definition."
+  ],
+  "handoff": "Root transfers actual Clang process/proof repair to f1_residuals; reviewer now owns fresh Swift16 process capture v2. No Clang producer/raw bytes changed.",
+  "kind": "independent-clang-v1-producer-review",
+  "preimages": [
+    {
+      "path": "factory/catalogue/public-ancestor-spike/independent-denominator-review/clang-producer-preimage-v1/capture_clang_external.py",
+      "sha256": "sha256:6354d45baa7c4bf41e4e8625c95244bf413c70d37fc1fa267e15bc371fcf0169"
+    },
+    {
+      "path": "factory/catalogue/public-ancestor-spike/independent-denominator-review/clang-producer-preimage-v1/clang-external-owner-v1.json",
+      "sha256": "sha256:fd53ce4b4a08b3c1f12968faf0fc9869d1e46122d975c3b04a4cff1fdc398afa"
+    },
+    {
+      "path": "factory/catalogue/public-ancestor-spike/independent-denominator-review/clang-producer-preimage-v1/test_clang_external.py",
+      "sha256": "sha256:82579df3a0304f2e66a64386e194b435d15b86fe57592c9a3cf97bce9056970b"
+    }
+  ],
+  "status": "blocked-production-promotion"
+}

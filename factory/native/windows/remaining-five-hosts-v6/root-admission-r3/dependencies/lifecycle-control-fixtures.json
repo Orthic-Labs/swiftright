@@ -1,0 +1,35 @@
+{
+  "kind": "factory-root-lifecycle-admission-controls-v1",
+  "version": "0.1",
+  "fixtureOnly": true,
+  "baseline": {
+    "activeRootCount": 2,
+    "maxActiveRoots": 3,
+    "quiescentBeforeReuseOrMove": true,
+    "operation": "reuse-or-move",
+    "sourceOnlyFixture": true
+  },
+  "faults": [
+    {
+      "name": "active-root-count-four",
+      "activeRootCount": 4,
+      "maxActiveRoots": 3,
+      "quiescentBeforeReuseOrMove": true,
+      "operation": "reuse-or-move"
+    },
+    {
+      "name": "not-quiescent",
+      "activeRootCount": 2,
+      "maxActiveRoots": 3,
+      "quiescentBeforeReuseOrMove": false,
+      "operation": "reuse-or-move"
+    },
+    {
+      "name": "wrong-operation",
+      "activeRootCount": 2,
+      "maxActiveRoots": 3,
+      "quiescentBeforeReuseOrMove": true,
+      "operation": "create-new"
+    }
+  ]
+}

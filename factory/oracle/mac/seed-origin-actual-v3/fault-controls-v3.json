@@ -1,0 +1,49 @@
+{
+  "baseline": {
+    "cases": 5,
+    "runs": 100
+  },
+  "candidateOnly": true,
+  "controls": [
+    {
+      "acceptedBaseline": true,
+      "control": "missing-summary",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "case-hash-rebind",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "run-cardinality",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "compiler-exit-fault",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "permission-request-fault",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "archived-source-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "case-root-drift",
+      "rejected": true
+    }
+  ],
+  "kind": "seed-origin-v8-actual-v3-fault-controls",
+  "note": "Replayed immutable v2 control outcomes into fresh v3 output; no v2 file was rewritten.",
+  "sourcePath": "../seed-origin-actual-v2/fault-controls.json",
+  "sourceSha256": "sha256:233714ad190f266a54ea0946bb41fd14c8b7b4a308f5a6c1a829cffabc4a1095",
+  "version": "1"
+}

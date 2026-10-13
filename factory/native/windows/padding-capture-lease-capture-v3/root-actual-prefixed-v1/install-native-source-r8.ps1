@@ -1,0 +1,8 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$zip='D:\Claude\swiftright\.factory-work\transports\native-source-r8.zip';$stage='D:\Claude\swiftright\.factory-work\controls\native-source-r8';$repo='D:\Claude\swiftright'
+if((Get-FileHash -LiteralPath $zip).Hash.ToLowerInvariant() -cne '74fa706c72a64c169da1a0856fdbbbb64e4b7be5f802fe719872b0fab890a18b'){throw 'source zip drift'};if(Test-Path -LiteralPath $stage){throw 'exclusive source stage exists'};Expand-Archive -LiteralPath $zip -DestinationPath $stage
+$m=Join-Path $stage 'manifest.json';if((Get-FileHash -LiteralPath $m).Hash.ToLowerInvariant() -cne 'e13c97a1abbd7e003132941729f1d05b00c4a0cc7f73cbc9171f8edf4e22a478'){throw 'source manifest drift'}
+$rows=@((Get-Content -Raw -LiteralPath $m|ConvertFrom-Json).files)
+foreach($r in $rows){$src=Join-Path $stage ($r.path -replace '/','\');$dst=Join-Path $repo ($r.path -replace '/','\');if((Get-FileHash -LiteralPath $src).Hash.ToLowerInvariant() -cne $r.sha256 -or (Get-Item -LiteralPath $src).Length -ne $r.bytes){throw 'source member drift'};if(Test-Path -LiteralPath $dst){throw 'immutable new source exists'};$tok=$null;$err=$null;[System.Management.Automation.Language.Parser]::ParseFile($src,[ref]$tok,[ref]$err)|Out-Null;if($err.Count){throw 'actual source parse failed'}}
+foreach($r in $rows){$src=Join-Path $stage ($r.path -replace '/','\');$dst=Join-Path $repo ($r.path -replace '/','\');[IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($dst))|Out-Null;[IO.File]::Copy($src,$dst,$false)}
+@{status='PASS_EXACT_ELEVEN_NATIVE_SOURCE_FILES_WINDOWS_PARSER';files=$rows;nativeActions=0;lockActions=0}|ConvertTo-Json -Depth 8

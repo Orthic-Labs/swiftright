@@ -1,0 +1,61 @@
+{
+  "archiveMapIntegrityFailures": [],
+  "archiveMapRows": 2134,
+  "candidateOnly": true,
+  "cases": 5,
+  "decision": "BLOCKED_ARCHIVE_HISTORY_ONLY",
+  "failures": [],
+  "freshIndexBinding": "PASS",
+  "kind": "seed-origin-actual-v4-independent-review",
+  "nativeCompilerRemoteRuns": 0,
+  "notes": [
+    "v4 explicit pathBase binds five summaries to immutable v2 bytes",
+    "v2 historical fault-controls map row remains stale and is preserved; fresh v4 controls are separate",
+    "no recapture, compiler, native, remote, parity, or promotion performed"
+  ],
+  "rows": [
+    {
+      "case": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258",
+      "failures": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258",
+      "failures": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258",
+      "failures": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258",
+      "failures": [],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258",
+      "failures": [],
+      "runs": 20
+    }
+  ],
+  "runs": 100,
+  "sourcePins": {
+    "v2ArchiveMap": "sha256:e33bdf9f96b5b989d946d8be152cf7a560f7adb793bff6f2bc08dae547d9e7df",
+    "v2Stage": "sha256:6a41b76a6bd6129e2f4b212d9b9997c73d31800968a99077ee5b5d4c04c84515",
+    "v4FaultControls": "sha256:5cc3d01e0bcd8d9b9df0219372a9096ba423df404cd44b37601e7cd7798ffbd7",
+    "v4Index": "sha256:d85dc3d7b2d95bf5eb3ff671934a6d7b48312730008024a8a65bbed2c7bdcbef",
+    "v4PathControls": "sha256:9a98e67dd37cfeb5ecfdd66ec3fa4f5e582deaf037f42163e7d718e7bcc4bd8e",
+    "v4Stage": "sha256:b77fc461bee1ab6d36f13a64f0ceac2caf2409bf9ff8fa4a02afd37eb9f1e6c1"
+  },
+  "staleHistoricalRows": [
+    {
+      "actualSha256": "sha256:233714ad190f266a54ea0946bb41fd14c8b7b4a308f5a6c1a829cffabc4a1095",
+      "bytes": 1153,
+      "expectedSha256": "sha256:202cd05db010a4329708a73167b9971ace22009702d3678d4db2d897435bf892",
+      "path": "fault-controls.json"
+    }
+  ],
+  "version": "1"
+}

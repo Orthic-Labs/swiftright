@@ -1,0 +1,16 @@
+{
+  "schema": "sr0-r13-offline-analysis-input-manifest-v1",
+  "entries": "explicit objects: role, sourcePath, destination, bytes, sha256",
+  "requiredDestinations": [
+    "result-workload.txt", "presentmon.csv", "build.json", "r1/meta.json", "r1/integrity.json", "r1/inputs.csv", "r1/frames.csv", "r1/bridge_input.csv", "r1/ticks.csv", "r1/mainactor.csv", "r1/inject.csv"
+  ],
+  "streamRoles": ["presentmon-stdout", "presentmon-stderr"],
+  "console": {
+    "destination": "presentmon.console.txt",
+    "order": ["presentmon-stdout", "presentmon-stderr"],
+    "syntheticBytesAdded": 0
+  },
+  "limits": {"maxFileBytes": 16777216, "maxTotalBytes": 33554432, "maxManifestBytes": 2097152},
+  "qualificationClaim": false,
+  "nativeActions": 0
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "sr0-r12-parser-repair-v3-source-pins",
+  "rawResult": "factory/pipeline/sr0-display-selfjob-root-v4/native-r10c-recovery-v1/root-native-r12-observer-r13-r1/actual-run-raw-r3/result-workload.txt",
+  "rawResultSha256": "c841626334d8b7a2ad9c13a1e72a4db49f6e64077b6e9bc622f2e4b387d0ae3e",
+  "rawResultBytes": 2837,
+  "expectedRuns": 1,
+  "expectedWrapperPid": 58252,
+  "workloadIdentityDonorSha256": "4e7af8708f78b1613196cc710c6cd7222f9a0485984326bd2e390df422a2d9ad",
+  "qualificationClaim": false,
+  "reason": "CRLF identity regex anchor mismatch",
+  "materializer": {
+    "script": "materialize-parser-v3.ps1",
+    "collectorCall": "Resolve-WorkloadIdentityV8",
+    "identitySource": "workload-identity-v8-crlf.ps1",
+    "sourceHashesRefreshRequired": true
+  },
+  "observer": {
+    "materializer": "materialize-observer-v3.ps1",
+    "observerSource": "observer-early-failure-v3.ps1",
+    "admissionSource": "r12-failure-admission-v1.ps1",
+    "qualificationClaim": false,
+    "lockReleaseEligibility": false,
+    "deadlineSeconds": 1100,
+    "transportDeadlineSeconds": 900,
+    "cleanupMarginSeconds": 120
+  }
+}

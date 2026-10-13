@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "controls": [
+    {
+      "name": "default_changed",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "bounded explicit40/default10"
+    },
+    {
+      "name": "unbounded_lease",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "bounded explicit40/default10"
+    },
+    {
+      "name": "wrong_option",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "bounded explicit40/default10"
+    },
+    {
+      "name": "host_layout_changed",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "exact lifetime-only host delta"
+    },
+    {
+      "name": "witness_changed",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "unchanged witness/layout/package bytes"
+    },
+    {
+      "name": "wrong_lease_plan",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "exact prospective lease selection"
+    },
+    {
+      "name": "wrong_runtime",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "unchanged source/template/runtime/renderer authority"
+    },
+    {
+      "name": "wrong_compiler",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "unchanged source/template/runtime/renderer authority"
+    },
+    {
+      "name": "invented_measured_identity",
+      "acceptedBaseline": true,
+      "coherentSourcePlanRehashed": true,
+      "rejected": true,
+      "reason": "prospective issuance before launch/no fabricated measurements"
+    }
+  ],
+  "nativeActions": 0,
+  "compilerActions": 0
+}

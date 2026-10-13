@@ -1,0 +1,46 @@
+{
+  "kind": "sr0-tuple12-workload-startupguard-overlay-v1",
+  "status": "source-only-ready",
+  "baseSourceCommit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "baseMainPath": "probes/sr0-b/workload/Sources/WorkloadWin/main.swift",
+  "baseMainSha256": "ff5bd4c1484225ab427ca215e676ccd41fbaf7f7991f3ae642bd72a4fa80f086",
+  "files": [
+    {
+      "path": "qualification/tuple12-workload-startupguard/WorkloadStartupGuard.swift",
+      "bytes": 1391,
+      "sha256": "1213fb0bb6860230c4257b752018842b22f12f344ddb223c95e7d0b9228f13bd"
+    },
+    {
+      "path": "qualification/tuple12-workload-startupguard/main.swift.patch",
+      "bytes": 1202,
+      "sha256": "70511e7b650c9eae236100e162cb422ffc79152440b12952d141e8c84fc1aaec"
+    }
+  ],
+  "hook": {
+    "api": "SetWindowsHookExW(WH_CBT, callback, nil, GetCurrentThreadId())",
+    "veto": [
+      "HCBT_ACTIVATE",
+      "HCBT_SETFOCUS"
+    ],
+    "lifetime": "install after Bridge.load, before bridge.run; defer stop spans full bridge.run; stop calls UnhookWindowsHookEx",
+    "failure": "guard install failure prints SWR_STARTUP_ERROR and exits 78 before bridge.run",
+    "default": "flag absent leaves hook disabled; renderer/runtime/ABI unchanged"
+  },
+  "driverJoin": {
+    "flag": "--sr0-noactivate",
+    "required": "SR0_NOACTIVATE guard=installed source=thread-cbt-hcbt-activate-setfocus",
+    "paired": "tuple12-workload-background-overlay.patch",
+    "input": "WM_CHAR PostMessage to retained workload HWND only",
+    "metrics": "WindowMetrics/client metrics, QPC input, activity, resource, renderer timing streams retained"
+  },
+  "qualification": {
+    "startup": "guard-installed marker before first renderer-ready/window event",
+    "background": "background_noactivate=PASS, HWND_BOTTOM, SWP_NOACTIVATE, positive client metrics",
+    "admission": "guard marker + worker source pins + no foreground takeover + all workload receipt joins",
+    "threeRunPolicy": 3,
+    "crossCompareRunsPerSide": 20
+  },
+  "remoteActions": 0,
+  "nativeActions": 0,
+  "gitActions": 0
+}

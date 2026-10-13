@@ -1,0 +1,95 @@
+{
+  "kind": "factory-count1-adapter-input-producer-source-checks-v1",
+  "status": "source-only",
+  "count": 1,
+  "requiredRoles": [
+    "issuedMetadata",
+    "producerProfile",
+    "capturePlan",
+    "plan",
+    "compile",
+    "candidateBinding",
+    "tuple",
+    "case",
+    "manifest",
+    "coordinator",
+    "exe",
+    "renderer"
+  ],
+  "requiredRunRefs": 25,
+  "producerProfileClosure": "every producer-stage.json file row, exact sha256 and bytes",
+  "runtimeClosure": "every compile.runtimeModules row, exact archive ref, sha256 and bytes",
+  "overlayClosure": {
+    "requiredNames": [
+      "coordinator-r5.ps1",
+      "interactive-task-r5.ps1",
+      "dispatch-r5.ps1",
+      "capture-repeat-r5.ps1",
+      "integration-prefixed-ids-r1.ps1"
+    ],
+    "requiredSha256": {
+      "coordinator-r5.ps1": "sha256:3e32c96c858f1233836ecb6a9191050dde39387fabe70c8cc1d8222e6cb83761",
+      "interactive-task-r5.ps1": "sha256:6c9b9720ec840f62e4922dc3590709cf31e619fa9de2a29fa3b58a6f67c82f44",
+      "dispatch-r5.ps1": "sha256:a5b147e031e156c6f31392d7167e21a2dfb45c7bd9b18099cfa7d54b7ffdd0dc",
+      "capture-repeat-r5.ps1": "sha256:6580498b8e12636af46a9f180dfb606bc2f4e81ccd320c6c18969fc0abde8255",
+      "integration-prefixed-ids-r1.ps1": "sha256:d4a20512937c6a7cb1e5751e02566276290897cb56203a99b40cfcccf486e904"
+    },
+    "exactOverlayRootSuffix": "/execute-r5",
+    "pathRootJoin": true,
+    "archivedFailedContract": "/execute-r4 remains retained only as historical failed source"
+  },
+  "issuerSource": {
+    "requiredMapField": "issuerSource",
+    "name": "issue-before-launch-prefixed-r1.ps1",
+    "sha256": "sha256:ee30fdd3f83459a62a2024fe95b22bf228b1471cf7498642181e49c2d473d66e",
+    "pathSuffix": "/root-metadata-controls-v1/issuer-overlay-r1/issue-before-launch-prefixed-r1.ps1",
+    "provenanceProducer": "padding-capture-lease-capture-v3/root-metadata-controls-v1/issuer-overlay-r1/issue-before-launch-prefixed-r1.ps1"
+  },
+  "count20RepeatMode": {
+    "expectedCount": 20,
+    "overlayRootSuffix": "/repeat-r3",
+    "requiredNames": [
+      "resume-issued-coordinator-repeat-r3.ps1",
+      "interactive-task-repeat-r3.ps1",
+      "dispatch-repeat-r3.ps1",
+      "capture-repeat-r3.ps1",
+      "integration-prefixed-ids-r1.ps1"
+    ],
+    "archivedFailedContract": "/repeat-r2 remains retained only as historical source"
+  },
+  "pathPolicy": [
+    "archive-relative",
+    "no-absolute",
+    "no-parent",
+    "no-backslash",
+    "no-drive-prefix"
+  ],
+  "outputPolicy": [
+    "exclusive-create",
+    "qualified-false",
+    "nativeParity-hold"
+  ],
+  "effects": {
+    "native": 0,
+    "gui": 0,
+    "compiler": 0,
+    "remote": 0,
+    "lock": 0,
+    "signing": 0
+  },
+  "syntheticFallback": false,
+  "historicalRelabel": false,
+  "dependencyClosure": [
+    "adapter-v4.py imports frozen ../readers.py",
+    "adapter-v4.py loads frozen ../dependencies/common.schema.json & capture.schema.json",
+    "run-adapter-v4.py imports only adapter-v4.py"
+  ],
+  "runtimePathPolicy": "recorded Windows compile.runtimeModules archivePath remains exact logical key; input-map destination is strict archive-relative safe path",
+  "producerProfileV4": {
+    "path": "../dependencies/producer-stage-v4.json",
+    "sha256": "sha256:72016fe5689e9cb74ef851ab6be2665f74b1b5a73ec0711e406046748b287967",
+    "rows": 76,
+    "capturePlanHash": "sha256:db405b87fd926bbe45744f19b0c23990ea8dcf9c1d92d553781c9cef9920362a",
+    "closureTransferManifestHash": "sha256:0f0405fc0d7633cfff105942cbfffbbe7fe62cd404cc517c5264f5c21ad43f2a"
+  }
+}

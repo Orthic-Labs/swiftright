@@ -1,0 +1,158 @@
+{
+  "assertions": [
+    {
+      "channel": "paint",
+      "expected": {
+        "assertions": [
+          {
+            "channel": "layout",
+            "expected": {
+              "assert": "records-measure-and-place",
+              "childCount": 2,
+              "proposalWidth": 48,
+              "spacing": 4
+            },
+            "id": "swiftui.custom-layout.assertion.primary",
+            "observability": "available"
+          }
+        ],
+        "axes": [
+          {
+            "coverage": "full-product",
+            "id": "proposal-width",
+            "values": [
+              32,
+              48
+            ]
+          },
+          {
+            "coverage": "full-product",
+            "id": "child-count",
+            "values": [
+              1,
+              2
+            ]
+          },
+          {
+            "coverage": "pairwise",
+            "id": "layout-direction",
+            "values": [
+              "leftToRight",
+              "rightToLeft"
+            ]
+          }
+        ],
+        "block": "swiftui.custom-layout",
+        "id": "swiftui.custom-layout.recipe",
+        "instrumentationTransparency": {
+          "case": "swiftui.custom-layout.instrumentation-transparency",
+          "channels": [
+            "layout",
+            "paint"
+          ]
+        },
+        "kind": "recipe",
+        "negativeCases": [
+          {
+            "id": "swiftui.custom-layout.negative.invalid-member",
+            "mode": "must-not-compile",
+            "sourceHash": "sha256:272c393d1380c203f35ecbcbacc505e17bc85bfe56115f6132439a6c09804a54"
+          }
+        ],
+        "provenance": {
+          "createdAt": "2026-10-10T17:26:20Z",
+          "producer": "factory/recipes-draft",
+          "review": {
+            "at": "2026-10-10T17:26:20Z",
+            "decision": "candidate",
+            "reviewer": "pending-maintainer-review"
+          },
+          "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+        },
+        "statefulSequences": [
+          [
+            "measure",
+            "place",
+            "change-environment",
+            "measure",
+            "place"
+          ]
+        ],
+        "stimuli": [],
+        "version": "0.1",
+        "witnesses": [
+          {
+            "id": "swiftui.custom-layout.witness",
+            "resources": [
+              {
+                "hash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e",
+                "id": "swiftui.custom-layout.witness.swift"
+              }
+            ],
+            "sourceHash": "sha256:613d91e6d8eb556eeb790e494ac0354baa57e204da63ed851e9d6bd11b439d6e"
+          }
+        ]
+      },
+      "id": "swiftui.custom-layout.recipe.assertion.primary",
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "coverage": "full-product",
+      "id": "child-count",
+      "values": [
+        2
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "layout-direction",
+      "values": [
+        "leftToRight"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "proposal-width",
+      "values": [
+        48
+      ]
+    }
+  ],
+  "block": "swiftui.custom-layout",
+  "id": "swiftui.custom-layout.recipe",
+  "instrumentationTransparency": {
+    "case": "swiftui.custom-layout.recipe.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  },
+  "kind": "recipe",
+  "negativeCases": [],
+  "provenance": {
+    "createdAt": "2026-10-12T00:00:00Z",
+    "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+    "review": {
+      "at": "2026-10-12T00:00:00Z",
+      "decision": "candidate",
+      "reviewer": "root"
+    },
+    "sourceHash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1"
+  },
+  "stimuli": [],
+  "version": "0.1",
+  "witnesses": [
+    {
+      "id": "swiftui.custom-layout.recipe.witness",
+      "resources": [
+        {
+          "hash": "sha256:20bd1f475c71d9733e5c8376dfd70466199e10f49d57ff788e30fab3b90c85ff",
+          "id": "factory-probe-witness.swift"
+        }
+      ],
+      "sourceHash": "sha256:20bd1f475c71d9733e5c8376dfd70466199e10f49d57ff788e30fab3b90c85ff"
+    }
+  ]
+}

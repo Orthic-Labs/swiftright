@@ -1,0 +1,191 @@
+--- v1/capture-repeat.ps1
++++ v2/capture-repeat.ps1
+@@ -16,7 +16,7 @@
+ $timingHelper=Join-Path $PSScriptRoot 'support\lifecycle-timing.ps1'
+ if((Get-FileHash $timingHelper).Hash.ToLowerInvariant() -cne 'c6951ea443587b3027141f4d08ddc942b8d364a7b920bee16e3a5cc76b7c62a5'){throw 'Lifecycle timing helper drift'}
+ . $timingHelper
+-if((Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'ce8b4cad822b254d68bc7a620dede23969e8fbcf7d2c48443732318cacfe0fee'){throw 'Integration binding manifest drift'}
++if((Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'integration-bindings.json')).Hash.ToLowerInvariant() -cne '9e0f411946f7d8290c62827efd5db8476ce7b044b3634383546020ce1b030612'){throw 'Integration binding manifest drift'}
+ . (Join-Path $PSScriptRoot 'support\integration.ps1')
+ Assert-FactoryIntegrationSources $PSScriptRoot
+ . (Join-Path $PSScriptRoot 'dependencies\uia-worker\invoke-worker.ps1')
+@@ -27,7 +27,7 @@
+ . (Join-Path $PSScriptRoot 'dependencies\uia-worker\support\final-exit-certificate.ps1')
+ . (Join-Path $PSScriptRoot 'support\first-proof.ps1')
+ $outputPath=[IO.Path]::GetFullPath($RunRoot)
+-if(-not $outputPath.StartsWith('D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v1\',[StringComparison]::OrdinalIgnoreCase)){throw 'Output outside first capture lane'}
++if(-not $outputPath.StartsWith('D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v2\',[StringComparison]::OrdinalIgnoreCase)){throw 'Output outside first capture lane'}
+ $pixelHelper=Join-Path $PSScriptRoot 'support\pixels-background.ps1'
+ if((Get-FileHash -LiteralPath $pixelHelper).Hash.ToLowerInvariant() -ne '7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef'){throw 'Pixel helper drift'}
+ . $pixelHelper
+@@ -37,6 +37,7 @@
+ $approved=@{caseID='swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258';sourceHash='sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b';planHash='ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10';receiptRelative='build-capture-lease-r1\observation.json'}
+ $receiptRelative=$approved.receiptRelative
+ $capturePlan=Get-Content -Raw (Join-Path $PSScriptRoot 'capture-plan.json')|ConvertFrom-Json
++if($CompileReceiptHash -cne $capturePlan.actualBuild.compileReceiptSha256 -or $ExeHash -cne $capturePlan.actualBuild.exeSha256){throw 'Exact actual lease build receipt/exe pins required'}
+ $expectedOutput=if($Count -eq 1){$capturePlan.dispatch.first.runRoot}else{$capturePlan.dispatch.repeat.runRoot}
+ if($outputPath -cne $expectedOutput){throw 'Exact fresh single/repeat capture lane required'}
+ if($packagePath -cne $capturePlan.compiledHostPackagePath){throw 'Exact padding-window-diagnosis host package required'}
+@@ -136,7 +137,7 @@
+  $workerRoot=Join-Path $dir 'uia-worker'
+  $workerAttempted=$false
+  $inventory=[ordered]@{kind='factory-owned-uia-slot-inventory-v1';lockOwner=$LockOwner;rendererDirectory=$dir;roots=@($workerRoot);attempted=$false}
+- Write-FactoryDiagnosticJson (Join-Path $dir 'owned-worker-inventory.json') $inventory
++ Write-FactoryDiagnosticJson (Join-Path $dir 'declared-worker-inventory.json') $inventory
+  $launchRequest=[ordered]@{utc=[DateTimeOffset]::UtcNow.ToString('o');ticks=[Diagnostics.Stopwatch]::GetTimestamp();frequency=[Diagnostics.Stopwatch]::Frequency}
+  $p=$null;$launchReturn=$null
+  $timingSamples=[Collections.Generic.List[object]]::new();$retainedTimingHandle=[IntPtr]::Zero
+@@ -183,19 +184,19 @@
+   Assert-FactorySnapshotReady $workerResult $target
+   Copy-Item -LiteralPath $workerResult.snapshotPath -Destination (Join-Path $dir 'native.uia.json')
+   $ordering=[ordered]@{kind='factory-isolated-uia-parent-ordering-v1';issuedMetadataHash=$IssuedMetadataHash;rendererIdentity=$finalStart;parentProcessID=$PID;clockDomain='parent-process-local-stopwatch';frequency=[Diagnostics.Stopwatch]::Frequency;workerReceiptRef=$workerResult.workerReceiptPath;workerReceiptHash=$workerResult.workerReceiptSha256;workerFinalCertificateRef=$workerResult.finalCertificatePath;workerFinalCertificateHash=(Get-FileHash -LiteralPath $workerResult.finalCertificatePath).Hash.ToLowerInvariant();snapshotHash=$workerResult.snapshotSha256;workerVerifiedTicks=[Diagnostics.Stopwatch]::GetTimestamp();pixelsStartTicks=$null;pixelsEndTicks=$null;ownedCloseStartTicks=$null;ownedCloseEndTicks=$null;pixelReceiptRef=$null;pixelReceiptHash=$null;pixelSamples=@();ownedCloseReceiptRef=$null;ownedCloseReceiptHash=$null;crossProcessClockQualified=$false}
+-  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering-worker-ready.json') $ordering
+   $fgAtCapture=([FactoryDesktop]::GetForegroundWindow() -eq $hwnd)
+   if($fgAtCapture){throw 'Background-only guard: owned window foreground at capture'}
+   $guard={Assert-OwnedWindow $p.Id $exe $ownedStartedAt $hwnd;Assert-Background $p.Id $dir $foregroundBefore;Check-Lock;if($p.HasExited){throw 'Owned renderer exited before pixels'}}
+   Assert-FactorySnapshotReady $workerResult $target
+   $ordering.pixelsStartTicks=[Diagnostics.Stopwatch]::GetTimestamp()
+-  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering-pixels-start.json') $ordering
+   $pixels=Capture-FactoryPixels $hwnd $p.Id $dir $guard
+   $ordering.pixelsEndTicks=[Diagnostics.Stopwatch]::GetTimestamp()
+   $ordering.pixelReceiptRef=Join-Path $dir 'native.pixels.json'
+   $ordering.pixelReceiptHash=(Get-FileHash -LiteralPath $ordering.pixelReceiptRef).Hash.ToLowerInvariant()
+   $ordering.pixelSamples=@((Get-Content -Raw -LiteralPath $ordering.pixelReceiptRef|ConvertFrom-Json).samples)
+-  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering-pixels-complete.json') $ordering
+   Assert-Background $p.Id $dir $foregroundBefore
+   $closeSourceGuard={
+    if((Get-FileHash $closeHelper).Hash.ToLowerInvariant() -ne 'd0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c'){throw 'Owned close helper drift'}
+@@ -220,7 +221,7 @@
+   [FactoryDesktop]::GetWindowThreadProcessId($hwnd,[ref]$closePID)|Out-Null
+   Assert-FactorySnapshotReady $workerResult $target
+   $ordering.ownedCloseStartTicks=[Diagnostics.Stopwatch]::GetTimestamp()
+-  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering.json') $ordering
++  Write-FactoryDiagnosticJson (Join-Path $dir 'capture-ordering-close-pending.json') $ordering
+   $timingSamples.Add((Get-FactoryLifecycleTimingSample 'owned-close-request' $p $retainedTimingHandle $rawStreams))
+   $close=Request-FactoryOwnedClose $hwnd $p.Id $closePID {Assert-OwnedWindow $p.Id $exe $ownedStartedAt $hwnd} $closeSourceGuard {Check-Lock} {Assert-Background $p.Id $dir $foregroundBefore} {param($target,$message,$w,$l) [FactoryDesktop]::PostMessage($target,$message,$w,$l)}
+   $close|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $dir 'owned-close.json')
+@@ -265,7 +266,7 @@
+   $rawQualification=if($stdoutHashState.qualification -eq 'unqualified' -or $stderrHashState.qualification -eq 'unqualified'){'unqualified'}elseif($stdoutHashState.qualification -eq 'diagnostic-partial' -or $stderrHashState.qualification -eq 'diagnostic-partial'){'diagnostic-partial'}else{'sealed-raw'}
+   try{$timingSamples.Add((Get-FactoryLifecycleTimingSample 'raw-closure-final' $p $retainedTimingHandle $rawStreams));[ordered]@{kind='padding-window-retained-handle-timing-v1';launchRequest=$launchRequest;launchReturn=$launchReturn;ownedIdentity=[ordered]@{pid=$p.Id;path=$exe;startedAt=$ownedStartedAt};compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;stdoutSha256=$stdoutHashState.sha256;stderrSha256=$stderrHashState.sha256;rawHashesQualification=$rawQualification;nativeExitDeadlineSeconds=15;rawDrainMilliseconds=5000;observations=$timingSamples.ToArray();authority='observational only; cleanup certificate remains original helper'}|ConvertTo-Json -Depth 16|Set-Content -Encoding UTF8 (Join-Path $dir 'lifecycle-timing.json')}catch{$streamErrors+=('Lifecycle timing receipt: '+[string]$_)}
+   try{[ordered]@{ownedIdentity=[ordered]@{pid=$p.Id;path=$exe;startedAt=$ownedStartedAt};lockOwner=$LockOwner;compileReceiptHash=$CompileReceiptHash;exeHash=$ExeHash;serializerControlSha256=$SerializerControlSha256;sourceHash=$plan.sourceHash;primaryError=if($null -ne $primaryError){[string]$primaryError}else{''};preCleanupExitObservation=$preCleanupExitObservation;cleanup=$cleanupResult;streamErrors=$streamErrors;rawStreams=$rawStates;rawHashesQualification=$rawQualification;stdoutSha256=$stdoutHashState.sha256;stderrSha256=$stderrHashState.sha256}|ConvertTo-Json -Depth 8|Set-Content -Encoding UTF8 (Join-Path $dir 'capture-outcome.json')}catch{$streamErrors+=('outcome receipt: '+[string]$_)}
+-  if(-not $workerAttempted){try{Write-FactoryDiagnosticJson (Join-Path $dir 'uia-no-start.json') ([ordered]@{kind='factory-uia-slot-no-start-v1';root=$workerRoot;lockOwner=$LockOwner;rendererDirectory=$dir;attempted=$false;noInvocationConfirmed=$true})}catch{}}
++  if(-not $workerAttempted){try{Write-FactoryDiagnosticJson (Join-Path $dir 'owned-worker-inventory.json') $inventory;Write-FactoryDiagnosticJson (Join-Path $dir 'uia-no-start.json') ([ordered]@{kind='factory-uia-slot-no-start-v1';root=$workerRoot;lockOwner=$LockOwner;rendererDirectory=$dir;attempted=$false;noInvocationConfirmed=$true})}catch{}}
+   # Separate release-only snapshot; never changes original outcome/cleanup/errors.
+   try{
+    Assert-FactoryIntegrationSources $PSScriptRoot
+--- v1/coordinator.ps1
++++ v2/coordinator.ps1
+@@ -8,9 +8,10 @@
+ $ErrorActionPreference='Stop'
+ if($CompileReceiptHash -cnotmatch '^[0-9a-f]{64}$' -or $ExeHash -cnotmatch '^[0-9a-f]{64}$' -or $SerializerControlSha256 -cnotmatch '^[0-9a-f]{64}$'){throw 'Measured lowercase SHA256 compile/executable/serializer control pins required'}
+ $here=[IO.Path]::GetFullPath($PSScriptRoot)
+-$expectedHere='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v1'
++$expectedHere='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v2'
+ if($here -cne $expectedHere){throw 'Exact capture coordinator lane required'}
+ $plan=Get-Content -Raw (Join-Path $here 'capture-plan.json')|ConvertFrom-Json
++if($CompileReceiptHash -cne $plan.actualBuild.compileReceiptSha256 -or $ExeHash -cne $plan.actualBuild.exeSha256){throw 'Exact actual lease build receipt/exe pins required'}
+ $runRoot=if($Count -eq 1){$plan.dispatch.first.runRoot}else{$plan.dispatch.repeat.runRoot}
+ $controlRoot=Join-Path $here $(if($Count -eq 1){'coordinator-single-r1'}else{'coordinator-repeat-r1'})
+ if($runRoot -cne (Join-Path $here $(if($Count -eq 1){'actual-single-r1'}else{'actual-repeat-r1'}))){throw 'Exact prospective output namespace required'}
+@@ -22,7 +23,7 @@
+  if((Get-FileHash -LiteralPath $sealHelper).Hash.ToLowerInvariant() -cne '4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d'){throw 'Stream helper drift'}
+ }
+ Assert-ControlHelpers
+-if((Get-FileHash -LiteralPath (Join-Path $here 'integration-bindings.json')).Hash.ToLowerInvariant() -cne 'ce8b4cad822b254d68bc7a620dede23969e8fbcf7d2c48443732318cacfe0fee'){throw 'Integration binding manifest drift'}
++if((Get-FileHash -LiteralPath (Join-Path $here 'integration-bindings.json')).Hash.ToLowerInvariant() -cne '9e0f411946f7d8290c62827efd5db8476ce7b044b3634383546020ce1b030612'){throw 'Integration binding manifest drift'}
+ . (Join-Path $here 'support\integration.ps1')
+ Assert-FactoryIntegrationSources $here
+ . (Join-Path $here 'support\final-exit-certificate.ps1')
+--- v1/capture-plan.json
++++ v2/capture-plan.json
+@@ -10,7 +10,7 @@
+   "compiledHostPackagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+   "launchPreflightPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\preflight.ps1",
+   "launchPreflightSha256": "sha256:37ed4ec43f7b3e27db423d1b5564155ec58b0d5c61b021fa602a5919ebd15c6b",
+-  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v1",
++  "captureRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2",
+   "renderer": {
+     "rollingInputPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+     "sha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+@@ -22,12 +22,12 @@
+   "dispatch": {
+     "first": {
+       "count": 1,
+-      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v1\\actual-single-r1"
++      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-single-r1"
+     },
+     "retries": false,
+     "repeat": {
+       "count": 20,
+-      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v1\\actual-repeat-r1",
++      "runRoot": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v2\\actual-repeat-r1",
+       "firstProofRequired": true
+     }
+   },
+@@ -36,11 +36,15 @@
+     "workerContractSha256": "7487595d84e251066aa8f532593f6f84e4a101153fc3854987054eb00ca5fa49",
+     "workerInvokerSha256": "155a29c64e1093b9570560fccf530b19b20d1602d64d5fbcc74c25dd7ee32d32",
+     "finalExitHelperSha256": "94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4",
+-    "combinedReleaseHelperSha256": "64205826d6b8371bf5ba9f3cbcc5a1cb4d8a7e55bcd7a8f29e5fee92db15c128"
++    "combinedReleaseHelperSha256": "c9fd2c0e59bfe7c00ca982fd56abb2cc346d603561c9ac720e37c90a55714985"
+   },
+-  "prospectiveActualPins": "Root measured future build-capture-lease-r1 receipt/exe required; no predecessor pins",
+   "hostArguments": [
+     "--factory-capture-lease-seconds=40"
+   ],
+-  "metadataIssuerSha256": "59a832f9cc7505ea6514bbfa8b4464b8ad60da4dad304d23a9c2835995436b0b"
++  "metadataIssuerSha256": "16d7d4a683e58b43f17368e0f4d3d3bdf540da2f88f4f7e2ad46c2d97d721be3",
++  "actualBuild": {
++    "compileReceiptSha256": "1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
++    "exeSha256": "3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
++    "receiptRef": "factory/native/windows/padding-capture-lease-build-v1/actual-build-r1/observation.json"
++  }
+ }
+--- v1/support/all-owned-release.ps1
++++ v2/support/all-owned-release.ps1
+@@ -21,6 +21,9 @@
+  $allowedRefs=@($workerPath,$certPath,$CompilePath,$Exe,(Join-Path $Directory 'host.stdout.txt'),(Join-Path $Directory 'host.stderr.txt'))
+  $reader={param($ref) if($allowedRefs -cnotcontains $ref){throw 'Renderer final read outside exact closure'};return ,([IO.File]::ReadAllBytes($ref))}
+  if(-not(Test-FactoryFinalReleaseProof $certificate $expected $reader)){throw 'Renderer final original handle proof absent'}
++ $declaration=Get-Content -Raw -LiteralPath (Join-Path $Directory 'declared-worker-inventory.json')|ConvertFrom-Json
++ $declaredRoot=Join-Path $Directory 'uia-worker'
++ if($declaration.kind -cne 'factory-owned-uia-slot-inventory-v1' -or $declaration.lockOwner -cne $Owner -or $declaration.rendererDirectory -cne $Directory -or @($declaration.roots).Count -ne 1 -or $declaration.roots[0] -cne $declaredRoot -or $declaration.attempted -isnot [bool] -or $declaration.attempted){throw 'Exact prelaunch worker declaration required'}
+  $root=Join-Path $Directory 'uia-worker';$inventory=Get-Content -Raw -LiteralPath (Join-Path $Directory 'owned-worker-inventory.json')|ConvertFrom-Json
+  if($inventory.kind -cne 'factory-owned-uia-slot-inventory-v1' -or $inventory.lockOwner -cne $Owner -or $inventory.rendererDirectory -cne $Directory -or @($inventory.roots).Count -ne 1 -or $inventory.roots[0] -cne $root -or $inventory.attempted -isnot [bool]){throw 'Exact exhaustive worker slot inventory required'}
+  if(-not $inventory.attempted){
+--- v1/verify-source.py
++++ v2/verify-source.py
+@@ -8,7 +8,7 @@
+  assert r.index('Invoke-FactoryUiaSnapshotWorker $target')<r.index('$pixels=Capture-FactoryPixels')<r.index("'owned-close-request'")
+  assert r.count('Assert-FactorySnapshotReady $workerResult $target')==3
+  assert r.index('$workerAttempted=$true')<r.index('Invoke-FactoryUiaSnapshotWorker $target')
+- assert r.index("'owned-worker-inventory.json') $inventory")<r.index('$p=[Diagnostics.Process]::Start')
++ assert r.index("'declared-worker-inventory.json') $inventory")<r.index('$p=[Diagnostics.Process]::Start')
+  assert r.index('Assert-LeaseIssuedMetadata $IssuedMetadataPath')<r.index('$p=[Diagnostics.Process]::Start')
+  assert r.index('Initialize-FactoryFinalExitNative')<r.index('$p=[Diagnostics.Process]::Start')
+  assert r.index("'capture-outcome.json')}")<r.index('$finalSample=Get-FactoryFinalExitSample')<r.index('Assert-FactoryCaptureOutcome $primaryError')
+@@ -29,6 +29,11 @@
+  for row in json.loads((HERE/'integration-bindings.json').read_text())['files']:assert h(HERE/row['path'])==row['sha256']
+  assert p['compiledPlanSha256']=='sha256:'+h(HERE.parent/'padding-capture-lease-build-v1/package/plan.json')
+  assert p['launchPreflightSha256']=='sha256:'+h(HERE.parent/'padding-capture-lease-build-v1/preflight.ps1')
+- assert 'admittedExeSha256' not in p and 'admittedCompileReceiptSha256' not in p
+- return {'status':'passed','offlineSourceChecks':21,'nativeActions':0,'compilerActions':0,'windowsControls':'prepared/unrun'}
++ assert p['actualBuild']['compileReceiptSha256']=='1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf'
++ assert p['actualBuild']['exeSha256']=='3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a'
++ assert r.count("'capture-ordering.json') $ordering")==1
++ assert r.count("'owned-worker-inventory.json') $inventory")==2
++ assert "if(-not $workerAttempted){try{Write-FactoryDiagnosticJson" in r
++ assert "Exact prelaunch worker declaration required" in (HERE/'support/all-owned-release.ps1').read_text()
++ return {'status':'passed','offlineSourceChecks':25,'nativeActions':0,'compilerActions':0,'windowsControls':'prepared/unrun'}
+ if __name__=='__main__':print(json.dumps(verify(),indent=2))
+--- v1/run-controls.ps1
++++ v2/run-controls.ps1
+@@ -9,3 +9,5 @@
+ & (Join-Path $PSScriptRoot 'dependencies\uia-worker\test-final-release.ps1') -OutputRoot (Join-Path $OutputRoot 'worker-final-release')
+ & (Join-Path $PSScriptRoot 'test-combined-release.ps1') -OutputPath (Join-Path $OutputRoot 'combined-release.json')
+ & (Join-Path $PSScriptRoot 'test-ordering.ps1') -OutputPath (Join-Path $OutputRoot 'ordering.json')
++
++& (Join-Path $PSScriptRoot 'test-receipt-phases.ps1') -OutputRoot (Join-Path $OutputRoot 'receipt-phases')

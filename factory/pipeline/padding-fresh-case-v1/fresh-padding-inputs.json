@@ -1,0 +1,136 @@
+{
+  "schema": "factory-padding-fresh-source-packet-v1",
+  "status": "source-ready-native-pending",
+  "historical": {
+    "caseId": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258",
+    "caseSha256": "84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+    "tupleId": "sr1-observed-r09-20261010",
+    "tupleMacHostSha256": "9e50043f329abbc61cf7196eb425e868117c51c3a236ab03c6ea7e12887ba470",
+    "tupleWindowsHostSha256": "9812b7c0a9cb8275ba1c9530a2b091f611c4da408b5a70c93bd6244d8316e4f6",
+    "admission": "rejected-historical-case-mismatch"
+  },
+  "freshMac": {
+    "caseId": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9",
+    "caseHash": "037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "tupleId": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "tupleMacHostSha256": "13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "tupleWindowsHostSha256": "3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "macosBuild": "26A434",
+    "acceptanceConfigSha256": "c12eaec44a65627e6f546925664482736bfede7665ab5930244c5fcd401998245"
+  },
+  "source": {
+    "recipeId": "swiftui.padding-frame.recipe",
+    "recipeSha256": "fa97b8398b00bae018a187f80d8058a0955b340caa4cc6a4b34bb9eac9410bc6",
+    "witnessSha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "captureHostSha256": "749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+    "axClientSha256": "9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404",
+    "compilerToolSha256": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+    "compilerReceiptSha256": "904f70b9d9851824a466b405984add08df41c9b54486a4019a2941e7c8bb47ca",
+    "hostBuildSha256": "ab38be841b62900958a63f9b7f83867e35420fe2410511303dfd9279393f6769"
+  },
+  "macObservation": {
+    "runs": 20,
+    "sourceBound": true,
+    "permissionRequests": false,
+    "candidateOnly": true,
+    "parity": "blocked",
+    "timing": "blocked",
+    "axMismatchPreserveRaw": true,
+    "rawArchiveManifestSha256": "f9088161d15ab3369e3084c8410569244aa392c044e465b7eba85c689f26d1bc"
+  },
+  "prospectiveWindows": {
+    "expectedCount": 1,
+    "freshNativeIdsRequired": true,
+    "reuseExeOnlyAfterCompilerReceiptClosure": true,
+    "macRawReuse": "allowed-as-observation-only",
+    "caseTupleMustBeRegeneratedAfterCandidateManifestFix": true
+  },
+  "references": [
+    {
+      "name": "candidate-source-manifest.json",
+      "path": "factory/pipeline/padding-fresh-case-v1/candidate-source-manifest.json",
+      "bytes": 1882,
+      "sha256": "23902379892835961967a5c9dae4d07882f9f9364d634393bc09fedc1a3d58e1"
+    },
+    {
+      "name": "seed-case.json",
+      "path": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.json",
+      "bytes": 1518,
+      "sha256": "84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d"
+    },
+    {
+      "name": "seed-witness.swift",
+      "path": "factory/oracle/mac/seed-origin-v5/inputs/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "bytes": 223,
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "name": "fresh-case.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+      "bytes": 2334,
+      "sha256": "f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+    },
+    {
+      "name": "fresh-tuple.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+      "bytes": 2244,
+      "sha256": "bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+    },
+    {
+      "name": "fresh-witness.swift",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.swift",
+      "bytes": 223,
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "name": "fresh-witness.manifest.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r2/fresh-witness.manifest.json",
+      "bytes": 2406,
+      "sha256": "e0cf14d63685c6f53721ff13ed9cba86c164beea0b13655bb64a9587f546c3f2"
+    },
+    {
+      "name": "mac-root-review.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/root-review-r1.json",
+      "bytes": 1158,
+      "sha256": "8fc50078ad13a79ebab332dfb9ea955b66f75222e73e9713b006fbf79ab315ee"
+    },
+    {
+      "name": "mac-summary.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9/summary.json",
+      "bytes": 57437,
+      "sha256": "d5e5b9d7b543c3a0312cdeee9d0e4edf1dc7db172817ab850ad24df635712835"
+    },
+    {
+      "name": "mac-compiler-receipt.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/host/evidence/compiler-receipt.json",
+      "bytes": 6389,
+      "sha256": "904f70b9d9851824a466b405984add08df41c9b54486a4019a2941e7c8bb47ca"
+    },
+    {
+      "name": "mac-host-build.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/host/host-build-r1.json",
+      "bytes": 9079,
+      "sha256": "ab38be841b62900958a63f9b7f83867e35420fe2410511303dfd9279393f6769"
+    },
+    {
+      "name": "mac-archive-manifest.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/raw-archive-manifest.json",
+      "bytes": 202035,
+      "sha256": "f9088161d15ab3369e3084c8410569244aa392c044e465b7eba85c689f26d1bc"
+    },
+    {
+      "name": "mac-ax-run001.json",
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/evidence/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9/run-001/external-ax.raw.json",
+      "bytes": 3186,
+      "sha256": "d3e56f152c1b8972aa3a23444bb353d62ee79d3d54c19479588306025936f561"
+    },
+    {
+      "name": "candidate-source.swift",
+      "path": "factory/pipeline/padding-fresh-case-v1/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "bytes": 223,
+      "sha256": "b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+﻿{
+    "kind":  "factory-uia-worker-config-admission-controls-v1",
+    "status":  "SOURCE_CONTROLS_PASS",
+    "productionPredicate":  "Test-FactoryUiaWorkerConfigAdmission",
+    "cases":  [
+                  {
+                      "name":  "legacy-v1",
+                      "accepted":  true
+                  },
+                  {
+                      "name":  "mta-v2",
+                      "accepted":  true
+                  },
+                  {
+                      "name":  "mta-v2-parent-mta",
+                      "accepted":  true
+                  },
+                  {
+                      "name":  "v2-sta-worker",
+                      "accepted":  false
+                  },
+                  {
+                      "name":  "v2-missing-apartment",
+                      "accepted":  false
+                  },
+                  {
+                      "name":  "unknown-v3",
+                      "accepted":  false
+                  },
+                  {
+                      "name":  "wrong-output-root",
+                      "accepted":  false
+                  }
+              ],
+    "nativeActions":  0,
+    "compilerActions":  0
+}

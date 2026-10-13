@@ -1,0 +1,119 @@
+{
+  "kind": "factory-provider-terminal-byte-recovery-v1",
+  "revision": 3,
+  "files": [
+    {
+      "path": "transport.json",
+      "bytes": 2006,
+      "sha256": "a607d2b66564d32e14b19b152f7a4b890e62bbd4415be5c86fac771baba01103"
+    },
+    {
+      "path": "transport.json.stdout.bin",
+      "bytes": 1747,
+      "sha256": "22154b46e6c92817ffe0a846499bf0bc54265ec2872edbacc2d02af2c06e88aa"
+    },
+    {
+      "path": "transport.json.stderr.bin",
+      "bytes": 391,
+      "sha256": "d13931f8441023b0666c8d337d4fcdfc426d078d481b45b632248e12746a36d2"
+    },
+    {
+      "path": "compile-observation.json",
+      "bytes": 1260,
+      "sha256": "7b94f0df82f60775e96c33ce91adf662c0124ff3473588511f54234353ba7806"
+    },
+    {
+      "path": "compile.stdout.bin",
+      "bytes": 1042,
+      "sha256": "b654e2ff149849b0da5133d084db5886aac39d7a3f8a593907e89176d030e7d0"
+    },
+    {
+      "path": "compile.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "outer": {
+    "kind": "sr0-root-transport-job-v1",
+    "status": "held",
+    "budgetBytes": 1073741824,
+    "limitFlags": 512,
+    "activeBefore": 1,
+    "peakBeforeBytes": 74612736,
+    "activeAfter": 1,
+    "peakAfterBytes": 344911872,
+    "memoryCapExceeded": false,
+    "selfOnly": true,
+    "helperPath": "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootControlSuiteJobV1.cs",
+    "helperSha256": "3ea2ea6d0134278fb704ef4ef8caf3fecc3b8e9463e1872b715baed70c6d0c76",
+    "helperSizeBytes": 13100,
+    "scriptPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\run-provider-r3.ps1",
+    "scriptSha256": "191d6535eb6e4e112e2dcd5ee731da16d2f318c20b604cb53b0a92f4d35986c6",
+    "scriptSizeBytes": 1232,
+    "childPid": 10328,
+    "childPath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "childHandleAcquired": true,
+    "childTerminal": true,
+    "childExit": 1,
+    "childExitRaw": 1,
+    "childExitSigned": 1,
+    "childExitIdentity": true,
+    "timedOut": false,
+    "outputCapExceeded": false,
+    "stdoutPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\run-provider-r3-transport.json.stdout.bin",
+    "stderrPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\run-provider-r3-transport.json.stderr.bin",
+    "stdoutBytes": 1747,
+    "stderrBytes": 391,
+    "stdoutSha256": "22154b46e6c92817ffe0a846499bf0bc54265ec2872edbacc2d02af2c06e88aa",
+    "stderrSha256": "d13931f8441023b0666c8d337d4fcdfc426d078d481b45b632248e12746a36d2",
+    "streamsSealed": true,
+    "cleanupAttempted": false,
+    "cleanupBefore": null,
+    "cleanupTerminated": null,
+    "cleanupOpenFailed": null,
+    "cleanupAfter": null,
+    "cleanupSelfOnly": null,
+    "failure": "root transport script exit was nonzero: 1",
+    "startedAt": "2026-10-12T15:59:34.9375593+00:00",
+    "endedAt": "2026-10-12T15:59:53.9101161+00:00"
+  },
+  "compile": {
+    "kind": "factory-system-image-provider-compile-v1",
+    "application": "C:\\WINDOWS\\System32\\cmd.exe",
+    "argv": "/d /s /c \"D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\provider-raster-r3\\compile-vcvars64.cmd\"",
+    "cwd": "D:\\Claude\\swiftright\\.factory-work\\hosts\\system-star-fill\\provider-raster-r3",
+    "startedAt": "2026-10-12T15:59:35.7078797+00:00",
+    "finishedAt": "2026-10-12T15:59:53.7276170+00:00",
+    "pid": 17272,
+    "exitCode": 0,
+    "timedOut": false,
+    "outputCapExceeded": false,
+    "ownedExited": true,
+    "originalHandleRetained": true,
+    "streamDrainComplete": true,
+    "streamsSealed": false,
+    "jobActiveReadable": true,
+    "jobActiveCount": 1,
+    "jobActiveCountAfterWait": 1,
+    "jobProcessIds": [
+      49808
+    ],
+    "jobProcessNames": [
+      "49808:vctip"
+    ],
+    "cleanupJobActive": 0,
+    "kernelWait": 0,
+    "memoryCapBytes": 1073741824,
+    "jobFlags": 8704,
+    "nativeActions": 0,
+    "stdoutBytes": null,
+    "stdoutSha256": null,
+    "stderrBytes": null,
+    "stderrSha256": null,
+    "error": "job not quiescent"
+  },
+  "qualified": false,
+  "compilerActions": 0,
+  "nativeActions": 0,
+  "remoteDeletion": false
+}

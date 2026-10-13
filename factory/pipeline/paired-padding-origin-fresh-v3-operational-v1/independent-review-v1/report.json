@@ -1,0 +1,34 @@
+{
+  "actualControls": {
+    "frozen-run-fault": "rejected",
+    "source-pin-manifest-fault": "rejected",
+    "tool-cache-wrong-byte-fault": "rejected"
+  },
+  "actualCounts": {
+    "MacSchemaCollected": 20,
+    "frozenBlobs": 69,
+    "originDescriptors": 180,
+    "originGuardAccepted": 20,
+    "parityQualified": false,
+    "windowsTyped": 0
+  },
+  "execution": "Offline Python source guard & archive-only tool rehydration, production collect/comparator/F9/F10; no native/compiler/remote execution",
+  "findings": [
+    {
+      "id": "producer-run-control-reason",
+      "proof": "Producer frozen-run-fault modifies pin manifest, rejected by manifest hash; independent actual run-byte fault here reaches exact frozen run changed: 001/capture.json.",
+      "scope": "coverage"
+    },
+    {
+      "id": "runtime-dependency-scope",
+      "proof": "Main executes v2 module from path without own embedded source pin; parses rehydration plan before plan hash check. Reviewed current dependency bytes & root frozen source preflight supply current execution closure; standalone main does not pin every imported module before exec/parse.",
+      "scope": "preflight boundary"
+    }
+  ],
+  "independentValidJSONRunFault": "frozen run changed: 001/capture.json",
+  "qualification": "Mac20 origin accepted; Windows0; candidateOnly true/frozen false; raw timing & parity held",
+  "sourceSha256": "62ab8bb0c2ed36ebe1419e892513abf75b34ce0223f281ae25c4e3230d679392",
+  "stageSha256": "0e3826e095ebf1b7c62cee081e42ec43ec8b3201904dce84c8e8169b5989c114",
+  "tempRemoved": true,
+  "verdict": "CLEAR_ACTUAL_FROZEN_MAC20_ARCHIVE_REPLAY"
+}

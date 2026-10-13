@@ -1,0 +1,53 @@
+{
+  "assertionChannels": [
+    "accessibility",
+    "events/state",
+    "presentation"
+  ],
+  "block": "swiftui.popover",
+  "case": {
+    "descriptor": {
+      "coverage": "declared",
+      "executionEligible": false,
+      "id": "swiftui.popover.instrumentation-transparency",
+      "inputs": {},
+      "projectedWitnessHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:ffd80206a9cc1f0c90c30af1d05672f318ff2a8cdfd19dcadf77e885120380ec",
+    "id": "swiftui.popover.instrumentation-transparency"
+  },
+  "caseInputs": {},
+  "compileExpectation": "success",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:9938c1d0aaafabbe093aa15369ef8943659c2c1d14f71d26524b182da1fa1e07",
+    "id": "swiftui.popover.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "instrumentation-transparency",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.View.popover(isPresented:attachmentAnchor:arrowEdge:content:)",
+      "selector": "usr:s:7SwiftUI4ViewPAAE7popover11isPresented16attachmentAnchor9arrowEdge7contentQrAA7BindingVySbG_AA017PopoverAttachmentH0OAA0J0OSgqd__yctAaBRd__lF",
+      "symbolEvidenceSha256": "5b5cc1304fff2157021a958c6fcef67127f00ae2cc5bf87a0e68031d5695962a"
+    }
+  ],
+  "sourceFile": "swiftui.popover.instrumentation-transparency.swift",
+  "sourceHash": "sha256:5b12ffc1ec77183ac3a4f1dfbcf4b5b09bbdacea347f04743777507f72eb89ae",
+  "unsupportedObservability": {
+    "accessibility": "native accessibility capture is unavailable in source-only generation",
+    "events/state": "native event capture is unavailable in source-only generation",
+    "presentation": "native presentation lifecycle and owned secondary window are unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.popover.witness",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.popover.witness.swift",
+    "sourceHash": "sha256:cf17827ed806bc22a5a8437a319301bfdc75a3d05e726d7af003b9bf85fe66bb"
+  },
+  "witnessType": "Witness_round2_popover"
+}

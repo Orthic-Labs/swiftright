@@ -1,0 +1,272 @@
+{
+  "kind": "independent-extended-demand-v8-review-f7-v1",
+  "decision": "CLEAR-REQUIREMENTS-ONLY",
+  "producerStageHash": "3a4f1a2dc9e64a59bea3b6c0ca739a67a26106c745916091fbe9c3786d281f44",
+  "overlayHash": "43baccb1414f923c2a67c7b8fa1d7e6349899474176bf4ae79789f4ed5da54ae",
+  "verifierHash": "5207beb54ea1945bb530ee1c765f9de840b769874dc573a4cb63e2c24934723c",
+  "pins": [
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/README.md",
+      "sha256": "159f7241fe470f9a35b9eb2148b315b392e1e7f09f4407683344e52762b1185c",
+      "size": 1071
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/evidence/controls-v8.json",
+      "sha256": "e80e0aadbfe3d1d4a4f08d2d19f70371fb19c458213025dc08426557ebbfba57",
+      "size": 1491
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/freeze_stage.py",
+      "sha256": "db4fc7defc3056567421257966c721296fd6a2efbdb5e2f2ddc2d248cbe6c51f",
+      "size": 1770
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/generate.py",
+      "sha256": "09a3ddbd5b89c48bb7b6a559892546677f128155b5ac551c67691ad448d2d237",
+      "size": 1844
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/mapping-v8-action-overlay.json",
+      "sha256": "43baccb1414f923c2a67c7b8fa1d7e6349899474176bf4ae79789f4ed5da54ae",
+      "size": 4756
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/test_mapping_v8.py",
+      "sha256": "b2486d586c22bf03847f815e4076c5ab36fef129009c6cda74282f0861270cb8",
+      "size": 2457
+    },
+    {
+      "path": "/Volumes/D/claude/swiftright/factory/shell/extended-demand-mapping-v8/verify_v8.py",
+      "sha256": "5207beb54ea1945bb530ee1c765f9de840b769874dc573a4cb63e2c24934723c",
+      "size": 5673
+    },
+    {
+      "path": "factory/shell/extended-demand-mapping-v7/mapping-v7-action-overlay.json",
+      "sha256": "9617a692eff9607056e217d50842f543b1dd54795f75720f8ed0f532beb6b5f3",
+      "size": 4764
+    },
+    {
+      "path": "factory/shell/extended-demand-mapping-v6/mapping-v6-overlay.json",
+      "sha256": "f806795690e20f1221d218ba5531094b97e95d3300ebc9aef229c5633d057a89",
+      "size": 6938
+    },
+    {
+      "path": "factory/registry/evidence/block-registry.json",
+      "sha256": "1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983",
+      "size": 6595
+    }
+  ],
+  "actualBaseline": {
+    "status": "PASS",
+    "denominator": 107,
+    "unresolvedHeld": 5,
+    "ambiguousHeld": 3,
+    "rows": 8,
+    "newFullDemandResolutions": 0,
+    "registryPromotion": 0
+  },
+  "actualProducerControlReplay": [
+    {
+      "control": "denominator-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "row-omission",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "promotion-fault",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "base-overlay-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "registry-hash-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "resolved-fault",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "identity-claim-fault",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "disposition-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "evidence-text-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "boolean-count-fault",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    }
+  ],
+  "additionalOwnFaults": [
+    {
+      "control": "boolean-denominator",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "boolean-registry-zero",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "duplicate-held-row",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "string-false-row",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "prior-disposition-drift",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    },
+    {
+      "control": "status-promotion",
+      "baseline": "accepted",
+      "mutation": "rejected"
+    }
+  ],
+  "exactHeldRows": [
+    {
+      "rowKey": "f12-extended-013",
+      "demand": "crop/text editing controls",
+      "disposition": "unresolved-held",
+      "priorDisposition": "unresolved-held",
+      "requiredEvidence": [
+        "SwiftUI source witness naming exact crop/text editor declarations",
+        "exact source line/range + USR/declaration receipt",
+        "recipe/gate trigger connecting image-view-edit to declaration"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-014",
+      "demand": "custom pointer gestures",
+      "disposition": "unresolved-held",
+      "priorDisposition": "unresolved-held",
+      "requiredEvidence": [
+        "SwiftUI source witness with exact gesture modifier/type",
+        "exact source line/range + USR/declaration receipt",
+        "recipe/gate trigger for pointer gesture semantics"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-017",
+      "demand": "document scroll/acknowledgement gating",
+      "disposition": "unresolved-held",
+      "priorDisposition": "unresolved-held",
+      "requiredEvidence": [
+        "SwiftUI source witness for scroll container + acknowledgement action",
+        "exact source line/range + USR/declaration receipt",
+        "recipe/gate trigger for legal acceptance flow"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-039",
+      "demand": "navigation transitions",
+      "disposition": "unresolved-held",
+      "priorDisposition": "unresolved-held",
+      "requiredEvidence": [
+        "SwiftUI source witness for navigation path/transition declaration",
+        "exact source line/range + USR/declaration receipt",
+        "recipe/gate trigger for navigation journey"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-040",
+      "demand": "ordered multi-step flow",
+      "disposition": "unresolved-held",
+      "priorDisposition": "unresolved-held",
+      "requiredEvidence": [
+        "SwiftUI source witness for ordered flow/state transition declaration",
+        "exact source line/range + USR/declaration receipt",
+        "recipe/gate trigger for onboarding journey"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-001",
+      "demand": "Binding(get:set:)",
+      "disposition": "ambiguous-catalogue-held",
+      "priorDisposition": "ambiguous-catalogue-held",
+      "requiredEvidence": [
+        "exact contextual Binding overload source + USR",
+        "consumer source join proving this overload"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-002",
+      "demand": "Button actions",
+      "disposition": "ambiguous-catalogue-held",
+      "priorDisposition": "ambiguous-catalogue-held",
+      "requiredEvidence": [
+        "exact contextual Button initializer/action source + USR",
+        "consumer source join proving action family"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    },
+    {
+      "rowKey": "f12-extended-045",
+      "demand": "radio/checkbox controls",
+      "disposition": "ambiguous-catalogue-held",
+      "priorDisposition": "ambiguous-catalogue-held",
+      "requiredEvidence": [
+        "exact SwiftUI control declaration source + USR",
+        "consumer source join distinguishing candidates"
+      ],
+      "fullDemandResolved": false,
+      "registryPromotion": false,
+      "apiIdentityProven": false
+    }
+  ],
+  "denominator": 107,
+  "unresolvedHeld": 5,
+  "ambiguousHeld": 3,
+  "fullDemandResolutions": 0,
+  "registryPromotion": 0,
+  "producerModifications": 0,
+  "compilerRuns": 0,
+  "nativeRuns": 0,
+  "scope": "Exact existing requirements/dispositions preserved; no API identity, complete demand coverage, registry eligibility or status promotion."
+}

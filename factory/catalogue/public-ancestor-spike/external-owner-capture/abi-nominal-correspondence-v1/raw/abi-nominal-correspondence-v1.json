@@ -1,0 +1,278 @@
+{
+  "schema": "abi-nominal-correspondence-v1",
+  "scope": "exact five Core nominal targets; no blanket alias or eligibility claim",
+  "immutableLinkEvidence": {
+    "path": "factory/catalogue/compiler-cursor-spike/link-evidence.json",
+    "sha256": "sha256:836e763c6557857c32d60ff21f5c6bbebc3a4e34c196b4e26708eb4928ecdeec"
+  },
+  "sdk": {
+    "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "target": "arm64-apple-macosx27.0",
+    "xcode": "Xcode-27-RC 27A266"
+  },
+  "moduleFlagsObservation": {
+    "SwiftUICore": "// swift-module-flags: -target arm64e-apple-macos27.0 -target-variant arm64e-apple-ios27.0-macabi -enable-objc-interop -target-arch-variant arm64e.x1 -enable-library-evolution -language-mode 5 -O -library-level api -enable-experimental-feature AnyAppleOSAvailability -module-abi-name SwiftUI -enable-experimental-feature ExcludePrivateFromMemberwiseInit -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature MemberImportVisibility -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 8.0.84.1.406 -module-name SwiftUICore -package-name SwiftUI",
+    "implication": "Core textual source module is SwiftUICore while compiled ABI module name is SwiftUI; per-nominal raw refs remain required"
+  },
+  "interfaces": {
+    "SwiftUI": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUI.framework/Versions/A/Modules/SwiftUI.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:155b00c7d8fa9e9696b96b4bd3291b4c910207b480025d13ba6482f7b9940d38",
+      "indexOutput": "factory/catalogue/compiler-cursor-spike/index-interface-output.txt",
+      "indexOutputSha256": "sha256:352c81a020cd442aea487f0d74998f29b27d550b6958fd35582e4e14b3c1ef34",
+      "indexRequest": "factory/catalogue/compiler-cursor-spike/request-index-interface.yaml",
+      "indexRequestSha256": "sha256:91ffbe06f6dc3e89074a5daa5d43e9e345e4903b11d70fc5d961601c159d6764"
+    },
+    "SwiftUICore": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/SwiftUICore.framework/Versions/A/Modules/SwiftUICore.swiftmodule/arm64e-apple-macos.swiftinterface",
+      "sha256": "sha256:4fb89ff3d972d507faee2bde0a7e81761a2cb9c744eaf94df810235918c7ac13",
+      "indexOutput": "factory/catalogue/compiler-cursor-spike/index-core-output.txt",
+      "indexOutputSha256": "sha256:293b704c69ef4e80c577a79b23e556f1c480417caac656fddd3b75c2f6ffd506",
+      "indexRequest": "factory/catalogue/compiler-cursor-spike/request-index-core.yaml",
+      "indexRequestSha256": "sha256:a015dd80fef49c539edc1464d397a2d973ae8fbc8bebda3aef7c213cedf53afa"
+    }
+  },
+  "probe": {
+    "source": "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/probes/owners.swift",
+    "sha256": "sha256:0a11a763583268fcd5e70792a911cd7c5242897eaa86f989ae8bdd80f04e55c0",
+    "typecheckExit": 0,
+    "argv": [
+      "xcrun",
+      "--sdk",
+      "macosx",
+      "swiftc",
+      "-typecheck",
+      "-sdk",
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+      "-target",
+      "arm64-apple-macosx27.0",
+      "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/probes/owners.swift"
+    ]
+  },
+  "sourcekit": {
+    "request": "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/requests/owners.yaml",
+    "requestSha256": "sha256:12bcdbe7ec19aa8d5bfe3fcb87aa7c520afebf9ff70ab59aaa47e62d61ac9994",
+    "rawOutput": "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/raw/owners.index.txt",
+    "rawOutputSha256": "sha256:818fe028a28856a39e8ffaedfad64b0db8196d5d2dd816c01bc828b744fad59d",
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit": 0,
+    "argv": [
+      "xcrun",
+      "sourcekit-lsp",
+      "debug",
+      "run-sourcekitd-request",
+      "--request-file",
+      "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/requests/owners.yaml"
+    ]
+  },
+  "demangle": {
+    "tool": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "sha256": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe"
+    },
+    "argv": [
+      "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "--expand",
+      "11 exact source/import USRs"
+    ],
+    "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/receipts/owners.demangle.stdout",
+    "stdoutSha256": "sha256:5f9676366502270e2462e4f108248ad18f313c2a70b4b6777b48b5a2d091b5d7",
+    "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/abi-nominal-correspondence-v1/receipts/owners.demangle.stderr",
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit": 0
+  },
+  "tools": {
+    "swiftc": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+    },
+    "sourcekitLsp": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+    },
+    "sourcekitd": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+      "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+    },
+    "swiftDemangle": {
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-demangle",
+      "sha256": "sha256:ae7da66c8a56fb3b90817c10eb816c82e25bf7a26ae0158effbda223f7f0fefe"
+    }
+  },
+  "correspondences": [
+    {
+      "name": "AttributedTextFormatting",
+      "source": {
+        "module": "SwiftUICore",
+        "usr": "s:11SwiftUICore24AttributedTextFormattingO",
+        "kind": "enum",
+        "line": 11910,
+        "access": "public"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI24AttributedTextFormattingO",
+        "kind": "enum",
+        "lines": [
+          2,
+          3
+        ]
+      },
+      "interfaceExtensionAnchor": {
+        "line": 4158,
+        "usr": "s:e:s:7SwiftUI24AttributedTextFormattingOAAE12TransferableV"
+      },
+      "namespace": {
+        "source": "SwiftUICore",
+        "importedABI": "SwiftUI"
+      },
+      "status": "abi-namespace-mismatch-observed"
+    },
+    {
+      "name": "AttributedTextFormatting.Transferable",
+      "source": {
+        "module": "SwiftUI",
+        "owner": "SwiftUICore.AttributedTextFormatting",
+        "line": 4160,
+        "access": "public",
+        "kind": "struct"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI24AttributedTextFormattingOAAE12TransferableV",
+        "kind": "struct",
+        "line": 3
+      },
+      "interfaceExtensionAnchor": {
+        "line": 4158,
+        "usr": "s:e:s:7SwiftUI24AttributedTextFormattingOAAE12TransferableV"
+      },
+      "namespace": {
+        "sourceOwner": "SwiftUICore.AttributedTextFormatting",
+        "importedABI": "SwiftUI.AttributedTextFormatting.Transferable"
+      },
+      "status": "exact-imported-nested-ABI-ref"
+    },
+    {
+      "name": "CustomHoverEffect",
+      "source": {
+        "module": "SwiftUICore",
+        "usr": "s:11SwiftUICore17CustomHoverEffectP",
+        "kind": "protocol",
+        "line": 1703,
+        "access": "public"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI17CustomHoverEffectP",
+        "kind": "protocol",
+        "line": 6
+      },
+      "interfaceExtensionAnchor": {
+        "line": 4442,
+        "usr": "s:e:s:7SwiftUI17CustomHoverEffectPAAE05hoverE0_2in9isEnabledQrqd___AA0dE5GroupVSgSbtAaBRd__lF"
+      },
+      "namespace": {
+        "source": "SwiftUICore",
+        "importedABI": "SwiftUI"
+      },
+      "status": "abi-namespace-mismatch-observed",
+      "availabilityProbe": "macOS-unavailable-wrapper"
+    },
+    {
+      "name": "HoverEffectContent",
+      "source": {
+        "module": "SwiftUICore",
+        "usr": "s:11SwiftUICore18HoverEffectContentP",
+        "kind": "protocol",
+        "line": 5039,
+        "access": "public"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI18HoverEffectContentP",
+        "kind": "protocol",
+        "line": 7
+      },
+      "interfaceExtensionAnchor": {
+        "line": 6298,
+        "usr": "s:e:s:7SwiftUI18HoverEffectContentPAAE7opacityyQrSdF"
+      },
+      "namespace": {
+        "source": "SwiftUICore",
+        "importedABI": "SwiftUI"
+      },
+      "status": "abi-namespace-mismatch-observed",
+      "availabilityProbe": "macOS-unavailable-wrapper"
+    },
+    {
+      "name": "TupleContent",
+      "source": {
+        "module": "SwiftUICore",
+        "usr": "s:11SwiftUICore12TupleContentV",
+        "kind": "struct",
+        "line": 6943,
+        "access": "public"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI12TupleContentV",
+        "kind": "struct",
+        "lines": [
+          8
+        ]
+      },
+      "interfaceExtensionAnchor": {
+        "line": 22178,
+        "usr": "s:e:s:7SwiftUI12TupleContentVAARvzAA07ToolbarD0RzlE05_makeE07content6inputsAA01_E7OutputsVAA11_GraphValueVyACyxxQp_QPGGAA01_E6InputsVtFZ"
+      },
+      "namespace": {
+        "source": "SwiftUICore",
+        "importedABI": "SwiftUI"
+      },
+      "status": "abi-namespace-mismatch-observed",
+      "rawDuplicateRefCount": 2
+    },
+    {
+      "name": "Text.LineStyle",
+      "source": {
+        "module": "SwiftUICore",
+        "usr": "s:11SwiftUICore4TextV9LineStyleV",
+        "kind": "struct",
+        "line": 7411,
+        "parentExtensionLine": 7410,
+        "access": "public"
+      },
+      "importRef": {
+        "module": "SwiftUI",
+        "usr": "s:7SwiftUI4TextV9LineStyleV",
+        "kind": "struct",
+        "line": 9
+      },
+      "interfaceExtensionAnchor": {
+        "line": 22527,
+        "usr": "s:e:s:7SwiftUI4TextV9LineStyleVAAE011nsUnderlineE0AESgSo011NSUnderlineE0V_tcfc"
+      },
+      "namespace": {
+        "source": "SwiftUICore.Text",
+        "importedABI": "SwiftUI.Text.LineStyle"
+      },
+      "status": "abi-namespace-mismatch-observed"
+    }
+  ],
+  "controls": {
+    "rawOwnerIdentityRequired": true,
+    "sourceLineAndUSRRequired": true,
+    "perNominalOnly": true,
+    "noGraphAbsenceExclusion": true,
+    "noBroadModuleAlias": true,
+    "rawInputMutationRejects": [
+      "wrong imported USR",
+      "wrong source line",
+      "wrong kind",
+      "wrong module namespace",
+      "duplicate/missing raw ref",
+      "changed source/request/output hash"
+    ]
+  }
+}

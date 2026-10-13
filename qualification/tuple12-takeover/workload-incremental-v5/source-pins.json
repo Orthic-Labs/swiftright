@@ -1,0 +1,38 @@
+{
+  "kind": "sr0-tuple12-workload-incremental-v5-source-pins",
+  "status": "source-ready-pending-root-parser-headless-controls",
+  "base_source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "build_receipt_sha256": "14789302c49ca5a1ebd405715a12006f5eb249913cf524b6fa754581fabbb579",
+  "compiled_manifest_sha256": "26705e8f1fdd0164a9963c9cb0f730fda2e313e5c07348097c8fe8ab3ef7e468",
+  "plan_manifest_sha256": "a780e651a1506fde772453548fd4defb4831731588c00e8772c224e47696cf28",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_dll_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "adapter_sha256": "ff8972b44d0255617fbec71ca8010bbacd1ae6bc85de95ab1c8915aee946f480",
+  "deriver_sha256": "71355337bbc14a3bb1a8f50aea77b02518629905226cc1611cf2f52510d27199",
+  "controls_sha256": "1e2df6e7bd77b300e1fd5d77cfc85317f0ba6e804e0d3116bfd6361626f8be63",
+  "job_controls_sha256": "eb88604344f34cc49cf71365e81f66a0b888539bb92089e8353a8b7ae41516b3",
+  "helper_sha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "readme_sha256": "2a53c4567257f437ca3203a6e4de4042ab7c6439f8b8a0ec1351cbe0f4851daf",
+  "requirements": {
+    "job_memory_limit_flag": "0x200",
+    "process_memory_limit_flag": "0x100",
+    "kill_on_job_close_flag": "0x2000",
+    "job_memory_bytes": 1073741824,
+    "launch_order": [
+      "CreateProcess(CREATE_SUSPENDED)",
+      "AssignProcessToJobObject",
+      "ResumeThread"
+    ],
+    "active_count_query": "QueryInformationJobObject(JobObjectBasicAccountingInformation)",
+    "renderer_artifact_max_bytes": 33554432,
+    "edits": 3,
+    "rust_invocations": 0
+  },
+  "execution": {
+    "native": false,
+    "compiler": false,
+    "signing": false,
+    "desktop_lock": false,
+    "controls_run": false
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema": "factory-padding-fresh-source-fault-controls-v1",
+  "status": "SOURCE_CONTROLS_PASS",
+  "nativeActions": 0,
+  "lockActions": 0,
+  "compilerActions": 0,
+  "cases": [
+    {
+      "name": "baseline",
+      "accepted": true,
+      "expectedAccepted": true,
+      "nativeActions": 0,
+      "output": "{\"status\":\"SOURCE_ADMISSION_PASS\",\"nativeActions\":0,\"caseId\":\"swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9\",\"tupleId\":\"sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011\",\"candidateManifest\":\"candidate-source-manifest.json\",\"macObservation\":\"held-candidate-only\"}"
+    },
+    {
+      "name": "historical-host-relabel",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "historical donor unexpectedly equals fresh host",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"historical donor unexpectedly equals fresh host\",\"nativeActions\":0}"
+    },
+    {
+      "name": "wrong-witness-source",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "frozen fresh witness top-level source hash drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"frozen fresh witness top-level source hash drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "candidate-nested-witness-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "candidate witness source hash mismatch",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"candidate witness source hash mismatch\",\"nativeActions\":0}"
+    },
+    {
+      "name": "case-tuple-mac-host-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "fresh host hash drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"fresh host hash drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "case-identity-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "fresh case/tuple identity drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"fresh case/tuple identity drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "compiler-output-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "compiler receipt/output mismatch",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"compiler receipt/output mismatch\",\"nativeActions\":0}"
+    },
+    {
+      "name": "host-build-source-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "host build/source mismatch",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"host build/source mismatch\",\"nativeActions\":0}"
+    },
+    {
+      "name": "runtime-commit-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "runtime commit drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"runtime commit drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "renderer-hash-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "renderer hash drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"renderer hash drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "mac-promoted",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "Mac evidence incorrectly promoted",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"Mac evidence incorrectly promoted\",\"nativeActions\":0}"
+    },
+    {
+      "name": "candidate-manifest-top-source-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "candidate manifest source hash mismatch",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"candidate manifest source hash mismatch\",\"nativeActions\":0}"
+    },
+    {
+      "name": "windows-host-packet-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "fresh host hash drift",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"fresh host hash drift\",\"nativeActions\":0}"
+    },
+    {
+      "name": "mac-candidate-flag-drift",
+      "accepted": false,
+      "expectedAccepted": false,
+      "nativeActions": 0,
+      "error": "Mac evidence incorrectly promoted",
+      "output": "{\"status\":\"SOURCE_ADMISSION_HOLD\",\"reason\":\"Mac evidence incorrectly promoted\",\"nativeActions\":0}"
+    }
+  ]
+}

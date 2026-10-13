@@ -1,0 +1,31 @@
+{
+  "kind": "sr0-tuple12-driver-overlay",
+  "version": 1,
+  "status": "candidate",
+  "baseScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/drive-fixture.ps1",
+    "sha256": "1683b96e2b0e9ac06cf93777d2274d5f4ece9c40092d90799de95b98e77436e9"
+  },
+  "overlayScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus.ps1",
+    "sha256": "1e102040d1c4c8de647a1e6d7880ec2b60d174479e355b03327db50e0fb02780"
+  },
+  "change": [
+    "NoActivate skips only driver Ensure-Foreground before UIA SetFocus.",
+    "Renderer startup CBT HCBT_ACTIVATE and HCBT_SETFOCUS guard remains in force.",
+    "NoActivate focus admission reads target provider HasKeyboardFocusProperty; it never reads desktop-global FocusedElement.",
+    "Default branch retains frozen foreground and FocusedElement behavior."
+  ],
+  "rendererFocusSource": [
+    "examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift:focusRow",
+    "examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift:focusTarget",
+    "render/swiftright-render/src/ax.rs:TreeUpdate.focus"
+  ],
+  "run": {
+    "delivery": "targeted",
+    "fixture": "F1",
+    "keyMode": "char",
+    "switch": "-NoActivate",
+    "requiredProviderLog": "provider_focus[Row 5]=True property=HasKeyboardFocus"
+  }
+}

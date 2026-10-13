@@ -1,0 +1,81 @@
+{
+  "kind": "sr1-owner-review-v1",
+  "subject": "remaining-five-hosts-v5/root-admission-r2",
+  "auditedPath": "factory/native/windows/remaining-five-hosts-v6/root-admission-r2",
+  "status": "HOLD_BEFORE_EFFECTS",
+  "pathResolution": {
+    "requested": "factory/native/windows/remaining-five-hosts-v5/root-admission-r2",
+    "present": false,
+    "audited": "factory/native/windows/remaining-five-hosts-v6/root-admission-r2"
+  },
+  "scope": "offline source byte/case/witness/type/dependency/rolling review; no compiler/native/remote/Git",
+  "stage": {
+    "r2Manifest": "sha256:143557d72744655c4cc88c49ed6751c26bc043c1752ba0f26dc427d2ef77ccd4",
+    "r2Entries": 15,
+    "r2ByteHashFailures": 0,
+    "v5SourceManifest": "sha256:ef0853a00aca582f10f655b05946303190dfe608b76b01dc9810e2921de71950",
+    "v5Entries": 146,
+    "v5ByteHashFailures": 0
+  },
+  "baseline": {
+    "status": "PASS_SOURCE_ONLY",
+    "planCount": 5,
+    "sequence": [
+      "disabled",
+      "image",
+      "shapes.fill-stroke",
+      "text.bundled-font",
+      "toggle"
+    ],
+    "uniqueScratchCount": 5,
+    "destinationCount": 1,
+    "compilerInvocations": 0,
+    "nativeCalls": 0,
+    "remoteCalls": 0
+  },
+  "faultControls": {
+    "rejectedControls": 5,
+    "names": [
+      "five-package-roots",
+      "source-hash",
+      "reordered-sequence",
+      "renderer",
+      "duplicate-scratch"
+    ]
+  },
+  "closure": {
+    "caseSourceWitnessManifest": "5/5 passed",
+    "witnessTypes": [
+      "Witness_disabled",
+      "Witness_image",
+      "Witness_shapes_fill_stroke",
+      "Witness_text_bundled_font",
+      "Witness_toggle"
+    ],
+    "sourceBindings": "5 plans exact against v5 package bytes",
+    "bridgePlanBindings": "50/50 rows matched v5 transfer dependency hashes",
+    "canonicalTuple": "tuple11 exact pin"
+  },
+  "dependencyPins": {
+    "v5TransferBundle": "sha256:f545b56726f3f79981809c7ca3833dfe1613d45c9746b211236a7cf2cc3a2664",
+    "externalDependencyCount": 70,
+    "representation": "all 5 plans match compiler/renderer/runtime & 10 bridge rows each",
+    "DellByteCheck": "unrun on Mac; root must execute transfer dependency checks before writes"
+  },
+  "findings": [
+    {
+      "severity": "action-required-before-admission",
+      "id": "R2-DEP-PIN",
+      "detail": "rolling-plan.json pins v5 source-stage only; it does not pin v5 transfer-bundle.json hash or externalDependencyCount/list. Add exact transfer bundle path/hash/count to prospective successor, or make root admission verify existing v5 transfer bundle hash before any transfer/native effect."
+    },
+    {
+      "severity": "action-required-before-admission",
+      "id": "R2-ROLLING-MAX3",
+      "detail": "rolling-plan.json/verifier enforce one destination, strict sequence, unique scratch, & no overwrite/delete, but encode no max-active-roots<=3 inventory/quiescence assertion. Root must assert active roots <=3 & quiescence between cases before admission."
+    }
+  ],
+  "commands": [
+    "factory/.venv/bin/python factory/native/windows/remaining-five-hosts-v6/root-admission-r2/verify_source_packet.py"
+  ],
+  "producerEdits": false
+}

@@ -1,0 +1,133 @@
+{
+    "kind":  "root-factory-admission-v17-stage-v1",
+    "status":  "passed-source-only",
+    "parsed":  10,
+    "controls":  {
+                     "kind":  "factory-first-proof-admission-controls-v2",
+                     "status":  "passed-source-only",
+                     "controls":  [
+                                      {
+                                          "name":  "correct-admission-root",
+                                          "accepted":  true,
+                                          "thrown":  "",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "wrong-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Mac context raw join drift: macContext_capture_index\r\nAt D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\windows-replay-r11\\r17\\overlay\\integration-fresh-r11-v7.ps1:65 \r\nchar:729\r\n+ ... a256 -cne $row.sha256){throw (\u0027Mac context raw join drift: \u0027+$key)} }\r\n+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Mac context raw...t_capture_index:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Mac context raw join drift: macContext_capture_index",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "missing-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Explicit admission root missing\r\nAt D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\windows-replay-r11\\r17\\overlay\\resume-issued-coordinator-fresh-r11\r\n-v17.ps1:35 char:69\r\n+ ... onRoot -PathType Container)){throw \u0027Explicit admission root missing\u0027}\r\n+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Explicit admission root missing:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Explicit admission root missing",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "stale-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Mac context raw join drift: macContext_capture_index\r\nAt D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\windows-replay-r11\\r17\\overlay\\integration-fresh-r11-v7.ps1:65 \r\nchar:729\r\n+ ... a256 -cne $row.sha256){throw (\u0027Mac context raw join drift: \u0027+$key)} }\r\n+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Mac context raw...t_capture_index:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Mac context raw join drift: macContext_capture_index",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      }
+                                  ],
+                     "nativeWindowActions":  0,
+                     "compilerActions":  0,
+                     "guiActions":  0,
+                     "remoteActions":  0,
+                     "lockActions":  0
+                 },
+    "controlReceiptSha256":  "efc57f43a5d20c7d52fe42214e93b8af8bdf88e88878bb98eb75dc521cdcbff3",
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "lockActions":  0,
+    "at":  "2026-10-11T19:07:27.9296994+00:00"
+}
+{
+    "kind":  "root-factory-v17-deep-memory-admission-v1",
+    "status":  "passed",
+    "issuedMetadataHash":  "876611d051d5f9af06e87d52c148da7df5fd37381caebf4e2c2caea4935e4adf",
+    "memoryControlsSha256":  "abb27ecccd168c67003434d8c60c653da6bbb3b8fc18113dfc3334f4c1285325",
+    "stageManifestSha256":  "9adc91782d7fc75764d63b88fd96a3a3f42f877c48d2100e9bcef595304b555a",
+    "nativeWindowActions":  0,
+    "guiActions":  0,
+    "lockActions":  0,
+    "deep":  {
+                 "kind":  "factory-native-overlay-prelaunch-v17",
+                 "status":  "passed-source-only",
+                 "runRoot":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\windows-replay-r11\\r17\\replays\\r1",
+                 "outputRoot":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\windows-replay-r11\\r17\\replays",
+                 "plannedWorkerOutputs":  20,
+                 "packagePath":  "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+                 "issuedMetadataHash":  "876611d051d5f9af06e87d52c148da7df5fd37381caebf4e2c2caea4935e4adf",
+                 "compileReceiptHash":  "1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+                 "exeHash":  "3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a",
+                 "nativeWindowActions":  0,
+                 "compilerActions":  0,
+                 "guiActions":  0,
+                 "remoteActions":  0,
+                 "lockActions":  0
+             },
+    "memory":  {
+                   "schema":  "factory-interactive-job-memory-controls-v2",
+                   "status":  "passed-source-only",
+                   "controls":  [
+                                    {
+                                        "name":  "wrong-memory-limit-flags",
+                                        "accepted":  false,
+                                        "expectedRejected":  true,
+                                        "error":  "Exception calling \"ValidateFlagsForControl\" with \"1\" argument(s): \"Only JOB_OBJECT_LIMIT_JOB_MEMORY is admitted\""
+                                    },
+                                    {
+                                        "name":  "positive-1GiB-memory-job",
+                                        "accepted":  true,
+                                        "expectedRejected":  false,
+                                        "error":  ""
+                                    },
+                                    {
+                                        "name":  "live-child-guard-rejects",
+                                        "accepted":  false,
+                                        "expectedRejected":  true,
+                                        "error":  "Exception calling \"RequireOnlyCurrent\" with \"1\" argument(s): \"Live child process remains in memory job\""
+                                    },
+                                    {
+                                        "name":  "self-only-after-child-terminal",
+                                        "accepted":  true,
+                                        "expectedRejected":  false,
+                                        "error":  ""
+                                    }
+                                ],
+                   "childProof":  {
+                                      "pid":  39316,
+                                      "originalHandleRetained":  true,
+                                      "terminal":  true,
+                                      "exitCode":  -1,
+                                      "deadlineMilliseconds":  2500,
+                                      "noWindow":  true
+                                  },
+                   "jobMemoryLimitBytes":  1073741824,
+                   "jobMemoryLimitFlag":  512,
+                   "killOnJobClose":  false,
+                   "nativeWindowActions":  0,
+                   "compilerActions":  0,
+                   "remoteActions":  0,
+                   "lockActions":  0
+               }
+}

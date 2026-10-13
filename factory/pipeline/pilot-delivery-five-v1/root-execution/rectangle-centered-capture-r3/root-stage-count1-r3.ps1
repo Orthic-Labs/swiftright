@@ -1,0 +1,14 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+if(@(Get-Process swift,swiftc,swift-build,clang,FactoryProbe -ErrorAction SilentlyContinue).Count){throw 'compiler/native stage busy'}
+if((Get-Content -LiteralPath 'D:\Claude\desktop.lock' -Raw).Trim() -cne 'free'){throw 'desktop busy for rolling capture stage'}
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$Capture='D:\Claude\swiftright\.factory-work\hosts\rectangle\captures\centered-r3';$Package='D:\Claude\swiftright\.factory-work\hosts\rectangle\package';$Zip='D:\Claude\swiftright\.factory-work\rectangle-centered-count1-r3.zip'
+if(Test-Path -LiteralPath $Capture){throw 'fresh centered capture namespace required'}
+$Plan=Join-Path $Package 'plan.json';if(Test-Path -LiteralPath $Plan){$Retired=Join-Path $Capture 'retired';New-Item -ItemType Directory -Path $Retired -Force|Out-Null;Move-Item -LiteralPath $Plan -Destination (Join-Path $Retired 'plan-old.json')}
+if((Get-FileHash -LiteralPath (Join-Path $Package 'plan-final-v4.json')).Hash.ToLowerInvariant() -cne 'f896e7db7dd28d45a28002ab5712619d9818a24cfef0466aa730374a16b364a4'){throw 'centered final-r6 plan drift'};Copy-Item -LiteralPath (Join-Path $Package 'plan-final-v4.json') -Destination $Plan -Force
+if((Get-FileHash -LiteralPath $Plan).Hash.ToLowerInvariant() -cne 'f896e7db7dd28d45a28002ab5712619d9818a24cfef0466aa730374a16b364a4'){throw 'centered plan install drift'}
+if((Get-FileHash -LiteralPath $Zip).Hash.ToLowerInvariant() -cne '87c467a31e4527493f83b80ba6f3cf584f4dd7b9ae722bcdab9807fdffc418cc'){throw 'centered source zip drift'}
+$Stage=Join-Path $Capture 'source-stage';Expand-Archive -LiteralPath $Zip -DestinationPath $Stage;$M=Get-Content -Raw -LiteralPath (Join-Path $Stage 'stage-manifest.json')|ConvertFrom-Json;foreach($R in @($M.files)){$F=Get-Item -LiteralPath (Join-Path $Stage $R.path);if($F.Length -ne $R.bytes -or (Get-FileHash -LiteralPath $F.FullName).Hash.ToLowerInvariant() -cne $R.sha256){throw 'centered source stage drift'}}
+foreach($N in @('producer','admission','overlay')){$D=$M.roots.$N;New-Item -ItemType Directory -Path $D -Force|Out-Null;Get-ChildItem -LiteralPath (Join-Path $Stage $N) -Force|ForEach-Object{Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $D $_.Name) -Recurse -Force}}
+if('1' -eq '20'){if((Get-FileHash -LiteralPath '').Hash.ToLowerInvariant() -cne ''){throw 'Count1 proof drift'}}
+[ordered]@{status='source-staged';count=1;planHash='f896e7db7dd28d45a28002ab5712619d9818a24cfef0466aa730374a16b364a4';compileReceiptHash='c6d2b4818d455087ac91c85cf07ce51abe19845c034e7217eb091a128b734e9b';exeHash='ff678d7e8859f56a37b731e399fa14e6903f71a2d5e9f5dbe76bf0a5f23bd848';nativeActions=0;lockActions=0}|ConvertTo-Json -Depth 8

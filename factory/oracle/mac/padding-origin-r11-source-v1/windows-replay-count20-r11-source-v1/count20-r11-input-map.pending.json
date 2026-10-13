@@ -1,0 +1,858 @@
+{
+  "admissionRules": [
+    "Do not copy or relabel observed-count20-metadata-r7 or observed-native20-r7 as fresh evidence.",
+    "Do not populate runID, runRoot, manifest, capture IDs, coordinator outputs, or native hashes until root creates fresh namespace.",
+    "Keep v4 source-equivalence candidate-only: fresh metadata and fresh capture IDs remain mandatory.",
+    "Require all 20 actual rows and transitive source/runtime/compiler/renderer/worker joins before trusted reader admission."
+  ],
+  "candidateOnly": true,
+  "count": 20,
+  "donorEvidence": {
+    "actualRoles": {
+      "candidateBinding": {
+        "bytes": 1579,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/candidate-binding.json",
+        "sha256": "sha256:e2b7579d81923b8db2252b7c605af9c20fc80677cdaad4756e78fed94ccc0336"
+      },
+      "candidateTuple": {
+        "bytes": 11041,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/candidate-tuple.json",
+        "sha256": "sha256:40b1a3cb5802bfd6e0e5b1836872e664bc2b85dd6b3c82fca08255aa22d8cb6d"
+      },
+      "compilerBytes": {
+        "bytes": 45056,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/tool/compiler.bin",
+        "sha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+      },
+      "donorWitnessManifest": {
+        "bytes": 1878,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/host/witness.manifest.json",
+        "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+      },
+      "executable": {
+        "bytes": 3721216,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-archive-r7/capture-bd1cba8c7017fc5cfc343288191ebd130f6f38730f69266301194ebcac81e7de/FactoryProbe.exe",
+        "sha256": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a"
+      },
+      "plan": {
+        "bytes": 8974,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/plan.json",
+        "sha256": "sha256:ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10"
+      },
+      "producerReceipt": {
+        "bytes": 17795,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/observation.json",
+        "sha256": "sha256:1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf"
+      },
+      "proofBundle": {
+        "bytes": 872540,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/proof-bundle-r7-v2c.actual.json",
+        "sha256": "sha256:b2d7655c34d1ae82c909f5f478993f421af31938dd57f1db115b414141ca36c9"
+      },
+      "runtimeReceipt": {
+        "bytes": 11275,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/runtime-source-receipt.json",
+        "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+      },
+      "runtimeTree": {
+        "bytes": 2825,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/runtime-source-tree.json",
+        "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+      },
+      "trustedReader": {
+        "bytes": 219142,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/adapter-v6-r7/trusted-reader-count20-r7.actual.json",
+        "sha256": "sha256:4ff0bc39d5d498c8f26b75a2d9b3b26563d26245c0cf3e6d5b113afeb9dc2253"
+      }
+    },
+    "historicalCase": {
+      "hash": "sha256:84951ddf8b3ff3239a497d8a8bbe525a9e09b5d7354f2d2ac994cf8e740bbc3d",
+      "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258"
+    },
+    "historicalTupleHash": "sha256:40b1a3cb5802bfd6e0e5b1836872e664bc2b85dd6b3c82fca08255aa22d8cb6d",
+    "historicalTupleID": "sr1-source-bound-r11-20261011",
+    "metadataManifest": {
+      "bytes": 21954,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-count20-metadata-r7/manifest.json",
+      "sha256": "sha256:3ee72b3db60ed804d48d1555e9d86a927321517401f94640e572c279c64ad2ce"
+    },
+    "metadataManifestRows": [
+      {
+        "bytes": 1579,
+        "path": "coordinator-repeat-r1/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\candidate-binding.json",
+        "sha256": "e2b7579d81923b8db2252b7c605af9c20fc80677cdaad4756e78fed94ccc0336"
+      },
+      {
+        "bytes": 11041,
+        "path": "coordinator-repeat-r1/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\candidate-tuple.json",
+        "sha256": "40b1a3cb5802bfd6e0e5b1836872e664bc2b85dd6b3c82fca08255aa22d8cb6d"
+      },
+      {
+        "bytes": 28927,
+        "path": "coordinator-repeat-r1/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\coordinator-repeat-r1\\issued-metadata.json",
+        "sha256": "6f1f8ced038361a464c893551fed7c0770027bfa4e5ed08275694e2a1c491f1c"
+      },
+      {
+        "bytes": 6069,
+        "path": "root-actual-prefixed-count20-r7/metadata-controls-count20-r1.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\metadata-controls-count20-r1.json",
+        "sha256": "48bc68a875c39a7722e4a49af15ace0b5fe4a6191dcc85175c7606c3f9e0d0de"
+      },
+      {
+        "bytes": 1645,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-canonical-input-hash/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-canonical-input-hash\\candidate-binding.json",
+        "sha256": "25058bb92225b86e522707fb8945dcadad3a527f383f148cb19dcd151db19f68"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-canonical-input-hash/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-canonical-input-hash\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29054,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-canonical-input-hash/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-canonical-input-hash\\issued-metadata.json",
+        "sha256": "1e44ba18f6702f55bf44541ec96f3a1508b44f96d5e919f049a600336e43face"
+      },
+      {
+        "bytes": 1630,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-frozen/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-frozen\\candidate-binding.json",
+        "sha256": "8090ae9aeb887d713f654cc871c1d381b2d6a1b82170ee8e9c39c353c398c766"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-frozen/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-frozen\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29026,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/binding-frozen/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\binding-frozen\\issued-metadata.json",
+        "sha256": "9267aaa6133fd011c8d6b792eb23781e4aeed3b86380d542374e6c8357015848"
+      },
+      {
+        "bytes": 1633,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/mac-context-path/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\mac-context-path\\candidate-binding.json",
+        "sha256": "f702798edae948108ddc798e64688cc9a6321cba651ea14b568c4ce0f9c8fc77"
+      },
+      {
+        "bytes": 11009,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/mac-context-path/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\mac-context-path\\candidate-tuple.json",
+        "sha256": "f34caea451bad773e37d976563304e422e4270ae291d3b7160077eb03d9647bb"
+      },
+      {
+        "bytes": 29030,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/mac-context-path/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\mac-context-path\\issued-metadata.json",
+        "sha256": "1b234b43ffb730cb9d01c7a11a8fc1e56e589780a79607b179b4f5e522ef78f9"
+      },
+      {
+        "bytes": 1640,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-expected-count/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-expected-count\\candidate-binding.json",
+        "sha256": "cc0e5e39d3067694ffc0db2a67d923416d0fcbd357373d092c2c36b7f0c486c4"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-expected-count/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-expected-count\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29044,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-expected-count/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-expected-count\\issued-metadata.json",
+        "sha256": "63aaed5026a4610c0c8c44dc7f3ce45272dc8b3a81dc974e66713f670f41c2fc"
+      },
+      {
+        "bytes": 1639,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-host-argument/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-host-argument\\candidate-binding.json",
+        "sha256": "07d856f121cc069d16eabc63fb5cd8974a618a2e0755d2af4df6061aafd13607"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-host-argument/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-host-argument\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29042,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-host-argument/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-host-argument\\issued-metadata.json",
+        "sha256": "a0a7817936b7c529b2437ecff9df521a2f5f480944f8bfb31d16011e843adb70"
+      },
+      {
+        "bytes": 1641,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-runtime-modules/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-runtime-modules\\candidate-binding.json",
+        "sha256": "c28e03cf4215efa9167400d2353eee8ed2016ec3812495d3ea72294b3fdb866b"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-runtime-modules/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-runtime-modules\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 27095,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-runtime-modules/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-runtime-modules\\issued-metadata.json",
+        "sha256": "dffbc70544f97615e38c5da08734fe4bb617bbb8adc962620d3eb275f348923c"
+      },
+      {
+        "bytes": 1643,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-serializer-prefix/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-serializer-prefix\\candidate-binding.json",
+        "sha256": "b202322bcdc790116ffb2814ddc738e6d1076f1343bf8cbab9cacb1e1accf653"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-serializer-prefix/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-serializer-prefix\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29057,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-serializer-prefix/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-serializer-prefix\\issued-metadata.json",
+        "sha256": "94aa82e1ec630de92021d74ac9d145103732257f17b7539f6e2b2603c6d119fd"
+      },
+      {
+        "bytes": 1637,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-source-hash/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-source-hash\\candidate-binding.json",
+        "sha256": "de2e4c3d20a0ac9ac98a0ab95f6e7bc9daad4058610b44553ff8cc76f47d9f7a"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-source-hash/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-source-hash\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29031,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/metadata-source-hash/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\metadata-source-hash\\issued-metadata.json",
+        "sha256": "6839c72988ab4d570706ca01cd293f4bffbe41042d79dc6f802eb23236920858"
+      },
+      {
+        "bytes": 1635,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/relocated-positive/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\relocated-positive\\candidate-binding.json",
+        "sha256": "32abd29971e75d537fe6c2baa9f5e3d18751a1ebc1de5883eb99f5656425d943"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/relocated-positive/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\relocated-positive\\candidate-tuple.json",
+        "sha256": "748fa7ef6219bc402159f5b834fc83b5233384045b7e88762b462264bb26a514"
+      },
+      {
+        "bytes": 29034,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/relocated-positive/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\relocated-positive\\issued-metadata.json",
+        "sha256": "278038d997b210fba173d5fb6bfc1c5ddc5cf6ee418280417056ee4db800d557"
+      },
+      {
+        "bytes": 1627,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-case/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-case\\candidate-binding.json",
+        "sha256": "14ab261d012bb8323a95ef48fb4ccbb783b44cbeba7855ab57102035b47665c5"
+      },
+      {
+        "bytes": 11004,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-case/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-case\\candidate-tuple.json",
+        "sha256": "33d29cb5fc02654e4f43f7c8eadbf839375401b7331e742532064874d81734c6"
+      },
+      {
+        "bytes": 29018,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-case/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-case\\issued-metadata.json",
+        "sha256": "e53f0656d5a8a715898d14b5a6638d5a7c5b7b52ce7a5c44ac707a05eda6483e"
+      },
+      {
+        "bytes": 1631,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-renderer/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-renderer\\candidate-binding.json",
+        "sha256": "861873d757a237e723d8497874a8b4ed7ef5bc49490d358077f301f65de3e628"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-renderer/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-renderer\\candidate-tuple.json",
+        "sha256": "7674baf77a33db3c2c09f4ce356c0a2faf371d792a2935dde3d817a592bedbb0"
+      },
+      {
+        "bytes": 29026,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-renderer/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-renderer\\issued-metadata.json",
+        "sha256": "6aa07f139b67182d15d6c937d9aa2f4966ce780ff9d736cfb26a8a74b337fed6"
+      },
+      {
+        "bytes": 1630,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-runtime/candidate-binding.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-runtime\\candidate-binding.json",
+        "sha256": "b95a3349854b9b02cbcd8f73936d8403803a6cd372c31598ff4d53c1ada23b30"
+      },
+      {
+        "bytes": 11046,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-runtime/candidate-tuple.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-runtime\\candidate-tuple.json",
+        "sha256": "7abd41d8cf86c20e9fd6d336b9641ecdbeaed7e03980c154cdf41b5522ad8f83"
+      },
+      {
+        "bytes": 29024,
+        "path": "root-actual-prefixed-count20-r7/controls-count20-r1/tuple-runtime/issued-metadata.json",
+        "recordedPath": "D:\\Claude\\swiftright\\factory\\native\\windows\\padding-capture-lease-capture-v3\\root-actual-prefixed-count20-r7\\controls-count20-r1\\tuple-runtime\\issued-metadata.json",
+        "sha256": "5cc390ce3f666ed49c5e09f759d2b5963522cdb79943d9e92ecf21728100641c"
+      }
+    ],
+    "metadataRoot": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-count20-metadata-r7",
+    "metadataStatus": "actual-donor-evidence-only",
+    "nativeManifest": {
+      "bytes": 339943,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/manifest.json",
+      "sha256": "sha256:05151d8a29ca0bfc9d5c440924fd8547e16a89cb5e2d4c4c6b81880c9a1aa0f7"
+    },
+    "nativeRoot": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7",
+    "runs": [
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-01",
+        "run": 1
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-02",
+        "run": 2
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-03",
+        "run": 3
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-04",
+        "run": 4
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-05",
+        "run": 5
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-06",
+        "run": 6
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-07",
+        "run": 7
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-08",
+        "run": 8
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-09",
+        "run": 9
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-10",
+        "run": 10
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-11",
+        "run": 11
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-12",
+        "run": 12
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-13",
+        "run": 13
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-14",
+        "run": 14
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-15",
+        "run": 15
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-16",
+        "run": 16
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-17",
+        "run": 17
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-18",
+        "run": 18
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-19",
+        "run": 19
+      },
+      {
+        "roles": {
+          "capture-outcome.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/capture-outcome.json",
+          "declared-worker-inventory.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/declared-worker-inventory.json",
+          "final-exit-certificate.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/final-exit-certificate.json",
+          "host.stderr.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/host.stderr.txt",
+          "host.stdout.txt": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/host.stdout.txt",
+          "lifecycle-timing.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/lifecycle-timing.json",
+          "measured-capture-identity.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/measured-capture-identity.json",
+          "native.pixels.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/native.pixels.json",
+          "native.uia.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/native.uia.json",
+          "owned-close.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/owned-close.json",
+          "owned-process.json": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20/owned-process.json"
+        },
+        "root": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/observed-native20-r7/actual-repeat-r1/native-20",
+        "run": 20
+      }
+    ]
+  },
+  "effects": {
+    "compilerActions": 0,
+    "lockActions": 0,
+    "nativeWindowActions": 0,
+    "remoteActions": 0
+  },
+  "executionOverlay": {
+    "controls": {
+      "compilerActions": 0,
+      "frozenRepeatR6Mutated": false,
+      "lockActions": 0,
+      "nativeActions": 0,
+      "remoteActions": 0,
+      "schemaHash": "sha256:ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61"
+    },
+    "files": [
+      {
+        "bytes": 928,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/README.md",
+        "role": "source-contract",
+        "sha256": "sha256:214a86bc9ceb80d37a74dafcfc2f9ad25ca65d27894ab9260473fee4764a23de"
+      },
+      {
+        "bytes": 38387,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/capture-repeat-r7.ps1",
+        "role": "overlay-source",
+        "sha256": "sha256:1acfd679cc48deb615f529b74f0e1d0e89be42babad502a3514d19825bccf43a"
+      },
+      {
+        "bytes": 4659,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/dispatch-repeat-r7.ps1",
+        "role": "overlay-source",
+        "sha256": "sha256:7bef1472646818952d1fc14bb59e6b87ec1a36162a5ae9e7c09737886c0a3c6f"
+      },
+      {
+        "bytes": 12280,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/integration-prefixed-ids-r1.ps1",
+        "role": "overlay-source",
+        "sha256": "sha256:d4a20512937c6a7cb1e5751e02566276290897cb56203a99b40cfcccf486e904"
+      },
+      {
+        "bytes": 2483,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/interactive-task-repeat-r7.ps1",
+        "role": "overlay-source",
+        "sha256": "sha256:af8dd8a9fdfc9a26d614f46a158e4186e33f69013d37971676895b7190248a57"
+      },
+      {
+        "bytes": 17273,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/resume-issued-coordinator-repeat-r7.ps1",
+        "role": "overlay-source",
+        "sha256": "sha256:918b1180fedad771b929c4c098c181eb4983b264c229bfbf6c0b7ed53d9a3cc4"
+      },
+      {
+        "bytes": 2902,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/test-repeat-r7-source.py",
+        "role": "pure-control",
+        "sha256": "sha256:6eb8436b90addc38e855d605ecdfe8e74ee7f690de32b56b8caff5376c3d259a"
+      },
+      {
+        "bytes": 12776,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/support/first-proof-repeat-r7.ps1",
+        "role": "first-proof-helper",
+        "sha256": "sha256:7954c469cabaa8857e3b7140bb6bae2f9bcf7bd1bc78015e3960ff1a8d098970"
+      },
+      {
+        "bytes": 5887,
+        "path": "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1",
+        "role": "dependency-pinned",
+        "sha256": "sha256:ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61"
+      }
+    ],
+    "kind": "factory-root-execution-overlay-repeat-r7-contract-v1",
+    "overlayRoot": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7",
+    "schemaDependency": {
+      "bytes": 5887,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/dependencies/uia-worker/schema.ps1",
+      "sha256": "sha256:ca1590fa7d41669ff4217ad282c1a1d1af747ffcb0b14ee002bcad0c3eafbb61"
+    },
+    "stageManifest": {
+      "bytes": 3023,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-metadata-controls-v2/repeat-r7/stage-manifest-r7.json",
+      "sha256": "sha256:9f6b2821b205d3463063faf66ed5c550acd37a5292ec80b47552d50e61907fae"
+    }
+  },
+  "freshMetadataContract": {
+    "metadataManifest": null,
+    "namespace": "root-controlled-new-count20-r11",
+    "requiredCaptureIDs": "capture/<32-hex> & image/<32-hex>, issued before launch",
+    "requiredCount20Rows": 20,
+    "requiredFiles": [
+      "manifest.json",
+      "coordinator-repeat-r1/issued-metadata.json",
+      "coordinator-repeat-r1/candidate-binding.json",
+      "coordinator-repeat-r1/candidate-tuple.json"
+    ],
+    "requiredFreshCaseHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "requiredFreshTupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "requiredHistoricalDonorRelabel": false,
+    "requiredHostArguments": [
+      "--factory-capture-lease-seconds=40"
+    ],
+    "requiredSourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+    "runID": null,
+    "runRoot": null
+  },
+  "freshSourceInputs": {
+    "case": {
+      "bytes": 2334,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+      "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+    },
+    "equivalenceAdmissionV4": {
+      "bytes": 3226,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/replay-equivalence-v4.json",
+      "sha256": "sha256:aa8f39419292d2170b9036f6ee648bf8b71f9ca9ddcf6205d1a03ea0b2f2f34d"
+    },
+    "manifest": {
+      "bytes": 1896,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.manifest.json",
+      "sha256": "sha256:e39db8b6d3844c6de9811eb5783564b49eb8556bc3cc854e79c3a36c61f8e9e0"
+    },
+    "tuple": {
+      "bytes": 2244,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+      "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+    },
+    "witnessSource": {
+      "bytes": 223,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    }
+  },
+  "freshTuple": {
+    "caseHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+    "caseID": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9",
+    "freshMetadataIDsRequired": true,
+    "historicalDonorRelabel": false,
+    "macosHostHash": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be977",
+    "tupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+    "windowsHostHash": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10"
+  },
+  "futureNativeArchiveContract": {
+    "hashesInvented": false,
+    "namespace": null,
+    "requiredJoins": [
+      "fresh issued metadata hash/path",
+      "fresh candidate binding/tuple",
+      "fresh plan",
+      "producer receipt",
+      "runtime receipt/tree",
+      "compiler bytes",
+      "renderer bytes",
+      "proof bundle",
+      "trusted reader",
+      "worker/renderer terminal proofs"
+    ],
+    "requiredManifestRows": 20,
+    "requiredPerRunRoles": [
+      "capture-outcome.json",
+      "declared-worker-inventory.json",
+      "final-exit-certificate.json",
+      "owned-process.json",
+      "owned-close.json",
+      "measured-capture-identity.json",
+      "native.pixels.json",
+      "native.uia.json",
+      "lifecycle-timing.json",
+      "host.stdout.txt",
+      "host.stderr.txt"
+    ],
+    "status": "held-until-root-fresh-metadata-and-native-launch"
+  },
+  "rootProtocol": {
+    "issueMetadata": {
+      "bytes": 5703,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/issue-count20-metadata-r7.ps1",
+      "sha256": "sha256:c650e993ac4797bd9b80f400201c41abbb8f272161efd978f137a9efbf133bd6"
+    },
+    "launchNative": {
+      "bytes": 3341,
+      "path": "factory/native/windows/padding-capture-lease-capture-v3/root-actual-prefixed-v1/launch-count20-native-r7.ps1",
+      "sha256": "sha256:670102988502f5f53702447302644e1c0fb832d9cb9f2ac7529d9332017df4b4"
+    }
+  },
+  "schema": "factory-windows-count20-r11-fresh-input-map-v1",
+  "status": "source-ready-fresh-metadata-required"
+}

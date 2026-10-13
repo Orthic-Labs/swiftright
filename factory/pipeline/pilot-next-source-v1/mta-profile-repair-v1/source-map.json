@@ -1,0 +1,99 @@
+{
+  "schema": "mta-profile-repair-source-map-v1",
+  "status": "prospective-source-only",
+  "qualification": "held",
+  "profiles": [
+    {
+      "profile": "text",
+      "donorRoot": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r4-sources",
+      "bindingKind": "root-text-helper-bindings-v1",
+      "tag": "count1-mta-text-r1",
+      "expectedPathFragment": "text-paint"
+    },
+    {
+      "profile": "circle",
+      "donorRoot": "factory/native/windows/pilot-circle-root-v1/capture-count1-r4-sources",
+      "bindingKind": "root-circle-helper-bindings-v1",
+      "tag": "count1-mta-circle-r1",
+      "expectedPathFragment": "circle-r11"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5817,
+      "sha256": "sha256:95882a49c082e38dd8f97b002c3f77f820b7e261b1f7773f766722b6935762d3"
+    },
+    {
+      "path": "assert-mta-profile-closure-v1.ps1",
+      "bytes": 4716,
+      "sha256": "sha256:1f6e3bb2ae1a3b2b31d2a90b8df69d28ecbc30d6246f898f827b52b7244bc5b4"
+    },
+    {
+      "path": "circle-replacement-manifest.json",
+      "bytes": 476,
+      "sha256": "sha256:1917027c731b952f15357091a99c1c2c4a01ed9ae2ad872e62c4492549af085f"
+    },
+    {
+      "path": "repair_mta_profile_v1.py",
+      "bytes": 9170,
+      "sha256": "sha256:6376fd1b6210519817cb98c769960a4fb3a2254d5c40b5daff3f988e9b1be5d3"
+    },
+    {
+      "path": "test-mta-profile-repair-controls.ps1",
+      "bytes": 3288,
+      "sha256": "sha256:8853e4aead63b78dfb2c9ec17b40bbf985cd9901c8cd499e9aab971a2eb554f4"
+    },
+    {
+      "path": "text-replacement-manifest.json",
+      "bytes": 472,
+      "sha256": "sha256:afe47cacdef73b21b79b07873f37b1c5078ded1c49b85a114824e00f35f33b03"
+    }
+  ],
+  "sharedSupport": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-v1/final-exit-certificate-mta-v1.ps1",
+      "bytes": 12696,
+      "sha256": "sha256:db5aa26893a23bb1da8b930ff8e9131a458c2e2c9e23963b439715c02851f584"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-v1/all-owned-release-rectangle-mta-v1.ps1",
+      "bytes": 8046,
+      "sha256": "sha256:886be59286e4c122f617f74cebf94014418a12340df6d48e743e6a4ef1c5cb44"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-v1/test-mta-config-admission.ps1",
+      "bytes": 2041,
+      "sha256": "sha256:777a4858aea98d9cbefe58ef85a0fad0f6150c6da18f4ad9cd36ed6f18606dc4"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-v1/invoke-mta-release-proof.ps1",
+      "bytes": 1024,
+      "sha256": "sha256:ff2d0a37be1bde7b086822003f433c9820bdefe49057508223d0c8e1d09fba59"
+    }
+  ],
+  "requiredDistinctFinalExitSources": [
+    {
+      "path": "producer/support/final-exit-certificate.ps1",
+      "role": "renderer-owned final exit"
+    },
+    {
+      "path": "producer/dependencies/uia-worker/support/final-exit-certificate.ps1",
+      "role": "worker-owned final exit"
+    }
+  ],
+  "controls": [
+    "exact whole-token replacement",
+    "stale r1/r10 rejection",
+    "post-mutation binding reseal",
+    "post-mutation source-inputs hash",
+    "MTA v2 parent/apartment closure",
+    "missing/duplicate/unsafe binding row rejection"
+  ],
+  "execution": {
+    "native": false,
+    "remote": false,
+    "tests": false,
+    "git": false
+  }
+}

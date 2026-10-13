@@ -1,0 +1,49 @@
+{
+  "kind": "factory-full-viewport-paint-comparison-v1",
+  "macArchive": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/observed-count1-r1",
+  "windowsRun": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-color-capture-count20-r2/actual-native-r1/files/native/count20-r1/native-01",
+  "actual": {
+    "scaleAgrees": true,
+    "viewportAgrees": true,
+    "imageSizeAgrees": true,
+    "sizeJoinsRecordedScale": true,
+    "exactRgbaBytes": false,
+    "paintAgrees": false
+  },
+  "faultControls": [
+    {
+      "name": "synthetic-identical-positive",
+      "passes": true,
+      "nativeEvidence": false
+    },
+    {
+      "name": "mac-placement-shift",
+      "rejected": true,
+      "nativeEvidence": false
+    },
+    {
+      "name": "red-pixel-hole",
+      "rejected": true,
+      "nativeEvidence": false
+    },
+    {
+      "name": "unexpected-background-artifact",
+      "rejected": true,
+      "nativeEvidence": false
+    },
+    {
+      "name": "one-color-byte",
+      "rejected": true,
+      "nativeEvidence": false
+    },
+    {
+      "name": "wrong-recorded-scale",
+      "rejected": true,
+      "nativeEvidence": false
+    }
+  ],
+  "normalisation": "none; compare all RGBA bytes at identical recorded raster scale",
+  "qualified": false,
+  "eligibility": "diagnostic; exact source/case/tuple/production-reader joins pending",
+  "nativeActions": 0
+}

@@ -1,0 +1,944 @@
+{
+  "schema": "clang-external-process-v2",
+  "sdk": {
+    "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "target": "arm64-apple-macosx27.0",
+    "xcode": "Xcode-27-RC 27A266"
+  },
+  "targetNames": [
+    "AppKit.NSWindow",
+    "AppKit.NSApplication",
+    "AppKit.NSColor",
+    "AppKit.NSControl",
+    "AppKit.NSControl.ControlSize",
+    "AppKit.NSDirectionalEdgeInsets",
+    "AppKit.NSUnderlineStyle",
+    "AppKit.NSAnimationContext",
+    "Foundation.NSUserActivity",
+    "CoreFoundation.CGPoint",
+    "CoreFoundation.CGSize",
+    "CoreFoundation.CGRect",
+    "Spatial.Size3D"
+  ],
+  "requestedTargetNames": [
+    "AppKit.NSAnimationContext",
+    "AppKit.NSApplication",
+    "AppKit.NSColor",
+    "AppKit.NSControl.ControlSize",
+    "AppKit.NSDirectionalEdgeInsets",
+    "AppKit.NSUnderlineStyle",
+    "AppKit.NSWindow",
+    "CoreFoundation.CGPoint",
+    "CoreFoundation.CGRect",
+    "CoreFoundation.CGSize",
+    "Foundation.NSUserActivity",
+    "Spatial.Size3D"
+  ],
+  "targets": [
+    {
+      "target": "AppKit.NSWindow",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSWindow",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSWindow.h",
+        "sha256": "sha256:32d8533578a7dfc8edf193775bc3471556ad8da94322bc42ce5942eed9c47549",
+        "line": 283,
+        "text": "@interface NSWindow : NSResponder <NSAnimatablePropertyContainer, NSMenuItemValidation, NSUserInterfaceValidations, NSUserInterfaceItemIdentification, NSAppearanceCustomization, NSAccessibilityElement, NSAccessibility>"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSWindow",
+        "usr": "c:objc(cs)NSWindow",
+        "line": 7,
+        "column": 33
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSApplication",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSApplication",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSApplication.h",
+        "sha256": "sha256:33ed7a975710fc58046253c6d12f5210acb99418ae5e2c3f6a89c585fc3ee793",
+        "line": 194,
+        "text": "@interface NSApplication : NSResponder <NSUserInterfaceValidations, NSMenuItemValidation, NSAccessibilityElement, NSAccessibility>"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSApplication",
+        "usr": "c:objc(cs)NSApplication",
+        "line": 8,
+        "column": 38
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSColor",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSColor",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSColor.h",
+        "sha256": "sha256:9dadf6af222eabf442c157c7a9bc62fdf42a251d47e9818434e0080705767a79",
+        "line": 77,
+        "text": "@interface NSColor : NSObject <NSCopying, NSSecureCoding, NSPasteboardReading, NSPasteboardWriting>"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSColor",
+        "usr": "c:objc(cs)NSColor",
+        "line": 9,
+        "column": 32
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSControl",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSControl",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSControl.h",
+        "sha256": "sha256:97801b3a7c4df7ff89349e0ac4f02e291b369eb00cdfefa51247b584ad16a5f0",
+        "line": 19,
+        "text": "@interface NSControl : NSView"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSControl",
+        "usr": "c:objc(cs)NSControl",
+        "line": 10,
+        "column": 34
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSControl.ControlSize",
+      "module": "AppKit",
+      "usr": "c:@E@NSControlSize",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSCell.h",
+        "sha256": "sha256:d1940191053a2a37b80c25600d0c7c94e04995571d7e2b28d1642de54faa1a6a",
+        "line": 91,
+        "text": "typedef NS_ENUM(NSUInteger, NSControlSize) {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.enum",
+        "name": "ControlSize",
+        "usr": "c:@E@NSControlSize",
+        "line": 11,
+        "column": 46
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSDirectionalEdgeInsets",
+      "module": "AppKit",
+      "usr": "c:@S@NSDirectionalEdgeInsets",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSCollectionViewCompositionalLayout.h",
+        "sha256": "sha256:f289e389269efc69411ac0ee81388b5e089d07926855b85f2417d1db89fe6de3",
+        "line": 53,
+        "text": "typedef struct __attribute__((objc_boxable)) NS_SWIFT_SENDABLE NSDirectionalEdgeInsets {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "NSDirectionalEdgeInsets",
+        "usr": "c:@S@NSDirectionalEdgeInsets",
+        "line": 12,
+        "column": 42
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSUnderlineStyle",
+      "module": "AppKit",
+      "usr": "c:@E@NSUnderlineStyle",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSAttributedString.h",
+        "sha256": "sha256:37bfc5d3233db052e7c232870acc4dea9f2e50bba54e3a65e69a682a71d080e1",
+        "line": 61,
+        "text": "typedef NS_OPTIONS(NSInteger, NSUnderlineStyle) {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "NSUnderlineStyle",
+        "usr": "c:@E@NSUnderlineStyle",
+        "line": 13,
+        "column": 39
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "AppKit.NSAnimationContext",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSAnimationContext",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSAnimationContext.h",
+        "sha256": "sha256:ae3015b39a897801e8fb154990d02bd9c81059470b6f51ffe7b98df4786039a9",
+        "line": 19,
+        "text": "@interface NSAnimationContext : NSObject"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSAnimationContext",
+        "usr": "c:objc(cs)NSAnimationContext",
+        "line": 14,
+        "column": 41
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit-targets.ast.json",
+        "sha256": "sha256:dcf2d527b21c31354bb3d13f0f6f33006ec6fe29d5c9e03502cc14eea0fb73d6",
+        "records": 9
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "Foundation.NSUserActivity",
+      "module": "Foundation",
+      "usr": "c:objc(cs)NSUserActivity",
+      "astKind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Headers/NSUserActivity.h",
+        "sha256": "sha256:72276d09f9b78b1fed417d54efa3e948183b705f578501a53305e69b75fb98e1",
+        "line": 56,
+        "text": "@interface NSUserActivity : NSObject"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.class",
+        "name": "NSUserActivity",
+        "usr": "c:objc(cs)NSUserActivity",
+        "line": 15,
+        "column": 37
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/foundation-targets.ast.json",
+        "sha256": "sha256:d29565770a3d495e163fa27b873e727b35eaaab6f4e8d1a2986315e9fe3d907c",
+        "records": 1
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "CoreFoundation.CGPoint",
+      "module": "CoreFoundation",
+      "usr": "c:@S@CGPoint",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreFoundation.framework/Versions/A/Headers/CFCGTypes.h",
+        "sha256": "sha256:b44200f87a0b8e83ee8007806c87c9587dcf33259cec71f6c23fc07492885bcb",
+        "line": 51,
+        "text": "CGPoint {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "CGPoint",
+        "usr": "c:@S@CGPoint",
+        "line": 16,
+        "column": 23
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/corefoundation-targets.ast.json",
+        "sha256": "sha256:d99bca0759fa66b77031fd170d59b9c82391619037d3d244f71f495bd8b1fd92",
+        "records": 6
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "CoreFoundation.CGSize",
+      "module": "CoreFoundation",
+      "usr": "c:@S@CGSize",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreFoundation.framework/Versions/A/Headers/CFCGTypes.h",
+        "sha256": "sha256:b44200f87a0b8e83ee8007806c87c9587dcf33259cec71f6c23fc07492885bcb",
+        "line": 59,
+        "text": "struct CF_SWIFT_SENDABLE CGSize {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "CGSize",
+        "usr": "c:@S@CGSize",
+        "line": 17,
+        "column": 22
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/corefoundation-targets.ast.json",
+        "sha256": "sha256:d99bca0759fa66b77031fd170d59b9c82391619037d3d244f71f495bd8b1fd92",
+        "records": 6
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "CoreFoundation.CGRect",
+      "module": "CoreFoundation",
+      "usr": "c:@S@CGRect",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreFoundation.framework/Versions/A/Headers/CFCGTypes.h",
+        "sha256": "sha256:b44200f87a0b8e83ee8007806c87c9587dcf33259cec71f6c23fc07492885bcb",
+        "line": 77,
+        "text": "struct CF_SWIFT_SENDABLE CGRect {"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "CGRect",
+        "usr": "c:@S@CGRect",
+        "line": 18,
+        "column": 22
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/corefoundation-targets.ast.json",
+        "sha256": "sha256:d99bca0759fa66b77031fd170d59b9c82391619037d3d244f71f495bd8b1fd92",
+        "records": 6
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    },
+    {
+      "target": "Spatial.Size3D",
+      "module": "Spatial",
+      "usr": "c:@UA@SPSize3D",
+      "astKind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/include/Spatial/Structures.h",
+        "sha256": "sha256:23bf3c4aba59bf52cbf7007d3a082b9bf83f55764c877c24ac92649124f483f9",
+        "line": 129,
+        "text": "} SPSize3D"
+      },
+      "sourceKit": {
+        "kind": "source.lang.swift.ref.struct",
+        "name": "Size3D",
+        "usr": "c:@UA@SPSize3D",
+        "line": 19,
+        "column": 32
+      },
+      "astOutput": {
+        "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/spatial-targets.ast.json",
+        "sha256": "sha256:30406e9a3eeea5ba181801e94eb8ebccb8aa093ec3e985b06d00ec619d2e8d66",
+        "records": 1
+      },
+      "status": "public-header-exported",
+      "eligibilityEvidence": [
+        "exact compiler AST owner",
+        "exact public SDK header line",
+        "exported module map",
+        "successful actual import/typecheck"
+      ]
+    }
+  ],
+  "moduleMaps": [
+    {
+      "module": "AppKit",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Modules/module.modulemap",
+      "sha256": "sha256:545df348af8f6fd613912b1c122e8f70a612229eab35fc0ec83925d2df12a07f",
+      "exportEvidence": [
+        "framework module AppKit",
+        "export *"
+      ]
+    },
+    {
+      "module": "Foundation",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Versions/C/Modules/module.modulemap",
+      "sha256": "sha256:93f2c5bd296b0e67cd8280e608190e8b4cfb22bc1c49b5c4737667710bd54ba1",
+      "exportEvidence": [
+        "export *",
+        "module * { export * }"
+      ]
+    },
+    {
+      "module": "CoreFoundation",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreFoundation.framework/Versions/A/Modules/module.modulemap",
+      "sha256": "sha256:f20d579eee800a87061d7e47f17cfbee8cb5c79f03d330b88e41b8584b7a6b92",
+      "exportEvidence": [
+        "export *",
+        "module * { export * }"
+      ]
+    },
+    {
+      "module": "Spatial",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/include/Spatial/module.modulemap",
+      "sha256": "sha256:89931a74f1c73eb1fb77b5441c2509928d4cfac2ea6baa5a738a928ceffdd0c5",
+      "exportEvidence": [
+        "export *",
+        "module * { export * }"
+      ]
+    }
+  ],
+  "processRuns": [
+    {
+      "name": "swift-typecheck",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "swiftc",
+        "-typecheck",
+        "-sdk",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-target",
+        "arm64-apple-macosx27.0",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/owners.swift"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:00:54.446762+00:00",
+      "endedAt": "2026-10-11T00:00:55.233155+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/owners.swiftc.stdout",
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutBytes": 0,
+      "rawStdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawStdoutBytes": 0,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/owners.swiftc.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "toolIdentitySha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/owners.swift",
+          "sha256": "sha256:9e2b8482421d5c2e98be86b861ec7a0036092e7bc9f6075ed4a5661603124476"
+        }
+      ]
+    },
+    {
+      "name": "sourcekit-index",
+      "argv": [
+        "xcrun",
+        "sourcekit-lsp",
+        "debug",
+        "run-sourcekitd-request",
+        "--request-file",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/requests/owners.yaml"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:00:55.317715+00:00",
+      "endedAt": "2026-10-11T00:00:55.526474+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/owners.index.txt",
+      "stdoutSha256": "sha256:c5f0713451686c912debea32d70e6f063650dbfc5c4f31f9d1f096cc9ad7ebd2",
+      "stdoutBytes": 93468,
+      "rawStdoutSha256": "sha256:c5f0713451686c912debea32d70e6f063650dbfc5c4f31f9d1f096cc9ad7ebd2",
+      "rawStdoutBytes": 93468,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/owners.sourcekit.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+      "toolIdentitySha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/requests/owners.yaml",
+          "sha256": "sha256:0aa121c4445703256f7d0d08de001da1f831087b09905b4a648dd38f4cda7be2"
+        }
+      ]
+    },
+    {
+      "name": "clang-appkit-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "objective-c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "AppKit/AppKit.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/appkit_ast.m"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:00:55.542102+00:00",
+      "endedAt": "2026-10-11T00:01:04.940847+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit.ast.json.gz",
+      "stdoutSha256": "sha256:4e9e4fca1dfa906d4ea335daa2733963fc6eef413b1fa3add09cd8035367644a",
+      "stdoutBytes": 11077503,
+      "rawStdoutSha256": "sha256:ad2e52291b12ba2a6828f18f3020b91fa6443a524b255105af0cb5935ed9fb54",
+      "rawStdoutBytes": 439300244,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/appkit.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/appkit_ast.m",
+          "sha256": "sha256:53440d396d1cf365a032775bccc410bd02735c0498e050b0a1ee27397eab168e"
+        }
+      ]
+    },
+    {
+      "name": "clang-foundation-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "objective-c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "Foundation/Foundation.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/foundation_ast.m"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:04.995850+00:00",
+      "endedAt": "2026-10-11T00:01:09.251817+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/foundation.ast.json.gz",
+      "stdoutSha256": "sha256:e907dd74a46931391c27231d1a1d56e7681d857a35ce2c96a43a6ab80721f14b",
+      "stdoutBytes": 5983136,
+      "rawStdoutSha256": "sha256:d1b92471cb8051bf5244a5b21271b8681a1d6562b46126c67b61172aa74a65fb",
+      "rawStdoutBytes": 231098264,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/foundation.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/foundation_ast.m",
+          "sha256": "sha256:8f01d70383c623af0699bd03fd27756705549fd3e1d0cfa11ec2690ca390eaee"
+        }
+      ]
+    },
+    {
+      "name": "clang-corefoundation-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "CoreFoundation/CoreFoundation.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/corefoundation_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:09.297725+00:00",
+      "endedAt": "2026-10-11T00:01:10.126564+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/corefoundation.ast.json.gz",
+      "stdoutSha256": "sha256:65ca327b7987a8b0cf3171cc4509cea0a0df89224f33bfc6d04a14db42525cd8",
+      "stdoutBytes": 1041747,
+      "rawStdoutSha256": "sha256:5509a4cd5041662ec6625006c1c7a6a62b8bc6cbb7a07bb733115883859f0e58",
+      "rawStdoutBytes": 36614901,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/corefoundation.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/corefoundation_ast.c",
+          "sha256": "sha256:aa5efe6a1482561f7ba1cd601dd2a67e75aef3fec24c48b7b8dc7afe5b1f6bf5"
+        }
+      ]
+    },
+    {
+      "name": "clang-coregraphics-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "CoreGraphics/CoreGraphics.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/coregraphics_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:10.173576+00:00",
+      "endedAt": "2026-10-11T00:01:11.477910+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/coregraphics.ast.json.gz",
+      "stdoutSha256": "sha256:dfdafd08e76855a3c1d349ef00da2c3bd207e84ad3cad9267ac7b189412aee39",
+      "stdoutBytes": 1665809,
+      "rawStdoutSha256": "sha256:fb5a1099bd6cfa2ee236917b0131a667bcfbc9953dbbcc6a43655371dc74425f",
+      "rawStdoutBytes": 61481715,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/coregraphics.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/coregraphics_ast.c",
+          "sha256": "sha256:6ff53c9f43ab43a965dfa33c3a995699116da74f19e5e88490dfaeab6a4e7131"
+        }
+      ]
+    },
+    {
+      "name": "clang-spatial-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "Spatial/Structures.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/spatial_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:11.525827+00:00",
+      "endedAt": "2026-10-11T00:01:21.120702+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/spatial.ast.json.gz",
+      "stdoutSha256": "sha256:8482e09f6b91b5fa19f3d1037c5d5b3a46bfda4e7d097a2d039dc8787265f90d",
+      "stdoutBytes": 10229794,
+      "rawStdoutSha256": "sha256:3e1ae0b18ba8122b338458f35defe7099e05e643d92f3af856eee0944cd59485",
+      "rawStdoutBytes": 327128531,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/spatial.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5",
+      "inputBindings": [
+        {
+          "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/spatial_ast.c",
+          "sha256": "sha256:acd82c3f9c7275aba209d6cffac6b4cb9b022b1ff09c843e1e5fe44d577ec47c"
+        }
+      ]
+    }
+  ],
+  "sourcekitRaw": {
+    "path": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/owners.index.txt",
+    "sha256": "sha256:c5f0713451686c912debea32d70e6f063650dbfc5c4f31f9d1f096cc9ad7ebd2",
+    "runName": "sourcekit-index"
+  },
+  "astRawRuns": {
+    "AppKit": {
+      "name": "clang-appkit-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "objective-c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "AppKit/AppKit.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/appkit_ast.m"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:00:55.542102+00:00",
+      "endedAt": "2026-10-11T00:01:04.940847+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/appkit.ast.json.gz",
+      "stdoutSha256": "sha256:4e9e4fca1dfa906d4ea335daa2733963fc6eef413b1fa3add09cd8035367644a",
+      "stdoutBytes": 11077503,
+      "rawStdoutSha256": "sha256:ad2e52291b12ba2a6828f18f3020b91fa6443a524b255105af0cb5935ed9fb54",
+      "rawStdoutBytes": 439300244,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/appkit.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+    },
+    "Foundation": {
+      "name": "clang-foundation-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "objective-c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "Foundation/Foundation.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/foundation_ast.m"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:04.995850+00:00",
+      "endedAt": "2026-10-11T00:01:09.251817+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/foundation.ast.json.gz",
+      "stdoutSha256": "sha256:e907dd74a46931391c27231d1a1d56e7681d857a35ce2c96a43a6ab80721f14b",
+      "stdoutBytes": 5983136,
+      "rawStdoutSha256": "sha256:d1b92471cb8051bf5244a5b21271b8681a1d6562b46126c67b61172aa74a65fb",
+      "rawStdoutBytes": 231098264,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/foundation.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+    },
+    "CoreFoundation": {
+      "name": "clang-corefoundation-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "CoreFoundation/CoreFoundation.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/corefoundation_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:09.297725+00:00",
+      "endedAt": "2026-10-11T00:01:10.126564+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/corefoundation.ast.json.gz",
+      "stdoutSha256": "sha256:65ca327b7987a8b0cf3171cc4509cea0a0df89224f33bfc6d04a14db42525cd8",
+      "stdoutBytes": 1041747,
+      "rawStdoutSha256": "sha256:5509a4cd5041662ec6625006c1c7a6a62b8bc6cbb7a07bb733115883859f0e58",
+      "rawStdoutBytes": 36614901,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/corefoundation.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+    },
+    "CoreGraphics": {
+      "name": "clang-coregraphics-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "CoreGraphics/CoreGraphics.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/coregraphics_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:10.173576+00:00",
+      "endedAt": "2026-10-11T00:01:11.477910+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/coregraphics.ast.json.gz",
+      "stdoutSha256": "sha256:dfdafd08e76855a3c1d349ef00da2c3bd207e84ad3cad9267ac7b189412aee39",
+      "stdoutBytes": 1665809,
+      "rawStdoutSha256": "sha256:fb5a1099bd6cfa2ee236917b0131a667bcfbc9953dbbcc6a43655371dc74425f",
+      "rawStdoutBytes": 61481715,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/coregraphics.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+    },
+    "Spatial": {
+      "name": "clang-spatial-ast",
+      "argv": [
+        "xcrun",
+        "--sdk",
+        "macosx",
+        "clang",
+        "-fsyntax-only",
+        "-x",
+        "c",
+        "-isysroot",
+        "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+        "-include",
+        "Spatial/Structures.h",
+        "-Xclang",
+        "-ast-dump=json",
+        "/Volumes/D/claude/swiftright/factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/probes/spatial_ast.c"
+      ],
+      "cwd": "/Volumes/D/claude/swiftright",
+      "startedAt": "2026-10-11T00:01:11.525827+00:00",
+      "endedAt": "2026-10-11T00:01:21.120702+00:00",
+      "returncode": 0,
+      "stdout": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/raw/spatial.ast.json.gz",
+      "stdoutSha256": "sha256:8482e09f6b91b5fa19f3d1037c5d5b3a46bfda4e7d097a2d039dc8787265f90d",
+      "stdoutBytes": 10229794,
+      "rawStdoutSha256": "sha256:3e1ae0b18ba8122b338458f35defe7099e05e643d92f3af856eee0944cd59485",
+      "rawStdoutBytes": 327128531,
+      "stderr": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-process-v2/receipts/spatial.clang.stderr",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrBytes": 0,
+      "tool": "xcrun",
+      "toolIdentityPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "toolIdentitySha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+    }
+  },
+  "controls": {
+    "exactRawUSR": true,
+    "exactSourceLine": true,
+    "exactASTKind": true,
+    "actualReturnCode": true,
+    "actualArgvCwdTimestamps": true,
+    "sourceRequestHashes": true,
+    "rawStdoutHashes": true,
+    "moduleMapExportReconstructed": true,
+    "wrongSourceRejects": true,
+    "wrongUSRRejects": true,
+    "wrongKindRejects": true,
+    "wrongProcessRejects": true,
+    "wrongExportRejects": true,
+    "extraTargetRejects": true,
+    "noAbsenceInference": true
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "pilot-continuation-source-map-v1",
+  "status": "source-ready-held",
+  "qualification": "held",
+  "files": [
+    {
+      "role": "README",
+      "path": "factory/pipeline/pilot-next-source-v1/pilot-continuation-v1/README.md",
+      "bytes": 2470,
+      "sha256": "sha256:05b8bcc26bd18abda59fd4e30124710cf35e6a3d59f4fd91828bc9371814cce1"
+    },
+    {
+      "role": "API availability",
+      "path": "factory/pipeline/pilot-next-source-v1/pilot-continuation-v1/api-availability.json",
+      "bytes": 1290,
+      "sha256": "sha256:b7b124adaa663090711abf22c0188b51d4504ce62fcedd08b4cc26fd495afaab"
+    },
+    {
+      "role": "bounded source input generator",
+      "path": "factory/pipeline/pilot-next-source-v1/pilot-continuation-v1/prepare_control_state_inputs.py",
+      "bytes": 6220,
+      "sha256": "sha256:69655ea4669d43605b2b553a369152e4487cf94f911ec563b430dd26a3f01c7a"
+    }
+  ],
+  "generatedInputs": [
+    {
+      "block": "swiftui.toggle",
+      "source": {
+        "role": "generated witness",
+        "path": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.swift",
+        "bytes": 254,
+        "sha256": "sha256:3963ee0eb84db394afe8c7ff6b318a6687272c00dba0f5fc502e54af1f0d2331"
+      },
+      "manifest": {
+        "role": "generated manifest",
+        "path": "factory/probes/generated/factory.probes.smoke.swiftui.toggle.manifest.json",
+        "bytes": 1776,
+        "sha256": "sha256:ea1e48d8ea6bacbc256902afe0332718cfad791a4fb5123667100ef5f5d628af"
+      },
+      "recipe": {
+        "role": "recipe",
+        "path": "factory/recipes/data/swiftui.toggle.json",
+        "bytes": 1897,
+        "sha256": "sha256:be9a47a98424327373c7f0e199bc3375cd7f6cc541558f77b6d7a4038f482cb9"
+      }
+    },
+    {
+      "block": "swiftui.disabled",
+      "source": {
+        "role": "generated witness",
+        "path": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.swift",
+        "bytes": 229,
+        "sha256": "sha256:809a9b357e8432236658f9f7453c271f1a8f3967a9d8bb02e2fd7230f3c8b6ed"
+      },
+      "manifest": {
+        "role": "generated manifest",
+        "path": "factory/probes/generated/factory.probes.smoke.swiftui.disabled.manifest.json",
+        "bytes": 1826,
+        "sha256": "sha256:96e08adaabfec69b419b8a51f0bfdf308968d8a1d4a38d8bdb4fdc42a23d603d"
+      },
+      "recipe": {
+        "role": "recipe",
+        "path": "factory/recipes/data/swiftui.disabled.json",
+        "bytes": 1702,
+        "sha256": "sha256:8cd033248e1f31cfd02e546a9df4648c02038d3880822dcdbc381e6ca0719296"
+      }
+    }
+  ],
+  "machinery": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/pilot-generic-capture-v1/text/prepare-plan.py",
+      "role": "reviewed source-plan interface only"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/pilot-generic-capture-v1/text/capture-single.ps1",
+      "role": "reviewed Windows capture interface only"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mac-capture-same-group-v1/capture_origin_rectangle_r1.py",
+      "role": "reviewed Mac protocol interface only"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/uia-source-closure-admission-v1",
+      "role": "required source closure packet"
+    }
+  ],
+  "execution": {
+    "compilerActions": 0,
+    "nativeActions": 0,
+    "remoteActions": 0,
+    "tests": 0,
+    "qualification": "held"
+  }
+}

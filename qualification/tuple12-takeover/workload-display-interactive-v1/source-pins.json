@@ -1,0 +1,15 @@
+{
+  "kind": "sr0-tuple12-workload-display-interactive-v1",
+  "status": "source-ready-pending-root-parser-headless-control-and-interactive-schedule",
+  "base_source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "envelope": { "path": "qualification/tuple12-takeover/workload-display-interactive-v1/run-interactive-diagnostic.ps1", "sha256": "PENDING_ROOT_HASH" },
+  "child": { "path": "qualification/tuple12-takeover/workload-display-diagnostic-v3/run-one-diagnostic.ps1", "binding": "v3 session admission and v6 owned helper" },
+  "shared_helper": { "path": "qualification/tuple12-takeover/workload-incremental-v6/shared/Sr0OwnedJobProcess.cs", "sha256": "PENDING_ROOT_HASH", "provenance": "exact v6 helper, unchanged" },
+  "limits": { "job_memory_bytes": 1073741824, "stream_cap_bytes": 8388608, "child_deadline_seconds": 900, "poll_seconds": 1, "active_processes": 0, "child_receipt_read_bytes": 2097152 },
+  "admission": { "current_session_equals_active_console": true, "session_mismatch_status": "session-mismatch", "ssh_session0_must_reject_before_child": true },
+  "workload": { "runs": 1, "no_activate": true, "background_no_activate": true, "input": false },
+  "lock": { "owner": "v3 child", "release": "child cleanupZero + task quiescence only", "preserve_on_failure": true },
+  "execution": { "native": false, "compiler": false, "scheduled_interactive": false, "controls_run": false }
+}

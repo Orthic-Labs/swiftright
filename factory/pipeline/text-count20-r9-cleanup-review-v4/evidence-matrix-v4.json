@@ -1,0 +1,59 @@
+{
+  "kind": "text-count20-r9-cleanup-evidence-matrix-v4",
+  "owner": "factory-rectangle-9526f6f062a841d69ec4a860f4b4cd03 2026-10-12T03:57:15.1903850+00:00",
+  "count": 20,
+  "identityManifest": {
+    "path": "factory/pipeline/text-count20-r9-cleanup-review-v4/identity-input-v4.json",
+    "sha256": "53ad4efa214ccff0429299c8b286748b262c7dade196ac298380084ceff76cdf"
+  },
+  "originalEvidence": {
+    "coordinator": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/coordinator.json",
+      "sha256": "72b872b2e87b2bb239e68c6ce33ae8a2b895f4fd19c72aedad5479e3e304cb6a",
+      "parentPid": 53320,
+      "kernelWait": 0,
+      "kernelExitCodeSigned": 1
+    },
+    "taskResult": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/task-result.json",
+      "sha256": "fdea9ecef57d92e8d988cfb99ca8b7ec5f65572ce08537310431dffae84120e2",
+      "peakJobMemoryUsedBytes": 335839232,
+      "jobMemoryLimitBytes": 1073741824,
+      "status": "hold-harness-error"
+    },
+    "sourceInputs": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/source-inputs.json",
+      "sha256": "6c335ddead9c023b1faf40bc9e02fb679112f48ec1955934dd28ce4268789c22"
+    }
+  },
+  "workerInventories": [
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/owned-worker-inventory.json",
+      "sha256": "5605275d710cd041872674c94cbfe9f8c90a34e4cde3b711eb2533f3ca1cc186"
+    },
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/owned-worker-inventory.json",
+      "sha256": "3c40c9f1b47b0e0ccdc2d2134968de55c65d7e225466ac31cd7a3bfd76ec719f"
+    }
+  ],
+  "priorCleanupReceipts": {
+    "innerReceipt": {
+      "path": "factory/pipeline/text-count20-r9-owned-cleanup-root-v2/root-late-cleanup-r2/cleanup-receipt.json",
+      "sha256": "2fd77664984b7561af5541a467c061174e92e3c25e46c8e797576f7004547f74"
+    },
+    "outerWrapperStdout": {
+      "path": "factory/pipeline/text-count20-r9-owned-cleanup-root-v2/root-late-cleanup-r2/read-transport/transport.json.stdout.bin",
+      "sha256": "2bafb953c241714cc8efc79de235d4b55ba3339e8d43d16878fc15004d360064"
+    },
+    "outerWrapperStderr": {
+      "path": "factory/pipeline/text-count20-r9-owned-cleanup-root-v2/root-late-cleanup-r2/read-transport/transport.json.stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "policy": {
+    "currentAbsence": "managed absence + native OpenProcess ERROR_INVALID_PARAMETER 87; no original terminal proof inferred",
+    "reusedPid": "never terminate or release on path/start/hash mismatch",
+    "release": "exclusive expected-owner CAS only after all five identities current-quiescent",
+    "qualification": "always held; current absence is cleanup evidence only"
+  }
+}

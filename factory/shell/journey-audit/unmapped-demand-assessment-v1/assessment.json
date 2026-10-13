@@ -1,0 +1,1994 @@
+{
+  "kind": "f12-unmapped-demand-assessment-v1",
+  "version": 1,
+  "policy": {
+    "scope": "61 rows whose source-receipt-refresh-v2 status is unmapped",
+    "associationRequires": "exact source anchor plus exact SDK catalogue symbol plus existing registry identity",
+    "fuzzyNameMatchesRejected": true,
+    "ownershipOrDependencyEvidenceRejected": true,
+    "registryPromotionCount": 0,
+    "catalogueProposalCount": 0
+  },
+  "inputs": {
+    "demandAssociations": {
+      "path": "factory/shell/journey-audit/source-receipt-refresh-v2/evidence/demand-associations-v2.json",
+      "sha256": "sha256:f38615ab56d5b8ccaf7620e6d828699a0132f8a060ebcac6316944eb0910e22a"
+    },
+    "independentReview": {
+      "path": "factory/shell/journey-audit/source-receipt-refresh-v2/independent-review-v1/review.json",
+      "sha256": "sha256:6a6b8e27e6c2ff3addc7d31f4fcd872f6647d63fedde7e427e972f19eba4d7be"
+    },
+    "catalogue": {
+      "path": "factory/catalogue/evidence/catalogue.json",
+      "sha256": "sha256:740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270",
+      "id": "sdk.macos27.swiftui",
+      "version": "0.1",
+      "symbolCount": 108272,
+      "sourceHash": "sha256:48a54bd1cb7afdb3b878f95c2fcc6f07b45f629862a3f97911079b36b17259bf"
+    },
+    "registryManifest": {
+      "path": "factory/registry/manifest.json",
+      "sha256": "sha256:7a2e80bf7ce132955e46b676c4818f96bfaebde279f5d5a4868da5d3bb482cf1",
+      "id": "swiftui-pilot-rounds-1-2",
+      "version": "0.1",
+      "blockIds": [
+        "swiftui.shapes.fill-stroke",
+        "swiftui.image",
+        "swiftui.stack-overlay",
+        "swiftui.text.bundled-font",
+        "swiftui.custom-layout",
+        "swiftui.scroll-view",
+        "swiftui.toggle",
+        "swiftui.disabled",
+        "swiftui.padding-frame",
+        "swiftui.preference-key"
+      ]
+    },
+    "blockRegistry": {
+      "path": "factory/registry/evidence/block-registry.json",
+      "sha256": "sha256:1ad0a508bb0b721a31f9e2ecdf209a217d20c52d2666a14d3eaf970653d8b983",
+      "id": "swiftui-pilot-rounds-1-2.block-registry",
+      "version": "0.1"
+    }
+  },
+  "counts": {
+    "inputDemandRows": 107,
+    "unmappedRows": 61,
+    "sourceInventoryOnlyRows": 46,
+    "assessedRows": 61,
+    "catalogueProposals": 0,
+    "registryMappings": 0
+  },
+  "rows": [
+    {
+      "journeyId": "slice-editor",
+      "demand": "Binding(get:set:)",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "swiftui-source-anchor-no-exact-catalogue-binding",
+      "reason": "SwiftUI source anchor is broad and does not expose exact catalogue symbol identity or registry block identity.",
+      "evidenceRefs": [
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "slice-editor",
+      "demand": "Button actions",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "swiftui-source-anchor-no-exact-catalogue-binding",
+      "reason": "SwiftUI source anchor is broad and does not expose exact catalogue symbol identity or registry block identity.",
+      "evidenceRefs": [
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "media-playback",
+      "demand": "HTML media element and codec recovery",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "media-player",
+          "line": 209,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "slice-editor",
+      "demand": "List/ForEach/onMove",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "swiftui-source-anchor-no-exact-catalogue-binding",
+      "reason": "SwiftUI source anchor is broad and does not expose exact catalogue symbol identity or registry block identity.",
+      "evidenceRefs": [
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "PDF.js worker/render pipeline",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "slice-editor",
+      "demand": "TextField/FocusState",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "swiftui-source-anchor-no-exact-catalogue-binding",
+      "reason": "SwiftUI source anchor is broad and does not expose exact catalogue symbol identity or registry block identity.",
+      "evidenceRefs": [
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "settings",
+      "demand": "TextField/control variety",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "settings-panel",
+          "line": 173,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "sha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "text": "export function SettingsPanel(props: SettingsPanelProps) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "dialogs",
+      "demand": "animation and dismiss interactions",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "settings",
+      "demand": "async loading and external-change reconciliation",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "settings-panel",
+          "line": 173,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "sha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "text": "export function SettingsPanel(props: SettingsPanelProps) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "image-view-edit",
+      "demand": "canvas/image transform",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "image-viewer",
+          "line": 97,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "text": "export function ImageViewer(props: ImageViewerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "navigation",
+      "demand": "command palette modal and focus trap",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "nav",
+          "line": 26,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {"
+        },
+        {
+          "id": "nav-key",
+          "line": 54,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function navNeighborIndex("
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "persistence",
+      "demand": "crash-safe atomic write",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "cross-product-source-boundary-and-no-exact-catalogue-binding",
+      "reason": "Evidence spans SwiftUI plus non-SwiftUI source; no exact catalogue symbol and registry block can be joined from anchors.",
+      "evidenceRefs": [
+        {
+          "id": "theme-store",
+          "line": 82,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "sha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "text": "export function createThemeStore(options: ThemeStoreOptions) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        },
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "image-view-edit",
+      "demand": "crop/text editing controls",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "image-viewer",
+          "line": 97,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "text": "export function ImageViewer(props: ImageViewerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "image-view-edit",
+      "demand": "custom pointer gestures",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "image-viewer",
+          "line": 97,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "text": "export function ImageViewer(props: ImageViewerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "tray-menu",
+      "demand": "deep-link parsing/routing",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "recovery",
+      "demand": "diagnostics and logs",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "error-boundary",
+          "line": 14,
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "sha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "text": "export class ErrorBoundary extends Component<Props, State> {"
+        },
+        {
+          "id": "onboard-retry",
+          "line": 151,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "legal-acceptance",
+      "demand": "document scroll/acknowledgement gating",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "document/file adapter",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "recovery",
+      "demand": "document/session restoration",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "error-boundary",
+          "line": 14,
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "sha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "text": "export class ErrorBoundary extends Component<Props, State> {"
+        },
+        {
+          "id": "onboard-retry",
+          "line": 151,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "onboarding",
+      "demand": "download progress/cancel/retry",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "onboard-ports",
+          "line": 28,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "text": "export interface PermissionsBackend {"
+        },
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "updates",
+      "demand": "download/install progress",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "updates",
+          "line": 187,
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "text": ": \"Check for updates\"}"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "tray-menu",
+      "demand": "duplicate/window targeting policy",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "onboarding",
+      "demand": "durable state + service sequencing",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "onboard-ports",
+          "line": 28,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "text": "export interface PermissionsBackend {"
+        },
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "recovery",
+      "demand": "error classification",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "error-boundary",
+          "line": 14,
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "sha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "text": "export class ErrorBoundary extends Component<Props, State> {"
+        },
+        {
+          "id": "onboard-retry",
+          "line": 151,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "external-link policy",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "find input and IME",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "shortcuts",
+      "demand": "focus/IME behavior",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shortcuts",
+          "line": 167,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "sha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "text": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {"
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "media-playback",
+      "demand": "fullscreen host API",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "media-player",
+          "line": 209,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "shortcuts",
+      "demand": "key event routing",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shortcuts",
+          "line": 167,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "sha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "text": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {"
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "settings",
+      "demand": "keyboard focus and navigation",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "settings-panel",
+          "line": 173,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "sha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "text": "export function SettingsPanel(props: SettingsPanelProps) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "navigation",
+      "demand": "keyboard focus/roving selection",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "nav",
+          "line": 26,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {"
+        },
+        {
+          "id": "nav-key",
+          "line": 54,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function navNeighborIndex("
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "media-playback",
+      "demand": "keyboard transport shortcuts",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "media-player",
+          "line": 209,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "image-view-edit",
+      "demand": "large resource lifecycle",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "image-viewer",
+          "line": 97,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "text": "export function ImageViewer(props: ImageViewerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "onboarding",
+      "demand": "legal modal/eligibility controls",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "onboard-ports",
+          "line": 28,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "text": "export interface PermissionsBackend {"
+        },
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "media-playback",
+      "demand": "media conversion service",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "media-player",
+          "line": 209,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "dialogs",
+      "demand": "modal stacking/focus restoration",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "tray-menu",
+      "demand": "native menu/tray lifecycle",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "image-view-edit",
+      "demand": "native open/save/print dialogs",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "image-viewer",
+          "line": 97,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/image/ImageViewer.tsx",
+          "sha256": "0ed60c870fcfcb0537c0cfda39666402bb4232bcf6f18ae916c7a69b8c580af4",
+          "text": "export function ImageViewer(props: ImageViewerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "navigation",
+      "demand": "navigation transitions",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "nav",
+          "line": 26,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {"
+        },
+        {
+          "id": "nav-key",
+          "line": 54,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function navNeighborIndex("
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "onboarding",
+      "demand": "ordered multi-step flow",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "onboard-ports",
+          "line": 28,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "text": "export interface PermissionsBackend {"
+        },
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "onboarding",
+      "demand": "permission prompts",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "onboard-ports",
+          "line": 28,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/types.ts",
+          "sha256": "ee4c4386ea05e1628a019c2eedc04e7d0d4f126fd54ea549f6758dfa6a23f30f",
+          "text": "export interface PermissionsBackend {"
+        },
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "slice-editor",
+      "demand": "persistence",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "swiftui-source-anchor-no-exact-catalogue-binding",
+      "reason": "SwiftUI source anchor is broad and does not expose exact catalogue symbol identity or registry block identity.",
+      "evidenceRefs": [
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "updates",
+      "demand": "platform installer and rollback",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "updates",
+          "line": 187,
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "text": ": \"Check for updates\"}"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "legal-acceptance",
+      "demand": "quit/close action",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "legal-acceptance",
+      "demand": "radio/checkbox controls",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "shortcuts",
+      "demand": "rebinding capture/conflict UX",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shortcuts",
+          "line": 167,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "sha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "text": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {"
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "legal-acceptance",
+      "demand": "receipt persistence/hash",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "updates",
+      "demand": "restart/recovery strategy",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "updates",
+          "line": 187,
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "text": ": \"Check for updates\"}"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "persistence",
+      "demand": "schema migration",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "cross-product-source-boundary-and-no-exact-catalogue-binding",
+      "reason": "Evidence spans SwiftUI plus non-SwiftUI source; no exact catalogue symbol and registry block can be joined from anchors.",
+      "evidenceRefs": [
+        {
+          "id": "theme-store",
+          "line": 82,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "sha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "text": "export function createThemeStore(options: ThemeStoreOptions) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        },
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "shortcuts",
+      "demand": "sequence timeout",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shortcuts",
+          "line": 167,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/shortcuts.ts",
+          "sha256": "fef05533504f2f97b6099161e8bd8fe8fe4c6c6633051fc6832e258fa953b92d",
+          "text": "export function createShortcutRegistry(options: ShortcutRegistryOptions = {}) {"
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "settings",
+      "demand": "settings storage/revision service",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "settings-panel",
+          "line": 173,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "sha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "text": "export function SettingsPanel(props: SettingsPanelProps) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "sidebar panels",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "navigation",
+      "demand": "sidebar selection state",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "nav",
+          "line": 26,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function filterNavGroups(groups: readonly NavGroup[], query: string): NavGroup[] {"
+        },
+        {
+          "id": "nav-key",
+          "line": 54,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/nav.ts",
+          "sha256": "cce566059ce3c2e2b1db550eb8a3aacdcd084e646d622d7e221810bf0e832b23",
+          "text": "export function navNeighborIndex("
+        },
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        },
+        {
+          "id": "shell-bridge",
+          "line": 16,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/bridge.ts",
+          "sha256": "373c32ef6a4a683ab42788775c60fd3b966739dfc9317bf7f9fd3cc8de69db2d",
+          "text": "export interface AppShellBridge {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "recovery",
+      "demand": "startup/window recovery",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "error-boundary",
+          "line": 14,
+          "path": "/Volumes/D/claude/viewright/src/app/ErrorBoundary.tsx",
+          "sha256": "6eeffc679b14dfe03543312ae563a486741590a89eb383f3748dad0cd850765d",
+          "text": "export class ErrorBoundary extends Component<Props, State> {"
+        },
+        {
+          "id": "onboard-retry",
+          "line": 151,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "if (error && !state) return <div className={cx(\"rk-onboarding\", className)}><p className=\"rk-onboarding__error\" role=\"alert\">{error}</p><Button onClick={() => window.location.reload()}>Retry</Button></div>;"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "persistence",
+      "demand": "storage adapters and cross-process consistency",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "cross-product-source-boundary-and-no-exact-catalogue-binding",
+      "reason": "Evidence spans SwiftUI plus non-SwiftUI source; no exact catalogue symbol and registry block can be joined from anchors.",
+      "evidenceRefs": [
+        {
+          "id": "theme-store",
+          "line": 82,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/theme.ts",
+          "sha256": "f8c9f3f09031246de2c4d3b7d70063ca4c3abb4b50b471e566758a3101963459",
+          "text": "export function createThemeStore(options: ThemeStoreOptions) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        },
+        {
+          "id": "slice-model",
+          "line": 117,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorModel.swift",
+          "sha256": "75eaac0255c69c5e3f10c302e7103c6398333c3973797aca48b5494606ff6c66",
+          "text": "private func persist() {"
+        },
+        {
+          "id": "slice-editor",
+          "line": 14,
+          "path": "/Volumes/D/claude/swiftright/examples/SliceApp/Sources/SliceApp/Shared/EditorScreen.swift",
+          "sha256": "e269da98ff801b525aa6cd6e606fe09b69754983dc465791269bded305f69f31",
+          "text": "struct EditorScreen: View {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "dialogs",
+      "demand": "text entry/IME",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "shell-provider",
+          "line": 101,
+          "path": "/Volumes/D/claude/rightkit/packages/app-shell/src/react/provider.tsx",
+          "sha256": "3fea819d427b5e53ee19c9d7d536cb75ba480b5b90965da23c8078391bf99af3",
+          "text": "export function ShellProvider({"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "media-playback",
+      "demand": "time/progress animation",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "media-player",
+          "line": 209,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/MediaPlayer.tsx",
+          "sha256": "8d72f466662ba97d8a5ff3a62974424ec915caab8197535480dfabea6adc2923",
+          "text": "export function MediaPlayer(props: MediaPlayerProps) {"
+        },
+        {
+          "id": "media-adapters",
+          "line": 47,
+          "path": "/Volumes/D/claude/rightkit/packages/media-ui/src/adapters.tsx",
+          "sha256": "c6e425f44259088d2cd19d583d8b73637674119dcd7ff6088d8718f9c91d0a36",
+          "text": "export interface MediaAdapters {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "updates",
+      "demand": "update service/auth",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "updates",
+          "line": 187,
+          "path": "/Volumes/D/claude/viewright/src/settings/sections/UpdatesSection.tsx",
+          "sha256": "0ed709e06c50284d72f5228b226f8c62d8c0cf4e3d7069744b636686d5cf583e",
+          "text": ": \"Check for updates\"}"
+        },
+        {
+          "id": "recovery",
+          "line": 57,
+          "path": "/Volumes/D/claude/viewright/src/app/setupRecovery.ts",
+          "sha256": "6d43aec544b208e0a30e865ad8a6d4835c8978424bc12fe488fc15912715b94f",
+          "text": "throw new Error(`Save or close ${dirtyPdf.displayName} before installing the update.`);"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "settings",
+      "demand": "validation/errors",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "settings-panel",
+          "line": 173,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/SettingsPanel.tsx",
+          "sha256": "33cd96fc8186666d7017a002b5d833089ef100b9c42bfd54a2f11941b2a896da",
+          "text": "export function SettingsPanel(props: SettingsPanelProps) {"
+        },
+        {
+          "id": "settings-backend",
+          "line": 12,
+          "path": "/Volumes/D/claude/rightkit/packages/settings-ui/src/types.ts",
+          "sha256": "17e02b20b7e28e96d690ff8962068ab44aa93fc6c1846708ecb83cb1b27b2b5d",
+          "text": "export interface SettingsBackend {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "legal-acceptance",
+      "demand": "version policy",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "legal-gate",
+          "line": 272,
+          "path": "/Volumes/D/claude/rightkit/packages/legal-ui/src/LegalGate.tsx",
+          "sha256": "d80f967e8e156a632065c168345f14041b0baa8a30eca44800ff48d316b732a2",
+          "text": "export function LegalGate({"
+        },
+        {
+          "id": "onboard-flow",
+          "line": 74,
+          "path": "/Volumes/D/claude/rightkit/packages/onboarding/src/Onboarding.tsx",
+          "sha256": "8eff4d33f0ce06f5ca370aa4572fdd56c4980c1ac295c35a52ca1d08d92e70a8",
+          "text": "export function Onboarding({ settings, legal, steps = [], permissions, models, license, onComplete, onSkip, className, requiredVersion, isAccepted, documentsHash, beforeLegalGate, requireModel, autoStartDownload, shouldAutoStart, onModelsStepEnter, modelsIntro, allowSkip = true, titlebar, dragRegion, legalDragRegion = false, legalReceipt }: OnboardingProps) {"
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    },
+    {
+      "journeyId": "pdf-reading",
+      "demand": "view-state persistence",
+      "status": "unmapped",
+      "sourceAssociationStatus": "unmapped",
+      "associationKind": "current-source-evidence-association-only",
+      "sourceProof": false,
+      "reasonCode": "non-swift-source-boundary",
+      "reason": "Evidence is RightKit/ViewRight source; SDK catalogue is SwiftUI and no exact SwiftUI catalogue symbol or registry block is evidenced.",
+      "evidenceRefs": [
+        {
+          "id": "pdf-viewer",
+          "line": 166,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/PdfViewer.tsx",
+          "sha256": "57ad768e42ce42002f7160a8e9c0f742b47bf554336d5ae3618af4ebae560fe5",
+          "text": "export function PdfViewer({"
+        },
+        {
+          "id": "pdf-source",
+          "line": 11,
+          "path": "/Volumes/D/claude/rightkit/packages/pdf-ui/src/types.ts",
+          "sha256": "cdc3373245b1b9c9978de2501d1a133bc81b85f81054c4f180ed96e2cc342771",
+          "text": "export type PdfSource ="
+        }
+      ],
+      "catalogueExactMatches": [],
+      "registryCandidateIds": [],
+      "proposalStatus": "none-source-provable"
+    }
+  ]
+}

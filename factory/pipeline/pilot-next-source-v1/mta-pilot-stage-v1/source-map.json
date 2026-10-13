@@ -1,0 +1,56 @@
+{
+  "kind": "factory-mta-pilot-stage-source-map-v1",
+  "status": "source-only-pending-root-review",
+  "stager": "stage_mta_count1_r5.py",
+  "stagerSha256": "cd03dd16a9a926506a2d3933a0130ae8aba0b27e54ffa3de1398df7c187225f6",
+  "stagerBytes": 34073,
+  "profiles": {
+    "text": {
+      "donor": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r4-sources",
+      "installerTemplate": "factory/native/windows/pilot-text-paint-root-v2/install-count1-r4.ps1",
+      "guard": "overlay/integration-fresh-text-v1.ps1",
+      "issuer": "overlay/issue-text-metadata-v1.ps1",
+      "mtaWorker": "producer/dependencies/uia-worker/invoke-worker-mta.ps1",
+      "mtaControls": [
+        "overlay/final-exit-certificate-mta-v1.ps1",
+        "overlay/test-mta-config-admission.ps1",
+        "overlay/test-uia-mta-controls.ps1"
+      ],
+      "rendererFinalExit": "producer/support/final-exit-certificate.ps1",
+      "workerFinalExit": "producer/dependencies/uia-worker/support/final-exit-certificate.ps1"
+    },
+    "circle": {
+      "donor": "factory/native/windows/pilot-circle-root-v1/capture-count1-r4-sources",
+      "installerTemplate": "factory/native/windows/pilot-circle-root-v1/install-count1-r4.ps1",
+      "guard": "overlay/integration-fresh-circle-v1.ps1",
+      "issuer": "overlay/issue-circle-metadata-v1.ps1",
+      "mtaWorker": "producer/dependencies/uia-worker/invoke-worker-mta.ps1",
+      "mtaControls": [
+        "overlay/final-exit-certificate-mta-v1.ps1",
+        "overlay/test-mta-config-admission.ps1",
+        "overlay/test-uia-mta-controls.ps1"
+      ],
+      "rendererFinalExit": "producer/support/final-exit-certificate.ps1",
+      "workerFinalExit": "producer/dependencies/uia-worker/support/final-exit-certificate.ps1"
+    }
+  },
+  "limits": {
+    "maxFiles": 256,
+    "maxFileBytes": 8388608,
+    "maxTotalBytes": 33554432
+  },
+  "requiredControls": [
+    "stage manifest row hash/byte verification",
+    "renderer vs worker final-exit helper distinction",
+    "MTA invoker path/hash/byte binding",
+    "source-inputs hash after all source changes",
+    "profile integration positive plus real field mutations",
+    "fresh output collision rejection",
+    "coordinator preflight with nativeActions=0 and lockActions=0"
+  ],
+  "historicalInputs": {
+    "textMtaInvokerSha256": "e8b62b517bb38d21b9006bdea5a5e76dd8b19491a8c5e37403d6cfa2bfe5a547",
+    "circleMtaInvokerSha256": "e8b62b517bb38d21b9006bdea5a5e76dd8b19491a8c5e37403d6cfa2bfe5a547"
+  },
+  "graphReseal": "candidate tuple sourceInputs/context, canonicalTupleRef, source-inputs tuple/context/binding refs resealed after namespace transforms"
+}

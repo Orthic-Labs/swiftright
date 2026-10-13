@@ -1,0 +1,34 @@
+{
+  "kind": "sr0-tuple12-windows-full-assembler-v3",
+  "status": "source-ready-pending-root-native-admission",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "assembler_sha256": "9cfe6d9be06ad8c6f0b0be17e28f6e97547ab24a2514c5b1ee440cd14580c6be",
+  "controls_sha256": "b3e582a044e330a12cc48233720da1ba24ec4e4022373c096aae886ad40b2e3a",
+  "driver_base_sha256": "5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4",
+  "driver_sha256": "0b95be5be7e208e9f2d1eefe60287184278e39b6738a9c4fd8388b23f0828d1c",
+  "driver_overlay": {
+    "path": "qualification/tuple12-takeover/f3-ready-diagnosis-v1/drive-fixture-noactivate-focus-r6-diagnostic.ps1",
+    "base_path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r5.ps1",
+    "policy": "R5 source plus exactly four timing-only lines; no marker, assertion, input, identity, or cleanup changes"
+  },
+  "worker_sha256": "efa1bc833afa0ab9b04caa8e41f5dd8a685613c488075e91422ef19973dc0079",
+  "coordinator_sha256": "3a3a815c0bcb62880244ee0ff2ca96b479c44838285d281fafb5ad94b6b857a8",
+  "runner_sha256": "f29f670ebdce71a27d363b68ca1cb63ae34cdd04266cf2b56978eb77028f8cd4",
+  "configs": 16,
+  "runs_per_config": 20,
+  "required_runs": 320,
+  "native_denominators": {
+    "F1": 17,
+    "F2": 13,
+    "F3": 15,
+    "F4": 12,
+    "F5": 13,
+    "F6": 16,
+    "F6-reduced": 11,
+    "F7": 20,
+    "F8": 15,
+    "F9": 11
+  },
+  "admission": "qualified only when all 16 configurations x 20 runs pass strict native markers, exact artifact/source joins, retained-handle/kernel exit proofs, noactivate, targeted delivery, same HWND/process/handle, and complete drains",
+  "timing_overlay": "R6 diagnostics are observational; readiness timing is not an admission relaxation"
+}

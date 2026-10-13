@@ -1,0 +1,93 @@
+{
+  "baseMap": {
+    "bytes": 76562,
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v1/count20-r11-input-map.pending.json",
+    "sha256": "sha256:985c4cb7728049031dc26905a1a5c4519aeeb226cf59932c232c5ce8ac4819ab"
+  },
+  "candidateOnly": true,
+  "count": 20,
+  "donorRebindForbidden": true,
+  "effects": {
+    "compilerActions": 0,
+    "lockActions": 0,
+    "nativeWindowActions": 0,
+    "remoteActions": 0
+  },
+  "freshOutputFields": [
+    "runID",
+    "runRoot",
+    "metadataManifest",
+    "issuedMetadata",
+    "candidateBinding",
+    "candidateTuple",
+    "captureIDs",
+    "nativeRows"
+  ],
+  "freshRefs": {
+    "case": {
+      "bytes": 2334,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/cases/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.json",
+      "sha256": "sha256:f9a8e685f55c8063fde159bfb58926c637cd740fc8c6edb71de702933b7e3878"
+    },
+    "equivalenceV4": {
+      "bytes": 3226,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-admission-r4-admission-v1/replay-equivalence-v4.json",
+      "sha256": "sha256:aa8f39419292d2170b9036f6ee648bf8b71f9ca9ddcf6205d1a03ea0b2f2f34d"
+    },
+    "manifest": {
+      "bytes": 1896,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/manifests/swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9.manifest.json",
+      "sha256": "sha256:e39db8b6d3844c6de9811eb5783564b49eb8556bc3cc854e79c3a36c61f8e9e0"
+    },
+    "tuple": {
+      "bytes": 2244,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/generated/13bfe5b8fbd9/candidate-tuple.json",
+      "sha256": "sha256:bf5978000391687733885d3e49465e79e7727f374488cb359595a085113422c0"
+    }
+  },
+  "requiredFreshCaseHash": "sha256:037c8e81cdc19fa488812bea6ed618aaa4ff8960a9b485fc60fc8c61dcc338de",
+  "requiredFreshTupleID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+  "rootEffectsOnly": [
+    "issuer execution",
+    "guard execution",
+    "coordinator/desktop lock",
+    "native Count20 launch"
+  ],
+  "schema": "factory-windows-count20-r11-fresh-issuer-source-map-v2",
+  "sourceControls": [
+    "v4 receipt status/candidateOnly/fresh metadata+IDs",
+    "fresh byte hashes",
+    "exact closure hashes",
+    "20 ID syntax/uniqueness",
+    "namespace nonexistence",
+    "historical donor relabel rejection"
+  ],
+  "sources": {
+    "README.md": {
+      "bytes": 1722,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/README.md",
+      "sha256": "sha256:3e0d9dc0cb0f057ce7b89c3683b3eacfc06403be83aec8d806dae7cfd41d4fc0"
+    },
+    "guard-count20-fresh-r11.ps1": {
+      "bytes": 7394,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/guard-count20-fresh-r11.ps1",
+      "sha256": "sha256:24d5e0661ff7734fb4f32a620802d872af48c09770f7556225a668b7aa9a5c87"
+    },
+    "issue-count20-fresh-r11.ps1": {
+      "bytes": 9142,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/issue-count20-fresh-r11.ps1",
+      "sha256": "sha256:ba5befd4a8d680e14b534c73175350e7583b389ea548c3d3c5e8370445a59cc3"
+    },
+    "launch-count20-fresh-r11.ps1": {
+      "bytes": 4125,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/launch-count20-fresh-r11.ps1",
+      "sha256": "sha256:de8a427e2b1af86029084f062262bf0ab5e5d5bf594a8cbadc973a0e21e2a973"
+    },
+    "test-count20-fresh-r11.py": {
+      "bytes": 2298,
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v2/test-count20-fresh-r11.py",
+      "sha256": "sha256:3a12f66bb05ef0befc6a4ad0c8cbd074eea0ebe857d59623730f48afb66671ce"
+    }
+  },
+  "status": "source-ready-fresh-metadata-required"
+}

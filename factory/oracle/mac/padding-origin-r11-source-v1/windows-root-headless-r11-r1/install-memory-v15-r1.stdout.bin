@@ -1,0 +1,54 @@
+{
+    "kind":  "root-factory-v15-actual-memory-controls-v1",
+    "status":  "passed",
+    "stageManifestSha256":  "634bb4d5ea5459457cf573d7381bc942ac6ac5c66e17e875ed4c99222821e4a6",
+    "receiptSha256":  "53aaae03bda130b7160a7f3a6dff560d86d742f5536e5ab9809f70a3b4be3ed3",
+    "parsed":  11,
+    "controls":  {
+                     "schema":  "factory-interactive-job-memory-controls-v2",
+                     "status":  "passed-source-only",
+                     "controls":  [
+                                      {
+                                          "name":  "wrong-memory-limit-flags",
+                                          "accepted":  false,
+                                          "expectedRejected":  true,
+                                          "error":  "Exception calling \"ValidateFlagsForControl\" with \"1\" argument(s): \"Only JOB_OBJECT_LIMIT_JOB_MEMORY is admitted\""
+                                      },
+                                      {
+                                          "name":  "positive-1GiB-memory-job",
+                                          "accepted":  true,
+                                          "expectedRejected":  false,
+                                          "error":  ""
+                                      },
+                                      {
+                                          "name":  "live-child-guard-rejects",
+                                          "accepted":  false,
+                                          "expectedRejected":  true,
+                                          "error":  "Exception calling \"RequireOnlyCurrent\" with \"1\" argument(s): \"Live child process remains in memory job\""
+                                      },
+                                      {
+                                          "name":  "self-only-after-child-terminal",
+                                          "accepted":  true,
+                                          "expectedRejected":  false,
+                                          "error":  ""
+                                      }
+                                  ],
+                     "childProof":  {
+                                        "pid":  56184,
+                                        "originalHandleRetained":  true,
+                                        "terminal":  true,
+                                        "exitCode":  -1,
+                                        "deadlineMilliseconds":  2500,
+                                        "noWindow":  true
+                                    },
+                     "jobMemoryLimitBytes":  1073741824,
+                     "jobMemoryLimitFlag":  512,
+                     "killOnJobClose":  false,
+                     "nativeWindowActions":  0,
+                     "compilerActions":  0,
+                     "remoteActions":  0,
+                     "lockActions":  0
+                 },
+    "nativeWindowActions":  0,
+    "lockActions":  0
+}

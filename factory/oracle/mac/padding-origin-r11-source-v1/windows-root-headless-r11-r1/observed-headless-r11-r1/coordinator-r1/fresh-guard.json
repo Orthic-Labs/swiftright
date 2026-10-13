@@ -1,0 +1,114 @@
+{
+    "kind":  "factory-fresh-count20-r11-guard-controls-v1",
+    "status":  "passed-source-only",
+    "issuedMetadataPath":  "D:\\Claude\\swiftright\\.factory-work\\windows-replay-r11\\coordinator-r1\\issued-metadata.json",
+    "issuedMetadataSha256":  "7d1747fd3fbd62ddb3f6adfc4e3b9519636ee64b0ae6c759a53b103e176b03cb",
+    "count":  20,
+    "baseline":  {
+                     "name":  "admitted-baseline-actual",
+                     "accepted":  true,
+                     "rejected":  false,
+                     "nativeWindowActions":  0
+                 },
+    "faultControls":  [
+                          {
+                              "name":  "metadata-expected-count",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh issued metadata context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-host-argument",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh issued metadata context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-source-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh issued metadata context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-serializer-prefix",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh issued metadata context mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "metadata-runtime-modules",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Issued actual runtime module metadata mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-case",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "fresh candidate case mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-runtime",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh runtime/renderer/host closure mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "tuple-renderer",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Fresh runtime/renderer/host closure mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-frozen",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "fresh tuple reference mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "binding-canonical-input-hash",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "fresh candidate binding source-input hash mismatch",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          },
+                          {
+                              "name":  "mac-context-path",
+                              "accepted":  false,
+                              "rejected":  true,
+                              "reason":  "Mac context source ref mismatch: freshCase",
+                              "nativeWindowActions":  0,
+                              "outerMetadataResealed":  true
+                          }
+                      ],
+    "fullControlsRef":  {
+                            "path":  "D:\\Claude\\swiftright\\.factory-work\\windows-replay-r11\\controls-full-r2\\metadata-controls.json",
+                            "sha256":  "sha256:b9b55c9e5c1cba7d35bb217a88bd01b279e94d6188334ba643014af05db5a525",
+                            "bytes":  6011
+                        },
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "remoteActions":  0,
+    "lockActions":  0,
+    "qualification":  "hold"
+}

@@ -1,0 +1,11 @@
+{
+  "kind": "swift-compiler-process-receipt",
+  "version": "2",
+  "invocationMode": "xcrun | direct",
+  "required": ["resolver", "sourceBefore", "sourceAfter", "sourceDrift", "compiler", "status"],
+  "compilerRequired": ["argv", "logicalCompilerName", "logicalCompilerPath", "realPathBefore", "realHashBefore", "realToolBefore", "realToolAfter", "pid", "pgid", "startedAtUtc", "endedAtUtc", "exitCode", "timedOut", "ownedProcessGroup", "cwd", "stdoutPath", "stderrPath", "stdoutHash", "stderrHash", "xcrunPath", "xcrunHash", "outputBinary"],
+  "cleanupRule": "owned start_new_session process group receives bounded TERM then KILL; ProcessLookupError is recorded as nonfatal groupMissing only when exit/drain are durable",
+  "argvRule": "xcrun mode preserves ['/usr/bin/xcrun','swiftc'] logical argv while real resolved compiler path/hash are recorded separately; direct mode preserves logical symlink argv[0] without resolve substitution",
+  "sourceRule": "exact Witness.swift and CaptureHost.swift pre/post path/hash/bytes must match",
+  "successRule": "SUCCESS requires exitCode 0, no timeout, no source/tool drift, durable stdout/stderr & emitted binary hash"
+}

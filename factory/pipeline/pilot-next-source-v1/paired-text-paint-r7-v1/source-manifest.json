@@ -1,0 +1,19 @@
+{
+  "kind": "factory-source-manifest-v1",
+  "packet": "paired-text-paint-r7-v1",
+  "files": [
+    {"path": "compare_text_paint.py", "sha256": "bf0a2c0a55755c0f694b40310c227bed582e4ac25a2fefb88d5e1f3ee033ad2d"},
+    {"path": "README.md", "sha256": "0248a888605513e85febdcff49f9249fb65034cc91d7111ff4f74c0255762e8d"},
+    {"path": "input-template.json", "sha256": "fe6e47072e53411c39a2fb01448c38c2f520fd4dbc68d986e4a8969a2e898282"},
+    {"path": "test_text_paint_controls.py", "sha256": "463bfa989e064d17ea23be5a6e3477eb5dd8672b8fcd046a455cb14d73a2baed"}
+  ],
+  "inputs": {
+    "macRoot": "factory/oracle/mac/text-origin-r11-root-v1/observed-paint-mac20-r1",
+    "macCaseHash": "sha256:29807aa918aa7c2c1c4a4705eb324b0020f29060be7359d4923694aeb5d437ad",
+    "tupleID": "sr1-text-paint-v2-r11-paired20-20261012",
+    "windowsHostHash": "sha256:33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+    "windowsSchemaOnly": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r5g"
+  },
+  "bounds": {"jsonBytes": 4194304, "fileBytes": 16777216, "aggregateBytes": 134217728},
+  "claims": ["raw-only", "observed-diagnostic", "parity-held", "no-qualification"]
+}

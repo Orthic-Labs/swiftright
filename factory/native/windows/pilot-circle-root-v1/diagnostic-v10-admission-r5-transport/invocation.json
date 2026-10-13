@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "win",
+    "powershell.exe",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\run-control-suite-job-v1.ps1",
+    "-HelperPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\transport-v1\\controls-r4\\Sr0RootControlSuiteJobV1.cs",
+    "-HelperSha256",
+    "3ea2ea6d0134278fb704ef4ef8caf3fecc3b8e9463e1872b715baed70c6d0c76",
+    "-ScriptPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\circle-admission-r10f.ps1",
+    "-ScriptSha256",
+    "2469175dc7e1125d6c03254de534062f9b94b985c368744e433940f1503dc76c",
+    "-OutputPath",
+    "D:\\Claude\\swiftright\\.factory-work\\root-tools\\circle-admission-r10f-transport.json",
+    "-DeadlineSeconds",
+    "100"
+  ],
+  "scriptSha256": "2469175dc7e1125d6c03254de534062f9b94b985c368744e433940f1503dc76c",
+  "budgetBytes": 1073741824
+}

@@ -1,0 +1,67 @@
+{
+  "kind": "factory-centered-paired-count1-comparison-v1",
+  "macRoot": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/observed-mac20-r1/run-001",
+  "windowsRoot": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-centered-capture-r11/actual-native-r2/files",
+  "macBuildReceipt": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/build-r1/receipt.json",
+  "expectedCount": 1,
+  "pairCount": 1,
+  "pairs": [
+    {
+      "run": 1,
+      "macDecodedRgbaSha256": "31fb056912009e9d0e3e69e04f9725c2604094a3ac481f4c20bc09ea0e1f5258",
+      "windowsDecodedRgbaSha256": "31fb056912009e9d0e3e69e04f9725c2604094a3ac481f4c20bc09ea0e1f5258",
+      "macPngFileSha256": "4f4b84b66cac6cbd7fdc461af718ec7fa83456a6db4be034c3f197ff262a7198",
+      "windowsPngFileSha256": "14d2eeaf8878fb6594178fb614c65fd309b85c40bf9420eb739bdcf3c69b388f",
+      "macSourcePNGMode": "RGB",
+      "windowsSourcePNGMode": "RGBA",
+      "declaredModeConversion": {
+        "mac": "RGB->RGBA channel-preserving decode",
+        "windows": "none"
+      },
+      "imageSize": [
+        800,
+        600
+      ],
+      "differingPixelCount": 0,
+      "differingPixelBounds": null,
+      "exactPaint": true,
+      "geometryExact": null,
+      "semanticChannel": "pending; Mac accessibilityAttempted=false",
+      "lifecycleBounds": true,
+      "performanceTimingComparison": "pending; raw lifecycle timing retained; no duration/velocity/stall agreement claimed"
+    }
+  ],
+  "exactPaintRuns": 1,
+  "geometryExactRuns": 0,
+  "lifecycleBoundsRuns": 1,
+  "semanticComparison": {
+    "status": "pending",
+    "reason": "Mac archive accessibilityAttempted=false; no AX/geometry channel available"
+  },
+  "performanceTimingComparison": {
+    "status": "pending",
+    "evidence": "each Windows native-XX/lifecycle-timing.json & Mac run-XXX/observation.raw.json retained",
+    "claims": []
+  },
+  "negativeControls": {
+    "passed": true,
+    "count": 6,
+    "mutations": [
+      "sourceHash",
+      "case",
+      "runtime",
+      "renderer",
+      "client",
+      "pixel"
+    ],
+    "reader": "verify_mac_run",
+    "fixture": "factory/pipeline/pilot-delivery-five-v1/root-execution/rectangle-full-viewport-v1/observed-mac20-r1",
+    "scope": "Mac-side artifact faults only; Windows negative-control coverage unavailable"
+  },
+  "normalisation": "none; channel-preserving decode to RGBA for exact comparison",
+  "goldenPromotion": false,
+  "parityPromotion": false,
+  "qualified": false,
+  "nativeActions": 0,
+  "eligibility": "diagnostic-only; exact source/case/tuple/receipt/lifecycle joins recorded"
+}

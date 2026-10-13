@@ -1,0 +1,51 @@
+{
+  "baseline": {
+    "archiveBytes": 5399699,
+    "archiveFiles": 2134,
+    "candidateOnly": true,
+    "cases": 5,
+    "runs": 100,
+    "status": "PASS"
+  },
+  "candidateOnly": true,
+  "controls": [
+    {
+      "acceptedBaseline": true,
+      "control": "missing-summary",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "case-hash-rebind",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "run-cardinality",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "compiler-exit-fault",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "permission-request-fault",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "archived-source-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "case-root-drift",
+      "rejected": true
+    }
+  ],
+  "kind": "seed-origin-v8-actual-evidence-fault-controls",
+  "scope": "100 candidate runs; controls reject case joins, cardinality, compiler, permission, archive, & command faults",
+  "version": "1"
+}

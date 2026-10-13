@@ -1,0 +1,181 @@
+--- probes/sr0-b/workload/scripts/run-workload.ps1
++++ /tmp/run-workload.ps1-lifecycle-v1.ps1
+@@ -17,6 +17,7 @@
+   [int]$Rows = 200,                   # editable rows the app runs with (200 = the section 11 workload; stress series 1000, 5000)
+   [double]$KeyRate = 10,              # keys per second posted to the workload window (10 = the section 11 workload; stress series 30)
+   [switch]$NoResources,               # skip the resource sampler (overhead A/B)
++  [switch]$LifecycleProof,             # tuple12 opt-in: retain task/process terminal proof before removal
+   [string]$PaintPhaseMs = '',         # R10 A/B: SWR_PAINT_PHASE_MS handed to the renderer through task-workload.ps1 (0 = pacing off; '' = renderer default)
+   [switch]$MemDeep,                   # R10 memory diagnosis: SWR_MEM_DEEP=1 for the renderer (heap and address-space walk every 5th memory sample; diagnostic run, perturbs timing)
+   [string]$Tag = '',
+@@ -39,7 +40,13 @@
+ $result   = "$runRoot\result-workload.txt"
+ $orchLog  = "$runRoot\orchestrator.log"
+ $taskName = 'SR0BWorkload'
++if ($LifecycleProof) {
++  if ($Tag -notmatch '^[A-Za-z0-9._-]+$') { throw 'LifecycleProof requires an alphanumeric task tag' }
++  $taskName = "SR0BWorkload-$Tag"
++}
++if ($LifecycleProof -and (Test-Path $runRoot)) { throw "LifecycleProof requires fresh run root: $runRoot" }
+ New-Item -ItemType Directory -Force $runRoot | Out-Null
++if ($LifecycleProof -and (Test-Path $result)) { throw "LifecycleProof requires fresh result path: $result" }
+ function Log([string]$m) { $l = "{0} {1}" -f (Get-Date -Format o), $m; Add-Content -Path $orchLog -Value $l; $l }
+ function Read-Shared([string]$p) {
+   if (-not (Test-Path $p)) { return '' }
+@@ -100,25 +107,40 @@
+ Start-Sleep -Seconds 5
+ 
+ # 3) interactive one-shot task
+-$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($NoResources) { ' -NoResources' })$(if ($PaintPhaseMs -ne '') { " -PaintPhaseMs $PaintPhaseMs" })$(if ($MemDeep) { ' -MemDeep' })"
++$arg = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scripts\task-workload.ps1`" -Base `"$Base`" -RunRoot `"$runRoot`" -ResultFile `"$result`" -Runs $Runs -Warmup $Warmup -Measure $Measure -Instr $Instr -Rows $Rows -KeyRate $KeyRate$(if ($LifecycleProof) { ' -LifecycleProof' })$(if ($NoResources) { ' -NoResources' })$(if ($PaintPhaseMs -ne '') { " -PaintPhaseMs $PaintPhaseMs" })$(if ($MemDeep) { ' -MemDeep' })"
+ $act = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arg -WorkingDirectory $Base
+ $pri = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
+ $set = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes (($Runs * ($Warmup + $Measure + 60)) / 60 + 10)) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+-Register-ScheduledTask -TaskName $taskName -Action $act -Principal $pri -Settings $set -Force | Out-Null
+-Log "registered $taskName"
+-Start-ScheduledTask -TaskName $taskName
++if ($LifecycleProof) {
++  $prior = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
++  if ($prior -and $prior.State -in @('Running', 'Queued')) { Log "ABORT: existing task state=$($prior.State)"; Stop-Pm; exit 6 }
++  Register-ScheduledTask -TaskName $taskName -Action $act -Principal $pri -Settings $set -ErrorAction Stop | Out-Null
++  Log "registered $taskName lifecycle_proof=on"
++  Start-ScheduledTask -TaskName $taskName -ErrorAction Stop
++} else {
++  Register-ScheduledTask -TaskName $taskName -Action $act -Principal $pri -Settings $set -Force | Out-Null
++  Log "registered $taskName"
++  Start-ScheduledTask -TaskName $taskName
++}
+ $fin = $false; $st = 'Running'; $d = (Get-Date).AddSeconds($Runs * ($Warmup + $Measure + 90) + 120)
+ do {
+   Start-Sleep -Seconds 5
+   $st = (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue).State
+   $fin = (Read-Shared $result) -match 'finished='
+-} while (-not $fin -and $st -eq 'Running' -and (Get-Date) -lt $d)
+-Log "harness finished=$fin task_state=$st"
+-Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
++} while (-not $fin -and (($LifecycleProof -and $st -in @('Running', 'Queued')) -or (-not $LifecycleProof -and $st -eq 'Running')) -and (Get-Date) -lt $d)
++$proofText = Read-Shared $result
++$proof = $proofText -match 'worker_terminal=1' -and (($proofText -match 'sampler_terminal=1') -or $NoResources) -and $proofText -match 'task_quiescent=1'
++if ($LifecycleProof -and (-not $fin -or -not $proof)) { Log "ABORT: lifecycle proof missing finished=$fin proof=$proof task_state=$st"; Stop-Pm; exit 7 }
++while ($LifecycleProof -and $st -in @('Running', 'Queued') -and (Get-Date) -lt $d) { Start-Sleep -Seconds 2; $st = (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue).State }
++if ($LifecycleProof -and $st -in @('Running', 'Queued')) { Log "ABORT: task not quiescent state=$st"; Stop-Pm; exit 8 }
++Log "harness finished=$fin task_state=$st lifecycle_proof=$proof"
++if ($LifecycleProof) { Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction Stop } else { Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue }
+ Start-Sleep -Seconds 3
+ Stop-Pm
+ 
+ # 4) analysis (python 3.11, isolated mode)
+ Copy-Item "$Base\build.json" "$runRoot\build.json" -Force
+ & py -3.11 -I "$analysis\analyze_workload.py" --os windows --root $runRoot --expect-scale $ExpectScale --out "$runRoot\report" 2>&1 | Tee-Object -FilePath "$runRoot\analysis-console.txt"
+-Log "analysis rc=$LASTEXITCODE report=$runRoot\report"
++`$analysisRc = `$LASTEXITCODE
++Log "analysis rc=`$analysisRc report=`$runRoot\report"
++if (`$LifecycleProof) { exit `$analysisRc }
+--- probes/sr0-b/workload/scripts/task-workload.ps1
++++ /tmp/task-workload.ps1-lifecycle-v1.ps1
+@@ -44,7 +44,8 @@
+   [switch]$MemDeep,                                         # R10 memory diagnosis: SWR_MEM_DEEP=1 (the renderer also walks the process heaps and address space every 5th memory sample; slow, never a gated run)
+   [string]$RunPrefix = 'r',
+   [ValidateSet('char', 'all')][string]$KeyMode = 'char',   # char: WM_CHAR only; all: WM_KEYDOWN + WM_CHAR + WM_KEYUP (types every key twice)
+-  [int]$ForegroundSeconds = 8                               # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
++  [int]$ForegroundSeconds = 8,                              # how long to keep trying to take the foreground (inside the 10 s warm-up) before the run is voided
++  [switch]$LifecycleProof                                      # tuple12 opt-in: retain process/sampler terminal proof
+ )
+ $ErrorActionPreference = 'Continue'
+ $swiftBin = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin'
+@@ -82,6 +83,10 @@
+     [DllImport("user32.dll")] static extern bool AttachThreadInput(uint a, uint b, bool attach);
+     [DllImport("kernel32.dll")] static extern uint GetCurrentThreadId();
+     [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h, out RECT r);
++    [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
++    public static int WindowPid(IntPtr h) { uint p; GetWindowThreadProcessId(h, out p); return (int)p; }
++    [DllImport("kernel32.dll", SetLastError = true)] static extern bool GetExitCodeProcess(IntPtr h, out uint code);
++    public static bool Terminal(IntPtr h, Process p, out uint code) { code = 259; try { p.Refresh(); if (!p.HasExited) return false; return GetExitCodeProcess(h, out code); } catch { return false; } }
+     [DllImport("user32.dll")] static extern bool GetLastInputInfo(ref LASTINPUTINFO p);
+     [DllImport("kernel32.dll")] static extern uint GetTickCount();
+     [StructLayout(LayoutKind.Sequential)] public struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
+@@ -192,6 +197,7 @@
+     // are RECORDED as context at every key: eventsPath (foreground owner changes), activityPath (one row per key). Nothing here aborts the script.
+     // deadlineQpc > 0: no key is posted whose due time is after it (keys never reach a window the app is already closing).
+     public static string Run(IntPtr hwnd, int pid, double rateHz, double maxSeconds, string outPath, string chars, string eventsPath, bool allMessages, long deadlineQpc, string activityPath) {
++        if (WindowPid(hwnd) != pid) return "sent=0 fg_lost=0 send_fail=0 fg_events=0 fg_recovered=0 stop=window-owner-mismatch user_input_events=0 min_idle_ms=-1 minimized_samples=0";
+         double hz = Stopwatch.Frequency;
+         long step = (long)(hz / rateHz);
+         long start = Stopwatch.GetTimestamp() + (long)(0.2 * hz);
+@@ -284,6 +290,8 @@
+   [pscustomobject]@{ total = $mods.Count; hits = ($hit -join ','); procs = ($procs -join ','); all = $mods }
+ }
+ $okRuns = 0
++$workerTerminalAll = $true
++$samplerTerminalAll = $true
+ for ($i = 1; $i -le $Runs; $i++) {
+   $id = "$RunPrefix$i"
+   $dir = "$RunRoot\$id"
+@@ -304,10 +312,13 @@
+   if ($MemDeep) { $psi.EnvironmentVariables['SWR_MEM_DEEP'] = '1' } else { [void]$psi.EnvironmentVariables.Remove('SWR_MEM_DEEP') }
+   $qs = [System.Diagnostics.Stopwatch]::GetTimestamp()
+   $proc = [System.Diagnostics.Process]::Start($psi)
++  $workerHandle = $proc.Handle
++  $workerFullPath = try { $proc.MainModule.FileName } catch { $exe }
++  $lines.Add("worker run=$id pid=$($proc.Id) parent_pid=$PID full_path=$workerFullPath")
+   $so = $proc.StandardOutput.ReadToEndAsync()
+   $se = $proc.StandardError.ReadToEndAsync()
+   $lines.Add("pid run=$id pid=$($proc.Id) start_utc=$([DateTime]::UtcNow.ToString('o')) qpc_start=$qs")
+-  $sampler = $null; $samplerErr = $null
++  $sampler = $null; $samplerHandle = [IntPtr]::Zero; $samplerErr = $null
+   if (-not $NoResources) {
+     # No window, BelowNormal priority: it must not take the foreground or compete with the workload. Its own CPU is a column of every row.
+     $ssi = New-Object System.Diagnostics.ProcessStartInfo
+@@ -317,6 +328,7 @@
+     $ssi.WorkingDirectory = $dir
+     try {
+       $sampler = [System.Diagnostics.Process]::Start($ssi)
++      if ($LifecycleProof) { $samplerHandle = $sampler.Handle }
+       try { $sampler.PriorityClass = [System.Diagnostics.ProcessPriorityClass]::BelowNormal } catch { }
+       $null = $sampler.StandardOutput.ReadToEndAsync()
+       $samplerErr = $sampler.StandardError.ReadToEndAsync()
+@@ -354,6 +366,7 @@
+     $res = [Inj]::Run($hwnd, $proc.Id, $KeyRate, $Warmup + $Measure + 6, "$dir\inject.csv", $chars, "$dir\fg_events.csv", ($KeyMode -eq 'all'), $keyDeadline, "$dir\activity.csv")
+     $lines.Add("inject run=$id $res csv=$dir\inject.csv key_mode=$KeyMode rate_hz=$KeyRate key_deadline_ms_from_start=$([int](($keyDeadline - $qs) * 1000 / $swFreq))")
+     foreach ($l in (Get-Content "$dir\fg_events.csv" -ErrorAction SilentlyContinue | Select-Object -Skip 1)) { $lines.Add("fg_event run=$id $l") }
++    if ($LifecycleProof -and $res -match 'window-owner-mismatch') { $valid = $false; if ($reason -eq 'ok') { $reason = 'window-owner-mismatch' } }
+     $cpuB = Get-CpuMap; $spanS = ([System.Diagnostics.Stopwatch]::GetTimestamp() - $tA) / $swFreq
+     $ctx1 = Get-OverlayContext $proc.Id
+     $lines.Add("context run=$id phase=post overlay_modules=$(if ($ctx1.hits) { $ctx1.hits } else { 'none' }) modules_total=$($ctx1.total) overlay_procs=$(if ($ctx1.procs) { $ctx1.procs } else { 'none' })")
+@@ -368,18 +381,23 @@
+   }
+   $deadline = (Get-Date).AddSeconds($Warmup + $Measure + 40)
+   while (-not $proc.HasExited -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 500 }
+-  if (-not $proc.HasExited) { $valid = $false; $reason = 'timeout-killed'; try { $proc.Kill() } catch { } }
++  if (-not $proc.HasExited) { $valid = $false; $reason = 'timeout-killed'; try { $proc.Kill() } catch { }; try { $proc.WaitForExit(15000) } catch { }; $proc.Refresh() }
+   $qe = [System.Diagnostics.Stopwatch]::GetTimestamp()
+   $exit = if ($proc.HasExited) { $proc.ExitCode } else { -1 }
+-  $lines.Add("pid_exit run=$id pid=$($proc.Id) qpc_end=$qe exit=$exit")
++  $kernelCode = 259; $workerTerminal = if ($LifecycleProof) { [Inj]::Terminal($workerHandle, $proc, [ref]$kernelCode) } else { $proc.HasExited }
++  if ($LifecycleProof -and -not $workerTerminal) { $workerTerminalAll = $false; $valid = $false; if ($reason -eq 'ok') { $reason = 'worker-terminal-proof-missing' } }
++  $lines.Add("pid_exit run=$id pid=$($proc.Id) qpc_end=$qe exit=$exit kernel_terminal=$([int]$workerTerminal) kernel_exit=$kernelCode")
+   if ($exit -ne 0) { $valid = $false; if ($reason -eq 'ok') { $reason = "exit-$exit" } }
+   if ($sampler) {
+     try { Set-Content -Path "$dir\sampler.stop" -Value 'stop' -Encoding ascii } catch { }
+-    if (-not $sampler.WaitForExit(8000)) { try { $sampler.Kill() } catch { } }
++    if (-not $sampler.WaitForExit(8000)) { try { $sampler.Kill() } catch { }; try { $sampler.WaitForExit(15000) } catch { }; $sampler.Refresh() }
+     $sErr = try { $samplerErr.Result } catch { '' }
+     if ($sErr) { [System.IO.File]::WriteAllText("$dir\sampler-stderr.txt", $sErr) }
+     $nRows = @(Get-Content "$dir\resources.csv" -ErrorAction SilentlyContinue).Count - 1
+-    $lines.Add("resources run=$id rows=$([math]::Max($nRows, 0)) sampler_exit=$(if ($sampler.HasExited) { $sampler.ExitCode } else { 'running' }) csv=$dir\resources.csv")
++    $samplerKernelCode = 259
++    $samplerTerminal = if ($LifecycleProof) { [Inj]::Terminal($samplerHandle, $sampler, [ref]$samplerKernelCode) } else { $sampler.HasExited }
++    if ($LifecycleProof -and -not $samplerTerminal) { $samplerTerminalAll = $false; $valid = $false; if ($reason -eq 'ok') { $reason = 'sampler-terminal-proof-missing' } }
++    $lines.Add("resources run=$id rows=$([math]::Max($nRows, 0)) sampler_exit=$(if ($samplerTerminal) { $sampler.ExitCode } else { 'running' }) sampler_kernel_terminal=$([int]$samplerTerminal) csv=$dir\resources.csv")
+   }
+   [System.IO.File]::WriteAllText("$dir\stdout.txt", $so.Result)
+   [System.IO.File]::WriteAllText("$dir\stderr.txt", $se.Result)
+@@ -388,5 +406,7 @@
+   Flush-Out
+   Start-Sleep -Seconds 5
+ }
+-$lines.Add("finished=$(Get-Date -Format o) runs_valid=$okRuns of $Runs")
++$finalText = "finished=$(Get-Date -Format o) runs_valid=$okRuns of $Runs"
++if ($LifecycleProof) { $lines.Add("worker_terminal=$([int]$workerTerminalAll) sampler_terminal=$([int]$samplerTerminalAll) task_quiescent=$([int]($workerTerminalAll -and $samplerTerminalAll))") }
++$lines.Add($finalText)
+ Flush-Out

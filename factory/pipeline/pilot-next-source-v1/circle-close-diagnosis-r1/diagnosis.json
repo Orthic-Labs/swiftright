@@ -1,0 +1,94 @@
+{
+  "schema": "factory-circle-close-diagnosis-r1",
+  "status": "observational-hold",
+  "rawEvidence": {
+    "circleRoot": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic",
+    "circleNative": "factory/native/windows/pilot-circle-root-v1/actual-count1-r5g-diagnostic/native/native-01",
+    "circleOutcome": {
+      "coordinatorStatus": "failed",
+      "taskStatus": "hold-harness-error",
+      "primaryError": "Owned renderer child deadline",
+      "wholeBatchExitConfirmed": true,
+      "lockReleased": true,
+      "memoryPeakBytes": 344670208,
+      "memoryActiveProcessCount": 1
+    },
+    "circleOwnedHost": {
+      "pid": 31152,
+      "hwnd": 9842364,
+      "exeSha256": "76152979c8ae679b3643307ce7608112ddefd50ef60d83d5d7fe868002f36871",
+      "compileReceiptSha256": "f8284f2f9fee5f82411474ecc356e25c189dcdf984f8bfdb86f2563d85f687e3",
+      "startedAt": "2026-10-12T02:43:30.1094446Z"
+    },
+    "circleUiAWorker": {
+      "status": "completed-natural-uiasnapshot",
+      "exitCode": 0,
+      "preCleanupKernelWaitResult": 0,
+      "timedOut": false,
+      "stdoutSealed": true,
+      "stderrSealed": true,
+      "nativeWindowsOpened": false,
+      "rendererLoaded": false,
+      "finishedAt": "2026-10-12T02:43:35.1958489+00:00"
+    },
+    "circleHostClosure": {
+      "windowClosedMarkerUtc": "2026-10-12T02:43:38.607Z",
+      "closeReturnUtc": "2026-10-12T02:43:38.7307369+00:00",
+      "preCleanupUtc": "2026-10-12T02:43:53.7254297+00:00",
+      "preCleanupKernelWaitResult": 258,
+      "preCleanupHasExitedObserved": true,
+      "preCleanupExitCode": 0,
+      "finalKernelWaitResult": 0,
+      "finalExitCode": 0,
+      "finalCertificateUtc": "2026-10-12T02:43:55.2336337+00:00",
+      "rawStreamsSealed": true,
+      "streamErrors": []
+    },
+    "textComparison": {
+      "root": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r5g",
+      "closeReturnUtc": "2026-10-12T02:38:58.4404189+00:00",
+      "waitReturnUtc": "2026-10-12T02:38:58.5844377+00:00",
+      "waitKernelResult": 0,
+      "finalKernelResult": 0,
+      "finalExitCode": 0,
+      "rawStreamsSealed": true
+    },
+    "circlePixels": {
+      "printWindowRepeatStable": true,
+      "screenRepeatStable": true,
+      "methodsEqual": false,
+      "controlledOcclusionQualification": false,
+      "nativeParity": "hold"
+    }
+  },
+  "sourcePins": {
+    "circleHostMainSha256": "900b982ac3ee69bc61814fa60eab7df379feaec89e0d2ab0a862a0386cded6e7",
+    "circleCaptureOverlaySha256": "0a63f779cd9b7dfc8c6d41aa6c1ccab22f9082aebd9d84243c1e8b69b667bd32",
+    "textHostMainSha256": "5a601361b5ddd33b04a0a40bd3819a8cd5a13e810760370ca8b36d83a098d10e",
+    "textCaptureOverlaySha256": "7e5567957e59ef74192a7d721b393a1918f2d771a3e4100f9157cdc0ec39d3b9"
+  },
+  "diagnosis": {
+    "captureLifecycle": "retained-handle cleanup sealed both streams & proved final host exit 0; existing 15s gate must remain",
+    "workerCause": "not-supported-by-evidence; UIA worker exited 0 with sealed streams before host close",
+    "hostClosure": "circle host did not signal retained kernel handle within 15s after close; final exit 0 arrived after cleanup",
+    "rendererOrHost": "unresolved protected host/runtime shutdown latency after Bridge.run/window close",
+    "wrapperObservation": "circle recorded .NET HasExited=true & exitCode=0 while retained kernel wait remained 258; direct retained-handle wait must be authoritative"
+  },
+  "nextSourceAction": {
+    "folder": "factory/pipeline/pilot-next-source-v1/circle-close-diagnosis-r1",
+    "preserveDeadlineSeconds": 15,
+    "freshDiagnostic": "candidate-main.swift adds bounded monotonic stderr markers before/after graph.tearDown, releaseAll, bridge.shutdownComplete, Bridge.run return, & process main exit; direct retained-handle wait remains beside Process.WaitForExit",
+    "candidateSourceSha256": "b761a826b249e7b918c6a25af8b3d9bccaced7005d1a35253fb3fd618a576a19",
+    "candidatePatchSha256": "1a390afdcb9e7a051472ddbf3218563be6608213f6670c59a1fa5f43e3c38f08",
+    "frozenInputsPath": "factory/pipeline/pilot-next-source-v1/circle-close-diagnosis-r1/frozen-inputs.json",
+    "rootCaptureSequence": [
+      "verify frozen-inputs.json hashes",
+      "copy package into fresh ignored candidate stage",
+      "derive fresh plan with only candidate host source binding/source hash changed; preserve case/tuple/compiler/runtime/renderer and issue fresh compile receipt",
+      "run existing Count1 coordinator with 15-second close & 5-second drain bounds",
+      "retain original handle; sample WaitForSingleObject/GetExitCodeProcess beside Process.WaitForExit/HasExited/ExitCode",
+      "require direct terminal, signed/raw/.NET exit agreement, sealed streams, active=0, lock release before cleanup"
+    ],
+    "qualification": "held until fresh run separates wrapper wait-state mismatch from host/runtime shutdown latency"
+  }
+}

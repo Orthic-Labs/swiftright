@@ -1,0 +1,42 @@
+{
+  "kind": "factory-fresh-r11-count20-adapter-plan-source-map-r17",
+  "status": "source-ready-r17-issued-metadata-pending",
+  "namespace": {
+    "relative": "factory/native/windows/.work/windows-replay-r11/r17",
+    "archiveRelative": "factory/native/windows/.work/windows-replay-r11/r17/observed-native-v17-r1",
+    "archiveMeaning": "transported Windows native observation root; read-only source for adapter refs",
+    "readerDestinationMustBeFreshAndSeparate": true
+  },
+  "sources": {
+    "planDeriver": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/adapter-v10-r17-source/derive-adapter-plan-r17.py",
+      "sha256": "sha256:ac5e5b1f289c131c1adbf1002004bbd21036a262d9ccf8bf353b62819bdbf480",
+      "bytes": 4547
+    },
+    "planDeriverControls": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/adapter-v10-r17-source/test-r17-plan-deriver-fixtures.py",
+      "sha256": "sha256:16b5ddae480c90e35613626e2f731504eb192e63bc258357487ba4276b87927a",
+      "bytes": 4463
+    },
+    "commands": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v10-source/adapter-v10-r17-source/r17-adapter-commands-v1.md",
+      "sha256": "sha256:6a7141219e302c995953e5cc9298e37666b6a8c33a455cade3f8bc8a6d0d9924",
+      "bytes": 3013
+    }
+  },
+  "frozenPlan": {
+    "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/fresh-count20-adapter-plan-v2.json",
+    "sha256": "sha256:6fa3d83e9ccac74abafd3b9c9ee1226bcd604b06b7aab5be358dfc10f13449b4",
+    "bytes": 3146
+  },
+  "rules": [
+    "derive issued runID, issued SHA, capture IDs, image IDs, source hash, case ID, and case hash from measured metadata",
+    "reject absolute, drive-relative, UNC, backslash, symlink, malformed, duplicate, wrong-count, wrong-source, wrong-case, or frozen-tuple inputs",
+    "fixture controls carry nativeEvidence=false and never qualify candidate",
+    "archive refs remain read-only; reader output uses separate fresh destination",
+    "missing Windows proof, memory receipt, raw hash, or archive role remains HOLD"
+  ],
+  "nativeActions": 0,
+  "lockActions": 0,
+  "remoteActions": 0
+}

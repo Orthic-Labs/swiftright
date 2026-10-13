@@ -1,0 +1,27 @@
+{
+  "schema": "mta-release-diagnosis-source-map-v1",
+  "status": "prospective-source-only",
+  "qualification": "held",
+  "failedReceipt": {
+    "path": "factory/native/windows/pilot-rectangle-fixed-root-v2/actual-count1-r9-transport/transport.json",
+    "bytes": 2002,
+    "sha256": "sha256:47487a17ab06cf83ed20ecf223bfadd1bf2edc1760977878520ebba7229818c5"
+  },
+  "diagnostic": {
+    "stderrPath": "factory/native/windows/pilot-rectangle-fixed-root-v2/actual-count1-r9-transport/transport.json.stderr.bin",
+    "observedError": "All owned worker original handle proofs required",
+    "cause": "MTA config v2 rejected by frozen release proof expecting config v1"
+  },
+  "files": [
+    {"path": "final-exit-certificate-mta-v1.ps1", "bytes": 12696, "sha256": "sha256:db5aa26893a23bb1da8b930ff8e9131a458c2e2c9e23963b439715c02851f584", "role": "shared production predicate + MTA proof overlay"},
+    {"path": "all-owned-release-rectangle-mta-v1.ps1", "bytes": 8046, "sha256": "sha256:886be59286e4c122f617f74cebf94014418a12340df6d48e743e6a4ef1c5cb44", "role": "release caller with new function name"},
+    {"path": "test-mta-config-admission.ps1", "bytes": 2041, "sha256": "sha256:777a4858aea98d9cbefe58ef85a0fad0f6150c6da18f4ad9cd36ed6f18606dc4", "role": "controls call production predicate"},
+    {"path": "invoke-mta-release-proof.ps1", "bytes": 1024, "sha256": "sha256:ff2d0a37be1bde7b086822003f433c9820bdefe49057508223d0c8e1d09fba59", "role": "non-mutating root entry"}
+  ],
+  "frozenOrigins": [
+    {"path": "capture-count1-r9-sources/producer/dependencies/uia-worker/support/final-exit-certificate.ps1", "bytes": 12293, "sha256": "sha256:3e3a2cab99320534cd8b3e43d32f3848cceb42a29fe767b7cc5994da4485230d"},
+    {"path": "capture-count1-r9-sources/overlay/all-owned-release-rectangle-r1.ps1", "bytes": 8043, "sha256": "sha256:97af99f02b85fc311710fab2cf9013e55dcc1957ef7a550408d9c3401f94950c"}
+  ],
+  "predicateCases": ["legacy-v1 accepted", "MTA-v2 accepted", "MTA-v2 parent-MTA accepted", "v2 worker-STA rejected", "v2 missing-apartment rejected", "unknown-v3 rejected", "wrong-output-root rejected"],
+  "execution": {"native": false, "remote": false, "tests": false, "git": false}
+}

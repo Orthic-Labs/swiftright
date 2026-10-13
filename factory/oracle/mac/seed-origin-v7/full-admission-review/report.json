@@ -1,0 +1,134 @@
+{
+  "kind": "seed-origin-v7-full-admission-review",
+  "decision": "HOLD_MISSING_CANONICAL_CASE_ARTIFACTS",
+  "scope": "read-only source admission; no capture, GUI, Accessibility, or permission request ran",
+  "stage": {
+    "root": "factory/oracle/mac/seed-origin-v7",
+    "manifestSha256": "sha256:2ab90d9a5f42cf88dabdba97067447d314351925a88d3a3c4fec0d90ae0a2a66",
+    "entries": 69,
+    "bytes": 280027,
+    "inputPinsSha256": "sha256:e70a10649e798ab7e6c28985d0bfcc35ae90f9a33ab75b01c71b41a0da7a1fb6"
+  },
+  "staticChecks": {
+    "verify_v7": "PASS",
+    "test_v7": {"status": "PASS", "rows": 5, "controls": 8, "captureStatus": "NOT_RUN"},
+    "runtimeDependencyClosure": {"status": "PASS", "files": 23},
+    "liveImportedSourcesEqualArchivedCopies": true,
+    "collectorEqualsV6": true,
+    "collectorSha256": "sha256:737399fcb39f13d79a8e908507210d0de733a3180b8eded63dfa7ec70ed2f8bf",
+    "collectorBytes": 34732,
+    "admissionLineage": "READY_FOR_BOUNDED_CAPTURE"
+  },
+  "compilerRoutes": {
+    "mainSources": ["Witness.swift", "CaptureHost.swift"],
+    "auxiliarySources": ["AXClient.swift"],
+    "sharedRoute": "_compiler_build_common",
+    "resolver": ["/usr/bin/xcrun", "--find", "swiftc"],
+    "compilerLogicalArgv": ["/usr/bin/xcrun", "swiftc"],
+    "resolverAndCompilerReceipts": "per-run evidence/compiler-receipt.json and evidence/ax-compiler-receipt.json",
+    "sourceBeforeAfter": true,
+    "realToolAndXcrunHashes": true,
+    "ownedProcessGroups": true,
+    "boundedDrainTermKill": true,
+    "rawStreams": true
+  },
+  "noPromptGuards": {
+    "AXClient.swift": {
+      "sha256": "sha256:9514c4ed6964a9a078058fc909ea72a89ad6363fd0662ed2e9369788af59c404",
+      "preflight": "AXIsProcessTrusted()",
+      "requestApisAbsent": true,
+      "permissionRequests": false,
+      "denial": "HELD"
+    },
+    "CaptureHost.swift": {
+      "sha256": "sha256:749fb3b497784aa8edc344868c15fcf0d69c2bd9a63cdb37a8592949ef77688b",
+      "preflight": ["AXIsProcessTrusted()", "CGPreflightScreenCaptureAccess()"],
+      "requestApisAbsent": true,
+      "permissionRequests": false,
+      "denial": "HELD"
+    }
+  },
+  "cases": [
+    {
+      "id": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258",
+      "block": "swiftui.disabled",
+      "manifestCaseSha256": "sha256:68c63ea77bd20a82644b951a8335e98f6717ac138a6c6b218b6d05dadd0848ba",
+      "recipeCanonicalSha256": "sha256:b6570d5051e25255e79c62fce9d84c2f4c104096b009d97372ebd89c98502591",
+      "sourceSha256": "sha256:488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+      "witnessSha256": "sha256:ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+      "providerResources": null,
+      "holds": ["host-specific provider/native adapter", "witness internal Layout callbacks", "animation", "screen/compositor and external AX when preflight unavailable"]
+    },
+    {
+      "id": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258",
+      "block": "swiftui.image",
+      "manifestCaseSha256": "sha256:a3e936cc5f688ebd885ba817e4f0b3b4df84e3b48f6bf6b0e2c92632f5dc93b4",
+      "recipeCanonicalSha256": "sha256:857bb9c8c53cab67b4cd767006d6e83cffe1a1b6687a6fe8002618cdf615537f",
+      "sourceSha256": "sha256:fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171",
+      "witnessSha256": "sha256:1f7e2fba7fb10cb5a00f6a0f4553e98d23bc58e324fc0a7bd3a3e4f52f0e361f",
+      "providerResources": null,
+      "holds": ["host-specific provider/native adapter", "witness internal Layout callbacks", "animation", "screen/compositor and external AX when preflight unavailable"]
+    },
+    {
+      "id": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258",
+      "block": "swiftui.shapes.fill-stroke",
+      "manifestCaseSha256": "sha256:c2a99399c435d6c1e16bbb2d80675f1f8a4ab1aa3e654b7dcf4ff1ffd0410491",
+      "recipeCanonicalSha256": "sha256:52e97ee42c856ce0fb112d6ac616c66afcadac4177115870622e17673046cb57",
+      "sourceSha256": "sha256:73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+      "witnessSha256": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+      "providerResources": null,
+      "holds": ["host-specific provider/native adapter", "witness internal Layout callbacks", "animation", "screen/compositor and external AX when preflight unavailable"]
+    },
+    {
+      "id": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258",
+      "block": "swiftui.text.bundled-font",
+      "manifestCaseSha256": "sha256:29dfb27ddce10411c9fa742d5ebaf7ebef22134e1d35e64036b5952cf2254156",
+      "recipeCanonicalSha256": "sha256:c9775c4ef0bdcfce849df1e0111782a87159b0014428a155c9e855047a3422e9",
+      "sourceSha256": "sha256:71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91",
+      "witnessSha256": "sha256:a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70",
+      "providerResources": null,
+      "fontResourceHold": "recipe explicitly says repository contains no bundled font resource",
+      "holds": ["bundled font qualification", "witness font resolution", "registered font provider", "host-specific text measurement/provider adapter", "witness internal Layout callbacks", "animation", "screen/compositor and external AX when preflight unavailable"]
+    },
+    {
+      "id": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258",
+      "block": "swiftui.toggle",
+      "manifestCaseSha256": "sha256:7113610be80860ddf6b73d6b640fd19729288131f0b0ce712740f874f726da2f",
+      "recipeCanonicalSha256": "sha256:6f31cbc93614655204a76ed6f698cb6997d21d3c716ef21d1377744fc2daf637",
+      "sourceSha256": "sha256:cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+      "witnessSha256": "sha256:9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c",
+      "providerResources": null,
+      "holds": ["host-specific provider/native adapter", "events/state stimulus not attempted by static collector", "witness internal Layout callbacks", "animation", "screen/compositor and external AX when preflight unavailable"]
+    }
+  ],
+  "blockers": [
+    {
+      "id": "missing-canonical-case-artifacts",
+      "severity": "BLOCKING",
+      "evidence": "inputs contains five recipe JSON files named block.json, but no full canonical case JSON named by exact gate-seeded case ID; factory/recipes/cases is absent",
+      "collectorPath": "capture() resolves case_root/<caseID>.json, then case_root/<caseID with __>.json, then factory/recipes/cases/<caseID>.json",
+      "requiredFreshStageFix": "include five case artifacts whose canonical_hash equals each manifest case.hash; preserve recipe, tuple, inputs, provenance, expectedCaseSetHash, and seed joins"
+    }
+  ],
+  "bounded100Command": {
+    "status": "BLOCKED_UNTIL_CASE_ARTIFACTS_PINNED",
+    "runsPerCase": 20,
+    "totalRuns": 100,
+    "argv": [
+      "env",
+      "SWIFTRIGHT_REPO_ROOT=/Volumes/D/claude/swiftright",
+      "/Volumes/D/claude/swiftright/factory/.venv/bin/python",
+      "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/capture_origin.py",
+      "--manifest", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs/swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs/swiftui.image.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs/swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs/swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--manifest", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs/swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258.manifest.json",
+      "--case-root", "/Volumes/D/claude/swiftright/factory/oracle/mac/seed-origin-v7/inputs",
+      "--scratch", "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/seed-origin-v7-capture-20261011",
+      "--output", "/Volumes/D/claude/swiftright/factory/native/macos/evidence/seed-origin-v7-capture-20261011",
+      "--runs", "20"
+    ],
+    "postCapture": "strict compiler receipt, summary/archive, raw/output, binary/source, AX ownership, and per-run joins before candidate-only disposition"
+  }
+}

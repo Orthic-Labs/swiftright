@@ -1,0 +1,62 @@
+{
+    "kind":  "root-factory-admission-v14-stage-v1",
+    "status":  "passed-source-only",
+    "parsed":  10,
+    "controls":  {
+                     "kind":  "factory-first-proof-admission-controls-v2",
+                     "status":  "passed-source-only",
+                     "controls":  [
+                                      {
+                                          "name":  "correct-admission-root",
+                                          "accepted":  true,
+                                          "thrown":  "",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "wrong-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Mac context raw join drift: macContext_capture_index\r\nAt D:\\Claude\\swiftright\\.factory-work\\windows-replay-r11\\r14\\overlay\\integration-fresh-r11-v7.ps1:65 char:729\r\n+ ... a256 -cne $row.sha256){throw (\u0027Mac context raw join drift: \u0027+$key)} }\r\n+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Mac context raw...t_capture_index:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Mac context raw join drift: macContext_capture_index",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "missing-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Explicit admission root missing\r\nAt D:\\Claude\\swiftright\\.factory-work\\windows-replay-r11\\r14\\overlay\\resume-issued-coordinator-fresh-r11-v12.ps1:35 \r\nchar:69\r\n+ ... onRoot -PathType Container)){throw \u0027Explicit admission root missing\u0027}\r\n+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Explicit admission root missing:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Explicit admission root missing",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      },
+                                      {
+                                          "name":  "stale-admission-root",
+                                          "accepted":  false,
+                                          "thrown":  "Mac context raw join drift: macContext_capture_index\r\nAt D:\\Claude\\swiftright\\.factory-work\\windows-replay-r11\\r14\\overlay\\integration-fresh-r11-v7.ps1:65 char:729\r\n+ ... a256 -cne $row.sha256){throw (\u0027Mac context raw join drift: \u0027+$key)} }\r\n+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Mac context raw...t_capture_index:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Mac context raw join drift: macContext_capture_index",
+                                          "nativeWindowActions":  0,
+                                          "compilerActions":  0,
+                                          "guiActions":  0,
+                                          "remoteActions":  0,
+                                          "lockActions":  0
+                                      }
+                                  ],
+                     "nativeWindowActions":  0,
+                     "compilerActions":  0,
+                     "guiActions":  0,
+                     "remoteActions":  0,
+                     "lockActions":  0
+                 },
+    "controlReceiptSha256":  "b7b9d6386e6bdd097f192eeb35e378420e8c745f7df4e7ab5c5802f93172d9d0",
+    "nativeWindowActions":  0,
+    "compilerActions":  0,
+    "guiActions":  0,
+    "lockActions":  0,
+    "at":  "2026-10-11T18:24:14.7800748+00:00"
+}

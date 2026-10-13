@@ -1,0 +1,34 @@
+--- a/Sources/FactoryProbe/main.swift
++++ b/Sources/FactoryProbe/main.swift
+@@
+     func commit(_ record: CommitRecord) {
+         guard let root = record.root, let window else { return }
+         let backgroundID = UInt64.max - 1
+         var nodes: [NodeUpsert] = [NodeUpsert(id: backgroundID, bounds: viewport, primitives: [.rect(viewport, color: themeDark ? 0x1e1e1eff : 0xffffffff)])]
+         var current: Set<UInt64> = []
+-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32) throws {
++        let rootPixel = root.pixelFrame
++        let intrinsicRoot = Rect(x: Float(rootPixel.x), y: Float(rootPixel.y),
++                                 w: Float(rootPixel.width), h: Float(rootPixel.height))
++        guard let rootTranslation = factoryCenteredRootSubtree(intrinsicRoot, viewport: viewport) else {
++            throw NSError(domain: "FactoryRootSubtreeCenterUnavailable", code: 1)
++        }
++        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32,
++                  translation: FactoryRootSubtreeTranslation) throws {
+             let id = UInt64(n.instance + 1)
+             current.insert(id)
+             runtimeIDs[id] = n.id
+             let p = n.pixelFrame
+-            let bounds = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
++            let rawBounds = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
++            let bounds = translation.applying(to: rawBounds)
+@@
+-            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index)) }
++            for (index, child) in n.children.enumerated() {
++                try walk(child, parent: id, order: UInt32(index), translation: translation)
++            }
+         }
+         do {
+-            try walk(root, parent: backgroundID, order: 0)
++            try walk(root, parent: backgroundID, order: 0, translation: rootTranslation)
+*** End Patch

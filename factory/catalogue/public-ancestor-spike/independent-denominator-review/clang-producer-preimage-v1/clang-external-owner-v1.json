@@ -1,0 +1,276 @@
+{
+  "schema": "clang-external-owner-v1",
+  "scope": "exact AppKit/CoreGraphics/Spatial owners only",
+  "sdk": {
+    "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+    "target": "arm64-apple-macosx27.0",
+    "xcode": "Xcode-27-RC 27A266"
+  },
+  "moduleMaps": [
+    {
+      "module": "AppKit",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Modules/module.modulemap",
+      "sha256": "sha256:545df348af8f6fd613912b1c122e8f70a612229eab35fc0ec83925d2df12a07f",
+      "exportEvidence": [
+        "framework module AppKit",
+        "export *"
+      ]
+    },
+    {
+      "module": "CoreGraphics",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreGraphics.framework/Versions/A/Modules/module.modulemap",
+      "sha256": "sha256:b71a70adda09321094262b0a81e59ec25bf1fd69ff5b4e2463ad4fd3c82f7ff3",
+      "exportEvidence": [
+        "framework module CoreGraphics",
+        "export *"
+      ]
+    },
+    {
+      "module": "Spatial",
+      "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/include/Spatial/module.modulemap",
+      "sha256": "sha256:89931a74f1c73eb1fb77b5441c2509928d4cfac2ea6baa5a738a928ceffdd0c5",
+      "exportEvidence": [
+        "module Spatial",
+        "export *"
+      ]
+    }
+  ],
+  "probe": {
+    "source": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/probes/owners.swift",
+    "sha256": "sha256:641a9a244d0825985a097ca0413a1861536a98f6c61e37dd38034abbc75c9f5e",
+    "swiftcExit": 0,
+    "swiftcStderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sourcekit": {
+    "request": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/requests/owners.yaml",
+    "requestSha256": "sha256:13f0e881e5957a7d6dadc16e2bc14e132d5b3663ad475c3016198562bedbaf35",
+    "raw": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/owners.index.txt",
+    "rawSha256": "sha256:38da20fa013758d75b895023cc6267479dd13ed2a0b957842e2fc2dfa33a799d",
+    "exit": 0,
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "xcrun",
+      "sourcekit-lsp",
+      "debug",
+      "run-sourcekitd-request",
+      "--request-file",
+      "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/requests/owners.yaml"
+    ]
+  },
+  "clangAST": {
+    "tools": {
+      "swiftc": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      },
+      "clang": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+        "sha256": "sha256:5922f5f7843fee699497c45cc98134b6686e0a5e2fa8a5866ab74c5482fa87a5"
+      },
+      "sourcekitLsp": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp",
+        "sha256": "sha256:557857429e47f330546941521a7a9b38410895a7308eac8eceb28056e6fe5396"
+      },
+      "sourcekitd": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/sourcekitd.framework/Versions/A/sourcekitd",
+        "sha256": "sha256:d200bd40b3c44181d086c218d9925bacf2d54befa44031dedf15abb51830292b"
+      }
+    },
+    "runs": {
+      "AppKit": {
+        "probe": "probes/appkit_ast.m",
+        "exit": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "argv": [
+          "xcrun",
+          "--sdk",
+          "macosx",
+          "clang",
+          "-fsyntax-only",
+          "-x",
+          "objective-c",
+          "-isysroot",
+          "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+          "-include",
+          "AppKit/AppKit.h",
+          "-Xclang",
+          "-ast-dump=json",
+          "probes/appkit_ast.m"
+        ]
+      },
+      "CoreGraphics": {
+        "probe": "probes/coregraphics_ast.c",
+        "exit": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "Spatial": {
+        "probe": "probes/spatial_ast.c",
+        "exit": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "outputs": {
+      "AppKit": {
+        "gzip": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/appkit.ast.json.gz",
+        "gzipSha256": "sha256:2ac3d6c7ab2e8686059542deca0f0ca2a503818aa6a402b57466fd29a0913a18",
+        "decompressedSha256": "sha256:99da44200c7e33c62211fe91461c8408d7a753f776f32e9797026e3f89a39477",
+        "filtered": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/appkit-targets.ast.json",
+        "filteredSha256": "sha256:86e9445d9106815b86c5cf71db6d1dfdcc5dcca9580a1e338d92ed89cbb84582"
+      },
+      "CoreGraphics": {
+        "gzip": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/coregraphics.ast.json.gz",
+        "gzipSha256": "sha256:3563e3842e5bea329167cb716172954106f330835e565fdadda5b4a6fbbfb887",
+        "decompressedSha256": "sha256:bbb8b4239c88d828ca9425ba86f5528fde01065cdca175ca1c57f45096af0392",
+        "filtered": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/coregraphics-targets.ast.json",
+        "filteredSha256": "sha256:5961b78e366ddd706abc2fcc4c0289596e1f9b03c73909f81a78d0cb6b10d0d9"
+      },
+      "Spatial": {
+        "gzip": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/spatial.ast.json.gz",
+        "gzipSha256": "sha256:63edcf264c3afd27122753a1756ec8a8e9bf690edc7284d499c1160f7857994d",
+        "decompressedSha256": "sha256:47258a07d8971eb9040eed6667f8db17d8350a9270d3e99733b7887b93cc7eb6",
+        "filtered": "factory/catalogue/public-ancestor-spike/external-owner-capture/clang-external-owner-v1/raw/spatial-targets.ast.json",
+        "filteredSha256": "sha256:ac397e7897165d62f2266d346e1c81142b0aec0caf26b4dfbdaef472444aa2c6"
+      }
+    }
+  },
+  "targets": [
+    {
+      "target": "AppKit.NSWindow",
+      "module": "AppKit",
+      "usr": "c:objc(cs)NSWindow",
+      "kind": "ObjCInterfaceDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Versions/C/Headers/NSWindow.h",
+        "sha256": "sha256:32d8533578a7dfc8edf193775bc3471556ad8da94322bc42ce5942eed9c47549",
+        "line": 283,
+        "text": "@interface NSWindow : NSResponder <NSAnimatablePropertyContainer, NSMenuItemValidation, NSUserInterfaceValidations, NSUserInterfaceItemIdentification, NSAppearanceCustomization, NSAccessibilityElement, NSAccessibility>"
+      },
+      "astIdentity": "_OBJC_CLASS_$_NSWindow",
+      "sourceKit": {
+        "name": "NSWindow",
+        "line": 6,
+        "column": 33
+      },
+      "eligibilityEvidence": [
+        "exact Clang ObjCInterfaceDecl",
+        "public SDK header",
+        "module map umbrella export *",
+        "successful Swift import/typecheck"
+      ],
+      "status": "public-header-exported"
+    },
+    {
+      "target": "CoreGraphics.CGPoint",
+      "module": "CoreGraphics",
+      "usr": "c:@S@CGPoint",
+      "kind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGGeometry.h",
+        "sha256": "sha256:41e89d5338a795b60c577e3bec68ca61940eada078c40ecacbe203afc1e39465",
+        "line": 25,
+        "text": "typedef struct CG_BOXABLE CGPoint CGPoint;"
+      },
+      "astIdentity": "struct CGPoint",
+      "sourceKit": {
+        "name": "CGPoint",
+        "line": 7,
+        "column": 36
+      },
+      "eligibilityEvidence": [
+        "exact Clang typedef AST",
+        "public SDK header",
+        "module map umbrella export *",
+        "successful Swift import/typecheck"
+      ],
+      "status": "public-header-exported"
+    },
+    {
+      "target": "CoreGraphics.CGSize",
+      "module": "CoreGraphics",
+      "usr": "c:@S@CGSize",
+      "kind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGGeometry.h",
+        "sha256": "sha256:41e89d5338a795b60c577e3bec68ca61940eada078c40ecacbe203afc1e39465",
+        "line": 33,
+        "text": "typedef struct CG_BOXABLE CGSize CGSize;"
+      },
+      "astIdentity": "struct CGSize",
+      "sourceKit": {
+        "name": "CGSize",
+        "line": 8,
+        "column": 35
+      },
+      "eligibilityEvidence": [
+        "exact Clang typedef AST",
+        "public SDK header",
+        "module map umbrella export *",
+        "successful Swift import/typecheck"
+      ],
+      "status": "public-header-exported"
+    },
+    {
+      "target": "CoreGraphics.CGRect",
+      "module": "CoreGraphics",
+      "usr": "c:@S@CGRect",
+      "kind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGGeometry.h",
+        "sha256": "sha256:41e89d5338a795b60c577e3bec68ca61940eada078c40ecacbe203afc1e39465",
+        "line": 51,
+        "text": "typedef struct CG_BOXABLE CGRect CGRect;"
+      },
+      "astIdentity": "struct CGRect",
+      "sourceKit": {
+        "name": "CGRect",
+        "line": 9,
+        "column": 35
+      },
+      "eligibilityEvidence": [
+        "exact Clang typedef AST",
+        "public SDK header",
+        "module map umbrella export *",
+        "successful Swift import/typecheck"
+      ],
+      "status": "public-header-exported"
+    },
+    {
+      "target": "Spatial.Size3D",
+      "module": "Spatial",
+      "usr": "c:@UA@SPSize3D",
+      "kind": "TypedefDecl",
+      "source": {
+        "path": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/usr/include/Spatial/Structures.h",
+        "sha256": "sha256:23bf3c4aba59bf52cbf7007d3a082b9bf83f55764c877c24ac92649124f483f9",
+        "line": 129,
+        "text": "} SPSize3D",
+        "swiftNameAnnotationLine": 131,
+        "swiftNameAnnotation": "SPATIAL_SWIFT_NAME(Size3D)",
+        "availabilityLine": 132,
+        "availability": "__API_AVAILABLE(macos(13.0), ios(16.0), watchos(9.0), tvos(16.0));"
+      },
+      "astIdentity": "union SPSize3D + SwiftNameAttr(Size3D)",
+      "sourceKit": {
+        "name": "Size3D",
+        "line": 10,
+        "column": 32
+      },
+      "eligibilityEvidence": [
+        "exact Clang typedef AST",
+        "exact SwiftNameAttr(Size3D)",
+        "public SDK header/module map export *",
+        "successful Swift import/typecheck"
+      ],
+      "status": "public-header-exported"
+    }
+  ],
+  "controls": {
+    "exactRawUSR": true,
+    "exactSourceHeaderLine": true,
+    "exactASTIdentity": true,
+    "moduleMapExportRequired": true,
+    "noAbsenceInference": true,
+    "noSyntheticPublicFlags": true,
+    "unresolvedAliasesRemainHeld": true
+  }
+}

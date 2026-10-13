@@ -1,0 +1,34 @@
+{
+  "kind": "sr1-owner-review-remaining-five-root-admission-r3-v1",
+  "status": "PASS_SOURCE_ONLY_PRE_EFFECT",
+  "scope": "r3 source admission only",
+  "actions": {"compilerInvocations": 0, "nativeCalls": 0, "remoteCalls": 0, "gitMutations": 0},
+  "sourceChecks": {
+    "verifier": "PASS_SOURCE_ONLY",
+    "planCount": 5,
+    "sequence": ["disabled", "image", "shapes.fill-stroke", "text.bundled-font", "toggle"],
+    "scratchCount": 5,
+    "rollingMaxActiveRoots": 3,
+    "quiescenceRequiredBeforeReuseOrMove": true,
+    "exactTransferDependencyCount": 70,
+    "exactTransferBundleSha256": "sha256:f545b56726f3f79981809c7ca3833dfe1613d45c9746b211236a7cf2cc3a2664,
+    "consumerTransportRefCount": 14,
+    "macContextRefCount": 12,
+    "canonicalInputRefCount": 2
+  },
+  "controls": {
+    "packetFaultsRejected": ["five-package-roots", "source-hash", "reordered-sequence", "renderer", "duplicate-scratch"],
+    "lifecycleBaseline": {"accepted": true, "fixtureOnly": true, "activeRootCount": 2, "maxActiveRoots": 3, "quiescentBeforeReuseOrMove": true},
+    "lifecycleFaultsRejected": ["active-root-count-four", "not-quiescent", "wrong-operation"]
+  },
+  "held": [
+    "Fresh runtime facts must prove activeRootCount <= 3 and quiescence before reuse/move.",
+    "Dell Count1 producer output and candidate tuple/case/runtime/renderer/metadata joins are not present in source-only packet.",
+    "Dell-to-Mac zip must be created only after exact 14 transport refs pass hash/byte checks."
+  ],
+  "frozenInputs": {
+    "r2StageSha256": "sha256:143557d72744655c4cc88c49ed6751c26bc043c1752ba0f26dc427d2ef77ccd4",
+    "adapterV3StageSha256": "sha256:242732dd9be4e72ba022400c203c2389e4d0ecc842f6f07e496906b6f0fe2ab8",
+    "captureV3StageSha256": "sha256:51cc818f25949031b5551cf2824ebb966665874ef5d037514e821465f01f3135"
+  }
+}

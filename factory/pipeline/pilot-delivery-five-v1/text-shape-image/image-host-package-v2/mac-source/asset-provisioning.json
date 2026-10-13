@@ -1,0 +1,14 @@
+{
+  "kind": "macos-main-bundle-named-image-provisioning-v1",
+  "probeTag": "swiftui.image.rgba-registered.v1",
+  "witnessImageName": "factory.rgba.square.v1",
+  "catalogPath": "Resources/FactoryRGBA.xcassets",
+  "pngPath": "Resources/FactoryRGBA.xcassets/factory.rgba.square.v1.imageset/factory-rgba.png",
+  "pngSha256": "sha256:57b45fdbc5d9a86bbad5f547b6964e39ba0c872130c564877d306f61477f6bea",
+  "contract": "Compile catalog with xcrun actool into App.app/Contents/Resources/Assets.car; execute App.app/Contents/MacOS/FactoryProbe so Image(\"factory.rgba.square.v1\") resolves through main bundle.",
+  "bundleLookup": "Bundle.main",
+  "forbidden": ["Image(systemName:...)", "NSImage", "Bundle.module witness branch", "default-font or unnamed asset fallback"],
+  "assetCompiler": "/usr/bin/xcrun actool",
+  "platform": "macosx",
+  "minimumDeploymentTarget": "14.0"
+}

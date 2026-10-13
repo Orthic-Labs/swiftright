@@ -1,0 +1,75 @@
+{
+  "kind": "factory-text-count1-r10-kernel-stage-v4-source-manifest-v1",
+  "status": "source-only-pending-root-transport-and-preflight",
+  "nativeActions": 0,
+  "compilerActions": 0,
+  "lockActions": 0,
+  "remoteActions": 0,
+  "namespace": "text-mta-r11-count1-r10",
+  "donor": {
+    "root": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5g-sources",
+    "oldNamespace": "text-mta-r11-v5g",
+    "hostPlan": {
+      "path": "host-plan.json",
+      "bytes": 8723,
+      "sha256": "de8660b0c55a717d52171ec476b833881919696f434c3ceba077ba3b77fbc642"
+    },
+    "sourceInputs": {
+      "path": "admission/source-inputs.json",
+      "bytes": 5692,
+      "sha256": "7ca9e0d5d811e316bc01a90447a17243b9430290112ce7979abbf8d678b6a9e3"
+    }
+  },
+  "entry": {
+    "path": "stage_text_count1_r10_v4.py",
+    "bytes": 41619,
+    "sha256": "50e8ec75b5e99ca266df28192442ce4411ffb468114d0850974509c1fd611cfb"
+  },
+  "readme": {
+    "path": "README.md",
+    "bytes": 2004,
+    "sha256": "c8a3ef51b15dfeb3bd21774fc1e6375953364cf29d46ebc729f52ca7b7297df6"
+  },
+  "dependencies": [
+    {
+      "path": "factory/pipeline/owned-child-kernel-cleanup-root-v3/cleanup-kernel-authority-v3.ps1",
+      "bytes": 11288,
+      "sha256": "cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13"
+    },
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/install-count1-r5g-mta.ps1",
+      "bytes": 8393,
+      "sha256": "bf31c1be12d80e56913160025b5e9fcb500695c0089d0e40103659250663c137"
+    },
+    {
+      "path": "factory/native/windows/pilot-rectangle-fixed-root-v2/capture-count1-r12-sources/overlay/final-exit-certificate-mta-v1.ps1",
+      "bytes": 12696,
+      "sha256": "db5aa26893a23bb1da8b930ff8e9131a458c2e2c9e23963b439715c02851f584"
+    },
+    {
+      "path": "factory/native/windows/pilot-rectangle-fixed-root-v2/capture-count1-r12-sources/overlay/test-mta-config-admission.ps1",
+      "bytes": 2041,
+      "sha256": "777a4858aea98d9cbefe58ef85a0fad0f6150c6da18f4ad9cd36ed6f18606dc4"
+    },
+    {
+      "path": "factory/native/windows/pilot-rectangle-fixed-root-v2/capture-count1-r12-sources/overlay/test-uia-mta-controls.ps1",
+      "bytes": 4708,
+      "sha256": "f0a5c50e942328af62e5716b24469694a3f5fedd5199fbd66ca6a003994632a1"
+    }
+  ],
+  "measured": {
+    "sourceSha256": "4770ac41a8826891d972725f4af8e56f92c5b66ead5777eee677692cec71701e",
+    "windowsExeSha256": "33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7",
+    "rootV3CleanupSha256": "cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b"
+  },
+  "cleanupRoles": [
+    "producer/support/cleanup.ps1",
+    "producer/dependencies/uia-worker/support/cleanup.ps1"
+  ],
+  "expectedCleanupBindings": [
+    "Invoke-FactoryOwnedCleanup $p $exe $ownedStartedAt -ExpectedExeHash $ExeHash -KnownStartedIdentity",
+    "Invoke-FactoryOwnedCleanup $p $exe $startedAt -ExpectedExeHash $exeHash -KnownStartedIdentity"
+  ]
+}

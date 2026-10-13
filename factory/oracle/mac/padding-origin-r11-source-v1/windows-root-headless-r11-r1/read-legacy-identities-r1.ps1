@@ -1,0 +1,3 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$p='D:\Claude\swiftright\factory\native\windows\padding-capture-lease-capture-v3\coordinator-single-r1\issued-metadata.json';$i=Get-Item -LiteralPath $p;if($i.Length -gt 2MB -or ($i.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe JSON'};$m=[IO.File]::ReadAllText($p)|ConvertFrom-Json
+[ordered]@{kind='root-factory-count1-issued-identities-observation-v1';path=$p;sha256=(Get-FileHash -LiteralPath $p).Hash.ToLowerInvariant();version=$m.version;kindObserved=$m.kind;runID=$m.runID;captures=$m.captures;nativeWindowActions=0;compilerActions=0;lockActions=0}|ConvertTo-Json -Depth 20

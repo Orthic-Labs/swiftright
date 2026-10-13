@@ -1,0 +1,62 @@
+{
+  "schema": "taskid-windows-three-variants-stage-manifest-v1",
+  "root": "factory/runtime-additions/taskid-windows-three-variants-v1",
+  "executionStatus": "prepared-deferred-no-Windows-execution",
+  "excluded": [
+    "__pycache__",
+    "*.pyc",
+    "upload-receipt.json",
+    "run-dispatch-receipt.json",
+    "remote binaries"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1160,
+      "sha256": "fe4a43aa697382cae1d3ab821274b07f35dc9a17ef92342620b6c08658fdf3ff"
+    },
+    {
+      "path": "dispatch.py",
+      "bytes": 8132,
+      "sha256": "5efa1d3744d68dd63d15c5f2d3c71ecacd3699a6d69d6e3faf454513dd1f3e3d"
+    },
+    {
+      "path": "preflight-receipt.json",
+      "bytes": 336,
+      "sha256": "94f76f3240ea16ca1db04062ba8b9f2abfaf983718ac4bed446623c0018e888e"
+    },
+    {
+      "path": "prepare.py",
+      "bytes": 5500,
+      "sha256": "c56fb7fce57a2b66d23cdf7b4114048039d75a15669d190d598333a4437e8c86"
+    },
+    {
+      "path": "run-three-variants.ps1",
+      "bytes": 10218,
+      "sha256": "20da809119afb9de5675777ed1e41acda30ad908c4d9e556f403e08d0060150d"
+    },
+    {
+      "path": "source-plan.json",
+      "bytes": 30424,
+      "sha256": "66ad3b9db201e956bde92f85a34b5c61585fc8036e285909ce5ba38325481c3c"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch-source-manifest.json",
+      "sha256": "6f0012b931f7562e1cbf243b0cbeb3ce992c812e8cf08ca9f97c2f178c4af9cc",
+      "role": "frozen variant declaration"
+    },
+    {
+      "path": "factory/runtime-additions/next-runtime-diagnosis-v1/scratch",
+      "role": "local source roots; source-plan binds exact package bytes"
+    }
+  ],
+  "counts": {
+    "ownedFiles": 6,
+    "variants": 3,
+    "packageFilesPerVariant": 45,
+    "compilerInvocations": 0,
+    "sshInvocations": 0
+  }
+}

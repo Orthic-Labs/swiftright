@@ -1,0 +1,82 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.shapes.fill-stroke.recipe",
+  "provenance": {
+    "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+    "createdAt": "2026-10-10T17:26:20Z",
+    "producer": "factory/recipes-draft",
+    "review": {
+      "reviewer": "pending-maintainer-review",
+      "at": "2026-10-10T17:26:20Z",
+      "decision": "candidate"
+    }
+  },
+  "block": "swiftui.shapes.fill-stroke",
+  "witnesses": [
+    {
+      "id": "swiftui.shapes.fill-stroke.witness",
+      "sourceHash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+      "resources": [
+        {
+          "id": "swiftui.shapes.fill-stroke.witness.swift",
+          "hash": "sha256:a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e"
+        }
+      ]
+    }
+  ],
+  "stimuli": [],
+  "assertions": [
+    {
+      "id": "swiftui.shapes.fill-stroke.assertion.primary",
+      "channel": "layout",
+      "expected": {
+        "width": 40,
+        "height": 20,
+        "shape": "Rectangle-or-RoundedRectangle",
+        "style": "fill-or-stroke"
+      },
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "id": "shape",
+      "values": [
+        "Rectangle()",
+        "RoundedRectangle(cornerRadius: 6)"
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "style",
+      "values": [
+        "fill(Color.red)",
+        "stroke(Color.blue, lineWidth: 2)"
+      ],
+      "coverage": "pairwise"
+    },
+    {
+      "id": "color-scheme",
+      "values": [
+        "light",
+        "dark"
+      ],
+      "coverage": "pairwise"
+    }
+  ],
+  "negativeCases": [
+    {
+      "id": "swiftui.shapes.fill-stroke.negative.invalid-member",
+      "mode": "must-not-compile",
+      "sourceHash": "sha256:0e94a9dc43a419e8be26428539895719858ba9295b19f383567757302e95ffe3"
+    }
+  ],
+  "instrumentationTransparency": {
+    "case": "swiftui.shapes.fill-stroke.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  }
+}

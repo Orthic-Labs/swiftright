@@ -1,0 +1,98 @@
+{
+  "kind": "factory-mta-release-diagnosis-v1",
+  "status": "source-diagnosis-only",
+  "frozenEvidence": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r5f-diagnostic/native/native-01/uia-worker",
+  "frozenReleaseCaller": {
+    "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/overlay/all-owned-release-text-r1.ps1",
+    "sha256": "1298c3570798d6aa72cd0822e8374d4ee9f72a105cebea89b293e240109e761e",
+    "bytes": 14408
+  },
+  "frozenWorkerHelper": {
+    "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/producer/dependencies/uia-worker/support/final-exit-certificate.ps1",
+    "sha256": "3e3a2cab99320534cd8b3e43d32f3848cceb42a29fe767b7cc5994da4485230d",
+    "bytes": 12293
+  },
+  "prospectiveWorkerHelper": {
+    "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-r1/final-exit-certificate-v2.ps1",
+    "sha256": "78b9edaf1b72c389f3c026a6c1e1606505568803bfe3ad67ae1e66416809475d",
+    "bytes": 12293,
+    "delta": "expected config kind v2, matching uia-worker-invoke-v2 output"
+  },
+  "offlineControls": {
+    "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-r1/test-r5f-worker-release-v2.ps1",
+    "sha256": "26b0fab4726eb2c48a758b45d3b0cdb28e8b07c84e158a23d302111a4fead136",
+    "bytes": 5826,
+    "nativeWindowActions": 0,
+    "compilerActions": 0,
+    "lockActions": 0
+  },
+  "supplementalRelease": {
+    "path": "factory/pipeline/pilot-next-source-v1/mta-release-diagnosis-r1/supplemental-owner-release-v2.ps1",
+    "sha256": "9123ee9b88e4bef370ccffb04776aeaa3fa7a25de5f7415a901a81f04c813a50",
+    "bytes": 11637,
+    "mutates": "desktop lock only after full renderer+worker+parent proof; writes separate fresh supplement",
+    "actualTaskResultEvidence": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r5f-diagnostic/control/task-result.json",
+      "sha256": "98fb384b2d771ada4c3413b8dd4dbab985fcb1aa7983dbf2c472795e02b00277"
+    },
+    "rendererHelper": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/producer/support/final-exit-certificate.ps1",
+      "sha256": "94db73dadfaa998fe63eefc5e7ce416310fe9072cd2fd09689f2f923f81538b4",
+      "bytes": 8684
+    },
+    "allOwnedReleaseHelper": {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/producer/support/all-owned-release.ps1",
+      "sha256": "c9fd2c0e59bfe7c00ca982fd56abb2cc346d603561c9ac720e37c90a55714985",
+      "bytes": 8023
+    },
+    "actualControlsReceipt": {
+      "sha256": "f833f909970d475d33c72bb9c68deb41dc296d31d098794f20f7e3037b89a475"
+    }
+  },
+  "stagerBindings": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-pilot-stage-v1/stage_mta_count1_r5.py",
+      "sha256": "09aaf402449fbb710165700269515f49884ed5df1fbf0712c8cedb7af4037ce5",
+      "bytes": 36019
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/mta-pilot-count20-stage-v1/stage_mta_count20.py",
+      "sha256": "f9b964963556352907e03222a0dd3c9295e33428b6fea5bcce9f9e745f8661d7",
+      "bytes": 26274
+    }
+  ],
+  "frozenProducerInputs": [
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/overlay/uia-worker-invoke-v2.ps1",
+      "sha256": "e8b62b517bb38d21b9006bdea5a5e76dd8b19491a8c5e37403d6cfa2bfe5a547",
+      "bytes": 11500
+    },
+    {
+      "path": "factory/native/windows/pilot-text-paint-root-v2/capture-count1-r5f-sources/producer/dependencies/uia-worker/worker-contract.json",
+      "sha256": "cf7bad2f9e2832bd433907aeb0ad916cb8601147fcb4f4116f8016fb2cfa2f52",
+      "bytes": 1322
+    }
+  ],
+  "actualConfig": {
+    "path": "factory/native/windows/pilot-text-paint-root-v2/actual-count1-r5f-diagnostic/native/native-01/uia-worker/config.json",
+    "sha256": "1617583c8addb6435c2dca5b9222b7147a90534d166a8d9f2ea484cabc429ce3",
+    "bytes": 2759,
+    "kind": "factory-uia-snapshot-worker-config-v2"
+  },
+  "controls": {
+    "positive": "actual v2 config and exact r5f worker proof",
+    "faults": [
+      "config kind v1",
+      "workerScriptHash drift",
+      "sourceContractHash drift",
+      "configHash drift",
+      "retained handle or worker identity drift",
+      "terminal certificate hash drift",
+      "source binding removal/path/hash drift",
+      "stdout or stderr sealed hash drift"
+    ],
+    "nativeWindowActions": 0,
+    "compilerActions": 0,
+    "lockActions": 0
+  }
+}

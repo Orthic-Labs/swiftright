@@ -1,0 +1,32 @@
+{
+  "kind": "sr0-tuple12-driver-overlay",
+  "version": 3,
+  "status": "candidate",
+  "baseScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/drive-fixture.ps1",
+    "sha256": "1683b96e2b0e9ac06cf93777d2274d5f4ece9c40092d90799de95b98e77436e9"
+  },
+  "overlayScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r3.ps1",
+    "sha256": "ec5e9ce17a9a3f1088ad15f08a15c1c32b7d9af0d45f091a66404d6ab5ef0780"
+  },
+  "change": [
+    "NoActivate skips only driver Ensure-Foreground before UIA SetFocus.",
+    "Each SetFocus call emits setfocus_attempt; renderer startup CBT HCBT_ACTIVATE and HCBT_SETFOCUS guard remains in force.",
+    "NoActivate focus admission reads target provider HasKeyboardFocusProperty for direct and later Focused-Name checks; it never reads desktop-global FocusedElement.",
+    "Default branch retains frozen foreground and FocusedElement behavior."
+  ],
+  "rendererFocusSource": [
+    "examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift:focusRow",
+    "examples/SliceApp/Sources/SliceApp/Windows/BridgeBackend.swift:focusTarget",
+    "render/swiftright-render/src/ax.rs:TreeUpdate.focus"
+  ],
+  "run": {
+    "delivery": "targeted",
+    "fixture": "F1..F9",
+    "keyMode": "char",
+    "switch": "-NoActivate",
+    "providerState": "HasKeyboardFocus=False is recorded under CBT noactivate veto; native AX logical focus assertions are required",
+    "requiredSetFocusLog": "setfocus_attempt[Row 5]=0 noactivate=True"
+  }
+}

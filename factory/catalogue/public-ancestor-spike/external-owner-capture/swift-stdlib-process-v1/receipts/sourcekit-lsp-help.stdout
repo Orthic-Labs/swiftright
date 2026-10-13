@@ -1,0 +1,49 @@
+OVERVIEW: Language Server Protocol implementation for Swift and C-based
+languages
+
+USAGE: sourcekit-lsp <options> <subcommand>
+
+OPTIONS:
+  --configuration <configuration>
+                          Build with configuration [debug|release]
+  --scratch-path, --build-path <scratch-path>
+                          Specify build/cache directory (--build-path option is
+                          deprecated, --scratch-path should be used instead)
+  -Xcc <Xcc>              Pass flag through to all C compiler invocations
+  -Xcxx <Xcxx>            Pass flag through to all C++ compiler invocations
+  -Xlinker <Xlinker>      Pass flag through to all linker invocations
+  -Xswiftc <Xswiftc>      Pass flag through to all Swift compiler invocations
+  -Xclangd <Xclangd>      Pass options to clangd command-line
+  -index-prefix-map <index-prefix-map>
+                          Override the prefix map from the build system, values
+                          of form 'remote=local'
+  --default-workspace-type <default-workspace-type>
+                          Override default workspace type selection; one of
+                          'swiftPM', 'compilationDatabase', or 'buildServer'
+  --compilation-db-search-path <compilation-db-search-path>
+                          Specify a relative path where sourcekit-lsp should
+                          search for `compile_commands.json` or
+                          `compile_flags.txt` relative to the root of a
+                          workspace. Multiple search paths may be specified by
+                          repeating this option.
+  --generated-files-path <generated-files-path>
+                          Specify the directory where generated files will be
+                          stored
+  --experimental-feature <experimental-feature>
+                          Enable an experimental sourcekit-lsp feature.
+                          Available features are: on-type-formatting,
+                          structured-logs
+  --bypass-workspace-trust
+                          Skip the workspace trust prompt and always load
+                          workspace-scoped configuration. Use when the LSP
+                          client (e.g. VS Code) already provides its own
+                          workspace trust gating.
+  -h, --help              Show help information.
+
+SUBCOMMANDS:
+  diagnose                Creates a bundle containing information that help
+                          diagnose issues with sourcekit-lsp
+  debug                   Commands to debug sourcekit-lsp. Intended for
+                          developers of sourcekit-lsp
+
+  See 'sourcekit-lsp help <subcommand>' for detailed help.

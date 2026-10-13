@@ -1,0 +1,47 @@
+{
+  "kind": "sr0-display-v5-r6-workload-identity-diagnosis-v1-pins",
+  "sourceFiles": {
+    "readme": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/v5-r6-diagnosis-v1/README.md",
+      "sha256": "c96bf403796991ba9646768bd0b6d305e6f6affabd06561d0ef0bbefead6a278"
+    },
+    "identityHelper": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/v5-r6-diagnosis-v1/workload-identity-v6.ps1",
+      "sha256": "1cd6c8a486a33cb318e5fab9b0613d888920b1fc9d52cac7849bd75e39d84309"
+    },
+    "collector": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/v5-r6-diagnosis-v1/collector-selfjob-v6-pidjoin.ps1",
+      "sha256": "361f391e7c3a2579436d6b46c529e760430fe652fe251c96833e1406a84de766"
+    },
+    "controls": {
+      "path": "factory/pipeline/sr0-display-selfjob-v4/v5-r6-diagnosis-v1/test-workload-identity-controls-v1.ps1",
+      "sha256": "786813e3cb313574c6a2c34f5a3965e98f1065231c9adcf0e89158099627777a"
+    }
+  },
+  "immutableEvidence": {
+    "archiveRoot": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-native-raw",
+    "resultWorkload": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-native-raw/result-workload.txt",
+    "presentMonCsv": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-native-raw/presentmon.csv",
+    "collectorReceipt": "factory/pipeline/sr0-display-selfjob-root-v4/v5-root-r6/actual-native-raw/collector-receipt.json",
+    "wrapperPid": 46448,
+    "nestedWorkloadPid": 17992,
+    "csvTargetRowsProcessId": 17992,
+    "csvTargetJoinDefect": "collector-v5 passed wrapper PID to CSV validator"
+  },
+  "strictHeldEvidence": {
+    "workerStdoutDrain": 0,
+    "streamDrainRows": 1,
+    "finishedLinePresent": true,
+    "workerTerminal": 0,
+    "taskQuiescent": 0,
+    "runsValid": 0,
+    "qualificationClaim": false
+  },
+  "bounds": {
+    "resultMaxBytes": 2097152,
+    "csvMaxBytes": 67108864,
+    "collectorDeadlineSeconds": 900,
+    "pollSeconds": 1,
+    "jobMemoryLimitBytes": 1073741824
+  }
+}

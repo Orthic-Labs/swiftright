@@ -1,0 +1,24 @@
+{
+  "kind": "text-count20-r9-cleanup-review-v3-evidence",
+  "owner": "factory-rectangle-9526f6f062a841d69ec4a860f4b4cd03 2026-10-12T03:57:15.1903850+00:00",
+  "qualificationClaim": false,
+  "lockAction": "none",
+  "rows": [
+    {"role":"coordinator","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/coordinator.json","sha256":"72b872b2e87b2bb239e68c6ce33ae8a2b895f4fd19c72aedad5479e3e304cb6a","status":"failed","count":20,"parentKernelWait":0,"parentKernelExitCodeSigned":1,"lockReleased":false},
+    {"role":"task-result","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/control/task-result.json","sha256":"fdea9ecef57d92e8d988cfb99ca8b7ec5f65572ce08537310431dffae84120e2","status":"hold-harness-error","count":20,"peakJobMemoryUsedBytes":335839232,"jobMemoryLimitBytes":1073741824,"activeProcessCount":2},
+    {"role":"source-inputs","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/admission/source-inputs.json","sha256":"6c335ddead9c023b1faf40bc9e02fb679112f48ec1955934dd28ce4268789c22","count":20,"exeSha256":"33248eaa0369e8d4b5e7dea9e1df7d6d86110ee3f31c8fdc9db61a500d057fe7"},
+    {"role":"native-01-original-terminal","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/final-exit-certificate.json","sha256":"9df73f734475186056b94ee054e7c4b17c6b40e5167a4da8a503f4d12883a631","pid":50080,"startUtc":"2026-10-12T03:57:39.1989562Z","kernelAfter":0,"exitCode":0,"streamsSealed":true},
+    {"role":"native-02-original-terminal","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/final-release-hold.json","sha256":"728bc2d64193cb81ecc86bc996a503235c804d9dd5a8158d62eb367c86442d04","pid":26108,"startUtc":"2026-10-12T03:58:13.9333787Z","originalTerminalProof":false,"reason":"Final original-handle exit or sealed raw proof absent"},
+    {"role":"native-01-inventory","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-01/owned-worker-inventory.json","sha256":"5605275d710cd041872674c94cbfe9f8c90a34e4cde3b711eb2533f3ca1cc186"},
+    {"role":"native-02-inventory","path":"factory/native/windows/pilot-text-paint-root-v2/actual-count20-r9-held/native/native-02/owned-worker-inventory.json","sha256":"3c40c9f1b47b0e0ccdc2d2134968de55c65d7e225466ac31cd7a3bfd76ec719f"},
+    {"role":"prior-cleanup-receipt","path":"factory/pipeline/text-count20-r9-owned-cleanup-root-v2/root-late-cleanup-r2/read-transport/transport.json.stdout.bin","sha256":"2fd77664984b7561af5541a467c061174e92e3c25e46c8e797576f7004547f74","status":"cleanup-held","nativeActions":0,"terminationActions":0}
+  ],
+  "policy": {
+    "liveIdentity": "exact PID + native path + native start ticks + executable SHA-256",
+    "allowedWaitResults": [0, 258],
+    "absentCurrentProof": "Get-Process absent + OpenProcess zero + ERROR_INVALID_PARAMETER 87",
+    "lockRelease": "root-only exact owner CAS after fresh receipt review",
+    "memoryLimitBytes": 1073741824,
+    "streamLimitBytes": 8388608
+  }
+}

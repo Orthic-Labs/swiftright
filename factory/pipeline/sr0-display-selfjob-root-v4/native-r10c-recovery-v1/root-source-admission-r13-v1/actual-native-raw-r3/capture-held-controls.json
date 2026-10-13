@@ -1,0 +1,54 @@
+﻿{
+    "kind":  "sr0-r13-capture-held-reader-controls-v2",
+    "status":  "passed-source-controls",
+    "predicate":  "Test-CaptureHeldTerminalV13",
+    "astExtracted":  true,
+    "actualStatus":  "capture-held-report-only",
+    "actualAccepted":  true,
+    "qualificationClaim":  false,
+    "lockMutation":  false,
+    "faults":  [
+                   {
+                       "name":  "collector-status-passed",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "capture-complete-false",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "qualification-claim-true",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "csv-invalid",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "active-two",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "lock-released-false",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "launcher-not-quiescent",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "coordinator-parent-proof-false",
+                       "status":  "rejected"
+                   },
+                   {
+                       "name":  "coordinator-exit-mismatch",
+                       "status":  "rejected"
+                   }
+               ],
+    "receiptPins":  {
+                        "launcher":  "f302d8275545238770953739a76922cb0acd097956a2a86938aecd23f6ef50ff",
+                        "collector":  "638538d7c481a2363f54f73f129229799be9629566a8bbb2bb870849f2fed2a8",
+                        "coordinator":  "521bf3af3e23bef586f289ff1a05e6105831b6880448b36f2d83981327be33dc"
+                    },
+    "checkedAt":  "2026-10-12T06:06:40.3836713+00:00"
+}

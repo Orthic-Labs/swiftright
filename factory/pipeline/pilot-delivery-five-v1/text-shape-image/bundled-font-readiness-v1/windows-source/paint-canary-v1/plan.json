@@ -1,0 +1,36 @@
+{
+  "kind": "windows-bundled-font-paint-canary-v1",
+  "candidate": "swiftui.text.bundled-font.tinos-pilot",
+  "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "rendererSha256": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "bridgeABI": "0.6",
+  "font": {
+    "family": "Tinos",
+    "postScriptName": "Tinos-Regular",
+    "resourceSha256": "sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61",
+    "bytes": 521588
+  },
+  "source": "FontCustomPaintCanary.cpp",
+  "provider": "DirectWrite isolated custom font set",
+  "witnessText": "SwiftRight bundled Tinos font witness",
+  "fontSizeDIP": 18,
+  "outputs": ["tinos.rgba.bin", "tinos.metadata.json", "stdout.bin", "stderr.bin"],
+  "texture": "DWRITE_TEXTURE_CLEARTYPE_3X1 -> per-pixel maximum coverage",
+  "selection": {
+    "providerPaint": "measured by canary",
+    "rendererSelection": "unproven",
+    "bridgeMeasurementSelection": "unproven"
+  },
+  "runtimeEdits": false,
+  "fontInstallation": false,
+  "executionEligible": false,
+  "requiredChannels": ["resource hash", "canary process receipt", "ABI bridge measurement", "native text paint", "screenshot", "UIA"],
+  "holds": [
+    "ABI 0.6 exposes family/weight/size/lineHeight fields but no font-byte registration",
+    "isolated DirectWrite collection cannot prove existing SwiftRight renderer selects Tinos",
+    "existing host's process-private AddFontResourceEx remains provider evidence, not renderer proof",
+    "lineLimit is runtime metadata but absent from ABI 0.6 MeasureRequest",
+    "default run requires nonZeroAlphaPixels > 0; --fault-empty-coverage must fail empty-coverage"
+  ],
+  "status": "source-ready-provider-paint-selection-held"
+}

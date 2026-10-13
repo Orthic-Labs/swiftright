@@ -1,0 +1,30 @@
+{
+  "kind": "sr0-tuple12-driver-overlay",
+  "version": 4,
+  "status": "candidate",
+  "baseScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r3.ps1",
+    "sha256": "ec5e9ce17a9a3f1088ad15f08a15c1c32b7d9af0d45f091a66404d6ab5ef0780"
+  },
+  "overlayScript": {
+    "path": "probes/sr0-s/fresh-on-bridge/scripts/tuple12-startupguard-smoke-v1/drive-fixture-noactivate-focus-r4.ps1",
+    "sha256": "34d28b1f4cc6a4fccb279639ae767c069a40ae081290ef2b11aebafd52b441b4"
+  },
+  "change": [
+    "Capture current foreground HWND after renderer-ready target identity and metrics validation, before first targeted sample.",
+    "Keep every later Sample-Fg transition counted and logged; keep fg_before/fg_after per targeted key.",
+    "Keep targeted delivery free of foreground acquisition; global delivery retains existing Ensure-Foreground and abort behavior."
+  ],
+  "admission": {
+    "requiredRunSummary": "keymode=char delivery=targeted fg_changes=0 driver_abort=none",
+    "requiredTrace": "every targeted key has fg_before=fg_after=baseline and no foreground transition",
+    "nativeSemantic": "17/17 plus provider logical focus Row5 and Row99 assertions",
+    "sourceControls": "qualification/test_startupguard_driver_r4_controls.py"
+  },
+  "rootRun": {
+    "sourceDriver": "overlayScript.sha256",
+    "freshOutput": true,
+    "matrix": "F1..F20 fresh namespace; do not combine with prior partial runs",
+    "preserveRaw": true
+  }
+}

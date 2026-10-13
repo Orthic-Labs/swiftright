@@ -1,0 +1,39 @@
+{
+  "kind": "factory-stack-lifecycle-diagnosis-source-manifest-v2",
+  "scope": "additive-host-trace-and-receipt-join",
+  "protected": [
+    "renderer",
+    "Bridge",
+    "runtime",
+    "ABI",
+    "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/worker.ps1"
+  ],
+  "newSources": [
+    "stack-phase-host-v2.swift",
+    "phase-contract-v2.json",
+    "materialize-host-phase-v2.ps1",
+    "validate-phase-receipt-v2.ps1"
+  ],
+  "archivedHostPins": {
+    "sourceHash": "5a41b5d411509e5e9d293cc56943c7270394c176ba863b0533921ac22a87792d",
+    "executableHash": "62aa7d5b9a5b9001d697822d26b2d102d8934de1de4a02103f810e756f71af66",
+    "rendererHash": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "bridgeLoaderHash": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+    "bridgeHash": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+    "runtimeHash": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "evidenceInputs": [
+    "factory/pipeline/sr0-display-selfjob-v4/diagnosis/README.md",
+    "factory/pipeline/sr0-display-selfjob-v4/diagnosis/bridge-load-trace-v1.swift",
+    "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/worker-contract.json",
+    "factory/pipeline/pilot-next-source-v1/rectangle-count20-uia-diagnostic-v1/worker.ps1",
+    "factory/pipeline/paired-stack-custom-actual-v4/independent-review/findings-v1.json"
+  ],
+  "claims": {
+    "bridgeLoadDeadlock": "not-established",
+    "rendererEntryAfterDpiSetup": "observed-in-archived-failure",
+    "windowReady": "unobserved",
+    "uiaExposure": "unjoined",
+    "qualification": "not-produced"
+  }
+}

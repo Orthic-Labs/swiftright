@@ -1,0 +1,45 @@
+{
+  "kind": "factory-supervised-local-job-v2",
+  "argv": [
+    "python3",
+    "factory/pipeline/padding-fresh-case-v1/fault-controls-v1.py",
+    "--root",
+    "/Volumes/D/claude/swiftright",
+    "--packet",
+    "/Volumes/D/claude/swiftright/factory/pipeline/padding-fresh-case-v1/fresh-padding-inputs.json",
+    "--control-root",
+    "/Volumes/D/claude/swiftright/.factory-work/padding-fresh-fault-controls-r3"
+  ],
+  "pid": 99614,
+  "exitCode": 0,
+  "budgetFailure": null,
+  "startedAt": "2026-10-12T02:58:26.358472+00:00",
+  "finishedAt": "2026-10-12T02:58:27.198795+00:00",
+  "seconds": 0.84,
+  "peakGroupRssBytes": 48594944,
+  "inventory": {
+    "retries": 3,
+    "timeoutSeconds": 1.0,
+    "attempts": 4,
+    "errors": []
+  },
+  "finalInventory": {
+    "known": true,
+    "count": 0,
+    "rssBytes": 0,
+    "error": "",
+    "attempts": 1
+  },
+  "quiescenceKnown": true,
+  "ownedGroupQuiescent": true,
+  "termination": [],
+  "supervisorError": "",
+  "stdout": {
+    "bytes": 192,
+    "sha256": "f924ac28f92fd1dfa6477c84f38517c854774c0a0be1364aa610785f28c6deec"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

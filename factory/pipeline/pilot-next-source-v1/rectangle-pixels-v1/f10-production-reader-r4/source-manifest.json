@@ -1,0 +1,39 @@
+{
+  "kind": "factory-rectangle-f10-production-reader-source-map-v4",
+  "status": "source-only-pending-root-reader-admission",
+  "files": [
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/f10-production-reader-r4/prepare_f10_adapter_input.py",
+      "bytes": 9867,
+      "sha256": "89edfcde727cda7c1024f62edc8ddbe3dd3d649df08402615afe4956aca34f44"
+    },
+    {
+      "path": "factory/pipeline/pilot-next-source-v1/rectangle-pixels-v1/f10-production-reader-r4/README.md",
+      "bytes": 1931,
+      "sha256": "3f875bac7af249be07f94f8227ad1f89c3d52517603da165e8110a73dfb92f40"
+    }
+  ],
+  "inputs": {
+    "windowsExport": "factory/native/windows/pilot-rectangle-fixed-root-v2/actual-count20-r4/export-manifest.json",
+    "artifactExport": "factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1/export-manifest.json",
+    "windowsRows": 1023,
+    "artifactRows": 3,
+    "roles": [
+      "compiler",
+      "exe",
+      "renderer"
+    ]
+  },
+  "guards": [
+    "bounded JSON before read",
+    "regular non-symlink paths",
+    "exact path/bytes/SHA role joins",
+    "native-01..native-20 proof roles",
+    "parent kernel certificates",
+    "qualified=false and nativeParityGranted=false",
+    "Windows export kind/captureStatus/lockReleased/qualified strict checks",
+    "artifact export totalBytes & three-role checks",
+    "trusted reader handoff requires explicit root-authored F10 input manifest",
+    "seeded negative controls: missing archive, hash/bytes drift, wrong tuple/case, duplicate ID, parent certificate"
+  ]
+}

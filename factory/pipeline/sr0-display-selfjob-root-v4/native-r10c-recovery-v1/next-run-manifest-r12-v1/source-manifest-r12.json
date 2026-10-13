@@ -1,0 +1,56 @@
+{
+  "schema": "sr0-display-selfjob-r12-manifest-successor-source-v1",
+  "status": "source-only-ready-for-root-review",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3041,
+      "sha256": "4781931505547a1a5b8017d6b71a3c4ea7baf6c812d874f2b70bd20324e6a455"
+    },
+    {
+      "path": "install_r12_sources.ps1",
+      "bytes": 14222,
+      "sha256": "d7d7ea20119d4346456e43a716320b8fb0858979a179e81731570459ba6a03e1"
+    },
+    {
+      "path": "preflight-r12.ps1",
+      "bytes": 5740,
+      "sha256": "80ead3b703b777ed9f38b03a9954b88731a48b644bc71adf5085301ed13c143f"
+    },
+    {
+      "path": "run-admission-r12.ps1",
+      "bytes": 2931,
+      "sha256": "9b41123c0a1e88588e70b13bcd51410b5577fe6e0f681a90c8c708f886a55603"
+    },
+    {
+      "path": "run-source-controls-r12.ps1",
+      "bytes": 4112,
+      "sha256": "5b091cd956c7e7f9e075b4f3a5f6a89a545906b8c68e0ed661f3900f635372b5"
+    },
+    {
+      "path": "schedule-once-v8-admission.ps1",
+      "bytes": 10838,
+      "sha256": "a2c1b9fc23efbc2c8df785c5230d9aa862e207ffce8ec1f2bc2eab177850cdc6"
+    },
+    {
+      "path": "test-manifest-admission-controls-r12.ps1",
+      "bytes": 3959,
+      "sha256": "394798cb0b7c64b24fe090fe229e87eeefbbf2353a7e24d45c437161428017c6"
+    }
+  ],
+  "policy": {
+    "admissionManifestImmutable": true,
+    "runManifestFresh": true,
+    "nativeActions": 0,
+    "lockActions": 0,
+    "deadlineSeconds": 900,
+    "pollSeconds": 1,
+    "aggregateJobMemoryLimitBytes": 1073741824,
+    "aggregateLimitFlags": 512,
+    "killOnJobClose": false,
+    "rows": 200,
+    "keyRate": 10,
+    "warmup": 10,
+    "measure": 60
+  }
+}

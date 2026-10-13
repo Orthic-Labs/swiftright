@@ -1,0 +1,36 @@
+{
+  "kind": "round2-extra-f4-review-request",
+  "version": "0.1",
+  "requester": "root/f1_edge_cases",
+  "reviewer": "root/f7_windows",
+  "scope": "offline source-only F4 successor proposal",
+  "proposalPath": "factory/probes/round2-extra-generator-v1/generate.py",
+  "configPath": "factory/probes/round2-extra-generator-v1/config.json",
+  "expectedBlocks": [
+    "swiftui.popover",
+    "swiftui.animation.spring-interruption",
+    "swiftui.text-field-ime",
+    "swiftui.environment-font-color-scheme",
+    "swiftui.context-menu"
+  ],
+  "expectedOutputs": 19,
+  "sourceInputs": {
+    "candidateManifest": "e7366d2f526577c240343155e36d353a8c0be6bba0c2542a66dfba684585febf",
+    "sourceJoin": "71141aa8fb954ea3bcfb307b3b431fbb953ddb7e117967dc7ee37e1c1603353a",
+    "validation": "440966690da58b2eade55247b8ad9cb2d1ebe6f8336c9a13749154ebf8ce0fba",
+    "nativeRequirements": "2610d49e05a93ded6bea7e3bd903140ddb393f5ff778a4278b25ff6fd8218270",
+    "catalogue": "740f000fd0b389d0c0fee5455f9f3b4285da75c50f9e3f0ba01a5963ca7f5270"
+  },
+  "reviewQuestions": [
+    "Does generated source preserve exact frozen witness bytes after declared descriptor substitution?",
+    "Do case IDs, inputs, projected hashes, selected USRs, recipe hashes, & source joins reject mutation?",
+    "Are all five blocks explicitly held with no unsupported observability or native capability implied?",
+    "Does output remain outside active registry and existing generator paths?"
+  ],
+  "execution": {
+    "compilerRuns": 0,
+    "nativeRuns": 0,
+    "measurementTuple": null,
+    "registryPromotion": false
+  }
+}

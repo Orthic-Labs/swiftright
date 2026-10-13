@@ -1,0 +1,50 @@
+# Exact root-admitted Rectangle receipt; no compiler or native actions.
+param([ValidateSet('Launch')][string]$Phase='Launch',[Parameter(Mandatory=$true)][string]$CompileReceiptSha256,[Parameter(Mandatory=$true)][string]$ExeSha256,[Parameter(Mandatory=$true)][string]$SerializerControlSha256)
+$ErrorActionPreference='Stop'
+$root='D:\Claude\swiftright\.factory-work\hosts\rectangle';$package=Join-Path $root 'package'
+function BHash([string]$p){$i=Get-Item -LiteralPath $p;if($i.PSIsContainer -or $i.Length -gt 64MB -or ($i.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'bounded regular input required'};(Get-FileHash -LiteralPath $p).Hash.ToLowerInvariant()}
+function BJson([string]$p){if((Get-Item -LiteralPath $p).Length -gt 2MB){throw 'JSON input limit'};Get-Content -LiteralPath $p -Raw|ConvertFrom-Json}
+$planPath=Join-Path $package 'plan.json';$receipt=Join-Path $root 'final-r3\observation.json'
+if((BHash $planPath) -cne 'f896e7db7dd28d45a28002ab5712619d9818a24cfef0466aa730374a16b364a4' -or $CompileReceiptSha256 -cne 'c6d2b4818d455087ac91c85cf07ce51abe19845c034e7217eb091a128b734e9b' -or (BHash $receipt) -cne $CompileReceiptSha256 -or $ExeSha256 -cne 'ff678d7e8859f56a37b731e399fa14e6903f71a2d5e9f5dbe76bf0a5f23bd848'){throw 'exact fresh Rectangle pins required'}
+$p=BJson $planPath;$c=BJson $receipt
+if($p.kind -cne 'factory-rectangle-compiler-plan-v2' -or $p.phase -cne 'final' -or $p.case.id -cne 'swiftui.shapes.fill-stroke.recipe.pilot-next.rectangle-fill-light.73250c091e3660b1' -or $p.case.hash -cne 'sha256:bdb866ab75c201e782d8b2079d6fb4f15f5fd8d46e7f16135c4a007bdb408eab' -or $p.tuple.id -cne 'sr1-rectangle-centered-r11-20261012-r1' -or $p.compileRequest.maxParallelJobs -ne 1){throw 'fresh plan case/tuple mismatch'}
+if($c.kind -cne 'factory-rectangle-owned-compile-v1' -or $c.phase -cne 'final' -or $c.exitCode -ne 0 -or $c.timedOut -or $c.outputCapExceeded -or -not $c.ownedExited -or -not $c.originalHandleRetained -or $c.kernelWait -ne 0 -or -not $c.streamDrainComplete -or -not $c.streamsSealed -or -not $c.jobActiveReadable -or $c.jobActiveCount -ne 0 -or -not $c.cleanupJobReadable -or $c.cleanupJobActive -ne 0 -or $c.memoryCapBytes -ne 1073741824 -or $c.jobFlags -ne 512 -or $c.nativeActions -ne 0 -or $c.error -or $c.cleanupError){throw 'compile lifecycle admission failed'}
+if($c.planSha256 -cne (BHash $planPath) -or $c.sourceHash -cne $p.sourceHash -or $c.case.id -cne $p.case.id -or $c.case.hash -cne $p.case.hash -or $c.exeSha256 -cne $ExeSha256 -or $c.runtimeSourceCommit -cne $p.runtimeSourceCommit -or $c.runtimeSourceTreeHash -cne $p.runtimeSourceTreeHash -or $c.rendererSha256 -cne $p.rendererSha256 -or $p.tuple.hostHashes.windows -cne ('sha256:'+$ExeSha256)){throw 'compile byte identity mismatch'}
+foreach($n in @('stdout','stderr')){$f=Join-Path $root ('final-r3\compile.'+$n+'.bin');if((BHash $f) -cne $c.($n+'Sha256') -or (Get-Item -LiteralPath $f).Length -ne $c.($n+'Bytes')){throw 'sealed compile stream mismatch'}}
+function Rows([string]$dir,$rows){$seen=@{};$total=0;foreach($b in @($rows)){if($b.path -match '(^/|\\|:|(^|/)\.\.(/|$))' -or $seen.ContainsKey([string]$b.path)){throw 'binding path rejected'};$f=[IO.Path]::GetFullPath((Join-Path $dir $b.path));if(-not $f.StartsWith($dir+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'binding escape'};$seen[[string]$b.path]=$f;$total+=(Get-Item $f).Length;if($seen.Count -gt 256 -or $total -gt 32MB -or (BHash $f) -cne ([string]$b.sha256).Replace('sha256:','')){throw 'source binding mismatch'}};$actual=@((Join-Path $dir 'Package.swift'))+@(Get-ChildItem -LiteralPath (Join-Path $dir 'Sources') -Recurse -File|ForEach-Object{$_.FullName});$expected=@($seen.Values|Where-Object{$_ -eq (Join-Path $dir 'Package.swift') -or $_.StartsWith((Join-Path $dir 'Sources')+'\')});if($actual.Count -ne $expected.Count -or @($actual|Where-Object{$expected -cnotcontains $_}).Count){throw 'exact source membership mismatch'}}
+Rows $package $p.sourceBindings
+if((BHash (Join-Path $package 'runtime-source-tree.json')) -cne $p.runtimeSourceTreeHash.Replace('sha256:','')){throw 'runtime tree mismatch'}
+Rows $p.runtimePackagePath (BJson (Join-Path $package 'runtime-source-tree.json'))
+Rows $p.bridgePackagePath $p.bridgeBindings
+if((BHash $p.rendererPath) -cne $p.rendererSha256 -or $p.rendererSha256 -cne 'e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93' -or (BHash $c.exePath) -cne $ExeSha256 -or $c.exeBytes -ne (Get-Item $c.exePath).Length){throw 'renderer/executable mismatch'}
+$stream=[IO.File]::OpenRead($c.exePath)
+try{$reader=[IO.BinaryReader]::new($stream);$stream.Position=60;$off=$reader.ReadInt32();if($off -lt 64 -or $off -gt $stream.Length-100){throw 'PE offset bounds'};$stream.Position=$off;if($reader.ReadUInt32() -ne 17744 -or $reader.ReadUInt16() -ne 34404){throw 'PE x64 required'};$stream.Position=$off+24+68;if($reader.ReadUInt16() -ne 2){throw 'GUI subsystem required'}}finally{$stream.Dispose()}
+if($SerializerControlSha256 -cne '952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba'){throw 'serializer control pin mismatch'}
+$plan=$p
+ if($SerializerControlSha256 -cne '952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba'){throw 'Measured actual serializer control pin mandatory'}
+ $serializerRoot=Join-Path $root 'dependencies\serializer-actual-r2';$serializerRecordedRoot='D:\Claude\swiftright\.factory-work\hosts\padding-settled\serializer-control-actual-r2';$serializerRecordedPlan='fe088dc1318e6ebc319c95ee169c2c91aa7e630fd19d81729389ebedb8397b20';$serializerPath=Join-Path $serializerRoot 'control.json'
+ if((Get-FileHash $serializerPath).Hash.ToLowerInvariant() -cne $SerializerControlSha256){throw 'Actual serializer control drift'}
+ $serializer=Get-Content -Raw $serializerPath|ConvertFrom-Json
+ if($serializer.kind -cne 'factory-serializer-control-actual-v1' -or $serializer.passed -isnot [bool] -or -not $serializer.passed -or $serializer.planSha256 -cne $serializerRecordedPlan -or $serializer.sourceSha256 -cne 'cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1' -or $serializer.controlSha256 -cne '7b7b79a0e90c63aa696a7347e6ab975fe6dc811bce96b12a2e3548bf3ef64454'){throw 'Serializer plan/source authority mismatch'}
+ $serializerExe=Join-Path $serializerRoot 'serializer-control.exe';$swiftc=Join-Path (Split-Path $plan.compilerPath -Parent) 'swiftc.exe'
+ if((Get-FileHash $serializerExe).Hash.ToLowerInvariant() -cne $serializer.exeSha256 -or (Get-FileHash $swiftc).Hash.ToLowerInvariant() -cne $serializer.swiftcSha256){throw 'Serializer actual tool/exe drift'}
+ $serializerArgs='"D:\Claude\swiftright\.factory-work\hosts\padding-settled\package\Sources\FactoryProbe\MetricsPayload.swift" "D:\Claude\swiftright\.factory-work\hosts\padding-settled\serializer-control\main.swift" -o "'+(Join-Path $serializerRecordedRoot 'serializer-control.exe')+'"'
+ foreach($serializerChildPhase in @('compile','run')){
+  $receiptPath=Join-Path $serializerRoot ($serializerChildPhase+'\observation.json');$expectedReceiptHash=if($serializerChildPhase -ceq 'compile'){$serializer.compileReceiptSha256}else{$serializer.runReceiptSha256}
+  if((Get-FileHash $receiptPath).Hash.ToLowerInvariant() -cne $expectedReceiptHash){throw 'Serializer child receipt drift'}
+  $child=Get-Content -Raw $receiptPath|ConvertFrom-Json
+  $expectedTool=if($serializerChildPhase -ceq 'compile'){$swiftc}else{Join-Path $serializerRecordedRoot 'serializer-control.exe'};$expectedToolHash=if($serializerChildPhase -ceq 'compile'){$serializer.swiftcSha256}else{$serializer.exeSha256};$expectedArgs=if($serializerChildPhase -ceq 'compile'){$serializerArgs}else{''}
+  if($child.kind -cne 'factory-serializer-pure-child-v1' -or $child.phase -cne $serializerChildPhase -or $child.planSha256 -cne $serializerRecordedPlan -or $child.toolPath -cne $expectedTool -or $child.toolSha256 -cne $expectedToolHash -or $child.argv -cne $expectedArgs -or $child.cwd -cne $serializerRecordedRoot){throw 'Serializer child actual invocation mismatch'}
+  if(($child.pid -isnot [int] -and $child.pid -isnot [long]) -or $child.pid -le 0 -or ($child.exitCode -isnot [int] -and $child.exitCode -isnot [long]) -or $child.exitCode -ne 0 -or ($child.kernelWait -isnot [int] -and $child.kernelWait -isnot [long]) -or $child.kernelWait -ne 0 -or $child.timedOut -isnot [bool] -or $child.timedOut -or $child.ownedExited -isnot [bool] -or -not $child.ownedExited -or $child.streamDrainComplete -isnot [bool] -or -not $child.streamDrainComplete -or $child.error -or $child.cleanupError){throw 'Serializer child exit/stream proof failed'}
+  if(@($child.rawStreams).Count -ne 2 -or @($child.rawFileHashes).Count -ne 2){throw 'Serializer requires two raw streams'}
+  foreach($name in @('stdout','stderr')){
+   $states=@($child.rawStreams|Where-Object{$_.name -ceq $name});$hashes=@($child.rawFileHashes|Where-Object{$_.path -ceq ('compile.'+$name+'.bin')})
+   if($states.Count -ne 1 -or $hashes.Count -ne 1){throw 'Serializer stream membership'}
+   $state=$states[0];$raw=Join-Path $serializerRoot ($serializerChildPhase+'\compile.'+$name+'.bin')
+   if($state.sealed -isnot [bool] -or -not $state.sealed -or $state.destinationClosed -isnot [bool] -or -not $state.destinationClosed -or $state.taskStatus -cne 'RanToCompletion' -or $state.closureTaskStatus -cne 'RanToCompletion' -or $hashes[0].hash.qualification -cne 'sealed-raw' -or (Get-FileHash $raw).Hash.ToLowerInvariant() -cne $hashes[0].hash.sha256){throw 'Serializer terminal raw stream mismatch'}
+  }
+ }
+ $serializerStdout=Join-Path $serializerRoot 'run\compile.stdout.bin'
+ if((Get-FileHash $serializerStdout).Hash.ToLowerInvariant() -cne $serializer.stdoutSha256 -or @([IO.File]::ReadAllText($serializerStdout) -split '\r?\n'|Where-Object{$_ -ceq 'SERIALIZER_CONTROL_PASS records=5 failClosed=true nativeLaunches=0'}).Count -ne 1){throw 'Actual serializer PASS marker missing'}
+
+[ordered]@{kind='root-rectangle-capture-compile-admission-v1';status='passed';case=$p.case;compileReceiptSha256=$CompileReceiptSha256;exeSha256=$ExeSha256;sourceHash=$p.sourceHash;nativeActions=0;compilerActions=0;lockActions=0}|ConvertTo-Json -Depth 6

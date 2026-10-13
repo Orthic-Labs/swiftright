@@ -1,0 +1,67 @@
+{
+  "baseline": {
+    "compilerInvocations": 0,
+    "controlScripts": 6,
+    "externalRequirements": 70,
+    "nativeCalls": 0,
+    "packagePayloads": {
+      "disabled": 14,
+      "image": 14,
+      "shapes.fill-stroke": 14,
+      "text.bundled-font": 14,
+      "toggle": 14
+    },
+    "payloadFiles": 122,
+    "preflightOnlyCalls": 5,
+    "stageRecords": 146
+  },
+  "checks": [
+    "146 source-stage records rehashed against frozen files",
+    "122 payload entries are unique, in-stage, exact-byte joined, and partitioned 14 per package across 5 packages",
+    "70 external requirements have 65 file pins and 5 runtime source-tree pins with 13 unique paths",
+    "fresh tool root and 5 package roots are guarded before transfer writes",
+    "fresh results root is guarded before admission writes",
+    "six recorded controls precede five builder calls",
+    "builder calls use -PreflightOnly exactly once per host and assert compiler/native/output hold boundary",
+    "no compiler/native/remote execution performed by this review"
+  ],
+  "faultControls": [
+    {
+      "control": "payload-count",
+      "rejected": true
+    },
+    {
+      "control": "external-count",
+      "rejected": true
+    },
+    {
+      "control": "payload-hash",
+      "rejected": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "R1-SOURCE-TREE-DEFERRED",
+      "severity": "review-note",
+      "text": "Transfer validates existence for five external source-tree rows but does not independently recompute treeSha256; package preflight Assert-FactoryRuntimeSource performs complete binding/hash/membership checks before returning each preflight receipt."
+    }
+  ],
+  "kind": "remaining-five-v5-root-admission-independent-review-v1",
+  "pinnedContext": {
+    "bridgeHeaderCommit": "862997c",
+    "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+    "bridgeSourceCommit": "0a745ab",
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "producerPins": {
+    "admissionScriptSha256": "07c6cf0ed95602ed82ee11933395c0b94afd9e26509e93e1676914a3520f2c2c",
+    "sourceStageManifestSha256": "ef0853a00aca582f10f655b05946303190dfe608b76b01dc9810e2921de71950",
+    "transferBundleSha256": "f545b56726f3f79981809c7ca3833dfe1613d45c9746b211236a7cf2cc3a2664",
+    "transferScriptSha256": "dd54896c4a3e93de6f39581e51d6d8231a98f1f445bf6b328082e5f434cb5c56"
+  },
+  "producerRoot": "factory/native/windows/remaining-five-hosts-v5/root-admission-r1",
+  "reviewNote": "Source-tree transfer rows are existence-checked during transfer; full runtime tree byte membership is enforced by each package preflight verifier before its preflight result. No qualification or execution eligibility is granted.",
+  "status": "PASS_SOURCE_REVIEW_ONLY"
+}

@@ -1,0 +1,31 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$repo='D:\Claude\swiftright';$parent=Join-Path $repo '.factory-work\windows-replay-r11';$ns=Join-Path $repo 'factory\native\windows\.work\windows-replay-r11\r17';$stage=Join-Path $ns 'overlay';$zip=Join-Path $repo '.factory-work\windows-replay-r11-overlay-v17.zip'
+function Hash([string]$p){(Get-FileHash -LiteralPath $p).Hash.ToLowerInvariant()}
+function Read-BoundedJson([string]$p){$i=Get-Item -LiteralPath $p;if($i.Length -gt 2MB -or ($i.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe JSON'};[IO.File]::ReadAllText($p)|ConvertFrom-Json}
+if((Hash $zip) -cne '8b6a10199e2191d6900c135b91504d7eb7a918613e9f87b24b71797dc59d677f'){throw 'Source ZIP drift'}
+if(-not(Test-Path -LiteralPath $ns)){throw 'Retained headless-only issued namespace required'}
+$m=Read-BoundedJson (Join-Path $stage 'stage-manifest.json');$parsed=0
+foreach($r in $m.files){$f=Join-Path $stage $r.path;$i=Get-Item -LiteralPath $f;if($i.Length -ne $r.bytes -or $i.Length -gt 1MB -or ($i.Attributes -band [IO.FileAttributes]::ReparsePoint) -or (Hash $f) -cne $r.sha256){throw 'Stage source drift'};if($f.EndsWith('.ps1')){$t=$null;$e=$null;$null=[System.Management.Automation.Language.Parser]::ParseFile($f,[ref]$t,[ref]$e);if($e.Count){throw ('Source parse failure '+$r.path+': '+($e.Message -join ';'))};$parsed++}}
+if(@(Get-ChildItem -LiteralPath $stage -File -Force).Count -ne (@($m.files).Count+1)){throw 'Exhaustive stage inventory mismatch'}
+$inputs=Join-Path $parent 'headless-r1\inputs';$builder=Join-Path $repo '.factory-work\hosts\padding-window-diagnosis';$producer=Join-Path $repo 'factory\native\windows\padding-capture-lease-capture-v3'
+$plan=Join-Path $builder 'package\plan.json';$receipt=Join-Path $builder 'package\build-capture-lease-r1\observation.json';$d=Read-BoundedJson $receipt;$exe=$d.exePath
+$renderer=Join-Path $repo '.factory-work\inputs\renderer\swiftright_render.dll';$canonical=Join-Path $repo 'factory\native\windows\canonical-inputs-v1\manifest.json';$binding=Join-Path $builder 'metadata\source-binding.json'
+$run=Join-Path $ns 'replays\r1';$issued=Join-Path $ns 'coordinator-r1\issued-metadata.json';$serializer='952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba'
+$compileHash='1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf';$exeHash='3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a'
+if((Hash $receipt) -cne $compileHash -or (Hash $exe) -cne $exeHash){throw 'Measured compiler/executable drift'}
+$issue=@('Retained existing issued nonce; zero native attempts')
+[IO.File]::WriteAllText((Join-Path $ns 'issuer.stdout.json'),[string]($issue -join "`r`n"),[Text.UTF8Encoding]::new($false))
+$ih=Hash $issued;$integration=Join-Path $stage 'integration-fresh-r11-v7.ps1';$control=Join-Path $ns '.factory-work\controls-full-r1';$out=Join-Path $control 'metadata-controls.json'
+$null=& (Join-Path $stage 'test-full-metadata-controls-v10.ps1') -IssuedMetadataPath $issued -IssuedMetadataHash $ih -RunRoot $run -CompileHash $compileHash -ExeHash $exeHash -SerializerHash $serializer -ProducerRoot $producer -ControlRoot $control -OutputPath $out -IntegrationScript $integration
+$g=Read-BoundedJson $out;$faults=@($g.faultControls|Where-Object{$_.rejected -eq $true})
+if($g.status -cne 'passed-source-only' -or $g.issuedMetadataSha256 -cne $ih -or -not $g.baseline.accepted -or $faults.Count -ne 11 -or @($faults|Where-Object{$_.accepted -ne $false -or $_.nativeWindowActions -ne 0}).Count){throw 'Fresh20 fault receipts not admitted'}
+$fresh=[ordered]@{kind='factory-fresh-count20-r11-guard-controls-v1';status='passed-source-only';issuedMetadataPath=$issued;issuedMetadataSha256=$ih;count=20;baseline=$g.baseline;faultControls=$faults;fullControlsRef=[ordered]@{path=$out;sha256=('sha256:'+(Hash $out));bytes=(Get-Item -LiteralPath $out).Length};nativeWindowActions=0;compilerActions=0;guiActions=0;remoteActions=0;lockActions=0;qualification='hold'}
+$fp=Join-Path $ns 'coordinator-r1\fresh-guard.json';[IO.File]::WriteAllText($fp,($fresh|ConvertTo-Json -Depth 32),[Text.UTF8Encoding]::new($false))
+$legacyPath=Join-Path $producer 'coordinator-single-r1\issued-metadata.json';$legacy=Read-BoundedJson $legacyPath;$one=Join-Path $ns '.factory-work\controls-count1-r1';$oneOut=Join-Path $one 'metadata-controls.json'
+$null=& (Join-Path $stage 'test-count1-metadata-controls-v7.ps1') -IssuedMetadataPath $legacyPath -IssuedMetadataHash (Hash $legacyPath) -RunRoot $legacy.runRoot -CompileHash $compileHash -ExeHash $exeHash -SerializerHash $serializer -ProducerRoot $repo -ControlRoot $one -OutputPath $oneOut -IntegrationScript $integration
+$oneG=Read-BoundedJson $oneOut;if($oneG.status -cne 'passed-source-only' -or -not $oneG.baseline.accepted -or @($oneG.faultControls|Where-Object{$_.rejected -eq $true}).Count -ne 11){throw 'LegacyCount1 guarded baseline rejected'}
+$actual=Join-Path $ns 'actual-inputs';[IO.Directory]::CreateDirectory($actual)|Out-Null;Copy-Item -LiteralPath $binding -Destination (Join-Path $actual 'source-binding.json');Copy-Item -LiteralPath $receipt -Destination (Join-Path $actual 'compile-observation.json');Copy-Item -LiteralPath $plan -Destination (Join-Path $actual 'source-plan.json')
+$result=[ordered]@{kind='root-factory-issued-controls-v17-v1';status='passed-source-only';parsed=$parsed;issuedPath=$issued;issuedSha256=$ih;runID=(Read-BoundedJson $issued).runID;count=20;freshFaults=11;legacyCount1Faults=11;fullControlsSha256=(Hash $out);freshControlsSha256=(Hash $fp);count1ControlsSha256=(Hash $oneOut);nativeWindowActions=0;compilerActions=0;guiActions=0;lockActions=0;at=[DateTimeOffset]::UtcNow.ToString('o')}
+[IO.File]::WriteAllText((Join-Path $ns 'root-issue-controls.json'),($result|ConvertTo-Json -Depth 12),[Text.UTF8Encoding]::new($false));$result|ConvertTo-Json -Depth 12
+
+& (Join-Path $stage 'test-worker-output-preflight-v17.ps1') -ControlRoot (Join-Path $ns 'worker-output-controls-r1')

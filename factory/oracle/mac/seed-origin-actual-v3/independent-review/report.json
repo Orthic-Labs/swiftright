@@ -1,0 +1,63 @@
+{
+  "candidateOnly": true,
+  "cases": 5,
+  "decision": "BLOCKED_ARCHIVE_HISTORY_ONLY",
+  "errors": [],
+  "indexRows": 5,
+  "kind": "seed-origin-actual-v3-independent-review",
+  "nativeCompilerRemoteRuns": 0,
+  "pins": {
+    "v2Map": "sha256:e33bdf9f96b5b989d946d8be152cf7a560f7adb793bff6f2bc08dae547d9e7df",
+    "v2Stage": "sha256:6a41b76a6bd6129e2f4b212d9b9997c73d31800968a99077ee5b5d4c04c84515",
+    "v3Controls": "sha256:c072563d33ac55e9adc3bcb3652f223c732b9a10eba57492c3775b7b21d56dc1",
+    "v3Index": "sha256:bb414077b9618f98959ca85ac7ae0f1c01798f97bcdff9a26e7c36d4febbea38",
+    "v3Stage": "sha256:45bd7977780de631fc027e7df50d79ae525addac9fdb84775cab589c62e508a1"
+  },
+  "rows": [
+    {
+      "case": "swiftui.disabled.recipe.gate-seeded.ca4e13f820f5d258",
+      "issues": [
+        "summaryPath-not-v3-relative"
+      ],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.image.recipe.gate-seeded.ca4e13f820f5d258",
+      "issues": [
+        "summaryPath-not-v3-relative"
+      ],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.shapes.fill-stroke.recipe.gate-seeded.ca4e13f820f5d258",
+      "issues": [
+        "summaryPath-not-v3-relative"
+      ],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.text.bundled-font.recipe.gate-seeded.ca4e13f820f5d258",
+      "issues": [
+        "summaryPath-not-v3-relative"
+      ],
+      "runs": 20
+    },
+    {
+      "case": "swiftui.toggle.recipe.gate-seeded.ca4e13f820f5d258",
+      "issues": [
+        "summaryPath-not-v3-relative"
+      ],
+      "runs": 20
+    }
+  ],
+  "runs": 100,
+  "staleHistoricalRows": [
+    {
+      "actual": "sha256:233714ad190f266a54ea0946bb41fd14c8b7b4a308f5a6c1a829cffabc4a1095",
+      "expected": "sha256:202cd05db010a4329708a73167b9971ace22009702d3678d4db2d897435bf892",
+      "path": "fault-controls.json"
+    }
+  ],
+  "v2RawCopyDetected": false,
+  "version": "1"
+}

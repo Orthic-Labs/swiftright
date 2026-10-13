@@ -1,0 +1,39 @@
+{
+    "desktopLock":  "factory-text-54171b0a9f5b4c1aa3237ee7c4c36837 2026-10-12T02:03:10.1371230+00:00",
+    "files":  [
+                  {
+                      "exists":  false,
+                      "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-staged-controls-r10b.transport.json"
+                  },
+                  {
+                      "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-staged-controls-r10b.transport.json.stdout.bin",
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "bytes":  0,
+                      "text":  ""
+                  },
+                  {
+                      "path":  "D:\\Claude\\swiftright\\.factory-work\\root-tools\\sr0-staged-controls-r10b.transport.json.stderr.bin",
+                      "sha256":  "7e052c15159a1b2cd7e301950ae9ae5f31d576612e0aabcb6358eba7b2a772e8",
+                      "bytes":  482,
+                      "text":  "drain exit mismatch: exit-zero\r\nAt D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\test-workload-drain-controls-r10.ps1:19 \r\nchar:592\r\n+ ... aseError){Publish-Failure $record $caseError;throw $caseError};return ...\r\n+                                                  ~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (drain exit mismatch: exit-zero:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : drain exit mismatch: exit-zero\r\n \r\n"
+                  },
+                  {
+                      "path":  "D:\\Claude\\swiftright\\factory\\native\\windows\\.work\\sr0-display-selfjob-v4\\one-run-v7-r10\\drain-controls-r10.json",
+                      "sha256":  "a7330f2f513ae723cd3bc7cbeaf046b0663520425345127be73f16d46fcb54aa",
+                      "bytes":  1989,
+                      "text":  "{\r\n    \"kind\":  \"sr0-display-workload-drain-controls-r10\",\r\n    \"status\":  \"held\",\r\n    \"failure\":  \"drain exit mismatch: exit-zero\",\r\n    \"helperSha256\":  \"d3e42971353516ed714edff1c848a48269acaa0f908b6ae1acd591f35878b1d8\",\r\n    \"failedCase\":  {\r\n                       \"name\":  \"exit-zero\",\r\n                       \"file\":  \"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\",\r\n                       \"argv\":  \"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \\\"Write-Output drain-zero; exit 0\\\"\",\r\n                       \"exit\":  -532462766,\r\n                       \"expectedExit\":  0,\r\n                       \"expectTerminal\":  true,\r\n                       \"expectInheritedPipeDelay\":  false,\r\n                       \"proof\":  {\r\n                                     \"processWaitCompleted\":  true,\r\n                                     \"processTerminal\":  true,\r\n                                     \"processWaitError\":  null,\r\n                                     \"stdoutCompleted\":  true,\r\n                                     \"stderrCompleted\":  true,\r\n                                     \"stdoutFaulted\":  false,\r\n                                     \"stderrFaulted\":  false,\r\n                                     \"stdoutCanceled\":  false,\r\n                                     \"stderrCanceled\":  false,\r\n                                     \"streamsDrained\":  true,\r\n                                     \"timeoutSeconds\":  15,\r\n                                     \"elapsedMilliseconds\":  5309,\r\n                                     \"totalBudgetBounded\":  true\r\n                                 },\r\n                       \"stdout\":  \"\",\r\n                       \"stderr\":  \"\\nUnhandled Exception: \\n   Cannot print exception string because Exception.ToString() failed.\\n\",\r\n                       \"cleanupError\":  null,\r\n                       \"failure\":  \"drain exit mismatch: exit-zero\"\r\n                   },\r\n    \"nativeQualificationClaim\":  false\r\n}\r\n"
+                  },
+                  {
+                      "exists":  false,
+                      "path":  "D:\\Claude\\swiftright\\.factory-work\\sr0-display-selfjob-v4\\v5-root-r10\\staged-controls-gate-r10b.json"
+                  }
+              ],
+    "nativeActions":  0,
+    "kind":  "root-staged-controls-diagnosis-r10b",
+    "live":  [
+
+             ],
+    "workFiles":  {
+
+                  }
+}

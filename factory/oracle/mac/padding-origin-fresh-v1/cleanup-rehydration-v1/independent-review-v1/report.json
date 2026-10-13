@@ -1,0 +1,70 @@
+{
+  "archive": {
+    "compressedFrontendBytes": 60527695,
+    "entries": 2,
+    "manifest": "factory/oracle/mac/compiler-tool-archive-v1/archive-manifest.json",
+    "rawFrontendBytes": 173118384,
+    "sha256": "sha256:66cb21fad8d62d556e1954aeb9da232f5c05709f172242f050a227068629a8b7"
+  },
+  "candidateOnly": true,
+  "controls": {
+    "missing-map-target": "rejected",
+    "missing-root": "rejected"
+  },
+  "helper": {
+    "failure": "archive manifest version is JSON string \"1\"; helper requires exact integer 1",
+    "path": "factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v1/rehydrate.py",
+    "realReplay": {
+      "returncode": 1,
+      "stderrSha256": "sha256:229a0b16e3d26468231ec35e8810a3832bb5d5584bac55471b57e9ae21cd20b4",
+      "stderrTail": "ort_keys=True))\n                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v1/rehydrate.py\", line 138, in rehydrate\n    manifest = load_manifest(manifest_path)\n  File \"/Volumes/D/claude/swiftright/factory/oracle/mac/padding-origin-fresh-v1/cleanup-rehydration-v1/rehydrate.py\", line 79, in load_manifest\n    raise ValueError(\"archive manifest identity differs\")\nValueError: archive manifest identity differs\n",
+      "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sha256": "sha256:155e5d2fd745f7c8af0403f1961fbb37686b610824f3f21afb063493e71509f9",
+    "unitControls": "4/4 pass"
+  },
+  "historicalBytesMutated": false,
+  "independentDataOnlyCache": {
+    "compilerExecutions": 0,
+    "extracted": [
+      {
+        "action": "WRITTEN",
+        "archiveSha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+        "bytes": 199024,
+        "mode": "0o644",
+        "path": "xcrun",
+        "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9"
+      },
+      {
+        "action": "WRITTEN",
+        "archiveSha256": "sha256:c7c2a62d3bacfdb800574b882f8089c80a7a8c7763600952cd52131b2f1de71e",
+        "bytes": 173118384,
+        "mode": "0o644",
+        "path": "84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7.raw",
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7"
+      }
+    ],
+    "nativeExecutions": 0,
+    "path": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/cleanup-review-r1/independent-cache",
+    "readerChecks": [
+      {
+        "bytes": 199024,
+        "logicalPath": "/usr/bin/xcrun",
+        "sha256": "sha256:bbe7671518a3905f9d3fce54312fbc77c2876b0d62aca74a0688fa869d31a8a9",
+        "status": "PASS"
+      },
+      {
+        "bytes": 173118384,
+        "logicalPath": "/Applications/Xcode-27-RC.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "sha256": "sha256:84b410d8143298f90ab0b721d488dab90e2fdbf23577ae6186162832a1155cb7",
+        "status": "PASS"
+      }
+    ],
+    "readerConfigPath": "/Users/adrdsouza/Library/Caches/SwiftRightFactory/padding-origin-fresh-v1/cleanup-review-r1/independent-cache/reader_config.json",
+    "readerConfigSha256": "sha256:33e7a666fe8056585dd16afaa7a8db0ddbcac5d7fb6ef7aa29d39b2ec7bf41f4",
+    "status": "PASS"
+  },
+  "productionAuthority": "independent cache mapping only; helper remains blocked until manifest type contract is repaired & separately reviewed",
+  "schema": "cleanup-rehydration-independent-review-v1",
+  "status": "HOLD_HELPER_MANIFEST_TYPE"
+}

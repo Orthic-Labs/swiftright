@@ -1,0 +1,178 @@
+{
+  "compileAndArchiveChecks": [
+    {
+      "name": "production-argv",
+      "pass": true
+    },
+    {
+      "name": "compiler-bytes",
+      "pass": true
+    },
+    {
+      "name": "compiler-ref",
+      "pass": true
+    },
+    {
+      "name": "all-runtime-tree-bytes",
+      "pass": true
+    }
+  ],
+  "compilerArchive": {
+    "actions": 0,
+    "bytes": 45056,
+    "path": "/Volumes/D/claude/swiftright/.factory-work/compiler-archive-r1/swift.exe",
+    "sha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+  },
+  "controlOnly": true,
+  "derivedObservationFixture": {
+    "controlOnly": true,
+    "hwnd": 41093876,
+    "ownedIdentity": {
+      "path": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-capture-lease-r1\\scratch\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+      "pid": 15500,
+      "startedAt": "2026-10-11T12:48:38.4757640Z"
+    },
+    "rawPreserved": true
+  },
+  "faults": [
+    {
+      "issues": [
+        "owned process identity mismatch"
+      ],
+      "name": "wrong-pid",
+      "nativeWindowActions": 0,
+      "proofRoleReads": {
+        "close": 1,
+        "compile": 1,
+        "exe": 1,
+        "observation": 1,
+        "outcome": 1,
+        "owned": 1,
+        "plan": 1,
+        "renderer": 1,
+        "runtimeReceipt": 1,
+        "runtimeTree": 1,
+        "stderr": 1,
+        "stdout": 1,
+        "witness": 1
+      },
+      "status": "blocked",
+      "transitiveReads": 0
+    },
+    {
+      "issues": [
+        "observation/WM_CLOSE HWND mismatch"
+      ],
+      "name": "wrong-hwnd",
+      "nativeWindowActions": 0,
+      "proofRoleReads": {
+        "close": 1,
+        "compile": 1,
+        "exe": 1,
+        "observation": 1,
+        "outcome": 1,
+        "owned": 1,
+        "plan": 1,
+        "renderer": 1,
+        "runtimeReceipt": 1,
+        "runtimeTree": 1,
+        "stderr": 1,
+        "stdout": 1,
+        "witness": 1
+      },
+      "status": "blocked",
+      "transitiveReads": 0
+    },
+    {
+      "issues": [
+        "terminal retained kernel signal0 required; HasExited alone insufficient"
+      ],
+      "name": "bad-terminal-certificate",
+      "nativeWindowActions": 0,
+      "proofRoleReads": {
+        "close": 1,
+        "compile": 1,
+        "exe": 1,
+        "observation": 1,
+        "outcome": 1,
+        "owned": 1,
+        "plan": 1,
+        "renderer": 1,
+        "runtimeReceipt": 1,
+        "runtimeTree": 1,
+        "stderr": 1,
+        "stdout": 1,
+        "witness": 1
+      },
+      "status": "blocked",
+      "transitiveReads": 0
+    },
+    {
+      "issues": [
+        "observation raw file bytes mismatch"
+      ],
+      "name": "raw-closure-mismatch",
+      "nativeWindowActions": 0,
+      "proofRoleReads": {
+        "close": 1,
+        "compile": 1,
+        "exe": 1,
+        "observation": 1,
+        "outcome": 2,
+        "owned": 1,
+        "plan": 1,
+        "renderer": 1,
+        "runtimeReceipt": 1,
+        "runtimeTree": 1,
+        "stderr": 2,
+        "stdout": 2,
+        "witness": 1
+      },
+      "status": "blocked",
+      "transitiveReads": 43
+    }
+  ],
+  "nativeWindowActions": 0,
+  "parityClaim": false,
+  "positive": {
+    "issues": [],
+    "name": "positive",
+    "nativeWindowActions": 0,
+    "proofRoleReads": {
+      "close": 2,
+      "compile": 1,
+      "exe": 1,
+      "observation": 1,
+      "outcome": 2,
+      "owned": 2,
+      "plan": 1,
+      "renderer": 1,
+      "runtimeReceipt": 1,
+      "runtimeTree": 1,
+      "stderr": 2,
+      "stdout": 2,
+      "witness": 1
+    },
+    "status": "pass",
+    "transitiveReads": 54
+  },
+  "productionAdmission": false,
+  "proofRoles": [
+    "outcome",
+    "observation",
+    "owned",
+    "close",
+    "plan",
+    "compile",
+    "witness",
+    "exe",
+    "renderer",
+    "runtimeReceipt",
+    "runtimeTree",
+    "stdout",
+    "stderr"
+  ],
+  "remainingIssues": [],
+  "schema": "windows-exit-proof-source-control-r2",
+  "status": "blocked"
+}

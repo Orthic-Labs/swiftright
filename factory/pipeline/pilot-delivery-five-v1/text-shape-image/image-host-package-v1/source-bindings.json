@@ -1,0 +1,168 @@
+{
+  "kind": "image-host-package-source-bindings-v1",
+  "status": "source-ready-pending-root-build",
+  "runtime": {
+    "commit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "controls": "sha256:646f42253fb783e10c02c37210bb936a9c3dda5b7347a0ed18a24c213732e4d1",
+    "shapes": "sha256:3e5a45e398aa43af0f261eadb9be37c853ec122f136b20fadeb928a1e849a118"
+  },
+  "bridge": {
+    "types": "sha256:2f51d62f8778f16fb71b9c44a674c889ee41a7c67ee5af23acbfe2a633296dfd",
+    "bridge": "sha256:cce02240c0b1f4e4af771a998177f0ee880d235b4781b416d23f49a6ab9a7f56",
+    "marshal": "sha256:ee8345a4f011f5a40c2bb53bcd49dc8a8a9600eb1a8d10c2c3bde770917cb375",
+    "renderer": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+  },
+  "witness": {
+    "path": "package/Sources/FactoryProbe/Witness.swift",
+    "sha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+    "source": "Image(\"factory.rgba.square.v1\").resizable().scaledToFit().frame(width:32,height:32).environment(colorScheme:.light)"
+  },
+  "asset": {
+    "rawRGBAsha256": "sha256:dc3ae926d85afbeca3cc60a12a8c69faad0f0b31f60c76ebe55bf4be00aab008",
+    "sourceWidth": 4,
+    "sourceHeight": 4,
+    "registeredWidth": 32,
+    "registeredHeight": 32,
+    "macCatalogPng": "mac-assets/FactoryRGBA.xcassets/factory.rgba.square.v1.imageset/factory-rgba.png",
+    "macCatalogPngSha256": "sha256:57b45fdbc5d9a86bbad5f547b6964e39ba0c872130c564877d306f61477f6bea"
+  },
+  "host": {
+    "main": "sha256:96a7c6195ea2f60980db635ba2a7853285d35a0b4ee41195a7e4ba1183cba603",
+    "asset": "sha256:18af625f5afdaa295109270c3db36f259156a3bdf1d35c63634c35cbd46109d4",
+    "registry": "sha256:47b462c6718863d857bfe746111d0730d4f2efd68ff77019ca15d1dddcc7b1f8"
+  },
+  "holds": [
+    "root fresh bounded compile receipt",
+    "native capture/paired capture receipts",
+    "renderer sampling parity at host DPI"
+  ],
+  "outputs": null,
+  "paths": {
+    "workspaceRoot": "D:\\Claude\\swiftright",
+    "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+    "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+    "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package"
+  },
+  "compiler": {
+    "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "sha256": "sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "argv": [
+      "build",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bounded-r1\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ]
+  },
+  "package": {
+    "plan": "package/plan.json",
+    "planSha256": "sha256:87c62a6a823033f98d83a4436a4316e9135997e606ac861fac3307db51eca84e",
+    "packageSwift": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+    "runtimeReceipt": "sha256:9c1c34cff32fd7078727daa54253a407c4771fe1da440537c3a109e9b6c25221",
+    "runtimeTree": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+    "sourceBindings": [
+      {
+        "path": "Package.swift",
+        "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+        "bytes": 539
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryContainer.swift",
+        "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+        "bytes": 362
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryFill.swift",
+        "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+        "bytes": 1646
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+        "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+        "bytes": 512
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryRGBAAsset.swift",
+        "sha256": "sha256:18af625f5afdaa295109270c3db36f259156a3bdf1d35c63634c35cbd46109d4",
+        "bytes": 1423
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryRGBAImageRegistry.swift",
+        "sha256": "sha256:47b462c6718863d857bfe746111d0730d4f2efd68ff77019ca15d1dddcc7b1f8",
+        "bytes": 2192
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+        "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+        "bytes": 1023
+      },
+      {
+        "path": "Sources/FactoryProbe/FactoryViewport.swift",
+        "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+        "bytes": 3051
+      },
+      {
+        "path": "Sources/FactoryProbe/Witness.swift",
+        "sha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+        "bytes": 424
+      },
+      {
+        "path": "Sources/FactoryProbe/main.swift",
+        "sha256": "sha256:96a7c6195ea2f60980db635ba2a7853285d35a0b4ee41195a7e4ba1183cba603",
+        "bytes": 14095
+      }
+    ]
+  },
+  "boundedAdapter": {
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "memoryCapBytes": 1073741824,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "sourceBindings": [
+      {
+        "path": "tools/prepare-bounded-stage.ps1",
+        "sha256": "sha256:56573cffdcf4489dffe907f71e873687c1bfd7a410c24bf43718aea4b30d9006",
+        "bytes": 2602
+      },
+      {
+        "path": "tools/compile-bounded.ps1",
+        "sha256": "sha256:3c4510325ca3a9be79ed94b88c384946d5cadaab55443b6973ac03ebbcc00998",
+        "bytes": 2225
+      }
+    ],
+    "sourceBindingsHash": "sha256:0c1977d32a0d0ba0b3ebb75107e2e4d21c385b7dacfd918e91c50fc141aef5ed"
+  },
+  "macSource": {
+    "plan": "mac-source/plan.json",
+    "manifest": "mac-source/source-manifest.json",
+    "witness": "mac-source/Sources/FactoryProbe/Witness.swift",
+    "adapter": "mac-source/Sources/FactoryProbe/CaptureHost.swift",
+    "status": "source-ready-pending-root-compile-capture",
+    "planSha256": "sha256:fabd46f942622deb54b5ce4fa45b266de9cf8c71b85452562dcd71602ba83edd",
+    "manifestSha256": "sha256:101b36b5e1f87e132ecf8c62ad110e8d103691d209760bbcbde508d5ebe50d6c",
+    "witnessSha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+    "adapterSha256": "sha256:3a48b5dfef35a74ad49922ee63b56745a9f587d51abf40eed3702e923f3780b0"
+  }
+}

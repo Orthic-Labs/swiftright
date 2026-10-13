@@ -1,0 +1,1730 @@
+{
+  "kind": "remaining-five-v5-root-transfer-bundle-r1",
+  "sourcePacket": "factory/native/windows/remaining-five-hosts-v5",
+  "sourceStageManifestSha256": "ef0853a00aca582f10f655b05946303190dfe608b76b01dc9810e2921de71950",
+  "sourceStageManifestBytes": 33535,
+  "sourceStageFileCount": 146,
+  "planSha256ByLabel": {
+    "disabled": "5bd6d08b3684114fcc9f837aaf0bdfb1c18d8b9131ba910e82ccb646385bf985",
+    "image": "1028fcde0817c634801c7fac416d29b8754307f0e0a3cc30609854ad31b6e7f3",
+    "shapes.fill-stroke": "73668c16e6446c48211f26288bcb114e6003b7fc58a60a6850b2019640c95e14",
+    "text.bundled-font": "afb063d5e3a3ebb564cf929a7014a0457a3222aaf7100ce5a4efa1d90e39f62a",
+    "toggle": "1140f92a89aebd695f8c9e87cac2900258fa24b4bb31a6a5a83d733391572a66"
+  },
+  "payload": [
+    {
+      "source": "root-stage-manifest.json",
+      "destinationKind": "tool",
+      "destination": "root-stage-manifest.json",
+      "sha256": "ef0853a00aca582f10f655b05946303190dfe608b76b01dc9810e2921de71950",
+      "bytes": 33535
+    },
+    {
+      "source": "build-hosts-v2.ps1",
+      "destinationKind": "tool",
+      "destination": "build-hosts-v2.ps1",
+      "sha256": "a2e8297e6a695973c5a0b250a5b5cddb7b993c77647501f9f63f970022d2a6cb",
+      "bytes": 16597
+    },
+    {
+      "source": "cleanup-decision.ps1",
+      "destinationKind": "tool",
+      "destination": "cleanup-decision.ps1",
+      "sha256": "018d89b825634a0dc238c1201d4fd97a23acbcdaf57b82333c6097e9efd92001",
+      "bytes": 407
+    },
+    {
+      "source": "cleanup.ps1",
+      "destinationKind": "tool",
+      "destination": "cleanup.ps1",
+      "sha256": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+      "bytes": 6746
+    },
+    {
+      "source": "control-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "control-admission.ps1",
+      "sha256": "0348814bba0e8ea89de323603bcd096f10b68528a0ac762c1df9078e624fa39e",
+      "bytes": 7469
+    },
+    {
+      "source": "parse-stream-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "parse-stream-controls.ps1",
+      "sha256": "462ca3ace7b79a465582a92bb25f44db0d0654c500656bea10e854fcc56a3120",
+      "bytes": 820
+    },
+    {
+      "source": "process-stream-control.cs",
+      "destinationKind": "tool",
+      "destination": "process-stream-control.cs",
+      "sha256": "20464024c7a9cd427adf0eadaa4f74573d806c9af2cc77341ad60a55fde1ce61",
+      "bytes": 2099
+    },
+    {
+      "source": "run-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "run-controls.ps1",
+      "sha256": "b664e8972dc83a21cc8e4ece750e2e3df744fcf02804c8f651e2137bb130db7a",
+      "bytes": 5125
+    },
+    {
+      "source": "run-stream-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "run-stream-controls.ps1",
+      "sha256": "f93cbb3e7df6f9e375d595a4a5b794350a94b40776194a6c7dd8849f69d9f183",
+      "bytes": 1488
+    },
+    {
+      "source": "stream-control-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "stream-control-admission.ps1",
+      "sha256": "0635da5ef4d46a6de58a27b01304e4f72d871a7a507178c3cf9f3c37c6de7c6a",
+      "bytes": 10568
+    },
+    {
+      "source": "stream-control-inputs.json",
+      "destinationKind": "tool",
+      "destination": "stream-control-inputs.json",
+      "sha256": "640ee89a374b1615fd96661f6b510835232f0a318221f8f16696d7c64c82fe5c",
+      "bytes": 476
+    },
+    {
+      "source": "stream-seal.ps1",
+      "destinationKind": "tool",
+      "destination": "stream-seal.ps1",
+      "sha256": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+      "bytes": 6200
+    },
+    {
+      "source": "test-process-streams-bounded.ps1",
+      "destinationKind": "tool",
+      "destination": "test-process-streams-bounded.ps1",
+      "sha256": "42aa40fcee7934f25667b381437ef0d095e849caa13cea35c5902d4a71f5d12d",
+      "bytes": 6741
+    },
+    {
+      "source": "test-stream-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "test-stream-admission.ps1",
+      "sha256": "a0a522a08db578e6a0cb79728a87c44bdcf6c3d88c8d35cdb99cb4e618f744fe",
+      "bytes": 4191
+    },
+    {
+      "source": "test-stream-seal.ps1",
+      "destinationKind": "tool",
+      "destination": "test-stream-seal.ps1",
+      "sha256": "b370fbcf8d079631464bf379ff72d90686c3bc6a0dde05856915d452a6fc2873",
+      "bytes": 6191
+    },
+    {
+      "source": "shared/host-inputs.ps1",
+      "destinationKind": "tool",
+      "destination": "shared/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    {
+      "source": "shared/verify-runtime-source.ps1",
+      "destinationKind": "tool",
+      "destination": "shared/verify-runtime-source.ps1",
+      "sha256": "9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589",
+      "bytes": 1286
+    },
+    {
+      "source": "pure-controls/parse-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "pure-controls/parse-controls.ps1",
+      "sha256": "aac5683ef9b5b1985c0ae743a7c747954c87395219051aa3ea0d295e30340131",
+      "bytes": 995
+    },
+    {
+      "source": "pure-controls/provider/main.swift",
+      "destinationKind": "tool",
+      "destination": "pure-controls/provider/main.swift",
+      "sha256": "78414b081bcc90956e76ac7ed21cf6bb7bcc1ad3af7fd9908ed3a82345ed81a7",
+      "bytes": 649
+    },
+    {
+      "source": "pure-controls/reserved-assignment-lint.ps1",
+      "destinationKind": "tool",
+      "destination": "pure-controls/reserved-assignment-lint.ps1",
+      "sha256": "0d070324e77b57dc1bb91b65b3971df01dc0a27f06bdaa6719fa48cdf7ce869b",
+      "bytes": 1181
+    },
+    {
+      "source": "pure-controls/test-cleanup.ps1",
+      "destinationKind": "tool",
+      "destination": "pure-controls/test-cleanup.ps1",
+      "sha256": "3667ddd15b42ae675945c8367e94dd8b596903e837dd678e08407d6aa9a2d9be",
+      "bytes": 1236
+    },
+    {
+      "source": "pure-controls/test-host-inputs.ps1",
+      "destinationKind": "tool",
+      "destination": "pure-controls/test-host-inputs.ps1",
+      "sha256": "4d779a450d77585dca3d9211ee0f9d415e92f9db21cafce1d4a8bef2f7b8bdc0",
+      "bytes": 2262
+    },
+    {
+      "source": "pure-controls/test-integer-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "pure-controls/test-integer-admission.ps1",
+      "sha256": "909639e7cbdff33e4f697082131571e039b11adb5878f8de7eea47aab7bb0c16",
+      "bytes": 1284
+    },
+    {
+      "source": "reviewed-v3-controls/build-hosts-v2.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/build-hosts-v2.ps1",
+      "sha256": "9d597e93291233783f7cba00c361b72cc67abadd9dced0f7d87b3d344b6edcc1",
+      "bytes": 15819
+    },
+    {
+      "source": "reviewed-v3-controls/cleanup-decision.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/cleanup-decision.ps1",
+      "sha256": "018d89b825634a0dc238c1201d4fd97a23acbcdaf57b82333c6097e9efd92001",
+      "bytes": 407
+    },
+    {
+      "source": "reviewed-v3-controls/cleanup.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/cleanup.ps1",
+      "sha256": "a9386ddd954490a0da9565211248944ebeb5a27492465512f0e9a55f9dbf2bd7",
+      "bytes": 6746
+    },
+    {
+      "source": "reviewed-v3-controls/control-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/control-admission.ps1",
+      "sha256": "5a71b4577910b1bd91c6ad39a74cf0c84f16f2b2949b9251c106a5cdb3598e8c",
+      "bytes": 7591
+    },
+    {
+      "source": "reviewed-v3-controls/parse-stream-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/parse-stream-controls.ps1",
+      "sha256": "fe60774f695c22dfd96676ea2c90426b2400ee2b82c7ac6faa2dd4efacfc7eaa",
+      "bytes": 909
+    },
+    {
+      "source": "reviewed-v3-controls/preflight.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/preflight.ps1",
+      "sha256": "400417705f80ed4edbf2362a3d2773f6a65d19a503a85de70175c95a52972117",
+      "bytes": 8095
+    },
+    {
+      "source": "reviewed-v3-controls/producer-source-scope.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/producer-source-scope.ps1",
+      "sha256": "d0485e74d694f700b2540dab2c57f2d3deb342758b965adcb3ddbc32faa6fd9b",
+      "bytes": 1428
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/parse-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/parse-controls.ps1",
+      "sha256": "aac5683ef9b5b1985c0ae743a7c747954c87395219051aa3ea0d295e30340131",
+      "bytes": 995
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/provider/main.swift",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/provider/main.swift",
+      "sha256": "78414b081bcc90956e76ac7ed21cf6bb7bcc1ad3af7fd9908ed3a82345ed81a7",
+      "bytes": 649
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/reserved-assignment-lint.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/reserved-assignment-lint.ps1",
+      "sha256": "9569bacc55a2ba4755d4fe512c0f63f71ec5d483abac2702b43885a6f018db32",
+      "bytes": 1300
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/test-cleanup.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/test-cleanup.ps1",
+      "sha256": "3667ddd15b42ae675945c8367e94dd8b596903e837dd678e08407d6aa9a2d9be",
+      "bytes": 1236
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/test-host-inputs.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/test-host-inputs.ps1",
+      "sha256": "4d779a450d77585dca3d9211ee0f9d415e92f9db21cafce1d4a8bef2f7b8bdc0",
+      "bytes": 2262
+    },
+    {
+      "source": "reviewed-v3-controls/pure-controls/test-integer-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/pure-controls/test-integer-admission.ps1",
+      "sha256": "909639e7cbdff33e4f697082131571e039b11adb5878f8de7eea47aab7bb0c16",
+      "bytes": 1284
+    },
+    {
+      "source": "reviewed-v3-controls/run-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/run-controls.ps1",
+      "sha256": "b664e8972dc83a21cc8e4ece750e2e3df744fcf02804c8f651e2137bb130db7a",
+      "bytes": 5125
+    },
+    {
+      "source": "reviewed-v3-controls/run-stream-controls.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/run-stream-controls.ps1",
+      "sha256": "f93cbb3e7df6f9e375d595a4a5b794350a94b40776194a6c7dd8849f69d9f183",
+      "bytes": 1488
+    },
+    {
+      "source": "reviewed-v3-controls/shared/host-inputs.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/shared/host-inputs.ps1",
+      "sha256": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db",
+      "bytes": 1047
+    },
+    {
+      "source": "reviewed-v3-controls/shared/verify-runtime-source.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/shared/verify-runtime-source.ps1",
+      "sha256": "9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589",
+      "bytes": 1286
+    },
+    {
+      "source": "reviewed-v3-controls/source-pins.json",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/source-pins.json",
+      "sha256": "b36483b10d508ff486dbfdfe51a910bd9615612ecec1596802b4278edb9285b0",
+      "bytes": 4267
+    },
+    {
+      "source": "reviewed-v3-controls/stream-control-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/stream-control-admission.ps1",
+      "sha256": "1b40b1a913221121144b5aca7fc069cc30abfe76ca159ef05cacdfae5e76cca2",
+      "bytes": 10996
+    },
+    {
+      "source": "reviewed-v3-controls/stream-seal.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/stream-seal.ps1",
+      "sha256": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+      "bytes": 6200
+    },
+    {
+      "source": "reviewed-v3-controls/test-json-array-shape.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/test-json-array-shape.ps1",
+      "sha256": "e02d32cd666cebb19065f21db8535d223d48237eb4096bfbdf19f62cf2faff97",
+      "bytes": 1377
+    },
+    {
+      "source": "reviewed-v3-controls/test-process-streams-bounded.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/test-process-streams-bounded.ps1",
+      "sha256": "42aa40fcee7934f25667b381437ef0d095e849caa13cea35c5902d4a71f5d12d",
+      "bytes": 6741
+    },
+    {
+      "source": "reviewed-v3-controls/test-producer-source-scope.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/test-producer-source-scope.ps1",
+      "sha256": "2ca1d1381d0924c04178f8410bd1ed23c452ae2471ade948c3a4c8c4220006b6",
+      "bytes": 1842
+    },
+    {
+      "source": "reviewed-v3-controls/test-stream-admission.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/test-stream-admission.ps1",
+      "sha256": "ef8977debeca930c7f958ef89f4081dbe7a934bfa3a3f7437ec7e4a68cf39c17",
+      "bytes": 4167
+    },
+    {
+      "source": "reviewed-v3-controls/test-stream-seal.ps1",
+      "destinationKind": "tool",
+      "destination": "reviewed-v3-controls/test-stream-seal.ps1",
+      "sha256": "b370fbcf8d079631464bf379ff72d90686c3bc6a0dde05856915d452a6fc2873",
+      "bytes": 6191
+    },
+    {
+      "source": "dependencies/canonical-inputs-manifest.json",
+      "destinationKind": "tool",
+      "destination": "dependencies/canonical-inputs-manifest.json",
+      "sha256": "208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bytes": 3476
+    },
+    {
+      "source": "dependencies/module-origin-receipt.json",
+      "destinationKind": "tool",
+      "destination": "dependencies/module-origin-receipt.json",
+      "sha256": "eb25de924faebd4ac8375521c6726f857aa9e8dc84a4b8aa7efe05e07eee7d33",
+      "bytes": 28113
+    },
+    {
+      "source": "dependencies/module-origin-accepted-replay.json",
+      "destinationKind": "tool",
+      "destination": "dependencies/module-origin-accepted-replay.json",
+      "sha256": "df4be5f8eb5d4ec8f82287b5c33c898cadb29703adc8a57f2a36628a295ca8e4",
+      "bytes": 93
+    },
+    {
+      "source": "dependencies/module-origin-independent-review.json",
+      "destinationKind": "tool",
+      "destination": "dependencies/module-origin-independent-review.json",
+      "sha256": "5d81d19e3a34812e1d40dfaa30367ea749fbb6602652569a208ef89e7a9a4f98",
+      "bytes": 3153
+    },
+    {
+      "source": "disabled/package/Package.swift",
+      "destinationKind": "package",
+      "destination": "Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/FactoryFill.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/Witness.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "488f2ef0127e24169f706568540c0b26392db81187d663c31e55dd223f33f349",
+      "bytes": 229,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/Sources/FactoryProbe/main.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/main.swift",
+      "sha256": "3ea912e34fb29819e7e4e9b5fef6240ab01a92428f5bcc3e140d1909c72edaf1",
+      "bytes": 13223,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/case.json",
+      "destinationKind": "package",
+      "destination": "case.json",
+      "sha256": "68c63ea77bd20a82644b951a8335e98f6717ac138a6c6b218b6d05dadd0848ba",
+      "bytes": 1496,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/plan.json",
+      "destinationKind": "package",
+      "destination": "plan.json",
+      "sha256": "5bd6d08b3684114fcc9f837aaf0bdfb1c18d8b9131ba910e82ccb646385bf985",
+      "bytes": 8389,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/reference-witness.swift",
+      "destinationKind": "package",
+      "destination": "reference-witness.swift",
+      "sha256": "ce4273870f49aca700728de75c70aea449d8733fff0482bf76567fdcc78a0a1d",
+      "bytes": 177,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/runtime-source-receipt.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/runtime-source-tree.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825,
+      "label": "disabled"
+    },
+    {
+      "source": "disabled/package/witness.manifest.json",
+      "destinationKind": "package",
+      "destination": "witness.manifest.json",
+      "sha256": "723db682df397090441c14c70475ea4d8fb8e244668e272e749f579df90ab54c",
+      "bytes": 1854,
+      "label": "disabled"
+    },
+    {
+      "source": "image/package/Package.swift",
+      "destinationKind": "package",
+      "destination": "Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/FactoryFill.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/Witness.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "fdd83d446963865b80f7b9697c11f0caf42352e7d5f7c34155a36f19bdf84171",
+      "bytes": 356,
+      "label": "image"
+    },
+    {
+      "source": "image/package/Sources/FactoryProbe/main.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/main.swift",
+      "sha256": "583a9dec96ea0c57ef0ae5cfe2f1253d9c280c4b501b6e7d15d9ce8d28b7a096",
+      "bytes": 13237,
+      "label": "image"
+    },
+    {
+      "source": "image/package/case.json",
+      "destinationKind": "package",
+      "destination": "case.json",
+      "sha256": "a3e936cc5f688ebd885ba817e4f0b3b4df84e3b48f6bf6b0e2c92632f5dc93b4",
+      "bytes": 1480,
+      "label": "image"
+    },
+    {
+      "source": "image/package/plan.json",
+      "destinationKind": "package",
+      "destination": "plan.json",
+      "sha256": "1028fcde0817c634801c7fac416d29b8754307f0e0a3cc30609854ad31b6e7f3",
+      "bytes": 8337,
+      "label": "image"
+    },
+    {
+      "source": "image/package/reference-witness.swift",
+      "destinationKind": "package",
+      "destination": "reference-witness.swift",
+      "sha256": "1f7e2fba7fb10cb5a00f6a0f4553e98d23bc58e324fc0a7bd3a3e4f52f0e361f",
+      "bytes": 305,
+      "label": "image"
+    },
+    {
+      "source": "image/package/runtime-source-receipt.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275,
+      "label": "image"
+    },
+    {
+      "source": "image/package/runtime-source-tree.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825,
+      "label": "image"
+    },
+    {
+      "source": "image/package/witness.manifest.json",
+      "destinationKind": "package",
+      "destination": "witness.manifest.json",
+      "sha256": "c4b1097ab087c219321e977e90d2970965eff244d8969b8dd5b7925cd327975a",
+      "bytes": 1814,
+      "label": "image"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Package.swift",
+      "destinationKind": "package",
+      "destination": "Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/FactoryFill.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/Witness.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "73235389c2f255b5ceea4184a356fbf0e582d91e00a6ad9887da8de68c2773c7",
+      "bytes": 298,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/Sources/FactoryProbe/main.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/main.swift",
+      "sha256": "8b4ad227e90b06ae4490fbe339d043236f8c4370f2bf20e37e85e5bd3c8d579c",
+      "bytes": 13266,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/case.json",
+      "destinationKind": "package",
+      "destination": "case.json",
+      "sha256": "c2a99399c435d6c1e16bbb2d80675f1f8a4ab1aa3e654b7dcf4ff1ffd0410491",
+      "bytes": 1597,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/plan.json",
+      "destinationKind": "package",
+      "destination": "plan.json",
+      "sha256": "73668c16e6446c48211f26288bcb114e6003b7fc58a60a6850b2019640c95e14",
+      "bytes": 8332,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/reference-witness.swift",
+      "destinationKind": "package",
+      "destination": "reference-witness.swift",
+      "sha256": "a0b4d2ba05551ffa7ffaaeb63196cd612f8e3efb831d2afb6ca1f2278568821e",
+      "bytes": 191,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/runtime-source-receipt.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/runtime-source-tree.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "shapes.fill-stroke/package/witness.manifest.json",
+      "destinationKind": "package",
+      "destination": "witness.manifest.json",
+      "sha256": "6482903502df6cc74fc91d091c5e02ca8dc859a7d427c0225e9aaf713a092e2e",
+      "bytes": 2017,
+      "label": "shapes.fill-stroke"
+    },
+    {
+      "source": "text.bundled-font/package/Package.swift",
+      "destinationKind": "package",
+      "destination": "Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/FactoryFill.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/Witness.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "71703865d3cf6253244b99d44adc74ff1e4390b728acac48c6497bb361c14a91",
+      "bytes": 324,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/Sources/FactoryProbe/main.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/main.swift",
+      "sha256": "2b621525e7fb4b6fac7e5ccdc087f236454061b33dd077f2ac38d9a09f939da7",
+      "bytes": 13272,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/case.json",
+      "destinationKind": "package",
+      "destination": "case.json",
+      "sha256": "29dfb27ddce10411c9fa742d5ebaf7ebef22134e1d35e64036b5952cf2254156",
+      "bytes": 1523,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/plan.json",
+      "destinationKind": "package",
+      "destination": "plan.json",
+      "sha256": "afb063d5e3a3ebb564cf929a7014a0457a3222aaf7100ce5a4efa1d90e39f62a",
+      "bytes": 8491,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/reference-witness.swift",
+      "destinationKind": "package",
+      "destination": "reference-witness.swift",
+      "sha256": "a8c84ee30ae50ac915769f151e1dc940dfffe8365064f2ace3087110ce331f70",
+      "bytes": 270,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/runtime-source-receipt.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/runtime-source-tree.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "text.bundled-font/package/witness.manifest.json",
+      "destinationKind": "package",
+      "destination": "witness.manifest.json",
+      "sha256": "35b6b7f3bc1b7e96354f1614197f28171eac00da56682e493cecab36684db458",
+      "bytes": 1935,
+      "label": "text.bundled-font"
+    },
+    {
+      "source": "toggle/package/Package.swift",
+      "destinationKind": "package",
+      "destination": "Package.swift",
+      "sha256": "74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/FactoryContainer.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/FactoryFill.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147",
+      "bytes": 1646,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c",
+      "bytes": 512,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/FactoryViewport.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/Witness.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "cf8c0255e9f1c537224a866bab4c7a3c784fd36bd51551e670043e8e011c610a",
+      "bytes": 250,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/Sources/FactoryProbe/main.swift",
+      "destinationKind": "package",
+      "destination": "Sources/FactoryProbe/main.swift",
+      "sha256": "f5f1208d242bd11a42bb95cf4d73572f1cc2dc0d28fc2d47d58d077542a06f7a",
+      "bytes": 13243,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/case.json",
+      "destinationKind": "package",
+      "destination": "case.json",
+      "sha256": "7113610be80860ddf6b73d6b640fd19729288131f0b0ce712740f874f726da2f",
+      "bytes": 1483,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/plan.json",
+      "destinationKind": "package",
+      "destination": "plan.json",
+      "sha256": "1140f92a89aebd695f8c9e87cac2900258fa24b4bb31a6a5a83d733391572a66",
+      "bytes": 8347,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/reference-witness.swift",
+      "destinationKind": "package",
+      "destination": "reference-witness.swift",
+      "sha256": "9e44420bbc1d361993e57eb911ebd474f55444c0786fd57123d59a28f337585c",
+      "bytes": 189,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/runtime-source-receipt.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-receipt.json",
+      "sha256": "b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/runtime-source-tree.json",
+      "destinationKind": "package",
+      "destination": "runtime-source-tree.json",
+      "sha256": "c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825,
+      "label": "toggle"
+    },
+    {
+      "source": "toggle/package/witness.manifest.json",
+      "destinationKind": "package",
+      "destination": "witness.manifest.json",
+      "sha256": "00dae64ecf76966af6e2538e56f6b33dd6c6e664d82657dfd96f0604d3adeed1",
+      "bytes": 1801,
+      "label": "toggle"
+    }
+  ],
+  "externalDependencies": [
+    {
+      "kind": "file",
+      "name": "disabled:compiler",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:renderer",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge-header",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Package.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include\\CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/CDispatchPrivate/shim.c",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/CSwiftRight/module.modulemap",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/CSwiftRight/swiftright.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/SwiftRightBridge/Bridge.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/SwiftRightBridge/Loader.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/SwiftRightBridge/Marshal.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "kind": "file",
+      "name": "disabled:bridge:Sources/SwiftRightBridge/Types.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    },
+    {
+      "kind": "source-tree",
+      "name": "disabled:runtime-source-tree",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "kind": "file",
+      "name": "image:compiler",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    {
+      "kind": "file",
+      "name": "image:renderer",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge-header",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Package.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include\\CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/CDispatchPrivate/shim.c",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/CSwiftRight/module.modulemap",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/CSwiftRight/swiftright.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/SwiftRightBridge/Bridge.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/SwiftRightBridge/Loader.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/SwiftRightBridge/Marshal.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "kind": "file",
+      "name": "image:bridge:Sources/SwiftRightBridge/Types.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    },
+    {
+      "kind": "source-tree",
+      "name": "image:runtime-source-tree",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:compiler",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:renderer",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge-header",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Package.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include\\CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/CDispatchPrivate/shim.c",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/CSwiftRight/module.modulemap",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/CSwiftRight/swiftright.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/SwiftRightBridge/Bridge.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/SwiftRightBridge/Loader.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/SwiftRightBridge/Marshal.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "kind": "file",
+      "name": "shapes.fill-stroke:bridge:Sources/SwiftRightBridge/Types.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    },
+    {
+      "kind": "source-tree",
+      "name": "shapes.fill-stroke:runtime-source-tree",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:compiler",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:renderer",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge-header",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Package.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include\\CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/CDispatchPrivate/shim.c",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/CSwiftRight/module.modulemap",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/CSwiftRight/swiftright.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/SwiftRightBridge/Bridge.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/SwiftRightBridge/Loader.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/SwiftRightBridge/Marshal.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "kind": "file",
+      "name": "text.bundled-font:bridge:Sources/SwiftRightBridge/Types.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    },
+    {
+      "kind": "source-tree",
+      "name": "text.bundled-font:runtime-source-tree",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:compiler",
+      "path": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:renderer",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge-header",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Package.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include\\CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/CDispatchPrivate/shim.c",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/CSwiftRight/module.modulemap",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/CSwiftRight/swiftright.h",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/SwiftRightBridge/Bridge.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/SwiftRightBridge/Loader.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/SwiftRightBridge/Marshal.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "kind": "file",
+      "name": "toggle:bridge:Sources/SwiftRightBridge/Types.swift",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    },
+    {
+      "kind": "source-tree",
+      "name": "toggle:runtime-source-tree",
+      "path": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "treeSha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    }
+  ],
+  "hostRequirements": [
+    {
+      "label": "disabled",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+      "bridgeSourceCommit": "0a745ab",
+      "bridgeHeaderCommit": "862997c",
+      "bridgeHeaderPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+      "bridgeCanonicalManifestSha256": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bridgeBindings": [
+        {
+          "path": "Package.swift",
+          "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494",
+          "bytes": 1527
+        },
+        {
+          "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+          "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8",
+          "bytes": 841
+        },
+        {
+          "path": "Sources/CDispatchPrivate/shim.c",
+          "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8",
+          "bytes": 30
+        },
+        {
+          "path": "Sources/CSwiftRight/module.modulemap",
+          "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e",
+          "bytes": 71
+        },
+        {
+          "path": "Sources/CSwiftRight/swiftright.h",
+          "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+          "bytes": 41937
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Bridge.swift",
+          "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+          "bytes": 23494
+        },
+        {
+          "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+          "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6",
+          "bytes": 3794
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Loader.swift",
+          "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+          "bytes": 3266
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Marshal.swift",
+          "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d",
+          "bytes": 10915
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Types.swift",
+          "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+          "bytes": 12904
+        }
+      ]
+    },
+    {
+      "label": "image",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+      "bridgeSourceCommit": "0a745ab",
+      "bridgeHeaderCommit": "862997c",
+      "bridgeHeaderPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+      "bridgeCanonicalManifestSha256": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bridgeBindings": [
+        {
+          "path": "Package.swift",
+          "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494",
+          "bytes": 1527
+        },
+        {
+          "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+          "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8",
+          "bytes": 841
+        },
+        {
+          "path": "Sources/CDispatchPrivate/shim.c",
+          "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8",
+          "bytes": 30
+        },
+        {
+          "path": "Sources/CSwiftRight/module.modulemap",
+          "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e",
+          "bytes": 71
+        },
+        {
+          "path": "Sources/CSwiftRight/swiftright.h",
+          "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+          "bytes": 41937
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Bridge.swift",
+          "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+          "bytes": 23494
+        },
+        {
+          "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+          "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6",
+          "bytes": 3794
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Loader.swift",
+          "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+          "bytes": 3266
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Marshal.swift",
+          "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d",
+          "bytes": 10915
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Types.swift",
+          "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+          "bytes": 12904
+        }
+      ]
+    },
+    {
+      "label": "shapes.fill-stroke",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+      "bridgeSourceCommit": "0a745ab",
+      "bridgeHeaderCommit": "862997c",
+      "bridgeHeaderPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+      "bridgeCanonicalManifestSha256": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bridgeBindings": [
+        {
+          "path": "Package.swift",
+          "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494",
+          "bytes": 1527
+        },
+        {
+          "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+          "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8",
+          "bytes": 841
+        },
+        {
+          "path": "Sources/CDispatchPrivate/shim.c",
+          "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8",
+          "bytes": 30
+        },
+        {
+          "path": "Sources/CSwiftRight/module.modulemap",
+          "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e",
+          "bytes": 71
+        },
+        {
+          "path": "Sources/CSwiftRight/swiftright.h",
+          "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+          "bytes": 41937
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Bridge.swift",
+          "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+          "bytes": 23494
+        },
+        {
+          "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+          "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6",
+          "bytes": 3794
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Loader.swift",
+          "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+          "bytes": 3266
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Marshal.swift",
+          "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d",
+          "bytes": 10915
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Types.swift",
+          "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+          "bytes": 12904
+        }
+      ]
+    },
+    {
+      "label": "text.bundled-font",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+      "bridgeSourceCommit": "0a745ab",
+      "bridgeHeaderCommit": "862997c",
+      "bridgeHeaderPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+      "bridgeCanonicalManifestSha256": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bridgeBindings": [
+        {
+          "path": "Package.swift",
+          "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494",
+          "bytes": 1527
+        },
+        {
+          "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+          "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8",
+          "bytes": 841
+        },
+        {
+          "path": "Sources/CDispatchPrivate/shim.c",
+          "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8",
+          "bytes": 30
+        },
+        {
+          "path": "Sources/CSwiftRight/module.modulemap",
+          "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e",
+          "bytes": 71
+        },
+        {
+          "path": "Sources/CSwiftRight/swiftright.h",
+          "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+          "bytes": 41937
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Bridge.swift",
+          "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+          "bytes": 23494
+        },
+        {
+          "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+          "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6",
+          "bytes": 3794
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Loader.swift",
+          "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+          "bytes": 3266
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Marshal.swift",
+          "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d",
+          "bytes": 10915
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Types.swift",
+          "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+          "bytes": 12904
+        }
+      ]
+    },
+    {
+      "label": "toggle",
+      "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+      "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+      "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+      "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+      "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+      "bridgeSourceCommit": "0a745ab",
+      "bridgeHeaderCommit": "862997c",
+      "bridgeHeaderPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\swiftright.h",
+      "bridgeHeaderSha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+      "bridgeCanonicalManifestSha256": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+      "bridgeBindings": [
+        {
+          "path": "Package.swift",
+          "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494",
+          "bytes": 1527
+        },
+        {
+          "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+          "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8",
+          "bytes": 841
+        },
+        {
+          "path": "Sources/CDispatchPrivate/shim.c",
+          "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8",
+          "bytes": 30
+        },
+        {
+          "path": "Sources/CSwiftRight/module.modulemap",
+          "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e",
+          "bytes": 71
+        },
+        {
+          "path": "Sources/CSwiftRight/swiftright.h",
+          "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+          "bytes": 41937
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Bridge.swift",
+          "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8",
+          "bytes": 23494
+        },
+        {
+          "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+          "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6",
+          "bytes": 3794
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Loader.swift",
+          "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768",
+          "bytes": 3266
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Marshal.swift",
+          "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d",
+          "bytes": 10915
+        },
+        {
+          "path": "Sources/SwiftRightBridge/Types.swift",
+          "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+          "bytes": 12904
+        }
+      ]
+    }
+  ],
+  "admissionAssets": [
+    {
+      "path": "README.md",
+      "sha256": "3e91553c15ffa35a21cf5f7a75a8815853017f9b6dbeca293407133a09ade63c",
+      "bytes": 1978
+    }
+  ],
+  "targetToolRoot": "D:\\Claude\\swiftright\\.factory-work\\hosts\\remaining-five-v5-admission-r1",
+  "targetPackages": {
+    "disabled": "D:\\Claude\\swiftright\\.factory-work\\hosts\\disabled\\package",
+    "image": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+    "shapes.fill-stroke": "D:\\Claude\\swiftright\\.factory-work\\hosts\\shapes.fill-stroke\\package",
+    "text.bundled-font": "D:\\Claude\\swiftright\\.factory-work\\hosts\\text.bundled-font\\package",
+    "toggle": "D:\\Claude\\swiftright\\.factory-work\\hosts\\toggle\\package"
+  },
+  "executionBoundary": {
+    "compilerInvocations": 0,
+    "nativeCalls": 0,
+    "overwrite": false,
+    "delete": false
+  }
+}

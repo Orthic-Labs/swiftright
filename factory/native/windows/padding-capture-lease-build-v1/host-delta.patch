@@ -1,0 +1,38 @@
+--- parent/main.swift
++++ lease/main.swift
+@@ -59,6 +59,7 @@
+ }
+ @MainActor final class RendererHost {
+     let bridge: Bridge
++    let captureLeaseNanoseconds: UInt64
+     var graph: Graph?
+     var window: BridgeWindow?
+     var measurer: NativeMeasurer?
+@@ -76,7 +77,7 @@
+     var firstWindowMetricsEventSeen = false
+     var firstLayoutLogged = false
+     var windowClosed = false
+-    init(_ bridge: Bridge) { self.bridge = bridge }
++    init(_ bridge: Bridge, captureLeaseNanoseconds: UInt64 = 10_000_000_000) { self.bridge = bridge; self.captureLeaseNanoseconds = captureLeaseNanoseconds }
+     func ready(_ window: BridgeWindow) {
+         self.window = window
+         do {
+@@ -194,13 +195,16 @@
+         if started == nil { started = time }
+         graph?.tick(now: Double(time) / 1_000_000_000)
+         graph?.flush()
+-        if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }
++        if time - (started ?? time) > captureLeaseNanoseconds { bridge.requestQuit() }
+     }
+ }
+ let result: Int32 = MainActor.assumeIsolated {
+     do {
++        let captureLease = try factoryCaptureLeaseNanoseconds(Array(CommandLine.arguments.dropFirst()))
++        print("FACTORY_CAPTURE_LEASE nanoseconds=\(captureLease) source=explicit-bounded-diagnostic-option")
++        fflush(stdout)
+         let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll")
+-        let host = RendererHost(bridge)
++        let host = RendererHost(bridge, captureLeaseNanoseconds: captureLease)
+         bridge.onReady = { window in MainActor.assumeIsolated { host.ready(window) } }
+         bridge.onEvent = { event in MainActor.assumeIsolated { host.event(event) } }
+         bridge.onTick = { _, time in MainActor.assumeIsolated { host.tick(time) } }

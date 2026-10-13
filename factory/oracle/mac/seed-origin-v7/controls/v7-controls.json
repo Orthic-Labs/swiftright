@@ -1,0 +1,67 @@
+{
+  "baseline": {
+    "admission": {
+      "admissionFiles": 17,
+      "collectorReused": true,
+      "status": "PASS",
+      "v6Decision": "READY_FOR_BOUNDED_CAPTURE"
+    },
+    "dependencies": {
+      "dependencies": 23,
+      "runtimeCopies": true,
+      "status": "PASS"
+    },
+    "inputs": {
+      "captureStatus": "NOT_RUN",
+      "rows": 5,
+      "seed": 14577611000270672472,
+      "status": "PASS"
+    },
+    "status": "PASS"
+  },
+  "captureStatus": "NOT_RUN",
+  "controls": [
+    {
+      "acceptedBaseline": true,
+      "control": "source-bytes-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "source-pin-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "witness-bytes-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "duplicate-case-id",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "recipe-canonical-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "dependency-bytes-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "collector-source-drift",
+      "rejected": true
+    },
+    {
+      "acceptedBaseline": true,
+      "control": "permission-api-source-fault",
+      "rejected": true
+    }
+  ],
+  "kind": "seed-origin-v7-source-admission-controls",
+  "scope": "five remaining seeded Mac cases; no capture executed"
+}

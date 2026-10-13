@@ -1,0 +1,293 @@
+{
+  "basePlanHash": "sha256:be73260accb728a1a613913be4503fae8414623218d129b7ed38eb2f609c7aaf",
+  "baseWitnessHash": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629",
+  "bridgeBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "path": "Sources/CDispatchPrivate/shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "path": "Sources/CSwiftRight/module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "path": "Sources/CSwiftRight/swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    }
+  ],
+  "bridgeCanonicalManifestHash": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+  "bridgeHeaderCommit": "862997c",
+  "bridgeHeaderHash": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "candidateID": "sr1-source-bound-r11-mac20-host-13bfe5b8fbd9-20261011",
+  "captureLease": {
+    "arguments": [
+      "--factory-capture-lease-seconds=40"
+    ],
+    "defaultSeconds": 10,
+    "purpose": "isolated worker acquisition only; original15s exit/5s cleanup unchanged",
+    "selectedSeconds": 40
+  },
+  "case": {
+    "hash": "sha256:9ece4c6f5de297a2a303c19cb95167b14e0291a77ee5e40f6d9b5dc7a65996cd",
+    "id": "swiftui.padding-frame.recipe.gate-seeded.ca4e13f820f5d258.r11.h13bfe5b8fbd9"
+  },
+  "caseInputs": {
+    "alignment": "trailing",
+    "padding": 8,
+    "width": 96
+  },
+  "channelsUnavailable": [
+    "provider.paint",
+    "native.screenshot",
+    "native.uia"
+  ],
+  "closureBinding": null,
+  "compileCommand": {
+    "argv": [
+      "build",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\scratch-r1",
+      "-c",
+      "release",
+      "-j",
+      "1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "compilerSha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+    "nativeActions": 0,
+    "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "toolPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "workingDirectory": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\package"
+  },
+  "compileExpectation": "success",
+  "compileRequest": {
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "jobHelperPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\inputs\\Sr0OwnedJobProcess.cs",
+    "kind": "swiftpm-windows-gui-release/1",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\scratch-r1",
+    "target": "windows-x86_64",
+    "maxParallelJobs": 1,
+    "maxFrontendThreadsObserved": null
+  },
+  "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "diagnosticEvidence": "Synchronous failurebranch visibility only; original guardconditions/host behavior retained",
+  "diagnosticLineage": {
+    "guardConditionsUnchanged": true,
+    "knownWindowClosedFlagDiagnosticOnly": true,
+    "layoutAndWitnessUnchanged": true,
+    "parentMainSha256": "sha256:76e51bba847f6e438345f6cf57f30d92fc8a6d5c716e362e894f6016cd73593e",
+    "parentPlanSha256": "sha256:aa6dcaf950ac7809a70db4c58139ef4d2022bd6015e31a6f8d95159897df6cdc",
+    "predecessorSourceManifestSha256": "sha256:8b9dbf4e7b7a0c506eda61c428cc790acda0d92dea05217af0aaa6737ac12c8f"
+  },
+  "diagnosticScope": "factory-padding-explicit-capture-lease-v1",
+  "environmentInputs": {},
+  "executionEligible": false,
+  "expectedHostHashes": {
+    "macos": "sha256:13bfe5b8fbd9e5a4daa5bae9d50464dbd00b189c55fe7ec8286b287ab4be9777",
+    "windows": "sha256:3d3171b6d6be0447d4c34cd7f8ee5f74332bd1e9eeb24f62f9b1057332d8d10a"
+  },
+  "expectedOutput": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\scratch-r1\\out\\Products\\Release-windows-x86_64\\FactoryProbe.exe",
+  "freshInputRefs": {
+    "case": {
+      "bytes": 2348,
+      "path": "fresh-inputs/case.json",
+      "sha256": "9be4e91b6048c5c2ee8167ffb2d78bbd36dc89ea81239fb7beab3f806f93130b"
+    },
+    "manifest": {
+      "bytes": 1896,
+      "path": "fresh-inputs/manifest.json",
+      "sha256": "39287e276e22b2f3af925451a15bbee36461b38c26e69364dbe319a70091cdae"
+    },
+    "tuple": {
+      "bytes": 2272,
+      "path": "fresh-inputs/tuple.json",
+      "sha256": "fb4e06733d2377f8a321a88e92d5d19d77660c4dc17dca6ee6f1235e6088ef18"
+    }
+  },
+  "frozenTupleBound": false,
+  "historicalSourcePlan": {
+    "bytes": 8974,
+    "sha256": "ee83748cd42326e57676e47d8fec777bd8466706ba2c72a01eb9b5b71292de10"
+  },
+  "hostArguments": [
+    "--factory-capture-lease-seconds=40"
+  ],
+  "hostMode": "renderer",
+  "inputsRoot": "D:\\Claude\\swiftright\\.factory-work\\inputs",
+  "kind": "windows-padding-fresh-compile-plan-v1",
+  "manifestHash": "sha256:9ece4c6f5de297a2a303c19cb95167b14e0291a77ee5e40f6d9b5dc7a65996cd",
+  "measuredSourceEvidence": {
+    "compiler": {
+      "bytes": 45056,
+      "path": "factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1/artifacts/swift.exe",
+      "sha256": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    },
+    "jobHelper": {
+      "bytes": 13575,
+      "path": "factory/pipeline/pilot-next-source-v1/windows-task-memory-v1/Sr0OwnedJobProcess.cs",
+      "sha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e"
+    },
+    "renderer": {
+      "bytes": 11885056,
+      "path": "factory/pipeline/paired-rectangle-fixed-r11-root-v3/artifact-bytes-r1/artifacts/renderer.dll",
+      "sha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93"
+    }
+  },
+  "memoryBudget": {
+    "bytes": 1073741824,
+    "helperPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\inputs\\Sr0OwnedJobProcess.cs",
+    "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+    "jobLimitFlags": 512,
+    "killOnJobClose": false
+  },
+  "nativeHold": "Native capture under coordinated desktop lock required; headless layout is never native evidence.",
+  "nativeParity": "hold",
+  "observationLimits": [
+    "UIA/pixels/layout leaves only; no frozen tuple or parity",
+    "Retained default-body text measurement only"
+  ],
+  "observationScope": "Exact seeded padding witness; event-driven settled viewport/metrics diagnostic; observational only",
+  "rendererHashEnforcement": "External build/launch preflight must verify rendererLoadPath SHA256 before execution; source loader only opens configured path.",
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "replays": 1,
+  "runtimeModuleOrigin": {
+    "acceptedReplayHash": "sha256:df4be5f8eb5d4ec8f82287b5c33c898cadb29703adc8a57f2a36628a295ca8e4",
+    "independentReviewHash": "sha256:5d81d19e3a34812e1d40dfaa30367ea749fbb6602652569a208ef89e7a9a4f98",
+    "receiptHash": "sha256:eb25de924faebd4ac8375521c6726f857aa9e8dc84a4b8aa7efe05e07eee7d33",
+    "scope": "Exact374 source lineage context; fresh SwiftPM host build recompiles runtime, must archive its own produced module bytes; not prebuilt module reuse"
+  },
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "runtimeSourceTreeFileHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeVerifierHash": "9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589",
+  "seed": 14577611000270672472,
+  "seedCaptureSourceMatched": false,
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "path": "Sources/FactoryProbe/CaptureLease.swift",
+      "sha256": "sha256:a544682735f732fae73c134c718886d19a7bef542aef5a9aaebc78d049f7c222"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:19a6fe4545d538c727d13fb025a8d13938ed6f39797db9769269b53c3b229c03"
+    },
+    {
+      "path": "Sources/FactoryProbe/MetricsLogging.swift",
+      "sha256": "sha256:2a590250fd2ff7f0266d9a1f1ccece396b84d5d2866ae6995f1e356bb53f2da4"
+    },
+    {
+      "path": "Sources/FactoryProbe/MetricsPayload.swift",
+      "sha256": "sha256:cde9a9a3a90f52eda4134069f7c6be80ad0d7315689c8e2cdc7ae21deb0f19e1"
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b"
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:d631b9927d808298d0ad67f111c305d78200544c221910229c53daa98e8ccaa3"
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "path": "witness.manifest.json",
+      "sha256": "sha256:0210e1c0ac73ac48528c3303d42f85f9506e99e3eef816e031f20138f705c629"
+    }
+  ],
+  "sourceDelta": {
+    "firstLayout": "marker emitted only after first successful BridgeWindow.commit",
+    "logger": "JSON-native explicit numeric conversion via shared MetricsPayload.swift; witness/runtime/renderer semantics unchanged",
+    "missingEvent": "window close emits held status when no successful first-event snapshot/log exists",
+    "semantics": "tick/poll, graph or synthetic data never creates windowMetrics event"
+  },
+  "sourceHash": "sha256:b969817f59b409121be96eea473322186969ff355d632be9aea227150582554b",
+  "version": "0.3",
+  "windowsOperationalPaths": {
+    "compiler": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "jobHelper": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\inputs\\Sr0OwnedJobProcess.cs",
+    "package": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\package",
+    "renderer": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+    "scratch": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\scratch-r1"
+  },
+  "runtimeSourceTreePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-fresh-r11-r3\\package\\runtime-source-tree.json",
+  "operationalCachedCompile": {
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-capture-lease-r1\\scratch",
+    "argv": "build --package-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\" --scratch-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\padding-window-diagnosis\\package\\build-capture-lease-r1\\scratch\" -c release -Xlinker /MANIFEST:EMBED -Xlinker \"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup --jobs 1",
+    "donorReceiptSha256": "1847f82af0c1d02452d816ca5051787e865afb5be50147d57065c0c37f93e4cf",
+    "nativeActions": 0
+  },
+  "incrementalPlanPredecessorSha256": "783920b786991e5f9f6b6e7ee1feb9a3cb2624065f052c02c96d516d1ea9d93a"
+}

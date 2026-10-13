@@ -1,0 +1,85 @@
+{
+  "kind": "factory-issued-metadata-full-guard-controls-review-v1",
+  "status": "PASS_SOURCE_ONLY_PENDING_DELL_ACTUAL",
+  "previousRevisionStageSha256": "sha256:06d1bb94b1acb94eaa302805379b1aee8c3259824903ced80acc5fa6a60f5d61",
+  "serializerControlValue": "952c75251160871870cb6d5f4a3af9d4ba2b8d204fbca40aa7fc437655af1bba",
+  "serializerPrefixFaultExpected": "Issued metadata admitted context mismatch",
+  "scope": "new root-metadata-controls-v1 source packet",
+  "actions": {
+    "compilerInvocations": 0,
+    "nativeWindowActions": 0,
+    "guiActions": 0,
+    "remoteActions": 0,
+    "lockActions": 0
+  },
+  "frozenInputs": {
+    "integrationSha256": "sha256:238b0df7a4f517babbbb2cb32133a2e4890ccb3b23839cd3dbdf5ae171270de4",
+    "issueBeforeLaunchSha256": "sha256:6d8ade4a46e4264af381543099f1474be3dabee5171e062389277e784ad0de35",
+    "candidateContextSha256": "sha256:705377b54e341e7cfc06eea4394bd7c5b9d92885e56165c0ee928a0e433c8de2",
+    "commonSchemaSha256": "sha256:d319f074f346ab0bbf15a91ff0d860aff80eeaa78ceb9486154f74faea60e6a6"
+  },
+  "controls": {
+    "guard": "Assert-LeaseIssuedMetadata from frozen support/integration.ps1",
+    "positive": "actual root-issued metadata, exact pinned files, Count1",
+    "faults": [
+      "metadata-expected-count",
+      "metadata-host-argument",
+      "metadata-source-hash",
+      "metadata-runtime-modules",
+      "metadata-serializer-prefix",
+      "tuple-case",
+      "tuple-runtime",
+      "tuple-renderer",
+      "binding-frozen",
+      "binding-canonical-input-hash",
+      "mac-context-path"
+    ],
+    "reseal": "tuple, candidate-binding, metadata outer refs and metadata raw hash resealed per mutation",
+    "nativeWindowActionsExpected": 0
+  },
+  "transport": {
+    "staticPrelaunchRefs": 14,
+    "dynamicWindowsClosure": "required from actual Count1 adapter inputs; recursive path/hash/bytes enumeration before Dell zip",
+    "r3Commands": "unadmitted; replaced by explicit fresh-lane commands in COMMANDS.md",
+    "pathControls": {
+      "helperHashPinned": true,
+      "faultControlScript": "test-transport-path-controls.ps1",
+      "faults": ["drive-relative", "drive-rooted", "UNC", "rooted", "backslash", "colon", "duplicate-separator", "dot", "dotdot", "manifest-escape", "destination-escape"],
+      "nativeWindowActions": 0,
+      "lockActions": 0
+    }
+  },
+  "pending": [
+    "Dell root must run issue-before-launch and controls against actual metadata",
+    "Mac must consume dynamic Dell bundle and validate actual tuple with local common.schema"
+  ],
+  "prospectiveCoordinator": {
+    "source": "resume-issued-coordinator.ps1",
+    "status": "PASS_SOURCE_ONLY_PENDING_DELL_ACTUAL",
+    "count": 1,
+    "preissuedMetadataRequired": true,
+    "fullGuardReceiptHashRequired": true,
+    "macSchemaReceiptHashRequired": true,
+    "issuerSkipped": true,
+    "frozenCoordinatorSourcePreserved": true,
+    "nativeWindowActions": 0,
+    "compilerInvocations": 0,
+    "remoteActions": 0,
+    "lockActions": "runtime-only-silent-CAS",
+    "parentCaptureRootResolution": true,
+    "guardReceiptActualShape": true,
+    "schemaReceiptJoins": [
+      "candidateTupleRef.sha256/bytes",
+      "schemaRef.sha256/bytes",
+      "toolRef.sha256/bytes",
+      "sourceRef.sha256/bytes",
+      "issued sourceHash",
+      "exitCode=0",
+      "issued runID rootNonce"
+    ],
+    "guardReceiptIssuedMetadataLineage": true,
+    "guardReceiptCases": "one exact admitted relocated positive plus 11 unique rejected names",
+    "sourceBindingFileExplicit": true,
+    "sourceArchiveRefActualMacBytes": true
+  }
+}

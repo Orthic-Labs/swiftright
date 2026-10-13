@@ -1,0 +1,35 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.circle.fixed.recipe",
+  "block": "swiftui.circle.fill",
+  "provenance": {
+    "producer": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1",
+    "review": "candidate-source-only",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+  },
+  "witness": {
+    "id": "swiftui.circle.fixed.witness",
+    "path": "factory/pipeline/pilot-next-source-v1/circle-fixed-v1/witness.swift",
+    "sha256": "sha256:01f9fef3ab058a958bebf886191519e0102b05ff6b46acedd0d59a7aa8601f2e"
+  },
+  "inputs": {
+    "shape": "Circle()",
+    "style": "fill(Color.blue)",
+    "colorScheme": "light",
+    "frameDip": {"width": 40, "height": 40},
+    "viewportDip": {"width": 320, "height": 240},
+    "backendPrimitive": "Primitive.rect(radius: 20)",
+    "semanticColor": "system.blue",
+    "semanticColorARGB": "0x007affff"
+  },
+  "assertions": [
+    "runtime ShapeGeometry.circle is preserved",
+    "fill paint is required",
+    "circle diameter is min(frame.width, frame.height)",
+    "host client viewport is measured in physical pixels with finite scale resolving to 320x240 DIP",
+    "renderer ABI remains 0.6"
+  ],
+  "qualification": "source-ready-measured-tuple-required"
+}

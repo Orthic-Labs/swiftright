@@ -1,0 +1,41 @@
+{
+  "kind": "recipe",
+  "version": "0.1",
+  "id": "swiftui.text.layout.baseline.recipe",
+  "block": "swiftui.text.layout.baseline",
+  "provenance": {
+    "producer": "factory/pipeline/pilot-next-source-v1/text-baseline-v1",
+    "review": "source-candidate"
+  },
+  "witness": {
+    "id": "swiftui.text.layout.baseline.witness",
+    "source": "witness.swift"
+  },
+  "inputs": {
+    "text": "Aa",
+    "font": {
+      "family": "system",
+      "size": 24,
+      "weight": "regular",
+      "design": "default"
+    },
+    "foreground": "primary",
+    "colorScheme": "light",
+    "viewport": {
+      "width": 120,
+      "height": 48,
+      "alignment": "center"
+    }
+  },
+  "assertions": {
+    "channels": ["layout", "paint", "text-observation"],
+    "text": "Aa",
+    "frame": {"width": 120, "height": 48},
+    "font": {"family": "system", "size": 24, "weight": "regular", "design": "default"}
+  },
+  "negativeCases": [
+    {"id": "wrong-font-size", "mutation": "font.size=25", "mustRejectBeforeCapture": true},
+    {"id": "wrong-viewport", "mutation": "viewport.width=121", "mustRejectBeforeCapture": true},
+    {"id": "wrong-text", "mutation": "text=Ab", "mustRejectBeforeCapture": true}
+  ]
+}

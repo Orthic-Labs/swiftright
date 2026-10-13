@@ -1,0 +1,52 @@
+{
+  "kind": "factory-stack-lifecycle-phase-contract-v2",
+  "maxReceiptBytes": 262144,
+  "maxPhases": 32,
+  "hostRequiredOrder": [
+    "before-bridge-load",
+    "after-bridge-load",
+    "hook-installed",
+    "before-bridge-run",
+    "dpi-configured",
+    "loop-ready",
+    "on-ready",
+    "first-window-metrics",
+    "window-closed",
+    "after-bridge-run"
+  ],
+  "workerRequiredOrder": [
+    "config-accepted",
+    "source-pins-verified",
+    "before-ui-automation-assembly",
+    "after-ui-automation-assembly",
+    "before-from-handle",
+    "after-from-handle",
+    "before-read-uia",
+    "after-read-uia",
+    "before-scalar-validation",
+    "after-scalar-validation",
+    "before-uia-publication",
+    "after-uia-publication"
+  ],
+  "joinKeys": [
+    "runId",
+    "host.pid",
+    "host.startedUtc",
+    "host.path",
+    "host.sessionId",
+    "host.sourceHash",
+    "host.rendererHash",
+    "host.bridgeHash",
+    "host.runtimeHash",
+    "worker.parentPid",
+    "worker.parentStartedUtc"
+  ],
+  "allowedClassifications": [
+    "loader-or-abi",
+    "gpui-before-window",
+    "window-callback-publication",
+    "uia-window-exposure",
+    "uia-content",
+    "evidence-incomplete"
+  ]
+}

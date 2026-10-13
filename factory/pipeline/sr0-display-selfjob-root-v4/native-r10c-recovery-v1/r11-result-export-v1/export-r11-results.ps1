@@ -1,0 +1,32 @@
+[CmdletBinding()]
+param(
+ [Parameter(Mandatory)][string]$RunRoot,
+ [Parameter(Mandatory)][string]$PlanPath,
+ [Parameter(Mandatory)][ValidatePattern('^[0-9a-fA-F]{64}$')][string]$ExpectedPlanSha256,
+ [Parameter(Mandatory)][string[]]$ReceiptPaths,
+ [Parameter(Mandatory)][string[]]$RuntimeInputPaths,
+ [Parameter(Mandatory)][string]$ArchivePath,
+ [Parameter(Mandatory)][string]$ManifestPath
+)
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';Add-Type -AssemblyName System.IO.Compression
+$MaxFiles=256;$MaxFileBytes=[int64]8388608;$MaxJsonBytes=[int64]2097152;$MaxTotalBytes=[int64]33554432;$BufferBytes=65536
+function Fail([string]$m){throw ('sr0 r11 result export rejected: '+$m)}
+function Require([bool]$ok,[string]$m){if(-not $ok){Fail $m}}
+function Full([string]$p){return [IO.Path]::GetFullPath($p)}
+function LeafSafe([string]$p){$i=Get-Item -LiteralPath $p -Force -ErrorAction Stop;Require (-not $i.PSIsContainer) ('directory input: '+$p);Require (($i.Attributes-band[IO.FileAttributes]::ReparsePoint)-eq 0) ('reparse input: '+$p);return $i}
+function HashFile([string]$p,[int64]$limit=$MaxFileBytes){$i=LeafSafe $p;Require ($i.Length -le $limit) ('file cap exceeded: '+$p);$sha=[Security.Cryptography.SHA256]::Create();$stream=[IO.File]::OpenRead($i.FullName);$buf=New-Object byte[] $BufferBytes;$total=[int64]0;try{while(($n=$stream.Read($buf,0,$buf.Length))-gt 0){$total+=$n;Require ($total -le $limit) ('stream cap exceeded: '+$p);[void]$sha.TransformBlock($buf,0,$n,$buf,0)};$sha.TransformFinalBlock([byte[]]@(),0,0);return [ordered]@{bytes=$total;sha256=([BitConverter]::ToString($sha.Hash)-replace '-','').ToLowerInvariant()}}finally{$stream.Dispose();$sha.Dispose()}}
+function ReadJsonBounded([string]$p){$i=LeafSafe $p;Require ($i.Length -le $MaxJsonBytes) ('JSON cap exceeded: '+$p);return ([Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes($i.FullName))).TrimStart([char]0xfeff)|ConvertFrom-Json}
+function RelativeInside([string]$root,[string]$path){$r=(Full $root).TrimEnd([IO.Path]::DirectorySeparatorChar,[IO.Path]::AltDirectorySeparatorChar)+[IO.Path]::DirectorySeparatorChar;$f=Full $path;Require ($f.StartsWith($r,[StringComparison]::OrdinalIgnoreCase)) ('path escapes run root: '+$path);return $f.Substring($r.Length).Replace('\','/')}
+function EnsureFreshParent([string]$p){$f=Full $p;Require (-not(Test-Path -LiteralPath $f)) ('fresh output already exists: '+$f);$parent=Split-Path -Parent $f;Require (Test-Path -LiteralPath $parent -PathType Container) ('output parent missing: '+$parent);return $f}
+function RoleFor([string]$path,[string]$defaultRole){$leaf=[IO.Path]::GetFileName($path).ToLowerInvariant();if($leaf -match 'collector.*\.(stdout|stderr)|collector.*\.bin$'){return 'collector-stream'};if($leaf -match 'launcher.*\.(stdout|stderr)|launcher.*\.bin$'){return 'launcher-stream'};if($leaf -match 'sample'){return 'sample'};if($leaf -match 'owner|status|coordinator|collector|launcher|start|final'){return 'receipt'};return $defaultRole}
+$run=Full $RunRoot;$plan=Full $PlanPath;$archive=EnsureFreshParent $ArchivePath;$manifest=EnsureFreshParent $ManifestPath;Require (Test-Path -LiteralPath $run -PathType Container) 'run root missing';Require (Test-Path -LiteralPath $plan -PathType Leaf) 'plan missing'
+$planInfo=HashFile $plan $MaxJsonBytes;Require ($planInfo.sha256 -ceq $ExpectedPlanSha256.ToLowerInvariant()) 'plan SHA-256 mismatch';$planJson=ReadJsonBounded $plan;Require ([int]$planJson.runs -eq 1 -and [int]$planJson.deadlineSeconds -eq 900 -and [int]$planJson.pollSeconds -eq 1) 'plan timing contract mismatch';Require ([bool]$planJson.noActivate -and [bool]$planJson.noResources) 'plan interaction guard missing';Require (-not [bool]$planJson.qualificationClaim) 'plan qualification claim must be false'
+$items=New-Object 'System.Collections.Generic.List[object]';$seen=New-Object 'System.Collections.Generic.HashSet[string]';$sum=[int64]0
+function Add-Input([string]$source,[string]$archiveName,[string]$role,[bool]$IsJson){$full=Full $source;Require ($seen.Add($full)) ('duplicate input: '+$full);$cap=$MaxFileBytes;if($IsJson){$cap=$MaxJsonBytes};$info=HashFile $full $cap;$newTotal=$script:sum+$info.bytes;Require ($newTotal -le $MaxTotalBytes) 'aggregate export cap exceeded';$script:sum=$newTotal;$items.Add([ordered]@{archivePath=$archiveName.Replace('\','/');sourcePath=$full;role=$role;bytes=$info.bytes;sha256=$info.sha256})|Out-Null}
+Add-Input $plan 'plan.json' 'plan' $true
+foreach($raw in @($ReceiptPaths)){$f=Full $raw;if(-not([IO.Path]::IsPathRooted($raw))){$f=Full (Join-Path $run $raw)};Require (Test-Path -LiteralPath $f -PathType Leaf) ('receipt missing: '+$raw);$rel=RelativeInside $run $f;Add-Input $f ('run/'+$rel) (RoleFor $rel 'receipt') ($f.ToLowerInvariant().EndsWith('.json'))}
+foreach($raw in @($RuntimeInputPaths)){$f=Full $raw;Require (Test-Path -LiteralPath $f -PathType Leaf) ('runtime input missing: '+$raw);$leaf=[IO.Path]::GetFileName($f);Add-Input $f ('runtime/'+$items.Count.ToString('D3')+'-'+$leaf) 'runtime-input' ($f.ToLowerInvariant().EndsWith('.json'))}
+Require ($items.Count -le $MaxFiles) 'file-count cap exceeded';Require ($items.Count -gt 1) 'no result inputs supplied'
+$zip=[IO.File]::Open($archive,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None);$za=New-Object IO.Compression.ZipArchive($zip,[IO.Compression.ZipArchiveMode]::Create,$false,[Text.Encoding]::UTF8);try{$buf=New-Object byte[] $BufferBytes;foreach($entry in @($items)){$ze=$za.CreateEntry([string]$entry.archivePath,[IO.Compression.CompressionLevel]::NoCompression);$src=[IO.File]::OpenRead([string]$entry.sourcePath);$dst=$ze.Open();try{while(($n=$src.Read($buf,0,$buf.Length))-gt 0){$dst.Write($buf,0,$n)}}finally{$dst.Dispose();$src.Dispose()}}}finally{$za.Dispose();$zip.Flush();$zip.Dispose()}
+$receipt=[ordered]@{kind='sr0-display-selfjob-r11-result-export-v1';status='raw-export-only';qualificationClaim=$false;runRoot=$run;plan=[ordered]@{path=$plan;bytes=$planInfo.bytes;sha256=$planInfo.sha256};archivePath=$archive;fileCount=$items.Count;totalBytes=$sum;maxFileBytes=$MaxFileBytes;maxJsonBytes=$MaxJsonBytes;maxTotalBytes=$MaxTotalBytes;files=@($items);sourcePreservation='raw bytes copied without metric synthesis';checkedAt=[DateTimeOffset]::UtcNow.ToString('o')}
+$tmp="$manifest.$([guid]::NewGuid().ToString('N')).tmp";[IO.File]::WriteAllText($tmp,(($receipt|ConvertTo-Json -Depth 16)+"`r`n"),[Text.Encoding]::UTF8);[IO.File]::Move($tmp,$manifest)

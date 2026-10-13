@@ -1,0 +1,528 @@
+{
+  "actualPrebuildArgv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "boundedAdapter": {
+    "compiler": "tools/compile-bounded.ps1",
+    "fileCap": 256,
+    "kind": "windows-job-memory-compile-adapter-v1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "outputCapBytes": 8388608,
+    "qualification": "compile-only-source-packet; root must create fresh receipt",
+    "sourceBindings": [
+      {
+        "bytes": 2602,
+        "path": "tools/prepare-bounded-stage.ps1",
+        "sha256": "sha256:56573cffdcf4489dffe907f71e873687c1bfd7a410c24bf43718aea4b30d9006"
+      },
+      {
+        "bytes": 2225,
+        "path": "tools/compile-bounded.ps1",
+        "sha256": "sha256:3c4510325ca3a9be79ed94b88c384946d5cadaab55443b6973ac03ebbcc00998"
+      }
+    ],
+    "sourceBindingsHash": "sha256:0c1977d32a0d0ba0b3ebb75107e2e4d21c385b7dacfd918e91c50fc141aef5ed",
+    "sourceCapBytes": 268435456,
+    "stager": "tools/prepare-bounded-stage.ps1",
+    "timeoutSeconds": 600
+  },
+  "boundedFrontendEvidence": "pending emitted command review; requested flags alone do not prove consumption",
+  "bridgeBindings": [
+    {
+      "bytes": 1527,
+      "path": "Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "bytes": 841,
+      "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "bytes": 30,
+      "path": "Sources/CDispatchPrivate/shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "bytes": 71,
+      "path": "Sources/CSwiftRight/module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "bytes": 41937,
+      "path": "Sources/CSwiftRight/swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "bytes": 23494,
+      "path": "Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "bytes": 3794,
+      "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "bytes": 3266,
+      "path": "Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "bytes": 10915,
+      "path": "Sources/SwiftRightBridge/Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "bytes": 12904,
+      "path": "Sources/SwiftRightBridge/Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    }
+  ],
+  "bridgeCanonicalManifestHash": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+  "bridgeHeaderCommit": "862997c",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "candidate": "swiftui.image.rgba-registered.v1",
+  "canonicalCaseHash": "sha256:51a2e1c449d7acb18797f373edf349b59f1e695131f73655c70d9f86fc20abba",
+  "case": {
+    "hash": "sha256:51a2e1c449d7acb18797f373edf349b59f1e695131f73655c70d9f86fc20abba",
+    "id": "swiftui.image.rgba-registered.recipe/case/945183c17df6cb13"
+  },
+  "caseHash": "sha256:51a2e1c449d7acb18797f373edf349b59f1e695131f73655c70d9f86fc20abba",
+  "caseMaterialization": {
+    "axisJoin": {
+      "candidateCount": 1,
+      "normalizedInputs": {
+        "color-scheme": "light",
+        "frame-height": 32,
+        "frame-width": 32,
+        "name": "factory.rgba.square.v1",
+        "source-height": 4,
+        "source-width": 4
+      },
+      "selectedCaseId": "swiftui.image.rgba-registered.recipe/case/945183c17df6cb13",
+      "selectedCoverage": "full-product",
+      "transparencyRowsExcluded": 1
+    },
+    "caseSetHash": "sha256:ea54774bd6b950d9760d45cf2856dfc232fae4a54d7e4e870947912701a2091b",
+    "inputKeyMap": {
+      "colorScheme": "color-scheme",
+      "frameHeight": "frame-height",
+      "frameWidth": "frame-width",
+      "name": "name",
+      "sampling": "sampling",
+      "sourceHeight": "source-height",
+      "sourcePixelHash": "source-pixel-hash",
+      "sourceWidth": "source-width"
+    },
+    "packetCaseId": "swiftui.image.rgba-registered.v1/case/factory-rgba-square",
+    "packetCaseRawJsonHash": "sha256:5a215d4a6767e63ddbd12db37d7e44fcf54317cf6d7ad40641216a3fec2b0135",
+    "packetRecipeCanonicalHash": "sha256:a8683c61648e4e02c941611278ef871428fccbf07162d89849e497de19b6fab9",
+    "packetRecipePath": "factory/pipeline/pilot-next-source-v1/image-resizable-v1/rgba-recipe.json",
+    "rawInputs": {
+      "colorScheme": "light",
+      "frameHeight": 32,
+      "frameWidth": 32,
+      "name": "factory.rgba.square.v1",
+      "sourceHeight": 4,
+      "sourceWidth": 4
+    },
+    "recipe": {
+      "assertions": [
+        {
+          "channel": "paint",
+          "expected": {
+            "admission": "source-bound-RGBA-only; no-SF-Symbol-equivalence",
+            "asset": {
+              "name": "factory.rgba.square.v1",
+              "sourceHeight": 4,
+              "sourceWidth": 4,
+              "targetHeight": 32,
+              "targetWidth": 32
+            },
+            "block": "swiftui.image",
+            "candidate": "swiftui.image.rgba-registered.v1",
+            "colorScheme": "light",
+            "foregroundTint": "none",
+            "id": "swiftui.image.rgba-registered.recipe",
+            "kind": "factory-image-rgba-recipe-v1",
+            "rgbaOrder": "row-major-RGBA8",
+            "sampling": {
+              "backendDraw": "identity-at-32x32",
+              "sourceToTarget": "nearest",
+              "unverifiedBackendFilter": false
+            },
+            "witness": "witness-rgba.swift"
+          },
+          "id": "swiftui.image.rgba-registered.recipe.assertion.primary",
+          "observability": "available"
+        }
+      ],
+      "axes": [
+        {
+          "coverage": "full-product",
+          "id": "name",
+          "values": [
+            "factory.rgba.square.v1"
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "source-width",
+          "values": [
+            4
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "source-height",
+          "values": [
+            4
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "frame-width",
+          "values": [
+            32
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "frame-height",
+          "values": [
+            32
+          ]
+        },
+        {
+          "coverage": "full-product",
+          "id": "color-scheme",
+          "values": [
+            "light"
+          ]
+        }
+      ],
+      "block": "swiftui.image",
+      "id": "swiftui.image.rgba-registered.recipe",
+      "instrumentationTransparency": {
+        "case": "swiftui.image.rgba-registered.recipe.instrumentation-transparency",
+        "channels": [
+          "layout",
+          "paint"
+        ]
+      },
+      "kind": "recipe",
+      "negativeCases": [],
+      "provenance": {
+        "createdAt": "2026-10-12T00:00:00Z",
+        "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+        "review": {
+          "at": "2026-10-12T00:00:00Z",
+          "decision": "candidate",
+          "reviewer": "root"
+        },
+        "sourceHash": "sha256:a8683c61648e4e02c941611278ef871428fccbf07162d89849e497de19b6fab9"
+      },
+      "stimuli": [],
+      "version": "0.1",
+      "witnesses": [
+        {
+          "id": "swiftui.image.rgba-registered.recipe.witness",
+          "resources": [
+            {
+              "hash": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+              "id": "factory-probe-witness.swift"
+            }
+          ],
+          "sourceHash": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8"
+        }
+      ]
+    },
+    "recipeHash": "sha256:7ae0edee52f984c79a7268d7acc71d3369280cb26dc5dc441f2238bbc2f1bb0e"
+  },
+  "casePath": "case.json",
+  "caseRawJsonHash": "sha256:5a215d4a6767e63ddbd12db37d7e44fcf54317cf6d7ad40641216a3fec2b0135",
+  "compileRequest": {
+    "argv": [
+      "build",
+      "--build-system",
+      "native",
+      "-v",
+      "--package-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+      "--scratch-path",
+      "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch",
+      "--jobs",
+      "1",
+      "-Xswiftc",
+      "-j1",
+      "-Xswiftc",
+      "-num-threads",
+      "-Xswiftc",
+      "1",
+      "-c",
+      "release",
+      "-Xlinker",
+      "/MANIFEST:EMBED",
+      "-Xlinker",
+      "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+      "-Xlinker",
+      "/SUBSYSTEM:WINDOWS",
+      "-Xlinker",
+      "/ENTRY:mainCRTStartup"
+    ],
+    "buildSystem": "native",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "configuration": "release",
+    "kind": "swiftpm-windows-gui-release/1",
+    "maxFrontendThreads": 1,
+    "maxParallelJobs": 1,
+    "memoryCapBytes": 1073741824,
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch",
+    "target": "windows-x86_64"
+  },
+  "compileRequestArgvOrdering": {
+    "actual": "native-before-package",
+    "declared": "native-before-package",
+    "defect": false,
+    "source": "retained-prebuild-builder-receipt"
+  },
+  "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "executionEligible": false,
+  "expectedHostHash": "sha256:8fb1b38b3e29881da1334a17b6cea452cd4bacbe374e07bb44f1b12aceffead0",
+  "frontendCommandScan": {
+    "bytes": 42583,
+    "frontendCommandCount": 3,
+    "frontendCommands": [
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Alignment.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Animation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Axis.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Controls.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\FocusTraversal.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Geometry.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Graph.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Keyboard.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Layout.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\LayoutEngine.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Modifiers.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Preferences.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Presentation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Selection.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Shapes.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\State.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextInput.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\TextMeasurement.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\ToggleStyles.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime\\Sources\\SwiftRightRuntime\\Views.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.v9dXbo\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 6 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightRuntime -package-name runtime -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Alignment.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Animation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Axis.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Controls.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\FocusTraversal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Geometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Graph.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Keyboard.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Layout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\LayoutEngine.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Modifiers.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Preferences.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Presentation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Selection.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Shapes.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\State.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextInput.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextMeasurement.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\ToggleStyles.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Views.swift.o",
+        "index": 1,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.uqRhNW\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightBridge -package-name swiftrightbridge -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Bridge.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\ButtonFocusGate.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Loader.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Marshal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Types.swift.o",
+        "index": 2,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryContainer.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryFill.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryProviderPolicy.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryRGBAAsset.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryRGBAImageRegistry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryTextGeometry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\FactoryViewport.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\Witness.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\Sources\\FactoryProbe\\main.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.QBbjos\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -entry-point-function-name FactoryProbe_main -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name FactoryProbe -package-name package -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryContainer.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryFill.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryProviderPolicy.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryRGBAAsset.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryRGBAImageRegistry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryTextGeometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryViewport.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\Witness.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\main.swift.o",
+        "index": 3,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      }
+    ],
+    "lastNumThreads": 1,
+    "numThreadsOccurrenceCount": 3,
+    "numThreadsValues": [
+      1,
+      1,
+      1
+    ],
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-compile-r1/actual-prebuild-r2/compile.stdout.bin",
+    "proof": "actual-stdout-stream-scan",
+    "requiredLastNumThreads": 1,
+    "sha256": "sha256:18976ee577fdc9147a57c937e8da97bef32a48ef6fd1e24cf137f8fd3b599791"
+  },
+  "frozenTupleBound": false,
+  "helperSha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e",
+  "hostHash": "sha256:8fb1b38b3e29881da1334a17b6cea452cd4bacbe374e07bb44f1b12aceffead0",
+  "imageSemantics": {
+    "bridgeRole": "NodeRole.image in current 0a745ab SwiftRightBridge Types.swift (ABI rev 0.6)",
+    "bridgeTypesSha256": "sha256:d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb",
+    "runtimeRole": "ResolvedAccessibility.role = \"image\" from current 37429120 Graph.swift",
+    "sourceRefs": [
+      "factory/native/windows/api-font-37429120-20261011/runtime/Sources/SwiftRightRuntime/Graph.swift:714-735,1745-1747",
+      "factory/native/windows/canonical-inputs-v1/SwiftRightBridge/Sources/SwiftRightBridge/Types.swift:21-24,104-129"
+    ],
+    "status": "source-confirmed"
+  },
+  "inputsRoot": "D:\\Claude\\swiftright\\.factory-work\\inputs",
+  "kind": "factory-pilot-five-compiler-plan-v1",
+  "materializedCase": {
+    "block": "swiftui.image",
+    "coverage": "full-product",
+    "expectedCaseSetHash": "sha256:ea54774bd6b950d9760d45cf2856dfc232fae4a54d7e4e870947912701a2091b",
+    "id": "swiftui.image.rgba-registered.recipe/case/945183c17df6cb13",
+    "inputs": {
+      "color-scheme": "light",
+      "frame-height": 32,
+      "frame-width": 32,
+      "name": "factory.rgba.square.v1",
+      "source-height": 4,
+      "source-width": 4
+    },
+    "kind": "case",
+    "provenance": {
+      "createdAt": "2026-10-12T00:00:00Z",
+      "inputs": [
+        {
+          "hash": "sha256:7ae0edee52f984c79a7268d7acc71d3369280cb26dc5dc441f2238bbc2f1bb0e",
+          "id": "swiftui.image.rgba-registered.recipe"
+        }
+      ],
+      "producer": "factory/recipes.expand_cases",
+      "sourceHash": "sha256:f1e1c4df846cab845ccbc8305faf8c95d8585b5c03566ea5db17e6e1369e62f9"
+    },
+    "recipe": {
+      "hash": "sha256:7ae0edee52f984c79a7268d7acc71d3369280cb26dc5dc441f2238bbc2f1bb0e",
+      "id": "swiftui.image.rgba-registered.recipe"
+    },
+    "tuple": {
+      "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+      "factoryVersion": "0.1-working-observation",
+      "hostHashes": {
+        "windows": "sha256:8fb1b38b3e29881da1334a17b6cea452cd4bacbe374e07bb44f1b12aceffead0"
+      },
+      "id": "sr1-image-delivery-r11-20261012-r1",
+      "macosBuild": "26A434",
+      "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+      "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+      "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+      "toolchains": {
+        "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+        "winSwift": "Swift 6.4.0+Asserts; measured compiler sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+      }
+    },
+    "version": "0.1"
+  },
+  "nativeParity": "prebuild-validated-final-build-pending",
+  "outputs": {
+    "prebuildExeBytes": 3696640,
+    "prebuildExePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+    "prebuildExeSha256": "sha256:8fb1b38b3e29881da1334a17b6cea452cd4bacbe374e07bb44f1b12aceffead0"
+  },
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/text-shape-image/image-host-package-v1/package",
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image\\package",
+  "packetPlanHash": "sha256:87c62a6a823033f98d83a4436a4316e9135997e606ac861fac3307db51eca84e",
+  "phase": "final",
+  "prebuildReceipt": "factory/pipeline/pilot-delivery-five-v1/root-execution/image-compile-r1/actual-prebuild-r2/observation.json",
+  "prebuildReceiptHash": "sha256:d7524969fbd76d94570c11de7f7828f2234a745c133f439cf4af8486710a546d",
+  "providerRequirements": [],
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtimeModuleOrigin": {
+    "acceptedReplayHash": "sha256:df4be5f8eb5d4ec8f82287b5c33c898cadb29703adc8a57f2a36628a295ca8e4",
+    "independentReviewHash": "sha256:5d81d19e3a34812e1d40dfaa30367ea749fbb6602652569a208ef89e7a9a4f98",
+    "receiptHash": "sha256:eb25de924faebd4ac8375521c6726f857aa9e8dc84a4b8aa7efe05e07eee7d33",
+    "scope": "Exact374 source lineage context; fresh SwiftPM host build recompiles runtime, must archive its own produced module bytes; not prebuilt module reuse"
+  },
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourcePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceReceiptHash": "sha256:9c1c34cff32fd7078727daa54253a407c4771fe1da440537c3a109e9b6c25221",
+  "runtimeSourceTreeFileHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "scratchPath": "build-bounded-r1\\scratch",
+  "sourceBindings": [
+    {
+      "bytes": 539,
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "bytes": 362,
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "bytes": 1646,
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:e06af75e3e8ecd0a28d55bb5520fff10e222ba84bfe3b8a52a5e1898fc9e3147"
+    },
+    {
+      "bytes": 512,
+      "path": "Sources/FactoryProbe/FactoryProviderPolicy.swift",
+      "sha256": "sha256:c5117474e58afc54012ad21b75efcc5e9aeb1f90aaf7b0d34ec6924993c70d8c"
+    },
+    {
+      "bytes": 1423,
+      "path": "Sources/FactoryProbe/FactoryRGBAAsset.swift",
+      "sha256": "sha256:18af625f5afdaa295109270c3db36f259156a3bdf1d35c63634c35cbd46109d4"
+    },
+    {
+      "bytes": 2192,
+      "path": "Sources/FactoryProbe/FactoryRGBAImageRegistry.swift",
+      "sha256": "sha256:47b462c6718863d857bfe746111d0730d4f2efd68ff77019ca15d1dddcc7b1f8"
+    },
+    {
+      "bytes": 1023,
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "bytes": 3051,
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "bytes": 424,
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8"
+    },
+    {
+      "bytes": 14095,
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:96a7c6195ea2f60980db635ba2a7853285d35a0b4ee41195a7e4ba1183cba603"
+    }
+  ],
+  "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "sourceHash": "sha256:4a4fe189d1280fa5df8654449c01b59f9aac4d7e3b209ec6baf712db474ea8b8",
+  "stage": "D:\\Claude\\swiftright",
+  "status": "final-plan-ready-pending-final-build",
+  "tuple": {
+    "acceptanceConfigHash": "sha256:082fe5a160dba7d326ded1ce1fbbea5a4cc7222aa1d21c2d8778af4babbbd874",
+    "factoryVersion": "0.1-working-observation",
+    "hostHashes": {
+      "windows": "sha256:8fb1b38b3e29881da1334a17b6cea452cd4bacbe374e07bb44f1b12aceffead0"
+    },
+    "id": "sr1-image-delivery-r11-20261012-r1",
+    "macosBuild": "26A434",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "sdk": "/Applications/Xcode-27-RC.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+    "toolchains": {
+      "macSwift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+      "winSwift": "Swift 6.4.0+Asserts; measured compiler sha256:1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a"
+    }
+  },
+  "witness": "Sources/FactoryProbe/Witness.swift"
+}

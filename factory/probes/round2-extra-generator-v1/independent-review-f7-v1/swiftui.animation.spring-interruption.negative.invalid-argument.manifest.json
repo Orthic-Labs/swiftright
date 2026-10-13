@@ -1,0 +1,57 @@
+{
+  "assertionChannels": [
+    "events/state",
+    "presentation"
+  ],
+  "block": "swiftui.animation.spring-interruption",
+  "case": {
+    "descriptor": {
+      "coverage": "declared",
+      "executionEligible": false,
+      "id": "swiftui.animation.spring-interruption.negative.invalid-argument",
+      "inputs": {},
+      "projectedWitnessHash": "sha256:d502eb3a0ff65be61ec399b5135cbdbbfad34756e79c8bda3aede4924a697ba2",
+      "projectionOnly": true
+    },
+    "descriptorHash": "sha256:86c23958c3788c10494be31c4e6b92db816ba45b1b0f9f253ac41587401f539f",
+    "id": "swiftui.animation.spring-interruption.negative.invalid-argument"
+  },
+  "caseInputs": {},
+  "compileExpectation": "failure",
+  "executionEligible": false,
+  "instrumentationInserted": false,
+  "kind": "generated-round2-candidate-probe",
+  "recipe": {
+    "hash": "sha256:6d490903df442283df81c4ca940f73e1d1add37d49fe7cf86ed26207d1f63bd3",
+    "id": "swiftui.animation.spring-interruption.recipe"
+  },
+  "registryPromotion": false,
+  "scenario": "negative:must-not-compile",
+  "sourceBindings": [
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.Animation.spring",
+      "selector": "usr:s:7SwiftUI9AnimationV6springACvpZ",
+      "symbolEvidenceSha256": "2587593d6f3898737b462ffc9a2dc313a9f35db0b4be6412b4bf4ab682d4e571"
+    },
+    {
+      "catalogueStatus": "inventory",
+      "path": "SwiftUI.withAnimation(_:_:)",
+      "selector": "usr:s:7SwiftUI13withAnimationyxAA0D0VSg_xyKXEtKlF",
+      "symbolEvidenceSha256": "155d93f2f0137a33db1aaee54f2d96e50fa6b96da17ce953fe595b380509bc5f"
+    }
+  ],
+  "sourceFile": "swiftui.animation.spring-interruption.negative.invalid-argument.swift",
+  "sourceHash": "sha256:d44305a4ced456adc8398ba26ec72e12cadb09aa520bdfa2349c97673b1ded52",
+  "unsupportedObservability": {
+    "events/state": "native event capture is unavailable in source-only generation",
+    "presentation": "timed native presentation geometry is unavailable in source-only generation"
+  },
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.animation.spring-interruption.witness",
+    "resourcePath": "factory/recipes/round2-extra-v1/witnesses/swiftui.animation.spring-interruption.witness.swift",
+    "sourceHash": "sha256:625024090b1339c661ec599cdda64bdc734f447b4387eddfb7119358ccf2c7c2"
+  },
+  "witnessType": "Witness_round2_spring"
+}

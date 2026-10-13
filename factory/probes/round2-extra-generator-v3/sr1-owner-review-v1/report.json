@@ -1,0 +1,60 @@
+{
+  "kind": "sr1-owner-review-v1",
+  "subject": "round2-extra-generator-v3",
+  "auditedPath": "factory/probes/round2-extra-generator-v3",
+  "status": "PASS_SOURCE_ONLY",
+  "scope": "offline source byte/case/witness/type review; no compiler/native/remote/Git",
+  "stage": {
+    "path": "factory/probes/round2-extra-generator-v3/stage-manifest.json",
+    "sha256": "sha256:5becc681e1dade503019e4e78d59694eab61bbe0a93fedea06e73635df28e008",
+    "entries": 14,
+    "byteHashFailures": 0
+  },
+  "baseline": {
+    "outputs": 19,
+    "positiveOutputs": 14,
+    "negativeOutputs": 5,
+    "compilerRuns": 0,
+    "nativeRuns": 0,
+    "registryPromotion": false
+  },
+  "faultControls": {
+    "rejectedControls": 17,
+    "allRejected": true,
+    "controlNames": [
+      "USR/source join",
+      "join selector",
+      "empty source-use join",
+      "extra source-use join",
+      "join block",
+      "case binding",
+      "IME unsupported observability",
+      "registry promotion",
+      "positive/negative witness identity",
+      "declaration name binding",
+      "case id/descriptor mismatch",
+      "source bytes hash",
+      "source file binding",
+      "actual source bytes binding",
+      "frozen descriptor membership",
+      "negative source hash",
+      "negative declaration name"
+    ]
+  },
+  "closure": {
+    "blocks": 5,
+    "descriptorCounts": {
+      "swiftui.popover": 3,
+      "swiftui.animation.spring-interruption": 4,
+      "swiftui.text-field-ime": 3,
+      "swiftui.environment-font-color-scheme": 6,
+      "swiftui.context-menu": 3
+    },
+    "sourceHashCaseWitnessTypeChecks": "passed"
+  },
+  "commands": [
+    "factory/.venv/bin/python factory/probes/round2-extra-generator-v3/generate.py --check-only",
+    "factory/.venv/bin/python factory/probes/round2-extra-generator-v3/test_generator.py"
+  ],
+  "findings": []
+}

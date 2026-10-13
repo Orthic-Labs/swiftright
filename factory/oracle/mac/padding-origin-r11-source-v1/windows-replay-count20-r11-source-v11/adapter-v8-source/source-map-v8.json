@@ -1,0 +1,20 @@
+{
+  "kind": "factory-fresh-r11-count20-adapter-source-map-v8",
+  "status": "source-ready-windows-archive-pending",
+  "plan": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/fresh-count20-adapter-plan-v1.json", "sha256": "sha256:6fa3d83e9ccac74abafd3b9c9ee1226bcd604b06b7aab5be358dfc10f13449b4", "bytes": 3146},
+  "README": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/README.md", "sha256": "sha256:4c4d7603c17e5c5fff343baafdca914cffc1c424deddfdad2d34cacc9b6c8c71", "bytes": 1714},
+  "frozenProducer": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v7-source/produce-inputs-v7.py", "sha256": "sha256:9598dac17eabb3a137b3a60b37f3ff3839444dd50e5cdd1de99ca60b90058ab5", "bytes": 4941},
+  "sources": {
+    "produceInputMap": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/produce-input-map-v8.py", "sha256": "sha256:8296a1975645acb4e26e1fb4f1ee9931b0421aeb56a62470719f891f364628a1", "bytes": 8707},
+    "produceInputs": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/produce-inputs-v8.py", "sha256": "sha256:c32dfb67c9dfc32ccafc5828f9ac36c2786b94e50fa4978f5d8b686b25603bf3", "bytes": 7174},
+    "runAdapter": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/run-adapter-v8.py", "sha256": "sha256:0f75514993b156458d87b72b9428b7561f57fca697c7de2c2ead0121517c8419", "bytes": 6639},
+    "trustedReader": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/run-trusted-reader-v8.py", "sha256": "sha256:49e82bf9bbc1b37c37b898f82b4d051255ce4a1a583eee14be4bb84baa158a33", "bytes": 4585},
+    "pairedComparator": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v11/adapter-v8-source/run-paired-mac20-v8.py", "sha256": "sha256:b142a57eb834bec4b9ed23b4a3b56cdb0890ba7bad04e93ffa0a03b647ad8aab", "bytes": 4005}
+  },
+  "frozenReferences": {
+    "adapterV6Run": {"path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/adapter-v6-source/run-adapter-v6.py", "sha256": "sha256:c9cc0824541912584234a10ad774b2c3f70856be79d1df2beebcd6cc06f1cf3d", "bytes": 6604},
+    "windowsAdmission": {"path": "factory/native/windows/settled-capture-adapter-v3/count1-inputs-r3/windows-exit-proof-r2/build-count20-proof-r2.py", "sha256": "sha256:e31898549158c4e39939fe91181605819a14325b681a43d00e402be9d5079739", "bytes": 10352},
+    "macArchiveManifest": {"path": "factory/oracle/mac/padding-origin-r11-source-v1/observed-mac20-r1/raw-archive-manifest.json", "sha256": "sha256:f9088161d15ab3369e3084c8410569244aa392c044e465b7eba85c689f26d1bc", "bytes": 202035}
+  },
+  "rules": ["every archive ref is regular, non-symlink, byte/hash verified", "Count20 capture/image IDs are unique & schema-pattern bound", "provider observations, compiler/source/tuple/case/runtime/renderer/host joins are mandatory", "no fixture substitution, relabeling, parity promotion, or golden freeze"]
+}

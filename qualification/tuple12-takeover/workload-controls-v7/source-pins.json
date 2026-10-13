@@ -1,0 +1,21 @@
+{
+  "kind": "sr0-tuple12-workload-lifecycle-v7",
+  "status": "source-ready-pending-root-parse",
+  "base_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "workload_exe_sha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+  "overlay_source": {
+    "run-workload": "f464e356bec5dbfddb03e35954d19de0f5ef5c50d11d7315593855068d4f94e4",
+    "task-workload": "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e",
+    "verify-artifacts": "d412213c28c4e716f76ef59b6a609c4297f566f05cf1942ceb0c520b6c2c8e82",
+    "sample-resources": "90b2bc9fda6c2b5e0c7ca244508e1a7d84e9a5640d2089394ea51e7cc6d11b13"
+  },
+  "controls_sha256": {
+    "lifecycle_v7": "e39547c65ac0eb1b01470f4ceb45d31e3c6ad55cfc7b02e66719b0b5d4e1796b"
+  },
+  "v6_failure_evidence": "probes/sr0-b/workload/out/tuple12-source-build-v1/observed-workload-r10-v6-r1",
+  "fixes": [
+    "PresentMon Stop-Pm publishes terminal, signed/raw exit, stop mode, and stream-drain fields to script scope before caller proof.",
+    "Preserves forced-owned -1 as bit-exact signed/raw evidence; no proof weakening."
+  ]
+}

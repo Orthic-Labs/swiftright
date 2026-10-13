@@ -1,0 +1,8 @@
+$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue'
+$root='D:\Claude\swiftright\.factory-work\root-tools'
+$paths=@((Join-Path $root 'sr0-staged-controls-r10b.transport.json'),(Join-Path $root 'sr0-staged-controls-r10b.transport.json.stdout.bin'),(Join-Path $root 'sr0-staged-controls-r10b.transport.json.stderr.bin'),'D:\Claude\swiftright\factory\native\windows\.work\sr0-display-selfjob-v4\one-run-v7-r10\drain-controls-r10.json','D:\Claude\swiftright\.factory-work\sr0-display-selfjob-v4\v5-root-r10\staged-controls-gate-r10b.json')
+$files=@();foreach($p in $paths){if(Test-Path -LiteralPath $p){$i=Get-Item -LiteralPath $p;if($i.Length -gt 2097152){throw 'diagnostic bounds'};$files+=@{path=$p;bytes=$i.Length;sha256=(Get-FileHash -LiteralPath $p).Hash.ToLowerInvariant();text=[IO.File]::ReadAllText($p)}}else{$files+=@{path=$p;exists=$false}}}
+$live=@(Get-CimInstance Win32_Process|Where-Object{$_.CommandLine -and ($_.CommandLine.Contains('sr0-staged-controls-r10b') -or $_.CommandLine.Contains('v5-root-r10') -or $_.CommandLine.Contains('text-mta-r11-v5f'))}|Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CreationDate,CommandLine)
+$work='D:\Claude\swiftright\factory\native\windows\.work\sr0-display-selfjob-v4\one-run-v7-r10\drain-controls-work-r8'
+$workFiles=if(Test-Path $work){@(Get-ChildItem -LiteralPath $work -File|Select-Object Name,Length)}else{@()}
+@{kind='root-staged-controls-diagnosis-r10b';desktopLock=(Get-Content -LiteralPath 'D:\Claude\desktop.lock' -Raw).Trim();files=$files;live=$live;workFiles=$workFiles;nativeActions=0}|ConvertTo-Json -Depth 8

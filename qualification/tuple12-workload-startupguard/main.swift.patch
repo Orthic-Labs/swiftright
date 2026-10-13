@@ -1,0 +1,33 @@
+--- probes/sr0-b/workload/Sources/WorkloadWin/main.swift	2026-10-10 01:11:05
++++ /tmp/workload-main-overlay.swift	2026-10-11 20:13:23
+@@ -20,6 +20,7 @@
+ // Exit codes: 0 complete, 1 run failed or ended early, 78 startup diagnostic.
+ 
+ let args = WorkloadArgs(CommandLine.arguments)
++let sr0NoActivate = args.options["sr0-noactivate"] == "1"
+ 
+ @MainActor
+ func countNodes() -> Int32 {
+@@ -102,7 +103,21 @@
+     bridge.onTick = { _, ts in MainActor.assumeIsolated { backend.tick(timestampNS: ts) } }
+     bridge.onWindowClosed = { MainActor.assumeIsolated { backend.closed(); platform.detach() } }
+ 
++    let startupGuard: SR0WorkloadStartupGuard
+     do {
++        startupGuard = try SR0WorkloadStartupGuard(enabled: sr0NoActivate)
++    } catch {
++        print("SWR_STARTUP_ERROR noactivate_guard=FAILED error=\(error)")
++        fflush(stdout)
++        return 78
++    }
++    defer { startupGuard.stop() }
++    if sr0NoActivate {
++        print("SR0_NOACTIVATE guard=installed source=thread-cbt-hcbt-activate-setfocus")
++        fflush(stdout)
++    }
++
++    do {
+         try bridge.run(title: "SwiftRight SR0 Workload", width: 960, height: 640)
+     } catch {
+         print("run failed: \(error)")
+

@@ -1,0 +1,93 @@
+{
+  "kind": "sr0-tuple12-workload-display-root-launch-v1",
+  "status": "source-ready-pending-root-parser-headless-controls-and-root-task",
+  "packetSources": [
+    {
+      "path": "qualification/tuple12-takeover/workload-display-root-launch-v1/run-display-root-launch-v1.ps1",
+      "bytes": 13146,
+      "sha256": "b06d7052a98835037eccd3ee3e5ef7bac5a06b93ae49370ac75591244951a3b4"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-display-root-launch-v1/schedule-root-launch-v1.ps1",
+      "bytes": 3487,
+      "sha256": "bdee55f4c520ed7ae447defcbd70ce690ebbb023b54f461af943abfb9a3c5c2d"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-display-root-launch-v1/test-display-root-launch-v1-controls.py",
+      "bytes": 4734,
+      "sha256": "8c95637812f7625179cd8e119ef723419cbb1fc6e0e72e549b26dd7e7eef93e3"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-display-root-launch-v1/README.md",
+      "bytes": 2295,
+      "sha256": "229e8ea2abad0c87ee5ed4ff3a045f4e0a0104e8f2d8d9f7b851579792338c9c"
+    }
+  ],
+  "externalPinnedSources": [
+    {
+      "path": "qualification/tuple12-takeover/workload-display-diagnostic-v3/run-one-diagnostic.ps1",
+      "bytes": 18112,
+      "sha256": "b12a194976ba942f5d818c7c3fe05e6e95822adbd439a70e1a0d6de970508358"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-display-diagnostic-v3/display-context-sampler-v1.ps1",
+      "bytes": 10718,
+      "sha256": "c1877063f2826feb1b50bd7f3f388052bc13d856a174869ee8fa5937f479c384"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-controls-v8/run-workload.ps1",
+      "bytes": 18816,
+      "sha256": "4fbb5774e8c62bee0ff387b2a5d1c537f7ea2b089676ce780435bf55afe8268d"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-controls-v8/task-workload.ps1",
+      "bytes": 36190,
+      "sha256": "c3c7bd8df105f8865fe83ba86fe67fe73b9306c2535e84cca9df9edb8b281e3e"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-analysis-v3/analyze_workload.py",
+      "bytes": 90756,
+      "sha256": "35330066332c30e96d5e3a6232a0188889760ad73b7d4c04f1d9fb9f178b535a"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-incremental-v6/shared/Sr0OwnedJobProcess.cs",
+      "bytes": 13575,
+      "sha256": "112e5775dc01282b0938dada7b9cec20412f82744257177f0a7846c2a723c69e"
+    },
+    {
+      "path": "qualification/tuple12-takeover/workload-display-diagnostic-v3/source-pins.json",
+      "bytes": 2189,
+      "sha256": "7f389e6116a3f2523533863abd6e1e75eb081160213f59cd51878cca7980cdc2"
+    }
+  ],
+  "artifactPins": {
+    "workloadExeSha256": "7e749248800da8e6058b0b69ccbab2a5ce2e43a1a719475616da5e92936d930c",
+    "rendererDllSha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"
+  },
+  "runtimePolicy": {
+    "scheduledPrincipal": "current-user interactive",
+    "runLevel": "Highest",
+    "uacPrompt": "stop-on-prompt",
+    "memoryLimitBytes": 1073741824,
+    "memoryLimitFlags": "0x200",
+    "killOnJobClose": false,
+    "parentHandleRetained": true,
+    "activeConsoleCheckBeforeChild": true,
+    "childProof": [
+      "terminal",
+      "exitReadable",
+      "streamsDrained",
+      "activeProcesses=0",
+      "taskQuiescent",
+      "lockReleased"
+    ]
+  },
+  "effects": {
+    "native": false,
+    "compiler": false,
+    "gui": false,
+    "remote": false,
+    "git": false,
+    "controlsRun": false
+  }
+}

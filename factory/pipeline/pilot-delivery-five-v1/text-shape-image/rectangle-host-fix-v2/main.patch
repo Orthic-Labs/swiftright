@@ -1,0 +1,9 @@
+--- a/Sources/FactoryProbe/main.swift
++++ b/Sources/FactoryProbe/main.swift
+@@
+-            let p = n.pixelFrame
+-            let bounds = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
++            let p = n.pixelFrame
++            let rawBounds = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
++            let bounds = factoryCenteredRootChild(rawBounds, viewport: viewport,
++                directChildOfRoot: n.kind == "Rectangle" && parent == UInt64(root.instance + 1))

@@ -1,0 +1,52 @@
+{
+  "schema": "factory-windows-count20-r11-full-metadata-controls-source-map-v7",
+  "status": "source-ready-root-controlled-native-pending",
+  "count": 20,
+  "controlsKind": "factory-issued-metadata-full-guard-controls-v1",
+  "effects": {
+    "compilerActions": 0,
+    "nativeWindowActions": 0,
+    "guiActions": 0,
+    "remoteActions": 0,
+    "lockActions": 0
+  },
+  "requirements": [
+    "fresh ControlRoot inside ProducerRoot",
+    "no TempPath",
+    "no Remove-Item",
+    "baseline accepted",
+    "relocated resealed positive",
+    "11 resealed actual faults rejected",
+    "zero native actions"
+  ],
+  "sources": {
+    "test-full-metadata-controls-v7.ps1": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v7/test-full-metadata-controls-v7.ps1",
+      "sha256": "sha256:1399a5ddcbe4a894fb87858d78373b8ba8372331b21eed55c58528998a39efef",
+      "bytes": 6938
+    },
+    "README.md": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v7/README.md",
+      "sha256": "sha256:e48e8292a7e4e6e52c5fc33bbfff0ddd2c4dab5eb1abc356b7bab03f49047df3",
+      "bytes": 717
+    },
+    "v6/integration-fresh-r11-v3.ps1": {
+      "path": "factory/oracle/mac/padding-origin-r11-source-v1/windows-replay-count20-r11-source-v6/integration-fresh-r11-v3.ps1",
+      "sha256": "sha256:b0c5c9ea2bdc4898e3cba5b5049d7d47a699d116c683abf779d8b1e0d9b08b40",
+      "bytes": 31925
+    }
+  },
+  "expectedFaults": [
+    "metadata-expected-count",
+    "metadata-host-argument",
+    "metadata-source-hash",
+    "metadata-serializer-prefix",
+    "metadata-runtime-modules",
+    "tuple-case",
+    "tuple-runtime",
+    "tuple-renderer",
+    "binding-frozen",
+    "binding-canonical-input-hash",
+    "mac-context-path"
+  ]
+}
