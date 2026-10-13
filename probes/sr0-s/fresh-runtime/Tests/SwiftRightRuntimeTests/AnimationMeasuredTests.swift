@@ -60,6 +60,26 @@ struct TransitionScreen: View {
     }
 }
 
+/// Shows the blue bar while `shown` is false: setting `shown` removes it.
+struct RemovalScreen: View {
+    @Bindable var model: BarModel
+    let transition: AnyTransition
+    var body: some View {
+        VStack(spacing: 0) {
+            if !model.shown { Color.blue.frame(width: 120, height: 40).transition(transition) }
+            Color.red.frame(width: 60, height: 20)
+        }
+        .frame(width: 200, height: 80, alignment: .top)
+    }
+}
+
+@MainActor
+func colourCount(_ graph: Graph) -> Int {
+    var nodes: [ResolvedNode] = []
+    collect(graph.snapshot(), into: &nodes) { $0.kind == "Color" }
+    return nodes.count
+}
+
 @MainActor
 func bar(_ graph: Graph) -> ResolvedNode? {
     var nodes: [ResolvedNode] = []
@@ -417,6 +437,70 @@ final class AnimationMeasuredTests: XCTestCase {
         graph.tick(now: 0)
         graph.tick(now: 0.5)
         XCTAssertEqual(bar(graph)?.frame.minX, x)
+    }
+
+    // MARK: removal (measured: the removed view stays, fading or moving out by its own width, while its siblings relayout at once)
+
+    private func removalScreen(_ model: BarModel, _ transition: AnyTransition) -> RemovalScreen { RemovalScreen(model: model, transition: transition) }
+
+    func testRemovalFadesOutAndTheSiblingMovesUpAtOnce() {
+        let model = BarModel()
+        model.shown = false
+        let graph = Graph(removalScreen(model, .opacity))
+        graph.flush()
+        XCTAssertEqual(bar(graph)?.opacity, 1)
+        var done = 0
+        withAnimation(.linear(duration: 1)) { model.shown = true } completion: { done += 1 }
+        graph.flush()
+        XCTAssertEqual(bar(graph)?.opacity, 1, "the removed view is still there, untouched at the commit")
+        graph.tick(now: 0)
+        graph.tick(now: 0.25)
+        XCTAssertEqual(bar(graph)?.opacity ?? -1, 0.75, accuracy: 1e-9)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(bar(graph)?.opacity ?? -1, 0.5, accuracy: 1e-9)
+        XCTAssertEqual(done, 0)
+        graph.tick(now: 1.0)
+        XCTAssertEqual(colourCount(graph), 1, "only the red sibling is left when the animation has finished")
+        XCTAssertEqual(done, 1, "the transaction waits for the removal")
+    }
+
+    func testRemovalMoveLeavesByItsOwnWidth() {
+        let model = BarModel()
+        model.shown = false
+        let graph = Graph(removalScreen(model, .move(edge: .leading)))
+        graph.flush()
+        let x0 = Double(bar(graph)?.frame.minX ?? 0)
+        withAnimation(.linear(duration: 1)) { model.shown = true }
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.25)
+        XCTAssertEqual(Double(bar(graph)?.frame.minX ?? 0), x0 - 30, accuracy: 1e-9)
+        XCTAssertEqual(bar(graph)?.opacity, 1, "a move does not fade")
+        graph.tick(now: 0.5)
+        XCTAssertEqual(Double(bar(graph)?.frame.minX ?? 0), x0 - 60, accuracy: 1e-9)
+    }
+
+    func testSlideInsertsFromTheLeadingEdgeAndRemovesTowardsTheTrailingEdge() {
+        let model = BarModel()
+        model.shown = false
+        let graph = Graph(removalScreen(model, .slide))
+        graph.flush()
+        let x0 = Double(bar(graph)?.frame.minX ?? 0)
+        withAnimation(.linear(duration: 1)) { model.shown = true }
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(Double(bar(graph)?.frame.minX ?? 0), x0 + 60, accuracy: 1e-9)
+    }
+
+    func testRemovalWithoutAnAnimationIsImmediate() {
+        let model = BarModel()
+        model.shown = false
+        let graph = Graph(removalScreen(model, .opacity))
+        graph.flush()
+        model.shown = true
+        graph.flush()
+        XCTAssertEqual(colourCount(graph), 1, "only the red sibling")
     }
 
     func testStaticOpacityModifierScalesTheLeaf() {

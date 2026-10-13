@@ -156,9 +156,12 @@ public final class ResolvedNodePainter {
         switch node.kind {
         case "Text":
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
-            guard node.opacity == 1 else { throw HostPaintError.unsupportedTextPaintStyle }
             guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
-            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: 1, scheme: node.style.colorScheme) } ?? textColor ?? (node.style.colorScheme == .dark ? try HostPaint.rgba(.semantic("label"), opacity: 1, scheme: .dark) : nil)
+            // Opacity is baked into the text run's colour alpha (the run is created per presented opacity, so an animated fade re-measures each frame).
+            // A text without its own colour fades the primary label colour.
+            let inherited = textColor.map { ($0 & 0xffffff00) | UInt32((Double($0 & 255) * node.opacity).rounded()) }
+            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: node.style.colorScheme) } ?? inherited
+                ?? (node.style.colorScheme == .dark || node.opacity != 1 ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) : nil)
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
             return NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],

@@ -726,6 +726,16 @@ public struct ResolvedNode: Equatable, Sendable {
     public let shortcut: ResolvedShortcut?
 }
 
+extension ResolvedNode {
+    /// The same node with a new frame, opacity and children (a removal transition presents a frozen subtree moved and faded).
+    func replacing(frame: LayoutRect, pixelFrame: PixelRect, opacity: Double, children: [ResolvedNode]) -> ResolvedNode {
+        ResolvedNode(id: id, instance: instance, kind: kind, text: text, frame: frame, pixelFrame: pixelFrame, opacity: opacity,
+                     selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
+                     fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
+                     imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut)
+    }
+}
+
 /// Indirect immutable storage keeps optional shape metadata off every legacy snapshot.
 fileprivate final class ResolvedShapeStorage: Equatable, Sendable {
     let value: ResolvedShape
@@ -815,6 +825,8 @@ public final class Graph {
     var animating: [Node] = []
     /// onAppear actions of nodes that appeared in the running flush; `flush` runs them after presenting the state those nodes first appeared in.
     var pendingAppear: [() -> Void] = []
+    /// Removed subtrees still presented while their removal transition runs (see Transition.swift).
+    var ghosts: [Ghost] = []
     var animatingNeedsSort = false
     /// Bumped by each layout pass; see `Node.invalidateLayout(epoch:)`.
     private(set) var layoutEpoch = 0
@@ -1057,7 +1069,7 @@ public final class Graph {
     /// interpolated values.
     public func tick(now: Double) {
         guard !closed, root != nil else { return }
-        let wasAnimating = animating.contains { $0.motion != nil && $0.alive }
+        let wasAnimating = !ghosts.isEmpty || animating.contains { $0.motion != nil && $0.alive }
         clock = now
         advanceMotions(now: now, anchoring: true)
         if wasAnimating { emit(animationNames: []) }
@@ -1072,6 +1084,8 @@ public final class Graph {
         guard let root, !closed else { return }
         teardown(root.id)
         self.root = nil
+        for ghost in ghosts { finishChain(ghost.chain) }
+        ghosts.removeAll()
         nodes.removeAll()
         nodesByString.removeAll()
         preferenceObserverNodes.removeAll()
@@ -1156,6 +1170,7 @@ public final class Graph {
             kept.append(entry)
         }
         for old in parent.children where !surviving.contains(old) {
+            if let oldNode = nodes[old] { captureGhost(parent: parent, old: oldNode) }
             if parent.retainsRemovedRowState, hasKeyedSegment(old.segments.dropFirst(parent.id.segments.count)) {
                 parent.rowCache.beginRetiring(old)
                 teardown(old, retainingIn: (list: parent, top: old))
@@ -1699,7 +1714,7 @@ public final class Graph {
         }
     }
 
-    private func resolve(_ node: Node, selected: Bool = false) -> ResolvedNode {
+    func resolve(_ node: Node, selected: Bool = false) -> ResolvedNode {
         let kind = node.kind
         let text: String?
         var selection: UTF16Range?
@@ -1728,6 +1743,10 @@ public final class Graph {
         for child in childNodes {
             let isSelected = hasSelection && (tagOf(child).map { selectedTags.contains($0) } ?? false)
             children.append(resolve(child, selected: isSelected))
+        }
+        if !ghosts.isEmpty {
+            let id = node.idString
+            for ghost in ghosts where ghost.parentID == id { children.insert(resolvedGhost(ghost), at: min(ghost.index, children.count)) }
         }
         var image: ImageReference?
         var imageSizing: ResolvedImageSizing?

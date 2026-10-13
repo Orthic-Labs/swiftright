@@ -76,9 +76,17 @@ final class PainterTests: XCTestCase {
         XCTAssertEqual(runs.asked.first?.0, "+")
     }
 
-    func testUnsupportedNodesAndTranslucentTextFailVisibly() throws {
-        XCTAssertThrowsError(try paint(Text("x").opacity(0.5), proposal: (100, 100), runs: FakeRuns(), glyphs: false))
+    func testUnsupportedNodesFailVisibly() throws {
         XCTAssertThrowsError(try paint(TextField("t", text: .constant("")), proposal: (100, 100), glyphs: false))
+    }
+
+    /// Opacity is baked into the text run's colour alpha: an unstyled text fades the primary label colour, a coloured one its own colour.
+    func testTextOpacityIsBakedIntoTheRunColourAlpha() throws {
+        let runs = FakeRuns()
+        _ = try paint(VStack { Text("a").opacity(0.5); Text("b").foregroundStyle(Color.red).opacity(0.5); Text("c") }, proposal: (320, 240), runs: runs, glyphs: false)
+        let label = try HostPaint.rgba(.semantic("label"), opacity: 0.5)
+        XCTAssertEqual(runs.colours, [label, 0xff383c80, nil])
+        XCTAssertEqual(label & 255, 108, "216 * 0.5")
     }
 
     func testForegroundColourReachesTheTextRun() throws {

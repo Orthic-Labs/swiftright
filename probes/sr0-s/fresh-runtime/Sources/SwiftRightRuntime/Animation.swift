@@ -373,6 +373,9 @@ enum TransactionContext {
         queued.append(transaction)
     }
 
+    /// The transactions queued so far (a removal reads them to decide whether it animates).
+    static var queuedTransactions: [AnimationTransaction] { queued }
+
     static func takeQueued() -> [AnimationTransaction] {
         let out = queued
         queued = []
@@ -516,13 +519,13 @@ extension Graph {
     }
 
     /// Ends every layer of the chain at once (a merged spring replaces them): their transactions count as finished.
-    private func finishChain(_ chain: MotionChain) {
+    func finishChain(_ chain: MotionChain) {
         for layer in chain.layers + chain.retired { endLayer(layer, removal: true) }
         chain.layers = []
         chain.retired = []
     }
 
-    private func endLayer(_ layer: MotionLayer, removal: Bool) {
+    func endLayer(_ layer: MotionLayer, removal: Bool) {
         if !layer.logicallyEnded {
             layer.logicallyEnded = true
             layer.transaction.layerLogicallyEnded()
@@ -554,6 +557,7 @@ extension Graph {
     /// Interpolates every running motion to `now`. A layer that reaches its end presents its target and finishes. `anchoring` is true only for a
     /// display tick: a layer that has not begun takes `now` as its progress 0 there. A commit (`anchoring` false) leaves such a layer as it is.
     func advanceMotions(now: Double, anchoring: Bool) {
+        advanceGhosts(now: now, anchoring: anchoring)
         guard !animating.isEmpty else { return }
         // Only nodes that hold a motion are visited, in path order so completion order does not depend on hashing.
         if animatingNeedsSort {
@@ -569,36 +573,45 @@ extension Graph {
         }
         for node in animating {
             guard let chain = node.motion else { continue }
-            if anchoring {
-                for layer in chain.layers where layer.start == nil { layer.start = now }
-            }
-            for layer in chain.layers {
-                guard let start = layer.start else { continue }
-                let elapsed = now - start
-                if !layer.logicallyEnded, elapsed >= layer.animation.duration {
-                    layer.logicallyEnded = true
-                    layer.transaction.layerLogicallyEnded()
-                }
-                if elapsed >= layer.visualDuration { layer.finished = true }
-            }
-            let value = chain.value(at: now)
-            // finished layers at the bottom of the chain fold into its base
-            while let first = chain.layers.first, first.finished {
-                chain.base = first.to
-                chain.layers.removeFirst()
-                chain.retired.append(first)
-            }
+            let value = advanceChain(chain, now: now, anchoring: anchoring)
             if chain.layers.isEmpty {
                 node.motion = nil
-                let retired = chain.retired
-                chain.retired = []
                 node.presentedFrame = chain.base.frame
                 node.presentedOpacity = chain.base.opacity
-                for layer in retired { endLayer(layer, removal: true) }
             } else {
                 node.presentedFrame = value.frame
                 node.presentedOpacity = value.opacity
             }
         }
+    }
+
+    /// Moves one chain to `now`: anchors unstarted layers on a display tick, fires logical completions, folds finished layers into the base and,
+    /// when none is left, fires the removal completions. Returns the presented value (the chain's base once it has no layer).
+    func advanceChain(_ chain: MotionChain, now: Double, anchoring: Bool) -> Presentation {
+        if anchoring {
+            for layer in chain.layers where layer.start == nil { layer.start = now }
+        }
+        for layer in chain.layers {
+            guard let start = layer.start else { continue }
+            let elapsed = now - start
+            if !layer.logicallyEnded, elapsed >= layer.animation.duration {
+                layer.logicallyEnded = true
+                layer.transaction.layerLogicallyEnded()
+            }
+            if elapsed >= layer.visualDuration { layer.finished = true }
+        }
+        let value = chain.value(at: now)
+        // finished layers at the bottom of the chain fold into its base
+        while let first = chain.layers.first, first.finished {
+            chain.base = first.to
+            chain.layers.removeFirst()
+            chain.retired.append(first)
+        }
+        if chain.layers.isEmpty {
+            let retired = chain.retired
+            chain.retired = []
+            for layer in retired { endLayer(layer, removal: true) }
+        }
+        return value
     }
 }
