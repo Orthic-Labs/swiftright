@@ -105,7 +105,7 @@ public final class HostTextInput: @preconcurrency TextStore {
     }
 
     /// A pointer press on bridge node `node` at window pixel `x`: a TextField takes the focus and the caret goes to the nearest character boundary.
-    func pointerDown(node: UInt64, x: Float) -> Bool {
+    public func pointerDown(node: UInt64, x: Float) -> Bool {
         guard let id = runtimeID(node), graph.isTextField(id) else { return false }
         let wasFocused = graph.focusedTextFieldID == id
         guard graph.focusTextField(id) else { return false }
@@ -117,7 +117,7 @@ public final class HostTextInput: @preconcurrency TextStore {
         return true
     }
 
-    func accessibility(_ action: BridgeEvent.AXAction, node: UInt64, i0: Int32, i1: Int32, text: String) -> Bool {
+    public func accessibility(_ action: BridgeEvent.AXAction, node: UInt64, i0: Int32, i1: Int32, text: String) -> Bool {
         guard let id = runtimeID(node), let s = graph.textInput(id), graph.isTextField(id) else { return false }
         switch action {
         case .focus:
@@ -141,7 +141,7 @@ public final class HostTextInput: @preconcurrency TextStore {
     }
 
     /// A key-down. Tab moves focus; the rest edit the focused field.
-    func handleKey(name: String, modifiers: UInt32) -> Bool {
+    public func handleKey(name: String, modifiers: UInt32) -> Bool {
         let shift = modifiers & 0x4 != 0, ctrl = modifiers & 0x1 != 0
         if name == "tab", modifiers & ~0x4 == 0 {
             trace.append("key:tab")
