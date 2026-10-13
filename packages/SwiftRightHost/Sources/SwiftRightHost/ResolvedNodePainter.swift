@@ -113,6 +113,10 @@ public final class ResolvedNodePainter {
         return Rect(x: x0, y: y0, w: max(0, x1 - x0), h: max(0, y1 - y0))
     }
 
+    /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
+    /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
+    static let unpaintedPrimitives: Set<String> = ["Button", "TextField", "TextEditor", "Toggle", "Divider", "Menu", "List"]
+
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
         case "VStack", "HStack", "ZStack", "Overlay", "Layout", "Group", "EmptyView", "Spacer", "ScrollView", "LazyVStack", "LazyHStack": return true
@@ -166,9 +170,8 @@ public final class ResolvedNodePainter {
                                 flags: [], structural: false)
 
         default:
-            guard Self.isStructuralContainer(node.kind) || node.kind.hasPrefix("modifier.") || node.kind.hasPrefix("Witness_") || node.kind == "Root" else {
-                throw HostPaintError.unsupportedNode(node.kind)
-            }
+            // A composite (user-defined) view paints through its children; only runtime primitives the paint path has no emission for fail.
+            guard !Self.unpaintedPrimitives.contains(node.kind) else { throw HostPaintError.unsupportedNode(node.kind) }
             return NodeEmission(primitives: [], semantic: nil, flags: [], structural: true)
         }
     }

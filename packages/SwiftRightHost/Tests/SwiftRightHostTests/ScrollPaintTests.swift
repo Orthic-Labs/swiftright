@@ -64,4 +64,14 @@ final class ScrollPaintTests: XCTestCase {
         XCTAssertEqual(ResolvedNodePainter.intersection(Rect(x: 0, y: 0, w: 100, h: 100), Rect(x: 50, y: 50, w: 100, h: 100)), Rect(x: 50, y: 50, w: 50, h: 50))
         XCTAssertEqual(ResolvedNodePainter.intersection(Rect(x: 0, y: 0, w: 10, h: 10), Rect(x: 20, y: 20, w: 10, h: 10)).w, 0)
     }
+
+    private struct Composite: View {
+        @State private var shown = true
+        var body: some View { VStack(spacing: 0) { Rectangle().fill(Color.blue).frame(width: 10, height: 10) } }
+    }
+
+    func testUserDefinedCompositeViewsPaintThroughTheirChildren() throws {
+        let nodes = try commit(Composite(), proposal: (50, 50))
+        XCTAssertEqual(nodes.filter { !rects($0).isEmpty }.count, 1)
+    }
 }
