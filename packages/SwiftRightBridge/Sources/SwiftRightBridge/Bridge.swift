@@ -13,6 +13,10 @@ import CDispatchPrivate
 public final class Bridge {
     let api: swr_api
     public let info: swr_bootstrap_info
+    /// The ABI view this bridge negotiated with the renderer (0.6, or 0.7 when the renderer exports it).
+    public let revision: BridgeRevision
+    /// ABI 0.7 font entries; nil on a 0.6 renderer.
+    let fonts: FontEntryPoints?
 
     public var onReady: ((BridgeWindow) -> Void)?
     public var onTick: ((BridgeWindow, UInt64) -> Void)?
@@ -49,9 +53,11 @@ public final class Bridge {
     public private(set) var windowClosedCalls = 0
     private var draining = false
 
-    init(api: swr_api, info: swr_bootstrap_info) {
+    init(api: swr_api, info: swr_bootstrap_info, revision: BridgeRevision = .v06, fonts: FontEntryPoints? = nil) {
         self.api = api
         self.info = info
+        self.revision = revision
+        self.fonts = fonts
     }
 
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
@@ -65,8 +71,14 @@ public final class Bridge {
 
     /// Validates identity BEFORE any other symbol is resolved or any callback installed.
     public static func validate(_ i: swr_bootstrap_info) throws {
-        if i.abi_major != UInt32(SWR_ABI_MAJOR) || i.abi_minor != UInt32(SWR_ABI_MINOR) {
-            throw BridgeError.startup("SWR_STARTUP_ERROR: abi mismatch expected \(SWR_ABI_MAJOR).\(SWR_ABI_MINOR) got \(i.abi_major).\(i.abi_minor)")
+        try validateIdentity(i, minor: UInt32(SWR_ABI_MINOR), apiTableSize: MemoryLayout<swr_api>.size, fnCount: UInt32(SWR_API_FN_COUNT))
+    }
+
+    /// Shared identity check: major/minor, arch, pointer width, every struct size and the function count
+    /// against what this bridge was built with. `apiTableSize` / `fnCount` differ between the 0.6 and 0.7 views.
+    static func validateIdentity(_ i: swr_bootstrap_info, minor: UInt32, apiTableSize: Int, fnCount: UInt32) throws {
+        if i.abi_major != UInt32(SWR_ABI_MAJOR) || i.abi_minor != minor {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: abi mismatch expected \(SWR_ABI_MAJOR).\(minor) got \(i.abi_major).\(i.abi_minor)")
         }
         let arch = archName(i)
         if arch != "x86_64" {
@@ -78,7 +90,7 @@ public final class Bridge {
         }
         let sizes: [(String, UInt32, Int)] = [
             ("host_callbacks", i.host_callbacks_size, MemoryLayout<swr_host_callbacks>.size),
-            ("api_table", i.api_table_size, MemoryLayout<swr_api>.size),
+            ("api_table", i.api_table_size, apiTableSize),
             ("transaction", i.transaction_size, MemoryLayout<swr_transaction>.size),
             ("node", i.node_size, MemoryLayout<swr_node>.size),
             ("primitive", i.primitive_size, MemoryLayout<swr_primitive>.size),
@@ -94,8 +106,8 @@ public final class Bridge {
         for (name, got, want) in sizes where Int(got) != want {
             throw BridgeError.startup("SWR_STARTUP_ERROR: \(name) table size mismatch expected \(want) got \(got)")
         }
-        if i.fn_count != UInt32(SWR_API_FN_COUNT) {
-            throw BridgeError.startup("SWR_STARTUP_ERROR: function count mismatch expected \(SWR_API_FN_COUNT) got \(i.fn_count)")
+        if i.fn_count != fnCount {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: function count mismatch expected \(fnCount) got \(i.fn_count)")
         }
     }
 

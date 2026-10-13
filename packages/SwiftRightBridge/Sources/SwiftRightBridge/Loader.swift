@@ -16,7 +16,7 @@ public extension Bridge {
     /// Loads `swiftright_render.dll` (or `path`, or $SWIFTRIGHT_RENDER_DLL), calls ONLY
     /// `swr_bootstrap_query`, validates ABI identity, and only then resolves the function
     /// table. Throws `BridgeError.startup` with a deterministic message on any mismatch.
-    static func load(path: String? = nil) throws -> Bridge {
+    static func load(path: String? = nil, minimumRevision: BridgeRevision = .v06) throws -> Bridge {
         let chosen = path
             ?? ProcessInfo.processInfo.environment[rendererPathVariable]
             ?? "swiftright_render.dll"
@@ -37,6 +37,35 @@ public extension Bridge {
 
         typealias BootstrapFn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info>?, UInt32) -> Int32
         typealias GetAPIFn = @convention(c) (UnsafeMutablePointer<swr_api>?, UInt32) -> Int32
+
+        // ABI 0.7 is additive: prefer the versioned exports when the renderer has them, else use the 0.6 view
+        // (a 0.6 renderer, or a 0.7 renderer asked for the legacy view) unless the host demanded 0.7.
+        let bootV07Raw = GetProcAddress(module, "swr_bootstrap_query_v07")
+        let apiV07Raw = GetProcAddress(module, "swr_get_api_v07")
+        let revision = try BridgeNegotiation.choose(hasBootstrapV07: bootV07Raw != nil, hasApiV07: apiV07Raw != nil,
+                                                    minimum: minimumRevision)
+        if revision == .v07, let bootV07Raw, let apiV07Raw {
+            typealias BootstrapV07Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v07>?, UInt32) -> Int32
+            typealias GetAPIV07Fn = @convention(c) (UnsafeMutablePointer<swr_api_v07>?, UInt32) -> Int32
+            let boot7 = unsafeBitCast(bootV07Raw, to: BootstrapV07Fn.self)
+            var info7 = swr_bootstrap_info_v07()
+            let rc7 = withUnsafeMutablePointer(to: &info7) { boot7($0, UInt32(MemoryLayout<swr_bootstrap_info_v07>.size)) }
+            if rc7 != 0 {
+                throw BridgeError.startup("SWR_STARTUP_ERROR: bootstrap query v07 rejected rc=\(rc7)")
+            }
+            try BridgeNegotiation.validateV07(info7)
+            let getAPI7 = unsafeBitCast(apiV07Raw, to: GetAPIV07Fn.self)
+            var api7 = swr_api_v07()
+            let rc8 = withUnsafeMutablePointer(to: &api7) { getAPI7($0, UInt32(MemoryLayout<swr_api_v07>.size)) }
+            if rc8 != 0 {
+                throw BridgeError.startup("SWR_STARTUP_ERROR: function table v07 rejected rc=\(rc8)")
+            }
+            guard let fontRegister = api7.font_register, let fontResolve = api7.font_resolve else {
+                throw BridgeError.startup("SWR_STARTUP_ERROR: 0.7 function table has no font entries")
+            }
+            return Bridge(api: BridgeNegotiation.baseTable(of: api7), info: BridgeNegotiation.baseView(of: info7),
+                          revision: .v07, fonts: FontEntryPoints(register: fontRegister, resolve: fontResolve))
+        }
 
         guard let bootRaw = GetProcAddress(module, "swr_bootstrap_query") else {
             throw BridgeError.startup("SWR_STARTUP_ERROR: missing symbol swr_bootstrap_query")
@@ -61,7 +90,7 @@ public extension Bridge {
         return Bridge(api: api, info: info)
     }
     #else
-    static func load(path: String? = nil) throws -> Bridge {
+    static func load(path: String? = nil, minimumRevision: BridgeRevision = .v06) throws -> Bridge {
         throw BridgeError.unsupportedPlatform
     }
     #endif

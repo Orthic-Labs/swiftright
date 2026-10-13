@@ -1,0 +1,147 @@
+import CSwiftRight
+import Foundation
+
+// Bundled-font registration (ABI rev 0.7). A renderer at 0.7 shapes a family from bytes the
+// host registered; a 0.6 renderer cannot, and says so instead of silently falling back.
+
+public typealias FontRegisterFn = @convention(c) (UnsafePointer<UInt8>?, UInt64, UnsafeMutablePointer<swr_font_info>?) -> Int32
+public typealias FontResolveFn = @convention(c) (UnsafePointer<UInt8>?, UInt32, UnsafeMutablePointer<swr_font_resolution>?) -> Int32
+
+/// The two 0.7 font entry points of a renderer's table.
+public struct FontEntryPoints {
+    public let register: FontRegisterFn
+    public let resolve: FontResolveFn
+    public init(register: @escaping FontRegisterFn, resolve: @escaping FontResolveFn) {
+        self.register = register
+        self.resolve = resolve
+    }
+}
+
+public struct FontRegistrationFlags: OptionSet {
+    public let rawValue: UInt32
+    public init(rawValue: UInt32) { self.rawValue = rawValue }
+    /// First registration of these bytes.
+    public static let new = FontRegistrationFlags(rawValue: UInt32(SWR_FONT_NEW))
+    /// The same bytes were registered before; the handle is unchanged.
+    public static let duplicate = FontRegistrationFlags(rawValue: UInt32(SWR_FONT_DUPLICATE))
+    /// The text system already listed this family name (a bundled family shadowing an installed one).
+    public static let systemFamily = FontRegistrationFlags(rawValue: UInt32(SWR_FONT_SYSTEM_FAMILY))
+    /// The family was measured before registration; GPUI may keep a cached resolution.
+    public static let late = FontRegistrationFlags(rawValue: UInt32(SWR_FONT_LATE))
+}
+
+public struct FontRegistration: Equatable {
+    public let handle: UInt64
+    public let family: String
+    public let weight: UInt32
+    public let faceCount: UInt32
+    public let sha256: [UInt8]
+    public let flags: FontRegistrationFlags
+    public var sha256Hex: String { sha256.map { String(format: "%02x", $0) }.joined() }
+}
+
+public enum FontSource: UInt32 {
+    /// Not bundled and not listed: the renderer would shape it with its fallback face.
+    case fallback = 0
+    /// Shaped from registered bytes.
+    case bundled = 1
+    /// An installed family the text system lists.
+    case system = 2
+}
+
+public struct FontResolution: Equatable {
+    public let source: FontSource
+    public let handle: UInt64
+    public let sha256: [UInt8]
+}
+
+public extension Bridge {
+    /// True when the renderer is ABI 0.7 (it has the font entries).
+    var supportsFontRegistration: Bool { fonts != nil }
+
+    /// Registers TTF/OTF/TTC bytes with the renderer for this process (retained until exit: GPUI
+    /// cannot unregister). UI thread only, after the window exists (call it from `onReady`).
+    /// Throws SWR_E_UNSUPPORTED on an ABI 0.6 renderer.
+    func registerFont(_ bytes: [UInt8]) throws -> FontRegistration {
+        guard let fonts else { throw BridgeError.status(-15, "swr_font_register (renderer ABI \(revision) has no font registration)") }
+        if bytes.isEmpty { throw BridgeError.status(-1, "swr_font_register (empty font)") }
+        var info = swr_font_info()
+        info.struct_size = UInt32(MemoryLayout<swr_font_info>.size)
+        let rc = bytes.withUnsafeBufferPointer { fonts.register($0.baseAddress, UInt64($0.count), &info) }
+        if rc != 0 { throw BridgeError.status(rc, "swr_font_register") }
+        let family = withUnsafeBytes(of: &info.family) { raw in
+            String(decoding: raw.prefix(min(Int(info.family_len), raw.count)), as: UTF8.self)
+        }
+        let sha = withUnsafeBytes(of: &info.sha256) { Array($0) }
+        return FontRegistration(handle: info.font, family: family, weight: info.weight, faceCount: info.face_count,
+                                sha256: sha, flags: FontRegistrationFlags(rawValue: info.flags))
+    }
+
+    /// Where `family` would be shaped from, without shaping. The negative control for fallback.
+    func resolveFont(family: String) throws -> FontResolution {
+        guard let fonts else { throw BridgeError.status(-15, "swr_font_resolve (renderer ABI \(revision) has no font registration)") }
+        let utf8 = Array(family.utf8)
+        if utf8.isEmpty { throw BridgeError.status(-1, "swr_font_resolve (empty family)") }
+        var out = swr_font_resolution()
+        out.struct_size = UInt32(MemoryLayout<swr_font_resolution>.size)
+        let rc = utf8.withUnsafeBufferPointer { fonts.resolve($0.baseAddress, UInt32($0.count), &out) }
+        if rc != 0 { throw BridgeError.status(rc, "swr_font_resolve") }
+        let sha = withUnsafeBytes(of: &out.sha256) { Array($0) }
+        return FontResolution(source: FontSource(rawValue: out.source) ?? .fallback, handle: out.font, sha256: sha)
+    }
+}
+
+/// The bundled font resources of an app: registers every font file in a resource directory with the
+/// renderer, and answers what `Font.custom(_:size:)` names mean. Use it from `onReady`, before the
+/// first measurement, so the first shaping of a family already sees the bundled bytes.
+public final class BundledFontLibrary {
+    public static let fontExtensions: Set<String> = ["ttf", "otf", "ttc"]
+
+    public private(set) var registrations: [FontRegistration] = []
+    /// lower-cased lookup key (family, file stem) -> provider family.
+    private var providerFamilies: [String: String] = [:]
+    private let bridge: Bridge
+
+    public init(bridge: Bridge) { self.bridge = bridge }
+
+    /// Directories where bundled fonts live, nearest first: `<resource dir>`, `<resource dir>/Fonts`.
+    public static func fontFiles(in directory: URL) -> [URL] {
+        let fm = FileManager.default
+        var out: [URL] = []
+        for dir in [directory, directory.appendingPathComponent("Fonts", isDirectory: true)] {
+            let entries = (try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)) ?? []
+            out += entries.filter { fontExtensions.contains($0.pathExtension.lowercased()) }
+        }
+        return out.sorted { $0.path < $1.path }
+    }
+
+    /// Registers every font file under `directory`. A file the renderer rejects throws (the app shipped a
+    /// broken resource); an ABI 0.6 renderer throws SWR_E_UNSUPPORTED only when there is something to register.
+    @discardableResult
+    public func registerAll(in directory: URL) throws -> [FontRegistration] {
+        var added: [FontRegistration] = []
+        for file in Self.fontFiles(in: directory) {
+            added.append(try register(file: file))
+        }
+        return added
+    }
+
+    @discardableResult
+    public func register(file: URL) throws -> FontRegistration {
+        let data = try Data(contentsOf: file, options: [.mappedIfSafe])
+        let reg = try bridge.registerFont([UInt8](data))
+        registrations.append(reg)
+        providerFamilies[reg.family.lowercased()] = reg.family
+        providerFamilies[file.deletingPathExtension().lastPathComponent.lowercased()] = reg.family
+        return reg
+    }
+
+    /// The renderer family a `Font.custom` name selects, or nil when no bundled font answers to it. Accepts the
+    /// family ("Tinos"), a PostScript-style name ("Tinos-Regular") or the file stem.
+    public func providerFamily(forCustomName name: String) -> String? {
+        let key = name.lowercased()
+        if let hit = providerFamilies[key] { return hit }
+        if let dash = key.firstIndex(of: "-"), let hit = providerFamilies[String(key[..<dash])] { return hit }
+        return nil
+    }
+}
