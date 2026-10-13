@@ -8,8 +8,8 @@ enum ToggleDarkData {
     static let trackOffDisabled: UInt32 = 0x292929
     /// The knob is white at this opacity over the track (it is opaque white in the light appearance).
     static let knobAlpha: Double = 0.8518
-    /// Measured darkening next to the knob, as a fraction of the track colour (0.0385: none is modelled in dark).
-    static let shadowStrength: Double = 0.0
+    /// Measured darkening next to the knob, as a fraction of the track colour (0.0385 at one pixel; the soft halo is up to 5% of the track colour, the light value 0.0562, which the dark profile uses).
+    static let shadowStrength: Double = 0.0562
     /// Knob end-cap outline in points (x from the knob's end, y shrinking to 0 at the straight edge), measured from the dark OFF capture.
     static let knobCap: [(x: Double, y: Double)] = [
         (0.0023, 9.8), (0.0208, 9.4), (0.0578, 9.0), (0.1133, 8.6),
