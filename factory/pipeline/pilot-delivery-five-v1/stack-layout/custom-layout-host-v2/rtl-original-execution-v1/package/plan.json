@@ -1,0 +1,262 @@
+{
+  "version": "1.0",
+  "kind": "windows-custom-layout-lifecycle-source-plan",
+  "diagnosticScope": "factory-custom-layout-rtl-axis-source-v1",
+  "case": {
+    "hash": "sha256:d81b5c097a3f5e47",
+    "id": "swiftui.custom-layout.recipe/case/d81b5c097a3f5e47"
+  },
+  "stage": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors",
+  "hostMode": "renderer",
+  "compileExpectation": "success",
+  "executionEligible": false,
+  "nativeParity": "hold-until-root-mac-and-windows-count1-capture",
+  "frozenTupleBound": false,
+  "replays": 1,
+  "channelsUnavailable": [
+    "provider.paint",
+    "native.screenshot",
+    "native.uia"
+  ],
+  "nativeHold": "Native capture under coordinated desktop lock required; source planner never claims native evidence.",
+  "observationScope": "Same-source custom Layout; current 374 LayoutEngine placement joined to ABI0.6 fill primitives; no parity",
+  "observationLimits": [
+    "Provider readback/full qualification remains held until root-owned native capture."
+  ],
+  "environmentInputs": {
+    "colorScheme": "light",
+    "layoutDirection": "rightToLeft"
+  },
+  "inputsRoot": "D:\\Claude\\swiftright\\.factory-work\\inputs",
+  "rendererPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererLoadPath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll",
+  "rendererSha256": "e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+  "runtimePackagePath": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+  "runtimeSourceTreeHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeSourceReceiptHash": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+  "runtimeSourceTreeFileHash": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+  "runtimeVerifierHash": "9ce00189fe433a9b94f37198663de42edae0fbd44506d2e11420cacdf8ac5589",
+  "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+  "compilerHash": "1e406093ba7ca843cfcfab9b6efc72c23bb67a621f2925802196d5891e642d1a",
+  "bridgePackagePath": "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge",
+  "bridgeSourceCommit": "0a745ab",
+  "bridgeHeaderCommit": "862997c",
+  "bridgeHeaderHash": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b",
+  "bridgeCanonicalManifestHash": "sha256:208689e04f06a0e397ccd611bb8aca3828e0cf7ec15fd7df0a4dab8436389efa",
+  "compileRequest": {
+    "kind": "swiftpm-windows-gui-release/1",
+    "target": "windows-x86_64",
+    "configuration": "release",
+    "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors\\package",
+    "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors\\package\\build-rtl-original-v1\\scratch",
+    "compilerPath": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift.exe",
+    "executionEligible": false
+  },
+  "sourceHash": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a",
+  "manifestHash": "sha256:16f7a7a0a50ccc6d1c75e5a774cd3fca85a49b65f6d940fa1fe9d0fb8b1296e1",
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "bytes": 539,
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "bytes": 1392,
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "bytes": 362,
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "bytes": 2107,
+      "sha256": "sha256:195d4441b121e12a454cf070169ce9c82efc40f617b21805fdbdafb00d80339d"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "bytes": 1023,
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43"
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "bytes": 3051,
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae"
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "bytes": 1703,
+      "sha256": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a"
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "bytes": 15862,
+      "sha256": "sha256:d8e77dbee9c3260707bf2d967f83450a048f4fce27f4e28f14b874b1ddeb97e9"
+    },
+    {
+      "path": "case.json",
+      "bytes": 2148,
+      "sha256": "sha256:b6763fe02c47b73418f59d9bca198e1a413cf984421eecfc453aa236ef9bdb1a"
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "bytes": 11275,
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7"
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "bytes": 2825,
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e"
+    },
+    {
+      "path": "witness.manifest.json",
+      "bytes": 4245,
+      "sha256": "sha256:16f7a7a0a50ccc6d1c75e5a774cd3fca85a49b65f6d940fa1fe9d0fb8b1296e1"
+    }
+  ],
+  "bridgeBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "9a7de67a40234fbfd9ad795752d8b89074a3b22b55e3a1a5a990b6bd7089b494"
+    },
+    {
+      "path": "Sources/CDispatchPrivate/include/CDispatchPrivate.h",
+      "sha256": "c3e9ab7cfb6869c53bf61ce6346c0b45f2c519fccda7d8d804564f6642ac12d8"
+    },
+    {
+      "path": "Sources/CDispatchPrivate/shim.c",
+      "sha256": "f9c6175a670a94f188b25270267c19d16e13d6eabf3ffde30d60ef9702761ef8"
+    },
+    {
+      "path": "Sources/CSwiftRight/module.modulemap",
+      "sha256": "fd66bf76aa5e5be6985f4d6a16021e1a8cb05f04904e13da8bd78c9b704c241e"
+    },
+    {
+      "path": "Sources/CSwiftRight/swiftright.h",
+      "sha256": "12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Bridge.swift",
+      "sha256": "d0768273e76a0ec3a6b71e8e8ac6a0a359be7ab6051e1e77ac40d4670c7118b8"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/ButtonFocusGate.swift",
+      "sha256": "8f3390d8092b6f6360d93de6c086a7ee05a1add6ca41ddb4216b8d50fdd855b6"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Loader.swift",
+      "sha256": "10144b99141508043ca2ab86d72ac444e89d770193753115cc68e683aaa6f768"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Marshal.swift",
+      "sha256": "971eb863f47d30c0044d7675b1a210b3c0fd989e77175638fdf6bf34d664fa5d"
+    },
+    {
+      "path": "Sources/SwiftRightBridge/Types.swift",
+      "sha256": "d2f319bbd929fb17f0197da2ea43bf1db9fd5373f88be3ac4a17adfbd8d6dacb"
+    }
+  ],
+  "diagnosticLineage": {
+    "customLayoutWitnessReplaced": true,
+    "derivedFromStackPlanHash": "sha256:9e385e4e50b46c109103cf28b9d8e93be01298fed6c35f2426a1d6a3cdaacef1",
+    "lifecycleMarkersUnchanged": true,
+    "rendererMapping": "ResolvedNode only; existing ABI0.6 Color fill mapping retained; host intrinsic subtree centered from root pixel frame",
+    "resourceGuardsUnchanged": true,
+    "shutdownInstrumentationUnchanged": true,
+    "stackLifecycleMainSha256": "sha256:1463629c6136d2dd1bf47b2ff21bfefcc3273f8d606608e3c10c5267062348a1",
+    "lifecycleCorrection": {
+      "kind": "ignore-late-callbacks-after-window-closed-v1",
+      "source": "Sources/FactoryProbe/main.swift",
+      "bridgeContract": "onWindowClosed precedes late main-queue drain; shutdownComplete ends post-close pump",
+      "guards": [
+        "tick",
+        "event",
+        "commit"
+      ],
+      "ownershipChecksLiveBeforeClose": true
+    }
+  },
+  "currentRuntimeLayoutAPI": {
+    "sourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "files": [
+      {
+        "path": "Sources/SwiftRightRuntime/Layout.swift",
+        "sha256": "sha256:229baee2f56f649ab93de9800119a86da4e5d03cd41a2227c60309e1131cb990"
+      },
+      {
+        "path": "Sources/SwiftRightRuntime/LayoutEngine.swift",
+        "sha256": "sha256:1322f549d76a5902a185cfd880f3e8c6d5f074785420ae9629d0f088bd69fa98"
+      },
+      {
+        "path": "Sources/SwiftRightRuntime/Graph.swift",
+        "sha256": "sha256:c81543a78ab0516df42a22947ae9f66a1d2635e961d0a5c0706a48924ad1f91f"
+      },
+      {
+        "path": "Sources/SwiftRightRuntime/Geometry.swift",
+        "sha256": "sha256:acc003c678fd38f9a89a3af299e1450be19561e0935731f9961afbbedf585b6e"
+      }
+    ],
+    "requiredSymbols": [
+      "Layout",
+      "LayoutRoot",
+      "Subview.sizeThatFits",
+      "Subview.place",
+      "LayoutEngine",
+      "ResolvedNode",
+      "NodeKind.layout"
+    ]
+  },
+  "closePolicy": {
+    "childSeconds": 15,
+    "streamSeconds": 5,
+    "destinationClosureSeconds": 5,
+    "retainedKernelHandle": true,
+    "waitABI": "FactoryProcessWaitV6"
+  },
+  "helperPins": {
+    "cleanup-v3.ps1": "cce603b0e2582b0be65b0ff78b5be17b540fb98efa237bb23de68d9f4a5a7e13",
+    "stream-seal.ps1": "4e68ceab6611e6b919489f1f98f147594453257584c301cc65dacb80ca69c48d",
+    "owned-close.ps1": "d0898e1a2ebdefce64fbf5b16cbc3b9f72578e2f0efb649ee001c182f7aaec7c",
+    "pixels-background.ps1": "7172bf8d69f2523672dc57e6ba2889951ea4db4a89100b8b5b42c2bdef2da6ef",
+    "host-inputs.ps1": "93c5c8e29999796f2c8a1c0689f384e3ea8b99d9e655c3e2a98e52baa27e49db"
+  },
+  "sourceOnly": {
+    "nativeActions": 0,
+    "compilerActions": 0,
+    "lockActions": 0,
+    "claims": [
+      "source-ready",
+      "compile-request-ready"
+    ],
+    "forbiddenClaims": [
+      "exeHash",
+      "compileReceiptHash",
+      "nativeObservation"
+    ]
+  },
+  "hostCorrection": {
+    "kind": "intrinsic-subtree-centering-v1",
+    "source": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+    "formula": "viewport origin + (viewport size - intrinsic root pixel frame size) / 2 - intrinsic root pixel frame origin",
+    "scope": "all resolved nodes in root subtree; host background remains full viewport",
+    "hardcodedLeafCoordinates": false,
+    "runtimeValidation": "pending-native-count1"
+  },
+  "tuple": {
+    "id": "sr1-custom-layout-rtl-original-v1-20261013-r1",
+    "rendererHash": "sha256:e280f4a9fd9eca0a7b2657f72f8c322a537cee7b4c85999f6cbf7eb1f39ccc93",
+    "runtimeSourceCommit": "37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b",
+    "abiVersion": "0.6",
+    "hostHashes": {}
+  },
+  "packageStagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors\\package",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\custom-layout-colors\\package\\build-rtl-original-v1\\scratch",
+  "executionVariant": "rtl-original-execution-v1-two-child-width48-close-safe",
+  "sourceBindingsHash": "sha256:44ac84ec7ef045bb902aaa020916dafadbcf90caf7a292f188ccf370663bbfb0",
+  "packageSourcePath": "factory/pipeline/pilot-delivery-five-v1/stack-layout/custom-layout-host-v2/rtl-original-execution-v1/package",
+  "packetPlanHash": null,
+  "status": "source-ready-pending-root-mac-and-windows-count1-capture"
+}

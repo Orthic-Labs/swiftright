@@ -1,0 +1,129 @@
+{
+  "block": "swiftui.custom-layout",
+  "case": {
+    "hash": "sha256:d81b5c097a3f5e47",
+    "id": "swiftui.custom-layout.recipe/case/d81b5c097a3f5e47"
+  },
+  "caseInputs": {
+    "child-count": 2,
+    "layout-direction": "rightToLeft",
+    "proposal-width": 48
+  },
+  "channels": {
+    "adapters": {
+      "customLayout": "current-374-layoutroot-layoutengine-resolvednode",
+      "native": "native host capture required",
+      "provider": "held-until-root-native-capture",
+      "text": "not-declared"
+    },
+    "assertionChannels": [
+      "layout"
+    ],
+    "geometry": [
+      {
+        "channel": "layout",
+        "hostHookRequired": true,
+        "probeTag": "swiftui.custom-layout:swiftui.custom-layout.witness",
+        "viewInstrumentationInserted": false
+      }
+    ],
+    "native": [
+      "abi0.6-primitives"
+    ],
+    "provider": [],
+    "transparency": {
+      "channels": [
+        "layout",
+        "paint"
+      ],
+      "enabled": false,
+      "viewIsolatedFromInstrumentation": true
+    },
+    "witnesses": [
+      {
+        "id": "swiftui.custom-layout.witness",
+        "sourceHash": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a"
+      }
+    ]
+  },
+  "compileExpectation": "success",
+  "environmentInputs": {
+    "colorScheme": "light",
+    "layoutDirection": "rightToLeft"
+  },
+  "executionEligible": false,
+  "kind": "factory-custom-layout-rtl-axis-source-witness-v1",
+  "observationScope": "Same-source custom Layout RTL axis; native Mac/Windows Count1 pending root capture; no parity claim",
+  "recipe": {
+    "hash": "sha256:87d402e0a468b7229cd96e77585bbef0c5e877525419f56256f3f175f3ba4cc1",
+    "id": "swiftui.custom-layout.recipe"
+  },
+  "scenario": "baseline",
+  "sourceBindings": [
+    {
+      "path": "Package.swift",
+      "sha256": "sha256:74a9751d7d21740585115d8d4042455b236d4c7d96132ec1b74836c6aca1858f",
+      "bytes": 539
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryCenteredLayout.swift",
+      "sha256": "sha256:35b75ba359fc04856d2a1585266d97d71e5a89a05d419df8464be1b0d02ac166",
+      "bytes": 1392
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryContainer.swift",
+      "sha256": "sha256:742dba1f12b2b2969779b8e525bfb699238f898f951693b67449d3c1dedeffa4",
+      "bytes": 362
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryFill.swift",
+      "sha256": "sha256:195d4441b121e12a454cf070169ce9c82efc40f617b21805fdbdafb00d80339d",
+      "bytes": 2107
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryTextGeometry.swift",
+      "sha256": "sha256:1063aea5475987cb356ac31d67b965206a9ca6383bcd66ed1fc4c366dbaf7d43",
+      "bytes": 1023
+    },
+    {
+      "path": "Sources/FactoryProbe/FactoryViewport.swift",
+      "sha256": "sha256:be3a8afa06db87d55d7aa07c52dde9a6b7a627ef51bf2f5269d148f23166d0ae",
+      "bytes": 3051
+    },
+    {
+      "path": "Sources/FactoryProbe/Witness.swift",
+      "sha256": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a",
+      "bytes": 1703
+    },
+    {
+      "path": "Sources/FactoryProbe/main.swift",
+      "sha256": "sha256:d8e77dbee9c3260707bf2d967f83450a048f4fce27f4e28f14b874b1ddeb97e9",
+      "bytes": 15862
+    },
+    {
+      "path": "case.json",
+      "sha256": "sha256:b6763fe02c47b73418f59d9bca198e1a413cf984421eecfc453aa236ef9bdb1a",
+      "bytes": 2148
+    },
+    {
+      "path": "runtime-source-receipt.json",
+      "sha256": "sha256:b28564f02cd32b96d348626a92e67c231d0ea5919ae93e836c9e6cfdb47d2fb7",
+      "bytes": 11275
+    },
+    {
+      "path": "runtime-source-tree.json",
+      "sha256": "sha256:c9ce2fb6d4e45c4bb452f91895909bc0179d6f9c97a946628a684ff8d163337e",
+      "bytes": 2825
+    }
+  ],
+  "sourceFile": "swiftui.custom-layout.recipe_case_d81b5c097a3f5e47.swift",
+  "sourceHash": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a",
+  "version": "0.1",
+  "witness": {
+    "id": "swiftui.custom-layout.witness",
+    "sourceHash": "sha256:3d971da04f4b5df0f2f0c65c6067d306fea727547d929307072f8be310c7817a"
+  },
+  "witnessType": "Witness_custom_layout",
+  "baseWitnessSourceHash": "sha256:afe77cdfbd5c73943aeebe52c515f2149c7951a4e3512f1678cda6625cdb58f7",
+  "filesSha256": "sha256:9174a1d7d007fcacc708e74b93be175d3dd2cde31ce7a85ab6893ef2f021919b"
+}

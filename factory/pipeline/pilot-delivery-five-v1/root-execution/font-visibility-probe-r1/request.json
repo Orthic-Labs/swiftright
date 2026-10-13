@@ -1,0 +1,39 @@
+{
+  "kind": "factory-font-visibility-probe-request-v1",
+  "packet": "font-visibility-probe-r1",
+  "repo": "D:\\Claude\\swiftright",
+  "inputRoot": "D:\\Claude\\swiftright\\.factory-work\\root-tools\\font-visibility-probe-r1",
+  "runner": "run-font-visibility-probe-v1.ps1",
+  "stage": "run-r1",
+  "source": [
+    {"path":"FontCollectionVisibilityProbe.cpp","sha256":"sha256:ffe9c95e4aa4da0523861fb49601438fb0253b454376b57876641b6a44a0aa4f","bytes":9519},
+    {"path":"ProviderOwnedJobProcess.cs","sha256":"sha256:0ed9cec5f361faa1f8a7cf7308435f2ffb0c01232e1e0532825d65b9a24fab86","bytes":16771},
+    {"path":"Tinos-Regular.ttf","sha256":"sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61","bytes":521588}
+  ],
+  "toolPins": {
+    "clPath":"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+    "clSha256":"sha256:dc8426b8760d92cf757df3d10b9f0244a95b454ff43194a58161568a0ec70d53",
+    "vcvars64Path":"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+    "vcvars64Sha256":"sha256:6b516d8fcf543c14b2d861e1f45661e0029230fe0dc48e86ce78522801822209",
+    "vctipPath":"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vctip.exe",
+    "vctipSha256":"sha256:0438198f79ccba1ad170f4344632e74bbf8b0d8ae55f92446565c54bedb26e37"
+  },
+  "compile": {
+    "compilerFlags":["/nologo","/std:c++17","/EHsc","/O2","/DUNICODE","/D_UNICODE","/DNOMINMAX"],
+    "linkLibraries":["dwrite.lib","gdi32.lib","ole32.lib"],
+    "maxParallelJobs":1,
+    "memoryCapBytes":1073741824,
+    "innerDeadlineSeconds":120
+  },
+  "probe": {
+    "argv":["Tinos-Regular.ttf","Tinos","Tinos-Regular","sha256:60a0e8ef0c04dd5dd69ffe91025fa2ae5836cbd35600a82ba031977557e2cb61"],
+    "registrationModes":["flags0","FR_PRIVATE"],
+    "requiredCleanup":["nonPrivateRemoved","privateRemoved"],
+    "observationOnly":true
+  },
+  "archive": {
+    "command":"Compress-Archive -LiteralPath D:\\Claude\\swiftright\\.factory-work\\root-tools\\font-visibility-probe-r1\\run-r1 -DestinationPath D:\\Claude\\swiftright\\.factory-work\\root-tools\\font-visibility-probe-r1\\archive-r1.zip",
+    "preserveFailedRuns":true,
+    "deleteActions":0
+  }
+}
