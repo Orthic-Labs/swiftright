@@ -1,0 +1,4 @@
+Option Explicit
+Dim shell
+Set shell = CreateObject("WScript.Shell")
+shell.Run "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""D:\Claude\swiftright\.work\sr0-t12-run\worker-v5.ps1"" -Base ""D:\Claude\swiftright\.work\sr0-r12-typecheck\src"" -Driver ""D:\Claude\swiftright\.work\sr0-t12-run\drive-fixture-noactivate-focus-r6-diagnostic.ps1"" -ExpectExe ""87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374"" -ExpectDll ""7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"" -RunRoot ""D:\Claude\swiftright\.work\sr0-t12-full-r1\F2-r7-7fff31e0ec7f4e30bc409c607df6270c\F2-r-74674b2cab2f463198661846d5da0a95"" -Receipt ""D:\Claude\swiftright\.work\sr0-t12-full-r1\F2-r7-7fff31e0ec7f4e30bc409c607df6270c\receipts\worker-74674b2cab2f463198661846d5da0a95.json"" -Fixture F2 -Variant """" -KeyMode char", 0, True

@@ -5,10 +5,10 @@ State: RECOVERED-BUT-UNADMITTED. Broker audit was READY with empty owners/inFlig
 
 | # | Item | State |
 |---|---|---|
-| A | Stage tuple 12 | pending: fresh canonical `D:\Claude\swiftright\.work\sr0-r12` stage after parse preflight, with source/render/member hashes & full receipts |
+| A | Stage tuple 12 | Windows Full16x20 320/320 qualified 2026-10-13 (matrix-v1/RESULT.md); remaining pending: fresh canonical `D:\Claude\swiftright\.work\sr0-r12` stage after parse preflight, with source/render/member hashes & full receipts |
 | A1 | Admit recovered renderer artifact | recovery command succeeded with one Cargo job; bind exact DLL bytes/path, complete source closure, & `Cargo.lock` pre/post receipts before stage admission |
 | B | W08: cancelled MSIX update leaves app unopenable | must be fixed upstream in RightKit; installed `@rightkit/release` 0.2.151 has no verified repair-helper/remediation proof |
-| C | Requalify tuple 12 | pending: matrix, smoke, pixels, text, modal, R9, R10, package & 20 Mac/20 Windows recordings per config; use tuple12 manifest candidate only after all hashes are receipted |
+| C | Requalify tuple 12 | matrix 320/320 done; Windows cross x20 301/320 (resume F7 r11, F8 r20, F9 r4-20); Mac refs only F1; still pending: matrix, smoke, pixels, text, modal, R9, R10, package & 20 Mac/20 Windows recordings per config; use tuple12 manifest candidate only after all hashes are receipted |
 | 1 | Prior qualification runner | tuple 11 automation remains historical baseline; tuple 12 runner launch/replay wrapper is prepared, no tuple 12 run |
 | 2 | Dell stage trees | prior paths corrected; tuple12 root currently absent, no deletion performed |
 | 3 | Narrator speech content | Adrian will listen later |

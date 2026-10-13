@@ -2,6 +2,11 @@
 
 Updated 11 October 2026 (tuple 12 takeover; no qualified tuple 12 result). Evidence lives in each probe's `RESULT.md` and the commits cited. Tuple and rerun list: `docs/sr0-snapshot.md` (sections 2e and 5b). Retry usage: `docs/sr0-retry-ledger.md`. Every item marked **PENDING** has no committed result; nothing here claims one.
 
+## 13 Oct 2026 tuple 12 Windows matrix (SR0 still OPEN)
+- Windows Full16 x20 = 320/320 qualified (`probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-matrix-v1/full16-r1-report.json`, notes in `RESULT.md` there). F3 68 s ready delay = host I/O stall in harness ready-file read, not product.
+- Windows cross recordings x20: 301/320 (`.../tuple12-cross20-r1/`); remaining F7 r11, F8 r20, F9 r4-20; paused on Adrian's order, Dell lock free. Mac 20 refs exist only for F1; F2-F9 held on no-prompt signer, so cross-compare beyond F1 is open.
+- R9 native, R10, package, W08, Narrator, freeze: not run / open.
+
 **Scope revision 1 (9 Oct 2026, approved by Adrian):** qualified targets are Windows x64 and macOS arm64 only. Windows arm64 and Intel Mac are unsupported, not deferred (`docs/architecture.md` §9, "Execution hosts").
 
 **Performance bar (Adrian, 2026-10-10, `docs/sr0-findings.md` section 11, `docs/architecture.md` §11 revision 2):** the zero-missed-vblank criterion (W5) is dropped. The SR0 bar is no worse than Mac SwiftUI on the same workload for input-to-visible latency and frame-interval p95; missed vblanks are reported, not gated.

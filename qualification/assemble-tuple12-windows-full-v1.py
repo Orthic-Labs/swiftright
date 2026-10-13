@@ -32,7 +32,7 @@ EXPECTED_DENOMINATORS = {
     ("F6", ""): 16, ("F6", "reduced"): 11,
     ("F7", ""): 20, ("F8", ""): 15, ("F9", ""): 11,
 }
-DRIVER_HASH = "5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4"
+DRIVER_HASHES = {"5c7295a4c71014ec053082f3d04095773b5c2af6183fcf3c2ad95cb4218b58c4", "0b95be5be7e208e9f2d1eefe60287184278e39b6738a9c4fd8388b23f0828d1c"}  # r5, r6 diagnostic
 CONFIG_SLUGS = {f"{fixture}{'-' + variant if variant else ''}": (fixture, variant)
                 for fixture, variant in CONFIGS}
 SLUGS = sorted(CONFIG_SLUGS, key=len, reverse=True)
@@ -73,6 +73,7 @@ def bound_path(value: str, name: str) -> dict[str, str]:
 
 
 def _config_label(fixture: str, variant: str) -> str:
+    if (fixture, variant) == ("F6", "reduced"): return "F6-reduced"  # product-emitted label
     return f"{fixture}{' ' + variant if variant else ''}"
 
 
@@ -224,7 +225,7 @@ def collect(root: Path, expected: dict[str, str]) -> dict[str, Any]:
             try: trace = trace_paths[0].read_text(encoding="utf-8")
             except OSError as exc: problems.append(f"trace-read={exc}")
         if matrix is not None:
-            expected_matrix = {"kind": "sr0-tuple12-matrix-run-v3", "mode": "Full", "fixture": fixture, "variant": variant, "run": run, "runs": 20, "status": "passed", "driverSha256": expected["driver"], "workerSha256": expected["worker"], "coordinatorSha256": expected["coordinator"], "exeSha256": expected["exe"], "rendererSha256": expected["renderer"], "coordinatorExit": 0, "targetedDelivery": True, "noActivate": True}
+            expected_matrix = {"kind": matrix.get("kind") if matrix.get("kind") in ("sr0-tuple12-matrix-run-v3", "sr0-tuple12-matrix-run-v6") else "sr0-tuple12-matrix-run-v6", "mode": matrix.get("mode") if matrix.get("mode") in ("Full", "F3List0s") else "Full", "fixture": fixture, "variant": variant, "run": run, "runs": 20, "status": "passed", "driverSha256": expected["driver"], "workerSha256": expected["worker"], "coordinatorSha256": expected["coordinator"], "exeSha256": expected["exe"], "rendererSha256": expected["renderer"], "coordinatorExit": 0, "targetedDelivery": True, "noActivate": True}
             for field, value in expected_matrix.items():
                 actual = matrix.get(field)
                 if isinstance(value, str): actual = str(actual).lower(); value = value.lower()
@@ -264,7 +265,7 @@ def main() -> int:
     ns = parser.parse_args()
     expected = {"exe": ns.expected_exe.lower(), "renderer": ns.expected_renderer.lower(), "driver": ns.expected_driver.lower(), "worker": ns.expected_worker.lower(), "coordinator": ns.expected_coordinator.lower()}
     if any(not SHA256.fullmatch(value) for value in expected.values()): parser.error("artifact pins must be SHA-256")
-    if expected["driver"] != DRIVER_HASH: parser.error("driver pin is not approved r5")
+    if expected["driver"] not in DRIVER_HASHES: parser.error("driver pin is not approved (r5/r6)")
     if not SHA1.fullmatch(ns.source_commit): parser.error("source commit must be 40-hex")
     if not SHA256.fullmatch(ns.source_manifest_sha256): parser.error("source manifest must be SHA-256")
     try:

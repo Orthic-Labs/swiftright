@@ -1,0 +1,58 @@
+EVT {"kind":"lifecycle","mono_ns":245735829619600,"node_id":"selftest","payload":{"fixture":"F6","phase":"start"},"seq":0}
+EVT {"kind":"lifecycle","mono_ns":245736304566900,"node_id":"animation","payload":{"effective_reduce":false,"enabled":true,"phase":"policy","reduce_source":"default","system_reduce":"on","variant_reduce":false},"seq":1}
+EVT {"kind":"lifecycle","mono_ns":245736305779600,"node_id":"window","payload":{"phase":"root-appear"},"seq":2}
+EVT {"kind":"lifecycle","mono_ns":245736307353600,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+EVT {"kind":"lifecycle","mono_ns":245736308107600,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+EVT {"kind":"lifecycle","mono_ns":245736308324600,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+EVT {"kind":"lifecycle","mono_ns":245736308509800,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+EVT {"kind":"lifecycle","mono_ns":245736308705800,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+EVT {"kind":"lifecycle","mono_ns":245736308884700,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+EVT {"kind":"lifecycle","mono_ns":245736309091300,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+EVT {"kind":"lifecycle","mono_ns":245736309269500,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+EVT {"kind":"lifecycle","mono_ns":245736309438600,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+EVT {"kind":"lifecycle","mono_ns":245736309615800,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":12}
+EVT {"kind":"lifecycle","mono_ns":245736313473100,"node_id":"window","payload":{"height_px":1200,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":13}
+EVT {"kind":"lifecycle","mono_ns":245736314172700,"node_id":"selftest","payload":{"name":"motion policy recorded","phase":"stage"},"seq":14}
+EVT {"kind":"lifecycle","mono_ns":245736314255400,"node_id":"animation","payload":{"phase":"start","tag":"A"},"seq":15}
+EVT {"kind":"state","mono_ns":245736314325300,"node_id":"model","payload":{"animated":true,"id":"F0000006-0000-4000-8000-000000000200","index":0,"op":"insert","tag":"A"},"seq":16}
+EVT {"kind":"lifecycle","mono_ns":245736314396400,"node_id":"animation","payload":{"phase":"start","tag":"B"},"seq":17}
+EVT {"kind":"state","mono_ns":245736314443200,"node_id":"model","payload":{"animated":true,"id":"F0000006-0000-4000-8000-000000000201","index":0,"op":"insert","tag":"B"},"seq":18}
+EVT {"kind":"lifecycle","mono_ns":245736314528500,"node_id":"selftest","payload":{"name":"burst insert (same turn)","phase":"stage"},"seq":19}
+EVT {"kind":"lifecycle","mono_ns":245736315037600,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":20}
+EVT {"kind":"lifecycle","mono_ns":245736315245700,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":21}
+EVT {"kind":"lifecycle","mono_ns":245736316400400,"node_id":"animation","payload":{"phase":"complete","tag":"A"},"seq":22}
+EVT {"kind":"lifecycle","mono_ns":245736682097900,"node_id":"animation","payload":{"phase":"complete","tag":"B"},"seq":23}
+EVT {"kind":"lifecycle","mono_ns":245737817896600,"node_id":"selftest","payload":{"name":"animation window","phase":"stage"},"seq":24}
+EVT {"kind":"lifecycle","mono_ns":245742120309300,"node_id":"window","payload":{"phase":"closed"},"seq":25}
+EVT {"kind":"lifecycle","mono_ns":245742120605200,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":26}
+EVT {"kind":"lifecycle","mono_ns":245742120954800,"node_id":"F0000006-0000-4000-8000-000000000201","payload":{"local":0,"phase":"disappear"},"seq":27}
+EVT {"kind":"lifecycle","mono_ns":245742121189600,"node_id":"F0000006-0000-4000-8000-000000000200","payload":{"local":0,"phase":"disappear"},"seq":28}
+EVT {"kind":"lifecycle","mono_ns":245742121367800,"node_id":"F0000006-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":29}
+EVT {"kind":"lifecycle","mono_ns":245742121543500,"node_id":"F0000006-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":30}
+EVT {"kind":"lifecycle","mono_ns":245742121703300,"node_id":"F0000006-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":31}
+EVT {"kind":"lifecycle","mono_ns":245742121867900,"node_id":"F0000006-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":32}
+EVT {"kind":"lifecycle","mono_ns":245742122037600,"node_id":"F0000006-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":33}
+EVT {"kind":"lifecycle","mono_ns":245742122199000,"node_id":"F0000006-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":34}
+EVT {"kind":"lifecycle","mono_ns":245742122360400,"node_id":"F0000006-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":35}
+EVT {"kind":"lifecycle","mono_ns":245742122525700,"node_id":"F0000006-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":36}
+EVT {"kind":"lifecycle","mono_ns":245742122771700,"node_id":"F0000006-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":37}
+EVT {"kind":"lifecycle","mono_ns":245742122946100,"node_id":"F0000006-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":38}
+SELFTEST-STAGES F6: motion policy recorded@0.48s | burst insert (same turn)@0.48s | animation window@1.99s | awaiting-driver-close end-reason=window-closed
+ASSERT F6 script-completed: PASS stages=motion policy recorded@0.48s | burst insert (same turn)@0.48s | animation window@1.99s | awaiting-driver-close
+ASSERT F6 os-reduce-motion-read: PASS os=reduce-on effective=false source=default
+ASSERT F6 os-setting-does-not-decide: PASS os=reduce-on effective=false expected=false source=default expected-source=default
+ASSERT F6 normal-policy-enabled: PASS enabled=true
+ASSERT F6 two-animations-started: PASS starts=2
+ASSERT F6 interruption-recorded: PASS second-start seq=17 first-complete seq=22
+ASSERT F6 both-animations-complete: PASS completes=2
+ASSERT F6 final-order: PASS count=12
+ASSERT F6 env-reduce-controls-motion: PASS effective-reduce=false fade-frame commits=22 (snap: 0; animate: >=3)
+ASSERT F6 frames-driven-by-display-tick: PASS tick-commits=25 ticks=350
+ASSERT F6 animated-path-regardless-of-os-setting: PASS os=reduce-on effective-reduce=false fade-frame commits=22 tick-commits=25 (animate branch: >=3 each)
+ASSERT F6 initial-focus-matches-mac-oracle: PASS expected=none initial-events=0 focused=none first-focus-event-is-initial=false after-appears-before-tasks=true (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)
+ASSERT F6 invoke-does-not-move-focus: PASS ax-invokes=0 coalesced-focus-requests=0 offenders=none
+ASSERT F6 renderer-no-violations: PASS thread_violations=0 host_panics=0
+ASSERT F6 commits-accepted: PASS commits=29 errors=0 dropped-after-close=0
+ASSERT F6 no-measure-or-draw-failures: PASS measure=0 draw=0 
+SELFTEST F6: PASS (16/16 asserted; blocked=0; end=window-closed)
+
