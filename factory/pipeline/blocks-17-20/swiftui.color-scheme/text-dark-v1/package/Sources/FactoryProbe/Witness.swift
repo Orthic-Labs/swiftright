@@ -9,10 +9,10 @@ struct Witness_cs_text_dark: View {
         ZStack(alignment: .topLeading) {
             Rectangle().fill(.background)
             VStack(alignment: .leading, spacing: 0) {
-                Text("MMMM").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading)
-                Text("MMMM").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(.secondary)
-                Text("MMMM").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.accentColor)
-                Text("MMMM").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.red)
+                Text("MMMMMMMM").frame(height: 24, alignment: .topLeading)
+                Text("MMMMMMMM").frame(height: 24, alignment: .topLeading).foregroundStyle(.secondary)
+                Text("MMMMMMMM").frame(height: 24, alignment: .topLeading).foregroundStyle(Color.accentColor)
+                Text("MMMMMMMM").frame(height: 24, alignment: .topLeading).foregroundStyle(Color.red)
             }
             .padding(8)
         }

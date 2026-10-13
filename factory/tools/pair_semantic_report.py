@@ -133,6 +133,8 @@ def keep(elements, cfg):
     for e in elements:
         if e["name"] in ignore:
             continue
+        if e["role"] == "text" and not e["name"] and not e["value"]:
+            continue   # an empty text (a task dialog always has a content text, empty without a message)
         if roles is not None:
             if e["role"] not in roles:
                 continue

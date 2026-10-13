@@ -116,6 +116,12 @@ class SemanticTests(unittest.TestCase):
         m = dict(windows=[mac_window([mac_el(None, "AXStaticText", 0, 20, 10, 10, value="Waiting")]), mac_window([mac_el("OK", "AXButton", 0, 0, 10, 10)], main=False, title="T", kind="alert")])
         self.assertEqual(S.compare_run(w, m, dict(fields=["role", "name", "count"], dialogs=dict(count=1)))[0], [])
 
+    def test_empty_content_text_of_a_messageless_dialog_is_not_an_element(self):
+        task = win_window([win_el("", "Text", 0, 0, 10, 10), win_el("Copy", "Button", 0, 20, 10, 10)], main=False, title="Share", cls="#32770")
+        w = dict(windows=[win_window([]), task])
+        m = dict(windows=[mac_window([]), mac_window([mac_el("Copy", "AXButton", 0, 20, 10, 10)], main=False, title="Share", kind="alert")])
+        self.assertEqual(S.compare_run(w, m, dict(fields=["role", "name", "count", "order", "dialogTitle"], scope="dialog"))[0], [])
+
     def test_real_windows_dump_flattens(self):
         # shape of an F2 dump from a real host run (checkbox): title-bar chrome is dropped, the control keeps role/toggle/bounds relative to the client origin
         w = dict(windows=[win_window([win_el("Enabled", "CheckBox", 0, 0, 16, 16, toggle="On", value="1", automationId="Root/#0/Modified/Modified/Toggle")])])

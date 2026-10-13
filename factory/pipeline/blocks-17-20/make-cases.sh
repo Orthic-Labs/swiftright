@@ -222,10 +222,10 @@ mk swiftui.color-scheme/text-dark-v1 Witness_cs_text_dark "struct Witness_cs_tex
         ZStack(alignment: .topLeading) {
             Rectangle().fill(.background)
             VStack(alignment: .leading, spacing: 0) {
-                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading)
-                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(.secondary)
-                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.accentColor)
-                Text(\"MMMM\").font(.system(size: 36, weight: .bold)).frame(height: 48, alignment: .topLeading).foregroundStyle(Color.red)
+                Text(\"MMMMMMMM\").frame(height: 24, alignment: .topLeading)
+                Text(\"MMMMMMMM\").frame(height: 24, alignment: .topLeading).foregroundStyle(.secondary)
+                Text(\"MMMMMMMM\").frame(height: 24, alignment: .topLeading).foregroundStyle(Color.accentColor)
+                Text(\"MMMMMMMM\").frame(height: 24, alignment: .topLeading).foregroundStyle(Color.red)
             }
             .padding(8)
         }
@@ -235,7 +235,7 @@ mk swiftui.color-scheme/text-dark-v1 Witness_cs_text_dark "struct Witness_cs_tex
 }" $DARK
 cat > swiftui.color-scheme/text-dark-v1/pair.json <<JSON
 {"textColourGate": {"tolerance": 24, "background": [30, 30, 30], "regions": [
-  {"name": "primary", "rect": [0, 20, 800, 140]}, {"name": "secondary", "rect": [0, 140, 800, 260]},
-  {"name": "accentColor", "rect": [0, 260, 800, 380]}, {"name": "red", "rect": [0, 380, 800, 500]}]},
- "excludeRects": [{"name": "text lines (glyph shapes differ: Segoe UI vs SF, decision 2)", "rect": [0, 20, 800, 500]}]}
+  {"name": "primary", "rect": [0, 20, 800, 80]}, {"name": "secondary", "rect": [0, 80, 800, 140]},
+  {"name": "accentColor", "rect": [0, 140, 800, 200]}, {"name": "red", "rect": [0, 200, 800, 260]}]},
+ "excludeRects": [{"name": "text lines (glyph shapes differ: Segoe UI vs SF, decision 2)", "rect": [0, 20, 800, 260]}]}
 JSON
