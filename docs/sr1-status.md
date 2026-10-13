@@ -10,8 +10,16 @@ Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's 
 | ZStack + overlay (body font) | `stack-layout/stack-overlay-centered-execution-v9` | 20 | 20 edge-aa≤32 outside the named `+` glyph region (decision 2) |
 | Text, bundled Tinos + lineLimit | `text-shape-image/bundled-font-readiness-v6-line-limit-host` | 20 | 20 exact-with-exclusions; text gate 20/20 (ink within 1 px, baseline equal) via ABI 0.7 font registration |
 | Image `star.fill` | `text-shape-image/image-system-star-fill-v10` (+16pt and 120x60 N=3; 48pt N=3 via a measured override, which is not evidence of generalisation) | 20 | frame, ink bbox and tint 20/20; glyph shape reported (decision 3) |
+| ScrollView (block 6), vertical, offset 0 | `blocks-6-10/scroll-view/vertical-offset0-v1` (`factory/pipeline/`; five colour rows, content 200 pt in a 120x100 viewport, indicators off) | 20 | 20 exact |
+| ScrollView, `defaultScrollAnchor(.bottom)` | `blocks-6-10/scroll-view/vertical-bottom-anchor-v1` (programmatic initial offset; `ScrollViewReader`/`scrollPosition` do not exist in the runtime) | 20 | 20 exact |
+| ScrollView, horizontal axis | `blocks-6-10/scroll-view/horizontal-axis-v1` | 20 | 20 exact |
+| ScrollView, rows of Text (the recipe witness) on a yellow viewport backdrop | `blocks-6-10/scroll-view/vertical-text-rows-v1` | 20 | 20 exact-with-exclusions: only the named row-glyph region (decision 2) differs; clipped ink ends at the viewport bottom on both sides |
+| PreferenceKey (block 10), custom `reduce` (max and sum) rendered by the observing parent | `blocks-6-10/preference-key/reduce-max-sum-v1` | 20 | 20 exact |
+| PreferenceKey, nil-literal `defaultValue`, first contribution wins, no-contributor default | `blocks-6-10/preference-key/nil-default-first-wins-v1` | 20 | 20 exact |
 
 Tests on the same build: Windows runtime 224, bridge 48, host 35; Mac runtime 216, bridge 48, host 35; 0 failures on either host.
+
+Blocks 6 (ScrollView) and 10 (PreferenceKey) were captured on product stage `0a47f28e7-94d4c4b6` (renderer 0.7 `82513ae0…`, same Sandbox loop, Mac side: offscreen `NSHostingView.cacheDisplay` at scale 2.5 because `ImageRenderer` renders ScrollView blank). Product changes behind them: ScrollView viewport clip in the host paint path (`4a2891c35`), `View.defaultScrollAnchor` (`e2a953403`), nil-literal `PreferenceKey.defaultValue` and the first `onPreferenceChange` delivery of the default value (`a3d47453c`), composite user views in the paint path (`0a47f28e7`). Mac suites at that commit: runtime 245, bridge 52, host 63, 0 failures.
 
 **Known gaps:**
 - SliceApp's own backend does not yet use `ResolvedNodePainter`.
