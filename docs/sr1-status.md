@@ -44,6 +44,28 @@ Disabled-coverage closure (Button, plain views, coloured text) was captured on p
 
 Gate fix: `pair_control_report.label_box` searched left of the control first with a strip `max(1, c[0]-2)` wide, so for the checkbox at x=0 it found the box's own edge ([0,11,1,33]) and verified nothing. It now searches both sides (minimum strip 4 px, control columns plus a 2 px guard excluded), takes the side with the most ink, and fails the row when no label ink is found. Recomputed from the existing captures (no recapture), newest N=20 runs: `switch-labelled-on-v1` 20/20, label ink mac [2,18,119,44] vs windows [2,19,104,42] (left of the switch, starts x=2 on both sides, vertical centre 31.0 vs 30.5); `checkbox-labelled-on-v1` 20/20, label ink mac [54,8,171,34] vs windows [54,9,156,32] (right of the box, starts x=54 on both sides, centre 21.0 vs 20.5, previously the meaningless [0,11,1,33]). Unit tests with synthetic images are in `factory/tools/test_pair_control_report.py`; they were not run locally (the workspace hook blocks local execution of tests in this public repository), only the recompute above exercised the new function.
 
+### Round 3 lane C: blocks 18 (swiftui.animation) and 19 (swiftui.opacity-transition), F1 manual clock
+
+Captured on product stage `f2fa32033-50ca6029` (renderer 0.7 `82513ae0...`, Sandbox loop; the Sandbox worker was restarted after the first three cases, by another lane, after a Dell network outage). Every case is multi-frame: N=20 runs x the sampled clock steps, each (run, frame) one pair. "Pixels" is the plain whole-frame diff; "clock gate" is `pair_clock_report.py` (decision C2): extent within 1 px (2 px for the spring cases, C4), exact pixels outside edge strips, SwiftUI's own progress within 0.004 (0.005 spring). Pixel `fail` counts are only the one partial-coverage column of an animating fractional edge (SwiftUI anti-aliases it, the runtime snaps frames to the device pixel grid; max 128/255, spring 255 at one column).
+
+| Block | Case (`factory/pipeline/blocks-6-10/`) | N x frames | Verdict |
+|---|---|---|---|
+| 18 | `swiftui.animation/linear-width-v1` (linear 1 s, 100 -> 200 pt) | 20 x 6 | clock gate 120/120; pixels exact 80/120 |
+| 18 | `easeinout-samples-v1` (0/25/50/75/100 %) | 20 x 5 | clock gate 100/100 (progress equal to 5 decimals); pixels exact 60/100 |
+| 18 | `interrupt-40-v1` (easeInOut 1 s reversed at 0.4 s, additive) | 20 x 8 | clock gate 160/160; exact 40, edge-aa 40 |
+| 18 | `default-spring-v1` (`.default`, 100 -> 250 pt) | 20 x 6 | clock gate 120/120 with the named 2 px extent tolerance (0.3 s reads 0.886455 under the manual clock, table 0.890036) |
+| 18 | `animation-value-v1` (`.animation(.easeIn, value:)`) | 20 x 6 | clock gate 120/120 |
+| 18 | `disables-animations-v1` (`disablesAnimations` silences the modifier, not an explicit animation) | 20 x 4 | 80/80 exact |
+| 18 | `completion-v1` (`.logicallyComplete` at 0.5 s, `.removed` at 0.537 s flags) | 20 x 4 | clock gate 80/80 (flag pixels exact) |
+| 19 | `swiftui.opacity-transition/opacity-static-v1` (`.opacity(0.5)`, nested 0.25) | 20 | 20 exact |
+| 19 | `opacity-animated-v1` (0.2 -> 1, easeInOut) | 20 x 6 | 120/120 exact |
+| 19 | `insertion-fade-v1` (`.transition(.opacity)`, linear) | 20 x 6 | 120/120 exact |
+| 19 | `move-leading-v1` (`.move(edge: .leading)` insertion) | 20 x 6 | 120/120 exact |
+| 19 | `removal-fade-v1`, `removal-move-v1` (ghost removal, sibling relayout) | 20 x 6 each | 120/120 exact each |
+| 19 | `opacity-text-v1` (Text under `.opacity(0.5)`) | 20 | 20 exact-with-exclusions (glyph regions named, decision 2); ink colour gate 20/20 (red mac (255,156,158) vs win (255,155,157)) |
+
+Product changes: `Animation.swift` (Bezier curves, spring table, layered interruption, completion criteria, scoped `.animation(_:value:)`, `withTransaction`), `Transition.swift` (`AnyTransition`, insertion starts, removal ghosts), `Graph.swift` (onAppear after first presentation, ghosts in resolve), `Edge` enum, Text opacity in `ResolvedNodePainter`. Measurements and decisions: `docs/sr1-decisions.md` C1-C10. Known limits: one explicit transaction per flush decides for every changed node; Image fade excluded; no `.scale`/custom `Transition`.
+
 **Known gaps:**
 - SliceApp's own backend does not yet use `ResolvedNodePainter`.
 - Per-case provenance files (`source-bindings.json`, `plan.json`) describe the old host sources.
