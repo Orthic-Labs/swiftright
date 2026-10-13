@@ -1,0 +1,13 @@
+$ ssh -o BatchMode=yes win powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.factory-work\pair-tools\session.ps1 -Exe D:\Claude\swiftright\.factory-work\hosts\bundled-font-readiness-v6-line-limit-host\package\scratch\x86_64-unknown-windows-msvc\release\FactoryProbe.exe -Out D:\Claude\swiftright\.factory-work\hosts\bundled-font-readiness-v6-line-limit-host\captures\20261013-144150 -Runs 1
+--stdout--
+
+--stderr--
+D:\Claude\swiftright\.factory-work\pair-tools\session.ps1 : desktop busy for 30 min
+At D:\Claude\swiftright\.factory-work\pair-tools\session.ps1:22 char:71
++ ... t-Content (Join-Path $Out 'session-error.txt');Write-Error $_;$code=1 ...
++                                                    ~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,session.ps1
+ 
+
+exit=1

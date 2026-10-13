@@ -176,7 +176,7 @@ func tinosProviderMetrics(fontPath: String, pointSizeDIP: Float = 18) throws -> 
                 result = try bridge.measure(adapted.request)
             }
             retained[request] = result
-            print("FACTORY_TINOS_MEASURE text=\(request.text) requestedFamily=\(resource.requestedFamily) family=\(adapted.request.fontFamily) fontSize=\(adapted.request.fontSize) lineHeight=\(adapted.request.lineHeight) providerFamily=\(resource.providerFamily) resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil")")
+            print("FACTORY_TINOS_MEASURE text=\(request.text) requestedFamily=\(resource.requestedFamily) family=\(adapted.request.fontFamily) fontSize=\(adapted.request.fontSize) lineHeight=\(adapted.request.lineHeight) providerFamily=\(resource.providerFamily) resourceSHA256=\(resource.resourceSHA256) widthPX=\(result.width) heightPX=\(result.height) firstBaselinePX=\(result.firstBaseline) lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil")")
             return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale), height: CGFloat(result.height / scale)), baseline: CGFloat(result.firstBaseline / scale), lineCount: result.lineCount)
         } catch { fatalError("Native Tinos measurement failed: \(error)") }
     }
@@ -367,7 +367,7 @@ let result: Int32 = MainActor.assumeIsolated {
         print("FACTORY_TINOS_PROVIDER_METRICS lineHeightDIP=\(providerMetrics.lineHeightDIP) ascentDIP=\(providerMetrics.ascentDIP) descentDIP=\(providerMetrics.descentDIP) unitsPerEm=\(providerMetrics.unitsPerEm) ascentUnits=\(providerMetrics.ascentUnits) descentUnits=\(providerMetrics.descentUnits) lineGapUnits=\(providerMetrics.lineGapUnits) source=\(providerMetrics.source) family=Tinos postScriptName=Tinos-Regular resourceSHA256=\(tinos.resourceSHA256)")
         fflush(stdout)
         // ABI 0.7 renderer (font registration); the pinned 0.6 renderer under inputs\\renderer is not touched.
-        let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7\\swiftright_render.dll", minimumRevision: .v07)
+        let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll", minimumRevision: .v07)
         print("FACTORY_ABI revision=\(bridge.revision) minor=\(bridge.info.abi_minor) fnCount=\(bridge.info.fn_count) fonts=\(bridge.supportsFontRegistration)")
         let host = RendererHost(bridge, tinos: tinos, providerMetrics: providerMetrics)
         bridge.onReady = { window in MainActor.assumeIsolated { host.ready(window) } }
