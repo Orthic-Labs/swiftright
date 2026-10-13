@@ -160,32 +160,42 @@ struct FrameSpec: Equatable {
 /// The headless runtime clamps negative/NaN minima to zero, treats a NaN maximum as zero,
 /// preserves positive infinity, and raises a maximum below the minimum to the minimum.
 /// This keeps malformed inputs finite without asserting native SDK parity for those inputs.
+///
+/// Sizing follows `_FlexFrameLayout` as measured on macOS (ImageRenderer): the child is offered the proposal clamped to
+/// [minimum, maximum] (an unspecified proposal becomes the ideal length when one is given). The frame is at least the child and
+/// at least the minimum; with a maximum it also grows to the (clamped) offer, then is capped at the maximum. A minimum alone
+/// therefore never grows the frame to the offer: `frame(minWidth: 70)` around a 30 pt child is 70 pt, not the offered width.
 struct FlexibleFrameSpec: Equatable {
     let minWidth: CGFloat?
+    let idealWidth: CGFloat?
     let maxWidth: CGFloat?
     let minHeight: CGFloat?
+    let idealHeight: CGFloat?
     let maxHeight: CGFloat?
     let alignment: Alignment
 
-    init(minWidth: CGFloat?, maxWidth: CGFloat?, minHeight: CGFloat?, maxHeight: CGFloat?, alignment: Alignment) {
+    init(minWidth: CGFloat?, idealWidth: CGFloat? = nil, maxWidth: CGFloat?,
+         minHeight: CGFloat?, idealHeight: CGFloat? = nil, maxHeight: CGFloat?, alignment: Alignment) {
         self.minWidth = Self.normalizedMinimum(minWidth)
         self.maxWidth = Self.normalizedMaximum(maxWidth, minimum: self.minWidth)
+        self.idealWidth = Self.normalizedIdeal(idealWidth)
         self.minHeight = Self.normalizedMinimum(minHeight)
         self.maxHeight = Self.normalizedMaximum(maxHeight, minimum: self.minHeight)
+        self.idealHeight = Self.normalizedIdeal(idealHeight)
         self.alignment = alignment
     }
 
     func childProposal(_ proposal: ProposedViewSize) -> ProposedViewSize {
         ProposedViewSize(
-            width: childDimension(proposal.width, minimum: minWidth, maximum: maxWidth),
-            height: childDimension(proposal.height, minimum: minHeight, maximum: maxHeight)
+            width: childDimension(proposal.width, ideal: idealWidth, minimum: minWidth, maximum: maxWidth),
+            height: childDimension(proposal.height, ideal: idealHeight, minimum: minHeight, maximum: maxHeight)
         )
     }
 
     func frameSize(for child: LayoutSize, proposal: ProposedViewSize) -> LayoutSize {
         LayoutSize(
-            width: frameDimension(child.width, offered: proposal.width, minimum: minWidth, maximum: maxWidth),
-            height: frameDimension(child.height, offered: proposal.height, minimum: minHeight, maximum: maxHeight)
+            width: frameDimension(child.width, offered: proposal.width, ideal: idealWidth, minimum: minWidth, maximum: maxWidth),
+            height: frameDimension(child.height, offered: proposal.height, ideal: idealHeight, minimum: minHeight, maximum: maxHeight)
         )
     }
 
@@ -204,20 +214,33 @@ struct FlexibleFrameSpec: Equatable {
         return max(minimum ?? 0, normalized)
     }
 
-    private func childDimension(_ offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat? {
-        guard minimum != nil || maximum != nil else { return offered }
+    private static func normalizedIdeal(_ value: CGFloat?) -> CGFloat? {
+        guard let value, let finite = finiteLength(value) else { return nil }
+        return max(0, finite)
+    }
+
+    /// The length the child is offered on one axis; nil when the frame passes an unspecified proposal through. An infinite proposal
+    /// (a stack asking for the most a child can take) is clamped like any other, so it becomes the maximum.
+    private func childDimension(_ offered: CGFloat?, ideal: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat? {
+        guard minimum != nil || maximum != nil || ideal != nil else { return offered }
         let limits = bounds(minimum: minimum, maximum: maximum)
-        guard let offered = finiteLength(offered) else {
+        guard let offered = offered ?? ideal else {
             return limits.minimum > 0 ? limits.minimum : nil
         }
         return min(max(offered, limits.minimum), limits.maximum)
     }
 
-    private func frameDimension(_ child: CGFloat, offered: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat {
+    private func frameDimension(_ child: CGFloat, offered: CGFloat?, ideal: CGFloat?, minimum: CGFloat?, maximum: CGFloat?) -> CGFloat {
         guard minimum != nil || maximum != nil else { return child }
         let limits = bounds(minimum: minimum, maximum: maximum)
-        let target = finiteLength(offered) ?? child
-        return min(max(target, limits.minimum), limits.maximum)
+        var length = max(child, limits.minimum)
+        if let maximum {
+            // A maximum makes the frame take what it is offered (up to the maximum), as `frame(maxWidth: .infinity)` fills; offered
+            // the infinite proposal, it reports its maximum, which is how a stack finds a frame that shares the leftover space.
+            if let target = offered ?? ideal { length = max(length, min(max(target, limits.minimum), maximum)) }
+            length = min(length, maximum)
+        }
+        return length
     }
 }
 

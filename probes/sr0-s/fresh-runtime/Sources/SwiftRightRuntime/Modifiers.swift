@@ -40,23 +40,27 @@ extension View {
         Modified(content: self, spec: .frame(FrameSpec(width: width, height: height, alignment: alignment)))
     }
 
-    /// Offers size within width bounds & aligns content in resulting frame.
-    public func frame(minWidth: CGFloat? = nil, maxWidth: CGFloat, alignment: Alignment = .center) -> some View {
+    /// Offers size within the given bounds on each axis and aligns the content in the resulting frame.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/frame(minwidth:idealwidth:maxwidth:minheight:idealheight:maxheight:alignment:)
+    public func frame(
+        minWidth: CGFloat? = nil, idealWidth: CGFloat? = nil, maxWidth: CGFloat? = nil,
+        minHeight: CGFloat? = nil, idealHeight: CGFloat? = nil, maxHeight: CGFloat? = nil,
+        alignment: Alignment = .center
+    ) -> some View {
         Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
-            minWidth: minWidth, maxWidth: maxWidth, minHeight: nil, maxHeight: nil, alignment: alignment
-        )))
-    }
-
-    /// Offers size within height bounds & aligns content in resulting frame.
-    public func frame(minHeight: CGFloat? = nil, maxHeight: CGFloat, alignment: Alignment = .center) -> some View {
-        Modified(content: self, spec: .flexibleFrame(FlexibleFrameSpec(
-            minWidth: nil, maxWidth: nil, minHeight: minHeight, maxHeight: maxHeight, alignment: alignment
+            minWidth: minWidth, idealWidth: idealWidth, maxWidth: maxWidth,
+            minHeight: minHeight, idealHeight: idealHeight, maxHeight: maxHeight, alignment: alignment
         )))
     }
 
     /// Insets the view by `length` on the given edges. A nil length uses the fixed default of 16 pt.
     public func padding(_ edges: Edge.Set = .all, _ length: CGFloat? = nil) -> some View {
         Modified(content: self, spec: .padding(EdgeInsets(edges, length ?? defaultPaddingLength)))
+    }
+
+    /// Insets the view by the given amount on each edge. Apple: https://developer.apple.com/documentation/swiftui/view/padding(_:)-6pgl9
+    public func padding(_ insets: EdgeInsets) -> some View {
+        Modified(content: self, spec: .padding(insets))
     }
 
     public func onAppear(perform action: (() -> Void)? = nil) -> some View {
