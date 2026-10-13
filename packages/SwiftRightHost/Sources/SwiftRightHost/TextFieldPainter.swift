@@ -133,7 +133,7 @@ extension ResolvedNodePainter {
                 primitives.append(.rect(Rect(x: bounds.x + inset, y: top, w: max(1, scale / 2), h: height), color: TextFieldColors.caret))
             }
         }
-        let semantic = SemanticNode(role: .textField, label: node.accessibility.label ?? node.placeholder ?? "", value: shown,
+        let semantic = SemanticNode(role: .textField, label: node.placeholder ?? node.accessibility.label ?? ""  /* macOS exposes the placeholder (prompt, else title) as the field name */, value: shown,
                                     actions: isEnabled ? [.focus, .setValue, .setSelection] : [], identifier: node.id, disabled: !isEnabled)
         return NodeEmission(primitives: primitives, semantic: semantic, flags: isEnabled ? [.hitTarget, .focusable, .editable] : [], structural: false)
     }
