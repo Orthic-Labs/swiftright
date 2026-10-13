@@ -746,6 +746,12 @@ public struct ResolvedAccessibility: Equatable, Sendable {
 public struct ResolvedStyle: Equatable, Sendable {
     public let font: Font?
     public let foreground: ResolvedColor?
+    /// The colour scheme in effect at this node (`.environment(\.colorScheme, _)`, `.preferredColorScheme(_)`): a backend resolves semantic colours with it.
+    public let colorScheme: ColorScheme
+
+    public init(font: Font?, foreground: ResolvedColor?, colorScheme: ColorScheme = .light) {
+        self.font = font; self.foreground = foreground; self.colorScheme = colorScheme
+    }
 }
 
 public struct CommitRecord: Equatable, Sendable {
@@ -804,6 +810,9 @@ public final class Graph {
     private(set) var layoutEpoch = 0
     /// Counts evaluation rounds of a flush; see `Node.evaluatedRound`.
     private var evaluationRound = 0
+    /// `.preferredColorScheme` (ColorScheme.swift): the request made during this flush, and the root scheme before the first request.
+    var windowSchemeRequest: PreferredSchemeRequest?
+    var windowSchemeBase: ColorScheme?
     /// Turns on reduction only after a tree actually contains a preference source.
     private var preferenceReductionEnabled = false
     /// Live `.onPreferenceChange` nodes; legacy flushes skip observer traversal entirely.
@@ -918,6 +927,7 @@ public final class Graph {
                 }
             }
             if !preferenceObserverNodes.isEmpty { deliverPreferenceChanges() }
+            applyWindowSchemeRequest()
             if dirty.isEmpty { break }
         }
         if profile != nil {
@@ -1370,10 +1380,11 @@ public final class Graph {
         }
         if case .modifier(.environment(let apply)) = kind {
             apply(&node.environment)
+            noteWindowSchemeRequest(node)
         }
         if node.parent == nil || kind.changesEnvironment {
             node.enabled = node.environment.isEnabled
-            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle)
+            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle, colorScheme: node.environment.colorScheme)
         } else {
             node.enabled = node.inheritedEnabled
             node.style = node.inheritedStyle

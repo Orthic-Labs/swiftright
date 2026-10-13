@@ -17,22 +17,30 @@ public enum SwitchArtwork {
     static let shadowStrength = 0.0562, shadowReach = 4.5, shadowLift = 0.75
     static let samplesPerAxis = 8
 
-    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool }
+    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool, dark: Bool }
     nonisolated(unsafe) private static var cache: [Key: ContinuousRGBAImage] = [:]
     private static let cacheLock = NSLock()
 
     /// Straight-alpha RGBA of the switch at `widthPX` x `heightPX` device pixels (the control's frame in pixels). Memoised per state and size.
-    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool) -> ContinuousRGBAImage {
-        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled)
+    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light) -> ContinuousRGBAImage {
+        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
         cacheLock.lock(); defer { cacheLock.unlock() }
         if let hit = cache[key] { return hit }
-        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled)
+        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
         cache[key] = image
         return image
     }
 
     /// The track colour for a state (0xRRGGBB).
-    public static func trackColor(isOn: Bool, isEnabled: Bool) -> UInt32 {
+    public static func trackColor(isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light) -> UInt32 {
+        if scheme == .dark {
+            switch (isOn, isEnabled) {
+            case (true, true): return ToggleDarkData.trackOn
+            case (false, true): return ToggleDarkData.trackOff
+            case (true, false): return ToggleDarkData.trackOnDisabled
+            case (false, false): return ToggleDarkData.trackOffDisabled
+            }
+        }
         switch (isOn, isEnabled) {
         case (true, true): return SwitchArtworkData.trackOn
         case (false, true): return SwitchArtworkData.trackOff
@@ -79,11 +87,14 @@ public enum SwitchArtwork {
         return coverage
     }
 
-    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool) -> ContinuousRGBAImage {
+    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, dark: Bool = false) -> ContinuousRGBAImage {
         let n = samplesPerAxis, total = Double(n * n)
         let pxPerPointX = Double(widthPX) / controlWidth, pxPerPointY = Double(heightPX) / controlHeight
         let knobX = knobOriginX(isOn: isOn)
-        let base = trackColor(isOn: isOn, isEnabled: isEnabled)
+        let base = trackColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
+        // dark: the knob is white at `knobAlpha` over the track, so it is a blend INSIDE the track; light: an opaque white knob over the track
+        let knobAlpha = dark ? ToggleDarkData.knobAlpha : 1.0
+        let strength = dark ? ToggleDarkData.shadowStrength : shadowStrength
         let baseRGB = [Double(base >> 16 & 255), Double(base >> 8 & 255), Double(base & 255)]
         var rgba = [UInt8](repeating: 0, count: widthPX * heightPX * 4)
         for py in 0..<heightPX {
@@ -96,13 +107,18 @@ public enum SwitchArtwork {
                         let x = (Double(px) + (Double(sx) + 0.5) / Double(n)) / pxPerPointX
                         guard inside(SwitchArtworkData.trackCap, x: x, y: y, width: controlWidth, height: controlHeight) else { continue }
                         if inside(SwitchArtworkData.knobCap, x: x - knobX, y: y - knobInset, width: knobWidth, height: knobHeight) {
-                            knobSamples += 1
+                            if knobAlpha < 1 {
+                                trackSamples += 1
+                                for c in 0..<3 { colour[c] += 255 * knobAlpha + baseRGB[c] * (1 - knobAlpha) }
+                            } else {
+                                knobSamples += 1
+                            }
                             continue
                         }
                         trackSamples += 1
                         let d = max(0, pillDistance(x: x, y: y + shadowLift, x0: knobX, y0: knobInset, width: knobWidth, height: knobHeight))
                         let falloff = 1 - min(1, d / shadowReach)
-                        let shade = 1 - shadowStrength * falloff * falloff * falloff
+                        let shade = 1 - strength * falloff * falloff * falloff
                         for c in 0..<3 { colour[c] += baseRGB[c] * shade }
                     }
                 }

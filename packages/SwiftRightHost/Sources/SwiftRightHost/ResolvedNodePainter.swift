@@ -134,7 +134,7 @@ public final class ResolvedNodePainter {
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
             guard node.opacity == 1 else { throw HostPaintError.unsupportedTextPaintStyle }
             guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
-            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: 1) } ?? textColor
+            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: 1, scheme: node.style.colorScheme) } ?? textColor ?? (node.style.colorScheme == .dark ? try HostPaint.rgba(.semantic("label"), opacity: 1, scheme: .dark) : nil)
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
             return NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
@@ -175,7 +175,7 @@ public final class ResolvedNodePainter {
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
-            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity))], semantic: nil, flags: [], structural: false)
+            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
 
         case "Image":
             guard let systemImages else { throw HostPaintError.unsupportedNode("Image (no system image registry)") }
@@ -198,7 +198,7 @@ public final class ResolvedNodePainter {
             throw HostPaintError.systemImageContractMismatch("only resizable().scaledToFit() symbols are painted")
         }
         guard bounds.w > 0, bounds.h > 0 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
-        let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity)
+        let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme)
         let targetWidth = UInt32(max(1, bounds.w)), targetHeight = UInt32(max(1, bounds.h))
         let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight)
         let inset = registry.canvasInset(for: reference)

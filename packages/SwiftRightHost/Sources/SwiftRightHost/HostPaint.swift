@@ -46,13 +46,13 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
 /// Windows paint policy for resolved colours: native RGBA bytes (0xRRGGBBAA) for the semantic colours the runtime
 /// resolves (observed system colours), and explicit RGBA scaled by the node opacity.
 public enum HostPaint {
-    public static func rgba(_ value: ResolvedColor, opacity: Double) throws -> UInt32 {
+    public static func rgba(_ value: ResolvedColor, opacity: Double, scheme: ColorScheme = .light) throws -> UInt32 {
         switch value {
         case .rgba(let r, let g, let b, let a):
             return try rgba(components: [r, g, b, a], opacity: opacity)
         case .semantic(let name):
             guard opacity.isFinite, opacity >= 0, opacity <= 1 else { throw HostPaintError.invalidFillOpacity }
-            let raw = try semantic(name)
+            let raw = try semantic(name, scheme: scheme)
             return (raw & 0xffffff00) | UInt32((Double(raw & 255) * opacity).rounded())
         }
     }
@@ -67,7 +67,30 @@ public enum HostPaint {
         return bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | alpha
     }
 
-    public static func semantic(_ name: String) throws -> UInt32 {
+    /// Semantic colour names the runtime resolves, as 0xRRGGBBAA in `scheme`. Light: macOS light-appearance system colours; dark: the same names measured with the
+    /// dark appearance (`.environment(\.colorScheme, .dark)` in an NSHostingView whose window appearance is darkAqua), SwiftUI renders at scale 2.5 (block 20).
+    /// `label` / `secondaryLabel` (Color.primary / .secondary) are translucent (alpha 216 and 127 light, 216 and 140 dark); `background` is the window background.
+    public static func semantic(_ name: String, scheme: ColorScheme = .light) throws -> UInt32 {
+        if scheme == .dark, let value = darkSemantic[name] { return value }
+        return try semanticLight(name)
+    }
+
+    static let darkSemantic: [String: UInt32] = [
+        "system.red": 0xff4245ff,
+        "system.blue": 0x0091ffff,
+        "system.yellow": 0xffd600ff,
+        "system.orange": 0xff9230ff,
+        "system.green": 0x30d158ff,
+        "system.purple": 0xdb34f2ff,
+        "system.pink": 0xff375fff,
+        "system.gray": 0x98989dff,
+        "label": 0xffffffd8,
+        "secondaryLabel": 0xffffff8c,
+        "accentColor": 0x007affff,
+        "background": 0x1e1e1eff,
+    ]
+
+    static func semanticLight(_ name: String) throws -> UInt32 {
         let native: [String: UInt32] = [
             "system.red": 0xff383cff,
             "system.blue": 0x0088ffff,
@@ -81,6 +104,10 @@ public enum HostPaint {
             "black": 0x000000ff,
             "white": 0xffffffff,
             "clear": 0x00000000,
+            "label": 0x000000d8,
+            "secondaryLabel": 0x0000007f,
+            "accentColor": 0x007affff,
+            "background": 0xffffffff,
         ]
         guard let value = native[name] else { throw HostPaintError.unsupportedSemanticFill(name) }
         return value

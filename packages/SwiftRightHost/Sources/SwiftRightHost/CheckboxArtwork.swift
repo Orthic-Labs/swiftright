@@ -9,22 +9,30 @@ public enum CheckboxArtwork {
     public static let side = 16.0
     static let samplesPerAxis = 8
 
-    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool }
+    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool, dark: Bool }
     nonisolated(unsafe) private static var cache: [Key: ContinuousRGBAImage] = [:]
     private static let cacheLock = NSLock()
 
     /// Straight-alpha RGBA of the checkbox at `widthPX` x `heightPX` device pixels (the control's frame in pixels). Memoised per state and size.
-    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool) -> ContinuousRGBAImage {
-        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled)
+    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light) -> ContinuousRGBAImage {
+        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
         cacheLock.lock(); defer { cacheLock.unlock() }
         if let hit = cache[key] { return hit }
-        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled)
+        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
         cache[key] = image
         return image
     }
 
     /// The box colour for a state (0xRRGGBB).
-    public static func boxColor(isOn: Bool, isEnabled: Bool) -> UInt32 {
+    public static func boxColor(isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light) -> UInt32 {
+        if scheme == .dark {
+            switch (isOn, isEnabled) {
+            case (true, true): return ToggleDarkData.boxOn
+            case (false, true): return ToggleDarkData.boxOff
+            case (true, false): return ToggleDarkData.boxOnDisabled
+            case (false, false): return ToggleDarkData.boxOffDisabled
+            }
+        }
         switch (isOn, isEnabled) {
         case (true, true): return CheckboxArtworkData.boxOn
         case (false, true): return CheckboxArtworkData.boxOff
@@ -41,11 +49,11 @@ public enum CheckboxArtwork {
         return hypot(x - (s[0] + t * dx), y - (s[1] + t * dy)) - (s[4] + (s[5] - s[4]) * t)
     }
 
-    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool) -> ContinuousRGBAImage {
+    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, dark: Bool = false) -> ContinuousRGBAImage {
         let n = samplesPerAxis, total = Double(n * n)
         let pxPerPointX = Double(widthPX) / side, pxPerPointY = Double(heightPX) / side
-        let box = boxColor(isOn: isOn, isEnabled: isEnabled)
-        let checkColour = isEnabled ? CheckboxArtworkData.checkOn : CheckboxArtworkData.checkOnDisabled
+        let box = boxColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
+        let checkColour = dark ? (isEnabled ? ToggleDarkData.checkOn : ToggleDarkData.checkOnDisabled) : (isEnabled ? CheckboxArtworkData.checkOn : CheckboxArtworkData.checkOnDisabled)
         let boxRGB = [Double(box >> 16 & 255), Double(box >> 8 & 255), Double(box & 255)]
         let checkRGB = [Double(checkColour >> 16 & 255), Double(checkColour >> 8 & 255), Double(checkColour & 255)]
         let strokes = CheckboxArtworkData.checkStrokes
