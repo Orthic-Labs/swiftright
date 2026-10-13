@@ -170,6 +170,8 @@ def compare_lists(label, a, b, cfg):
             elif f == "default":
                 if y.get("default") and not x.get("focus"):
                     mm.append(dict(where=f"{label}[{i}]", field="default", windows="not focused", mac="default (Return) button", name=y["name"]))
+            elif f == "name" and "nameRoles" in cfg and x["role"] not in cfg["nameRoles"]:
+                continue   # names gate only for the listed roles (a hidden-label control has no name on the Mac)
             elif x.get(f) != y.get(f):
                 mm.append(dict(where=f"{label}[{i}]", field=f, windows=x.get(f), mac=y.get(f), role=(x["role"], y["role"])))
     return mm

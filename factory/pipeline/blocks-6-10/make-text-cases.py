@@ -55,6 +55,19 @@ def cases():
     }
 }''', "Witness_tf_submit", steps=[click, {"op": "char", "text": "hi"}, {"op": "wait", "ms": 200}, {"op": "key", "key": "Enter"}, {"op": "wait", "ms": 300}],
          sem=dict(SEM, pixels="report-only"))
+    # --- block 12 interaction: a click on a derived-binding switch writes the model; a constant-binding switch does not change
+    case("swiftui.binding", "derived-click-v1", '''struct Witness_binding_click: View {
+    @State private var count = 3
+    var body: some View {
+        let derived = Binding<Bool>(get: { count > 0 }, set: { count = $0 ? 1 : 0 })
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle("Derived", isOn: derived).labelsHidden().toggleStyle(.switch)
+            Toggle("Constant", isOn: .constant(true)).labelsHidden().toggleStyle(.switch)
+            Text("count: \\(count)")
+        }
+    }
+}''', "Witness_binding_click", steps=[{"op": "wait", "ms": 300}, {"op": "click", "x": 60, "y": 30}, {"op": "wait", "ms": 250}, {"op": "dump", "label": "c1"}, {"op": "click", "x": 60, "y": 110}, {"op": "wait", "ms": 250}, {"op": "dump", "label": "c2"}, {"op": "wait", "ms": 200}],
+         sem={"fields": ["role", "name", "toggle", "enabled"], "nameRoles": ["text"], "scope": "main", "roles": ["switch", "text"], "roleMap": {"AXCheckBox/AXToggle": "switch"}, "pixels": "report-only", "phases": ["c1", "c2", ""]})
     # --- block 14 swiftui.focus-state: Tab order, programmatic focus, the Bool form. The Text shows the FocusState value (gated through the semantic tree).
     focus_tab = '''enum Field: Hashable { case first, second }
 
