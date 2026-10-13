@@ -25,7 +25,7 @@ def win(ps, **kw):
     return sh(SSH + [ps], **kw)
 
 
-def windows(case, name, runs, out, shared=False):
+def windows(case, name, runs, out, shared=False, sandbox=False):
     wdir = out / "windows"; wdir.mkdir(parents=True, exist_ok=True)
     host = rf"{WIN_ROOT}\hosts\{name}"; tools = rf"{WIN_ROOT}\pair-tools"
     pkg = rf"{host}\package"; exe = rf"{pkg}\{EXE_REL}"; ts = out.name
@@ -47,6 +47,19 @@ def windows(case, name, runs, out, shared=False):
     if r.returncode:
         sys.exit(f"Windows build failed ({r.returncode}); see {out}/windows-swift-build.log")
     print(f"windows build ok {time.time() - t:.0f}s", flush=True)
+    if sandbox:
+        # capture inside the long-lived minimised Windows Sandbox (factory/tools/sandbox): no window on the Dell desktop; the host-built exe is read through the mapped folder
+        sys.path.insert(0, str(Path(__file__).resolve().parent / "sandbox"))
+        import client as sbx
+        sbx.sync_capture_tool(TOOLS)
+        jid, st, res = sbx.capture(exe, runs, wdir)
+        (out / "windows-session.log").write_text(json.dumps(dict(job=jid, status=st, result=res), indent=1))
+        if st.get("state") != "done" or "done" not in res:
+            sys.exit(f"Sandbox capture failed ({st.get('state')}): {res.get('error')}; see {out}/windows-session.log")
+        done = json.loads((wdir / "done.json").read_text(encoding="utf-8-sig"))
+        bad = [d for d in done if d["status"] != "ok"]
+        print(f"windows capture (sandbox: {'; '.join(res.get('video') or [])}) {len(done) - len(bad)}/{runs} ok" + (f" first error: {bad[0]}" if bad else ""), flush=True)
+        return
     # capture (session.ps1 owns the lock and always writes 'free')
     wout = rf"{host}\captures\{ts}"
     r = win(f'powershell -NoProfile -ExecutionPolicy Bypass -File {tools}\\session.ps1 -Exe {exe} -Out {wout} -Runs {runs}' + (f' -Shared -Case {name}' if shared else ''),
@@ -181,7 +194,7 @@ def compare(out, runs, exclusions=()):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case"); ap.add_argument("--runs", type=int, default=1)
-    ap.add_argument("--shared", action="store_true", help="PrintWindow capture without the exclusive desktop lock (background, no activation, no input); default unchanged"); ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
+    ap.add_argument("--shared", action="store_true", help="PrintWindow capture without the exclusive desktop lock (background, no activation, no input); default unchanged"); ap.add_argument("--sandbox", action="store_true", help="run the Windows capture inside the long-lived minimised Windows Sandbox (factory/tools/sandbox); the build still runs on the Dell host over SSH; default unchanged"); ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
     ap.add_argument("--exclude-text-bbox", action="append", metavar="X0,Y0,X1,Y1", help="named-in-report text region excluded from the pixel gate (repeatable); also <case>/pair.json excludeRects")
     ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
@@ -192,7 +205,7 @@ def main():
         sys.exit(0 if compare(out, n, load_exclusions(case, a.exclude_text_bbox)) else 1)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
-    if not a.skip_windows: windows(case, name, a.runs, out, a.shared)
+    if not a.skip_windows: windows(case, name, a.runs, out, a.shared, a.sandbox)
     if not a.skip_mac: mac(case, name, a.runs, out)
     print(f"out={out}")
     sys.exit(0 if compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox)) else 1)
