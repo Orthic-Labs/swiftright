@@ -252,4 +252,20 @@ final class SystemImageDeviceInkTests: XCTestCase {
         XCTAssertEqual(fit.snapshot()?.frame.width, 80)
         XCTAssertEqual(fit.snapshot()?.frame.height, 24)
     }
+
+    /// star.fill at scale class 2x (fitted by factory/tools/symbol-metrics/fit-layout.py): predicts the
+    /// Mac half-coverage ink box for several frame sizes without a per-configuration calibration.
+    func testScaleClassModelPredictsInkBoxForAnyFrame() {
+        let star2x = SystemImageLayoutMetrics(aspect: 29.0 / 28.0, inkLeft: 0.0047, inkTop: 0.0, inkRight: 0.9775, inkBottom: 0.962,
+                                              inkBias: [0.7, 0.5, 0.29, 0.35])
+        // (view frame px, measured Mac box) at scale 2.5 for 12, 20, 32, 40, 100 and 120x60 pt frames.
+        let measured: [((Int, Int), [Int])] = [((30, 28), [0, 0, 29, 27]), ((50, 48), [0, 0, 49, 46]), ((80, 78), [1, 0, 78, 75]),
+                                               ((100, 96), [1, 0, 98, 92]), ((250, 242), [1, 0, 244, 233]), ((156, 150), [1, 0, 152, 144])]
+        for ((w, h), box) in measured {
+            let p = star2x.predictedInkBox(widthPx: w, heightPx: h)
+            XCTAssertEqual([p?.left, p?.top, p?.right, p?.bottom].compactMap { $0 }, box, "view \(w)x\(h)")
+        }
+        XCTAssertNil(star2x.predictedInkBox(widthPx: 0, heightPx: 10))
+        XCTAssertEqual(SystemImageLayoutMetrics(aspect: 1, inkLeft: 0, inkTop: 0, inkRight: 1, inkBottom: 1).inkBias, [0.5, 0.5, 0.5, 0.5])
+    }
 }

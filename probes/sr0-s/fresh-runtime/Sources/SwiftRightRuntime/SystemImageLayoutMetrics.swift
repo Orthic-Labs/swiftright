@@ -13,13 +13,35 @@ public struct SystemImageLayoutMetrics: Equatable, Sendable {
     public let inkTop: Double
     public let inkRight: Double
     public let inkBottom: Double
+    /// Pixel bias per edge (left, top, right, bottom) of the half-coverage ink box: the box edge in whole
+    /// pixels is `floor(fraction * viewPixels + bias)`. 0.5 is plain rounding; fitted values absorb how
+    /// pointed glyph tips cover pixels (see `predictedInkBox`).
+    public let inkBias: [Double]
 
-    public init(aspect: Double, inkLeft: Double, inkTop: Double, inkRight: Double, inkBottom: Double) {
+    public init(aspect: Double, inkLeft: Double, inkTop: Double, inkRight: Double, inkBottom: Double,
+                inkBias: [Double] = [0.5, 0.5, 0.5, 0.5]) {
         self.aspect = aspect
         self.inkLeft = inkLeft
         self.inkTop = inkTop
         self.inkRight = inkRight
         self.inkBottom = inkBottom
+        self.inkBias = inkBias.count == 4 ? inkBias : [0.5, 0.5, 0.5, 0.5]
+    }
+
+    /// Half-coverage ink box in whole pixels, relative to the pixel-snapped Image view frame of
+    /// `widthPx` x `heightPx`, for ANY frame size: SwiftUI's symbol box aspect depends only on the screen-scale
+    /// class (`aspect` here is that class's fit intrinsic ratio), and the ink edges scale with the view frame.
+    /// Measured against SwiftUI on 120 held-out frames this reproduces the whole box exactly for about 80% of
+    /// frames and every edge to within one pixel; the remainder depend on the sub-pixel phase of sharp tips,
+    /// which needs the outline and is therefore not modelled (docs/sr1-decisions.md item 3).
+    public func predictedInkBox(widthPx: Int, heightPx: Int) -> SystemImageDeviceInkBox? {
+        guard widthPx > 0, heightPx > 0 else { return nil }
+        let w = Double(widthPx), h = Double(heightPx)
+        let box = SystemImageDeviceInkBox(left: Int((inkLeft * w + inkBias[0]).rounded(.down)),
+                                          top: Int((inkTop * h + inkBias[1]).rounded(.down)),
+                                          right: Int((inkRight * w + inkBias[2]).rounded(.down)),
+                                          bottom: Int((inkBottom * h + inkBias[3]).rounded(.down)))
+        return box.isValid ? box : nil
     }
 
     /// Ink may overflow the layout box slightly (negative or >1 fractions), never wildly.
