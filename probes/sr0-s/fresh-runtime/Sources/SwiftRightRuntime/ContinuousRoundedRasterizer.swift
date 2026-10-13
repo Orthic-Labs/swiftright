@@ -26,7 +26,11 @@ public enum ContinuousRoundedRasterizer {
     private static let maxRGBABytes = 16 * 1024 * 1024
     private static let maxPixels = maxRGBABytes / 4
     private static let maxSampleSegmentEvaluations = 100_000_000
-    private static let subdivisions = 12
+    /// Flattening tolerance in device pixels. Fills follow the exact curve; Apple's
+    /// stroker flattens each cubic to ~0.2 px (measured against SwiftUI at 2.5x: the
+    /// fill matches the exact curve, the stroke matches a 0.2 px Wang flattening).
+    private static let fillTolerance = 0.02
+    private static let strokeTolerance = 0.2
     private static let grid = 16
     private static let edgeBand = 0.75
 
@@ -60,8 +64,9 @@ public enum ContinuousRoundedRasterizer {
         } catch ContinuousRoundedGeometryError.unsupportedRadiusExtent {
             throw ContinuousRoundedRasterError.unsupportedGeometry
         }
-        let segments = flatten(path)
-        guard segments.count == 0 || width * height <= maxSampleSegmentEvaluations / segments.count else {
+        let fillSegments = flatten(path, tolerance: fillTolerance)
+        let segments = stroke > 0 && strokeRGBA != nil ? flatten(path, tolerance: strokeTolerance) : fillSegments
+        guard fillSegments.count == 0 || width * height <= maxSampleSegmentEvaluations / (fillSegments.count + segments.count) else {
             throw ContinuousRoundedRasterError.workLimitExceeded
         }
         let bytes = width * height * 4
@@ -71,9 +76,10 @@ public enum ContinuousRoundedRasterizer {
         for y in 0..<height {
             for x in 0..<width {
                 let center = (Double(x) + 0.5, Double(y) + 0.5)
-                let dist = distance(center, segments: segments)
-                let isInside = inside(center, segments: segments)
-                let fillNear = hasFill && dist <= edgeBand
+                let dist = hasStroke ? distance(center, segments: segments) : 0
+                let fillDist = hasFill ? distance(center, segments: fillSegments) : 0
+                let isInside = hasFill && inside(center, segments: fillSegments)
+                let fillNear = hasFill && fillDist <= edgeBand
                 let strokeNear = hasStroke && abs(dist - halfStroke) <= edgeBand
                 var fillCoverage = (hasFill && isInside) ? 1.0 : 0.0
                 var strokeCoverage = (hasStroke && dist <= halfStroke) ? 1.0 : 0.0
@@ -82,7 +88,7 @@ public enum ContinuousRoundedRasterizer {
                     for j in 0..<grid {
                         for i in 0..<grid {
                             let point = (Double(x) + (Double(i) + 0.5) * step, Double(y) + (Double(j) + 0.5) * step)
-                            if fillNear && inside(point, segments: segments) { fillHits += 1 }
+                            if fillNear && inside(point, segments: fillSegments) { fillHits += 1 }
                             if strokeNear && distanceSquared(point, segments: segments) <= halfStroke * halfStroke { strokeHits += 1 }
                         }
                     }
@@ -128,7 +134,7 @@ public enum ContinuousRoundedRasterizer {
             alpha: outAlpha)
     }
 
-    private static func flatten(_ path: [ContinuousPathElement]) -> [Segment] {
+    private static func flatten(_ path: [ContinuousPathElement], tolerance: Double) -> [Segment] {
         var result: [Segment] = []; result.reserveCapacity(64)
         var current = (0.0, 0.0), start = current
         func point(_ p: LayoutPoint) -> (Double, Double) { (Double(p.x), Double(p.y)) }
@@ -139,8 +145,13 @@ public enum ContinuousRoundedRasterizer {
             case .line(let to): append(point(to))
             case .cubic(let to, let c1, let c2):
                 let p0 = current, p1 = point(c1), p2 = point(c2), p3 = point(to)
-                for step in 1...subdivisions {
-                    let t = Double(step) / Double(subdivisions), u = 1 - t
+                // Wang's bound on uniform-t subdivisions for a cubic.
+                let d0 = (p0.0 - 2 * p1.0 + p2.0, p0.1 - 2 * p1.1 + p2.1)
+                let d1 = (p1.0 - 2 * p2.0 + p3.0, p1.1 - 2 * p2.1 + p3.1)
+                let m = max((d0.0 * d0.0 + d0.1 * d0.1).squareRoot(), (d1.0 * d1.0 + d1.1 * d1.1).squareRoot())
+                let n = max(1, min(256, Int((0.75 * m / tolerance).squareRoot().rounded(.up))))
+                for step in 1...n {
+                    let t = Double(step) / Double(n), u = 1 - t
                     append((u*u*u*p0.0 + 3*u*u*t*p1.0 + 3*u*t*t*p2.0 + t*t*t*p3.0,
                             u*u*u*p0.1 + 3*u*u*t*p1.1 + 3*u*t*t*p2.1 + t*t*t*p3.1))
                 }
