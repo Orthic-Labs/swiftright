@@ -13,8 +13,11 @@ public struct BodyFontProfile: Equatable, Sendable {
         self.family = family; self.weight = weight; self.fontSizeDIP = fontSizeDIP; self.lineHeightDIP = lineHeightDIP
     }
     /// The live Windows message-font profile resolved by the runtime (DPI-aware).
+    /// The line height follows SwiftUI/CoreText (round(hhea ascent) + round(hhea descent) of the resolved face) when the face's metrics
+    /// could be read, else the GDI text-metric height; the renderer's baseline rule (round(ascent) from the line top) is the same rule.
     public init(_ native: NativeWindowsBodyFont) {
-        self.init(family: native.family, weight: native.weight, fontSizeDIP: native.fontSizeDIP, lineHeightDIP: native.lineHeightDIP)
+        self.init(family: native.family, weight: native.weight, fontSizeDIP: native.fontSizeDIP,
+                  lineHeightDIP: native.coreTextLineHeightDIP ?? native.lineHeightDIP)
     }
 }
 

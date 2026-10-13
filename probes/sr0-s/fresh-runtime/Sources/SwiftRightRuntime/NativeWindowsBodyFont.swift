@@ -18,12 +18,29 @@ public struct NativeWindowsBodyFont: Equatable, Sendable {
     public let textMetricExternalLeading: Int32
     public let dpi: UInt32
     public let sourceAPI: String
+    /// `head` unitsPerEm and `hhea` ascent / descent of the resolved face (read from the font data of the selected GDI face), nil when
+    /// the tables could not be read. These are the metrics CoreText reports, which SwiftUI `Text` uses.
+    public let unitsPerEm: UInt16?
+    public let hheaAscentUnits: Int16?
+    public let hheaDescentUnits: Int16?
+
+    /// SwiftUI/CoreText `Text` line height for this face and size: round(ascent) + round(descent) in DIP (the font's leading and the GDI
+    /// tmHeight are not part of it; measured on macOS for SF at 12/13/17/24 pt). Nil without hhea metrics.
+    public var coreTextLineHeightDIP: Float? {
+        guard let upm = unitsPerEm, upm > 0, let a = hheaAscentUnits, let d = hheaDescentUnits else { return nil }
+        let asc = fontSizeDIP * Float(a) / Float(upm), desc = fontSizeDIP * abs(Float(d)) / Float(upm)
+        return asc.rounded() + desc.rounded()
+    }
 
     public init(family: String, fontSizeDIP: Float, lineHeightDIP: Float,
                 weight: UInt32, logFontHeight: Int32,
                 textMetricHeight: Int32, textMetricAscent: Int32,
                 textMetricDescent: Int32, textMetricExternalLeading: Int32,
-                dpi: UInt32, sourceAPI: String) {
+                dpi: UInt32, sourceAPI: String,
+                unitsPerEm: UInt16? = nil, hheaAscentUnits: Int16? = nil, hheaDescentUnits: Int16? = nil) {
+        self.unitsPerEm = unitsPerEm
+        self.hheaAscentUnits = hheaAscentUnits
+        self.hheaDescentUnits = hheaDescentUnits
         self.family = family
         self.fontSizeDIP = fontSizeDIP
         self.lineHeightDIP = lineHeightDIP
@@ -108,9 +125,24 @@ public enum NativeWindowsBodyFontResolver {
             throw NativeWindowsBodyFontError.invalidMetrics
         }
         let weight = UInt32(max(0, min(Int64(logFont.lfWeight), Int64(UInt32.max))))
+        // hhea / head of the resolved face (GetFontData; tags are little-endian DWORDs of the four characters).
+        func fontTable(_ tag: String) -> [UInt8]? {
+            let t = tag.utf8.enumerated().reduce(UInt32(0)) { $0 | UInt32($1.element) << (8 * UInt32($1.offset)) }
+            let size = GetFontData(dc, t, 0, nil, 0)
+            guard size != GDI_ERROR, size >= 10, size <= 4096 else { return nil }
+            var bytes = [UInt8](repeating: 0, count: Int(size))
+            let got = bytes.withUnsafeMutableBytes { GetFontData(dc, t, 0, $0.baseAddress, size) }
+            return got == size ? bytes : nil
+        }
+        var upm: UInt16?, hheaAscent: Int16?, hheaDescent: Int16?
+        if let head = fontTable("head"), head.count >= 20, let hhea = fontTable("hhea"), hhea.count >= 10 {
+            let units = UInt16(head[18]) << 8 | UInt16(head[19])
+            let a = Int16(bitPattern: UInt16(hhea[4]) << 8 | UInt16(hhea[5])), d = Int16(bitPattern: UInt16(hhea[6]) << 8 | UInt16(hhea[7]))
+            if units > 0, a > 0, d != 0 { upm = units; hheaAscent = a; hheaDescent = d }
+        }
         let sourceAPI = "SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS)+CreateFontIndirectW+GetTextMetricsW"
         if emitLog {
-            print("FACTORY_BODY_FONT_POLICY api=\(sourceAPI) family=\(selectedFace) dpi=\(dpi) lfHeight=\(logFont.lfHeight) fontSizeDIP=\(fontSizeDIP) tmHeightPX=\(textMetrics.tmHeight) tmAscentPX=\(textMetrics.tmAscent) tmDescentPX=\(textMetrics.tmDescent) tmExternalLeadingPX=\(textMetrics.tmExternalLeading) lineHeightDIP=\(lineHeightDIP) weight=\(weight) scale=\(scale)")
+            print("FACTORY_BODY_FONT_POLICY api=\(sourceAPI) family=\(selectedFace) dpi=\(dpi) lfHeight=\(logFont.lfHeight) fontSizeDIP=\(fontSizeDIP) tmHeightPX=\(textMetrics.tmHeight) tmAscentPX=\(textMetrics.tmAscent) tmDescentPX=\(textMetrics.tmDescent) tmExternalLeadingPX=\(textMetrics.tmExternalLeading) lineHeightDIP=\(lineHeightDIP) hheaAscentUnits=\(hheaAscent.map(String.init) ?? "nil") hheaDescentUnits=\(hheaDescent.map(String.init) ?? "nil") unitsPerEm=\(upm.map(String.init) ?? "nil") weight=\(weight) scale=\(scale)")
         }
         return NativeWindowsBodyFont(family: selectedFace, fontSizeDIP: fontSizeDIP,
                                      lineHeightDIP: lineHeightDIP, weight: weight,
@@ -119,7 +151,8 @@ public enum NativeWindowsBodyFontResolver {
                                      textMetricAscent: textMetrics.tmAscent,
                                      textMetricDescent: textMetrics.tmDescent,
                                      textMetricExternalLeading: textMetrics.tmExternalLeading,
-                                     dpi: dpi, sourceAPI: sourceAPI)
+                                     dpi: dpi, sourceAPI: sourceAPI,
+                                     unitsPerEm: upm, hheaAscentUnits: hheaAscent, hheaDescentUnits: hheaDescent)
 #else
         _ = emitLog
         throw NativeWindowsBodyFontError.windowsOnly

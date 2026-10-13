@@ -22,7 +22,29 @@ final class NativeWindowsBodyFontTests: XCTestCase {
         XCTAssertEqual(policy.sourceAPI, "test-profile")
     }
 
+    func testCoreTextLineHeightIsRoundedAscentPlusRoundedDescent() {
+        func policy(_ upm: UInt16?, _ a: Int16?, _ d: Int16?, size: Float) -> NativeWindowsBodyFont {
+            NativeWindowsBodyFont(family: "Segoe UI", fontSizeDIP: size, lineHeightDIP: 16.4, weight: 400, logFontHeight: -30, textMetricHeight: 41,
+                                  textMetricAscent: 33, textMetricDescent: 8, textMetricExternalLeading: 0, dpi: 240, sourceAPI: "t",
+                                  unitsPerEm: upm, hheaAscentUnits: a, hheaDescentUnits: d)
+        }
+        // Segoe UI 12 DIP: hhea 2210 / -514 over 2048 -> 12.95 / 3.01 -> 13 + 3 = 16 (GDI tmHeight says 16.4).
+        XCTAssertEqual(policy(2048, 2210, -514, size: 12).coreTextLineHeightDIP, 16)
+        XCTAssertEqual(policy(2048, 2210, -514, size: 9).coreTextLineHeightDIP, 12)    // 9.71 -> 10, 2.26 -> 2
+        XCTAssertNil(policy(nil, nil, nil, size: 12).coreTextLineHeightDIP)
+        XCTAssertNil(policy(0, 2210, -514, size: 12).coreTextLineHeightDIP)
+    }
+
 #if os(Windows)
+    func testLiveProfileCarriesTheResolvedFacesHheaMetrics() throws {
+        let policy = try NativeWindowsBodyFontResolver.resolve(dpi: 240, emitLog: false)
+        let upm = try XCTUnwrap(policy.unitsPerEm), asc = try XCTUnwrap(policy.hheaAscentUnits), desc = try XCTUnwrap(policy.hheaDescentUnits)
+        XCTAssertGreaterThan(upm, 0); XCTAssertGreaterThan(asc, 0); XCTAssertLessThan(desc, 0)
+        let line = try XCTUnwrap(policy.coreTextLineHeightDIP)
+        XCTAssertGreaterThan(line, policy.fontSizeDIP)
+        XCTAssertLessThan(abs(line - policy.lineHeightDIP), 2)
+    }
+
     func testResolvesLiveDPI96ProfileWithConsistentUnits() throws {
         let policy = try NativeWindowsBodyFontResolver.resolve(dpi: 96, emitLog: false)
         assertLiveUnits(policy, dpi: 96)
