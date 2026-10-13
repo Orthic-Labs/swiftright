@@ -1,0 +1,135 @@
+{
+  "actualPrebuildReceipt": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/actual-prebuild-r1/observation.json",
+  "actualPrebuildReceiptHash": "sha256:94e4c67579e7652ab55c4d0f5fed519c749c17aa5f2b9b7e34523c33885f2626",
+  "actualReceiptArgv": "build --build-system native -v --package-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\" --scratch-path \"D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\" --jobs 1 -Xswiftc -j1 -Xswiftc -num-threads -Xswiftc 1 -c release -Xlinker /MANIFEST:EMBED -Xlinker \"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\" -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup",
+  "argv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "argvOrderingDefect": {
+    "actual": "native-before-package",
+    "declared": "native-before-package",
+    "defect": false,
+    "source": "retained-prebuild-builder-receipt"
+  },
+  "attempt": 1,
+  "builderPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/build-owned-final-v1.ps1",
+  "builderSha256": "sha256:a783692d06af16bb9e49c744300c29bdf95a5d663fd64f6009a5202903f9d903",
+  "canonicalCaseHash": "sha256:e4b614b95408391eb87408347ff7fe76dd556933a3d53d275c1a3bd8da578bb0",
+  "captureGate": "root-final-build-receipt-then-native-count1-before-count20",
+  "case": {
+    "hash": "sha256:e4b614b95408391eb87408347ff7fe76dd556933a3d53d275c1a3bd8da578bb0",
+    "id": "swiftui.image.baseline.recipe/case/1cb79488eb173e62"
+  },
+  "caseHash": "sha256:e4b614b95408391eb87408347ff7fe76dd556933a3d53d275c1a3bd8da578bb0",
+  "caseRawJsonHash": "sha256:e270ddee7ce8ed806d772f41c0dae676347b2a9d9df956965022d5d014b9a85f",
+  "declaredCompileRequestArgv": [
+    "build",
+    "--build-system",
+    "native",
+    "-v",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1",
+    "-c",
+    "release",
+    "-Xlinker",
+    "/MANIFEST:EMBED",
+    "-Xlinker",
+    "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
+    "-Xlinker",
+    "/SUBSYSTEM:WINDOWS",
+    "-Xlinker",
+    "/ENTRY:mainCRTStartup"
+  ],
+  "executionEligible": true,
+  "expectedHostHash": "sha256:eab5a8b507c93f21ebfafd1ab01e8fa2a0654efd578a3d43683c6bdc907b7d8b",
+  "frontendCommandScan": {
+    "bytes": 49293,
+    "frontendCommandCount": 3,
+    "frontendCommands": [
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Alignment.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Animation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Axis.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Controls.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\FocusTraversal.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Geometry.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Graph.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Keyboard.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Layout.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\LayoutEngine.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Modifiers.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\NativeWindowsBodyFont.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Preferences.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Presentation.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Selection.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Shapes.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\State.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\SystemImageRasterProvider.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\TextInput.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\TextMeasurement.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\ToggleStyles.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\Views.swift D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\api-image-body-r1\\runtime\\Sources\\SwiftRightRuntime\\WindowsSystemImageProvider.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.bWhWMM\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 6 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightRuntime -package-name runtime -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Alignment.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Animation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Axis.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Controls.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\FocusTraversal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Geometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Graph.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Keyboard.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Layout.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\LayoutEngine.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Modifiers.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\NativeWindowsBodyFont.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Preferences.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Presentation.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Selection.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Shapes.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\State.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\SystemImageRasterProvider.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextInput.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\TextMeasurement.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\ToggleStyles.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\Views.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightRuntime.build\\WindowsSystemImageProvider.swift.o",
+        "index": 1,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Bridge.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\ButtonFocusGate.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Loader.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Marshal.swift D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\SwiftRightBridge\\Types.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.QMRLRN\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name SwiftRightBridge -package-name swiftrightbridge -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -parse-as-library -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Bridge.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\ButtonFocusGate.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Loader.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Marshal.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\SwiftRightBridge.build\\Types.swift.o",
+        "index": 2,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      },
+      {
+        "command": "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\swift-frontend.exe -frontend -c D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactoryContainer.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactoryFill.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactoryProviderPolicy.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactorySHA256.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactorySystemImageProvider.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactorySystemImageRegistry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactoryTextGeometry.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\FactoryViewport.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\Witness.swift D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\Sources\\FactoryProbe\\main.swift -supplementary-output-file-map C:\\Users\\adrds\\AppData\\Local\\Temp\\TemporaryDirectory.LN0MzK\\supplementaryOutputs-1 -target x86_64-unknown-windows-msvc -disable-objc-interop -sdk C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\SDKs\\Windows.sdk -I D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\Modules -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\XCTest-6.4.0\\usr\\lib\\swift\\windows\\x86_64 -I C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Platforms\\6.4.0\\Windows.platform\\Developer\\Library\\Testing-6.4.0\\usr\\lib\\swift\\windows -module-cache-path D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\ModuleCache -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format=dwarf -dwarf-version=4 -static -swift-version 5 -O -D SWIFT_PACKAGE -D SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE -entry-point-function-name FactoryProbe_main -empty-abi-descriptor -file-compilation-dir D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\CDispatchPrivate.build\\module.modulemap -Xcc -I -Xcc D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CDispatchPrivate\\include -Xcc -fmodule-map-file=D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge\\Sources\\CSwiftRight\\module.modulemap -Xcc -D_MT -Xcc -D_DLL -Xcc -Xclang -Xcc --dependent-lib=msvcrt -Xcc -gdwarf -no-auto-bridging-header-chaining -module-name FactoryProbe -package-name package -in-process-plugin-server-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin\\SwiftInProcPluginServer.dll -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\bin -plugin-path C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Toolchains\\6.4.0+Asserts\\usr\\local\\bin -autolink-library oldnames -autolink-library msvcrt -Xcc -D_MT -Xcc -D_DLL -enable-default-cmo -num-threads 1 -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryContainer.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryFill.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryProviderPolicy.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactorySHA256.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactorySystemImageProvider.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactorySystemImageRegistry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryTextGeometry.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\FactoryViewport.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\Witness.swift.o -o D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.build\\main.swift.o",
+        "index": 3,
+        "lastNumThreads": 1,
+        "numThreadsValues": [
+          1
+        ]
+      }
+    ],
+    "lastNumThreads": 1,
+    "numThreadsOccurrenceCount": 3,
+    "numThreadsValues": [
+      1,
+      1,
+      1
+    ],
+    "path": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/actual-prebuild-r1/compile.stdout.bin",
+    "proof": "actual-stdout-stream-scan",
+    "requiredLastNumThreads": 1,
+    "sha256": "sha256:a175bcff14cff7f22158dbf69d82994ee59c629d42830ceecb773527e628b31a"
+  },
+  "host": "image-star-observation",
+  "kind": "factory-pilot-five-bounded-final-builder-request-v1",
+  "maxFrontendThreads": 1,
+  "maxParallelJobs": 1,
+  "memoryCapBytes": 1073741824,
+  "nativeActions": 0,
+  "nativeProductPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe",
+  "packagePath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package",
+  "phase": "final",
+  "planPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/plan-final-v4.json",
+  "planSha256": "5aa434c14ca77a29d33a48af97c1b0c6c69bd77aaac2eaff3dcf0e98d549e169",
+  "prebuildBuilderPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/build-owned-pilot-v1.ps1",
+  "prebuildPlanPath": "/Volumes/D/claude/swiftright/factory/pipeline/pilot-delivery-five-v1/root-execution/image-star-observation-compile-r5/plan-prebuild-v4.json",
+  "scratchPath": "D:\\Claude\\swiftright\\.factory-work\\hosts\\image-star-observation\\package\\build-bound-r1\\scratch"
+}

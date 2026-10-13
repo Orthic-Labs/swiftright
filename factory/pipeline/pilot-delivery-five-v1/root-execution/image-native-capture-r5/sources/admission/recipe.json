@@ -1,0 +1,140 @@
+{
+  "assertions": [
+    {
+      "channel": "paint",
+      "expected": {
+        "axes": {
+          "colorScheme": [
+            "light"
+          ]
+        },
+        "block": "swiftui.image",
+        "id": "swiftui.image.baseline.recipe",
+        "inputs": {
+          "colorScheme": "light",
+          "fit": "contain",
+          "foreground": "yellow",
+          "frame": {
+            "height": 32,
+            "width": 32
+          },
+          "resizable": true,
+          "symbol": "star.fill"
+        },
+        "kind": "recipe",
+        "provenance": {
+          "producer": "factory/pipeline/pilot-next-source-v1/image-baseline-v1",
+          "review": "source-candidate"
+        },
+        "version": "0.1",
+        "witness": {
+          "id": "swiftui.image.baseline.witness",
+          "source": "witness.swift",
+          "sourceHash": "sha256:4a9c0ad851d32019523ec3a8224073fa93a2ac4e032a87683633870e617f71dd"
+        }
+      },
+      "id": "swiftui.image.baseline.recipe.assertion.primary",
+      "observability": "available"
+    }
+  ],
+  "axes": [
+    {
+      "coverage": "full-product",
+      "id": "symbol",
+      "values": [
+        "star.fill"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "resizable",
+      "values": [
+        true
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "fit",
+      "values": [
+        "contain"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "foreground",
+      "values": [
+        "yellow"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "color-scheme",
+      "values": [
+        "light"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "frame-width",
+      "values": [
+        32
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "frame-height",
+      "values": [
+        32
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "provider",
+      "values": [
+        "Segoe Fluent Icons"
+      ]
+    },
+    {
+      "coverage": "full-product",
+      "id": "unicode",
+      "values": [
+        "E735"
+      ]
+    }
+  ],
+  "block": "swiftui.image",
+  "id": "swiftui.image.baseline.recipe",
+  "instrumentationTransparency": {
+    "case": "swiftui.image.baseline.recipe.instrumentation-transparency",
+    "channels": [
+      "layout",
+      "paint"
+    ]
+  },
+  "kind": "recipe",
+  "negativeCases": [],
+  "provenance": {
+    "createdAt": "2026-10-12T00:00:00Z",
+    "producer": "factory/pipeline/pilot-delivery-five-v1/finalizer",
+    "review": {
+      "at": "2026-10-12T00:00:00Z",
+      "decision": "candidate",
+      "reviewer": "root"
+    },
+    "sourceHash": "sha256:7f6914ffd582afda8d12a0d0e5b3b8d2fb36ef98d7b3425f9dc5e9aac0d39012"
+  },
+  "stimuli": [],
+  "version": "0.1",
+  "witnesses": [
+    {
+      "id": "swiftui.image.baseline.recipe.witness",
+      "resources": [
+        {
+          "hash": "sha256:0862162052b143a52e3f556e41f70fa02612b0b3f6ee83d7f7aecd835f6a018b",
+          "id": "factory-probe-witness.swift"
+        }
+      ],
+      "sourceHash": "sha256:0862162052b143a52e3f556e41f70fa02612b0b3f6ee83d7f7aecd835f6a018b"
+    }
+  ]
+}

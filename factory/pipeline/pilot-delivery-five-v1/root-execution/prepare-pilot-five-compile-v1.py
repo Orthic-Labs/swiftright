@@ -99,6 +99,12 @@ case_raw=rd(packet/'case.json');case_doc=json.loads(case_raw);canonical_case=cas
 runtime_receipt=runtime_source_receipt(a.runtime_source_receipt) if a.runtime_source_receipt else None
 runtime_commit=runtime_receipt['commit'] if runtime_receipt else '37429120e7dd4e060ecf1a58a92ae3a7f4d2b12b'
 if runtime_receipt:
+ package_manifest=rd(packet/'Package.swift').decode('utf-8')
+ expected_runtime_literal=json.dumps(runtime_receipt['receipt']['runtimePackagePath'])
+ if package_manifest.count(expected_runtime_literal)!=1:
+  raise AssertionError('Package.swift runtime dependency must match runtime source receipt exactly')
+
+if runtime_receipt:
  plan['sourceCommit']=runtime_receipt['commit'];plan['runtimeSourceTreeHash']=runtime_receipt['treeHash'];plan['runtimeSourceReceiptHash']=runtime_receipt['sourceReceiptHash'];plan['runtimePackagePath']=runtime_receipt['receipt']['runtimePackagePath']
  plan['runtimeBinding']={'commit':runtime_receipt['commit'],'treeHash':runtime_receipt['treeHash'],'sourceReceiptHash':runtime_receipt['sourceReceiptHash']}
 plan.setdefault('candidate', case_doc['block']+'.pilot')
@@ -162,6 +168,8 @@ text=text.replace(' Verify-Rows $package $plan.sourceBindings $true\n',' Verify-
 files['build-owned-pilot-v1.ps1']=text.encode();files['Sr0OwnedJobProcess.cs']=hb
 stage='D:\\Claude\\swiftright\\.factory-work\\hosts\\'+a.host
 package=stage+'\\package';scratch=package+('\\build-bounded-r2\\scratch' if a.host=='image-v2' else '\\build-bound-r1\\scratch')
+if new_host:
+ plan['compileRequest']['nativeProductPath']=scratch+'\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe'
 plan.update(kind='factory-pilot-five-compiler-plan-v1',phase='prebuild',runtimeSourceCommit=runtime_commit,helperSha256=sha(hb),case=None,expectedHostHash=None)
 plan['packageSourcePath']='factory/pipeline/pilot-delivery-five-v1/'+rel+'/package'
 plan['compileRequest'].update(packagePath=package,scratchPath=scratch,maxParallelJobs=1,maxFrontendThreads=1,memoryCapBytes=1073741824)
@@ -199,6 +207,30 @@ $Plan=Join-Path $Stage 'package\plan-prebuild-v4.json';$Builder=Join-Path $Stage
 & $Builder -PlanPath $Plan -PlanSha256 '__PLANHASH__' -Phase prebuild -Attempt 1
 Get-Content -LiteralPath (Join-Path $Stage 'prebuild-r1\observation.json') -Raw
 '''
+if 'package/FactorySystemImageAssets.json' in files:
+ mapping_deploy=r'''$MapSource=Join-Path $Stage 'package\FactorySystemImageAssets.json'
+$MapRows=@($M.files|Where-Object{$_.path -ceq 'package/FactorySystemImageAssets.json'})
+if($MapRows.Count -ne 1){throw 'image mapping manifest row missing or duplicated'}
+$MapRow=$MapRows[0]
+$MapFile=Get-Item -LiteralPath $MapSource -Force
+if($MapFile.PSIsContainer -or ($MapFile.Attributes -band [IO.FileAttributes]::ReparsePoint) -or [int64]$MapFile.Length -ne [int64]$MapRow.bytes){throw 'image mapping source bytes drift'}
+if((Get-FileHash -LiteralPath $MapSource -Algorithm SHA256).Hash.ToLowerInvariant() -cne ([string]$MapRow.sha256).ToLowerInvariant()){throw 'image mapping source hash drift'}
+$ReceiptPath=Join-Path $Stage 'prebuild-r1\observation.json'
+$Compiled=Get-Content -LiteralPath $ReceiptPath -Raw|ConvertFrom-Json
+$ExePath=[string]$Compiled.exePath
+if([string]::IsNullOrWhiteSpace($ExePath)){throw 'prebuild receipt has no exePath'}
+$Exe=Get-Item -LiteralPath $ExePath -Force
+if($Exe.PSIsContainer -or ($Exe.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'prebuild exePath is not a regular file'}
+$Destination=Join-Path $Exe.DirectoryName 'FactorySystemImageAssets.json'
+if(Test-Path -LiteralPath $Destination){throw 'image mapping destination already exists'}
+Copy-Item -LiteralPath $MapSource -Destination $Destination
+$DestFile=Get-Item -LiteralPath $Destination -Force
+if($DestFile.PSIsContainer -or ($DestFile.Attributes -band [IO.FileAttributes]::ReparsePoint) -or [int64]$DestFile.Length -ne [int64]$MapRow.bytes){throw 'image mapping destination bytes drift'}
+if((Get-FileHash -LiteralPath $Destination -Algorithm SHA256).Hash.ToLowerInvariant() -cne ([string]$MapRow.sha256).ToLowerInvariant()){throw 'image mapping destination hash drift'}
+'''
+ marker="Get-Content -LiteralPath (Join-Path $Stage 'prebuild-r1\\observation.json') -Raw"
+ if marker not in script: raise AssertionError('prebuild receipt marker missing')
+ script=script.replace(marker,mapping_deploy+'\n'+marker,1)
 for k,v in {'STAGE':stage,'ZIP':z.name,'ZIPHASH':sha(rd(z)),'PLANHASH':sha(files['package/plan-prebuild-v4.json'])}.items():script=script.replace('__'+k+'__',v)
 (out/'stage-build-r1.ps1').write_text(script)
 (out/'preparation.json').write_bytes(jd({'host':a.host,'packageFiles':len(manifest['files']),'packetPlanHash':sha(raw),'planSha256':sha(files['package/plan-prebuild-v4.json']),'builderHash':sha(files['build-owned-pilot-v1.ps1']),'helperHash':sha(hb),'memoryCapBytes':1073741824,'nativeActions':0,'qualification':'pending-actual-compile'}))

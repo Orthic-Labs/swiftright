@@ -1,5 +1,5 @@
 """Prepare runnable host-bound Count1 capture stage from measured Rectangle lifecycle graph."""
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import argparse, base64, hashlib, json, zipfile, re
 
 REPO=Path('/Volumes/D/claude/swiftright')
@@ -529,6 +529,15 @@ patch_guard(donor_name('overlay/capture-rectangle-single-v3.ps1'), "$compiled.ki
 capture_rel=donor_name('overlay/capture-rectangle-single-v3.ps1')
 capture_text=files[capture_rel].decode()
 if capture_text.count('$plan.runtimeVerifierHash')!=2:raise SystemExit('runtime verifier guard anchors drift')
+runtime_root=winpath(req(plan,'runtimePackagePath'))
+runtime_parts=PureWindowsPath(runtime_root)
+runtime_parts.relative_to(PureWindowsPath(r'D:\Claude\swiftright\.factory-work\runtime-stage'))
+if '..' in runtime_parts.parts or "'" in runtime_root:raise SystemExit('unsafe runtime package path')
+verifier_rel='producer/support/verify-runtime-source.ps1'
+verifier_text=files[verifier_rel].decode()
+old_runtime_root=r'D:\Claude\swiftright\.factory-work\runtime-stage\runtime'
+if verifier_text.count(old_runtime_root)!=1:raise SystemExit('runtime verifier path anchor drift')
+files[verifier_rel]=verifier_text.replace(old_runtime_root,runtime_root,1).encode()
 capture_text=capture_text.replace('$plan.runtimeVerifierHash', "'"+sha(files['producer/support/verify-runtime-source.ps1'])+"'")
 # A legitimate early host exit can leave MainWindowHandle null. Preserve its
 # original exit code rather than failing window inventory on a null method.
