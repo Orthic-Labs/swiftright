@@ -83,8 +83,8 @@ mk swiftui.disabled/button-disabled-v1 Witness_button_disabled "struct Witness_b
 mk swiftui.text/foreground-colour-v1 Witness_text_colour "struct Witness_text_colour: View {
     var body: some View {
         VStack(spacing: 8) {
-            Text(\"Red\").foregroundColor(Color.red)
-            Text(\"Grey\").foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5))
+            Text(\"Red\").foregroundStyle(Color.red)
+            Text(\"Grey\").foregroundStyle(Color(red: 0.5, green: 0.5, blue: 0.5))
             Text(\"Plain\")
         }
         .frame(width: 160, height: 120)
