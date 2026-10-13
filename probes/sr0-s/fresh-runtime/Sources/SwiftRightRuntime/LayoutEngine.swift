@@ -174,7 +174,9 @@ extension Graph {
             )
             let content = measureGroup(node, contentProposal)
             return LayoutSize(width: width ?? content.width, height: height ?? content.height)
-        case .user, .button, .modifier, .toggle, .menu:
+        case .toggle:
+            return measureToggle(node, proposal)
+        case .user, .button, .modifier, .menu:
             return measureGroup(node, proposal)
         }
     }
@@ -259,8 +261,46 @@ extension Graph {
                 height: configuration.axes.contains(.vertical) ? content.height : rect.height
             )
             placeGroup(node, in: contentRect, proposal: contentProposal)
-        case .user, .button, .modifier, .toggle, .menu:
+        case .toggle:
+            placeToggle(node, in: rect, proposal: proposal)
+        case .user, .button, .modifier, .menu:
             placeGroup(node, in: rect, proposal: proposal)
+        }
+    }
+
+    // MARK: Toggle
+
+    /// A Toggle with drawn artwork (`ToggleMetrics`) is its label and the control side by side: the label leads, the control trails
+    /// (mirrored under right-to-left), both centred vertically. Without a label (`labelsHidden`) it is the control alone. A style without
+    /// drawn artwork lays out as its label alone, as before.
+    private func toggleArtwork(_ node: Node) -> ToggleArtwork? {
+        ToggleMetrics.artwork(forStyle: node.environment.toggleStyleMetadata)
+    }
+
+    private func toggleLabelProposal(_ artwork: ToggleArtwork, _ proposal: ProposedViewSize) -> ProposedViewSize {
+        ProposedViewSize(width: proposal.width.map { max(0, $0 - artwork.controlSize.width - artwork.labelSpacing) }, height: proposal.height)
+    }
+
+    private func measureToggle(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
+        guard let artwork = toggleArtwork(node) else { return measureGroup(node, proposal) }
+        let control = artwork.controlSize
+        guard !childNodes(node).isEmpty else { return control }
+        let label = measureGroup(node, toggleLabelProposal(artwork, proposal))
+        return LayoutSize(width: label.width + artwork.labelSpacing + control.width, height: max(label.height, control.height))
+    }
+
+    private func placeToggle(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+        guard let artwork = toggleArtwork(node) else { return placeGroup(node, in: rect, proposal: proposal) }
+        let children = childNodes(node)
+        guard !children.isEmpty else { return }
+        let labelProposal = toggleLabelProposal(artwork, proposal)
+        let label = measureGroup(node, labelProposal)
+        let labelRect = LayoutRect(x: mirrors(node) ? rect.maxX - label.width : rect.minX,
+                                   y: rect.minY + (rect.height - label.height) / 2, width: label.width, height: label.height)
+        if children.count == 1 {
+            place(children[0], in: labelRect, proposal: labelProposal)
+        } else {
+            placeStack(children, groupStackSpec, in: labelRect, proposal: labelProposal, mirrored: mirrors(node))
         }
     }
 

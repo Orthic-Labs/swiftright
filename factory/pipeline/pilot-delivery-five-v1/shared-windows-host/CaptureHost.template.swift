@@ -133,7 +133,8 @@ struct HostPlacement {
     func event(_ event: BridgeEvent) {
         guard !windowClosed else { return }
         if event.kind == .axAction, event.action == 1, let id = runtimeIDs[event.node] {
-            _ = graph?.tapButton(id)
+            // the default (invoke) action of a Button runs it, of a Toggle flips it
+            if !(graph?.tapButton(id) ?? false) { _ = graph?.activateToggle(id) }
             graph?.flush()
         }
     }

@@ -143,6 +143,17 @@ public final class ResolvedNodePainter {
                 return NodeEmission(primitives: [result.primitive], semantic: nil, flags: [], structural: false)
             }
 
+        case "Toggle":
+            let plan = try TogglePainter.plan(node, bounds: bounds, scale: scale)
+            let handle = try images.registerImage(width: UInt32(plan.image.width), height: UInt32(plan.image.height), rgba: plan.image.rgba, stride: 0)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            return NodeEmission(primitives: [.image(handle, plan.placement)],
+                                semantic: SemanticNode(role: plan.role, label: node.accessibility.label ?? "", value: node.accessibility.value ?? "",
+                                                       actions: plan.isEnabled ? [.invoke] : [], identifier: node.id, toggled: plan.toggled,
+                                                       disabled: !plan.isEnabled),
+                                flags: [.hitTarget], structural: false)
+
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
             return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity))], semantic: nil, flags: [], structural: false)
