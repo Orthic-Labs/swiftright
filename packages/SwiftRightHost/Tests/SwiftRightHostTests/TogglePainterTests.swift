@@ -18,6 +18,16 @@ private struct Witness_DisabledSwitchView: View {
     var body: some View { Toggle("Enabled", isOn: $on).labelsHidden().toggleStyle(.switch).disabled(true) }
 }
 
+private struct Witness_LabelledCheckboxView: View {
+    @State private var on = true
+    var body: some View { Toggle("Enabled", isOn: $on).toggleStyle(.checkbox) }
+}
+
+/// Styles the runtime resolves to no artwork are rejected by the painter, not drawn as something else.
+enum HostPaintErrorProbe {
+    static func unsupported() throws { throw HostPaintError.unsupportedToggleStyle("Fancy") }
+}
+
 private struct Witness_UnstyledToggleView: View {
     @State private var on = true
     var body: some View { Toggle("Enabled", isOn: $on).labelsHidden() }
@@ -91,8 +101,28 @@ final class TogglePainterTests: XCTestCase {
         XCTAssertEqual(label.1.primitives.count, 1)
     }
 
-    func testToggleWithoutSwitchStyleFailsVisibly() {
-        XCTAssertThrowsError(try paint(Witness_UnstyledToggleView())) { XCTAssertTrue(String(describing: $0).contains("no artwork yet"), "\($0)") }
+    func testDefaultToggleIsACheckboxAtItsFrame() throws {
+        let r = try paint(Witness_UnstyledToggleView())
+        let toggle = try XCTUnwrap(r.nodes.first { $0.0.kind == "Toggle" })
+        guard case .image(let handle, let rect, _) = try XCTUnwrap(toggle.1.primitives.first) else { return XCTFail("a checkbox is an image primitive") }
+        let entry = try XCTUnwrap(r.images.registered[handle.raw])
+        XCTAssertEqual(entry.width, 40); XCTAssertEqual(entry.height, 40)
+        XCTAssertEqual(rect.w, 40 - 2.0 / 64, accuracy: 1e-5)
+        XCTAssertEqual(toggle.1.semantic?.role, .checkbox)
+        XCTAssertEqual(toggle.1.semantic?.toggled, .on)
+    }
+
+    func testCheckboxLeadsItsLabel() throws {
+        let r = try paint(Witness_LabelledCheckboxView())
+        let toggle = try XCTUnwrap(r.nodes.first { $0.0.kind == "Toggle" })
+        let label = try XCTUnwrap(r.nodes.first { $0.0.kind == "Text" })
+        guard case .image(_, let rect, _) = try XCTUnwrap(toggle.1.primitives.first) else { return XCTFail() }
+        XCTAssertEqual(rect.x, Float(toggle.0.pixelFrame.x) + 1.0 / 64, accuracy: 1e-5)
+        XCTAssertLessThan(rect.x + rect.w, Float(label.0.pixelFrame.x))
+    }
+
+    func testUnknownToggleStyleFailsVisibly() {
+        XCTAssertThrowsError(try HostPaintErrorProbe.unsupported()) { XCTAssertTrue(String(describing: $0).contains("no artwork yet"), "\($0)") }
     }
 
     func testRepaintReleasesTheReplacedImage() throws {

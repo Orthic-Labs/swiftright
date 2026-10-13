@@ -22,26 +22,34 @@ public enum TogglePainter {
         guard node.opacity == 1, node.style.foreground == nil else { throw HostPaintError.unsupportedTogglePaintStyle }
         let width = (Float(artwork.controlSize.width) * scale).rounded(), height = (Float(artwork.controlSize.height) * scale).rounded()
         guard width > 0, height > 0 else { throw HostPaintError.unsupportedToggleStyle("empty control") }
-        // The control sits on the side away from the label (trailing in a left-to-right layout); alone it is the whole frame, centred vertically.
+        // The control sits on the side away from the label (the runtime lays out which side: trailing for a switch, leading for a checkbox, flipped
+        // under right-to-left); alone it is the whole frame, centred vertically.
         let x: Float
+        var offsetY: Float = 0
         if let label = node.children.first {
+            offsetY = Float(artwork.labelledControlOffsetY) * scale
             let labelMid = Float(label.pixelFrame.x) + Float(label.pixelFrame.width) / 2
             let nodeMid = Float(node.pixelFrame.x) + Float(node.pixelFrame.width) / 2
             x = labelMid < nodeMid ? bounds.x + bounds.w - width : bounds.x
         } else {
             x = bounds.x
         }
-        let y = bounds.y + ((bounds.h - height) / 2).rounded()
+        let y = bounds.y + ((bounds.h - height) / 2 + offsetY).rounded()
         let isOn = node.accessibility.value == "1"
         let isEnabled = node.accessibility.isEnabled
         let image: ContinuousRGBAImage
+        let role: NodeRole
         switch artwork {
         case .switchControl:
             image = SwitchArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled)
+            role = .switchControl
+        case .checkbox:
+            image = CheckboxArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled)
+            role = .checkbox
         }
         return TogglePaintPlan(
             image: image,
             placement: Rect(x: x + imageGuardBand, y: y + imageGuardBand, w: width - 2 * imageGuardBand, h: height - 2 * imageGuardBand),
-            role: .switchControl, toggled: isOn ? .on : .off, isEnabled: isEnabled)
+            role: role, toggled: isOn ? .on : .off, isEnabled: isEnabled)
     }
 }

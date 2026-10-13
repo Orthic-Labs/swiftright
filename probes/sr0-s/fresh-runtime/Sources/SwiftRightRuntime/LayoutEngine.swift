@@ -270,8 +270,8 @@ extension Graph {
 
     // MARK: Toggle
 
-    /// A Toggle with drawn artwork (`ToggleMetrics`) is its label and the control side by side: the label leads, the control trails
-    /// (mirrored under right-to-left), both centred vertically. Without a label (`labelsHidden`) it is the control alone. A style without
+    /// A Toggle with drawn artwork (`ToggleMetrics`) is its label and the control side by side (the switch trails its label, the checkbox
+    /// leads it; mirrored under right-to-left), both centred vertically. Without a label (`labelsHidden`) it is the control alone. A style without
     /// drawn artwork lays out as its label alone, as before.
     private func toggleArtwork(_ node: Node) -> ToggleArtwork? {
         ToggleMetrics.artwork(forStyle: node.environment.toggleStyleMetadata)
@@ -295,7 +295,9 @@ extension Graph {
         guard !children.isEmpty else { return }
         let labelProposal = toggleLabelProposal(artwork, proposal)
         let label = measureGroup(node, labelProposal)
-        let labelRect = LayoutRect(x: mirrors(node) ? rect.maxX - label.width : rect.minX,
+        // the label's side: leading for the switch, trailing for the checkbox; flipped under right-to-left
+        let labelOnLeft = artwork.labelLeads != mirrors(node)
+        let labelRect = LayoutRect(x: labelOnLeft ? rect.minX : rect.maxX - label.width,
                                    y: rect.minY + (rect.height - label.height) / 2, width: label.width, height: label.height)
         if children.count == 1 {
             place(children[0], in: labelRect, proposal: labelProposal)

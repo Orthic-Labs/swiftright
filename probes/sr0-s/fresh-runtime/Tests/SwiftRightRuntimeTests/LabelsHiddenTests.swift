@@ -43,7 +43,8 @@ final class LabelsHiddenTests: XCTestCase {
         XCTAssertEqual(toggle?.labelsHidden, true)
         XCTAssertEqual(toggle?.accessibility.label, "Wi-Fi")
         XCTAssertEqual(toggle?.children, [])
-        XCTAssertEqual(toggle?.frame.size, .zero)
+        // the platform default style is a 16 x 16 pt checkbox: with its label hidden the Toggle is the control alone (ToggleMetrics)
+        XCTAssertEqual(toggle?.frame.size, LayoutSize(width: 16, height: 16))
         XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 0)
     }
 
@@ -63,7 +64,8 @@ final class LabelsHiddenTests: XCTestCase {
         let graph = Graph(RootEnvironmentToggleScreen(model: LabelsModel()), measurer: measurer)
         graph.flush()
         let initial = graph.snapshot()?.children.first
-        XCTAssertEqual(initial?.frame.width, 40)
+        // label (5 characters at 8 pt) + 4.8 pt + the 16 pt checkbox = 60.8 pt, snapped to the pixel grid at scale 1
+        XCTAssertEqual(initial?.frame.width, 61)
         XCTAssertEqual(initial?.frame.height, 16)
 
         graph.setRootEnvironment { $0.labelsHidden = true }
@@ -71,7 +73,7 @@ final class LabelsHiddenTests: XCTestCase {
         let hidden = graph.snapshot()?.children.first
         XCTAssertEqual(hidden?.labelsHidden, true)
         XCTAssertEqual(hidden?.children, [])
-        XCTAssertEqual(hidden?.frame.size, .zero)
+        XCTAssertEqual(hidden?.frame.size, LayoutSize(width: 16, height: 16))
         XCTAssertEqual(hidden?.instance, initial?.instance)
 
         graph.setRootEnvironment { $0.labelsHidden = false }
@@ -79,7 +81,7 @@ final class LabelsHiddenTests: XCTestCase {
         let visible = graph.snapshot()?.children.first
         XCTAssertNil(visible?.labelsHidden)
         XCTAssertEqual(visible?.children.first?.text, "Wi-Fi")
-        XCTAssertEqual(visible?.frame.width, 40)
+        XCTAssertEqual(visible?.frame.width, 61)
         XCTAssertEqual(visible?.frame.height, 16)
         XCTAssertEqual(visible?.instance, initial?.instance)
         XCTAssertEqual(measurer.callCount(for: "Wi-Fi"), 1, "cached text metrics remain reusable across visibility changes")

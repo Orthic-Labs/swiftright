@@ -1,0 +1,9 @@
+{
+ "controlGate": {
+  "helper": "factory/tools/pair_control_report.py",
+  "minControlHeightPx": 50,
+  "labelCentreTolerancePx": 3,
+  "edgeAA": 32,
+  "note": "The label text differs by docs/sr1-decisions.md decision 2 (Segoe UI vs SF), so the switch sits at a different x. The gate compares the switch itself (size and y exact, pixels exact with edge-aa<=32 after translating by dx) and the label's vertical position; dx and the label pixels are reported."
+ }
+}

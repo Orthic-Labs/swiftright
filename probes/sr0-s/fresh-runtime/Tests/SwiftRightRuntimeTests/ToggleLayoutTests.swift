@@ -26,6 +26,11 @@ private struct SwitchInRow: View {
     }
 }
 
+private struct LabelledCheckbox: View {
+    @State private var on = true
+    var body: some View { Toggle("Enabled", isOn: $on).toggleStyle(.checkbox) }
+}
+
 private struct BareToggle: View {
     @State private var on = true
     var body: some View { Toggle("Enabled", isOn: $on).labelsHidden() }
@@ -84,16 +89,36 @@ final class ToggleLayoutTests: XCTestCase {
         XCTAssertFalse(node.accessibility.isEnabled)
     }
 
-    func testToggleWithoutStyleKeepsItsPreviousLayout() throws {
+    func testToggleWithoutStyleIsTheDefaultCheckbox() throws {
         let node = try XCTUnwrap(toggle(BareToggle()))
-        XCTAssertEqual(node.frame.width, 0)
-        XCTAssertEqual(node.frame.height, 0)
+        XCTAssertEqual(node.frame.width, 16)
+        XCTAssertEqual(node.frame.height, 16)
     }
 
-    func testMetricsResolveOnlyTheSwitchStyle() {
+    func testCheckboxLeadsItsLabelWithFourPointEightBetween() throws {
+        let node = try XCTUnwrap(toggle(LabelledCheckbox(), scale: 2.5))
+        let label = try XCTUnwrap(everyNode(node).first { $0.kind == "Text" })
+        XCTAssertEqual(label.frame.minX, 16 + 4.8, accuracy: 1e-9)
+        XCTAssertEqual(node.frame.width, 16 + 4.8 + label.frame.width, accuracy: 1e-9)
+        XCTAssertEqual(node.frame.height, 16)
+        XCTAssertEqual(node.toggleStyle, "CheckboxToggleStyle")
+    }
+
+    func testCheckboxLabelMovesToTheLeftUnderRightToLeft() throws {
+        let node = try XCTUnwrap(toggle(LabelledCheckbox().environment(\.layoutDirection, .rightToLeft)))
+        let label = try XCTUnwrap(everyNode(node).first { $0.kind == "Text" })
+        XCTAssertEqual(label.frame.minX, node.frame.minX, accuracy: 1e-9)
+    }
+
+    func testMetricsResolveSwitchAndCheckboxStylesOnly() {
         XCTAssertEqual(ToggleMetrics.artwork(forStyle: "SwitchToggleStyle"), .switchControl)
-        XCTAssertNil(ToggleMetrics.artwork(forStyle: nil))
+        for style in [nil, "DefaultToggleStyle", "CheckboxToggleStyle"] { XCTAssertEqual(ToggleMetrics.artwork(forStyle: style), .checkbox) }
+        XCTAssertNil(ToggleMetrics.artwork(forStyle: "SomeOtherToggleStyle"))
         XCTAssertEqual(ToggleArtwork.switchControl.controlSize, LayoutSize(width: 54, height: 24))
         XCTAssertEqual(ToggleArtwork.switchControl.labelSpacing, 8)
+        XCTAssertEqual(ToggleArtwork.checkbox.controlSize, LayoutSize(width: 16, height: 16))
+        XCTAssertEqual(ToggleArtwork.checkbox.labelSpacing, 4.8)
+        XCTAssertEqual(ToggleArtwork.checkbox.labelledControlOffsetY, 0.8)
+        XCTAssertEqual(ToggleArtwork.switchControl.labelledControlOffsetY, 0)
     }
 }

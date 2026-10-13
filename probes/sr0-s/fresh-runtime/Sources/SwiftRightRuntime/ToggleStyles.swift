@@ -13,10 +13,19 @@ public struct SwitchToggleStyle: ToggleStyle {
     public init() {}
 }
 
+/// A checkbox-style Toggle marker (macOS): the platform default. This runtime records selection metadata; the host draws it.
+public struct CheckboxToggleStyle: ToggleStyle {
+    public init() {}
+}
+
 public extension ToggleStyle where Self == DefaultToggleStyle {
     static var automatic: DefaultToggleStyle { DefaultToggleStyle() }
 }
 
 public extension ToggleStyle where Self == SwitchToggleStyle {
     static var `switch`: SwitchToggleStyle { SwitchToggleStyle() }
+}
+
+public extension ToggleStyle where Self == CheckboxToggleStyle {
+    static var checkbox: CheckboxToggleStyle { CheckboxToggleStyle() }
 }

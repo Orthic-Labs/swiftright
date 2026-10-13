@@ -229,12 +229,18 @@ def semantic_gate(case, out):
     if not pj.is_file():
         return None
     cfg = json.loads(pj.read_text())
-    tool = "pair_image_report.py" if "imageFrame" in cfg else "pair_text_report.py" if "textGate" in cfg else None
+    tool = "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
     if not tool:
         return None
     r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / tool), str(case), str(out)], capture_output=True, text=True)
     print(r.stdout + r.stderr, end="")
     return r.returncode == 0
+
+
+def semantic_decides(case):
+    """Cases whose pixels differ by design inside regions the exclusions cannot name (Image(systemName:) glyphs; a labelled control whose x follows the label's width): the semantic gate alone decides."""
+    cfg = json.loads((case / "pair.json").read_text())
+    return "imageFrame" in cfg or "controlGate" in cfg
 
 
 def main():
@@ -252,7 +258,7 @@ def main():
         out = Path(a.recompare).resolve(); n = len(list((out / "mac").glob("run-*.png")))
         ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox))
         sem = semantic_gate(case, out)
-        sys.exit(0 if (ok if sem is None else sem and (ok or "imageFrame" in json.loads((case / "pair.json").read_text()))) else 1)
+        sys.exit(0 if (ok if sem is None else sem and (ok or semantic_decides(case))) else 1)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
     if not a.skip_windows:
@@ -266,7 +272,7 @@ def main():
     if sem is None:
         sys.exit(0 if ok else 1)
     # An Image(systemName:) case differs from the Mac inside the glyph region by design (substitute provider): its semantic gate decides.
-    image = "imageFrame" in json.loads((case / "pair.json").read_text())
+    image = semantic_decides(case)
     sys.exit(0 if sem and (ok or image) else 1)
 
 
