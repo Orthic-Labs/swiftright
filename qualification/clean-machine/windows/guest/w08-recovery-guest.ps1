@@ -8,6 +8,9 @@
 #   appinstaller-same   Add-AppxPackage -AppInstallerFile <feed that declares the installed 0.1.0.0>: no newer version available
 #   settings-repair-same  as settings-repair, with the feed switched back to the 0.1.0.0 .appinstaller first (no newer version available to the Repair)
 #   settings-repair-path  as settings-repair, but the old version is installed with Add-AppxPackage -Path (no App Installer association) and no feed is served (the W08 offline scenario)
+#   tier1-launch        W08 Tier 1: NO action of ours. Launch ONLY via explorer shell:AppsFolder and let App Installer (OnLaunch, ShowPrompt + UpdateBlocksActivation) finish or repair the update; feed serves 0.1.1.0.
+#                       Any App Installer prompt is answered through UIA (its Update button) and recorded. Pass = within 60 s package Ok at 0.1.1.0, window appears, rows.json unchanged.
+#   tier1-launch-old    as tier1-launch, with the feed switched back to the 0.1.0.0 .appinstaller (no newer version published)
 #   settings-probe      development aid: no induction; dumps the Settings UI tree step by step (receipts settings-*.txt/jpg)
 # Flow: trust the signer, serve the feed (as W12), install 0.1.0.0 through the feed, write a data marker through the UI, publish the 0.1.1.0 feed,
 # induce NeedsRemediation by cancelling PackageManager.AddPackageAsync(0.1.1.0 msix) at staging+delay (retry delays until Status shows it), confirm the app
@@ -535,6 +538,8 @@ try {
         return
     }
     $delays = @(240, 200, 280, 240, 220, 260, 230, 250, 210, 270, 245, 235, 225, 255, 215, 265, 205, 275)
+    $delayFile = Join-Path $HarnessDir 'delays.txt'   # optional: fixed cancel offset(s), one integer ms per line
+    if (Test-Path -LiteralPath $delayFile) { $delays = @((Get-Content -LiteralPath $delayFile) | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ } | ForEach-Object { [int]$_ }); L ('cancel offsets from delays.txt: ' + ($delays -join ',')) }
     $success = $false
     for ($n = 1; $n -le $MaxAttempts; $n++) {
         $d = $delays[($n - 1) % $delays.Count]
@@ -624,6 +629,47 @@ try {
                 $rec.result = 'Repair clicked; package now ' + (Get-PkgText)
             }
             Stop-Settings
+        }
+        { $_ -in 'tier1-launch', 'tier1-launch-old' } {
+            if ($Method -eq 'tier1-launch-old') { Set-Feed 0; $rec.feed_switched_back_to_0_1_0_0 = $true }
+            $rec.command = 'launch ONLY via explorer shell:AppsFolder\' + $script:Pfn + '!' + $script:AppId + '; no Add-AppxPackage, no Repair, no Reset; feed serves ' + $(if ($Method -eq 'tier1-launch-old') { '0.1.0.0 only' } else { '0.1.1.0' })
+            L ('recovery: ' + $rec.command)
+            $rec.timeline = @(); $rec.prompt_actions = @(); $rec.launch = [ordered]@{ launched = $false }
+            $t0 = Get-Date; $swL = [Diagnostics.Stopwatch]::StartNew(); $lastT = ''; $okAt = $null; $winAt = $null; $clicked = @{}
+            Start-Process -FilePath 'explorer.exe' -ArgumentList ('shell:AppsFolder\' + $script:Pfn + '!' + $script:AppId) | Out-Null
+            $limit = 150
+            while ($swL.Elapsed.TotalSeconds -lt $limit) {
+                $t = Get-PkgText; if ($t -ne $lastT) { $rec.timeline += ('+' + [math]::Round($swL.Elapsed.TotalSeconds, 1) + 's ' + $t); $lastT = $t }
+                if (-not $okAt -and $t -match '^0\.1\.1\.0:Ok$' -and $Method -eq 'tier1-launch') { $okAt = [math]::Round($swL.Elapsed.TotalSeconds, 1) }
+                if (-not $okAt -and $t -match '^0\.1\.0\.0:Ok$' -and $Method -eq 'tier1-launch-old') { $okAt = [math]::Round($swL.Elapsed.TotalSeconds, 1) }
+                $procs = @(Get-AppProcs | Where-Object { $_.MainWindowHandle -ne 0 })
+                if ($procs.Count -gt 0 -and (Find-AppWindow)) { if (-not $winAt) { $winAt = [math]::Round($swL.Elapsed.TotalSeconds, 1) }; if ($okAt) { break } }
+                # App Installer prompt (ShowPrompt=true): answer it through UIA and record exactly what it showed
+                try {
+                    $AE = [System.Windows.Automation.AutomationElement]
+                    foreach ($w in @($AE::RootElement.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition))) {
+                        $cn = [string]$w.Current.ClassName; $nm = [string]$w.Current.Name
+                        if ($cn -in @('Shell_TrayWnd', 'Progman', 'Shell_SecondaryTrayWnd', 'WorkerW', 'Zed::Window')) { continue }
+                        if ($nm -notmatch 'App Installer|SliceApp|Update' -and [string]$w.Current.ProcessId -eq '') { continue }
+                        $btns = @(Find-ByName -Root $w -Name 'Update' -ControlType ([System.Windows.Automation.ControlType]::Button))
+                        if ($btns.Count -eq 0) { $btns = @(Find-ByName -Root $w -Name 'Update now' -ControlType ([System.Windows.Automation.ControlType]::Button)) }
+                        if ($btns.Count -gt 0 -and -not $clicked.ContainsKey($w.Current.ProcessId)) {
+                            $rec.prompt_actions += ('+' + [math]::Round($swL.Elapsed.TotalSeconds, 1) + 's window class=' + $cn + ' name=[' + $nm + '] dump: ' + ((Dump-Window $w 30) -join ' | '))
+                            Save-Shot ('tier1-prompt-' + [int]$swL.Elapsed.TotalSeconds)
+                            $how = Invoke-Element $btns[0]; $clicked[$w.Current.ProcessId] = $true
+                            $rec.prompt_actions += ('+' + [math]::Round($swL.Elapsed.TotalSeconds, 1) + 's clicked Update via ' + $how)
+                        }
+                    }
+                } catch { $rec.prompt_actions += ('prompt scan error: ' + $_.Exception.Message) }
+                Beat; Start-Sleep -Milliseconds 500
+            }
+            $rec.time_to_package_ok_s = $okAt; $rec.time_to_window_s = $winAt
+            $rec.package_final = Get-PkgText
+            $rec.update_prompt_shown = ($rec.prompt_actions.Count -gt 0)
+            $rec.pass_within_60s = [bool]($okAt -and $okAt -le 60 -and $winAt -and $winAt -le 60)
+            if (-not $okAt -or -not $winAt) { $rec.top_windows_at_end = @(Get-TopWindows | Where-Object { $_ -notmatch 'class=(Shell_TrayWnd|Progman|Shell_SecondaryTrayWnd|WorkerW) ' }); Save-Shot 'tier1-end' }
+            $rec.result = 'package ok at ' + $okAt + ' s, window at ' + $winAt + ' s, final ' + (Get-PkgText) + ', prompt shown ' + $rec.update_prompt_shown
+            Stop-App | Out-Null
         }
         'platform-register' {
             $rec.command = 'no action of ours: hold ' + $HoldMinutes + ' min (if > 0), then a launch attempt (explorer shell:AppsFolder), then watch the AppX deployment log for the platform RegisterByPackageFullName operation'

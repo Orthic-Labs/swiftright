@@ -180,11 +180,15 @@ export default {
           // TODO(updater): placeholder R2 public host. Replace with the RightApps R2 public URL for SliceApp before
           // any publication. Both URLs must be https (validator). Do not publish this placeholder.
           uri: "https://TODO-R2-PUBLIC-HOST.invalid/sliceapp/windows/SliceApp.appinstaller",
-          msixUri: `https://TODO-R2-PUBLIC-HOST.invalid/sliceapp/windows/SliceApp_${MSIX_VERSION}_x64.msix`,
+          // Versioned install source (W08): Windows repairs an interrupted update by re-adding from this URI, so each
+          // release keeps its own object (installer.artifacts[].versionedKey below uploads it; prune keeps current + previous).
+          msixUri: `https://TODO-R2-PUBLIC-HOST.invalid/sliceapp/installers/windows/versions/${MSIX_VERSION}/SliceApp_${MSIX_VERSION}_x64.msix`,
           out: path.join("dist", "win", "SliceApp.appinstaller"),
           hoursBetweenUpdateChecks: 8,
-          showPrompt: false,
-          updateBlocksActivation: false,
+          // W08: a prompted, activation-blocking update means the app never launches while an interrupted update
+          // is pending; App Installer completes or repairs it first. Adds <AutomaticBackgroundTask/> by default.
+          showPrompt: true,
+          updateBlocksActivation: true,
         },
       },
       updater: { kind: "appinstaller", artifacts: [] },
@@ -192,7 +196,7 @@ export default {
       // package itself (validateMsixTarget rejects both keys).
       artifacts: [WIN_APPX, path.join("dist", "win", "SliceApp.appinstaller")],
       hardening: [WIN_APPX],
-      installer: { artifacts: [{ file: WIN_APPX, key: "sliceapp/installers/windows/current/SliceApp_x64.msix" }] },
+      installer: { artifacts: [{ file: WIN_APPX, key: "sliceapp/installers/windows/current/SliceApp_x64.msix", versionedKey: `sliceapp/installers/windows/versions/${MSIX_VERSION}/SliceApp_${MSIX_VERSION}_x64.msix` }] },
     },
   },
 };
