@@ -108,6 +108,32 @@ def npx(d):
     return w * h - ImageChops.lighter(ImageChops.lighter(*d.split()[:2]), d.split()[2]).histogram()[0]
 
 
+def edge_band(im):
+    """L mask (255 = in band): pixels within 1 px of an edge in the Mac image (3x3 neighbourhood not uniform in any channel, dilated by 1; sr1-decisions #5)."""
+    from PIL import ImageFilter
+    e = None
+    for c in im.split():
+        m = ImageChops.difference(c.filter(ImageFilter.MaxFilter(3)), c.filter(ImageFilter.MinFilter(3)))
+        e = m if e is None else ImageChops.lighter(e, m)
+    return e.point(lambda v: 255 if v else 0).filter(ImageFilter.MaxFilter(3))
+
+
+def edge_gate(im, iw, exclusions=()):
+    """Verdict exact | edge-aa<=32 | fail, with counts. Pixels in excluded rects are ignored."""
+    a, b, c = ImageChops.difference(im, iw).split()
+    d = ImageChops.lighter(ImageChops.lighter(a, b), c)
+    for e in exclusions:
+        d.paste(0, e["rect"])
+    band = edge_band(im)
+    black = Image.new("L", d.size, 0)
+    inb, outb = Image.composite(d, black, band), Image.composite(black, d, band)
+    cnt = lambda x: x.size[0] * x.size[1] - x.histogram()[0]
+    ti, to = cnt(inb), cnt(outb); mi, mo = inb.getextrema()[1], outb.getextrema()[1]
+    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if to == 0 and mi <= 32 else "fail")
+    return dict(verdict=verdict, totalDiff=ti + to, inBandDiff=ti, outOfBandDiff=to, maxInBand=mi, maxOutOfBand=mo,
+                bandPixels=cnt(band))
+
+
 def compare(out, runs, exclusions=()):
     """exact = pixel-identical outside the named exclusion rects. Excluded regions are reported separately
     (diff pixel count, ink bbox on each side); they never gate. Without exclusions this is the plain full-frame exact diff."""
@@ -124,7 +150,8 @@ def compare(out, runs, exclusions=()):
         for e in exclusions:
             gated.paste((0, 0, 0), e["rect"])
         bbox = gated.getbbox()
-        row = dict(run=i, exact=bbox is None, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
+        g = edge_gate(im, iw, exclusions)
+        row = dict(run=i, verdict=g["verdict"], gate=g, exact=bbox is None, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
         if exclusions:
             row["fullFrameDifferentPixels"] = npx(full)
             row["excluded"] = []
@@ -134,16 +161,20 @@ def compare(out, runs, exclusions=()):
         rows.append(row)
         if bbox and first is None:
             first = i; ImageChops.invert(gated).save(out / f"diff-{i:02d}.png")
-    ok = [r for r in rows if r.get("exact")]
-    bad = [r for r in rows if not r.get("exact")]
+    ok = [r for r in rows if r.get("verdict") in ("exact", "edge-aa<=32")]
+    bad = [r for r in rows if r.get("verdict") not in ("exact", "edge-aa<=32")]
+    nex = sum(1 for r in rows if r.get("verdict") == "exact")
     worst = max((r.get("maxdiff", 0) for r in rows), default=0)
     bbox = next((r.get("diffbbox") for r in bad if r.get("diffbbox")), None)
-    rep = dict(pairs=runs, exact=len(ok), maxdiff=worst, diffbbox=bbox, rows=rows)
+    rep = dict(pairs=runs, exact=nex, edgeAA=len(ok) - nex, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
     if exclusions:
         rep["gate"] = "exact outside excluded regions"
         rep["excludedRegions"] = [dict(name=e["name"], rect=list(e["rect"])) for e in exclusions]
     (out / "report.json").write_text(json.dumps(rep, indent=1))
-    print(f"pairs={runs} exact={len(ok)} maxdiff={worst} diffbbox={bbox}" + (f" (gate excludes: {', '.join(e['name'] + str(list(e['rect'])) for e in exclusions)})" if exclusions else ""))
+    for r in rows:
+        if "gate" in r:
+            g = r["gate"]; print(f"  run {r['run']:02d} {g['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
+    print(f"pairs={runs} exact={nex} edge-aa<=32={len(ok) - nex} fail={len(bad)} maxdiff={worst} diffbbox={bbox}" + (f" (gate excludes: {', '.join(e['name'] + str(list(e['rect'])) for e in exclusions)})" if exclusions else ""))
     return len(ok) == runs
 
 
@@ -152,9 +183,13 @@ def main():
     ap.add_argument("case"); ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--skip-mac", action="store_true"); ap.add_argument("--skip-windows", action="store_true")
     ap.add_argument("--exclude-text-bbox", action="append", metavar="X0,Y0,X1,Y1", help="named-in-report text region excluded from the pixel gate (repeatable); also <case>/pair.json excludeRects")
+    ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
+    if a.recompare:
+        out = Path(a.recompare).resolve(); n = len(list((out / "mac").glob("run-*.png")))
+        sys.exit(0 if compare(out, n, load_exclusions(case, a.exclude_text_bbox)) else 1)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
     if not a.skip_windows: windows(case, name, a.runs, out)
