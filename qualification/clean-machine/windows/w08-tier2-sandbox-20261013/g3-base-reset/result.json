@@ -1,0 +1,131 @@
+{
+    "kind":  "w08",
+    "method":  "reset",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "233F86CA36845B203E19B3B9CB558560F56909D8",
+    "old_sha256":  "7c95bc5976eb180213eed07811b6cb2df5e699e878fe446a3f5abbd3c88beb3a",
+    "new_sha256":  "e57edfcaf0716df5b5ed0f561375d6e96d09bec64a76ae9ae8b5c9cc45aa45e9",
+    "guest_sha256_original":  "8c2bd58ba7abfe770bd10de4f65fba413efc5ec8362e7e8c24b4cb284c4fc555",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  144.2,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  3,
+                      "genuine_cancels":  2,
+                      "completed_anyway":  1,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  390,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery_package":  "0.1.0.0:Modified, NeedsRemediation",
+    "recovery":  {
+                     "command":  "Get-AppxPackage OrthicLabs.SliceApp | Reset-AppxPackage",
+                     "private_data_before":  2,
+                     "result":  "OK",
+                     "timed_out":  false,
+                     "private_data_after":  2,
+                     "seconds":  2.6,
+                     "feed_requests_during":  0,
+                     "appx_events":  "events unreadable: No events were found that match the specified selection criteria."
+                 },
+    "post":  {
+                 "tag":  "reset",
+                 "package":  "0.1.0.0:Modified, NeedsRemediation",
+                 "package_detail":  {
+                                        "version":  "0.1.0.0",
+                                        "status":  "Modified, NeedsRemediation",
+                                        "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                        "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__d4vmt3818wrtw",
+                                        "is_partially_staged":  "False",
+                                        "user_install_state":  ""
+                                    },
+                 "appinstaller_assoc":  "0.1.0.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                 "needs_remediation":  true,
+                 "marker_in_file_before_launch":  true,
+                 "rows_sha_before_launch":  "DBCEBE9742B49D1869095EC0E1BE795FC19263F5E8712FB179A409273DE9FFF2",
+                 "rows_sha_equals_written":  true,
+                 "launch":  {
+                                "tag":  "reset-launch",
+                                "launched":  false,
+                                "pid":  0,
+                                "window_name":  "",
+                                "exe_path":  "",
+                                "running_version":  "",
+                                "seconds":  60.2,
+                                "processes_without_window":  0,
+                                "top_windows":  [
+                                                    "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948"
+                                                ],
+                                "window_dumps":  [
+                                                     "WINDOW class=ConsoleWindowClass name=[Administrator: Windows PowerShell]"
+                                                 ]
+                            },
+                 "marker_in_file_after":  true,
+                 "rows_sha_after":  "DBCEBE9742B49D1869095EC0E1BE795FC19263F5E8712FB179A409273DE9FFF2",
+                 "rows_sha_equals_written_after":  true
+             },
+    "reason":  "finished"
+}

@@ -1,0 +1,28 @@
+20:17:06.760 w08-recovery guest start, method platform-register, host 4D59F73D-EA25-4, os 10.0.26100.0
+20:17:08.207 default routes: 1
+20:17:08.408 signer imported to TrustedPeople
+20:17:09.074 feed server pid 6728
+20:17:18.208 feed up (0.1.0.0 feed)
+20:17:18.231 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+20:17:18.245 attempt 1 delay +360 ms
+20:17:33.750 marker written, rows.json sha E4FEB2B19368CBEE5308E69324DADAC168F3BBA661D3B795BE2228A915A0203B
+20:17:36.714 baseline: guard task removed (it had been registered: True)
+20:17:44.058   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+20:17:44.178 attempt 2 delay +330 ms
+20:18:00.338   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=Staged 
+20:18:00.354 attempt 3 delay +390 ms
+20:18:15.435   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+20:18:15.554 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+20:19:00.922 screenshot pre-recovery-launch.jpg 2732x1631
+20:19:00.958 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation launched=False after the probe: 0.1.0.0:Modified, NeedsRemediation windows=class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948
+20:19:04.992 recovery: no action of ours: hold 0 min (if > 0), then a launch attempt (explorer shell:AppsFolder), then watch the AppX deployment log for the platform RegisterByPackageFullName operation
+20:22:26.432 recovery result: platform register seen=True; package now 0.1.0.0:Modified, NeedsRemediation package now 0.1.0.0:Modified, NeedsRemediation
+20:23:31.678 post: package=0.1.0.0:Modified, NeedsRemediation launched=False version= banner= marker_in_file=True marker_ui=
+20:23:31.767 screenshot post.jpg 2732x1631
+20:23:31.767 post screenshot done
+20:23:31.779 feed tail read
+20:23:31.779 finally: begin
+20:23:31.783 finally: result saved
+20:23:31.799 finally: logs copied
+20:23:31.824 finally: DONE written, stopping computer
+20:23:39.825 guest shutdown suppressed by the long-lived worker

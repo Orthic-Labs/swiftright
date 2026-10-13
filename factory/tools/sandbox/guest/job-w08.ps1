@@ -24,6 +24,7 @@ function Reset-W08State {
     Step 'stop app + settings' { Get-Process -Name SliceApp, SystemSettings -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500 }
     Step 'remove repair scheduled tasks' { Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like 'OrthicLabs*' -or $_.TaskName -like '*SliceApp*' } | ForEach-Object { Stop-ScheduledTask -InputObject $_ -ErrorAction SilentlyContinue; Unregister-ScheduledTask -InputObject $_ -Confirm:$false -ErrorAction SilentlyContinue } }
     Step 'remove package (all users, then current user)' {
+        foreach ($p in @(Get-AppxPackage -Name 'OrthicLabs.OtherApp' -ErrorAction SilentlyContinue)) { Remove-AppxPackage -Package $p.PackageFullName -ErrorAction SilentlyContinue }   # wrong-identity control, if it was ever installed
         foreach ($p in @(Get-AppxPackage -Name $PkgName -AllUsers -ErrorAction SilentlyContinue)) {
             try { Remove-AppxPackage -Package $p.PackageFullName -AllUsers -ErrorAction Stop } catch { try { Remove-AppxPackage -Package $p.PackageFullName -ErrorAction Stop } catch { throw ('remove ' + $p.PackageFullName + ': ' + $_.Exception.Message) } }
         }
@@ -92,6 +93,7 @@ try {
     Copy-Item -LiteralPath $oldMsix -Destination "$pk\old.msix"; Copy-Item -LiteralPath $newMsix -Destination "$pk\new.msix"
     Copy-Item -LiteralPath $oldMsix -Destination "$pk\feed\SliceApp_0.1.0.0_x64.msix"; Copy-Item -LiteralPath $newMsix -Destination "$pk\feed\SliceApp_0.1.1.0_x64.msix"
     Copy-Item -LiteralPath "$W\feedin\SliceApp.0.appinstaller", "$W\feedin\SliceApp.1.appinstaller" -Destination "$pk\feed"
+    if (Test-Path -LiteralPath "$W\$pkgSub\extra") { Copy-Item -LiteralPath "$W\$pkgSub\extra" -Destination "$pk\extra" -Recurse }   # negative-control inputs (wrong identity, truncated packages)
     Export-Certificate -Cert $sig.SignerCertificate -FilePath "$pk\signer.cer" -Type CERT | Out-Null   # public certificate only
 
     # ---- run the harness (interactive session of the Sandbox; UIA needs it). The worker's job timeout bounds it.
@@ -108,8 +110,16 @@ try {
         $res.recovery = $hr.recovery
         $res.post = $hr.post
         $res.ok = [bool](@($hr.errors).Count -eq 0)
-        if ($Method -eq 'tier2-repair') { $res.pass = [bool]($hr.post.package -match ':Ok' -and $hr.post.launch.launched -and $hr.post.marker_in_file_after) }
-        elseif ($Method -eq 'tier2-uninstall') { $res.pass = [bool]$hr.recovery.pass }
+        $rc = $hr.recovery
+        $recovered = [bool]($hr.post.package -match ':Ok' -and $hr.post.launch.launched -and $hr.post.marker_in_file_after)
+        switch ($Method) {
+            'tier2-repair' { $res.pass = $recovered }
+            'tier2-killclient' { $res.pass = $recovered }
+            'tier2-stale' { $res.pass = $recovered }
+            'tier2-mutex' { $res.pass = [bool]($recovered -and $rc.mutex_second_run_busy) }
+            { $_ -in 'tier2-feed-down', 'tier2-wrongid', 'tier2-corrupt' } { $res.pass = [bool]($recovered -and $rc.failed_explicitly -and $rc.recovered_by_retry -and -not $rc.other_app_installed_at_end -and $rc.snapshot_before_restore.rows_sha_equals_written) }
+            { $_ -in 'tier2-uninstall', 'tier2-uninstall-retry', 'tier2-healthy', 'tier2-task-deleted' } { $res.pass = [bool]$rc.pass }
+        }
     }
     }
 } catch { $res.error = $_.Exception.Message; $res.ok = $false }

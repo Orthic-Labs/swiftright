@@ -1,0 +1,25 @@
+19:48:01.793 w08-recovery guest start, method tier2-repair, host 4D59F73D-EA25-4, os 10.0.26100.0
+19:48:02.840 default routes: 1
+19:48:02.978 signer imported to TrustedPeople
+19:48:03.721 feed server pid 3964
+19:48:12.644 feed up (0.1.0.0 feed)
+19:48:12.659 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+19:48:12.664 attempt 1 delay +360 ms
+19:48:28.087 marker written, rows.json sha D0397E58696DE2B41CB4099E739337597CF0D48D4DF4409012220146BE5259F3
+19:48:29.937 guard registered by the first launch: True
+19:48:37.253   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+19:48:37.386 attempt 2 delay +330 ms
+19:48:52.364   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+19:48:52.471 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+19:48:52.518 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+19:48:52.542 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder
+19:49:00.037 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 13.4 package now 0.1.1.0:Ok
+19:49:11.546 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+19:49:11.769 screenshot post.jpg 2732x1631
+19:49:11.773 post screenshot done
+19:49:11.785 feed tail read
+19:49:11.798 finally: begin
+19:49:11.801 finally: result saved
+19:49:11.801 finally: logs copied
+19:49:11.821 finally: DONE written, stopping computer
+19:49:19.834 guest shutdown suppressed by the long-lived worker

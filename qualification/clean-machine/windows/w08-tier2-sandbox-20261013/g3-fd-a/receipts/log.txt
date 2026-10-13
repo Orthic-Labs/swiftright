@@ -1,0 +1,41 @@
+19:41:59.114 w08-recovery guest start, method tier2-feed-down, host 4D59F73D-EA25-4, os 10.0.26100.0
+19:42:00.113 default routes: 1
+19:42:00.229 signer imported to TrustedPeople
+19:42:00.823 feed server pid 6200
+19:42:09.218 feed up (0.1.0.0 feed)
+19:42:09.224 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+19:42:09.229 attempt 1 delay +360 ms
+19:42:23.200 marker written, rows.json sha 2B79CFE2DC2E5A8AB87215AD04E127DACEB2617A2209C11328C92EBE9D6E408D
+19:42:24.328 guard registered by the first launch: True
+19:42:31.373   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+19:42:31.424 attempt 2 delay +330 ms
+19:42:36.869 feed server pid 7948
+19:42:58.733   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+19:42:58.752 attempt 3 delay +390 ms
+19:43:04.174 feed server pid 1560
+19:43:26.254   -> completed-anyway registered=0.1.1.0:Ok op_after=1 failed_state= 
+19:43:26.259 attempt 4 delay +300 ms
+19:43:31.742 feed server pid 1184
+19:43:54.254   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+19:43:54.270 attempt 5 delay +420 ms
+19:43:59.739 feed server pid 5068
+19:44:22.278   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+19:44:22.294 attempt 6 delay +270 ms
+19:44:27.768 feed server pid 5704
+19:44:50.452   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+19:44:50.537 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+19:44:50.571 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+19:44:50.605 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: feed-down
+19:45:45.300 feed server pid 1712
+19:45:53.716 feed restored at +69.5 s (feed server restarted); package 0.1.0.0:Modified, NeedsRemediation
+19:47:16.010 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (81.9 s after the restore)
+19:47:16.057 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 151.4 package now 0.1.1.0:Ok
+19:47:26.796 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+19:47:26.951 screenshot post.jpg 2732x1631
+19:47:26.953 post screenshot done
+19:47:26.965 feed tail read
+19:47:26.967 finally: begin
+19:47:26.972 finally: result saved
+19:47:26.978 finally: logs copied
+19:47:26.990 finally: DONE written, stopping computer
+19:47:34.992 guest shutdown suppressed by the long-lived worker

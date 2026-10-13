@@ -1,0 +1,196 @@
+{
+    "kind":  "w08",
+    "method":  "platform-register",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "233F86CA36845B203E19B3B9CB558560F56909D8",
+    "old_sha256":  "7c95bc5976eb180213eed07811b6cb2df5e699e878fe446a3f5abbd3c88beb3a",
+    "new_sha256":  "e57edfcaf0716df5b5ed0f561375d6e96d09bec64a76ae9ae8b5c9cc45aa45e9",
+    "guest_sha256_original":  "8c2bd58ba7abfe770bd10de4f65fba413efc5ec8362e7e8c24b4cb284c4fc555",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  395.4,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  3,
+                      "genuine_cancels":  3,
+                      "completed_anyway":  0,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  390,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery_package":  "0.1.0.0:Modified, NeedsRemediation",
+    "recovery":  {
+                     "command":  "no action of ours: hold 0 min (if \u003e 0), then a launch attempt (explorer shell:AppsFolder), then watch the AppX deployment log for the platform RegisterByPackageFullName operation",
+                     "timeline":  [
+                                      "20:19:50 after launch: 0.1.0.0:Modified, NeedsRemediation"
+                                  ],
+                     "launch_attempt":  {
+                                            "tag":  "platform-launch-attempt",
+                                            "launched":  false,
+                                            "pid":  0,
+                                            "window_name":  "",
+                                            "exe_path":  "",
+                                            "running_version":  "",
+                                            "seconds":  45,
+                                            "processes_without_window":  0,
+                                            "top_windows":  [
+                                                                "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948"
+                                                            ],
+                                            "window_dumps":  [
+                                                                 "WINDOW class=ConsoleWindowClass name=[Administrator: Windows PowerShell]"
+                                                             ]
+                                        },
+                     "package_after_launch_attempt":  "0.1.0.0:Modified, NeedsRemediation",
+                     "platform_register_seen":  true,
+                     "register_events":  [
+                                             "20:18:16.132 id=603 Information: Started deployment RegisterByPackageFullName operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and Options ForceTargetApplicationShutdownOption,RepairAppRegistr",
+                                             "20:18:16.142 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\b548e574-7c6e-4a7e-b79f-b2477e10a02f_S-1-5-21-2047949552-857980807-821054962-504_310.rslc for Register Operation on Package Orth",
+                                             "20:18:16.143 id=607 Information: Deployment Register operation on package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                             "20:18:16.148 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Trying to repair ACLs for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                             "20:18:16.153 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: ACLs repaired successfully for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                             "20:18:16.256 id=400 Information: Deployment Register operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw from: (AppxManifest.xml) finished successfully.",
+                                             "20:18:16.267 id=613 Information: Performance summary of Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Overall time: 125 ms (Active time: 125 ms) Enqueue cost: 0 ms Dequeue delay: 0 ms Bundle",
+                                             "20:19:05.351 id=603 Information: Started deployment RegisterByPackageFullName operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and Options ForceTargetApplicationShutdownOption,RepairAppRegistr",
+                                             "20:19:05.362 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\b548e574-7c6e-4a7e-b79f-b2477e10a02f_S-1-5-21-2047949552-857980807-821054962-504_311.rslc for Register Operation on Package Orth",
+                                             "20:19:05.363 id=607 Information: Deployment Register operation on package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                             "20:19:05.369 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Trying to repair ACLs for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                             "20:19:05.374 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: ACLs repaired successfully for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                             "20:19:05.504 id=400 Information: Deployment Register operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw from: (AppxManifest.xml) finished successfully.",
+                                             "20:19:05.522 id=613 Information: Performance summary of Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Overall time: 156 ms (Active time: 156 ms) Enqueue cost: 0 ms Dequeue delay: 0 ms Bundle"
+                                         ],
+                     "result":  "platform register seen=True; package now 0.1.0.0:Modified, NeedsRemediation",
+                     "seconds":  201.4,
+                     "feed_requests_during":  0,
+                     "appx_events":  [
+                                         "20:18:16.132 id=603 Information: Started deployment RegisterByPackageFullName operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and Options ForceTargetApplicationShutdownOption,RepairAppRegistr",
+                                         "20:18:16.142 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\b548e574-7c6e-4a7e-b79f-b2477e10a02f_S-1-5-21-2047949552-857980807-821054962-504_310.rslc for Register Operation on Package Orth",
+                                         "20:18:16.143 id=607 Information: Deployment Register operation on package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "20:18:16.144 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\AppxManifest.xml.",
+                                         "20:18:16.147 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                         "20:18:16.148 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Trying to repair ACLs for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                         "20:18:16.153 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: ACLs repaired successfully for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                         "20:18:16.168 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "20:18:16.206 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "20:18:16.223 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "20:18:16.223 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "20:18:16.223 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "20:18:16.223 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "20:18:16.245 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "20:18:16.245 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "20:18:16.250 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x10000C00, Set=0x0).",
+                                         "20:18:16.250 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x300, Set=0x0).",
+                                         "20:18:16.256 id=400 Information: Deployment Register operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw from: (AppxManifest.xml) finished successfully.",
+                                         "20:18:16.267 id=613 Information: Performance summary of Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Overall time: 125 ms (Active time: 125 ms) Enqueue cost: 0 ms Dequeue delay: 0 ms Bundle",
+                                         "20:19:05.351 id=603 Information: Started deployment RegisterByPackageFullName operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and Options ForceTargetApplicationShutdownOption,RepairAppRegistr",
+                                         "20:19:05.362 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\b548e574-7c6e-4a7e-b79f-b2477e10a02f_S-1-5-21-2047949552-857980807-821054962-504_311.rslc for Register Operation on Package Orth",
+                                         "20:19:05.363 id=607 Information: Deployment Register operation on package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "20:19:05.364 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\AppxManifest.xml.",
+                                         "20:19:05.369 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                         "20:19:05.369 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: Trying to repair ACLs for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                         "20:19:05.374 id=649 Information: Deployment Register operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw: ACLs repaired successfully for \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw.",
+                                         "20:19:05.395 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "20:19:05.453 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "20:19:05.473 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "20:19:05.473 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged"
+                                     ]
+                 },
+    "post":  {
+                 "tag":  "platform-register",
+                 "package":  "0.1.0.0:Modified, NeedsRemediation",
+                 "package_detail":  {
+                                        "version":  "0.1.0.0",
+                                        "status":  "Modified, NeedsRemediation",
+                                        "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                        "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__d4vmt3818wrtw",
+                                        "is_partially_staged":  "False",
+                                        "user_install_state":  ""
+                                    },
+                 "appinstaller_assoc":  "0.1.0.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                 "needs_remediation":  true,
+                 "marker_in_file_before_launch":  true,
+                 "rows_sha_before_launch":  "E4FEB2B19368CBEE5308E69324DADAC168F3BBA661D3B795BE2228A915A0203B",
+                 "rows_sha_equals_written":  true,
+                 "launch":  {
+                                "tag":  "platform-register-launch",
+                                "launched":  false,
+                                "pid":  0,
+                                "window_name":  "",
+                                "exe_path":  "",
+                                "running_version":  "",
+                                "seconds":  60.1,
+                                "processes_without_window":  0,
+                                "top_windows":  [
+                                                    "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948"
+                                                ],
+                                "window_dumps":  [
+                                                     "WINDOW class=ConsoleWindowClass name=[Administrator: Windows PowerShell]"
+                                                 ]
+                            },
+                 "marker_in_file_after":  true,
+                 "rows_sha_after":  "E4FEB2B19368CBEE5308E69324DADAC168F3BBA661D3B795BE2228A915A0203B",
+                 "rows_sha_equals_written_after":  true
+             },
+    "reason":  "finished"
+}

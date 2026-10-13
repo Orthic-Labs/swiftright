@@ -1,0 +1,33 @@
+20:02:53.500 w08-recovery guest start, method tier2-corrupt, host 4D59F73D-EA25-4, os 10.0.26100.0
+20:02:54.912 default routes: 1
+20:02:55.048 signer imported to TrustedPeople
+20:02:55.653 feed server pid 7504
+20:03:04.458 feed up (0.1.0.0 feed)
+20:03:04.474 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+20:03:04.490 attempt 1 delay +360 ms
+20:03:19.395 marker written, rows.json sha 5CBD911B044B4C92535266DA197A1A4F05A9D3BA12B4DA148794EE7076504120
+20:03:21.012 guard registered by the first launch: True
+20:03:28.317   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+20:03:28.437 attempt 2 delay +330 ms
+20:03:43.432   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=PackagesInUseClosed 
+20:03:43.446 attempt 3 delay +390 ms
+20:03:58.080   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+20:03:58.080 attempt 4 delay +300 ms
+20:04:13.238   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=Staged 
+20:04:13.238 attempt 5 delay +420 ms
+20:04:28.312   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+20:04:28.423 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+20:04:28.478 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+20:04:28.607 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: corrupt
+20:05:23.198 feed restored at +61.2 s (feed files restored); package 0.1.0.0:Modified, NeedsRemediation
+20:06:49.590 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (85.8 s after the restore)
+20:06:49.669 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 147 package now 0.1.1.0:Ok
+20:07:00.326 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+20:07:00.544 screenshot post.jpg 2732x1631
+20:07:00.546 post screenshot done
+20:07:00.560 feed tail read
+20:07:00.564 finally: begin
+20:07:00.572 finally: result saved
+20:07:00.582 finally: logs copied
+20:07:00.597 finally: DONE written, stopping computer
+20:07:08.612 guest shutdown suppressed by the long-lived worker

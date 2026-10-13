@@ -1,0 +1,27 @@
+20:14:01.189 w08-recovery guest start, method reset, host 4D59F73D-EA25-4, os 10.0.26100.0
+20:14:02.271 default routes: 1
+20:14:02.476 signer imported to TrustedPeople
+20:14:03.127 feed server pid 5128
+20:14:11.570 feed up (0.1.0.0 feed)
+20:14:11.580 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+20:14:11.591 attempt 1 delay +360 ms
+20:14:25.923 marker written, rows.json sha DBCEBE9742B49D1869095EC0E1BE795FC19263F5E8712FB179A409273DE9FFF2
+20:14:28.360 baseline: guard task removed (it had been registered: True)
+20:14:35.702   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+20:14:35.818 attempt 2 delay +330 ms
+20:14:50.959   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+20:14:50.965 attempt 3 delay +390 ms
+20:15:06.662   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+20:15:06.820 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+20:15:06.904 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+20:15:06.984 recovery: Get-AppxPackage OrthicLabs.SliceApp | Reset-AppxPackage
+20:15:09.643 recovery result: OK package now 0.1.0.0:Modified, NeedsRemediation
+20:16:14.944 post: package=0.1.0.0:Modified, NeedsRemediation launched=False version= banner= marker_in_file=True marker_ui=
+20:16:15.091 screenshot post.jpg 2732x1631
+20:16:15.091 post screenshot done
+20:16:15.095 feed tail read
+20:16:15.099 finally: begin
+20:16:15.099 finally: result saved
+20:16:15.127 finally: logs copied
+20:16:15.148 finally: DONE written, stopping computer
+20:16:23.149 guest shutdown suppressed by the long-lived worker

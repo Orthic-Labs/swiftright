@@ -1,0 +1,25 @@
+19:59:02.249 w08-recovery guest start, method tier2-wrongid, host 4D59F73D-EA25-4, os 10.0.26100.0
+19:59:03.227 default routes: 1
+19:59:03.336 signer imported to TrustedPeople
+19:59:03.942 feed server pid 6808
+19:59:12.350 feed up (0.1.0.0 feed)
+19:59:12.357 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+19:59:12.370 attempt 1 delay +360 ms
+19:59:27.956 marker written, rows.json sha 064C13815B2991A2BEECF0A0A79A9C55409DC355844C3150A963151C6F64D3BA
+19:59:29.848 guard registered by the first launch: True
+19:59:37.203   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+19:59:37.430 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+19:59:37.484 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+19:59:37.540 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: wrongid
+20:00:31.567 feed restored at +61.1 s (feed files restored); package 0.1.0.0:Modified, NeedsRemediation
+20:01:57.607 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (85.5 s after the restore)
+20:01:57.696 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 146.6 package now 0.1.1.0:Ok
+20:02:08.452 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+20:02:08.597 screenshot post.jpg 2732x1631
+20:02:08.598 post screenshot done
+20:02:08.602 feed tail read
+20:02:08.604 finally: begin
+20:02:08.608 finally: result saved
+20:02:08.614 finally: logs copied
+20:02:08.626 finally: DONE written, stopping computer
+20:02:16.637 guest shutdown suppressed by the long-lived worker

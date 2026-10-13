@@ -16,6 +16,18 @@
 #   tier2-feed-down     as tier2-repair, with the feed server stopped at the cancel: the guard must fail EXPLICITLY (repair.log names the unreachable feed, task result 1) and leave
 #                       the package untouched; the feed is then restored and the task started by hand to show the retry path recovers it.
 #   tier2-uninstall     no induction: install, launch once (guard registered), Remove-AppxPackage, start the task (stand-in for the next logon trigger); the task and its folder must be gone.
+#                       The tier2-* methods below all run the induction first and apply their condition AT the cancel (the guard acts within ~1 s of event 751). The repair is NEVER started by hand
+#                       except where a method says so (tier2-uninstall stands in for a logon).
+#   tier2-feed-down     (redefined) feed down at the cancel, feed back after 60 s; the guard's own retry (+2 min) must recover the package with NO manual task start
+#   tier2-stale         feed switched back to the 0.1.0.0 .appinstaller at the cancel (no newer version published): recovery to 0.1.0.0 or an explicit refusal
+#   tier2-wrongid       feed and msix files replaced by a package of a DIFFERENT identity at the cancel: the guard must refuse and install nothing; the feed is restored after 60 s and the retry recovers
+#   tier2-corrupt       msix files replaced by truncated copies at the cancel: explicit failure, package untouched, retry; the feed is restored after 60 s and the retry recovers
+#   tier2-mutex         a second run of the guard script is started while the task's run is in its settle window: it must log that another run is active and exit
+#   tier2-killclient    AddPackageAsync runs in a child process that is killed at staging+delay instead of Cancel (does the deployment survive its client being killed?)
+#   tier2-healthy       no induction: the guard must do nothing to a healthy package (same package full name, last-result healthy, no Add-AppxPackage logged)
+#   tier2-task-deleted  no induction: the task is deleted; the next app launch must register it again; then with a fresh install-attempt marker the next launch must NOT (24 h backoff)
+#   tier2-uninstall-retry  feed down so the first run fails and a retry is pending, then Remove-AppxPackage: the retry tick (no manual start) must clean up the task and folder
+#   reset / platform-register   baselines: the guard task is removed before the induction's recovery step so the method is tested alone
 #   settings-probe      development aid: no induction; dumps the Settings UI tree step by step (receipts settings-*.txt/jpg)
 # Flow: trust the signer, serve the feed (as W12), install 0.1.0.0 through the feed, write a data marker through the UI, publish the 0.1.1.0 feed,
 # induce NeedsRemediation by cancelling PackageManager.AddPackageAsync(0.1.1.0 msix) at staging+delay (retry delays until Status shows it), confirm the app
@@ -35,6 +47,11 @@ $MethodLines = @((Get-Content -LiteralPath (Join-Path $HarnessDir 'method.txt'))
 $Method = $MethodLines[0]
 $HoldMinutes = $(if ($MethodLines.Count -gt 1) { [int]$MethodLines[1] } else { 0 })
 $IsT2 = ($Method -like 'tier2-*')
+$NoGuard = (-not $IsT2 -and $Method -ne 'settings-probe')   # baselines of the pre-guard recoveries run with the guard task removed
+$Variant = ''
+if ($Method -in 'tier2-feed-down', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt') { $Variant = $Method.Substring(6) }
+if ($Method -eq 'tier2-uninstall-retry') { $Variant = 'feed-down' }
+$BadThenRestore = ($Variant -in 'feed-down', 'wrongid', 'corrupt')
 $PathInstall = ($Method -like '*-path')   # old version installed with Add-AppxPackage -Path (no App Installer association) and no feed served: the W08 offline scenario
 $PkgName = 'OrthicLabs.SliceApp'
 $OldVersion = '0.1.0.0'
@@ -44,6 +61,7 @@ $RowsPath = Join-Path $LocalAppData 'rows.json'
 $LogPath = Join-Path $LocalAppData 'slice-app.log'
 $Feed = 'C:\feed'
 $FeedUrl = 'https://localhost:8443/sliceapp/SliceApp.appinstaller'
+$ExtraDir = Join-Path $PackagesDir 'extra'
 $OldMsix = Join-Path $PackagesDir 'old.msix'
 $NewMsix = Join-Path $PackagesDir 'new.msix'
 $WorkDir = Join-Path $env:TEMP 'w08-recovery-work'
@@ -285,6 +303,7 @@ function Get-GuardState {
         $o.files = @(Get-ChildItem -LiteralPath $d -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name + ' ' + $_.Length })
         try { $o.guard_json = (Get-Content -LiteralPath (Join-Path $d 'guard.json') -Raw -ErrorAction Stop) -replace '\s+', ' ' } catch { $o.guard_json = 'unreadable' }
         try { $o.repair_log = @(Get-Content -LiteralPath (Join-Path $d 'repair.log') -ErrorAction Stop | ForEach-Object { [string]$_ }) } catch { $o.repair_log = @() }
+        foreach ($f in 'last-result.json', 'retry.json', 'install-result.json', 'install-attempt.json') { try { $o[$f] = (Get-Content -LiteralPath (Join-Path $d $f) -Raw -ErrorAction Stop) -replace '\s+', ' ' } catch { $o[$f] = $null } }
     }
     return $o
 }
@@ -296,6 +315,34 @@ function Wait-Guard([int]$Sec) {
         Beat; Start-Sleep -Milliseconds 500
     }
     return $false
+}
+function Get-GuardLogText { try { $fs = [IO.File]::Open((Join-Path (Get-GuardDir) 'repair.log'), [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite); try { return (New-Object IO.StreamReader($fs)).ReadToEnd() } finally { $fs.Dispose() } } catch { return '' } }
+function Remove-GuardTask { foreach ($t in @(Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue)) { try { Unregister-ScheduledTask -TaskName $t.TaskName -Confirm:$false -ErrorAction Stop } catch { L ('  guard task removal failed: ' + $_.Exception.Message) } } }
+function Test-OtherAppInstalled { return (@(Get-AppxPackage -Name 'OrthicLabs.OtherApp' -ErrorAction SilentlyContinue).Count -gt 0) }
+function Apply-Variant {
+    # applied AT the cancel: the guard acts within ~1 s of event 751 and reads the feed after an 8 s settle
+    switch ($Variant) {
+        'feed-down' { if ($script:FeedProc) { try { Stop-Process -Id $script:FeedProc.Id -Force -ErrorAction Stop; return 'feed server stopped' } catch { return 'feed stop error: ' + $_.Exception.Message } } }
+        'stale' { Set-Feed 0; return 'feed switched to the 0.1.0.0 .appinstaller' }
+        'wrongid' {
+            Copy-Item -LiteralPath (Join-Path $ExtraDir 'wrongid.msix') -Destination (Join-Path $Feed 'SliceApp_0.1.0.0_x64.msix') -Force
+            Copy-Item -LiteralPath (Join-Path $ExtraDir 'wrongid.msix') -Destination (Join-Path $Feed 'SliceApp_0.1.1.0_x64.msix') -Force
+            Copy-Item -LiteralPath (Join-Path $ExtraDir 'SliceApp.wrongid.appinstaller') -Destination (Join-Path $Feed 'SliceApp.appinstaller') -Force
+            return 'feed declares OrthicLabs.OtherApp and both msix files are that package'
+        }
+        'corrupt' {
+            Copy-Item -LiteralPath (Join-Path $ExtraDir 'corrupt-old.msix') -Destination (Join-Path $Feed 'SliceApp_0.1.0.0_x64.msix') -Force
+            Copy-Item -LiteralPath (Join-Path $ExtraDir 'corrupt-new.msix') -Destination (Join-Path $Feed 'SliceApp_0.1.1.0_x64.msix') -Force
+            return 'both msix files replaced by truncated copies'
+        }
+    }
+    return ''
+}
+function Restore-Feed {
+    if ($Variant -eq 'feed-down') { [void](Start-Feed); Set-Feed 1; return 'feed server restarted' }
+    Get-ChildItem -LiteralPath (Join-Path $PackagesDir 'feed') -Filter '*.msix' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $Feed -Force }
+    Set-Feed 1
+    return 'feed files restored'
 }
 function Test-FeedUp { try { return ((Invoke-WebRequest -Uri $FeedUrl -UseBasicParsing -TimeoutSec 5).StatusCode -eq 200) } catch { return $false } }
 
@@ -318,7 +365,8 @@ function Install-OldViaFeed {
 function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     $att = [ordered]@{ n = $n; delay_ms = $DelayMs; started = (Get-Date -Format 'HH:mm:ss') }
     $tAll = [Diagnostics.Stopwatch]::StartNew()
-    if ($Method -eq 'tier2-feed-down' -and -not (Test-FeedUp)) { [void](Start-Feed); $att.feed_restarted_for_attempt = $true }
+    if ($Variant -eq 'feed-down' -and -not (Test-FeedUp)) { [void](Start-Feed); $att.feed_restarted_for_attempt = $true }
+    if ($Variant -in 'wrongid', 'corrupt' -and $script:MarkerSha) { [void](Restore-Feed) }   # a later attempt starts from the good feed
     $errArr = @(Install-OldViaFeed)
     $err = [string]$errArr[-1]
     $att.install_old_s = [math]::Round($tAll.Elapsed.TotalSeconds, 1)
@@ -341,6 +389,11 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
             $R.guard_after_first_launch = Get-GuardState
             L ('guard registered by the first launch: ' + $gOk)
             if (-not $gOk) { $att.outcome = 'setup-failed'; $att.error = 'the first launch did not register the repair guard'; return $att }
+        } elseif ($NoGuard) {
+            $gOk = Wait-Guard 90
+            Remove-GuardTask
+            $R.guard_removed_for_baseline = [ordered]@{ guard_was_registered = $gOk; task_exists_now = [bool](Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue) }
+            L ('baseline: guard task removed (it had been registered: ' + $gOk + ')')
         }
     }
     Set-Feed 1   # the update is published
@@ -356,34 +409,57 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     $pm = New-Object Windows.Management.Deployment.PackageManager
     $uri = New-Object Uri(('file:///' + ($NewMsix -replace '\\', '/')))
     $watch = [Diagnostics.Stopwatch]::StartNew()
-    $op = $pm.AddPackageAsync($uri, [Collections.Generic.IEnumerable[Uri]]$null, [Windows.Management.Deployment.DeploymentOptions]::None)
+    $kill = ($Method -eq 'tier2-killclient'); $child = $null; $op = $null
+    if ($kill) {
+        $childCmd = "`$ErrorActionPreference='Stop'; [void][Windows.Management.Deployment.PackageManager, Windows.Management.Deployment, ContentType = WindowsRuntime]; `$pm = New-Object Windows.Management.Deployment.PackageManager; `$op = `$pm.AddPackageAsync((New-Object Uri('" + $uri.AbsoluteUri + "')), [Collections.Generic.IEnumerable[Uri]]`$null, [Windows.Management.Deployment.DeploymentOptions]::None); `$i = [Windows.Foundation.IAsyncInfo, Windows.Foundation, ContentType = WindowsRuntime]; while ([int]`$i.GetProperty('Status').GetValue(`$op) -eq 0) { Start-Sleep -Milliseconds 50 }"
+        $child = Start-Process -FilePath 'powershell.exe' -PassThru -WindowStyle Hidden -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($childCmd)))
+        $att.child_pid = $child.Id
+    } else { $op = $pm.AddPackageAsync($uri, [Collections.Generic.IEnumerable[Uri]]$null, [Windows.Management.Deployment.DeploymentOptions]::None) }
     $seen = $false; $deadline = (Get-Date).AddSeconds(90)
     while ((Get-Date) -lt $deadline) {
         if (Test-NewStaging) { $seen = $true; break }
-        if ([int]$asyncInfo.GetProperty('Status').GetValue($op) -ne 0) { break }
+        if ($kill) { if ($child.HasExited) { break } } elseif ([int]$asyncInfo.GetProperty('Status').GetValue($op) -ne 0) { break }
         Start-Sleep -Milliseconds 5
     }
     $att.trigger_seen = $seen
     $att.t_trigger_ms = [int]$watch.ElapsedMilliseconds
     if ($DelayMs -gt 0) { Start-Sleep -Milliseconds $DelayMs }
-    $stNow = [int]$asyncInfo.GetProperty('Status').GetValue($op)
-    $att.op_status_at_cancel = [string]$stNow   # 0 Started, 1 Completed, 2 Canceled, 3 Error
-    $att.t_cancel_ms = [int]$watch.ElapsedMilliseconds
-    if ($stNow -eq 0) { [void]$asyncInfo.GetMethod('Cancel').Invoke($op, $null) }
+    if ($kill) {
+        $stNow = $(if ($child.HasExited) { 9 } else { 0 })
+        $att.op_status_at_cancel = $(if ($stNow -eq 0) { 'client running' } else { 'client already exited' })
+        $att.t_cancel_ms = [int]$watch.ElapsedMilliseconds
+        if ($stNow -eq 0) { try { Stop-Process -Id $child.Id -Force -ErrorAction Stop; $att.client_killed = $true } catch { $att.client_kill_error = $_.Exception.Message } }
+    } else {
+        $stNow = [int]$asyncInfo.GetProperty('Status').GetValue($op)
+        $att.op_status_at_cancel = [string]$stNow   # 0 Started, 1 Completed, 2 Canceled, 3 Error
+        $att.t_cancel_ms = [int]$watch.ElapsedMilliseconds
+        if ($stNow -eq 0) { [void]$asyncInfo.GetMethod('Cancel').Invoke($op, $null) }
+    }
     $att.cancel_utc = (Get-Date).ToUniversalTime().ToString('o'); $script:InducedAt = Get-Date
-    if ($Method -eq 'tier2-feed-down' -and $script:FeedProc) { try { Stop-Process -Id $script:FeedProc.Id -Force -ErrorAction Stop; $att.feed_stopped_at_cancel = $true } catch { $att.feed_stop_error = $_.Exception.Message } }
-    $d2 = (Get-Date).AddSeconds(60)
-    while ([int]$asyncInfo.GetProperty('Status').GetValue($op) -eq 0 -and (Get-Date) -lt $d2) { Start-Sleep -Milliseconds 50 }
-    $att.op_status_after = [string][int]$asyncInfo.GetProperty('Status').GetValue($op)
-    $att.op_error_code = [string]$asyncInfo.GetProperty('ErrorCode').GetValue($op)
+    if ($Variant) { $att.variant_at_cancel = Apply-Variant }
+    if ($kill) { $att.op_status_after = 'n/a (client killed)'; $att.op_error_code = '' }
+    else {
+        $d2 = (Get-Date).AddSeconds(60)
+        while ([int]$asyncInfo.GetProperty('Status').GetValue($op) -eq 0 -and (Get-Date) -lt $d2) { Start-Sleep -Milliseconds 50 }
+        $att.op_status_after = [string][int]$asyncInfo.GetProperty('Status').GetValue($op)
+        $att.op_error_code = [string]$asyncInfo.GetProperty('ErrorCode').GetValue($op)
+    }
     # settle: stable for 6 s, max 40 s
     $last = ''; $stableSince = Get-Date; $sw2 = [Diagnostics.Stopwatch]::StartNew(); $timeline = @(); $sawNR = $false
     while ($sw2.Elapsed.TotalSeconds -lt 40) {
         $txt = (Get-PkgText) + ' | staging_new=' + (Test-NewStaging)
         if ($txt -match 'NeedsRemediation') { $sawNR = $true }
         if ($txt -ne $last) { $timeline += ('+' + [int]$watch.ElapsedMilliseconds + 'ms ' + $txt); $last = $txt; $stableSince = Get-Date }
-        elseif (((Get-Date) - $stableSince).TotalSeconds -ge 6) { break }
-        Start-Sleep -Seconds 1
+        elseif (((Get-Date) - $stableSince).TotalSeconds -ge 6 -and $Method -ne 'tier2-mutex') { break }
+        if ($Method -eq 'tier2-mutex' -and -not $att.second_run_started -and (Get-GuardLogText) -match 'NOT healthy') {
+            # the task's run is in its 8 s settle window: start a second run of the very same script directly
+            $att.second_run_started = $true; $att.second_run_utc = (Get-Date).ToUniversalTime().ToString('o')
+            $p2 = Start-Process -FilePath 'powershell.exe' -PassThru -Wait -WindowStyle Hidden -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path (Get-GuardDir) 'repair-guard.ps1'))
+            $att.second_run_exit = [int]$p2.ExitCode
+            $att.second_run_log_busy = ((Get-GuardLogText) -match 'another repair run is active')
+        }
+        if ($Method -eq 'tier2-mutex' -and $sw2.Elapsed.TotalSeconds -ge 25) { break }
+        Start-Sleep -Milliseconds $(if ($Method -eq 'tier2-mutex') { 250 } else { 1000 })
     }
     $att.timeline = $timeline
     $att.registered_after = Get-PkgText
@@ -624,6 +700,64 @@ try {
         Save-Result
         return
     }
+    if ($Method -in 'tier2-healthy', 'tier2-task-deleted') {
+        $h = $R.recovery
+        $pe = @(Install-OldViaFeed); $pe = [string]$pe[-1]
+        if ($pe) { throw $pe }
+        try { $script:AppId = [string](Get-AppxPackageManifest -Package (Get-Pkgs)[0].PackageFullName).Package.Applications.Application.Id } catch { }
+        $h.first_launch = Invoke-Launch 60 'first-launch'
+        $h.guard_registered = Wait-Guard 90
+        Stop-App | Out-Null
+        L ('guard registered: ' + $h.guard_registered)
+        $taskName = $script:Pfn + '-Repair'
+        if ($Method -eq 'tier2-healthy') {
+            $h.package_before = Get-PkgDetail
+            $logLenBefore = (Get-GuardLogText).Length
+            $t0 = Get-Date
+            Start-ScheduledTask -TaskName $taskName
+            $res = $null; $sw = [Diagnostics.Stopwatch]::StartNew()
+            while ($sw.Elapsed.TotalSeconds -lt 90) {
+                try { $res = Get-Content -LiteralPath (Join-Path (Get-GuardDir) 'last-result.json') -Raw -ErrorAction Stop | ConvertFrom-Json; if ($res -and ([datetime]$res.timeUtc).ToUniversalTime() -gt $t0.ToUniversalTime().AddSeconds(-1) -and [string]$res.mode -eq 'repair') { break } } catch { }
+                $res = $null; Beat; Start-Sleep -Milliseconds 500
+            }
+            $h.last_result = $res
+            $h.package_after = Get-PkgDetail
+            $h.guard_log_new = (Get-GuardLogText).Substring([math]::Min($logLenBefore, (Get-GuardLogText).Length))
+            $h.package_unchanged = ((($h.package_before | ForEach-Object { $_.full_name + $_.status }) -join ',') -eq (($h.package_after | ForEach-Object { $_.full_name + $_.status }) -join ','))
+            $h.add_appx_logged = ($h.guard_log_new -match 'Add-AppxPackage')
+            $h.pass = [bool]($res -and [string]$res.status -eq 'healthy' -and [int]$res.code -eq 0 -and $h.package_unchanged -and -not $h.add_appx_logged)
+            $h.result = 'status=' + $(if ($res) { $res.status } else { 'none' }) + ' package unchanged=' + $h.package_unchanged + ' Add-AppxPackage logged=' + $h.add_appx_logged
+        } else {
+            $g = $h
+            $g.guard_before = Get-GuardState
+            Remove-GuardTask
+            $g.task_deleted = -not [bool](Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue)
+            $sw = [Diagnostics.Stopwatch]::StartNew()
+            $g.relaunch = Invoke-Launch 60 'relaunch-after-task-deleted'
+            while ($sw.Elapsed.TotalSeconds -lt 90 -and -not (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue)) { Beat; Start-Sleep -Milliseconds 500 }
+            $g.task_reregistered = [bool](Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue)
+            $g.seconds_to_reregister = [math]::Round($sw.Elapsed.TotalSeconds, 1)
+            Stop-App | Out-Null
+            # backoff: the installer failed less than 24 h ago (marker on disk): a launch must not spawn it again
+            Start-Sleep -Seconds 5
+            Remove-GuardTask
+            $scriptBytes = [IO.File]::ReadAllBytes((Join-Path (Get-GuardDir) 'repair-guard.ps1')) + [byte[]](10)
+            $sha = ([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($scriptBytes)) -replace '-', '').ToLower()
+            [IO.File]::WriteAllText((Join-Path (Get-GuardDir) 'install-attempt.json'), ('{"epoch":' + [DateTimeOffset]::UtcNow.ToUnixTimeSeconds() + ',"sha256":"' + $sha + '"}'), $Utf8)
+            $g.marker_sha256 = $sha
+            $g.relaunch_with_marker = Invoke-Launch 60 'relaunch-with-backoff-marker'
+            Start-Sleep -Seconds 25
+            $g.task_registered_with_marker = [bool](Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue)
+            $g.install_skipped_logged = ((Get-GuardLogText) -match 'install skipped')
+            Stop-App | Out-Null
+            $g.guard_after = Get-GuardState
+            $g.pass = [bool]($g.task_deleted -and $g.task_reregistered -and -not $g.task_registered_with_marker -and $g.install_skipped_logged)
+            $g.result = 'task deleted=' + $g.task_deleted + ' re-registered by the next launch=' + $g.task_reregistered + ' (' + $g.seconds_to_reregister + ' s); with a fresh attempt marker re-registered=' + $g.task_registered_with_marker + ' skip logged=' + $g.install_skipped_logged
+        }
+        L ('result: ' + $R.recovery.result)
+        Save-Result
+        return
+    }
     $delays = @(240, 200, 280, 240, 220, 260, 230, 250, 210, 270, 245, 235, 225, 255, 215, 265, 205, 275)
     $delayFile = Join-Path $HarnessDir 'delays.txt'   # optional: fixed cancel offset(s), one integer ms per line
     if (Test-Path -LiteralPath $delayFile) { $delays = @((Get-Content -LiteralPath $delayFile) | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ } | ForEach-Object { [int]$_ }); L ('cancel offsets from delays.txt: ' + ($delays -join ',')) }
@@ -717,34 +851,63 @@ try {
             }
             Stop-Settings
         }
-        { $_ -in 'tier2-repair', 'tier2-feed-down' } {
-            $rec.command = 'NO action of ours: wait <= 120 s for the repair guard task (' + $script:Pfn + '-Repair, event 751 / logon), then launch via explorer shell:AppsFolder'
+        { $_ -in 'tier2-repair', 'tier2-feed-down', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt', 'tier2-mutex', 'tier2-killclient' } {
+            $rec.command = 'NO action of ours on the guard (never started by hand): wait for the repair guard task (' + $script:Pfn + '-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder' + $(if ($Variant) { '; condition applied at the cancel: ' + $Variant } else { '' })
             L ('recovery: ' + $rec.command)
-            $rec.timeline = @(); $lastT = ''; $okAt = $null
-            $limit = $(if ($Method -eq 'tier2-feed-down') { 75 } else { 120 })
+            $rec.manual_task_start = $false
+            $rec.timeline = @(); $lastT = ''; $okAt = $null; $restored = $false; $okBeforeRestore = $false
+            $limit = $(if ($BadThenRestore) { 480 } else { 120 })
             $t0 = $(if ($script:InducedAt) { $script:InducedAt } else { Get-Date })
             while (((Get-Date) - $t0).TotalSeconds -lt $limit) {
-                $t = Get-PkgText; if ($t -ne $lastT) { $rec.timeline += ('+' + [math]::Round(((Get-Date) - $t0).TotalSeconds, 1) + 's ' + $t); $lastT = $t }
-                if ($t -match '^0\.1\.[01]\.0:Ok$') { $okAt = [math]::Round(((Get-Date) - $t0).TotalSeconds, 1); if ($Method -eq 'tier2-repair') { break } }
+                $el = ((Get-Date) - $t0).TotalSeconds
+                $t = Get-PkgText; if ($t -ne $lastT) { $rec.timeline += ('+' + [math]::Round($el, 1) + 's ' + $t); $lastT = $t }
+                if ($t -match '^0\.1\.[01]\.0:Ok$') { $okAt = [math]::Round($el, 1); if ($BadThenRestore -and -not $restored) { $okBeforeRestore = $true }; break }
+                if ($BadThenRestore -and -not $restored -and $el -ge 60) {
+                    $rec.snapshot_before_restore = [ordered]@{ at_s = [math]::Round($el, 1); package = Get-PkgText; guard = Get-GuardState; other_app_installed = Test-OtherAppInstalled; rows_sha_equals_written = ((Get-Sha $RowsPath) -eq $script:MarkerSha) }
+                    $rec.restore = Restore-Feed; $rec.restored_at_s = [math]::Round(((Get-Date) - $t0).TotalSeconds, 1); $restored = $true
+                    L ('feed restored at +' + $rec.restored_at_s + ' s (' + $rec.restore + '); package ' + (Get-PkgText))
+                }
                 Beat; Start-Sleep -Milliseconds 500
             }
             $rec.seconds_to_package_ok_from_cancel = $okAt
             $rec.guard_after = Get-GuardState
-            if ($Method -eq 'tier2-feed-down') {
-                $rec.package_while_feed_down = Get-PkgText
-                $rl = (@($rec.guard_after.repair_log) -join "`n")
-                $rec.failed_explicitly = [bool](($rl -match 'feed unreachable') -and ($rl -match 'FAILED') -and (-not $okAt))
+            $rec.other_app_installed_at_end = Test-OtherAppInstalled
+            $rl = (@($rec.guard_after.repair_log) -join "`n")
+            if ($BadThenRestore) {
+                $snapLog = (@($rec.snapshot_before_restore.guard.repair_log) -join "`n")
+                $rec.package_while_bad = $rec.snapshot_before_restore.package
+                $rec.ok_before_restore = $okBeforeRestore
+                $expectLog = switch ($Variant) { 'feed-down' { 'feed unreachable' } 'wrongid' { 'REFUSED' } 'corrupt' { 'corrupt|-AppInstallerFile failed' } }
+                $rec.failed_explicitly = [bool](($snapLog -match $expectLog) -and ($snapLog -match 'FAILED') -and (-not $okBeforeRestore))
+                $rec.retry_scheduled_logged = [bool]($snapLog -match 'retry 1 scheduled')
+                $rec.recovered_by_retry = [bool]($okAt -and $restored)
+                $rec.seconds_ok_after_restore = $(if ($okAt -and $restored) { [math]::Round($okAt - $rec.restored_at_s, 1) } else { $null })
                 $rec.task_last_result = $rec.guard_after.last_result
-                L ('feed-down: package ' + $rec.package_while_feed_down + ' explicit failure logged ' + $rec.failed_explicitly + ' task result ' + $rec.task_last_result)
-                # retry path: feed back, run the task as the next trigger would
-                [void](Start-Feed); Set-Feed 1
-                Start-ScheduledTask -TaskName ($script:Pfn + '-Repair')
-                $sw3 = [Diagnostics.Stopwatch]::StartNew(); $okRetry = $null
-                while ($sw3.Elapsed.TotalSeconds -lt 120) { if ((Get-PkgText) -match '^0\.1\.[01]\.0:Ok$') { $okRetry = [math]::Round($sw3.Elapsed.TotalSeconds, 1); break }; Beat; Start-Sleep -Milliseconds 500 }
-                $rec.retry_after_feed_restored_ok_s = $okRetry
-                $rec.guard_after_retry = Get-GuardState
+                L ('bad-then-restore: package while bad ' + $rec.package_while_bad + '; explicit failure logged ' + $rec.failed_explicitly + '; recovered by the guard retry ' + $rec.recovered_by_retry + ' (' + $rec.seconds_ok_after_restore + ' s after the restore)')
             }
+            if ($Method -eq 'tier2-mutex') { $rec.mutex_second_run_busy = [bool]($R.attempts[-1].second_run_log_busy); $rec.mutex_second_run_exit = $R.attempts[-1].second_run_exit }
             $rec.result = 'package ' + (Get-PkgText) + '; seconds to Ok from cancel ' + $okAt
+        }
+        'tier2-uninstall-retry' {
+            $rec.command = 'feed down at the cancel -> first run fails and schedules a retry; then Remove-AppxPackage; the retry tick (NO manual start) must remove the task and the folder'
+            L ('recovery: ' + $rec.command)
+            $rec.manual_task_start = $false
+            $sw = [Diagnostics.Stopwatch]::StartNew(); $rt = $null
+            while ($sw.Elapsed.TotalSeconds -lt 120) { if (Test-Path -LiteralPath (Join-Path (Get-GuardDir) 'retry.json')) { break }; Beat; Start-Sleep -Milliseconds 500 }
+            $rec.retry_json_seen_s = [math]::Round($sw.Elapsed.TotalSeconds, 1)
+            $rec.guard_before_remove = Get-GuardState
+            foreach ($p in @(Get-Pkgs)) { try { Remove-AppxPackage -Package $p.PackageFullName -ErrorAction Stop } catch { $rec.remove_error = $_.Exception.Message } }
+            $rec.package_after_remove = Get-PkgText
+            $rec.task_exists_right_after_remove = [bool](Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue)
+            $swU = [Diagnostics.Stopwatch]::StartNew(); $gone = $false
+            while ($swU.Elapsed.TotalSeconds -lt 420) { if (-not (Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue)) { $gone = $true; break }; Beat; Start-Sleep -Milliseconds 500 }
+            $rec.task_removed = $gone; $rec.seconds_to_task_removed = [math]::Round($swU.Elapsed.TotalSeconds, 1)
+            Start-Sleep -Seconds 2
+            $rec.repair_dir_removed = -not (Test-Path -LiteralPath (Get-GuardDir))
+            $rec.parent_dir_kept = [bool](Test-Path -LiteralPath $LocalAppData); $rec.rows_kept = (Test-Path -LiteralPath $RowsPath)
+            try { $rec.cleanup_note = @(Get-Content -LiteralPath (Join-Path $env:TEMP ($script:Pfn + '-repair-cleanup.log')) -ErrorAction Stop | ForEach-Object { [string]$_ }) } catch { $rec.cleanup_note = @('none') }
+            $rec.pass = [bool]($gone -and $rec.repair_dir_removed -and $rec.parent_dir_kept -and $rec.rows_kept)
+            $rec.result = 'task removed by the retry tick=' + $gone + ' (' + $rec.seconds_to_task_removed + ' s after the remove) repair dir removed=' + $rec.repair_dir_removed + ' user data kept=' + $rec.rows_kept
         }
         { $_ -in 'tier1-launch', 'tier1-launch-old' } {
             if ($Method -eq 'tier1-launch-old') { Set-Feed 0; $rec.feed_switched_back_to_0_1_0_0 = $true }
@@ -849,6 +1012,7 @@ try {
     # ---- post state
     Start-Sleep -Seconds 5
     $R.post = Post-State $Method
+    if ($IsT2) { $R.guard_final = Get-GuardState }   # the task's triggers after the run: the retry trigger must be gone after a repair
     L ('post: package=' + $R.post.package + ' launched=' + $R.post.launch.launched + ' version=' + $R.post.launch.running_version + ' banner=' + $R.post.log_banner_for_pid + ' marker_in_file=' + $R.post.marker_in_file_after + ' marker_ui=' + $R.post.marker_row_shown_in_ui)
     Save-Shot 'post'
     L 'post screenshot done'

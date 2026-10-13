@@ -1,0 +1,88 @@
+{
+    "method":  "tier2-uninstall",
+    "started_utc":  "2026-10-13T14:02:49.7705577Z",
+    "marker":  "w08-recovery-tier2-uninstall-marker",
+    "attempts":  [
+
+                 ],
+    "induction":  {
+
+                  },
+    "pre_recovery":  {
+
+                     },
+    "recovery":  {
+                     "first_launch":  {
+                                          "tag":  "uninstall-first-launch",
+                                          "launched":  true,
+                                          "pid":  3676,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  1.4,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948",
+                                                              "class=Zed::Window name=[SliceApp] pid=0"
+                                                          ]
+                                      },
+                     "guard_registered":  true,
+                     "guard_before":  {
+                                          "task_name":  "OrthicLabs.SliceApp_d4vmt3818wrtw-Repair",
+                                          "task_exists":  true,
+                                          "task_state":  "Ready",
+                                          "last_run":  "11/30/1999 00:00:00",
+                                          "last_result":  267011,
+                                          "triggers":  [
+                                                           "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                           "MSFT_TaskLogonTrigger"
+                                                       ],
+                                          "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                                          "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                          "dir_exists":  true,
+                                          "files":  [
+                                                        "guard.json 498",
+                                                        "install-result.json 224",
+                                                        "repair-guard.ps1 24757",
+                                                        "repair.log 375"
+                                                    ],
+                                          "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_d4vmt3818wrtw\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=SwiftRight W08 Test\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_d4vmt3818wrtw-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-13T14:03:10.5355039Z\" }",
+                                          "repair_log":  [
+                                                             "2026-10-13T14:03:07Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                             "2026-10-13T19:33:10.623+05:30 [install] task OrthicLabs.SliceApp_d4vmt3818wrtw-Repair registered; identity=OrthicLabs.SliceApp / CN=SwiftRight W08 Test; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix"
+                                                         ],
+                                          "last-result.json":  null,
+                                          "retry.json":  null,
+                                          "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-13T14:03:10.6409531Z\", \"guardVersion\": 2, \"detail\": \"task OrthicLabs.SliceApp_d4vmt3818wrtw-Repair registered\" }",
+                                          "install-attempt.json":  null
+                                      },
+                     "rows_exists_before":  true,
+                     "parent_dir_before":  true,
+                     "package_after_remove":  "none",
+                     "task_exists_right_after_remove":  true,
+                     "task_removed":  true,
+                     "seconds_to_task_removed":  14.5,
+                     "guard_after":  {
+                                         "task_name":  "OrthicLabs.SliceApp_d4vmt3818wrtw-Repair",
+                                         "task_exists":  false,
+                                         "dir_exists":  false
+                                     },
+                     "repair_dir_removed":  true,
+                     "parent_dir_kept":  true,
+                     "rows_kept":  true,
+                     "cleanup_note":  [
+                                          "2026-10-13T19:33:28.2597155+05:30 package OrthicLabs.SliceApp_d4vmt3818wrtw absent; removing task OrthicLabs.SliceApp_d4vmt3818wrtw-Repair and C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair",
+                                          "task unregistered"
+                                      ],
+                     "pass":  true,
+                     "result":  "task removed=True repair dir removed=True user data kept=True"
+                 },
+    "post":  {
+
+             },
+    "errors":  [
+
+               ],
+    "default_routes":  1,
+    "ended_utc":  "2026-10-13T14:03:33.2010486Z"
+}
