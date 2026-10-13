@@ -251,8 +251,20 @@ public final class ResolvedNodePainter {
 
     /// One row of a List: its selection highlight (a rect primitive), and the row's semantics (a list item, selected or not) over the row's whole width.
     func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, listBounds: Rect, look: ListLook) throws -> NodeEmission {
-        let primitives: [Primitive] = ListPainter.highlight(for: row, listBounds: listBounds, look: look, scale: scale, active: listIsActive)
-            .map { [.rect($0.rect, color: $0.rgba, radius: $0.radiusPX)] } ?? []
+        var primitives: [Primitive] = []
+        switch ListPainter.highlight(for: row, listBounds: listBounds, look: look, scale: scale, active: listIsActive) {
+        case .flat(let rect, let rgba)?:
+            primitives = [.rect(rect, color: rgba)]
+        case .rounded(let rect, let rgb)?:
+            let w = Int(rect.w.rounded()), h = Int(rect.h.rounded())
+            let image = ListHighlightArtwork.render(widthPX: w, heightPX: h, scale: scale, rgb: rgb)
+            let handle = try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            primitives = [.image(handle, Rect(x: rect.x + imageGuardBand, y: rect.y + imageGuardBand, w: Float(w) - 2 * imageGuardBand, h: Float(h) - 2 * imageGuardBand))]
+        case nil:
+            break
+        }
         return NodeEmission(primitives: primitives,
                             semantic: SemanticNode(role: .listItem, label: node.accessibility.label ?? "", identifier: node.id, selected: row.isSelected, disabled: !row.isEnabled),
                             flags: [.hitTarget], structural: false)

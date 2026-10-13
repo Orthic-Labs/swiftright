@@ -7,7 +7,7 @@ import SwiftRightBridge
 /// style, rendered at scale 2.5, light appearance; factory/tools/switch-artwork/list-profile): a row is its content plus 8 pt, at least 24 pt (`ListMetrics`);
 /// separators are 1 pt lines in 230 (the pixel row above them at half coverage) along the bottom of every row except the last, from 16 pt inside the list's
 /// leading edge to 16 pt inside its trailing edge (the plain style: from 8 pt to the edge), and hidden next to a selected row; the inset style's selection is a
-/// 8 pt rounded rectangle 10 pt inside the list's edges, accent (0, 100, 225) while the list is the key view and grey 220 otherwise; the plain style's is a
+/// rounded rectangle (corner outline measured, `ListHighlightArtwork`) 10 pt inside the list's edges, accent (0, 100, 225) while the list is the key view and grey 220 otherwise; the plain style's is a
 /// flat full-width rectangle; the background is white. Nothing of Apple's artwork is embedded.
 public enum ListPainter {
     public static let background: UInt32 = 0xffffffff
@@ -15,8 +15,7 @@ public enum ListPainter {
     public static let selectionActive: UInt32 = 0x0064e1
     public static let selectionInactive: UInt32 = 0xdcdcdc
     public static let selectionInsetPoints: Float = 10
-    public static let selectionRadiusPoints: Float = 8
-    public static let separatorInsetPoints: Float = 16
+        public static let separatorInsetPoints: Float = 16
     public static let selectedTextColor: UInt32 = 0xffffffff
 
     public static func look(of node: ResolvedNode) -> ListLook { ListLook(style: node.listStyle) }
@@ -71,19 +70,18 @@ public enum ListPainter {
         return out
     }
 
-    /// The selection highlight of a selected row as a rect primitive: nil for an unselected row. The inset style rounds its corners (measured circular, 8 pt: a
-    /// continuous corner of that radius is wider than the row allows, and AppKit's profile fits a circular one), the plain style is flat.
-    public struct Highlight {
-        public var rect: Rect
-        public var rgba: UInt32
-        public var radiusPX: Float
+    /// The selection highlight of a selected row: nil for an unselected row. The inset style's is a rasterised rounded rectangle (`ListHighlightArtwork`: the
+    /// corner outline measured from SwiftUI), the plain style's a flat rect.
+    public enum Highlight {
+        case flat(Rect, UInt32)
+        case rounded(Rect, rgb: UInt32)
     }
 
     public static func highlight(for row: Row, listBounds: Rect, look: ListLook, scale: Float, active: Bool) -> Highlight? {
         guard row.isSelected else { return nil }
-        let colour = (selectionColor(active: active, isEnabled: row.isEnabled)) << 8 | 0xff
-        if look == .plain { return Highlight(rect: row.rect, rgba: colour, radiusPX: 0) }
+        let rgb = selectionColor(active: active, isEnabled: row.isEnabled)
+        if look == .plain { return .flat(row.rect, rgb << 8 | 0xff) }
         let inset = selectionInsetPoints * scale
-        return Highlight(rect: Rect(x: listBounds.x + inset, y: row.rect.y, w: listBounds.w - 2 * inset, h: row.rect.h), rgba: colour, radiusPX: selectionRadiusPoints * scale)
+        return .rounded(Rect(x: listBounds.x + inset, y: row.rect.y, w: listBounds.w - 2 * inset, h: row.rect.h), rgb: rgb)
     }
 }

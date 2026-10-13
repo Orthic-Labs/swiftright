@@ -83,16 +83,18 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(rects(list.primitives).count - 1, 4, "rows 1, 2, 3 touch the selected row 2: only the separators under row 0 and under row 3 remain (two layers each)")
     }
 
-    func testSelectedRowIsARoundedRectAndGreyUntilTheListIsActive() throws {
+    func testSelectedRowIsARasterisedRoundedRectAndGreyUntilTheListIsActive() throws {
         for (active, colour) in [(false, [220, 220, 220]), (true, [0, 100, 225])] {
             let r = try commit(Witness_ListFive(), active: active)
             let rows = flatten(r.root).first { $0.kind == "List" }!.children
             let selected = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rows[2].instance + 1) })
-            let rs = rects(selected.primitives)
-            guard rs.count == 1, case .rect(let place, let rgba, let radius, _, _) = selected.primitives.first(where: { if case .rect = $0 { return true } else { return false } })! else { return XCTFail("inset selection is one rounded rect") }
-            XCTAssertEqual(place.x, 175); XCTAssertEqual(place.w, 450, "180 pt: the highlight is inset 10 pt from both edges"); XCTAssertEqual(place.y, 245); XCTAssertEqual(place.h, 60)
-            XCTAssertEqual(radius, 20, "8 pt")
-            XCTAssertEqual([Int(rgba >> 24), Int(rgba >> 16 & 255), Int(rgba >> 8 & 255)], colour)
+            guard case .image(let handle, let place, _) = try XCTUnwrap(selected.primitives.first(where: { if case .image = $0 { return true } else { return false } })) else { return XCTFail("inset selection is a rasterised rounded rectangle") }
+            let image = try XCTUnwrap(r.images.registered[handle.raw])
+            XCTAssertEqual(Float(image.width), 450, "180 pt: the highlight is inset 10 pt from both edges"); XCTAssertEqual(Float(image.height), 60)
+            XCTAssertEqual(place.x, 175, accuracy: 0.1); XCTAssertEqual(place.y, 245, accuracy: 0.1)
+            let mid = (30 * Int(image.width) + 225) * 4
+            XCTAssertEqual(Array(image.rgba[mid..<mid + 3]).map(Int.init), colour)
+            XCTAssertEqual(image.rgba[3], 0, "the corner is transparent")
             XCTAssertEqual(selected.bounds.x, 150, "a row is hit along its whole width"); XCTAssertEqual(selected.bounds.w, 500); XCTAssertEqual(selected.bounds.h, 60)
             XCTAssertEqual(selected.flags, [.hitTarget])
             XCTAssertEqual(selected.semantic?.role, .listItem); XCTAssertEqual(selected.semantic?.selected, true); XCTAssertEqual(selected.semantic?.label, "Row 2")
@@ -131,5 +133,23 @@ final class ListPainterTests: XCTestCase {
 
     func testSeparatorColumnMatchesTheMacPixels() {
         XCTAssertEqual(ListPaintGolden.separatorColumn, ["ffffff", "ffffff", "f3f3f3", "e6e6e6", "e6e6e6", "ffffff", "ffffff"])
+    }
+
+    func testHighlightCornerMatchesSwiftUI() {
+        // the Mac's selected row spans x 175..624 from y 258 (a 180 pt wide, 24 pt tall highlight): the corner rows free of the row's text, within edge-aa 32
+        let image = ListHighlightArtwork.render(widthPX: 450, heightPX: 60, scale: 2.5, rgb: 0x0064e1)
+        var worst = 0, at = (0, 0)
+        for y in 0..<16 {
+            for x in 0..<36 {
+                let o = (y * image.width + x) * 4
+                let a = Double(image.rgba[o + 3]) / 255
+                let got = (0..<3).map { Int((Double(image.rgba[o + $0]) * a + 255 * (1 - a)).rounded()) }
+                let hex = String(Array(ListPaintGolden.selectionCorner[y])[(x * 6)..<(x * 6 + 6)])
+                let want = [0, 2, 4].map { Int(hex.dropFirst($0).prefix(2), radix: 16)! }
+                let d = zip(got, want).map { abs($0 - $1) }.max()!
+                if d > worst { worst = d; at = (x, y) }
+            }
+        }
+        XCTAssertLessThanOrEqual(worst, 32, "worst corner difference \(worst) at \(at)")
     }
 }
