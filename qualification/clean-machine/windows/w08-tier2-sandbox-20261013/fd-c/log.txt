@@ -1,0 +1,46 @@
+18:18:24.256 w08-recovery guest start, method tier2-feed-down, host 4D59F73D-EA25-4, os 10.0.26100.0
+18:18:25.253 default routes: 1
+18:18:25.388 signer imported to TrustedPeople
+18:18:25.784 feed server pid 2764
+18:18:33.559 feed up (0.1.0.0 feed)
+18:18:33.566 cancel offsets from delays.txt: 400,450,500,350
+18:18:33.571 attempt 1 delay +400 ms
+18:18:47.769 marker written, rows.json sha EB13F4F6A8DD92860AFFB29EC92B729A8E61561E28DAC3F790F68E92E9E52995
+18:18:49.230 guard registered by the first launch: True
+18:18:56.487   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+18:18:56.604 attempt 2 delay +450 ms
+18:19:01.925 feed server pid 1784
+18:19:24.459   -> completed-anyway registered=0.1.1.0:Ok op_after=1 failed_state= 
+18:19:24.459 attempt 3 delay +500 ms
+18:19:29.695 feed server pid 4976
+18:19:51.810   -> completed-anyway registered=0.1.1.0:Ok op_after=1 failed_state= 
+18:19:51.810 attempt 4 delay +350 ms
+18:19:57.025 feed server pid 6444
+18:20:19.083   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+18:20:19.104 attempt 5 delay +400 ms
+18:20:24.319 feed server pid 5888
+18:20:46.592   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+18:20:46.611 attempt 6 delay +450 ms
+18:20:51.853 feed server pid 5924
+18:21:14.262   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+18:21:14.272 attempt 7 delay +500 ms
+18:21:19.512 feed server pid 2312
+18:21:41.802   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+18:21:41.818 attempt 8 delay +350 ms
+18:21:47.061 feed server pid 4820
+18:22:09.970   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+18:22:10.049 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+18:22:10.080 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+18:22:10.127 recovery: NO action of ours: wait <= 120 s for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon), then launch via explorer shell:AppsFolder
+18:23:19.941 feed-down: package 0.1.0.0:Modified, NeedsRemediation explicit failure logged True task result 0
+18:23:20.253 feed server pid 1424
+18:23:42.693 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel  package now 0.1.1.0:Ok
+18:23:53.018 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+18:23:53.263 screenshot post.jpg 2732x1631
+18:23:53.265 post screenshot done
+18:23:53.301 feed tail read
+18:23:53.304 finally: begin
+18:23:53.316 finally: result saved
+18:23:53.326 finally: logs copied
+18:23:53.350 finally: DONE written, stopping computer
+18:24:01.352 guest shutdown suppressed by the long-lived worker

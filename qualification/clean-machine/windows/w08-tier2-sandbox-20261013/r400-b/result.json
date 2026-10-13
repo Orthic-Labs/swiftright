@@ -1,0 +1,258 @@
+{
+    "method":  "tier2-repair",
+    "started_utc":  "2026-10-13T12:26:31.2751924Z",
+    "marker":  "w08-recovery-tier2-repair-marker",
+    "attempts":  [
+                     {
+                         "n":  1,
+                         "delay_ms":  400,
+                         "started":  "17:56:40",
+                         "install_old_s":  8,
+                         "appinstaller_assoc_after_install":  "0.1.0.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                         "rows_sha_before":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+                         "registered_before":  "0.1.0.0:Ok",
+                         "staging_new_before_start":  false,
+                         "trigger_seen":  true,
+                         "t_trigger_ms":  103,
+                         "op_status_at_cancel":  "0",
+                         "t_cancel_ms":  513,
+                         "cancel_utc":  "2026-10-13T12:26:57.0429251Z",
+                         "op_status_after":  "2",
+                         "op_error_code":  "",
+                         "timeline":  [
+                                          "+684ms 0.1.0.0:Modified, NeedsRemediation | staging_new=False"
+                                      ],
+                         "registered_after":  "0.1.0.0:Modified, NeedsRemediation",
+                         "detail_after":  {
+                                              "version":  "0.1.0.0",
+                                              "status":  "Modified, NeedsRemediation",
+                                              "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                              "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__d4vmt3818wrtw",
+                                              "is_partially_staged":  "False",
+                                              "user_install_state":  ""
+                                          },
+                         "rows_sha_after":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+                         "events":  [
+                                        "17:56:56.538 id=603 Information: Started deployment Add operation on a package with main parameter new.msix and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagnosing app deployment issues.",
+                                        "17:56:56.582 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\c56ef9f7-31da-48c4-9285-3538ee39e5a6_S-1-5-21-2047949552-857980807-821054962-504_131.rslc for Add Operation on Package OrthicLab",
+                                        "17:56:56.583 id=607 Information: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                        "17:56:56.583 id=854 Information: Successfully added the following uri(s) to be processed: file:///C:/w08work/20261013-175603-w08-63547/packages/new.msix.",
+                                        "17:56:56.595 id=574 Information: Preferred package version for package family is changing. Current preferred version is: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw. New preferred version will be: OrthicLabs.SliceApp_0.1.1.0_x64__",
+                                        "17:56:56.604 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: updateList: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw is updating to OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw.",
+                                        "17:56:56.958 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                        "17:56:56.960 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                        "17:56:57.043 id=615 Verbose: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw has been cancelled by the caller.",
+                                        "17:56:57.052 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                        "17:56:57.085 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0xFFFFFFFF, Set=0x0).",
+                                        "17:56:57.087 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                        "17:56:57.087 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                        "17:56:57.087 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                        "17:56:57.087 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                        "17:56:57.091 id=605 Information: Error 0x80073CF8: Failure in the RegistrationChanged state handler.",
+                                        "17:56:57.106 id=751 Warning: Windows failed to undo changes with error code 0x80073CF8 to package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw. The package needs to be reinstalled.",
+                                        "17:56:57.136 id=472 Verbose: Moving package folder \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw to \\\\?\\C:\\Program Files\\WindowsApps\\Deleted\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtwbfc92748",
+                                        "17:56:57.141 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                        "17:56:57.142 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                        "17:56:57.172 id=401 Error: Deployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw from: (new.msix) failed with error 0x80073CF8. See http://go.microsoft.com/fwlink/?LinkId=23516",
+                                        "17:56:57.175 id=404 Error: AppX Deployment operation failed for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw with error 0x80073CF8. The specific error text for this failure is: Deployment Add operation with target vol",
+                                        "17:56:57.176 id=613 Information: Performance summary of Deployment Add operation on Package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw: Failed to reach state RegistrationChanged Overall time: 625 ms (Active time: 625 ms) Enqueue "
+                                    ],
+                         "failed_to_reach_state":  "RegistrationChanged",
+                         "saw_needs_remediation":  true,
+                         "event_751":  true,
+                         "outcome":  "NEEDS-REMEDIATION",
+                         "total_s":  23.4
+                     }
+                 ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  1,
+                      "genuine_cancels":  1,
+                      "completed_anyway":  0,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  400,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery":  {
+                         "package":  "0.1.0.0:Modified, NeedsRemediation",
+                         "package_detail":  {
+                                                "version":  "0.1.0.0",
+                                                "status":  "Modified, NeedsRemediation",
+                                                "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw",
+                                                "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__d4vmt3818wrtw",
+                                                "is_partially_staged":  "False",
+                                                "user_install_state":  ""
+                                            },
+                         "all_users":  [
+                                           "0.1.0.0:Modified, NeedsRemediation"
+                                       ],
+                         "rows_sha":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+                         "appinstaller_assoc":  "0.1.0.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                         "marker_in_file":  true,
+                         "rows_sha_equals_written":  true,
+                         "app_id":  "App",
+                         "launch_probe_skipped":  "no launch attempt before the method (a launch attempt can itself trigger recovery)",
+                         "package_at_method_start":  "0.1.0.0:Modified, NeedsRemediation",
+                         "needs_remediation_at_method_start":  true
+                     },
+    "recovery":  {
+                     "command":  "NO action of ours: wait \u003c= 120 s for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon), then launch via explorer shell:AppsFolder",
+                     "timeline":  [
+                                      "+6.8s 0.1.0.0:Modified, NeedsRemediation",
+                                      "+12s 0.1.0.0:Modified, DeploymentInProgress, Servicing, NeedsRemediation",
+                                      "+12.5s 0.1.1.0:Ok"
+                                  ],
+                     "seconds_to_package_ok_from_cancel":  12.5,
+                     "guard_after":  {
+                                         "task_name":  "OrthicLabs.SliceApp_d4vmt3818wrtw-Repair",
+                                         "task_exists":  true,
+                                         "task_state":  "Ready",
+                                         "last_run":  "10/13/2026 17:56:57",
+                                         "last_result":  0,
+                                         "triggers":  [
+                                                          "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                          "MSFT_TaskLogonTrigger"
+                                                      ],
+                                         "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                                         "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                         "dir_exists":  true,
+                                         "files":  [
+                                                       "guard.json 416",
+                                                       "repair-guard.ps1 11669",
+                                                       "repair.log 554"
+                                                   ],
+                                         "guard_json":  "{ \"guardVersion\": 1, \"pfn\": \"OrthicLabs.SliceApp_d4vmt3818wrtw\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_d4vmt3818wrtw-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-13T12:26:52.3488852Z\" }",
+                                         "repair_log":  [
+                                                            "2026-10-13T17:56:52.436+05:30 [install] task OrthicLabs.SliceApp_d4vmt3818wrtw-Repair registered; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                            "2026-10-13T17:56:59.382+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                            "2026-10-13T17:57:07.828+05:30 [repair] Add-AppxPackage -AppInstallerFile https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                                                            "2026-10-13T17:57:09.263+05:30 [repair] REPAIRED via feed: 0.1.1.0:Ok"
+                                                        ]
+                                     },
+                     "result":  "package 0.1.1.0:Ok; seconds to Ok from cancel 12.5",
+                     "seconds":  6.2,
+                     "feed_requests_during":  58,
+                     "appx_events":  [
+                                         "17:57:07.861 id=603 Information: Started deployment AddFromAppInstallerOperation operation on a package with main parameter SliceApp.appinstaller and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagnos",
+                                         "17:57:08.196 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\c56ef9f7-31da-48c4-9285-3538ee39e5a6_S-1-5-21-2047949552-857980807-821054962-504_132.rslc for Add Operation on Package OrthicLab",
+                                         "17:57:08.197 id=607 Information: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "17:57:08.197 id=854 Information: Successfully added the following uri(s) to be processed: https://localhost:8443/sliceapp/SliceApp_0.1.1.0_x64.msix.",
+                                         "17:57:08.204 id=574 Information: Preferred package version for package family is changing. Current preferred version is: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw. New preferred version will be: OrthicLabs.SliceApp_0.1.1.0_x64__",
+                                         "17:57:08.209 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: updateList: OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw is updating to OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw.",
+                                         "17:57:08.943 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "17:57:08.945 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "17:57:09.048 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "17:57:09.076 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0xFFFFFFFF, Set=0x0).",
+                                         "17:57:09.078 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "17:57:09.078 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "17:57:09.078 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "17:57:09.078 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "17:57:09.168 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "17:57:09.168 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "17:57:09.173 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x10000C00, Set=0x0).",
+                                         "17:57:09.191 id=400 Information: Deployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw from: (SliceApp_0.1.1.0_x64.msix) finished successfully.",
+                                         "17:57:09.204 id=472 Verbose: Moving package folder \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw to \\\\?\\C:\\Program Files\\WindowsApps\\Deleted\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw2566d53a",
+                                         "17:57:09.222 id=613 Information: Performance summary of Deployment Add operation on Package OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw: Overall time: 1125 ms (Active time: 1125 ms) Enqueue cost: 109 ms Dequeue delay: 0 ms Bundle "
+                                     ]
+                 },
+    "post":  {
+                 "tag":  "tier2-repair",
+                 "package":  "0.1.1.0:Ok",
+                 "package_detail":  {
+                                        "version":  "0.1.1.0",
+                                        "status":  "Ok",
+                                        "full_name":  "OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw",
+                                        "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.1.0_x64__d4vmt3818wrtw",
+                                        "is_partially_staged":  "False",
+                                        "user_install_state":  ""
+                                    },
+                 "appinstaller_assoc":  "0.1.1.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                 "needs_remediation":  false,
+                 "marker_in_file_before_launch":  true,
+                 "rows_sha_before_launch":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+                 "rows_sha_equals_written":  true,
+                 "launch":  {
+                                "tag":  "tier2-repair-launch",
+                                "launched":  true,
+                                "pid":  6664,
+                                "window_name":  "SliceApp",
+                                "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\SliceApp.exe",
+                                "running_version":  "0.1.1.0",
+                                "seconds":  1.1,
+                                "processes_without_window":  0,
+                                "top_windows":  [
+                                                    "class=Zed::Window name=[SliceApp] pid=0",
+                                                    "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6948"
+                                                ]
+                            },
+                 "marker_row_shown_in_ui":  true,
+                 "ui_row_count":  6,
+                 "closed_for_log_read":  true,
+                 "log_banner_for_pid":  true,
+                 "log_tail":  "slice-app: log opened 2026-10-13T12:26:48Z pid=5912 exe=C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__d4vmt3818wrtw\\SliceApp.exe | slice-app: log opened 2026-10-13T12:27:15Z pid=6664 exe=C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__d4vmt3818wrtw\\SliceApp.exe",
+                 "marker_in_file_after":  true,
+                 "rows_sha_after":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+                 "rows_sha_equals_written_after":  true
+             },
+    "errors":  [
+
+               ],
+    "default_routes":  1,
+    "marker_sha_written":  "CF3C5B6362883164A414A9A3AD62585FFF0C1153349C482BE188917FE8E83AE8",
+    "guard_after_first_launch":  {
+                                     "task_name":  "OrthicLabs.SliceApp_d4vmt3818wrtw-Repair",
+                                     "task_exists":  true,
+                                     "task_state":  "Ready",
+                                     "last_run":  "11/30/1999 00:00:00",
+                                     "last_result":  267011,
+                                     "triggers":  [
+                                                      "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                      "MSFT_TaskLogonTrigger"
+                                                  ],
+                                     "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                                     "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                     "dir_exists":  true,
+                                     "files":  [
+                                                   "guard.json 416",
+                                                   "repair-guard.ps1 11669",
+                                                   "repair.log 221"
+                                               ],
+                                     "guard_json":  "{ \"guardVersion\": 1, \"pfn\": \"OrthicLabs.SliceApp_d4vmt3818wrtw\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_d4vmt3818wrtw-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-13T12:26:52.3488852Z\" }",
+                                     "repair_log":  [
+                                                        "2026-10-13T17:56:52.436+05:30 [install] task OrthicLabs.SliceApp_d4vmt3818wrtw-Repair registered; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix"
+                                                    ]
+                                 },
+    "feed_log_tail":  [
+                          "2026-10-13T17:57:08.5591783+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=19062881-20111456] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.5768572+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=20111457-21160032] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.5788652+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=21160033-22208608] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.5808686+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=19062881-20111456]",
+                          "2026-10-13T17:57:08.5966715+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=22208609-23257184] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6084861+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=21160033-22208608]",
+                          "2026-10-13T17:57:08.6084861+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=20111457-21160032]",
+                          "2026-10-13T17:57:08.6125203+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=22208609-23257184]",
+                          "2026-10-13T17:57:08.6125203+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=23257185-24305760] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6185772+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=23257185-24305760]",
+                          "2026-10-13T17:57:08.6226140+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=24305761-25354336] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6264200+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=24305761-25354336]",
+                          "2026-10-13T17:57:08.6304369+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=25354337-26402912] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6462357+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=26402913-27451488] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6482746+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=25354337-26402912]",
+                          "2026-10-13T17:57:08.6502806+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=26402913-27451488]",
+                          "2026-10-13T17:57:08.6522944+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=27451489-28500064] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6719213+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=27451489-28500064]",
+                          "2026-10-13T17:57:08.6739413+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=28500065-29253897] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54614",
+                          "2026-10-13T17:57:08.6779490+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=28500065-29253897]",
+                          "2026-10-13T17:57:15.5922709+05:30 START HEAD /sliceapp/SliceApp.appinstaller range=[] ua=[App Virt Client/1.0] from=[::1]:54583",
+                          "2026-10-13T17:57:15.5942799+05:30 200 HEAD /sliceapp/SliceApp.appinstaller range=[]",
+                          "2026-10-13T17:57:15.5998133+05:30 START GET /sliceapp/SliceApp.appinstaller range=[bytes=0-564] ua=[App Virt Client/1.0] from=[::1]:54583",
+                          "2026-10-13T17:57:15.6018364+05:30 206 GET /sliceapp/SliceApp.appinstaller range=[bytes=0-564]",
+                          "2026-10-13T17:57:15.6267762+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=0-1] ua=[Microsoft-Delivery-Optimization/10.1] from=[::1]:54617",
+                          "2026-10-13T17:57:15.6288014+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=0-1]",
+                          "2026-10-13T17:57:15.6478690+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=0-1] ua=[Microsoft-Delivery-Optimization/10.1] from=[::1]:54618",
+                          "2026-10-13T17:57:15.6641994+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=0-1]",
+                          "2026-10-13T17:57:15.6956729+05:30 START GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=29241393-29307952] ua=[Microsoft-Delivery-Optimization/10.1] from=127.0.0.1:54619",
+                          "2026-10-13T17:57:15.6976780+05:30 206 GET /sliceapp/SliceApp_0.1.1.0_x64.msix range=[bytes=29241393-29307952]"
+                      ],
+    "ended_utc":  "2026-10-13T12:27:20.4284139Z"
+}

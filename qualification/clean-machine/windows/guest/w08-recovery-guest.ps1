@@ -220,6 +220,8 @@ function Read-RowValues($Root) {
 # ---- feed
 function Set-Feed([int]$n) { if (-not (Test-Path -LiteralPath $Feed)) { return }; Copy-Item -LiteralPath (Join-Path $PackagesDir ('feed\SliceApp.' + $n + '.appinstaller')) -Destination (Join-Path $Feed 'SliceApp.appinstaller') -Force }
 function Start-Feed {
+    # a killed feed server (tier2-feed-down stops it at the cancel) leaves its http.sys certificate bindings behind; serve-local-feed.ps1 would throw on `netsh http add sslcert`
+    foreach ($ip in '127.0.0.1:8443', '[::1]:8443') { & netsh.exe http delete sslcert ipport=$ip 2>&1 | Out-Null }
     if (Test-Path -LiteralPath $Feed) { Remove-Item -LiteralPath $Feed -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $Feed | Out-Null
     Get-ChildItem -LiteralPath (Join-Path $PackagesDir 'feed') -Filter '*.msix' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $Feed -Force }
@@ -325,7 +327,7 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     # first attempt: write the data marker through the UI (rows.json is outside the package and survives remove/reinstall)
     if (-not $script:MarkerSha) {
         $w = Invoke-Launch 60 'marker-write'
-        if (-not $w.launched) { $att.outcome = 'setup-failed'; $att.error = 'old build did not launch for the marker write'; return $att }
+        if (-not $w.launched) { $att.outcome = 'setup-failed'; $att.error = 'old build did not launch for the marker write'; $att.launch_detail = $w; try { $att.slice_log = @(Get-Content -LiteralPath $LogPath -ErrorAction Stop | Select-Object -Last 20 | ForEach-Object { [string]$_ }) } catch { $att.slice_log = @('no slice-app.log') }; $att.events_tail = @(Get-AppxEvents (Get-Date).AddMinutes(-2) 12); $att.pkg_now = Get-PkgDetail; return $att }
         $root = Find-AppWindow
         Write-MarkerRow -Root $root -Text $Marker
         $deadline = (Get-Date).AddSeconds(20); while ((Get-Date) -lt $deadline -and -not (Test-MarkerInFile)) { Start-Sleep -Milliseconds 500 }

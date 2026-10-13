@@ -1,0 +1,29 @@
+17:51:06.043 w08-recovery guest start, method tier2-repair, host 4D59F73D-EA25-4, os 10.0.26100.0
+17:51:07.105 default routes: 1
+17:51:07.250 signer imported to TrustedPeople
+17:51:07.371 feed server pid 5772
+17:51:15.082 feed up (0.1.0.0 feed)
+17:51:15.091 cancel offsets from delays.txt: 400,450,500,350
+17:51:15.096 attempt 1 delay +400 ms
+17:51:29.694 marker written, rows.json sha 4F3021F39BADFBACE373780F2D387945845C78F8078252D916E6EE02979BA976
+17:51:30.899 guard registered by the first launch: True
+17:51:37.873   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+17:51:37.940 attempt 2 delay +450 ms
+17:51:52.165   -> completed-anyway registered=0.1.1.0:Ok op_after=1 failed_state= 
+17:51:52.167 attempt 3 delay +500 ms
+17:52:06.252   -> completed-anyway registered=0.1.1.0:Ok op_after=1 failed_state= 
+17:52:06.254 attempt 4 delay +350 ms
+17:52:20.902   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+17:52:21.045 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+17:52:21.125 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+17:52:21.163 recovery: NO action of ours: wait <= 120 s for the repair guard task (OrthicLabs.SliceApp_d4vmt3818wrtw-Repair, event 751 / logon), then launch via explorer shell:AppsFolder
+17:52:28.121 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 13 package now 0.1.1.0:Ok
+17:52:38.404 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+17:52:38.605 screenshot post.jpg 2732x1631
+17:52:38.607 post screenshot done
+17:52:38.611 feed tail read
+17:52:38.613 finally: begin
+17:52:38.617 finally: result saved
+17:52:38.628 finally: logs copied
+17:52:38.641 finally: DONE written, stopping computer
+17:52:46.641 guest shutdown suppressed by the long-lived worker

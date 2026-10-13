@@ -1,0 +1,90 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-repair",
+    "ok":  false,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "233F86CA36845B203E19B3B9CB558560F56909D8",
+    "old_sha256":  "731f6b9a2e92f4e3cfcafeb9b74155a2cb7d813d46c6fb96440da909f616956f",
+    "new_sha256":  "85d2cdddacedbe51ba2e6aaefa256f34ab26fa35782f4ce823dfbb1afa283382",
+    "guest_sha256_original":  "889740aee2c0005a21626f4d2f346909817d2f6387a7c29a01b162a0b8e78d6d",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  148.2,
+    "harness_errors":  [
+                           "induction did not reach NeedsRemediation @ 651"
+                       ],
+    "induction":  {
+                      "success":  false,
+                      "attempts_total":  8,
+                      "genuine_cancels":  8,
+                      "completed_anyway":  0,
+                      "setup_failed":  0
+                  },
+    "pre_recovery_package":  null,
+    "recovery":  {
+
+                 },
+    "post":  {
+
+             },
+    "pass":  false,
+    "reason":  "finished"
+}
