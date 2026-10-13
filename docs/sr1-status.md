@@ -166,3 +166,46 @@ Root mistakes after R12 remain visible: missing Image mapping beside actual exec
 5. SR0 tuple12 matrix/native/workload/package/W08/freeze work remains distinct from factory block delivery.
 
 Workspaces: terminal Dell stages moved into ignored repo folders by same-volume Move-Item; none deleted over SSH. Current active stages are Custom, Rectangle & Rounded. New Mac native execution uses internal scratch, no permission prompts. Nativehost compiler cap1GiB, full runtime Windows test cap2GiB, controllers128/256MiB; recent owned jobs quiescent. Fable quota failure policy persists: record failure/reset & continue authorized work. Current pause is Adrian's stop request.
+
+## Round 3, lane A: blocks 11 (swiftui.button) and 16 (swiftui.list)
+
+Interaction cases drive both sides: Windows through the Sandbox F2 job (posted click and keys, UI Automation dump), Mac through an offscreen host (accessibility press, key events to the table, a stand-in drop for onMove). Decisions A1-A10 in `docs/sr1-decisions.md`. Gates: `pair_button_report.py`, `pair_textcolour_report.py`, `pair_semantic_report.py`, new `pair_list_report.py` (rows, selection, frames, label ink; pixels by pair.py with the row labels named as exclusions, decision 2). Renderer 0.7 `82513ae0`.
+
+| Case | N | Verdict | Stage |
+|---|---|---|---|
+| `blocks-11-16/swiftui.button/bordered-v1` | 20 | 20 button gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/borderless-disabled-v1` | 20 | 20 text-colour gate | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/borderless-red-v1` | 20 | 20 text-colour gate | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/borderless-v1` | 20 | 20 text-colour gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/click-disabled-v1` | 20 | 20 semantic gate + counter pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/click-increments-v1` | 20 | 20 semantic gate + counter pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/click-prominent-v1` | 20 | 20 semantic gate + counter pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/click-twice-v1` | 20 | 20 semantic gate + counter pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/default-action-v1` | 20 | 20 button gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/destructive-v1` | 20 | 20 button gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/plain-disabled-v1` | 20 | 20 text-colour gate | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/plain-v1` | 20 | 20 text-colour gate | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/prominent-disabled-v1` | 20 | 20 button gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/prominent-v1` | 20 | 20 button gate | `71f0d7f52-b65d8bc1` |
+| `blocks-11-16/swiftui.button/return-default-action-v1` | 20 | 20 semantic gate + counter pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.button/view-label-bordered-v1` | 20 | 20 pixels (exact / edge-aa 32) | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.button/view-label-borderless-v1` | 20 | 20 pixels (exact / edge-aa 32) | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.button/view-label-plain-v1` | 20 | 20 pixels (exact / edge-aa 32) | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.button/view-label-prominent-v1` | 20 | 20 pixels (exact / edge-aa 32) | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/arrow-keys-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/arrow-up-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/click-selects-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/delete-key-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/five-rows-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/onmove-down-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/onmove-up-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/plain-arrow-keys-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/plain-selected-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/plain-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/selection-initial-v1` | 20 | 20 list gate + pixels | `5c6494cf7-298db764` |
+| `blocks-11-16/swiftui.list/variable-rows-selected-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+| `blocks-11-16/swiftui.list/variable-rows-v1` | 20 | 20 list gate + pixels | `8be83c64c-659f151c` |
+
+Tests on the final lane-A build (`8be83c64c-659f151c`): Windows runtime 333, host 121, bridge 51 (1 skipped); Mac runtime 325, host 121, bridge 52 (1 skipped); 0 failures. Product changes: `ButtonStyle`/`buttonStyle`, `KeyboardShortcut`, `ListStyle`/`listStyle`, List layout and onMove in the runtime; `ButtonPainter` looks, `ListPainter`, `ListHighlightArtwork`, row semantics in the host; a Button's label Text publishes no node.
+
+Lane A caveats: pressed Button state, Button tint/controlSize/dark appearance, foreground on a bordered Button, List scrolling, sidebar style, adjacent multi-selection and a real drag are not delivered (A3, A9, A10); the `.borderless` label colour (grey 127) comes from an offscreen window AppKit draws as active; Mac list/button clicks are accessibility presses, not mouse events; `job-interact.ps1` cannot send modifier keys (`$vk` shadows `$VK`), reported to lane D; the foreground colour of a prominent or disabled plain Button reaches its Text through the environment and wins over the Button's own rule.

@@ -9,6 +9,8 @@ CASES = {}
 
 
 def case(name, typename, body, pair=None, steps=None):
+    # a List case needs the interaction job even when nothing is pressed: it is the one that dumps the UI Automation tree (list items) the list gate reads
+    if steps is None and name.startswith("swiftui.list/"): steps = [{"op": "wait", "ms": 600}]
     CASES[name] = dict(type=typename, body=body, pair=pair, steps=steps)
 
 
@@ -45,7 +47,7 @@ for style, mod in (("bordered", ""), ("prominent", ".buttonStyle(.borderedPromin
     t = f"Witness_button_view_label_{style}"
     case(f"swiftui.button/view-label-{style}-v1", t, f"""struct {t}: View {{
     var body: some View {{
-        Button(action: {{}}) {{ Rectangle().fill(Color.red).frame(width: 30, height: 10) }}{mod}
+        Button(action: {{}}) {{ Rectangle().fill(Color.red).frame(width: 32, height: 12) }}{mod}
     }}
 }}""")
 
@@ -121,7 +123,7 @@ VAR = """struct %(t)s: View {
     %(state)s
     var body: some View {
         List%(sel)s {
-            Rectangle().fill(Color.red).frame(width: 30, height: 10)%(tag0)s
+            Rectangle().fill(Color.red).frame(width: 32, height: 12)%(tag0)s
             Rectangle().fill(Color.red).frame(width: 30, height: 40)%(tag1)s
             Rectangle().fill(Color.red).frame(width: 30, height: 24)%(tag2)s
         }.frame(width: 200, height: 160)
@@ -142,9 +144,9 @@ DEL = """struct %(t)s: View {
 case("swiftui.list/delete-key-v1", T + "delete_key", DEL % dict(t=T + "delete_key", mods="\n            .onDelete { offsets in items.remove(atOffsets: offsets) }"), list_gate(4),
      [{"op": "wait", "ms": 600}, {"op": "click", "x": 400, "y": ROW_TOP + ROW_H * 2 + 30}, {"op": "wait", "ms": 300}, {"op": "key", "key": "Delete"}, {"op": "wait", "ms": 500}])
 case("swiftui.list/onmove-down-v1", T + "onmove_down", DEL % dict(t=T + "onmove_down", mods="\n            .onMove { source, destination in items.move(fromOffsets: source, toOffset: destination) }"), list_gate(5),
-     [{"op": "wait", "ms": 600}, {"op": "click", "x": 400, "y": ROW_TOP + ROW_H * 1 + 30}, {"op": "wait", "ms": 300}, {"op": "key", "key": "Down", "mods": ["alt"]}, {"op": "wait", "ms": 500}])
+     [{"op": "wait", "ms": 600}, {"op": "click", "x": 400, "y": ROW_TOP + ROW_H * 1 + 30}, {"op": "wait", "ms": 300}, {"op": "key", "key": "PageDown"}, {"op": "wait", "ms": 500}])
 case("swiftui.list/onmove-up-v1", T + "onmove_up", DEL % dict(t=T + "onmove_up", mods="\n            .onMove { source, destination in items.move(fromOffsets: source, toOffset: destination) }"), list_gate(5),
-     [{"op": "wait", "ms": 600}, {"op": "click", "x": 400, "y": ROW_TOP + ROW_H * 3 + 30}, {"op": "wait", "ms": 300}, {"op": "key", "key": "Up", "mods": ["alt"]}, {"op": "wait", "ms": 500}])
+     [{"op": "wait", "ms": 600}, {"op": "click", "x": 400, "y": ROW_TOP + ROW_H * 3 + 30}, {"op": "wait", "ms": 300}, {"op": "key", "key": "PageUp"}, {"op": "wait", "ms": 500}])
 
 
 def main():

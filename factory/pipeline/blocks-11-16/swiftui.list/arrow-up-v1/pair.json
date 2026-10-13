@@ -1,0 +1,103 @@
+{
+ "listGate": {
+  "rowsTopPx": 125,
+  "rowHeightPx": 60,
+  "listRect": [
+   150,
+   100,
+   650,
+   500
+  ],
+  "textColourTolerance": 40,
+  "rows": 5
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py",
+   "rect": [
+    190,
+    137,
+    340,
+    173
+   ]
+  },
+  {
+   "name": "row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py",
+   "rect": [
+    190,
+    197,
+    340,
+    233
+   ]
+  },
+  {
+   "name": "row 2 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py",
+   "rect": [
+    190,
+    257,
+    340,
+    293
+   ]
+  },
+  {
+   "name": "row 3 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py",
+   "rect": [
+    190,
+    317,
+    340,
+    353
+   ]
+  },
+  {
+   "name": "row 4 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py",
+   "rect": [
+    190,
+    377,
+    340,
+    413
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  },
+  {
+   "op": "key",
+   "key": "Down"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "key",
+   "key": "Down"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "key",
+   "key": "Down"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "key",
+   "key": "Up"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600},{\"op\":\"key\",\"key\":\"Down\"},{\"op\":\"wait\",\"ms\":200},{\"op\":\"key\",\"key\":\"Down\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"key\",\"key\":\"Down\"},{\"op\":\"wait\",\"ms\":200},{\"op\":\"key\",\"key\":\"Up\"},{\"op\":\"wait\",\"ms\":400}]"
+ ]
+}

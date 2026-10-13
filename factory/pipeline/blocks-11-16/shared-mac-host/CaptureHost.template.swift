@@ -112,6 +112,8 @@ final class Driver {
         var all: [NSObject] = []
         buttons(host, &all)
         guard let b = all.first(where: match) else { throw NSError(domain: "MacHost", code: 6, userInfo: [NSLocalizedDescriptionKey: "no button matches (\(all.count) buttons)"]) }
+        // a disabled button refuses the press, as a click on it does nothing
+        if b.responds(to: Selector("isAccessibilityEnabled")), (b.value(forKey: "accessibilityEnabled") as? Bool) == false { return }
         guard (b as AnyObject).accessibilityPerformPress() else { throw NSError(domain: "MacHost", code: 7, userInfo: [NSLocalizedDescriptionKey: "press refused"]) }
     }
 
@@ -187,10 +189,10 @@ final class Driver {
         let ev = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: flags, timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
                                   context: nil, characters: chars, charactersIgnoringModifiers: chars, isARepeat: false, keyCode: code)!
         if name == "Tab" { if flags.contains(.shift) { window.selectPreviousKeyView(nil) } else { window.selectNextKeyView(nil) }; return }
-        if let tv = table(), flags.contains(.option), name == "Down" || name == "Up" {
-            // Alt+Up/Down: the model route to onMove, as on the Windows host: drop the selected row one place below / above its neighbour through the table's drag-and-drop
+        if let tv = table(), name == "PageDown" || name == "PageUp" {
+            // PageUp/PageDown: the model route to onMove, as on the Windows host: drop the selected row one place below / above its neighbour through the table's drag-and-drop
             // data source (what a drag does)
-            try moveSelectedRow(in: tv, by: name == "Down" ? 1 : -1)
+            try moveSelectedRow(in: tv, by: name == "PageDown" ? 1 : -1)
             return
         }
         if let tv = table(), ["Down", "Up", "Delete", "Backspace", "Home", "End", "Space", "Return", "Enter"].contains(name) {

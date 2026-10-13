@@ -219,12 +219,12 @@ struct HostPlacement {
         if ctrl { mods.insert(.command) }; if shift { mods.insert(.shift) }
         switch name {
         case "tab": _ = graph.moveFocus(forward: !shift)
+        case "pageup", "pagedown":
+            // PageUp/PageDown: the model route to onMove (a drag is not driven): move the selected row one place up/down
+            if let list = firstListID() { _ = graph.moveSelection(in: list, by: name == "pageup" ? -1 : 1) }
         case "up", "arrowup", "down", "arrowdown":
             if let list = firstListID() {
-                if event.modifiers & 0x2 != 0 {
-                    // Alt+Up/Down: the model route to onMove (a drag is not driven): move the selected row one place
-                    _ = graph.moveSelection(in: list, by: name.hasSuffix("up") ? -1 : 1)
-                } else if graph.navigateList(list, name.hasSuffix("up") ? .up : .down, extending: shift) { setListActive() }
+                if graph.navigateList(list, name.hasSuffix("up") ? .up : .down, extending: shift) { setListActive() }
             }
         case "delete", "backspace":
             if let list = firstListID() { setListActive(); _ = graph.deleteSelection(in: list) }
