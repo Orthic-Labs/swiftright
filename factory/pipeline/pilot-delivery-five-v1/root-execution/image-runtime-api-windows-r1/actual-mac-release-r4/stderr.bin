@@ -1,0 +1,20 @@
+[0/1] Planning build
+Building for production...
+[0/4] Write swift-version-1BA08FC37EE9B949.txt
+[1/4] Write sources
+[4/5] Compiling SwiftRightRuntime Alignment.swift
+/Volumes/D/claude/swiftright/probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/ContinuousRoundedGeometry.swift:68:13: warning: immutable value 'xm' was never used; consider replacing with '_' or removing it [#NoUsage]
+66 |         let middleFar = radius * controlMiddleFar
+67 |         let x1 = x0 + width, y1 = y0 + height
+68 |         let xm = (x0 + x1) / 2, ym = (y0 + y1) / 2
+   |             `- warning: immutable value 'xm' was never used; consider replacing with '_' or removing it [#NoUsage]
+69 |         let right = x1, left = x0, top = y0, bottom = y1
+70 |         var result: [ContinuousPathElement] = []
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[5/7] Compiling SwiftRightRuntimeTests AlignmentTests.swift
+[6/8] Compiling fresh_runtimePackageTests runner.swift
+[6/8] Write Objects.LinkFileList
+[7/8] Linking fresh-runtimePackageTests
+Build complete! (9.42s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.

@@ -1,0 +1,39 @@
+{
+  "kind": "factory-supervised-local-job-v1",
+  "argv": [
+    "swift",
+    "test",
+    "--build-system",
+    "native",
+    "-c",
+    "release",
+    "--package-path",
+    "probes/sr0-s/fresh-runtime",
+    "--scratch-path",
+    "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/runtime-systemimage-api-v1/build",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1"
+  ],
+  "pid": 57740,
+  "exitCode": 1,
+  "budgetFailure": null,
+  "startedAt": "2026-10-13T02:17:38.877984+00:00",
+  "finishedAt": "2026-10-13T02:18:44.986635+00:00",
+  "seconds": 66.108,
+  "peakGroupRssBytes": 56393728,
+  "stdout": {
+    "bytes": 52057,
+    "sha256": "b1ca1dc204373d5c5a413fa1ed47922290e6c5777ca5097c5429e697cde1e0bf"
+  },
+  "stderr": {
+    "bytes": 1459,
+    "sha256": "ba1c5b07a2d77b235278723a275abb82bea8b09c5b6197fa37355096765be78b"
+  },
+  "ownedGroupQuiescent": true
+}

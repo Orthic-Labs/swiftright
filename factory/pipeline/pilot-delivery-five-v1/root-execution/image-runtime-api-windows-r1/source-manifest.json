@@ -1,0 +1,77 @@
+{
+  "kind": "factory-windows-headless-runtime-api-test-request-v1",
+  "status": "source-only-ready",
+  "sourceRoot": "probes/sr0-s/fresh-runtime",
+  "destinationRoot": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+  "scratchRoot": "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime-api-image-r1-scratch",
+  "overlayPolicy": "stage six additive files into quiescent canonical runtime tree; preserve all existing files and receipts",
+  "sourceFiles": [
+    {
+      "path": "probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/NativeWindowsBodyFont.swift",
+      "sha256": "sha256:81d47e8a7d0b1652fa9ba5e30e6101322d8b06d18fa3f9c140e81a9887dbdd3b",
+      "bytes": 6218
+    },
+    {
+      "path": "probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/NativeWindowsBodyFontTests.swift",
+      "sha256": "sha256:91874cfa4b4c8e5d5ba6a0d569314c4c120576c7758d4c2a1ff1618283df7c82",
+      "bytes": 2269
+    },
+    {
+      "path": "probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/SystemImageRasterProvider.swift",
+      "sha256": "sha256:38f3f8e1d500041d6cea6c417bcc01fa34288b95dda5f032a7ddff876744a2e2",
+      "bytes": 7238
+    },
+    {
+      "path": "probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/SystemImageRasterProviderTests.swift",
+      "sha256": "sha256:a6cef26e795267251555a8fd9905437493947c770cb81303d9b0867db440889b",
+      "bytes": 2433
+    },
+    {
+      "path": "probes/sr0-s/fresh-runtime/Sources/SwiftRightRuntime/WindowsSystemImageProvider.swift",
+      "sha256": "sha256:6baf5bbf0f780e13370c9d6b2d4818a7223c3448aecd3dd1885eb1447c67f8ac",
+      "bytes": 8551
+    },
+    {
+      "path": "probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/WindowsSystemImageProviderTests.swift",
+      "sha256": "sha256:500ab12f015d9a2073302f1d890700091a91dc6efd0cd2039de05f0ad8d8084d",
+      "bytes": 2638
+    }
+  ],
+  "swiftArgv": [
+    "swift.exe",
+    "test",
+    "--package-path",
+    "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime",
+    "--scratch-path",
+    "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime-api-image-r1-scratch",
+    "--jobs",
+    "1",
+    "-Xswiftc",
+    "-j1",
+    "-Xswiftc",
+    "-num-threads",
+    "-Xswiftc",
+    "1"
+  ],
+  "supervision": {
+    "mode": "existing-pinned-windows-supervisor",
+    "rssCapBytes": 1073741824,
+    "wallSeconds": 120,
+    "maxParallelJobs": 1,
+    "maxFrontendThreads": 1,
+    "gui": false,
+    "requireSealedStreams": true,
+    "requireQuiescence": true
+  },
+  "testScope": [
+    "SwiftRightRuntimeTests"
+  ],
+  "forbiddenChanges": [
+    "renderer",
+    "bridge",
+    "protected runtime existing files",
+    "Mac reference bytes"
+  ],
+  "entryPath": "factory/pipeline/pilot-delivery-five-v1/root-execution/image-runtime-api-windows-r1/run-headless-tests.ps1",
+  "entrySha256": "sha256:963eee167dc470ff0b116e1e8e46b4a96993e5e3b804eb93f5a074234e9c64d2"
+}

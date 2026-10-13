@@ -1,0 +1,33 @@
+[0/1] Planning build
+Building for production...
+[0/9] Write swift-version--3180EABD63812A8D.txt
+[1/9] Write sources
+[4/10] Compiling SwiftRightRuntime Alignment.swift
+D:\Claude\swiftright\.factory-work\runtime-stage\api-image-body-r1\runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:102:13: warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+100 |         defer { _ = DeleteDC(dc) }
+101 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+102 |         var units = Array(request.providerFamily.utf16) + [0]
+    |             `- warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+103 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+104 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+[5/11] Compiling SwiftRightRuntimeTests AlignmentTests.swift
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+1 | _Builtin_stddef.wchar_t
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+<unknown>:0: note: attempting to recover from the previous modularization issue
+[5/11] D:\Claude\swiftright\.factory-work\runtime-stage\api-image-body-r1\scratch-r3\x86_64-unknown-windows-msvc\release\fresh-runtimePackageDiscoveredTests.derived\all-discovered-tests.swift
+[6/11] Write sources
+[8/12] Compiling fresh_runtimePackageDiscoveredTests SwiftRightRuntimeTests.swift
+[8/12] D:\Claude\swiftright\.factory-work\runtime-stage\api-image-body-r1\scratch-r3\x86_64-unknown-windows-msvc\release\fresh-runtimePackageTests.derived\runner.swift
+[9/12] Write sources
+[11/13] Compiling fresh_runtimePackageTests runner.swift
+[11/13] Write Objects.LinkFileList
+[12/13] Linking fresh-runtimePackageTests.xctest
+Build complete! (88.77s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.

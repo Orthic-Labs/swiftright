@@ -1,0 +1,26 @@
+Building for production...
+[0/9] Write swift-version--3180EABD63812A8D.txt
+[1/9] Write sources
+[4/10] Compiling SwiftRightRuntime Alignment.swift
+D:\Claude\swiftright\.factory-work\runtime-stage\api-image-body-r1\runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:102:13: warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+100 |         defer { _ = DeleteDC(dc) }
+101 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+102 |         var units = Array(request.providerFamily.utf16) + [0]
+    |             `- warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+103 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+104 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+D:\Claude\swiftright\.factory-work\runtime-stage\api-image-body-r1\runtime\Sources\SwiftRightRuntime\NativeWindowsBodyFont.swift:63:57: error: overlapping accesses to 'nonClient', but modification requires exclusive access; consider copying to a local variable [#ExclusivityViolation]
+ 61 |         var nonClient = NONCLIENTMETRICSW()
+ 62 |         nonClient.cbSize = UInt32(MemoryLayout<NONCLIENTMETRICSW>.size)
+ 63 |         let parametersOK = withUnsafeMutablePointer(to: &nonClient) { pointer in
+    |                                                         `- error: overlapping accesses to 'nonClient', but modification requires exclusive access; consider copying to a local variable [#ExclusivityViolation]
+ 64 |             SystemParametersInfoForDpi(UInt32(0x0029), nonClient.cbSize,
+    |                                                                  `- note: conflicting access is here
+ 65 |                                        UnsafeMutableRawPointer(pointer), UInt32(0), dpi)
+ 66 |         }
+
+[#ExclusivityViolation]: <https://docs.swift.org/compiler/documentation/diagnostics/exclusivity-violation>
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+error: fatalError
