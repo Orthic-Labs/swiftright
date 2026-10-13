@@ -82,6 +82,33 @@ class SemanticTests(unittest.TestCase):
             (t / "run/mac/ax-01.json").write_text(json.dumps(dict(windows=[mac_window([mac_el("B", "AXStaticText", 0, 0, 1, 1)])])))
             self.assertEqual(subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True).returncode, 1)
 
+    def test_default_button_must_hold_focus_only_when_mac_has_one(self):
+        task = win_window([win_el("Delete", "Button", 0, 20, 60, 20), win_el("Cancel", "Button", 70, 20, 60, 20, focus=True)], main=False, title="T", cls="#32770")
+        w = dict(windows=[win_window([]), task])
+        def sheet(default_idx):
+            kids = [mac_el("Delete", "AXButton", 0, 20, 60, 20), mac_el("Cancel", "AXButton", 70, 20, 60, 20)]
+            if default_idx is not None: kids[default_idx]["default"] = True
+            return dict(windows=[mac_window([]), mac_window(kids, main=False, title="T", kind="alert")])
+        cfg = dict(fields=["role", "name", "default", "dialogTitle"], scope="dialog")
+        self.assertEqual(S.compare_run(w, sheet(1), cfg)[0], [])                      # Mac default = Cancel, Windows focus = Cancel
+        self.assertEqual(len(S.compare_run(w, sheet(0), cfg)[0]), 1)                  # Mac default = Delete, but Windows focuses Cancel
+        self.assertEqual(S.compare_run(w, sheet(None), cfg)[0], [])                   # no Mac default: nothing to gate
+
+    def test_phases_and_per_phase_dialog_counts(self):
+        with tempfile.TemporaryDirectory() as t:
+            t = Path(t); (t / "case").mkdir(); (t / "run/windows").mkdir(parents=True); (t / "run/mac").mkdir()
+            cfg = dict(fields=["role", "name"], phases=["open", ""], dialogs=dict(count={"open": 1, "": 0}))
+            (t / "case/pair.json").write_text(json.dumps(dict(semanticGate=cfg)))
+            task = win_window([win_el("OK", "Button", 0, 0, 1, 1)], main=False, title="T", cls="#32770")
+            sheet = mac_window([mac_el("OK", "AXButton", 0, 0, 1, 1)], main=False, title="T", kind="alert")
+            for label, wins, macs in (("-open", [win_window([]), task], [mac_window([]), sheet]), ("", [win_window([])], [mac_window([])])):
+                (t / f"run/windows/uia-01{label}.json").write_text(json.dumps(dict(windows=wins)))
+                (t / f"run/mac/ax-01{label}.json").write_text(json.dumps(dict(windows=macs)))
+            r = subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            (t / "run/windows/uia-01.json").write_text(json.dumps(dict(windows=[win_window([]), task])))   # the dialog is still open after the press
+            self.assertEqual(subprocess.run([sys.executable, str(Path(S.__file__)), str(t / "case"), str(t / "run")], capture_output=True, text=True).returncode, 1)
+
     def test_real_windows_dump_flattens(self):
         # shape of an F2 dump from a real host run (checkbox): title-bar chrome is dropped, the control keeps role/toggle/bounds relative to the client origin
         w = dict(windows=[win_window([win_el("Enabled", "CheckBox", 0, 0, 16, 16, toggle="On", value="1", automationId="Root/#0/Modified/Modified/Toggle")])])

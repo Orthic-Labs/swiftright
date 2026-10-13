@@ -206,6 +206,10 @@ public struct ResolvedPresentationAction: Equatable, Sendable {
     public let title: String
     public let role: ButtonRole?
     public let isDisabled: Bool
+
+    public init(title: String, role: ButtonRole?, isDisabled: Bool) {
+        self.title = title; self.role = role; self.isDisabled = isDisabled
+    }
 }
 
 public struct ResolvedPresentation: Equatable, Sendable {

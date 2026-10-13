@@ -13,8 +13,12 @@ The gate comes from <case>/pair.json "semanticGate":
     "roleMap":  {"AXSheet": "dialog"},                // case overrides of the Mac/Windows role -> normalised role table
     "boundsTolerancePt": 1.0,                         // only with "bounds" in fields: max |difference| of x, y, w, h in points, relative to the window client area
     "dialogs":  {"count": 1},                         // optional: number of extra windows both sides must show
-    "focus":    "element"                             // "element": the process-focused element (name, role) is compared as a field of the report
+    "focus":    "element",                            // "element": the process-focused element (name, role) is compared as a field of the report
+    "phases":   ["open", ""]                          // dump labels to compare (default [""] = the final dump): windows/uia-NN-<label>.json against mac/ax-NN-<label>.json
   }
+"dialogs": {"count": N} may be {"open": 1, "": 0} to give a count per phase. Field "default": a Mac dialog button that is the Return (default) button must hold the keyboard
+focus of the Windows dialog (a Mac dialog without a default button gates nothing: a task dialog always has one). Field "dialogTitle": the Windows dialog title equals the Mac
+alert's message text.
 Normalised element: role, name, value, enabled, focus, toggle (on|off|mixed|null), bounds [x,y,w,h] pt relative to the window content origin. Elements are compared
 as the depth-first sequence of the kept elements of each window group; a missing/extra element or a differing gated field fails the run.
 """
@@ -82,7 +86,8 @@ def flatten_mac(node, role_map, out, depth=0):
     if role == "text" and not name and value is not None:
         name, value = value, None
     out.append(dict(role=role, name=clean(name), value=None if toggle else clean(value) if value is not None else None,
-                    enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")), toggle=toggle, bounds=node.get("bounds"), depth=depth, raw=key))
+                    enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")), toggle=toggle, bounds=node.get("bounds"), depth=depth, raw=key,
+                    default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive"))))
     for c in node.get("children", []):
         flatten_mac(c, role_map, out, depth + 1)
 
@@ -155,12 +160,15 @@ def compare_lists(label, a, b, cfg):
                         mm.append(dict(where=f"{label}[{i}]", field="bounds", windows=bx, mac=by))
                 elif max(abs(p - q) for p, q in zip(bx, by)) > tol:
                     mm.append(dict(where=f"{label}[{i}]", field="bounds", windows=bx, mac=by, tolerancePt=tol))
+            elif f == "default":
+                if y.get("default") and not x.get("focus"):
+                    mm.append(dict(where=f"{label}[{i}]", field="default", windows="not focused", mac="default (Return) button", name=y["name"]))
             elif x.get(f) != y.get(f):
                 mm.append(dict(where=f"{label}[{i}]", field=f, windows=x.get(f), mac=y.get(f), role=(x["role"], y["role"])))
     return mm
 
 
-def compare_run(win_doc, mac_doc, cfg):
+def compare_run(win_doc, mac_doc, cfg, phase=""):
     rm = cfg.get("roleMap", {})
     w, m = win_groups(win_doc, rm), mac_groups(mac_doc, rm)
     scope = cfg.get("scope", "all")
@@ -171,6 +179,8 @@ def compare_run(win_doc, mac_doc, cfg):
         mm += compare_lists("main", a, b, cfg)
     if scope in ("dialog", "all"):
         want = cfg.get("dialogs", {}).get("count")
+        if isinstance(want, dict):
+            want = want.get(phase)
         if want is not None:
             for side, g in (("windows", w), ("mac", m)):
                 if len(g["dialogs"]) != want:
@@ -197,11 +207,18 @@ def main():
         sys.exit("pair.json has no semanticGate")
     rows = []
     n = len(list((out / "windows").glob("uia-[0-9][0-9].json")))
+    phases = cfg.get("phases", [""])
     for i in range(1, n + 1):
-        wp, mp = out / f"windows/uia-{i:02d}.json", out / f"mac/ax-{i:02d}.json"
-        if not (wp.is_file() and mp.is_file()):
-            rows.append(dict(run=i, verdict="fail", error=f"missing dump windows={wp.is_file()} mac={mp.is_file()}")); continue
-        mm, info = compare_run(json.loads(wp.read_text(encoding="utf-8-sig")), json.loads(mp.read_text(encoding="utf-8-sig")), cfg)
+        mm, info, err = [], {}, None
+        for phase in phases:
+            suffix = f"-{phase}" if phase else ""
+            wp, mp = out / f"windows/uia-{i:02d}{suffix}.json", out / f"mac/ax-{i:02d}{suffix}.json"
+            if not (wp.is_file() and mp.is_file()):
+                err = f"missing dump (phase '{phase}') windows={wp.is_file()} mac={mp.is_file()}"; break
+            pm, pinfo = compare_run(json.loads(wp.read_text(encoding="utf-8-sig")), json.loads(mp.read_text(encoding="utf-8-sig")), cfg, phase)
+            mm += [dict(m, phase=phase) for m in pm]; info[phase or "final"] = pinfo
+        if err:
+            rows.append(dict(run=i, verdict="fail", error=err)); continue
         rows.append(dict(run=i, verdict="pass" if not mm else "fail", compared=info, mismatches=mm))
     passed = sum(1 for r in rows if r["verdict"] == "pass")
     rep = dict(pairs=n, pass_=passed, fail=n - passed, gate=cfg, rows=rows)

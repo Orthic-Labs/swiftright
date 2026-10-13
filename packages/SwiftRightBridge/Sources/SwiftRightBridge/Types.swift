@@ -230,6 +230,13 @@ public struct BridgeEvent {
     /// KEY only: the typed character (may be empty).
     public var typed: String
 
+    /// For hosts and tests that build events themselves (the renderer fills them in production).
+    public init(kindRaw: UInt32, action: UInt32 = 0, window: UInt64 = 0, node: NodeID = 0, snapshot: UInt64 = 0, seq: UInt64 = 0, arg: UInt64 = 0,
+                x: Float = 0, y: Float = 0, i0: Int32 = 0, i1: Int32 = 0, modifiers: UInt32 = 0, text: String = "", typed: String = "") {
+        self.kindRaw = kindRaw; self.action = action; self.window = window; self.node = node; self.snapshot = snapshot; self.seq = seq; self.arg = arg
+        self.x = x; self.y = y; self.i0 = i0; self.i1 = i1; self.modifiers = modifiers; self.text = text; self.typed = typed
+    }
+
     /// Rev 0.6 `.modalResult` of a menu or custom-button dialog: the chosen item's host id and
     /// its index, or nil when dismissed (and for plain message boxes, which report `i0`).
     public var modalChoice: (itemID: UInt32, index: Int)? {
