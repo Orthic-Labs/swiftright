@@ -115,7 +115,7 @@ public final class ResolvedNodePainter {
 
     /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
     /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
-    static let unpaintedPrimitives: Set<String> = ["Button", "TextField", "TextEditor", "Toggle", "Divider", "Menu", "List"]
+    static let unpaintedPrimitives: Set<String> = ["Button", "TextField", "TextEditor", "Divider", "Menu", "List"]
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
