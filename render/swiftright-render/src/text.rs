@@ -218,8 +218,8 @@ impl TextCache {
 /// Baseline placement matching CoreText/SwiftUI `Text` (measured on macOS: baseline = round(ascent) DIP below the line top at every
 /// scale; the font's leading is not placed above the text). Returns (baseline offset inside a line box in px, paint-origin shift in px):
 /// GPUI paints the baseline at half-leading + ascent, so the shift moves it to round(ascent).
-pub(crate) fn baseline_placement(line_height: f32, ascent: f32, descent: f32, scale: f32) -> (f32, f32) {
-    let target = ascent.round();
+pub(crate) fn baseline_placement(line_height: f32, ascent: f32, descent: f32, ct_ascent: f32, scale: f32) -> (f32, f32) {
+    let target = ct_ascent.round();
     let gpui = (line_height - (ascent + descent)) / 2.0 + ascent;
     (target * scale, (target - gpui) * scale)
 }
@@ -384,7 +384,17 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     // CoreText / SwiftUI Text: the baseline sits at the (DIP-rounded) ascent below the line top and any extra leading goes
     // below the descent. GPUI paints with half-leading above the text, so the paint origin is shifted to compensate.
     let (baseline_in_line, paint_dy) = match asc_desc {
-        Some((ascent, descent)) => baseline_placement(lh, ascent, descent, scale),
+        Some((ascent, descent)) => {
+            // CoreText's ascent: the face's hhea ascent for a registered (bundled) font. GPUI/DirectWrite's own ascent differs
+            // (Tinos: 17 DIP vs 16.04), so it only describes where GPUI paints, never where the baseline must land.
+            let ct_ascent = crate::font::REGISTRY
+                .lock()
+                .ok()
+                .and_then(|reg| reg.hhea_em(r.family))
+                .map(|(a, _)| a * r.font_size)
+                .unwrap_or(ascent);
+            baseline_placement(lh, ascent, descent, ct_ascent, scale)
+        }
         None => (lh * scale * 0.8, 0.0),
     };
     if paint_dy != 0.0 {
@@ -428,7 +438,7 @@ mod baseline_tests {
     #[test]
     fn baseline_is_rounded_ascent_from_line_top() {
         // Tinos 18 DIP at 2.5x: asc 16.04, desc 3.89, host line height 20 (round(asc)+round(desc)); CoreText baseline = 16 DIP = 40 px.
-        let (b, dy) = baseline_placement(20.0, 16.0400391, 3.8935547, 2.5);
+        let (b, dy) = baseline_placement(20.0, 16.0400391, 3.8935547, 16.0400391, 2.5);
         assert_eq!(b, 40.0);
         // GPUI baseline = 0.0332 + 16.04 = 16.0732 DIP; the shift lands it on 16 DIP.
         assert!(((16.0732 * 2.5) + dy - 40.0).abs() < 0.01);
@@ -437,7 +447,7 @@ mod baseline_tests {
     #[test]
     fn font_gap_in_line_height_goes_below_the_text() {
         // Line height with the 0.76 DIP gap included: baseline still at the ascent, not half a gap lower.
-        let (b, dy) = baseline_placement(20.698242, 16.0400391, 3.8935547, 2.5);
+        let (b, dy) = baseline_placement(20.698242, 16.0400391, 3.8935547, 16.0400391, 2.5);
         assert_eq!(b, 40.0);
         assert!(dy < 0.0);
         let gpui_baseline_px = ((20.698242 - 19.9335938) / 2.0 + 16.0400391) * 2.5;
@@ -446,7 +456,21 @@ mod baseline_tests {
 
     #[test]
     fn rounds_to_nearest_dip() {
-        assert_eq!(baseline_placement(15.0, 11.5845, 2.812, 2.5).0, 30.0);
-        assert_eq!(baseline_placement(20.0, 38.67, 8.44, 1.0).0, 39.0);
+        assert_eq!(baseline_placement(15.0, 11.5845, 2.812, 11.5845, 2.5).0, 30.0);
+        assert_eq!(baseline_placement(20.0, 38.67, 8.44, 38.67, 1.0).0, 39.0);
+    }
+}
+
+#[cfg(test)]
+mod baseline_gpui_ascent_tests {
+    use super::baseline_placement;
+
+    #[test]
+    fn gpui_ascent_larger_than_coretext_is_compensated() {
+        // DirectWrite/GPUI ascent 17 DIP, CoreText 16.04: the baseline still lands at 16 DIP = 40 px.
+        let (b, dy) = baseline_placement(20.0, 17.0, 3.8935547, 16.0400391, 2.5);
+        assert_eq!(b, 40.0);
+        let gpui_px = ((20.0 - 20.8935547) / 2.0 + 17.0) * 2.5;
+        assert!((gpui_px + dy - 40.0).abs() < 0.01);
     }
 }

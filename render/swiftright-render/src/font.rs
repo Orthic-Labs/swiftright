@@ -21,6 +21,8 @@ pub struct FontMeta {
     pub family: String,
     pub weight: u32,
     pub face_count: u32,
+    /// hhea ascent / descent in em (CoreText's ascent and descent for the face); None when the table is absent.
+    pub hhea_em: Option<(f32, f32)>,
 }
 
 fn be16(b: &[u8], o: usize) -> Option<u16> {
@@ -132,7 +134,18 @@ pub fn parse(b: &[u8]) -> Result<FontMeta, Status> {
         .map(|w| w as u32)
         .filter(|w| (1..=1000).contains(w))
         .unwrap_or(400);
-    Ok(FontMeta { family, weight, face_count: faces })
+    let hhea_em = (|| {
+        let (h, hl) = table(b, first, b"hhea")?;
+        let (hd, hdl) = table(b, first, b"head")?;
+        if hl < 8 || hdl < 20 {
+            return None;
+        }
+        let upm = be16(b, hd + 18)? as f32;
+        let asc = be16(b, h + 4)? as i16 as f32;
+        let desc = be16(b, h + 6)? as i16 as f32;
+        (upm > 0.0 && asc > 0.0).then(|| (asc / upm, desc.abs() / upm))
+    })();
+    Ok(FontMeta { family, weight, face_count: faces, hhea_em })
 }
 
 // ------------------------------------------------------------------ SHA-256
@@ -218,6 +231,11 @@ impl Registry {
         self.entries.iter().find(|e| &e.sha256 == sha)
     }
 
+    /// hhea (ascent, descent) in em of a registered family, if any.
+    pub fn hhea_em(&self, family: &str) -> Option<(f32, f32)> {
+        self.find_family(family).and_then(|e| e.meta.hhea_em)
+    }
+
     pub fn find_family(&self, family: &str) -> Option<&Entry> {
         let k = key(family);
         self.entries.iter().find(|e| key(&e.meta.family) == k)
@@ -285,6 +303,12 @@ mod tests {
 
     fn hex(b: &[u8]) -> String {
         b.iter().map(|x| format!("{x:02x}")).collect()
+    }
+
+    #[test]
+    fn tinos_hhea_is_coretext_ascent_descent() {
+        let (a, d) = parse(TINOS).unwrap().hhea_em.unwrap();
+        assert!((a * 18.0 - 16.040039).abs() < 1e-4 && (d * 18.0 - 3.8935547).abs() < 1e-4);
     }
 
     #[test]
