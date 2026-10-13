@@ -1,0 +1,55 @@
+{
+ "case": "checkbox-labelled-on-v1",
+ "run": "20261013-201656",
+ "pairs": 1,
+ "gatePassed": 1,
+ "gate": "control size equal, y within 2 px; control (translated by dx) exact with edge-aa<=32; label vertical centre within 3 px; label pixels reported only",
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "controlBBox": {
+    "mac": [
+     0,
+     2,
+     40,
+     42
+    ],
+    "windows": [
+     0,
+     2,
+     40,
+     42
+    ],
+    "dxWindowsMinusMac": 0,
+    "dyWindowsMinusMac": 0
+   },
+   "sameSizeAndY": true,
+   "controlGate": {
+    "verdict": "edge-aa<=32",
+    "totalDiff": 237,
+    "inBandDiff": 237,
+    "outOfBandDiff": 0,
+    "maxInBand": 17,
+    "maxOutOfBand": 0,
+    "bandPixels": 1183
+   },
+   "labelInkBBox": {
+    "mac": [
+     0,
+     11,
+     1,
+     33
+    ],
+    "windows": [
+     0,
+     10,
+     1,
+     34
+    ],
+    "centreToleranceOk": true
+   },
+   "labelDifferingPixelsReported": 16
+  }
+ ]
+}

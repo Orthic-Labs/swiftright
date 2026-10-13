@@ -16,16 +16,25 @@ Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's 
 | ScrollView, rows of Text (the recipe witness) on a yellow viewport backdrop | `blocks-6-10/scroll-view/vertical-text-rows-v1` | 20 | 20 exact-with-exclusions: only the named row-glyph region (decision 2) differs; clipped ink ends at the viewport bottom on both sides |
 | PreferenceKey (block 10), custom `reduce` (max and sum) rendered by the observing parent | `blocks-6-10/preference-key/reduce-max-sum-v1` | 20 | 20 exact |
 | PreferenceKey, nil-literal `defaultValue`, first contribution wins, no-contributor default | `blocks-6-10/preference-key/nil-default-first-wins-v1` | 20 | 20 exact |
+| Toggle, `.toggleStyle(.switch)` on and off, label hidden | `blocks-6-10/swiftui.toggle/switch-on-v1`, `switch-off-v1` | 20 + 20 | 20 + 20 edge-aa≤32 (max 18 on, 7 off); frame exact, flat state colours exact (decisions 5, 7) |
+| Toggle, switch with its label | `blocks-6-10/swiftui.toggle/switch-labelled-on-v1` | 20 | 20 control gate (`pair_control_report.py`): switch same size and y, flat colours exact, edge-aa≤32 after translating by the label-width difference (−16 px, Segoe vs SF, decision 2); label centred within 3 px; pixel verdict is `fail` by design (the switch sits 16 px left) |
+| Toggle, default style (a checkbox on macOS, decision 8) on and off, label hidden | `blocks-6-10/swiftui.toggle/checkbox-on-v1`, `checkbox-off-v1` | 20 + 20 | 20 + 20 edge-aa≤32 (max 17 on, 5 off) |
+| Toggle, default style with its label | `blocks-6-10/swiftui.toggle/checkbox-labelled-on-v1` | 20 | 20 control gate (box same size, shift 0, max 17, y within 2 px of AppKit's 0.8 pt drop); label as above |
+| `.disabled(true)` on a switch, on and off | `blocks-6-10/swiftui.disabled/toggle-on-disabled-v1`, `toggle-off-disabled-v1` | 20 + 20 | 20 + 20 edge-aa≤32 (max 16, 7); dimmed colours exact (decision 10) |
+| `.disabled(true)` on a checkbox, on and off | `blocks-6-10/swiftui.disabled/checkbox-on-disabled-v1`, `checkbox-off-disabled-v1` | 20 + 20 | 20 + 20 edge-aa≤32 (max 4, 3) |
 
 Tests on the same build: Windows runtime 224, bridge 48, host 35; Mac runtime 216, bridge 48, host 35; 0 failures on either host.
 
 Blocks 6 (ScrollView) and 10 (PreferenceKey) were captured on product stage `0a47f28e7-94d4c4b6` (renderer 0.7 `82513ae0…`, same Sandbox loop, Mac side: offscreen `NSHostingView.cacheDisplay` at scale 2.5 because `ImageRenderer` renders ScrollView blank). Product changes behind them: ScrollView viewport clip in the host paint path (`4a2891c35`), `View.defaultScrollAnchor` (`e2a953403`), nil-literal `PreferenceKey.defaultValue` and the first `onPreferenceChange` delivery of the default value (`a3d47453c`), composite user views in the paint path (`0a47f28e7`). Suites: Windows runtime 242 and host 54 on stage `0a47f28e7`, bridge 51 (1 skipped) on stage `031478e48` (the `0a47f28e7` bridge run had one failure in the W08 `RepairGuardTests.testEmbeddedScriptMatchesSourceFile`, caused by that commit pair predating the guard file rename; not part of these blocks); Mac runtime 245, bridge 52, host 63 on the working tree. 0 failures in the runs reported except that one.
+
+Blocks Toggle and `.disabled` were captured on product stage `5105e0064-aae1fa17` (renderer 0.7 `82513ae0…`, same Sandbox loop; Mac side: an offscreen `NSHostingView` in a window that is never shown, because `ImageRenderer` draws AppKit controls as a placeholder, decision 9). Product changes behind them: Toggle layout metrics in the runtime (`ToggleMetrics`: 54 x 24 pt switch, 16 x 16 pt checkbox, label spacing), `SwitchArtwork` and `CheckboxArtwork` vector models and `TogglePainter` in `SwiftRightHost`, switch and checkbox semantics (role, toggled, disabled flag, invoke action) on the bridge node, and the capture host's invoke path flipping a Toggle. Tests on that stage: Windows runtime 244, host 63, 0 failures; Mac runtime 236, host 63, 0 failures. The bridge package has 1 failure on this stage on both hosts (`RepairGuardTests.testEmbeddedScriptMatchesSourceFile`, W08's in-flight work, not Toggle); `swift test` at a later HEAD, Mac, bridge 52, 0 failures.
 
 **Known gaps:**
 - SliceApp's own backend does not yet use `ResolvedNodePainter`.
 - Per-case provenance files (`source-bindings.json`, `plan.json`) describe the old host sources.
 - 41 symbol sizes use measured ink overrides.
 - Hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested.
+- Toggle artwork is measured at scale 2.5, light appearance only (the resolved tree carries no colour scheme, so a dark environment still paints light); `Button` disabled artwork is not delivered (it needs coloured text runs); Toggle activation by pointer or keyboard is covered by unit tests (`activateToggle`, painter repaint), not by a Sandbox input run.
 
 **Next:** scale to 10 blocks, then 20, using the same loop.
 
