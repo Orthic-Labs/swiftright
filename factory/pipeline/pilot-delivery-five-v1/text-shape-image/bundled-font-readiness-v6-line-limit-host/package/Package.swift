@@ -1,9 +1,11 @@
 // swift-tools-version:6.0
 import PackageDescription
-let package = Package(name: "FactoryTinosProbe", dependencies: [
-    .package(name: "fresh-runtime", path: "D:\\Claude\\swiftright\\.factory-work\\runtime-stage\\runtime"),
-    .package(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\SwiftRightBridge-0.7")
+// The product (SwiftRightHost = runtime + bridge + paint path) is staged once for all cases; pair.py replaces the token with the
+// staged tree (factory/tools/stage-product.py: git archive of one commit). The renderer DLL is chosen per run (SWIFTRIGHT_RENDER_DLL).
+let package = Package(name: "FactoryProbe", dependencies: [
+    .package(name: "fresh-runtime", path: "@@PRODUCT_STAGE@@\\probes\\sr0-s\\fresh-runtime"),
+    .package(path: "@@PRODUCT_STAGE@@\\packages\\SwiftRightHost")
 ], targets: [.executableTarget(name: "FactoryProbe", dependencies: [
     .product(name: "SwiftRightRuntime", package: "fresh-runtime"),
-    .product(name: "SwiftRightBridge", package: "SwiftRightBridge-0.7")
+    .product(name: "SwiftRightHost", package: "SwiftRightHost")
 ])], swiftLanguageModes: [.v5])

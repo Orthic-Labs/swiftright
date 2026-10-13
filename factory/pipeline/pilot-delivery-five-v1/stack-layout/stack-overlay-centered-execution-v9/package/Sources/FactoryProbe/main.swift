@@ -1,65 +1,59 @@
 import Foundation
-import SwiftRightRuntime
-import SwiftRightBridge
+import SwiftRightHost
 import WinSDK
 
-// Thread-local factory hook vetoes activation before staged renderer creates its window.
-let factoryActivationVeto: HOOKPROC = { code, wParam, lParam in
+// Capture host: an owned renderer window of a fixed client size, the witness as a plain SwiftUI-source view, and the PRODUCT paint
+// path (SwiftRightHost: shapes incl. continuous, Image(systemName:), body/custom fonts, line limit). Nothing here paints:
+// the host only places the resolved tree (optionally centred in the viewport), draws the white/dark background, commits it
+// and owns the capture lifecycle (activation veto, owned-window metrics, 10 s lease).
+// Stamped per case by stamp-case.py; the witness file is the case's own and is never touched.
+
+// Thread-local hook vetoes activation before the renderer creates its window (nothing ever takes the foreground).
+let hostActivationVeto: HOOKPROC = { code, wParam, lParam in
     if code == Int32(HCBT_ACTIVATE) || code == Int32(HCBT_SETFOCUS) { return 1 }
     return CallNextHookEx(nil, code, wParam, lParam)
 }
 
-@MainActor final class NativeMeasurer: TextMeasurer {
-    let bridge: Bridge
-    let scale: Float
-    let bodyFont: FactoryDefaultBodyFontPolicy
-    var retained: [TextMeasureRequest: SwiftRightBridge.TextMeasurement] = [:]
-    init(_ bridge: Bridge, _ scale: Float, _ bodyFont: FactoryDefaultBodyFontPolicy) {
-        self.bridge = bridge; self.scale = scale; self.bodyFont = bodyFont
-    }
-    func measure(_ request: TextMeasureRequest) -> SwiftRightRuntime.TextMeasurement {
-        do {
-            guard request.fontID == "body", request.fontMetadata == nil, request.lineLimit == nil,
-                  Float(request.scale) == scale else { throw NSError(domain: "FactoryUnsupportedMeasurementStyle", code: 1) }
-            let result: SwiftRightBridge.TextMeasurement
-            if let cached = retained[request] { result = cached }
-            else {
-                guard retained.count < 128 else { throw NSError(domain: "FactoryMeasurementCacheBound", code: 1) }
-                result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: bodyFont.family,
-                  weight: bodyFont.weight, color: 0x1f1f1fff, fontSize: bodyFont.fontSizeDIP,
-                  lineHeight: bodyFont.lineHeightDIP, scale: scale,
-                  maxWidth: Float(request.proposedWidth ?? 0) * scale))
-                retained[request] = result
-                print("FACTORY_MEASURE text=\(request.text) proposedDIP=\(request.proposedWidth.map(String.init(describing:)) ?? "nil") widthPX=\(result.width) heightPX=\(result.height) lines=\(result.lineCount) scale=\(scale)")
-            }
-            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale),
-              height: CGFloat(result.height / scale)), baseline: CGFloat(result.firstBaseline / scale), lineCount: result.lineCount)
-        } catch { fatalError("Native measurement failed: \(error)") }
-    }
-    func renderRun(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle {
-        // Match full supported semantic style &possible edge-snapped extents.
-        // Proposed widths remain in retained keys; ambiguous unequal shaping is refused.
-        let fontID = font?.id ?? "body"
-        let metadata = font?.metadata
-        let candidates = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale && $0.key.lineLimit == nil && factorySnappedExtentCanMatch($0.value.width, bounds.w, origin: bounds.x, scale: scale) && factorySnappedExtentCanMatch($0.value.height, bounds.h, origin: bounds.y, scale: scale) }
-            .sorted { ($0.key.proposedWidth ?? .infinity) < ($1.key.proposedWidth ?? .infinity) }
-        guard let chosen = candidates.first else { throw NSError(domain: "FactoryMeasuredRunGeometryMismatch", code: 1) }
-        guard candidates.allSatisfy({ $0.value.width == chosen.value.width && $0.value.height == chosen.value.height && $0.value.lines == chosen.value.lines && $0.value.firstBaseline == chosen.value.firstBaseline }) else {
-            throw NSError(domain: "FactoryAmbiguousMeasuredRun", code: 1)
-        }
-        print("FACTORY_RETAINED_RUN text=\(text) widthPX=\(chosen.value.width) heightPX=\(chosen.value.height) snappedWidthPX=\(bounds.w) lines=\(chosen.value.lineCount) proposedDIP=\(chosen.key.proposedWidth.map(String.init(describing:)) ?? "nil")")
-        return chosen.value.run
-    }
-    func releaseAll() { retained.values.forEach { bridge.release($0.run) }; retained.removeAll() }
+/// Where the renderer DLL is: SWIFTRIGHT_RENDER_DLL (set per run by the capture job), else the pinned default.
+func hostRendererPath() -> String {
+    ProcessInfo.processInfo.environment["SWIFTRIGHT_RENDER_DLL"] ?? "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll"
 }
-@MainActor final class RendererHost {
+
+/// The directory holding bundled fonts: beside the exe, in a `Resources` folder there, or the same one above a SwiftPM scratch layout.
+func hostBundledFontDirectory() -> URL? {
+    var dir = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
+    for _ in 0..<8 {
+        for candidate in [dir, dir.appendingPathComponent("Resources", isDirectory: true)] where !BundledFontLibrary.fontFiles(in: candidate).isEmpty {
+            return candidate
+        }
+        dir.deleteLastPathComponent()
+    }
+    return nil
+}
+
+struct HostPlacement {
+    let dx: Float, dy: Float
+    func applying(to b: Rect) -> Rect { Rect(x: b.x + dx, y: b.y + dy, w: b.w, h: b.h) }
+    /// Centres the intrinsic root of the tree in the viewport (translation of the whole subtree; the background stays fixed).
+    static func centered(_ root: Rect, in viewport: Rect) -> HostPlacement? {
+        let all = [root.x, root.y, root.w, root.h, viewport.x, viewport.y, viewport.w, viewport.h]
+        guard all.allSatisfy({ $0.isFinite }), root.w >= 0, root.h >= 0, root.w <= viewport.w, root.h <= viewport.h else { return nil }
+        return HostPlacement(dx: viewport.x + (viewport.w - root.w) / 2 - root.x, dy: viewport.y + (viewport.h - root.h) / 2 - root.y)
+    }
+}
+
+@MainActor final class CaptureHost {
+    static let centered = true
+    static let dark = false
+
     let bridge: Bridge
     var graph: Graph?
     var window: BridgeWindow?
-    var measurer: NativeMeasurer?
+    var measurer: BridgeTextMeasurer?
+    var systemImages: SystemImageRegistry?
+    var painter: ResolvedNodePainter?
     var ownedHWND: HWND?
     var initialDPI: UInt32?
-    let themeDark = "light" == "dark"
     var viewport = Rect(x: 0, y: 0, w: 320, h: 240)
     var scale: Float = 1
     var version: UInt64 = 0
@@ -67,7 +61,10 @@ let factoryActivationVeto: HOOKPROC = { code, wParam, lParam in
     var live: Set<UInt64> = []
     var runtimeIDs: [UInt64: String] = [:]
     var errors: [String] = []
+    // The bridge drains late main-queue work after onWindowClosed; no window ownership lookup is valid then.
+    var windowClosed = false
     init(_ bridge: Bridge) { self.bridge = bridge }
+
     func ready(_ window: BridgeWindow) {
         self.window = window
         do {
@@ -75,84 +72,82 @@ let factoryActivationVeto: HOOKPROC = { code, wParam, lParam in
             let owned = try factoryOwnedClient()
             let metrics = owned.size
             ownedHWND = owned.hwnd; initialDPI = metrics.dpi
-            print("FACTORY_ABI_INITIAL_METRICS width=\(abi.width) height=\(abi.height) scale=\(abi.scale)")
+            print("HOST_ABI_INITIAL_METRICS width=\(abi.width) height=\(abi.height) scale=\(abi.scale)")
             scale = metrics.scale
             viewport = Rect(x: 0, y: 0, w: Float(metrics.width), h: Float(metrics.height))
-            let bodyFont = try factoryDefaultBodyFontPolicy(dpi: metrics.dpi)
-            let nativeMeasurer = NativeMeasurer(bridge, scale, bodyFont)
-            measurer = nativeMeasurer
-            let graph = Graph(Witness_stack_overlay(), measurer: nativeMeasurer, scale: CGFloat(scale))
+            // Bundled fonts register before the first measurement and are verified to resolve to the registered bytes.
+            let fonts = BundledFontLibrary(bridge: bridge)
+            if let dir = hostBundledFontDirectory() {
+                for registration in try fonts.registerAll(in: dir) {
+                    let resolved = try bridge.resolveFont(family: registration.family)
+                    guard resolved.source == .bundled, resolved.handle == registration.handle else {
+                        throw NSError(domain: "HostBundledFontNotResolved", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(registration.family): \(resolved.source)"])
+                    }
+                    print("HOST_BUNDLED_FONT family=\(registration.family) weight=\(registration.weight) faces=\(registration.faceCount) sha256=sha256:\(registration.sha256Hex) abi=\(bridge.revision) resolve=\(resolved.source)")
+                }
+            }
+            let body = BodyFontProfile(try NativeWindowsBodyFontResolver.resolve(dpi: metrics.dpi))
+            let measurer = BridgeTextMeasurer(bridge: bridge, scale: scale, body: body, fonts: fonts)
+            self.measurer = measurer
+            let images = try SystemImageRegistry(images: bridge, rasterizer: WindowsGlyphRasterizer())
+            images.scale = Double(scale)
+            systemImages = images
+            painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images)
+            let graph = Graph(Witness_stack_overlay(), measurer: measurer, scale: CGFloat(scale))
+            images.install(on: graph)
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
             graph.commitSink = { [weak self] record in self?.commit(record) }
             self.graph = graph
             try window.requestTicks(true)
             graph.flush()
-            print("FACTORY_RENDERER_READY scale=\(scale) width=\(metrics.width) height=\(metrics.height) hwnd=\(UInt(bitPattern: owned.hwnd)) pid=\(owned.pid) thread=\(owned.thread) dpi=\(metrics.dpi) metricsSource=owned-client-rect")
+            print("HOST_RENDERER_READY scale=\(scale) width=\(metrics.width) height=\(metrics.height) hwnd=\(UInt(bitPattern: owned.hwnd)) pid=\(owned.pid) thread=\(owned.thread) dpi=\(metrics.dpi) metricsSource=owned-client-rect")
             fflush(stdout)
         } catch { fail(error) }
     }
+
     func fail(_ error: Error) { errors.append(String(describing: error)); bridge.requestQuit() }
+
     func commit(_ record: CommitRecord) {
-        guard let root = record.root, let window else { return }
-        let backgroundID = UInt64.max - 1
-        var nodes: [NodeUpsert] = [NodeUpsert(id: backgroundID, bounds: viewport, primitives: [.rect(viewport, color: themeDark ? 0x1e1e1eff : 0xffffffff)])]
+        guard !windowClosed, let root = record.root, let window, let painter else { return }
+        if let failure = measurer?.failures.first { fail(NSError(domain: "HostTextMeasurement", code: 1, userInfo: [NSLocalizedDescriptionKey: failure])); return }
         let rootPixel = root.pixelFrame
-        let rootBounds = Rect(x: Float(rootPixel.x), y: Float(rootPixel.y),
-                              w: Float(rootPixel.width), h: Float(rootPixel.height))
-        guard let centering = factoryCenteredRootSubtree(rootBounds, viewport: viewport) else {
-            fail(NSError(domain: "FactoryRootCenteringMismatch", code: 1))
-            return
-        }
-        print("FACTORY_ROOT_CENTERING rootX=\(rootBounds.x) rootY=\(rootBounds.y) rootW=\(rootBounds.w) rootH=\(rootBounds.h) dx=\(centering.dx) dy=\(centering.dy) viewportW=\(viewport.w) viewportH=\(viewport.h)")
-        var current: Set<UInt64> = []
-        let sharedMapper = FactorySharedNodeMapper(scale: scale) { text, font, bounds in
-            guard let measurer = self.measurer else { throw NSError(domain: "FactoryMeasurerUnavailable", code: 1) }
-            return try measurer.renderRun(text: text, font: font, bounds: bounds)
-        }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32) throws {
-            let id = UInt64(n.instance + 1)
-            current.insert(id)
-            runtimeIDs[id] = n.id
-            let p = n.pixelFrame
-            let sourceBounds = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
-            let bounds = centering.applying(to: sourceBounds)
-            let emission = try sharedMapper.emit(n, bounds: bounds)
-            let primitives = emission.primitives
-            let semantic = emission.semantic
-            let flags = emission.flags
-            if n.kind == "Rectangle" || n.kind == "Circle" {
-                print("FACTORY_NATIVE_FILL node=\(n.id) kind=\(n.kind) x=\(bounds.x) y=\(bounds.y) width=\(bounds.w) height=\(bounds.h)")
-            } else if n.kind == "Color" {
-                print("FACTORY_NATIVE_COLOR node=\(n.id) x=\(bounds.x) y=\(bounds.y) width=\(bounds.w) height=\(bounds.h)")
-            }
-            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: flags, bounds: bounds, primitives: primitives, semantic: semantic))
-            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index)) }
+        let rootBounds = Rect(x: Float(rootPixel.x), y: Float(rootPixel.y), w: Float(rootPixel.width), h: Float(rootPixel.height))
+        var placement = HostPlacement(dx: 0, dy: 0)
+        if Self.centered {
+            guard let centering = HostPlacement.centered(rootBounds, in: viewport) else { fail(NSError(domain: "HostRootCenteringMismatch", code: 1)); return }
+            placement = centering
+            print("HOST_ROOT_CENTERING rootX=\(rootBounds.x) rootY=\(rootBounds.y) rootW=\(rootBounds.w) rootH=\(rootBounds.h) dx=\(placement.dx) dy=\(placement.dy) viewportW=\(viewport.w) viewportH=\(viewport.h)")
         }
         do {
-            try walk(root, parent: backgroundID, order: 0)
-            current.insert(backgroundID)
+            let committed = try painter.commit(root: root, version: version + 1, previousLive: live,
+                                               background: ResolvedNodePainter.Background(bounds: viewport, color: Self.dark ? 0x1e1e1eff : 0xffffffff),
+                                               place: { placement.applying(to: $0) }) { try window.commit($0) }
             version += 1
-            try window.commit(Transaction(version: version, upserts: nodes, removes: Array(live.subtracting(current))))
-            live = current
-            print("FACTORY_COMMIT version=\(version) nodes=\(nodes.count)")
+            live = committed.live
+            runtimeIDs.merge(committed.runtimeIDs) { _, new in new }
+            print("HOST_COMMIT version=\(version) nodes=\(committed.nodeCount)")
             fflush(stdout)
         } catch { fail(error) }
     }
+
     func event(_ event: BridgeEvent) {
+        guard !windowClosed else { return }
         if event.kind == .axAction, event.action == 1, let id = runtimeIDs[event.node] {
             _ = graph?.tapButton(id)
             graph?.flush()
         }
     }
+
     func tick(_ time: UInt64) {
+        guard !windowClosed else { return }
         do {
             let owned = try factoryOwnedClient(expected: ownedHWND)
-            guard owned.size.dpi == initialDPI else { throw NSError(domain: "FactoryDPIDriftUnsupported", code: 1) }
+            guard owned.size.dpi == initialDPI else { throw NSError(domain: "HostDPIDriftUnsupported", code: 1) }
             let width = Float(owned.size.width), height = Float(owned.size.height)
             if viewport.w != width || viewport.h != height {
                 viewport = Rect(x: 0, y: 0, w: width, h: height)
                 graph?.rootProposal = ProposedViewSize(width: owned.size.logicalWidth, height: owned.size.logicalHeight)
-                print("FACTORY_VIEWPORT_UPDATE width=\(owned.size.width) height=\(owned.size.height) dpi=\(owned.size.dpi) logicalWidth=\(owned.size.logicalWidth) logicalHeight=\(owned.size.logicalHeight)")
+                print("HOST_VIEWPORT_UPDATE width=\(owned.size.width) height=\(owned.size.height) dpi=\(owned.size.dpi) logicalWidth=\(owned.size.logicalWidth) logicalHeight=\(owned.size.logicalHeight)")
                 fflush(stdout)
             }
         } catch { fail(error); return }
@@ -161,28 +156,37 @@ let factoryActivationVeto: HOOKPROC = { code, wParam, lParam in
         graph?.flush()
         if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }
     }
+
+    func closed() {
+        guard !windowClosed else { return }
+        windowClosed = true
+        graph?.tearDown()
+        measurer?.releaseAll()
+        painter?.releaseAll()
+        systemImages?.releaseAll()
+        do { try bridge.shutdownComplete() } catch { errors.append(String(describing: error)) }
+    }
 }
+
 let result: Int32 = MainActor.assumeIsolated {
     do {
-        let bridge = try Bridge.load(path: "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer\\swiftright_render.dll")
-        let host = RendererHost(bridge)
+        let dll = hostRendererPath()
+        let bridge = try Bridge.load(path: dll)
+        print("HOST_RENDERER dll=\(dll) abi=\(bridge.revision) fonts=\(bridge.supportsFontRegistration)")
+        let host = CaptureHost(bridge)
         bridge.onReady = { window in MainActor.assumeIsolated { host.ready(window) } }
         bridge.onEvent = { event in MainActor.assumeIsolated { host.event(event) } }
         bridge.onTick = { _, time in MainActor.assumeIsolated { host.tick(time) } }
-        bridge.onWindowClosed = { MainActor.assumeIsolated {
-            host.graph?.tearDown()
-            host.measurer?.releaseAll()
-            do { try bridge.shutdownComplete() } catch { host.errors.append(String(describing: error)) }
-        } }
-        guard let activationHook = SetWindowsHookExW(Int32(WH_CBT), factoryActivationVeto, nil, GetCurrentThreadId()) else {
-            print("FACTORY_STARTUP_ERROR activation veto hook failed"); return 78
+        bridge.onWindowClosed = { MainActor.assumeIsolated { host.closed() } }
+        guard let activationHook = SetWindowsHookExW(Int32(WH_CBT), hostActivationVeto, nil, GetCurrentThreadId()) else {
+            print("HOST_STARTUP_ERROR activation veto hook failed"); return 78
         }
         defer { UnhookWindowsHookEx(activationHook) }
-        print("FACTORY_BACKGROUND_GUARD thread-cbt-activation-veto")
+        print("HOST_BACKGROUND_GUARD thread-cbt-activation-veto")
         try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240)
-        host.errors.forEach { print("FACTORY_RENDER_ERROR \($0)") }
+        host.errors.forEach { print("HOST_RENDER_ERROR \($0)") }
         return host.errors.isEmpty ? 0 : 1
-    } catch { print("FACTORY_STARTUP_ERROR \(error)"); return 78 }
+    } catch { print("HOST_STARTUP_ERROR \(error)"); return 78 }
 }
 fflush(stdout)
 exit(result)
