@@ -155,4 +155,45 @@ final class ContinuousRoundedGeometryTests: XCTestCase {
             XCTAssertLessThanOrEqual(abs(px(x, y, c) - px(y, x, c)), 1, "transpose \(x),\(y),\(c)")
         } } }
     }
+
+    func testStrokeEdgeCoverageIsSmoothstepOfLinearCoverage() {
+        XCTAssertEqual(ContinuousRoundedRasterizer.strokeEdgeCoverage(0), 0)
+        XCTAssertEqual(ContinuousRoundedRasterizer.strokeEdgeCoverage(1), 1)
+        // Measured against SwiftUI: 0.25 -> 0.157, 0.5 -> 0.498, 0.75 -> 0.843.
+        XCTAssertEqual(ContinuousRoundedRasterizer.strokeEdgeCoverage(0.25), 0.157, accuracy: 0.004)
+        XCTAssertEqual(ContinuousRoundedRasterizer.strokeEdgeCoverage(0.5), 0.5, accuracy: 0.004)
+        XCTAssertEqual(ContinuousRoundedRasterizer.strokeEdgeCoverage(0.75), 0.843, accuracy: 0.004)
+        // A 2.5 px stroke on a pixel-aligned straight edge: 0.25 true coverage each side -> 0.157 alpha.
+        let image = try! ContinuousRoundedRasterizer.rasterize(width: 60, height: 40, cornerRadius: 0,
+                                                                strokeRGBA: 0x000000ff, strokeWidth: 2.5,
+                                                                shapeWidth: 55, shapeHeight: 35,
+                                                                offsetX: 0.75, offsetY: 0.75)
+        let alpha = Int(image.rgba[(20 * 60 + 0) * 4 + 3])
+        XCTAssertEqual(Double(alpha) / 255, 0.157, accuracy: 0.01)
+    }
+
+    func testLargeRadiusFullScreenStrokeRasterizesWithinWorkBudget() throws {
+        // 500 x 350 px, 100 px radius, 20 px stroke (radius 40 pt, stroke 8 pt at 2.5x) used to exceed the
+        // brute-force work limit; the spatial index makes cost proportional to the area.
+        let image = try ContinuousRoundedRasterizer.rasterize(width: 521, height: 371, cornerRadius: 100,
+                                                               strokeRGBA: 0x0088ffff, strokeWidth: 20,
+                                                               shapeWidth: 500, shapeHeight: 350)
+        XCTAssertEqual(image.rgba.count, 521 * 371 * 4)
+        XCTAssertEqual(image.rgba[(185 * 521 + 10) * 4 + 3], 255)    // left side, mid height: fully covered stroke
+        XCTAssertEqual(image.rgba[(185 * 521 + 260) * 4 + 3], 0)     // interior
+        let full = try ContinuousRoundedRasterizer.rasterize(width: 1000, height: 700, cornerRadius: 120,
+                                                              fillRGBA: 0xff0000ff, strokeRGBA: 0x0000ffff, strokeWidth: 12)
+        XCTAssertEqual(full.rgba[(350 * 1000 + 500) * 4 + 3], 255)
+    }
+
+    func testDevicePixelSnapMatchesSwiftUIEdgeRounding() {
+        func snap(_ o: Double, _ l: Double) -> (Double, Double) { let r = DevicePixelSnap.edges(origin: o, length: l); return (r.origin, r.length) }
+        XCTAssertEqual(snap(350, 100).0, 350); XCTAssertEqual(snap(350, 100).1, 100)
+        // 112.5 x 62.5 px at 343.75 / 268.75 -> 344...456 and 269...331
+        XCTAssertEqual(snap(343.75, 112.5).0, 344); XCTAssertEqual(snap(343.75, 112.5).1, 112)
+        XCTAssertEqual(snap(268.75, 62.5).0, 269); XCTAssertEqual(snap(268.75, 62.5).1, 62)
+        // .5 ties as observed: 362.5 + 75 -> 362...437, 237.5 + 125 -> 238...362
+        XCTAssertEqual(snap(362.5, 75).0, 362); XCTAssertEqual(snap(362.5, 75).1, 75)
+        XCTAssertEqual(snap(237.5, 125).0, 238); XCTAssertEqual(snap(237.5, 125).1, 124)
+    }
 }

@@ -25,14 +25,28 @@ public enum ContinuousRoundedRasterError: Error, Equatable {
 public enum ContinuousRoundedRasterizer {
     private static let maxRGBABytes = 16 * 1024 * 1024
     private static let maxPixels = maxRGBABytes / 4
-    private static let maxSampleSegmentEvaluations = 100_000_000
-    /// Flattening tolerance in device pixels. Fills follow the exact curve; Apple's
-    /// stroker flattens each cubic to ~0.2 px (measured against SwiftUI at 2.5x: the
-    /// fill matches the exact curve, the stroke matches a 0.2 px Wang flattening).
+    /// Upper bound on raster area. Per-pixel cost is bounded by the segments near that pixel (spatial
+    /// grid), so cost is linear in area; 2M px covers any full-screen shape at 1080p-class sizes.
+    private static let maxWorkPixels = 2_000_000
+    private static let cellSize = 16
+    /// Flattening tolerance in device pixels. Fills follow the exact curve. Apple's stroker
+    /// subdivides each cubic uniformly into n = ceil(sqrt(0.75 * M / tolerance)) segments (Wang's
+    /// bound, M = max second difference of the control polygon) with tolerance 0.2 DEVICE pixels:
+    /// the rule is in device px, so n grows as sqrt(radius_px). Verified against SwiftUI
+    /// ImageRenderer for corner radii 2.5-100 px, stroke 1.25-20 px at scales 1, 2, 2.5, 3 and 4
+    /// (every config passes at 0.2; a 0.3 or 0.1 tolerance fails the large and small radii).
     private static let fillTolerance = 0.02
     private static let strokeTolerance = 0.2
     private static let grid = 16
     private static let edgeBand = 0.75
+
+    /// Apple's stroke anti-aliasing is not linear in covered area: measured straight-edge strokes at
+    /// 0.25 / 0.5 / 0.75 true coverage render as 0.157 / 0.498 / 0.843, which is smoothstep(c) =
+    /// c*c*(3-2c) (0.156 / 0.5 / 0.844). Applying it cuts the stroke edge error against SwiftUI from
+    /// about 30/255 to about 15/255 across radii, widths and scales. Fill edges are linear.
+    @inline(__always) public static func strokeEdgeCoverage(_ linear: Double) -> Double {
+        linear * linear * (3 - 2 * linear)
+    }
 
     public static func rasterize(width: Int, height: Int, cornerRadius: CGFloat,
                                  fillRGBA: UInt32? = nil,
@@ -66,35 +80,48 @@ public enum ContinuousRoundedRasterizer {
         }
         let fillSegments = flatten(path, tolerance: fillTolerance)
         let segments = stroke > 0 && strokeRGBA != nil ? flatten(path, tolerance: strokeTolerance) : fillSegments
-        guard fillSegments.count == 0 || width * height <= maxSampleSegmentEvaluations / (fillSegments.count + segments.count) else {
-            throw ContinuousRoundedRasterError.workLimitExceeded
-        }
+        guard width * height <= maxWorkPixels else { throw ContinuousRoundedRasterError.workLimitExceeded }
         let bytes = width * height * 4
         var output = [UInt8](repeating: 0, count: bytes)
         let hasFill = fillRGBA != nil, hasStroke = strokeRGBA != nil && stroke > 0
         let step = 1.0 / Double(grid)
+        // Spatial indexes: a pixel only needs segments within the reach that can still matter
+        // (stroke: half width + edge band; fill: edge band), plus a pixel diagonal for sample points.
+        let strokeIndex = hasStroke ? SegmentIndex(segments, width: width, height: height, cell: cellSize, reach: halfStroke + edgeBand + 1.5) : nil
+        let fillIndex = hasFill ? SegmentIndex(fillSegments, width: width, height: height, cell: cellSize, reach: edgeBand + 1.5) : nil
+        var centerCrossings: [Double] = [], subCrossings = [[Double]](repeating: [], count: grid)
         for y in 0..<height {
+            if hasFill { centerCrossings = crossings(fillSegments, y: Double(y) + 0.5) }
+            var subRowsReady = false
             for x in 0..<width {
                 let center = (Double(x) + 0.5, Double(y) + 0.5)
-                let dist = hasStroke ? distance(center, segments: segments) : 0
-                let fillDist = hasFill ? distance(center, segments: fillSegments) : 0
-                let isInside = hasFill && inside(center, segments: fillSegments)
+                let cell = (y / cellSize) * (strokeIndex?.cellsX ?? fillIndex!.cellsX) + x / cellSize
+                let dist = hasStroke ? strokeIndex!.distanceSquared(center, cell: cell).squareRoot() : 0
+                let fillDist = hasFill ? fillIndex!.distanceSquared(center, cell: cell).squareRoot() : 0
+                let isInside = hasFill && isInsideCrossings(centerCrossings, center.0)
                 let fillNear = hasFill && fillDist <= edgeBand
                 let strokeNear = hasStroke && abs(dist - halfStroke) <= edgeBand
                 var fillCoverage = (hasFill && isInside) ? 1.0 : 0.0
                 var strokeCoverage = (hasStroke && dist <= halfStroke) ? 1.0 : 0.0
                 if fillNear || strokeNear {
+                    if fillNear && !subRowsReady {
+                        for j in 0..<grid { subCrossings[j] = crossings(fillSegments, y: Double(y) + (Double(j) + 0.5) * step) }
+                        subRowsReady = true
+                    }
                     var fillHits = 0, strokeHits = 0
                     for j in 0..<grid {
                         for i in 0..<grid {
-                            let point = (Double(x) + (Double(i) + 0.5) * step, Double(y) + (Double(j) + 0.5) * step)
-                            if fillNear && inside(point, segments: fillSegments) { fillHits += 1 }
-                            if strokeNear && distanceSquared(point, segments: segments) <= halfStroke * halfStroke { strokeHits += 1 }
+                            let px = Double(x) + (Double(i) + 0.5) * step
+                            if fillNear && isInsideCrossings(subCrossings[j], px) { fillHits += 1 }
+                            if strokeNear {
+                                let py = Double(y) + (Double(j) + 0.5) * step
+                                if strokeIndex!.distanceSquared((px, py), cell: cell) <= halfStroke * halfStroke { strokeHits += 1 }
+                            }
                         }
                     }
                     let n = Double(grid * grid)
                     if fillNear { fillCoverage = Double(fillHits) / n }
-                    if strokeNear { strokeCoverage = Double(strokeHits) / n }
+                    if strokeNear { strokeCoverage = strokeEdgeCoverage(Double(strokeHits) / n) }
                 }
                 let fill = fillRGBA.map { unpack($0, coverage: fillCoverage) }
                 let strokeColor = hasStroke ? strokeRGBA.map { unpack($0, coverage: strokeCoverage) } : nil
@@ -161,30 +188,69 @@ public enum ContinuousRoundedRasterizer {
         return result
     }
 
-    private static func inside(_ p: (Double, Double), segments: [Segment]) -> Bool {
-        var hit = false
+    /// Sorted x positions where the horizontal line at `y` crosses the closed outline (even-odd rule).
+    private static func crossings(_ segments: [Segment], y: Double) -> [Double] {
+        var xs: [Double] = []
         for segment in segments {
             let (x0, y0) = segment.a, (x1, y1) = segment.b
-            if (y0 > p.1) != (y1 > p.1) {
-                let x = (x1 - x0) * (p.1 - y0) / (y1 - y0) + x0
-                if p.0 < x { hit.toggle() }
-            }
+            if (y0 > y) != (y1 > y) { xs.append((x1 - x0) * (y - y0) / (y1 - y0) + x0) }
         }
-        return hit
+        xs.sort()
+        return xs
     }
 
-    private static func distance(_ p: (Double, Double), segments: [Segment]) -> Double {
-        distanceSquared(p, segments: segments).squareRoot()
+    /// Even-odd containment: odd number of crossings strictly to the right of `x`.
+    private static func isInsideCrossings(_ xs: [Double], _ x: Double) -> Bool {
+        var lo = 0, hi = xs.count
+        while lo < hi { let mid = (lo + hi) / 2; if xs[mid] > x { hi = mid } else { lo = mid + 1 } }
+        return (xs.count - lo) % 2 == 1
     }
 
-    private static func distanceSquared(_ p: (Double, Double), segments: [Segment]) -> Double {
-        segments.reduce(Double.greatestFiniteMagnitude) { best, segment in
-            let vx = segment.b.0 - segment.a.0, vy = segment.b.1 - segment.a.1
-            let wx = p.0 - segment.a.0, wy = p.1 - segment.a.1
-            let lengthSquared = vx * vx + vy * vy
-            let t = lengthSquared > 0 ? max(0, min(1, (wx * vx + wy * vy) / lengthSquared)) : 0
-            let dx = p.0 - (segment.a.0 + t * vx), dy = p.1 - (segment.a.1 + t * vy)
-            return min(best, dx * dx + dy * dy)
+    /// Uniform grid over the raster: each cell lists the segments that can lie within `reach` of any
+    /// point in it, so nearest-segment queries cost the local segment count, not the whole outline.
+    private struct SegmentIndex {
+        let segments: [Segment]
+        let cellsX: Int
+        let offsets: [Int32]
+        let items: [Int32]
+
+        init(_ segments: [Segment], width: Int, height: Int, cell: Int, reach: Double) {
+            self.segments = segments
+            let cx = (width + cell - 1) / cell, cy = (height + cell - 1) / cell
+            cellsX = cx
+            var counts = [Int32](repeating: 0, count: cx * cy + 1)
+            func cells(_ s: Segment) -> (Int, Int, Int, Int)? {
+                let x0 = min(s.a.0, s.b.0) - reach, x1 = max(s.a.0, s.b.0) + reach
+                let y0 = min(s.a.1, s.b.1) - reach, y1 = max(s.a.1, s.b.1) + reach
+                let c0 = max(0, Int((x0 / Double(cell)).rounded(.down))), c1 = min(cx - 1, Int((x1 / Double(cell)).rounded(.down)))
+                let r0 = max(0, Int((y0 / Double(cell)).rounded(.down))), r1 = min(cy - 1, Int((y1 / Double(cell)).rounded(.down)))
+                return c0 <= c1 && r0 <= r1 ? (c0, c1, r0, r1) : nil
+            }
+            for s in segments { if let (c0, c1, r0, r1) = cells(s) { for r in r0...r1 { for c in c0...c1 { counts[r * cx + c + 1] += 1 } } } }
+            for i in 1..<counts.count { counts[i] += counts[i - 1] }
+            offsets = counts
+            var fill = counts, items = [Int32](repeating: 0, count: Int(counts[counts.count - 1]))
+            for (k, s) in segments.enumerated() {
+                if let (c0, c1, r0, r1) = cells(s) {
+                    for r in r0...r1 { for c in c0...c1 { let slot = r * cx + c; items[Int(fill[slot])] = Int32(k); fill[slot] += 1 } }
+                }
+            }
+            self.items = items
+        }
+
+        /// Squared distance to the nearest indexed segment, or +infinity when none is within reach.
+        func distanceSquared(_ p: (Double, Double), cell: Int) -> Double {
+            var best = Double.infinity
+            for n in Int(offsets[cell])..<Int(offsets[cell + 1]) {
+                let segment = segments[Int(items[n])]
+                let vx = segment.b.0 - segment.a.0, vy = segment.b.1 - segment.a.1
+                let wx = p.0 - segment.a.0, wy = p.1 - segment.a.1
+                let lengthSquared = vx * vx + vy * vy
+                let t = lengthSquared > 0 ? max(0, min(1, (wx * vx + wy * vy) / lengthSquared)) : 0
+                let dx = p.0 - (segment.a.0 + t * vx), dy = p.1 - (segment.a.1 + t * vy)
+                best = min(best, dx * dx + dy * dy)
+            }
+            return best
         }
     }
 }
