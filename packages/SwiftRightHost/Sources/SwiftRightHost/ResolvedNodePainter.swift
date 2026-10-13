@@ -77,7 +77,7 @@ public final class ResolvedNodePainter {
     /// renderer. The painter's image handles follow the outcome of `submit` (kept on success, released on failure). `place` moves each
     /// node's pixel bounds (a host that centres or insets the tree); the optional background is not placed.
     public func commit(root: ResolvedNode, version: UInt64, previousLive: Set<UInt64>, background: Background? = nil,
-                       place: (Rect) -> Rect = { $0 }, submit: (SwiftRightBridge.Transaction) throws -> Void) throws -> Committed {
+                       place: (Rect) -> Rect = { $0 }, focused: String? = nil, submit: (SwiftRightBridge.Transaction) throws -> Void) throws -> Committed {
         var nodes: [NodeUpsert] = []
         var current: Set<UInt64> = []
         var runtimeIDs: [UInt64: String] = [:]
