@@ -1,0 +1,60 @@
+{
+ "pairs": 1,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 255,
+ "diffbbox": [
+  253,
+  45,
+  548,
+  555
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 545,
+    "inBandDiff": 545,
+    "outOfBandDiff": 0,
+    "maxInBand": 255,
+    "maxOutOfBand": 0,
+    "bandPixels": 29650
+   },
+   "exact": false,
+   "differentPixels": 545,
+   "maxdiff": 255,
+   "diffbbox": [
+    253,
+    45,
+    548,
+    555
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "4a2891c35-78128810-dirty",
+   "commit": "4a2891c359a142a07e0be51dbf17c1114cc77f48",
+   "ref": "HEAD",
+   "mode": "working-tree",
+   "dirty": true,
+   "treeSha256": "sha256:781288105d18544ea8d9d6ffb50993f77875334efead9be249769807b28aa72b",
+   "files": 109,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-13T14:10:27Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-6-10/padding-frame/frame-alignment-rtl-v1"
+ }
+}
