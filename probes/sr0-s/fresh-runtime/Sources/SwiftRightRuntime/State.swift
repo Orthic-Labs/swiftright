@@ -73,16 +73,64 @@ public struct State<Value>: DynamicPropertyStorage {
 
 // MARK: - Binding
 
+/// SwiftUI `Transaction`: the animation context a binding setter receives. A binding hands its setter the transaction it carries
+/// (empty unless `.transaction(_:)` or `.animation(_:)` set one), NOT the ambient `withAnimation` transaction (macOS oracle, SR1
+/// lane B block 12: setter calls inside `withAnimation(.easeIn)` and `withTransaction` still saw a nil animation).
+public struct Transaction: Sendable, Equatable {
+    public var animation: Animation?
+    public var disablesAnimations: Bool
+
+    public init() {
+        animation = nil
+        disablesAnimations = false
+    }
+
+    public init(animation: Animation?) {
+        self.animation = animation
+        disablesAnimations = false
+    }
+}
+
 @MainActor
 @dynamicMemberLookup
 @propertyWrapper
 public struct Binding<Value> {
     private let getter: () -> Value
-    private let setter: (Value) -> Void
+    private let setter: (Value, Transaction) -> Void
+    private let carried: Transaction
 
     public init(get: @escaping () -> Value, set: @escaping (Value) -> Void) {
         getter = get
+        setter = { value, _ in set(value) }
+        carried = Transaction()
+    }
+
+    /// Setter that also receives the binding's transaction (empty unless `.transaction(_:)` / `.animation(_:)` set one).
+    public init(get: @escaping () -> Value, set: @escaping (Value, Transaction) -> Void) {
+        getter = get
         setter = set
+        carried = Transaction()
+    }
+
+    private init(getter: @escaping () -> Value, setter: @escaping (Value, Transaction) -> Void, carried: Transaction) {
+        self.getter = getter
+        self.setter = setter
+        self.carried = carried
+    }
+
+    /// A binding that always reads `value` and ignores writes.
+    public static func constant(_ value: Value) -> Binding<Value> {
+        Binding(get: { value }, set: { _ in })
+    }
+
+    /// The binding with `transaction` as the one its setter receives (replaces, does not merge: oracle).
+    public func transaction(_ transaction: Transaction) -> Binding<Value> {
+        Binding(getter: getter, setter: setter, carried: transaction)
+    }
+
+    /// The binding whose setter receives `animation` (default `.default`): `transaction(Transaction(animation:))`.
+    public func animation(_ animation: Animation? = .default) -> Binding<Value> {
+        transaction(Transaction(animation: animation))
     }
 
     public init(projectedValue: Binding<Value>) {
@@ -91,7 +139,7 @@ public struct Binding<Value> {
 
     public var wrappedValue: Value {
         get { getter() }
-        nonmutating set { setter(newValue) }
+        nonmutating set { setter(newValue, carried) }
     }
 
     public var projectedValue: Binding<Value> { self }
@@ -100,12 +148,13 @@ public struct Binding<Value> {
         let get = getter
         let set = setter
         return Binding<Subject>(
-            get: { get()[keyPath: keyPath] },
-            set: { newValue in
+            getter: { get()[keyPath: keyPath] },
+            setter: { newValue, transaction in
                 var whole = get()
                 whole[keyPath: keyPath] = newValue
-                set(whole)
-            }
+                set(whole, transaction)
+            },
+            carried: carried
         )
     }
 }
