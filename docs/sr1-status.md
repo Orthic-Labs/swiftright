@@ -10,6 +10,11 @@ Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's 
 | ZStack + overlay (body font) | `stack-layout/stack-overlay-centered-execution-v9` | 20 | 20 edge-aa≤32 outside the named `+` glyph region (decision 2) |
 | Text, bundled Tinos + lineLimit | `text-shape-image/bundled-font-readiness-v6-line-limit-host` | 20 | 20 exact-with-exclusions; text gate 20/20 (ink within 1 px, baseline equal) via ABI 0.7 font registration |
 | Image `star.fill` | `text-shape-image/image-system-star-fill-v10` (+16pt and 120x60 N=3; 48pt N=3 via a measured override, which is not evidence of generalisation) | 20 | frame, ink bbox and tint 20/20; glyph shape reported (decision 3) |
+| padding + frame (stage `3b3e6b28e-1c2805c1`, commit `3b3e6b28e`) | `blocks-6-10/padding-frame/padding-edges-v1` (padding all/per-edge/`Edge.Set`/`EdgeInsets`/default/fractional) | 20 | 20 edge-aa≤32 (2 px, max 31, a Mac anti-aliased pixel on a fractional `Color` edge) |
+| | `blocks-6-10/padding-frame/frame-alignment-v1` (9 alignments, oversized child, width/height-only) | 20 | 20 exact |
+| | `blocks-6-10/padding-frame/frame-alignment-rtl-v1` (same grid + per-edge padding under right-to-left) | 20 | 20 exact |
+| | `blocks-6-10/padding-frame/flexible-frame-v1` (min/max, `.infinity`, offers 200/100/60, min-only, flex frames sharing an HStack) | 20 | 20 exact |
+| | `blocks-6-10/padding-frame/nested-fractional-v1` (nested frames/padding/stacks at fractional sizes) | 20 | 20 edge-aa≤32 (8 px, max 31) |
 | ScrollView (block 6), vertical, offset 0 | `blocks-6-10/scroll-view/vertical-offset0-v1` (`factory/pipeline/`; five colour rows, content 200 pt in a 120x100 viewport, indicators off) | 20 | 20 exact |
 | ScrollView, `defaultScrollAnchor(.bottom)` | `blocks-6-10/scroll-view/vertical-bottom-anchor-v1` (programmatic initial offset; `ScrollViewReader`/`scrollPosition` do not exist in the runtime) | 20 | 20 exact |
 | ScrollView, horizontal axis | `blocks-6-10/scroll-view/horizontal-axis-v1` | 20 | 20 exact |
@@ -24,6 +29,8 @@ Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's 
 | `.disabled(true)` on a checkbox, on and off | `blocks-6-10/swiftui.disabled/checkbox-on-disabled-v1`, `checkbox-off-disabled-v1` | 20 + 20 | 20 + 20 edge-aa≤32 (max 4, 3) |
 
 Tests on the same build: Windows runtime 224, bridge 48, host 35; Mac runtime 216, bridge 48, host 35; 0 failures on either host.
+
+Tests on the padding-frame build (`3b3e6b28e-1c2805c1`): Windows runtime 253, host 63, bridge 48 with 1 failure (`RepairGuardTests.testEmbeddedScriptMatchesSourceFile`: the W08 session's repair-guard rename is mid-flight at HEAD, not this block); Mac runtime 245, bridge 52, host 63, 0 failures. Product changes for the block: full `frame(min/ideal/max Width/Height)` with measured flex semantics, `padding(EdgeInsets)` (`3b3e6b28e`). Witnesses avoid edges on exact half device pixels, which SwiftUI rounds by a value-dependent rule we cannot reproduce (`blocks-6-10/padding-frame/README.md`).
 
 Blocks 6 (ScrollView) and 10 (PreferenceKey) were captured on product stage `0a47f28e7-94d4c4b6` (renderer 0.7 `82513ae0…`, same Sandbox loop, Mac side: offscreen `NSHostingView.cacheDisplay` at scale 2.5 because `ImageRenderer` renders ScrollView blank). Product changes behind them: ScrollView viewport clip in the host paint path (`4a2891c35`), `View.defaultScrollAnchor` (`e2a953403`), nil-literal `PreferenceKey.defaultValue` and the first `onPreferenceChange` delivery of the default value (`a3d47453c`), composite user views in the paint path (`0a47f28e7`). Suites: Windows runtime 242 and host 54 on stage `0a47f28e7`, bridge 51 (1 skipped) on stage `031478e48` (the `0a47f28e7` bridge run had one failure in the W08 `RepairGuardTests.testEmbeddedScriptMatchesSourceFile`, caused by that commit pair predating the guard file rename; not part of these blocks); Mac runtime 245, bridge 52, host 63 on the working tree. 0 failures in the runs reported except that one.
 
