@@ -230,9 +230,9 @@ extension SystemImageRasterProvider {
             return accum
         }
         func coverageByte(_ v: Float) -> UInt8 { UInt8(max(0, min(255, (v * 255).rounded()))) }
-        func halfBox(_ accum: [Float]) -> SystemImageDeviceInkBox? {
+        func halfBox(_ accum: [Float], threshold: UInt8 = 128) -> SystemImageDeviceInkBox? {
             var x0 = tw, y0 = th, x1 = -1, y1 = -1
-            for ty in 0..<th { for tx in 0..<tw where coverageByte(accum[ty * tw + tx]) >= 128 {
+            for ty in 0..<th { for tx in 0..<tw where coverageByte(accum[ty * tw + tx]) >= threshold {
                 x0 = min(x0, tx); x1 = max(x1, tx); y0 = min(y0, ty); y1 = max(y1, ty) } }
             return x1 < 0 ? nil : SystemImageDeviceInkBox(left: x0, top: y0, right: x1 + 1, bottom: y1 + 1)
         }
@@ -248,35 +248,43 @@ extension SystemImageRasterProvider {
         var accum = accumulate(rect)
         var produced = halfBox(accum)
         if let d = deviceInk {
-            // closed-loop refinement of each edge in 1/16 px steps (bounded)
+            // Closed-loop refinement of each edge in 1/16 px steps (bounded). A box edge must also be stable
+            // against +-4/255 of coverage noise (GPU blending rounds the 50% threshold differently than this
+            // raster), so the boxes at thresholds 124 and 132 must both equal the target: a pixel sitting exactly
+            // on half coverage is moved off the threshold instead of being left to rounding.
             let step = 1.0 / 16, limit = 2.0
             let nominal = rect
             let dc = SystemImageDeviceInkBox(left: d.left + Int(inset), top: d.top + Int(inset),
                                              right: d.right + Int(inset), bottom: d.bottom + Int(inset))
-            var best = (rect, accum, produced, Int.max)
-            func error(_ b: SystemImageDeviceInkBox?) -> Int {
-                guard let b else { return Int.max / 2 }
-                return abs(b.left - dc.left) + abs(b.top - dc.top) + abs(b.right - dc.right) + abs(b.bottom - dc.bottom)
+            func error(_ lo: SystemImageDeviceInkBox?, _ mid: SystemImageDeviceInkBox?, _ hi: SystemImageDeviceInkBox?) -> Int {
+                var e = 0
+                for b in [lo, mid, hi] {
+                    guard let b else { return Int.max / 2 }
+                    e += abs(b.left - dc.left) + abs(b.top - dc.top) + abs(b.right - dc.right) + abs(b.bottom - dc.bottom)
+                }
+                return e
             }
-            best.3 = error(produced)
+            var lo = halfBox(accum, threshold: 124), hi = halfBox(accum, threshold: 132)
+            var best = (rect, accum, produced, error(lo, produced, hi))
             var iterations = 0
-            while let b = produced, error(b) != 0, iterations < 64 {
+            while let l = lo, let h = hi, error(lo, produced, hi) != 0, iterations < 96 {
                 iterations += 1
                 var x0 = rect.x, y0 = rect.y, x1 = rect.x + rect.width, y1 = rect.y + rect.height
-                if b.left > dc.left { x0 -= step } else if b.left < dc.left { x0 += step }
-                if b.top > dc.top { y0 -= step } else if b.top < dc.top { y0 += step }
-                if b.right < dc.right { x1 += step } else if b.right > dc.right { x1 -= step }
-                if b.bottom < dc.bottom { y1 += step } else if b.bottom > dc.bottom { y1 -= step }
+                if l.left < dc.left { x0 += step } else if h.left > dc.left { x0 -= step }
+                if l.top < dc.top { y0 += step } else if h.top > dc.top { y0 -= step }
+                if l.right > dc.right { x1 -= step } else if h.right < dc.right { x1 += step }
+                if l.bottom > dc.bottom { y1 -= step } else if h.bottom < dc.bottom { y1 += step }
                 guard x1 - x0 > step, y1 - y0 > step,
                       abs(x0 - nominal.x) <= limit, abs(y0 - nominal.y) <= limit,
                       abs(x1 - (nominal.x + nominal.width)) <= limit, abs(y1 - (nominal.y + nominal.height)) <= limit else { break }
                 rect = SystemImageFitRect(x: x0, y: y0, width: x1 - x0, height: y1 - y0)
                 accum = accumulate(rect)
                 produced = halfBox(accum)
-                let e = error(produced)
+                lo = halfBox(accum, threshold: 124); hi = halfBox(accum, threshold: 132)
+                let e = error(lo, produced, hi)
                 if e < best.3 { best = (rect, accum, produced, e) }
             }
-            if best.3 < error(produced) { rect = best.0; accum = best.1; produced = best.2 }
+            if best.3 < error(lo, produced, hi) { rect = best.0; accum = best.1; produced = best.2 }
         }
 
         var rgba = [UInt8](repeating: 0, count: Int(targetBytes))
