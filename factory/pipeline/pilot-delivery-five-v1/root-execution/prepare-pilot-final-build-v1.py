@@ -47,6 +47,10 @@ parser.add_argument('--compile-revision', type=int, choices=range(1, 11), defaul
                     help='rolling root compile stage revision')
 parser.add_argument('--actual-dir', help='fresh actual-prebuild-rN directory')
 parser.add_argument('--stdout-path', help='actual compile.stdout.bin; defaults inside actual-dir')
+parser.add_argument('--cached-frontend-plan', type=Path,
+                    help='prior immutable prebuild plan for an exact unchanged cached executable')
+parser.add_argument('--cached-frontend-actual', type=Path,
+                    help='prior actual prebuild archive containing frontend commands & identical executable')
 parser.add_argument('--seed-case-artifact', type=Path,
                     help='original recipe seed when packet case is already materialized; same block/inputs required')
 args = parser.parse_args()
@@ -301,7 +305,7 @@ def materialize_case(case: dict, plan: dict, packet_plan: dict, host_hash: str) 
         'caseSetHash': expansion['manifest']['expectedCaseSetHash'],
     }
 
-def scan_frontend(path: Path) -> dict:
+def scan_frontend(path: Path, allow_empty: bool = False) -> dict:
     """Stream stdout & prove every swift-frontend command ends at one thread."""
     commands: list[dict] = []
     pending = b''
@@ -328,14 +332,14 @@ def scan_frontend(path: Path) -> dict:
             require(values and values[-1] == 1, 'each swift-frontend command must end with -num-threads 1')
             commands.append({'index': len(commands) + 1, 'command': text.rstrip('\r\n'),
                              'numThreadsValues': values, 'lastNumThreads': values[-1]})
-    require(commands, 'no swift-frontend -frontend command proof found')
+    require(commands or allow_empty, 'no swift-frontend -frontend command proof found')
     values = [value for command in commands for value in command['numThreadsValues']]
     file_hash, file_bytes = stream_hash(path)
     return {
         'path': str(path), 'sha256': 'sha256:' + file_hash, 'bytes': file_bytes,
         'frontendCommandCount': len(commands), 'frontendCommands': commands,
         'numThreadsOccurrenceCount': len(values), 'numThreadsValues': values,
-        'lastNumThreads': values[-1], 'requiredLastNumThreads': 1,
+        'lastNumThreads': values[-1] if values else None, 'requiredLastNumThreads': 1,
         'proof': 'actual-stdout-stream-scan',
     }
 
@@ -436,7 +440,9 @@ for key, expected in {
 }.items():
     require(receipt.get(key) == expected, f'prebuild receipt gate failed: {key}')
 
-stdout_evidence = scan_frontend(stdout_path)
+require(bool(args.cached_frontend_plan) == bool(args.cached_frontend_actual),
+        'cached frontend proof requires both prior plan & actual archive')
+stdout_evidence = scan_frontend(stdout_path, allow_empty=bool(args.cached_frontend_actual))
 require(receipt.get('stdoutSha256', '').replace('sha256:', '') == stdout_evidence['sha256'].replace('sha256:', ''), 'stdout hash drift')
 require(receipt.get('stdoutBytes') == stdout_evidence['bytes'], 'stdout byte count drift')
 stderr_path = actual_dir / 'compile.stderr.bin'
@@ -448,6 +454,45 @@ exe_hash, exe_bytes = stream_hash(exe_candidate)
 require(receipt.get('exeSha256', '').replace('sha256:', '') == exe_hash, 'native product hash drift')
 require(receipt.get('exeBytes') == exe_bytes, 'native product size drift')
 require(receipt.get('exePath') == scratch_path + '\\x86_64-unknown-windows-msvc\\release\\FactoryProbe.exe', 'native product path mismatch')
+if not stdout_evidence['frontendCommandCount']:
+    prior_plan_path = args.cached_frontend_plan.resolve()
+    prior_actual = args.cached_frontend_actual.resolve()
+    require(prior_actual != actual_dir.resolve(), 'cached proof must come from a prior archive')
+    prior_plan = load_json(prior_plan_path)
+    prior_receipt_path = prior_actual / 'observation.json'
+    prior_receipt = load_json(prior_receipt_path)
+    # Only packet metadata correction & tuple label may differ. Every build input stays identical.
+    excluded = {'packetPlanHash', 'tuple'}
+    require({k: v for k, v in prior_plan.items() if k not in excluded}
+            == {k: v for k, v in plan.items() if k not in excluded},
+            'cached build inputs differ from current plan')
+    require({k: v for k, v in prior_plan.get('tuple', {}).items() if k != 'id'}
+            == {k: v for k, v in plan.get('tuple', {}).items() if k != 'id'},
+            'cached tuple binding differs')
+    require(str(prior_receipt.get('planSha256')).removeprefix('sha256:') == digest(prior_plan_path),
+            'prior receipt plan hash drift')
+    for key in ('sourceHash', 'runtimeSourceCommit', 'runtimeSourceTreeHash', 'compilerHash',
+                'rendererSha256', 'target', 'configuration', 'exitCode', 'timedOut',
+                'outputCapExceeded', 'ownedExited', 'streamDrainComplete', 'streamsSealed',
+                'originalHandleRetained', 'jobActiveReadable', 'jobActiveCount', 'kernelWait',
+                'cleanupJobReadable', 'cleanupJobActive', 'nativeActions', 'argv', 'cwd',
+                'exePath', 'exeBytes', 'exeSha256'):
+        require(prior_receipt.get(key) == receipt.get(key), f'cached receipt binding differs: {key}')
+    require(stream_hash(prior_actual / 'FactoryProbe.exe') == (exe_hash, exe_bytes),
+            'cached executable differs')
+    prior_scan = scan_frontend(prior_actual / 'compile.stdout.bin')
+    require(str(prior_receipt.get('stdoutSha256')).removeprefix('sha256:')
+            == prior_scan['sha256'].removeprefix('sha256:')
+            and prior_receipt.get('stdoutBytes') == prior_scan['bytes'], 'cached stdout drift')
+    prior_stderr_hash, prior_stderr_bytes = stream_hash(prior_actual / 'compile.stderr.bin')
+    require(str(prior_receipt.get('stderrSha256')).removeprefix('sha256:') == prior_stderr_hash
+            and prior_receipt.get('stderrBytes') == prior_stderr_bytes, 'cached stderr drift')
+    stdout_evidence.update({
+        'proof': 'incremental-no-op-with-exact-prior-executable',
+        'priorPlanPath': str(prior_plan_path), 'priorPlanHash': 'sha256:' + digest(prior_plan_path),
+        'priorReceiptPath': str(prior_receipt_path), 'priorReceiptHash': 'sha256:' + digest(prior_receipt_path),
+        'priorFrontendScan': prior_scan,
+    })
 host_hash = 'sha256:' + exe_hash
 materialized_case, case_meta = materialize_case(case, plan, packet_plan, host_hash)
 case_hash = canonical_sha256(materialized_case)
