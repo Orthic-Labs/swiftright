@@ -82,25 +82,40 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
             let emission = try emit(n, id: id, bounds: bounds)
-            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: emission.primitives, semantic: emission.semantic))
-            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index)) }
+            // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
+            // primitives in the scroll frame (intersected for nested scroll views).
+            var primitives = emission.primitives
+            if let clip, !primitives.isEmpty { primitives = [.clipPush(clip)] + primitives + [.clipPop] }
+            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: primitives, semantic: emission.semantic))
+            let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
+            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip) }
         }
-        try walk(root, parent: background?.id ?? 0, order: 0)
+        try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
         try submit(Transaction(version: version, upserts: nodes, removes: Array(previousLive.subtracting(current))))
         committed = true
         return Committed(live: current, runtimeIDs: runtimeIDs, nodeCount: nodes.count)
     }
 
+    /// Containers whose resolved frame clips their descendants (a scroll view shows only its viewport).
+    static func clipsContent(_ kind: String) -> Bool { kind == "ScrollView" }
+
+    public static func intersection(_ outer: Rect?, _ inner: Rect) -> Rect {
+        guard let outer else { return inner }
+        let x0 = max(outer.x, inner.x), y0 = max(outer.y, inner.y)
+        let x1 = min(outer.x + outer.w, inner.x + inner.w), y1 = min(outer.y + outer.h, inner.y + inner.h)
+        return Rect(x: x0, y: y0, w: max(0, x1 - x0), h: max(0, y1 - y0))
+    }
+
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
-        case "VStack", "HStack", "ZStack", "Overlay", "Layout", "Group", "EmptyView", "Spacer": return true
+        case "VStack", "HStack", "ZStack", "Overlay", "Layout", "Group", "EmptyView", "Spacer", "ScrollView", "LazyVStack", "LazyHStack": return true
         default: return false
         }
     }

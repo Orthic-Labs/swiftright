@@ -66,6 +66,12 @@ public enum HostPaint {
             "system.red": 0xff383cff,
             "system.blue": 0x0088ffff,
             "system.yellow": 0xffcc00ff,
+            // macOS light-appearance system colours, read from SwiftUI renders at scale 2.5 (the capture scale).
+            "system.orange": 0xff8d28ff,
+            "system.green": 0x34c759ff,
+            "system.purple": 0xcb30e0ff,
+            "system.pink": 0xff2d55ff,
+            "system.gray": 0x8e8e93ff,
             "black": 0x000000ff,
             "white": 0xffffffff,
             "clear": 0x00000000,
