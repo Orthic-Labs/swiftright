@@ -1,0 +1,165 @@
+import Foundation
+import SwiftRightRuntime
+import SwiftRightBridge
+
+/// What one resolved node paints: ABI primitives and semantics; `structural` nodes only group their children.
+public struct NodeEmission {
+    public var primitives: [Primitive]
+    public var semantic: SemanticNode?
+    public var flags: NodeFlags
+    public var structural: Bool
+}
+
+/// Resolved tree -> ABI paint. One painter per window: it owns the renderer image handles of continuous shapes
+/// (replaced as the shape changes, released on removal and at teardown). A host supplies the node's pixel bounds in window
+/// coordinates (the runtime's `pixelFrame`, translated if the host places the tree), and brackets each commit:
+///
+///     painter.beginCommit()
+///     ... for each node: painter.emit(node, bounds:) ...
+///     try window.commit(transaction)           // success
+///     painter.endCommit(committed: true)       // (false when the commit failed: the new handles are released instead)
+@MainActor
+public final class ResolvedNodePainter {
+    public let scale: Float
+    private let images: ImageRegistering
+    private let text: TextRunSource?
+    private let systemImages: SystemImageRegistry?
+    private let log: (String) -> Void
+    private var shapeImages: [UInt64: ImageHandle] = [:]
+    private var pendingShapeImages: [UInt64: ImageHandle] = [:]
+
+    public init(images: ImageRegistering, scale: Float, text: TextRunSource? = nil, systemImages: SystemImageRegistry? = nil,
+                log: @escaping (String) -> Void = { print($0) }) {
+        self.images = images; self.scale = scale; self.text = text; self.systemImages = systemImages; self.log = log
+    }
+
+    public func beginCommit() { pendingShapeImages = [:] }
+
+    /// `committed == false` releases the images created for the failed commit and keeps the previous ones.
+    public func endCommit(committed: Bool) {
+        if committed {
+            for (id, handle) in shapeImages where pendingShapeImages[id] != handle { _ = images.release(handle) }
+            shapeImages = pendingShapeImages
+        } else {
+            pendingShapeImages.values.forEach { _ = images.release($0) }
+        }
+        pendingShapeImages = [:]
+    }
+
+    public func releaseAll() {
+        shapeImages.values.forEach { _ = images.release($0) }
+        shapeImages = [:]
+        pendingShapeImages.values.forEach { _ = images.release($0) }
+        pendingShapeImages = [:]
+    }
+
+    /// A solid backdrop node under the whole tree (the window background).
+    public struct Background {
+        public var id: UInt64, bounds: Rect, color: UInt32
+        public init(id: UInt64 = UInt64.max - 1, bounds: Rect, color: UInt32) { self.id = id; self.bounds = bounds; self.color = color }
+    }
+
+    /// What a committed tree left behind: the live bridge ids and the runtime id of each.
+    public struct Committed {
+        public var live: Set<UInt64>
+        public var runtimeIDs: [UInt64: String]
+        public var nodeCount: Int
+    }
+
+    /// The whole path from a resolved tree to one ABI transaction: every node is painted (`emit`), upserted under its parent in order
+    /// (the bridge id of a node is its runtime instance + 1), ids no longer present are removed, and `submit` hands the transaction to the
+    /// renderer. The painter's image handles follow the outcome of `submit` (kept on success, released on failure). `place` moves each
+    /// node's pixel bounds (a host that centres or insets the tree); the optional background is not placed.
+    public func commit(root: ResolvedNode, version: UInt64, previousLive: Set<UInt64>, background: Background? = nil,
+                       place: (Rect) -> Rect = { $0 }, submit: (Transaction) throws -> Void) throws -> Committed {
+        var nodes: [NodeUpsert] = []
+        var current: Set<UInt64> = []
+        var runtimeIDs: [UInt64: String] = [:]
+        if let background {
+            nodes.append(NodeUpsert(id: background.id, bounds: background.bounds, primitives: [.rect(background.bounds, color: background.color)]))
+            current.insert(background.id)
+        }
+        beginCommit()
+        var committed = false
+        defer { endCommit(committed: committed) }
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32) throws {
+            let id = UInt64(n.instance + 1)
+            current.insert(id)
+            runtimeIDs[id] = n.id
+            let p = n.pixelFrame
+            let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
+            let emission = try emit(n, id: id, bounds: bounds)
+            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: emission.primitives, semantic: emission.semantic))
+            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index)) }
+        }
+        try walk(root, parent: background?.id ?? 0, order: 0)
+        try submit(Transaction(version: version, upserts: nodes, removes: Array(previousLive.subtracting(current))))
+        committed = true
+        return Committed(live: current, runtimeIDs: runtimeIDs, nodeCount: nodes.count)
+    }
+
+    public static func isStructuralContainer(_ kind: String) -> Bool {
+        switch kind {
+        case "VStack", "HStack", "ZStack", "Overlay", "Layout", "Group", "EmptyView", "Spacer": return true
+        default: return false
+        }
+    }
+
+    /// `id` is the bridge node id the caller upserts this node under (image handles are keyed by it).
+    public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect) throws -> NodeEmission {
+        switch node.kind {
+        case "Text":
+            guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+            guard node.style.foreground == nil, node.opacity == 1 else { throw HostPaintError.unsupportedTextPaintStyle }
+            guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
+            let run = try text.run(text: string, font: node.style.font, bounds: bounds)
+            return NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
+                                semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                flags: [], structural: false)
+
+        case "Rectangle", "RoundedRectangle", "Circle":
+            switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {
+            case .primitive(let primitive):
+                return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
+            case .continuous(let request):
+                let result = try ContinuousShapeRaster.primitive(images, request)
+                if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+                pendingShapeImages[id] = result.image
+                return NodeEmission(primitives: [result.primitive], semantic: nil, flags: [], structural: false)
+            }
+
+        case "Color":
+            guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
+            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity))], semantic: nil, flags: [], structural: false)
+
+        case "Image":
+            guard let systemImages else { throw HostPaintError.unsupportedNode("Image (no system image registry)") }
+            return NodeEmission(primitives: [try systemImagePrimitive(node, bounds: bounds, registry: systemImages)],
+                                semantic: SemanticNode(role: .image, label: node.accessibility.label ?? node.image?.name ?? "", identifier: node.id,
+                                                       disabled: !node.accessibility.isEnabled),
+                                flags: [], structural: false)
+
+        default:
+            guard Self.isStructuralContainer(node.kind) || node.kind.hasPrefix("modifier.") || node.kind.hasPrefix("Witness_") || node.kind == "Root" else {
+                throw HostPaintError.unsupportedNode(node.kind)
+            }
+            return NodeEmission(primitives: [], semantic: nil, flags: [], structural: true)
+        }
+    }
+
+    private func systemImagePrimitive(_ node: ResolvedNode, bounds: Rect, registry: SystemImageRegistry) throws -> Primitive {
+        guard let reference = node.image else { throw HostPaintError.systemImageContractMismatch("no image reference") }
+        guard registry.supports(reference) else { throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' is not in the table") }
+        guard let sizing = node.imageSizing, sizing.isResizable, sizing.scalesToFit, sizing.resizingMode == .stretch else {
+            throw HostPaintError.systemImageContractMismatch("only resizable().scaledToFit() symbols are painted")
+        }
+        guard bounds.w > 0, bounds.h > 0 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
+        let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity)
+        let targetWidth = UInt32(max(1, bounds.w)), targetHeight = UInt32(max(1, bounds.h))
+        let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight)
+        let inset = registry.canvasInset(for: reference)
+        log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
+        return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,
+                                   w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))
+    }
+}

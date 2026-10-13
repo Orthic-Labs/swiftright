@@ -1,0 +1,23 @@
+import XCTest
+@testable import SwiftRightHost
+
+final class RetainedRunTests: XCTestCase {
+    private func e(_ w: Float, _ h: Float, proposed: CGFloat? = nil, base: Float = 40) -> RetainedRunChoice.Entry {
+        RetainedRunChoice.Entry(proposedWidth: proposed, width: w, height: h, lines: 1, firstBaseline: base)
+    }
+    func testSnappedExtentsMatchFloorOrCeilOfTheMeasuredExtent() {
+        XCTAssertTrue(snappedExtentCanMatch(17.4, 17, scale: 1)); XCTAssertTrue(snappedExtentCanMatch(17.4, 18, scale: 1))
+        XCTAssertFalse(snappedExtentCanMatch(17.4, 19, scale: 1)); XCTAssertFalse(snappedExtentCanMatch(17.4, 17.5, scale: 1))
+        XCTAssertFalse(snappedExtentCanMatch(.nan, 17)); XCTAssertFalse(snappedExtentCanMatch(17, 17, origin: 0.5))
+    }
+    func testChoosesTheMatchingMeasurementAndRefusesTheAmbiguousOrMissing() throws {
+        let chosen = try RetainedRunChoice.choose([e(100.2, 20), e(50, 20)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")
+        XCTAssertEqual(chosen.width, 100.2)
+        XCTAssertThrowsError(try RetainedRunChoice.choose([e(10, 20)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")) {
+            XCTAssertEqual($0 as? HostPaintError, .measuredRunGeometryMismatch("t")) }
+        XCTAssertThrowsError(try RetainedRunChoice.choose([e(100.2, 20, base: 40), e(100.6, 20, base: 41)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")) {
+            XCTAssertEqual($0 as? HostPaintError, .ambiguousMeasuredRun("t")) }
+        // Equal candidates (same text measured at two proposals) are one run.
+        XCTAssertNoThrow(try RetainedRunChoice.choose([e(100, 20, proposed: 50), e(100, 20, proposed: nil)], bounds: Rect(x: 0, y: 0, w: 100, h: 20), scale: 1, text: "t"))
+    }
+}
