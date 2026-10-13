@@ -189,6 +189,13 @@ extension View {
         }))
     }
 
+    /// Selects the style of the Lists in this view. Apple: https://developer.apple.com/documentation/swiftui/view/liststyle(_:)
+    public func listStyle<S: ListStyle>(_ style: S) -> some View {
+        Modified(content: self, spec: .environment({ environment in
+            environment.listStyleMetadata = String(describing: S.self)
+        }))
+    }
+
     /// Hides control labels from resolved content while preserving their accessibility titles.
     public func labelsHidden() -> some View {
         Modified(content: self, spec: .environment({ environment in

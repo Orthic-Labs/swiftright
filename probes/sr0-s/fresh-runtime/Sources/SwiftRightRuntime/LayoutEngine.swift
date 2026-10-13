@@ -156,6 +156,8 @@ extension Graph {
             let childProposal = frame.childProposal(proposal)
             let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
             return frame.frameSize(for: inside, proposal: proposal)
+        case .stack(let spec) where spec.name == "List":
+            return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
         case .stack(let spec):
             return stackPlan(childNodes(node), spec, proposal).size
         case .layout(let spec):
@@ -230,6 +232,8 @@ extension Graph {
                 height: childSize.height
             )
             placeChild(child, in: inner, within: node, bounds: rect, proposal: childProposal)
+        case .stack(let spec) where spec.name == "List":
+            placeList(node, in: rect)
         case .stack(let spec):
             placeStack(childNodes(node), spec, in: rect, proposal: proposal, mirrored: mirrors(node))
         case .layout(let spec):
@@ -293,6 +297,24 @@ extension Graph {
                                width: max(0, rect.width - 2 * padding.width), height: max(0, rect.height - 2 * padding.height))
         let innerProposal = ProposedViewSize(width: proposal.width.map { max(0, $0 - 2 * padding.width) }, height: proposal.height.map { max(0, $0 - 2 * padding.height) })
         placeGroup(node, in: inner, proposal: innerProposal)
+    }
+
+    // MARK: List
+
+    /// Rows top to bottom, each `ListMetrics.rowHeight` tall with its content centred and inset from the leading edge (see `ListMetrics`). Rows below the
+    /// List's bottom edge are laid out and clipped by the host; there is no scrolling.
+    private func placeList(_ node: Node, in rect: LayoutRect) {
+        let look = ListLook(style: node.environment.listStyleMetadata)
+        let inset = ListMetrics.contentInset(look)
+        let proposal = ProposedViewSize(width: max(0, rect.width - 2 * inset), height: nil)
+        var y = rect.minY + ListMetrics.topInset(look)
+        for child in childNodes(node) {
+            let size = measure(child, proposal)
+            let rowHeight = ListMetrics.rowHeight(forContent: size.height)
+            let content = LayoutRect(x: rect.minX + inset, y: y + (rowHeight - size.height) / 2, width: size.width, height: size.height)
+            placeChild(child, in: content, within: node, bounds: rect, proposal: proposal)
+            y += rowHeight
+        }
     }
 
     // MARK: Toggle

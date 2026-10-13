@@ -26,7 +26,7 @@ def label_ink(img, button, fill, cap, thresh=40):
     rect = (x0 + cap - 4, y0 + 4, x1 - cap + 4, y1 - 4)
     crop = img.crop(rect)
     lum = crop.convert("L")
-    f = sum(fill) // 3
+    f = int(0.299 * fill[0] + 0.587 * fill[1] + 0.114 * fill[2])     # the luminance the 'L' conversion gives
     mask = lum.point(lambda v: 255 if abs(v - f) >= thresh else 0)
     b = mask.getbbox()
     if b is None: return None, None

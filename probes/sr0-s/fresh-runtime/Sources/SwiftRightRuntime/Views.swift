@@ -587,24 +587,15 @@ extension ForEach {
     }
 }
 
-extension DynamicViewContent {
-    /// Accepted for API shape. Move gestures are not wired on the headless runtime; tests drive
-    /// `MutableCollection.move(fromOffsets:toOffset:)` on the model directly.
-    public func onMove(perform action: ((IndexSet, Int) -> Void)?) -> some DynamicViewContent {
-        OnMoveContent(content: self, handler: action)
+#if os(Windows)
+// swift-corelibs Foundation on Windows lacks `remove(atOffsets:)` (Apple's Foundation has it since macOS 15, so macOS must not declare it twice).
+extension RangeReplaceableCollection where Self: BidirectionalCollection {
+    /// Removes the elements at `offsets`. Apple: https://developer.apple.com/documentation/swiftui/rangereplaceablecollection/remove(atoffsets:)
+    public mutating func remove(atOffsets offsets: IndexSet) {
+        for offset in offsets.sorted(by: >) { remove(at: index(startIndex, offsetBy: offset)) }
     }
 }
-
-struct OnMoveContent<Content: DynamicViewContent>: DynamicViewContent, ViewContainer {
-    let content: Content
-    let handler: ((IndexSet, Int) -> Void)?
-    @MainActor public var body: Never { return fatalError("OnMoveContent has no body") }
-    var supportsRefreshSkip: Bool { (content as? ViewContainer)?.supportsRefreshSkip ?? false }
-    @MainActor
-    func parts() -> [(Segment, any View)] {
-        (content as? ViewContainer)?.parts() ?? []
-    }
-}
+#endif
 
 extension MutableCollection where Self: RandomAccessCollection {
     public mutating func move(fromOffsets source: IndexSet, toOffset destination: Int) {

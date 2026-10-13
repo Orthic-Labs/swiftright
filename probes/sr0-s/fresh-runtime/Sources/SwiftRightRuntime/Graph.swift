@@ -202,6 +202,8 @@ enum ModifierSpec {
     case tag(AnyHashable)
     /// SR1: the `onDelete` hook of a List row.
     case deletion(DeletionHook)
+    /// SR1 block 16: the `onMove` hook of a List row.
+    case movement(MoveHook)
     /// SR1: a context menu's content, evaluated into `Node.menuEntries`.
     case contextMenu(any View)
     /// SR1: an alert or confirmation dialog, presented while its binding is true.
@@ -228,6 +230,7 @@ enum ModifierSpec {
         case .transition: return "modifier.transition"
         case .tag: return "modifier.tag"
         case .deletion: return "modifier.onDelete"
+        case .movement: return "modifier.onMove"
         case .contextMenu: return "modifier.contextMenu"
         case .presentation(let payload):
             return payload.kind == .alert ? "modifier.alert" : "modifier.confirmationDialog"
@@ -254,6 +257,7 @@ enum ModifierSpec {
         case .transition: return "transition"
         case .tag: return "tag"
         case .deletion: return "onDelete"
+        case .movement: return "onMove"
         case .contextMenu: return "contextMenu"
         case .presentation(let payload):
             return payload.kind == .alert ? "alert" : "confirmationDialog"
@@ -648,6 +652,7 @@ enum LayoutKey: Equatable {
     case spacer(CGFloat)
     case toggleLabelHidden
     case button(String?)
+    case list(String?)
     case image(ImageSpec)
     case scrollView(ScrollViewConfiguration)
 }
@@ -729,6 +734,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let buttonStyle: String?
     /// Button nodes only: true under `.keyboardShortcut(.defaultAction)` (Return, no modifiers), the window's default button.
     public let isDefaultButton: Bool
+    /// List nodes only: the `.listStyle` type metadata; nil when none applies.
+    public let listStyle: String?
 }
 
 extension ResolvedNode {
@@ -738,7 +745,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle)
     }
 }
 
@@ -1549,6 +1556,7 @@ public final class Graph {
             let font = node.environment.font
             let string = node.textInput?.display ?? ""
             key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font, nil)
+        case .stack(let spec) where spec.name == "List": key = .list(node.environment.listStyleMetadata)
         case .stack(let spec): key = .stack(spec)
         case .modifier(.padding(let insets)): key = .padding(insets)
         case .modifier(.frame(let frame)): key = .frame(frame)
@@ -1793,6 +1801,8 @@ public final class Graph {
                 ancestor = a.parent
             }
         }
+        var listStyle: String?
+        if case .stack(let spec) = kind, spec.name == "List" { listStyle = node.environment.listStyleMetadata }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1825,7 +1835,8 @@ public final class Graph {
             presentation: node.presented.map(resolvePresentation),
             shortcut: shortcut,
             buttonStyle: buttonStyle,
-            isDefaultButton: isDefaultButton
+            isDefaultButton: isDefaultButton,
+            listStyle: listStyle
         )
     }
 

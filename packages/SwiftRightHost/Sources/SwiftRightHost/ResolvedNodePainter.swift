@@ -29,6 +29,9 @@ public final class ResolvedNodePainter {
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
     /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
     var focusedFieldID: String?
+    /// True while the keyboard is in a List (the host sets it on a pointer press in the list or a navigation key): a selection then paints in the accent colour,
+    /// otherwise grey, as AppKit draws a table that is not the first responder.
+    public var listIsActive = false
     var pendingFieldLayouts: [String: TextFieldLayout] = [:]
     /// Where each TextField of the last committed tree put its text (runtime id), for caret placement and IME candidate anchoring.
     public private(set) var fieldLayouts: [String: TextFieldLayout] = [:]
@@ -91,22 +94,36 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
-            let emission = try emit(n, id: id, bounds: bounds, textColor: textColor)
+            let emission: NodeEmission
+            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, listBounds: rowList.bounds, look: rowList.look) }
+            else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
+            // A List row is hit anywhere along its width, not only where its content is.
+            let nodeBounds = row?.rect ?? bounds
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
             // primitives in the scroll frame (intersected for nested scroll views).
             var primitives = emission.primitives
             if let clip, !primitives.isEmpty { primitives = [.clipPush(clip)] + primitives + [.clipPop] }
-            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: bounds, primitives: primitives, semantic: emission.semantic))
+            nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: nodeBounds, primitives: primitives, semantic: emission.semantic))
             let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
             // A Button's label takes the button's label colour (grey when the button is disabled) unless the label sets its own.
             let childTextColor = n.kind == "Button" ? try ButtonPainter.labelColor(of: n) : textColor
-            for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
+            if n.kind == "List" {
+                let look = ListPainter.look(of: n)
+                let rows = ListPainter.rows(of: n, bounds: bounds, scale: scale)
+                for (index, child) in n.children.enumerated() where index < rows.count {
+                    // Text inside an active selection is white.
+                    let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look))
+                }
+            } else {
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor) }
+            }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
         try submit(SwiftRightBridge.Transaction(version: version, focus: focusedField.map { UInt64($0.instance + 1) } ?? 0, upserts: nodes, removes: Array(previousLive.subtracting(current))))
@@ -130,7 +147,7 @@ public final class ResolvedNodePainter {
     }
 
     /// Containers whose resolved frame clips their descendants (a scroll view shows only its viewport).
-    static func clipsContent(_ kind: String) -> Bool { kind == "ScrollView" }
+    static func clipsContent(_ kind: String) -> Bool { kind == "ScrollView" || kind == "List" }
 
     public static func intersection(_ outer: Rect?, _ inner: Rect) -> Rect {
         guard let outer else { return inner }
@@ -141,7 +158,7 @@ public final class ResolvedNodePainter {
 
     /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
     /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
-    static let unpaintedPrimitives: Set<String> = ["TextEditor", "Divider", "Menu", "List"]
+    static let unpaintedPrimitives: Set<String> = ["TextEditor", "Divider", "Menu"]
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
@@ -207,6 +224,11 @@ public final class ResolvedNodePainter {
         case "TextField":
             return try emitTextField(node, id: id, bounds: bounds)
 
+        case "List":
+            return NodeEmission(primitives: try ListPainter.primitives(for: node, bounds: bounds, scale: scale),
+                                semantic: SemanticNode(role: .list, label: node.accessibility.label ?? "", identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                flags: [], structural: false)
+
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
             return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
@@ -223,6 +245,15 @@ public final class ResolvedNodePainter {
             guard !Self.unpaintedPrimitives.contains(node.kind) else { throw HostPaintError.unsupportedNode(node.kind) }
             return NodeEmission(primitives: [], semantic: nil, flags: [], structural: true)
         }
+    }
+
+    /// One row of a List: its selection highlight (a rect primitive), and the row's semantics (a list item, selected or not) over the row's whole width.
+    func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, listBounds: Rect, look: ListLook) throws -> NodeEmission {
+        let primitives: [Primitive] = ListPainter.highlight(for: row, listBounds: listBounds, look: look, scale: scale, active: listIsActive)
+            .map { [.rect($0.rect, color: $0.rgba, radius: $0.radiusPX)] } ?? []
+        return NodeEmission(primitives: primitives,
+                            semantic: SemanticNode(role: .listItem, label: node.accessibility.label ?? "", identifier: node.id, selected: row.isSelected, disabled: !row.isEnabled),
+                            flags: [.hitTarget], structural: false)
     }
 
     private func systemImagePrimitive(_ node: ResolvedNode, bounds: Rect, registry: SystemImageRegistry) throws -> Primitive {

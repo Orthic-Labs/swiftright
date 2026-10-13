@@ -20,6 +20,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
     case unsupportedToggleStyle(String)
     case unsupportedTogglePaintStyle
     case unsupportedButtonPaintStyle
+    case unsupportedListStyle(String)
 
     public var description: String {
         switch self {
@@ -38,6 +39,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
         case .continuousShapeRasterInput(let code): return "HostPaint: continuous shape raster input invalid (\(code))"
         case .unsupportedToggleStyle(let style): return "HostPaint: Toggle style '\(style)' has no artwork yet (only the switch and checkbox styles are painted)"
         case .unsupportedTogglePaintStyle: return "HostPaint: Toggle with a foreground style or opacity is not painted yet"
+        case .unsupportedListStyle(let style): return "HostPaint: List style '\(style)' has no artwork yet (only the automatic, inset and plain styles are painted)"
         case .unsupportedButtonPaintStyle: return "HostPaint: Button with a foreground style, opacity or an empty frame is not painted yet"
         }
     }

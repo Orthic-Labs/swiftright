@@ -84,6 +84,46 @@ struct OnDeleteContent<Content: DynamicViewContent>: DynamicViewContent, ViewCon
     }
 }
 
+// MARK: - onMove
+
+/// Holds one `onMove` handler. Rows of the same handler share the box, so a move groups them.
+final class MoveBox {
+    let perform: (IndexSet, Int) -> Void
+
+    init(perform: @escaping (IndexSet, Int) -> Void) { self.perform = perform }
+}
+
+/// The move a row belongs to, and the row's offset inside its ForEach as of the last evaluation.
+struct MoveHook {
+    let box: MoveBox
+    let offset: Int
+}
+
+/// Wraps each row of the content with its move hook (the same way `OnDeleteContent` hooks deletion).
+struct OnMoveContent<Content: DynamicViewContent>: DynamicViewContent, ViewContainer {
+    let content: Content
+    let box: MoveBox
+
+    @MainActor public var body: Never { return fatalError("OnMoveContent has no body") }
+
+    @MainActor
+    func parts() -> [(Segment, any View)] {
+        let rows = (content as? ViewContainer)?.parts() ?? []
+        return rows.enumerated().map { offset, part in
+            (part.0, ModifierWrapper(inner: part.1, spec: .movement(MoveHook(box: box, offset: offset))) as any View)
+        }
+    }
+}
+
+extension DynamicViewContent {
+    /// Handler for rows moved by the runtime (`Graph.moveRows`). SwiftUI calls it with the source offsets of the moved rows and the destination offset
+    /// in the rows as they were before the move (a row moved from 1 to below the row at 3 passes `[1]` and 4).
+    /// Apple: https://developer.apple.com/documentation/swiftui/dynamicviewcontent/onmove(perform:)
+    public func onMove(perform action: ((IndexSet, Int) -> Void)?) -> some DynamicViewContent {
+        OnMoveContent(content: self, box: MoveBox(perform: action ?? { _, _ in }))
+    }
+}
+
 extension DynamicViewContent {
     /// Handler for rows deleted by the runtime (`Graph.deleteRows`, `Graph.deleteSelection`). The IndexSet holds the
     /// rows' offsets in this ForEach as of the last flush.
@@ -192,6 +232,39 @@ extension Graph {
         return deleteRows(taggedRows(of: list).filter { selected.contains($0.tag) }.map { $0.node.id.description })
     }
 
+    /// Moves the named rows (all of one ForEach) to the destination offset, as a drop of those rows between two rows does: the `onMove` handler runs once
+    /// with the rows' offsets and `destination`, an offset in the rows as they are now. Returns false when no named row has a handler.
+    @discardableResult
+    public func moveRows(_ rowIDs: [String], toOffset destination: Int) -> Bool {
+        var order: [MoveBox] = []
+        var offsets: [ObjectIdentifier: [Int]] = [:]
+        for id in rowIDs {
+            guard let row = node(id), let hook = moveHook(of: row) else { continue }
+            let key = ObjectIdentifier(hook.box)
+            if offsets[key] == nil { order.append(hook.box) }
+            offsets[key, default: []].append(hook.offset)
+        }
+        for box in order { box.perform(IndexSet(offsets[ObjectIdentifier(box)] ?? []), destination) }
+        return !order.isEmpty
+    }
+
+    /// Moves one row up (`delta` < 0) or down (`delta` > 0) by `delta` rows: the drop of that row `delta` rows away. The keyboard-or-model route to a move,
+    /// since a drag is not driven here.
+    @discardableResult
+    public func moveRow(_ rowID: String, by delta: Int) -> Bool {
+        guard delta != 0, let row = node(rowID), let hook = moveHook(of: row) else { return false }
+        return moveRows([rowID], toOffset: delta > 0 ? hook.offset + delta + 1 : hook.offset + delta)
+    }
+
+    /// Moves the selected row of a List by `delta` rows (single selection).
+    @discardableResult
+    public func moveSelection(in listID: String, by delta: Int) -> Bool {
+        guard let list = node(listID), let access = list.selection else { return false }
+        let selected = access.current()
+        guard let row = taggedRows(of: list).first(where: { selected.contains($0.tag) }) else { return false }
+        return moveRow(row.node.id.description, by: delta)
+    }
+
     // MARK: Helpers
 
     /// The tag of a row: a `.tag` modifier reached through single-child wrappers.
@@ -208,6 +281,14 @@ extension Graph {
         guard node.kind.passesThrough else { return nil }
         let children = childNodes(node)
         return children.count == 1 ? deletionHook(of: children[0]) : nil
+    }
+
+    /// The `onMove` hook of a row, reached through single-child wrappers.
+    func moveHook(of node: Node) -> MoveHook? {
+        if case .modifier(.movement(let hook)) = node.kind { return hook }
+        guard node.kind.passesThrough else { return nil }
+        let children = childNodes(node)
+        return children.count == 1 ? moveHook(of: children[0]) : nil
     }
 
     /// The tagged children of a List, in order.
