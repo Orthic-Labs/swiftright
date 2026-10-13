@@ -11,6 +11,11 @@
 #   tier1-launch        W08 Tier 1: NO action of ours. Launch ONLY via explorer shell:AppsFolder and let App Installer (OnLaunch, ShowPrompt + UpdateBlocksActivation) finish or repair the update; feed serves 0.1.1.0.
 #                       Any App Installer prompt is answered through UIA (its Update button) and recorded. Pass = within 60 s package Ok at 0.1.1.0, window appears, rows.json unchanged.
 #   tier1-launch-old    as tier1-launch, with the feed switched back to the 0.1.0.0 .appinstaller (no newer version published)
+#   tier2-repair        W08 Tier 2: the app registered the out-of-package repair guard (scheduled task <PFN>-Repair) on its first launch. After NeedsRemediation is induced we do
+#                       NOTHING for up to 120 s (the guard acts on event 751), then launch via explorer shell:AppsFolder. Pass = package Ok, window appears, rows.json unchanged.
+#   tier2-feed-down     as tier2-repair, with the feed server stopped at the cancel: the guard must fail EXPLICITLY (repair.log names the unreachable feed, task result 1) and leave
+#                       the package untouched; the feed is then restored and the task started by hand to show the retry path recovers it.
+#   tier2-uninstall     no induction: install, launch once (guard registered), Remove-AppxPackage, start the task (stand-in for the next logon trigger); the task and its folder must be gone.
 #   settings-probe      development aid: no induction; dumps the Settings UI tree step by step (receipts settings-*.txt/jpg)
 # Flow: trust the signer, serve the feed (as W12), install 0.1.0.0 through the feed, write a data marker through the UI, publish the 0.1.1.0 feed,
 # induce NeedsRemediation by cancelling PackageManager.AddPackageAsync(0.1.1.0 msix) at staging+delay (retry delays until Status shows it), confirm the app
@@ -29,6 +34,7 @@ $Utf8 = New-Object System.Text.UTF8Encoding($false)
 $MethodLines = @((Get-Content -LiteralPath (Join-Path $HarnessDir 'method.txt')) | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ })
 $Method = $MethodLines[0]
 $HoldMinutes = $(if ($MethodLines.Count -gt 1) { [int]$MethodLines[1] } else { 0 })
+$IsT2 = ($Method -like 'tier2-*')
 $PathInstall = ($Method -like '*-path')   # old version installed with Add-AppxPackage -Path (no App Installer association) and no feed served: the W08 offline scenario
 $PkgName = 'OrthicLabs.SliceApp'
 $OldVersion = '0.1.0.0'
@@ -257,6 +263,40 @@ function Get-AppxEvents([datetime]$Since, [int]$Max = 60) {
     } catch { return @('events unreadable: ' + $_.Exception.Message) }
 }
 
+# ---- W08 Tier 2 guard evidence
+function Get-GuardDir { return (Join-Path $env:LOCALAPPDATA 'SliceApp\repair') }
+function Get-GuardState {
+    $o = [ordered]@{ task_name = ($script:Pfn + '-Repair') }
+    $t = $null
+    try { $t = Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction Stop } catch { }
+    $o.task_exists = [bool]$t
+    if ($t) {
+        $o.task_state = [string]$t.State
+        try { $i = Get-ScheduledTaskInfo -TaskName ($script:Pfn + '-Repair'); $o.last_run = [string]$i.LastRunTime; $o.last_result = [int]$i.LastTaskResult } catch { }
+        $o.triggers = @($t.Triggers | ForEach-Object { $_.CimClass.CimClassName + $(if ($_.Subscription) { ' ' + (([string]$_.Subscription) -replace '\s+', ' ') } else { '' }) })
+        $o.action = [string]$t.Actions[0].Execute + ' ' + [string]$t.Actions[0].Arguments
+        $o.run_as = [string]$t.Principal.UserId + ' ' + [string]$t.Principal.LogonType + ' ' + [string]$t.Principal.RunLevel
+    }
+    $d = Get-GuardDir
+    $o.dir_exists = (Test-Path -LiteralPath $d)
+    if ($o.dir_exists) {
+        $o.files = @(Get-ChildItem -LiteralPath $d -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name + ' ' + $_.Length })
+        try { $o.guard_json = (Get-Content -LiteralPath (Join-Path $d 'guard.json') -Raw -ErrorAction Stop) -replace '\s+', ' ' } catch { $o.guard_json = 'unreadable' }
+        try { $o.repair_log = @(Get-Content -LiteralPath (Join-Path $d 'repair.log') -ErrorAction Stop | ForEach-Object { [string]$_ }) } catch { $o.repair_log = @() }
+    }
+    return $o
+}
+function Wait-Guard([int]$Sec) {
+    $dl = (Get-Date).AddSeconds($Sec)
+    while ((Get-Date) -lt $dl) {
+        $t = $null; try { $t = Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction Stop } catch { }
+        if ($t -and (Test-Path -LiteralPath (Join-Path (Get-GuardDir) 'guard.json'))) { return $true }
+        Beat; Start-Sleep -Milliseconds 500
+    }
+    return $false
+}
+function Test-FeedUp { try { return ((Invoke-WebRequest -Uri $FeedUrl -UseBasicParsing -TimeoutSec 5).StatusCode -eq 200) } catch { return $false } }
+
 # ---------------------------------------------------------------- induction
 function Install-OldViaFeed {
     Stop-App | Out-Null
@@ -276,6 +316,7 @@ function Install-OldViaFeed {
 function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     $att = [ordered]@{ n = $n; delay_ms = $DelayMs; started = (Get-Date -Format 'HH:mm:ss') }
     $tAll = [Diagnostics.Stopwatch]::StartNew()
+    if ($Method -eq 'tier2-feed-down' -and -not (Test-FeedUp)) { [void](Start-Feed); $att.feed_restarted_for_attempt = $true }
     $errArr = @(Install-OldViaFeed)
     $err = [string]$errArr[-1]
     $att.install_old_s = [math]::Round($tAll.Elapsed.TotalSeconds, 1)
@@ -293,6 +334,12 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
         $script:MarkerSha = Get-Sha $RowsPath
         $R.marker_sha_written = $script:MarkerSha
         L ('marker written, rows.json sha ' + $script:MarkerSha)
+        if ($IsT2) {
+            $gOk = Wait-Guard 90
+            $R.guard_after_first_launch = Get-GuardState
+            L ('guard registered by the first launch: ' + $gOk)
+            if (-not $gOk) { $att.outcome = 'setup-failed'; $att.error = 'the first launch did not register the repair guard'; return $att }
+        }
     }
     Set-Feed 1   # the update is published
     $att.rows_sha_before = Get-Sha $RowsPath
@@ -321,14 +368,17 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     $att.op_status_at_cancel = [string]$stNow   # 0 Started, 1 Completed, 2 Canceled, 3 Error
     $att.t_cancel_ms = [int]$watch.ElapsedMilliseconds
     if ($stNow -eq 0) { [void]$asyncInfo.GetMethod('Cancel').Invoke($op, $null) }
+    $att.cancel_utc = (Get-Date).ToUniversalTime().ToString('o'); $script:InducedAt = Get-Date
+    if ($Method -eq 'tier2-feed-down' -and $script:FeedProc) { try { Stop-Process -Id $script:FeedProc.Id -Force -ErrorAction Stop; $att.feed_stopped_at_cancel = $true } catch { $att.feed_stop_error = $_.Exception.Message } }
     $d2 = (Get-Date).AddSeconds(60)
     while ([int]$asyncInfo.GetProperty('Status').GetValue($op) -eq 0 -and (Get-Date) -lt $d2) { Start-Sleep -Milliseconds 50 }
     $att.op_status_after = [string][int]$asyncInfo.GetProperty('Status').GetValue($op)
     $att.op_error_code = [string]$asyncInfo.GetProperty('ErrorCode').GetValue($op)
     # settle: stable for 6 s, max 40 s
-    $last = ''; $stableSince = Get-Date; $sw2 = [Diagnostics.Stopwatch]::StartNew(); $timeline = @()
+    $last = ''; $stableSince = Get-Date; $sw2 = [Diagnostics.Stopwatch]::StartNew(); $timeline = @(); $sawNR = $false
     while ($sw2.Elapsed.TotalSeconds -lt 40) {
         $txt = (Get-PkgText) + ' | staging_new=' + (Test-NewStaging)
+        if ($txt -match 'NeedsRemediation') { $sawNR = $true }
         if ($txt -ne $last) { $timeline += ('+' + [int]$watch.ElapsedMilliseconds + 'ms ' + $txt); $last = $txt; $stableSince = Get-Date }
         elseif (((Get-Date) - $stableSince).TotalSeconds -ge 6) { break }
         Start-Sleep -Seconds 1
@@ -342,7 +392,9 @@ function Invoke-CancelAttempt([int]$n, [int]$DelayMs) {
     foreach ($e in @($att.events)) { if ($e -match 'Failed to reach state (\w+)') { $att.failed_to_reach_state = $Matches[1]; break } }
     $reg = @(Get-Pkgs)
     $newReg = [bool]($reg | Where-Object { [string]$_.Version -eq $NewVersion })
-    $att.outcome = $(if (Test-NeedsRemediation) { 'NEEDS-REMEDIATION' }
+    $ev751 = @($att.events | Where-Object { $_ -match ' id=751 ' }).Count -gt 0
+    $att.saw_needs_remediation = $sawNR; $att.event_751 = $ev751
+    $att.outcome = $(if ((Test-NeedsRemediation) -or ($IsT2 -and ($sawNR -or $ev751))) { 'NEEDS-REMEDIATION' }
         elseif ($newReg -and $reg.Count -eq 1 -and [string]$reg[0].Status -eq 'Ok') { 'completed-anyway' }
         elseif ($reg.Count -eq 1 -and [string]$reg[0].Version -eq $OldVersion -and [string]$reg[0].Status -eq 'Ok') { 'old-ok' }
         else { 'other' })
@@ -537,6 +589,39 @@ try {
         Save-Result
         return
     }
+    if ($Method -eq 'tier2-uninstall') {
+        $u = $R.recovery
+        $pe = @(Install-OldViaFeed); $pe = [string]$pe[-1]
+        if ($pe) { throw $pe }
+        try { $script:AppId = [string](Get-AppxPackageManifest -Package (Get-Pkgs)[0].PackageFullName).Package.Applications.Application.Id } catch { }
+        $l = Invoke-Launch 60 'uninstall-first-launch'
+        $u.first_launch = $l
+        $u.guard_registered = Wait-Guard 90
+        $u.guard_before = Get-GuardState
+        L ('guard registered: ' + $u.guard_registered)
+        Stop-App | Out-Null
+        $u.rows_exists_before = (Test-Path -LiteralPath $RowsPath)
+        $u.parent_dir_before = [bool](Test-Path -LiteralPath $LocalAppData)
+        foreach ($p in @(Get-Pkgs)) { try { Remove-AppxPackage -Package $p.PackageFullName -ErrorAction Stop } catch { $u.remove_error = $_.Exception.Message } }
+        $u.package_after_remove = Get-PkgText
+        $u.task_exists_right_after_remove = [bool](Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue)
+        $swU = [Diagnostics.Stopwatch]::StartNew()
+        Start-ScheduledTask -TaskName ($script:Pfn + '-Repair')   # stands in for the next logon trigger
+        $gone = $false
+        while ($swU.Elapsed.TotalSeconds -lt 90) { if (-not (Get-ScheduledTask -TaskName ($script:Pfn + '-Repair') -ErrorAction SilentlyContinue)) { $gone = $true; break }; Beat; Start-Sleep -Milliseconds 500 }
+        $u.task_removed = $gone; $u.seconds_to_task_removed = [math]::Round($swU.Elapsed.TotalSeconds, 1)
+        Start-Sleep -Seconds 2
+        $u.guard_after = Get-GuardState
+        $u.repair_dir_removed = -not (Test-Path -LiteralPath (Get-GuardDir))
+        $u.parent_dir_kept = [bool](Test-Path -LiteralPath $LocalAppData)
+        $u.rows_kept = (Test-Path -LiteralPath $RowsPath)
+        try { $u.cleanup_note = @(Get-Content -LiteralPath (Join-Path $env:TEMP ($script:Pfn + '-repair-cleanup.log')) -ErrorAction Stop | ForEach-Object { [string]$_ }) } catch { $u.cleanup_note = @('none') }
+        $u.pass = [bool]($u.guard_registered -and $u.task_removed -and $u.repair_dir_removed -and $u.parent_dir_kept -and $u.rows_kept)
+        $u.result = 'task removed=' + $gone + ' repair dir removed=' + $u.repair_dir_removed + ' user data kept=' + $u.rows_kept
+        L ('uninstall: ' + $u.result)
+        Save-Result
+        return
+    }
     $delays = @(240, 200, 280, 240, 220, 260, 230, 250, 210, 270, 245, 235, 225, 255, 215, 265, 205, 275)
     $delayFile = Join-Path $HarnessDir 'delays.txt'   # optional: fixed cancel offset(s), one integer ms per line
     if (Test-Path -LiteralPath $delayFile) { $delays = @((Get-Content -LiteralPath $delayFile) | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ } | ForEach-Object { [int]$_ }); L ('cancel offsets from delays.txt: ' + ($delays -join ',')) }
@@ -629,6 +714,35 @@ try {
                 $rec.result = 'Repair clicked; package now ' + (Get-PkgText)
             }
             Stop-Settings
+        }
+        { $_ -in 'tier2-repair', 'tier2-feed-down' } {
+            $rec.command = 'NO action of ours: wait <= 120 s for the repair guard task (' + $script:Pfn + '-Repair, event 751 / logon), then launch via explorer shell:AppsFolder'
+            L ('recovery: ' + $rec.command)
+            $rec.timeline = @(); $lastT = ''; $okAt = $null
+            $limit = $(if ($Method -eq 'tier2-feed-down') { 75 } else { 120 })
+            $t0 = $(if ($script:InducedAt) { $script:InducedAt } else { Get-Date })
+            while (((Get-Date) - $t0).TotalSeconds -lt $limit) {
+                $t = Get-PkgText; if ($t -ne $lastT) { $rec.timeline += ('+' + [math]::Round(((Get-Date) - $t0).TotalSeconds, 1) + 's ' + $t); $lastT = $t }
+                if ($t -match '^0\.1\.[01]\.0:Ok$') { $okAt = [math]::Round(((Get-Date) - $t0).TotalSeconds, 1); if ($Method -eq 'tier2-repair') { break } }
+                Beat; Start-Sleep -Milliseconds 500
+            }
+            $rec.seconds_to_package_ok_from_cancel = $okAt
+            $rec.guard_after = Get-GuardState
+            if ($Method -eq 'tier2-feed-down') {
+                $rec.package_while_feed_down = Get-PkgText
+                $rl = (@($rec.guard_after.repair_log) -join "`n")
+                $rec.failed_explicitly = [bool](($rl -match 'feed unreachable') -and ($rl -match 'FAILED') -and (-not $okAt))
+                $rec.task_last_result = $rec.guard_after.last_result
+                L ('feed-down: package ' + $rec.package_while_feed_down + ' explicit failure logged ' + $rec.failed_explicitly + ' task result ' + $rec.task_last_result)
+                # retry path: feed back, run the task as the next trigger would
+                [void](Start-Feed); Set-Feed 1
+                Start-ScheduledTask -TaskName ($script:Pfn + '-Repair')
+                $sw3 = [Diagnostics.Stopwatch]::StartNew(); $okRetry = $null
+                while ($sw3.Elapsed.TotalSeconds -lt 120) { if ((Get-PkgText) -match '^0\.1\.[01]\.0:Ok$') { $okRetry = [math]::Round($sw3.Elapsed.TotalSeconds, 1); break }; Beat; Start-Sleep -Milliseconds 500 }
+                $rec.retry_after_feed_restored_ok_s = $okRetry
+                $rec.guard_after_retry = Get-GuardState
+            }
+            $rec.result = 'package ' + (Get-PkgText) + '; seconds to Ok from cancel ' + $okAt
         }
         { $_ -in 'tier1-launch', 'tier1-launch-old' } {
             if ($Method -eq 'tier1-launch-old') { Set-Feed 0; $rec.feed_switched_back_to_0_1_0_0 = $true }

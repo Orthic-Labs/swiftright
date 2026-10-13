@@ -185,10 +185,13 @@ export default {
           msixUri: `https://TODO-R2-PUBLIC-HOST.invalid/sliceapp/installers/windows/versions/${MSIX_VERSION}/SliceApp_${MSIX_VERSION}_x64.msix`,
           out: path.join("dist", "win", "SliceApp.appinstaller"),
           hoursBetweenUpdateChecks: 8,
-          // W08: a prompted, activation-blocking update means the app never launches while an interrupted update
-          // is pending; App Installer completes or repairs it first. Adds <AutomaticBackgroundTask/> by default.
-          showPrompt: true,
-          updateBlocksActivation: true,
+          // W08: no prompt and no activation block. Tier 1 (prompted, activation-blocking) was rejected: launch through
+          // shell:AppsFolder is refused before App Installer's OnLaunch check, and a prompt gives users a Cancel button that
+          // re-exposes the interruption. Recovery is the out-of-package repair guard (packages/SwiftRightBridge RepairGuard,
+          // installed by the app on each normal launch); the versioned msixUri above is its fallback install source.
+          // Adds <AutomaticBackgroundTask/> by default.
+          showPrompt: false,
+          updateBlocksActivation: false,
         },
       },
       updater: { kind: "appinstaller", artifacts: [] },

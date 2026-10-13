@@ -20,6 +20,8 @@ public final class Bridge {
     public var onEvent: ((BridgeEvent) -> Void)?
     public var onWindowClosed: (() -> Void)?
     public var textStore: TextStore?
+    /// Folder name under %LOCALAPPDATA% for the out-of-package repair guard (W08 Tier 2); defaults to the window title.
+    public var repairGuardName: String?
 
     /// Same events as `onEvent`, as an AsyncStream (iterate it on the MainActor). The stream is made on first access and buffers
     /// from then on: a host that only uses `onEvent` never reads it, and an unbounded buffer nobody reads grows with every event
@@ -106,6 +108,7 @@ public final class Bridge {
     @discardableResult
     public func run(title: String, width: UInt32, height: UInt32) throws -> Int32 {
         #if os(Windows)
+        RepairGuard.installIfNeeded(appName: repairGuardName ?? title)
         let wake = _dispatch_get_main_queue_handle_4CF()
         guard let runFn = api.run else { throw BridgeError.startup("SWR_STARTUP_ERROR: missing function run") }
         var cb = makeCallbacks()

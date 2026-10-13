@@ -10,13 +10,14 @@
 # The packages must hash to the expected values (the tuple 08 MSIX pair); nothing is deleted or recycled.
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)][ValidateSet('settings-probe', 'settings-repair', 'settings-repair-same', 'settings-repair-path', 'platform-register', 'reset', 'reinstall-same', 'appinstaller-same', 'tier1-launch', 'tier1-launch-old')][string]$Method,
+    [Parameter(Mandatory = $true)][ValidateSet('settings-probe', 'settings-repair', 'settings-repair-same', 'settings-repair-path', 'platform-register', 'reset', 'reinstall-same', 'appinstaller-same', 'tier1-launch', 'tier1-launch-old', 'tier2-repair', 'tier2-feed-down', 'tier2-uninstall')][string]$Method,
     [Parameter(Mandatory = $true)][string]$RunId,
     [Parameter(Mandatory = $true)][string]$OldMsix,
     [Parameter(Mandatory = $true)][string]$NewMsix,
     [Parameter(Mandatory = $true)][string]$FeedDir,        # SliceApp.0.appinstaller and SliceApp.1.appinstaller (the R5 feed files, localhost https)
     [Parameter(Mandatory = $true)][string]$ExpectOldSha256,
     [Parameter(Mandatory = $true)][string]$ExpectNewSha256,
+    [string]$CancelDelays = '',                             # fixed cancel offsets, comma separated, tried in rotation (e.g. '240,360')
     [int]$CancelDelayMs = 0,                                # fixed cancel offset for the induction (0 = the default rotating offsets)
     [int]$HoldMinutes = 0,                                  # platform-register only: wait this long before the launch attempt
     [int]$TimeoutMinutes = 60,
@@ -47,7 +48,8 @@ Copy-Item -LiteralPath (Join-Path $g 'w08-recovery-guest.ps1'), (Join-Path $g 'w
 Copy-Item -LiteralPath $feedScript -Destination $Harness
 Copy-Item -LiteralPath (Join-Path $g 'logon-w08-recovery.cmd') -Destination (Join-Path $Harness 'logon.cmd')
 [IO.File]::WriteAllText((Join-Path $Harness 'method.txt'), ($Method + $(if ($HoldMinutes -gt 0) { "`r`n$HoldMinutes" } else { '' }) + "`r`n"), $Utf8)
-if ($CancelDelayMs -gt 0) { [IO.File]::WriteAllText((Join-Path $Harness 'delays.txt'), ("$CancelDelayMs`r`n"), $Utf8) }
+if ($CancelDelays) { [IO.File]::WriteAllText((Join-Path $Harness 'delays.txt'), ((($CancelDelays -split ',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }) -join "`r`n") + "`r`n", $Utf8) }
+elseif ($CancelDelayMs -gt 0) { [IO.File]::WriteAllText((Join-Path $Harness 'delays.txt'), ("$CancelDelayMs`r`n"), $Utf8) }
 Copy-Item -LiteralPath $OldMsix -Destination (Join-Path $Pkgs 'old.msix')
 Copy-Item -LiteralPath $NewMsix -Destination (Join-Path $Pkgs 'new.msix')
 Copy-Item -LiteralPath $OldMsix -Destination (Join-Path $Pkgs 'feed\SliceApp_0.1.0.0_x64.msix')
