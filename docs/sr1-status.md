@@ -1,3 +1,45 @@
+# SR1 status: 14 October 2026, one consolidated build
+
+All 20 blocks (plus the cross-cutting pixel-tie cases) were rerun on **one product stage: `58df259c5-4c63f440`** (git archive of commit `58df259c5`; runtime, bridge and `SwiftRightHost` from a single tree `4c63f440307c`), factory renderer 0.7 `82513ae0...`, minimised Windows Sandbox through `factory/tools/pair.py --sandbox`. Round-3 cases (blocks 11-20, 85 cases) ran at N=20; round-1/2 and pixel-tie cases (42) ran at N=3 as regression. Result: **127 of 127 jobs pass their deciding gate; no case changed verdict against its earlier stage; no product change was needed.** Raw per-case output: `factory/pipeline/consolidation/results.jsonl` (driver `run_all.py`), per-run reports under each case's `runs/`.
+
+What changed for this pass: every Windows host now centres its tree through the runtime (a `ZStack` in a viewport-sized frame) instead of translating the finished tree, as the half-pixel tie rule requires (`blocks-6-10/pixel-ties/README.md`); 46 case hosts were restamped (diff = centring only) and the stampers (`stamp-case.py`, both `new-case.py`) now do the same. `job-interact.ps1` no longer shadows its `$VK` table with `$vk`, so `mods` key steps work.
+
+Tests on the stage (default build, `--jobs 1`): Windows runtime 333, host 121, bridge 51 (1 skipped); Mac (git archive on the internal disk) runtime 325, host 121, bridge 52 (1 skipped); 0 failures.
+
+Pixel `fail` counts inside a row are by design where a control, semantic, clock or image gate decides (label width Segoe vs SF, animating partial-coverage column, glyph shape, dialogs); the gate column names the decider.
+
+| Block | Cases | N | Verdict on the stage (every case passed its deciding gate) | Caveats |
+|---|---|---|---|---|
+| 1 rounded-rect | 5 | 3 | edge-aa<=32 (max 17); 15/15 pairs | Continuous stroke; 4 gen variants share the verdict |
+| 2 image | 4 | 3 | image gate 12/12 (frame, ink bbox, tint); glyph shape reported (638 / 253 / 1692 / 1187 px) | Segoe Fluent substitute glyph; 48 pt uses a measured ink override (not evidence of generalisation) |
+| 3 stack-overlay | 1 | 3 | edge-aa<=32 outside the named `+` glyph region | decision 2 (Segoe UI vs SF) |
+| 4 text-bundled | 1 | 3 | text gate 3/3 (exact outside glyph region, ink bbox within 1 px) | Tinos via ABI 0.7 font registration |
+| 5 custom-layout | 2 | 3 | exact 6/6 (LTR and RTL) |  |
+| 6 scroll-view | 4 | 3 | exact 9/12, exact-with-exclusions 3/12 (row-text glyph region) | Mac side is an offscreen NSHostingView (ImageRenderer renders ScrollView blank) |
+| 7 toggle | 6 | 3 | edge-aa<=32 12/12 (max 18); labelled cases 6/6 by control gate | labelled cases: pixel verdict fail by design (label width Segoe vs SF, -16 px on the switch) |
+| 8 disabled (+button, text colour) | 9 | 3 | edge-aa<=32 18, exact-with-exclusions 3; button gate 6/6 (enabled, disabled); text-colour gate on `plain-*` and `foreground-colour` | Button is 8 px narrower by design (label advance); Button artwork light only |
+| 9 padding-frame | 5 | 3 | exact 9/15, edge-aa<=32 6/15 (max 31) | fractional `Color` edges |
+| 10 preference-key | 2 | 3 | exact 6/6 |  |
+| 11 button | 19 | 20 | 20 x 19 cases: button gate or text-colour gate or semantic (click/Return) 19/19 pass; pixels exact 2 cases, edge-aa<=32 2 cases | bordered/prominent are 7-8 px narrower (label advance); every Button style is measured in light only; pressed/focused states unmeasured |
+| 12 binding | 4 | 20 | exact 1, edge-aa<=32 2 (+ text exclusion), click semantic 20/20 | `derived-toggle` text glyph region excluded |
+| 13 textfield | 6 | 20 | semantic 120/120 (6 cases) | Windows focus ring not drawn; real IME/TSF deferred to hardware |
+| 14 focus-state | 4 | 20 | semantic 80/80 (4 cases) | UIA keyboard focus is false in the Sandbox; gated through `@FocusState` text and `HOST_FIELD` log |
+| 15 ime-marked-text | 4 | 20 | semantic 80/80 (4 cases) | posted WM_IME messages only; real composition needs hardware |
+| 16 list | 13 | 20 | list gate 13/13 cases (rows, text, order, selection, frame within 1 px, label ink); pixels exact 1, exact-with-exclusions 5, edge-aa<=32 7 | label glyph regions excluded (decision 2) |
+| 17 alert | 9 | 20 | semantic 180/180 (9 cases: open phase TaskDialog vs Mac alert record, final phase) | pixels of the main window reported, never gate |
+| 18 animation | 7 | 20 | clock gate 7/7 cases (780 pairs ok) | spring cases use the named 2 px extent tolerance; one explicit transaction per flush |
+| 19 opacity-transition | 7 | 20 | clock gate / exact: 640/640 pairs (exact 620, text-exclusion 20) | Image fade excluded; no `.scale`/custom Transition |
+| 20 color-scheme | 12 | 20 | exact 60 (3 cases), edge-aa<=32 160 (8 cases, haze <= 3), text-colour gate 20/20 | Toggle artwork measured at scale 2.5 only |
+| pixel-ties | 3 | 3 | exact 9/9 (ruler, centered-origin, layout) | half-pixel tie rule `3353d63f`; hosts centre through the runtime |
+
+Case list per block: `factory/pipeline/consolidation/run_all.py` (JOBS). Cases: 127 jobs = 85 round-3 (N=20) + 42 regression (N=3).
+
+Known gaps: SliceApp's own backend does not use `ResolvedNodePainter`; 41 symbol sizes use measured ink overrides; hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested; Button artwork and button styles are light only; real Microsoft IME, TSF and Narrator are deferred to hardware; the Windows default text colour is 0x1f1f1f against the Mac's 0x272727 (within the colour gate).
+
+---
+
+# Lane history (captured on earlier stages; superseded by the table above, kept for the measurements and decisions)
+
 # SR1 status: 13 October 2026, evening
 
 Since the 09:21 pause, the session "swiftright-87" has owned SR1 under Adrian's grant (`docs/sr1-decisions.md`). All five original blocks pass their gates on **one product build**: runtime, bridge and the new `packages/SwiftRightHost`, staged as `d124fbe94-bc0c222d`, with factory renderer 0.7 `82513ae0…`. Captures run in the minimised Windows Sandbox (`factory/tools/sandbox/`) through `factory/tools/pair.py`. An independent review is pending on the closure of its first-round caveats.
