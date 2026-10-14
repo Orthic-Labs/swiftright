@@ -321,7 +321,8 @@ jobs:
         run: pnpm exec right-release build --platform win --skip-checks
         env:
           LEGION_UNSIGNED_CANDIDATE_ROOT: ${{ runner.temp }}/unsigned-windows-candidate
-          LEGION_SOURCE_REVISION: ${{ env.RIGHT_GIT_SOURCE_REVISION }}
+          RIGHT_GIT_SOURCE_REVISION: ${{ needs.admission.outputs.source_revision }}
+          LEGION_SOURCE_REVISION: ${{ needs.admission.outputs.source_revision }}
           RIGHT_GIT_RELEASE_PLATFORM: ${{ matrix.platform }}
           RIGHT_GIT_RELEASE_ARCHITECTURE: ${{ matrix.architecture }}
           AZURE_ARTIFACT_SIGNING_ENDPOINT: ${{ vars.AZURE_ARTIFACT_SIGNING_ENDPOINT }}
@@ -450,7 +451,8 @@ jobs:
         run: pnpm exec right-release build --platform mac --skip-checks
         env:
           LEGION_UNSIGNED_CANDIDATE_ROOT: ${{ runner.temp }}/unsigned-macos-candidate
-          LEGION_SOURCE_REVISION: ${{ env.RIGHT_GIT_SOURCE_REVISION }}
+          RIGHT_GIT_SOURCE_REVISION: ${{ needs.admission.outputs.source_revision }}
+          LEGION_SOURCE_REVISION: ${{ needs.admission.outputs.source_revision }}
           RIGHT_GIT_RELEASE_PLATFORM: ${{ matrix.platform }}
           RIGHT_GIT_RELEASE_ARCHITECTURE: ${{ matrix.architecture }}
           APPLE_DEVELOPER_ID: ${{ vars.APPLE_DEVELOPER_ID }}
