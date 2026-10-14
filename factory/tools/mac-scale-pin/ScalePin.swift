@@ -45,9 +45,7 @@ enum ScalePin {
         probe.frame = NSRect(x: 0, y: 0, width: 10, height: 10)
         let scratch = type(of: window).init(contentRect: probe.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         scratch.contentView = probe
-        probe.layoutSubtreeIfNeeded()
-        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
-        probe.layoutSubtreeIfNeeded()
+        probe.layoutSubtreeIfNeeded()   // evaluates the probe's body now; NO run-loop turn here: a pump between the case window's contentView and its first order-front changed which field the first Tab reached (focus-state/tab-order-v1, 20/20 semantic failures)
         emit(backing: "\(Double(window.backingScaleFactor))", effective: seen)
     }
 
