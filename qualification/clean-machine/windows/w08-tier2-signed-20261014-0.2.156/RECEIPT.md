@@ -73,3 +73,14 @@ Run by the RightKit agent on BOGUS-DELL: Windows 11 Pro 26300, Windows PowerShel
 3. ValueQueries `EventRecordID = Event/System/EventRecordID`; the action arguments keep the literal `$(EventRecordID)`. PASS. `-File ""` is empty only because the function ran from a dynamic scriptblock, where `$PSCommandPath` is unset; a real `-Install` run fills it in, as the Sandbox runs show.
 
 Not covered on the real Dell: an actual 751-triggered repair, and a machine with Task Scheduler blocked by policy (contract item c).
+
+## Oracle review corrections (2026-10-14)
+
+Verdict on `c0c3f685`: DELIVERED-WITH-CAVEATS, no blockers. Corrections to statements above:
+- **Clock restore.** Both clock-skew jobs were killed as timeouts the instant the clock jumped, so their restore steps never ran. The clock came back within seconds, most likely through the Sandbox host's time sync, not the script.
+- **Daily-mode entry.** The switch to daily mode happened in a skew-induced run (17:33:50, 33 s before its trigger), with a forged `firstFailureEpoch`, not a natural retry. What is proven: the 24 h TimeTrigger fired when the clock crossed it, and the guard re-armed 24 h ahead. A real 24 h wait and StartWhenAvailable are left to the long-run test (item d).
+- **Owner review.** RightKit's owner review PASS is at `/Volumes/D/rightkit-publish/private-audits/inventory/owner-fixes/release-0.2.156-OWNER-REVIEW.md` and covers RightKit 0.2.156 only. The SwiftRight marker change (RepairGuard.swift) was reviewed by this Oracle pass, not by RightKit.
+- **"The next launch retries."** True only when the guard isn't installed yet or its task is missing. On an upgrade with the task present, a failed spawn leaves the new script in place, and the existing task runs it (`-EventRecordID` is optional). This is unchanged from before.
+- **Test coverage.** The new Swift unit tests cover `recordLaunch` only. They were compiled but not run in CI. The Windows-only ordering in `installIfNeeded` is shown by the Sandbox failed-launch control.
+
+Contract status: (a) CLOSED-WITH-CAVEATS (Sandbox only); (b) CLOSED; (c) OPEN, though the no-window checks passed on the real Dell (above); (d) OPEN, running; (e) CLOSED-WITH-CAVEATS for RightKit 0.2.156.

@@ -11,7 +11,7 @@ Release owner must provide:
 5. **Negative controls** — cancellation outside registration, helper on healthy package, wrong package identity, stale feed, corrupt package, & repeated helper invocation. Each must return expected nonzero/result state without data loss.
 6. **Tuple12 binding** — receipts bind helper/source/package bytes to tuple12 source commit `0e201571e4320a3b6ccce14313fd2ad67e523904`, renderer candidate `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2`, & release metadata. Re-run package qualification after any changed byte.
 
-Acceptance requires release owner review, exact receipt files & hashes, reproducible helper invocation, cancellation-state repair, relaunch, data-integrity proof, & package signature proof. Until then freeze stays held, approved 20-per-side comparison remains required, & Narrator listening remains later human follow-up.
+Acceptance requires release owner review, exact receipt files & hashes, reproducible helper invocation, cancellation-state repair, relaunch, data-integrity proof, & package signature proof. Until then freeze stays held, approved 20-per-side comparison remains required, & Narrator listening remains later human follow-up. W08 status (14 Oct): owner review PASS for RightKit 0.2.156 (`/Volumes/D/rightkit-publish/private-audits/inventory/owner-fixes/release-0.2.156-OWNER-REVIEW.md`); the SwiftRight marker change was reviewed by Oracle; see `qualification/clean-machine/windows/w08-tier2-signed-20261014-0.2.156/RECEIPT.md`.
 
 ## Tier 2 repair guard: Sandbox acceptance (2026-10-13)
 
