@@ -63,3 +63,13 @@ Read it: `python3 longrun/longrun_check.py`. It takes a read-only snapshot throu
 
 ## Not covered
 A real user-driven cancel in the Settings UI; the 240 ms offset (harness timing); the 24 h cutoff and the daily step on a genuine clock (skew only, until the long run passes 12:10:45 Z tomorrow and a further 24 h); the real-Dell checks above; any non-Sandbox Windows machine; Oracle review.
+
+## Real-Dell no-window checks (2026-10-14, relayed from the Dell RightKit chat)
+
+Run by the RightKit agent on BOGUS-DELL: Windows 11 Pro 26300, Windows PowerShell 5.1.26100.9711, real user, no windows or consoles, nothing installed. Source: `git show 1cf6ab31:packages/release/msix-repair-guard.ps1`. The results came back through Rightkit2; this session did not run them.
+
+1. sha256 `5abc0a4d…37e5` matches; `powershell.exe` ParseFile reports 0 errors. PASS.
+2. The guard's own `Get-TaskXml`, extracted from the AST without executing its body, for `OrthicLabs.SliceApp_j3cejpx244dcr` with a retry 24 h ahead. `Register-ScheduledTask SR-W08-probe` and `Export-ScheduledTask` both succeed. The XML has an EventTrigger `*[System[(EventID=751)]]` on AppXDeploymentServer/Operational, a TimeTrigger (the daily step) and a LogonTrigger. The task was unregistered at once and confirmed gone. PASS.
+3. ValueQueries `EventRecordID = Event/System/EventRecordID`; the action arguments keep the literal `$(EventRecordID)`. PASS. `-File ""` is empty only because the function ran from a dynamic scriptblock, where `$PSCommandPath` is unset; a real `-Install` run fills it in, as the Sandbox runs show.
+
+Not covered on the real Dell: an actual 751-triggered repair, and a machine with Task Scheduler blocked by policy (contract item c).
