@@ -14,8 +14,8 @@
 //     Mac/SliceApp.entitlements is an empty record. A future entitlement must be added to that path, not here.
 import path from "node:path";
 
-const VERSION = "0.1.1";
-const MSIX_VERSION = "0.1.1.0";
+const VERSION = "0.1.0";
+const MSIX_VERSION = "0.1.0.0";
 
 // Swift 6.4.0 Windows toolchain used for the build-proof on the Windows host (2026-10-09).
 const SWIFT_RUNTIME_BIN = "C:\\Users\\adrds\\AppData\\Local\\Programs\\Swift\\Runtimes\\6.4.0\\usr\\bin";

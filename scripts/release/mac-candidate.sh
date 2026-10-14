@@ -11,7 +11,7 @@ app_dir="$repo/examples/SliceApp"
 out_root="${RIGHT_GIT_ARTIFACT_ROOT:?RIGHT_GIT_ARTIFACT_ROOT is not set}"
 dest="$out_root/sliceapp/macos/arm64"
 rr="$repo/node_modules/@rightkit/release/cli/right-release.mjs"
-dmg="$app_dir/dist/mac/SliceApp_0.1.1_arm64.dmg"
+dmg="$app_dir/dist/mac/SliceApp_0.1.0_arm64.dmg"
 app="$app_dir/dist/mac/SliceApp.app"
 
 case "$action" in
@@ -41,7 +41,7 @@ JSON
     cat "$dest/build-identity.json"
     ;;
   check)
-    cand="$dest/SliceApp_0.1.1_arm64.dmg"
+    cand="$dest/SliceApp_0.1.0_arm64.dmg"
     [[ -f "$cand" ]] || { echo "::error::candidate DMG missing: $cand"; exit 1; }
     expected="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["dmgSha256"])' "$dest/build-identity.json")"
     actual="$(shasum -a 256 "$cand" | cut -d' ' -f1)"
@@ -56,14 +56,14 @@ JSON
     [[ -L "$mnt/Applications" ]] || { echo "::error::DMG lacks the Applications link"; exit 1; }
     plutil -lint "$mapp/Contents/Info.plist"
     [[ "$(plutil -extract CFBundleIdentifier raw "$mapp/Contents/Info.plist")" == "dev.orthic.sliceapp" ]] || { echo "::error::wrong CFBundleIdentifier"; exit 1; }
-    [[ "$(plutil -extract CFBundleShortVersionString raw "$mapp/Contents/Info.plist")" == "0.1.1" ]] || { echo "::error::wrong version"; exit 1; }
+    [[ "$(plutil -extract CFBundleShortVersionString raw "$mapp/Contents/Info.plist")" == "0.1.0" ]] || { echo "::error::wrong version"; exit 1; }
     arch="$(lipo -archs "$mapp/Contents/MacOS/SliceApp")"
     [[ "$arch" == "arm64" ]] || { echo "::error::executable architecture is '$arch', expected arm64"; exit 1; }
     sig="$(codesign -dv --verbose=2 "$mapp" 2>&1 || true)"
     echo "$sig"
     if grep -q "Authority=" <<<"$sig"; then echo "::error::the candidate app carries a signing authority; this lane must be unsigned"; exit 1; fi
     if grep -q "TeamIdentifier=[A-Z0-9]" <<<"$sig"; then echo "::error::the candidate app carries a team identifier"; exit 1; fi
-    echo "unsigned DMG candidate ok: sha256 $actual, arm64, dev.orthic.sliceapp 0.1.1"
+    echo "unsigned DMG candidate ok: sha256 $actual, arm64, dev.orthic.sliceapp 0.1.0"
     ;;
   *) echo "usage: mac-candidate.sh build|check" >&2; exit 2 ;;
 esac

@@ -12,7 +12,7 @@ $app = Join-Path $repo 'examples\SliceApp'
 $outRoot = $env:RIGHT_GIT_ARTIFACT_ROOT
 if (-not $outRoot) { throw 'RIGHT_GIT_ARTIFACT_ROOT is not set' }
 $dest = Join-Path $outRoot 'sliceapp\windows\x86_64'
-$msix = Join-Path $app 'dist\win\SliceApp_0.1.1.0_x64.msix'
+$msix = Join-Path $app 'dist\win\SliceApp_0.1.0.0_x64.msix'
 
 # Swift 6.4.0 release installer from swift.org (the same toolchain line the Dell host uses: swift-6.4 RELEASE, x86_64-unknown-windows-msvc).
 $swiftUrl = 'https://download.swift.org/swift-6.4.0-release/windows10/swift-6.4.0-RELEASE/swift-6.4.0-RELEASE-windows10.exe'
@@ -132,7 +132,7 @@ if ($Action -eq 'build') {
 Step 'Check unsigned MSIX candidate' {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $pin = Get-Content (Join-Path $app 'Windows\renderer-pin.json') -Raw | ConvertFrom-Json
-    $candidate = Join-Path $dest 'SliceApp_0.1.1.0_x64.msix'
+    $candidate = Join-Path $dest 'SliceApp_0.1.0.0_x64.msix'
     if (-not (Test-Path $candidate)) { Fail "candidate MSIX missing: $candidate" }
     $seal = Get-Content (Join-Path $dest 'msix-seal.json') -Raw | ConvertFrom-Json
     $sha = (Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -149,7 +149,7 @@ Step 'Check unsigned MSIX candidate' {
     } finally { $zip.Dispose() }
     [xml]$manifest = Get-Content (Join-Path $unpack 'AppxManifest.xml') -Raw
     $id = $manifest.Package.Identity
-    if ($id.Name -ne 'OrthicLabs.SliceApp' -or $id.Version -ne '0.1.1.0' -or $id.ProcessorArchitecture -ne 'x64') { Fail "unexpected identity: $($id.Name) $($id.Version) $($id.ProcessorArchitecture)" }
+    if ($id.Name -ne 'OrthicLabs.SliceApp' -or $id.Version -ne '0.1.0.0' -or $id.ProcessorArchitecture -ne 'x64') { Fail "unexpected identity: $($id.Name) $($id.Version) $($id.ProcessorArchitecture)" }
     $payloadRenderer = (Get-FileHash -LiteralPath (Join-Path $unpack $pin.file) -Algorithm SHA256).Hash
     if ($payloadRenderer -ne $pin.sha256.ToUpperInvariant()) { Fail "renderer in the MSIX is $payloadRenderer, pin is $($pin.sha256)" }
     Write-Host "renderer in MSIX payload matches the tuple 12 pin $payloadRenderer"
