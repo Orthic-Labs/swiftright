@@ -12,6 +12,11 @@
     "release:admit": "node scripts/release/candidate.mjs admit",
     "release:summary": "node scripts/release/candidate.mjs summary",
     "release:candidate": "node scripts/release/candidate.mjs build",
-    "release:check": "node scripts/release/candidate.mjs check"
+    "release:check": "node scripts/release/candidate.mjs check",
+    "release:finalize-windows": "node scripts/release/finalize.mjs windows",
+    "release:finalize-macos": "node scripts/release/finalize.mjs macos",
+    "release:qualify-installed": "node scripts/release/finalize.mjs qualify",
+    "release:verify-evidence": "node scripts/release/finalize.mjs verify-evidence",
+    "release:publish-qualified": "node scripts/release/finalize.mjs publish"
   }
 }

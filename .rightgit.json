@@ -59,6 +59,14 @@
       }
     ],
     "signWindows": true,
-    "signMacos": true
+    "signMacos": true,
+    "releaseChain": {
+      "evidenceVerificationScript": "release:verify-evidence",
+      "windowsFinalizeScript": "release:finalize-windows",
+      "macosFinalizeScript": "release:finalize-macos",
+      "installedQualificationScript": "release:qualify-installed",
+      "publishScript": "release:publish-qualified",
+      "qualificationRunnerVariable": "SWIFTRIGHT_QUALIFICATION_RUNNER"
+    }
   }
 }
