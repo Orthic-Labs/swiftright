@@ -1,0 +1,501 @@
+{
+ "_comment": "Notch journeys on the Mac. `files` are paths under pulse/mac/Notch (globs allowed). `uses` names a shared group below whose SwiftUI use every member journey inherits. API-to-journey counts come from these lists.",
+ "groups": {
+  "design-system": [
+   "Sources/DesignSystem/*.swift",
+   "Sources/Settings/AccentColor.swift",
+   "Sources/Settings/ColorTransitionStyle.swift",
+   "Sources/Settings/NotchSurfaceStyle.swift",
+   "Sources/Model/UsageBand.swift"
+  ],
+  "notch-surface": [
+   "Sources/Notch/NotchRootView.swift",
+   "Sources/Notch/SideNotchShape.swift",
+   "Sources/Notch/NotchMotion.swift",
+   "Sources/Notch/NotchHostingView.swift",
+   "Sources/Notch/NoticeStage.swift",
+   "Sources/Notch/NotchViewModel.swift"
+  ]
+ },
+ "journeys": [
+  {
+   "id": "J01",
+   "name": "Resting pill and open notch",
+   "summary": "The always-present notch: a pill at the chosen edge that is open with every ring visible, drawn as one liquid silhouette on all four edges.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Notch/NotchWindowController.swift",
+    "Sources/Notch/NotchPanel.swift",
+    "Sources/Notch/NotchLayout.swift",
+    "Sources/Notch/NotchPlacement.swift",
+    "Sources/Notch/NotchEdge.swift",
+    "Sources/Notch/BackgroundCursor.swift",
+    "Sources/Features/NotchBulb.swift",
+    "Sources/Settings/NotchVisibility.swift",
+    "Sources/Settings/NotchSize.swift",
+    "Sources/App/AppDelegate.swift",
+    "Sources/App/CodenotchMain.swift"
+   ],
+   "windows": "has",
+   "windows_note": "Windows draws the same cells in a software rasteriser into a layered window per monitor (windows/README.md 'The notch'); comparison rows 'Resting/Expanded notch' all match. Windows has no surface style or colour transition (docs/settings.md 'Still to add on Windows').",
+   "windows_files": [
+    "windows/src/main.rs",
+    "windows/src/layout.rs",
+    "windows/src/render.rs",
+    "windows/src/canvas.rs",
+    "windows/src/surface.rs",
+    "windows/src/motion.rs"
+   ]
+  },
+  {
+   "id": "J02",
+   "name": "Hover open, peek and fold",
+   "summary": "Pointer contact opens the pill; events peek it open for 3, 5 or 10 seconds; a full-screen app folds it away.",
+   "uses": [
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Settings/PeekDuration.swift",
+    "Sources/Notch/FullScreenDetector.swift",
+    "Sources/Notch/NotchWindowController.swift"
+   ],
+   "windows": "has",
+   "windows_note": "Show: Always show, On hover or Hidden, folds for a borderless full-monitor window (windows/README.md 'The notch'); peek length is a Windows setting too (docs/settings.md, 'Peek length').",
+   "windows_files": [
+    "windows/src/main.rs",
+    "windows/src/visibility.rs",
+    "windows/src/lifecycle.rs"
+   ]
+  },
+  {
+   "id": "J03",
+   "name": "Ring gauges (Claude, Codex, System, Disks)",
+   "summary": "Per-provider cells: a glyph in a usage ring, an inner thin ring, colour bands, weekly headline and pace.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Features/ProviderRing.swift",
+    "Sources/Providers/ProviderGlyph.swift",
+    "Sources/Providers/GlyphOutline.swift",
+    "Sources/Features/WeeklyHeadline.swift",
+    "Sources/Features/DailyPace.swift",
+    "Sources/Features/UsagePace.swift",
+    "Sources/Model/UsageBand.swift",
+    "Sources/Settings/WeeklyRing.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has the five cells (windows/README.md 'The notch'). Differs: no inner activity arc while an agent works (docs/comparison/behaviour.md row 10, high), no refresh press-in (row 11), CPU and Memory are one System ring (docs/settings.md 'Still to add on Windows'), no daily pace ring.",
+   "windows_files": [
+    "windows/src/layout.rs",
+    "windows/src/render.rs",
+    "windows/src/glyphs.rs",
+    "windows/src/canvas.rs"
+   ]
+  },
+  {
+   "id": "J04",
+   "name": "Hover cards and session list",
+   "summary": "A card slides out of the notch on a neck for each ring: limit windows, resets, plan, account, drives, GPU, session rows.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Features/TooltipCard.swift",
+    "Sources/Features/UsageResetCard.swift",
+    "Sources/Sessions/ActivitySummary.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has the hover cards (windows/src/card.rs; comparison group 'Notch: hover-card' is low-severity glyph differences only). Windows lacks the running-session list and session-row click (behaviour.md rows 12-13, high and med).",
+   "windows_files": [
+    "windows/src/card.rs"
+   ]
+  },
+  {
+   "id": "J05",
+   "name": "Send and LocalSend nearby share",
+   "summary": "The fifth cell: device picker card, drop target, Cmd-V to send the clipboard, transfer progress, incoming-share toast.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Sharing/SendCard.swift",
+    "Sources/Sharing/SendProvider.swift",
+    "Sources/Sharing/NearbySharing.swift",
+    "Sources/Features/NoticeCard.swift"
+   ],
+   "windows": "has",
+   "windows_note": "Windows has the Send cell with device rows, drop or Ctrl+V, progress and Accept/Decline (windows/README.md 'Nearby sharing'; behaviour.md 'Checked, no material difference: Send'). Gap: Chat rows on the Send card (behaviour.md row 14, med). The LocalSend protocol runs in the hub on both platforms (windows/src/send.rs:3).",
+   "windows_files": [
+    "windows/src/send.rs",
+    "windows/src/send_sys.rs"
+   ]
+  },
+  {
+   "id": "J06",
+   "name": "Tools cell and middle-click wheel",
+   "summary": "The sixth cell lists one-tap tools; the middle button opens a liquid ring of tools round the pointer.",
+   "uses": [
+    "design-system"
+   ],
+   "files": [
+    "Sources/Sharing/ToolsProvider.swift",
+    "Sources/Conveniences/Tools.swift",
+    "Sources/Conveniences/ToolWheel.swift",
+    "Sources/Conveniences/ToolWheelMotion.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has the wheel and Tools card (windows/README.md 'Tools'). The tool set differs from the Mac's (behaviour.md row 28, written 12 October when Windows had no notes, clipboard or task-view; docs/settings.md lists the current Windows wheel default, which now includes Clipboard). Comparison group 'Notch: wheel' is five low-severity glyph rows.",
+   "windows_files": [
+    "windows/src/wheel.rs",
+    "windows/src/send.rs"
+   ]
+  },
+  {
+   "id": "J07",
+   "name": "Launcher",
+   "summary": "Option+Space panel: apps, files, calculator, clipboard rows, snippets, notes, custom commands.",
+   "uses": [
+    "design-system"
+   ],
+   "files": [
+    "Sources/Launcher/LauncherView.swift",
+    "Sources/Launcher/LauncherController.swift",
+    "Sources/Launcher/LauncherModel.swift",
+    "Sources/Launcher/LauncherConfig.swift",
+    "Sources/Launcher/LauncherActions.swift",
+    "Sources/Launcher/LauncherNotes.swift",
+    "Sources/Launcher/LauncherFileSearch.swift",
+    "Sources/Launcher/LauncherIndex.swift",
+    "Sources/Launcher/LauncherHotKey.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows launcher exists, off by default (windows/README.md 'Launcher'); Mac-only sources: dictionary, Apple Shortcuts, per-app hotkeys, content search, snippet expansion (docs/settings.md 'Still to add on Windows'; behaviour.md rows 38-40).",
+   "windows_files": [
+    "windows/src/launcher.rs",
+    "windows/src/launcher_files.rs",
+    "windows/src/launcher_notes.rs",
+    "windows/src/launcher_commands.rs"
+   ]
+  },
+  {
+   "id": "J08",
+   "name": "Clipboard history strip",
+   "summary": "A strip of clip cards with boards, filters, preview and paste-back.",
+   "uses": [
+    "design-system"
+   ],
+   "files": [
+    "Sources/Launcher/ClipboardStripView.swift",
+    "Sources/Launcher/ClipboardStripController.swift",
+    "Sources/Launcher/ClipboardStripContent.swift",
+    "Sources/Launcher/ClipboardModel.swift",
+    "Sources/Launcher/ClipboardCapture.swift",
+    "Sources/Launcher/ClipboardPaster.swift",
+    "Sources/Launcher/ClipboardDrag.swift",
+    "Sources/App/ClipboardStripPicture.swift"
+   ],
+   "windows": "has",
+   "windows_note": "Windows strip landed on 2026-10-13 (docs/settings.md 'Clipboard' rows; windows/src/clip_strip.rs); a few spec parts are still open (docs/settings.md 'Still to add on Windows').",
+   "windows_files": [
+    "windows/src/clip_strip.rs",
+    "windows/src/clip.rs",
+    "windows/src/clip_capture.rs",
+    "windows/src/clip_paste.rs"
+   ]
+  },
+  {
+   "id": "J09",
+   "name": "Settings entry points and hub hand-off",
+   "summary": "Settings bulb with its neck, the move grip, click-to-open-hub on each ring, right-click Quit; the hub is a separate process.",
+   "uses": [
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Features/SettingsHandle.swift",
+    "Sources/Features/MoveHandle.swift",
+    "Sources/System/HubLauncher.swift",
+    "Sources/System/HubBridge.swift",
+    "Sources/Notch/NotchWindowController.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has the Settings disc, move grip, right-click Quit and hub launch (windows/README.md 'The notch', hub.rs:1-9, bridge.rs:1-9). Differs: permission-dot click and outside-ring click (behaviour.md rows 24-25), relaunch route to Settings when hidden (row 27).",
+   "windows_files": [
+    "windows/src/hub.rs",
+    "windows/src/bridge.rs",
+    "windows/src/main.rs",
+    "windows/src/layout.rs"
+   ]
+  },
+  {
+   "id": "J10",
+   "name": "Alerts, toasts and notifications",
+   "summary": "Usage reset, limit reached, drive filling, session ended: a toast from the notch, a system banner, a chime.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Features/NoticeCard.swift",
+    "Sources/Features/UsageResetCard.swift",
+    "Sources/Notch/NoticeStage.swift",
+    "Sources/Model/UsageLimitWatcher.swift",
+    "Sources/Model/UsageResetWatcher.swift",
+    "Sources/Model/ThresholdNotifier.swift",
+    "Sources/Model/DriveCapacityWatcher.swift",
+    "Sources/Model/NotificationChannel.swift",
+    "Sources/App/SessionChime.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has the toast queue, hover hold and reset, limit, drive, agent and update toasts (windows/README.md 'Toasts'; windows/src/alerts.rs). Toasts now come out in every Show state, including a Hidden notch (windows/README.md 'Toasts'), which closes the high-severity row 15 of docs/comparison/behaviour.md (written 12 October). Delivery and sound rows 17-23 are still listed as differences.",
+   "windows_files": [
+    "windows/src/alerts.rs",
+    "windows/src/notify.rs",
+    "windows/src/update.rs"
+   ]
+  },
+  {
+   "id": "J11",
+   "name": "Multi-display, placement and edges",
+   "summary": "One notch per display, four edges, Option-drag along and round corners, per-display scope and preference.",
+   "uses": [
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Notch/NotchFleet.swift",
+    "Sources/Notch/NotchGeometry.swift",
+    "Sources/Notch/NotchPlacement.swift",
+    "Sources/Notch/CornerPassage.swift",
+    "Sources/Settings/DisplayPreference.swift",
+    "Sources/Settings/NotchScreenScope.swift",
+    "Sources/Features/MoveHandle.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has one panel per monitor with its own edge and position (behaviour.md row 26, Windows-only). Missing on Windows: display choice and which displays (`displayPreference`, `notchScope`; docs/settings.md 'Still to add on Windows'); comparison rows 'appearance/all-displays', 'main-display' are windows-missing.",
+   "windows_files": [
+    "windows/src/main.rs",
+    "windows/src/lifecycle.rs",
+    "windows/src/runtime.rs"
+   ]
+  },
+  {
+   "id": "J12",
+   "name": "Accounts (Claude and Codex)",
+   "summary": "Which account each ring reads, account switch, the Sync chats button on the Claude card, credentials read, plan and sign-in rows.",
+   "uses": [
+    "design-system"
+   ],
+   "files": [
+    "Sources/System/ClaudeChatSync.swift",
+    "Sources/Providers/ClaudeAccountBook.swift",
+    "Sources/Providers/ClaudeProfile.swift",
+    "Sources/Providers/ClaudeOAuthProvider.swift",
+    "Sources/Providers/CodexLocalProvider.swift",
+    "Sources/System/ClaudeAccountWatcher.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows reads one Claude account (no per-folder profiles), no Sign in action, no reset-credit extras (behaviour.md rows 1-5, high and med). Account rename and forget match (behaviour.md 'Checked, no material difference'). The hub's Accounts section is shared.",
+   "windows_files": [
+    "windows/src/usage.rs",
+    "windows/src/claude_accounts.rs",
+    "windows/src/desktop.rs",
+    "windows/src/claude_sync.rs"
+   ]
+  },
+  {
+   "id": "J13",
+   "name": "Updates and the disk-image installer",
+   "summary": "Update card (Update/Later), restart-after-update, and the disk-image card that installs, replaces or undoes an app.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/Features/UpdateCard.swift",
+    "Sources/Features/DiskImageCard.swift",
+    "Sources/Conveniences/DiskImageInstaller.swift",
+    "Sources/Conveniences/DiskImageWork.swift",
+    "Sources/App/Updater.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has update cards (windows/src/update.rs) and an installer card for new .msi/.msix/.exe downloads (windows/src/installer.rs); the trigger differs by platform (behaviour.md row 35, accepted) and auto-install defaults differ (rows 32-34, med).",
+   "windows_files": [
+    "windows/src/update.rs",
+    "windows/src/installer.rs"
+   ]
+  },
+  {
+   "id": "J14",
+   "name": "Keyboard and window conveniences (no notch UI)",
+   "summary": "Fn as Command, window moves, Finder cut and paste, Auto Quit, Dock click, snippet expansion.",
+   "uses": [],
+   "files": [
+    "Sources/Conveniences/ConveniencesService.swift",
+    "Sources/Conveniences/EventTapHub.swift",
+    "Sources/Conveniences/AutoQuit.swift",
+    "Sources/Conveniences/FinderCutPaste.swift",
+    "Sources/Conveniences/Windows/WindowActions.swift",
+    "Sources/Conveniences/Windows/WindowHotKeys.swift",
+    "Sources/Keyboard/FnCommand.swift",
+    "Sources/Conveniences/SnippetExpansion.swift"
+   ],
+   "windows": "differs",
+   "windows_note": "Windows has Alt-as-Ctrl editing keys and 34 window chords (windows/README.md 'Editing keys and window shortcuts'); Auto Quit, snippet expansion and Dock-click minimise are missing or redundant (behaviour.md rows 41-45).",
+   "windows_files": [
+    "windows/src/keys.rs",
+    "windows/src/window_keys.rs"
+   ]
+  },
+  {
+   "id": "J15",
+   "name": "Agent session activity",
+   "summary": "Watches Claude, Codex and Pi sessions: activity arc on the ring, finished-session peek, terminal tab focus.",
+   "uses": [],
+   "files": [
+    "Sources/Sessions/ActivityCoordinator.swift",
+    "Sources/Sessions/ClaudeSessionMonitor.swift",
+    "Sources/Sessions/CodexActivityMonitor.swift",
+    "Sources/Sessions/PiResponseMonitor.swift",
+    "Sources/Sessions/SessionCompletionWatcher.swift",
+    "Sources/Sessions/TerminalTabFocus.swift"
+   ],
+   "windows": "lacks",
+   "windows_note": "Windows has no session monitor; its 'agent turn ended' toast is inferred from transcript writes and is off by default (behaviour.md rows 10, 12, 13, 18; windows/src/alerts.rs `finish_loop`).",
+   "windows_files": [
+    "windows/src/alerts.rs",
+    "windows/src/claude_watch.rs"
+   ]
+  },
+  {
+   "id": "J16",
+   "name": "Uninstall helper, Finder extension and elevation",
+   "summary": "Privileged launch daemon that moves apps to the Trash, the Finder Sync menu, the elevation client.",
+   "uses": [],
+   "files": [
+    "Helper/main.swift",
+    "Helper/TrashPolicy.swift",
+    "Elevate/main.swift",
+    "Shared/HelperProtocol.swift",
+    "FinderExtension/FinderSync.swift",
+    "Sources/System/PrivilegedHelper.swift",
+    "Sources/Conveniences/FinderMenuState.swift"
+   ],
+   "windows": "lacks",
+   "windows_note": "Mac-only by platform: Windows apps are removed through their own uninstaller (behaviour.md row 58, accepted) and Explorer has its own Copy as path (row 44).",
+   "windows_files": []
+  },
+  {
+   "id": "J17",
+   "name": "View-shot harness (CI acceptance pictures)",
+   "summary": "Renders every view in qa/notch-views.json on the Mac; the Windows side renders the same list for the comparison.",
+   "uses": [
+    "design-system",
+    "notch-surface"
+   ],
+   "files": [
+    "Sources/App/ViewShots.swift",
+    "Sources/App/ClipboardStripPicture.swift"
+   ],
+   "windows": "has",
+   "windows_note": "windows/src/viewshots.rs renders the same list (windows/README.md 'Checks'); docs/comparison/README.md holds the pairs.",
+   "windows_files": [
+    "windows/src/viewshots.rs"
+   ]
+  }
+ ],
+ "slices": [
+  {
+   "id": "S1",
+   "name": "Notch face with ring gauges (read-only)",
+   "journeys": [
+    "J01",
+    "J03"
+   ],
+   "why": "Smallest notch a user can see and trust: the pill, the five cells' rings and glyphs with real readings, click to open the hub.",
+   "files": [
+    "Sources/Features/ProviderRing.swift",
+    "Sources/Providers/ProviderGlyph.swift",
+    "Sources/Providers/GlyphOutline.swift",
+    "Sources/Model/UsageBand.swift",
+    "Sources/Notch/SideNotchShape.swift",
+    "Sources/Notch/NotchRootView.swift",
+    "Sources/Notch/NotchMotion.swift",
+    "Sources/Notch/NotchViewModel.swift",
+    "Sources/DesignSystem/*.swift",
+    "Sources/Settings/AccentColor.swift",
+    "Sources/Settings/NotchSurfaceStyle.swift",
+    "Sources/Settings/ColorTransitionStyle.swift"
+   ]
+  },
+  {
+   "id": "S2",
+   "name": "Hover cards and toasts",
+   "journeys": [
+    "J04",
+    "J10"
+   ],
+   "why": "Cards slide out of the notch: limit windows, resets, drives; toasts for resets, limits and updates.",
+   "files": [
+    "Sources/Features/TooltipCard.swift",
+    "Sources/Features/UsageResetCard.swift",
+    "Sources/Features/UpdateCard.swift",
+    "Sources/Features/NoticeCard.swift",
+    "Sources/Notch/NoticeStage.swift",
+    "Sources/Sessions/ActivitySummary.swift"
+   ]
+  },
+  {
+   "id": "S3",
+   "name": "Send and Tools",
+   "journeys": [
+    "J05",
+    "J06"
+   ],
+   "why": "Device picker, transfer progress, tools card and the middle-click wheel.",
+   "files": [
+    "Sources/Sharing/SendCard.swift",
+    "Sources/Conveniences/ToolWheel.swift",
+    "Sources/Conveniences/ToolWheelMotion.swift"
+   ]
+  },
+  {
+   "id": "S4",
+   "name": "Settings handle, move grip and multi-display",
+   "journeys": [
+    "J09",
+    "J11"
+   ],
+   "why": "The bulb on its neck, the six-dot grip, carrying the notch along and round corners, one notch per display.",
+   "files": [
+    "Sources/Features/SettingsHandle.swift",
+    "Sources/Features/MoveHandle.swift",
+    "Sources/Features/NotchBulb.swift",
+    "Sources/Notch/CornerPassage.swift",
+    "Sources/Notch/NotchFleet.swift"
+   ]
+  },
+  {
+   "id": "S5",
+   "name": "Launcher and clipboard strip",
+   "journeys": [
+    "J07",
+    "J08"
+   ],
+   "why": "Keyboard-first panels with text input, lists and paste-back.",
+   "files": [
+    "Sources/Launcher/LauncherView.swift",
+    "Sources/Launcher/LauncherController.swift",
+    "Sources/Launcher/ClipboardStripView.swift",
+    "Sources/Launcher/ClipboardStripController.swift",
+    "Sources/Launcher/ClipboardStripContent.swift",
+    "Sources/App/ClipboardStripPicture.swift"
+   ]
+  }
+ ]
+}

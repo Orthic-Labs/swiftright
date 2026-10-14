@@ -1,0 +1,512 @@
+{
+ "_comment": "Platform-service patterns scanned over ALL Swift files of mac/Notch (regex, per line, comments and strings blanked). Each service maps to an architecture section 7 interface where one exists.",
+ "services": [
+  {
+   "id": "panel-window",
+   "name": "Borderless panel windows (NSPanel/NSWindow subclasses, styleMask, collectionBehavior, ignoresMouseEvents)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\bNSPanel\\b",
+    "\\bNSWindow\\b",
+    "\\bcollectionBehavior\\b",
+    "\\bignoresMouseEvents\\b",
+    "\\bstyleMask\\b",
+    "\\bcanBecomeKey\\b",
+    "\\borderFrontRegardless\\b",
+    "\\.hasShadow\\b",
+    "\\bRightKitOverlayPanel\\b"
+   ],
+   "windows": "One borderless layered window per monitor, WS_EX_NOACTIVATE plus rightkit_overlay OverlayStyle::PASSIVE (windows/src/main.rs:1293), per-pixel alpha through UpdateLayeredWindow (windows/src/surface.rs:1-3); the clipboard strip and launcher use the same pattern (windows/src/clip_strip.rs:3323, windows/src/launcher.rs:2910).",
+   "rightkit": "desktop-overlay: rightkit-overlay 0.1.1 (staged-unverified); Swift RightKitOverlay is in use by the Mac notch (5 imports) but the notch panel itself is 'not portable yet' (pulse/STATUS.md, 'Not swapped')",
+   "sr2": "WindowService: overlay panel (non-activating, per-display, click-through regions)"
+  },
+  {
+   "id": "window-level",
+   "name": "Window levels above the menu bar (.level, CGShieldingWindowLevel, statusWindow)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\.level\\s*=",
+    "CGShieldingWindowLevel",
+    "\\.statusBar\\b",
+    "\\.screenSaver\\b",
+    "\\.popUpMenu\\b",
+    "\\.mainMenu\\b",
+    "NSWindow\\.Level"
+   ],
+   "windows": "rightkit_overlay::windows::reassert_topmost (windows/src/main.rs:1517) and WS_EX_TOPMOST (windows/src/clip_strip.rs:3323).",
+   "rightkit": "desktop-overlay: rightkit-overlay 0.1.1 (reassert_topmost, show_noactivate, hide)",
+   "sr2": "WindowService: window level policy for overlay panels"
+  },
+  {
+   "id": "hosting",
+   "name": "SwiftUI hosting inside AppKit (NSHostingView, NSHostingController, NSViewRepresentable, NSApplicationDelegateAdaptor)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\bNSHostingView\\b",
+    "\\bNSHostingController\\b",
+    "\\bNSViewRepresentable\\b",
+    "\\bNSApplicationDelegateAdaptor\\b",
+    "\\bImageRenderer\\b"
+   ],
+   "windows": "None needed: the Windows notch is not a hosted view. SwiftRight's SDK-owned entry and renderer replace NSHostingView (docs/architecture.md section 5, 'Application entry').",
+   "rightkit": "none (SwiftRight runtime)",
+   "sr2": "Not a service: runtime and renderer"
+  },
+  {
+   "id": "screen-geometry",
+   "name": "Screen, notch and safe-area geometry (NSScreen, safeAreaInsets, auxiliaryTopLeftArea, visibleFrame, backingScaleFactor)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\bNSScreen\\b",
+    "\\bsafeAreaInsets\\b",
+    "\\bauxiliaryTop(?:Left|Right)Area\\b",
+    "\\bvisibleFrame\\b",
+    "\\bbackingScaleFactor\\b",
+    "\\bdidChangeScreenParametersNotification\\b",
+    "\\bCGDisplay\\w*",
+    "\\bCGGetActiveDisplayList\\b"
+   ],
+   "windows": "EnumDisplayMonitors (windows/src/main.rs:992), per-monitor DPI awareness (windows/src/main.rs:856; GetDpiForMonitor at windows/src/clip_strip.rs:1468), WM_DISPLAYCHANGE and work-area changes (windows/src/main.rs:773, :3869). Windows has no hardware-notch geometry; the Mac's safeAreaInsets / auxiliary areas (NotchGeometry) have no counterpart.",
+   "rightkit": "desktop-overlay: monitor_at and foreground_fills_monitor are listed as the owner's functions (pulse/STATUS-WINDOWS.md, 'Layered windows'); no owner for the display's own notch",
+   "sr2": "WindowService: display list, work area, scale, change notifications"
+  },
+  {
+   "id": "pointer-tracking",
+   "name": "Hover and pointer tracking (NSTrackingArea, NSEvent monitors, mouseLocation, mouse moved/dragged)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\bNSTrackingArea\\b",
+    "\\bmouseEntered\\b",
+    "\\bmouseExited\\b",
+    "\\baddGlobalMonitorForEvents\\b",
+    "\\baddLocalMonitorForEvents\\b",
+    "\\bNSEvent\\.mouseLocation\\b",
+    "\\bmouseMoved\\b",
+    "\\bacceptsMouseMovedEvents\\b"
+   ],
+   "windows": "TrackMouseEvent / WM_MOUSELEAVE (windows/src/main.rs:2810, :2861) plus cursor polling (windows/src/main.rs:2986, :3068); the wheel's pointer hook runs on its own thread (windows/src/wheel.rs:2063).",
+   "rightkit": "desktop-overlay: hit-region rule is RightKit's on the Mac (RightKitOverlayHitRegions, NotchWindowController.swift:1510); no hover-tracking owner",
+   "sr2": "WindowService: pointer enter/leave, hit regions, global pointer position"
+  },
+  {
+   "id": "fullscreen-detect",
+   "name": "Full-screen and foreground-app detection (CGWindowListCopyWindowInfo, frontmostApplication, presentationOptions)",
+   "iface": "WindowService",
+   "patterns": [
+    "\\bCGWindowListCopyWindowInfo\\b",
+    "\\bfrontmostApplication\\b",
+    "\\bpresentationOptions\\b",
+    "\\bNSWorkspace\\.shared\\.runningApplications\\b",
+    "\\bactiveSpaceDidChangeNotification\\b",
+    "\\bdidActivateApplicationNotification\\b"
+   ],
+   "windows": "Topmost visible, non-owned window covering the whole monitor with no caption or frame, ignoring cloaked windows (windows/src/visibility.rs:1-6; DwmGetWindowAttribute at windows/src/main.rs:1486).",
+   "rightkit": "desktop-overlay: foreground_fills_monitor (pulse/STATUS-WINDOWS.md); machine matrix still pending (pulse/docs/feasibility.md 'Fullscreen hide')",
+   "sr2": "WindowService: foreground-occupancy signal"
+  },
+  {
+   "id": "status-item-menu",
+   "name": "Menus and status items (NSStatusItem, NSMenu, right-click menu)",
+   "iface": "TrayService",
+   "patterns": [
+    "\\bNSStatusItem\\b",
+    "\\bNSStatusBar\\b",
+    "\\bNSMenu\\b",
+    "\\bNSMenuItem\\b",
+    "\\brightMouseDown\\b",
+    "\\bmenu\\(for event\\b"
+   ],
+   "windows": "The notch has no tray or taskbar item (windows/README.md); right-click opens one 'Quit' card drawn by the notch itself (windows/src/main.rs:3674).",
+   "rightkit": "desktop-shell: rightkit-shell 0.1.4 / 0.2.0 (tray) is not needed for the notch; it is Tauri-specific (docs/architecture.md section 7)",
+   "sr2": "TrayService: not needed by the notch (card drawn by the SDK)"
+  },
+  {
+   "id": "global-shortcuts",
+   "name": "Global hotkeys (Carbon RegisterEventHotKey)",
+   "iface": "ShortcutService",
+   "patterns": [
+    "\\bRegisterEventHotKey\\b",
+    "\\bInstallEventHandler\\b",
+    "\\bUnregisterEventHotKey\\b",
+    "\\bEventHotKeyRef\\b",
+    "\\bimport Carbon\\b"
+   ],
+   "windows": "rightkit-hotkeys GlobalHotkeys for window chords, the launcher key, the clipboard strip key and Ctrl+V on the Send cell (windows/src/window_keys.rs:1-12, windows/src/launcher.rs:34, windows/src/clip_strip.rs:42, windows/src/send_sys.rs:1-5).",
+   "rightkit": "global-hotkeys: rightkit-hotkeys 0.1.0 (staged-unverified; Pulse takes a snapshot copy, pulse/windows/Cargo.toml); Swift RightKitHotkeys 'designed' (pulse/STATUS.md)",
+   "sr2": "ShortcutService: register, conflict report, repeat, release"
+  },
+  {
+   "id": "event-tap",
+   "name": "Keyboard and mouse event taps (CGEventTap, cghidEventTap)",
+   "iface": "ShortcutService",
+   "patterns": [
+    "\\bCGEvent\\.tapCreate\\b",
+    "\\bCGEventTapCreate\\b",
+    "\\bcghidEventTap\\b",
+    "\\bcgSessionEventTap\\b",
+    "\\bCGEventMask\\b",
+    "\\bCGEventTapLocation\\b"
+   ],
+   "windows": "One WH_KEYBOARD_LL hook on a dedicated thread (windows/src/keys.rs:3, :230) and a WH_MOUSE_LL hook for the wheel (windows/src/wheel.rs:2017, :2063).",
+   "rightkit": "global-hotkeys: HookHotkeys primitives for chords Windows refuses (pulse/STATUS-WINDOWS.md, ledger row 159); Swift side 'designed'",
+   "sr2": "ShortcutService: low-level input hooks (Mac extension: CGEventTap)"
+  },
+  {
+   "id": "synth-input",
+   "name": "Synthesised input and pasteboard paste (CGEvent post, keyDown events)",
+   "iface": "ShortcutService",
+   "patterns": [
+    "\\bCGEvent\\(keyboardEventSource\\b",
+    "\\.post\\(tap:",
+    "\\bCGEventSource\\b"
+   ],
+   "windows": "SendInput for paste keystrokes (windows/src/clip_paste.rs:369, :392).",
+   "rightkit": "desktop-automation: rightkit-automation 0.1.0 (staged-unverified) has an input ladder; Pulse does not use it",
+   "sr2": "ShortcutService / ClipboardService: paste-back keystroke"
+  },
+  {
+   "id": "accessibility",
+   "name": "Accessibility API automation (AXUIElement, AXObserver, AXIsProcessTrusted)",
+   "iface": "(none: automation)",
+   "patterns": [
+    "\\bAXUIElement\\w*",
+    "\\bAXObserver\\w*",
+    "\\bAXIsProcessTrusted\\w*",
+    "\\bAXValue\\w*",
+    "\\bkAX\\w+"
+   ],
+   "windows": "UI Automation only for link detection under a middle click (windows/src/wheel.rs:1893-1927); window moves use SetWindowPos on the foreground window (windows/src/window_keys.rs:459-466). Auto Quit has no Windows version (docs/comparison/behaviour.md row 43).",
+   "rightkit": "desktop-automation: rightkit-automation 0.1.0 (staged-unverified, AX and UIA); Swift RightKitAccessibility 'designed' (pulse/STATUS.md)",
+   "sr2": "Mac extension module plus an automation adapter; not a view block"
+  },
+  {
+   "id": "system-metrics",
+   "name": "CPU, memory and disk metrics (host_statistics, sysctl, vm_statistics, statfs, volume resource keys)",
+   "iface": "(none: sensors)",
+   "patterns": [
+    "\\bhost_statistics\\w*",
+    "\\bhost_processor_info\\b",
+    "\\bvm_statistics\\w*",
+    "\\bsysctl\\w*",
+    "\\bmach_host_self\\b",
+    "\\bstatfs\\b",
+    "\\bvolumeAvailableCapacity\\w*",
+    "\\bvolumeTotalCapacity\\w*",
+    "\\bmountedVolumeURLs\\b",
+    "\\bNSProcessInfo\\b|\\bProcessInfo\\.processInfo\\b"
+   ],
+   "windows": "GetSystemTimes deltas, GlobalMemoryStatusEx, PDH counters and GetDiskFreeSpaceExW (windows/src/sensors.rs:2, :32, :36, :237); 2 s visible and 10 s hidden cadence (windows/src/lifecycle.rs:5-6).",
+   "rightkit": "none: `rightkit owns --compact` lists no system-metrics owner; pulse/STATUS-WINDOWS.md 'Ruled local' keeps sensors in Pulse",
+   "sr2": "SensorService (new; not in architecture section 7)"
+  },
+  {
+   "id": "iokit-sensors",
+   "name": "IOKit sensors (IOAccelerator GPU utilisation, IOHIDEventSystemClient temperature)",
+   "iface": "(none: sensors)",
+   "patterns": [
+    "\\bIOKit\\b",
+    "\\bIOHID\\w*",
+    "\\bIOServiceGetMatchingServices\\b",
+    "\\bIOServiceMatching\\b",
+    "\\bIORegistry\\w*",
+    "\\bIOAccelerator\\b"
+   ],
+   "windows": "GPU temperature from an NVML helper started only while the System card is open, CPU zones from MSAcpi_ThermalZoneTemperature through a hidden PowerShell (windows/src/sensors.rs:11, :948-959, :992).",
+   "rightkit": "none (same as system-metrics)",
+   "sr2": "SensorService: GPU busy and temperatures (Mac extension for IOKit)"
+  },
+  {
+   "id": "notifications",
+   "name": "User notifications and sounds (UNUserNotificationCenter, NSSound)",
+   "iface": "NotificationService",
+   "patterns": [
+    "\\bUNUserNotificationCenter\\b",
+    "\\bUNMutableNotificationContent\\b",
+    "\\bNSUserNotification\\w*",
+    "\\bNSSound\\b",
+    "\\bAudioServicesPlaySystemSound\\b",
+    "\\bimport UserNotifications\\b"
+   ],
+   "windows": "WinRT ToastNotificationManager through a hidden PowerShell under PowerShell's own AUMID (windows/src/notify.rs:5, :19, :94), stock sounds by PlaySoundW (windows/src/notify.rs:3, :64).",
+   "rightkit": "desktop-shell: rightkit-shell 0.1.4 (registry-recorded) / 0.2.0 (staged-unverified) lists notifications; Tauri-specific parts must be separated (docs/architecture.md section 7)",
+   "sr2": "NotificationService: post, sound, permission state"
+  },
+  {
+   "id": "launch-at-login",
+   "name": "Launch at login and privileged daemon (SMAppService)",
+   "iface": "LaunchService",
+   "patterns": [
+    "\\bSMAppService\\b",
+    "\\bSMLoginItemSetEnabled\\b",
+    "\\bimport ServiceManagement\\b"
+   ],
+   "windows": "One HKCU Run value, per user, no elevation (windows/src/autostart.rs:1-9). The Mac's privileged SMAppService.daemon has no Windows counterpart (docs/comparison/behaviour.md rows 50-51).",
+   "rightkit": "desktop-shell: rightkit-shell lists autostart",
+   "sr2": "LaunchService: launch at login"
+  },
+  {
+   "id": "open-urls-apps",
+   "name": "Open links, files and apps; running-application control (NSWorkspace, NSRunningApplication)",
+   "iface": "LaunchService",
+   "patterns": [
+    "\\bNSWorkspace\\b",
+    "\\bNSRunningApplication\\b",
+    "\\bopenApplication\\b",
+    "\\bactivateIgnoringOtherApps\\b",
+    "\\bterminate\\(\\)"
+   ],
+   "windows": "Hub start and show-section through a child process and a named event (windows/src/hub.rs:1-9, :178); explorer.exe for 'show in folder' (windows/src/send.rs:2198).",
+   "rightkit": "owned-processes: rightkit-process 0.3.3 (registry-recorded); pulse/STATUS-WINDOWS.md asks for 0.4.0",
+   "sr2": "LaunchService: open file, link, app"
+  },
+  {
+   "id": "single-instance-ipc",
+   "name": "Single-instance and app-to-hub signalling (Darwin notifications, Distributed notifications, CFNotificationCenter)",
+   "iface": "LaunchService / EngineService",
+   "patterns": [
+    "\\bCFNotificationCenterGetDarwinNotifyCenter\\b",
+    "\\bDistributedNotificationCenter\\b",
+    "\\bCFNotificationCenterPostNotification\\b",
+    "\\bnotify_post\\b",
+    "\\bCFNotificationCenter\\w*"
+   ],
+   "windows": "Named mutex with newest-wins (windows/src/main.rs:735) and named events `Local\\dev.orthic.pulse.hub.show.<section>` and `Local\\dev.orthic.pulse.notch.state` (windows/src/hub.rs:1-9, windows/src/bridge.rs:1-9).",
+   "rightkit": "desktop-shell: rightkit-shell (single instance); local-services: rightkit-service 0.1.4 (staged-unverified) for the hub channel",
+   "sr2": "LaunchService (single instance) and EngineService (hub channel)"
+  },
+  {
+   "id": "secure-store",
+   "name": "Keychain credential reads (SecItem, Keychain)",
+   "iface": "SecureStore",
+   "patterns": [
+    "\\bSecItemCopyMatching\\b",
+    "\\bSecItemAdd\\b",
+    "\\bSecItemUpdate\\b",
+    "\\bkSecClass\\w*",
+    "\\bSecKeychain\\w*",
+    "\\bLAContext\\b",
+    "\\bRightKitAppleCredentials\\b",
+    "\\bimport Security\\b"
+   ],
+   "windows": "No credential store: the Windows notch reads Claude Code's and Codex's own credential files read-only (windows/src/usage.rs:1-8; docs/comparison/behaviour.md header, usage.rs:989-995). The Mac reads the Keychain through RightKitAppleCredentials (mac/Notch/Sources/Providers/KeychainItem.swift:2).",
+   "rightkit": "os-credential-store: rightkit-secrets 0.1.3 (staged-unverified, Credential Manager) and RightKitSwift (rightkit-swift 0.4.0, registry-pinned; pulse/STATUS.md says tag 0.7.0 is in use, a version disagreement to settle)",
+   "sr2": "SecureStore: read-only keychain item; file read on Windows"
+  },
+  {
+   "id": "settings-store",
+   "name": "Settings persistence (UserDefaults, @AppStorage, JSON state files)",
+   "iface": "(settings: rightkit-settings)",
+   "patterns": [
+    "\\bUserDefaults\\b",
+    "\\b@AppStorage\\b",
+    "\\bNSUbiquitousKeyValueStore\\b"
+   ],
+   "windows": "pill-settings.json with an own bounded parser and a restricted-ACL atomic writer (windows/src/settings.rs:1-10; pulse/STATUS-WINDOWS.md 'Blocked on RightKit').",
+   "rightkit": "settings-persistence: rightkit-settings 0.1.1 (staged-unverified); waits on rightkit-fs 0.3.4 (pulse/STATUS-WINDOWS.md)",
+   "sr2": "Settings adapter (rightkit-settings through the swiftright-services C ABI, docs/architecture.md section 7)"
+  },
+  {
+   "id": "clipboard",
+   "name": "Clipboard (NSPasteboard, change count, paste)",
+   "iface": "ClipboardService",
+   "patterns": [
+    "\\bNSPasteboard\\b",
+    "\\bchangeCount\\b",
+    "\\bNSPasteboardItem\\b",
+    "\\bNSPasteboard\\.PasteboardType\\b"
+   ],
+   "windows": "AddClipboardFormatListener worker (windows/src/clip_capture.rs:2, windows/src/clip_win.rs:42) and OpenClipboard reads (windows/src/send_sys.rs:51, :224).",
+   "rightkit": "desktop-shell: @rightkit/shell lists rich clipboard (0.1.0, declaration-only); the clipboard store is a held row until RightKit answers (pulse/STATUS-WINDOWS.md)",
+   "sr2": "ClipboardService: read/write types, change observation, sensitive-content policy"
+  },
+  {
+   "id": "drag-drop",
+   "name": "Drag and drop (NSDraggingSource, onDrop, onDrag, NSItemProvider)",
+   "iface": "DialogService / ClipboardService",
+   "patterns": [
+    "\\bNSDragging\\w*",
+    "\\bregisterForDraggedTypes\\b",
+    "\\.onDrop\\s*\\(",
+    "\\.onDrag\\s*\\(",
+    "\\bNSItemProvider\\b",
+    "\\bbeginDraggingSession\\b"
+   ],
+   "windows": "WM_DROPFILES and DragQueryFileW (windows/src/send_sys.rs:1-5, windows/src/clip_win.rs:49, :224).",
+   "rightkit": "none found in `rightkit owns --compact`",
+   "sr2": "ClipboardService / DialogService: drop target"
+  },
+  {
+   "id": "file-watching",
+   "name": "File and directory watching (FSEvents, DispatchSource file system objects)",
+   "iface": "(none: watch)",
+   "patterns": [
+    "\\bFSEventStream\\w*",
+    "\\bDispatchSource\\.makeFileSystemObjectSource\\b",
+    "\\bmakeFileSystemObjectSource\\b",
+    "\\bkqueue\\b",
+    "\\bRightKitWatch\\b"
+   ],
+   "windows": "Three ReadDirectoryChangesW watchers on their own threads (windows/src/claude_watch.rs:1-5).",
+   "rightkit": "file-watching: rightkit-watch 0.3.2 (staged-unverified); Windows backend 'not started' (pulse/STATUS.md, STATUS-WINDOWS.md); the Mac notch already imports RightKitWatch (2 files)",
+   "sr2": "Watch adapter (new; not in architecture section 7)"
+  },
+  {
+   "id": "child-processes",
+   "name": "Child processes and shell commands (Foundation.Process, posix_spawn)",
+   "iface": "EngineService",
+   "patterns": [
+    "\\bProcess\\(\\)",
+    "\\bposix_spawn\\w*",
+    "\\bNSTask\\b",
+    "\\.launchPath\\b",
+    "\\.executableURL\\b"
+   ],
+   "windows": "std::process::Command for the hub, drive health and installers (windows/src/hub.rs:178, windows/src/drive_health.rs:182, windows/src/installer.rs:1117).",
+   "rightkit": "owned-processes: rightkit-process 0.3.3 (registry-recorded); 0.4.0 requested",
+   "sr2": "EngineService: child process lifecycle"
+  },
+  {
+   "id": "xpc-helper",
+   "name": "Privileged helper over XPC and Apple Events (NSXPCConnection, NSAppleScript, Apple Events)",
+   "iface": "EngineService",
+   "patterns": [
+    "\\bNSXPCConnection\\b",
+    "\\bNSXPCListener\\b",
+    "\\bNSAppleScript\\b",
+    "\\bNSAppleEventDescriptor\\b",
+    "\\bAEDeterminePermissionToAutomateTarget\\b",
+    "\\bSMAppService\\.daemon\\b"
+   ],
+   "windows": "No equivalent: Windows apps are removed through their own uninstaller (docs/comparison/behaviour.md row 58, accepted difference).",
+   "rightkit": "none",
+   "sr2": "Mac extension module only"
+  },
+  {
+   "id": "local-network",
+   "name": "Local-network discovery and sharing (Network.framework, Bonjour, NWListener, URLSession)",
+   "iface": "EngineService",
+   "patterns": [
+    "\\bNWBrowser\\b",
+    "\\bNWListener\\b",
+    "\\bNWConnection\\b",
+    "\\bimport Network\\b",
+    "\\bNetService\\b",
+    "\\bURLSession\\b",
+    "\\bPOSIX socket\\b|\\bsocket\\(AF_INET"
+   ],
+   "windows": "LocalSend runs in the hub's core on both platforms (windows/src/send.rs:3); the notch makes WinHTTP calls for usage and updates (windows/src/http.rs:25).",
+   "rightkit": "http-client: rightkit-http 0.2.5 (staged-unverified); Send engine: rightkit-send 'unpublished' (pulse/STATUS.md); local-services: rightkit-service 0.1.4",
+   "sr2": "EngineService (nearby-share engine in the hub) plus an HTTP adapter"
+  },
+  {
+   "id": "core-animation",
+   "name": "Core Animation layers and display links (CALayer, CAShapeLayer, CADisplayLink, CVDisplayLink)",
+   "iface": "(renderer)",
+   "patterns": [
+    "\\bCALayer\\b",
+    "\\bCAShapeLayer\\b",
+    "\\bCABasicAnimation\\b",
+    "\\bCASpringAnimation\\b",
+    "\\bCADisplayLink\\b",
+    "\\bCVDisplayLink\\w*",
+    "\\bCATransaction\\b",
+    "\\bCAMediaTimingFunction\\b"
+   ],
+   "windows": "A software rasteriser stepped by a 16 ms timer only while something moves (windows/src/motion.rs:1-6, windows/src/canvas.rs:3).",
+   "rightkit": "none (renderer)",
+   "sr2": "Not a service: SwiftRight renderer, animation and clock (SR1 blocks 18-19)"
+  },
+  {
+   "id": "visual-effect",
+   "name": "System materials and glass (NSVisualEffectView, glassEffect)",
+   "iface": "(renderer)",
+   "patterns": [
+    "\\bNSVisualEffectView\\b",
+    "\\.glassEffect\\s*\\(",
+    "\\bNSGlassEffectView\\b",
+    "\\bGlass\\b"
+   ],
+   "windows": "None: the Windows notch is solid; surface style and colour transition are listed as still to add (pulse/docs/settings.md, 'Still to add on Windows').",
+   "rightkit": "none (renderer)",
+   "sr2": "Not a service: renderer foundation (SR1 plan, Foundations)"
+  },
+  {
+   "id": "finder-extension",
+   "name": "Finder Sync extension and Finder automation",
+   "iface": "(Mac extension module)",
+   "patterns": [
+    "\\bFIFinderSync\\b",
+    "\\bFIFinderSyncController\\b",
+    "\\bimport FinderSync\\b",
+    "\\bFinder\\b.*\\bNSAppleScript\\b"
+   ],
+   "windows": "None: Explorer has its own Copy as path and Open in Terminal (docs/comparison/behaviour.md row 44).",
+   "rightkit": "none",
+   "sr2": "Mac extension module only"
+  },
+  {
+   "id": "disk-images-codesign",
+   "name": "Disk images, code signing and Gatekeeper (hdiutil, SecStaticCode, spctl, ditto)",
+   "iface": "(Mac extension module)",
+   "patterns": [
+    "\\bhdiutil\\b",
+    "\\bSecStaticCode\\w*",
+    "\\bSecCodeCheckValidity\\w*",
+    "\\bspctl\\b",
+    "\\bditto\\b",
+    "\\brenamex_np\\b"
+   ],
+   "windows": "Installer card for new .msi, .msix and setup .exe downloads (windows/src/installer.rs:5-8); update download checked with WinVerifyTrust (windows/src/update.rs:10).",
+   "rightkit": "update-policy: @rightkit/updates 0.2.5 (JS, Tauri); signing and publication are RightKit release tooling",
+   "sr2": "Mac extension module; Windows needs its own installer-check adapter"
+  },
+  {
+   "id": "screen-capture",
+   "name": "Screenshots (screencapture, CGWindowListCreateImage, ScreenCaptureKit, CGPreflightScreenCaptureAccess)",
+   "iface": "(none: capture)",
+   "patterns": [
+    "\\bscreencapture\\b",
+    "\\bCGWindowListCreateImage\\b",
+    "\\bSCStream\\b",
+    "\\bSCScreenshotManager\\b",
+    "\\bCGPreflightScreenCaptureAccess\\b",
+    "\\bCGRequestScreenCaptureAccess\\b"
+   ],
+   "windows": "BitBlt from the screen DC after the overlay is gone, CF_DIB to the clipboard (windows/src/shot.rs:16).",
+   "rightkit": "none (desktop-qa and screen-recording owners do not cover product capture)",
+   "sr2": "CaptureService (new; not in architecture section 7)"
+  },
+  {
+   "id": "permission-probes",
+   "name": "Privacy-permission state probes (TCC, Full Disk Access, local network, Accessibility prompt)",
+   "iface": "(none: permissions)",
+   "patterns": [
+    "\\bTCC\\.db\\b",
+    "\\bAXIsProcessTrustedWithOptions\\b",
+    "\\bCGPreflightListenEventAccess\\b",
+    "\\bIOHIDCheckAccess\\b",
+    "\\bIOHIDRequestAccess\\b",
+    "\\bfullDiskAccess\\b|\\bFullDiskAccess\\b"
+   ],
+   "windows": "None needed: Windows needs no permission grants; the hub shows startup, notifications and firewall (pulse/README.md 'Permissions'; docs/comparison/behaviour.md row 50).",
+   "rightkit": "none",
+   "sr2": "Mac extension module only"
+  },
+  {
+   "id": "logging",
+   "name": "Logging and diagnostics (os.Logger, os_log, NSLog)",
+   "iface": "(diagnostics)",
+   "patterns": [
+    "\\bos_log\\b",
+    "\\bLogger\\(",
+    "\\bimport os\\b",
+    "\\bNSLog\\b",
+    "\\bOSLog\\w*",
+    "\\bRightKitDiagnostics\\b"
+   ],
+   "windows": "diag.rs writes notch.log (windows/README.md 'Diagnostics'); crashes through rightkit-crash 0.2.1 (pulse/STATUS-WINDOWS.md).",
+   "rightkit": "structured-logging: rightkit-logs 0.2.1 (staged-unverified; Mac notch imports RightKitDiagnostics, mac/Notch/Sources/App/Log.swift:3); crash-reporting: rightkit-crash 0.2.1",
+   "sr2": "Diagnostics adapter (docs/architecture.md section 7, 'Diagnostics and native QA')"
+  }
+ ]
+}

@@ -1,0 +1,223 @@
+{
+  "_comment": "Hand-authored inputs to the demand map. Every entry cites the file it was read from.",
+  "witness_roots": [
+    "pilot-delivery-five-v1/stack-layout/custom-layout-host-v2/light-centered-execution-v4/mac-source/**/Witness.swift",
+    "pilot-delivery-five-v1/stack-layout/custom-layout-host-v2/rtl-original-execution-v1/mac-source/**/Witness.swift",
+    "pilot-delivery-five-v1/stack-layout/stack-overlay-centered-execution-v9/mac-source/**/Witness.swift",
+    "pilot-delivery-five-v1/text-shape-image/rounded-stroke-host-v1/*/mac-source/**/Witness.swift",
+    "pilot-delivery-five-v1/text-shape-image/bundled-font-readiness-v6-line-limit-host/mac-source/**/Witness.swift",
+    "pilot-delivery-five-v1/text-shape-image/image-system-star-fill-*/mac-source/**/Witness.swift",
+    "blocks-6-10/*/*/mac-source/**/Witness.swift",
+    "blocks-11-16/*/*/mac-source/**/Witness.swift",
+    "blocks-17-20/*/*/mac-source/**/Witness.swift"
+  ],
+  "excluded_by_architecture": {
+    "_source": "docs/architecture.md section 5, 'Compatibility categories': Combine-based ObservableObject, StateObject, ObservedObject and onReceive are initially outside inventory (Unsupported API); Observation is the supported model.",
+    "names": [
+      "ObservedObject",
+      "StateObject",
+      "EnvironmentObject",
+      "@Published",
+      "ObservableObject",
+      ".sink {",
+      ".receive(on",
+      "import Combine",
+      "AnyCancellable",
+      ".objectWillChange"
+    ]
+  },
+  "block_caveats": {
+    "swiftui.shapes.fill-stroke": "Continuous stroke only; hairline strokes below 1.5 px untested (docs/sr1-status.md 'Known gaps'). Path, trim and dashes are not in this block's symbol list.",
+    "swiftui.image": "SF Symbols map to Segoe Fluent Icons; 41 symbol sizes use measured ink overrides; glyph shape is reported, not gated (docs/sr1-decisions.md decision 3; docs/sr1-status.md 'Known gaps').",
+    "swiftui.stack-overlay": "ZStack and overlay only (factory/registry/manifest.json); VStack and HStack have no manifest entry.",
+    "swiftui.text.bundled-font": "Segoe UI is the Windows body font, so glyph pixels are excluded (decision 2); the bundled Tinos font is exact through ABI 0.7.",
+    "swiftui.custom-layout": "Layout protocol, left-to-right and right-to-left, exact (docs/sr1-status.md block 5).",
+    "swiftui.scroll-view": "No ScrollViewReader or scrollPosition in the runtime; vertical offset 0, bottom anchor and horizontal axis measured (docs/sr1-status.md blocks 6).",
+    "swiftui.toggle": "Switch and checkbox styles, measured at scale 2.5, light and dark (decisions 7, 8, D2).",
+    "swiftui.disabled": ".disabled dims controls, not plain views (decision 10).",
+    "swiftui.padding-frame": "padding all, per edge, EdgeInsets; fixed and flexible frames, 9 alignments (docs/sr1-status.md block 9).",
+    "swiftui.preference-key": "Custom reduce, nil default, first contribution wins (docs/sr1-status.md block 10).",
+    "swiftui.animation": "One explicit transaction per flush decides for every changed node; spring cases use a 2 px extent tolerance (docs/sr1-status.md block 18; decisions C1-C6). No Animatable, keyframes or TimelineView in the block's symbol list.",
+    "swiftui.opacity-transition": "Image fade excluded; no .scale or custom Transition (docs/sr1-status.md block 19).",
+    "swiftui.binding": "Setter transaction, constant, derived bindings (docs/sr1-status.md block 12).",
+    "swiftui.textfield": "Windows focus ring not drawn; real IME and TSF deferred to hardware (docs/sr1-status.md block 13).",
+    "swiftui.focus-state": "UIA keyboard focus is false in the Sandbox; gated through @FocusState text (docs/sr1-status.md block 14).",
+    "swiftui.ime-marked-text": "Posted WM_IME messages only; real composition needs hardware (docs/sr1-status.md block 15).",
+    "swiftui.alert": "Windows TaskDialog compared by semantics; main-window pixels reported, never a gate (docs/sr1-status.md block 17).",
+    "swiftui.color-scheme": "Semantic colours measured light and dark; toggle artwork at scale 2.5 only (docs/sr1-status.md block 20).",
+    "swiftui.button": "Every style measured in light only; pressed and focused states unmeasured; bordered and prominent are 7-8 px narrower (docs/sr1-status.md block 11).",
+    "swiftui.list": "No scrolling, no sidebar or grouped styles, no dark appearance, no multi-selection adjacency (docs/sr1-decisions.md A10)."
+  },
+  "partial_overrides": {
+    "member-call:fill": "Shape.fill is delivered (shapes.fill-stroke); the Canvas GraphicsContext.fill form is not in any block",
+    "member-call:stroke": "Shape.stroke is delivered (shapes.fill-stroke); the Canvas GraphicsContext.stroke form is not in any block",
+    "modifier:foregroundStyle": "Text colour is gated (docs/sr1-status.md block 8 text-colour gate, decision 11) and Button label colour (decision A3); other receivers are not measured",
+    "env-key:isEnabled": "the runtime publishes isEnabled for .disabled (decision 10); reading it through EnvironmentValues is not a manifest symbol"
+  },
+  "families": [
+    {
+      "id": "F-path",
+      "name": "Vector paths (Path, its builders, StrokeStyle, trim)",
+      "names": [
+        "Path",
+        "addLine",
+        "move",
+        "closeSubpath",
+        "addQuadCurve",
+        "addArc",
+        "addCurve",
+        "addEllipse",
+        "applying",
+        "offsetBy",
+        "strokedPath",
+        "trimmedPath",
+        "StrokeStyle",
+        "trim",
+        "FillStyle"
+      ],
+      "plan": "docs/sr1-plan.md Foundations lists vector paths (fill, stroke, caps, joins, dashes, trim) as a renderer foundation still to add"
+    },
+    {
+      "id": "F-canvas",
+      "name": "Canvas drawing (Canvas, GraphicsContext, shading, layers, filters)",
+      "names": [
+        "Canvas",
+        "GraphicsContext",
+        "addFilter",
+        "drawLayer",
+        "translateBy",
+        "color",
+        "TimelineView"
+      ],
+      "plan": "not in the SR1 plan; needs a retained-tree escape or a drawing-command ABI"
+    },
+    {
+      "id": "F-transform",
+      "name": "Transforms and placement (scaleEffect, rotationEffect, offset, position, degrees, radians)",
+      "names": [
+        "scaleEffect",
+        "rotationEffect",
+        "offset",
+        "position",
+        "degrees",
+        "radians",
+        "scale"
+      ],
+      "plan": "docs/sr1-plan.md Foundations: full affine transforms (today translation only)"
+    },
+    {
+      "id": "F-animatable",
+      "name": "Animatable data and spring animation (Animatable, AnimatablePair, spring, snappy, bouncy, delay, keyframes)",
+      "names": [
+        "Animatable",
+        "AnimatablePair",
+        "Animation.spring",
+        "spring",
+        "snappy",
+        "bouncy",
+        "delay",
+        "timingCurve",
+        "SpringKeyframe",
+        "keyframeAnimator",
+        "contentTransition"
+      ],
+      "plan": "block 18 covers linear, easeIn/Out/InOut and the default spring (docs/sr1-decisions.md C3-C4); custom springs and Animatable are new"
+    },
+    {
+      "id": "F-pointer",
+      "name": "Pointer, hit testing and gestures (onHover, allowsHitTesting, contentShape, onTapGesture, gestures)",
+      "names": [
+        "onHover",
+        "allowsHitTesting",
+        "contentShape",
+        "onTapGesture",
+        "gesture",
+        "simultaneousGesture",
+        "onContinuousHover",
+        "onEnded",
+        "onChanged",
+        "SpatialTapGesture",
+        "TapGesture",
+        "DragGesture",
+        "help"
+      ],
+      "plan": "docs/sr1-plan.md Foundations lists hit-testing; blocks 11 and 16 gate clicks only"
+    },
+    {
+      "id": "F-style",
+      "name": "Backgrounds, clipping and effects (background, clipShape, clipped, mask, shadow, brightness, tint, glassEffect, Glass)",
+      "names": [
+        "background",
+        "clipShape",
+        "clipped",
+        "mask",
+        "shadow",
+        "brightness",
+        "tint",
+        "glassEffect",
+        "Glass",
+        "LinearGradient",
+        "Capsule",
+        "UnevenRoundedRectangle",
+        "Divider"
+      ],
+      "plan": "docs/sr1-plan.md Foundations: clipping by shape; glass has no Windows source (the Windows notch is solid, pulse/docs/settings.md)"
+    },
+    {
+      "id": "F-text",
+      "name": "Type: Font.system, weights, text modifiers",
+      "names": [
+        "system",
+        "semibold",
+        "regular",
+        "medium",
+        "bold",
+        "heavy",
+        "monospaced",
+        "monospacedDigit",
+        "minimumScaleFactor",
+        "multilineTextAlignment",
+        "truncationMode",
+        "tail",
+        "middle",
+        "fontWeight",
+        "tracking",
+        "textSelection"
+      ],
+      "plan": "block 4 gates Font.custom with bundled Tinos; Font.system is implemented in the runtime (Controls.swift:327) without a case"
+    },
+    {
+      "id": "F-compose",
+      "name": "Composition helpers (Group, AnyView, EmptyView, Spacer, ViewModifier, GeometryReader, EnvironmentKey, fixedSize)",
+      "names": [
+        "Group",
+        "AnyView",
+        "EmptyView",
+        "Spacer",
+        "ViewModifier",
+        "GeometryReader",
+        "EnvironmentKey",
+        "fixedSize",
+        "ButtonStyleConfiguration",
+        "layoutPriority",
+        "AnyLayout"
+      ],
+      "plan": "ZStack and overlay are block 3; VStack and HStack are exercised in witnesses only"
+    },
+    {
+      "id": "F-a11y",
+      "name": "Accessibility modifiers",
+      "names": [
+        "accessibilityLabel",
+        "accessibilityHidden",
+        "accessibilityElement",
+        "accessibilityValue",
+        "accessibilityAddTraits",
+        "accessibilityAction",
+        "isButton",
+        "isSelected"
+      ],
+      "plan": "docs/architecture.md section 11: every inventory control needs an AccessKit mapping and UIA assertions"
+    }
+  ]
+}
