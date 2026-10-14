@@ -1,0 +1,3 @@
+{"semanticGate": {"fields": ["role", "name", "enabled", "dialogTitle", "count", "order"], "scope": "all", "pixels": "report-only", "phases": ["open", ""], "dialogs": {"count": {"open": 1, "": 0}}},
+ "macArgs": ["--press", "2"],
+ "steps": [{"op": "wait", "ms": 1200}, {"op": "foreground", "target": "dialog"}, {"op": "dump", "label": "open"}, {"op":"invoke","target":"dialog","name":"Third"}, {"op": "wait", "ms": 800}]}

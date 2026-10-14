@@ -1,0 +1,47 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "pixels": "report-only"
+ },
+ "textOriginGate": {
+  "fields": [
+   [
+    25,
+    25,
+    325,
+    85
+   ]
+  ],
+  "caret": "macFact",
+  "caretTolerancePx": 0
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "click",
+   "x": 150,
+   "y": 55
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":300},{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":300}]"
+ ]
+}

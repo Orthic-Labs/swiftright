@@ -1,0 +1,33 @@
+{
+ "clock": [
+  0.0,
+  0.1,
+  0.2,
+  0.3,
+  0.5,
+  0.6
+ ],
+ "clockGate": {
+  "tracks": [
+   {
+    "name": "bar",
+    "kind": "Color",
+    "index": 0,
+    "colour": [
+     0,
+     136,
+     255
+    ],
+    "axis": "x",
+    "line": 300,
+    "from": 100,
+    "to": 250,
+    "leaf": 2
+   }
+  ],
+  "extentTolerancePx": 2.0,
+  "progressTolerance": 0.005,
+  "stripPx": 1,
+  "note": "2 px: SwiftUI's built-in spring integrates in fixed steps and its value depends on how it is sampled (0.3 s reads 0.886455 under the manual clock, 0.890036 in a fresh sparse probe, a 0.0036 difference = up to 1.4 px here); the runtime table follows the sparse probe (decision C4)"
+ }
+}

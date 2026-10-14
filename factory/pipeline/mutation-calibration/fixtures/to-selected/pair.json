@@ -1,0 +1,98 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "ignoreNames": [
+   "Second",
+   "Clear",
+   "First",
+   "Focus",
+   "Blur"
+  ],
+  "pixels": "report-only",
+  "phases": [
+   "p1",
+   "p2",
+   "p3",
+   ""
+  ]
+ },
+ "textOriginGate": {
+  "fields": [
+   [
+    25,
+    25,
+    325,
+    85
+   ],
+   [
+    25,
+    105,
+    325,
+    165
+   ]
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "click",
+   "x": 150,
+   "y": 275
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "p1"
+  },
+  {
+   "op": "click",
+   "x": 150,
+   "y": 345
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "p2"
+  },
+  {
+   "op": "click",
+   "x": 150,
+   "y": 415
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "dump",
+   "label": "p3"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":300},{\"op\":\"click\",\"x\":150,\"y\":275},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"p1\"},{\"op\":\"click\",\"x\":150,\"y\":345},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"p2\"},{\"op\":\"click\",\"x\":150,\"y\":415},{\"op\":\"wait\",\"ms\":250},{\"op\":\"dump\",\"label\":\"p3\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}
