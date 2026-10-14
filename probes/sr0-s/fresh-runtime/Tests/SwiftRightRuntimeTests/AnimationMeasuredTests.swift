@@ -1,6 +1,6 @@
 import Foundation
 import Observation
-import SwiftRightRuntime
+@testable import SwiftRightRuntime
 import XCTest
 
 // SR1 round 3 block 18 (swiftui.animation) and block 19 (swiftui.opacity-transition): every expected number below was measured on macOS SwiftUI
@@ -159,7 +159,44 @@ final class AnimationMeasuredTests: XCTestCase {
         graph.tick(now: 0.53)
         XCTAssertLessThan(p(graph), 1, "still settling at 0.53 s")
         graph.tick(now: 0.54)
-        XCTAssertEqual(p(graph), 1, "SwiftUI removes the spring at 0.537 s and the value snaps to the target")
+        XCTAssertEqual(p(graph), 1, "SwiftUI removes this 100 pt spring at scale 1 at 0.536 s and the value snaps to the target")
+    }
+
+    /// SwiftUI removes a spring when every animated component is within a tolerance of its target (decision C11). Measured on macOS 27.0.1 (26A434) at 12.5 ms:
+    /// (displacement x, y, width, height, opacity; display scale; last sample still running; first sample removed).
+    func testSpringIsRemovedWithinOneDevicePixelOfTheTarget() {
+        let cases: [([Double], Double, Double, Double)] = [
+            ([0, 0, 15, 0, 0], 1, 0.3375, 0.35), ([0, 0, 50, 0, 0], 1, 0.4625, 0.475), ([0, 0, 50, 0, 0], 2, 0.525, 0.5375),
+            ([0, 0, 150, 0, 0], 1, 0.575, 0.5875), ([0, 0, 150, 0, 0], 2, 0.6375, 0.65), ([0, 0, 150, 0, 0], 2.5, 0.6625, 0.675),
+            ([0, 0, 150, 0, 0], 3, 0.675, 0.6875), ([0, 0, 400, 0, 0], 1, 0.6625, 0.675), ([0, 0, 400, 0, 0], 2, 0.7375, 0.75),
+            ([0, 0, 0, 100, 0], 1, 0.525, 0.5375), ([0, 0, 0, 100, 0], 2, 0.6, 0.6125),
+            ([150, 0, 0, 0, 0], 1, 0.6375, 0.65), ([150, 0, 0, 0, 0], 2, 0.7125, 0.725), ([0, 150, 0, 0, 0], 2, 0.7125, 0.725),
+            ([150, 0, 150, 0, 0], 1, 0.6375, 0.65),   // the slowest component decides
+            ([0, 0, 0, 0, 1], 1, 0.8125, 0.825), ([0, 0, 0, 0, 1], 2, 0.8125, 0.825),
+        ]
+        for (displacement, scale, live, removed) in cases {
+            let settle = SpringModel.settle(displacement: displacement, scale: scale)
+            XCTAssertGreaterThan(settle, live - 0.0005, "\(displacement) at scale \(scale): still running at \(live) s")
+            XCTAssertLessThanOrEqual(settle, removed + 0.0005, "\(displacement) at scale \(scale): removed by \(removed) s")
+        }
+        // the curve itself does not depend on the scale; 0.6 s reads 0.994417 on the Mac
+        XCTAssertEqual(SpringModel.value(elapsed: 0.6, duration: 0.5), 0.994417, accuracy: 1e-6)
+    }
+
+    /// The Windows capture runs at 2.5 device pixels per point: a 100 pt widening is still running at 0.6 s and gone by 0.64 s (at scale 1 it is gone at 0.536 s).
+    func testDefaultSpringAtTheCaptureScaleStillRunsAtPointSixSeconds() {
+        let model = BarModel()
+        let graph = Graph(BarScreen(model: model), scale: 2.5)
+        graph.flush()
+        withAnimation(.default) { model.wide = true }
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.6)
+        XCTAssertEqual(p(graph), 0.994417, accuracy: 1e-5, "100 pt at scale 2.5 has not been removed at 0.6 s")
+        graph.tick(now: 0.62)
+        XCTAssertLessThan(p(graph), 1)
+        graph.tick(now: 0.64)
+        XCTAssertEqual(p(graph), 1)
     }
 
     // MARK: onAppear
@@ -265,7 +302,7 @@ final class AnimationMeasuredTests: XCTestCase {
             XCTAssertEqual(fired, 0)
             graph.tick(now: early)
             if criteria == .removed {
-                XCTAssertEqual(fired, 0, "removed waits for the settle at 0.537 s")
+                XCTAssertEqual(fired, 0, "removed waits for the settle at 0.536 s")
                 graph.tick(now: late)
             }
             XCTAssertEqual(fired, 1, "\(criteria)")

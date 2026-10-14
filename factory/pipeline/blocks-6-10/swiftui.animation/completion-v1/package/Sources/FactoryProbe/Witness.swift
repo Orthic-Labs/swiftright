@@ -5,7 +5,7 @@ import SwiftUI
 #endif
 
 // Block swiftui.animation, case completion: withAnimation(_:completionCriteria:_:completion:) with the default spring. `.logicallyComplete` fires at the spring's
-// perceptual duration (0.5 s), `.removed` when it settles (0.537 s). Each completion turns a flag from red to green (a state change without animation).
+// perceptual duration (0.5 s), `.removed` when it settles (0.536 s at scale 1 for 100 pt, 0.63 s at the capture scale 2.5). Each completion turns a flag from red to green (a state change without animation).
 struct Witness_anim_completion: View {
     @State private var wide = false
     @State private var wide2 = false

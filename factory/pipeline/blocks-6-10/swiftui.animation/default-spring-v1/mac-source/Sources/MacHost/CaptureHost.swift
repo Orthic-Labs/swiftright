@@ -98,10 +98,12 @@ struct ClockCaptureHost {
         try FileManager.default.createDirectory(atPath: out, withIntermediateDirectories: true)
         // The first animate call fixes the animation's start, so the clock reads times[0] from before the witness appears.
         ManualClock.now = times[0]
-        // SwiftUI's built-in spring ends when the remaining displacement is under ONE DEVICE PIXEL (1 / displayScale pt: the default spring on a 150 pt
-        // move ends at 0.58 s at scale 1, 0.65 s at 2, 0.68 s at 2.5), and `displayScale` otherwise comes from whatever screen the Mac happens to have attached
-        // (a headless 1920x1080 at 1x, a Retina panel at 2x). The reference is therefore pinned (decision C11): default 1, the runtime's headless default.
-        let displayScale = Double(value("--display-scale") ?? "1") ?? 1
+        // SwiftUI's built-in spring ends when the remaining displacement is under about one device pixel (1.05 / displayScale pt for a size, 0.5 / displayScale for an
+        // offset; the default spring on a 150 pt width ends at 0.5875 s at scale 1, 0.65 s at 2, 0.675 s at 2.5), and the scale otherwise comes from whatever screen
+        // the Mac has attached (a headless 1920x1080 at 1x, a Retina panel at 2x). The reference is pinned (decision C11) to the capture density, the scale the Windows
+        // runtime's Graph runs at: `--display-scale` overrides.
+        let displayScale = Double(value("--display-scale") ?? "") ?? scale
+        PinnedScaleWindow.pinned = CGFloat(displayScale)
         let root = ZStack(alignment: .center) { Witness_anim_default_spring() }
             .frame(width: 320, height: 240, alignment: .center)
             .background(Color.white)
@@ -111,7 +113,7 @@ struct ClockCaptureHost {
         print("MAC_ENV os=\(ProcessInfo.processInfo.operatingSystemVersionString) pinnedDisplayScale=\(displayScale) screens=[\(screens)]")
         let host = NSHostingView(rootView: root)
         host.frame = NSRect(x: 0, y: 0, width: 320, height: 240)
-        let window = NSWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
+        let window = PinnedScaleWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         window.contentView = host
         host.layoutSubtreeIfNeeded()
         pump(0.3)
@@ -133,4 +135,10 @@ struct ClockCaptureHost {
         }
         print("{\"status\":\"OBSERVED\",\"mode\":\"offscreen-hosting-view-manual-clock\",\"scale\":\(scale),\"frames\":\(times.count)}")
     }
+}
+
+/// The window reports the pinned backing scale instead of the attached screen's (decision C11): SwiftUI lays text out and settles springs for the scale it sees.
+final class PinnedScaleWindow: NSWindow {
+    nonisolated(unsafe) static var pinned: CGFloat = 1
+    override var backingScaleFactor: CGFloat { Self.pinned }
 }

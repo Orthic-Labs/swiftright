@@ -16,7 +16,7 @@ import Foundation
 // Layers advance only through `Graph.tick(now:)` (host clock). A layer begins at the first tick after it was created: that tick is its progress 0,
 // whatever the host clock reads. A flush between ticks never begins, advances or ends a layer.
 // Completion (`withAnimation(_:completionCriteria:_:completion:)`): `.logicallyComplete` fires when every layer the transaction started has
-// reached its logical duration (for the default spring 0.5 s, although it settles at 0.537 s); `.removed` fires when the node's whole chain
+// reached its logical duration (for the default spring 0.5 s, although it settles later: see `SpringModel`); `.removed` fires when the node's whole chain
 // of layers has finished and been removed. A transaction that started no layer (no change, nil animation) completes at its commit.
 // Completions run after the commit record has been delivered.
 
@@ -75,10 +75,9 @@ public struct Animation: Sendable, Equatable {
     public static var smooth: Animation { Animation(name: "smooth", duration: 0.5, curve: .spring) }
     public static var spring: Animation { Animation(name: "spring", duration: 0.5, curve: .spring) }
 
-    /// Seconds until the layer stops changing the presentation and is removed (the spring settles after its perceptual duration).
-    var visualDuration: Double {
-        curve == .spring ? duration * SpringModel.settle / SpringModel.perceptual : duration
-    }
+    /// Seconds until the layer stops changing the presentation and is removed. A spring settles when what is left of each animated component is under
+    /// SwiftUI's one-device-pixel tolerance, so its end depends on the distance and the display scale: `MotionLayer.visualDuration` computes it.
+    var visualDuration: Double { duration }
 }
 
 /// How `withAnimation(_:completionCriteria:_:completion:)` decides the animation is complete.
@@ -134,41 +133,69 @@ struct UnitBezier {
     static let easeInOut = UnitBezier(0.42, 0, 0.58, 1)
 }
 
-/// The default spring, as measured from SwiftUI (`Animation.default` on macOS 27, evaluated at 12.5 ms steps from a fresh state).
+/// The default spring, as measured from SwiftUI (`Animation.default` on macOS 27, evaluated at 12.5 ms steps from a fresh state, 0 to 0.8125 s).
 /// A built-in spring integrates in small fixed steps, so its curve is not a closed-form spring; the table reproduces it. Between two
-/// entries the value is interpolated linearly; at `settle` the animation ends and the presentation snaps to the target.
+/// entries the value is interpolated linearly; past the last entry the remainder shrinks by `tailRatio` per step.
+///
+/// SwiftUI removes the animation (the value snaps to the target) at the first call where every animated component is within a tolerance of its
+/// target, measured on macOS 27.0.1 (26A434) with 12.5 ms sampling, amplitudes 15 to 400 and display scales 1 to 3: width and height 1.05 / displayScale
+/// pt, x and y offsets 0.5 / displayScale pt, opacity 0.0006 (no scale). The old constant 0.537 s was the 100 pt, scale 1 case (decision C11).
 enum SpringModel {
     /// The perceptual duration the table was measured for.
     static let perceptual = 0.5
-    /// Seconds after which SwiftUI removes the animation (the first call that returns nil is at 0.537 s).
-    static let settle = 0.537
     static let step = 0.0125
     static let table: [Double] = [
         0.000000, 0.009937, 0.041377, 0.087193, 0.127702, 0.186574, 0.248139, 0.310082, 0.370762, 0.414751,
         0.470753, 0.523282, 0.572065, 0.606131, 0.648200, 0.686530, 0.721278, 0.745108, 0.774085, 0.800081,
         0.823335, 0.839118, 0.858136, 0.875040, 0.890036, 0.900149, 0.912263, 0.922966, 0.930158, 0.938749,
         0.946315, 0.952972, 0.957431, 0.962741, 0.967403, 0.971492, 0.974225, 0.977473, 0.980317, 0.982808,
-        0.984469, 0.986440, 0.988164,
+        0.984469, 0.986440, 0.988164, 0.989671, 0.990675, 0.991865, 0.992905, 0.993812, 0.994417, 0.995132,
+        0.995756, 0.996301, 0.996776, 0.997092, 0.997466, 0.997792, 0.998077, 0.998266, 0.998489, 0.998684,
+        0.998854, 0.998967, 0.999100, 0.999216, 0.999317, 0.999385,
     ]
+    /// What is left shrinks by this factor per step after the table (fit to the last five entries).
+    static let tailRatio = 0.8836
     /// Critically damped natural frequency (rad/s) of the closest closed-form spring (fit to the table, worst error 0.01): used only when a
     /// spring continues from a velocity (an interrupted spring), where no table exists.
     static let omega = 12.658
+
+    private static var lastIndex: Int { table.count - 1 }
 
     /// Progress of a spring that starts at rest, `elapsed` seconds in (perceptual duration `duration`).
     static func value(elapsed: Double, duration: Double) -> Double {
         let e = elapsed * perceptual / duration
         if e <= 0 { return 0 }
-        if e >= settle { return 1 }
-        let last = Double(table.count - 1) * step
-        if e >= last {
-            // from the last entry to the end of the animation, the remaining 1.2 % closes linearly
-            let f = (e - last) / (settle - last)
-            return table[table.count - 1] + (1 - table[table.count - 1]) * f * 0.9
-        }
         let x = e / step
         let i = Int(x)
+        if i >= lastIndex {
+            return 1 - (1 - table[lastIndex]) * pow(tailRatio, x - Double(lastIndex))
+        }
         let f = x - Double(i)
         return table[i] + (table[i + 1] - table[i]) * f
+    }
+
+    /// Seconds (at the perceptual duration) after which a spring across `displacement` (target minus start: x, y, width, height, opacity) is removed.
+    static func settle(displacement: [Double], scale: Double) -> Double {
+        let s = max(scale, 0.25)
+        let tolerance = [0.5 / s, 0.5 / s, 1.05 / s, 1.05 / s, 0.0006]
+        var settle = 0.0
+        for i in 0..<min(displacement.count, tolerance.count) {
+            let d = abs(displacement[i])
+            guard d > tolerance[i] else { continue }
+            settle = max(settle, time(remaining: tolerance[i] / d))
+        }
+        return settle
+    }
+
+    /// First time at which the share still to travel is `q` (0 < q < 1).
+    private static func time(remaining q: Double) -> Double {
+        let last = 1 - table[lastIndex]
+        if q < last { return (Double(lastIndex) + log(q / last) / log(tailRatio)) * step }
+        var i = 0
+        while i < lastIndex - 1 && 1 - table[i + 1] > q { i += 1 }
+        let a = 1 - table[i], b = 1 - table[i + 1]
+        let f = b < a ? (a - q) / (a - b) : 0
+        return (Double(i) + min(max(f, 0), 1)) * step
     }
 }
 
@@ -283,6 +310,8 @@ final class MotionLayer {
     var inclusiveEnd = true
     /// A spring that continued from an interrupted spring: displacement from `to` (target - value) and its rate of change per component.
     var continuation: (displacement: [Double], velocity: [Double])?
+    /// Seconds after which a spring that starts at rest is removed (its distance and the display scale decide: `SpringModel.settle`); nil until `startLayer` sets it.
+    var springSettle: Double?
 
     init(to: Presentation, animation: Animation, transaction: AnimationTransaction) {
         self.to = to
@@ -327,7 +356,10 @@ final class MotionLayer {
     }
 
     private func computeVisualDuration() -> Double {
-        guard continuation != nil else { return animation.visualDuration }
+        guard continuation != nil else {
+            if isSpring, let springSettle { return springSettle * animation.duration / SpringModel.perceptual }
+            return animation.visualDuration
+        }
         // a continued spring ends when every component is within 1 % of the largest starting displacement of the target
         let w = SpringModel.omega * SpringModel.perceptual / animation.duration
         let c = continuation!
@@ -498,6 +530,10 @@ extension Graph {
         let target = Presentation(frame: node.frame, opacity: node.targetOpacity)
         let chain = node.motion ?? MotionChain(base: Presentation(frame: node.presentedFrame, opacity: node.presentedOpacity))
         let layer = MotionLayer(to: target, animation: animation, transaction: transaction)
+        if layer.isSpring {
+            let from = (chain.layers.isEmpty ? chain.base : (clock.map { chain.value(at: $0) } ?? chain.layers.last!.to)).components
+            layer.springSettle = SpringModel.settle(displacement: zip(target.components, from).map { $0 - $1 }, scale: Double(scale))
+        }
         if layer.isSpring, let top = chain.layers.last, top.isSpring, let now = clock, top.start != nil {
             // A spring that interrupts a spring continues from the presented position and velocity (SwiftUI merges them).
             let current = chain.value(at: now)
