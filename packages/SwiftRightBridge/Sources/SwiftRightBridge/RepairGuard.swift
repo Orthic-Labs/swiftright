@@ -28,7 +28,7 @@ public enum RepairGuard {
     /// Pure decision, testable on any platform: does the guard need (re)installing? `taskExists` is evaluated last and only when
     /// the cheap file checks pass.
     static func needsInstall(scriptOnDisk: String?, configJSON: Data?, pfn: String, taskExists: () -> Bool = { true }) -> Bool {
-        guard scriptOnDisk == RepairGuardScript.source else { return true }
+        guard scriptOnDisk == scriptFile else { return true }
         guard let data = configJSON,
               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               (object["pfn"] as? String) == pfn,
@@ -44,6 +44,25 @@ public enum RepairGuard {
               let epoch = (object["epoch"] as? NSNumber)?.doubleValue else { return false }
         let age = now.timeIntervalSince1970 - epoch
         return age >= 0 && age < attemptBackoff
+    }
+
+    /// The deployed guard file: the embedded LF text plus its final newline, byte-identical to the RightKit canonical file and the pin.
+    static var scriptFile: String { RepairGuardScript.source + "\n" }
+
+    /// After an installer launch: spawned -> write `install-attempt.json` (and clear any earlier launch-failure record);
+    /// spawn failed -> write `install-launch-failure.json` ({epoch, sha256, launchFailure}) and leave the marker untouched, so
+    /// the next launch tries again. Returns the file written, or nil when nothing could be written.
+    @discardableResult
+    static func recordLaunch(dir: URL, spawned: Bool, failure: String?, now: Date, scriptSha256: String = RepairGuardScript.sha256) -> URL? {
+        let marker = dir.appendingPathComponent("install-attempt.json")
+        let failed = dir.appendingPathComponent("install-launch-failure.json")
+        if spawned {
+            try? FileManager.default.removeItem(at: failed)
+            do { try attemptMarker(now: now, scriptSha256: scriptSha256).write(to: marker, options: .atomic); return marker } catch { return nil }
+        }
+        let reason = (failure ?? "unknown").replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let body = "{\"epoch\":\(Int(now.timeIntervalSince1970)),\"sha256\":\"\(scriptSha256)\",\"launchFailure\":\"\(reason)\"}"
+        do { try Data(body.utf8).write(to: failed, options: .atomic); return failed } catch { return nil }
     }
 
     static func attemptMarker(now: Date, scriptSha256: String = RepairGuardScript.sha256) -> Data {
@@ -82,11 +101,13 @@ public enum RepairGuard {
             }
             do {
                 try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-                try Data(RepairGuardScript.source.utf8).write(to: script, options: .atomic)
-                try attemptMarker(now: Date()).write(to: marker, options: .atomic)
+                try Data(scriptFile.utf8).write(to: script, options: .atomic)
             } catch { return }
-            appendLog(dir: dir, "installer started (script changed, guard.json missing or task missing)")
-            launchHidden(script: script.path.replacingOccurrences(of: "/", with: "\\"), pfn: pfn, systemRoot: systemRoot)
+            // The marker is written only after the installer process has started; a spawn failure is recorded, never marked.
+            let launch = launchHidden(script: script.path.replacingOccurrences(of: "/", with: "\\"), pfn: pfn, systemRoot: systemRoot)
+            recordLaunch(dir: dir, spawned: launch.spawned, failure: launch.failure, now: Date())
+            appendLog(dir: dir, launch.spawned ? "installer started (script changed, guard.json missing or task missing)"
+                                               : "installer launch failed: " + (launch.failure ?? "unknown") + " (no attempt marker written; the next launch retries)")
         }
         #endif
     }
@@ -109,7 +130,9 @@ public enum RepairGuard {
 
     /// CreateProcessW + CREATE_NO_WINDOW (no visible console, no inherited handles). Foundation's `Process` is not used: with
     /// FileHandle.nullDevice on stdio it fast-fails (0xc0000409) inside a packaged launch. Returns the process handle, or nil.
-    static func createHidden(_ line: String) -> PROCESS_INFORMATION? {
+    static func createHidden(_ line: String) -> PROCESS_INFORMATION? { createHiddenWithError(line).info }
+
+    static func createHiddenWithError(_ line: String) -> (info: PROCESS_INFORMATION?, error: DWORD) {
         var commandLine = Array(line.utf16)
         commandLine.append(0)
         var startup = STARTUPINFOW()
@@ -120,16 +143,18 @@ public enum RepairGuard {
         let started = commandLine.withUnsafeMutableBufferPointer { buffer in
             CreateProcessW(nil, buffer.baseAddress, nil, nil, false, DWORD(CREATE_NO_WINDOW), nil, nil, &startup, &info)
         }
-        return started ? info : nil
+        return started ? (info, 0) : (nil, GetLastError())
     }
 
     /// Runs the guard installer detached and hidden.
-    static func launchHidden(script: String, pfn: String, systemRoot: String) {
+    static func launchHidden(script: String, pfn: String, systemRoot: String) -> (spawned: Bool, failure: String?) {
         let exe = systemRoot + "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-        guard let info = createHidden("\"" + exe + "\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + script
-            + "\" -Install -Pfn \"" + pfn + "\"") else { return }
+        let made = createHiddenWithError("\"" + exe + "\" -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + script
+            + "\" -Install -Pfn \"" + pfn + "\"")
+        guard let info = made.info else { return (false, "CreateProcessW failed, error " + String(made.error)) }
         CloseHandle(info.hThread)
         CloseHandle(info.hProcess)
+        return (true, nil)
     }
 
     /// `schtasks /query /tn <name>` (hidden, waits up to 10 s): true when the task exists. Any doubt (cannot spawn, timeout) counts

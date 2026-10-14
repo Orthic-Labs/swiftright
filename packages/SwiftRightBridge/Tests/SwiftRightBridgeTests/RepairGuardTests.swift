@@ -15,7 +15,8 @@ final class RepairGuardTests: XCTestCase {
 
     func testNeedsInstallDecisions() {
         let cfg = Data(#"{"pfn":"A_b","task":"A_b-Repair"}"#.utf8)
-        let s = RepairGuardScript.source
+        let s = RepairGuard.scriptFile
+        XCTAssertTrue(RepairGuard.needsInstall(scriptOnDisk: RepairGuardScript.source, configJSON: cfg, pfn: "A_b"), "the old newline-less deployed copy is replaced")
         XCTAssertFalse(RepairGuard.needsInstall(scriptOnDisk: s, configJSON: cfg, pfn: "A_b"))
         XCTAssertTrue(RepairGuard.needsInstall(scriptOnDisk: nil, configJSON: cfg, pfn: "A_b"))
         XCTAssertTrue(RepairGuard.needsInstall(scriptOnDisk: s + " ", configJSON: cfg, pfn: "A_b"))
@@ -26,7 +27,7 @@ final class RepairGuardTests: XCTestCase {
 
     func testTaskMissingTriggersInstall() {
         let cfg = Data(#"{"pfn":"A_b","task":"A_b-Repair"}"#.utf8)
-        let s = RepairGuardScript.source
+        let s = RepairGuard.scriptFile
         XCTAssertTrue(RepairGuard.needsInstall(scriptOnDisk: s, configJSON: cfg, pfn: "A_b", taskExists: { false }))
         XCTAssertFalse(RepairGuard.needsInstall(scriptOnDisk: s, configJSON: cfg, pfn: "A_b", taskExists: { true }))
         // the task probe only runs when the cheap file checks pass
@@ -44,6 +45,33 @@ final class RepairGuardTests: XCTestCase {
         XCTAssertFalse(RepairGuard.installAttemptBlocked(markerJSON: Data("junk".utf8), now: now))
         XCTAssertFalse(RepairGuard.installAttemptBlocked(markerJSON: RepairGuard.attemptMarker(now: now.addingTimeInterval(-24 * 3600 - 1)), now: now), "retried after 24 h")
         XCTAssertFalse(RepairGuard.installAttemptBlocked(markerJSON: RepairGuard.attemptMarker(now: now.addingTimeInterval(-60), scriptSha256: "0" + sha.dropFirst()), now: now), "a changed script is retried at once")
+    }
+
+    func testDeployedFileIsByteIdenticalToPinnedFile() throws {
+        let file = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("guard/msix-repair-guard.ps1")
+        let pinned = try Data(contentsOf: file)
+        XCTAssertEqual(Data(RepairGuard.scriptFile.utf8), pinned.filter { $0 != 13 }, "writer output keeps the final newline")
+        XCTAssertEqual(RepairGuard.scriptFile.utf8.last, 10)
+    }
+
+    func testMarkerWrittenOnlyAfterSpawn() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("rg-" + UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let marker = dir.appendingPathComponent("install-attempt.json")
+        let failure = dir.appendingPathComponent("install-launch-failure.json")
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        // spawn failure: failure recorded, no marker, so the next launch is not blocked
+        XCTAssertEqual(RepairGuard.recordLaunch(dir: dir, spawned: false, failure: "CreateProcessW failed, error 2", now: now), failure)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: marker.path))
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: failure)) as? [String: Any])
+        XCTAssertEqual(object["launchFailure"] as? String, "CreateProcessW failed, error 2")
+        XCTAssertFalse(RepairGuard.installAttemptBlocked(markerJSON: try? Data(contentsOf: marker), now: now.addingTimeInterval(60)))
+        // spawned: marker written, failure record cleared
+        XCTAssertEqual(RepairGuard.recordLaunch(dir: dir, spawned: true, failure: nil, now: now), marker)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: failure.path))
+        XCTAssertTrue(RepairGuard.installAttemptBlocked(markerJSON: try? Data(contentsOf: marker), now: now.addingTimeInterval(60)))
     }
 
     #if canImport(CryptoKit)

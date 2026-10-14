@@ -45,25 +45,6 @@ const tmp = (label) => mkdtempSync(path.join(env.RUNNER_TEMP || env.TMPDIR || "/
 const log = (message) => console.log(`finalize: ${message}`);
 const writeJson = (file, value) => { mkdirSync(path.dirname(file), { recursive: true }); writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`); };
 
-// buildMsix reads the signer subject with Get-AuthenticodeSignature, which cannot read .msix on the hosted runner (empty subject).
-// Read the same subject from the package's AppxSignature.p7x (PKCX header + PKCS#7) instead; buildMsix still compares it with the manifest Publisher.
-const readMsixSignerSubject = (file) => {
-  const script = [
-    "$ErrorActionPreference = 'Stop'",
-    "Add-Type -AssemblyName System.IO.Compression.FileSystem",
-    `$zip = [System.IO.Compression.ZipFile]::OpenRead('${file.replace(/'/g, "''")}')`,
-    "try { $entry = $zip.GetEntry('AppxSignature.p7x'); if (-not $entry) { throw 'AppxSignature.p7x missing' }",
-    "$ms = New-Object System.IO.MemoryStream; $s = $entry.Open(); $s.CopyTo($ms); $s.Dispose(); $b = $ms.ToArray() } finally { $zip.Dispose() }",
-    "$cms = New-Object System.Security.Cryptography.Pkcs.SignedCms",
-    "$cms.Decode($b[4..($b.Length - 1)])",
-    "Write-Output $cms.SignerInfos[0].Certificate.Subject",
-  ].join("; ");
-  const r = spawnSync("pwsh", ["-NoProfile", "-NonInteractive", "-Command", script], { encoding: "utf8" });
-  if (r.status !== 0) console.error(`signer subject read failed: ${r.stderr || r.stdout}`);
-  console.log(`MSIX signer subject: ${String(r.stdout ?? "").trim()}`);
-  return r.status === 0 ? String(r.stdout ?? "").trim() : "";
-};
-
 async function finalizeWindows() {
   const unsignedRoot = need("RIGHT_GIT_UNSIGNED_CANDIDATE_ROOT");
   const outRoot = path.resolve(need("RIGHT_GIT_FINALIZED_WINDOWS_ROOT"));
@@ -112,7 +93,7 @@ async function finalizeWindows() {
     out,
     workDir: path.join(tmp("msix-root"), "root"),
     appInstaller: { ...options.appInstaller, out: path.join(outRoot, "SliceApp.appinstaller.placeholder-uris") },
-  }, { log: (event) => console.log(JSON.stringify(event)), readSubject: readMsixSignerSubject });
+  }, { log: (event) => console.log(JSON.stringify(event)) });
 
   // The re-packed package must differ from the candidate only by signatures.
   const signedSeal = JSON.parse(readFileSync(built.seal, "utf8"));
